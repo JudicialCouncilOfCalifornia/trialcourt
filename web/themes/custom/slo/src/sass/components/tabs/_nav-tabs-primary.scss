@@ -1,0 +1,40 @@
+// Tabs: Primary
+// -----------------------------------------------------------------------------
+
+.nav-tabs--primary {
+  .is-collapse-enabled &:before,
+  .is-horizontal &:before {
+    border-color: $nav-tabs-primary-border-color;
+  }
+
+  .nav-tabs__link {
+    background-color: $nav-tabs-primary-tab-background-color;
+    border-color: $nav-tabs-primary-border-color;
+    color: $nav-tabs-primary-tab-color;
+    border-radius: 0;
+    border-width: 1px 0 0 0;
+    padding: 0 $nav-tabs-primary-padding-horizontal;
+    position: relative;
+
+    &.is-active {
+      // Remove the bottom border for the active item, necessary for collapsed state.
+      border-bottom: 0;
+
+      &:after {
+        background-color: $nav-tabs-primary-indicator-color;
+      }
+
+      &:focus {
+        outline-color: $nav-tabs-primary-indicator-color;
+      }
+    }
+
+    .is-horizontal & {
+      border-width: 1px 0 0 1px;
+    }
+  }
+
+  .is-horizontal & li:first-child .nav-tabs__link {
+    border-width: 1px 0 0 0;
+  }
+}

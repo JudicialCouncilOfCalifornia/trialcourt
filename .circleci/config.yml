@@ -1,0 +1,130 @@
+# https://circleci.com/docs/2.0/workflows/#using-workspaces-to-share-data-among-jobs
+defaults: &defaults
+  docker:
+    - image: quay.io/pantheon-public/build-tools-ci:6.x
+  working_directory: ~/project
+  environment:
+    #=========================================================================
+    # In addition to the environment variables defined in this file, also
+    # add the following variables in the Circle CI UI.
+    #
+    # See: https://circleci.com/docs/2.0/env-vars/
+    #
+    # GITHUB_TOKEN:   The GitHub personal access token
+    # GIT_EMAIL:      The email address to use when making commits
+    #=========================================================================
+    TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+
+    # The variables below usually do not need to be modified.
+
+    #======================================================================================================================================
+    # Circle CI 2.0 does not yet expand environment variables so they have to be manually EXPORTed
+    # Once environment variables can be expanded the variables below can be uncommented and the EXPORTs in set-up-globals.sh can be removed
+    # See: https://discuss.circleci.com/t/unclear-how-to-work-with-user-variables-circleci-provided-env-variables/12810/11
+    # See: https://discuss.circleci.com/t/environment-variable-expansion-in-working-directory/11322
+    # See: https://discuss.circleci.com/t/circle-2-0-global-environment-variables/8681
+    #======================================================================================================================================
+
+    ADMIN_USERNAME: admin
+    # BUILD_TOOLS_VERSION: ^2.0.0-alpha4
+    TERM: dumb
+
+version: 2
+jobs:
+    build_test:
+        <<: *defaults
+        steps:
+            - checkout
+
+            - restore_cache:
+                keys:
+                    - composer-cache
+
+            - run:
+                # Set TERMINUS_ENV and related environment variables.
+                # https://github.com/pantheon-systems/docker-build-tools-ci/blob/1.x/scripts/set-environment
+                name: environment
+                command: /build-tools-ci/scripts/set-environment
+
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install
+
+            - save_cache:
+                key: composer-cache
+                paths:
+                    - $HOME/.composer/cache
+
+            - run:
+                name: Build Themes
+                command: scripts/theme.sh -a
+
+            - run:
+                name: lint php code for syntax errors
+                command: composer -n lint
+
+            - run:
+                name: check coding standards
+                command: composer -n code-sniff
+
+            - run:
+                name: run unit tests
+                command: composer -n unit-test
+
+            #- run:
+                #name: run functional tests with Behat
+                #command: ./tests/scripts/run-behat
+
+    deploy:
+        <<: *defaults
+        steps:
+            - add_ssh_keys:
+                fingerprints:
+                    - "..."
+
+            - checkout
+
+            - restore_cache:
+                keys:
+                    - composer-cache
+
+            - run:
+                name: Run Composer Install
+                command: composer install -o --no-dev
+
+            - run:
+                name: Build assets
+                #command: echo "Not building theme."
+                command: scripts/theme.sh -a
+
+            - run:
+                name: Disable StrictHostKeyChecking;
+                command: echo -e "Host codeserver.dev.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+
+            - run:
+                name: Deploy Artifact
+                command: chmod +x .circleci/scripts/deploy.sh && .circleci/scripts/deploy.sh
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
+      - build_test
+      # Build deploy and test on target platform
+      - deploy:
+          requires:
+            - build_test
+          filters:
+            branches:
+              only:
+                - develop
+                - stage
+                - master
+                - /^epic-.*/
+
+experimental:
+  notify:
+    branches:
+      only:
+        - master

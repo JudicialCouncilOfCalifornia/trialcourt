@@ -1,0 +1,95 @@
+# Rename this file to .lando.yml to use, or delete if you already have one.
+# Named start.lando.yml to not conflict with projects installed with lando mw install.
+
+# project_code: cmm, apb_d7, etc.
+name: tc
+
+# drupal8 | drupal7 | wordpress
+recipe: drupal8
+
+config:
+  # default: web | lightning: docroot
+  webroot: web
+
+  php: '7.3'
+
+  database: mariadb
+
+  # Optionally activate xdebug
+  #
+  # If you are having trouble getting xdebug to work please see:
+  # https://docs.devwithlando.io/services/php.html#using-xdebug
+  #xdebug: true
+
+# Additional services and features.
+services:
+  # Theme.
+  node-cli:
+    type: compose
+    services:
+      image: node:13
+      # Required. See Below
+      command: docker-php-entrypoint apache2-foreground
+      volumes:
+        - .:/app
+    # globals:
+    #   gulp-cli: latest
+
+# Custom Lando commands
+tooling:
+  node:
+    service: node-cli
+  npm:
+    service: node-cli
+  plb:
+    cmd:
+      - appserver: composer run generate -d /app/web/libraries/courtyard/
+      - node-cli: npm run build --prefix /app/web/libraries/courtyard/
+  reset:
+    service: appserver
+    description: "Runs updb, cr, cim, uli \n Reset your local after a build or db install."
+    cmd:
+      - drush updb -y
+      - drush cim -y
+      - drush cr
+  tb:
+    service: node-cli
+    description: "Theme: Build - `tb [theme_name]` Build poduction theme assets."
+    cmd:
+      - /app/scripts/theme.sh -b
+  tb:all:
+    service: node-cli
+    description: "Theme: Build All - `tb:all` Build all themes in the themes/custom directory."
+    cmd: /app/scripts/theme.sh -a
+  th:
+    service: appserver
+    description: "Help information for theme management."
+    cmd: /app/scripts/theme.sh -h
+  ti:
+    service: node-cli
+    description: "Theme: Install - `ti [theme_name]` (npm install)"
+    cmd:
+      - /app/scripts/theme.sh -i
+      - /app/scripts/theme.sh -b
+  tw:
+    service: node-cli
+    description: "Theme: Watch `tw [theme_name]`"
+    cmd:
+      - /app/scripts/theme.sh -w
+  ts:
+    service: appserver
+    description: "Theme: Sub - `ts [Theme Name]` Create subtheme from JCC Base"
+    cmd:
+      - drush --include=/app/web/themes/contrib/jcc_base jcc_base:create
+  # Docker is extra slow with xdebug enabled. Turn it on and off as needed without rebuilding.
+  # xdebug: https://github.com/lando/lando/issues/1668#issuecomment-507191275
+  xon:
+    service: appserver
+    description: Enable xdebug for apache.
+    cmd: "docker-php-ext-enable xdebug && /etc/init.d/apache2 reload"
+    user: root
+  xoff:
+    service: appserver
+    description: Disable xdebug for apache.
+    cmd: "rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && /etc/init.d/apache2 reload"
+    user: root
