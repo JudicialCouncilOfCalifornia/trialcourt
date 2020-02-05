@@ -2,6 +2,14 @@
 
 set -e
 
+# Disable strict host checking so we can push code and run drush on all envs.
+echo -e "Host codeserver.dev.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+echo -e "Host appserver.develop.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+echo -e "Host appserver.stage.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+echo -e "Host appserver.dev.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+echo -e "Host appserver.live.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
+
 TIMESTAMP=$(date +'%y-%m-%dT%H:%m:%S')
 PANTHEON_ENV=$CIRCLE_BRANCH
 
