@@ -63,6 +63,14 @@ git push origin $CIRCLE_BRANCH -f --tags
 
 # Reset env.
 
+# Give pantheon a chance for code to sync first.
+# May need to adjust this value.
+
+WAIT=30
+echo
+echo "Waiting $WAIT seconds for code to sync on host."
+sleep $WAIT
+
 echo
 echo Clearing Cache for $PANTHEON_ENV
 drush @p.$PANTHEON_ENV cr
