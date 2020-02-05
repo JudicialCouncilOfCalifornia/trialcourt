@@ -4,6 +4,8 @@
 # i.e. lando tw jcc_slo  (This will start the watcher for jcc_slo).
 # See .lando.yml for how this script is called.
 
+set -e
+
 # Reset in case getopts has been used previously in the shell.
 OPTIND=1
 
@@ -13,7 +15,7 @@ RESET="\033[0m"
 
 build_all () {
   # Loop over sub themes and build them all.
-  for d in /app/web/themes/custom/*/ ; do
+  for d in $PWD/web/themes/custom/*/ ; do
     echo
     echo -e "${GREEN}Now building:${RESET} ${YELLOW} $d ${RESET}"
     echo
@@ -39,6 +41,7 @@ show_help () {
   echo " - lando ti [theme_name] - Will run 'npm install' and 'npm run build' on this theme."
   echo " - lando tw [theme_name] - Will run the watcher for theme development."
   echo " - lando tb [theme_name] - Will run 'npm run build' on this theme."
+  echo " - lando tb:all - Will run 'npm run build' on all themes in the themes/custom directory."
   echo -e " - lando ts [Theme Name] - Will create a new sub theme from jcc_base with the human name provided.\n    The machine name will be a created as [theme_name]"
 }
 
@@ -54,17 +57,17 @@ while getopts "h?abiw:" opt; do
         ;;
     b)
         name_check $2
-        npm run production --prefix /app/web/themes/custom/$2
+        npm run production --prefix $PWD/web/themes/custom/$2
         exit 0
         ;;
     i)
         name_check $2
-        npm install --prefix /app/web/themes/custom/$2
+        npm install --prefix $PWD/web/themes/custom/$2
         exit 0
         ;;
     w)
         name_check $2
-        npm run dev --prefix /app/web/themes/custom/$2
+        npm run dev --prefix $PWD/web/themes/custom/$2
         exit 0
         ;;
     esac
