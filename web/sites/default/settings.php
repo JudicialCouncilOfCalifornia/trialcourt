@@ -116,6 +116,10 @@ if (isset($_SERVER['PANTHEON_ENVIRONMENT']) && ($_SERVER['HTTPS'] === 'OFF') && 
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
 
+  if (file_exists($app_root . '/' . $site_path . '/settings.pantheon.php')) {
+    include $app_root . '/' . $site_path . '/settings.pantheon.php';
+  }
+
   // Live.
   if ($_ENV['PANTHEON_ENVIRONMENT'] == 'live') {
     $config['config_split.config_split.prod']['status'] = TRUE;
@@ -156,10 +160,6 @@ else {
  *
  * Keep this code block at the end of this file to take full effect.
  */
-
-if (file_exists($app_root . '/' . $site_path . '/settings.pantheon.php')) {
-  include $app_root . '/' . $site_path . '/settings.pantheon.php';
-}
 
 if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
   include $app_root . '/' . $site_path . '/settings.local.php';
