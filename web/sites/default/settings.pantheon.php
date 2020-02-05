@@ -77,7 +77,7 @@ if ($is_installer_url) {
 }
 else {
   $config_directories = array(
-    CONFIG_SYNC_DIRECTORY => '..config/config-default',
+    CONFIG_SYNC_DIRECTORY => '../config/config-default',
   );
 }
 
