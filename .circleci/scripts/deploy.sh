@@ -1,6 +1,9 @@
 #!/bin/bash
 
+set -e
+
 TIMESTAMP=$(date +'%y-%m-%dT%H:%m:%S')
+PANTHEON_ENV=$CIRCLE_BRANCH
 
 git config --global user.email "$GIT_EMAIL"
 git config --global user.name "Ch3-P0"
@@ -22,6 +25,12 @@ echo "\n@todo- Work out release taging.\n"
 
 # Tag for master.
 if [ $CIRCLE_BRANCH == 'master' ] ; then
+  # For drush reset.
+  PANTHEON_ENV=live
+  # dev is pretending to be live until launch.
+  # Remove this for launch.
+  PANTHEON_ENV=dev
+
   # Get latest pantheon_live_ tag.
   git fetch origin --tags
   pantheon_prefix='pantheon_live_'
@@ -35,12 +44,29 @@ if [ $CIRCLE_BRANCH == 'master' ] ; then
   fi
   echo
   echo "Tagging master branch for production (Live): $pantheon_prefix$pantheon_new"
-  git tag -a $pantheon_prefix$pantheon_new -m "Tagging new pantheon live release."
+
+  echo -e "\nNOT REALLY - no tagging pre-production. Delete this message and uncomment git tag command below to go live."
+  # git tag -a $pantheon_prefix$pantheon_new -m "Tagging new pantheon live release."
 fi
 
 echo
 echo "Pushing $CIRCLE_BRANCH"
 git push origin $CIRCLE_BRANCH -f --tags
 
+# Reset env.
+
 echo
-echo "If deployment was successful, post-code-update hook will handle importing config, updating db, and clearing caches."
+echo Clearing Cache for $PANTHEON_ENV
+drush @p.$PANTHEON_ENV cr
+
+echo
+echo Running Database Updates for $PANTHEON_ENV
+drush @p.$PANTHEON_ENV updb -y
+
+echo
+echo Importing Config for $PANTHEON_ENV
+drush @p.$PANTHEON_ENV cim
+
+echo
+echo Clearing Cache for $PANTHEON_ENV
+drush @p.$PANTHEON_ENV cr
