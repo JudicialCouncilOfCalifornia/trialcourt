@@ -97,10 +97,6 @@ jobs:
                 command: scripts/theme.sh -a
 
             - run:
-                name: Disable StrictHostKeyChecking;
-                command: echo -e "Host codeserver.dev.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
-
-            - run:
                 name: Deploy Artifact
                 command: chmod +x .circleci/scripts/deploy.sh && .circleci/scripts/deploy.sh
 
