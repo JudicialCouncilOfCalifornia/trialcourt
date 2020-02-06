@@ -65,7 +65,11 @@ git push origin $CIRCLE_BRANCH -f --tags
 
 # Give pantheon a chance for code to sync first.
 # May need to adjust this value.
-sleep 30
+
+WAIT=30
+echo
+echo "Waiting $WAIT seconds for code to sync on host."
+sleep $WAIT
 
 echo
 echo Clearing Cache for $PANTHEON_ENV
