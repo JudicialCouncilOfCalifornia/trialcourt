@@ -128,7 +128,7 @@ $config['devel.settings']['devel_dumper'] = 'var_dumper';
 $config['system.logging']['error_level'] = 'verbose';
 
 /* Stage File Proxy Settings */
-$config['stage_file_proxy.settings']['origin'] = 'https://develop-jcc-srl.pantheonsite.io';
+$config['stage_file_proxy.settings']['origin'] = 'https://live-jcc-tc.pantheonsite.io';
 $config['stage_file_proxy.settings']['use_imagecache_root'] = 0;
 $config['stage_file_proxy.settings']['hotlink'] = 1;
 
@@ -137,17 +137,17 @@ $config['environment_indicator.indicator']['bg_color'] = '#045d30';
 $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
 
 /* Exclude all dev modules from core.extension.yml */
-$settings['config_exclude_modules'] = [
-  'config_exclude',
-  'devel',
-  'devel_generate',
-  'kint',
-  'libraries_debug',
-  'reroute_email',
-  'search_kint',
-  'stage_file_proxy',
-];
+// $settings['config_exclude_modules'] = [
+//   'config_exclude',
+  // 'devel',
+//   'devel_generate',
+//   'kint',
+//   'libraries_debug',
+//   'reroute_email',
+//   'search_kint',
+  // 'stage_file_proxy',
+// ];
 
-/* Store local configuration separately so it isn't tracked by git. */
+//  Store local configuration separately so it isn't tracked by git.
 $config['config_split.config_split.local']['status'] = TRUE;
 $config['config_split.config_split.stage']['status'] = TRUE;
