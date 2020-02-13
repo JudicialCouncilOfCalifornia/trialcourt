@@ -172,8 +172,8 @@
             "find ./vendor/ -type d -name .git | xargs rm -rf",
             "find ./web/ -type d -name .git | xargs rm -rf",
             "find .git/ -type d -name hooks | xargs rm -rf",
-            "cp -n examples/example.services.local.yml web/sites/default/services.local.yml",
-            "cp -n examples/example.settings.local.php web/sites/default/settings.local.php"
+            "if [ ! -f env.js ]; then cp examples/example.services.local.yml web/sites/default/services.local.yml; fi",
+            "if [ ! -f env.js ]; then cp examples/example.settings.local.php web/sites/default/settings.local.php; fi"
         ],
         "post-update-cmd": [
             "DrupalProject\\composer\\ScriptHandler::createRequiredFiles",
