@@ -39,6 +39,7 @@ Add your author information for historical reference and professional context, a
    - [Automated Testing](#user-content-automated-testing)
    - [Deploying Code](#user-content-deploying-code)
  - [Troubleshooting Local Environment](#user-content-troubleshooting-local-environment)
+ - [Migrating Content](#user-content-migrating-content)
 
 ## Local Development
 
@@ -198,3 +199,36 @@ Quicksilver scripts should run post deploy drush commands like `updb -y`, `cim -
 
 This process keeps working code separate from production code.
 
+## Migrating Content
+
+### Commandline
+
+It’s easiest to use the repo's drush aliases via lando, if you haven’t installed pantheon wide aliases globally. (If you have, use your own aliases if you want.)
+
+ - `lando drush @p.[env] ms` - migration status will show you any migrations and their status.
+ - `lando drush @p.[env] mim [migration]` - migration import the specific migration.
+
+ - Alternatively:
+   - `lando drush @p.[env] mim --group jcc` - migration import all of jcc group migrations.
+   - `lando drush @p.[env] mim --all` - migration import of all migrations.
+
+You should see import progress.
+
+##### See: `drush mim --help` for more tools, like --limit to import a set number of items. Or --feedback
+
+##### See: `drush | grep migrate` for more command info.
+
+### Drupal UI
+
+ - Navigate to “Structure > Migrations”https://stage-jcc-tc.pantheonsite.io/admin/structure/migrate
+ - click things… er…
+   - On JCC, click “List Migrations”
+   - On [migration], click “Execute”
+
+ - Verify content imported correctly.
+
+### Other Migrate Commands:
+
+ - `drush mr [migration]` - Roll Back a migration.
+ - `drush mim --update [migration]` - Update an imported migration if data changes.
+ - `drush mst [migration] && drush mrs [migration]` - First STOP and then RESET status of a stuck migration.
