@@ -81,7 +81,7 @@ drush @p.$PANTHEON_ENV updb -y
 
 echo
 echo Importing Config for $PANTHEON_ENV
-drush @p.$PANTHEON_ENV cim
+drush @p.$PANTHEON_ENV cim -y
 
 echo
 echo Clearing Cache for $PANTHEON_ENV
