@@ -20,7 +20,7 @@ Add your author information for historical reference and professional context, a
 
  - Working Repo: [Github][repo]
  - Hosting: [Pantheon][host]
- - CI/CD: [CircleCI][ci] - [![CircleCI]()]()
+ - CI/CD: [CircleCI][ci] - [![CircleCI](https://circleci.com/gh/JudicialCouncilOfCalifornia/trialcourt/tree/master.svg?style=svg)](https://circleci.com/gh/JudicialCouncilOfCalifornia/trialcourt/tree/master)
  - Backend: [Drupal 8][backend]
  - Frontend: [Drupal 8 Theme - JCCBase][frontend] subtheme(s).
 
@@ -64,6 +64,10 @@ Composer install will move `settings.local.php` and `services.local.yml` to the 
 **Ready to work.**
 
 Database can be fetched in multiple ways. I recommend saving to `data/` directory which is ignored and within the environment so it can be saved for future resets and imported from there, whithout cluttering up the project root with different versions of the database.
+
+Use drush alias with dev (not develop!) as our stand in for live, pre-production:
+
+`lando drush @p.dev sql-dump > data/dev-YYYY-MM-DD.sql`
 
 #### Options:
 
