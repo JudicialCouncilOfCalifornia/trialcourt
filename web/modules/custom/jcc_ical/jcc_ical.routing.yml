@@ -1,0 +1,19 @@
+jcc_ical.content:
+  path: '/node/{node}/ical'
+  defaults:
+    _controller: '\Drupal\jcc_ical\Controller\JccIcalController::build'
+    _title: 'iCal'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+jcc_ical.settings_form:
+  path: '/admin/config/system/jcc-ical'
+  defaults:
+    _title: 'jcc_ical settings'
+    _form: 'Drupal\jcc_ical\Form\SettingsForm'
+  requirements:
+    _permission: 'administer jcc_ical configuration'
