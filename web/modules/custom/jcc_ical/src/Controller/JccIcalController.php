@@ -30,16 +30,20 @@ class JccIcalController extends ControllerBase {
    */
   private $aliasCleaner;
 
-
+  /**
+   * Inject services.
+   */
   public static function create(ContainerInterface $container) {
     $alias_cleaner = $container->get('pathauto.alias_cleaner');
     return new static($alias_cleaner);
   }
 
+  /**
+   * Set injected dependencies.
+   */
   public function __construct(AliasCleaner $alias_cleaner) {
     $this->aliasCleaner = $alias_cleaner;
   }
-
 
   /**
    * Builds the response.
@@ -74,6 +78,16 @@ class JccIcalController extends ControllerBase {
     // @todo: Detect date fields instead of hardcoding field_date_range.
     // Or have the module add the fields to configured content types.
 
+    $address = !empty($node->field_location->first()) ? $node->field_location->first()->getValue() : [];
+    // Concatenate address elements.
+    $location = !empty($address)
+      ? $address['address_line1'] . ' '
+      . $address['address_line2'] . ' '
+      . $address['locality'] . ', '
+      . $address['administrative_area'] . ', '
+      . $address['country_code'] . ' '
+      : '';
+
     $daterange = $node->field_date_range->first()->getValue();
     $dtstart = \DateTime::createFromFormat ( 'Y-m-d\TH:i:s', $daterange['value']);
     $dtend = \DateTime::createFromFormat ( 'Y-m-d\TH:i:s', $daterange['end_value']);
@@ -90,6 +104,7 @@ DTSTAMP:" . gmdate('Ymd').'T'. gmdate('His') . "Z
 DTSTART:" . $dtstart->format('Ymd\THis\Z') . "
 DTEND:" . $dtend->format('Ymd\THis\Z') . "
 SUMMARY:" . $title . "
+LOCATION:" . $location . "
 END:VEVENT
 END:VCALENDAR";
   }
