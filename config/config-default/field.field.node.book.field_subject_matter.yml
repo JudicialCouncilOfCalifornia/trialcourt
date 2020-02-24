@@ -1,0 +1,29 @@
+uuid: f53482d7-9063-4933-ade9-5b856716bfe9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_subject_matter
+    - node.type.book
+    - taxonomy.vocabulary.subject_matter
+id: node.book.field_subject_matter
+field_name: field_subject_matter
+entity_type: node
+bundle: book
+label: 'Subject Matter'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      subject_matter: subject_matter
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
