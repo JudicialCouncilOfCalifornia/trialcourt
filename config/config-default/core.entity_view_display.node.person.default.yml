@@ -12,9 +12,10 @@ dependencies:
     - field.field.node.person.field_person_type
     - field.field.node.person.field_subject_matter
     - field.field.node.person.field_tags
+    - image.style.thumbnail
     - node.type.person
   module:
-    - metatag
+    - media
     - text
     - user
 id: node.person.default
@@ -25,72 +26,46 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 0
+    weight: 4
     settings: {  }
     third_party_settings: {  }
     region: content
-  field_division:
-    weight: 1
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
   field_first_name:
-    weight: 5
-    label: above
+    weight: 1
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
     region: content
   field_images:
-    weight: 7
-    label: above
+    weight: 0
+    label: inline
     settings:
-      link: true
+      image_style: thumbnail
+      image_link: media
     third_party_settings: {  }
-    type: entity_reference_label
+    type: media_thumbnail
     region: content
   field_last_name:
-    weight: 6
-    label: above
+    weight: 2
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
     region: content
-  field_metatag:
-    weight: 2
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: metatag_empty_formatter
-    region: content
   field_person_type:
-    weight: 8
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
-  field_subject_matter:
     weight: 3
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
-  field_tags:
-    weight: 4
-    label: above
+    label: visually_hidden
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
     region: content
 hidden:
+  field_division: true
+  field_metatag: true
+  field_subject_matter: true
+  field_tags: true
   links: true
