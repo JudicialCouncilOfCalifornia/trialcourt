@@ -13,7 +13,6 @@ dependencies:
     - node.type.book
   module:
     - link
-    - metatag
     - text
     - user
 id: node.book.default
@@ -30,15 +29,7 @@ content:
     region: content
   field_attachments:
     weight: 1
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
-  field_division:
-    weight: 3
-    label: above
+    label: inline
     settings:
       link: true
     third_party_settings: {  }
@@ -46,7 +37,7 @@ content:
     region: content
   field_links:
     weight: 2
-    label: above
+    label: inline
     settings:
       trim_length: 80
       url_only: false
@@ -56,28 +47,9 @@ content:
     third_party_settings: {  }
     type: link
     region: content
-  field_metatag:
-    weight: 4
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: metatag_empty_formatter
-    region: content
-  field_subject_matter:
-    weight: 5
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
-  field_tags:
-    weight: 6
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
 hidden:
+  field_division: true
+  field_metatag: true
+  field_subject_matter: true
+  field_tags: true
   links: true
