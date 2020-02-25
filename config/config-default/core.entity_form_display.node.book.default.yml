@@ -14,6 +14,7 @@ dependencies:
   module:
     - content_moderation
     - link
+    - media_library
     - metatag
     - path
     - scheduler
@@ -45,12 +46,9 @@ content:
   field_attachments:
     weight: 121
     settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
+      media_types: {  }
     third_party_settings: {  }
-    type: entity_reference_autocomplete
+    type: media_library_widget
     region: content
   field_division:
     weight: 122
