@@ -1,4 +1,4 @@
-uuid: b538be30-a4a5-4d0f-8e92-1bd0d009207f
+uuid: 62cae6e8-d2b4-44f8-b721-885f08a97150
 langcode: en
 status: true
 dependencies:
@@ -15,6 +15,8 @@ dependencies:
   module:
     - text
     - user
+_core:
+  default_config_hash: krIbNOdqw4vMF3Ty8qAW6AxgxmdBig5XuQRBW8-HYCU
 id: node.book.teaser
 targetEntityType: node
 bundle: book
@@ -23,10 +25,13 @@ content:
   body:
     label: hidden
     type: text_summary_or_trimmed
-    weight: 0
+    weight: 100
+    region: content
     settings:
       trim_length: 600
     third_party_settings: {  }
+  links:
+    weight: 101
     region: content
 hidden:
   field_attachments: true
@@ -35,4 +40,3 @@ hidden:
   field_metatag: true
   field_subject_matter: true
   field_tags: true
-  links: true
