@@ -1,0 +1,29 @@
+uuid: fb055a19-7f9b-4a37-ad9e-fd24c5dbe63a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tags
+    - node.type.book
+    - taxonomy.vocabulary.tags
+id: node.book.field_tags
+field_name: field_tags
+entity_type: node
+bundle: book
+label: Tags
+description: 'These are the tags that relate to the book item.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      tags: tags
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference
