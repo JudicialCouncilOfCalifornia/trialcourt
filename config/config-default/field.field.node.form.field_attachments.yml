@@ -1,0 +1,28 @@
+uuid: a186b464-7998-4ff5-a72f-791a90826f0c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_attachments
+    - media.type.file
+    - node.type.form
+id: node.form.field_attachments
+field_name: field_attachments
+entity_type: node
+bundle: form
+label: Attachments
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      file: file
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
