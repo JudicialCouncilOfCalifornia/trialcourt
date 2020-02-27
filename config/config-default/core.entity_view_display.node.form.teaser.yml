@@ -1,0 +1,58 @@
+uuid: dd62469e-6fc6-4ce2-9a17-3a85f2e2c16f
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.form.body
+    - field.field.node.form.field_attachments
+    - field.field.node.form.field_division
+    - field.field.node.form.field_form_type
+    - field.field.node.form.field_links
+    - field.field.node.form.field_metatag
+    - field.field.node.form.field_subject_matter
+    - field.field.node.form.field_tags
+    - node.type.form
+  module:
+    - text
+    - user
+id: node.form.teaser
+targetEntityType: node
+bundle: form
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 1
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  field_attachments:
+    type: entity_reference_label
+    weight: 3
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+  field_form_type:
+    type: entity_reference_label
+    weight: 2
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+  links:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_division: true
+  field_links: true
+  field_metatag: true
+  field_subject_matter: true
+  field_tags: true
