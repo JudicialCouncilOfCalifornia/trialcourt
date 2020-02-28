@@ -1,42 +1,44 @@
-uuid: 1985c6f8-d3b2-4804-aa06-c2f3623de009
+uuid: 00bd25a7-c71a-4ce2-b33e-76f5173626cc
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.page.body
-    - field.field.node.page.field_attachments
-    - field.field.node.page.field_division
-    - field.field.node.page.field_links
-    - field.field.node.page.field_metatag
-    - field.field.node.page.field_subject_matter
-    - field.field.node.page.field_tags
-    - node.type.page
+    - field.field.node.job.body
+    - field.field.node.job.field_attachments
+    - field.field.node.job.field_department
+    - field.field.node.job.field_division
+    - field.field.node.job.field_end_date
+    - field.field.node.job.field_metatag
+    - field.field.node.job.field_subject_matter
+    - field.field.node.job.field_tags
+    - node.type.job
   module:
-    - link
+    - datetime
     - metatag
     - text
     - user
-_core:
-  default_config_hash: g1S3_GLaxq4l3I9RIca5Mlz02MxI2KmOquZpHw59akM
-id: node.page.default
+id: node.job.default
 targetEntityType: node
-bundle: page
+bundle: job
 mode: default
 content:
   body:
     label: hidden
     type: text_default
-    weight: 3
-    region: content
+    weight: 101
     settings: {  }
     third_party_settings: {  }
-  content_moderation_control:
-    weight: 0
     region: content
-    settings: {  }
-    third_party_settings: {  }
   field_attachments:
-    weight: 2
+    weight: 102
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_department:
+    weight: 104
     label: above
     settings:
       link: true
@@ -44,34 +46,31 @@ content:
     type: entity_reference_label
     region: content
   field_division:
-    weight: 4
+    weight: 105
     label: above
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
     region: content
-  field_links:
-    weight: 6
+  field_end_date:
+    weight: 103
     label: above
     settings:
-      trim_length: 80
-      url_only: false
-      url_plain: false
-      rel: ''
-      target: ''
+      format_type: medium
+      timezone_override: ''
     third_party_settings: {  }
-    type: link
+    type: datetime_default
     region: content
   field_metatag:
-    weight: 5
+    weight: 106
     label: above
     settings: {  }
     third_party_settings: {  }
     type: metatag_empty_formatter
     region: content
   field_subject_matter:
-    weight: 7
+    weight: 107
     label: above
     settings:
       link: true
@@ -79,7 +78,7 @@ content:
     type: entity_reference_label
     region: content
   field_tags:
-    weight: 8
+    weight: 108
     label: above
     settings:
       link: true
@@ -87,8 +86,8 @@ content:
     type: entity_reference_label
     region: content
   links:
-    weight: 1
-    region: content
+    weight: 100
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden: {  }

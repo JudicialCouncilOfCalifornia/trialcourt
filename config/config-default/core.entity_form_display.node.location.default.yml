@@ -1,58 +1,55 @@
-uuid: 07306902-ca76-490b-86b8-b353127fc87f
+uuid: 8c5dfa14-1821-4db6-bba9-2b2db3953a1e
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.page.body
-    - field.field.node.page.field_attachments
-    - field.field.node.page.field_division
-    - field.field.node.page.field_links
-    - field.field.node.page.field_metatag
-    - field.field.node.page.field_subject_matter
-    - field.field.node.page.field_tags
-    - node.type.page
-    - workflows.workflow.editorial_workflow
+    - field.field.node.location.body
+    - field.field.node.location.field_division
+    - field.field.node.location.field_geolocation
+    - field.field.node.location.field_location
+    - field.field.node.location.field_location_type
+    - field.field.node.location.field_mailing_address
+    - field.field.node.location.field_metatag
+    - field.field.node.location.field_office_hours
+    - field.field.node.location.field_phone
+    - field.field.node.location.field_phone_hours
+    - field.field.node.location.field_subject_matter
+    - field.field.node.location.field_tags
+    - node.type.location
   module:
+    - address
     - content_moderation
-    - link
-    - media_library
+    - geolocation
     - metatag
+    - office_hours
     - path
     - scheduler
     - scheduler_content_moderation_integration
+    - telephone
     - text
-_core:
-  default_config_hash: sb0qCkzU_8mNq29NehYAU8jCBXWPLeX0UN8sYFVGVcw
-id: node.page.default
+id: node.location.default
 targetEntityType: node
-bundle: page
+bundle: location
 mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 31
-    region: content
+    weight: 13
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
+    region: content
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_attachments:
-    weight: 121
-    settings:
-      media_types: {  }
-    third_party_settings: {  }
-    type: media_library_widget
-    region: content
   field_division:
-    weight: 125
+    weight: 15
     settings:
       match_operator: CONTAINS
       match_limit: 10
@@ -61,22 +58,61 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
-  field_links:
-    weight: 123
-    settings:
-      placeholder_url: ''
-      placeholder_title: ''
+  field_geolocation:
+    weight: 26
+    settings: {  }
     third_party_settings: {  }
-    type: link_default
+    type: geolocation_latlng
+    region: content
+  field_location:
+    weight: 14
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
+    region: content
+  field_location_type:
+    weight: 17
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_mailing_address:
+    weight: 16
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
     region: content
   field_metatag:
-    weight: 122
+    weight: 18
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
     region: content
+  field_office_hours:
+    weight: 21
+    settings: {  }
+    third_party_settings: {  }
+    type: office_hours_default
+    region: content
+  field_phone:
+    weight: 22
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: telephone_default
+    region: content
+  field_phone_hours:
+    weight: 23
+    settings: {  }
+    third_party_settings: {  }
+    type: office_hours_default
+    region: content
   field_subject_matter:
-    weight: 126
+    weight: 19
     settings:
       match_operator: CONTAINS
       match_limit: 10
@@ -86,7 +122,7 @@ content:
     type: entity_reference_autocomplete
     region: content
   field_tags:
-    weight: 124
+    weight: 20
     settings:
       match_operator: CONTAINS
       match_limit: 10
@@ -97,13 +133,13 @@ content:
     region: content
   moderation_state:
     type: moderation_state_default
-    weight: 100
+    weight: 11
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -111,18 +147,18 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 3
     region: content
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 30
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 30
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -130,19 +166,19 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 120
+    weight: 12
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 4
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 0
     region: content
     settings:
       size: 60
@@ -150,28 +186,28 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
-    region: content
+    weight: 1
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
       match_limit: 10
+    region: content
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 30
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 30
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }

@@ -1,43 +1,41 @@
-uuid: 07306902-ca76-490b-86b8-b353127fc87f
+uuid: 075d8eff-a5c2-4b77-aedc-167b424112f2
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.page.body
-    - field.field.node.page.field_attachments
-    - field.field.node.page.field_division
-    - field.field.node.page.field_links
-    - field.field.node.page.field_metatag
-    - field.field.node.page.field_subject_matter
-    - field.field.node.page.field_tags
-    - node.type.page
-    - workflows.workflow.editorial_workflow
+    - field.field.node.job.body
+    - field.field.node.job.field_attachments
+    - field.field.node.job.field_department
+    - field.field.node.job.field_division
+    - field.field.node.job.field_end_date
+    - field.field.node.job.field_metatag
+    - field.field.node.job.field_subject_matter
+    - field.field.node.job.field_tags
+    - node.type.job
   module:
     - content_moderation
-    - link
+    - datetime
     - media_library
     - metatag
     - path
     - scheduler
     - scheduler_content_moderation_integration
     - text
-_core:
-  default_config_hash: sb0qCkzU_8mNq29NehYAU8jCBXWPLeX0UN8sYFVGVcw
-id: node.page.default
+id: node.job.default
 targetEntityType: node
-bundle: page
+bundle: job
 mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 31
-    region: content
+    weight: 121
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
+    region: content
   created:
     type: datetime_timestamp
     weight: 10
@@ -45,11 +43,21 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_attachments:
-    weight: 121
+    weight: 122
     settings:
       media_types: {  }
     third_party_settings: {  }
     type: media_library_widget
+    region: content
+  field_department:
+    weight: 124
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_division:
     weight: 125
@@ -61,22 +69,20 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
-  field_links:
+  field_end_date:
     weight: 123
-    settings:
-      placeholder_url: ''
-      placeholder_title: ''
+    settings: {  }
     third_party_settings: {  }
-    type: link_default
+    type: datetime_default
     region: content
   field_metatag:
-    weight: 122
+    weight: 126
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
     region: content
   field_subject_matter:
-    weight: 126
+    weight: 127
     settings:
       match_operator: CONTAINS
       match_limit: 10
@@ -86,7 +92,7 @@ content:
     type: entity_reference_autocomplete
     region: content
   field_tags:
-    weight: 124
+    weight: 128
     settings:
       match_operator: CONTAINS
       match_limit: 10
@@ -151,12 +157,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 5
-    region: content
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
       match_limit: 10
+    region: content
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
