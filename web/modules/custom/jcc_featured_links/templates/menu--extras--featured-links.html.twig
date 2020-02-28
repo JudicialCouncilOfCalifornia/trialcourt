@@ -1,0 +1,51 @@
+{#
+/**
+ * @file
+ * Theme override to display a menu.
+ *
+ * Available variables:
+ * - menu_name: The machine name of the menu.
+ * - items: A nested list of menu items. Each menu item contains:
+ *   - attributes: HTML attributes for the menu item.
+ *   - content.children: The menu item child items.
+ *   - title: The menu link title.
+ *   - url: The menu link url, instance of \Drupal\Core\Url
+ *   - content: The field item content.
+ *   - localized_options: Menu link localized options.
+ *   - is_expanded: TRUE if the link has visible children within the current
+ *     menu tree.
+ *   - is_collapsed: TRUE if the link has children within the current menu tree
+ *     that are not currently visible.
+ *   - in_active_trail: TRUE if the link is in the active trail.
+ */
+#}
+
+{% set i = 0 %}
+<div class="grid-container">
+  <ul class="menu menu-level-{{ items|first.menu_level }} menu--featured-links">
+    {% for key, item in items if key|first != '#' %}
+      {% set menu_item_classes = [
+        'menu-item',
+        item.is_expanded ? 'menu-item--expanded',
+        item.is_collapsed ? 'menu-item--collapsed',
+        item.in_active_trail ? 'menu-item--active-trail',
+        'menu-item--featured',
+        'border-2px',
+        'border-secondary'
+      ] %}
+      {% if i < 4 %}
+        {% set menu_item_classes = menu_item_classes|merge(['menu-item--featured--icon']) %}
+      {% endif %}
+      <li{{ item.attributes.addClass(menu_item_classes) }}>
+        {% if i < 4 %}
+          {% set rendered_content = item.content|without('') %}
+          {% if rendered_content|render %}
+            {{ rendered_content }}
+          {% endif %}
+        {% endif %}
+        {{ link(item.title, item.url) }}
+      </li>
+      {% set i = i + 1 %}
+    {% endfor %}
+  </ul>
+</div>
