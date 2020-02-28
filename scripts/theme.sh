@@ -67,7 +67,7 @@ while getopts "h?abiw:" opt; do
         ;;
     w)
         name_check $2
-        npm run dev --prefix $PWD/web/themes/custom/$2
+        npm run watch --prefix $PWD/web/themes/custom/$2
         exit 0
         ;;
     esac
