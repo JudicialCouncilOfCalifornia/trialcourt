@@ -1,17 +1,17 @@
-uuid: a6e7d580-9760-4ff5-a6c5-dd6cea20d8e0
+uuid: 016560ec-b9f1-4928-815e-2e292ff553eb
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.form.body
-    - field.field.node.form.field_attachments
-    - field.field.node.form.field_division
-    - field.field.node.form.field_form_type
-    - field.field.node.form.field_links
-    - field.field.node.form.field_metatag
-    - field.field.node.form.field_subject_matter
-    - field.field.node.form.field_tags
-    - node.type.form
+    - field.field.node.document.body
+    - field.field.node.document.field_attachments
+    - field.field.node.document.field_division
+    - field.field.node.document.field_document_type
+    - field.field.node.document.field_links
+    - field.field.node.document.field_metatag
+    - field.field.node.document.field_subject_matter
+    - field.field.node.document.field_tags
+    - node.type.document
   module:
     - content_moderation
     - link
@@ -21,9 +21,9 @@ dependencies:
     - scheduler
     - scheduler_content_moderation_integration
     - text
-id: node.form.default
+id: node.document.default
 targetEntityType: node
-bundle: form
+bundle: document
 mode: default
 content:
   body:
@@ -59,7 +59,7 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
-  field_form_type:
+  field_document_type:
     weight: 124
     settings:
       match_operator: CONTAINS
