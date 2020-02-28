@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the JCC Featured Links module.
+ */
+
+use Drupal\system\Entity\Menu;
+
+/**
+ * Implements hook_install().
+ */
+function jcc_featured_links_install() {
+  \Drupal::messenger()->addStatus(__FUNCTION__);
+
+  $menu = Menu::create([
+    'id' => 'featured_links',
+    'label' => 'Featured Links',
+    'description' => t("Custom menu with specially themed links.  Only displays :max top level links.", [':max' => JCC_FEATURED_LINKS_MAX])
+  ])->save();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function jcc_featured_links_uninstall() {
+  \Drupal::messenger()->addStatus(__FUNCTION__);
+}
