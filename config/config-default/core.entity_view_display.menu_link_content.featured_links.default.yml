@@ -5,8 +5,6 @@ dependencies:
   config:
     - field.field.menu_link_content.featured_links.field_icon
     - system.menu.featured_links
-  module:
-    - svg_image
 id: menu_link_content.featured_links.default
 targetEntityType: menu_link_content
 bundle: featured_links
@@ -18,16 +16,12 @@ content:
     third_party_settings: {  }
     region: content
   field_icon:
+    type: entity_reference_entity_view
     weight: 2
     label: above
     settings:
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: true
-      image_style: ''
-      image_link: ''
+      view_mode: default
+      link: false
     third_party_settings: {  }
-    type: image
     region: content
 hidden: {  }
