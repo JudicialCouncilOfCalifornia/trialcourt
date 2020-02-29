@@ -4,24 +4,22 @@ status: true
 dependencies:
   config:
     - field.field.menu_link_content.featured_links.field_icon
-    - image.style.thumbnail
     - system.menu.featured_links
   module:
     - link
+    - media_library
     - menu_item_extras
-    - svg_image
 id: menu_link_content.featured_links.default
 targetEntityType: menu_link_content
 bundle: featured_links
 mode: default
 content:
   field_icon:
+    type: media_library_widget
     weight: 21
     settings:
-      progress_indicator: throbber
-      preview_image_style: thumbnail
+      media_types: {  }
     third_party_settings: {  }
-    type: image_image
     region: content
   title:
     type: string_textfield
