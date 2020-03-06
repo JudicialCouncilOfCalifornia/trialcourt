@@ -15,12 +15,88 @@ dependencies:
   module:
     - content_moderation
     - datetime
+    - field_group
     - media_library
     - metatag
     - path
     - scheduler
     - scheduler_content_moderation_integration
     - text
+third_party_settings:
+  field_group:
+    group_job_content:
+      children:
+        - group_main_content
+        - group_media
+        - group_metadata
+      parent_name: ''
+      weight: 1
+      format_type: tabs
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: 'Job Content'
+    group_main_content:
+      children:
+        - field_department
+        - field_end_date
+        - body
+      parent_name: group_job_content
+      weight: 20
+      format_type: tab
+      region: content
+      format_settings:
+        description: ''
+        formatter: closed
+        required_fields: true
+        id: ''
+        classes: ''
+      label: Details
+    group_metadata:
+      children:
+        - field_division
+        - field_tags
+        - field_subject_matter
+      parent_name: group_job_content
+      weight: 22
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Metadata
+    group_job_header:
+      children:
+        - title
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Job Header'
+    group_media:
+      children:
+        - field_attachments
+      parent_name: group_job_content
+      weight: 21
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Media
 id: node.job.default
 targetEntityType: node
 bundle: job
@@ -28,88 +104,88 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 121
+    weight: 4
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
   field_attachments:
-    weight: 122
+    type: media_library_widget
+    weight: 5
+    region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
-    type: media_library_widget
-    region: content
   field_department:
-    weight: 124
+    type: entity_reference_autocomplete
+    weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_division:
-    weight: 125
+    type: entity_reference_autocomplete
+    weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_end_date:
-    weight: 123
+    type: datetime_default
+    weight: 3
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: datetime_default
-    region: content
   field_metatag:
-    weight: 126
+    weight: 14
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
     region: content
   field_subject_matter:
-    weight: 127
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
     type: entity_reference_autocomplete
+    weight: 4
     region: content
-  field_tags:
-    weight: 128
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete_tags
+  field_tags:
+    type: entity_reference_autocomplete
+    weight: 3
     region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 100
+    weight: 12
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -117,18 +193,18 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 4
     region: content
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 30
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 30
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -136,19 +212,19 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 120
+    weight: 13
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 5
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 1
     region: content
     settings:
       size: 60
@@ -156,7 +232,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 2
     settings:
       match_operator: CONTAINS
       size: 60
@@ -166,18 +242,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 30
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 30
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
