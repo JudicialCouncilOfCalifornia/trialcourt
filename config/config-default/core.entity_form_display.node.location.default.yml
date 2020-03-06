@@ -19,6 +19,7 @@ dependencies:
   module:
     - address
     - content_moderation
+    - field_group
     - geolocation
     - metatag
     - office_hours
@@ -27,6 +28,113 @@ dependencies:
     - scheduler_content_moderation_integration
     - telephone
     - text
+third_party_settings:
+  field_group:
+    group_location_content:
+      children:
+        - group_main_content
+        - group_address
+        - group_phone
+        - group_hours
+        - group_metadata
+      parent_name: ''
+      weight: 1
+      format_type: tabs
+      region: content
+      format_settings:
+        direction: vertical
+        id: ''
+        classes: ''
+      label: 'Location Content'
+    group_main_content:
+      children:
+        - body
+        - field_location_type
+      parent_name: group_location_content
+      weight: 21
+      format_type: tab
+      region: content
+      format_settings:
+        description: ''
+        formatter: closed
+        required_fields: true
+        id: ''
+        classes: ''
+      label: About
+    group_metadata:
+      children:
+        - field_geolocation
+        - field_division
+        - field_tags
+        - field_subject_matter
+      parent_name: group_location_content
+      weight: 25
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Metadata
+    group_location_header:
+      children:
+        - title
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Location Header'
+    group_address:
+      children:
+        - field_location
+        - field_mailing_address
+      parent_name: group_location_content
+      weight: 22
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Address
+    group_hours:
+      children:
+        - field_office_hours
+        - field_phone_hours
+      parent_name: group_location_content
+      weight: 24
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Hours
+    group_phone:
+      children:
+        - field_phone
+      parent_name: group_location_content
+      weight: 23
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Phone
 id: node.location.default
 targetEntityType: node
 bundle: location
@@ -34,7 +142,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 13
+    weight: 4
     settings:
       rows: 9
       summary_rows: 3
@@ -44,12 +152,12 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 2
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
   field_division:
-    weight: 15
+    weight: 22
     settings:
       match_operator: CONTAINS
       match_limit: 10
@@ -59,87 +167,87 @@ content:
     type: entity_reference_autocomplete
     region: content
   field_geolocation:
-    weight: 26
+    type: geolocation_latlng
+    weight: 21
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: geolocation_latlng
-    region: content
   field_location:
-    weight: 14
+    weight: 3
     settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
   field_location_type:
-    weight: 17
+    type: entity_reference_autocomplete
+    weight: 5
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_mailing_address:
-    weight: 16
+    type: address_default
+    weight: 4
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: address_default
-    region: content
   field_metatag:
-    weight: 18
+    weight: 14
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
     region: content
   field_office_hours:
-    weight: 21
+    type: office_hours_default
+    weight: 3
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: office_hours_default
-    region: content
   field_phone:
-    weight: 22
+    type: telephone_default
+    weight: 5
+    region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-    type: telephone_default
-    region: content
   field_phone_hours:
-    weight: 23
+    type: office_hours_default
+    weight: 4
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: office_hours_default
-    region: content
   field_subject_matter:
-    weight: 19
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
     type: entity_reference_autocomplete
+    weight: 24
     region: content
-  field_tags:
-    weight: 20
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete_tags
+  field_tags:
+    type: entity_reference_autocomplete
+    weight: 23
     region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 11
+    weight: 12
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 5
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -147,18 +255,18 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 3
+    weight: 4
     region: content
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 6
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 8
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -166,14 +274,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 12
+    weight: 13
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 4
+    weight: 5
     region: content
     third_party_settings: {  }
   title:
@@ -186,7 +294,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 1
+    weight: 2
     settings:
       match_operator: CONTAINS
       size: 60
@@ -196,18 +304,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 7
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 9
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
