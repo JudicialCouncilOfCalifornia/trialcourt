@@ -14,11 +14,101 @@ dependencies:
     - node.type.news
   module:
     - content_moderation
+    - field_group
     - link
     - media_library
     - metatag
     - path
     - text
+third_party_settings:
+  field_group:
+    group_news_content:
+      children:
+        - group_main_content
+        - group_media
+        - group_secondary_content
+        - group_metadata
+      parent_name: ''
+      weight: 1
+      format_type: tabs
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: 'News Content'
+    group_main_content:
+      children:
+        - field_news_type
+        - body
+      parent_name: group_news_content
+      weight: 20
+      format_type: tab
+      region: content
+      format_settings:
+        description: ''
+        formatter: closed
+        required_fields: true
+        id: ''
+        classes: ''
+      label: Details
+    group_secondary_content:
+      children:
+        - field_links
+      parent_name: group_news_content
+      weight: 22
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: 'Secondary Content'
+    group_metadata:
+      children:
+        - field_division
+        - field_tags
+        - field_subject_matter
+      parent_name: group_news_content
+      weight: 23
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Metadata
+    group_news_header:
+      children:
+        - title
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'News Header'
+    group_media:
+      children:
+        - field_attachments
+      parent_name: group_news_content
+      weight: 21
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Media
 id: node.news.default
 targetEntityType: node
 bundle: news
@@ -26,7 +116,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 1
+    weight: 2
     settings:
       rows: 9
       summary_rows: 3
@@ -36,7 +126,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -48,17 +138,17 @@ content:
     third_party_settings: {  }
     region: content
   field_division:
+    type: entity_reference_autocomplete
     weight: 11
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_links:
-    weight: 4
+    weight: 5
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -66,50 +156,50 @@ content:
     type: link_default
     region: content
   field_metatag:
-    weight: 12
+    weight: 9
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
     region: content
   field_news_type:
-    weight: 13
+    type: entity_reference_autocomplete
+    weight: 1
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_subject_matter:
-    weight: 14
+    type: entity_reference_autocomplete
+    weight: 13
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_tags:
-    weight: 15
+    type: entity_reference_autocomplete
+    weight: 12
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   moderation_state:
     type: moderation_state_default
-    weight: 9
+    weight: 7
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -117,21 +207,21 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 4
     region: content
     third_party_settings: {  }
   status:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 10
+    weight: 8
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 5
     region: content
     third_party_settings: {  }
   title:
