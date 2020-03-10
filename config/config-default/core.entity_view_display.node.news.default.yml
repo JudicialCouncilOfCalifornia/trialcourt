@@ -14,6 +14,7 @@ dependencies:
     - node.type.news
   module:
     - link
+    - metatag
     - text
     - user
 id: node.news.default
@@ -24,20 +25,28 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 0
+    weight: 1
     settings: {  }
     third_party_settings: {  }
     region: content
   field_attachments:
     type: entity_reference_label
-    weight: 2
+    weight: 3
     label: above
     settings:
       link: true
     third_party_settings: {  }
     region: content
+  field_division:
+    type: entity_reference_label
+    weight: 5
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
   field_links:
-    weight: 1
+    weight: 4
     label: above
     settings:
       trim_length: 80
@@ -48,11 +57,37 @@ content:
     third_party_settings: {  }
     type: link
     region: content
+  field_metatag:
+    type: metatag_empty_formatter
+    weight: 2
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  field_news_type:
+    type: entity_reference_label
+    weight: 0
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+  field_subject_matter:
+    type: entity_reference_label
+    weight: 6
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+  field_tags:
+    type: entity_reference_label
+    weight: 7
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
 hidden:
-  field_division: true
-  field_metatag: true
-  field_news_type: true
-  field_subject_matter: true
-  field_tags: true
   links: true
   search_api_excerpt: true
