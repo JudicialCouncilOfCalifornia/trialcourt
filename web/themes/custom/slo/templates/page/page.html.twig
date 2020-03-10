@@ -62,8 +62,12 @@
     </div>
   {% endif %}
 
+  {# Specify content types by nodes that do not require hero title component #}
   {% set nodes_without_titles = [
+    'page',
+    'book',
     'news',
+    'person',
   ] %}
 
   {% if page.title|render and node.bundle() not in nodes_without_titles %}
