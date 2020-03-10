@@ -88,40 +88,23 @@
   {{ title_suffix }}
 
   {% block content %}
-    {% if label and not page %}
-      {% set title %}
-        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-      {% endset %}
-    {% elseif label and page %}
-      {% set title %}
-        {{ label }}
-      {% endset %}
-    {% endif %}
-
-    {% set news_type %}
-      {{ content.field_news_type }}
+    {% set person %}
+      <div>
+        <div>
+          {{ content.field_images }}
+        </div>
+        <div>
+          <p>{{ content.field_first_name }} {{content.field_last_name }}<br/>
+          {{ content.field_person_type }}</p>
+        </div>
+      </div>
     {% endset %}
 
     {% set body %}
-      {% if display_submitted %}
-        <div{{ author_attributes.addClass('node__submitted') }}>
-          <div class="author">By {{ author_name }}</div>
-          <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
-          {{ metadata }}
-        </div>
-      {% endif %}
       {{ content.body }}
     {% endset %}
 
     {% set related %}
-      <div class="attachments">
-        {{ content.field_attachments }}
-      </div>
-
-      <div class="related_links">
-        {{ content.field_links }}
-      </div>
-
       <div>
         <div class="division">
           {{ content.field_division }}
@@ -138,9 +121,8 @@
     {% include '@organisms/sections/text-section/text-section.twig' with {
       text_section: {
         headergroup: {
-          brow: news_type,
           tag: 'h1',
-          title: title,
+          title: person,
         },
         column_content_left: body,
         column_content_right: related,
