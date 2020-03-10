@@ -98,6 +98,10 @@
       {% endset %}
     {% endif %}
 
+    {% set department %}
+      {{ content.field_department }}
+    {% endset %}
+
     {% set body %}
       {% if display_submitted %}
         <div{{ author_attributes.addClass('node__submitted') }}>
@@ -106,6 +110,9 @@
           {{ metadata }}
         </div>
       {% endif %}
+      <div class="deadline">
+        {{ content.field_end_date }}
+      </div>
       <div class="body">
         {{ content.body }}
       </div>
@@ -136,6 +143,7 @@
     {% include '@organisms/sections/text-section/text-section.twig' with {
       text_section: {
         headergroup: {
+          brow: department,
           tag: 'h1',
           title: title,
         },
