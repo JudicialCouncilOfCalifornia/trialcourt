@@ -98,8 +98,8 @@
       {% endset %}
     {% endif %}
 
-    {% set news_type %}
-      {{ content.field_news_type }}
+    {% set document_type %}
+      {{ content.field_document_type }}
     {% endset %}
 
     {% set body %}
@@ -110,6 +110,9 @@
           {{ metadata }}
         </div>
       {% endif %}
+      <div class="deadline">
+        {{ content.field_end_date }}
+      </div>
       <div class="body">
         {{ content.body }}
       </div>
@@ -140,7 +143,7 @@
     {% include '@organisms/sections/text-section/text-section.twig' with {
       text_section: {
         headergroup: {
-          brow: news_type,
+          brow: document_type,
           tag: 'h1',
           title: title,
         },
