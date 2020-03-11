@@ -79,9 +79,7 @@
   node.bundle|clean_class ~ '--' ~ view_mode|clean_class,
 ]|merge(classes|default([])) %}
 
-{#
 {{ attach_library('classy/node') }}
-#}
 
 <article{{ attributes.addClass(classes)|without('role') }}>
   {{ title_prefix }}
@@ -98,20 +96,12 @@
       {% endset %}
     {% endif %}
 
-    {% set news_type %}
-      {{ content.field_news_type }}
-    {% endset %}
-
     {% set body %}
-      {% if display_submitted %}
-        <div{{ author_attributes.addClass('node__submitted') }}>
-          <div class="author">By {{ author_name }}</div>
-          <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
-          {{ metadata }}
-        </div>
-      {% endif %}
       <div class="body">
         {{ content.body }}
+      </div>
+      <div class="book_navigation">
+        {{ content.book_navigation }}
       </div>
     {% endset %}
 
@@ -140,13 +130,12 @@
     {% include '@organisms/sections/text-section/text-section.twig' with {
       text_section: {
         headergroup: {
-          brow: news_type,
           tag: 'h1',
           title: title,
         },
         column_content_left: body,
         column_content_right: related,
       }
-    } only %}
+    } %}
   {% endblock %}
 </article>
