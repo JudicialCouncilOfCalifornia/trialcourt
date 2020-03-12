@@ -62,6 +62,10 @@
     </div>
   {% endif %}
 
+  {%  if page.breadcrumb|render %}
+    {{ page.breadcrumb }}
+  {% endif %}
+
   {# Specify content types by nodes that do not require hero title component #}
   {% set nodes_without_titles = [
     'page',
