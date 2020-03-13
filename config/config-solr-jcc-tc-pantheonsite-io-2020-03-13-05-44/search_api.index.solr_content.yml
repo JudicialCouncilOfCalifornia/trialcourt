@@ -1,0 +1,177 @@
+uuid: ba5ecac6-6d3c-4a82-be37-94a9eb9f1651
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - taxonomy
+    - search_api
+    - search_api_attachments
+    - media
+  config:
+    - field.storage.node.field_department
+    - field.storage.node.field_division
+    - field.storage.node.field_event_type
+    - field.storage.node.field_subject_matter
+    - field.storage.node.field_tags
+    - search_api.server.pantheon
+    - core.entity_view_mode.node.search_result
+id: solr_content
+name: 'Solr Content'
+description: ''
+read_only: false
+field_settings:
+  department:
+    label: 'Department » Taxonomy term » Name'
+    datasource_id: 'entity:node'
+    property_path: 'field_department:entity:name'
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_department
+      module:
+        - taxonomy
+        - taxonomy
+  division:
+    label: 'Division » Taxonomy term » Name'
+    datasource_id: 'entity:node'
+    property_path: 'field_division:entity:name'
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_division
+      module:
+        - taxonomy
+        - taxonomy
+  event_type:
+    label: 'Event Type » Taxonomy term » Name'
+    datasource_id: 'entity:node'
+    property_path: 'field_event_type:entity:name'
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_event_type
+      module:
+        - taxonomy
+        - taxonomy
+  node_grants:
+    label: 'Node access information'
+    property_path: search_api_node_grants
+    type: string
+    indexed_locked: true
+    type_locked: true
+    hidden: true
+  rendered_item:
+    label: 'Rendered HTML output'
+    property_path: rendered_item
+    type: text
+    configuration:
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:media':
+          file: ''
+          image: ''
+          menu_icons: ''
+        'entity:node':
+          announcement: search_result
+          book: search_result
+          document: search_result
+          event: search_result
+          job: search_result
+          location: search_result
+          news: search_result
+          page: search_result
+          person: search_result
+  saa_field_attachments:
+    label: 'Search api attachments: Attachments'
+    property_path: saa_field_attachments
+    type: text
+  status:
+    label: status
+    datasource_id: 'entity:node'
+    property_path: status
+    type: boolean
+    indexed_locked: true
+    type_locked: true
+    dependencies:
+      module:
+        - node
+  subject_matter:
+    label: 'Subject Matter » Taxonomy term » Name'
+    datasource_id: 'entity:node'
+    property_path: 'field_subject_matter:entity:name'
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_subject_matter
+      module:
+        - taxonomy
+        - taxonomy
+  tags:
+    label: 'Tags » Taxonomy term » Name'
+    datasource_id: 'entity:node'
+    property_path: 'field_tags:entity:name'
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_tags
+      module:
+        - taxonomy
+        - taxonomy
+  type:
+    label: 'Content type'
+    datasource_id: 'entity:node'
+    property_path: type
+    type: string
+    dependencies:
+      module:
+        - node
+  uid:
+    label: uid
+    datasource_id: 'entity:node'
+    property_path: uid
+    type: integer
+    indexed_locked: true
+    type_locked: true
+    dependencies:
+      module:
+        - node
+datasource_settings:
+  'entity:media':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+  'entity:node':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+processor_settings:
+  add_url: {  }
+  aggregated_field: {  }
+  content_access:
+    weights:
+      preprocess_query: -30
+  entity_status: {  }
+  file_attachments:
+    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
+    number_indexed: 0
+    number_first_bytes: '1 MB'
+    max_filesize: '0'
+    excluded_private: 1
+    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
+  language_with_fallback: {  }
+  rendered_item: {  }
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  index_directly: true
+  cron_limit: 50
+server: pantheon
