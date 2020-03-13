@@ -1,0 +1,72 @@
+uuid: 470382de-e13a-4773-8584-7ac335c36aa4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.person.body
+    - field.field.node.person.field_division
+    - field.field.node.person.field_first_name
+    - field.field.node.person.field_images
+    - field.field.node.person.field_last_name
+    - field.field.node.person.field_metatag
+    - field.field.node.person.field_person_type
+    - field.field.node.person.field_subject_matter
+    - field.field.node.person.field_tags
+    - image.style.thumbnail
+    - node.type.person
+  module:
+    - media
+    - text
+    - user
+id: node.person.default
+targetEntityType: node
+bundle: person
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_first_name:
+    weight: 1
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_images:
+    weight: 0
+    label: inline
+    settings:
+      image_style: thumbnail
+      image_link: media
+    third_party_settings: {  }
+    type: media_thumbnail
+    region: content
+  field_last_name:
+    weight: 2
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_person_type:
+    weight: 3
+    label: visually_hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+hidden:
+  field_division: true
+  field_metatag: true
+  field_subject_matter: true
+  field_tags: true
+  links: true
+  search_api_excerpt: true
