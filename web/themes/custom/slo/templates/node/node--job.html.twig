@@ -79,9 +79,7 @@
   node.bundle|clean_class ~ '--' ~ view_mode|clean_class,
 ]|merge(classes|default([])) %}
 
-{#
 {{ attach_library('classy/node') }}
-#}
 
 <article{{ attributes.addClass(classes)|without('role') }}>
   {{ title_prefix }}
@@ -119,24 +117,41 @@
     {% endset %}
 
     {% set related %}
-      <div class="attachments">
-        {{ content.field_attachments }}
-      </div>
+      {% if content.field_attachments[0] %}
+        <div class="attachments">
+          <div class="field_label">{{ node.field_attachments.fieldDefinition.label }}</div>
+          {{ content.field_attachments }}
+        </div>
+      {% endif %}
 
-      <div class="related_links">
-        {{ content.field_links }}
-      </div>
+      {% if content.field_links[0] %}
+        <div class="related_links">
+          <div class="field_label">{{ node.field_links.fieldDefinition.label }}</div>
+          {{ content.field_links }}
+        </div>
+      {% endif %}
 
       <div>
-        <div class="division">
-          {{ content.field_division }}
-        </div>
-        <div class="subject_matter">
-          {{ content.field_subject_matter }}
-        </div>
-        <div class="tags">
-          {{ content.field_tags }}
-        </div>
+        {% if content.field_division[0] %}
+          <div class="division">
+            <div class="field_label">{{ node.field_division.fieldDefinition.label }}</div>
+            {{ content.field_division }}
+          </div>
+        {% endif %}
+
+        {% if content.field_subject_matter[0] %}
+          <div class="subject_matter">
+            <div class="field_label">{{ node.field_subject_matter.fieldDefinition.label }}</div>
+            {{ content.field_subject_matter }}
+          </div>
+        {% endif %}
+
+        {% if content.field_tags[0] %}
+          <div class="tags">
+            <div class="field_label">{{ node.field_tags.fieldDefinition.label }}</div>
+            {{ content.field_tags }}
+          </div>
+        {% endif %}
       </div>
     {% endset %}
 
