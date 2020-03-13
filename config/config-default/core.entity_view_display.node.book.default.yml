@@ -13,6 +13,7 @@ dependencies:
     - node.type.book
   module:
     - link
+    - metatag
     - text
     - user
 _core:
@@ -30,15 +31,23 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_attachments:
-    weight: 2
+    weight: 3
     label: above
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
     region: content
+  field_division:
+    type: entity_reference_label
+    weight: 4
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
   field_links:
-    weight: 1
+    weight: 2
     label: above
     settings:
       trim_length: 80
@@ -49,10 +58,29 @@ content:
     third_party_settings: {  }
     type: link
     region: content
+  field_metatag:
+    type: metatag_empty_formatter
+    weight: 1
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  field_subject_matter:
+    type: entity_reference_label
+    weight: 5
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+  field_tags:
+    type: entity_reference_label
+    weight: 6
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
 hidden:
-  field_division: true
-  field_metatag: true
-  field_subject_matter: true
-  field_tags: true
   links: true
   search_api_excerpt: true
