@@ -128,13 +128,32 @@ $config['devel.settings']['devel_dumper'] = 'var_dumper';
 $config['system.logging']['error_level'] = 'verbose';
 
 /* Stage File Proxy Settings */
-$config['stage_file_proxy.settings']['origin'] = 'https://live-jcc-tc.pantheonsite.io';
+$config['stage_file_proxy.settings']['origin'] = 'https://develop-jcc-tc.pantheonsite.io';
 $config['stage_file_proxy.settings']['use_imagecache_root'] = 0;
 $config['stage_file_proxy.settings']['hotlink'] = 1;
 
 /* Environment Indicator */
 $config['environment_indicator.indicator']['bg_color'] = '#045d30';
 $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
+
+/* Solr */
+$config['search_api.server.pantheon']['backend_config'] = [
+  'connector' => 'standard',
+  'connector_config' => [
+    'schema' => NULL,
+    'scheme' => 'http',
+    'host' => 'solr',
+    'port' => '8983',
+    'path' => '/solr',
+    'core' => 'freedom',
+    'timeout' => 5,
+    'index_timeout' => 5,
+    'optimize_timeout' => 10,
+    'commit_within' => 1000,
+    'solr_version' => '',
+    'http_method' => 'AUTO'
+  ]
+];
 
 /* Exclude all dev modules from core.extension.yml */
 // $settings['config_exclude_modules'] = [
@@ -149,5 +168,5 @@ $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
 // ];
 
 //  Store local configuration separately so it isn't tracked by git.
-$config['config_split.config_split.local']['status'] = TRUE;
-$config['config_split.config_split.stage']['status'] = TRUE;
+// $config['config_split.config_split.local']['status'] = TRUE;
+// $config['config_split.config_split.stage']['status'] = TRUE;
