@@ -79,9 +79,7 @@
   node.bundle|clean_class ~ '--' ~ view_mode|clean_class,
 ]|merge(classes|default([])) %}
 
-{#
 {{ attach_library('classy/node') }}
-#}
 
 <article{{ attributes.addClass(classes)|without('role') }}>
   {{ title_prefix }}
@@ -124,15 +122,23 @@
       </div>
 
       <div>
-        <div class="division">
-          {{ content.field_division }}
-        </div>
-        <div class="subject_matter">
-          {{ content.field_subject_matter }}
-        </div>
-        <div class="tags">
-          {{ content.field_tags }}
-        </div>
+        {% if content.field_division[0] %}
+          <div class="division">
+            {{ content.field_division }}
+          </div>
+        {% endif %}
+
+        {% if content.field_subject_matter[0] %}
+          <div class="subject_matter">
+            {{ content.field_subject_matter }}
+          </div>
+        {% endif %}
+
+        {% if content.field_tags[0] %}
+          <div class="tags">
+            {{ content.field_tags }}
+          </div>
+        {% endif %}
       </div>
     {% endset %}
 
