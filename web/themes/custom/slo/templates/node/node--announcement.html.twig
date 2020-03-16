@@ -88,21 +88,19 @@
   {{ title_suffix }}
 
   {% block content %}
-    {#
     {% set alert_type %}
-        {{ content.field_alert_type }}
+      {{ content.field_alert_type }}
     {% endset %}
-    #}
 
     {% set body %}
-        {{ content.body }}
+      {{ content.body }}
     {% endset %}
 
-    {% include '@components/02-molecules/blocks/alerts/alert.twig' with {
+    {% include '@slo/components/02-molecules/blocks/alert/alert.twig' with {
       alert: {
-        type: "info",
-        heading: {{ title }},
-        text: {{ body }},
+        type: alert_type,
+        heading: title,
+        text: body,
       }
     } only %}
   {% endblock %}
