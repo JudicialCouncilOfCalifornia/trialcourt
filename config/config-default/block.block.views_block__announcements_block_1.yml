@@ -1,18 +1,18 @@
-uuid: 40941560-3821-4da8-a983-f9cbb38ca0d0
+uuid: 74276e82-c98f-4586-bcd1-1810c9e55217
 langcode: en
 status: true
 dependencies:
   config:
     - views.view.announcements
   module:
-    - system
+    - ctools
     - views
   theme:
     - slo
-id: views_block__announcements_block_1
+id: views_block__announcements_block_1_2
 theme: slo
-region: title
-weight: -1
+region: messaging
+weight: 0
 provider: null
 plugin: 'views_block:announcements-block_1'
 settings:
@@ -23,8 +23,10 @@ settings:
   views_label: ''
   items_per_page: none
 visibility:
-  request_path:
-    id: request_path
-    pages: '<front>'
-    negate: false
-    context_mapping: {  }
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      announcement: announcement
+    negate: true
+    context_mapping:
+      node: '@node.node_route_context:node'

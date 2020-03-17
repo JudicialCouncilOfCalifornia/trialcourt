@@ -4,13 +4,33 @@ status: true
 dependencies:
   config:
     - field.field.node.announcement.body
+    - field.field.node.announcement.field_alert_type
     - node.type.announcement
+    - workflows.workflow.editorial_workflow
   module:
     - content_moderation
+    - field_group
     - path
     - scheduler
     - scheduler_content_moderation_integration
     - text
+third_party_settings:
+  field_group:
+    group_main_content:
+      children:
+        - field_alert_type
+        - title
+        - body
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      region: content
+      format_settings:
+        description: ''
+        required_fields: true
+        id: ''
+        classes: ''
+      label: Details
 id: node.announcement.default
 targetEntityType: node
 bundle: announcement
@@ -18,7 +38,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 1
+    weight: 20
     settings:
       rows: 9
       summary_rows: 3
@@ -28,26 +48,32 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 3
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_alert_type:
+    weight: 18
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 9
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 6
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -55,23 +81,23 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 4
+    weight: 6
     region: content
     third_party_settings: {  }
   publish_on:
-    weight: 101
+    weight: 16
     settings: {  }
     third_party_settings: {  }
     type: datetime_timestamp_no_default
     region: content
   publish_state:
     type: scheduler_moderation
-    weight: 30
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }
   scheduler_settings:
-    weight: 6
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -79,27 +105,32 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 8
+    weight: 11
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 5
+    weight: 7
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight: 19
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  translation:
+    weight: 13
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 2
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
@@ -108,19 +139,19 @@ content:
     region: content
     third_party_settings: {  }
   unpublish_on:
-    weight: 102
+    weight: 17
     settings: {  }
     third_party_settings: {  }
     type: datetime_timestamp_no_default
     region: content
   unpublish_state:
     type: scheduler_moderation
-    weight: 30
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 7
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
