@@ -1,0 +1,18 @@
+<div class="usa-alert usa-alert--{{ alert.type }}">
+  <div class="usa-alert__body">
+    <h3 class="usa-alert__heading">{{ alert.heading }}</h3>
+    <p class="usa-alert__text">{{ alert.text }}</p>
+    {% if alert.button %}
+      <div class="jcc-alert__action">
+        {# Use 'secondary' button style, unless explicitly provided. #}
+        {% set button = alert.button|merge({
+          style: alert.button.style|default('secondary')
+        }) %}
+
+        {% include "@atoms/buttons/link-button.twig" with {
+          link_button: button
+        } only %}
+      </div>
+    {% endif %}
+  </div>
+</div>

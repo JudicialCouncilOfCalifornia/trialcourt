@@ -4,8 +4,10 @@ status: true
 dependencies:
   config:
     - field.field.node.announcement.body
+    - field.field.node.announcement.field_alert_type
     - node.type.announcement
   module:
+    - options
     - text
     - user
 id: node.announcement.default
@@ -25,6 +27,13 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_alert_type:
+    weight: 1
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
 hidden:
   langcode: true
   links: true
