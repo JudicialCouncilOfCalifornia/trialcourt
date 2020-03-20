@@ -15,17 +15,36 @@
   @if $scale == 0 {
     font-size: $font_size_sm;
   }
-  @elseif $scale == 1 {
+  @else if $scale == 1 {
     font-size: $font_size_md;
   }
   @else {
     font-size: $font_size_sm;
   }
 
-  @if $weight == bold {
-    font-weight: bold;
-  } @else {
-    font-weight: normal;
+  @if $weight == thin {
+    font-weight: $font_weight_thn;
+  }
+  @else if $weight == light {
+    font-weight: $font_weight_lgt;
+  }
+  @else if $weight == normal {
+    font-weight: $font_weight_reg;
+  }
+  @else if $weight == medium {
+    font-weight: $font_weight_med;
+  }
+  @else if $weight == semibold {
+    font-weight: $font_weight_sbd;
+  }
+  @else if $weight == bold {
+    font-weight: $font_weight_bld;
+  }
+  @else if $weight == heavy {
+    font-weight: $font_weight_hvy;
+  }
+  @else {
+    font-weight: $font_weight_reg;
   }
 }
 
