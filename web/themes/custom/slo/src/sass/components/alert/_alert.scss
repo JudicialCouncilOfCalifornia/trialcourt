@@ -1,0 +1,60 @@
+.usa-alert::before {
+  display: none;
+}
+
+.usa-alert {
+  margin: 0 0 1rem;
+  padding: 0;
+  background-image: none;
+}
+
+.usa-alert--info {
+  .usa-alert__body {
+    @include alert_img('info');
+  }
+}
+.usa-alert--success {
+  .usa-alert__body {
+    @include alert_img('success');
+  }
+}
+.usa-alert--warning {
+  .usa-alert__body {
+    @include alert_img('warning');
+  }
+}
+.usa-alert--error {
+  .usa-alert__body {
+    @include alert_img('error');
+  }
+}
+
+.usa-alert__body {
+  display: block;
+  @include max_page_width(85);
+  margin: 0 auto;
+  padding: 1rem 1.75rem 1rem 3rem;
+  background-size: 2rem;
+  background-position: 0 0.86rem;
+  background-repeat: no-repeat;
+}
+
+.usa-alert__heading {
+  display: inline;
+  margin-right: 0.2rem;
+  @include font_style(1, bold);
+  line-height: normal;
+}
+
+.usa-alert__text {
+  display: inline;
+  margin-bottom: 0.5rem;
+  @include font_style(0, normal);
+  line-height: normal;
+  div {
+    display: inherit;
+    p:first-child {
+      display: inherit;
+    }
+  }
+}
