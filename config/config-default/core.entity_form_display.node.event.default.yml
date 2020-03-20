@@ -7,17 +7,20 @@ dependencies:
     - field.field.node.event.field_date_range
     - field.field.node.event.field_division
     - field.field.node.event.field_event_type
+    - field.field.node.event.field_geolocation
     - field.field.node.event.field_images
     - field.field.node.event.field_location
     - field.field.node.event.field_subject_matter
     - field.field.node.event.field_tags
     - node.type.event
+    - workflows.workflow.editorial_workflow
   module:
     - address
     - autocomplete_deluxe
     - content_moderation
     - datetime_range
     - field_group
+    - geolocation
     - media_library
     - path
     - scheduler
@@ -72,6 +75,7 @@ third_party_settings:
       label: 'Secondary Content'
     group_metadata:
       children:
+        - field_geolocation
         - field_division
         - field_tags
         - field_subject_matter
@@ -130,7 +134,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -141,7 +145,7 @@ content:
     type: daterange_default
     region: content
   field_division:
-    weight: 2
+    weight: 5
     settings:
       limit: '10'
       min_length: '0'
@@ -174,6 +178,12 @@ content:
     third_party_settings: {  }
     type: autocomplete_deluxe
     region: content
+  field_geolocation:
+    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+    type: geolocation_latlng
+    region: content
   field_images:
     type: media_library_widget
     weight: 5
@@ -188,7 +198,7 @@ content:
     type: address_default
     region: content
   field_subject_matter:
-    weight: 4
+    weight: 7
     settings:
       limit: '10'
       min_length: '0'
@@ -205,7 +215,7 @@ content:
     type: autocomplete_deluxe
     region: content
   field_tags:
-    weight: 3
+    weight: 6
     settings:
       limit: '10'
       min_length: '0'
@@ -230,13 +240,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 14
+    weight: 16
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 12
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -244,23 +254,23 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 5
+    weight: 6
     region: content
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 9
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 8
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   scheduler_settings:
-    weight: 7
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -268,14 +278,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 17
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 7
     region: content
     third_party_settings: {  }
   title:
@@ -287,10 +297,10 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 12
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 3
@@ -303,18 +313,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 11
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 13
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }

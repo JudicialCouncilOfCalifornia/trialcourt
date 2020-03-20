@@ -7,14 +7,17 @@ dependencies:
     - field.field.node.event.field_date_range
     - field.field.node.event.field_division
     - field.field.node.event.field_event_type
+    - field.field.node.event.field_geolocation
     - field.field.node.event.field_images
     - field.field.node.event.field_location
     - field.field.node.event.field_subject_matter
     - field.field.node.event.field_tags
+    - filter.format.plain_text
     - node.type.event
   module:
     - address
     - datetime_range
+    - geolocation
     - text
     - user
 id: node.event.default
@@ -31,9 +34,9 @@ content:
     region: content
   content_moderation_control:
     weight: -20
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_date_range:
     weight: 106
     label: above
@@ -59,6 +62,30 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+    region: content
+  field_geolocation:
+    weight: 109
+    label: above
+    settings:
+      title: ''
+      set_marker: '1'
+      common_map: '1'
+      data_provider_settings: {  }
+      map_provider_id: leaflet
+      centre:
+        fit_bounds:
+          enable: true
+          weight: -101
+          map_center_id: fit_bounds
+          settings:
+            reset_zoom: true
+      map_provider_settings: {  }
+      info_text:
+        value: ''
+        format: plain_text
+      use_overridden_map_settings: 0
+    third_party_settings: {  }
+    type: geolocation_map
     region: content
   field_images:
     type: entity_reference_entity_view
@@ -94,9 +121,9 @@ content:
     region: content
   links:
     weight: 100
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
 hidden:
   langcode: true
   search_api_excerpt: true
