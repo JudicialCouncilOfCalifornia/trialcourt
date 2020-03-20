@@ -83,25 +83,29 @@
 {{ attach_library('classy/node') }}
 #}
 
-<article{{ attributes.addClass(classes)|without('role') }}>
+<div{{ attributes.addClass(classes)|without('role') }}>
   {{ title_prefix }}
   {{ title_suffix }}
 
   {% block content %}
+    {% set title %}
+      {{ label }}
+    {% endset %}
+
     {% set alert_type %}
-      {{ content.field_alert_type }}
+      {{- node.field_alert_type.0.value -}}
     {% endset %}
 
     {% set body %}
       {{ content.body }}
     {% endset %}
 
-    {% include '@slo/components/02-molecules/blocks/alert/alert.twig' with {
+    {% include '@slo/block/alert/alert.twig' with {
       alert: {
         type: alert_type,
         heading: title,
-        text: body,
+        text: body
       }
     } only %}
   {% endblock %}
-</article>
+</div>
