@@ -37,7 +37,6 @@
  * - page.sidebar_second: Items for the second sidebar.
  * - page.footer: Items for the footer region.
  * - page.breadcrumb: Items for the breadcrumb region.
- * - page.announcement: Items for the announcement region.
  *
  * @see template_preprocess_page()
  * @see html.html.twig
@@ -57,10 +56,6 @@
     </header>
   {% endif %}
 
-  {% if page.messaging|render %}
-    {{ page.messaging }}
-  {% endif %}
-
   {% if page.tabs|render %}
     <div class="page__tabs">
       {{ page.tabs }}
@@ -73,7 +68,6 @@
 
   {# Specify content types by nodes that do not require hero title component #}
   {% set nodes_without_titles = [
-    'announcement',
     'book',
     'document',
     'event',
