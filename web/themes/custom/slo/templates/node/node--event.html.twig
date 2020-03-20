@@ -121,6 +121,10 @@
         {{ content.links }}
       </div>
 
+      <div class="body">
+        {{ content.body }}
+      </div>
+
       <div>
         {% if content.field_division[0] %}
           <div class="division">
@@ -142,16 +146,16 @@
       </div>
     {% endset %}
 
-    {% set event_media_gallery %}
-      <div class="gallery">
-        {{ content.field_images }}
+    {% set event_images %}
+      <div class="map">
+        {{ content.field_geolocation }}
       </div>
-    {% endset %}
 
-    {% set body %}
-      <div class="body">
-        {{ content.body }}
-      </div>
+      {% if content.field_images[0] %}
+        <div class="gallery">
+          {{ content.field_images }}
+        </div>
+      {% endif %}
     {% endset %}
 
     {% include '@organisms/sections/text-section/text-section.twig' with {
@@ -162,13 +166,7 @@
           title: title,
         },
         column_content_left: event_details,
-        column_content_right: event_media_gallery,
-      }
-    } only %}
-
-    {% include '@organisms/sections/text-section/text-section.twig' with {
-      text_section: {
-        column_content_left: body,
+        column_content_right: event_images,
       }
     } only %}
   {% endblock %}
