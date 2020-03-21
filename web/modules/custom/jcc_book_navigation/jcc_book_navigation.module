@@ -1,0 +1,89 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_book_navigation.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Drupal\group\Entity\GroupContent;
+
+/**
+ * Implements hook_help().
+ */
+function jcc_book_navigation_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the jcc_book_navigation module.
+    case 'help.page.jcc_book_navigation':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Enhanced book navigation using USWDS markup.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function jcc_book_navigation_theme() {
+  return [
+    'jcc_book_navigation_block' => [
+      'variables' => ['items' => [], 'attributes' => [], 'active_trail' => []],
+    ],
+    'book_navigation__clean' => [
+      'template' => 'book-navigation--clean',
+      'base hook' => 'book_navigation'
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for node templates.
+ */
+function jcc_book_navigation_theme_suggestions_book_navigation_alter(array &$suggestions, array $variables) {
+  $suggestions[] = 'book_navigation' . '__' . 'clean';
+}
+
+/**
+ * Add link for creating child book pages.
+ *
+ * @param array $variables
+ *   An associative array containing variables.
+ */
+function jcc_book_navigation_preprocess_account_header_links(array &$variables) {
+  $node = \Drupal::routeMatch()->getParameter('node');
+
+  if (is_object($node)) {
+    $groupcontents = GroupContent::loadByEntity($node);
+    $group = NULL;
+    // Only react if it is actually posted inside a group.
+    if (!empty($groupcontents)) {
+      foreach ($groupcontents as $groupcontent) {
+        $group = $groupcontent->getGroup();
+        break;
+      }
+    }
+
+    if (is_object($node) && is_object($group)) {
+      $variables['links']['add']['below']['add_child_book_page'] = [
+        'classes' => '',
+        'link_attributes' => '',
+        'link_classes' => '',
+        'icon_classes' => '',
+        'icon_label' => '',
+        'title' => t('Add child page'),
+        'label' => t('Add child page'),
+        'title_classes' => '',
+        'url' => Url::fromUserInput("/group/{$group->id()}/content/create/group_node:topic",
+          [
+            'query' => [
+              'parent' => $node->id(),
+            ],
+          ]),
+      ];
+    }
+  }
+}
