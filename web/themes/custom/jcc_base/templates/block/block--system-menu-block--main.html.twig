@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Template for main menu block.
+ */
+#}
+
+{# Note: The .jcc-header_menu--desktop is needed at this level to layout
+properly (parent is flexed).  However this is a duplicate (see content block)
+and may cause issues in the future. #}
+{% embed 'block--system-menu-block.html.twig' with { classes: ['jcc-header_menu--desktop'] } %}
+  {% block prefix %}
+    <div id="js-header_menu--mobile"></div>
+  {% endblock %}
+
+  {% block content %}
+    <div class="jcc-header_menu--desktop slicknav_menu slicknav_menu--desktop">
+      {{ content }}
+    </div>
+  {% endblock %}
+{% endembed %}

@@ -1,0 +1,61 @@
+{#
+/**
+ * @file
+ * Template for "Accordion Container" Paragraph.
+ */
+#}
+{% extends 'paragraph.html.twig' %}
+{% block paragraph %}
+
+  {% if content.field_body|render or content.field_title_display|render %}
+    {% include '@organisms/sections/text-section/text-section.twig' with {
+      text_section: {
+        background_variant: 'has-background-color--dark',
+        id: paragraph_id,
+        headergroup: {
+          title: content.field_title_display|render ? content.field_title_display : '',
+          body: content.field_body|render ? content.field_body : null,
+        },
+      }
+    } only %}
+  {% endif %}
+
+  {% if content.field_accordions|render %}
+    {% set accordion_items = [] %}
+    {% set accordions = paragraph.field_accordions %}
+
+    {% for key, item in accordions.value %}
+      {# ⇣ This check is important because Accordion fields are NOT required.
+      Empty accordions are possible, and would return the wrong data. #}
+      {% if accordions.get(key).entity.field_title_display.value %}
+        {% set accordion = accordions.get(key).entity %}
+
+        {% set body %}
+          {{ accordion.field_body|view }}
+          {{ accordion.field_postcard|view }}
+        {% endset %}
+
+        {# Store each accordion in an array for the Pattern component. #}
+        {% set accordion_items = accordion_items|merge([{
+          title: accordion.field_title_display|view,
+          body: body,
+        }]) %}
+      {% endif %}
+    {% endfor %}
+
+    {% include '@molecules/interactive/accordion/accordion.twig' with {
+      accordion: {
+        full: true,
+        items: accordion_items,
+      }
+    } only %}
+
+  {% endif %}
+
+  {{ content|without(
+    'field_accordions',
+    'field_body',
+    'field_create_anchor',
+    'field_title_display'
+  ) }}
+{% endblock %}

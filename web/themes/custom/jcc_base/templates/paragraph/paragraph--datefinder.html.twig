@@ -1,0 +1,37 @@
+{#
+/**
+ * @file
+ * Template for "Datefinder" Paragraph.
+ */
+#}
+{% extends 'paragraph.html.twig' %}
+{% block content %}
+  {{ attach_library('atrium/datefinder') }}
+
+  {% set date_input %}
+    {{ jcc_datefinder_form }}
+  {% endset %}
+
+  {% set datefinder %}
+    {% include '@molecules/interactive/datefinder/datefinder.twig' with {
+      datefinder: {
+        title: content.field_label,
+        date_input: date_input,
+        serve_date_label: content.field_label_date_output,
+        serve_hidden: true
+      }
+    } only %}
+  {% endset %}
+
+  {% include '@organisms/sections/text-section/text-section.twig' with {
+    text_section: {
+      id: paragraph_id,
+      headergroup: {
+        brow: content.field_brow|render ? content.field_brow : '',
+        title: content.field_title_display|render ? content.field_title_display : '',
+      },
+      column_content_left: content.field_body|render ? content.field_body : ' ',
+      column_content_right: datefinder
+    }
+  } only %}
+{% endblock %}

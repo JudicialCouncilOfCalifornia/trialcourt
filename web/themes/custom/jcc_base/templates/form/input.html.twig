@@ -1,0 +1,39 @@
+{#
+/**
+ * @file
+ * Theme override for an 'input' #type form element.
+ *
+ * Available variables:
+ * - attributes: A list of HTML attributes for the input element.
+ * - children: Optional additional rendered elements.
+ *
+ * @see template_preprocess_input()
+ */
+#}
+{% set classes = [] %}
+
+{# @todo Apply a class to the element if errors are present. Not sure if this code works. #}
+{% if element.errors %}
+  {% set classes = classes|merge(['usa-input-error']) %}
+{% endif %}
+
+{# Add input specific classes from USWDS. #}
+{% if element['#type'] == 'range' %}
+  {% set classes = classes|merge(['usa-range']) %}
+
+{% elseif element['#type'] == 'checkbox' %}
+  {% set classes = classes|merge(['usa-checkbox__input']) %}
+
+{% elseif element['#type'] == 'radio' %}
+  {% set classes = classes|merge(['usa-radio__input']) %}
+
+{% elseif element['#type'] in ['submit', 'button'] %}
+  {% set classes = classes|merge(['usa-button']) %}
+
+{# Fallback to .usa-input for everything else, except type="file". #}
+{% elseif element['#type'] not in ['file'] %}
+  {% set classes = classes|merge(['usa-input']) %}
+{% endif %}
+
+<input{{ attributes.addClass(classes) }} />{{ children }}
+

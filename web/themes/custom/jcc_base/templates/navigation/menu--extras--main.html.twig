@@ -1,0 +1,81 @@
+{#
+/**
+ * @file
+ * Template for main menu.
+ */
+#}
+{% import _self as menus %}
+
+{# We call a macro which calls itself to render the full tree.
+@see https://twig.symfony.com/doc/1.x/tags/macro.html #}
+<div class="flex-column">
+  {{ menus.menu_links(items, attributes, 0) }}
+  {{ menus.mega_menu_links(items, attributes, 0) }}
+</div>
+
+{% macro menu_links(items, attributes, menu_level) %}
+  {% import _self as menus %}
+  {% if items %}
+    {% if menu_level == 0 %}
+      <ul{{ attributes.addClass(['jcc-header_nav', 'slicknav_nav']).setAttribute('id', 'slick-menu') }}>
+    {% else %}
+      <ul class="menu">
+    {% endif %}
+    {% for item in items %}
+      {% set classes = [
+        'jcc-header_nav__item',
+        'slicknav_nav__item',
+        item.is_expanded ? 'jcc-header_nav__item--expanded',
+        item.is_collapsed ? 'jcc-header_nav__item--collapsed',
+        item.in_active_trail ? 'jcc-header_nav__item--active-trail',
+        item.below ? 'has-children'
+      ] %}
+      <li>
+        <a href="{{ item.url }}" {{ item.attributes.addClass(classes) }} data-mega-menu-id="{{ item.title|clean_id }}">{{ item.content.icon }}{{ item.title }}</a>
+        {% if item.below %}
+          {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+        {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}
+{# Build the mega menu separately so it lives below the top level menu links but retain the slicnav responsiveness. #}
+{% macro mega_menu_links(items, attributes, menu_level) %}
+  {% import _self as menus %}
+  {% if items %}
+    {% if menu_level == 0 %}
+      <ul{{ attributes.addClass(['jcc-header_nav', 'mega-menu_nav']).setAttribute('id', 'mega-menu') }}>
+    {% else %}
+      {% set flex = menu_level == 1 ? 'grid-row' : '' %}
+      {% set hide = menu_level == 1 ? 'display-none' : '' %}
+      <ul class="menu {{ hide }} {{ flex }}">
+    {% endif %}
+    {% for item in items %}
+      {% if menu_level == 0 %}
+        <div id="{{ item.title|clean_id }}" class="mega-menu-sub">
+        {{ menus.mega_menu_links(item.below, attributes, menu_level + 1) }}
+      {% else %}
+        <div>
+        {% set classes = [
+          'jcc-header_nav__item',
+          'mega-menu_nav__item',
+          item.is_expanded ? 'jcc-header_nav__item--expanded',
+          item.is_collapsed ? 'jcc-header_nav__item--collapsed',
+          item.in_active_trail ? 'jcc-header_nav__item--active-trail',
+        ] %}
+        <li>
+          <a href="{{ item.url }}" {{ item.attributes.addClass(classes) }}>{{ item.content.icon }}{{ item.title }}</a>
+          {% if item.content.text %}
+            <div class="mega-menu-item-text">{{item.content.text}}</div>
+          {% endif %}
+          {% if item.below %}
+            {{ menus.mega_menu_links(item.below, attributes, menu_level + 1) }}
+          {% endif %}
+        </li>
+      {% endif %}
+      </div>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}

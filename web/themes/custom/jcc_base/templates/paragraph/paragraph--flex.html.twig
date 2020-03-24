@@ -1,0 +1,15 @@
+{#
+/**
+ * @file
+ * Template for "Flexible Column" Paragraph.
+ */
+#}
+{% extends 'paragraph.html.twig' %}
+{% block paragraph %}
+  {# @see field--paragraph--field-columns--flex.html.twig #}
+  {{ content|without(
+    'field_create_anchor',
+    'field_namechange',
+    'field_title_display'
+  ) }}
+{% endblock %}
