@@ -1,0 +1,42 @@
+// Tabs: Secondary
+// -----------------------------------------------------------------------------
+.nav-tabs--secondary {
+  background: $nav-tabs-secondary-background-color;
+
+  .is-collapse-enabled &:before,
+  .is-horizontal &:before {
+    border-color: $nav-tabs-secondary-border-color;
+  }
+
+  .nav-tabs__link {
+    font-size: 0.923rem;
+    background-color: $nav-tabs-secondary-tab-background-color;
+    color: $nav-tabs-secondary-tab-color;
+    border-color: $nav-tabs-secondary-border-color;
+    border-width: 1px 0 1px 4px;
+    padding: 0 $nav-tabs-secondary-padding-horizontal;
+
+    // Borders are used for the active item when collapsed.
+    &.is-active::after {
+      display: none;
+    }
+
+    &.is-active {
+      border-color: $nav-tabs-secondary-indicator-color;
+      color: $nav-tabs-secondary-tab-color;
+
+      &:focus {
+        outline-color: $nav-tabs-secondary-indicator-color;
+      }
+    }
+
+    .is-horizontal & {
+      border: 0;
+
+      &:after {
+        display: block;
+        background-color: $nav-tabs-secondary-indicator-color;
+      }
+    }
+  }
+}

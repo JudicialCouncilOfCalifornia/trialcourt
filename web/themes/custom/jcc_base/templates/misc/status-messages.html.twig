@@ -1,0 +1,86 @@
+{#
+/**
+ * @file
+ * Theme override for status messages.
+ *
+ * Displays status, error, and warning messages, grouped by type.
+ *
+ * An invisible heading identifies the messages for assistive technology.
+ * Sighted users see a colored box. See http://www.w3.org/TR/WCAG-TECHS/H69.html
+ * for info.
+ *
+ * Add an ARIA label to the contentinfo area so that assistive technology
+ * user agents will better describe this landmark.
+ *
+ * Available variables:
+ * - message_list: List of messages to be displayed, grouped by type.
+ * - status_headings: List of all status types.
+ * - attributes: HTML attributes for the element, including:
+ *   - class: HTML classes.
+ */
+#}
+<div data-drupal-messages>
+  {% block messages %}
+
+    {# Note: status_headings is not always set, so we are intentionally not
+    using it. This _could_ be a core bug. Instead, this replicates
+    Drupal\Core\Render\Element\StatusMessages, adding an info message
+    which is in USWDS, and used occasionally by contrib. It also takes care of
+    the class and role mappings. #}
+    {% set types = {
+      error: {
+        class: 'error',
+        label: 'Error message'|t,
+        role: 'alert'
+      },
+      info: {
+        class: 'info',
+        label: 'Informational message'|t,
+        role: 'status'
+      },
+      status: {
+        class: 'success',
+        label: 'Success message'|t,
+        role: 'status'
+      },
+      warning: {
+        class: 'warning',
+        label: 'Warning message'|t,
+        role: 'alert'
+      }
+    } %}
+
+    {% for type, messages in message_list %}
+
+      {% set classes = [
+        'usa-alert',
+        'usa-alert--' ~ types[type].class
+      ] %}
+
+      {% set attributes = attributes.setAttribute('aria-label', types[type].label) %}
+      {% set attributes = attributes.setAttribute('role', types[type].role) %}
+
+      <div{{ attributes.addClass(classes) }}>
+        <div class="usa-alert__body">
+          {%- if messages|length > 1 -%}
+            <ul>
+              {%- for message in messages %}
+                <li class="usa-alert__text">{{- message -}}</li>
+              {%- endfor -%}
+            </ul>
+          {%- else -%}
+            <p class="usa-alert__text">
+              {{- messages|first -}}
+            </p>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {# Reset type specific attributes/classes. #}
+      {% set attributes = attributes.removeClass(classes) %}
+      {% set attributes = attributes.removeAttribute('aria-label') %}
+      {% set attributes = attributes.removeAttribute('role') %}
+    {% endfor %}
+
+  {% endblock messages %}
+</div>

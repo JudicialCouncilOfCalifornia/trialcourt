@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Template for "JCC Form" media type using "Full content" display mode.
+ */
+#}
+<article{{ attributes.addClass(classes) }}>
+  {{ title_suffix.contextual_links }}
+  {% if content %}
+    {% for item in content %}
+      <div class="margin-4">
+        {#
+          @todo This is a temporary, quick and dirty solution
+          while we have no designs.
+        #}
+        <div><label class="jcc-form-group__title">{{ item['#title'] }}</label></div>
+        <div>{{ item }}</div>
+      </div>
+    {% endfor %}
+  {% endif %}
+</article>

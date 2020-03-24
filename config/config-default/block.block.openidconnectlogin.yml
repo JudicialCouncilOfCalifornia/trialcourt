@@ -1,13 +1,14 @@
-uuid: c953722d-6fcb-46f6-94bf-f6595e6dc648
+uuid: aa918629-21f0-49b6-888e-6269cbc45d3b
 langcode: en
 status: true
 dependencies:
   module:
     - openid_connect
+    - user
   theme:
-    - slo
+    - jcc_base
 id: openidconnectlogin
-theme: slo
+theme: jcc_base
 region: footer
 weight: 0
 provider: null
@@ -17,4 +18,11 @@ settings:
   label: 'OpenID Connect login'
   provider: openid_connect
   label_display: '0'
-visibility: {  }
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      anonymous: anonymous
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'

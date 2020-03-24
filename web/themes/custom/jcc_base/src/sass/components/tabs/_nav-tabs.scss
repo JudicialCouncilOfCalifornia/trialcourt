@@ -1,0 +1,192 @@
+// Responsive Tabs
+// -----------------------------------------------------------------------------
+
+$nav-tabs-background-color: #e6e6e6;
+$nav-tabs-font-size: 1rem;
+$nav-tabs-line-height: 3;
+$nav-tabs-trigger-width: 60px;
+$nav-tabs-active-indicator-height: 4px;
+$nav-tabs-primary-background-color: $nav-tabs-background-color;
+$nav-tabs-primary-border-color: color($theme-color-base-lighter);
+$nav-tabs-primary-tab-color: color($theme-color-primary-light);
+$nav-tabs-primary-tab-background-color: #fff;
+$nav-tabs-primary-indicator-color: color($theme-color-primary-vivid);
+$nav-tabs-primary-padding-horizontal: 1.65rem; // Use line-height for v-spacing.
+$nav-tabs-secondary-background-color: #f9f9f9;
+$nav-tabs-secondary-tab-background-color: transparent;
+$nav-tabs-secondary-tab-color: $nav-tabs-primary-tab-color;
+$nav-tabs-secondary-border-color: $nav-tabs-primary-border-color;
+$nav-tabs-secondary-indicator-color: $nav-tabs-primary-indicator-color;
+$nav-tabs-secondary-padding-horizontal: 1.65rem; // Use line-height for v-spacing.
+// 2px in calc() below is from border-top/bottom on link.
+$nav-tabs-collapsed-height: calc((#{$nav-tabs-line-height} * #{$nav-tabs-font-size}) + 2px);
+
+.nav-tabs__wrapper {
+  background: $nav-tabs-background-color;
+  // Offset .jcc-header logo overlap.  Note that the mobile header is not styled
+  // properly as of yet, so this may need to be adapted for smaller screens at
+  // some point.
+  padding-top: 80px;
+  margin-bottom: 0;
+
+  &, * {
+    font-size: $nav-tabs-font-size;
+    line-height: $nav-tabs-line-height;
+  }
+}
+
+.nav-tabs {
+  clear: both;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+
+  // Bottom border cannot not affect overall container height.
+  &:before {
+    border-bottom: 1px solid transparent;
+    bottom: 0;
+    content: '';
+    display: block;
+    height: 1px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    z-index: 10;
+  }
+}
+
+// Collapsed state
+// Note: These rules ensure only the first item, or when tabbing via keyboard,
+// the currently focused item, is visible.
+.is-collapse-enabled .nav-tabs {
+  max-height: 0;
+  overflow: hidden;
+  padding-top: $nav-tabs-collapsed-height;
+
+  &:before {
+    right: $nav-tabs-trigger-width;
+  }
+
+  &.is-open::before {
+    display: none;
+  }
+}
+
+// Collapsed and open.
+.nav-tabs.is-open {
+  max-height: 999em;
+}
+
+// Horizontal state
+.is-horizontal .nav-tabs {
+  border-bottom: 0;
+  max-height: none !important;
+  overflow: visible;
+  padding-top: 0 !important;
+}
+
+// Tab List Item
+// -----------------------------------------------------------------------------
+
+.nav-tabs .nav-tabs__item {
+  display: block;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Show active item at the top of the list when collapsed.
+.is-collapse-enabled .nav-tabs__item.is-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% - #{$nav-tabs-trigger-width});
+  z-index: 15;
+}
+
+.is-horizontal .nav-tabs__item {
+  float: left;
+  width: auto;
+  height: auto;
+  text-align: center;
+}
+
+// Override the states above
+.is-horizontal .nav-tabs__item.is-active,
+.is-horizontal .nav-tabs.nav-tabs--primary .nav-tabs__item.is-active {
+  position: relative;
+  top: 0;
+  width: auto;
+}
+
+// Tab Link
+// -----------------------------------------------------------------------------
+
+.nav-tabs .nav-tabs__link {
+  border: solid 1px transparent;
+  display: block;
+  position: relative;
+  text-decoration: none;
+
+  &.is-active {
+    font-weight: 700;
+
+    &:after {
+      background-color: currentColor;
+      bottom: 0;
+      content: '';
+      height: $nav-tabs-active-indicator-height;
+      left: 0;
+      position: absolute;
+      right: 0;
+      z-index: 16;
+    }
+  }
+
+  &:active,
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus {
+    // Focus styles provided do not work with overflow: hidden;
+    outline-offset: units(0 - $theme-focus-width);
+  }
+}
+
+// Tab Trigger & Nav Positioning
+// -----------------------------------------------------------------------------
+
+.tabs__trigger,
+.is-horizontal .tabs__trigger {
+  display: none;
+}
+
+/* JS dependent styling */
+.is-collapse-enabled .tabs__trigger {
+  background-color: $nav-tabs-primary-indicator-color;
+  border: 0;
+  border-radius: 0;
+  color: #fff;
+  cursor: pointer;
+  display: block;
+  font-size: $nav-tabs-font-size;
+  height: $nav-tabs-collapsed-height;
+  left: auto;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 0;
+  width: $nav-tabs-trigger-width;
+  z-index: 10;
+
+  &:focus {
+    z-index: 20;
+  }
+}

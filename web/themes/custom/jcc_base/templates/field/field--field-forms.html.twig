@@ -1,0 +1,33 @@
+{#
+/**
+ * @file
+ * Template for "Relevant Forms".
+ */
+#}
+{% set files = [] %}
+{% for key, item in items %}
+  {% set media =  item.content["#media"] %}
+  {% set files = files|merge([{
+    name: media.name.value,
+    url: media.field_url.uri,
+    url_title: 'Form ' ~ media.field_number.value,
+  }]) %}
+{% endfor %}
+
+<div class="margin-bottom-4">
+  {% include '@molecules/blocks/list-block/list-block.twig' with {
+    list_block: {
+      title: label,
+      link_list: {
+        files_list: true,
+        items: files,
+        icon: {
+          file: courtyard_icons,
+          name: 'file',
+          title: 'File',
+          decorative: false,
+        }
+      }
+    }
+  } %}
+</div>

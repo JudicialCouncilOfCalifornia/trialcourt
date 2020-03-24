@@ -1,0 +1,12 @@
+{#
+/**
+ * @file
+ * Theme override for the 'Page title' block, when inside the 'title' region.
+ */
+#}
+{%- include '@molecules/blocks/hero/hero.twig' with {
+  hero: {
+    title: content|render|striptags|trim,
+  }
+} -%}
+

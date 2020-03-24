@@ -1,0 +1,78 @@
+{#
+/**
+ * @file
+ * Template for "Card list" Paragraph.
+ */
+#}
+{% extends 'paragraph.html.twig' %}
+{% block paragraph %}
+
+  {% if content.field_cards|render %}
+
+    {% set headergroup = {
+      brow: content.field_brow|render ? content.field_brow : '',
+      title: content.field_title_display|render ? content.field_title_display : ''
+    } %}
+
+    {% if paragraph.field_background_card.value == 'light' %}
+      {% set background_variant = 'has-background-color--light--secondary' %}
+    {% elseif paragraph.field_background_card.value == 'dark' %}
+      {% set background_variant = 'has-background-color--dark--secondary' %}
+    {% endif %}
+
+    {% set card_content = [] %}
+    {% set cards = paragraph.field_cards %}
+
+    {% for key, item in cards.value %}
+      {% set icon = [] %}
+      {% set card = cards.get(key).entity %}
+
+      {# Prepare the icon for the Pattern component. #}
+      {% if card.field_icon.value %}
+        {%- set alt -%}
+          {% trans %}{{ card.field_icon.value }} icon{% endtrans %}
+        {%- endset -%}
+        {# TODO: Use base_path(). #}
+        {% set img = {
+          src: '/libraries/courtyard-artifact/public/images/graphics/' ~ card.field_icon.value ~ '.svg',
+          alt: alt,
+          renderer: 'patternlab'
+        } %}
+      {% endif %}
+
+      {# Store each card in an array for the Pattern component. #}
+      {% set card_content = card_content|merge([{
+        title: card.field_title_display|view,
+        excerpt: card.field_body|view,
+        img: img
+      }]) %}
+    {% endfor %}
+
+    {% set column_variant = 'has-one-column' %}
+    {% if card_content|length == 3 %}
+      {% set column_variant = 'has-three-columns' %}
+    {% elseif card_content|length == 2 %}
+      {% set column_variant = 'has-two-columns' %}
+    {% endif %}
+
+    {% include '@organisms/sections/card-section/card-section.twig' with {
+      card_section: {
+        id: paragraph_id,
+        background_variant: background_variant ? background_variant : null,
+        column_variant: column_variant,
+        headergroup: headergroup,
+        cards: card_content,
+      }
+    } only %}
+  {% endif %}
+
+  {{ content|without(
+    'field_background_card',
+    'field_brow',
+    'field_create_anchor',
+    'field_body',
+    'field_cards',
+    'field_title_display'
+  ) }}
+
+{% endblock %}

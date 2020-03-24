@@ -1,0 +1,41 @@
+{
+  "name": "judicialcouncil/jcc_base",
+  "description": "JCCBase is a base theme for Drupal. Integrates Exygy/courtyard pattern library.",
+  "type": "drupal-theme",
+  "homepage": "https://www.drupal.org/project/jcc_base",
+  "authors": [
+    {
+      "name": "Calvin Tyndall",
+      "email": "calvin@chapterthreellc.com",
+      "homepage": "https://chapterthree.com",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "issues": "https://chapterthree.com"
+  },
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "repositories": {
+    "drupal": {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  },
+  "require": {
+    "drupal/components": "^1.0",
+    "judicialcouncil/courtyard-artifact": "^0.0.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Drush\\Commands\\jcc_base\\": "Commands/jcc_base/"
+    }
+  },
+  "extra": {
+    "drush": {
+      "services": {
+        "drush.services.yml": "^9"
+      }
+    }
+  }
+}

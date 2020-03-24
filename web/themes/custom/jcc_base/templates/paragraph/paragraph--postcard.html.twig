@@ -1,0 +1,75 @@
+{#
+/**
+ * @file
+ * Template for "Postcard" Paragraph.
+ *
+ */
+#}
+{% extends 'paragraph.html.twig' %}
+{% block paragraph %}
+
+  {# Background Variants #}
+  {% set background_variant = paragraph.field_background.value %}
+  {% if paragraph.field_background.value == 'default' %}
+    {% set background_variant = null %}
+  {% elseif paragraph.field_background.value == 'light' %}
+    {% set background_variant = 'has-background-color--light--secondary' %}
+  {% elseif paragraph.field_background.value == 'dark' %}
+    {% set background_variant = 'has-background-color--dark--secondary' %}
+  {% endif %}
+
+  {# Postcard Image #}
+  {% set image = content.field_media|render ? content.field_media : '' %}
+  {% if paragraph.field_postcard_display.value == 'has-background-image' %}
+    {% if content.field_media|render %}
+      {% set image_id = paragraph.field_media.entity.id() %}
+      {% set image = drupal_entity('media', image_id, 'postcard_background') %}
+    {% endif %}
+  {% endif %}
+
+  {# @todo We may need to use the read-more.twig component here?  #}
+  {% set body = '' %}
+  {% if content.field_body|render or content.field_link|render %}
+    {% set body %}
+      {{ content.field_body }}
+      {{ content.field_link }}
+    {% endset %}
+  {% endif %}
+
+  {% include '@molecules/blocks/postcard/postcard.twig' with {
+    postcard: {
+      id: paragraph_id,
+      background_variant: background_variant,
+      headergroup: {
+        title: content.field_title_display|render ? content.field_title_display : '',
+        body: body,
+        tag: paragraph.field_header.value,
+      },
+      tag: content.field_text_overlay|render ? content.field_text_overlay : '',
+      img: image,
+    }
+  } only %}
+
+  {% if content.field_additional|render %}
+    {% include '@organisms/sections/text-section/text-section.twig' with {
+      text_section: {
+        headergroup: {
+          lead: content.field_additional,
+        },
+      }
+    } only %}
+  {% endif %}
+
+  {{ content|without(
+    'field_additional',
+    'field_background',
+    'field_body',
+    'field_create_anchor',
+    'field_header',
+    'field_link',
+    'field_media',
+    'field_text_overlay',
+    'field_title_display'
+  ) }}
+
+{% endblock %}

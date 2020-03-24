@@ -1,0 +1,88 @@
+/**
+ * Mega-menu (slicknav enhancements).
+ */
+
+// Make mega-menu columns.
+#mega-menu {
+  &.slicknav_nav {
+    ul {
+      &.grid-row {
+        display: flex;
+      }
+    }
+  }
+  a > i {
+    margin-right: 0.5rem;
+  }
+
+  ul {
+    margin-left: 0;
+  }
+
+  .mega-menu-sub > ul {
+
+    display: flex;
+    flex-wrap: wrap;
+
+    > div {
+      width: 25%;
+      flex: 1 0 auto;
+
+      > li {
+
+        > a {
+          font-weight: bold;
+          font-size: 1.1rem;
+        }
+
+        ul {
+          display: flex;
+          flex-wrap: wrap;
+
+          > div {
+            flex: 1 0 auto;
+          }
+        }
+      }
+    }
+  }
+
+  .mega-menu-item-text {
+    border: 1px dotted #fff;
+    padding: 0.5rem 1rem;
+    margin: 0 1rem;
+  }
+}
+
+// Hide slicknav menus on desktop in favor of mega-menu.
+#slick-menu {
+  @media screen and (min-width: 1024px) {
+    li {
+      > a.has-children {
+        &::after {
+          @include icon-after;
+          content: '\f107';
+        }
+        &.mega-menu-open {
+          &::after {
+            content: '\f106';
+          }
+        }
+      }
+      ul {
+        &.menu {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+.slicknav_menu {
+  > .flex-column {
+    width: 100%;
+  }
+  a > i {
+    margin-right: 0.5rem;
+  }
+}
