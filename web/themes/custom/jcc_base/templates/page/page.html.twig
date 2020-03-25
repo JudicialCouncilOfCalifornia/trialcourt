@@ -56,6 +56,10 @@
     </header>
   {% endif %}
 
+  {%  if page.messaging|render %}
+    {{ page.messaging }}
+  {% endif %}
+
   {% if page.tabs|render %}
     <div class="page__tabs">
       {{ page.tabs }}
@@ -68,6 +72,7 @@
 
   {# Specify content types by nodes that do not require hero title component #}
   {% set nodes_without_titles = [
+    'announcement',
     'book',
     'document',
     'event',
