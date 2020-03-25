@@ -89,14 +89,18 @@
 
   {% block content %}
     {% set alert_type %}
-      {{ content.field_alert_type }}
+      {{- node.field_alert_type.0.value -}}
+    {% endset %}
+
+    {% set title %}
+      {{ label }}
     {% endset %}
 
     {% set body %}
       {{ content.body }}
     {% endset %}
 
-    {% include '@slo/components/02-molecules/blocks/alert/alert.twig' with {
+    {% include '@jcc_base/_patterns/02-molecules/blocks/alert/alert.twig' with {
       alert: {
         type: alert_type,
         heading: title,
