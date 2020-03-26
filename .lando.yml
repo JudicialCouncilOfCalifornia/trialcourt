@@ -69,6 +69,19 @@ services:
 
 # Custom Lando commands
 tooling:
+  fresh:
+    description: Run all the things to get local to a fresh state for this branch. (Checkout master branch first if starting a new feature.)
+    cmd:
+      - appserver: echo && echo "Running composer install..." && composer install
+      - node-cli: echo && echo "Building themes..." && /app/scripts/theme.sh -a
+      - appserver: echo && echo "Resetting drupal..." && drush updb -y && drush cim -y && drush cr
+  'fresh:db <db>':
+    description: Same as fresh but also takes path to db file to import first.
+    cmd:
+      - database: /helpers/sql-import.sh
+      - appserver: echo && echo "Running composer install..." && composer install && true
+      - node-cli: echo && echo "Building themes..." && /app/scripts/theme.sh -a && true
+      - appserver: echo && echo "Resetting drupal..." && drush updb -y && drush cim -y && drush cr && true
   node:
     service: node-cli
   npm:
