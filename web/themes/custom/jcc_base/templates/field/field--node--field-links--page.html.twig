@@ -41,47 +41,42 @@
     label_display == 'visually_hidden' ? 'visually-hidden',
   ]
 %}
-{#
-{% if label_hidden %}
-  {% if multiple %}
-    <div{{ attributes }}>
-      {% for item in items %}
-        <div{{ item.attributes }}>{{ item.content }}</div>
-      {% endfor %}
-    </div>
-  {% else %}
-    {% for item in items %}
-      <div{{ attributes }}>{{ item.content }}</div>
-    {% endfor %}
-  {% endif %}
-{% else %}
-  <div{{ attributes }}>
-    <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
-    {% if multiple %}
-      <div>
-    {% endif %}
-    {% for item in items %}
-      <div{{ item.attributes }}>{{ item.content }}</div>
-    {% endfor %}
-    {% if multiple %}
-      </div>
-    {% endif %}
-  </div>
+
+{{ attributes }}
+
+{% if not label_hidden %}
+  {% set list_title %}
+    {{ label }}
+  {% endset %}
 {% endif %}
-#}
 
-<ul{{ attributes }}>
-  {% for item in items %}
-    <li>{{ item.content }}</li>
-  {% endfor %}
-</ul>
-{{ kint() }}
+{% set links %}
+  <div class="jcc-link-list jcc-link-list--files">
+    <ul class="jcc-link-list__list">
+      {% for item in items %}
+        <li class="jcc-link-list__item">
+            {% if link_list.files_list %}
+            {% set icon = link_list.icon|default({
+              name: "file",
+              title: "File"|t,
+              decorative: false,
+            }) %}
+            <span class="jcc-link-list__icon">
+              {% include '@atoms/icons/icon.twig' with  { icon: icon } %}
+            </span>
+          {% endif %}
+            <a href="{{ item.content['#url'] }}">
+              {{ item.content['#title'] }}
+            </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endset %}
 
-{#
-{% include '@molecules/blocks/link-list/link-list.twig' with {
-  link_list: {
-    name: content.field_links[0].title,
-    url: content.field_links[0].uri,
+{% include '@molecules/blocks/card/card.twig' with {
+  card: {
+    title: list_title,
+    excerpt: links,
   }
 } only %}
-#}
