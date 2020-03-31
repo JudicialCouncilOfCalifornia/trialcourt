@@ -36,67 +36,42 @@
  * @see template_preprocess_field()
  */
 #}
-
-{# MW - Always hide field label, possibly not need the single item handling
 {%
   set title_classes = [
     label_display == 'visually_hidden' ? 'visually-hidden',
+    'text-bold',
+  ]
+%}
+
+{%
+  set margins = [
+    'margin-top-3',
   ]
 %}
 
 {% if label_hidden %}
   {% if multiple %}
-    <div{{ attributes }}>
+    <div{{ attributes.addClass(margins) }}>
       {% for item in items %}
         <div{{ item.attributes }}>{{ item.content }}</div>
       {% endfor %}
     </div>
   {% else %}
     {% for item in items %}
-      <div{{ attributes }}>{{ item.content }}</div>
+      <div{{ attributes.addClass(margins) }}>{{ item.content }}</div>
     {% endfor %}
   {% endif %}
 {% else %}
-  <div{{ attributes }}>
+  <div{{ attributes.addClass(margins) }}>
     <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
     {% if multiple %}
-    <div>
-      {% endif %}
-      {% for item in items %}
-        <div{{ item.attributes }}>{{ item.content }}</div>
-      {% endfor %}
-      {% if multiple %}
-    </div>
+      <div>
+    {% endif %}
+    {% for item in items %}
+      <div{{ item.attributes }}>{{ item.content }}</div>
+    {% endfor %}
+    {% if multiple %}
+      </div>
     {% endif %}
   </div>
 {% endif %}
-#}
-
-{# FIXME: Need simple list component #}
-{# FIXME: Need configurations/options for icon component size and color #}
-<style>
-  .jcc-link-list__icon .icon {
-    width: 1rem;
-    height: 1rem;
-    color: #005ea2;
-  }
-</style>
-<div class="jcc-link-list jcc-link-list--files">
-  <ul class="jcc-link-list__list">
-    {% for item in items %}
-      <li class="jcc-link-list__item">
-        {% set icon = link_list.icon|default({
-          name: "file",
-          title: "File"|t,
-          decorative: false,
-        }) %}
-        <span class="jcc-link-list__icon">
-          {% include '@atoms/icons/icon.twig' with  { icon: icon } %}
-        </span>
-        <a href="{{ item.content['#url'] }}">
-          {{ item.content['#title'] }}
-        </a>
-      </li>
-    {% endfor %}
-  </ul>
-</div>
