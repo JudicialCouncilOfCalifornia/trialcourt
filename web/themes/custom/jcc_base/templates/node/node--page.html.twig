@@ -104,25 +104,45 @@
           {{ metadata }}
         </div>
       {% endif %}
+
       <div class="body">
         {{ content.body }}
       </div>
-    {% endset %}
 
-    {% set related %}
       {% if content.field_attachments[0] %}
         <div class="attachments">
           {{ content.field_attachments }}
         </div>
       {% endif %}
+    {% endset %}
 
-      {% if content.field_links[0] %}
-        <div class="related_links">
-          {{ content.field_links }}
-        </div>
-      {% endif %}
+    {# FIXME: Need a single column component option/variant #}
+    {# FIXME: Title is suppressed by CSS #}
+    {% include '@organisms/sections/text-section/text-section.twig' with {
+      text_section: {
+        headergroup: {
+          tag: 'h1',
+          title: title,
+        },
+        column_content_left: body,
+        column_content_right: related,
+      }
+    } %}
 
-      <div>
+    {% if content.field_links[0] %}
+      {% set related_links %}
+        {% include '@molecules/blocks/card/card.twig' with {
+          card: {
+            title: node.field_links.fieldDefinition.label,
+            excerpt: content.field_links,
+          }
+        } only %}
+      {% endset %}
+    {% endif %}
+
+
+    {% set aside %}
+      {% set meta %}
         {% if content.field_division[0] %}
           <div class="division">
             {{ content.field_division }}
@@ -140,18 +160,35 @@
             {{ content.field_tags }}
           </div>
         {% endif %}
-      </div>
+      {% endset %}
+
+      {% if meta %}
+        {% include '@molecules/blocks/card/card.twig' with {
+          card: {
+            title: 'Relevance',
+            excerpt: meta,
+          }
+        } only %}
+      {% endif %}
     {% endset %}
 
-    {% include '@organisms/sections/text-section/text-section.twig' with {
-      text_section: {
-        headergroup: {
-          tag: 'h1',
-          title: title,
-        },
-        column_content_left: body,
-        column_content_right: related,
-      }
-    } only %}
+    {# FIXME: Need an aside variant where aside header applies to both columns #}
+    {% if related_links or aside %}
+      {% if related_links %}
+        {% include '@organisms/sections/text-section-aside/text-section-aside.twig' with {
+          text_section_aside: {
+            content: related_links,
+            aside: aside,
+          }
+        } only %}
+      {% else %}
+        {% include '@organisms/sections/text-section-aside/text-section-aside.twig' with {
+          text_section_aside: {
+            content: aside,
+          }
+        } only %}
+      {% endif %}
+    {% endif %}
+
   {% endblock %}
 </article>
