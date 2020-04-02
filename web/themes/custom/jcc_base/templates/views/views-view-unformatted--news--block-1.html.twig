@@ -17,20 +17,55 @@
  * @ingroup themeable
  */
 #}
-{% if title %}
-  <h3>{{ title }}</h3>
+{% if view.title %}
+  {% set header_title = view.title|t %}
+{% else %}
+  {% set header_title = 'News, Updates & Notices Default' %}
 {% endif %}
 
-{%
-  set row_classes = [
-  default_row_class ? 'views-row',
-]
-%}
-
+{% set cards = [] %}
 {% for row in rows %}
-<div class="news-column-{{ loop.index }}">
-  <div{{ row.attributes.addClass(row_classes) }}>
-    {{- row.content -}}
-  </div>
-</div>
+  {%
+    set row_classes = [
+    default_row_class ? 'views-row',
+  ]
+  %}
+
+  {% set brow = row.content['#row']._entity.created.value|date("M j, Y") %}
+  {% set title = row.content['#row']._entity.title.value %}
+  {% set excerpt = row.content['#row']._entity.body.value|striptags %}
+  {% set url_node = row.content['#row']._entity.nid[0].value %}
+  {% set url = path('entity.node.canonical', {'node': url_node }) %}
+  {% set read_more_text= row.content['#view'].field.view_node.last_render_text %}
+
+  {% set recent_news_card = {
+    "brow": brow,
+    "title": title,
+    "excerpt": excerpt,
+    "url": url,
+    "read_more": {
+      "label": read_more_text,
+      "url": url
+    }
+  } %}
+
+  {% set cards = cards|merge([recent_news_card]) %}
 {% endfor %}
+
+{% set button_text = "More News" %}
+{% set button_url = "/news" %}
+
+{% include '@organisms/sections/cards-with-list/cards-with-list.twig' with {
+  cards_with_list: {
+    headergroup: {
+      brow: 'hidden',
+      title: header_title,
+    },
+    cards: cards,
+    button: {
+      text: button_text,
+      url: button_url,
+      style: 'primary',
+    },
+  }
+} %}
