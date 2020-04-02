@@ -116,25 +116,37 @@
       {% endif %}
     {% endset %}
 
-    {# FIXME: Need a single column component option/variant #}
-    {# FIXME: Title is suppressed by CSS #}
     {% include '@organisms/sections/text-section/text-section.twig' with {
       text_section: {
+        column_variant: 'jcc-text-section--has-one-column',
         headergroup: {
           tag: 'h1',
           title: title,
         },
         column_content_left: body,
-        column_content_right: related,
       }
     } %}
 
     {% if content.field_links[0] %}
+      {% set link_list %}
+        {% set links = [] %}
+        {% for link in node.field_links %}
+          {% set links = links|merge([{ 'title' : link.title, 'url' : link.url }]) %}
+        {% endfor %}
+
+        {#TODO: Replace with pattern library component variant later#}
+        {% include '@jcc_base/_patterns/02-molecules/blocks/list-links-simple/list-links-simple.twig' with {
+          list_group: {
+            items: links,
+          }
+        } %}
+      {% endset %}
+
       {% set related_links %}
         {% include '@molecules/blocks/card/card.twig' with {
           card: {
             title: node.field_links.fieldDefinition.label,
-            excerpt: content.field_links,
+            excerpt: link_list,
           }
         } only %}
       {% endset %}
@@ -172,17 +184,17 @@
       {% endif %}
     {% endset %}
 
-    {# FIXME: Need an aside variant where aside header applies to both columns #}
+    {# TODO: Replace with pattern library component variant later #}
     {% if related_links or aside %}
       {% if related_links %}
-        {% include '@organisms/sections/text-section-aside/text-section-aside.twig' with {
+        {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside/text-section-aside.twig' with {
           text_section_aside: {
             content: related_links,
             aside: aside,
           }
         } only %}
       {% else %}
-        {% include '@organisms/sections/text-section-aside/text-section-aside.twig' with {
+        {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside/text-section-aside.twig' with {
           text_section_aside: {
             content: aside,
           }
