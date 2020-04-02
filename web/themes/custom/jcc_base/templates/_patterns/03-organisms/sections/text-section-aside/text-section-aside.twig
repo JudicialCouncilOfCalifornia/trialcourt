@@ -1,0 +1,20 @@
+{% set classes = [
+    'jcc-text-section-aside',
+]|merge(text_section_aside.classes|default([''])) %}
+
+<div class="jcc-text-section-aside__container">
+    <div class="{{ classes|join(' ')|trim }}"{% if text_section_aside.id %} id="{{ text_section_aside.id }}"{% endif %}>
+
+        {% if text_section_aside.content %}
+        <div class="jcc-text-section-aside__aside jcc-text-section-aside__aside-main">
+            {{ text_section_aside.content }}
+        </div>
+        {% endif %}
+
+        {% if text_section_aside.aside %}
+        <div class="jcc-text-section-aside__aside">
+            {{ text_section_aside.aside }}
+        </div>
+        {% endif %}
+    </div>
+</div>
