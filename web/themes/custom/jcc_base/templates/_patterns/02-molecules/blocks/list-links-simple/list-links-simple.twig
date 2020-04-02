@@ -1,0 +1,19 @@
+<div class="jcc-link-list-simple jcc-link-list--files">
+  <ul class="jcc-link-list__list"{% if list_group.id %} id="{{ list_group.id }}"{% endif %}>
+    {% for item in list_group.items %}
+      {% if item.url and item.title %}
+        <li class="jcc-link-list__item">
+          {% set icon = link_list.icon|default({
+            name: "file",
+            title: "File"|t,
+            decorative: false,
+          }) %}
+          <span class="jcc-link-list__icon">
+            {% include '@atoms/icons/icon.twig' with  { icon: icon } %}
+          </span>
+          <a href="{{ item.url }}">{{ item.title }}</a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
