@@ -12,21 +12,22 @@ function jcc_base_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\For
     '#collapsed'  => TRUE
   ];
   $form['social']['facebook'] = [
-    '#type' => 'textfield',
+    '#type' => 'url',
     '#title' => t('Facebook'),
     '#default_value' => theme_get_setting('facebook'),
     '#placeholder' => 'https://www.facebook.com/[name]/'
   ];
   $form['social']['twitter'] = [
-    '#type' => 'textfield',
+    '#type' => 'url',
     '#title' => t('Twitter'),
     '#default_value' => theme_get_setting('twitter'),
     '#placeholder' => 'https://twitter.com/[name]'
   ];
   $form['social']['youtube'] = [
-    '#type' => 'textfield',
+    '#type' => 'url',
     '#title' => t('YouTube'),
     '#default_value' => theme_get_setting('youtube'),
     '#placeholder' => 'https://www.youtube.com/user/[name]'
   ];
+
 }
