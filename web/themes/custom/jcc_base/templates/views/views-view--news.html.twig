@@ -32,6 +32,12 @@
  * @ingroup themeable
  */
 #}
+
+{#
+  Original template for reference.
+  ------------------------------------
+#}
+
 {#{%#}
 {#  set classes = [#}
 {#    dom_id ? 'js-view-dom-id-' ~ dom_id,#}
@@ -71,14 +77,14 @@
 {#</div>#}
 
 {#
+------------------------------------
 /**
-Ask questions first.
+
 About this view:
-- block displays don't render titles. Use view.storage.label
 
 Changed view by
-- showing all
-- getting the rendered node
+- showing all results
+- Rendering nodes instead of fields.
 - removing the attachment
 
 Tips:
@@ -88,9 +94,15 @@ Tips:
 {{ drupal_breakpoint() }}
 #}
 
-{# Create headergroup. #}
+{#
+  Create headergroup.
+     `title: title` isn't working.
+     I think because block displays don't render titles.
+     `title: view.storage.label` will work.
+#}
+
 {% set headergroup = {
-  title: "tbd",
+  title: title,
 } %}
 
 {# Create cards array. #}
