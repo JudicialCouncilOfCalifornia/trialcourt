@@ -32,40 +32,66 @@
  * @ingroup themeable
  */
 #}
-{%
-  set classes = [
-    dom_id ? 'js-view-dom-id-' ~ dom_id,
-  ]
-%}
-<div{{ attributes.addClass(classes) }}>
-  {{ title_prefix }}
-  {{ title }}
-  {{ title_suffix }}
+{#{%#}
+{#  set classes = [#}
+{#    dom_id ? 'js-view-dom-id-' ~ dom_id,#}
+{#  ]#}
+{#%}#}
+{#<div{{ attributes.addClass(classes) }}>#}
+{#  {{ title_prefix }}#}
+{#  {{ title }}#}
+{#  {{ title_suffix }}#}
 
-  {% if header %}
-    <header>
-      {{ header }}
-    </header>
-  {% endif %}
+{#  {% if header %}#}
+{#    <header>#}
+{#      {{ header }}#}
+{#    </header>#}
+{#  {% endif %}#}
 
-  {{ exposed }}
-  {{ attachment_before }}
+{#  {{ exposed }}#}
+{#  {{ attachment_before }}#}
 
-  {% if rows -%}
-    {{ rows }}
-  {% elseif empty -%}
-    {{ empty }}
-  {% endif %}
-  {{ pager }}
+{#  {% if rows -%}#}
+{#    {{ rows }}#}
+{#  {% elseif empty -%}#}
+{#    {{ empty }}#}
+{#  {% endif %}#}
+{#  {{ pager }}#}
 
-  {{ attachment_after }}
-  {{ more }}
+{#  {{ attachment_after }}#}
+{#  {{ more }}#}
 
-  {% if footer %}
-    <footer>
-      {{ footer }}
-    </footer>
-  {% endif %}
+{#  {% if footer %}#}
+{#    <footer>#}
+{#      {{ footer }}#}
+{#    </footer>#}
+{#  {% endif %}#}
 
-  {{ feed_icons }}
-</div>
+{#  {{ feed_icons }}#}
+{#</div>#}
+
+
+{{ drupal_breakpoint() }}
+
+{# Create headergroup. #}
+{% set headergroup = {
+  title: "tbd",
+} %}
+
+{# Create cards array. #}
+{% set cards = [] %}
+{% set news_rows = rows.0['#rows'] %}
+{% for key, item in news_rows %}
+  {%  set cards = cards|merge([{
+    title: item['#node'].label,
+    brow: item['#node'].fields.created.0.value|date("F j, Y")
+  }]) %}
+{% endfor %}
+
+{# Render Pattern Lab Template. #}
+{% include '@organisms/sections/cards-with-list/cards-with-list.twig' with {
+  cards_with_list: {
+    headergroup: headergroup,
+    cards: cards
+  }
+} %}
