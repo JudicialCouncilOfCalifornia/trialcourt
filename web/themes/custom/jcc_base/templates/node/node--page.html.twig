@@ -135,7 +135,7 @@
         {% endfor %}
 
         {#TODO: Replace with pattern library component variant later#}
-        {% include '@jcc_base/_patterns/02-molecules/blocks/list-links-simple/list-links-simple.twig' with {
+        {% include '@jcc_base/_patterns/02-molecules/blocks/link-list-simple/link-list-simple.twig' with {
           list_group: {
             items: links,
           }
@@ -188,14 +188,14 @@
     {# TODO: Replace with pattern library component variant later #}
     {% if related_links or aside %}
       {% if related_links %}
-        {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside/text-section-aside.twig' with {
+        {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside-footer/text-section-aside-footer.twig' with {
           text_section_aside: {
             content: related_links,
             aside: aside,
           }
         } only %}
       {% else %}
-        {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside/text-section-aside.twig' with {
+        {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside-footer/text-section-aside-footer.twig' with {
           text_section_aside: {
             content: aside,
           }
