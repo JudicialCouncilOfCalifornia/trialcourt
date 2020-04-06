@@ -5,7 +5,7 @@ dependencies:
   config:
     - views.view.news
   module:
-    - system
+    - ctools
     - views
   theme:
     - jcc_base
@@ -23,8 +23,11 @@ settings:
   views_label: ''
   items_per_page: none
 visibility:
-  request_path:
-    id: request_path
-    pages: '<front>'
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      book: book
+      page: page
     negate: false
-    context_mapping: {  }
+    context_mapping:
+      node: '@node.node_route_context:node'
