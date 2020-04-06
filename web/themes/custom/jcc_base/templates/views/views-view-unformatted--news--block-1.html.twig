@@ -17,6 +17,7 @@
  * @ingroup themeable
  */
 #}
+
 {% if view.title %}
   {% set header_title = view.title|t %}
 {% endif %}
@@ -49,8 +50,18 @@
   {% set cards = cards|merge([recent_news_card]) %}
 {% endfor %}
 
-{% set button_text = 'More News' %}
-{% set button_url = '/news' %}
+{% if view.pager.displayHandler.display.display_options.use_more == true %}
+  {% set button_text = view.pager.displayHandler.display.display_options.use_more_text %}
+  {% set button_url = '/news' %}
+
+  {% set button = {
+    "text": button_text,
+    "url": button_url,
+    "style": 'primary'
+  } %}
+{% else %}
+  {% set button = {} %}
+{% endif %}
 
 {% include '@organisms/sections/cards-with-list/cards-with-list.twig' with {
   cards_with_list: {
@@ -59,10 +70,6 @@
       title: header_title,
     },
     cards: cards,
-    button: {
-      text: button_text,
-      url: button_url,
-      style: 'primary',
-    },
+    button: button,
   }
 } %}
