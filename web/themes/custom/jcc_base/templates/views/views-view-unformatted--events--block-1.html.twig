@@ -34,7 +34,7 @@
   {% set recent_event_card = {
     card: {
       title: title,
-      excerpt: excerpt,
+      excerpt: excerpt|length > 600 ? excerpt|slice(0, 600) ~ '…' : excerpt,
       url: url
     },
     date: start_date,
