@@ -47,13 +47,15 @@
 ]|merge(classes|default([])) %}
 
 <div{{ attributes.addClass(classes) }}>
-  {% if page.header|render or page.logo|render %}
-    <header class="page__header jcc-header">
-      <div class="jcc-header__container">
-        {{ page.logo }}
-        {{ page.header }}
-      </div>
-    </header>
+  {% if not node.field_hide_header.value %}
+    {% if page.header|render or page.logo|render %}
+      <header class="page__header jcc-header">
+        <div class="jcc-header__container">
+          {{ page.logo }}
+          {{ page.header }}
+        </div>
+      </header>
+    {% endif %}
   {% endif %}
 
   {%  if page.messaging|render %}
@@ -108,15 +110,17 @@
     {% endif %}
   </main>
 
-  {% if page.secondary_footer %}
-    <footer class="page__secondary_footer bg-primary-lighter" role="contentinfo">
-      {{ page.secondary_footer }}
-    </footer>
-  {% endif %}
+  {% if not node.field_hide_footer.value %}
+    {% if page.secondary_footer %}
+      <footer class="page__secondary_footer bg-primary-lighter" role="contentinfo">
+        {{ page.secondary_footer }}
+      </footer>
+    {% endif %}
 
-  {% if page.footer %}
-    <footer class="page__footer bg-primary-darker" role="contentinfo">
-      {{ page.footer }}
-    </footer>
+    {% if page.footer %}
+      <footer class="page__footer bg-primary-darker" role="contentinfo">
+        {{ page.footer }}
+      </footer>
+    {% endif %}
   {% endif %}
 </div>
