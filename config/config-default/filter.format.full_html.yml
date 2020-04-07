@@ -2,6 +2,8 @@ uuid: 389a21e7-5e20-4e23-864f-b07552f45297
 langcode: en
 status: true
 dependencies:
+  config:
+    - core.entity_view_mode.media.media_library
   module:
     - editor
     - media
@@ -9,7 +11,7 @@ _core:
   default_config_hash: hewPmBgni9jlDK_IjLxUx1HsTbinK-hdl0lOwjbteIY
 name: 'Full HTML'
 format: full_html
-weight: 1
+weight: -10
 filters:
   filter_align:
     id: filter_align
@@ -47,9 +49,11 @@ filters:
   media_embed:
     id: media_embed
     provider: media
-    status: false
+    status: true
     weight: 100
     settings:
       default_view_mode: default
-      allowed_media_types: {  }
-      allowed_view_modes: {  }
+      allowed_media_types:
+        image: image
+      allowed_view_modes:
+        media_library: media_library
