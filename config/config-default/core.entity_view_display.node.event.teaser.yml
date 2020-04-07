@@ -15,6 +15,8 @@ dependencies:
     - field.field.node.event.field_tags
     - node.type.event
   module:
+    - address
+    - datetime_range
     - text
     - user
 id: node.event.teaser
@@ -25,7 +27,7 @@ content:
   body:
     label: hidden
     type: text_summary_or_trimmed
-    weight: 2
+    weight: 4
     settings:
       trim_length: 600
     third_party_settings: {  }
@@ -35,18 +37,40 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  links:
+  field_date_range:
+    type: daterange_default
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      separator: '-'
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+  field_event_type:
+    type: entity_reference_label
     weight: 1
+    region: content
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+  field_location:
+    type: address_default
+    weight: 3
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  links:
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
-  field_date_range: true
   field_division: true
-  field_event_type: true
   field_geolocation: true
   field_images: true
-  field_location: true
   field_subject_matter: true
   field_tags: true
   langcode: true
