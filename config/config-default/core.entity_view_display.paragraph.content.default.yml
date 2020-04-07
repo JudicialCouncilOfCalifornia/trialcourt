@@ -8,7 +8,7 @@ dependencies:
     - field.field.paragraph.content.field_paragraph_container
     - field.field.paragraph.content.field_paragraph_content
     - field.field.paragraph.content.field_paragraph_id
-    - field.field.paragraph.content.field_paragraph_overlay
+    - field.field.paragraph.content.field_paragraph_inner_classes
     - paragraphs.paragraphs_type.content
   module:
     - text
@@ -46,7 +46,7 @@ content:
     region: content
   field_paragraph_content:
     weight: 0
-    label: above
+    label: hidden
     settings: {  }
     third_party_settings: {  }
     type: text_default
@@ -59,14 +59,13 @@ content:
     third_party_settings: {  }
     type: string
     region: content
-  field_paragraph_overlay:
-    weight: 5
+  field_paragraph_inner_classes:
+    weight: 6
     label: above
     settings:
-      thousand_separator: ''
-      prefix_suffix: true
+      link_to_entity: false
     third_party_settings: {  }
-    type: number_integer
+    type: string
     region: content
 hidden:
   search_api_excerpt: true

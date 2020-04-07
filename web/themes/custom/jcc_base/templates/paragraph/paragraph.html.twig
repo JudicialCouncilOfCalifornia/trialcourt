@@ -44,21 +44,37 @@
     not paragraph.isPublished() ? 'paragraph--unpublished',
     paragraph.bundle|clean_class,
     paragraph.bundle|clean_class ~ '--' ~ view_mode|clean_class,
+    paragraph.field_paragraph_classes.value|render|clean_class,
+    background_image_url ? 'imagebg',
   ]|merge(classes|default([]))
 %}
 
-{# Please DO NOT remove the id attribute. #}
-{% set paragraph_id = 'p' ~ paragraph.id() %}
-{% if paragraph.field_create_anchor.value == 1 %}
-  {% set paragraph_id = 'jump-' ~ paragraph.id() %}
-  {{ attach_library('atrium/jump-nav') }}
-{% endif %}
+{%
+  set inner_classes = [
+  paragraph.field_paragraph_container.value|render|trim ? 'grid-container',
+  paragraph.field_paragraph_inner_classes.value|render|clean_class,
+]
+%}
+
+{% set overlay = paragraph.field_paragraph_overlay.value|render|trim %}
 
 {% block paragraph %}
-  <div{{attributes.addClass(classes).setAttribute('id', paragraph_id) }}>
+  <div{{attributes.addClass(classes).setAttribute('id', paragraph.field_paragraph_id.value|render|clean_id) }}>
+    {% if background_image_url %}
+      <img src="{{ background_image_url }}" />
+    {% endif %}
+
+    <div{{ create_attribute().addClass(inner_classes) }}>
     {% block content %}
-      {{ content }}
+      {{ content|without(
+        'field_paragraph_id',
+        'field_paragraph_classes',
+        'field_paragraph_inner_classes',
+        'field_paragraph_container',
+        'field_paragraph_background_image'
+      ) }}
     {% endblock %}
+    </div>
   </div>
 {% endblock paragraph %}
 

@@ -8,7 +8,7 @@ dependencies:
     - field.field.paragraph.content.field_paragraph_container
     - field.field.paragraph.content.field_paragraph_content
     - field.field.paragraph.content.field_paragraph_id
-    - field.field.paragraph.content.field_paragraph_overlay
+    - field.field.paragraph.content.field_paragraph_inner_classes
     - paragraphs.paragraphs_type.content
   module:
     - field_group
@@ -21,8 +21,10 @@ third_party_settings:
         - field_paragraph_container
         - field_paragraph_id
         - field_paragraph_classes
+        - field_paragraph_inner_classes
         - field_paragraph_background_image
         - field_paragraph_overlay
+        - status
       parent_name: ''
       weight: 1
       format_type: details
@@ -41,7 +43,7 @@ mode: default
 content:
   field_paragraph_background_image:
     type: media_library_widget
-    weight: 5
+    weight: 6
     settings:
       media_types: {  }
     third_party_settings: {  }
@@ -77,13 +79,25 @@ content:
     third_party_settings: {  }
     type: string_textfield
     region: content
-  field_paragraph_overlay:
-    weight: 6
+  field_paragraph_inner_classes:
+    weight: 5
     settings:
+      size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: number
+    type: string_textfield
     region: content
+  status:
+    type: boolean_checkbox
+    weight: 8
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  translation:
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   created: true
-  status: true

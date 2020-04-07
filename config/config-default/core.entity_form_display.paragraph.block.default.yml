@@ -8,7 +8,7 @@ dependencies:
     - field.field.paragraph.block.field_paragraph_classes
     - field.field.paragraph.block.field_paragraph_container
     - field.field.paragraph.block.field_paragraph_id
-    - field.field.paragraph.block.field_paragraph_overlay
+    - field.field.paragraph.block.field_paragraph_inner_classes
     - paragraphs.paragraphs_type.block
   module:
     - block_field
@@ -21,8 +21,10 @@ third_party_settings:
         - field_paragraph_container
         - field_paragraph_id
         - field_paragraph_classes
+        - field_paragraph_inner_classes
         - field_paragraph_background_image
         - field_paragraph_overlay
+        - status
       parent_name: ''
       weight: 1
       format_type: details
@@ -40,7 +42,7 @@ bundle: block
 mode: default
 content:
   field_paragraph_background_image:
-    weight: 4
+    weight: 5
     settings:
       media_types: {  }
     third_party_settings: {  }
@@ -78,13 +80,25 @@ content:
     third_party_settings: {  }
     type: string_textfield
     region: content
-  field_paragraph_overlay:
-    weight: 5
+  field_paragraph_inner_classes:
+    weight: 4
     settings:
+      size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: number
+    type: string_textfield
     region: content
+  status:
+    type: boolean_checkbox
+    weight: 7
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  translation:
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   created: true
-  status: true
