@@ -1,0 +1,22 @@
+{% set tag = card.tag|default('h3') %}
+
+<div class="jcc-card">
+  {% if card.img %}
+    <div class="jcc-card__person">
+      {% include '@atoms/image/image.twig' with { image: card.img } %}
+    </div>
+  {% endif %}
+
+  <div class="jcc-card__body">
+    <{{ tag }} class="jcc-card__title">
+    {%  if card.url %}
+      <a class="usa-link" href="{{ card.url }}">{{ card.title }}</a>
+    {% else %}
+      {{ card.title }}
+    {% endif %}
+  </{{ tag }}>
+  {% if card.excerpt %}
+    <div class="jcc-card__excerpt">{{ card.excerpt }}</div>
+  {% endif %}
+  </div>
+</div>
