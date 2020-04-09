@@ -184,12 +184,21 @@
     {% endif %}
 
     {# TODO: Replace with pattern library component variant later #}
-    {% if aside %}
-      {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside-footer/text-section-aside-footer.twig' with {
-        text_section_aside: {
-          content: aside
-        }
-      } only %}
+    {% if related_links or aside %}
+      {% if related_links %}
+        {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside-footer/text-section-aside-footer.twig' with {
+          text_section_aside: {
+            content: related_links,
+            aside: aside,
+          }
+        } only %}
+      {% else %}
+        {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside-footer/text-section-aside-footer.twig' with {
+          text_section_aside: {
+            content: aside,
+          }
+        } only %}
+      {% endif %}
     {% endif %}
   {% endblock %}
 </article>
