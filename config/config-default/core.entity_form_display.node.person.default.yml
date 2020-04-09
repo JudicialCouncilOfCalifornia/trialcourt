@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.person.field_first_name
     - field.field.node.person.field_images
     - field.field.node.person.field_last_name
+    - field.field.node.person.field_links
     - field.field.node.person.field_metatag
     - field.field.node.person.field_person_type
     - field.field.node.person.field_subject_matter
@@ -17,6 +18,7 @@ dependencies:
     - autocomplete_deluxe
     - content_moderation
     - field_group
+    - link
     - media_library
     - metatag
     - path
@@ -29,6 +31,7 @@ third_party_settings:
       children:
         - group_main_content
         - group_media
+        - group_secondary_content
         - group_metadata
       parent_name: ''
       weight: 1
@@ -62,7 +65,7 @@ third_party_settings:
         - field_tags
         - field_subject_matter
       parent_name: group_person_content
-      weight: 2
+      weight: 3
       format_type: tab
       region: content
       format_settings:
@@ -99,6 +102,20 @@ third_party_settings:
         formatter: closed
         required_fields: true
       label: Media
+    group_secondary_content:
+      children:
+        - field_links
+      parent_name: group_person_content
+      weight: 2
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: 'Secondary Content'
 id: node.person.default
 targetEntityType: node
 bundle: person
@@ -159,6 +176,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
+  field_links:
+    weight: 26
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
     region: content
   field_metatag:
     weight: 14
@@ -276,6 +301,11 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  translation:
+    weight: 10
+    region: content
+    settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
