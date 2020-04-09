@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.job.field_department
     - field.field.node.job.field_division
     - field.field.node.job.field_end_date
+    - field.field.node.job.field_links
     - field.field.node.job.field_metatag
     - field.field.node.job.field_subject_matter
     - field.field.node.job.field_tags
@@ -17,6 +18,7 @@ dependencies:
     - content_moderation
     - datetime
     - field_group
+    - link
     - media_library
     - metatag
     - path
@@ -166,6 +168,14 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_links:
+    weight: 26
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+    region: content
   field_metatag:
     weight: 14
     settings: {  }
@@ -266,6 +276,11 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  translation:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 2
