@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.person.field_first_name
     - field.field.node.person.field_images
     - field.field.node.person.field_last_name
+    - field.field.node.person.field_links
     - field.field.node.person.field_metatag
     - field.field.node.person.field_person_type
     - field.field.node.person.field_subject_matter
@@ -15,6 +16,7 @@ dependencies:
     - image.style.thumbnail
     - node.type.person
   module:
+    - link
     - media
     - text
     - user
@@ -62,6 +64,18 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
+  field_links:
+    weight: 8
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
     region: content
   field_person_type:
     weight: 3

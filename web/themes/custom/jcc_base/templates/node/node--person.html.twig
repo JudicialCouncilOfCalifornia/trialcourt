@@ -124,6 +124,31 @@
     } %}
   {% endblock %}
 
+  {% if content.field_links[0] %}
+    {% set link_list %}
+      {% set links = [] %}
+      {% for link in node.field_links %}
+        {% set links = links|merge([{ 'title' : link.title, 'url' : link.url }]) %}
+      {% endfor %}
+
+      {#TODO: Replace with pattern library component variant later#}
+      {% include '@jcc_base/_patterns/02-molecules/blocks/link-list-simple/link-list-simple.twig' with {
+        list_group: {
+          items: links,
+        }
+      } %}
+    {% endset %}
+
+    {% set related_links %}
+      {% include '@molecules/blocks/card/card.twig' with {
+        card: {
+          title: node.field_links.fieldDefinition.label,
+          excerpt: link_list,
+        }
+      } only %}
+    {% endset %}
+  {% endif %}
+
   {% if content.field_division[0] or content.field_subject_matter[0] or content.field_tags[0] %}
     {% set aside %}
       {% set meta %}
