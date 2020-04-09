@@ -97,57 +97,115 @@
     {% endif %}
 
     {% set body %}
+      {% if display_submitted %}
+        <div{{ author_attributes.addClass('node__submitted') }}>
+          <div class="author">By {{ author_name }}</div>
+          <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
+          {{ metadata }}
+        </div>
+      {% endif %}
+
       <div class="body">
         {{ content.body }}
       </div>
+
       <div class="book_navigation">
         {{ content.book_navigation }}
       </div>
-    {% endset %}
 
-    {% set related %}
       {% if content.field_attachments[0] %}
         <div class="attachments">
           {{ content.field_attachments }}
         </div>
       {% endif %}
-
-      {% if content.field_links[0] %}
-        <div class="related_links">
-          {{ content.field_links }}
-        </div>
-      {% endif %}
-
-      <div>
-        {% if content.field_division[0] %}
-          <div class="division">
-            {{ content.field_division }}
-          </div>
-        {% endif %}
-
-        {% if content.field_subject_matter[0] %}
-          <div class="subject_matter">
-            {{ content.field_subject_matter }}
-          </div>
-        {% endif %}
-
-        {% if content.field_tags[0] %}
-          <div class="tags">
-            {{ content.field_tags }}
-          </div>
-        {% endif %}
-      </div>
     {% endset %}
 
     {% include '@organisms/sections/text-section/text-section.twig' with {
       text_section: {
+        column_variant: 'jcc-text-section--has-one-column',
         headergroup: {
           tag: 'h1',
           title: title,
         },
         column_content_left: body,
-        column_content_right: related,
       }
     } %}
+
+    {% if content.field_links[0] %}
+      {% set link_list %}
+        {% set links = [] %}
+        {% for link in node.field_links %}
+          {% set links = links|merge([{ 'title' : link.title, 'url' : link.url }]) %}
+        {% endfor %}
+
+        {#TODO: Replace with pattern library component variant later#}
+        {% include '@jcc_base/_patterns/02-molecules/blocks/link-list-simple/link-list-simple.twig' with {
+          list_group: {
+            items: links,
+          }
+        } %}
+      {% endset %}
+
+      {% set related_links %}
+        {% include '@molecules/blocks/card/card.twig' with {
+          card: {
+            title: node.field_links.fieldDefinition.label,
+            excerpt: link_list,
+          }
+        } only %}
+      {% endset %}
+    {% endif %}
+
+    {% if content.field_division[0] or content.field_subject_matter[0] or content.field_tags[0] %}
+      {% set aside %}
+        {% set meta %}
+          {% if content.field_division[0] %}
+            <div class="division relevance">
+              {{ content.field_division }}
+            </div>
+          {% endif %}
+
+          {% if content.field_subject_matter[0] %}
+            <div class="subject_matter relevance">
+              {{ content.field_subject_matter }}
+            </div>
+          {% endif %}
+
+          {% if content.field_tags[0] %}
+            <div class="tags relevance">
+              {{ content.field_tags }}
+            </div>
+          {% endif %}
+        {% endset %}
+
+        {% if meta %}
+          {% include '@molecules/blocks/card/card.twig' with {
+            card: {
+              title: 'Relevance',
+              excerpt: meta,
+            }
+          } only %}
+        {% endif %}
+      {% endset %}
+    {% endif %}
+
+    {# TODO: Replace with pattern library component variant later #}
+    {% if related_links or aside %}
+      {% if related_links %}
+        {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside-footer/text-section-aside-footer.twig' with {
+          text_section_aside: {
+            content: related_links,
+            aside: aside,
+          }
+        } only %}
+      {% else %}
+        {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside-footer/text-section-aside-footer.twig' with {
+          text_section_aside: {
+            content: aside,
+          }
+        } only %}
+      {% endif %}
+    {% endif %}
+
   {% endblock %}
 </article>
