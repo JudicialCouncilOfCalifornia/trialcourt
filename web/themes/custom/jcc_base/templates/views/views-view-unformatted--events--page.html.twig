@@ -78,7 +78,7 @@
       {% if rows %}
         <div class="view__content">
           {% set tiles = [] %}
-          {% for row in rows %}s
+          {% for row in rows %}
             {% set title = row.content['#node'].title.value %}
             {% set excerpt = row.content['#node'].body.value|striptags %}
             {% set url = path('entity.node.canonical', {'node': row.content['#node'].nid[0].value}) %}
