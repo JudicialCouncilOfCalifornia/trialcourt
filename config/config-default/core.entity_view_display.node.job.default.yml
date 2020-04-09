@@ -8,12 +8,14 @@ dependencies:
     - field.field.node.job.field_department
     - field.field.node.job.field_division
     - field.field.node.job.field_end_date
+    - field.field.node.job.field_links
     - field.field.node.job.field_metatag
     - field.field.node.job.field_subject_matter
     - field.field.node.job.field_tags
     - node.type.job
   module:
     - datetime
+    - link
     - metatag
     - text
     - user
@@ -25,12 +27,12 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 101
+    weight: 0
     settings: {  }
     third_party_settings: {  }
     region: content
   field_attachments:
-    weight: 102
+    weight: 1
     label: above
     settings:
       link: true
@@ -38,15 +40,15 @@ content:
     type: entity_reference_label
     region: content
   field_department:
-    weight: 104
-    label: above
+    weight: 3
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
     region: content
   field_division:
-    weight: 105
+    weight: 4
     label: above
     settings:
       link: true
@@ -54,23 +56,35 @@ content:
     type: entity_reference_label
     region: content
   field_end_date:
-    weight: 103
-    label: above
+    weight: 2
+    label: hidden
     settings:
       timezone_override: ''
       date_format: 'D, m/d/Y @ g:i a'
     third_party_settings: {  }
     type: datetime_custom
     region: content
+  field_links:
+    weight: 8
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
   field_metatag:
-    weight: 106
+    weight: 5
     label: above
     settings: {  }
     third_party_settings: {  }
     type: metatag_empty_formatter
     region: content
   field_subject_matter:
-    weight: 107
+    weight: 6
     label: above
     settings:
       link: true
@@ -78,18 +92,14 @@ content:
     type: entity_reference_label
     region: content
   field_tags:
-    weight: 108
+    weight: 7
     label: above
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
     region: content
-  links:
-    weight: 100
-    region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
   langcode: true
+  links: true
   search_api_excerpt: true
