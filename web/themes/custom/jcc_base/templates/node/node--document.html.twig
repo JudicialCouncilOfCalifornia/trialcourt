@@ -101,7 +101,7 @@
     {% endset %}
 
     {% set body %}
-      {#
+      {# Default author history if needed later ... needs to be enabled for node in Drupal
       {% if display_submitted %}
         <div{{ author_attributes.addClass('node__submitted') }}>
           <div class="author">By {{ author_name }}</div>
@@ -111,12 +111,16 @@
       {% endif %}
       #}
       <div class="publish_date">
+        {#
+          Displays first uploaded date (new node creation) or updated date automatically unless author specifies publish date manually.
+          Because a change date occurs during node creation, any edits on creation day will not denote an update for now.
+        #}
         {% if content.field_upload_date[0] %}
           {{ content.field_upload_date_label.0 }}:
           {{ content.field_upload_date }}
         {% else %}
           {% set createDate = node.createdtime|date("Y-m-d") %}
-          {% set lastPubDate = node.changedtime|date("Y-m-d")  %}
+          {% set lastPubDate = node.changedtime|date("Y-m-d") %}
           {% if lastPubDate > createDate %}
             Updated: {{ lastPubDate|date(format="D, m/d/Y")|raw }}
           {% else %}
