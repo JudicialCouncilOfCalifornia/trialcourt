@@ -79,102 +79,87 @@
   node.bundle|clean_class ~ '--' ~ view_mode|clean_class,
 ]|merge(classes|default([])) %}
 
-{#
-{{ attach_library('classy/node') }}
-#}
-
 <article{{ attributes.addClass(classes)|without('role') }}>
-  {{ title_prefix }}
-  {{ title_suffix }}
 
   {% block content %}
-    {% if label and not page %}
-      {% set title %}
-        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-      {% endset %}
-    {% elseif label and page %}
-      {% set title %}
-        {{ label }}
-      {% endset %}
-    {% endif %}
 
-    {% set location_type %}
-      {{ content.field_location_type }}
-    {% endset %}
-
-    {% set body %}
-      {% if display_submitted %}
-        <div{{ author_attributes.addClass('node__submitted') }}>
-          <div class="author">By {{ author_name }}</div>
-          <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
-          {{ metadata }}
-        </div>
-      {% endif %}
-      <div class="body">
-        {{ content.body }}
-      </div>
-    {% endset %}
-
-    {% set related %}
-      <div class="map">
-        {{ content.field_geolocation }}
-      </div>
-
-      <div>
-        <div class="address">
-          {{ content.field_location }}
-        </div>
-
-        <div class="office_hours">
-          {{ content.field_office_hours }}
-        </div>
-
-        <div class="mailing_address">
-          {{ content.field_mailing_address }}
-        </div>
-      </div>
-
-      <div>
-        <div class="phone">
-          {{ content.field_phone }}
-        </div>
-
-        <div class="phone_hours">
-          {{ content.field_phone_hours }}
-        </div>
-      </div>
-
-      <div>
-        {% if content.field_division[0] %}
-          <div class="division">
-            {{ content.field_division }}
-          </div>
-        {% endif %}
-
-        {% if content.field_subject_matter[0] %}
-          <div class="subject_matter">
-            {{ content.field_subject_matter }}
-          </div>
-        {% endif %}
-
-        {% if content.field_tags[0] %}
-          <div class="tags">
-            {{ content.field_tags }}
-          </div>
-        {% endif %}
-      </div>
-    {% endset %}
-
-    {% include '@organisms/sections/text-section/text-section.twig' with {
-      text_section: {
+    {% include '@organisms/sections/text-section-location/text-section-location.twig' with {
+      text_section_location: {
         headergroup: {
-          brow: location_type,
+          brow: content.field_location_type,
           tag: 'h1',
-          title: title,
+          title: label,
         },
-        column_content_left: body,
-        column_content_right: related,
+        column_content_left: {
+          body: content.body,
+        },
+        column_content_right: {
+          map: content.field_geolocation,
+          address: {
+            inline: false,
+            street: content.field_location.0.address_line1,
+            street2: content.field_location.0.address_line2,
+            locality: content.field_location.0.locality,
+            administrative_area: content.field_location.0.administrative_area,
+            postal_code: content.field_location.0.postal_code,
+            country: content.field_location.0.country_code,
+          },
+          office_hours: {
+            title: {
+              tag: "h6",
+              title: "Office Hours",
+            },
+            content: content.field_office_hours|children,
+          },
+          mailing_address: {
+            title: {
+              title: "Mailing Address",
+              tag: "h6",
+            },
+            inline: false,
+            street: content.field_mailing_address.0.address_line1,
+            street2: content.field_mailing_address.0.address_line2,
+            locality: content.field_mailing_address.0.locality,
+            administrative_area: content.field_mailing_address.0.administrative_area,
+            postal_code: content.field_mailing_address.0.postal_code,
+            country: content.field_mailing_address.0.country_code,
+          },
+          phone: {
+            tag: "h6",
+            title: "Phone",
+            content: content.field_phone|children,
+          },
+          phone_hours: {
+            title: {
+              tag: "h6",
+              title: "Phone Hours",
+            },
+            content: content.field_phone_hours|children,
+          },
+          division: {
+            title: {
+              tag: "h6",
+              title: "Division",
+            },
+            content: content.field_division|children,
+          },
+          subject_matter: {
+            title: {
+              tag: "h6",
+              title: "Subject Matter",
+            },
+            content: content.field_subject_matter|children,
+          },
+          tags: {
+            title: {
+              tag: "h6",
+              title: "Tags",
+            },
+            content: content.field_tags|children,
+          }
+        }
       }
     } only %}
   {% endblock %}
+
 </article>
