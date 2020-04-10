@@ -109,15 +109,16 @@
         {{ content.body }}
       </div>
 
-      <div class="book_navigation">
-        {{ content.book_navigation }}
-      </div>
-
       {% if content.field_attachments[0] %}
         <div class="attachments">
           {{ content.field_attachments }}
         </div>
       {% endif %}
+
+      <div class="book_navigation">
+        {{ content.book_navigation }}
+      </div>
+
     {% endset %}
 
     {% include '@organisms/sections/text-section/text-section.twig' with {
