@@ -8,18 +8,20 @@
  */
 #}
 {% if breadcrumb %}
-  <nav role="navigation" class="jcc-breadcrumb-nav" aria-labelledby="breadcrumb">
-    <h2 id="breadcrumb" class="visually-hidden">{{ 'Breadcrumb'|t }}</h2>
-    <ul class="jcc-breadcrumb">
-    {% for item in breadcrumb %}
-      <li class="jcc-breadcrumb__item">
-        {% if item.url %}
-          <a href="{{ item.url }}">{{ item.text }}</a>
-        {% else %}
-          <span aria-current="location">{{ item.text }}</span>
-        {% endif %}
-      </li>
-    {% endfor %}
-    </ul>
-  </nav>
+  {% set breadcrumbs = [] %}
+
+  {% for item in breadcrumb %}
+    {% set url = item.url %}
+    {% set label = item.text %}
+    {% set breadcrumb_item = {
+      url: url,
+      label: label
+    } %}
+
+    {% set breadcrumbs = breadcrumbs|merge([breadcrumb_item]) %}
+  {% endfor %}
+
+  {% include '@molecules/navigation/breadcrumbs/breadcrumbs.twig' with {
+    breadcrumbs: breadcrumbs
+  } %}
 {% endif %}
