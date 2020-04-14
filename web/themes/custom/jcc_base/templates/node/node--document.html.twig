@@ -116,7 +116,7 @@
         </div>
 
         {#
-          Displays first uploaded date (new node creation) or updated date automatically unless author specifies publish date manually.
+          Automatically displays first uploaded date (new node creation) or updated date unless author specifies publish date manually.
           Because a change date occurs during node creation, any edits on creation day will not denote an update for now.
         #}
         {% if content.field_upload_date[0] %}
@@ -160,7 +160,6 @@
           {% endif %}
         {% endfor %}
         {% set other_docs = other_docs|slice(1) %} {# Skip the primary document #}
-
         {% if other_docs|length > 0 %}
           {#TODO: Replace with pattern library component variant later#}
           {% include '@jcc_base/_patterns/02-molecules/blocks/link-list-simple/link-list-simple.twig' with {
@@ -181,7 +180,6 @@
     } %}
 
     {% if content.field_help_links[0] %}
-      {% set help_title = 'Help with ' ~ document_type %}
       {% set help_links = [] %}
       {% for link in node.field_help_links %}
         {% set help_links = help_links|merge([{
@@ -195,7 +193,7 @@
         switchboard: {
           background_variant: 'has-background-color--dark--primary',
           headergroup: {
-            title: help_title|striptags
+            title: 'Guides'
           },
           items: {
             primary: help_links
