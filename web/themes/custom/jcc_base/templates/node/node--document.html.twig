@@ -111,6 +111,10 @@
       {% endif %}
       #}
       <div class="publish_date">
+        <div class="document_type">
+          Type: {{ document_type }}
+        </div>
+
         {#
           Displays first uploaded date (new node creation) or updated date automatically unless author specifies publish date manually.
           Because a change date occurs during node creation, any edits on creation day will not denote an update for now.
@@ -128,27 +132,77 @@
           {% endif %}
         {% endif %}
       </div>
+
       <div class="body">
         {{ content.body }}
       </div>
+
       {% if content.field_attachments[0] %}
-        <div class="attachments">
-          {{ content.field_attachments }}
-        </div>
+        {# Display first document as primary download #}
+        {% set primary_doc = content.field_attachments[0]['#url'] %}
+        {% include "@atoms/buttons/link-button.twig" with {
+          link_button: {
+            text: 'Download Document',
+            url: primary_doc
+          }
+        } only %}
+
+        {# Display other documents as secondary downloads #}
+        {% set other_docs = [] %}
+        {% for other_doc in content.field_attachments %}
+          {% if other_doc['#title'] %}
+            {% set doc_title = other_doc['#title'] %}
+            {% set doc_url = other_doc['#url'] %}
+            {% set other_docs = other_docs|merge([{
+              title: doc_title,
+              url: doc_url
+            }]) %}
+          {% endif %}
+        {% endfor %}
+        {% set other_docs = other_docs|slice(1) %} {# Skip the primary document #}
+
+        {% if other_docs|length > 0 %}
+          {#TODO: Replace with pattern library component variant later#}
+          {% include '@jcc_base/_patterns/02-molecules/blocks/link-list-simple/link-list-simple.twig' with {
+            list_group: {
+              header: 'Related Downloads',
+              items: other_docs,
+            }
+          } %}
+        {% endif %}
       {% endif %}
     {% endset %}
 
-    {% include '@organisms/sections/text-section/text-section.twig' with {
-      text_section: {
-        column_variant: 'jcc-text-section--has-one-column',
-        headergroup: {
-          brow: document_type,
-          tag: 'h1',
-          title: title,
-        },
-        column_content_left: body,
+    {% include '@molecules/blocks/hero/hero.twig' with {
+      hero: {
+        title: title,
+        body: body
       }
     } %}
+
+    {% if content.field_help_links[0] %}
+      {% set help_title = 'Help with ' ~ document_type %}
+      {% set help_links = [] %}
+      {% for link in node.field_help_links %}
+        {% set help_links = help_links|merge([{
+          brow: link.options.attributes.title,
+          title: link.title,
+          url: link.url
+        }]) %}
+      {% endfor %}
+
+      {% include '@organisms/sections/switchboard/switchboard.twig' with {
+        switchboard: {
+          background_variant: 'has-background-color--dark--primary',
+          headergroup: {
+            title: help_title|striptags
+          },
+          items: {
+            primary: help_links
+          }
+        }
+      } %}
+    {% endif %}
 
     {% if content.field_links[0] %}
       {% set link_list %}
