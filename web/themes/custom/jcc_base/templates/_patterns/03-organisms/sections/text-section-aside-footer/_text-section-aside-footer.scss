@@ -8,3 +8,14 @@ div[class^='jcc-'] + .jcc-text-section-aside__container .jcc-text-section-aside 
     width: 66.6666% !important;
   }
 }
+
+/* remove green horizontal rule if follows certain components */
+.jcc-hero ~ .jcc-text-section-aside__container, .jcc-switchboard ~ .jcc-text-section-aside__container {
+  .jcc-text-section-aside {
+    .jcc-text-section-aside__aside {
+      .jcc-card__title::after {
+        background-color: transparent;
+      }
+    }
+  }
+}
