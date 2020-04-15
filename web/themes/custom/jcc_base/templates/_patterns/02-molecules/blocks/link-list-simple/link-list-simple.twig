@@ -1,3 +1,11 @@
+{% set tag = tag|default('h2') %}
+
+{% if list_group.header %}
+  <{{ tag }}>
+  {{ list_group.header }}
+  </{{ tag }}>
+{% endif %}
+
 <div class="jcc-link-list-simple jcc-link-list--files">
   <ul class="jcc-link-list__list"{% if list_group.id %} id="{{ list_group.id }}"{% endif %}>
     {% for item in list_group.items %}
