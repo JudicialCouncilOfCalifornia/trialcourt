@@ -101,6 +101,7 @@
     {% endset %}
 
     {% set body %}
+      {# Default author history if needed later ... needs to be enabled for node in Drupal
       {% if display_submitted %}
         <div{{ author_attributes.addClass('node__submitted') }}>
           <div class="author">By {{ author_name }}</div>
@@ -108,58 +109,173 @@
           {{ metadata }}
         </div>
       {% endif %}
-      <div class="deadline">
-        {{ content.field_end_date }}
+      #}
+      <div class="publish_date">
+        <div class="document_type">
+          Type: {{ document_type }}
+        </div>
+
+        {#
+          Automatically displays first uploaded date (new node creation) or updated date unless author specifies publish date manually.
+          Because a change date occurs during node creation, any edits on creation day will not denote an update for now.
+        #}
+        {% if content.field_upload_date[0] %}
+          {{ content.field_upload_date_label.0 }}:
+          {{ content.field_upload_date }}
+        {% else %}
+          {% set createDate = node.createdtime|date("Y-m-d") %}
+          {% set lastPubDate = node.changedtime|date("Y-m-d") %}
+          {% if lastPubDate > createDate %}
+            Updated: {{ lastPubDate|date(format="D, m/d/Y")|raw }}
+          {% else %}
+            Uploaded: {{ createDate|date(format="D, m/d/Y")|raw }}
+          {% endif %}
+        {% endif %}
       </div>
+
       <div class="body">
         {{ content.body }}
       </div>
-    {% endset %}
 
-    {% set related %}
       {% if content.field_attachments[0] %}
-        <div class="attachments">
-          {{ content.field_attachments }}
-        </div>
+        {# Display first document as primary download #}
+        {% set primary_doc = content.field_attachments[0]['#url'] %}
+        {% include "@atoms/buttons/link-button.twig" with {
+          link_button: {
+            text: 'Download Document',
+            url: primary_doc
+          }
+        } only %}
+
+        {# Display other documents as secondary downloads #}
+        {% set other_docs = [] %}
+        {% for other_doc in content.field_attachments %}
+          {% if other_doc['#title'] %}
+            {% set doc_title = other_doc['#title'] %}
+            {% set doc_url = other_doc['#url'] %}
+            {% set other_docs = other_docs|merge([{
+              title: doc_title,
+              url: doc_url
+            }]) %}
+          {% endif %}
+        {% endfor %}
+        {% set other_docs = other_docs|slice(1) %} {# Skip the primary document #}
+        {% if other_docs|length > 0 %}
+          {#TODO: Replace with pattern library component variant later#}
+          {% include '@jcc_base/_patterns/02-molecules/blocks/link-list-simple/link-list-simple.twig' with {
+            list_group: {
+              header: 'Related Downloads',
+              items: other_docs,
+            }
+          } %}
+        {% endif %}
       {% endif %}
-
-      {% if content.field_links[0] %}
-        <div class="related_links">
-          {{ content.field_links }}
-        </div>
-      {% endif %}
-
-      <div>
-        {% if content.field_division[0] %}
-          <div class="division">
-             {{ content.field_division }}
-          </div>
-        {% endif %}
-
-        {% if content.field_subject_matter[0] %}
-          <div class="subject_matter">
-            {{ content.field_subject_matter }}
-          </div>
-        {% endif %}
-
-        {% if content.field_tags[0] %}
-          <div class="tags">
-            {{ content.field_tags }}
-          </div>
-        {% endif %}
-      </div>
     {% endset %}
 
-    {% include '@organisms/sections/text-section/text-section.twig' with {
-      text_section: {
-        headergroup: {
-          brow: document_type,
-          tag: 'h1',
-          title: title,
-        },
-        column_content_left: body,
-        column_content_right: related,
+    {% include '@molecules/blocks/hero/hero.twig' with {
+      hero: {
+        title: title,
+        body: body
       }
-    } only %}
+    } %}
+
+    {% if content.field_help_links[0] %}
+      {% set help_links = [] %}
+      {% for link in node.field_help_links %}
+        {% set help_links = help_links|merge([{
+          brow: link.options.attributes.name,
+          title: link.title,
+          url: link.url
+        }]) %}
+      {% endfor %}
+
+      {% include '@organisms/sections/switchboard/switchboard.twig' with {
+        switchboard: {
+          background_variant: 'has-background-color--dark--primary',
+          headergroup: {
+            title: 'Guides'
+          },
+          items: {
+            primary: help_links
+          }
+        }
+      } %}
+    {% endif %}
+
+    {% if content.field_links[0] %}
+      {% set link_list %}
+        {% set links = [] %}
+        {% for link in node.field_links %}
+          {% set links = links|merge([{ 'title' : link.title, 'url' : link.url }]) %}
+        {% endfor %}
+
+        {#TODO: Replace with pattern library component variant later#}
+        {% include '@jcc_base/_patterns/02-molecules/blocks/link-list-simple/link-list-simple.twig' with {
+          list_group: {
+            items: links,
+          }
+        } %}
+      {% endset %}
+
+      {% set related_links %}
+        {% include '@molecules/blocks/card/card.twig' with {
+          card: {
+            title: node.field_links.fieldDefinition.label,
+            excerpt: link_list,
+          }
+        } only %}
+      {% endset %}
+    {% endif %}
+
+    {% if content.field_division[0] or content.field_subject_matter[0] or content.field_tags[0] %}
+      {% set aside %}
+        {% set meta %}
+          {% if content.field_division[0] %}
+            <div class="division relevance">
+              {{ content.field_division }}
+            </div>
+          {% endif %}
+
+          {% if content.field_subject_matter[0] %}
+            <div class="subject_matter relevance">
+              {{ content.field_subject_matter }}
+            </div>
+          {% endif %}
+
+          {% if content.field_tags[0] %}
+            <div class="tags relevance">
+              {{ content.field_tags }}
+            </div>
+          {% endif %}
+        {% endset %}
+
+        {% if meta %}
+          {% include '@molecules/blocks/card/card.twig' with {
+            card: {
+              title: 'Relevance',
+              excerpt: meta,
+            }
+          } only %}
+        {% endif %}
+      {% endset %}
+    {% endif %}
+
+    {# TODO: Replace with pattern library component variant later #}
+    {% if related_links or aside %}
+      {% if related_links %}
+        {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside-footer/text-section-aside-footer.twig' with {
+          text_section_aside: {
+            content: related_links,
+            aside: aside,
+          }
+        } only %}
+      {% else %}
+        {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside-footer/text-section-aside-footer.twig' with {
+          text_section_aside: {
+            content: aside,
+          }
+        } only %}
+      {% endif %}
+    {% endif %}
   {% endblock %}
 </article>

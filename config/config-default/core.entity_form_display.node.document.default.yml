@@ -7,16 +7,21 @@ dependencies:
     - field.field.node.document.field_attachments
     - field.field.node.document.field_division
     - field.field.node.document.field_document_type
+    - field.field.node.document.field_help_links
     - field.field.node.document.field_links
     - field.field.node.document.field_metatag
     - field.field.node.document.field_subject_matter
     - field.field.node.document.field_tags
+    - field.field.node.document.field_upload_date
+    - field.field.node.document.field_upload_date_label
     - node.type.document
   module:
     - autocomplete_deluxe
     - content_moderation
+    - datetime
     - field_group
     - link
+    - link_attributes
     - media_library
     - metatag
     - path
@@ -28,7 +33,6 @@ third_party_settings:
     group_document_type_content:
       children:
         - group_main_content
-        - group_media
         - group_secondary_content
         - group_metadata
       parent_name: ''
@@ -44,6 +48,9 @@ third_party_settings:
       children:
         - field_document_type
         - body
+        - group_media
+        - group_guides
+        - group_adjust_upload_date
       parent_name: group_document_type_content
       weight: 21
       format_type: tab
@@ -59,7 +66,7 @@ third_party_settings:
       children:
         - field_links
       parent_name: group_document_type_content
-      weight: 23
+      weight: 22
       format_type: tab
       region: content
       format_settings:
@@ -101,17 +108,47 @@ third_party_settings:
     group_media:
       children:
         - field_attachments
-      parent_name: group_document_type_content
-      weight: 22
-      format_type: tab
+      parent_name: group_main_content
+      weight: 3
+      format_type: details
       region: content
       format_settings:
+        description: 'Upload the document that you want to make available as the primary download button. If more than one document is being offered, the first document is primary and you can sort the document order manually by dragging the tile positions.'
+        required_fields: true
         id: ''
         classes: ''
-        description: ''
+        open: false
+      label: Documents
+    group_adjust_upload_date:
+      children:
+        - field_upload_date_label
+        - field_upload_date
+      parent_name: group_main_content
+      weight: 5
+      format_type: details
+      region: content
+      format_settings:
+        description: 'By default, the last publication date will be displayed unless specified differently here '
         formatter: closed
         required_fields: true
-      label: Media
+        id: ''
+        classes: ''
+        open: false
+      label: 'Upload Date'
+    group_guides:
+      children:
+        - field_help_links
+      parent_name: group_main_content
+      weight: 4
+      format_type: details
+      region: content
+      format_settings:
+        description: "<p>Optionally link this page to content that can assist the audience with this document. Unlike Related Links, these links will be highlighted clearly as recommended guides or instructions.</p>\r\n\r\n<p><strong>Descriptive Brow</strong><br>Adding a <strong>name</strong> attribute will display a descriptive brow above the link for the tile presentation. Expand the <strong>Attributes</strong> panel to add attributes to a link including <strong>name</strong>.</p>"
+        required_fields: true
+        id: ''
+        classes: ''
+        open: false
+      label: Guides
 id: node.document.default
 targetEntityType: node
 bundle: document
@@ -129,7 +166,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 3
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -141,7 +178,7 @@ content:
     type: media_library_widget
     region: content
   field_division:
-    weight: 16
+    weight: 6
     settings:
       limit: '10'
       min_length: '0'
@@ -174,8 +211,23 @@ content:
     third_party_settings: {  }
     type: autocomplete_deluxe
     region: content
+  field_help_links:
+    weight: 5
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+      enabled_attributes:
+        id: false
+        name: true
+        target: true
+        rel: true
+        class: true
+        accesskey: false
+    third_party_settings: {  }
+    type: link_attributes
+    region: content
   field_links:
-    weight: 19
+    weight: 6
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -183,13 +235,13 @@ content:
     type: link_default
     region: content
   field_metatag:
-    weight: 14
+    weight: 17
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
     region: content
   field_subject_matter:
-    weight: 18
+    weight: 8
     settings:
       limit: '10'
       min_length: '0'
@@ -206,7 +258,7 @@ content:
     type: autocomplete_deluxe
     region: content
   field_tags:
-    weight: 17
+    weight: 7
     settings:
       limit: '10'
       min_length: '0'
@@ -222,22 +274,34 @@ content:
     third_party_settings: {  }
     type: autocomplete_deluxe
     region: content
+  field_upload_date:
+    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_upload_date_label:
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 12
+    weight: 15
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -245,18 +309,18 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 4
+    weight: 6
     region: content
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 9
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 6
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -264,14 +328,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 13
+    weight: 16
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 5
+    weight: 7
     region: content
     third_party_settings: {  }
   title:
@@ -282,9 +346,14 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  translation:
+    weight: 12
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 2
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
@@ -294,18 +363,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 10
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 7
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 11
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
