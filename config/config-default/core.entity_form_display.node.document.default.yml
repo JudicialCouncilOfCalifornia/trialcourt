@@ -33,9 +33,6 @@ third_party_settings:
     group_document_type_content:
       children:
         - group_main_content
-        - group_adjust_upload_date
-        - group_media
-        - group_document_help
         - group_secondary_content
         - group_metadata
       parent_name: ''
@@ -51,6 +48,9 @@ third_party_settings:
       children:
         - field_document_type
         - body
+        - group_media
+        - group_guides
+        - group_adjust_upload_date
       parent_name: group_document_type_content
       weight: 21
       format_type: tab
@@ -66,7 +66,7 @@ third_party_settings:
       children:
         - field_links
       parent_name: group_document_type_content
-      weight: 25
+      weight: 22
       format_type: tab
       region: content
       format_settings:
@@ -82,7 +82,7 @@ third_party_settings:
         - field_tags
         - field_subject_matter
       parent_name: group_document_type_content
-      weight: 26
+      weight: 24
       format_type: tab
       region: content
       format_settings:
@@ -108,24 +108,24 @@ third_party_settings:
     group_media:
       children:
         - field_attachments
-      parent_name: group_document_type_content
-      weight: 23
-      format_type: tab
+      parent_name: group_main_content
+      weight: 3
+      format_type: details
       region: content
       format_settings:
-        description: ''
-        formatter: closed
+        description: 'Upload the document that you want to make available as the primary download button. If more than one document is being offered, the first document is primary and you can sort the document order manually by dragging the tile positions.'
         required_fields: true
         id: ''
         classes: ''
+        open: false
       label: Documents
     group_adjust_upload_date:
       children:
         - field_upload_date_label
         - field_upload_date
-      parent_name: group_document_type_content
-      weight: 22
-      format_type: tab
+      parent_name: group_main_content
+      weight: 5
+      format_type: details
       region: content
       format_settings:
         description: 'By default, the last publication date will be displayed unless specified differently here '
@@ -133,21 +133,22 @@ third_party_settings:
         required_fields: true
         id: ''
         classes: ''
+        open: false
       label: 'Upload Date'
-    group_document_help:
+    group_guides:
       children:
         - field_help_links
-      parent_name: group_document_type_content
-      weight: 24
-      format_type: tab
+      parent_name: group_main_content
+      weight: 4
+      format_type: details
       region: content
       format_settings:
+        description: 'Optionally link this page to content that can assist the audience with this document. Unlike Related Links, these links will be highlighted clearly as recommended guides or instructions.'
+        required_fields: true
         id: ''
         classes: ''
-        description: ''
-        formatter: closed
-        required_fields: true
-      label: 'Document Help'
+        open: false
+      label: Guides
 id: node.document.default
 targetEntityType: node
 bundle: document
@@ -177,7 +178,7 @@ content:
     type: media_library_widget
     region: content
   field_division:
-    weight: 5
+    weight: 6
     settings:
       limit: '10'
       min_length: '0'
@@ -211,7 +212,7 @@ content:
     type: autocomplete_deluxe
     region: content
   field_help_links:
-    weight: 26
+    weight: 5
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -240,7 +241,7 @@ content:
     type: metatag_firehose
     region: content
   field_subject_matter:
-    weight: 7
+    weight: 8
     settings:
       limit: '10'
       min_length: '0'
@@ -257,7 +258,7 @@ content:
     type: autocomplete_deluxe
     region: content
   field_tags:
-    weight: 6
+    weight: 7
     settings:
       limit: '10'
       min_length: '0'
@@ -274,20 +275,20 @@ content:
     type: autocomplete_deluxe
     region: content
   field_upload_date:
-    weight: 5
+    weight: 4
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
     region: content
   field_upload_date_label:
-    weight: 4
+    weight: 2
     settings: {  }
     third_party_settings: {  }
     type: options_select
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
