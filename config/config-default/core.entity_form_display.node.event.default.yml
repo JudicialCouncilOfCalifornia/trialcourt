@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.event.field_location
     - field.field.node.event.field_subject_matter
     - field.field.node.event.field_tags
+    - field.field.node.event.field_topics
     - node.type.event
     - workflows.workflow.editorial_workflow
   module:
@@ -25,6 +26,7 @@ dependencies:
     - path
     - scheduler
     - scheduler_content_moderation_integration
+    - straw
     - text
 third_party_settings:
   field_group:
@@ -78,6 +80,7 @@ third_party_settings:
         - field_geolocation
         - field_division
         - field_tags
+        - field_topics
         - field_subject_matter
       parent_name: group_event_content
       weight: 23
@@ -198,21 +201,14 @@ content:
     type: address_default
     region: content
   field_subject_matter:
-    weight: 7
+    weight: 8
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
-      new_terms: 0
       match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
-      selection_handler: default
+      match_limit: 10
+      placeholder: ''
     third_party_settings: {  }
-    type: autocomplete_deluxe
+    type: super_term_reference_autocomplete_widget
     region: content
   field_tags:
     weight: 6
@@ -230,6 +226,16 @@ content:
       selection_handler: default
     third_party_settings: {  }
     type: autocomplete_deluxe
+    region: content
+  field_topics:
+    weight: 7
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: super_term_reference_autocomplete_widget
     region: content
   langcode:
     type: language_select
