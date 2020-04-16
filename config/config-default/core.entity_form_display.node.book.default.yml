@@ -16,7 +16,7 @@ dependencies:
     - autocomplete_deluxe
     - content_moderation
     - field_group
-    - link
+    - link_attributes
     - media_library
     - metatag
     - path
@@ -48,11 +48,11 @@ third_party_settings:
       format_type: tab
       region: content
       format_settings:
-        id: ''
-        classes: ''
-        description: ''
+        description: "<p>Add links to other useful related content for reference or recommendations.</p>\r\n<p>To change the default file icon for the link display, enter the <strong>name</strong> of the available icon under  the link's <strong>Attributes</strong>. Refer to our pattern library for the icons that are available for use.</p>"
         formatter: closed
         required_fields: true
+        id: ''
+        classes: ''
       label: 'Secondary Content'
     group_book_content:
       children:
@@ -165,8 +165,17 @@ content:
     settings:
       placeholder_url: ''
       placeholder_title: ''
+      enabled_attributes:
+        name: true
+        target: true
+        rel: true
+        class: true
+        id: false
+        accesskey: false
+        aria-label: false
+        title: false
     third_party_settings: {  }
-    type: link_default
+    type: link_attributes
     region: content
   field_metatag:
     weight: 17
@@ -272,7 +281,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 12
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }

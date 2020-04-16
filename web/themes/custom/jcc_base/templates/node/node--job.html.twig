@@ -138,7 +138,23 @@
       {% set link_list %}
         {% set links = [] %}
         {% for link in node.field_links %}
-          {% set links = links|merge([{ 'title' : link.title, 'url' : link.url }]) %}
+          {% if link.options.attributes.name %}
+            {% set icon =
+              {
+                name: link.options.attributes.name,
+                title: link.options.attributes.name|capitalize|t,
+                decorative: false
+              }
+            %}
+          {% else %}
+            {% set icon = [] %}
+          {% endif %}
+
+          {% set links = links|merge([{
+            icon: icon,
+            title: link.title,
+            url: link.url
+          }]) %}
         {% endfor %}
 
         {#TODO: Replace with pattern library component variant later#}
