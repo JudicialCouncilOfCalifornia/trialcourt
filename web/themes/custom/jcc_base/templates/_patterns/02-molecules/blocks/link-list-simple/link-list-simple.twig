@@ -11,7 +11,7 @@
     {% for item in list_group.items %}
       {% if item.url and item.title %}
         <li class="jcc-link-list__item">
-          {% set icon = link_list.icon|default({
+          {% set icon = item.icon|default({
             name: "file",
             title: "File"|t,
             decorative: false,
