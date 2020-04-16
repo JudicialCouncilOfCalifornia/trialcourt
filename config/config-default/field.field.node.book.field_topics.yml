@@ -1,16 +1,16 @@
-uuid: 2247488b-ad0e-49ff-8ec0-2f4067104469
+uuid: f49145e7-7a39-4c4c-b44c-af1cb4294d3f
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_subject_matter
-    - node.type.job
-    - taxonomy.vocabulary.subject_matter
-id: node.job.field_subject_matter
-field_name: field_subject_matter
+    - field.storage.node.field_topics
+    - node.type.book
+    - taxonomy.vocabulary.topics
+id: node.book.field_topics
+field_name: field_topics
 entity_type: node
-bundle: job
-label: 'Subject Matter'
+bundle: book
+label: Topics
 description: ''
 required: false
 translatable: true
@@ -20,10 +20,10 @@ settings:
   handler: straw
   handler_settings:
     target_bundles:
-      subject_matter: subject_matter
+      topics: topics
     sort:
       field: name
       direction: asc
-    auto_create: 0
+    auto_create: 1
     auto_create_bundle: ''
 field_type: entity_reference

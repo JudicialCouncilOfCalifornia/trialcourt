@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.person.field_person_type
     - field.field.node.person.field_subject_matter
     - field.field.node.person.field_tags
+    - field.field.node.person.field_topics
     - node.type.person
   module:
     - autocomplete_deluxe
@@ -24,6 +25,7 @@ dependencies:
     - path
     - scheduler
     - scheduler_content_moderation_integration
+    - straw
     - text
 third_party_settings:
   field_group:
@@ -63,6 +65,7 @@ third_party_settings:
       children:
         - field_division
         - field_tags
+        - field_topics
         - field_subject_matter
       parent_name: group_person_content
       weight: 3
@@ -133,7 +136,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 3
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -186,7 +189,7 @@ content:
     type: link_default
     region: content
   field_metatag:
-    weight: 14
+    weight: 17
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
@@ -209,25 +212,18 @@ content:
     type: autocomplete_deluxe
     region: content
   field_subject_matter:
-    type: autocomplete_deluxe
+    type: super_term_reference_autocomplete_widget
     weight: 21
     region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
-      new_terms: 0
       match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
-      selection_handler: default
+      match_limit: 10
+      placeholder: ''
     third_party_settings: {  }
   field_tags:
     type: autocomplete_deluxe
-    weight: 20
+    weight: 19
     region: content
     settings:
       limit: '10'
@@ -242,6 +238,16 @@ content:
       size: 60
       selection_handler: default
     third_party_settings: {  }
+  field_topics:
+    weight: 20
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: super_term_reference_autocomplete_widget
+    region: content
   langcode:
     type: language_select
     weight: 2
@@ -251,13 +257,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 12
+    weight: 15
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -265,18 +271,18 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 4
+    weight: 6
     region: content
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 9
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 7
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -284,14 +290,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 13
+    weight: 16
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 5
+    weight: 7
     region: content
     third_party_settings: {  }
   title:
@@ -303,13 +309,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 2
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
@@ -319,18 +325,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 10
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 6
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 11
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
