@@ -1,0 +1,52 @@
+uuid: 7cc5d6f4-54cb-4697-bc96-fdf9449d4bf5
+langcode: en
+status: true
+dependencies: {  }
+id: local_forms_file
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - local_forms
+migration_group: jcc
+label: 'Local Forms: Import to file'
+source:
+  plugin: csv
+  path: modules/custom/jcc_tc_migration/csv/slo-local-forms.csv
+  delimiter: ','
+  enclosure: '"'
+  ids:
+    - id
+  constants:
+    DRUPAL_FILE_DIRECTORY: 'public://local-forms/'
+process:
+  pseudo_destination_filename:
+    -
+      plugin: callback
+      callable: basename
+      source: file_url
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'Cannot import empty image filename.'
+  pseudo_destination_path:
+    -
+      plugin: concat
+      source:
+        - constants/DRUPAL_FILE_DIRECTORY
+        - '@pseudo_destination_filename'
+  uri:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: file_url
+    -
+      plugin: file_copy
+      source:
+        - file_url
+        - '@pseudo_destination_path'
+      file_exists: rename
+      move: false
+destination:
+  plugin: 'entity:file'
+migration_dependencies: null
