@@ -139,27 +139,26 @@
         {% set links = [] %}
         {% for link in node.field_links %}
           {% if link.options.attributes.name %}
+            {% set link_name = link.options.attributes.name %}
             {% set icon =
               {
-                name: link.options.attributes.name,
-                title: link.options.attributes.name|capitalize|t,
+                name: link_name,
+                title: link_name.name|capitalize|t,
                 decorative: false
               }
             %}
-          {% else %}
-            {% set icon = [] %}
           {% endif %}
 
           {% set links = links|merge([{
             icon: icon,
-            title: link.title,
+            url_title: link.title,
             url: link.url
           }]) %}
         {% endfor %}
 
-        {#TODO: Replace with pattern library component variant later#}
-        {% include '@jcc_base/_patterns/02-molecules/blocks/link-list-simple/link-list-simple.twig' with {
-          list_group: {
+        {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
+          link_list: {
+            list_icons: true,
             items: links,
           }
         } %}
