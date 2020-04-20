@@ -150,19 +150,10 @@
         {# Display other documents as secondary downloads #}
         {% set other_docs = [] %}
         {% for other_doc in content.field_attachments %}
-          {% set link_name = 'file_download' %}
-          {% set icon =
-            {
-              name: link_name,
-              title: link_name.name|capitalize|t,
-              decorative: false
-            }
-          %}
           {% if other_doc['#title'] %}
             {% set doc_title = other_doc['#title'] %}
             {% set doc_url = other_doc['#url'] %}
             {% set other_docs = other_docs|merge([{
-              icon: icon,
               url_title: doc_title,
               url: doc_url
             }]) %}
