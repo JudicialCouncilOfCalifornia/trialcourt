@@ -135,43 +135,8 @@
     } %}
 
     {% if content.field_links[0] %}
-      {% set link_list %}
-        {% set links = [] %}
-        {% for link in node.field_links %}
-          {% if link.options.attributes.name %}
-            {% set icon =
-              {
-                name: link.options.attributes.name,
-                title: link.options.attributes.name|capitalize|t,
-                decorative: false
-              }
-            %}
-          {% else %}
-            {% set icon = [] %}
-          {% endif %}
-
-          {% set links = links|merge([{
-            icon: icon,
-            title: link.title,
-            url: link.url
-          }]) %}
-        {% endfor %}
-
-        {#TODO: Replace with pattern library component variant later#}
-        {% include '@jcc_base/_patterns/02-molecules/blocks/link-list-simple/link-list-simple.twig' with {
-          list_group: {
-            items: links,
-          }
-        } %}
-      {% endset %}
-
       {% set related_links %}
-        {% include '@molecules/blocks/card/card.twig' with {
-          card: {
-            title: node.field_links.fieldDefinition.label,
-            excerpt: link_list,
-          }
-        } only %}
+        {% include '@jcc_base/_includes/relatedlinks.html.twig' %}
       {% endset %}
     {% endif %}
 
