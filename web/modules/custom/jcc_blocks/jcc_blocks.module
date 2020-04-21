@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_blocks.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function jcc_blocks_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the jcc_blocks module.
+    case 'help.page.jcc_blocks':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('JCC Custom Blocks') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function jcc_blocks_theme() {
+  return [
+    'jcc_hero_block' => [
+      'variables' => [
+        'hero_icon_nav' => NULL
+      ],
+      'render element' => 'children',
+    ],
+  ];
+}
