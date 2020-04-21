@@ -1,0 +1,20 @@
+{#
+/**
+* @file
+* Default theme implementation to display a block.
+*
+* @see template_preprocess_block()
+*
+* @ingroup themeable
+*/
+#}
+{% set classes = [
+    'clear-both',
+] %}
+<div{{ attributes.addClass(classes) }}>
+  {% include '@organisms/sections/hero-icon-nav/hero-icon-nav.twig' with{
+    hero_icon_nav: hero_icon_nav
+  } %}
+</div>
+
+
