@@ -1,0 +1,7 @@
+services:
+  jcc_block_field_decorator.block_field.manager:
+    class: Drupal\jcc_block_field_decorator\BlockFieldManagerDecorator
+    public: false
+    decorates: block_field.manager
+    decoration_priority: 5
+    arguments: ['@jcc_block_field_decorator.block_field.manager.inner', '@plugin.manager.block', '@context.repository']

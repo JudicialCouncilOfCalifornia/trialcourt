@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_block_field_decorator.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function jcc_block_field_decorator_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the jcc_block_field_decorator module.
+    case 'help.page.jcc_block_field_decorator':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Add contraints and extend Block Field') . '</p>';
+      return $output;
+
+    default:
+  }
+}
