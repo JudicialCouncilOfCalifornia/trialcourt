@@ -27,7 +27,7 @@ function jcc_featured_links_theme($existing, $type, $theme, $path) {
  * Implements hook_preprocess_HOOK().
  */
 function jcc_featured_links_preprocess_menu(&$variables) {
-  if ($variables['menu_name'] == 'featured_links') {
+  if ($variables['menu_name'] == 'featured-links') {
     // Limit total number of links to render.
     $variables['items'] = array_slice($variables['items'], 0, JCC_FEATURED_LINKS_MAX);
   }
