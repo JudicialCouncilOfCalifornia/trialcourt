@@ -30,28 +30,6 @@ function jcc_base_theme_suggestions_form_element_alter(array &$suggestions, arra
 }
 
 /**
- * Implements hook_preprocess_input().
- */
-function jcc_base_preprocess_input(&$variables) {
-  $element = $variables['element'];
-
-  // Add the element type to the theme.
-  $variables['type'] = $element['#type'];
-}
-
-/**
- * Implements hook_preprocess_form_element().
- */
-function jcc_base_preprocess_form_element(&$variables) {
-  $element = $variables['element'];
-
-  // Add required class for checkbox and radio labels.
-  if (in_array($element['#type'], ['checkbox', 'radio'])) {
-    $variables['label']['#attributes']['class'][] = 'form-check-label';
-  }
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  */
 function jcc_base_form_search_block_form_alter(&$form, FormStateInterface $form_state, $form_id) {
