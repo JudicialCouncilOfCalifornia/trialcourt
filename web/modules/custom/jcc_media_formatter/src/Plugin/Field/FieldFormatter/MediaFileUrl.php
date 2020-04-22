@@ -62,7 +62,7 @@ class MediaFileUrl extends EntityReferenceFormatterBase {
 
         $elements[$delta] = [
           '#type' => 'link',
-          '#title' => $label,
+          '#title' => $media->getName() ?: $label,
           '#url' => $value ? Url::fromUri($value) : '',
         ];
 
