@@ -102,7 +102,7 @@ class JccHeroBlock extends BlockBase {
   }
 
   public function getFeaturedLinks() {
-    $menu_name = 'featured_links';
+    $menu_name = 'featured-links';
     $menu_tree = \Drupal::menuTree();
     $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
     $parameters->setMinDepth(0);
