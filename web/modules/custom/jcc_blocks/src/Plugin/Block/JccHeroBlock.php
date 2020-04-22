@@ -122,10 +122,11 @@ class JccHeroBlock extends BlockBase {
         break;
       }
 
+      $menu_item_extra_uuid = $item->link->getDerivativeId();
       $entity = array_pop(\Drupal::entityTypeManager()
         ->getStorage('menu_link_content')
         ->loadByProperties(
-            ['uuid' => $item->link->getDerivativeId()]
+            ['uuid' => $menu_item_extra_uuid]
         ));
        $icon = $this->getMediaUrl($entity->get('field_icon')->entity);
 
