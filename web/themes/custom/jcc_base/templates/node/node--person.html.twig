@@ -122,33 +122,19 @@
         column_content_left: body,
       }
     } %}
-  {% endblock %}
 
-  {% if content.field_links[0] %}
-    {% set related_links %}
-      {% include '@jcc_base/_includes/relatedlinks.html.twig' %}
-    {% endset %}
-  {% endif %}
-
-  {% set aside %}
-    {% include '@jcc_base/_includes/metadata.html.twig' %}
-  {% endset %}
-
-  {# TODO: Replace with pattern library component variant later #}
-  {% if related_links or aside %}
-    {% if related_links %}
-      {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside-footer/text-section-aside-footer.twig' with {
-        text_section_aside: {
-          content: related_links,
-          aside: aside,
-        }
-      } only %}
-    {% else %}
-      {% include '@jcc_base/_patterns/03-organisms/sections/text-section-aside-footer/text-section-aside-footer.twig' with {
-        text_section_aside: {
-          content: aside,
-        }
-      } only %}
+    {% if content.field_links[0] %}
+      {% set related_links %}
+        {% include '@jcc_base/_includes/relatedlinks.html.twig' %}
+      {% endset %}
     {% endif %}
-  {% endif %}
+
+    {% set meta %}
+      {% include '@jcc_base/_includes/metadata.html.twig' %}
+    {% endset %}
+
+    {% if related_links or meta %}
+      {% include '@jcc_base/_includes/aside-secondary--related.html.twig' %}
+    {% endif %}
+  {% endblock %}
 </article>
