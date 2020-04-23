@@ -35,7 +35,6 @@ function jcc_base_preprocess_region(&$variables) {
  */
 function jcc_base_header_region(&$variables) {
   $pl_path = base_path() . 'libraries/courtyard-artifact';
-  $main_nav = $variables['elements']['mainnavigation']['content'];
   $variables['header'] = [
     'mobile' => [
       'globe' => [
@@ -72,6 +71,20 @@ function jcc_base_header_region(&$variables) {
   ];
 
   $variables['header']['header_topbar']['dropbutton']['links'] = jcc_base_translation_menu();
+
+  $menu_name = 'main';
+  $menu_tree = \Drupal::menuTree();
+  $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
+  $parameters->setMinDepth(0);
+  $parameters->onlyEnabledLinks();
+
+  $tree = $menu_tree->load($menu_name, $parameters);
+  $manipulators = array(
+    array('callable' => 'menu.default_tree_manipulators:checkAccess'),
+    array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
+  );
+  $tree = $menu_tree->transform($tree, $manipulators);
+  $main_nav = $menu_tree->build($tree);
 
   $menu_link_tree_handler = Drupal::getContainer()->get('menu_item_extras.menu_link_tree_handler');
   $variables['header']['primary_nav']['items'] = jcc_base_mainnavigation_build($main_nav['#items'], $menu_link_tree_handler);
@@ -135,7 +148,8 @@ function jcc_base_mainnavigation_build($original_items, $menu_link_tree_handler)
       'name' => $original_item['title'],
       'url' => $original_item['url'],
     ];
-    $item['description'] = !$entity->field_text->isEmpty() ? $entity->field_text->first()->getValue()['value'] : NULL;
+    $item['description'] = $entity->field_text && !$entity->field_text->isEmpty() ? $entity->field_text->first()->getValue()['value'] : NULL;
+    $item['icon'] = $entity->field_fa_icon && !$entity->field_fa_icon->isEmpty() ? $entity->field_fa_icon->first()->getValue()['value'] : NULL;
 
     if (!empty($original_item['below'])) {
       $item['sublinks'] = jcc_base_mainnavigation_build($original_item['below'], $menu_link_tree_handler);
