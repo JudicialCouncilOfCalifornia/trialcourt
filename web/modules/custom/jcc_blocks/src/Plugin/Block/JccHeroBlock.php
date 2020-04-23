@@ -122,13 +122,13 @@ class JccHeroBlock extends BlockBase {
         break;
       }
 
-      $menu_item_extra_uuid = $item->link->getDerivativeId();
-      $entity = array_pop(\Drupal::entityTypeManager()
+      $menu_item_extra = \Drupal::entityTypeManager()
         ->getStorage('menu_link_content')
         ->loadByProperties(
-            ['uuid' => $menu_item_extra_uuid]
-        ));
-       $icon = $this->getMediaUrl($entity->get('field_icon')->entity);
+          ['uuid' => $item->link->getDerivativeId()]
+        );
+      $entity = array_pop($menu_item_extra);
+      $icon = $this->getMediaUrl($entity->get('field_icon')->entity);
 
        $links[$index < 4 ? 'icons' : 'buttons'][] = [
          'title' => $item->link->getTitle(),
