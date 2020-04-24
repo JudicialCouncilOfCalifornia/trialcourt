@@ -140,12 +140,14 @@
       {% if content.field_attachments[0] %}
         {# Display first document as primary download #}
         {% set primary_doc = content.field_attachments[0]['#url'] %}
-        {% include "@atoms/buttons/link-button.twig" with {
-          link_button: {
-            text: 'Download Document',
-            url: primary_doc
-          }
-        } only %}
+        <div>
+          {% include "@atoms/buttons/link-button.twig" with {
+            link_button: {
+              text: 'Download Document',
+              url: primary_doc
+            }
+          } only %}
+        </div>
 
         {# Display other documents as secondary downloads #}
         {% set other_docs = [] %}
