@@ -87,7 +87,7 @@ class JccHeroBlock extends BlockBase {
   public function build() {
     $build = [];
     $build['#theme'] = 'jcc_hero_block';
-    $build['#hero_icon_nav'] = [
+    $build['#hero_icon_nav']['hero_img_banner'] = [
       'background_img' => $this->getMediaUrl($this->configuration['background_image']),
       'brow' => $this->configuration['brow'],
       'title' => $this->configuration['title'],
