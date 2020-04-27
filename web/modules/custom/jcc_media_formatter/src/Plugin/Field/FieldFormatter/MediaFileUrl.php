@@ -35,6 +35,8 @@ class MediaFileUrl extends EntityReferenceFormatterBase {
     /** @var \Drupal\media\MediaInterface[] $media_items */
     foreach ($media_items as $delta => $media) {
 
+      $value = "";
+
       // Only handle media objects.
       if ($media instanceof MediaInterface) {
 
