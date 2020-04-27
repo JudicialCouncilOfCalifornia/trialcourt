@@ -20,12 +20,12 @@ config:
   # If you are having trouble getting xdebug to work please see:
   # https://docs.devwithlando.io/services/php.html#using-xdebug
   #xdebug: true
-proxy:
- solr:
-   - solr.tc.lndo.site:8983
-   # Provides a nice lndo url for the solr web interface
-   # at http://admin.solr.lndo.site
-   - admin.solr.lndo.site:8983
+# proxy:
+#  solr:
+#    - solr.tc.lndo.site:8983
+#    # Provides a nice lndo url for the solr web interface
+#    # at http://admin.solr.lndo.site
+#    - admin.solr.lndo.site:8983
 
 # Additional services and features.
 services:
@@ -41,21 +41,21 @@ services:
     # globals:
     #   gulp-cli: latest
 
-  solr:
-    # Use solr version 5.5
-    type: solr:5.5
-    # Optionally allow access to the database at localhost:9999
-    # You will need to make sure port 9999 is open on your machine
-    #
-    # You can also set `portforward: true` to have Lando dynamically assign
-    # a port. Unlike specifying an actual port setting this to true will give you
-    # a different port every time you restart your app
-    portforward: 9999
-    # Optionally declare the name of the solr core.
-    # This setting is only applicable for versions 5.5 and above
-    core: freedom
-    config:
-      conf: web/modules/contrib/search_api_solr/solr-conf/5.x
+  # solr:
+  #   # Use solr version 5.5
+  #   type: solr:5.5
+  #   # Optionally allow access to the database at localhost:9999
+  #   # You will need to make sure port 9999 is open on your machine
+  #   #
+  #   # You can also set `portforward: true` to have Lando dynamically assign
+  #   # a port. Unlike specifying an actual port setting this to true will give you
+  #   # a different port every time you restart your app
+  #   portforward: 9999
+  #   # Optionally declare the name of the solr core.
+  #   # This setting is only applicable for versions 5.5 and above
+  #   core: freedom
+  #   config:
+  #     conf: web/modules/contrib/search_api_solr/solr-conf/5.x
 
   appserver:
     extras:
