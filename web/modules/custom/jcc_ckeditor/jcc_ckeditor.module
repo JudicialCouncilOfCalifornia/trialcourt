@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * Implements HOOK_editor_js_settings_alter().
+ *
+ * Pre-select the show blocks button in CKEditor.
+ */
+function jcc_ckeditor_editor_js_settings_alter(array &$settings) {
+  foreach (array_keys($settings['editor']['formats']) as $text_format_id) {
+    if ($settings['editor']['formats'][$text_format_id]['editor'] === 'ckeditor') {
+      $settings['editor']['formats'][$text_format_id]['editorSettings']['startupOutlineBlocks'] = TRUE;
+    }
+  }
+}
