@@ -1,0 +1,340 @@
+uuid: 6efa6196-ed4f-43c6-a20c-980a68ed0a13
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - field.storage.node.field_alert_type
+    - field.storage.node.field_attachments
+    - field.storage.node.field_department
+    - field.storage.node.field_division
+    - field.storage.node.field_first_name
+    - field.storage.node.field_images
+    - field.storage.node.field_last_name
+    - field.storage.node.field_news_type
+    - field.storage.paragraph.field_paragraph_content
+    - field.storage.node.field_paragraphs
+    - field.storage.node.field_subject_matter
+    - field.storage.node.field_tags
+    - field.storage.node.field_topics
+    - search_api.server.database
+    - core.entity_view_mode.node.search_result
+  module:
+    - node
+    - search_api
+    - search_api_attachments
+    - paragraphs
+    - taxonomy
+id: database
+name: Database
+description: ''
+read_only: false
+field_settings:
+  body:
+    label: Body
+    datasource_id: 'entity:node'
+    property_path: body
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.body
+  field_alert_type:
+    label: 'Alert Type'
+    datasource_id: 'entity:node'
+    property_path: field_alert_type
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_alert_type
+  field_attachments:
+    label: Attachments
+    datasource_id: 'entity:node'
+    property_path: field_attachments
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_attachments
+  field_department:
+    label: Department
+    datasource_id: 'entity:node'
+    property_path: field_department
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_department
+  field_division:
+    label: Division
+    datasource_id: 'entity:node'
+    property_path: field_division
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_division
+  field_first_name:
+    label: 'First Name'
+    datasource_id: 'entity:node'
+    property_path: field_first_name
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_first_name
+  field_images:
+    label: Images
+    datasource_id: 'entity:node'
+    property_path: field_images
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_images
+  field_last_name:
+    label: 'Last Name'
+    datasource_id: 'entity:node'
+    property_path: field_last_name
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_last_name
+  field_news_type:
+    label: 'News Type'
+    datasource_id: 'entity:node'
+    property_path: field_news_type
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_news_type
+  field_paragraph_content:
+    label: Content
+    datasource_id: 'entity:paragraph'
+    property_path: field_paragraph_content
+    type: text
+    dependencies:
+      config:
+        - field.storage.paragraph.field_paragraph_content
+  field_paragraphs:
+    label: Paragraphs
+    datasource_id: 'entity:node'
+    property_path: field_paragraphs
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_paragraphs
+  field_subject_matter:
+    label: 'Subject Matter'
+    datasource_id: 'entity:node'
+    property_path: field_subject_matter
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_subject_matter
+  field_tags:
+    label: Tags
+    datasource_id: 'entity:node'
+    property_path: field_tags
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_tags
+  field_topics:
+    label: Topics
+    datasource_id: 'entity:node'
+    property_path: field_topics
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_topics
+  node_grants:
+    label: 'Node access information'
+    property_path: search_api_node_grants
+    type: string
+    indexed_locked: true
+    type_locked: true
+    hidden: true
+  rendered_item:
+    label: 'Rendered HTML output'
+    property_path: rendered_item
+    type: text
+    configuration:
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:node':
+          announcement: search_result
+          book: search_result
+          document: search_result
+          event: search_result
+          job: search_result
+          landing_page: search_result
+          location: search_result
+          news: search_result
+          page: search_result
+          person: search_result
+        'entity:paragraph':
+          block: ''
+          content: ''
+        'entity:taxonomy_term':
+          department: ''
+          division: ''
+          document_type: ''
+          event_type: ''
+          location_type: ''
+          news_type: ''
+          person_type: ''
+          subject_matter: ''
+          tags: ''
+          topics: ''
+  status:
+    label: null
+    datasource_id: 'entity:node'
+    property_path: status
+    type: boolean
+    indexed_locked: true
+    type_locked: true
+    dependencies:
+      module:
+        - node
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: string
+    dependencies:
+      module:
+        - node
+  type:
+    label: 'Content type'
+    datasource_id: 'entity:node'
+    property_path: type
+    type: string
+    dependencies:
+      module:
+        - node
+  uid:
+    label: null
+    datasource_id: 'entity:node'
+    property_path: uid
+    type: integer
+    indexed_locked: true
+    type_locked: true
+    dependencies:
+      module:
+        - node
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+  'entity:paragraph':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+  'entity:taxonomy_term':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+processor_settings:
+  add_url: {  }
+  aggregated_field: {  }
+  content_access:
+    weights:
+      preprocess_query: -30
+  entity_status: {  }
+  file_attachments:
+    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
+    number_indexed: 0
+    number_first_bytes: '1 MB'
+    max_filesize: '0'
+    excluded_private: 1
+    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
+  highlight:
+    highlight: always
+    highlight_partial: false
+    excerpt: true
+    excerpt_length: 256
+    exclude_fields: {  }
+    prefix: '<strong>'
+    suffix: '</strong>'
+    weights:
+      postprocess_query: 0
+  html_filter:
+    all_fields: false
+    fields:
+      - body
+      - field_alert_type
+      - field_first_name
+      - field_last_name
+      - field_paragraph_content
+      - rendered_item
+      - title
+      - type
+    title: true
+    alt: true
+    tags:
+      b: 2
+      em: 1
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      u: 1
+    weights:
+      preprocess_index: -15
+      preprocess_query: -15
+  ignorecase:
+    all_fields: false
+    fields:
+      - body
+      - field_alert_type
+      - field_first_name
+      - field_last_name
+      - field_paragraph_content
+      - rendered_item
+      - title
+      - type
+    weights:
+      preprocess_index: -20
+      preprocess_query: -20
+  language_with_fallback: {  }
+  rendered_item: {  }
+  reverse_entity_references: {  }
+  stemmer:
+    all_fields: false
+    fields:
+      - body
+      - field_paragraph_content
+      - rendered_item
+    exceptions:
+      mexican: mexic
+      texan: texa
+    weights:
+      preprocess_index: 0
+      preprocess_query: 0
+  transliteration:
+    all_fields: false
+    fields:
+      - body
+      - field_alert_type
+      - field_first_name
+      - field_last_name
+      - field_paragraph_content
+      - rendered_item
+      - title
+      - type
+    weights:
+      preprocess_index: -20
+      preprocess_query: -20
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  index_directly: true
+  cron_limit: 50
+server: database

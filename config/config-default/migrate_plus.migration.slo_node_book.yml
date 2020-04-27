@@ -17,33 +17,34 @@ source:
     - ../config/migration/slo/xml/4-13-20slo13onlyBook.xml
   item_selector: /mysqldump/database/table_data/row
   fields:
-    - name: src_unique_id
+    -
+      name: src_unique_id
       label: 'Unique ID'
-      selector: field[@name='id']
+      selector: 'field[@name=''id'']'
     -
       name: url
-      label: 'Url'
-      selector: field[@name='url']
+      label: Url
+      selector: 'field[@name=''url'']'
     -
       name: title
-      label: 'Title'
-      selector: field[@name='title']
+      label: Title
+      selector: 'field[@name=''title'']'
     -
       name: headerh1
       label: 'Header H1'
-      selector: field[@name='headerh1']
+      selector: 'field[@name=''headerh1'']'
     -
       name: division
-      label: 'Division'
-      selector: field[@name='division']
+      label: Division
+      selector: 'field[@name=''division'']'
     -
       name: body
-      label: 'Body'
-      selector: field[@name='body']
+      label: Body
+      selector: 'field[@name=''body'']'
     -
       name: htmlbody
       label: 'HTML Body'
-      selector: field[@name='htmlbody']
+      selector: 'field[@name=''htmlbody'']'
   ids:
     src_unique_id:
       type: integer
@@ -55,8 +56,6 @@ process:
   path/pathauto:
     plugin: default_value
     default_value: 0
-  # Substr from 29 to strip protocol and domain.
-  # Assumes consistency in url value.
   path/alias:
     plugin: substr
     source: url

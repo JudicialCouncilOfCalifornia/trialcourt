@@ -1,9 +1,9 @@
-uuid: 388e0a11-3345-453c-8835-452f07d7913c
+uuid: 13af36cb-78e9-46eb-befb-2363894281cc
 langcode: en
 status: true
 dependencies:
   config:
-    - search_api.index.lando
+    - search_api.index.database
   module:
     - search_api
 id: search
@@ -11,7 +11,7 @@ label: Search
 module: views
 description: ''
 tag: ''
-base_table: search_api_index_lando
+base_table: search_api_index_database
 base_field: search_api_id
 display:
   default:
@@ -33,7 +33,7 @@ display:
           skip_access: false
           preserve_facet_query_args: false
       exposed_form:
-        type: basic
+        type: input_required
         options:
           submit_button: Apply
           reset_button: false
@@ -42,6 +42,8 @@ display:
           expose_sort_order: true
           sort_asc_label: Asc
           sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: full_html
       pager:
         type: mini
         options:
@@ -63,42 +65,12 @@ display:
       style:
         type: default
       row:
-        type: search_api
-        options:
-          view_modes:
-            'entity:file':
-              file: default
-            'entity:media':
-              file: default
-              image: default
-            'entity:node':
-              announcement: teaser
-              book: teaser
-              document: teaser
-              event: teaser
-              job: teaser
-              location: teaser
-              news: teaser
-              page: teaser
-              person: teaser
-            'entity:taxonomy_term':
-              department: default
-              division: default
-              document_type: default
-              event_type: default
-              location_type: default
-              news_type: default
-              person_type: default
-              subject_matter: default
-              tags: default
+        type: fields
       fields:
-        search_api_id:
-          table: search_api_index_lando
-          field: search_api_id
-          id: search_api_id
-          entity_type: null
-          entity_field: null
-          plugin_id: standard
+        search_api_rendered_item:
+          id: search_api_rendered_item
+          table: search_api_index_database
+          field: search_api_rendered_item
           relationship: none
           group_type: group
           admin_label: ''
@@ -135,7 +107,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: true
+          element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -143,27 +115,57 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
+          view_modes:
+            'entity:node':
+              announcement: search_result
+              book: search_result
+              document: search_result
+              event: search_result
+              job: search_result
+              landing_page: search_result
+              location: search_result
+              news: search_result
+              page: search_result
+              person: search_result
+            'entity:paragraph':
+              block: default
+              content: default
+            'entity:taxonomy_term':
+              department: default
+              division: default
+              document_type: default
+              event_type: default
+              location_type: default
+              news_type: default
+              person_type: default
+              subject_matter: default
+              tags: default
+              topics: default
+          plugin_id: search_api_rendered_item
       filters:
-        search_api_fulltext:
-          id: search_api_fulltext
-          table: search_api_index_lando
-          field: search_api_fulltext
+        rendered_item:
+          id: rendered_item
+          table: search_api_index_database
+          field: rendered_item
           relationship: none
           group_type: group
           admin_label: ''
-          operator: and
-          value: ''
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
           group: 1
           exposed: true
           expose:
-            operator_id: search_api_fulltext_op
-            label: 'Fulltext search'
+            operator_id: rendered_item_op
+            label: Search
             description: ''
             use_operator: false
-            operator: search_api_fulltext_op
+            operator: rendered_item_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: search_api_fulltext
+            identifier: rendered_item
             required: false
             remember: false
             multiple: false
@@ -172,6 +174,8 @@ display:
               anonymous: '0'
               administrator: '0'
             placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -184,10 +188,7 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          parse_mode: terms
-          min_length: null
-          fields: {  }
-          plugin_id: search_api_fulltext
+          plugin_id: search_api_text
       sorts: {  }
       title: Search
       header: {  }
