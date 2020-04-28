@@ -59,6 +59,13 @@ function jcc_base_header_region(&$variables) {
         'alt' => (string) t('Judicial Court Logo'),
         'renderer' => 'patternlab'
       ],
+      'search' => [
+        'form_action' => '/search',
+        'search_input' => [
+          'form_input_name' => 'keyword',
+          'placeholder' => 'Search',
+        ]
+      ],
       'dropbutton' => [
         'icon' => [
           'name' => "globe-2",
