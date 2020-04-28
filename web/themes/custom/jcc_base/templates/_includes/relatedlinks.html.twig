@@ -1,9 +1,8 @@
-
 {% set link_list %}
   {% set links = [] %}
   {% for link in node.field_links %}
-    {% if link.options.attributes.name %}
-      {% set link_name = link.options.attributes.name %}
+    {% if link.options.attributes.class|join(" ") is not empty %}
+      {% set link_name = link.options.attributes.class|join(" ") %}
       {% set icon =
         {
           name: link_name,
@@ -18,7 +17,8 @@
     {% set links = links|merge([{
       icon: icon,
       url_title: link.title,
-      url: link.url
+      url: link.url,
+      renderer: patternlib
     }]) %}
   {% endfor %}
 
