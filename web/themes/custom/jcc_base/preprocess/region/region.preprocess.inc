@@ -149,7 +149,7 @@ function jcc_base_mainnavigation_build($original_items, $menu_link_tree_handler)
       'url' => $original_item['url'],
     ];
     $item['description'] = $entity->field_text && !$entity->field_text->isEmpty() ? $entity->field_text->first()->getValue()['value'] : NULL;
-    $item['icon'] = $entity->field_fa_icon && !$entity->field_fa_icon->isEmpty() ? $entity->field_fa_icon->first()->getValue()['value'] : NULL;
+    $item['icon'] = $entity->field_fa_icon && !$entity->field_fa_icon->isEmpty() ? ['#markup' => $entity->field_fa_icon->first()->getValue()['value']] : NULL;
 
     if (!empty($original_item['below'])) {
       $item['sublinks'] = jcc_base_mainnavigation_build($original_item['below'], $menu_link_tree_handler);
