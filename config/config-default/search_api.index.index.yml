@@ -1,32 +1,74 @@
-uuid: 6efa6196-ed4f-43c6-a20c-980a68ed0a13
+uuid: 1e61258d-a1c7-4af5-af0a-8cffa429d9a8
 langcode: en
 status: true
 dependencies:
-  config:
-    - field.storage.node.body
-    - field.storage.node.field_alert_type
-    - field.storage.node.field_attachments
-    - field.storage.node.field_department
-    - field.storage.node.field_division
-    - field.storage.node.field_first_name
-    - field.storage.node.field_images
-    - field.storage.node.field_last_name
-    - field.storage.node.field_news_type
-    - field.storage.paragraph.field_paragraph_content
-    - field.storage.node.field_paragraphs
-    - field.storage.node.field_subject_matter
-    - field.storage.node.field_tags
-    - field.storage.node.field_topics
-    - search_api.server.database
-    - core.entity_view_mode.node.search_result
   module:
+    - search_api_solr
     - node
     - search_api
     - search_api_attachments
-    - paragraphs
-    - taxonomy
-id: database
-name: Database
+    - media
+  config:
+    - field.storage.node.field_alert_type
+    - field.storage.node.field_attachments
+    - field.storage.node.body
+    - field.storage.node.field_department
+    - field.storage.node.field_division
+    - field.storage.node.field_document_type
+    - field.storage.node.field_event_type
+    - field.storage.node.field_first_name
+    - field.storage.node.field_images
+    - field.storage.node.field_last_name
+    - field.storage.node.field_help_links
+    - field.storage.node.field_location_type
+    - field.storage.node.field_news_type
+    - field.storage.node.field_person_type
+    - field.storage.node.field_phone
+    - field.storage.node.field_links
+    - field.storage.node.field_subject_matter
+    - field.storage.node.field_tags
+    - field.storage.node.field_topics
+    - search_api.server.solr
+third_party_settings:
+  search_api_solr:
+    finalize: false
+    commit_before_finalize: false
+    commit_after_finalize: false
+    multilingual:
+      limit_to_content_language: false
+      include_language_independent: true
+    highlighter:
+      maxAnalyzedChars: 51200
+      fragmenter: gap
+      regex:
+        slop: 0.5
+        pattern: blank
+        maxAnalyzedChars: 10000
+      usePhraseHighlighter: true
+      highlightMultiTerm: true
+      preserveMulti: false
+      highlight:
+        mergeContiguous: false
+        requireFieldMatch: false
+        snippets: 3
+        fragsize: 0
+    mlt:
+      mintf: 1
+      mindf: 1
+      maxdf: 0
+      maxdfpct: 0
+      minwl: 0
+      maxwl: 0
+      maxqt: 100
+      maxntp: 2000
+      boost: false
+      interestingTerms: none
+    advanced:
+      index_prefix: ''
+      collection: ''
+      timezone: America/Los_Angeles
+id: index
+name: Index
 description: ''
 read_only: false
 field_settings:
@@ -35,9 +77,18 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: body
     type: text
+    boost: !!float 2
     dependencies:
       config:
         - field.storage.node.body
+  created:
+    label: 'Authored on'
+    datasource_id: 'entity:node'
+    property_path: created
+    type: date
+    dependencies:
+      module:
+        - node
   field_alert_type:
     label: 'Alert Type'
     datasource_id: 'entity:node'
@@ -70,6 +121,22 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_division
+  field_document_type:
+    label: 'Document Type'
+    datasource_id: 'entity:node'
+    property_path: field_document_type
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_document_type
+  field_event_type:
+    label: 'Event Type'
+    datasource_id: 'entity:node'
+    property_path: field_event_type
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_event_type
   field_first_name:
     label: 'First Name'
     datasource_id: 'entity:node'
@@ -78,6 +145,14 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_first_name
+  field_help_links:
+    label: 'Links to Guides'
+    datasource_id: 'entity:node'
+    property_path: field_help_links
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_help_links
   field_images:
     label: Images
     datasource_id: 'entity:node'
@@ -94,6 +169,22 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_last_name
+  field_links:
+    label: 'Related Links'
+    datasource_id: 'entity:node'
+    property_path: field_links
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_links
+  field_location_type:
+    label: 'Location Type'
+    datasource_id: 'entity:node'
+    property_path: field_location_type
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_location_type
   field_news_type:
     label: 'News Type'
     datasource_id: 'entity:node'
@@ -102,22 +193,22 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_news_type
-  field_paragraph_content:
-    label: Content
-    datasource_id: 'entity:paragraph'
-    property_path: field_paragraph_content
-    type: text
-    dependencies:
-      config:
-        - field.storage.paragraph.field_paragraph_content
-  field_paragraphs:
-    label: Paragraphs
+  field_person_type:
+    label: 'Person Type'
     datasource_id: 'entity:node'
-    property_path: field_paragraphs
+    property_path: field_person_type
     type: integer
     dependencies:
       config:
-        - field.storage.node.field_paragraphs
+        - field.storage.node.field_person_type
+  field_phone:
+    label: Phone
+    datasource_id: 'entity:node'
+    property_path: field_phone
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_phone
   field_subject_matter:
     label: 'Subject Matter'
     datasource_id: 'entity:node'
@@ -142,6 +233,14 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_topics
+  nid:
+    label: ID
+    datasource_id: 'entity:node'
+    property_path: nid
+    type: integer
+    dependencies:
+      module:
+        - node
   node_grants:
     label: 'Node access information'
     property_path: search_api_node_grants
@@ -157,33 +256,34 @@ field_settings:
       roles:
         anonymous: anonymous
       view_mode:
+        'entity:media':
+          image: ''
+          menu_icons: ''
         'entity:node':
-          announcement: search_result
-          book: search_result
-          document: search_result
-          event: search_result
-          job: search_result
-          landing_page: search_result
-          location: search_result
-          news: search_result
-          page: search_result
-          person: search_result
-        'entity:paragraph':
-          block: ''
-          content: ''
-        'entity:taxonomy_term':
-          department: ''
-          division: ''
-          document_type: ''
-          event_type: ''
-          location_type: ''
-          news_type: ''
-          person_type: ''
-          subject_matter: ''
-          tags: ''
-          topics: ''
+          announcement: default
+          book: default
+          document: default
+          event: default
+          job: default
+          landing_page: default
+          location: default
+          news: default
+          page: default
+          person: default
+  saa_field_attachments:
+    label: 'Search api attachments: Attachments'
+    property_path: saa_field_attachments
+    type: text
   status:
-    label: null
+    label: status
+    datasource_id: 'entity:node'
+    property_path: status
+    type: boolean
+    dependencies:
+      module:
+        - node
+  status_1:
+    label: Published
     datasource_id: 'entity:node'
     property_path: status
     type: boolean
@@ -196,7 +296,8 @@ field_settings:
     label: Title
     datasource_id: 'entity:node'
     property_path: title
-    type: string
+    type: text
+    boost: !!float 3
     dependencies:
       module:
         - node
@@ -209,7 +310,7 @@ field_settings:
       module:
         - node
   uid:
-    label: null
+    label: uid
     datasource_id: 'entity:node'
     property_path: uid
     type: integer
@@ -219,21 +320,15 @@ field_settings:
       module:
         - node
 datasource_settings:
+  'entity:media':
+    bundles:
+      default: true
+      selected:
+        - file
+    languages:
+      default: true
+      selected: {  }
   'entity:node':
-    bundles:
-      default: true
-      selected: {  }
-    languages:
-      default: true
-      selected: {  }
-  'entity:paragraph':
-    bundles:
-      default: true
-      selected: {  }
-    languages:
-      default: true
-      selected: {  }
-  'entity:taxonomy_term':
     bundles:
       default: true
       selected: {  }
@@ -246,6 +341,15 @@ processor_settings:
   content_access:
     weights:
       preprocess_query: -30
+  double_quote_workaround:
+    all_fields: false
+    fields:
+      - rendered_item
+    replacement: '|9999999998|'
+    weights:
+      postprocess_query: 0
+      preprocess_index: -15
+      preprocess_query: -15
   entity_status: {  }
   file_attachments:
     excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
@@ -256,10 +360,11 @@ processor_settings:
     excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
   highlight:
     highlight: always
-    highlight_partial: false
+    highlight_partial: true
     excerpt: true
     excerpt_length: 256
-    exclude_fields: {  }
+    exclude_fields:
+      - rendered_item
     prefix: '<strong>'
     suffix: '</strong>'
     weights:
@@ -267,14 +372,7 @@ processor_settings:
   html_filter:
     all_fields: false
     fields:
-      - body
-      - field_alert_type
-      - field_first_name
-      - field_last_name
-      - field_paragraph_content
       - rendered_item
-      - title
-      - type
     title: true
     alt: true
     tags:
@@ -288,53 +386,40 @@ processor_settings:
     weights:
       preprocess_index: -15
       preprocess_query: -15
-  ignorecase:
+  ignore_character:
     all_fields: false
     fields:
-      - body
-      - field_alert_type
-      - field_first_name
-      - field_last_name
-      - field_paragraph_content
       - rendered_item
-      - title
-      - type
+    ignorable: '[''¿¡!?,.:;]'
+    ignorable_classes:
+      - Pc
+      - Pd
+      - Pe
+      - Pf
+      - Pi
+      - Po
+      - Ps
     weights:
-      preprocess_index: -20
-      preprocess_query: -20
+      preprocess_index: -10
+      preprocess_query: -10
   language_with_fallback: {  }
   rendered_item: {  }
   reverse_entity_references: {  }
-  stemmer:
-    all_fields: false
-    fields:
-      - body
-      - field_paragraph_content
-      - rendered_item
-    exceptions:
-      mexican: mexic
-      texan: texa
+  solr_date_range:
     weights:
       preprocess_index: 0
-      preprocess_query: 0
-  transliteration:
-    all_fields: false
-    fields:
-      - body
-      - field_alert_type
-      - field_first_name
-      - field_last_name
-      - field_paragraph_content
-      - rendered_item
-      - title
-      - type
+  type_boost:
+    boosts:
+      'entity:media':
+        datasource_boost: !!float 1
+      'entity:node':
+        datasource_boost: !!float 1
     weights:
-      preprocess_index: -20
-      preprocess_query: -20
+      preprocess_index: 0
 tracker_settings:
   default:
     indexing_order: fifo
 options:
   index_directly: true
   cron_limit: 50
-server: database
+server: solr
