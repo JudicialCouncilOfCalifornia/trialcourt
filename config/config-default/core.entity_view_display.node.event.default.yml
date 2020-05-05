@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.event.body
     - field.field.node.event.field_date_range
     - field.field.node.event.field_division
+    - field.field.node.event.field_event_moreinfo
     - field.field.node.event.field_event_type
     - field.field.node.event.field_geolocation
     - field.field.node.event.field_images
@@ -41,11 +42,11 @@ content:
     third_party_settings: {  }
   field_date_range:
     weight: 2
-    label: above
+    label: hidden
     settings:
       timezone_override: ''
-      date_format: 'D, m/d/Y @ g:i a'
-      separator: '-'
+      date_format: 'l F d, Y @ g:i a'
+      separator: to
     third_party_settings: {  }
     type: daterange_custom
     region: content
@@ -56,6 +57,13 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+    region: content
+  field_event_moreinfo:
+    weight: 12
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
     region: content
   field_event_type:
     weight: 1
@@ -581,7 +589,7 @@ content:
     region: content
   field_location:
     weight: 3
-    label: above
+    label: hidden
     settings: {  }
     third_party_settings: {  }
     type: address_default
