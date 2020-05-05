@@ -1,3 +1,18 @@
+{#
+/**
+ * @file
+ * Consistent presentation of related links for relevant content types.
+ * Requires data from field_links form field
+ * - title
+ * - url
+ * - options.attributes.class: optional value to change default icon defined in list components
+ *
+ * Optional variables:
+ * - singlecolumn: if passed from parent template, uses single column list component rather than the default multi-column variant
+ *
+ */
+ #}
+
 {% set link_list %}
   {% set links = [] %}
   {% for link in node.field_links %}
@@ -22,12 +37,21 @@
     }]) %}
   {% endfor %}
 
-  {% include '@molecules/blocks/link-list-simple-multicolumn/link-list-simple-multicolumn.twig' with {
-    link_list: {
-      list_icons: true,
-      items: links
-    }
-  } %}
+  {% if singlecolumn %}
+    {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
+      link_list: {
+        list_icons: true,
+        items: links
+      }
+    } %}
+  {% else %}
+    {% include '@molecules/blocks/link-list-simple-multicolumn/link-list-simple-multicolumn.twig' with {
+      link_list: {
+        list_icons: true,
+        items: links
+      }
+    } %}
+  {% endif %}
 {% endset %}
 
 {% include '@molecules/blocks/card/card.twig' with {
