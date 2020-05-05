@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.event.field_event_type
     - field.field.node.event.field_geolocation
     - field.field.node.event.field_images
+    - field.field.node.event.field_links
     - field.field.node.event.field_location
     - field.field.node.event.field_subject_matter
     - field.field.node.event.field_tags
@@ -23,6 +24,7 @@ dependencies:
     - datetime_range
     - field_group
     - geolocation
+    - link_attributes
     - media_library
     - path
     - scheduler
@@ -71,7 +73,7 @@ third_party_settings:
         - field_topics
         - field_subject_matter
       parent_name: group_event_content
-      weight: 24
+      weight: 23
       format_type: tab
       region: content
       format_settings:
@@ -98,7 +100,7 @@ third_party_settings:
       children:
         - field_images
       parent_name: group_event_content
-      weight: 22
+      weight: 21
       format_type: tab
       region: content
       format_settings:
@@ -123,6 +125,20 @@ third_party_settings:
         id: ''
         classes: ''
       label: Descriptions
+    group_secondary_content:
+      children:
+        - field_links
+      parent_name: group_event_content
+      weight: 22
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: 'Secondary Content'
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -204,6 +220,21 @@ content:
     settings:
       media_types: {  }
     third_party_settings: {  }
+    region: content
+  field_links:
+    weight: 2
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+      enabled_attributes:
+        id: false
+        name: false
+        target: true
+        rel: true
+        class: true
+        accesskey: false
+    third_party_settings: {  }
+    type: link_attributes
     region: content
   field_location:
     weight: 7
