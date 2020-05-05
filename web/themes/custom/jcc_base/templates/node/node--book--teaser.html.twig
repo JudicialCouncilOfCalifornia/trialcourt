@@ -97,28 +97,9 @@
     {% endif %}
 
     {% set body %}
-      {% if display_submitted %}
-        <div{{ author_attributes.addClass('node__submitted') }}>
-          <div class="author">By {{ author_name }}</div>
-          <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
-          {{ metadata }}
-        </div>
-      {% endif %}
-
       <div class="body">
         {{ content.body }}
       </div>
-
-      {% if content.field_attachments[0] %}
-        <div class="attachments">
-          {{ content.field_attachments }}
-        </div>
-      {% endif %}
-
-      <div class="book_navigation">
-        {{ content.book_navigation }}
-      </div>
-
     {% endset %}
 
     {% include '@organisms/sections/text-section/text-section.twig' with {

@@ -85,98 +85,45 @@
   {{ title_prefix }}
   {{ title_suffix }}
 
-  {% block content %}
-    {% if label and not page %}
-      {% set title %}
-        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-      {% endset %}
-    {% elseif label and page %}
-      {% set title %}
-        {{ label }}
-      {% endset %}
+  {% if label and not page %}
+    {% set title %}
+      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+    {% endset %}
+  {% elseif label and page %}
+    {% set title %}
+      {{ label }}
+    {% endset %}
+  {% endif %}
+
+  {% include '@molecules/text/title-content/title-content.twig' with {
+    title_content: {
+      title: {
+        title: title
+      },
+      content: content.body
+    }
+  } %}
+
+  {% if content.field_attachments[0] %}
+    {# Display documents as downloads #}
+    {% set docs = [] %}
+    {% for doc in content.field_attachments %}
+      {% if doc['#title'] %}
+        {% set doc_title = doc['#title'] %}
+        {% set doc_url = doc['#url'] %}
+        {% set docs = docs|merge([{
+          url_title: doc_title,
+          url: doc_url
+        }]) %}
+      {% endif %}
+    {% endfor %}
+    {% if docs|length > 0 %}
+      {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
+        link_list: {
+          list_icons: false,
+          items: docs,
+        }
+      } %}
     {% endif %}
-
-    {% set document_type %}
-      {{ content.field_document_type }}
-    {% endset %}
-
-    {% set body %}
-      {# Default author history if needed later ... needs to be enabled for node in Drupal
-      {% if display_submitted %}
-        <div{{ author_attributes.addClass('node__submitted') }}>
-          <div class="author">By {{ author_name }}</div>
-          <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
-          {{ metadata }}
-        </div>
-      {% endif %}
-      #}
-      <div class="publish_date">
-        <div class="document_type">
-          Type: {{ document_type }}
-        </div>
-
-        {#
-          Automatically displays first uploaded date (new node creation) or updated date unless author specifies publish date manually.
-          Because a change date occurs during node creation, any edits on creation day will not denote an update for now.
-        #}
-        {% if content.field_upload_date[0] %}
-          {{ content.field_upload_date_label.0 }}:
-          {{ content.field_upload_date }}
-        {% else %}
-          {% set createDate = node.createdtime|date("Y-m-d") %}
-          {% set lastPubDate = node.changedtime|date("Y-m-d") %}
-          {% if lastPubDate > createDate %}
-            Updated: {{ lastPubDate|date(format="D, m/d/Y")|raw }}
-          {% else %}
-            Uploaded: {{ createDate|date(format="D, m/d/Y")|raw }}
-          {% endif %}
-        {% endif %}
-      </div>
-
-      <div class="body">
-        {{ content.body }}
-      </div>
-
-      {% if content.field_attachments[0] %}
-        {# Display first document as primary download #}
-        {% set primary_doc = content.field_attachments[0]['#url'] %}
-        {% include "@atoms/buttons/link-button.twig" with {
-          link_button: {
-            text: 'Download Document',
-            url: primary_doc
-          }
-        } only %}
-
-        {# Display other documents as secondary downloads #}
-        {% set other_docs = [] %}
-        {% for other_doc in content.field_attachments %}
-          {% if other_doc['#title'] %}
-            {% set doc_title = other_doc['#title'] %}
-            {% set doc_url = other_doc['#url'] %}
-            {% set other_docs = other_docs|merge([{
-              url_title: doc_title,
-              url: doc_url
-            }]) %}
-          {% endif %}
-        {% endfor %}
-        {% set other_docs = other_docs|slice(1) %} {# Skip the primary document #}
-        {% if other_docs|length > 0 %}
-          {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
-            link_list: {
-              list_icons: true,
-              header: 'Related Downloads',
-              items: other_docs,
-            }
-          } %}
-        {% endif %}
-      {% endif %}
-    {% endset %}
-
-    {% include '@molecules/blocks/hero/hero.twig' with {
-      hero: {
-        title: title,
-        body: body
-      }
-    } %}
-  {% endblock %}
+  {% endif %}
 </article>
