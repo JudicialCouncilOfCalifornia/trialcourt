@@ -1,40 +1,38 @@
-{% if content.field_links[0] %}
-  {% set link_list %}
-    {% set links = [] %}
-    {% for link in node.field_links %}
-      {% if link.options.attributes.class|join(" ") is not empty %}
-        {% set link_name = link.options.attributes.class|join(" ") %}
-        {% set icon =
-          {
-            name: link_name,
-            title: link_name.name|capitalize|t,
-            decorative: false
-          }
-        %}
-      {% else %}
-        {% set icon = default %}
-      {% endif %}
+{% set link_list %}
+  {% set links = [] %}
+  {% for link in node.field_links %}
+    {% if link.options.attributes.class|join(" ") is not empty %}
+      {% set link_name = link.options.attributes.class|join(" ") %}
+      {% set icon =
+        {
+          name: link_name,
+          title: link_name.name|capitalize|t,
+          decorative: false
+        }
+      %}
+    {% else %}
+      {% set icon = default %}
+    {% endif %}
 
-      {% set links = links|merge([{
-        icon: icon,
-        url_title: link.title,
-        url: link.url,
-        renderer: patternlib
-      }]) %}
-    {% endfor %}
+    {% set links = links|merge([{
+      icon: icon,
+      url_title: link.title,
+      url: link.url,
+      renderer: patternlib
+    }]) %}
+  {% endfor %}
 
-    {% include '@molecules/blocks/link-list-simple-multicolumn/link-list-simple-multicolumn.twig' with {
-      link_list: {
-        list_icons: true,
-        items: links
-      }
-    } %}
-  {% endset %}
-
-  {% include '@molecules/blocks/card/card.twig' with {
-    card: {
-      title: node.field_links.fieldDefinition.label,
-      excerpt: link_list,
+  {% include '@molecules/blocks/link-list-simple-multicolumn/link-list-simple-multicolumn.twig' with {
+    link_list: {
+      list_icons: true,
+      items: links
     }
-  } only %}
-{% endif %}
+  } %}
+{% endset %}
+
+{% include '@molecules/blocks/card/card.twig' with {
+  card: {
+    title: node.field_links.fieldDefinition.label,
+    excerpt: link_list,
+  }
+} only %}

@@ -133,9 +133,15 @@
       {% endset %}
     {% endif %}
 
-    {% set aside %}
-      {% include '@jcc_base/_includes/metadata.html.twig' %}
-    {% endset %}
+    {% set subject_matter = content.field_subject_matter[0] %}
+    {% set tags = content.field_tags[0] %}
+    {% set topics = content.field_topics[0] %}
+
+    {% if subject_matter or tags or topics %}
+      {% set aside %}
+        {% include '@jcc_base/_includes/metadata.html.twig' %}
+      {% endset %}
+    {% endif %}
 
     {% if related or aside %}
       {% include '@jcc_base/_includes/aside-secondary--related.html.twig' %}
