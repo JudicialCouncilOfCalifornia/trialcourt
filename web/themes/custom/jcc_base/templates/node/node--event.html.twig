@@ -100,6 +100,11 @@
       {% set date_start = node.field_date_range.start_date %}
       {% set date_end = node.field_date_range.end_date %}
 
+      {% if content.field_event_type[0] %}
+        {{ content.field_event_type.0 }}
+        <br>
+      {% endif %}
+
       {% if date_end|date("Y-m-d") > date_start|date("Y-m-d") %}
         {{ date_start|date(format="l F d") }}
         to {{ date_end|date(format="l F d, Y") }}
@@ -164,18 +169,5 @@
     {% if related or aside %}
       {% include '@jcc_base/_includes/aside-secondary--related.html.twig' %}
     {% endif %}
-
-    {% set event_details %}
-      {% set event_type %}
-        {{ content.field_event_type }}
-      {% endset %}
-
-      {% if content.field_images[0] %}
-        <div class="gallery">
-          {{ content.field_images }}
-        </div>
-      {% endif %}
-    {% endset %}
-
   {% endblock %}
 </article>
