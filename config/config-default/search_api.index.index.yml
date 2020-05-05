@@ -9,22 +9,22 @@ dependencies:
     - search_api_attachments
     - media
   config:
+    - field.storage.node.body
     - field.storage.node.field_alert_type
     - field.storage.node.field_attachments
-    - field.storage.node.body
     - field.storage.node.field_department
     - field.storage.node.field_division
     - field.storage.node.field_document_type
     - field.storage.node.field_event_type
     - field.storage.node.field_first_name
+    - field.storage.node.field_help_links
     - field.storage.node.field_images
     - field.storage.node.field_last_name
-    - field.storage.node.field_help_links
+    - field.storage.node.field_links
     - field.storage.node.field_location_type
     - field.storage.node.field_news_type
     - field.storage.node.field_person_type
     - field.storage.node.field_phone
-    - field.storage.node.field_links
     - field.storage.node.field_subject_matter
     - field.storage.node.field_tags
     - field.storage.node.field_topics
@@ -279,6 +279,8 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: status
     type: boolean
+    indexed_locked: true
+    type_locked: true
     dependencies:
       module:
         - node
@@ -287,8 +289,6 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: status
     type: boolean
-    indexed_locked: true
-    type_locked: true
     dependencies:
       module:
         - node
@@ -358,6 +358,20 @@ processor_settings:
     max_filesize: '0'
     excluded_private: 1
     excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
+  hierarchy:
+    fields:
+      field_department: taxonomy_term-parent
+      field_division: taxonomy_term-parent
+      field_document_type: taxonomy_term-parent
+      field_event_type: taxonomy_term-parent
+      field_location_type: taxonomy_term-parent
+      field_news_type: taxonomy_term-parent
+      field_person_type: taxonomy_term-parent
+      field_subject_matter: taxonomy_term-parent
+      field_tags: taxonomy_term-parent
+      field_topics: taxonomy_term-parent
+    weights:
+      preprocess_index: -45
   highlight:
     highlight: always
     highlight_partial: true
@@ -377,12 +391,10 @@ processor_settings:
     alt: true
     tags:
       b: 2
-      em: 1
       h1: 5
       h2: 3
       h3: 2
       strong: 2
-      u: 1
     weights:
       preprocess_index: -15
       preprocess_query: -15
