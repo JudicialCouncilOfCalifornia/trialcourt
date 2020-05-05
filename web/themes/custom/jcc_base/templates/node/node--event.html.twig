@@ -96,11 +96,21 @@
       {% endset %}
     {% endif %}
 
-    {% set event_type %}
-      {{ content.field_event_type }}
+    {% set brow %}
+      {% set date_start = node.field_date_range.start_date %}
+      {% set date_end = node.field_date_range.end_date %}
+
+      {% if date_end|date("Y-m-d") > date_start|date("Y-m-d") %}
+        {{ date_start|date(format="l F d") }}
+        to {{ date_end|date(format="l F d, Y") }}
+      {% else %}
+        {{ date_start|date(format="l F d, Y") }}
+      {% endif %}
+      <br>
+      {{ date_start|date(format="g:i a") }} - {{ date_end|date(format="g:i a") }}
     {% endset %}
 
-    {% set event_details %}
+    {% set body %}
       {% if display_submitted %}
         <div{{ author_attributes.addClass('node__submitted') }}>
           <div class="author">By {{ author_name }}</div>
@@ -108,20 +118,6 @@
           {{ metadata }}
         </div>
       {% endif %}
-
-      {% if content.field_images[0] %}
-        <div class="gallery">
-          {{ content.field_images }}
-        </div>
-      {% endif %}
-
-      <div class="date field-label--bold">
-        {{ content.field_date_range }}
-      </div>
-
-      <div class="location field-label--bold">
-        {{ content.field_location }}
-      </div>
 
       <div class="body">
         {{ content.body }}
@@ -132,30 +128,54 @@
       </div>
     {% endset %}
 
-    {% set event_images %}
-      <div class="map">
-        {{ content.field_geolocation }}
-      </div>
-    {% endset %}
-
-    {% include '@organisms/sections/text-section/text-section.twig' with {
-      text_section: {
-        headergroup: {
-          brow: event_type,
-          tag: 'h1',
-          title: title,
-        },
-        column_content_left: event_details,
-        column_content_right: event_images,
+    {% include '@molecules/blocks/hero/hero.twig' with {
+      hero: {
+        brow: brow,
+        title: title,
+        body: body
       }
     } %}
 
-    {% set meta %}
-      {% include '@jcc_base/_includes/metadata.html.twig' %}
-    {% endset %}
+    {% if content.field_event_moreinfo[0] %}
+      {% set related %}
+        {% include '@molecules/blocks/card/card.twig' with {
+          card: {
+            excerpt: content.field_event_moreinfo.0,
+          }
+        } only %}
+      {% endset %}
+    {% endif %}
 
-    {% if related_links or meta %}
+    {% if related %}
+      {% set aside %}
+        {% include '@jcc_base/_includes/location.html.twig' %}
+        {% include '@jcc_base/_includes/metadata.html.twig' %}
+      {% endset %}
+    {% else %}
+      {% set related %}
+        {% include '@jcc_base/_includes/location.html.twig' %}
+      {% endset %}
+
+      {% set aside %}
+        {% include '@jcc_base/_includes/metadata.html.twig' %}
+      {% endset %}
+    {% endif %}
+
+    {% if related or aside %}
       {% include '@jcc_base/_includes/aside-secondary--related.html.twig' %}
     {% endif %}
+
+    {% set event_details %}
+      {% set event_type %}
+        {{ content.field_event_type }}
+      {% endset %}
+
+      {% if content.field_images[0] %}
+        <div class="gallery">
+          {{ content.field_images }}
+        </div>
+      {% endif %}
+    {% endset %}
+
   {% endblock %}
 </article>

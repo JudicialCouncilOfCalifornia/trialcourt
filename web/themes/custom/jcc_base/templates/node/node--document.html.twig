@@ -205,16 +205,16 @@
     {% endif %}
 
     {% if content.field_links[0] %}
-      {% set related_links %}
+      {% set related %}
         {% include '@jcc_base/_includes/relatedlinks.html.twig' %}
       {% endset %}
     {% endif %}
 
-    {% set meta %}
+    {% set aside %}
       {% include '@jcc_base/_includes/metadata.html.twig' %}
     {% endset %}
 
-    {% if related_links or meta %}
+    {% if related or aside %}
       {% include '@jcc_base/_includes/aside-secondary--related.html.twig' %}
     {% endif %}
   {% endblock %}
