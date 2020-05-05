@@ -141,24 +141,26 @@
       }
     } %}
 
-    {% if content.field_event_moreinfo[0] %}
+    {% if content.field_event_moreinfo[0] or content.field_location[0] %}
       {% set related %}
-        {% include '@molecules/blocks/card/card.twig' with {
-          card: {
-            excerpt: content.field_event_moreinfo.0,
-          }
-        } only %}
-      {% endset %}
-    {% endif %}
+        {% if content.field_event_moreinfo[0] %}
+          {% include '@molecules/blocks/card/card.twig' with {
+            card: {
+              excerpt: content.field_event_moreinfo.0,
+            }
+          } only %}
+        {% endif %}
 
-    {% if related %}
-      {% set aside %}
         {% include '@jcc_base/_includes/location.html.twig' %}
+      {% endset %}
+
+      {% set aside %}
+        {% include '@jcc_base/_includes/relatedlinks.html.twig' %}
         {% include '@jcc_base/_includes/metadata.html.twig' %}
       {% endset %}
     {% else %}
       {% set related %}
-        {% include '@jcc_base/_includes/location.html.twig' %}
+        {% include '@jcc_base/_includes/relatedlinks.html.twig' %}
       {% endset %}
 
       {% set aside %}
@@ -166,8 +168,6 @@
       {% endset %}
     {% endif %}
 
-    {% if related or aside %}
-      {% include '@jcc_base/_includes/aside-secondary--related.html.twig' %}
-    {% endif %}
+    {% include '@jcc_base/_includes/aside-secondary--related.html.twig' %}
   {% endblock %}
 </article>

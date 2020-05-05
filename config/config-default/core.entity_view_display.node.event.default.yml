@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.event.field_event_type
     - field.field.node.event.field_geolocation
     - field.field.node.event.field_images
+    - field.field.node.event.field_links
     - field.field.node.event.field_location
     - field.field.node.event.field_subject_matter
     - field.field.node.event.field_tags
@@ -21,6 +22,7 @@ dependencies:
     - datetime_range
     - geolocation
     - hierarchical_term_formatter
+    - link
     - text
     - user
 id: node.event.default
@@ -586,6 +588,18 @@ content:
       view_mode: default
       link: false
     third_party_settings: {  }
+    region: content
+  field_links:
+    weight: 13
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
     region: content
   field_location:
     weight: 3
