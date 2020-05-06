@@ -62,8 +62,8 @@ function jcc_base_header_region(&$variables) {
       'search' => [
         'form_action' => '/search',
         'search_input' => [
-          'form_input_name' => 'keyword',
-          'placeholder' => \Drupal::request()->query->get('keyword') ?: 'Search',
+          'form_input_name' => 'keywords',
+          'placeholder' => \Drupal::request()->query->get('keywords') ?: 'Search',
         ]
       ],
       'dropbutton' => [
