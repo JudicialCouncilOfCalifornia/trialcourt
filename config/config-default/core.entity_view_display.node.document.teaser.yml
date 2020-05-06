@@ -18,6 +18,7 @@ dependencies:
     - field.field.node.document.field_upload_date_label
     - node.type.document
   module:
+    - jcc_media_formatter
     - text
     - user
 id: node.document.teaser
@@ -34,18 +35,17 @@ content:
     third_party_settings: {  }
     region: content
   field_attachments:
-    type: entity_reference_label
+    type: media_file_url
     weight: 3
     region: content
-    label: above
-    settings:
-      link: true
+    label: hidden
+    settings: {  }
     third_party_settings: {  }
   field_document_type:
     type: entity_reference_label
     weight: 2
     region: content
-    label: above
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }
