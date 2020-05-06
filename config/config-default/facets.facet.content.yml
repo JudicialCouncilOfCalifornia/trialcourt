@@ -1,4 +1,4 @@
-uuid: bf6b018f-bee0-4c61-9c72-14cc9e697cfe
+uuid: c84ac5ce-8667-40d8-9a40-3b209ffd231c
 langcode: en
 status: true
 dependencies:
@@ -7,13 +7,13 @@ dependencies:
     - views.view.search
   module:
     - search_api
-id: division
-name: Division
-url_alias: division
+id: content
+name: Content
+url_alias: content
 weight: 0
 min_count: 1
 show_only_one_result: false
-field_identifier: field_division
+field_identifier: type
 facet_source_id: 'search_api:views_page__search__page_1'
 widget:
   type: checkbox
@@ -27,7 +27,7 @@ widget:
     reset_text: 'Show all'
     hide_reset_when_no_selection: true
 query_operator: or
-use_hierarchy: true
+use_hierarchy: false
 expand_hierarchy: false
 enable_parent_when_child_gets_disabled: true
 hard_limit: 0
@@ -59,6 +59,13 @@ processor_configs:
       sort: 40
     settings:
       sort: ASC
+  exclude_specified_items:
+    processor_id: exclude_specified_items
+    weights:
+      build: 50
+    settings:
+      exclude: 'Basic page, Landing Page'
+      regex: false
   hide_1_result_facet:
     processor_id: hide_1_result_facet
     weights:
