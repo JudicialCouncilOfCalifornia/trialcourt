@@ -83,21 +83,18 @@
     {% set header_title = view.title|t %}
   {% endif %}
 
-    {% set url = path('entity.node.canonical', {'node': node.nid.value}) %}
-    {% include '@organisms/sections/cards-with-list/cards-with-list.twig' with {
-      cards_with_list: {
-        cards: {
-          card: {
-            "brow": node.created.value|date("M j, Y"),
-            "title": node.title.value,
-            "excerpt": node.body.value|striptags,
-            "url": url,
-            "read_more": {
-              "label": "Read more",
-              "url": url,
-            }
-          },
-        }
+  {% set url = path('entity.node.canonical', {'node': node.nid.value}) %}
+  {% include '@organisms/sections/card-section/card-section.twig' with {
+    card_section: {
+      column_variant: "has-one-column",
+      cards: {
+        card: {
+          brow: node.created.value|date("M j, Y"),
+          title: node.title.value,
+          excerpt: node.body.value|striptags,
+          url: url,
+        },
       }
-    } %}
+    }
+  } %}
 </article>
