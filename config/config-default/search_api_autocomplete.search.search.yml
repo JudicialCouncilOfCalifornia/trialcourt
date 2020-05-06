@@ -8,6 +8,7 @@ dependencies:
   module:
     - views
     - search_api_autocomplete
+    - search_api_solr
 id: search
 label: Search
 index_id: index
@@ -29,11 +30,11 @@ suggester_settings:
         news: ''
         page: ''
         person: ''
-  server:
+  search_api_solr_terms:
     fields: {  }
 suggester_weights:
   live_results: -50
-  server: 0
+  search_api_solr_terms: 0
 suggester_limits:
   live_results: 3
 search_settings:
@@ -42,7 +43,7 @@ search_settings:
       default: true
       selected: {  }
 options:
-  limit: 10
+  limit: 7
   min_length: 2
   show_count: true
   autosubmit: true

@@ -62,7 +62,7 @@ third_party_settings:
       maxqt: 100
       maxntp: 2000
       boost: false
-      interestingTerms: none
+      interestingTerms: list
     advanced:
       index_prefix: ''
       collection: ''
@@ -386,7 +386,9 @@ processor_settings:
   html_filter:
     all_fields: false
     fields:
+      - body
       - rendered_item
+      - saa_field_attachments
     title: true
     alt: true
     tags:
@@ -402,6 +404,7 @@ processor_settings:
     all_fields: false
     fields:
       - rendered_item
+      - saa_field_attachments
     ignorable: '[''¿¡!?,.:;]'
     ignorable_classes:
       - Pc
