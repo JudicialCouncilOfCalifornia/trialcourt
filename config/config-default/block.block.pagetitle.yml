@@ -2,12 +2,14 @@ uuid: 6ddb7ffc-6e48-40e4-8559-17da4a077b70
 langcode: en
 status: true
 dependencies:
+  module:
+    - system
   theme:
     - jcc_base
 id: pagetitle
 theme: jcc_base
 region: title
-weight: 0
+weight: -11
 provider: null
 plugin: page_title_block
 settings:
@@ -15,4 +17,9 @@ settings:
   label: 'Page title'
   provider: core
   label_display: '0'
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: ''
+    negate: true
+    context_mapping: {  }
