@@ -137,23 +137,7 @@ $config['environment_indicator.indicator']['bg_color'] = '#045d30';
 $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
 
 /* Solr */
-$config['search_api.server.pantheon']['backend_config'] = [
-  'connector' => 'standard',
-  'connector_config' => [
-    'schema' => NULL,
-    'scheme' => 'http',
-    'host' => 'solr',
-    'port' => '8983',
-    'path' => '/solr',
-    'core' => 'freedom',
-    'timeout' => 5,
-    'index_timeout' => 5,
-    'optimize_timeout' => 10,
-    'commit_within' => 1000,
-    'solr_version' => '',
-    'http_method' => 'AUTO'
-  ]
-];
+$config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'sandbox-1';
 
 /* Exclude all dev modules from core.extension.yml */
 // $settings['config_exclude_modules'] = [
