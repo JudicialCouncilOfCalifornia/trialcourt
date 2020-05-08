@@ -70,6 +70,7 @@
  *   in different view modes.
  */
 #}
+
 {% set classes = [
   'node',
   node.isPromoted() ? 'node--promoted',
@@ -95,6 +96,21 @@
         {{ label }}
       {% endset %}
     {% endif %}
+
+    {% set breadcrumbs_source = drupal_block("system_breadcrumb_block").content["#links"] %}
+    {% set breadcrumbs = [] %}
+    {% for breadcrumb in breadcrumbs_source %}
+      {% if not loop.last %}
+        {% set url = breadcrumb.url %}
+      {% else %}
+        {% set url = null %}
+      {% endif %}
+      {% set label = breadcrumb.text %}
+      {% set breadcrumbs = breadcrumbs|merge([{
+        url: url,
+        label: label
+      }]) %}
+    {% endfor %}
 
     {% set brow %}
       {% set date_start = node.field_date_range.start_date %}
@@ -135,6 +151,7 @@
 
     {% include '@molecules/blocks/hero/hero.twig' with {
       hero: {
+        breadcrumbs: breadcrumbs,
         brow: brow,
         title: title,
         body: body
