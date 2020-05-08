@@ -5,6 +5,7 @@
  * Contains jcc_block_field_decorator.module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -20,5 +21,15 @@ function jcc_block_field_decorator_help($route_name, RouteMatchInterface $route_
       return $output;
 
     default:
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function jcc_block_field_decorator_form_views_exposed_form_alter(&$form, FormStateInterface $form_state) {
+  // FAQ block filters are configured on the node edit not visible to users.
+  if ($form['#id'] == 'views-exposed-form-faq-block') {
+    $form['#attributes']['class'] = 'display-none';
   }
 }
