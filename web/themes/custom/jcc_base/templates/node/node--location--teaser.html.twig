@@ -84,11 +84,11 @@
   {% block content %}
     {% if label and not page %}
       {% set title %}
-        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+        <span class="teaser"><a href="{{ url }}" rel="bookmark">{{ label }}</a></span>
       {% endset %}
     {% elseif label and page %}
       {% set title %}
-        {{ label }}
+        <span class="teaser">{{ label }}</span>
       {% endset %}
     {% endif %}
 
@@ -118,13 +118,13 @@
             country: content.field_location.0.country_code,
           },
           phone: {
-            tag: "h3",
+            tag: "p",
             title: "Phone",
             content: content.field_phone|children,
           },
           subject_matter: {
             title: {
-              tag: "h6",
+              tag: "p",
               title: "Subject Matter",
             },
             content: content.field_subject_matter|children,

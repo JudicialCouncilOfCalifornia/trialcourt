@@ -86,6 +86,15 @@
   {{ title_suffix }}
 
   {% block content %}
+    {% if label and not page %}
+      {% set title %}
+        <span class="teaser"><a href="{{ url }}" rel="bookmark">{{ label }}</a></span>
+      {% endset %}
+    {% elseif label and page %}
+      {% set title %}
+        <span class="teaser">{{ label }}</span>
+      {% endset %}
+    {% endif %}
 
     {% set body %}
       {% set person_name = [] %}
@@ -96,7 +105,7 @@
 
       {% include '@jcc_base/_patterns/02-molecules/blocks/card-person/card-person.twig' with {
         card: {
-          tag: 'h1',
+          tag: 'h2',
           img: {
             src: person_img_url,
             alt: person_img_alt,
