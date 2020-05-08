@@ -84,11 +84,19 @@
   {% block content %}
     {% if label and not page %}
       {% set title %}
+<<<<<<< HEAD
         <span class="teaser"><a href="{{ url }}" rel="bookmark">{{ label }}</a></span>
       {% endset %}
     {% elseif label and page %}
       {% set title %}
         <span class="teaser">{{ label }}</span>
+=======
+        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+      {% endset %}
+    {% elseif label and page %}
+      {% set title %}
+        {{ label }}
+>>>>>>> 286bb06f27933cc4dfc84de5c1c6a324ba19c213
       {% endset %}
     {% endif %}
 
@@ -118,13 +126,21 @@
             country: content.field_location.0.country_code,
           },
           phone: {
+<<<<<<< HEAD
             tag: "p",
+=======
+            tag: "h3",
+>>>>>>> 286bb06f27933cc4dfc84de5c1c6a324ba19c213
             title: "Phone",
             content: content.field_phone|children,
           },
           subject_matter: {
             title: {
+<<<<<<< HEAD
               tag: "p",
+=======
+              tag: "h6",
+>>>>>>> 286bb06f27933cc4dfc84de5c1c6a324ba19c213
               title: "Subject Matter",
             },
             content: content.field_subject_matter|children,
