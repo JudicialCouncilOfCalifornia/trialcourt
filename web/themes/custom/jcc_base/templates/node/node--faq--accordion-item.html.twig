@@ -82,83 +82,23 @@
 {{ attach_library('classy/node') }}
 
 <article{{ attributes.addClass(classes)|without('role') }}>
+
   {% block content %}
-    {% if label and not page %}
-      {% set title %}
-        <span class="teaser"><a href="{{ url }}" rel="bookmark">{{ label }}</a></span>
-      {% endset %}
-    {% elseif label and page %}
-      {% set title %}
-        <span class="teaser">{{ label }}</span>
-      {% endset %}
-    {% endif %}
-
-    {% set organization = content.field_location.0["#organization"] %}
-    {% set address_line1 = content.field_location.0["#address_line1"] %}
-    {% set address_line2 = content.field_location.0["#address_line2"] %}
-    {% set city = content.field_location.0["#locality"] %}
-    {% set state = content.field_location.0["#administrative_area"]["code"] %}
-    {% set postal_code = content.field_location.0["#postal_code"] %}
-    {% set country = content.field_location.0["#country"]["code"] %}
-
-    {% set event_body %}
-      <div class="address">
-        {% if organization %}
-          {{ organization }},
-        {% endif %}
-        {{ address_line1 }},
-        {% if address_line2 %}
-            {{ address_line2 }} ,
-        {% endif %}
-        {{ city }}, {{ state }}  {{ postal_code }}
-        {% if country %}
-          {{ country }}
-        {% endif %}
-      </div>
+    {% set body %}
       {{ content.body }}
+      {% for item in vocabularies %}
+        {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
+          link_list: item.link_list,
+          tag: 'h5'
+        } %}
+      {% endfor %}
     {% endset %}
 
-    {% set start_date = node.field_date_range.value|date(format="m/d/Y") %}
-    {% set card_url = path('entity.node.canonical', {'node': node.id}) %}
-    {% set img_src = file_url(node.field_images.entity.field_media_image.entity.uri.value) %}
-    {% set img_alt = node.field_images.entity.field_media_image.alt %}
+    {% include '@organisms/sections/text-section/text-section.twig' with {
+      text_section: {
+        column_content_left: body,
+      }
+    } only %}
 
-    {% set tiles = [] %}
-
-    {% set cards = {
-      card: {
-        title: title,
-        excerpt: event_body,
-        url: card_url
-      },
-      date: start_date,
-      img: {
-        src: img_src,
-        alt: img_alt,
-        renderer: 'patternlab',
-      },
-    } %}
-
-    {% set tiles = tiles|merge([cards])%}
-
-    {% if view.pager.displayHandler.options.use_more == true %}
-      {% set button_text = view.pager.displayHandler.options.use_more_text %}
-      {% set button_url = "/event" %}
-
-      {% set button = {
-        "text": button_text,
-        "url": button_url,
-        "style": 'primary'
-      } %}
-    {% else %}
-      {% set button = {} %}
-    {% endif %}
-
-    {% include '@organisms/sections/tiles-list/tiles-list.twig' with {
-      tiles_list: {
-        tiles: tiles,
-        button: button,
-      },
-    } %}
   {% endblock %}
 </article>
