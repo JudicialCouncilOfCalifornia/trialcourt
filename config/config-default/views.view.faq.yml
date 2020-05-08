@@ -16,6 +16,7 @@ dependencies:
     - taxonomy.vocabulary.tags
     - taxonomy.vocabulary.topics
   module:
+    - jcc_block_field_decorator
     - node
     - taxonomy
     - text
@@ -85,7 +86,11 @@ display:
         options:
           grouping:
             -
-              field: field_subject_matter
+              field: field_division
+              rendered: true
+              rendered_strip: true
+            -
+              field: field_topics
               rendered: true
               rendered_strip: true
           row_class: ''
@@ -589,7 +594,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: true
-          type: textfield
+          type: select
           limit: true
           vid: department
           hierarchy: true
@@ -636,7 +641,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: true
-          type: textfield
+          type: select
           limit: true
           vid: division
           hierarchy: true
@@ -683,7 +688,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: true
-          type: textfield
+          type: select
           limit: true
           vid: subject_matter
           hierarchy: true
@@ -730,7 +735,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: true
-          type: textfield
+          type: select
           limit: true
           vid: tags
           hierarchy: false
@@ -777,7 +782,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: true
-          type: textfield
+          type: select
           limit: true
           vid: topics
           hierarchy: true
@@ -825,10 +830,10 @@ display:
         - 'config:field.storage.node.field_tags'
         - 'config:field.storage.node.field_topics'
   block:
-    display_plugin: block
+    display_plugin: filterable_block
     id: block
-    display_title: Block
-    position: 1
+    display_title: 'Filterable Block'
+    position: 2
     display_options:
       display_extenders: {  }
     cache_metadata:
