@@ -88,11 +88,11 @@
   {% block content %}
     {% if label and not page %}
       {% set title %}
-        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+        <span class="teaser"><a href="{{ url }}" rel="bookmark">{{ label }}</a></span>
       {% endset %}
     {% elseif label and page %}
       {% set title %}
-        {{ label }}
+        <span class="teaser">{{ label }}</span>
       {% endset %}
     {% endif %}
 
