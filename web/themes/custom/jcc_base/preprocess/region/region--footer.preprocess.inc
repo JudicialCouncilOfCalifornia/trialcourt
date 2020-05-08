@@ -11,7 +11,7 @@
 function jcc_base_preprocess_region__footer(&$variables) {
   $theme = \Drupal::service('theme.manager')->getActiveTheme()->getName();
   $site = \Drupal::config('system.site');
-  $content = $variables['elements']['footer']['content'];
+
   // Set up arrays to pass to component.
   $variables['footer_tall'] = [
     'site_name' => $site->get('name'),
@@ -54,10 +54,26 @@ function jcc_base_preprocess_region__footer(&$variables) {
     ]
   ];
 
-  foreach ($content['#items'] as $key => $item) {
-    $variables['footer_tall']['links']['inline_nav']['items'][] = [
-      'name' => $item['title'],
-      'url' => $item['url']
-    ];
+  // Get links from footer menu directly.
+  $menu_name = 'footer';
+  $menu_tree = \Drupal::menuTree();
+  $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
+  $parameters->setMinDepth(0)->onlyEnabledLinks();
+
+  $tree = $menu_tree->load($menu_name, $parameters);
+  $manipulators = array(
+    array('callable' => 'menu.default_tree_manipulators:checkAccess'),
+    array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
+  );
+  $tree = $menu_tree->transform($tree, $manipulators);
+  $footer_nav = $menu_tree->build($tree);
+
+  if (isset($footer_nav['#items']) && !empty($footer_nav['#items'])) {
+    foreach ($footer_nav['#items'] as $key => $item) {
+      $variables['footer_tall']['links']['inline_nav']['items'][] = [
+        'name' => $item['title'],
+        'url' => $item['url']
+      ];
+    }
   }
 }
