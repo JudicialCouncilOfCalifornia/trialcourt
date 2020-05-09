@@ -8,6 +8,10 @@
   {% endif %}
 
   <div class="jcc-card__body">
+    {% if card.brow %}
+      <p class="jcc-hero__brow">{{ card.brow }}</p>
+    {% endif %}
+
     <{{ tag }} class="jcc-card__title">
     {%  if card.url %}
       <a class="usa-link" href="{{ card.url }}">{{ card.title }}</a>
