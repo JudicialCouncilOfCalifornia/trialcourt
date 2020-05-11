@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - facets.facet.department
     - field.field.node.job.body
     - field.field.node.job.field_attachments
     - field.field.node.job.field_department
@@ -16,6 +17,7 @@ dependencies:
     - field.field.node.job.field_topics
     - node.type.job
   module:
+    - entity_reference_facet_link
     - text
     - user
 id: node.job.teaser
@@ -40,12 +42,12 @@ content:
       link: true
     third_party_settings: {  }
   field_department:
-    type: entity_reference_label
+    type: entity_reference_facet_link
     weight: 2
     region: content
     label: above
     settings:
-      link: true
+      facet: department
     third_party_settings: {  }
   links:
     weight: 0

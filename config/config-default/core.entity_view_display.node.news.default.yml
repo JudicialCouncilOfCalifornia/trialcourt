@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - facets.facet.topics
     - field.field.node.news.body
     - field.field.node.news.field_attachments
     - field.field.node.news.field_division
@@ -14,7 +15,7 @@ dependencies:
     - field.field.node.news.field_topics
     - node.type.news
   module:
-    - hierarchical_term_formatter
+    - entity_reference_facet_link
     - jcc_media_formatter
     - link
     - metatag
@@ -40,12 +41,12 @@ content:
     third_party_settings: {  }
     region: content
   field_division:
-    type: entity_reference_label
+    type: entity_reference_facet_link
     weight: 5
     region: content
     label: above
     settings:
-      link: true
+      facet: division
     third_party_settings: {  }
   field_links:
     weight: 4
@@ -67,44 +68,36 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_news_type:
-    type: entity_reference_label
+    type: entity_reference_facet_link
     weight: 0
     region: content
     label: hidden
     settings:
-      link: true
+      facet: news_type
     third_party_settings: {  }
   field_subject_matter:
-    type: hierarchical_term_formatter
+    type: entity_reference_facet_link
     weight: 6
     region: content
     label: above
     settings:
-      link: true
-      display: all
-      wrap: none
-      separator: ' » '
-      reverse: false
+      facet: subject_matter
     third_party_settings: {  }
   field_tags:
-    type: entity_reference_label
+    type: entity_reference_facet_link
     weight: 7
     region: content
     label: above
     settings:
-      link: true
+      facet: tags
     third_party_settings: {  }
   field_topics:
     weight: 8
     label: above
     settings:
-      link: true
-      display: all
-      wrap: none
-      separator: ' » '
-      reverse: false
+      facet: topics
     third_party_settings: {  }
-    type: hierarchical_term_formatter
+    type: entity_reference_facet_link
     region: content
 hidden:
   langcode: true
