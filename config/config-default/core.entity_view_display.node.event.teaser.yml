@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - facets.facet.event_type
     - field.field.node.event.body
     - field.field.node.event.field_date_range
     - field.field.node.event.field_division
@@ -20,6 +21,7 @@ dependencies:
   module:
     - address
     - datetime_range
+    - entity_reference_facet_link
     - text
     - user
 id: node.event.teaser
@@ -51,12 +53,12 @@ content:
       timezone_override: ''
     third_party_settings: {  }
   field_event_type:
-    type: entity_reference_label
+    type: entity_reference_facet_link
     weight: 1
     region: content
     label: hidden
     settings:
-      link: true
+      facet: event_type
     third_party_settings: {  }
   field_location:
     type: address_plain

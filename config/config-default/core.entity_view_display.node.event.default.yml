@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - facets.facet.topics
     - field.field.node.event.body
     - field.field.node.event.field_date_range
     - field.field.node.event.field_division
@@ -20,8 +21,8 @@ dependencies:
   module:
     - address
     - datetime_range
+    - entity_reference_facet_link
     - geolocation
-    - hierarchical_term_formatter
     - link
     - text
     - user
@@ -56,9 +57,9 @@ content:
     weight: 8
     label: above
     settings:
-      link: true
+      facet: division
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   field_event_moreinfo:
     weight: 12
@@ -71,9 +72,9 @@ content:
     weight: 1
     label: hidden
     settings:
-      link: true
+      facet: event_type
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   field_geolocation:
     weight: 5
@@ -612,33 +613,25 @@ content:
     weight: 9
     label: above
     settings:
-      link: true
-      display: all
-      wrap: none
-      separator: ' » '
-      reverse: false
+      facet: subject_matter
     third_party_settings: {  }
-    type: hierarchical_term_formatter
+    type: entity_reference_facet_link
     region: content
   field_tags:
     weight: 10
     label: above
     settings:
-      link: true
+      facet: tags
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   field_topics:
     weight: 11
     label: above
     settings:
-      link: true
-      display: all
-      wrap: none
-      separator: ' » '
-      reverse: false
+      facet: topics
     third_party_settings: {  }
-    type: hierarchical_term_formatter
+    type: entity_reference_facet_link
     region: content
   links:
     weight: 7

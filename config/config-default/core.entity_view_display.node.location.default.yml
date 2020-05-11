@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - facets.facet.tags
     - field.field.node.location.body
     - field.field.node.location.field_division
     - field.field.node.location.field_geolocation
@@ -19,6 +20,7 @@ dependencies:
     - node.type.location
   module:
     - address
+    - entity_reference_facet_link
     - geolocation
     - metatag
     - office_hours
@@ -41,9 +43,9 @@ content:
     weight: 103
     label: above
     settings:
-      link: true
+      facet: division
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   field_geolocation:
     weight: 112
@@ -561,9 +563,9 @@ content:
     weight: 105
     label: above
     settings:
-      link: true
+      facet: location_type
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   field_mailing_address:
     weight: 104
@@ -645,17 +647,17 @@ content:
     weight: 107
     label: above
     settings:
-      link: true
+      facet: subject_matter
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   field_tags:
     weight: 108
     label: above
     settings:
-      link: true
+      facet: tags
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   links:
     weight: 100
