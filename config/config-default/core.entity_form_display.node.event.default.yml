@@ -6,9 +6,11 @@ dependencies:
     - field.field.node.event.body
     - field.field.node.event.field_date_range
     - field.field.node.event.field_division
+    - field.field.node.event.field_event_moreinfo
     - field.field.node.event.field_event_type
     - field.field.node.event.field_geolocation
     - field.field.node.event.field_images
+    - field.field.node.event.field_links
     - field.field.node.event.field_location
     - field.field.node.event.field_subject_matter
     - field.field.node.event.field_tags
@@ -22,6 +24,7 @@ dependencies:
     - datetime_range
     - field_group
     - geolocation
+    - link_attributes
     - media_library
     - path
     - scheduler
@@ -50,7 +53,7 @@ third_party_settings:
         - field_event_type
         - field_date_range
         - field_location
-        - body
+        - group_descriptions
       parent_name: group_event_content
       weight: 20
       format_type: tab
@@ -62,19 +65,6 @@ third_party_settings:
         id: ''
         classes: ''
       label: Details
-    group_secondary_content:
-      children: {  }
-      parent_name: group_event_content
-      weight: 22
-      format_type: tab
-      region: content
-      format_settings:
-        id: ''
-        classes: ''
-        description: ''
-        formatter: closed
-        required_fields: true
-      label: 'Secondary Content'
     group_metadata:
       children:
         - field_geolocation
@@ -120,6 +110,35 @@ third_party_settings:
         id: ''
         classes: ''
       label: Media
+    group_descriptions:
+      children:
+        - body
+        - field_event_moreinfo
+      parent_name: group_main_content
+      weight: 8
+      format_type: details
+      region: content
+      format_settings:
+        description: 'The <strong>Body</strong> provides the concise event description that will be prominently displayed everywhere. Expand on the core description using <strong>Extended Details</strong> to add benefits, links to related content, and other information to help set expectations.'
+        open: true
+        required_fields: true
+        id: ''
+        classes: ''
+      label: Descriptions
+    group_secondary_content:
+      children:
+        - field_links
+      parent_name: group_event_content
+      weight: 22
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: 'Secondary Content'
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -127,7 +146,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 4
+    weight: 5
     settings:
       rows: 9
       summary_rows: 3
@@ -142,7 +161,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_date_range:
-    weight: 2
+    weight: 6
     settings: {  }
     third_party_settings: {  }
     type: daterange_default
@@ -164,8 +183,16 @@ content:
     third_party_settings: {  }
     type: autocomplete_deluxe
     region: content
+  field_event_moreinfo:
+    weight: 6
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
   field_event_type:
-    weight: 1
+    weight: 5
     settings:
       limit: '10'
       min_length: '0'
@@ -194,8 +221,23 @@ content:
       media_types: {  }
     third_party_settings: {  }
     region: content
+  field_links:
+    weight: 2
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+      enabled_attributes:
+        id: false
+        name: false
+        target: true
+        rel: true
+        class: true
+        accesskey: false
+    third_party_settings: {  }
+    type: link_attributes
+    region: content
   field_location:
-    weight: 3
+    weight: 7
     settings: {  }
     third_party_settings: {  }
     type: address_default
@@ -239,7 +281,7 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
@@ -309,7 +351,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
