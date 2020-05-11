@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - facets.facet.topics
     - field.field.node.page.body
     - field.field.node.page.field_attachments
     - field.field.node.page.field_division
@@ -13,7 +14,7 @@ dependencies:
     - field.field.node.page.field_topics
     - node.type.page
   module:
-    - hierarchical_term_formatter
+    - entity_reference_facet_link
     - jcc_media_formatter
     - link
     - metatag
@@ -49,9 +50,9 @@ content:
     weight: 4
     label: above
     settings:
-      link: true
+      facet: division
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   field_links:
     weight: 6
@@ -76,33 +77,25 @@ content:
     weight: 7
     label: above
     settings:
-      display: all
-      link: true
-      wrap: none
-      separator: ' » '
-      reverse: false
+      facet: subject_matter
     third_party_settings: {  }
-    type: hierarchical_term_formatter
+    type: entity_reference_facet_link
     region: content
   field_tags:
     weight: 8
     label: above
     settings:
-      link: true
+      facet: tags
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   field_topics:
     weight: 9
     label: above
     settings:
-      link: true
-      display: all
-      wrap: none
-      separator: ' » '
-      reverse: false
+      facet: topics
     third_party_settings: {  }
-    type: hierarchical_term_formatter
+    type: entity_reference_facet_link
     region: content
   links:
     weight: 1

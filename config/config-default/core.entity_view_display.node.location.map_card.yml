@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.map_card
+    - facets.facet.subject_matter
     - field.field.node.location.body
     - field.field.node.location.field_division
     - field.field.node.location.field_geolocation
@@ -19,6 +20,7 @@ dependencies:
     - node.type.location
   module:
     - address
+    - entity_reference_facet_link
     - office_hours
     - telephone
     - user
@@ -73,9 +75,9 @@ content:
     weight: 2
     label: above
     settings:
-      link: true
+      facet: subject_matter
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
 hidden:
   body: true
