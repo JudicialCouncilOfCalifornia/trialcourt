@@ -142,12 +142,24 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
     $config['environment_indicator.indicator']['bg_color'] = '#0a07a9';
     $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
   }
+
+
+  if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array('live', 'dev'))) {
+    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-prod';
+  }
+  else if ($_ENV['PANTHEON_ENVIRONMENT'] == 'stage') {
+    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-stage';
+  }
+  else {
+    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-dev';
+  }
 }
 
 // Assumes local.
 else {
   $config['config_split.config_split.local']['status'] = TRUE;
   $config['config_split.config_split.stage']['status'] = TRUE;
+  $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'sandbox-1';
 }
 
 /**

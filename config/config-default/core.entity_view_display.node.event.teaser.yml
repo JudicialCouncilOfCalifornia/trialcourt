@@ -7,9 +7,11 @@ dependencies:
     - field.field.node.event.body
     - field.field.node.event.field_date_range
     - field.field.node.event.field_division
+    - field.field.node.event.field_event_moreinfo
     - field.field.node.event.field_event_type
     - field.field.node.event.field_geolocation
     - field.field.node.event.field_images
+    - field.field.node.event.field_links
     - field.field.node.event.field_location
     - field.field.node.event.field_subject_matter
     - field.field.node.event.field_tags
@@ -30,7 +32,7 @@ content:
     type: text_summary_or_trimmed
     weight: 4
     settings:
-      trim_length: 600
+      trim_length: 300
     third_party_settings: {  }
     region: content
   content_moderation_control:
@@ -57,7 +59,7 @@ content:
       link: true
     third_party_settings: {  }
   field_location:
-    type: address_default
+    type: address_plain
     weight: 3
     region: content
     label: hidden
@@ -70,8 +72,10 @@ content:
     third_party_settings: {  }
 hidden:
   field_division: true
+  field_event_moreinfo: true
   field_geolocation: true
   field_images: true
+  field_links: true
   field_subject_matter: true
   field_tags: true
   field_topics: true

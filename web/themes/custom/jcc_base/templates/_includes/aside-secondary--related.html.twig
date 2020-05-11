@@ -1,8 +1,8 @@
-{% if related_links %}
-  {% set main_content = related_links %}
-  {% set side_content = meta %}
+{% if related %}
+  {% set main_content = related %}
+  {% set side_content = aside %}
 {% else %}
-  {% set main_content = meta %}
+  {% set main_content = aside %}
 {% endif %}
 
 {% include '@organisms/sections/text-section-aside-secondary/text-section-aside-secondary.twig' with {

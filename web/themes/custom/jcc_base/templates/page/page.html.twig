@@ -81,10 +81,22 @@
     'landing_page',
   ] %}
 
-  {% if page.title|render and node.bundle() not in nodes_without_titles %}
+  {% set views_without_titles = [
+  ] %}
+
+  {% if page.title|render %}
+    {% if (not (
+
+      node.bundle() in nodes_without_titles
+
+      or (page.content['system_main']['#view_id'] and
+          page.content['system_main']['#view_id'] in views_without_titles)
+    ))
+    %}
     <div class="page__title">
       {{ page.title }}
     </div>
+    {% endif %}
   {% endif %}
 
   <main>
