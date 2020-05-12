@@ -101,9 +101,9 @@
       {% set person_img_url = file_url(node.field_images.entity.field_media_image.entity.fileuri) %}
       {% set person_img_alt = node.field_images.entity.field_media_image.alt %}
       {% set person_name = node.field_first_name.entity.field_first_name.value ~ " " ~ node.field_last_name.entity.field_last_name.value %}
-      {% set person_type = content.field_person_type %}
+      {% set person_type = content.field_person_type.0 %}
 
-      {% include '@jcc_base/_patterns/02-molecules/blocks/card-person/card-person.twig' with {
+      {% include '@molecules/blocks/card-person/card-person.twig' with {
         card: {
           tag: 'h2',
           img: {
@@ -111,8 +111,8 @@
             alt: person_img_alt,
             renderer: 'patternlab',
           },
-          title: person_name,
-          excerpt: person_type
+          brow: person_type,
+          title: person_name
         }
       } %}
 
