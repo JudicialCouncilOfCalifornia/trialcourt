@@ -1,0 +1,40 @@
+{#
+/**
+ * @file
+ * Consistent presentation of default hero component.
+ * Required variables:
+ * - breadcrumbs    from system_breadcrumb_block
+ * - title          from parent template
+ *
+ * Supported variables:
+ * - background_variant
+ * - brow
+ * - body
+ *
+ */
+ #}
+
+{% set breadcrumbs_source = drupal_block("system_breadcrumb_block").content["#links"] %}
+{% set breadcrumbs = [] %}
+{% for breadcrumb in breadcrumbs_source %}
+  {% if not loop.last %}
+    {% set url = breadcrumb.url %}
+  {% else %}
+    {% set url = null %}
+  {% endif %}
+  {% set label = breadcrumb.text %}
+  {% set breadcrumbs = breadcrumbs|merge([{
+    url: url,
+    label: label
+  }]) %}
+{% endfor %}
+
+{% include '@molecules/blocks/hero/hero.twig' with {
+  hero: {
+    background_variant: background_variant,
+    breadcrumbs: breadcrumbs,
+    brow: brow,
+    title: title,
+    body: body
+  }
+} %}
