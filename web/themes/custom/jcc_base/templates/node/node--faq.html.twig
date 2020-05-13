@@ -92,6 +92,12 @@
       {% endset %}
     {% endif %}
 
+    {% include '@jcc_base/_includes/section-hero.html.twig' with {
+      brow: "Frequently Asked Question",
+      title: label,
+      body: null
+    } %}
+
     {% set body %}
       {% if display_submitted %}
         <div{{ author_attributes.addClass('node__submitted') }}>
@@ -102,12 +108,6 @@
       {% endif %}
       {{ content}}
     {% endset %}
-
-    {% include '@jcc_base/_includes/section-hero.html.twig' with {
-      brow: "Frequently Asked Question",
-      title: label,
-      body: null
-    } %}
 
     {% include '@organisms/sections/text-section/text-section.twig' with {
       text_section: {
