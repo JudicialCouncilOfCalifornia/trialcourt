@@ -79,79 +79,40 @@
   node.bundle|clean_class ~ '--' ~ view_mode|clean_class,
 ]|merge(classes|default([])) %}
 
+{{ attach_library('classy/node') }}
+
 <article{{ attributes.addClass(classes)|without('role') }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
 
   {% block content %}
-    {% set location_type %}
-      {% if content.field_location_type[0] %}
-        {{ content.field_location_type.0 }} Location
-      {% else %}
-        Location
+    {% if label and not page %}
+      {% set title %}
+        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+      {% endset %}
+    {% endif %}
+
+    {% set body %}
+      {% if display_submitted %}
+        <div{{ author_attributes.addClass('node__submitted') }}>
+          <div class="author">By {{ author_name }}</div>
+          <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
+          {{ metadata }}
+        </div>
       {% endif %}
+      {{ content}}
     {% endset %}
 
     {% include '@jcc_base/_includes/section-hero.html.twig' with {
-      brow: location_type,
-      title: label
+      brow: "Frequently Asked Question"
+      title: label,
+      body: null
     } %}
 
-    {% include '@organisms/sections/text-section-location/text-section-location.twig' with {
-      text_section_location: {
-        column_content_left: {
-          body: content.body,
-        },
-        column_content_right: {
-          map: content.field_geolocation,
-          address: {
-            inline: false,
-            street: content.field_location.0.address_line1,
-            street2: content.field_location.0.address_line2,
-            locality: content.field_location.0.locality,
-            administrative_area: content.field_location.0.administrative_area,
-            postal_code: content.field_location.0.postal_code,
-            country: content.field_location.0.country_code,
-          },
-          office_hours: {
-            title: {
-              tag: "h6",
-              title: "Office Hours",
-            },
-            content: content.field_office_hours ? content.field_office_hours|children,
-          },
-          mailing_address: {
-            title: {
-              title: "Mailing Address",
-              tag: "h6",
-            },
-            inline: false,
-            street: content.field_mailing_address.0.address_line1,
-            street2: content.field_mailing_address.0.address_line2,
-            locality: content.field_mailing_address.0.locality,
-            administrative_area: content.field_mailing_address.0.administrative_area,
-            postal_code: content.field_mailing_address.0.postal_code,
-            country: content.field_mailing_address.0.country_code,
-          },
-          phone: {
-            tag: "h6",
-            title: "Phone",
-            content: content.field_phone ? content.field_phone|children,
-          },
-          phone_hours: {
-            title: {
-              tag: "h6",
-              title: "Phone Hours",
-            },
-            content: content.field_phone_hours ? content.field_phone_hours|children,
-          }
-        }
+    {% include '@organisms/sections/text-section/text-section.twig' with {
+      text_section: {
+        column_content_left: body
       }
     } only %}
-
-    {% set subject_matter = content.field_subject_matter[0] %}
-    {% set tags = content.field_tags[0] %}
-    {% set topics = content.field_topics[0] %}
-
-    {% include '@jcc_base/_includes/section-secondary.html.twig' %}
   {% endblock %}
-
 </article>
