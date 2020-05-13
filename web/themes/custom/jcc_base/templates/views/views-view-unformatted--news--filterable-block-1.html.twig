@@ -1,0 +1,74 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a view of unformatted rows.
+ *
+ * Available variables:
+ * - title: The title of this group of rows. May be empty.
+ * - rows: A list of the view's row items.
+ *   - attributes: The row's HTML attributes.
+ *   - content: The row's content.
+ * - view: The view object.
+ * - default_row_class: A flag indicating whether default classes should be
+ *   used on rows.
+ *
+ * @see template_preprocess_views_view_unformatted()
+ *
+ * @ingroup themeable
+ */
+#}
+
+{% if view.title %}
+  {% set header_title = view.title|t %}
+{% endif %}
+
+{% set cards = [] %}
+{% for row in rows %}
+  {%
+    set row_classes = [
+    default_row_class ? 'views-row',
+  ]
+  %}
+
+  {% set brow = row.content['#row']._entity.created.value|date("M j, Y") %}
+  {% set title = row.content['#row']._entity.title.value %}
+  {% set excerpt = row.content['#row']._entity.body.value|striptags %}
+  {% set url = path('entity.node.canonical', {'node': row.content['#row']._entity.nid[0].value}) %}
+  {% set read_more_text= row.content['#view'].field.view_node.last_render_text %}
+
+  {% set recent_news_card = {
+    "brow": brow,
+    "title": title,
+    "excerpt": excerpt,
+    "url": url,
+    "read_more": {
+      "label": read_more_text,
+      "url": url
+    }
+  } %}
+
+  {% set cards = cards|merge([recent_news_card]) %}
+{% endfor %}
+
+{% if view.pager.displayHandler.display.display_options.use_more == true %}
+  {% set button_text = view.pager.displayHandler.display.display_options.use_more_text %}
+  {% set button_url = '/news' %}
+
+  {% set button = {
+    "text": button_text,
+    "url": button_url,
+    "style": 'primary'
+  } %}
+{% else %}
+  {% set button = {} %}
+{% endif %}
+
+{% include '@organisms/sections/cards-with-list/cards-with-list.twig' with {
+  cards_with_list: {
+    headergroup: {
+      title: header_title,
+    },
+    cards: cards,
+    button: button,
+  }
+} %}
