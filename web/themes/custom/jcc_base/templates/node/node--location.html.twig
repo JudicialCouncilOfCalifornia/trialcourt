@@ -94,10 +94,16 @@
       title: label
     } %}
 
+    {% set body %}
+      <div class="body">
+        {{ content.body.0 }}
+      </div>
+    {% endset %}
+
     {% include '@organisms/sections/text-section-location/text-section-location.twig' with {
       text_section_location: {
         column_content_left: {
-          body: content.body,
+          body: body,
         },
         column_content_right: {
           map: content.field_geolocation,
