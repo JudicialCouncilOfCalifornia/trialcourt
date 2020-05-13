@@ -208,6 +208,8 @@
     {% set tags = content.field_tags[0] %}
     {% set topics = content.field_topics[0] %}
 
-    {% include '@jcc_base/_includes/section-secondary.html.twig' %}
+    {% include '@jcc_base/_includes/section-secondary.html.twig'with {
+      no_title_decoration: true
+    } %}
   {% endblock %}
 </article>

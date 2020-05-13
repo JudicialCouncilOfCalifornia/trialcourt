@@ -19,9 +19,7 @@
 
 {% set related %}
   {% set body %}
-    <div class="body">
-      {{ content.body }}
-    </div>
+    {{ content.body }}
   {% endset %}
 
   {% include '@molecules/blocks/card/card.twig' with {
@@ -50,5 +48,7 @@
 {% endif %}
 
 {% if related or aside %}
-  {% include '@jcc_base/_includes/aside-secondary--related.html.twig' %}
+  {% include '@jcc_base/_includes/aside-secondary--related.html.twig' with {
+    no_title_decoration: no_title_decoration
+  } %}
 {% endif %}
