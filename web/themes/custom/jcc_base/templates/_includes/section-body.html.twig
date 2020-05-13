@@ -1,0 +1,56 @@
+{#
+/**
+ * @file
+ * Consistent presentation when pairing body text and secondary content within same section.
+ * Required variables from parent template:
+ * - body       from content.body
+ * - related
+ * - aside
+ *
+ * Supported variables from parent template:
+ * - attachments
+ * - related_links
+ * - subject_matter
+ * - tags
+ * - topics
+ *
+ */
+ #}
+
+{% set related %}
+  {% set body %}
+    <div class="body">
+      {{ content.body }}
+    </div>
+  {% endset %}
+
+  {% include '@molecules/blocks/card/card.twig' with {
+    card: {
+      excerpt: body,
+    }
+  } only %}
+{% endset %}
+
+{% if attachments or related_links or subject_matter or tags or topics %}
+  {% set aside %}
+    {% if content.field_attachments[0] %}
+      {% include '@jcc_base/_includes/attachments.html.twig' %}
+    {% endif %}
+
+    {% if related_links %}
+      {% include '@jcc_base/_includes/relatedlinks.html.twig' with {
+        singlecolumn: true
+      } %}
+    {% endif %}
+
+    {% if subject_matter or tags or topics %}
+      {% include '@jcc_base/_includes/metadata.html.twig' %}
+    {% endif %}
+  {% endset %}
+{% endif %}
+
+{% if related or aside %}
+  {% include '@jcc_base/_includes/aside-secondary--related.html.twig' with {
+    no_title_decoration: no_title_decoration
+  } %}
+{% endif %}

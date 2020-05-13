@@ -70,6 +70,7 @@
  *   in different view modes.
  */
 #}
+
 {% set classes = [
   'node',
   node.isPromoted() ? 'node--promoted',
@@ -96,13 +97,15 @@
       {% endset %}
     {% endif %}
 
-    {% set brow %}
+    {% set event_date %}
       {% set date_start = node.field_date_range.start_date %}
       {% set date_end = node.field_date_range.end_date %}
 
       {% if content.field_event_type[0] %}
         {{ content.field_event_type.0 }}
         <br>
+      {% else %}
+        Event
       {% endif %}
 
       {% if date_end|date("Y-m-d") > date_start|date("Y-m-d") %}
@@ -133,12 +136,10 @@
       </div>
     {% endset %}
 
-    {% include '@molecules/blocks/hero/hero.twig' with {
-      hero: {
-        brow: brow,
-        title: title,
-        body: body
-      }
+    {% include '@jcc_base/_includes/section-hero.html.twig' with {
+      brow: event_date,
+      title: title,
+      body: body
     } %}
 
     {% set related %} {# Always set due to location being required #}
@@ -174,6 +175,10 @@
       {% endset %}
     {% endif %}
 
-    {% include '@jcc_base/_includes/aside-secondary--related.html.twig' %}
+    {% if related or aside %}
+      {% include '@jcc_base/_includes/aside-secondary--related.html.twig' with {
+        no_title_decoration: true
+      } %}
+    {% endif %}
   {% endblock %}
 </article>

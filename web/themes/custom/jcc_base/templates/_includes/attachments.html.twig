@@ -1,0 +1,38 @@
+{#
+/**
+ * @file
+ * Consistent presentation of related links for relevant content types.
+ * Requires data from field_links form field
+ * - title
+ * - url
+ *
+ * Optional variables:
+ * - singlecolumn: if passed from parent template, uses single column list component rather than the default multi-column variant
+ *
+ */
+ #}
+{% set link_list %}
+  {% set docs = [] %}
+  {% for doc in content.field_attachments %}
+    {% set doc_title = doc['#title'] %}
+    {% set doc_url = doc['#url'] %}
+    {% set docs = docs|merge([{
+      url_title: doc_title,
+      url: doc_url
+    }]) %}
+  {% endfor %}
+
+  {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
+    link_list: {
+      list_icons: true,
+      items: docs
+    }
+  } %}
+{% endset %}
+
+{% include '@molecules/blocks/card/card.twig' with {
+  card: {
+    title: content.field_attachments["#title"],
+    excerpt: link_list,
+  }
+} only %}
