@@ -1,0 +1,27 @@
+uuid: 18e29a1e-2186-401b-8c32-b4215388caf4
+langcode: en
+status: true
+dependencies: {  }
+id: glossary_csv_import
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: jcc
+label: 'Import Glossary terms'
+source:
+  plugin: csv
+  path: modules/custom/jcc_tc_migration/csv/glossary-terms.csv
+  delimiter: ','
+  enclosure: '"'
+  ids:
+    - id
+process:
+  vid:
+    plugin: default_value
+    default_value: glossary
+  name: title
+  description: body
+destination:
+  plugin: 'entity:taxonomy_term'
+migration_dependencies: null
