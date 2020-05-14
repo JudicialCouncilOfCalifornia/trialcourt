@@ -53,14 +53,14 @@
     {% endif %}
   {% endif %}
 
+  {%  if page.messaging|render %}
+    {{ page.messaging }}
+  {% endif %}
+
   {% if page.tabs|render %}
     <div class="page__tabs">
       {{ page.tabs }}
     </div>
-  {% endif %}
-
-  {%  if page.messaging|render %}
-    {{ page.messaging }}
   {% endif %}
 
   <div class="usa-section">
@@ -93,15 +93,11 @@
 
   {% if not node.field_hide_footer.value %}
     {% if page.secondary_footer %}
-      <footer class="page__secondary_footer bg-primary-lighter" role="contentinfo">
-        {{ page.secondary_footer }}
-      </footer>
+      {{ page.secondary_footer }}
     {% endif %}
 
     {% if page.footer %}
-      <footer class="page__footer bg-primary-darker" role="contentinfo">
-        {{ page.footer }}
-      </footer>
+      {{ page.footer }}
     {% endif %}
   {% endif %}
 </div>
