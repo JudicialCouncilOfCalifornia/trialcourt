@@ -48,13 +48,8 @@
 
 <div{{ attributes.addClass(classes) }}>
   {% if not node.field_hide_header.value %}
-    {% if page.header|render or page.logo|render %}
-      <header class="page__header jcc-header">
-        <div class="jcc-header__container">
-          {{ page.logo }}
-          {{ page.header }}
-        </div>
-      </header>
+    {% if page.header|render %}
+      {{ page.header }}
     {% endif %}
   {% endif %}
 
