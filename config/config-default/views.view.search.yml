@@ -76,14 +76,15 @@ display:
               menu_icons: media_library
             'entity:node':
               announcement: teaser
-              book: teaser
-              document: teaser
-              event: teaser
-              job: teaser
-              landing_page: teaser
+              book: search_index
+              document: search_index
+              event: search_index
+              faq: default
+              job: search_index
+              landing_page: search_index
               location: teaser
-              news: teaser
-              page: teaser
+              news: search_index
+              page: search_index
               person: teaser
       fields:
         body:
@@ -202,6 +203,52 @@ display:
           min_length: null
           fields: {  }
           plugin_id: search_api_fulltext
+        type:
+          id: type
+          table: search_api_index_index
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value:
+            book: book
+            document: document
+            event: event
+            job: job
+            news: news
+            page: page
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          plugin_id: search_api_options
       sorts: {  }
       title: Search
       header: {  }
