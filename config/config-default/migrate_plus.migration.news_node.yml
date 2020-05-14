@@ -88,8 +88,11 @@ process:
   field_tags:
     -
       plugin: explode
-      delimiter: ', '
+      delimiter: ','
       source: tags
+    -
+      plugin: callback
+      callable: trim
     -
       plugin: entity_generate
       entity_type: taxonomy_term
@@ -99,8 +102,11 @@ process:
   field_topics:
     -
       plugin: explode
-      delimiter: ', '
+      delimiter: ','
       source: topics
+    -
+      plugin: callback
+      callable: trim
     -
       plugin: entity_generate
       entity_type: taxonomy_term
