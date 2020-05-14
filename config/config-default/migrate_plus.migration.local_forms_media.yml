@@ -29,10 +29,12 @@ process:
       method: process
       message: 'Cannot import empty filename.'
   name:
-    - plugin: callback
+    -
+      plugin: callback
       callable: htmlspecialchars_decode
       source: title
-    - plugin: default_value
+    -
+      plugin: default_value
       default_value: '@pseudo_destination_filename'
   field_media_file/target_id:
     plugin: migration_lookup
