@@ -85,7 +85,7 @@
   {{ title_prefix }}
   {{ title_suffix }}
 
-  {% set start_date = node.field_date_range.value|date(format="m/d/Y") %}
+  {% set start_date = node.field_date_range.value|date(format="F j, Y") %}
   {% set city = content.field_location.0["#locality"] %}
   {% set state = content.field_location.0["#administrative_area"]["code"] %}
 
@@ -106,7 +106,7 @@
 
     {% include '@organisms/sections/text-section/text-section.twig' with {
       text_section: {
-        column_variant: 'jcc-text-section--has-one-column',
+        column_variant: 'has-two-columns-threequarter',
         headergroup: {
           tag: 'h2',
           title: title,
