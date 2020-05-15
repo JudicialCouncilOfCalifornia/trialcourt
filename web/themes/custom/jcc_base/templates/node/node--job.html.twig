@@ -96,11 +96,10 @@
       {% endset %}
     {% endif %}
 
-    {% set brow %}
-      {% if content.field_department %}
-        <div class="department">
-          {{content.field_department.0 }}
-        </div>
+    {% set department %}
+      Job Posting
+      {% if content.field_department[0] %}
+        for {{content.field_department.0 }}
       {% endif %}
     {% endset %}
 
@@ -112,7 +111,7 @@
       {% endif %}
 
       <div class="body">
-        {{ content.body }}
+        {{ content.body.0 }}
       </div>
 
       {% if content.field_attachments[0] %}
@@ -122,36 +121,19 @@
       {% endif %}
     {% endset %}
 
-    {% include '@organisms/sections/text-section/text-section.twig' with {
-      text_section: {
-        column_variant: 'jcc-text-section--has-one-column',
-        headergroup: {
-          brow: brow,
-          tag: 'h1',
-          title: title,
-        },
-        column_content_left: body,
-      }
+    {% include '@jcc_base/_includes/section-hero.html.twig' with {
+      brow: department,
+      title: title,
+      body: body
     } %}
 
-    {% if content.field_links[0] %}
-      {% set related %}
-        {% include '@jcc_base/_includes/relatedlinks.html.twig' %}
-      {% endset %}
-    {% endif %}
-
+    {% set related_links = content.field_links[0] %}
     {% set subject_matter = content.field_subject_matter[0] %}
     {% set tags = content.field_tags[0] %}
     {% set topics = content.field_topics[0] %}
 
-    {% if subject_matter or tags or topics %}
-      {% set aside %}
-        {% include '@jcc_base/_includes/metadata.html.twig' %}
-      {% endset %}
-    {% endif %}
-
-    {% if related or aside %}
-      {% include '@jcc_base/_includes/aside-secondary--related.html.twig' %}
-    {% endif %}
+    {% include '@jcc_base/_includes/section-secondary.html.twig'with {
+      no_title_decoration: true
+    } %}
   {% endblock %}
 </article>

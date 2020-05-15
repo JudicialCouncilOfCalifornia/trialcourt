@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - facets.facet.document_type
     - field.field.node.document.body
     - field.field.node.document.field_attachments
     - field.field.node.document.field_division
@@ -18,6 +19,7 @@ dependencies:
     - field.field.node.document.field_upload_date_label
     - node.type.document
   module:
+    - entity_reference_facet_link
     - jcc_media_formatter
     - text
     - user
@@ -42,12 +44,12 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_document_type:
-    type: entity_reference_label
+    type: entity_reference_facet_link
     weight: 2
     region: content
     label: hidden
     settings:
-      link: true
+      facet: document_type
     third_party_settings: {  }
   links:
     weight: 0

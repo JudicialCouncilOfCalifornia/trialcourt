@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - facets.facet.topics
     - field.field.node.faq.body
     - field.field.node.faq.field_department
     - field.field.node.faq.field_division
@@ -11,6 +12,7 @@ dependencies:
     - field.field.node.faq.field_topics
     - node.type.faq
   module:
+    - entity_reference_facet_link
     - text
     - user
 id: node.faq.default
@@ -29,41 +31,41 @@ content:
     weight: 4
     label: above
     settings:
-      link: true
+      facet: department
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   field_division:
     weight: 3
     label: above
     settings:
-      link: true
+      facet: division
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   field_subject_matter:
     weight: 2
     label: above
     settings:
-      link: true
+      facet: subject_matter
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   field_tags:
     weight: 6
     label: above
     settings:
-      link: true
+      facet: tags
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   field_topics:
     weight: 5
     label: above
     settings:
-      link: true
+      facet: topics
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_facet_link
     region: content
   links:
     weight: 0

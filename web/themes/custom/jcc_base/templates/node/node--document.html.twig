@@ -97,7 +97,11 @@
     {% endif %}
 
     {% set document_type %}
-      {{ content.field_document_type }}
+      {% if content.field_document_type[0] %}
+        {{ content.field_document_type.0 }}
+      {% else %}
+        Document
+      {% endif %}
     {% endset %}
 
     {% set body %}
@@ -111,10 +115,6 @@
       {% endif %}
       #}
       <div class="publish_date">
-        <div class="document_type">
-          Type: {{ document_type }}
-        </div>
-
         {#
           Automatically displays first uploaded date (new node creation) or updated date unless author specifies publish date manually.
           Because a change date occurs during node creation, any edits on creation day will not denote an update for now.
@@ -134,7 +134,7 @@
       </div>
 
       <div class="body">
-        {{ content.body }}
+        {{ content.body.0 }}
       </div>
 
       {% if content.field_attachments[0] %}
@@ -174,11 +174,10 @@
       {% endif %}
     {% endset %}
 
-    {% include '@molecules/blocks/hero/hero.twig' with {
-      hero: {
-        title: title,
-        body: body
-      }
+    {% include '@jcc_base/_includes/section-hero.html.twig' with {
+      brow: document_type,
+      title: title,
+      body: body
     } %}
 
     {% if content.field_help_links[0] %}
@@ -204,24 +203,13 @@
       } %}
     {% endif %}
 
-    {% if content.field_links[0] %}
-      {% set related %}
-        {% include '@jcc_base/_includes/relatedlinks.html.twig' %}
-      {% endset %}
-    {% endif %}
-
+    {% set related_links = content.field_links[0] %}
     {% set subject_matter = content.field_subject_matter[0] %}
     {% set tags = content.field_tags[0] %}
     {% set topics = content.field_topics[0] %}
 
-    {% if subject_matter or tags or topics %}
-      {% set aside %}
-        {% include '@jcc_base/_includes/metadata.html.twig' %}
-      {% endset %}
-    {% endif %}
-
-    {% if related or aside %}
-      {% include '@jcc_base/_includes/aside-secondary--related.html.twig' %}
-    {% endif %}
+    {% include '@jcc_base/_includes/section-secondary.html.twig'with {
+      no_title_decoration: true
+    } %}
   {% endblock %}
 </article>

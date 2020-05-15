@@ -82,16 +82,28 @@
 <article{{ attributes.addClass(classes)|without('role') }}>
 
   {% block content %}
+    {% set location_type %}
+      Location
+      {% if content.field_location_type[0] %}
+        for {{ content.field_location_type.0 }}
+      {% endif %}
+    {% endset %}
+
+    {% include '@jcc_base/_includes/section-hero.html.twig' with {
+      brow: location_type,
+      title: label
+    } %}
+
+    {% set body %}
+      <div class="body">
+        {{ content.body.0 }}
+      </div>
+    {% endset %}
 
     {% include '@organisms/sections/text-section-location/text-section-location.twig' with {
       text_section_location: {
-        headergroup: {
-          brow: content.field_location_type,
-          tag: 'h1',
-          title: label,
-        },
         column_content_left: {
-          body: content.body,
+          body: body,
         },
         column_content_right: {
           map: content.field_geolocation,
@@ -135,31 +147,16 @@
               title: "Phone Hours",
             },
             content: content.field_phone_hours ? content.field_phone_hours|children,
-          },
-          division: {
-            title: {
-              tag: "h6",
-              title: "Division",
-            },
-            content: content.field_division ? content.field_division|children,
-          },
-          subject_matter: {
-            title: {
-              tag: "h6",
-              title: "Subject Matter",
-            },
-            content: content.field_subject_matter? content.field_subject_matter|children,
-          },
-          tags: {
-            title: {
-              tag: "h6",
-              title: "Tags",
-            },
-            content: content.field_tags ? content.field_tags|children,
           }
         }
       }
     } only %}
+
+    {% set subject_matter = content.field_subject_matter[0] %}
+    {% set tags = content.field_tags[0] %}
+    {% set topics = content.field_topics[0] %}
+
+    {% include '@jcc_base/_includes/section-secondary.html.twig' %}
   {% endblock %}
 
 </article>

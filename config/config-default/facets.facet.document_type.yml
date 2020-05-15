@@ -28,7 +28,7 @@ widget:
     hide_reset_when_no_selection: true
 query_operator: or
 use_hierarchy: true
-expand_hierarchy: true
+expand_hierarchy: false
 enable_parent_when_child_gets_disabled: true
 hard_limit: 5
 exclude: false
@@ -53,6 +53,61 @@ processor_configs:
       sort: 30
     settings:
       sort: DESC
+  dependent_processor:
+    processor_id: dependent_processor
+    weights:
+      build: 5
+    settings:
+      content:
+        enable: true
+        condition: values
+        values: document
+        negate: false
+      department:
+        enable: false
+        condition: null
+        values: ''
+        negate: false
+      division:
+        enable: false
+        condition: null
+        values: ''
+        negate: false
+      event_type:
+        enable: false
+        condition: null
+        values: ''
+        negate: false
+      location_type:
+        enable: false
+        condition: null
+        values: ''
+        negate: false
+      news_type:
+        enable: false
+        condition: null
+        values: ''
+        negate: false
+      person_type:
+        enable: false
+        condition: null
+        values: ''
+        negate: false
+      subject_matter:
+        enable: false
+        condition: null
+        values: ''
+        negate: false
+      tags:
+        enable: false
+        condition: null
+        values: ''
+        negate: false
+      topics:
+        enable: false
+        condition: null
+        values: ''
+        negate: false
   display_value_widget_order:
     processor_id: display_value_widget_order
     weights:
