@@ -59,9 +59,9 @@ process:
       callable: basename
       source: file_url
     -
-      plugin: skip_row_if_not_set
-      method: process
-      message: 'Cannot import empty filename.'
+      plugin: skip_on_empty
+      method: row
+      message: 'Cannot import empty image filename.'
   pseudo_destination_path:
     -
       plugin: concat
