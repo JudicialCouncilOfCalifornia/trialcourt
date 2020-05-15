@@ -1,25 +1,57 @@
-uuid: 7cc5d6f4-54cb-4697-bc96-fdf9449d4bf5
+uuid: 944c668f-1080-4064-9aa1-b9778968011a
 langcode: en
 status: true
 dependencies: {  }
-id: local_forms_file
+id: news_file
 class: null
 field_plugin_method: null
 cck_plugin_method: null
 migration_tags:
-  - document
+  - news
   - file
 migration_group: jcc
-label: 'Document: Import file'
+label: 'News: Import files'
 source:
   plugin: csv
-  path: ../config/migration/slo/csv/document-local.csv
+  path: ../config/migration/slo/csv/news.csv
+  header_row_count: 1
   delimiter: ','
   enclosure: '"'
   ids:
     - id
+  fields:
+    -
+      name: id
+      label: 'Primary key'
+    -
+      name: category
+      label: 'Taxonomy term for News Type'
+    -
+      name: file_url
+      label: 'Attachment file url'
+    -
+      name: file_title
+      label: 'Attachment file title'
+    -
+      name: title
+      label: 'News title'
+    -
+      name: body
+      label: 'News body'
+    -
+      name: date
+      label: 'Publication date'
+    -
+      name: tags
+      label: 'Taxonomy terms for Tag'
+    -
+      name: topics
+      label: 'Taxonomy terms for Topics'
+    -
+      name: division
+      label: 'Taxonomy terms for Division'
   constants:
-    DRUPAL_FILE_DIRECTORY: 'public://document/'
+    DRUPAL_FILE_DIRECTORY: 'public://news-documents/'
 process:
   pseudo_destination_filename:
     -
@@ -28,7 +60,7 @@ process:
       source: file_url
     -
       plugin: skip_on_empty
-      method: process
+      method: row
       message: 'Cannot import empty image filename.'
   pseudo_destination_path:
     -
