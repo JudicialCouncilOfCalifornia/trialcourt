@@ -144,11 +144,9 @@
 
     {% set related %} {# Always set due to location being required #}
       {% if content.field_event_moreinfo[0] %}
-        {% include '@molecules/blocks/card/card.twig' with {
-          card: {
-            excerpt: content.field_event_moreinfo.0,
-          }
-        } only %}
+        <div class="body">
+          {{ content.field_event_moreinfo.0 }}
+        </div>
       {% endif %}
 
       {% if content.field_location[0] %}
