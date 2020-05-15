@@ -26,6 +26,7 @@ function jcc_base_preprocess_views_view(&$variables) {
 
     case 'faq':
       if ($view->current_display == 'block') {
+        $groups = [];
         foreach($view->result as $row) {
           $entity = $row->_entity;
           $subject_matter = !empty($entity->field_subject_matter) ? $entity->field_subject_matter->referencedEntities() : [];
