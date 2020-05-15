@@ -153,7 +153,7 @@ class FilterableBlock extends Block {
           break;
 
         default:
-          continue;
+          continue 2;
 
       }
       // Create block form elements for exposed items.
