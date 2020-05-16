@@ -63,31 +63,29 @@
     </div>
   {% endif %}
 
-  <div class="usa-section">
-    <div class="grid-container-widescreen">
-      {%  if page.breadcrumb|render %}
-        {{ page.breadcrumb }}
-      {% endif %}
+  <div class="jcc-book-container grid-container-widescreen">
+    {%  if page.breadcrumb|render %}
+      {{ page.breadcrumb }}
+    {% endif %}
 
-      <div class="grid-row grid-gap">
-        <div class="usa-layout-docs__sidenav desktop:grid-col-3">
-          {{ page.left_sidebar }}
+    <div class="grid-row grid-gap">
+      <div class="usa-layout-docs__sidenav desktop:grid-col-3">
+        {{ page.left_sidebar }}
+      </div>
+
+      <main class="usa-layout-docs__main desktop:grid-col-9 usa-prose usa-layout-docs">
+        <a id="main-content" tabindex="-1"></a> {# link is in html.html.twig #}
+
+        <div class="page__content">
+          {{ page.content }}
         </div>
 
-        <main class="usa-layout-docs__main desktop:grid-col-9 usa-prose usa-layout-docs">
-          <a id="main-content" tabindex="-1"></a> {# link is in html.html.twig #}
-
-          <div class="page__content">
-            {{ page.content }}
+        {% if page.content_below|render %}
+          <div class="page__content-below">
+            {{ page.content_below }}
           </div>
-
-          {% if page.content_below|render %}
-            <div class="page__content-below">
-              {{ page.content_below }}
-            </div>
-          {% endif %}
-        </main>
-      </div>
+        {% endif %}
+      </main>
     </div>
   </div>
 
