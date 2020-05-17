@@ -11,6 +11,10 @@
  * @ingroup themeable
  */
 #}
-
-<abbr class="taxonomy-tooltip-tip">{{ word }}<span class="jcc_custom_tooltip">{{ tip }}</span></abbr>
+{%- include '@atoms/tooltip/tooltip.twig' with {
+  tooltip: {
+    highlight: word,
+    tool_text: tip
+  }
+} -%}
 
