@@ -1,0 +1,56 @@
+<?php
+/**
+ * @file
+ * Theme and preprocess functions for blocks.
+ */
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function jcc_base_preprocess_block__views_block__news_filterable_block_1(&$variables) {
+  $header_title = empty($variables['elements']['#configuration']['views_label']) ? $variables['elements']['content']['#title']['#markup'] : $variables['elements']['#configuration']['views_label'];
+
+  $cards = array();
+  $rows = $variables['elements']['content']['#view']->result;
+  $read_more_text= $variables['elements']['content']['#view']->field['view_node']->last_render_text;
+
+  foreach ($rows as $row) {
+    $brow = date("M j, Y", $row->_entity->created->value);
+    $title = $row->_entity->title->value;
+    $excerpt = strip_tags($row->_entity->body->value);
+    $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
+
+    $recent_news_card = [
+      'brow' => $brow,
+      'title' => $title,
+      'excerpt' => $excerpt,
+      'url' => $url,
+      'read_more' => [
+        'label' => $read_more_text,
+        'url' => $url
+      ]
+    ];
+    array_push($cards, $recent_news_card);
+  }
+
+  if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == true) {
+    $button_text = $variables['elements']['content']['#view']->display_handler->display['display_options']['use_more_text'];
+    $button_url = '/news';
+
+    $button = [
+      'text' => $button_text,
+      'url' => $button_url,
+      'style' => 'primary'
+    ];
+  } else {
+    $button = [];
+  }
+
+  $variables['my_news_list'] = [
+    'headergroup' => [
+      'title' => htmlspecialchars_decode($header_title),
+    ],
+    'cards' => $cards,
+    'button' => $button
+  ];
+}
