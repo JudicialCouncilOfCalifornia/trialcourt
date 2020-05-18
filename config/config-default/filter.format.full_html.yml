@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_mode.media.media_library
   module:
     - editor
+    - glossify_taxonomy
     - media
 _core:
   default_config_hash: hewPmBgni9jlDK_IjLxUx1HsTbinK-hdl0lOwjbteIY
@@ -57,3 +58,14 @@ filters:
         image: image
       allowed_view_modes:
         media_library: media_library
+  glossify_taxonomy:
+    id: glossify_taxonomy
+    provider: glossify_taxonomy
+    status: true
+    weight: -10
+    settings:
+      glossify_taxonomy_case_sensitivity: '0'
+      glossify_taxonomy_first_only: '1'
+      glossify_taxonomy_type: tooltips
+      glossify_taxonomy_vocabs: glossary
+      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
