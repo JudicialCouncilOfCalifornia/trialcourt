@@ -24,10 +24,12 @@
  */
 #}
 <div{{ attributes }}>
-  {% include '@molecules/blocks/step/step.twig' with {
-    step: {
-      title: name,
-      excerpt: content ,
+  {% include '@organisms/sections/text-section/text-section.twig' with {
+    text_section: {
+      headergroup:  {
+        title: name
+      },
+      column_content_left: content
     }
   }
   %}
