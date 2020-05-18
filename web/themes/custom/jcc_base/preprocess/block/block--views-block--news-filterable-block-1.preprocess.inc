@@ -17,7 +17,7 @@ function jcc_base_preprocess_block__views_block__news_filterable_block_1(&$varia
   foreach ($rows as $row) {
     $brow = date("M j, Y", $row->_entity->created->value);
     $title = $row->_entity->title->value;
-    $excerpt = strip_tags($row->_entity->body->value);
+    $excerpt = substr(strip_tags($row->_entity->body->value), 1, 200);
     $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
 
     $recent_news_card = [
