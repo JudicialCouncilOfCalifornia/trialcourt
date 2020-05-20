@@ -12,44 +12,55 @@ migration_tags:
 migration_group: jcc
 label: 'News: Import media'
 source:
-  plugin: csv
-  path: ../config/migration/slo/csv/news.csv
-  header_row_count: 1
-  delimiter: ','
-  enclosure: '"'
-  ids:
-    - id
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: 'http://spreadsheets.google.com/feeds/list/1ZXKepMImqcR57_zpTT48BaFlW2wdN78ya57RNZPWJHE/1/public/values?alt=json'
+  item_selector: entry
   fields:
     -
       name: id
+      selector: id
       label: 'Primary key'
     -
       name: category
+      selector: category
       label: 'Taxonomy term for News Type'
     -
       name: file_url
+      selector: fileurl
       label: 'Attachment file url'
     -
       name: file_title
+      selector: filetitle
       label: 'Attachment file title'
     -
       name: title
+      selector: title
       label: 'News title'
     -
       name: body
+      selector: body
       label: 'News body'
     -
       name: date
+      selector: date
       label: 'Publication date'
     -
       name: tags
+      selector: tags
       label: 'Taxonomy terms for Tag'
     -
       name: topics
+      selector: topics
       label: 'Taxonomy terms for Topics'
     -
       name: division
+      selector: division
       label: 'Taxonomy terms for Division'
+  ids:
+    id:
+      type: integer
 process:
   pseudo_destination_filename:
     -
