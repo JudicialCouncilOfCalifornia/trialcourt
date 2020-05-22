@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_migrate_source_ui.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function jcc_migrate_source_ui_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the migrate_source_ui module.
+    case 'help.page.jcc_migrate_source_ui':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('UI for migration sources.') . '</p>';
+      return $output;
+  }
+}
