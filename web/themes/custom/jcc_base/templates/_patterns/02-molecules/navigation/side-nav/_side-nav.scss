@@ -1,0 +1,50 @@
+$active-bg: #e6eef8;
+
+// Book side navigation customizations
+.jcc-book-container {
+  .usa-layout-docs__sidenav {
+    margin-top: 2em !important;
+    padding: 0 !important;
+    background-color: $jcc-primary-blue-lightest;
+
+    .block {
+      a {
+        color: inherit !important;
+      }
+
+      a:hover {
+        background-color: transparent;
+        font-weight: bold;
+      }
+
+      nav > .usa-sidenav:first-child {
+        border-bottom: 0;
+
+        .usa-sidenav__item:first-child {
+          a {
+            padding-top: 1em;
+            border-top: 0;
+          }
+        }
+      }
+
+      .usa-current, .usa-current:hover {
+        background-color: $active-bg;
+      }
+
+      .usa-current, a:hover {
+        color: $jcc-primary-blue-light !important;
+      }
+
+      .usa-current + ul {
+        a {
+          background-color: $active-bg;
+        }
+      }
+
+      .usa-current::after {
+        background-color: transparent;
+      }
+    }
+  }
+}
