@@ -15,7 +15,7 @@ source:
   plugin: url
   data_fetcher_plugin: http
   data_parser_plugin: google_sheets
-  urls: 'http://spreadsheets.google.com/feeds/list/1ZXKepMImqcR57_zpTT48BaFlW2wdN78ya57RNZPWJHE/12/public/values?alt=json'
+  urls: 'http://spreadsheets.google.com/feeds/list/1ZXKepMImqcR57_zpTT48BaFlW2wdN78ya57RNZPWJHE/11/public/values?alt=json'
   item_selector: entry
   fields:
     -
@@ -46,6 +46,22 @@ source:
       name: htmlbody
       label: 'HTML Body'
       selector: htmlbody
+    -
+      name: bid
+      label: 'Book ID'
+      selector: bid
+    -
+      name: pid
+      label: 'Parent ID'
+      selector: pid
+    -
+      name: bid_nid
+      label: 'Book NID'
+      selector: bidnid
+    -
+      name: pid_nid
+      label: 'Parent NID'
+      selector: pidnid
   ids:
     src_unique_id:
       type: integer
@@ -57,25 +73,29 @@ process:
     migration: node_book
     source: src_unique_id
     no_stub: true
-  book/bid:
-    plugin: migration_lookup_parent_by_path
-    source: url
-    path_part: 1
-    parent_path_prefix: ''
-    parent_path_suffix: index.htm
+  pseudo_new_bid:
+    plugin: migration_lookup
     migration: node_book
-    lookup_id: url
+    source: bid
+    no_stub: true
+  book/bid:
+    plugin: null_coalesce
+    source:
+      - '@pseudo_new_bid'
+      - bid_nid
   book/weight:
     plugin: default_value
     default_value: 0
-  book/pid:
-    plugin: migration_lookup_parent_by_path
-    source: url
-    path_part: 1
-    parent_path_prefix: ''
-    parent_path_suffix: index.htm
+  pseudo_new_pid:
+    plugin: migration_lookup
     migration: node_book
-    lookup_id: url
+    source: pid
+    no_stub: true
+  book/pid:
+    plugin: null_coalesce
+    source:
+      - '@pseudo_new_pid'
+      - pid_nid
 destination:
   plugin: book
 migration_dependencies:
