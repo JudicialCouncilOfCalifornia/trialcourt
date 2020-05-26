@@ -37,6 +37,20 @@ class JccBookNavigationBlock extends BookNavigationBlock {
       // Only show the block if the user has view access for the top-level node.
       if ($nid) {
         $tree = $this->bookManager->bookTreeAllData($current_bid);
+
+        // search for the book root
+        $book_parent_key = '';
+        foreach ($tree as $key => $book) {
+          $book_parent_key = $book['link']['nid'] == $current_bid ? $key : '';
+          break;
+        }
+        // put it at the start of the tree
+        if ($book_parent_key) {
+          $book_parent = $tree[$book_parent_key];
+          unset($tree[$book_parent_key]);
+          array_unshift($tree, $book_parent);
+        }
+
         $build = $this->bookManager->bookTreeOutput($tree);
         // Add active trail to theme.
         $active_trail = $this->bookManager->getActiveTrailIds($node->book['bid'], $node->book);
