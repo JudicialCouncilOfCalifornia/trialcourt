@@ -41,8 +41,10 @@ class JccBookNavigationBlock extends BookNavigationBlock {
         // search for the book root
         $book_parent_key = '';
         foreach ($tree as $key => $book) {
-          $book_parent_key = $book['link']['nid'] == $current_bid ? $key : '';
-          break;
+          if ($book['link']['nid'] == $current_bid) {
+            $book_parent_key = $key;
+            break;
+          }
         }
         // put it at the start of the tree
         if ($book_parent_key) {
