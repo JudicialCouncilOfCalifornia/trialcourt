@@ -104,20 +104,11 @@
       {% endif %}
     {% endset %}
 
-    {% set body %}
-      {% if display_submitted %}
-        <div{{ author_attributes.addClass('node__submitted') }}>
-          <div class="author">By {{ author_name }}</div>
-          <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
-          {{ metadata }}
-        </div>
-      {% endif %}
-    {% endset %}
+{#    {% set body %}#}
+{#
+{#    {% endset %}#}
 
-    {% include '@jcc_base/_includes/section-hero.html.twig' with {
-      brow: news_type,
-      title: title
-    } %}
+
 
     {% set attachments = content.field_attachments[0] %}
     {% set related_links = content.field_links[0] %}
@@ -125,8 +116,68 @@
     {% set tags = content.field_tags[0] %}
     {% set topics = content.field_topics[0] %}
 
-    {% include '@jcc_base/_includes/section-body.html.twig'with {
-      no_title_decoration: true
-    } %}
+{#    If body is empty set url attachement as button in the body area#}
+    {% if (content.body.0 == null) and (content.field_attachments[0]) %}
+      {# Display first document as primary download #}
+      {% set primary_doc = content.field_attachments[0]['#url'] %}
+      {% set body %}
+        {% if display_submitted %}#}
+          <div{{ author_attributes.addClass('node__submitted') }}>
+            <div class="author">By {{ author_name }}</div>
+            <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
+            {{ metadata }}
+          </div>
+        {% endif %}
+        <div>
+          {% include "@atoms/buttons/link-button.twig" with {
+              link_button: {
+                text: 'Download News',
+                url: primary_doc
+              }
+            } only
+          %}
+        </div>
+        {# Display other documents as secondary downloads #}
+        {% set other_docs = [] %}
+        {% for other_doc in content.field_attachments %}
+          {% if other_doc['#title'] %}
+            {% set doc_title = other_doc['#title'] %}
+            {% set doc_url = other_doc['#url'] %}
+            {% set other_docs = other_docs|merge([{
+              url_title: doc_title,
+              url: doc_url
+            }]) %}
+          {% endif %}
+        {% endfor %}
+        {% set other_docs = other_docs|slice(1) %} {# Skip the primary document #}
+        {% if other_docs|length > 0 %}
+          {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
+            link_list: {
+              list_icons: true,
+              header: 'Other Downloads',
+              items: other_docs,
+            }
+          } %}
+        {% endif %}
+      {% endset %}
+
+      {% include '@jcc_base/_includes/section-hero.html.twig' with {
+        brow: news_type,
+        title: title,
+        body: body
+      } %}
+    {%  else %}
+      {% include '@jcc_base/_includes/section-hero.html.twig' with {
+        brow: news_type,
+        title: title,
+        body: body
+      } %}
+      {% include '@jcc_base/_includes/section-body.html.twig'with {
+        no_title_decoration: true
+      } %}
+    {%  endif %}
+
+
+
   {% endblock %}
 </article>
