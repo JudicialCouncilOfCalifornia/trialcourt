@@ -18,8 +18,8 @@ function jcc_base_preprocess_block__views_block__events_filterable_block_1(&$var
     $excerpt = substr(strip_tags($row->_entity->body->value), 1,600);
     $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
     $start_date = $row->_entity->field_date_range->value;
-    $img_src = file_create_url($row->_entity->field_images->entity->field_media_image->entity->uri->value);
-    $img_alt = $row->_entity->field_images->entity->field_media_image->alt;
+    $img_src =isset($row->_entity->field_images->entity->field_media_image->entity->uri->value) ? file_create_url($row->_entity->field_images->entity->field_media_image->entity->uri->value) : "";
+    $img_alt = isset($row->_entity->field_images->entity->field_media_image->alt) ? $row->_entity->field_images->entity->field_media_image->alt : "";
 
     $recent_events_card = [
       'card' => [
