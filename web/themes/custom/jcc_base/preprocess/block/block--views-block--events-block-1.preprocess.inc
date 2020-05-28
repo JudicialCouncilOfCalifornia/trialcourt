@@ -19,7 +19,7 @@ function jcc_base_preprocess_block__views_block__events_block_1(&$variables) {
     $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
     $start_date = $row->_entity->field_date_range->value;
     $img_src =isset($row->_entity->field_images->entity->field_media_image->entity->uri->value) ? file_create_url($row->_entity->field_images->entity->field_media_image->entity->uri->value) : "";
-    $img_alt = $row->_entity->field_images->entity->field_media_image->alt;
+    $img_alt = isset($row->_entity->field_images->entity->field_media_image->alt) ? $row->_entity->field_images->entity->field_media_image->alt : "";
 
     $recent_events_card = [
       'card' => [
