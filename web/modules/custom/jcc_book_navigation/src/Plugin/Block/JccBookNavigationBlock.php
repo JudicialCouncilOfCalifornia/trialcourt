@@ -36,7 +36,7 @@ class JccBookNavigationBlock extends BookNavigationBlock {
         ->execute();
       // Only show the block if the user has view access for the top-level node.
       if ($nid) {
-        $tree = $this->bookManager->bookTreeAllData($current_bid);
+        $tree = $this->bookManager->bookTreeAllData($node->book['bid'], $node->book);
 
         // search for the book root
         $book_parent_key = '';
