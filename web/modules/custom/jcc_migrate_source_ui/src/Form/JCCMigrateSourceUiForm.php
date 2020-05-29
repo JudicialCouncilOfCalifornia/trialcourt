@@ -3,9 +3,13 @@
 namespace Drupal\jcc_migrate_source_ui\Form;
 
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Cache\DatabaseBackend;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\State\StateInterface;
+use Drupal\file\FileUsage\DatabaseFileUsageBackend;
 use Drupal\jcc_migrate_source_ui\MigrateBatchExecutable;
 use Drupal\jcc_migrate_source_ui\StubMigrationMessage;
 use Drupal\migrate\Plugin\Migration;
@@ -37,14 +41,46 @@ class JCCMigrateSourceUiForm extends FormBase {
   protected $definitions;
 
   /**
+   * The databes connection.
+   *
+   * @var array
+   */
+  protected $database;
+
+  /**
+   * The state interface.
+   *
+   * @var array
+   */
+  protected $state;
+
+  /**
+   * The database backend for discovery migration cache.
+   *
+   * @var array
+   */
+  protected $cacheDiscoveryMigration;
+
+  /**
+   * The file usage backend.
+   *
+   * @var array
+   */
+  protected $fileUsage;
+
+  /**
    * MigrateSourceUiForm constructor.
    *
    * @param \Drupal\migrate\Plugin\MigrationPluginManager $plugin_manager_migration
    *   The migration plugin manager.
    */
-  public function __construct(MigrationPluginManager $plugin_manager_migration) {
+  public function __construct(MigrationPluginManager $plugin_manager_migration, Connection $database, StateInterface $state, DatabaseBackend $cache_discovery_migration, DatabaseFileUsageBackend $file_usage) {
     $this->pluginManagerMigration = $plugin_manager_migration;
     $this->definitions = $this->pluginManagerMigration->getDefinitions();
+    $this->database = $database;
+    $this->state = $state;
+    $this->cacheDiscoveryMigration = $cache_discovery_migration;
+    $this->fileUsage = $file_usage;
   }
 
   /**
@@ -52,7 +88,11 @@ class JCCMigrateSourceUiForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('plugin.manager.migration')
+      $container->get('plugin.manager.migration'),
+      $container->get('database'),
+      $container->get('state'),
+      $container->get('cache.discovery_migration'),
+      $container->get('file.usage')
     );
   }
 
@@ -67,33 +107,40 @@ class JCCMigrateSourceUiForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $options = [];
+    // Create form options of available migrations.
     $migrationLabels = [];
     foreach ($this->definitions as $definition) {
       $migrationInstance = $this->pluginManagerMigration->createStubMigration($definition);
       if ($migrationInstance->getSourcePlugin() instanceof CSV || $migrationInstance->getSourcePlugin() instanceof Json || $migrationInstance->getSourcePlugin() instanceof Xml || $migrationInstance->getSourcePlugin() instanceof Url) {
         $plugin_id = $migrationInstance->getSourcePlugin()->getPluginId();
         $id = $definition['id'];
-
         $options[$plugin_id][$id] = $this->t('%id (supports %file_type)', [
           '%id' => $definition['label'] ?? $id,
           '%file_type' => $plugin_id,
         ]);
       }
     }
-    $type_options = [
+    // Supported type options.
+    $supported_types = [
       'csv' => 'csv',
       'json' => 'json',
       'xml' => 'xml',
       'url' => 'url'
     ];
+    // Limit type selection to avaialble types.
+    $available_types = array_intersect_key($supported_types, $options);
 
+    $form = [
+      '#tree' => TRUE
+    ];
     $form['source_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Select source type'),
-      '#options' => $type_options,
+      '#required' => TRUE,
+      '#options' => $available_types
     ];
-    foreach ($type_options as $type) {
+    // Create selects for each type.
+    foreach ($available_types as $type) {
       $opts = $options[$type];
       asort($opts);
       $form['migrations'][$type] = [
@@ -106,13 +153,32 @@ class JCCMigrateSourceUiForm extends FormBase {
           ],
         ],
       ];
+      // Indicators for existing source records, displayed when matching
+      // option is selected.
+      foreach (array_keys($opts) as $key) {
+        $form['migrations'][$key] = [
+          '#type' => 'item',
+          '#title' => $this->t('Stored Source'),
+          '#markup' => $this->getMigrationSource($key),
+          '#value' => $this->getMigrationSource($key),
+          '#access' => $this->getMigrationSource($key),
+          '#states' => [
+            'visible' => [
+              ':input[name="source_type"]' => ['value' => $type],
+              ':input[name="migrations[' . $type . ']"]' => ['value' => $key]
+            ]
+          ],
+        ];
+      }
     }
     $form['source_file'] = [
       '#type' => 'file',
       '#title' => $this->t('Upload the source file'),
       '#states' => [
-        'invisible' => [
-          ':input[name="source_type"]' => ['value' => 'url'],
+        'visible' => [
+          [':input[name="source_type"]' => ['value' => 'csv']],
+          [':input[name="source_type"]' => ['value' => 'xml']],
+          [':input[name="source_type"]' => ['value' => 'json']],
         ],
       ],
     ];
@@ -125,15 +191,43 @@ class JCCMigrateSourceUiForm extends FormBase {
           ':input[name="source_type"]' => ['value' => 'url'],
         ],
       ],
+      '#prefix' => '<div id="migrate-source-url">',
+      '#suffix' => '</div>',
+    ];
+    $form['run_migration'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Run Migration'),
+      '#default_value' => 0,
+      '#states' => [
+        'visible' => [
+          ':input[name="remove_source"]' => ['checked' => FALSE],
+        ],
+      ],
+    ];
+    $form['remove_source'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Remove Source'),
+      '#default_value' => 0,
+      '#states' => [
+        'visible' => [
+          ':input[name="run_migration"]' => ['checked' => FALSE],
+        ],
+      ],
     ];
     $form['update_existing_records'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Update existing records'),
-      '#default_value' => 1,
+      '#default_value' => 0,
+      '#states' => [
+        'visible' => [
+          ':input[name="run_migration"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
-    $form['import'] = [
+
+    $form['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Migrate'),
+      '#value' => $this->t('Execute'),
     ];
 
     return $form;
@@ -145,16 +239,23 @@ class JCCMigrateSourceUiForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
 
+    $migrations = $form_state->getValue('migrations');
+
+    if ($form_state->getValue('remove_source')) {
+      return;
+    }
+
     $source_type = $form_state->getValue('source_type');
-    $migration_id = $form_state->getValue($source_type);
+    $migration_id = $migrations[$source_type];
     $definition = $this->pluginManagerMigration->getDefinition($migration_id);
     $migrationInstance = $this->pluginManagerMigration->createStubMigration($definition);
     $extension = $this->getFileExtensionSupported($migrationInstance);
-
     $validators = ['file_validate_extensions' => [$extension]];
-    $file = file_save_upload('source_file', $validators, FALSE, 0, FileSystemInterface::EXISTS_REPLACE);
-    $url = $form_state->getValue('source_url');
+    // Save file to private directory for use by migrator.
+    $file = file_save_upload('source_file', $validators, 'private://', 0, FileSystemInterface::EXISTS_REPLACE);
+    $url = $form_state->getValue('source_url') ? $form_state->getValue('source_url') : $migrations[$migration_id];
 
+    // Set file_path for use in submit.
     if (isset($file)) {
       // File upload was attempted.
       if ($file) {
@@ -175,7 +276,7 @@ class JCCMigrateSourceUiForm extends FormBase {
       }
     }
     else {
-      $form_state->setErrorByName('source_file', $this->t('You have to upload a source file or enter a URL.'));
+      $form_state->setError($form, $this->t('You have to upload a source file or enter a URL.'));
     }
   }
 
@@ -184,27 +285,38 @@ class JCCMigrateSourceUiForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $source_type = $form_state->getValue('source_type');
-    $migration_id = $form_state->getValue($source_type);
-    /** @var \Drupal\migrate\Plugin\Migration $migration */
-    $migration = $this->pluginManagerMigration->createInstance($migration_id);
+    $migrations = $form_state->getValue('migrations');
+    $migration_id = $migrations[$source_type];
+    // Allows user to run migration from this page if desired.
+    if ($form_state->getValue('run_migration')) {
+      /** @var \Drupal\migrate\Plugin\Migration $migration */
+      $migration = $this->pluginManagerMigration->createInstance($migration_id);
+      // Reset status.
+      $status = $migration->getStatus();
+      if ($status !== MigrationInterface::STATUS_IDLE) {
+        $migration->setStatus(MigrationInterface::STATUS_IDLE);
+        $this->messenger()->addWarning($this->t('Migration @id reset to Idle', ['@id' => $migration_id]));
+      }
+      $options = [
+        'file_path' => $form_state->getValue('file_path'),
+      ];
+      // Force updates or not.
+      if ($form_state->getValue('update_existing_records')) {
+        $options['update'] = TRUE;
+      }
+      $executable = new MigrateBatchExecutable($migration, new StubMigrationMessage(), $options);
+      $executable->batchImport();
 
-    // Reset status.
-    $status = $migration->getStatus();
-    if ($status !== MigrationInterface::STATUS_IDLE) {
-      $migration->setStatus(MigrationInterface::STATUS_IDLE);
-      $this->messenger()->addWarning($this->t('Migration @id reset to Idle', ['@id' => $migration_id]));
+      return;
     }
 
-    $options = [
-      'file_path' => $form_state->getValue('file_path'),
-    ];
-    // Force updates or not.
-    if ($form_state->getValue('update_existing_records')) {
-      $options['update'] = TRUE;
+    $type = $form_state->getValue('source_type') == 'url' ? 'urls' : 'path';
+    if ($form_state->getValue('remove_source')) {
+      $this->deleteMigrationSource($migration_id, $type);
     }
-
-    $executable = new MigrateBatchExecutable($migration, new StubMigrationMessage(), $options);
-    $executable->batchImport();
+    else {
+      $this->setMigrationSource($migration_id, $form_state->getValue('file_path'), $type);
+    }
   }
 
   /**
@@ -229,6 +341,101 @@ class JCCMigrateSourceUiForm extends FormBase {
     }
 
     return $extension;
+  }
+
+  /**
+   * Set the migration source via the State API.
+   *
+   * @param string $migration_id
+   *   The migration id as indicated in the migration template.
+   * @param string $uri
+   *   The uri of the local file or external source.
+   * @param string $type
+   *   The type of source, url or path, as required by the migrate source
+   *   plugin.
+   */
+  private function setMigrationSource($migration_id, $uri, $type = 'urls') {
+    $sources = $this->state->get('jcc_migrate_sources');
+    // If a source exists, delete the old one so and update it's file usage.
+    if (!empty($sources[$migration_id])) {
+      $this->deleteMigrationSource($migration_id, $type);
+    }
+    // Set the file usage for local files.
+    if ($type == 'path') {
+      $this->setFileUsage($migration_id, $uri, 'add');
+    }
+    $sources[$migration_id] = [
+      'type' => $type,
+      'uri' => $uri
+    ];
+    // Set the update state value array and clear necessary caches for
+    // migration discovery.
+    $this->state->set('jcc_migrate_sources', $sources);
+    $this->cacheDiscoveryMigration->invalidateAll();
+  }
+
+  /**
+   * Load a migration source by migration id.
+   *
+   * @param  string $migration_id
+   *   The migration id as indicated in the migtation template.
+   *
+   * @return string|bool
+   *   The source uri or FALSE.
+   */
+  private function getMigrationSource($migration_id) {
+    $sources = $this->state->get('jcc_migrate_sources');
+    return !empty($sources[$migration_id]) ? $sources[$migration_id]['uri'] : FALSE;
+  }
+
+  /**
+   * Delete a migration source.
+   *
+   * @param  string $migration_id
+   *   The migration id as indicated in the migtation template.
+   * @param string $type
+   *   The type of source, url or path, as required by the migrate source
+   *   plugin.
+   */
+  private function deleteMigrationSource($migration_id, $type = 'urls') {
+    $sources = $this->state->get('jcc_migrate_sources');
+    if (empty($sources[$migration_id])) {
+      return;
+    }
+    if ($type == 'path') {
+      $this->setFileUsage(
+        $migration_id,
+        $sources[$migration_id]['uri'],
+        'delete'
+      );
+    }
+    unset($sources[$migration_id]);
+    $this->state->set('jcc_migrate_sources', $sources);
+    $this->cacheDiscoveryMigration->invalidateAll();
+  }
+
+  /**
+   * Set file usage for source.
+   *
+   * @param string $migration_id
+   *   The migration id as indicated in the migration template.
+   * @param string $uri
+   *   The uri of the local file or external source.
+   * @param string $operation
+   *   The file usage operation. add|delete
+   */
+  private function setFileUsage($migration_id, $uri, $operation) {
+    $files = \Drupal::entityTypeManager()
+      ->getStorage('file')
+      ->loadByProperties(['uri' => $uri]);
+    foreach ($files as $file) {
+      $this->fileUsage->{$operation}(
+        $file,
+        'jcc_migrate_source_ui',
+        'migration',
+        $migration_id
+      );
+    }
   }
 
 }
