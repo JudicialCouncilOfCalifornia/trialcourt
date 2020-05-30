@@ -8,6 +8,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\Messenger;
 use Drupal\Core\State\StateInterface;
 use Drupal\file\FileUsage\DatabaseFileUsageBackend;
 use Drupal\jcc_migrate_source_ui\MigrateBatchExecutable;
@@ -41,7 +42,7 @@ class JCCMigrateSourceUiForm extends FormBase {
   protected $definitions;
 
   /**
-   * The databes connection.
+   * The database connection.
    *
    * @var array
    */
@@ -69,18 +70,43 @@ class JCCMigrateSourceUiForm extends FormBase {
   protected $fileUsage;
 
   /**
+   * The drupal messenger service.
+   *
+   * @var array
+   */
+  protected $messenger;
+
+  /**
    * MigrateSourceUiForm constructor.
    *
-   * @param \Drupal\migrate\Plugin\MigrationPluginManager $plugin_manager_migration
+   * @param MigrationPluginManager $plugin_manager_migration
    *   The migration plugin manager.
+   * @param Connection $database
+   *   The database service.
+   * @param StateInterface $state
+   *   The state service.
+   * @param DatabseBAckend $cache_discovery_migration
+   *   The cache service for discovery_migration.
+   * @param DatabaseFileUsageBackend $file_usage
+   *   The file.usage service.
+   * @param Messenger $messenger
+   *   The messenger service.
    */
-  public function __construct(MigrationPluginManager $plugin_manager_migration, Connection $database, StateInterface $state, DatabaseBackend $cache_discovery_migration, DatabaseFileUsageBackend $file_usage) {
+  public function __construct(
+    MigrationPluginManager $plugin_manager_migration,
+    Connection $database,
+    StateInterface $state,
+    DatabaseBackend $cache_discovery_migration,
+    DatabaseFileUsageBackend $file_usage,
+    Messenger $messenger) {
+
     $this->pluginManagerMigration = $plugin_manager_migration;
     $this->definitions = $this->pluginManagerMigration->getDefinitions();
     $this->database = $database;
     $this->state = $state;
     $this->cacheDiscoveryMigration = $cache_discovery_migration;
     $this->fileUsage = $file_usage;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -92,7 +118,8 @@ class JCCMigrateSourceUiForm extends FormBase {
       $container->get('database'),
       $container->get('state'),
       $container->get('cache.discovery_migration'),
-      $container->get('file.usage')
+      $container->get('file.usage'),
+      $container->get('messenger')
     );
   }
 
@@ -372,6 +399,7 @@ class JCCMigrateSourceUiForm extends FormBase {
     // migration discovery.
     $this->state->set('jcc_migrate_sources', $sources);
     $this->cacheDiscoveryMigration->invalidateAll();
+    $this->messenger->addStatus($this->t('Migration source set for %s', ['%s' => $migration_id]));
   }
 
   /**
@@ -412,6 +440,7 @@ class JCCMigrateSourceUiForm extends FormBase {
     unset($sources[$migration_id]);
     $this->state->set('jcc_migrate_sources', $sources);
     $this->cacheDiscoveryMigration->invalidateAll();
+    $this->messenger->addStatus($this->t('Migration source deleted for %s.', ['%s' => $migration_id]));
   }
 
   /**
