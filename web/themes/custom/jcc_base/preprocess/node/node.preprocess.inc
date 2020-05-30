@@ -48,5 +48,35 @@ function jcc_base_preprocess_node(&$variables) {
         }
       }
       break;
+    case 'book':
+      if($variables['view_mode'] == 'full'){
+        $topics = $node->field_topics->referencedEntities();
+        $divisions =$node->field_division->referencedEntities();
+        $termIds = '';
+        $divisionIds = '';
+        if (!empty($topics)) {
+          foreach ($topics as $term) {
+            if ($termIds == '') {
+              $termIds = $term->id();
+            } else {
+              $termIds = $termIds . '+' . $term->id();
+            }
+          }
+        }
+        if (!empty($divisions)) {
+          foreach ($divisions as $division) {
+            if ($divisionIds == '') {
+              $divisionIds = $division->id();
+            } else {
+              $divisionIds = $divisionIds . '+' . $division->id();
+            }
+          }
+        }
+
+        $view = Drupal\views\Views::getView('faq');
+        $view->setDisplay('block_1');
+        $view->setArguments([$termIds, $divisionIds]);
+        $variables['faq_items'] = $view->render();
+      }
   }
 }
