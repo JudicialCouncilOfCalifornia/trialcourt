@@ -86,12 +86,15 @@
   {% block content %}
     {% set body %}
       {{ content.body }}
-      {% for item in vocabularies %}
-        {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
-          link_list: item.link_list,
-          tag: 'h5'
-        } %}
-      {% endfor %}
+
+      {% if view_mode == 'full' %}
+        {% for item in vocabularies %}
+          {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
+            link_list: item.link_list,
+            tag: 'h5'
+          } %}
+        {% endfor %}
+      {%  endif %}
     {% endset %}
 
     {% include '@organisms/sections/text-section/text-section.twig' with {
