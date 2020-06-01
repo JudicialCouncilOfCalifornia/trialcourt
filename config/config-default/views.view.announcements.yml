@@ -306,23 +306,10 @@ display:
       display_description: ''
       block_description: 'Announcements Block - Page Specific'
       pager:
-        type: mini
+        type: some
         options:
           items_per_page: 3
           offset: 0
-          id: 0
-          total_pages: null
-          tags:
-            previous: ‹
-            next: ›
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
       defaults:
         pager: false
         arguments: false
@@ -400,7 +387,6 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
-        - url.query_args
         - 'user.node_grants:view'
         - user.permissions
       tags:
@@ -415,28 +401,16 @@ display:
       display_description: ''
       block_description: 'Announcements Block - Global Announcements'
       pager:
-        type: mini
+        type: some
         options:
           items_per_page: 3
           offset: 0
-          id: 0
-          total_pages: null
-          tags:
-            previous: ‹
-            next: ›
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
       defaults:
         pager: false
         arguments: false
         filters: false
         filter_groups: false
+        sorts: false
       arguments: {  }
       filters:
         status:
@@ -551,12 +525,42 @@ display:
         operator: AND
         groups:
           1: AND
+      sorts:
+        changed:
+          id: changed
+          table: node_field_data
+          field: changed
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          granularity: second
+          entity_type: node
+          entity_field: changed
+          plugin_id: date
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          order: DESC
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+          relationship: none
+          group_type: group
+          admin_label: ''
+          exposed: false
+          expose:
+            label: ''
+          granularity: second
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - url.query_args
         - 'user.node_grants:view'
         - user.permissions
       tags:
