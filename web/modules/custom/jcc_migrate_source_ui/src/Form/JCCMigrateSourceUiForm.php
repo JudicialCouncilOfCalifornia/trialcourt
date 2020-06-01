@@ -314,6 +314,17 @@ class JCCMigrateSourceUiForm extends FormBase {
     $source_type = $form_state->getValue('source_type');
     $migrations = $form_state->getValue('migrations');
     $migration_id = $migrations[$source_type];
+
+    $type = $form_state->getValue('source_type') == 'url' ? 'urls' : 'path';
+    if ($form_state->getValue('remove_source')) {
+      $this->deleteMigrationSource($migration_id, $type);
+
+      return;
+    }
+    else {
+      $this->setMigrationSource($migration_id, $form_state->getValue('file_path'), $type);
+    }
+
     // Allows user to run migration from this page if desired.
     if ($form_state->getValue('run_migration')) {
       /** @var \Drupal\migrate\Plugin\Migration $migration */
@@ -333,16 +344,6 @@ class JCCMigrateSourceUiForm extends FormBase {
       }
       $executable = new MigrateBatchExecutable($migration, new StubMigrationMessage(), $options);
       $executable->batchImport();
-
-      return;
-    }
-
-    $type = $form_state->getValue('source_type') == 'url' ? 'urls' : 'path';
-    if ($form_state->getValue('remove_source')) {
-      $this->deleteMigrationSource($migration_id, $type);
-    }
-    else {
-      $this->setMigrationSource($migration_id, $form_state->getValue('file_path'), $type);
     }
   }
 
