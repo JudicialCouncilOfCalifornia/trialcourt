@@ -68,19 +68,17 @@
 
     {% block content %}
       {% if sidebar.rows %}
-        <div class="location-sidebar">
-          <div class="location-sidebar__title">
+        <div class="location-sidebar maxw-tablet">
+          <div class="location-sidebar__title margin-bottom-3">
             <h2>Locations</h2>
           </div>
-          <div class="location-sidebar__description">
-            <p>{{ sidebar.description }}</p>
-          </div>
+          <div class="location-sidebar__items grid-row grid-gap">
           {% for location in sidebar.rows %}
-            <div class="location-sidebar__location">
+            <div class="location-sidebar__location tablet:grid-col-6">
               {% set locationView = location.field_location|view %}
               <h5>
                 <a href="{{ path('entity.node.canonical', {'node': location.id}) }}">
-                  <i class="fas fa-map-marker-alt"></i>{{ locationView.0.locality }}
+                  <i class="fas fa-map-marker-alt"></i>{{ location.title|view }}
                 </a>
               </h5>
               <div class="location-sidebar__address1">{{ locationView.0.address_line1 }}</div>
@@ -88,6 +86,7 @@
               <div class="location-sidebar__locality">{{ locationView.0.locality }}, {{ locationView.0.administrative_area }} {{ locationView.0.postal_code }}</div>
             </div>
           {% endfor %}
+          </div>
           {% block pager %}
             {% if pager %}
               {{ pager }}

@@ -52,7 +52,7 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 3
+          items_per_page: 6
           offset: 0
           id: 0
           total_pages: null
@@ -84,13 +84,6 @@ display:
               weight: 0
               enable: false
               map_center_id: client_location
-            fit_bounds:
-              enable: true
-              settings:
-                min_zoom: 10
-                reset_zoom: true
-              weight: 0
-              map_center_id: fit_bounds
             fixed_boundaries:
               settings:
                 north: ''
@@ -100,17 +93,31 @@ display:
               weight: 0
               enable: false
               map_center_id: fixed_boundaries
+            fit_bounds:
+              enable: true
+              settings:
+                min_zoom: 10
+                reset_zoom: true
+              weight: 0
+              map_center_id: fit_bounds
+            fixed_value:
+              settings:
+                latitude: null
+                longitude: null
+                location_option_id: fixed_value
+              weight: 0
+              enable: false
+              map_center_id: location_plugins
             first_row:
               weight: 0
               enable: false
               map_center_id: location_plugins
               settings:
                 location_option_id: first_row
-            fixed_value:
+            ipstack:
               settings:
-                latitude: null
-                longitude: null
-                location_option_id: fixed_value
+                access_key: ''
+                location_option_id: ipstack
               weight: 0
               enable: false
               map_center_id: location_plugins
@@ -120,13 +127,6 @@ display:
               map_center_id: location_plugins
               settings:
                 location_option_id: freeogeoip
-            ipstack:
-              settings:
-                access_key: ''
-                location_option_id: ipstack
-              weight: 0
-              enable: false
-              map_center_id: location_plugins
           even_empty: 1
           map_provider_id: leaflet
           map_provider_settings:
@@ -553,8 +553,8 @@ display:
                   position: topright
                 enabled: false
               leaflet_gesture_handling:
+                enabled: true
                 weight: 0
-                enabled: false
               leaflet_disable_user_interaction:
                 weight: 0
                 enabled: false
