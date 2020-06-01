@@ -15,6 +15,7 @@ dependencies:
     - field.field.node.location.field_phone_hours
     - field.field.node.location.field_subject_matter
     - field.field.node.location.field_tags
+    - field.field.node.location.field_topics
     - node.type.location
   module:
     - address
@@ -27,6 +28,7 @@ dependencies:
     - path
     - scheduler
     - scheduler_content_moderation_integration
+    - straw
     - telephone
     - text
 third_party_settings:
@@ -66,6 +68,7 @@ third_party_settings:
         - field_geolocation
         - field_division
         - field_tags
+        - field_topics
         - field_subject_matter
       parent_name: group_location_content
       weight: 26
@@ -235,21 +238,14 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_subject_matter:
-    type: autocomplete_deluxe
-    weight: 24
+    type: super_term_reference_autocomplete_widget
+    weight: 25
     region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
-      new_terms: 0
       match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
+      match_limit: '10'
+      size: '60'
+      placeholder: ''
     third_party_settings: {  }
   field_tags:
     type: autocomplete_deluxe
@@ -268,6 +264,16 @@ content:
       size: 60
       selection_handler: default
     third_party_settings: {  }
+  field_topics:
+    weight: 24
+    settings:
+      match_operator: CONTAINS
+      match_limit: '10'
+      size: '60'
+      placeholder: ''
+    third_party_settings: {  }
+    type: super_term_reference_autocomplete_widget
+    region: content
   langcode:
     type: language_select
     weight: 2
