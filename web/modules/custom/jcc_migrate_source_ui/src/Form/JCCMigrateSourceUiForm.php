@@ -356,11 +356,14 @@ class JCCMigrateSourceUiForm extends FormBase {
     $depends_on = implode(', ', $dependencies['required']);
     foreach ($dependencies['required'] as $id) {
       if (!$this->getMigrationSource($id)) {
-        $this->messenger()->addError($this->t('@migration_id depends on: @ids', ['@migration_id' => $migration_id, '@id' => $depends_on]));
+        $this->messenger()->addError($this->t('@migration_id depends on: @ids', ['@migration_id' => $migration_id, '@ids' => $depends_on]));
         return FALSE;
       }
     }
-    $this->messenger()->addMessage($this->t('@migration_id depends on: @ids', ['@migration_id' => $migration_id, '@id' => $depends_on]));
+    if ($depends_on) {
+      $this->messenger()->addMessage($this->t('@migration_id depends on: @ids', ['@migration_id' => $migration_id, '@ids' => $depends_on]));
+    }
+
     return TRUE;
   }
 
