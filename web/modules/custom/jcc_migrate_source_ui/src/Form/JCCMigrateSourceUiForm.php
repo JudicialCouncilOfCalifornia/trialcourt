@@ -327,6 +327,9 @@ class JCCMigrateSourceUiForm extends FormBase {
 
     // Allows user to run migration from this page if desired.
     if ($form_state->getValue('run_migration')) {
+      if (!$this->checkDependencies($migration_id)) {
+        return;
+      }
       /** @var \Drupal\migrate\Plugin\Migration $migration */
       $migration = $this->pluginManagerMigration->createInstance($migration_id);
       // Reset status.
@@ -345,6 +348,20 @@ class JCCMigrateSourceUiForm extends FormBase {
       $executable = new MigrateBatchExecutable($migration, new StubMigrationMessage(), $options);
       $executable->batchImport();
     }
+  }
+
+  public function checkDependencies($migration_id) {
+    $migrationInstance = $this->pluginManagerMigration->createStubMigration($this->definitions[$migration_id]);
+    $dependencies = $migrationInstance->getMigrationDependencies();
+    $depends_on = implode(', ', $dependencies['required']);
+    foreach ($dependencies['required'] as $id) {
+      if (!$this->getMigrationSource($id)) {
+        $this->messenger()->addError($this->t('@migration_id depends on: @ids', ['@migration_id' => $migration_id, '@id' => $depends_on]));
+        return FALSE;
+      }
+    }
+    $this->messenger()->addMessage($this->t('@migration_id depends on: @ids', ['@migration_id' => $migration_id, '@id' => $depends_on]));
+    return TRUE;
   }
 
   /**
