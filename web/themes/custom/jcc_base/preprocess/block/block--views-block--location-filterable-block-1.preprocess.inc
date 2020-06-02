@@ -28,9 +28,10 @@ function jcc_base_preprocess_block__views_block__location_filterable_block_1(&$v
   }
 
   /** create a placeholder third card here until we figure out what we need */
+  $note_text = $variables['elements']['#configuration']['contextual_filter']['note_text']['value'];
+
   $location_card = [
-    'title' => 'Placeholder Title',
-    'excerpt' => 'Placeholder Text'
+    'excerpt' => $note_text,
   ];
 
   array_push($cards, $location_card);
