@@ -14,7 +14,7 @@ use Drupal\Core\Render\Markup;
 function jcc_base_preprocess_region__header(&$variables) {
   // Get theme logo from appearance setting
   $theme_logo = theme_get_setting('logo.url');
-  // BEGIN Get the site name from basic site settings
+  // BEGIN Get basic site settings (e.g. site name for logo alt)
   $config = \Drupal::config('system.site');
   $site_name = $config->get('name');
   // END
@@ -33,14 +33,14 @@ function jcc_base_preprocess_region__header(&$variables) {
       ],
       'logo' => [
         'src' => $theme_logo,
-        'alt' => $site_name,
+        'alt' => $site_name . ' logo',
         'renderer' => 'patternlab'
       ]
     ],
     'header_topbar' => [
       'logo' => [
         'src' => $theme_logo,
-        'alt' => $site_name,
+        'alt' => $site_name . ' logo',
         'renderer' => 'patternlab'
       ],
       'search' => [
