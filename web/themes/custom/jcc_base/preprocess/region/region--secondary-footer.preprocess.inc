@@ -28,8 +28,11 @@ function jcc_base_preprocess_region__secondary_footer(&$variables) {
   $menu_link_tree_handler = Drupal::getContainer()->get('menu_item_extras.menu_link_tree_handler');
   $menu_link_tree_handler->processMenuLinkTree($footer_menu['#items'], $menu_name);
 
+  $variables['list_section']['lowercase_titles'] = TRUE;
+
   $variables['list_section']['menu'] = [
     'classes' => [],
+    'lowercase_titles' => TRUE,
     'disable_header_link' => TRUE,
     'items' => $footer_menu['#items'],
   ];
