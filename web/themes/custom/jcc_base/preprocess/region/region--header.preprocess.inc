@@ -12,7 +12,13 @@ use Drupal\Core\Render\Markup;
  * Implements hook_preprocess_HOOK().
  */
 function jcc_base_preprocess_region__header(&$variables) {
-  $pl_path = base_path() . 'libraries/courtyard-artifact';
+  // Get theme logo from appearance setting
+  $theme_logo = theme_get_setting('logo.url');
+  // BEGIN Get basic site settings (e.g. site name for logo alt)
+  $config = \Drupal::config('system.site');
+  $site_name = $config->get('name');
+  // END
+
   $variables['header'] = [
     'mobile' => [
       'globe' => [
@@ -26,15 +32,15 @@ function jcc_base_preprocess_region__header(&$variables) {
         'decorative' => TRUE
       ],
       'logo' => [
-        'src' => $pl_path . '/public/images/jcc-logo-long.png',
-        'alt' => (string) t('Judicial Court Logo'),
+        'src' => $theme_logo,
+        'alt' => $site_name . ' logo',
         'renderer' => 'patternlab'
       ]
     ],
     'header_topbar' => [
       'logo' => [
-        'src' => $pl_path . '/public/images/jcc-logo-long.png',
-        'alt' => (string) t('Judicial Court Logo'),
+        'src' => $theme_logo,
+        'alt' => $site_name . ' logo',
         'renderer' => 'patternlab'
       ],
       'search' => [
