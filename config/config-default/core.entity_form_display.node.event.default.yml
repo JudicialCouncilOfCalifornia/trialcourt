@@ -52,6 +52,7 @@ third_party_settings:
       children:
         - field_event_type
         - field_date_range
+        - field_recurring_event
         - field_location
         - group_descriptions
       parent_name: group_event_content
@@ -73,7 +74,7 @@ third_party_settings:
         - field_topics
         - field_subject_matter
       parent_name: group_event_content
-      weight: 23
+      weight: 24
       format_type: tab
       region: content
       format_settings:
@@ -115,7 +116,7 @@ third_party_settings:
         - body
         - field_event_moreinfo
       parent_name: group_main_content
-      weight: 8
+      weight: 9
       format_type: details
       region: content
       format_settings:
@@ -129,7 +130,7 @@ third_party_settings:
       children:
         - field_links
       parent_name: group_event_content
-      weight: 22
+      weight: 23
       format_type: tab
       region: content
       format_settings:
@@ -156,7 +157,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -237,13 +238,13 @@ content:
     type: link_attributes
     region: content
   field_location:
-    weight: 7
+    weight: 8
     settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
   field_recurring_event:
-    weight: 26
+    weight: 7
     settings:
       size: 60
       placeholder: ''
@@ -251,7 +252,7 @@ content:
     type: string_textfield
     region: content
   field_subject_matter:
-    weight: 8
+    weight: 9
     settings:
       match_operator: CONTAINS
       size: 60
@@ -289,7 +290,7 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 3
+    weight: 2
     region: content
     settings:
       include_locked: true
@@ -310,7 +311,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 5
     region: content
     third_party_settings: {  }
   publish_on:
@@ -321,12 +322,12 @@ content:
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 9
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
   scheduler_settings:
-    weight: 8
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -341,7 +342,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 6
     region: content
     third_party_settings: {  }
   title:
@@ -359,7 +360,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
