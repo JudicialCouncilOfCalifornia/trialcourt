@@ -986,6 +986,7 @@ display:
         style: false
         row: false
         fields: false
+        footer: false
       pager:
         type: none
         options:
@@ -1032,13 +1033,13 @@ display:
           bundle_type: event
           classes: ''
           color_taxonomies:
-            1979: '#f2e4d4'
-            2043: '#f0f0f0'
-            1977: '#e1f3f8'
-            1992: '#f8dfe2'
-            1978: '#ffbc78'
-            1980: '#dfe1e2'
-            1947: '#f2938c'
+            1979: '#ffbc78'
+            2043: '#97d4ea'
+            1977: '#f2938c'
+            1992: '#d9e8f6'
+            1978: '#dfe1e2'
+            1980: '#f2e4d4'
+            1947: '#f0f0f0'
       row:
         type: 'entity:node'
         options:
@@ -1426,6 +1427,20 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
+      footer:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: false
+          tokenize: false
+          content:
+            value: "<div class=\"calendar-legend\">\r\n<div class=\"legend-item\"><span class=\"legend-square arraignment accent-warm-light\"></span><label class=\"t-small\"> : Arraignment</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square civil-trial accent-cool-light\"></span><label class=\"t-small\"> : Civil Trial</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square hearing secondary-light\"></span><label class=\"t-small\"> : Hearing</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square holiday primary-lighter\"></span><label class=\"t-small\"> : Holiday</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square motion base-lighter\"></span><label class=\"t-small\"> : Motion</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square sentencing accent-warm-lighter\"></span><label class=\"t-small\"> : Sentencing</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square workshop base-lightest\"></span><label class=\"t-small\"> : Workshop</label></div>\r\n</div>"
+            format: full_html
+          plugin_id: text
     cache_metadata:
       max-age: -1
       contexts:
