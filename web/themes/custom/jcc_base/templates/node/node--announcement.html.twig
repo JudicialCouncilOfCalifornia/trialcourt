@@ -92,6 +92,11 @@
       {{- node.field_alert_type.0.value -}}
     {% endset %}
 
+
+    {%  if node.field_dismissible_announcement.0.value == "1" %}
+      {% set dissmissible = true %}
+    {% endif %}
+
     {% set title %}
       {{ label.0 }}
     {% endset %}
@@ -106,7 +111,7 @@
         type: alert_type,
         heading: title,
         text: body,
-        close: false
+        close: dissmissible
       }
     } only %}
   {% endblock %}
