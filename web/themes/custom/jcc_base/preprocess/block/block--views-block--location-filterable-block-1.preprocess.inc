@@ -13,15 +13,22 @@ function jcc_base_preprocess_block__views_block__location_filterable_block_1(&$v
   $rows = $variables['elements']['content']['#view']->result;
 
   foreach ($rows as $row) {
-    $title = $row->_entity->title->value;
-    $address = \Drupal::service('renderer')->renderRoot($row->_entity->field_location->view('default'));
-    $phone = \Drupal::service('renderer')->renderRoot($row->_entity->field_phone->view('default'));
+    /** $title = $row->_entity->title->value; */
+
+    $location = !empty($row->_entity->field_location) ? $row->_entity->field_location->first() : NULL;
+    $location->view([
+      'type' => '#markup',
+      'label' => 'hidden'
+    ]);
+
+    $address = \Drupal::service('renderer')->renderRoot($location->view('default'));
+    $phone = $row->_entity->field_phone->value;
     $office_hours = \Drupal::service('renderer')->renderRoot($row->_entity->field_office_hours->view('default'));
     $phone_hours = \Drupal::service('renderer')->renderRoot($row->_entity->field_phone_hours->view('default'));
     $excerpt = t($address . $office_hours . $phone . $phone_hours);
 
     $location_card = [
-      'title' => $title,
+      /** 'title' => $title, */
       'excerpt' => $excerpt
     ];
     array_push($cards, $location_card);
