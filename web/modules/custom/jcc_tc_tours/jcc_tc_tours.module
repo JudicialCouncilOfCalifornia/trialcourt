@@ -1,0 +1,63 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_tc_tours.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use \Drupal\tour\Entity\Tour;
+
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_tc_tours_form_alter(&$form, &$form_state, $form_id) {
+  // Attach behaviour to forms to expand details elements containing tour tips.
+  // See related /js.
+  switch ($form_id) {
+    case 'node_announcement_form':
+    case 'node_announcement_edit_form':
+      $form['#attached']['library'][] = 'jcc_tc_tours/jcc-tc-tours-announcement';
+      break;
+
+  }
+}
+
+/**
+ * Implements hook_page_bottom().
+ *
+ * Add tour to content type specific edit form pages.
+ * To create a tour for specific content type add the route
+ * <content type>.edit_form to the tour config,
+ * ie. announcement.edit_form .
+ */
+function jcc_tc_tours_page_bottom(array &$page_bottom) {
+  if (!\Drupal::currentUser()->hasPermission('access tour')) {
+    return;
+  }
+  $route_match = \Drupal::routeMatch();
+  $route = $route_match->getRouteName();
+  // Only add custom tour hooks for node edit pages.
+  if ($route !== 'entity.node.edit_form') {
+    return;
+  }
+  $params = $route_match->getParameters();
+  $bundle = null;
+  // Get bundle of a node edit page.
+  if($node = $params->get('node')) {
+    $bundle = $node->type->getString();
+  }
+  else {
+    return;
+  }
+
+  // Check if a tour for this edit page exists and display it.
+  $results = \Drupal::entityQuery('tour')
+    ->condition('routes.*.route_name', $bundle . '.edit_form')
+    ->execute();
+  if (!empty($results) && $tours = Tour::loadMultiple(array_keys($results))) {
+    if (!empty($tours)) {
+      $page_bottom['tour'] = \Drupal::entityTypeManager()->getViewBuilder('tour')->viewMultiple($tours, 'full');
+    }
+  }
+}

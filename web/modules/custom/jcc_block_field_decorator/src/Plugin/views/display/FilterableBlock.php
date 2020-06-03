@@ -176,8 +176,7 @@ class FilterableBlock extends Block {
             '@id' => $id,
             '%label' => $item->options['expose']['label']
           ]);
-        }
-        else {
+        } else {
           $title = $this->t('@type: @id', ['@id' => $id, '@type' => $item_label]);
         }
         // Create form fields.
@@ -203,6 +202,19 @@ class FilterableBlock extends Block {
         }
       }
     }
+
+    // Set special block note
+    $form['override'][$type]['note_text']['enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => 'Display special block notes',
+      '#default_value' => $block_configuration[$type]['note_text']['enabled'],
+    ];
+    $form['override'][$type]['note_text']['value'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Special Block Notes'),
+      '#description' => $this->t('Special block notes about the contents.'),
+      '#default_value' => $block_configuration[$type]['note_text']['value'],
+    ];
 
     return $form;
   }
@@ -243,6 +255,7 @@ class FilterableBlock extends Block {
     }
 
     $block->setConfiguration($config);
+
   }
 
   /**
