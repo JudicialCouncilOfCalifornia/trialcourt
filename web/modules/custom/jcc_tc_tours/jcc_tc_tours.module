@@ -12,6 +12,8 @@ use \Drupal\tour\Entity\Tour;
  * Implements hook_form_alter().
  */
 function jcc_tc_tours_form_alter(&$form, &$form_state, $form_id) {
+  // Attach behaviour to forms to expand details elements containing tour tips.
+  // See related /js.
   switch ($form_id) {
     case 'node_announcement_form':
     case 'node_announcement_edit_form':
