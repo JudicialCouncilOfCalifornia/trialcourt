@@ -1,0 +1,13 @@
+diff --git devel.module devel.module
+index 3d8570a..7f91149 100644
+--- devel.module
++++ devel.module
+@@ -169,7 +169,7 @@ function devel_set_handler($handlers) {
+   if (empty($handlers)) {
+     restore_error_handler();
+   }
+-  elseif (count($handlers) == 1 && isset($handlers[DEVEL_ERROR_HANDLER_STANDARD])) {
++  elseif ((is_object($handlers) || is_array($handlers)) && count($handlers) == 1 && isset($handlers[DEVEL_ERROR_HANDLER_STANDARD])) {
+     // Do nothing.
+   }
+   else {
