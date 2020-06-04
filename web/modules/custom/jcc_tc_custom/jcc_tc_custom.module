@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_tc_custom.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_tc_custom_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Set default publish_state if it exists and is not set.
+  if (!empty($form['publish_state'])) {
+    $options = $form['publish_state']['widget'][0]['#options'];
+    if (array_key_exists('published', $options)) {
+      $default_value = $form['publish_state']['widget'][0]['#default_value'];
+      $form['publish_state']['widget'][0]['#default_value'] = empty($default_value) ? ['published'] : $default_value;
+    }
+  }
+  // Set default unpublish_state if it exists and is not set.
+  if (!empty($form['unpublish_state'])) {
+    $options = $form['unpublish_state']['widget'][0]['#options'];
+    if (array_key_exists('archived', $options)) {
+      $default_value = $form['unpublish_state']['widget'][0]['#default_value'];
+      $form['unpublish_state']['widget'][0]['#default_value'] = empty($default_value) ? ['archived'] : $default_value;
+    }
+  }
+}
