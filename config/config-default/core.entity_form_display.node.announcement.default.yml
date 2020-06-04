@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.announcement.body
     - field.field.node.announcement.field_alert_type
+    - field.field.node.announcement.field_dismissible_announcement
     - field.field.node.announcement.field_display_on_all_pages
     - field.field.node.announcement.field_specific_visibility
     - node.type.announcement
@@ -37,7 +38,7 @@ third_party_settings:
       children:
         - field_display_on_all_pages
         - field_specific_visibility
-        - field_manual_path
+        - field_dismissible_announcement
       parent_name: ''
       weight: 16
       format_type: details
@@ -77,6 +78,13 @@ content:
     third_party_settings: {  }
     type: options_select
     region: content
+  field_dismissible_announcement:
+    type: boolean_checkbox
+    weight: 20
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_display_on_all_pages:
     weight: 18
     settings:
