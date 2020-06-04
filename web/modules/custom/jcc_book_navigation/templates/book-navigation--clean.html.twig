@@ -31,17 +31,19 @@
  */
 #}
 {% if tree or has_links %}
-  <nav class="grid-row margin-top-6" role="navigation" aria-labelledby="book-label-{{ book_id }}">
-    {% if has_links %}
-      {% if prev_url %}
-        <div class="tablet:grid-col-auto"><a class="usa-button usa-button--outline" href="{{ prev_url }}" rel="prev" title="{{ 'Go to previous page'|t }}"><b>{{ '‹'|t }}</b> {{ prev_title }}</a></div>
+  <div class="book_navigation">
+    <nav class="grid-row margin-top-6" role="navigation" aria-labelledby="book-label-{{ book_id }}">
+      {% if has_links %}
+        {% if prev_url %}
+          <div class="tablet:grid-col-auto"><a class="usa-button usa-button--outline" href="{{ prev_url }}" rel="prev" title="{{ 'Go to previous page'|t }}"><b>{{ '‹'|t }}</b> {{ prev_title }}</a></div>
+        {% endif %}
+        {% if parent_url %}
+          <div class="tablet:grid-col-auto"><a class="usa-button" href="{{ parent_url }}" title="{{ 'Go to parent page'|t }}">{{ 'Up'|t }}</a></div>
+        {% endif %}
+        {% if next_url %}
+          <div class="tablet:grid-col-auto"><a class="usa-button usa-button--outline" href="{{ next_url }}" rel="next" title="{{ 'Go to next page'|t }}">{{ next_title }} <b>{{ '›'|t }}</b></a></div>
+        {% endif %}
       {% endif %}
-      {% if parent_url %}
-        <div class="tablet:grid-col-auto"><a class="usa-button" href="{{ parent_url }}" title="{{ 'Go to parent page'|t }}">{{ 'Up'|t }}</a></div>
-      {% endif %}
-      {% if next_url %}
-        <div class="tablet:grid-col-auto"><a class="usa-button usa-button--outline" href="{{ next_url }}" rel="next" title="{{ 'Go to next page'|t }}">{{ next_title }} <b>{{ '›'|t }}</b></a></div>
-      {% endif %}
-    {% endif %}
-  </nav>
+    </nav>
+  </div>
 {% endif %}
