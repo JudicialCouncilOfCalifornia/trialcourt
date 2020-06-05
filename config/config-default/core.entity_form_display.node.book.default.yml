@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.book.field_division
     - field.field.node.book.field_links
     - field.field.node.book.field_metatag
+    - field.field.node.book.field_related_content
     - field.field.node.book.field_subject_matter
     - field.field.node.book.field_tags
     - field.field.node.book.field_topics
@@ -43,6 +44,7 @@ third_party_settings:
     group_secondary_content:
       children:
         - field_links
+        - field_related_content
       parent_name: group_book_content
       weight: 23
       format_type: tab
@@ -132,7 +134,7 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -183,6 +185,16 @@ content:
     third_party_settings: {  }
     type: metatag_firehose
     region: content
+  field_related_content:
+    weight: 6
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_subject_matter:
     weight: 18
     settings:
@@ -222,7 +234,7 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
@@ -248,7 +260,7 @@ content:
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 11
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -281,13 +293,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 4
     region: content
     settings:
       match_operator: CONTAINS
