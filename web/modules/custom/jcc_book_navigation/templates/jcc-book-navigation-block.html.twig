@@ -27,14 +27,6 @@
 
 <nav role="navigation" aria-label="Document Table of Contents">
   {{ jcc_book_navigation.book_links(items, attributes, 0, active_trail) }}
-
-  {% set related_content_view = drupal_view('book_related_content', 'block_1')|render  %}
-  {% if related_content_view|striptags|trim %}
-    <div class="view-book-related-content-wrapper">
-      <p class="title text-uppercase text-bold">{{ 'Contact Information' }}</p>
-      {{ related_content_view }}
-    </div>
-  {% endif %}
 </nav>
 
 {% macro book_links(items, attributes, menu_level, active_trail) %}
