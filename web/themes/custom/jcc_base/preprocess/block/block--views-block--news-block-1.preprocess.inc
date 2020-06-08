@@ -19,7 +19,8 @@ function jcc_base_preprocess_block__views_block__news_block_1(&$variables) {
     $brow = date("M j, Y", $row->_entity->created->value);
     $title = $row->_entity->title->value;
     if ($row->_entity->body->value != null) {
-      $excerpt = substr(strip_tags($row->_entity->body->value), 1, 200);
+      $pos = strpos(strip_tags($row->_entity->body->value), ' ', 200);
+      $excerpt = substr(strip_tags($row->_entity->body->value), 0, $pos);
     } else {
       if ($row->_entity->field_attachments != null)
       $excerpt = $row->_entity->field_attachments->entity->getName();
