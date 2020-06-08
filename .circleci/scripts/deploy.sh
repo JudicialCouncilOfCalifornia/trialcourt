@@ -35,9 +35,6 @@ echo "\n@todo- Work out release taging.\n"
 if [ $CIRCLE_BRANCH == 'master' ] ; then
   # For drush reset.
   PANTHEON_ENV=live
-  # dev is pretending to be live until launch.
-  # Remove this for launch.
-  PANTHEON_ENV=dev
 
   # Get latest pantheon_live_ tag.
   git fetch origin --tags
