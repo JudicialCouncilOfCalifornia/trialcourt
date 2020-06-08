@@ -53,8 +53,7 @@ if [ $CIRCLE_BRANCH == 'master' ] ; then
   echo
   echo "Tagging master branch for production (Live): $pantheon_prefix$pantheon_new"
 
-  echo -e "\nNOT REALLY - no tagging pre-production. Delete this message and uncomment git tag command below to go live."
-  # git tag -a $pantheon_prefix$pantheon_new -m "Tagging new pantheon live release."
+  git tag -a $pantheon_prefix$pantheon_new -m "Tagging new pantheon live release."
 fi
 
 echo
