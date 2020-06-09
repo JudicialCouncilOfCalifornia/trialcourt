@@ -1,5 +1,5 @@
 $inactive-bg: #f2f6fb;
-$active-bg: $jcc-primary-blue-lightest;
+$active-bg: #e4ebf4;
 
 // Book side navigation customizations
 .jcc-book-container {
@@ -18,6 +18,17 @@ $active-bg: $jcc-primary-blue-lightest;
         font-weight: bold;
       }
 
+      .jcc-haschildren {
+        padding: .5rem 2.5rem .5rem 1rem;
+      }
+
+      .fa, .fas {
+        float: right;
+        position: relative;
+        top: -1.7rem;
+        right: .9rem;
+      }
+
       nav > .usa-sidenav:first-child {
         border-bottom: 0;
 
@@ -29,18 +40,12 @@ $active-bg: $jcc-primary-blue-lightest;
         }
       }
 
-      .usa-current, .usa-current:hover {
+      .jcc-current__container, .jcc-current__container:hover {
         background-color: $active-bg;
       }
 
-      .usa-current, a:hover {
+      .usa-current, a:hover, .fa, .fas {
         color: $jcc-primary-blue !important;
-      }
-
-      .usa-current + ul {
-        a {
-          background-color: $active-bg;
-        }
       }
 
       .usa-current::after {
