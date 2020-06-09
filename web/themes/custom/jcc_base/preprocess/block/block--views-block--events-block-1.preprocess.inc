@@ -15,7 +15,8 @@ function jcc_base_preprocess_block__views_block__events_block_1(&$variables) {
 
   foreach ($rows as $row) {
     $title = $row->_entity->title->value;
-    $excerpt = substr(strip_tags($row->_entity->body->value), 1,600);
+    $pos = strpos(strip_tags($row->_entity->body->value), ' ', 600);
+    $excerpt = substr(strip_tags($row->_entity->body->value), 0, $pos);
     $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
     $start_date = $row->_entity->field_date_range->value;
     $img_src =isset($row->_entity->field_images->entity->field_media_image->entity->uri->value) ? file_create_url($row->_entity->field_images->entity->field_media_image->entity->uri->value) : "";
