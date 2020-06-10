@@ -94,6 +94,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  */
 
 $config_directories['sync'] = '../config/config-default';
+$config['config_split.config_split.local']['folder'] = '../config/config-default-local';
 
 // Require HTTPS across all Pantheon environments.
 if (isset($_SERVER['PANTHEON_ENVIRONMENT']) && ($_SERVER['HTTPS'] === 'OFF') && (php_sapi_name() != "cli")) {
