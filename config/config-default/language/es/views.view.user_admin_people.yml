@@ -1,5 +1,5 @@
 label: Usuarios
-description: 'Encontrar y gestionar qué personas interactúan con su sitio.'
+description: 'Encuentre y gestione a las personas que interactúan con su sitio.'
 display:
   default:
     display_title: Máster
@@ -9,6 +9,8 @@ display:
           submit_button: Filtro
           reset_button_label: Restablecer
           exposed_sorts_label: 'Ordenar por'
+          sort_asc_label: Asc
+          sort_desc_label: Desc
       pager:
         options:
           tags:
@@ -30,16 +32,20 @@ display:
           settings:
             format_custom_true: Activo
             format_custom_false: Bloqueado
+        roles_target_id:
+          label: Roles
         created:
           label: 'Miembro desde hace'
         access:
           label: 'Último acceso'
         operations:
           label: Operaciones
+        mail:
+          separator: ', '
       filters:
         combine:
           expose:
-            label: 'El nombre o correo electrónico contiene'
+            label: 'Nombre o correo electrónico contiene'
         status:
           group_info:
             label: Estado
@@ -55,13 +61,16 @@ display:
           expose:
             label: Permiso
       title: Usuarios
+      empty:
+        area_text_custom:
+          content: 'No people available.'
       use_more_text: más
   page_1:
     display_title: Página
     display_options:
       menu:
-        title: Lista
-        description: 'Encontrar y gestionar qué personas interactúan con su sitio.'
+        title: Listado
+        description: 'Encuentre y gestione a las personas que interactúan con su sitio.'
       tab_options:
         title: Usuarios
         description: 'Gestionar cuentas, roles y permisos de usuarios.'

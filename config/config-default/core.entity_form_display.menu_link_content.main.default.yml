@@ -1,4 +1,4 @@
-uuid: ac779f90-8889-4292-bd15-0da593eff5eb
+uuid: 1ebd63ef-5fff-4635-9725-d5167c1feca4
 langcode: en
 status: true
 dependencies:
@@ -7,8 +7,46 @@ dependencies:
     - field.field.menu_link_content.main.field_text
     - system.menu.main
   module:
-    - link
+    - field_group
+    - link_attributes
     - menu_item_extras
+third_party_settings:
+  field_group:
+    group_details_sidebar:
+      children:
+        - view_mode
+        - langcode
+      parent_name: ''
+      weight: 4
+      format_type: details_sidebar
+      region: content
+      format_settings:
+        description: ''
+        weight: 0
+        required_fields: true
+        id: ''
+        classes: ''
+        open: false
+      label: 'Additional settings'
+    group_menu_item_properties:
+      children:
+        - field_fa_icon
+        - title
+        - field_text
+      parent_name: ''
+      weight: 3
+      format_type: details_sidebar
+      region: content
+      format_settings:
+        description: ''
+        open: true
+        weight: 0
+        id: ''
+        classes: ''
+        required_fields: false
+      label: 'Menu item properties'
+_core:
+  default_config_hash: C0Z_PNWIxH82XoDlGtelSC77Z39ctb5LFOXErwrnBBM
 id: menu_link_content.main.default
 targetEntityType: menu_link_content
 bundle: main
