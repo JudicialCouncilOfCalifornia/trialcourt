@@ -32,7 +32,6 @@
 {% macro book_links(items, attributes, menu_level, active_trail) %}
   {% import _self as jcc_book_navigation %}
   {% if items %}
-
     {% if menu_level == 0 %}
       {% for item in items %}
         {% set link_classes = {
@@ -55,18 +54,26 @@
         {% for item in items %}
           {% set classes = [
             'usa-sidenav__item',
+            item.original_link.nid in active_trail or item.original_link.nid == active_trail|last ? 'jcc-current__container',
           ] %}
           {% set link_classes = {
             'class' : [
               item.original_link.nid in active_trail or item.original_link.nid == active_trail|last ? 'usa-current',
+              menu_level == 1 and item.original_link.has_children ? 'jcc-haschildren'
             ]
           } %}
           <li{{ item.attributes.addClass(classes) }}>
             {% if item.below %}
               {{ link(item.title, item.url, link_classes) }}
+              {% if menu_level == 1 %}
+                <i class="fas fa-chevron-up"></i>
+              {% endif %}
               {{ jcc_book_navigation.book_links(item.below, attributes, menu_level + 1, active_trail) }}
             {% else %}
               {{ link(item.title, item.url, link_classes) }}
+              {% if menu_level == 1 and item.original_link.has_children %}
+                <i class="fas fa-chevron-down"></i>
+              {% endif %}
             {% endif %}
           </li>
         {% endfor %}
