@@ -32,6 +32,11 @@ function jcc_tc_tours_form_alter(&$form, &$form_state, $form_id) {
     case 'node_faq_edit_form':
       $form['#attached']['library'][] = 'jcc_tc_tours/jcc-tc-tours-faq';
       break;
+
+    case 'node_location_form':
+    case 'node_location_edit_form':
+      $form['#attached']['library'][] = 'jcc_tc_tours/jcc-tc-tours-location';
+      break;
   }
 }
 
