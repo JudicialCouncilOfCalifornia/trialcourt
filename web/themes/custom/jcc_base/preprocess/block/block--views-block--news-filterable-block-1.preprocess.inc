@@ -11,14 +11,20 @@ function jcc_base_preprocess_block__views_block__news_filterable_block_1(&$varia
   $header_title = empty($variables['elements']['#configuration']['views_label']) ? $variables['elements']['content']['#title']['#markup'] : $variables['elements']['#configuration']['views_label'];
 
   $cards = array();
+  $excerpt = '';
   $rows = $variables['elements']['content']['#view']->result;
   $read_more_text= isset($variables['elements']['content']['#view']->field['view_node']->last_render_text) ? $variables['elements']['content']['#view']->field['view_node']->last_render_text : "";
 
   foreach ($rows as $row) {
     $brow = date("M j, Y", $row->_entity->created->value);
     $title = $row->_entity->title->value;
-    $pos = strpos(strip_tags($row->_entity->body->value), ' ', 200);
-    $excerpt = substr(strip_tags($row->_entity->body->value), 0, $pos);
+    if ($row->_entity->body->value != null) {
+      $excerpt = substr(strip_tags($row->_entity->body->value), 0, 200);
+    } else {
+      if ($row->_entity->field_attachments != null) {
+        $excerpt = $row->_entity->field_attachments->entity->getName();
+      }
+    }
     $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
 
     $recent_news_card = [
