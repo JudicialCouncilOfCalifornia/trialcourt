@@ -95,6 +95,8 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
 
 $config_directories['sync'] = '../config/config-slo';
 
+$settings['file_public_path']  = 'sites/default/files/slo';
+
 // Require HTTPS across all Pantheon environments.
 if (isset($_SERVER['PANTHEON_ENVIRONMENT']) && ($_SERVER['HTTPS'] === 'OFF') && (php_sapi_name() != "cli")) {
   if (!isset($_SERVER['HTTP_USER_AGENT_HTTPS']) || (isset($_SERVER['HTTP_USER_AGENT_HTTPS']) && $_SERVER['HTTP_USER_AGENT_HTTPS'] != 'ON')) {
