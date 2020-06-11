@@ -20,6 +20,7 @@ if (file_exists($app_root . '/sites/sites.local.php')) {
 // Epics.
 $sites['epic-multi-jcc-tc.pantheonsite.io'] = 'default';
 $sites['epic-slo-jcc-tc.pantheonsite.io'] = 'slo';
+$sites['epic-oc-jcc-tc.pantheonsite.io'] = 'oc';
 
 // Local using Lando.
 // This list is at the end as it may be automatically ammended by installer.
