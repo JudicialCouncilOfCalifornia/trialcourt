@@ -27,6 +27,7 @@ proxy:
     - tc.lndo.site
     # Multi Sites (Don't forget to update web/sites/sites.php)
     - tc-slo.lndo.site
+    - tc-oc.lndo.site
 
 # Additional services and features.
 services:
@@ -40,6 +41,12 @@ services:
       volumes:
         - .:/app
   dbslo:
+    type: mysql:5.7
+    creds:
+      user: drupal8
+      password: drupal8
+      database: drupal8
+  dboc:
     type: mysql:5.7
     creds:
       user: drupal8
