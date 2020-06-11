@@ -59,12 +59,12 @@ mkdir /app/config/config-${NEW}-local
 
 # Replace variables in settings.local.php
 sed -i "s/'host' => 'database'/'host' => 'db${NEW}'/g" /app/web/sites/${NEW}/settings.local.php
-sed -i "s/sites\/default/sites\/${NEW}/g" /app/web/sites/${NEW}/settings.local.php
+sed -i "s/sites\/default\/services\.local\.yml/sites\/${NEW}\/services\.local\.yml/g" /app/web/sites/${NEW}/settings.local.php
 
 # Replace variables in settings.pantheon.php
 sed -i "s/CONFIG_SYNC_DIRECTORY => '..\/config\/config-default'/CONFIG_SYNC_DIRECTORY => '..\/config\/config-${NEW}'/g" /app/web/sites/${NEW}/settings.pantheon.php
 
-sed -i "s/sites\/default/sites\/${NEW}/g" /app/web/sites/${NEW}/settings.pantheon.php
+sed -i "s/sites\/default\/files/sites\/default\/files\/${NEW}/g" /app/web/sites/${NEW}/settings.pantheon.php
 
 # Replace variables in settings.php
 sed -i "s/'..\/config\/config-default'/'..\/config\/config-${NEW}'/g" /app/web/sites/${NEW}/settings.php
@@ -85,7 +85,7 @@ fi
 
 if [ -f /app/config/config-${NEW}/locale.settings.yml ] ; then
   echo -e "\nUpdating locale.settings."
-  sed -i "s/sites\/default/sites\/${NEW}/g" /app/config/config-${NEW}/locale.settings.yml
+  sed -i "s/sites\/default\/files/sites\/default\/files\/${NEW}/g" /app/config/config-${NEW}/locale.settings.yml
 fi
 
 drush uli -l tc-${NEW}.lndo.site --druplicon
