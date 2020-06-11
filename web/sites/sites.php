@@ -25,3 +25,4 @@ $sites['epic-slo-jcc-tc.pantheonsite.io'] = 'slo';
 // This list is at the end as it may be automatically ammended by installer.
 $sites['tc.lndo.site'] = 'default';
 $sites['tc-slo.lndo.site'] = 'slo';
+$sites['tc-oc.lndo.site'] = 'oc';
