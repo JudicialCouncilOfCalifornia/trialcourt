@@ -3,7 +3,7 @@
 set -e
 
 # Include project variables.
-. project-${1}.sh
+. .circleci/scripts/project-${1}.sh
 
 # GIT url of the artifact repo.
 ARTIFACT_GIT=ssh://codeserver.dev.${UUID}@codeserver.dev.${UUID}.drush.in:2222/~/repository.git
