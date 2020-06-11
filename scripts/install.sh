@@ -71,7 +71,9 @@ sed -i "s/'..\/config\/config-default'/'..\/config\/config-${NEW}'/g" /app/web/s
 
 sed -i "s/'..\/config\/config-default-local'/'..\/config\/config-${NEW}-local'/g" /app/web/sites/${NEW}/settings.php
 
-echo -e "\n${G}Multisite directory configured... now running installation. This will take a while...${RE}"
+sed -i "s/sites\/default\/files/sites\/default\/files\/${NEW}/g" /app/web/sites/${NEW}/settings.php
+
+echo -e "\n${G}Multisite configured... now running installation. This will take a while...${RE}"
 
 cd /app
 drush si -l tc-${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com"
