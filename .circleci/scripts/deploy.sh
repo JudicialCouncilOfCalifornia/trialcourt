@@ -2,14 +2,11 @@
 
 set -e
 
-# Disable strict host checking so we can push code and run drush on all envs.
-echo -e "Host codeserver.dev.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-echo -e "Host appserver.develop.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-echo -e "Host appserver.stage.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-echo -e "Host appserver.dev.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-echo -e "Host appserver.live.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+# Include project variables.
+. project-${1}.sh
 
-
+# GIT url of the artifact repo.
+ARTIFACT_GIT=ssh://codeserver.dev.${UUID}@codeserver.dev.${UUID}.drush.in:2222/~/repository.git
 TIMESTAMP=$(date +'%y-%m-%dT%H:%m:%S')
 PANTHEON_ENV=$CIRCLE_BRANCH
 
@@ -53,6 +50,10 @@ if [ $CIRCLE_BRANCH == 'master' ] ; then
   git tag -a $pantheon_prefix$pantheon_new -m "Tagging new pantheon live release."
 fi
 
+# Disable strict host checking so we can push code and run drush on all envs.
+echo -e "Host codeserver.dev.${UUID}.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+echo -e "Host appserver.${PANTHEON_ENV}.${UUID}.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
 echo
 echo "Pushing $CIRCLE_BRANCH"
 git push origin $CIRCLE_BRANCH -f --tags
@@ -69,16 +70,16 @@ sleep $WAIT
 
 echo
 echo Clearing Cache for $PANTHEON_ENV
-drush @p.$PANTHEON_ENV cr
+drush @${SITE_CODE}.${PANTHEON_ENV} cr
 
 echo
 echo Running Database Updates for $PANTHEON_ENV
-drush @p.$PANTHEON_ENV updb -y
+drush @${SITE_CODE}.${PANTHEON_ENV} updb -y
 
 echo
 echo Importing Config for $PANTHEON_ENV
-drush @p.$PANTHEON_ENV cim -y
+drush @${SITE_CODE}.${PANTHEON_ENV} cim -y
 
 echo
 echo Clearing Cache for $PANTHEON_ENV
-drush @p.$PANTHEON_ENV cr
+drush @${SITE_CODE}.${PANTHEON_ENV} cr

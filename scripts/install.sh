@@ -59,18 +59,21 @@ mkdir /app/config/config-${NEW}-local
 
 # Replace variables in settings.local.php
 sed -i "s/'host' => 'database'/'host' => 'db${NEW}'/g" /app/web/sites/${NEW}/settings.local.php
+sed -i "s/sites\/default\/services\.local\.yml/sites\/${NEW}\/services\.local\.yml/g" /app/web/sites/${NEW}/settings.local.php
 
 # Replace variables in settings.pantheon.php
 sed -i "s/CONFIG_SYNC_DIRECTORY => '..\/config\/config-default'/CONFIG_SYNC_DIRECTORY => '..\/config\/config-${NEW}'/g" /app/web/sites/${NEW}/settings.pantheon.php
 
-sed -i "s/'sites\/default'/'sites\/${NEW}'/g" /app/web/sites/${NEW}/settings.pantheon.php
+sed -i "s/sites\/default\/files/sites\/default\/files\/${NEW}/g" /app/web/sites/${NEW}/settings.pantheon.php
 
 # Replace variables in settings.php
 sed -i "s/'..\/config\/config-default'/'..\/config\/config-${NEW}'/g" /app/web/sites/${NEW}/settings.php
 
 sed -i "s/'..\/config\/config-default-local'/'..\/config\/config-${NEW}-local'/g" /app/web/sites/${NEW}/settings.php
 
-echo -e "\n${G}Multisite directory configured... now running installation. This will take a while...${RE}"
+sed -i "s/sites\/default\/files/sites\/default\/files\/${NEW}/g" /app/web/sites/${NEW}/settings.php
+
+echo -e "\n${G}Multisite configured... now running installation. This will take a while...${RE}"
 
 cd /app
 drush si -l tc-${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com"
@@ -78,8 +81,13 @@ drush si -l tc-${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc
 drush cex -y -l tc-${NEW}.lndo.site
 
 if [ -f /app/config/config-${NEW}/config_split.config_split.local.yml ] ; then
-  echo -e "\nUpdating split local."
+  echo -e "\nUpdating config_split.local."
   sed -i "s/\/config\/config-default-local/\/config\/config-${NEW}-local/g" /app/config/config-${NEW}/config_split.config_split.local.yml
+fi
+
+if [ -f /app/config/config-${NEW}/locale.settings.yml ] ; then
+  echo -e "\nUpdating locale.settings."
+  sed -i "s/sites\/default\/files/sites\/default\/files\/${NEW}/g" /app/config/config-${NEW}/locale.settings.yml
 fi
 
 drush uli -l tc-${NEW}.lndo.site --druplicon
