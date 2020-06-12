@@ -18,6 +18,10 @@ git config --global user.name "Ch3-P0"
 
 echo "\nClone artifact.\n"
 mkdir -p data
+# Remove existing artifact to start fresh.
+if [ -d data/artifact ] ; then
+  rm -rf data/artifact
+fi
 cd data
 git clone $ARTIFACT_GIT artifact
 echo "\nCheckout $CIRCLE_BRANCH\n"
