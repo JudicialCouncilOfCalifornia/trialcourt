@@ -28,6 +28,8 @@ proxy:
     # Multi Sites (Don't forget to update web/sites/sites.php)
     - tc-slo.lndo.site
     - tc-oc.lndo.site
+    - tc-napa.lndo.site
+    - tc-newsroom.lndo.site
 
 # Additional services and features.
 services:
@@ -47,6 +49,18 @@ services:
       password: drupal8
       database: drupal8
   dboc:
+    type: mysql:5.7
+    creds:
+      user: drupal8
+      password: drupal8
+      database: drupal8
+  dbnapa:
+    type: mysql:5.7
+    creds:
+      user: drupal8
+      password: drupal8
+      database: drupal8
+  dbnewsroom:
     type: mysql:5.7
     creds:
       user: drupal8
