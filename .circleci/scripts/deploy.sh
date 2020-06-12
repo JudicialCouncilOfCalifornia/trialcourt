@@ -5,6 +5,9 @@ set -e
 # Include project variables.
 . .circleci/scripts/project-${1}.sh
 
+# Disable strict host checking so we can pull/push code.
+echo -e "Host codeserver.dev.${UUID}.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
 # GIT url of the artifact repo.
 ARTIFACT_GIT=ssh://codeserver.dev.${UUID}@codeserver.dev.${UUID}.drush.in:2222/~/repository.git
 TIMESTAMP=$(date +'%y-%m-%dT%H:%m:%S')
@@ -50,8 +53,7 @@ if [ $CIRCLE_BRANCH == 'master' ] ; then
   git tag -a $pantheon_prefix$pantheon_new -m "Tagging new pantheon live release."
 fi
 
-# Disable strict host checking so we can push code and run drush on all envs.
-echo -e "Host codeserver.dev.${UUID}.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+# Disable strict host checking so we can run drush on all envs.
 echo -e "Host appserver.${PANTHEON_ENV}.${UUID}.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
 echo
