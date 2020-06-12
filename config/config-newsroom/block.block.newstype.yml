@@ -1,0 +1,31 @@
+uuid: 237cd519-ac10-46e4-9b7e-67c3eadc67cc
+langcode: en
+status: true
+dependencies:
+  config:
+    - facets.facet.news_type
+  module:
+    - facets
+    - system
+  theme:
+    - jcc_base
+_core:
+  default_config_hash: CLMTgIER9ae4sjwPDtEJADwIaqYzgZffP6CaZQOXO2k
+id: newstype
+theme: jcc_base
+region: title
+weight: -2
+provider: null
+plugin: 'facet_block:news_type'
+settings:
+  id: 'facet_block:news_type'
+  label: 'News Type'
+  provider: facets
+  label_display: '0'
+  block_id: newstype
+visibility:
+  request_path:
+    id: request_path
+    pages: "/search\r\n/search/*"
+    negate: false
+    context_mapping: {  }
