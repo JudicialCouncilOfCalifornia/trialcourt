@@ -20,12 +20,16 @@ config:
   # If you are having trouble getting xdebug to work please see:
   # https://docs.devwithlando.io/services/php.html#using-xdebug
   #xdebug: true
-# proxy:
-#  solr:
-#    - solr.tc.lndo.site:8983
-#    # Provides a nice lndo url for the solr web interface
-#    # at http://admin.solr.lndo.site
-#    - admin.solr.lndo.site:8983
+
+proxy:
+  appserver:
+    # Default (Base for starting multisites.)
+    - jcc.lndo.site
+    # Multi Sites (Don't forget to update web/sites/sites.php)
+    - slo.lndo.site
+    - oc.lndo.site
+    - napa.lndo.site
+    - newsroom.lndo.site
 
 # Additional services and features.
 services:
@@ -38,8 +42,30 @@ services:
       command: docker-php-entrypoint apache2-foreground
       volumes:
         - .:/app
-    # globals:
-    #   gulp-cli: latest
+  dbslo:
+    type: mysql:5.7
+    creds:
+      user: drupal8
+      password: drupal8
+      database: drupal8
+  dboc:
+    type: mysql:5.7
+    creds:
+      user: drupal8
+      password: drupal8
+      database: drupal8
+  dbnapa:
+    type: mysql:5.7
+    creds:
+      user: drupal8
+      password: drupal8
+      database: drupal8
+  dbnewsroom:
+    type: mysql:5.7
+    creds:
+      user: drupal8
+      password: drupal8
+      database: drupal8
 
   # solr:
   #   # Use solr version 5.5
@@ -70,18 +96,25 @@ services:
 # Custom Lando commands
 tooling:
   fresh:
-    description: Run all the things to get local to a fresh state for this branch. (Checkout master branch first if starting a new feature.)
+    description: "Run all the things to get local to a fresh state for this branch. (Checkout master branch first if starting a new feature.)
+      \n -h\tShow this help message.
+      \n -f\t[path/to/sql] - Import a database file.
+      \n -l\t[URI] for drush commands. Target specific multisites.
+      \n  \tSee available appserver proxies in .lando.yml
+      \n  \tOR urls in lando info --service=appserver."
     cmd:
-      - appserver: echo && echo "Running composer install..." && composer install
-      - node-cli: echo && echo "Building themes..." && /app/scripts/theme.sh -a
-      - appserver: echo && echo "Resetting drupal..." && drush updb -y && drush cim -y && drush cr
-  'fresh:db <db>':
-    description: Same as fresh but also takes path to db file to import first.
-    cmd:
-      - database: /helpers/sql-import.sh
-      - appserver: echo && echo "Running composer install..." && composer install && true
-      - node-cli: echo && echo "Building themes..." && /app/scripts/theme.sh -a && true
-      - appserver: echo && echo "Resetting drupal..." && drush updb -y && drush cim -y && drush cr && true
+      - appserver: scripts/fresh.sh
+      - node-cli: scripts/fresh.sh
+      - appserver: scripts/fresh.sh
+  multisite:
+    service: appserver
+    description: "Helper for creating new multisites.
+      \n FIRST take these steps: ([new] = short site code like slo)
+      \n  - create new proxy in .lando.yml tc-[new].lndo.site
+      \n  - create new db service in .lando.yml db[new]
+      \n  - lando rebuild
+      \n THEN run (lando multisite [new])"
+    cmd: scripts/install.sh
   node:
     service: node-cli
   npm:

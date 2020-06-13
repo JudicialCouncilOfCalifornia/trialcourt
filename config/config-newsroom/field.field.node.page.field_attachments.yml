@@ -1,0 +1,32 @@
+uuid: 2ded5f64-a535-4719-918e-0507938c525b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_attachments
+    - media.type.file
+    - media.type.image
+    - node.type.page
+_core:
+  default_config_hash: ZtjXYa4p34VDszDHWE9UFN7Xp2CvIoItnQ-KS0eFfxU
+id: node.page.field_attachments
+field_name: field_attachments
+entity_type: node
+bundle: page
+label: Attachments
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      file: file
+      image: image
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: file
+field_type: entity_reference

@@ -97,8 +97,24 @@ jobs:
                 command: scripts/theme.sh -a
 
             - run:
-                name: Deploy Artifact
-                command: chmod +x .circleci/scripts/deploy.sh && .circleci/scripts/deploy.sh
+                name: Deploy SLO
+                # Pass the SITE_CODE as the first argument.
+                command: .circleci/scripts/deploy.sh slo
+
+            - run:
+                # Pass the SITE_CODE as the first argument.
+                name: Deploy OC
+                command: .circleci/scripts/deploy.sh oc
+
+            - run:
+                # Pass the SITE_CODE as the first argument.
+                name: Deploy Newsroom
+                command: .circleci/scripts/deploy.sh newsroom
+
+            - run:
+                # Pass the SITE_CODE as the first argument.
+                name: Deploy Napa
+                command: .circleci/scripts/deploy.sh napa
 
 workflows:
   version: 2
