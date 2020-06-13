@@ -77,9 +77,11 @@ function jcc_base_preprocess_region__header(&$variables) {
   $tree = $menu_tree->transform($tree, $manipulators);
   $main_nav = $menu_tree->build($tree);
 
-  $menu_link_tree_handler = Drupal::getContainer()->get('menu_item_extras.menu_link_tree_handler');
-  $variables['header']['primary_nav']['lowercase_titles'] = TRUE;
-  $variables['header']['primary_nav']['items'] = jcc_base_mainnavigation_build($main_nav['#items'], $menu_link_tree_handler);
+  if (!empty($main_nav['#items'])) {
+    $menu_link_tree_handler = Drupal::getContainer()->get('menu_item_extras.menu_link_tree_handler');
+    $variables['header']['primary_nav']['lowercase_titles'] = TRUE;
+    $variables['header']['primary_nav']['items'] = jcc_base_mainnavigation_build($main_nav['#items'], $menu_link_tree_handler);
+  }
 }
 
 /**

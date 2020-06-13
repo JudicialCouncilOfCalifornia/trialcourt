@@ -1,0 +1,31 @@
+uuid: a36f1a83-7ed2-421a-81a9-ced820f6efbf
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_topics
+    - node.type.location
+    - taxonomy.vocabulary.topics
+_core:
+  default_config_hash: YbsCHeUuD0fMt6jskCsAW5XoqOLa3vBtx0gmTGIHxZI
+id: node.location.field_topics
+field_name: field_topics
+entity_type: node
+bundle: location
+label: Topics
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: straw
+  handler_settings:
+    target_bundles:
+      topics: topics
+    sort:
+      field: name
+      direction: asc
+    auto_create: 0
+    auto_create_bundle: ''
+field_type: entity_reference
