@@ -33,15 +33,6 @@ $sites['test-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['live-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 // $sites['live url'] = 'newsroom';
 
-// Epics.
-$sites['epic-multi-jcc-tc.pantheonsite.io'] = 'default';
-$sites['epic-slo-jcc-tc.pantheonsite.io'] = 'slo';
-$sites['epic-oc-jcc-tc.pantheonsite.io'] = 'oc';
-$sites['epic-multi-jcc-oc.pantheonsite.io'] = 'oc';
-$sites['epic-multi-jcc-napa.pantheonsite.io'] = 'napa';
-$sites['epic-multi-jcc-newsroom.pantheonsite.io'] = 'newsroom';
-
-
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
 // sites.local.php next to this file. It will be ignored by git.
@@ -51,8 +42,10 @@ if (file_exists($app_root . '/sites/sites.local.php')) {
 
 // Local using Lando.
 // This list is at the end as it may be automatically ammended by installer.
-$sites['tc.lndo.site'] = 'default';
-$sites['tc-slo.lndo.site'] = 'slo';
-$sites['tc-oc.lndo.site'] = 'oc';
-$sites['tc-napa.lndo.site'] = 'napa';
-$sites['tc-newsroom.lndo.site'] = 'newsroom';
+$sites['jcc.lndo.site'] = 'default';
+$sites['slo.lndo.site'] = 'slo';
+$sites['oc.lndo.site'] = 'oc';
+$sites['napa.lndo.site'] = 'napa';
+$sites['newsroom.lndo.site'] = 'newsroom';
+$sites['oc.lndo.site'] = 'oc';
+$sites['napa.lndo.site'] = 'napa';
