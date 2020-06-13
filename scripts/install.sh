@@ -28,17 +28,17 @@ if [ -d /app/web/sites/${NEW} ] ; then
   exit 1
 fi
 
-if grep -Fq "tc-${NEW}.lndo.site" /app/.lando.yml
+if grep -Fq "${NEW}.lndo.site" /app/.lando.yml
 then
-  echo "\nProxy Detected in .lando.yml"
+  echo -e "\nProxy Detected in .lando.yml"
 else
-  echo -e "\n - ${R}No proxy ${RE}tc-${NEW}.lndo.site${R} detected in .lando.yml.${RE}"
+  echo -e "\n - ${R}No proxy ${RE}${NEW}.lndo.site${R} detected in .lando.yml.${RE}"
   NOPROXY=true
 fi
 
 if grep -Fq "db${NEW}" /app/.lando.yml
 then
-  echo "\nDatabase Services for db${NEW} detected in .lando.yml"
+  echo -e "\nDatabase Services for db${NEW} detected in .lando.yml"
 else
   echo -e "\n - ${R}No Database Services for ${RE}db${NEW}${R} detected in .lando.yml${RE}"
   NODB=true
@@ -52,7 +52,7 @@ fi
 
 echo -e "\n${G}Creating new multisite: ${NEW}${RE}\n"
 
-echo "\$sites['tc-${NEW}.lndo.site'] = '${NEW}';" >> /app/web/sites/sites.php
+echo "\$sites['${NEW}.lndo.site'] = '${NEW}';" >> /app/web/sites/sites.php
 cp -r /app/web/sites/default /app/web/sites/$NEW
 rm -rf /app/web/sites/${NEW}/files
 mkdir /app/config/config-${NEW}-local
@@ -76,9 +76,10 @@ sed -i "s/sites\/default\/files/sites\/default\/files\/${NEW}/g" /app/web/sites/
 echo -e "\n${G}Multisite configured... now running installation. This will take a while...${RE}"
 
 cd /app
-drush si -l tc-${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com"
+drush si -l ${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com"
 
-drush cex -y -l tc-${NEW}.lndo.site
+echo -e "\nExporting config..."
+drush cex -y -l ${NEW}.lndo.site
 
 if [ -f /app/config/config-${NEW}/config_split.config_split.local.yml ] ; then
   echo -e "\nUpdating config_split.local."
@@ -90,7 +91,7 @@ if [ -f /app/config/config-${NEW}/locale.settings.yml ] ; then
   sed -i "s/sites\/default\/files/sites\/default\/files\/${NEW}/g" /app/config/config-${NEW}/locale.settings.yml
 fi
 
-drush uli -l tc-${NEW}.lndo.site --druplicon
+drush uli -l ${NEW}.lndo.site --druplicon
 
 echo -e "\n${G}Installation complete!${RE}
   If everything worked, you should be able to access it with the link above."
