@@ -36,7 +36,7 @@ git commit -am "Built assets. $TIMESTAMP"
 echo "\n@todo- Work out release taging.\n"
 
 # Tag for master.
-if [ $CIRCLE_BRANCH == 'master' ] ; then
+if [ $CIRCLE_BRANCH == 'master' ] && $LIVE ; then
   # For drush reset.
   PANTHEON_ENV=live
 

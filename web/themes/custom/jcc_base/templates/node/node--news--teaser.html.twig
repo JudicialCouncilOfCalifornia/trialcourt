@@ -84,6 +84,11 @@
   {% endif %}
 
   {% set url = path('entity.node.canonical', {'node': node.nid.value}) %}
+  {% if node.body.value %}
+    {% set excerpt = node.body.value|striptags %}
+  {% else %}
+    {% set excerpt = "" %}
+  {% endif %}
   {% include '@organisms/sections/card-section/card-section.twig' with {
     card_section: {
       column_variant: "has-one-column",
@@ -91,7 +96,7 @@
         card: {
           brow: node.created.value|date("M j, Y"),
           title: node.title.value,
-          excerpt: node.body.value|striptags,
+          excerpt: excerpt,
           url: url,
         },
       }
