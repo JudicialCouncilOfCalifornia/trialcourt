@@ -96,13 +96,6 @@ display:
               weight: 0
               enable: false
               map_center_id: client_location
-            fit_bounds:
-              enable: true
-              settings:
-                min_zoom: 10
-                reset_zoom: true
-              weight: 0
-              map_center_id: fit_bounds
             fixed_boundaries:
               settings:
                 north: ''
@@ -112,17 +105,31 @@ display:
               weight: 0
               enable: false
               map_center_id: fixed_boundaries
+            fit_bounds:
+              enable: true
+              settings:
+                min_zoom: 10
+                reset_zoom: true
+              weight: 0
+              map_center_id: fit_bounds
+            fixed_value:
+              settings:
+                latitude: null
+                longitude: null
+                location_option_id: fixed_value
+              weight: 0
+              enable: false
+              map_center_id: location_plugins
             first_row:
               weight: 0
               enable: false
               map_center_id: location_plugins
               settings:
                 location_option_id: first_row
-            fixed_value:
+            ipstack:
               settings:
-                latitude: null
-                longitude: null
-                location_option_id: fixed_value
+                access_key: ''
+                location_option_id: ipstack
               weight: 0
               enable: false
               map_center_id: location_plugins
@@ -132,13 +139,6 @@ display:
               map_center_id: location_plugins
               settings:
                 location_option_id: freeogeoip
-            ipstack:
-              settings:
-                access_key: ''
-                location_option_id: ipstack
-              weight: 0
-              enable: false
-              map_center_id: location_plugins
           even_empty: 1
           map_provider_id: leaflet
           map_provider_settings:
@@ -147,7 +147,7 @@ display:
                 weight: 0
                 settings:
                   position: topright
-                  default_label: ''
+                  default_label: false
                   tile_layer_providers:
                     OpenStreetMap:
                       'OpenStreetMap Mapnik':
@@ -558,7 +558,6 @@ display:
                     location_priority:
                       lat: null
                       lng: null
-                    remove_duplicates: false
                 enabled: false
               leaflet_control_fullscreen:
                 weight: 0
@@ -586,7 +585,7 @@ display:
                   transparent: false
                   identify: false
                 enabled: false
-            height: 600px
+            height: 560px
             width: 100%
             zoom: '10'
       row:
