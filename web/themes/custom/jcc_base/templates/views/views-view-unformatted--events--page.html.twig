@@ -80,7 +80,11 @@
           {% set tiles = [] %}
           {% for row in rows %}
             {% set title = row.content['#node'].title.value %}
-            {% set excerpt = row.content['#node'].body.value|striptags %}
+            {% if row.content['#node'].body.value %}
+              {% set excerpt = row.content['#node'].body.value|striptags %}
+            {% else %}
+              {% set excerpt = "" %}
+            {% endif %}
             {% set url = path('entity.node.canonical', {'node': row.content['#node'].nid[0].value}) %}
             {% set start_date = row.content['#node'].field_date_range[0].start_date %}
             {% set img_src = file_url(row.content['#node'].field_images.entity.field_media_image.entity.uri.value) %}
