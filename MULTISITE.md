@@ -46,24 +46,12 @@ Installation on my local takes about 10 minutes. There is no progress indicator 
    - copy `sites/default` to `sites/[new]`
    - delete `sites/[new]/files`
    - mkdir `config/config-[new]-local`
-   - String change: `sites/[new]/settings.local.yml` database settings:
-     - `'host' => 'database'`
-     - > `'host' => '[new]db'`,
-   - String change: `sites/[new]/settings.pantheon.php` config dir settings:
-     - `CONFIG_SYNC_DIRECTORY => '../config/config-default'`,
-     - > `CONFIG_SYNC_DIRECTORY => '../config/config-[new]'`,
-   - String change: `sites/[new]/settings.php` config dir settings:
-     - `$config_directories['sync'] = '../config/config-default';`
-     - > `$config_directories['sync'] = '../config/config-[new]';`
-     - `$config['config_split.config_split.local']['folder'] = '../config/config-default-local';`
-     - > `$config['config_split.config_split.local']['folder'] = '../config/config-[new]-local';`
-
+   - A series of pre install string changes for settings files.
    - `drush si -l tc-${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com`
 
    - POST INSTALL
-     - String change: `config/config-[new]/config_split.config_split.local.yml`:
-       - `folder: ../config/config-default-local`
-       - > `folder: ../config/config-[new]-local`
+     - Config export from the installed site.
+     - A few more string replacements to key config files, updating site directories.
 
 ## Pantheon Multisite Hackery!
 
@@ -80,7 +68,7 @@ etc.
 
 The reason for this is that in test and live environments, nothing outside of `/sites/default/files` is writable.
 
-The second issue is the limitation of one database per environment. You COULD use a table prefix configured for each subsite. Pantheon does not recommend this, but when have I ever listened to Pantheon's recommendations? Howerver, this is actually a pain, especially if you ever need to separate the sites in the future. But, it could work.
+The second issue is the limitation of one database per environment. You COULD use a table prefix configured for each subsite. Pantheon does not recommend this, but when have I ever listened to Pantheon's recommendations? However, this is actually a pain, especially if you ever need to separate the sites in the future. But, it could work.
 
 For our use, we want to use one Drupal Multisite codebase for local development, but we're limited by Pantheon and stuck there for the time being. So we can kind of virtualize a multisite across multiple Pantheon project instances.
 
@@ -93,9 +81,10 @@ For our use, we want to use one Drupal Multisite codebase for local development,
  - Each additional site requires one run command in the CI config.yml and a project-*.sh config file to complement the deploy.sh script.
    - `run: command: command: .circleci/scripts/deploy.sh oc`
    - `.circleci/scripts/project-oc.sh`
- - `project-*.sh` sets 2 variables and is imported by the main deploy.sh script.
+ - `project-*.sh` sets 3 variables and is imported by the main deploy.sh script.
    - `UUID=` - the pantheon project UUID.
    - `SITE_CODE=` - the abbreviated site code i.e. slo, oc, napa.
+   - `LIVE=[true|false]` - if set to true, the deploy of `master` will get a pantheon live tag.
 
 ### Additional notes about managing multisite.
 
