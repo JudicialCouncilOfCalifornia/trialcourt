@@ -41,7 +41,7 @@ function jcc_tc_custom_form_alter(&$form, &$form_state, $form_id){
     $protected_menu_items = array('1', '11', '24', '25', '26', '93');
 
     //disabling menu edits for specific items.
-    if ($current_user->hasRole('editor') || $current_user->hasRole('author')){
+    if (!$current_user->hasRole('administrator')){
       $menu_item_id = $form_state->getBuildInfo()['callback_object']->getEntity()->get('id')->getValue()[0]['value'];
       if(in_array($menu_item_id, $protected_menu_items)){
         $form['link']['#disabled'] = true;
@@ -70,7 +70,7 @@ function jcc_tc_custom_form_alter(&$form, &$form_state, $form_id){
     $protected_menu_nodes = array('651', '650', '834', '27', '928', '835', '836');
 
     //disabling menu edits for specific nodes.
-    if ($current_user->hasRole('editor') || $current_user->hasRole('author')){
+    if (!$current_user->hasRole('administrator')){
       $node_id = $form_state->getBuildInfo()['callback_object']->getEntity()->get('nid')->getValue()[0]['value'];
       if(in_array($node_id, $protected_menu_nodes)){
         $form['actions']['delete']['#access'] = false;
