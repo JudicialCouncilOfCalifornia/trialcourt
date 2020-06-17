@@ -141,7 +141,8 @@ class PatternLab extends PluginBase implements CKEditorPluginInterface, CKEditor
    * {@inheritdoc}
    */
   public function isEnabled(Editor $editor) {
-    return !empty($this->patternlabData);
+    // return !empty($this->patternlabData);
+    return FALSE;
   }
 
 }
