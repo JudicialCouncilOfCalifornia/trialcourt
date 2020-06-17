@@ -26,14 +26,17 @@
  *   - previous: Present if the currently visible list of pages does not start
  *     at the first page.
  *   - next: Present if the visible list of pages ends before the last page.
+ * - total_pages: Total number of page results
  *
  * @see template_preprocess_pager()
+ * @see jcc_base_preprocess_pager()
  */
 #}
 {% if items %}
   {% include '@molecules/navigation/pagination/pagination.twig' with {
     pagination: {
       heading_id: heading_id,
+      total_pages: total_pages,
       current: current,
       items: items.pages,
       ellipses_previous: ellipses.previous,
