@@ -8,15 +8,11 @@
         column-gap: 0;
       }
     }
-    #edit-field-division-target-id--wrapper,
-    #edit-field-document-type-target-id--wrapper {
+    .fieldgroup.usa-fieldset {
       -webkit-box-flex: 0;
       -ms-flex: 0 0 auto;
       flex: 0 0 auto;
-      width: 40%;
-      @media screen and (max-width: 1024px) {
-        width: 50%;
-      }
+      width: 50%;
       @media screen and (max-width: 768px) {
         width: 100%;
       }
@@ -47,10 +43,7 @@
       }
     }
     #edit-actions {
-      width: 20% !important;
-      .button.form-submit{
-        margin-top: 3rem;
-      }
+      display:none;
     }
   }
   .view__content {
@@ -63,10 +56,19 @@
     h3{
       margin-top: 1.5rem;
     }
-    .views-row{
-      padding: 5px;
-      &:nth-child(odd) {
-        background-color: #eff6fb;
+    .documents-group {
+      break-inside: avoid;
+      .views-row {
+        padding: 5px;
+
+        .views-field.views-field-field-upload-date,
+        .views-field.views-field-field-attachments {
+          display: inline-block;
+        }
+
+        &:nth-child(odd) {
+          background-color: #eff6fb;
+        }
       }
     }
   }
