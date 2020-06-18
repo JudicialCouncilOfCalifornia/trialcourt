@@ -8,11 +8,14 @@ dependencies:
     - field.storage.node.field_document_type
     - field.storage.node.field_subject_matter
     - field.storage.node.field_topics
+    - field.storage.node.field_upload_date
     - node.type.document
     - system.menu.main
     - taxonomy.vocabulary.department
-    - taxonomy.vocabulary.subject_matter
+    - taxonomy.vocabulary.document_type
   module:
+    - better_exposed_filters
+    - datetime
     - jcc_media_formatter
     - node
     - taxonomy
@@ -47,7 +50,7 @@ display:
           query_comment: ''
           query_tags: {  }
       exposed_form:
-        type: basic
+        type: bef
         options:
           submit_button: Apply
           reset_button: false
@@ -56,6 +59,47 @@ display:
           expose_sort_order: true
           sort_asc_label: Asc
           sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: full_html
+          bef:
+            general:
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+            filter:
+              title:
+                plugin_id: default
+                advanced:
+                  placeholder_text: 'Search for document title'
+                  collapsible: false
+                  is_secondary: false
+              field_division_target_id:
+                plugin_id: bef
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: 0
+              field_document_type_target_id:
+                plugin_id: bef
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: 0
       pager:
         type: none
         options:
@@ -457,6 +501,70 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
+        field_upload_date:
+          id: field_upload_date
+          table: node__field_upload_date
+          field: field_upload_date
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_default
+          settings:
+            timezone_override: ''
+            format_type: html_date
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
       filters:
         status:
           value: '1'
@@ -529,55 +637,6 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: string
-        field_subject_matter_target_id:
-          id: field_subject_matter_target_id
-          table: node__field_subject_matter
-          field: field_subject_matter_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: or
-          value: {  }
-          group: 2
-          exposed: true
-          expose:
-            operator_id: field_subject_matter_target_id_op
-            label: 'Subject Matter'
-            description: ''
-            use_operator: false
-            operator: field_subject_matter_target_id_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_subject_matter_target_id
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              author: '0'
-              administrator: '0'
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          reduce_duplicates: false
-          type: textfield
-          limit: true
-          vid: subject_matter
-          hierarchy: false
-          error_message: true
-          plugin_id: taxonomy_index_tid
         field_division_target_id:
           id: field_division_target_id
           table: node__field_division
@@ -600,7 +659,7 @@ display:
             identifier: field_division_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               anonymous: '0'
@@ -649,7 +708,7 @@ display:
             identifier: field_document_type_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               anonymous: '0'
@@ -672,7 +731,7 @@ display:
           reduce_duplicates: false
           type: select
           limit: true
-          vid: department
+          vid: document_type
           hierarchy: false
           error_message: true
           plugin_id: taxonomy_index_tid
@@ -705,6 +764,7 @@ display:
         - 'config:field.storage.node.field_document_type'
         - 'config:field.storage.node.field_subject_matter'
         - 'config:field.storage.node.field_topics'
+        - 'config:field.storage.node.field_upload_date'
   page_1:
     display_plugin: page
     id: page_1
@@ -737,3 +797,4 @@ display:
         - 'config:field.storage.node.field_document_type'
         - 'config:field.storage.node.field_subject_matter'
         - 'config:field.storage.node.field_topics'
+        - 'config:field.storage.node.field_upload_date'
