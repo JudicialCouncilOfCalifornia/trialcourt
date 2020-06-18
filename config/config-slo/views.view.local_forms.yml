@@ -63,7 +63,7 @@ display:
           text_input_required_format: full_html
           bef:
             general:
-              autosubmit: false
+              autosubmit: true
               autosubmit_exclude_textfield: false
               autosubmit_textfield_delay: 500
               autosubmit_hide: false
@@ -511,8 +511,8 @@ display:
           label: ''
           exclude: false
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: '({{ field_upload_date }})'
             make_link: false
             path: ''
             absolute: false
@@ -537,7 +537,7 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
+          element_type: span
           element_class: ''
           element_label_type: ''
           element_label_class: ''
@@ -739,7 +739,20 @@ display:
       title: 'Forms and Filing'
       header: {  }
       footer: {  }
-      empty: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: 'No document matches your criteria.'
+            format: full_html
+          plugin_id: text
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
@@ -748,7 +761,7 @@ display:
         groups:
           1: AND
           2: OR
-      use_ajax: false
+      use_ajax: true
     cache_metadata:
       max-age: -1
       contexts:
