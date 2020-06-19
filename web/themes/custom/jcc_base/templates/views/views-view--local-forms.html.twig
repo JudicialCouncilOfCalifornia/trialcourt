@@ -44,14 +44,28 @@
     {{ title_prefix }}
     {{ title_suffix }}
 
-    {% set events_title %}
-      {{ view.title|default('Events') }}
-    {% endset %}
+  {% if view.title %}
+    {% include '@jcc_base/_includes/section-hero.html.twig' with {
+      title: view.title,
+    } %}
+  {% endif %}
 
     {% block header %}
       {% if header %}
         <div class="view__header">
           {{ header }}
+        </div>
+      {% endif %}
+    {% endblock %}
+
+    {% block exposed %}
+      {% if exposed %}
+        <div class="view-filter-wrapper">
+          <div class="grid-container-widescreen padding-y-4">
+            <div class="view__filters">
+              {{ exposed }}
+            </div>
+          </div>
         </div>
       {% endif %}
     {% endblock %}
@@ -66,53 +80,20 @@
 
     {% block content %}
       {% if rows %}
-        <div class="view__content">
-          {% set tiles = [] %}
-          {% for row in rows %}
-            {% set title = row.content['#node'].title.value %}
-            {% if row.content['#node'].body.value %}
-              {% set excerpt = row.content['#node'].body.value|striptags %}
-            {% else %}
-              {% set excerpt = "" %}
-            {% endif %}
-            {% set url = path('entity.node.canonical', {'node': row.content['#node'].nid[0].value}) %}
-            {% set start_date = row.content['#node'].field_date_range[0].start_date %}
-            {% set img_src = file_url(row.content['#node'].field_images.entity.field_media_image.entity.uri.value) %}
-            {% set img_alt = row.content['#node'].field_images.entity.field_media_image.alt %}
-
-            {% set recent_event_card = {
-              card: {
-                title: title,
-                excerpt: excerpt|length > 600 ? excerpt|slice(0, 600) ~ '…' : excerpt,
-                url: url
-              },
-              date: start_date,
-              img: {
-                src: img_src,
-                alt: img_alt,
-                renderer: 'patternlab',
-              }
-            } %}
-
-            {% set tiles = tiles|merge([recent_event_card]) %}
-          {% endfor %}
-
-          {% include "@organisms/sections/tiles-list/tiles-list.twig" with {
-            tiles_list: {
-              headergroup: {
-                title: events_title
-              },
-              tiles: tiles
-            }
-          } only %}
+        <div class="grid-container-widescreen padding-y-4">
+          <div class="view__content results-size-{{ rows|length }}">
+            {{ rows }}
+          </div>
         </div>
       {% endif %}
     {% endblock %}
 
     {% block empty %}
       {% if empty %}
-        <div class="view__content is-empty">
-          {{ empty }}
+        <div class="grid-container-widescreen padding-y-4">
+          <div class="view__content is-empty">
+            {{ empty }}
+          </div>
         </div>
       {% endif %}
     {% endblock %}
@@ -152,5 +133,6 @@
         </div>
       {% endif %}
     {% endblock %}
+
   </{{ tag }}>
 {% endblock %}
