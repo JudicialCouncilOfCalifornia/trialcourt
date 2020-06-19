@@ -78,6 +78,15 @@ echo -e "\n${G}Multisite configured... now running installation. This will take 
 cd /app
 drush si -l ${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com"
 
+if [ ! -d /app/web/themes/custom/jcc_napa ] ; then
+  echo -e "\nCreating subtheme jcc_${NEW}"
+  drush --include=/app/web/themes/custom/jcc_base jcc_base:create jcc_${NEW}
+
+  echo -e "\nSetting new theme as default."
+  drush then jcc_${NEW} -l ${NEW}.lndo.site
+  drush config-set system.theme default jcc_${NEW} -y -l ${NEW}.lndo.site
+fi
+
 echo -e "\nExporting config..."
 drush cex -y -l ${NEW}.lndo.site
 
