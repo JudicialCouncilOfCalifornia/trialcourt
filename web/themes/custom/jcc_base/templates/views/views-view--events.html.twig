@@ -66,6 +66,12 @@
       {% endif %}
     {% endblock %}
 
+    {% block exposed %}
+      {% if view.exposed_widgets %}
+        {{ view.exposed_widgets }}
+      {% endif %}
+    {% endblock %}
+
     {% block content %}
       {% if rows %}
         <div class="view__content">

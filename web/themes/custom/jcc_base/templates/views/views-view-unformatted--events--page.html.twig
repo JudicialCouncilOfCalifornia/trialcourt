@@ -44,24 +44,14 @@
     {{ title_prefix }}
     {{ title_suffix }}
 
-    {% block title %}
-      {% if title %}
-        {{ title }}
-      {% endif %}
-    {% endblock %}
+    {% set events_title %}
+      {{ view.title|default('Events') }}
+    {% endset %}
 
     {% block header %}
       {% if header %}
         <div class="view__header">
           {{ header }}
-        </div>
-      {% endif %}
-    {% endblock %}
-
-    {% block exposed %}
-      {% if exposed %}
-        <div class="view__filters">
-          {{ exposed }}
         </div>
       {% endif %}
     {% endblock %}
@@ -109,6 +99,9 @@
 
           {% include "@organisms/sections/tiles-list/tiles-list.twig" with {
             tiles_list: {
+              headergroup: {
+                title: events_title
+              },
               tiles: tiles
             }
           } only %}
