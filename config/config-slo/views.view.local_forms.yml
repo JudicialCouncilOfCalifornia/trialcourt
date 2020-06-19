@@ -11,7 +11,6 @@ dependencies:
     - field.storage.node.field_upload_date
     - node.type.document
     - system.menu.main
-    - taxonomy.vocabulary.division
     - taxonomy.vocabulary.document_type
   module:
     - better_exposed_filters
@@ -78,17 +77,6 @@ display:
                   placeholder_text: 'Search for document title'
                   collapsible: false
                   is_secondary: false
-              field_division_target_id:
-                plugin_id: bef
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                  collapsible: false
-                  is_secondary: false
-                select_all_none: false
-                select_all_none_nested: false
-                display_inline: 0
               field_document_type_target_id:
                 plugin_id: bef
                 advanced:
@@ -637,55 +625,6 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: string
-        field_division_target_id:
-          id: field_division_target_id
-          table: node__field_division
-          field: field_division_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: or
-          value: {  }
-          group: 2
-          exposed: true
-          expose:
-            operator_id: field_division_target_id_op
-            label: Division
-            description: ''
-            use_operator: false
-            operator: field_division_target_id_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_division_target_id
-            required: false
-            remember: false
-            multiple: true
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              author: '0'
-              administrator: '0'
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          reduce_duplicates: false
-          type: select
-          limit: true
-          vid: division
-          hierarchy: false
-          error_message: true
-          plugin_id: taxonomy_index_tid
         field_document_type_target_id:
           id: field_document_type_target_id
           table: node__field_document_type
@@ -732,7 +671,7 @@ display:
           type: select
           limit: true
           vid: document_type
-          hierarchy: true
+          hierarchy: false
           error_message: true
           plugin_id: taxonomy_index_tid
       sorts: {  }
