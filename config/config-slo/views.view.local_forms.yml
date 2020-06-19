@@ -11,7 +11,7 @@ dependencies:
     - field.storage.node.field_upload_date
     - node.type.document
     - system.menu.main
-    - taxonomy.vocabulary.department
+    - taxonomy.vocabulary.division
     - taxonomy.vocabulary.document_type
   module:
     - better_exposed_filters
@@ -98,7 +98,7 @@ display:
                   collapsible: false
                   is_secondary: false
                 select_all_none: false
-                select_all_none_nested: false
+                select_all_none_nested: true
                 display_inline: 0
       pager:
         type: none
@@ -682,7 +682,7 @@ display:
           reduce_duplicates: false
           type: select
           limit: true
-          vid: department
+          vid: division
           hierarchy: false
           error_message: true
           plugin_id: taxonomy_index_tid
@@ -732,7 +732,7 @@ display:
           type: select
           limit: true
           vid: document_type
-          hierarchy: false
+          hierarchy: true
           error_message: true
           plugin_id: taxonomy_index_tid
       sorts: {  }
@@ -788,7 +788,7 @@ display:
       path: forms-filing/forms-and-filing
       menu:
         type: normal
-        title: 'Forms & Filing'
+        title: 'Forms and Filing'
         description: ''
         expanded: false
         parent: 'menu_link_content:27652866-2c6d-4ac9-8942-2b6ef870640f'
