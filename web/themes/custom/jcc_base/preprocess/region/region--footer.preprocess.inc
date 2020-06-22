@@ -75,5 +75,20 @@ function jcc_base_preprocess_region__footer(&$variables) {
         'url' => $item['url']
       ];
     }
+    $moduleHandler = Drupal::service('module_handler');
+    $user = Drupal::currentUser();
+    if ($moduleHandler->moduleExists('contextual') && $user->hasPermission('access contextual links')) {
+      $contextual_links = [
+        'menu' => [
+          'route_parameters' => [
+            'menu' => $menu_name
+          ]
+        ]
+      ];
+      $variables['footer_tall']['links']['inline_nav']['contextual_links'] = [
+        '#type' => 'contextual_links_placeholder',
+        '#id' => _contextual_links_to_id($contextual_links),
+      ];
+    }
   }
 }
