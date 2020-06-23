@@ -202,6 +202,7 @@
     "require-dev": {
         "components/highlightjs": "9.7.*",
         "d3/d3": "3.5.*",
+        "drupal/coder": "^8.3",
         "drupal/console": "^1.9",
         "drupal/devel": "^2.1",
         "drupal/stage_file_proxy": "^1.0@RC",
@@ -235,7 +236,6 @@
             "DrupalProject\\composer\\ScriptHandler::postInstall",
             "find ./vendor/ -type d -name .git | xargs rm -rf",
             "find ./web/ -type d -name .git | xargs rm -rf",
-            "find .git/ -type d -name hooks | xargs rm -rf",
             "if [ ! -f web/sites/default/services.local.yml ]; then cp examples/example.services.local.yml web/sites/default/services.local.yml; fi",
             "if [ ! -f web/sites/default/settings.local.php ]; then cp examples/example.settings.local.php web/sites/default/settings.local.php; fi"
         ],
@@ -243,15 +243,15 @@
             "DrupalProject\\composer\\ScriptHandler::createRequiredFiles",
             "DrupalProject\\composer\\ScriptHandler::postInstall",
             "find ./vendor/ -type d -name .git | xargs rm -rf",
-            "find ./web/ -type d -name .git | xargs rm -rf",
-            "find .git/ -type d -name hooks | xargs rm -rf"
+            "find ./web/ -type d -name .git | xargs rm -rf"
         ],
         "build-assets": [
             "@prepare-for-pantheon",
             "composer install --optimize-autoloader --no-dev"
         ],
         "lint": "find web/modules/custom web/themes/custom -name '*.php' -exec php -l {} \\;",
-        "code-sniff": "echo 'No code sniff step defined.'",
+        "code-sniff": "vendor/bin/phpcs --config-set installed_paths /app/vendor/drupal/coder/coder_sniffer && vendor/bin/phpcs -p --standard=Drupal,DrupalPractice --extensions=php,inc,profile,module,install,profile web",
+        "code-bf": "vendor/bin/phpcbf --config-set installed_paths /app/vendor/drupal/coder/coder_sniffer && vendor/bin/phpcbf -p --standard=Drupal,DrupalPractice --extensions=php,inc,profile,module,install,profile web",
         "unit-test": "echo 'No unit test step defined.'",
         "artifact-sync": [
             "rsync -KPar --delete --force --files-from=scripts/deploy.txt ./ data/artifact/"
