@@ -3,10 +3,13 @@
 namespace Drupal\jcc_blocks\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\media\Entity\Media;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\file\Entity\File;
-
+use Drupal\media\Entity\Media;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a 'JccHeroBlock' block.
@@ -16,7 +19,49 @@ use Drupal\file\Entity\File;
  *  admin_label = @Translation("JCC Hero Block"),
  * )
  */
-class JccHeroBlock extends BlockBase {
+class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface {
+
+
+  /**
+   * @var AccountInterface $account
+   */
+  protected $account;
+
+  /**
+   * @var ModuleHandler $moduleHandler
+   */
+  protected $moduleHandler;
+
+  /**
+   * @param array $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   * @param AccountInterface $account
+   * @param ModuleHandler $module_handler
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, AccountInterface $account, ModuleHandler $module_handler) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->account = $account;
+    $this->moduleHandler = $module_handler;
+  }
+
+  /**
+   * @param ContainerInterface $container
+   * @param array $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   *
+   * @return static
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('current_user'),
+      $container->get('module_handler')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -94,6 +139,22 @@ class JccHeroBlock extends BlockBase {
       'subtitle' => $this->configuration['subtitle'],
     ];
 
+    $placeholder = FALSE;
+    if ($this->moduleHandler->moduleExists('contextual') && $this->account->hasPermission('access contextual links')) {
+      $contextual_links = [
+        'menu' => [
+          'route_parameters' => [
+            'menu' => 'featured-links'
+          ]
+        ]
+      ];
+      $placeholder = [
+        '#type' => 'contextual_links_placeholder',
+        '#id' => _contextual_links_to_id($contextual_links),
+      ];
+    }
+
+    $build['#hero_icon_nav']['contextual_links'] = $placeholder;
     if ($this->configuration['featured_links']) {
       $build['#hero_icon_nav']['links'] = $this->getFeaturedLinks();
     }
