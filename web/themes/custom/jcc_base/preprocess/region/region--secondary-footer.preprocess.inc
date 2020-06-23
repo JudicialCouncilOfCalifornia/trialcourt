@@ -37,5 +37,23 @@ function jcc_base_preprocess_region__secondary_footer(&$variables) {
       'disable_header_link' => TRUE,
       'items' => $footer_menu['#items'],
     ];
+
+    $moduleHandler = Drupal::service('module_handler');
+    $user = Drupal::currentUser();
+    $placeholder = FALSE;
+    if ($moduleHandler->moduleExists('contextual') && $user->hasPermission('access contextual links')) {
+      $contextual_links = [
+        'menu' => [
+          'route_parameters' => [
+            'menu' => $menu_name
+          ]
+        ]
+      ];
+      $placeholder = [
+        '#type' => 'contextual_links_placeholder',
+        '#id' => _contextual_links_to_id($contextual_links),
+      ];
+    }
+    $variables['list_section']['menu']['contextual_links'] = $placeholder;
   }
 }

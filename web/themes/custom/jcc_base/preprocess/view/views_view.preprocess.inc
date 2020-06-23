@@ -8,8 +8,27 @@ function jcc_base_preprocess_views_view(&$variables) {
   switch($view->id()) {
     case 'location':
       if ($view->current_display == 'block') {
+        $moduleHandler = Drupal::service('module_handler');
+        $user = Drupal::currentUser();
+
         foreach($view->result as $row) {
-          $variables['sidebar']['rows'][] = $row->_entity;
+          $placeholder = FALSE;
+          if ($moduleHandler->moduleExists('contextual') && $user->hasPermission('access contextual links')) {
+            $contextual_links = [
+              'node' => [
+                'route_parameters' => [
+                  'node' => $row->_entity->id()
+                ]
+              ]
+            ];
+            $placeholder = [
+              '#type' => 'contextual_links_placeholder',
+              '#id' => _contextual_links_to_id($contextual_links),
+            ];
+          }
+          $location = $row->_entity->toArray();
+          $location['contextual_links'] = $placeholder;
+          $variables['sidebar']['rows'][] = $location;
         }
         $num_rows = $view->total_rows;
         $verb = $num_rows == 1 ? 'is' : 'are';
