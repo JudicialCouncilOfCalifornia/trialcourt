@@ -49,10 +49,13 @@
     </header>
   {% endif %}
 
-  {#
-  {{ exposed }}
-  #}
   {{ attachment_before }}
+
+  {% block exposed %}
+    {% if view.exposed_widgets %}
+      {{ view.exposed_widgets }}
+    {% endif %}
+  {% endblock %}
 
   {% if rows -%}
     {{ rows }}
