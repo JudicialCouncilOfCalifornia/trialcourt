@@ -81,6 +81,22 @@ function jcc_base_preprocess_region__header(&$variables) {
     $menu_link_tree_handler = Drupal::getContainer()->get('menu_item_extras.menu_link_tree_handler');
     $variables['header']['primary_nav']['lowercase_titles'] = TRUE;
     $variables['header']['primary_nav']['items'] = jcc_base_mainnavigation_build($main_nav['#items'], $menu_link_tree_handler);
+
+    $moduleHandler = Drupal::service('module_handler');
+    $user = Drupal::currentUser();
+    if ($moduleHandler->moduleExists('contextual') && $user->hasPermission('access contextual links')) {
+      $contextual_links = [
+        'menu' => [
+          'route_parameters' => [
+            'menu' => $menu_name
+          ]
+        ]
+      ];
+      $variables['header']['primary_nav']['contextual_links'] = [
+        '#type' => 'contextual_links_placeholder',
+        '#id' => _contextual_links_to_id($contextual_links),
+      ];
+    }
   }
 }
 

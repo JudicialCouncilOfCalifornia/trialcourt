@@ -27,6 +27,23 @@ function jcc_base_preprocess_block__views_block__news_block_1(&$variables) {
     }
     $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
 
+    $moduleHandler = Drupal::service('module_handler');
+    $user = Drupal::currentUser();
+    $placeholder = FALSE;
+    if ($moduleHandler->moduleExists('contextual') && $user->hasPermission('access contextual links')) {
+      $contextual_links = [
+        'node' => [
+          'route_parameters' => [
+            'node' => $row->_entity->id()
+          ]
+        ]
+      ];
+      $placeholder = [
+        '#type' => 'contextual_links_placeholder',
+        '#id' => _contextual_links_to_id($contextual_links),
+      ];
+    }
+
     $recent_news_card = [
       'brow' => $brow,
       'title' => $title,
@@ -35,7 +52,8 @@ function jcc_base_preprocess_block__views_block__news_block_1(&$variables) {
       'read_more' => [
         'label' => $read_more_text,
         'url' => $url
-      ]
+      ],
+      'contextual_links' => $placeholder
     ];
     array_push($cards, $recent_news_card);
   }
