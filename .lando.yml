@@ -103,6 +103,7 @@ tooling:
       \n  \tSee available appserver proxies in .lando.yml
       \n  \tOR urls in lando info --service=appserver."
     cmd:
+      - appserver: rm -f /app/data/.*.fresh && true
       - appserver: scripts/fresh.sh
       - node-cli: scripts/fresh.sh
       - appserver: scripts/fresh.sh
