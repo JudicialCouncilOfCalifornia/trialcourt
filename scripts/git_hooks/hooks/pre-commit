@@ -1,0 +1,62 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @file
+ * Place this file in your $GIT_DIR/hooks directory and call it pre-commit.
+ * Any other scripts you want to execute on commit can then also be placed
+ * in $GIT_DIR/hooks with the correct naming convention. For example:
+ *
+ *   pre-commit_[name]
+ *
+ * Make that file executable and this script will find it and run it.
+ */
+
+/**
+ * Get an array containing paths of all files in the specified tree.
+ */
+function find_all_files($dir = '.') {
+  $root = scandir($dir);
+
+  // Ignore . and .. dirs.
+  foreach ($root as $value) {
+    if ($value === '.' || $value === '..') {
+      continue;
+    }
+    // Found a file? Store it.
+    if (is_file("$dir/$value")) {
+      $result[] = "$dir/$value";
+      continue;
+    }
+
+    // Traverse the sub directories.
+    foreach (find_all_files("$dir/$value") as $value) {
+      $result[] = $value;
+    }
+  }
+
+  return $result;
+}
+
+// What is the .git directory for this project?
+$git_dir = trim(`echo $(git rev-parse --git-dir 2>/dev/null)`);
+if (empty($git_dir)) {
+  echo 'fatal: hooks/functions: GIT_DIR not set"';
+  exit(1);
+}
+
+// Get a list of all the files in the git hooks directory.
+$files = find_all_files($git_dir . '/hooks');
+
+// Search for correctly named files and execute them.
+foreach ($files as $file) {
+  if (substr(basename($file), 0, 11) == 'pre-commit_') {
+    if (is_executable($file)) {
+      // Execute the hook.
+      echo "\nExecuting pre-commit hook: $file\n\n";
+      system('sh ' . $file, $ret);
+      if ($ret != 0) {
+        exit($ret);
+      }
+    }
+  }
+}
