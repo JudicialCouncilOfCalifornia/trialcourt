@@ -205,7 +205,8 @@
         "drupal/console": "^1.9",
         "drupal/devel": "^2.1",
         "drupal/stage_file_proxy": "^1.0@RC",
-        "drupal/twig_xdebug": "^1.1"
+        "drupal/twig_xdebug": "^1.1",
+        "phpmd/phpmd": "@stable"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -249,8 +250,7 @@
             "composer install --optimize-autoloader --no-dev"
         ],
         "lint": "find web/modules/custom web/themes/custom -name '*.php' -exec php -l {} \\;",
-        "code-sniff": "vendor/bin/phpcs --config-set installed_paths /app/vendor/drupal/coder/coder_sniffer && vendor/bin/phpcs -p --standard=Drupal,DrupalPractice --extensions=php,inc,profile,module,install,profile web",
-        "code-bf": "vendor/bin/phpcbf --config-set installed_paths /app/vendor/drupal/coder/coder_sniffer && vendor/bin/phpcbf -p --standard=Drupal,DrupalPractice --extensions=php,inc,profile,module,install,profile web",
+        "code-sniff": "echo 'No code sniff defined yet.'",
         "unit-test": "echo 'No unit test step defined.'",
         "artifact-sync": [
             "rsync -KPar --delete --force --files-from=scripts/deploy.txt ./ data/artifact/"

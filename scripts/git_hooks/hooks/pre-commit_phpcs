@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# Reset in case getopts has been used previously in the shell.
+OPTIND=1
+
+R="\033[31m"
+G="\033[32m"
+Y="\033[33m"
+RE="\033[0m"
+
+if [ "$STANDARDS" != "no" ] ; then
+  # Run PHPCS
+  ROOT_DIR="$(pwd)/"
+  LIST=$( git diff --name-only --cached --diff-filter=ACM -- '*.php' '*.inc' '*.profile' '*.module' '*.install' '*.profile')
+  EXTENSIONS="php,inc,profile,module,install,profile"
+  PHPCS_BIN=vendor/bin/phpcs
+
+  if [ ! -f $PHPCS_BIN ];
+    then
+      echo "\nWARNING: PHP Code Sniffer was not found. This commit might include coding standards violations. You can fix this by ensuring that composer has correctly installed it's dev dependencies including a symlink in the bin folder to the phpcs package in vendor.\n"
+      exit 1
+    else
+      echo "\nSniffing staged files via PHP Code Sniffer.\n"
+  fi
+
+  echo $LIST
+
+  if [ ! -z "$LIST" ];
+    then
+      echo "\nDrupal Standard\n"
+      $PHPCS_BIN -p --standard=${ROOT_DIR}/vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml --extensions=${EXTENSIONS} ${LIST}
+      e=$?
+      echo "\nDrupalPractice Standard\n"
+      $PHPCS_BIN -p --standard=${ROOT_DIR}/vendor/drupal/coder/coder_sniffer/DrupalPractice/ruleset.xml --extensions=${EXTENSIONS} ${LIST}
+      if [ ! $e ] ; then
+        e=$?
+      fi
+      echo "\n\n${Y}Please fix any coding standards above.\nYou can prefix your git command with ${RE}STANDARDS=no git commit -m ...${Y} to skip this test and commit anyway. ${R}NOT Recommended!${RE}\n"
+      echo "${Y}Drupal distributions, profiles, modules and themes need to follow the Drupal Coding Standards. It's easier to clean these up as we go, instead of letting them accumulate.${RE}\n"
+  fi
+
+  exit $e
+else
+  echo "\n\n${R}Skipped Coding Standards Check!\n"
+  echo "${Y}Drupal distributions, profiles, modules and themes need to follow the Drupal Coding Standards. It's easier to clean these up as we go, instead of letting them accumulate.${RE}\n"
+  exit 0
+fi
