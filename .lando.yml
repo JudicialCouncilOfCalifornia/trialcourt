@@ -103,6 +103,7 @@ tooling:
       \n  \tSee available appserver proxies in .lando.yml
       \n  \tOR urls in lando info --service=appserver."
     cmd:
+      - appserver: rm -f /app/data/.*.fresh && true
       - appserver: scripts/fresh.sh
       - node-cli: scripts/fresh.sh
       - appserver: scripts/fresh.sh
@@ -119,10 +120,18 @@ tooling:
     service: node-cli
   npm:
     service: node-cli
-  plb:
-    cmd:
-      - appserver: composer run generate -d /app/web/libraries/courtyard/
-      - node-cli: npm run build --prefix /app/web/libraries/courtyard/
+  phpcbf:
+    service: appserver
+    description: "lando phpcbf [path]\tCode Beautification. (Auto fix coding standards.)"
+    cmd: /app/vendor/bin/phpcbf --config-set installed_paths /app/vendor/drupal/coder/coder_sniffer && /app/vendor/bin/phpcbf -p --standard=Drupal,DrupalPractice --extensions=php,inc,profile,module,install,profile
+  phpcs:
+    service: appserver
+    description: "lando phpcs [path]\tCode Sniffer. (Check coding standards.)"
+    cmd: /app/vendor/bin/phpcs --config-set installed_paths /app/vendor/drupal/coder/coder_sniffer && /app/vendor/bin/phpcs -p --standard=Drupal,DrupalPractice --extensions=php,inc,profile,module,install,profile
+  phpmd:
+    service: appserver
+    description: "lando phpmd [path] [format] [ruleset]\tMess Detector."
+    cmd: /app/vendor/bin/phpmd
   reset:
     service: appserver
     description: "Runs updb, cr, cim, uli \n Reset your local after a build or db install."
