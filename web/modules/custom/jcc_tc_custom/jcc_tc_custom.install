@@ -1,0 +1,78 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the JCC TC Custom module.
+ */
+
+use Drupal\Core\Config\Entity\ConfigEntityType;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
+/**
+ * TC-245: Update Field storage definitions.
+ *
+ * For menu_link_content.field_icon, node.field_alert_type.
+ */
+function jcc_tc_custom_update_8901() {
+  $items = [
+    'entity_reference' => [
+      'menu_link_content.field_icon',
+    ],
+    'list_string' => [
+      'node.field_alert_type',
+    ],
+  ];
+
+  foreach ($items as $type => $fields) {
+    foreach ($fields as $field) {
+      $field_storage_configs = \Drupal::entityTypeManager()->getStorage('field_storage_config')->loadByProperties(['type' => $type]);
+      $field_storage = $field_storage_configs[$field];
+      $field_storage->save();
+    }
+  }
+}
+
+/**
+ * TC-245: Install missing facets_summary entity type.
+ */
+function jcc_tc_custom_update_8902() {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+
+  if ($manager->getEntityType('facets_summary') === NULL) {
+    $manager->installEntityType(new ConfigEntityType([
+      'id' => 'facets_summary',
+      'label' => new TranslatableMarkup('Facet summary'),
+      'handlers' => [
+        'storage' => 'Drupal\Core\Config\Entity\ConfigEntityStorage',
+        'list_builder' => 'Drupal\facets\FacetListBuilder',
+        'form' => [
+          'default' => 'Drupal\facets_summary\Form\FacetsSummarySettingsForm',
+          'edit' => 'Drupal\facets_summary\Form\FacetsSummaryForm',
+          'settings' => 'Drupal\facets_summary\Form\FacetsSummarySettingsForm',
+          'delete' => 'Drupal\facets_summary\Form\FacetsSummaryDeleteConfirmForm',
+        ],
+      ],
+      'admin_permission' => 'administer facets',
+      'config_prefix' => 'facets_summary',
+      'entity_keys' => [
+        'id' => 'id',
+        'label' => 'name',
+        'uuid' => 'uuid',
+        'status' => 'status',
+      ],
+      'config_export' => [
+        'id',
+        'name',
+        'facets',
+        'facet_source_id',
+        'processor_configs',
+      ],
+      'links' => [
+        'add-form' => '/admin/config/search/facets/add-facet-summary',
+        'edit-form' => '/admin/config/search/facets/facet-summary/{facets_summary}/edit',
+        'settings-form' => '/admin/config/search/facets/facet-summary{facets_summary}/settings',
+        'delete-form' => '/admin/config/search/facets/facet-summary/{facets_summary}/delete',
+      ],
+    ]));
+  }
+}
