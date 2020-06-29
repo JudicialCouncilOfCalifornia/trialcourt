@@ -37,8 +37,8 @@ function jcc_tc_custom_update_8901() {
  */
 function jcc_tc_custom_update_8902() {
   $manager = \Drupal::entityDefinitionUpdateManager();
-
-  if ($manager->getEntityType('facets_summary') === NULL) {
+  $module_exists = \Drupal::moduleHandler()->moduleExists('facets_summary');
+  if ($manager->getEntityType('facets_summary') === NULL && $module_exists) {
     $manager->installEntityType(new ConfigEntityType([
       'id' => 'facets_summary',
       'label' => new TranslatableMarkup('Facet summary'),
