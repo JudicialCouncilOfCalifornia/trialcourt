@@ -42,71 +42,81 @@
 {% block view %}
   <{{ tag }}{{ attributes.addClass(classes) }}>
 
-    {% block header %}
-      {% if header %}
-        <div class="view__header">
-          {{ header }}
-        </div>
-      {% endif %}
-    {% endblock %}
+    {% if not empty %}
+      {% block header %}
+        {% if header %}
+          <div class="view__header">
+            {{ header }}
+          </div>
+        {% endif %}
+      {% endblock %}
 
-    {% block attachment_before %}
-      {% if attachment_before %}
-        <div class="view__attachment view__attachment--before">
-          {{ attachment_before }}
-        </div>
-      {% endif %}
-    {% endblock %}
+      {% block attachment_before %}
+        {% if attachment_before %}
+          <div class="view__attachment view__attachment--before">
+            {{ attachment_before }}
+          </div>
+        {% endif %}
+      {% endblock %}
 
-    {% block content %}
-      {% if sidebar.rows %}
-        <div class="location-sidebar">
-          <div class="location-sidebar__title margin-bottom-3">
-            <h2>Locations</h2>
-            {% block exposed %}
-              {% if exposed %}
-                <div class="view__filters">
-                  {{ exposed }}
-                </div>
+      {% block content %}
+        {% if sidebar.rows %}
+          <div class="location-sidebar">
+            <div class="location-sidebar__title margin-bottom-3">
+              <h2>Locations</h2>
+              {% block exposed %}
+                {% if exposed %}
+                  <div class="view__filters">
+                    {{ exposed }}
+                  </div>
+                {% endif %}
+              {% endblock %}
+            </div>
+
+            <div class="location-sidebar__items grid-row grid-gap">
+            {% for location in sidebar.rows %}
+              {% set contextual = location.contextual_links ? 'contextual-region' : '' %}
+              <div class="location-sidebar__location tablet:grid-col-6 {{ contextual }}">
+                {{ location.contextual_links }}
+                {% set locationView = location.field_location %}
+                <h5>
+                  <a href="{{ path('entity.node.canonical', {'node': location.nid.0.value}) }}">
+                    <i class="fas fa-map-marker-alt"></i>{{ location.title.0.value }}
+                  </a>
+                </h5>
+                <div class="location-sidebar__address1">{{ locationView.0.address_line1 }}</div>
+                <div class="location-sidebar__address2">{{ locationView.0.address_line2 }}</div>
+                <div class="location-sidebar__locality">{{ locationView.0.locality }}, {{ locationView.0.administrative_area }} {{ locationView.0.postal_code }}</div>
+              </div>
+            {% endfor %}
+            </div>
+            {% block pager %}
+              {% if pager %}
+                {{ pager }}
               {% endif %}
             {% endblock %}
           </div>
-
-          {% block empty %}
-            {% if empty %}
-              <div class="view__content is-empty">
-                {{ empty }}
-              </div>
-            {% endif %}
-          {% endblock %}
-
-          <div class="location-sidebar__items grid-row grid-gap">
-          {% for location in sidebar.rows %}
-            {% set contextual = location.contextual_links ? 'contextual-region' : '' %}
-            <div class="location-sidebar__location tablet:grid-col-6 {{ contextual }}">
-              {{ location.contextual_links }}
-              {% set locationView = location.field_location %}
-              <h5>
-                <a href="{{ path('entity.node.canonical', {'node': location.nid.0.value}) }}">
-                  <i class="fas fa-map-marker-alt"></i>{{ location.title.0.value }}
-                </a>
-              </h5>
-              <div class="location-sidebar__address1">{{ locationView.0.address_line1 }}</div>
-              <div class="location-sidebar__address2">{{ locationView.0.address_line2 }}</div>
-              <div class="location-sidebar__locality">{{ locationView.0.locality }}, {{ locationView.0.administrative_area }} {{ locationView.0.postal_code }}</div>
-            </div>
-          {% endfor %}
+        {% endif %}
+        {% if rows %}
+          <div class="view__content">
+            {{ rows }}
           </div>
-          {% block pager %}
-            {% if pager %}
-              {{ pager }}
-            {% endif %}
-          {% endblock %}
+        {% endif %}
+      {% endblock %}
+    {% endif %}
+
+    {% block empty %}
+      {% if empty %}
+        <div class="location-sidebar">
+          <div class="location-sidebar__title margin-bottom-3">
+            <h2>Locations</h2>
+              <div class="view__filters">
+                {{ exposed }}
+              </div>
+          </div>
         </div>
-      {% endif %}
-      {% if rows %}
-        <div class="view__content">
-          {{ rows }}
+        <div class="view__content is-empty">
+          {{ empty }}
         </div>
       {% endif %}
     {% endblock %}

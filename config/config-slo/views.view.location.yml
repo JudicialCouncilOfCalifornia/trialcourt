@@ -903,19 +903,17 @@ display:
                 select_all_none_nested: false
                 display_inline: 1
       empty:
-        area:
-          id: area
+        view:
+          id: view
           table: views
-          field: area
+          field: view
           relationship: none
           group_type: group
           admin_label: ''
           empty: true
-          tokenize: false
-          content:
-            value: 'No location matches your search.'
-            format: full_html
-          plugin_id: text
+          view_to_insert: 'location:default'
+          inherit_arguments: false
+          plugin_id: view
     cache_metadata:
       max-age: -1
       contexts:
