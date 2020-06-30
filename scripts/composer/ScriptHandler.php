@@ -70,7 +70,6 @@ class ScriptHandler {
         $fs->mkdir($hooksDest);
       }
       // Copy all githooks files to .git/hooks.
-      echo "\nInstalling githooks.\n";
       foreach (
         $iterator = new \RecursiveIteratorIterator(
           new \RecursiveDirectoryIterator($hooksSrc, \RecursiveDirectoryIterator::SKIP_DOTS),
@@ -80,8 +79,16 @@ class ScriptHandler {
           mkdir($hooksDest . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
         }
         else {
-          copy($item, $hooksDest . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
-          $fs->chmod($hooksDest . DIRECTORY_SEPARATOR . $iterator->getSubPathName(), 0755);
+          if (!$fs->exists($hooksDest . DIRECTORY_SEPARATOR . $iterator->getSubPathName())) {
+            echo "\nInstalling git hook:\n";
+            echo $hooksDest . DIRECTORY_SEPARATOR . $iterator->getSubPathName() . "\n\n";
+            copy($item, $hooksDest . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+            $fs->chmod($hooksDest . DIRECTORY_SEPARATOR . $iterator->getSubPathName(), 0755);
+          }
+          else {
+            echo "\nExists, not overwriting:\n";
+            echo $hooksDest . DIRECTORY_SEPARATOR . $iterator->getSubPathName() . "\n\n";
+          }
         }
       }
     }
