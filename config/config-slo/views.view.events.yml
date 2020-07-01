@@ -946,6 +946,7 @@ display:
         filter_groups: false
         use_ajax: false
         exposed_form: false
+        header: false
       pager:
         type: full
         options:
@@ -1083,6 +1084,18 @@ display:
                 select_all_none: false
                 select_all_none_nested: false
                 display_inline: 1
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: false
+          tokenize: false
+          content: '<h3 class="jcc-card__title">[view:title]</h3>'
+          plugin_id: text_custom
     cache_metadata:
       max-age: -1
       contexts:
@@ -1566,7 +1579,7 @@ display:
           empty: false
           tokenize: false
           content:
-            value: "<div class=\"calendar-legend\">\r\n<div class=\"legend-item\"><span class=\"legend-square arraignment accent-warm-light\"></span><label class=\"t-small\"> : Arraignment</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square civil-trial accent-cool-light\"></span><label class=\"t-small\"> : Civil Trial</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square hearing secondary-light\"></span><label class=\"t-small\"> : Hearing</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square holiday primary-lighter\"></span><label class=\"t-small\"> : Holiday</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square motion base-lighter\"></span><label class=\"t-small\"> : Motion</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square sentencing accent-warm-lighter\"></span><label class=\"t-small\"> : Sentencing</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square workshop base-lightest\"></span><label class=\"t-small\"> : Workshop</label></div>\r\n</div>"
+            value: "<div class=\"calendar-legend\">\r\n<div class=\"legend-item\"><span class=\"legend-square arraignment accent-warm-light\"></span><label class=\"t-small\">Arraignment</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square civil-trial accent-cool-light\"></span><label class=\"t-small\">Civil Trial</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square hearing secondary-light\"></span><label class=\"t-small\">Hearing</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square holiday primary-lighter\"></span><label class=\"t-small\">Holiday</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square motion base-lighter\"></span><label class=\"t-small\">Motion</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square sentencing accent-warm-lighter\"></span><label class=\"t-small\">Sentencing</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square workshop base-lightest\"></span><label class=\"t-small\">Workshop</label></div>\r\n</div>"
             format: full_html
           plugin_id: text
         view:
