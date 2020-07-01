@@ -15,6 +15,7 @@ dependencies:
     - taxonomy.vocabulary.location_type
   module:
     - address
+    - better_exposed_filters
     - geolocation
     - jcc_block_field_decorator
     - node
@@ -96,13 +97,6 @@ display:
               weight: 0
               enable: false
               map_center_id: client_location
-            fit_bounds:
-              enable: true
-              settings:
-                min_zoom: 10
-                reset_zoom: true
-              weight: 0
-              map_center_id: fit_bounds
             fixed_boundaries:
               settings:
                 north: ''
@@ -112,17 +106,31 @@ display:
               weight: 0
               enable: false
               map_center_id: fixed_boundaries
+            fit_bounds:
+              enable: true
+              settings:
+                min_zoom: 10
+                reset_zoom: true
+              weight: 0
+              map_center_id: fit_bounds
+            fixed_value:
+              settings:
+                latitude: null
+                longitude: null
+                location_option_id: fixed_value
+              weight: 0
+              enable: false
+              map_center_id: location_plugins
             first_row:
               weight: 0
               enable: false
               map_center_id: location_plugins
               settings:
                 location_option_id: first_row
-            fixed_value:
+            ipstack:
               settings:
-                latitude: null
-                longitude: null
-                location_option_id: fixed_value
+                access_key: ''
+                location_option_id: ipstack
               weight: 0
               enable: false
               map_center_id: location_plugins
@@ -132,13 +140,6 @@ display:
               map_center_id: location_plugins
               settings:
                 location_option_id: freeogeoip
-            ipstack:
-              settings:
-                access_key: ''
-                location_option_id: ipstack
-              weight: 0
-              enable: false
-              map_center_id: location_plugins
           even_empty: 1
           map_provider_id: leaflet
           map_provider_settings:
@@ -558,7 +559,6 @@ display:
                     location_priority:
                       lat: null
                       lng: null
-                    remove_duplicates: false
                 enabled: false
               leaflet_control_fullscreen:
                 weight: 0
@@ -586,7 +586,7 @@ display:
                   transparent: false
                   identify: false
                 enabled: false
-            height: 590px
+            height: 685px
             width: 100%
             zoom: '10'
       row:
@@ -784,12 +784,144 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
+      filters:
+        status:
+          value: '1'
+          table: node_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: node
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          value:
+            location: location
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        field_location_type_target_id:
+          id: field_location_type_target_id
+          table: node__field_location_type
+          field: field_location_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_location_type_target_id_op
+            label: ''
+            description: ''
+            use_operator: false
+            operator: field_location_type_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_location_type_target_id
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              editor: '0'
+              author: '0'
+              administrator: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: location_type
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+      defaults:
+        filters: false
+        filter_groups: false
+        exposed_form: false
+        empty: false
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      exposed_form:
+        type: bef
+        options:
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: full_html
+          bef:
+            general:
+              autosubmit: true
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+            filter:
+              field_location_type_target_id:
+                plugin_id: bef
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: 1
+      empty:
+        view:
+          id: view
+          table: views
+          field: view
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          view_to_insert: 'location:default'
+          inherit_arguments: false
+          plugin_id: view
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:

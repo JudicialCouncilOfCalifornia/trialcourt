@@ -456,6 +456,7 @@ display:
         use_more: false
         use_more_always: false
         use_more_text: false
+        footer: false
       row:
         type: fields
         options:
@@ -469,6 +470,7 @@ display:
       use_more: true
       use_more_always: false
       use_more_text: 'Full Calendar'
+      footer: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -1112,6 +1114,7 @@ display:
         row: false
         fields: false
         footer: false
+        header: false
       pager:
         type: none
         options:
@@ -1566,6 +1569,29 @@ display:
             value: "<div class=\"calendar-legend\">\r\n<div class=\"legend-item\"><span class=\"legend-square arraignment accent-warm-light\"></span><label class=\"t-small\"> : Arraignment</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square civil-trial accent-cool-light\"></span><label class=\"t-small\"> : Civil Trial</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square hearing secondary-light\"></span><label class=\"t-small\"> : Hearing</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square holiday primary-lighter\"></span><label class=\"t-small\"> : Holiday</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square motion base-lighter\"></span><label class=\"t-small\"> : Motion</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square sentencing accent-warm-lighter\"></span><label class=\"t-small\"> : Sentencing</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square workshop base-lightest\"></span><label class=\"t-small\"> : Workshop</label></div>\r\n</div>"
             format: full_html
           plugin_id: text
+        view:
+          id: view
+          table: views
+          field: view
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: false
+          view_to_insert: 'events:page_1'
+          inherit_arguments: true
+          plugin_id: view
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: false
+          tokenize: false
+          content: '<h3 class="jcc-card__title">Calendar</h3>'
+          plugin_id: text_custom
     cache_metadata:
       max-age: -1
       contexts:
