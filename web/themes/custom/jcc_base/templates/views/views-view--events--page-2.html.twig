@@ -39,84 +39,98 @@
   dom_id ? 'js-view-dom-id-' ~ dom_id,
 ] %}
 
-{% block view %}
-  <{{ tag }}{{ attributes.addClass(classes) }}>
-    {{ title_prefix }}
-    {{ title_suffix }}
 
-    {% if view.title %}
-      {% include '@jcc_base/_includes/section-hero.html.twig' with {
-        title: view.title,
-      } %}
-    {% endif %}
+    {% block view %}
+      <{{ tag }}{{ attributes.addClass(classes) }}>
+      {{ title_prefix }}
+      {{ title_suffix }}
 
-    {% block header %}
-      {% if header %}
-        <div class="view__header">
-          {{ header }}
+      {% if view.title %}
+        {% include '@jcc_base/_includes/section-hero.html.twig' with {
+          title: view.title,
+        } %}
+      {% endif %}
+      <div class="jcc-text-section-aside__container">
+        <div class="jcc-text-section-aside">
+          <div class="jcc-text-section-aside__content">
+            <div class="jcc-card">
+
+              {% if header %}
+                {{ header }}
+              {% endif %}
+
+              {% block attachment_before %}
+                {% if attachment_before %}
+                  <div class="view__attachment view__attachment--before">
+                    {{ attachment_before }}
+                  </div>
+                {% endif %}
+              {% endblock %}
+
+              {% block content %}
+                {% if rows %}
+                  <div class="view__content">
+                    {{ rows }}
+                  </div>
+                {% endif %}
+              {% endblock %}
+
+              {% block empty %}
+                {% if empty %}
+                  <div class="view__content is-empty">
+                    {{ empty }}
+                  </div>
+                {% endif %}
+              {% endblock %}
+
+              {% block pager %}
+                {% if pager %}
+                  {{ pager }}
+                {% endif %}
+              {% endblock %}
+
+              {% block attachment_after %}
+                {% if attachment_after %}
+                  <div class="view__attachment view__attachment--after">
+                    {{ attachment_after }}
+                  </div>
+                {% endif %}
+              {% endblock %}
+
+              {% block more %}
+                {% if more %}
+                  {{ more }}
+                {% endif %}
+              {% endblock %}
+
+              {% block footer %}
+                {% if footer %}
+                  <div class="view-footer jcc-text-section-aside__container">
+                    {{ footer }}
+                  </div>
+                {% endif %}
+              {% endblock %}
+
+              {% block feed_icons %}
+                {% if feed_icons %}
+                  <div class="feed-icons">
+                    {{ feed_icons }}
+                  </div>
+                {% endif %}
+              {% endblock %}
+            </div>
+          </div>
+
+          <div class="jcc-text-section-aside__aside">
+            <div class="jcc-card">
+              <div class="jcc-card__title">
+                Latest News
+              </div>
+              <div>{{ drupal_view('news', 'block_1') }}</div>
+            </div>
+          </div>
         </div>
-      {% endif %}
+      </div>
+    </{{ tag }}>
     {% endblock %}
 
-    {% block attachment_before %}
-      {% if attachment_before %}
-        <div class="view__attachment view__attachment--before">
-          {{ attachment_before }}
-        </div>
-      {% endif %}
-    {% endblock %}
-
-    {% block content %}
-      {% if rows %}
-        <div class="view__content">
-          {{ rows }}
-        </div>
-      {% endif %}
-    {% endblock %}
-
-    {% block empty %}
-      {% if empty %}
-        <div class="view__content is-empty">
-          {{ empty }}
-        </div>
-      {% endif %}
-    {% endblock %}
-
-    {% block pager %}
-      {% if pager %}
-        {{ pager }}
-      {% endif %}
-    {% endblock %}
-
-    {% block attachment_after %}
-      {% if attachment_after %}
-        <div class="view__attachment view__attachment--after">
-          {{ attachment_after }}
-        </div>
-      {% endif %}
-    {% endblock %}
-
-    {% block more %}
-      {% if more %}
-        {{ more }}
-      {% endif %}
-    {% endblock %}
-
-    {% block footer %}
-      {% if footer %}
-        <div class="view-footer jcc-text-section-aside__container">
-          {{ footer }}
-        </div>
-      {% endif %}
-    {% endblock %}
-
-    {% block feed_icons %}
-      {% if feed_icons %}
-        <div class="feed-icons">
-          {{ feed_icons }}
-        </div>
-      {% endif %}
-    {% endblock %}
-
-  </{{ tag }}>
-{% endblock %}
