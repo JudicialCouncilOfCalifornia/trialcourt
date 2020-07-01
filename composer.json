@@ -254,7 +254,7 @@
         "code-sniff": "echo 'No code sniff defined yet.'",
         "unit-test": "echo 'No unit test step defined.'",
         "artifact-sync": [
-            "rsync -KPar --delete --force --files-from=scripts/deploy.txt ./ data/artifact/"
+            "rsync -KPar --delete --force --exclude='node_modules' --files-from=scripts/deploy.txt ./ data/artifact/"
         ]
     },
     "extra": {

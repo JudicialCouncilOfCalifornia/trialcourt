@@ -95,6 +95,10 @@ services:
 
 # Custom Lando commands
 tooling:
+  dbget:
+    description: "dbget [drush-alias]\tPull the database for alias. i.e. lando dbget @slo.live"
+    service: appserver
+    cmd: scripts/dbget.sh
   fresh:
     description: "Run all the things to get local to a fresh state for this branch. (Checkout master branch first if starting a new feature.)
       \n -h\tShow this help message.
