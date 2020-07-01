@@ -23,7 +23,9 @@
     {% endif %}
 
     {% if related_links %}
-      {% include '@jcc_base/_includes/relatedlinks.html.twig' %}
+      {% include '@jcc_base/_includes/relatedlinks.html.twig' with {
+        columns: 2
+      } %}
     {% endif %}
   {% endset %}
 {% endif %}
