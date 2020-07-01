@@ -37,21 +37,13 @@
     }]) %}
   {% endfor %}
 
-  {% if singlecolumn %}
-    {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
-      link_list: {
-        list_icons: true,
-        items: links
-      }
-    } %}
-  {% else %}
-    {% include '@molecules/blocks/link-list-simple-multicolumn/link-list-simple-multicolumn.twig' with {
-      link_list: {
-        list_icons: true,
-        items: links
-      }
-    } %}
-  {% endif %}
+  {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
+    link_list: {
+      columns: columns,
+      files_list: true,
+      items: links
+    }
+  } %}
 {% endset %}
 
 {% include '@molecules/blocks/card/card.twig' with {
