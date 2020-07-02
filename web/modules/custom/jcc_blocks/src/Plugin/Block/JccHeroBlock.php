@@ -23,12 +23,12 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
 
 
   /**
-   * @var AccountInterface $account
+   * @var \Drupal\Core\Session\AccountInterface
    */
   protected $account;
 
   /**
-   * @var ModuleHandler $moduleHandler
+   * @var \Drupal\Core\Extension\ModuleHandler
    */
   protected $moduleHandler;
 
@@ -36,8 +36,8 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
    * @param array $configuration
    * @param string $plugin_id
    * @param mixed $plugin_definition
-   * @param AccountInterface $account
-   * @param ModuleHandler $module_handler
+   * @param \Drupal\Core\Session\AccountInterface $account
+   * @param \Drupal\Core\Extension\ModuleHandler $module_handler
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, AccountInterface $account, ModuleHandler $module_handler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -46,7 +46,7 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
   }
 
   /**
-   * @param ContainerInterface $container
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
    * @param array $configuration
    * @param string $plugin_id
    * @param mixed $plugin_definition
@@ -67,8 +67,7 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
-    ] + parent::defaultConfiguration();
+    return [] + parent::defaultConfiguration();
   }
 
   /**
@@ -97,14 +96,14 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
       '#default_value' => $this->configuration['subtitle'],
       '#weight' => '0',
     ];
-    $form['background_image'] = array(
+    $form['background_image'] = [
       '#type' => 'media_library',
       '#allowed_bundles' => ['image'],
       '#title' => t('Background image'),
       '#default_value' => $this->configuration['background_image'],
       '#description' => t('Upload or select the background image.'),
       '#weight' => '0',
-    );
+    ];
     $form['featured_links'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable Featured Links'),
@@ -144,9 +143,9 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
       $contextual_links = [
         'menu' => [
           'route_parameters' => [
-            'menu' => 'featured-links'
-          ]
-        ]
+            'menu' => 'featured-links',
+          ],
+        ],
       ];
       $placeholder = [
         '#type' => 'contextual_links_placeholder',
@@ -156,13 +155,16 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
 
     $build['#hero_icon_nav']['contextual_links'] = $placeholder;
     if ($this->configuration['featured_links']) {
-      $build['#hero_icon_nav']['links'] = $this->getFeaturedLinks();
+      $build['#hero_icon_nav']['links'] = self::getFeaturedLinks();
     }
 
     return $build;
   }
 
-  public function getFeaturedLinks() {
+  /**
+   *
+   */
+  public static function getFeaturedLinks() {
     $menu_name = 'featured-links';
     $menu_tree = \Drupal::menuTree();
     $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
@@ -170,10 +172,10 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
     $parameters->onlyEnabledLinks();
 
     $tree = $menu_tree->load($menu_name, $parameters);
-    $manipulators = array(
-      array('callable' => 'menu.default_tree_manipulators:checkAccess'),
-      array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
-    );
+    $manipulators = [
+      ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+      ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+    ];
     $tree = $menu_tree->transform($tree, $manipulators);
     $links = [];
 
@@ -189,20 +191,23 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
           ['uuid' => $item->link->getDerivativeId()]
         );
       $entity = array_pop($menu_item_extra);
-      $icon = $this->getMediaUrl($entity->get('field_icon')->entity);
+      $icon = self::getMediaUrl($entity->get('field_icon')->entity);
 
-       $links[$index < 4 ? 'icons' : 'buttons'][] = [
-         'title' => $item->link->getTitle(),
-         'url' => $item->link->getUrlObject()->toString(),
-         'icon' => $index < 4 ? $icon : '',
-       ];
+      $links[$index < 4 ? 'icons' : 'buttons'][] = [
+        'title' => $item->link->getTitle(),
+        'url' => $item->link->getUrlObject()->toString(),
+        'icon' => $index < 4 ? $icon : '',
+      ];
 
-       $index++;
+      $index++;
     }
 
     return $links;
   }
 
+  /**
+   *
+   */
   public function getMediaUrl($media) {
     $background_image_url = '';
     if ($media) {
