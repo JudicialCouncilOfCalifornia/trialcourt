@@ -1,9 +1,13 @@
 <?php
 
+/**
+ * @file
+ */
+
 use Drupal\node\Entity\Node;
 
 /**
- * Implements HOOK_theme_suggestions_HOOK_alter().
+ * Implements HOOK_theme_suggestions_page_alter().
  */
 function jcc_base_theme_suggestions_page_alter(array &$suggestions, array $variables) {
   // Add a template suggestions for node type.
@@ -15,10 +19,22 @@ function jcc_base_theme_suggestions_page_alter(array &$suggestions, array $varia
 
     $suggestions[] = 'page__node__' . $node->bundle();
   }
+
+  // Get Request Object.
+  $request = \Drupal::request();
+
+  // If there is an HTTP Exception.
+  if ($exception = $request->attributes->get('exception')) {
+    // Get the status code.
+    $statusCode = $exception->getStatusCode();
+    if (in_array($statusCode, [401, 403, 404])) {
+      $suggestions[] = 'page__' . $statusCode;
+    }
+  }
 }
 
 /**
- * Implements HOOK_theme_suggestions_HOOK_alter().
+ * Implements HOOK_theme_suggestions_user_alter().
  */
 function jcc_base_theme_suggestions_user_alter(array &$suggestions, array $variables) {
   // Add a suggestion based on the view mode.
@@ -26,7 +42,7 @@ function jcc_base_theme_suggestions_user_alter(array &$suggestions, array $varia
 }
 
 /**
- * Implements HOOK_theme_suggestions_HOOK_alter().
+ * Implements HOOK_theme_suggestions_region_alter().
  */
 function jcc_base_theme_suggestions_region_alter(array &$suggestions, array $variables) {
   // Add a suggestion based on the view mode.
