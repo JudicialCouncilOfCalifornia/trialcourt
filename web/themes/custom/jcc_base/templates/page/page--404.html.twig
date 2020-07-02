@@ -55,19 +55,27 @@
   <div class="grid-container-widescreen padding-y-4 region--exposed-filters">
     <main class="usa-layout-docs__main desktop:grid-col-9 usa-prose usa-layout-docs">
       <a id="main-content" tabindex="-1"></a>
-      <div class="page__content">
+      <div class="error-page">
         <h1 class="jcc-header-group__title">404</h1>
-        <p class="jcc-header-group__body">{{ page.content }}</p>
-        <br>
-        {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
-          link_list: my_link_list
-        } %}
+        <h2 class="jcc-header-group__body">{{ page.content }}</h2>
+        <div class="featured-links">
+          <p>Here are some helpful links instead:</p>
+          {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
+            link_list: my_link_list
+          } %}
+        </div>
 
       </div>
     </main>
   </div>
 
-  {% if page.footer %}
-    {{ page.footer }}
+  {% if not node.field_hide_footer.value %}
+    {% if page.secondary_footer %}
+      {{ page.secondary_footer }}
+    {% endif %}
+
+    {% if page.footer %}
+      {{ page.footer }}
+    {% endif %}
   {% endif %}
 </div>
