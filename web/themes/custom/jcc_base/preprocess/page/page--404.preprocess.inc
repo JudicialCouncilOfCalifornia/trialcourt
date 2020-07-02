@@ -27,7 +27,6 @@ function jcc_base_preprocess_page__404(&$variables) {
   }
 
   $variables['my_link_list'] = [
-    'header' => 'Here are some helpful links instead:',
     'file_list' => FALSE,
     'items' => $links,
   ];
