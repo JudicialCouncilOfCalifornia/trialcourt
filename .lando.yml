@@ -99,6 +99,10 @@ tooling:
     description: "dbget [drush-alias]\tPull the database for alias. i.e. lando dbget @slo.live"
     service: appserver
     cmd: scripts/dbget.sh
+  feature:sync:
+    description: "Sync latest feature updates to all multisites."
+    service: appserver
+    cmd: scripts/feature_sync.sh
   fresh:
     description: "Run all the things to get local to a fresh state for this branch. (Checkout master branch first if starting a new feature.)
       \n -h\tShow this help message.
@@ -143,35 +147,35 @@ tooling:
       - drush updb -y
       - drush cim -y
       - drush cr
-  tb:
-    service: node-cli
-    description: "Theme: Build - `tb [theme_name]` Build poduction theme assets."
-    cmd:
-      - /app/scripts/theme.sh -b
-  tb:all:
-    service: node-cli
-    description: "Theme: Build All - `tb:all` Build all themes in the themes/custom directory."
-    cmd: /app/scripts/theme.sh -a
-  th:
-    service: appserver
-    description: "Help information for theme management."
-    cmd: /app/scripts/theme.sh -h
-  ti:
-    service: node-cli
-    description: "Theme: Install - `ti [theme_name]` (npm install)"
-    cmd:
-      - /app/scripts/theme.sh -i
-      - /app/scripts/theme.sh -b
-  tw:
-    service: node-cli
-    description: "Theme: Watch `tw [theme_name]`"
-    cmd:
-      - /app/scripts/theme.sh -w
-  ts:
-    service: appserver
-    description: "Theme: Sub - `ts [Theme Name]` Create subtheme from JCC Base"
-    cmd:
-      - drush --include=/app/web/themes/custom/jcc_base jcc_base:create
+  # tb:
+  #   service: node-cli
+  #   description: "Theme: Build - `tb [theme_name]` Build poduction theme assets."
+  #   cmd:
+  #     - /app/scripts/theme.sh -b
+  # tb:all:
+  #   service: node-cli
+  #   description: "Theme: Build All - `tb:all` Build all themes in the themes/custom directory."
+  #   cmd: /app/scripts/theme.sh -a
+  # th:
+  #   service: appserver
+  #   description: "Help information for theme management."
+  #   cmd: /app/scripts/theme.sh -h
+  # ti:
+  #   service: node-cli
+  #   description: "Theme: Install - `ti [theme_name]` (npm install)"
+  #   cmd:
+  #     - /app/scripts/theme.sh -i
+  #     - /app/scripts/theme.sh -b
+  # tw:
+  #   service: node-cli
+  #   description: "Theme: Watch `tw [theme_name]`"
+  #   cmd:
+  #     - /app/scripts/theme.sh -w
+  # ts:
+  #   service: appserver
+  #   description: "Theme: Sub - `ts [Theme Name]` Create subtheme from JCC Base"
+  #   cmd:
+  #     - drush --include=/app/web/themes/custom/jcc_base jcc_base:create
   # Docker is extra slow with xdebug enabled. Turn it on and off as needed without rebuilding.
   # xdebug: https://github.com/lando/lando/issues/1668#issuecomment-507191275
   xon:
