@@ -208,7 +208,7 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
   /**
    *
    */
-  public function getMediaUrl($media) {
+  public static function getMediaUrl($media) {
     $background_image_url = '';
     if ($media) {
       $background_image_media_entity = is_numeric($media) ? Media::load($media) : $media;
