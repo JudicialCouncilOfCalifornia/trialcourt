@@ -28,6 +28,8 @@ dependencies:
     - link
     - text
     - user
+_core:
+  default_config_hash: zuQGQ0-Vi4bv_6cmstmX6ZGEDssCbwAPNfL14TZWRYM
 id: node.event.search_index
 targetEntityType: node
 bundle: event
@@ -83,7 +85,7 @@ content:
     weight: 5
     label: above
     settings:
-      set_marker: '1'
+      set_marker: true
       title: '[node:title]'
       info_text:
         value: "<p><strong>[node:title]</strong></p>\r\n\r\n<p>[node:field_location]</p>\r\n"
@@ -140,7 +142,7 @@ content:
             weight: 0
             settings:
               position: topright
-              default_label: false
+              default_label: ''
               tile_layer_providers:
                 OpenStreetMap:
                   'OpenStreetMap Mapnik':
@@ -578,8 +580,8 @@ content:
               transparent: false
               identify: false
             enabled: false
-      use_overridden_map_settings: 0
-      common_map: '1'
+      use_overridden_map_settings: false
+      common_map: true
       data_provider_settings: {  }
     third_party_settings: {  }
     type: geolocation_map
