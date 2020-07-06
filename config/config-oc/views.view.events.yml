@@ -1,4 +1,4 @@
-uuid: ad7dcfc0-a8c0-4e2e-b3ca-732faa9259e1
+uuid: ac8c7e1e-2375-4dd7-8fef-fd2c7cafe312
 langcode: en
 status: true
 dependencies:
@@ -20,8 +20,6 @@ dependencies:
     - taxonomy
     - text
     - user
-_core:
-  default_config_hash: h62l2OI-QmuZRAx6mcbealQhc6o4VmMeOKZomZkvbjc
 id: events
 label: 'Events Views'
 module: views
@@ -942,15 +940,17 @@ display:
         title: false
         pager: false
       pager:
-        type: mini
+        type: full
         options:
           items_per_page: 10
           offset: 0
           id: 0
           total_pages: null
           tags:
-            previous: ‹‹
-            next: ››
+            previous: '‹ Previous'
+            next: 'Next ›'
+            first: '« First'
+            last: 'Last »'
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -959,6 +959,7 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
+          quantity: 5
       display_description: ''
     cache_metadata:
       max-age: -1
