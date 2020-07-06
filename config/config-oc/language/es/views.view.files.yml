@@ -1,5 +1,5 @@
 label: Archivos
-description: 'Buscar y administrar archivos.'
+description: 'Encontrar y administrar archivos.'
 display:
   default:
     display_title: Máster
@@ -9,8 +9,6 @@ display:
           submit_button: Filtro
           reset_button_label: Restablecer
           exposed_sorts_label: 'Ordenar por'
-          sort_asc_label: Asc
-          sort_desc_label: Desc
       pager:
         options:
           tags:
@@ -21,11 +19,8 @@ display:
             items_per_page_options_all_label: '- Todo -'
             offset_label: Desplazamiento
       fields:
-        fid:
-          label: Fid
         filename:
           label: Nombre
-          separator: ', '
         filemime:
           label: 'Tipo MIME'
         filesize:
@@ -56,7 +51,7 @@ display:
         area_text_custom:
           content: 'No hay archivos disponibles.'
   page_1:
-    display_title: 'Resumen de ficheros'
+    display_title: 'Vista general de archivos'
     display_options:
       menu:
         title: Archivos
@@ -78,7 +73,7 @@ display:
         type:
           label: 'Tipo de entidad'
         module:
-          label: 'Módulo de registro'
+          label: 'Registrando módulo'
         count:
           label: 'Conteo de usos'
       title: 'Usos del archivo'
@@ -86,4 +81,4 @@ display:
         fid:
           exception:
             title: Todo(s)
-          title: 'Información de uso de archivos para {{ arguments.fid }}'
+          title: 'Información de uso del fichero para {{ arguments.fid }}'
