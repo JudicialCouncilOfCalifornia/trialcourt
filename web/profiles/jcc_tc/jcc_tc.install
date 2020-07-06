@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Installation items for jcc_tc profile.
+ */
+
+/**
+ * Install profile modules.
+ *
+ * These need profile install to be complete and features to be enabled.
+ */
+function jcc_tc_install() {
+  $module_list = [
+    'jcc_tc_announcement',
+    'jcc_tc_block_paragraph_',
+    'jcc_tc_book',
+    'jcc_tc_content_moderation',
+    'jcc_tc_content_paragraph_',
+    'jcc_tc_document',
+    'jcc_tc_event',
+    'jcc_tc_faq',
+    'jcc_tc_field_storage',
+    'jcc_tc_job',
+    'jcc_tc_landing_page',
+    'jcc_tc_location',
+    'jcc_tc_news',
+    'jcc_tc_page',
+    'jcc_tc_taxonomy_base',
+  ];
+  \Drupal::service('module_installer')->install($module_list);
+}

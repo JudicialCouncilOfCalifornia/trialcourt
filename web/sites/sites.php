@@ -1,6 +1,10 @@
 <?php
 
-// Develop.
+/**
+ * @file
+ * Develop.
+ */
+
 $sites['develop-jcc-tc.pantheonsite.io'] = 'slo';
 $sites['develop-jcc-oc.pantheonsite.io'] = 'oc';
 $sites['develop-jcc-napa.pantheonsite.io'] = 'napa';
@@ -32,7 +36,6 @@ $sites['dev-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['test-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['live-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 // $sites['live url'] = 'newsroom';
-
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
 // sites.local.php next to this file. It will be ignored by git.
@@ -47,5 +50,3 @@ $sites['slo.lndo.site'] = 'slo';
 $sites['oc.lndo.site'] = 'oc';
 $sites['napa.lndo.site'] = 'napa';
 $sites['newsroom.lndo.site'] = 'newsroom';
-$sites['oc.lndo.site'] = 'oc';
-$sites['napa.lndo.site'] = 'napa';
