@@ -142,40 +142,40 @@ tooling:
     cmd: /app/vendor/bin/phpmd
   reset:
     service: appserver
-    description: "Runs updb, cr, cim, uli \n Reset your local after a build or db install."
+    description: "lando reset -l [alias]\tRuns updb, cr, cim, uli \n Reset your local after a build or db install."
     cmd:
       - drush updb -y
       - drush cim -y
       - drush cr
-  # tb:
-  #   service: node-cli
-  #   description: "Theme: Build - `tb [theme_name]` Build poduction theme assets."
-  #   cmd:
-  #     - /app/scripts/theme.sh -b
-  # tb:all:
-  #   service: node-cli
-  #   description: "Theme: Build All - `tb:all` Build all themes in the themes/custom directory."
-  #   cmd: /app/scripts/theme.sh -a
-  # th:
-  #   service: appserver
-  #   description: "Help information for theme management."
-  #   cmd: /app/scripts/theme.sh -h
-  # ti:
-  #   service: node-cli
-  #   description: "Theme: Install - `ti [theme_name]` (npm install)"
-  #   cmd:
-  #     - /app/scripts/theme.sh -i
-  #     - /app/scripts/theme.sh -b
-  # tw:
-  #   service: node-cli
-  #   description: "Theme: Watch `tw [theme_name]`"
-  #   cmd:
-  #     - /app/scripts/theme.sh -w
-  # ts:
-  #   service: appserver
-  #   description: "Theme: Sub - `ts [Theme Name]` Create subtheme from JCC Base"
-  #   cmd:
-  #     - drush --include=/app/web/themes/custom/jcc_base jcc_base:create
+  tb:
+    service: node-cli
+    description: "Theme: Build - `tb [theme_name]` Build poduction theme assets."
+    cmd:
+      - /app/scripts/theme.sh -b
+  tb:all:
+    service: node-cli
+    description: "Theme: Build All - `tb:all` Build all themes in the themes/custom directory."
+    cmd: /app/scripts/theme.sh -a
+  th:
+    service: appserver
+    description: "Help information for theme management."
+    cmd: /app/scripts/theme.sh -h
+  ti:
+    service: node-cli
+    description: "Theme: Install - `ti [theme_name]` (npm install)"
+    cmd:
+      - /app/scripts/theme.sh -i
+      - /app/scripts/theme.sh -b
+  tw:
+    service: node-cli
+    description: "Theme: Watch `tw [theme_name]`"
+    cmd:
+      - /app/scripts/theme.sh -w
+  ts:
+    service: appserver
+    description: "Theme: Sub - `ts [Theme Name]` Create subtheme from JCC Base"
+    cmd:
+      - drush --include=/app/web/themes/custom/jcc_base jcc_base:create
   # Docker is extra slow with xdebug enabled. Turn it on and off as needed without rebuilding.
   # xdebug: https://github.com/lando/lando/issues/1668#issuecomment-507191275
   xon:
