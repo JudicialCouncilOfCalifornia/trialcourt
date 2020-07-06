@@ -36,11 +36,11 @@ else
   done
 
   for SITE in ${SUB_SITES[@]} ; do
-    drush @local.$TARGET_SITE cr
+    drush $SITE cr
     echo -e "\nUpdating $SITE..."
     drush $SITE fra -y --bundle=jcc_tc
     echo -e "\nExporting config for $SITE..."
     drush $SITE cex -y
-    drush @local.$TARGET_SITE cr
+    drush $SITE cr
   done
 fi
