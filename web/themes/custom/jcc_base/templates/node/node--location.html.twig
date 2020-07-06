@@ -89,12 +89,65 @@
       {% endif %}
     {% endset %}
 
+    {% set address %}
+      <div class="address">
+        {{ content.field_location.0.address_line1 }},
+        {% if content.field_location.0.address_line2|striptags %}
+          {{ content.field_location.0.address_line2 }},
+        {% endif %}
+        {{ content.field_location.0.locality }}, {{ content.field_location.0.administrative_area }}
+        {{ content.field_location.0.postal_code }}
+      </div>
+
+      <div class="grid-row">
+        {% if content.field_office_hours|striptags %}
+          <div class="office_hours grid-col-3">
+            <p>Office Hours</p>
+            {{ content.field_office_hours|children }}
+          </div>
+        {% endif %}
+
+        {% if content.field_phone  %}
+          <div class="phone grid-col-3">
+            {{ content.field_phone }}
+          </div>
+        {% endif %}
+
+        {% if content.field_phone_hours|striptags %}
+          <div class="phone_hours grid-col-3">
+            <p>Phone Hours</p>
+            {{ content.field_phone_hours|children }}
+          </div>
+        {% endif %}
+      </div>
+    {% endset %}
+
     {% include '@jcc_base/_includes/section-hero.html.twig' with {
       brow: location_type,
-      title: label
+      title: label,
+      body: address
     } %}
 
-    {% set body %}
+    {% set mainLocationInfo %}
+      <div class="map">
+        {% include '@molecules/interactive/map/map.twig' with {
+          map: {
+            full: true,
+            content: content.field_geolocation
+          }
+        } %}
+      </div>
+      {% if content.field_mailing_address.0.address_line1|striptags %}
+        <div class="mailing_address">
+          <p>Mailing Address</p>
+          {{ content.field_mailing_address.0.address_line1 }},
+          {% if content.field_mailing_address.0.address_line2|striptags %}
+            {{ content.field_mailing_address.0.address_line2 }}
+          {% endif %}
+          {{ content.field_mailing_address.0.locality }}, {{ content.field_mailing_address.0.administrative_area }}
+          {{ content.field_mailing_address.0.postal_code }}
+        </div>
+      {% endif %}
       <div class="body">
         {{ content.body.0 }}
       </div>
@@ -103,52 +156,8 @@
     {% include '@organisms/sections/text-section-location/text-section-location.twig' with {
       text_section_location: {
         column_content_left: {
-          body: body,
+          body: mainLocationInfo
         },
-        column_content_right: {
-          map: content.field_geolocation,
-          address: {
-            inline: false,
-            street: content.field_location.0.address_line1,
-            street2: content.field_location.0.address_line2,
-            locality: content.field_location.0.locality,
-            administrative_area: content.field_location.0.administrative_area,
-            postal_code: content.field_location.0.postal_code,
-            country: content.field_location.0.country_code,
-          },
-          office_hours: {
-            title: {
-              tag: "h6",
-              title: "Office Hours",
-            },
-            content: content.field_office_hours ? content.field_office_hours|children,
-          },
-          mailing_address: {
-            title: {
-              title: "Mailing Address",
-              tag: "h6",
-            },
-            inline: false,
-            street: content.field_mailing_address.0.address_line1,
-            street2: content.field_mailing_address.0.address_line2,
-            locality: content.field_mailing_address.0.locality,
-            administrative_area: content.field_mailing_address.0.administrative_area,
-            postal_code: content.field_mailing_address.0.postal_code,
-            country: content.field_mailing_address.0.country_code,
-          },
-          phone: {
-            tag: "h6",
-            title: "Phone",
-            content: content.field_phone ? content.field_phone|children,
-          },
-          phone_hours: {
-            title: {
-              tag: "h6",
-              title: "Phone Hours",
-            },
-            content: content.field_phone_hours ? content.field_phone_hours|children,
-          }
-        }
       }
     } only %}
 
