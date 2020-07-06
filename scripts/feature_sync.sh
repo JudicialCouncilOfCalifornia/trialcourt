@@ -23,7 +23,7 @@ drush $SOURCE_SITE fu -y --bundle=jcc_tc
 if [ "$TARGET_SITE" ] ; then
   echo -e "${G}\nImporting feature changes to $TARGET_SITE${RE}"
   drush @local.$TARGET_SITE fra -y --bundle=jcc_tc
-  echo -e "\nExporting config for @local.$T{ARGET_SITE}..."
+  echo -e "\nExporting config for @local.${TARGET_SITE}..."
   drush @local.$TARGET_SITE cex -y
 else
   echo -e "\n${G}Importing feature changes to all subsites.${RE}"
