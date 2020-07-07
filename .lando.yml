@@ -99,10 +99,18 @@ tooling:
     description: "dbget [drush-alias]\tPull the database for alias. i.e. lando dbget @slo.live"
     service: appserver
     cmd: scripts/dbget.sh
-  feature:sync:
-    description: "Sync latest feature updates to all multisites."
+  feature:docs:
+    description: "Show documentation for managing features on this project. FEATURES.md"
     service: appserver
-    cmd: scripts/feature_sync.sh
+    cmd: clear && scripts/feature_sync.sh docs
+  feature:enable:
+    description: "lando feature:enable [module]\t\t\tEnable a new feature on all multisites."
+    service: appserver
+    cmd: scripts/feature_sync.sh enable
+  feature:sync:
+    description: "lando feature:sync [site code (oc)]\tSync latest feature updates to all multisites."
+    service: appserver
+    cmd: scripts/feature_sync.sh sync
   fresh:
     description: "Run all the things to get local to a fresh state for this branch. (Checkout master branch first if starting a new feature.)
       \n -h\tShow this help message.
