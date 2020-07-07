@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Sites routing map.
+ */
+
 // Develop.
 $sites['develop-jcc-tc.pantheonsite.io'] = 'slo';
 $sites['develop-jcc-oc.pantheonsite.io'] = 'oc';
@@ -31,13 +36,13 @@ $sites['www.napa.courts.ca.gov'] = 'napa';
 $sites['dev-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['test-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['live-jcc-newsroom.pantheonsite.io'] = 'newsroom';
-// $sites['live url'] = 'newsroom';
+$sites['live_url_goes_here'] = 'newsroom';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
 // sites.local.php next to this file. It will be ignored by git.
-if (file_exists($app_root . '/sites/sites.local.php')) {
-  include $app_root . '/sites/sites.local.php';
+if (file_exists('./sites/sites.local.php')) {
+  include './sites/sites.local.php';
 }
 
 // Local using Lando.
@@ -47,5 +52,3 @@ $sites['slo.lndo.site'] = 'slo';
 $sites['oc.lndo.site'] = 'oc';
 $sites['napa.lndo.site'] = 'napa';
 $sites['newsroom.lndo.site'] = 'newsroom';
-$sites['oc.lndo.site'] = 'oc';
-$sites['napa.lndo.site'] = 'napa';

@@ -12,6 +12,12 @@ If you have a `config/config-local` you should rename that to `config/config-def
 
 The pattern will be `sites/[sitecode]` and `config/config-[sitecode]` where `[sitecode]` is a short abbreviation for the court. i.e. `slo`
 
+
+## Features
+
+This project uses Features module to share configuration across multisites, and with the installation profile. For detailed information about creating, managing and deploying features, please see the [FEATURES.md](FEATURES.md).
+
+
 ## Lando Changes
 
 Lando will have a proxy and a database service for each multisite, including default. It will require a `lando rebuild` to activate, each time a proxy and datbase service are added.  See `proxy` and `services` in the `.lando.yml` file for examples.
