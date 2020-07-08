@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Theme and preprocess functions for blocks.
@@ -10,18 +11,19 @@
 function jcc_base_preprocess_block__views_block__news_filterable_block_1(&$variables) {
   $header_title = empty($variables['elements']['#configuration']['views_label']) ? $variables['elements']['content']['#title']['#markup'] : $variables['elements']['#configuration']['views_label'];
 
-  $cards = array();
+  $cards = [];
   $excerpt = '';
   $rows = $variables['elements']['content']['#view']->result;
-  $read_more_text= isset($variables['elements']['content']['#view']->field['view_node']->last_render_text) ? $variables['elements']['content']['#view']->field['view_node']->last_render_text : "";
+  $read_more_text = isset($variables['elements']['content']['#view']->field['view_node']->last_render_text) ? $variables['elements']['content']['#view']->field['view_node']->last_render_text : "";
 
   foreach ($rows as $row) {
     $brow = date("M j, Y", $row->_entity->created->value);
     $title = $row->_entity->title->value;
-    if ($row->_entity->body->value != null) {
+    if ($row->_entity->body->value != NULL) {
       $excerpt = substr(strip_tags($row->_entity->body->value), 0, 200);
-    } else {
-      if ($row->_entity->field_attachments != null) {
+    }
+    else {
+      if ($row->_entity->field_attachments != NULL) {
         $excerpt = $row->_entity->field_attachments->entity->getName();
       }
     }
@@ -34,22 +36,23 @@ function jcc_base_preprocess_block__views_block__news_filterable_block_1(&$varia
       'url' => $url,
       'read_more' => [
         'label' => $read_more_text,
-        'url' => $url
-      ]
+        'url' => $url,
+      ],
     ];
     array_push($cards, $recent_news_card);
   }
 
-  if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == true) {
+  if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == TRUE) {
     $button_text = $variables['elements']['content']['#view']->display_handler->display['display_options']['use_more_text'];
     $button_url = '/news';
 
     $button = [
       'text' => $button_text,
       'url' => $button_url,
-      'style' => 'primary'
+      'style' => 'primary',
     ];
-  } else {
+  }
+  else {
     $button = [];
   }
 
@@ -58,6 +61,6 @@ function jcc_base_preprocess_block__views_block__news_filterable_block_1(&$varia
       'title' => htmlspecialchars_decode($header_title),
     ],
     'cards' => $cards,
-    'button' => $button
+    'button' => $button,
   ];
 }

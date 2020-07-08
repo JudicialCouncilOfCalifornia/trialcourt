@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Contains Drush hooks.
@@ -10,24 +11,24 @@ use Drupal\Component\Utility\UrlHelper;
  * Implements hook_drush_command().
  */
 function jcc_base_drush_command() {
-  $items = array();
+  $items = [];
 
-  $items['jcc_base'] = array(
+  $items['jcc_base'] = [
     'description' => 'Create a JCCBase subtheme.',
-    'arguments' => array(
+    'arguments' => [
       'name'         => 'The name of your subtheme.',
-    ),
-    'options' => array(
+    ],
+    'options' => [
       'machine_name' => 'The machine-readable name of your subtheme. This will be auto-generated from the human-readable name if ommited.',
       'description' => 'The description of your subtheme',
       'destination' => 'The destination of your subtheme. Defaults to "./themes".',
       'kit' => 'The name or url of the starter kit to use. Defaults to "default".',
-    ),
-    'examples' => array(
+    ],
+    'examples' => [
       'drush jcc_base "My Theme"' => 'Creates a JCCBase subtheme called "My Theme", using the default options.',
       'drush jcc_base "My Theme" --machine_name=my_theme' => 'Creates a JCCBase subtheme called "My Theme" with a specific machine name.',
-    ),
-  );
+    ],
+  ];
 
   return $items;
 }
@@ -39,7 +40,7 @@ function jcc_base_drush_help($section) {
   switch ($section) {
     case 'drush:jcc_base':
       return dt('This command will create a JCCBase subtheme. See examples to get started.');
-    break;
+
   }
 }
 
@@ -67,10 +68,12 @@ function drush_jcc_base($name = NULL, $machine_name = NULL) {
     $machine_name = $name;
   }
   $machine_name = str_replace(' ', '_', strtolower($machine_name));
-  $search = array(
-    '/[^a-z0-9_]/', // Remove characters not valid in function names.
-    '/^[^a-z]+/',   // Functions must begin with an alpha character.
-  );
+  $search = [
+  // Remove characters not valid in function names.
+    '/[^a-z0-9_]/',
+  // Functions must begin with an alpha character.
+    '/^[^a-z]+/',
+  ];
   $machine_name = preg_replace($search, '', $machine_name);
 
   // Description of subtheme.
@@ -103,10 +106,10 @@ function drush_jcc_base($name = NULL, $machine_name = NULL) {
     $current_dir = getcwd();
     chdir(drush_tempdir());
 
-    drush_print(dt('Downloading @kit_name from @kit_url...', array(
+    drush_print(dt('Downloading @kit_name from @kit_url...', [
       '@kit_name' => (!empty($kit_name)) ? $kit_name . ' kit' : $kit_name,
       '@kit_url' => $kit_url,
-    )));
+    ]));
     if ($filepath = drush_download_file($kit_url)) {
       $filename = basename($filepath);
 
@@ -124,26 +127,27 @@ function drush_jcc_base($name = NULL, $machine_name = NULL) {
   }
 
   if (!is_dir(dirname($subtheme_path))) {
-    drush_die(dt('The directory "!directory" was not found.', array('!directory' => dirname($subtheme_path))));
+    drush_die(dt('The directory "!directory" was not found.', ['!directory' => dirname($subtheme_path)]));
   }
   drush_op('drush_copy_dir', $kit_path, $subtheme_path);
 
   // Alter the contents of the .info file based on the command options.
-  $alterations = array(
+  $alterations = [
     'JCC_BASE_SUBTHEME_NAME' => $name,
     'JCC_BASE_SUBTHEME_DESCRIPTION' => $description,
     'JCC_BASE_SUBTHEME_MACHINE_NAME' => $machine_name,
     'hidden: true' => '',
-  );
+  ];
 
-  // Replace all occurrences of '{{machine_name}}' with the machine name of our sub theme.
+  // Replace all occurrences of '{{machine_name}}' with the machine name of
+  // our sub theme.
   $files_to_replace = jcc_base_get_files_to_make_replacements($kit);
   foreach ($files_to_replace as $file_to_replace) {
     drush_op('jcc_base_file_str_replace', $subtheme_path . '/' . $file_to_replace, array_keys($alterations), $alterations);
   }
 
   // Rename files.
-  $files_to_rename = array(
+  $files_to_rename = [
     '{{kit}}.info.yml',
     '{{kit}}.libraries.yml',
     '{{kit}}.breakpoints.yml',
@@ -151,7 +155,7 @@ function drush_jcc_base($name = NULL, $machine_name = NULL) {
     'config/schema/{{kit}}.schema.yml',
     'src/sass/{{kit}}.style.scss',
     'src/js/{{kit}}.script.js',
-  );
+  ];
   foreach ($files_to_rename as $file_to_rename_path) {
     $file_original_path = $subtheme_path . '/' . str_replace('{{kit}}', $kit, $file_to_rename_path);
     $file_new_path = $subtheme_path . '/' . str_replace('{{kit}}', $machine_name, $file_to_rename_path);
@@ -161,11 +165,11 @@ function drush_jcc_base($name = NULL, $machine_name = NULL) {
   // Notify user of the newly created theme.
   $message = 'Successfully created the JCCBase subtheme "!name" in "!path" using the "!kit" kit';
 
-  $message = dt($message . '.', array(
+  $message = dt($message . '.', [
     '!name' => $name,
     '!path' => $subtheme_path,
     '!kit' => $kit,
-  ));
+  ]);
   drush_print($message);
 }
 
@@ -183,7 +187,7 @@ function jcc_base_file_str_replace($file_path, $find, $replace) {
  * Returns an array of files to make string replacements.
  */
 function jcc_base_get_files_to_make_replacements($kit = 'default') {
-  return array(
+  return [
     $kit . '.info.yml',
     $kit . '.libraries.yml',
     $kit . '.theme',
@@ -193,5 +197,5 @@ function jcc_base_get_files_to_make_replacements($kit = 'default') {
     'README.md',
     'templates/content/node.html.twig',
     'config/schema/' . $kit . '.schema.yml',
-  );
+  ];
 }

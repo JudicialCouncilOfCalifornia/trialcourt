@@ -5,7 +5,6 @@
  * Utility code related to paragraphs.
  */
 
-use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\image\Entity\ImageStyle;
 
 /**

@@ -5,60 +5,58 @@
  * Theme and preprocess functions for region.
  */
 
-use Drupal\Core\Link;
-use Drupal\Core\Render\Markup;
+use Drupal\menu_item_extras\Service\MenuLinkTreeHandler;
 
 /**
  * Implements hook_preprocess_HOOK().
  */
 function jcc_base_preprocess_region__header(&$variables) {
-  // Get theme logo from appearance setting
+  // Get theme logo from appearance setting.
   $theme_logo = theme_get_setting('logo.url');
   // BEGIN Get basic site settings (e.g. site name for logo alt)
   $config = \Drupal::config('system.site');
   $site_name = $config->get('name');
-  // END
-
+  // END.
   $variables['header'] = [
     'mobile' => [
       'globe' => [
         'name' => 'globe',
         'title' => (string) t('Translate'),
-        'decorative' => TRUE
+        'decorative' => TRUE,
       ],
       'search' => [
         'name' => 'search',
         'title' => (string) t('Search'),
-        'decorative' => TRUE
+        'decorative' => TRUE,
       ],
       'logo' => [
         'src' => $theme_logo,
         'alt' => $site_name . ' logo',
-        'renderer' => 'patternlab'
-      ]
+        'renderer' => 'patternlab',
+      ],
     ],
     'header_topbar' => [
       'logo' => [
         'src' => $theme_logo,
         'alt' => $site_name . ' logo',
-        'renderer' => 'patternlab'
+        'renderer' => 'patternlab',
       ],
       'search' => [
         'form_action' => '/search',
         'search_input' => [
           'form_input_name' => 'keywords',
           'placeholder' => \Drupal::request()->query->get('keywords') ?: 'Search',
-        ]
+        ],
       ],
       'dropbutton' => [
         'icon' => [
           'name' => "globe-2",
           'title' => "Translate",
-          'decorative' => TRUE
+          'decorative' => TRUE,
         ],
         'label' => "Translate",
-      ]
-    ]
+      ],
+    ],
   ];
 
   $variables['header']['header_topbar']['dropbutton']['links'] = jcc_base_translation_menu();
@@ -70,10 +68,10 @@ function jcc_base_preprocess_region__header(&$variables) {
   $parameters->onlyEnabledLinks();
 
   $tree = $menu_tree->load($menu_name, $parameters);
-  $manipulators = array(
-    array('callable' => 'menu.default_tree_manipulators:checkAccess'),
-    array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
-  );
+  $manipulators = [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ];
   $tree = $menu_tree->transform($tree, $manipulators);
   $main_nav = $menu_tree->build($tree);
 
@@ -88,9 +86,9 @@ function jcc_base_preprocess_region__header(&$variables) {
       $contextual_links = [
         'menu' => [
           'route_parameters' => [
-            'menu' => $menu_name
-          ]
-        ]
+            'menu' => $menu_name,
+          ],
+        ],
       ];
       $variables['header']['primary_nav']['contextual_links'] = [
         '#type' => 'contextual_links_placeholder',
@@ -133,7 +131,7 @@ function jcc_base_translation_menu() {
 
     $links[] = [
       'title' => $language->getName(),
-      'href' => "$host$langcode$current_path"
+      'href' => "$host$langcode$current_path",
     ];
   }
 
@@ -143,16 +141,16 @@ function jcc_base_translation_menu() {
 /**
  * Recursive function to map menu to component array format.
  *
- * @param  array $original_items
+ * @param array $original_items
  *   The top level links for the menu.
- * @param  MenuLinkTreeHandler $menu_link_tree_handler
+ * @param Drupal\menu_item_extras\Service\MenuLinkTreeHandler $menu_link_tree_handler
  *   Service for loading additional link field data.
  *
  * @return array
  *   Array formetted for assocaited pattern lab components.
  */
-function jcc_base_mainnavigation_build($original_items, $menu_link_tree_handler) {
-  foreach($original_items as $original_item) {
+function jcc_base_mainnavigation_build(array $original_items, MenuLinkTreeHandler $menu_link_tree_handler) {
+  foreach ($original_items as $original_item) {
     $entity = $menu_link_tree_handler->getMenuLinkItemEntity($original_item['original_link']);
     $item = [
       'name' => $original_item['title'],
