@@ -5,8 +5,10 @@ dependencies:
   config:
     - facets.facet.topics
     - field.field.node.news.body
+    - field.field.node.news.feeds_item
     - field.field.node.news.field_attachments
     - field.field.node.news.field_division
+    - field.field.node.news.field_feed_uid
     - field.field.node.news.field_links
     - field.field.node.news.field_metatag
     - field.field.node.news.field_news_type
@@ -100,6 +102,8 @@ content:
     type: entity_reference_facet_link
     region: content
 hidden:
+  feeds_item: true
+  field_feed_uid: true
   langcode: true
   links: true
   search_api_excerpt: true
