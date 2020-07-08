@@ -5,6 +5,12 @@
  * Sites routing map.
  */
 
+// Test epic-feat.
+$sites['epic-feat-jcc-tc.pantheonsite.io'] = 'slo';
+$sites['epic-feat-jcc-oc.pantheonsite.io'] = 'oc';
+$sites['epic-feat-jcc-napa.pantheonsite.io'] = 'napa';
+$sites['epic-feat-jcc-newsroom.pantheonsite.io'] = 'newsroom';
+
 // Develop.
 $sites['develop-jcc-tc.pantheonsite.io'] = 'slo';
 $sites['develop-jcc-oc.pantheonsite.io'] = 'oc';
