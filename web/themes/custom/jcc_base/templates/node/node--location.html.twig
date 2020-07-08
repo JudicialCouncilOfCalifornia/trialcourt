@@ -92,7 +92,7 @@
     {% set address %}
       <div class="address">
         {{ content.field_location.0.address_line1 }},
-        {% if content.field_location.0.address_line2|render|striptags == ' ' %}
+        {% if content.field_location.0.address_line2|render|spaceless|striptags %}
           {{ content.field_location.0.address_line2 }},
         {% endif %}
         {{ content.field_location.0.locality }}, {{ content.field_location.0.administrative_area }}
@@ -137,15 +137,12 @@
     </div>
 
     {% set mainLocationInfo %}
-      {% if content.field_mailing_address.0.address_line1|render|striptags == ' ' %}
+      {% if content.field_mailing_address.0.address_line1|render|spaceless|striptags %}
         <div class="mailing_address">
           <p>Mailing Address</p>
-          {{ content.field_mailing_address.0.address_line1 }},
-          {% if content.field_mailing_address.0.address_line2|render|striptags == ' ' %}
-            {{ content.field_mailing_address.0.address_line2 }}
-          {% endif %}
-          {{ content.field_mailing_address.0.locality }}, {{ content.field_mailing_address.0.administrative_area }}
-          {{ content.field_mailing_address.0.postal_code }}
+              {{ content.field_mailing_address.0.address_line1 }},
+              {{ content.field_mailing_address.0.locality }}, {{ content.field_mailing_address.0.administrative_area }}
+              {{ content.field_mailing_address.0.postal_code }}
         </div>
       {% endif %}
       <div class="body">
