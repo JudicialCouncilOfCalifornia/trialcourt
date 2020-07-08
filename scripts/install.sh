@@ -97,7 +97,7 @@ fi
 
 if [ -f /app/config/config-${NEW}/locale.settings.yml ] ; then
   echo -e "\nUpdating locale.settings."
-  sed -i "s/sites\/default\/files/sites\/default\/files\/${NEW}/g" /app/config/config-${NEW}/locale.settings.yml
+  sed -i "s/sites\/default\/files\/default/sites\/default\/files\/${NEW}/g" /app/config/config-${NEW}/locale.settings.yml
 fi
 
 drush uli -l ${NEW}.lndo.site --druplicon
