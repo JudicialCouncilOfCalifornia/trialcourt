@@ -100,25 +100,25 @@
       </div>
 
       <div class="grid-row">
-          <div class="office_hours grid-col-3">
-            <p>Office Hours</p>
-            {% if content.field_office_hours|render|striptags %}
-              {{ content.field_office_hours|children }}
-            {% endif %}
-          </div>
+        <div class="office_hours grid-col-3">
+          <p>Office Hours</p>
+          {% if content.field_office_hours|render|striptags %}
+            {{ content.field_office_hours|children }}
+          {% endif %}
+        </div>
 
-          <div class="phone grid-col-3">
-            {% if content.field_phone  %}
-              {{ content.field_phone }}
-            {% endif %}
-          </div>
+        <div class="phone grid-col-3">
+          {% if content.field_phone  %}
+            {{ content.field_phone }}
+          {% endif %}
+        </div>
 
-          <div class="phone_hours grid-col-3">
-            <p>Phone Hours</p>
-            {% if content.field_phone_hours|render|striptags %}
-              {{ content.field_phone_hours|children }}
-            {% endif %}
-          </div>
+        <div class="phone_hours grid-col-3">
+          <p>Phone Hours</p>
+          {% if content.field_phone_hours|render|striptags %}
+            {{ content.field_phone_hours|children }}
+          {% endif %}
+        </div>
       </div>
     {% endset %}
 
@@ -138,13 +138,14 @@
 
     {% set mainLocationInfo %}
       {% if content.field_mailing_address.0.address_line1|render|spaceless|striptags %}
-        <div class="mailing_address">
+        <div class="mailing_address margin-bottom-3">
           <p>Mailing Address</p>
-              {{ content.field_mailing_address.0.address_line1 }},
-              {{ content.field_mailing_address.0.locality }}, {{ content.field_mailing_address.0.administrative_area }}
-              {{ content.field_mailing_address.0.postal_code }}
+          {{ content.field_mailing_address.0.address_line1 }},
+          {{ content.field_mailing_address.0.locality }}, {{ content.field_mailing_address.0.administrative_area }}
+          {{ content.field_mailing_address.0.postal_code }}
         </div>
       {% endif %}
+
       <div class="body">
         {{ content.body.0 }}
       </div>
