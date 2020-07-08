@@ -28,8 +28,6 @@ dependencies:
     - telephone
     - text
     - user
-_core:
-  default_config_hash: 4HmM4S01jcEMZxRQhmE5CvpiarDrW6_aYrxPRZFc6_I
 id: node.location.default
 targetEntityType: node
 bundle: location
@@ -54,7 +52,7 @@ content:
     weight: 112
     label: above
     settings:
-      set_marker: true
+      set_marker: '1'
       title: '[node:title]'
       info_text:
         value: "<p><strong>[node:title]</strong></p>\r\n\r\n<p>[node:field_location]</p>\r\n"
@@ -111,7 +109,7 @@ content:
             weight: 0
             settings:
               position: topright
-              default_label: ''
+              default_label: false
               tile_layer_providers:
                 OpenStreetMap:
                   'OpenStreetMap Mapnik':
@@ -549,8 +547,8 @@ content:
               transparent: false
               identify: false
             enabled: false
-      use_overridden_map_settings: false
-      common_map: true
+      use_overridden_map_settings: 0
+      common_map: '1'
       data_provider_settings: {  }
     third_party_settings: {  }
     type: geolocation_map
