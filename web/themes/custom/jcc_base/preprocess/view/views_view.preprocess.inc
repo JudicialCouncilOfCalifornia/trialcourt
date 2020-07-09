@@ -1,25 +1,30 @@
 <?php
 
 /**
+ * @file
+ * Preprocessors for views.
+ */
+
+/**
  * Implements hook_preprocess_HOOK().
  */
 function jcc_base_preprocess_views_view(&$variables) {
   $view = $variables['view'];
-  switch($view->id()) {
+  switch ($view->id()) {
     case 'location':
       if ($view->current_display == 'block') {
         $moduleHandler = Drupal::service('module_handler');
         $user = Drupal::currentUser();
 
-        foreach($view->result as $row) {
+        foreach ($view->result as $row) {
           $placeholder = FALSE;
           if ($moduleHandler->moduleExists('contextual') && $user->hasPermission('access contextual links')) {
             $contextual_links = [
               'node' => [
                 'route_parameters' => [
-                  'node' => $row->_entity->id()
-                ]
-              ]
+                  'node' => $row->_entity->id(),
+                ],
+              ],
             ];
             $placeholder = [
               '#type' => 'contextual_links_placeholder',
@@ -46,10 +51,10 @@ function jcc_base_preprocess_views_view(&$variables) {
     case 'faq':
       if ($view->current_display == 'block') {
         $groups = [];
-        foreach($view->result as $row) {
+        foreach ($view->result as $row) {
           $entity = $row->_entity;
           $subject_matter = !empty($entity->field_subject_matter) ? $entity->field_subject_matter->referencedEntities() : [];
-          foreach($subject_matter as $term) {
+          foreach ($subject_matter as $term) {
             $groups[$term->getName()]['items'][] = [
               'title' => $entity->getTitle(),
               'body' => $entity->body->view(),
@@ -74,7 +79,7 @@ function jcc_base_preprocess_views_view_unformatted__faq__block(&$variables) {
     $variables['accordion']['expand_first'] = 0;
     $variables['accordion']['items'][] = [
       'title' => $row['content']['#row']->_entity->getTitle(),
-      'body' => $content
+      'body' => $content,
     ];
   }
 }

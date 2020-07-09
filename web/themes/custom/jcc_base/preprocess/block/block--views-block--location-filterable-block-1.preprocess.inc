@@ -1,24 +1,24 @@
 <?php
+
 /**
  * @file
  * Theme and preprocess functions for blocks.
  */
+
 /**
  * Implements hook_preprocess_HOOK().
  */
 function jcc_base_preprocess_block__views_block__location_filterable_block_1(&$variables) {
   $header_title = empty($variables['elements']['#configuration']['views_label']) ? $variables['elements']['content']['#title']['#markup'] : $variables['elements']['#configuration']['views_label'];
 
-  $cards = array();
+  $cards = [];
   $rows = $variables['elements']['content']['#view']->result;
 
   foreach ($rows as $row) {
-    /** $title = $row->_entity->title->value; */
-
     $location = !empty($row->_entity->field_location) ? $row->_entity->field_location->first() : NULL;
     $location->view([
       'type' => '#markup',
-      'label' => 'hidden'
+      'label' => 'hidden',
     ]);
 
     $address = \Drupal::service('renderer')->renderRoot($location->view('default'));
@@ -28,8 +28,7 @@ function jcc_base_preprocess_block__views_block__location_filterable_block_1(&$v
     $excerpt = t($address . $office_hours . $phone . $phone_hours);
 
     $location_card = [
-      /** 'title' => $title, */
-      'excerpt' => $excerpt
+      'excerpt' => $excerpt,
     ];
     array_push($cards, $location_card);
   }
@@ -41,18 +40,18 @@ function jcc_base_preprocess_block__views_block__location_filterable_block_1(&$v
   ];
 
   array_push($cards, $location_card);
-  /** end placeholder card */
 
-  if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == true) {
+  if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == TRUE) {
     $button_text = $variables['elements']['content']['#view']->display_handler->display['display_options']['use_more_text'];
     $button_url = $variables['elements']['content']['#view']->display_handler->display['display_options']['link_url'];
 
     $button = [
       'text' => $button_text,
       'url' => $button_url,
-      'style' => 'primary'
+      'style' => 'primary',
     ];
-  } else {
+  }
+  else {
     $button = [];
   }
 
@@ -63,6 +62,6 @@ function jcc_base_preprocess_block__views_block__location_filterable_block_1(&$v
     'background_variant' => 'has-background-color--light--secondary',
     'column_variant' => 'has-three-columns',
     'cards' => $cards,
-    'button' => $button
+    'button' => $button,
   ];
 }

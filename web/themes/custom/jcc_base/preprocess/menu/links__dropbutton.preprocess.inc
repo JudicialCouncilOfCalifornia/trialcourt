@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Preprocess links dropbotton.
+ */
+
+/**
  * Implements template_preprocess_links__dropbutton().
  */
 function jcc_base_preprocess_links__dropbutton(&$variables) {

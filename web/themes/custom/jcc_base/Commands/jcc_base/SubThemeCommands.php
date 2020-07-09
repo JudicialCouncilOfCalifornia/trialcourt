@@ -20,6 +20,9 @@ use Robo\Task\Archive\loadTasks as ArchiveTaskLoader;
 use Robo\Task\Filesystem\loadTasks as FilesystemTaskLoader;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * Subtheme Commands.
+ */
 class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
 
   use TaskAccessor;
@@ -27,11 +30,15 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
   use FilesystemTaskLoader;
 
   /**
+   * Subtheme Generator.
+   *
    * @var \Drupal\jcc_base\SubThemeGenerator
    */
   protected $subThemeCreator;
 
   /**
+   * File system.
+   *
    * @var \Symfony\Component\Filesystem\Filesystem
    */
   protected $fs;
@@ -67,7 +74,8 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
    * @usage drush jcc_base:create 'My Theme'
    *   Creates a JCCBase sub-theme called "My Theme", using the default options.
    * @usage drush jcc_base:create 'My Theme' --machine_name=my_theme
-   *   Creates a JCCBase sub-theme called "My Theme" with a specific machine name.
+   *   Creates a JCCBase sub-theme called "My Theme" with a specific machine
+   *   name.
    *
    * @jcc_baseArgLabel name
    * @jcc_baseOptionMachineName machine-name
@@ -91,7 +99,7 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
     /** @var \Drupal\Core\Extension\Extension[] $themes */
     foreach (\Drupal::service('theme_handler')->listInfo() as $theme) {
       $path = "{$theme->getPath()}/src/kits/{$kit}";
-      if($this->fs->exists($path)) {
+      if ($this->fs->exists($path)) {
         $srcDir = $path;
       }
     }
@@ -212,11 +220,12 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
   }
 
   /**
+   * Validate hook for generate subtheme.
+   *
    * @hook validate jcc_base:create
    */
-  public function onHookValidateJCCBaseGenerateSubTheme(CommandData $commandData): ?CommandError {
+  public function onHookValidateJccBaseGenerateSubTheme(CommandData $commandData): ?CommandError {
     $input = $commandData->input();
-
 
     if (!$input->getOption('kit')) {
       $input->setOption('kit', 'default');
@@ -247,11 +256,14 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
   }
 
   /**
+   * Validate hook for JCC Base Arg Label.
+   *
    * @hook validate @jcc_baseArgLabel
    *
    * @return null|\Consolidation\AnnotatedCommand\CommandError
+   *   Command Error.
    */
-  public function onHookValidateJCCBaseArgLabel(CommandData $commandData): ?CommandError {
+  public function onHookValidateJccBaseArgLabel(CommandData $commandData): ?CommandError {
     $annotationKey = 'jcc_baseArgLabel';
     $annotationData = $commandData->annotationData();
     if (!$annotationData->has($annotationKey)) {
@@ -261,13 +273,24 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
     $commandErrors = [];
     $argNames = $this->parseMultiValueAnnotation($annotationData->get($annotationKey));
     foreach ($argNames as $argName) {
-      $commandErrors[] = $this->onHookValidateJCCBaseArgLabelSingle($commandData, $argName);
+      $commandErrors[] = $this->onHookValidateJccBaseArgLabelSingle($commandData, $argName);
     }
 
     return $this->aggregateCommandErrors($commandErrors);
   }
 
-  protected function onHookValidateJCCBaseArgLabelSingle(CommandData $commandData,  string $argName): ?CommandError {
+  /**
+   * Validate single lable.
+   *
+   * @param \Consolidation\AnnotatedCommand\CommandData $commandData
+   *   Command Data.
+   * @param string $argName
+   *   Arg name.
+   *
+   * @return \Consolidation\AnnotatedCommand\CommandError|null
+   *   Command error or NULL.
+   */
+  protected function onHookValidateJccBaseArgLabelSingle(CommandData $commandData, string $argName): ?CommandError {
     $label = $commandData->input()->getArgument($argName);
     if (strlen($label) === 0) {
       return NULL;
@@ -281,9 +304,11 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
   }
 
   /**
+   * Validate machine name.
+   *
    * @hook validate @jcc_baseOptionMachineName
    */
-  public function onHookValidateJCCBaseOptionMachineName(CommandData $commandData) {
+  public function onHookValidateJccBaseOptionMachineName(CommandData $commandData) {
     $annotationKey = 'jcc_baseOptionMachineName';
     $annotationData = $commandData->annotationData();
     if (!$annotationData->has($annotationKey)) {
@@ -293,13 +318,24 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
     $commandErrors = [];
     $optionNames = $this->parseMultiValueAnnotation($annotationData->get($annotationKey));
     foreach ($optionNames as $optionName) {
-      $commandErrors[] = $this->onHookValidateJCCBaseOptionMachineNameSingle($commandData, $optionName);
+      $commandErrors[] = $this->onHookValidateJccBaseOptionMachineNameSingle($commandData, $optionName);
     }
 
     return $this->aggregateCommandErrors($commandErrors);
   }
 
-  protected function onHookValidateJCCBaseOptionMachineNameSingle(CommandData $commandData, $optionName): ?CommandError {
+  /**
+   * Validate single machine name.
+   *
+   * @param \Consolidation\AnnotatedCommand\CommandData $commandData
+   *   Command data.
+   * @param string $optionName
+   *   Option name.
+   *
+   * @return \Consolidation\AnnotatedCommand\CommandError|null
+   *   Error or NULL.
+   */
+  protected function onHookValidateJccBaseOptionMachineNameSingle(CommandData $commandData, $optionName): ?CommandError {
     $machineNames = $commandData->input()->getOption($optionName);
     if (!is_array($machineNames)) {
       $machineNames = strlen($machineNames) !== 0 ? [$machineNames] : [];
@@ -319,10 +355,28 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
     return NULL;
   }
 
+  /**
+   * Parse multi value annotation.
+   *
+   * @param string $value
+   *   Annotation.
+   *
+   * @return array
+   *   Array of items.
+   */
   protected function parseMultiValueAnnotation(string $value): array {
     return $this->explodeCommaSeparatedList($value);
   }
 
+  /**
+   * Explode comma separated list.
+   *
+   * @param string $items
+   *   Comma separated list of items.
+   *
+   * @return array
+   *   Array of items.
+   */
   protected function explodeCommaSeparatedList(string $items): array {
     return array_filter(
       preg_split('/\s*,\s*/', trim($items)),
@@ -331,7 +385,13 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
   }
 
   /**
+   * Aggregate Command Errors.
+   *
    * @param \Consolidation\AnnotatedCommand\CommandError[] $commandErrors
+   *   Command errors.
+   *
+   * @return \Consolidation\AnnotatedCommand\CommandError|null
+   *   Errors or NULL.
    */
   protected function aggregateCommandErrors(array $commandErrors): ?CommandError {
     $errorCode = 0;
@@ -349,10 +409,25 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
     return NULL;
   }
 
+  /**
+   * Convert label to machine name.
+   *
+   * @param string $label
+   *   The label to convert.
+   *
+   * @return string
+   *   The machine name.
+   */
   protected function convertLabelToMachineName(string $label): string {
     return mb_strtolower(preg_replace('/[^a-z0-9_]+/ui', '_', $label));
   }
 
+  /**
+   * Get default destination.
+   *
+   * @return string
+   *   The default theme destination.
+   */
   protected function getDefaultDestination(): string {
     if ($this->fs->exists('./themes/contrib') || $this->fs->exists('./themes/custom')) {
       return './themes/custom';
@@ -361,24 +436,63 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
     return './themes';
   }
 
+  /**
+   * Get default description.
+   *
+   * @return string
+   *   The default subtheme description.
+   */
   protected function getDefaultDescription(): string {
     return 'A theme based on JCCBase.';
   }
 
+  /**
+   * Check if dir is empty.
+   *
+   * @param string $dir
+   *   Directory to check.
+   *
+   * @return bool
+   *   True if dir is empty.
+   */
   protected function isDirEmpty(string $dir): bool {
     return !(new FilesystemIterator($dir))->valid();
   }
 
+  /**
+   * Get direct descendants.
+   *
+   * @param string $dir
+   *   Directory.
+   */
   protected function getDirectDescendants(string $dir): Finder {
     return (new Finder())
       ->in($dir)
       ->depth('0');
   }
 
+  /**
+   * Get file name from URL.
+   *
+   * @param string $url
+   *   Url for file.
+   *
+   * @return string
+   *   File name.
+   */
   protected function getFileNameFromUrl(string $url): string {
     return pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_BASENAME);
   }
 
+  /**
+   * Get top level dir.
+   *
+   * @param string $parentDir
+   *   Parent directory.
+   *
+   * @return string
+   *   Path name of top level dir.
+   */
   protected function getTopLevelDir(string $parentDir): string {
     $directDescendants = $this->getDirectDescendants($parentDir);
     $iterator = $directDescendants->getIterator();

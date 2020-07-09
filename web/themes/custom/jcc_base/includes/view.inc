@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Theme and preprocess functions for views.
@@ -26,4 +27,3 @@ function jcc_base_theme_suggestions_views_view_unformatted_alter(array &$suggest
   $display = $view->current_display;
   $suggestions[] = 'views_view_unformatted__' . $name . '__' . $display;
 }
-
