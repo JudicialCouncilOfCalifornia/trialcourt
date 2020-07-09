@@ -202,3 +202,10 @@ Recap:
  - Import config from Features to multisites by enabling or syncing, manually or with tooling.
  - Export changes with config managemnt for each multisite, manually or with tooling.
 
+
+UPDATE this doc for:
+
+Scenarios:
+  - Universal Features with immutable values
+  - site specific configurations
+  - universal config with mutable values
