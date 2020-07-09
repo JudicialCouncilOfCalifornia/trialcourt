@@ -1,0 +1,66 @@
+# This file is installed in the artifact by the deploy script.
+# Source `scripts/_artifact.gitignore`. Changes to source will not overwrite
+# a .gitignore already in the artifact.
+
+#Ignore paths that contain user-generated content.
+web/sites/*/files
+web/sites/*/private
+web/files/*
+
+# Pantheon commits a settings.php for environment-specific settings.
+# Place local settings in settings.local.php
+web/sites/*/settings.local.php
+
+# Note that services.local.yml is not loaded by default. If you would like
+# to use this file add the following to your settings.local.php file:
+#   $settings['container_yamls'][] = __DIR__ . '/services.local.yml';
+web/sites/*/services.local.yml
+config/config-local
+
+drush/drush.yml
+
+# ** Only works in OSs that support newer versions of fnmatch (Bash 4+)
+/web/sites/default/**/files
+/web/sites/default/**/private
+
+# Ignore SimpleTest multi-site environment.
+web/sites/simpletest
+
+# Packages #
+############
+*.7z
+*.dmg
+*.gz
+*.bz2
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.tgz
+
+# Logs and databases #
+######################
+*.log
+*.sql
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+
+Thumbs.db
+._*
+
+# Vim generated files #
+######################
+*.un~
+*.swp
+
+# SASS #
+##########
+.sass-cache
+
+# Things in the core directory that Drupal 8 commits in the repository.
+!web/core/**/*.gz
+

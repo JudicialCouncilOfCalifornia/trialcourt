@@ -50,6 +50,8 @@ for path in .circleci/scripts/* ; do
     git pull origin $CIRCLE_BRANCH
     echo "\nSync to artifact.\n"
     cd ../.. && composer -n artifact-sync
+    # Make sure there's a gitignore file in the artifact.
+    cp -n scripts/_artifact.gitignore data/artifact/.gitignore
     cd data/artifact
     git add .
     git commit -am "Built assets. $TIMESTAMP"

@@ -6,18 +6,24 @@
  */
 
 // Develop.
+$sites['develop-jcc-tc-default.pantheonsite.io'] = 'default';
 $sites['develop-jcc-tc.pantheonsite.io'] = 'slo';
 $sites['develop-jcc-oc.pantheonsite.io'] = 'oc';
 $sites['develop-jcc-napa.pantheonsite.io'] = 'napa';
 $sites['develop-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 
 // Stage.
+$sites['stage-jcc-tc-default.pantheonsite.io'] = 'default';
 $sites['stage-jcc-tc.pantheonsite.io'] = 'slo';
 $sites['stage-jcc-oc.pantheonsite.io'] = 'oc';
 $sites['stage-jcc-napa.pantheonsite.io'] = 'napa';
 $sites['stage-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 
 // Live.
+$sites['dev-jcc-tc-default.pantheonsite.io'] = 'default';
+$sites['test-jcc-tc-default.pantheonsite.io'] = 'default';
+$sites['live-jcc-tc-default.pantheonsite.io'] = 'default';
+
 $sites['dev-jcc-tc.pantheonsite.io'] = 'slo';
 $sites['test-jcc-tc.pantheonsite.io'] = 'slo';
 $sites['live-jcc-tc.pantheonsite.io'] = 'slo';
