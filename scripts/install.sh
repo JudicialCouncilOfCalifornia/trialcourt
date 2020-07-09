@@ -2,7 +2,7 @@
 
 # A helper script for installing new multisites.
 
-set -e
+# set -e
 
 # Reset in case getopts has been used previously in the shell.
 OPTIND=1
@@ -78,7 +78,7 @@ echo -e "\n${G}Multisite configured... now running installation. This will take 
 cd /app
 drush si -l ${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com"
 
-if [ ! -d /app/web/themes/custom/jcc_napa ] ; then
+if [ ! -d /app/web/themes/custom/jcc_${NEW} ] ; then
   echo -e "\nCreating subtheme jcc_${NEW}"
   drush --include=/app/web/themes/custom/jcc_base jcc_base:create jcc_${NEW}
 
@@ -97,7 +97,7 @@ fi
 
 if [ -f /app/config/config-${NEW}/locale.settings.yml ] ; then
   echo -e "\nUpdating locale.settings."
-  sed -i "s/sites\/default\/files/sites\/default\/files\/${NEW}/g" /app/config/config-${NEW}/locale.settings.yml
+  sed -i "s/sites\/default\/files\/default/sites\/default\/files\/${NEW}/g" /app/config/config-${NEW}/locale.settings.yml
 fi
 
 drush uli -l ${NEW}.lndo.site --druplicon

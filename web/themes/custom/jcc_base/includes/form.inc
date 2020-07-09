@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Theme and preprocess functions for forms.
@@ -17,6 +18,7 @@ function jcc_base_theme_suggestions_form_alter(array &$suggestions, array &$vari
     $suggestions[] = $variables['theme_hook_original'] . '__' . $element['#form_id'];
   }
 }
+
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */

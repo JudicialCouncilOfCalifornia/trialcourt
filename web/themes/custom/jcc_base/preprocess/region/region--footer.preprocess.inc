@@ -21,37 +21,37 @@ function jcc_base_preprocess_region__footer(&$variables) {
           'icon' => [
             'name' => 'youtube',
             'title' => (string) t('YouTube'),
-            'decorative' => FALSE
+            'decorative' => FALSE,
           ],
           'title' => (string) t('YouTube'),
-          'url' => theme_get_setting('youtube', $theme)
+          'url' => theme_get_setting('youtube', $theme),
         ],
         [
           'icon' => [
             'name' => 'facebook2',
             'title' => (string) t('Facebook'),
-            'decorative' => FALSE
+            'decorative' => FALSE,
           ],
           'title' => (string) t('Facebook'),
-          'url' => theme_get_setting('facebook', $theme)
+          'url' => theme_get_setting('facebook', $theme),
         ],
         [
           'icon' => [
             'name' => 'twitter',
             'title' => (string) t('Twitter'),
-            'decorative' => FALSE
+            'decorative' => FALSE,
           ],
           'title' => (string) t('Twitter'),
-          'url' => theme_get_setting('twitter', $theme)
-        ]
-      ]
+          'url' => theme_get_setting('twitter', $theme),
+        ],
+      ],
     ],
     'links' => [
       'patternlab' => TRUE,
       'inline_nav' => [
-        'items' => []
-      ]
-    ]
+        'items' => [],
+      ],
+    ],
   ];
 
   // Get links from footer menu directly.
@@ -61,10 +61,10 @@ function jcc_base_preprocess_region__footer(&$variables) {
   $parameters->setMinDepth(0)->onlyEnabledLinks();
 
   $tree = $menu_tree->load($menu_name, $parameters);
-  $manipulators = array(
-    array('callable' => 'menu.default_tree_manipulators:checkAccess'),
-    array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
-  );
+  $manipulators = [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ];
   $tree = $menu_tree->transform($tree, $manipulators);
   $footer_nav = $menu_tree->build($tree);
 
@@ -72,7 +72,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
     foreach ($footer_nav['#items'] as $key => $item) {
       $variables['footer_tall']['links']['inline_nav']['items'][] = [
         'name' => $item['title'],
-        'url' => $item['url']
+        'url' => $item['url'],
       ];
     }
     $moduleHandler = Drupal::service('module_handler');
@@ -81,9 +81,9 @@ function jcc_base_preprocess_region__footer(&$variables) {
       $contextual_links = [
         'menu' => [
           'route_parameters' => [
-            'menu' => $menu_name
-          ]
-        ]
+            'menu' => $menu_name,
+          ],
+        ],
       ];
       $variables['footer_tall']['links']['inline_nav']['contextual_links'] = [
         '#type' => 'contextual_links_placeholder',

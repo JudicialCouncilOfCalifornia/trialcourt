@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Preprocess Region Secondary Footer.
+ */
+
 use Drupal\Core\Menu\MenuTreeParameters;
 
 /**
@@ -18,10 +23,10 @@ function jcc_base_preprocess_region__secondary_footer(&$variables) {
   $menu_active_trail = \Drupal::service('menu.active_trail')->getActiveTrailIds($menu_name);
   $parameters->setActiveTrail($menu_active_trail);
   $tree = $menu_tree->load($menu_name, $parameters);
-  $manipulators = array(
-    array('callable' => 'menu.default_tree_manipulators:checkAccess'),
-    array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
-  );
+  $manipulators = [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ];
   $tree = $menu_tree->transform($tree, $manipulators);
   $footer_menu = $menu_tree->build($tree);
 
@@ -45,9 +50,9 @@ function jcc_base_preprocess_region__secondary_footer(&$variables) {
       $contextual_links = [
         'menu' => [
           'route_parameters' => [
-            'menu' => $menu_name
-          ]
-        ]
+            'menu' => $menu_name,
+          ],
+        ],
       ];
       $placeholder = [
         '#type' => 'contextual_links_placeholder',

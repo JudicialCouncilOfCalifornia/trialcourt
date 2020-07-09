@@ -8,33 +8,52 @@ use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * Sub theme generator.
+ */
 class SubThemeGenerator {
 
   /**
+   * Filesystem.
+   *
    * @var \Symfony\Component\Filesystem\Filesystem
    */
   protected $fs;
 
   /**
+   * Finder.
+   *
    * @var \Symfony\Component\Finder\Finder
    */
   protected $finder;
 
   /**
+   * Machine name old.
+   *
    * @var string
    */
   protected $machineNameOld = '';
 
   /**
+   * Dir.
+   *
    * @var string
    */
   protected $dir = '';
 
+  /**
+   * Get dir.
+   *
+   * @return string
+   *   This dir.
+   */
   public function getDir(): string {
     return $this->dir;
   }
 
   /**
+   * Set dir.
+   *
    * @param string $dir
    *   Directory where a JCCBase starter kit already copied to.
    *
@@ -47,10 +66,18 @@ class SubThemeGenerator {
   }
 
   /**
+   * Machine name.
+   *
    * @var string
    */
   protected $machineName = '';
 
+  /**
+   * Get machine name.
+   *
+   * @return string
+   *   This machine name.
+   */
   public function getMachineName(): string {
     if (!$this->machineName) {
       return basename($this->getDir());
@@ -59,6 +86,15 @@ class SubThemeGenerator {
     return $this->machineName;
   }
 
+  /**
+   * Set machine name.
+   *
+   * @param string $machineName
+   *   Machine name string.
+   *
+   * @return object
+   *   This object.
+   */
   public function setMachineName(string $machineName) {
     $this->machineName = $machineName;
 
@@ -66,16 +102,30 @@ class SubThemeGenerator {
   }
 
   /**
+   * Name.
+   *
    * @var string
    */
   protected $name = '';
 
+  /**
+   * Get name.
+   *
+   * @return string
+   *   This name.
+   */
   public function getName(): string {
     return $this->name;
   }
 
   /**
+   * Set name.
+   *
+   * @param string $name
+   *   Name string.
+   *
    * @return $this
+   *   This object.
    */
   public function setName(string $name) {
     $this->name = $name;
@@ -83,25 +133,51 @@ class SubThemeGenerator {
     return $this;
   }
 
+  /**
+   * Description.
+   *
+   * @var string
+   */
   protected $description = '';
 
+  /**
+   * Get description.
+   *
+   * @return string
+   *   This description.
+   */
   public function getDescription(): string {
     return $this->description;
   }
 
+  /**
+   * Set description.
+   *
+   * @param string $description
+   *   Set the description.
+   *
+   * @return $this
+   *   This object.
+   */
   public function setDescription(string $description) {
     $this->description = $description;
 
     return $this;
   }
 
+  /**
+   * Constructor.
+   */
   public function __construct() {
     $this->fs = new Filesystem();
     $this->finder = new Finder();
   }
 
   /**
+   * Generate new theme object.
+   *
    * @return $this
+   *   This object.
    */
   public function generate() {
     return $this
@@ -111,7 +187,10 @@ class SubThemeGenerator {
   }
 
   /**
-   * @return $this
+   * Init old machine name.
+   *
+   * @return object
+   *   This object.
    */
   protected function initMachineNameOld() {
     $dstDir = $this->getDir();
@@ -123,7 +202,10 @@ class SubThemeGenerator {
   }
 
   /**
-   * @return $this
+   * Modify file contents.
+   *
+   * @return object
+   *   This object.
    */
   protected function modifyFileContents() {
     $replacementPairs = $this->getFileContentReplacementPairs();
@@ -135,7 +217,10 @@ class SubThemeGenerator {
   }
 
   /**
-   * @return $this
+   * Rename files.
+   *
+   * @return object
+   *   This object.
    */
   protected function renameFiles() {
     $machineNameNew = $this->getMachineName();
@@ -151,7 +236,10 @@ class SubThemeGenerator {
   }
 
   /**
-   * @return $this
+   * Modify file content.
+   *
+   * @return object
+   *   This modified object.
    */
   protected function modifyFileContent(string $fileName, array $replacementPairs) {
     if (!$this->fs->exists($fileName)) {
@@ -167,7 +255,10 @@ class SubThemeGenerator {
   }
 
   /**
-   * @return string[]
+   * Get file names to rename.
+   *
+   * @return array
+   *   List of matching files.
    */
   protected function getFileNamesToRename(): array {
     // Find all files within the theme that match *{KIT_NAME}*.
@@ -175,7 +266,10 @@ class SubThemeGenerator {
   }
 
   /**
-   * @return string[]
+   * Get file content replacement pairs.
+   *
+   * @return array
+   *   Replacemnt array.
    */
   protected function getFileContentReplacementPairs(): array {
     return [
@@ -187,12 +281,24 @@ class SubThemeGenerator {
   }
 
   /**
-   * @return string[]
+   * Get file list for string replacement.
+   *
+   * @return array
+   *   File list for string replacement.
    */
-  function getFilesToMakeReplacements(): array {
+  public function getFilesToMakeReplacements(): array {
     return array_keys(iterator_to_array($this->finder->files()->in($this->getDir())));
   }
 
+  /**
+   * Get the contents of the file.
+   *
+   * @param string $fileName
+   *   Name of the file.
+   *
+   * @return string
+   *   Content of the file.
+   */
   protected function fileGetContents(string $fileName): string {
     $content = file_get_contents($fileName);
     if ($content === FALSE) {

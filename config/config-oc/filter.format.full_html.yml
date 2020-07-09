@@ -1,4 +1,4 @@
-uuid: f04a1b47-18e3-4e6b-a10d-106f833685c9
+uuid: 7caa5013-205b-4d27-83aa-2ab16ac5b2e3
 langcode: en
 status: true
 dependencies:
@@ -7,9 +7,10 @@ dependencies:
   module:
     - editor
     - glossify_taxonomy
+    - jcc_ckeditor
     - media
 _core:
-  default_config_hash: X6DurFghcHhNqs9iymlvsmyb2rbSXfIv4XQxhHWROkQ
+  default_config_hash: 20zjhBcmljMSxmatQQ3TBOvzr3ZK4iGRANh7sdwZREk
 name: 'Full HTML'
 format: full_html
 weight: -10
@@ -69,3 +70,9 @@ filters:
       glossify_taxonomy_type: tooltips
       glossify_taxonomy_vocabs: glossary
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+  filter_token_links:
+    id: filter_token_links
+    provider: jcc_ckeditor
+    status: true
+    weight: 0
+    settings: {  }

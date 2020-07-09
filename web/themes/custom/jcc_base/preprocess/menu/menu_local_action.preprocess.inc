@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * @file
+ * Preprocess menu local action.
+ */
+
 /**
  * Implements template_preprocess_menu_local_action().
  */
@@ -7,6 +13,4 @@ function jcc_base_preprocess_menu_local_action(&$variables) {
   $variables['link']['#options']['attributes']['class'][] = 'btn';
   $variables['link']['#options']['attributes']['class'][] = 'btn-sm';
   $variables['link']['#options']['attributes']['class'][] = 'btn-primary';
-
-  dsm($variables);
 }

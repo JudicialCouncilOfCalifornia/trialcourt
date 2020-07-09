@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Preprocess form element.
+ */
+
+/**
  * Implements hook_preprocess_form_element().
  */
 function jcc_base_preprocess_form_element(&$variables) {
