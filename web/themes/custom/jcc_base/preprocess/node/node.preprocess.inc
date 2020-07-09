@@ -1,9 +1,11 @@
 <?php
+
 /**
  * @file
  * Theme and preprocess functions for nodes.
  */
 
+use Drupal\views\Views;
 use Drupal\Core\Url;
 
 /**
@@ -19,7 +21,7 @@ function jcc_base_preprocess_node(&$variables) {
           $location->address_line1,
           $location->locality,
           $location->administrative_area,
-          $location->postal_code
+          $location->postal_code,
         ];
         $query = implode('%20', $address);
         $variables['directions_url'] = "https://bing.com/maps/default.aspx?where1=" . $query;
@@ -38,9 +40,9 @@ function jcc_base_preprocess_node(&$variables) {
               $variables['vocabularies'][$field_name]['link_list']['header'] = $field_definition->getLabel();
               foreach ($terms as $term) {
                 $url = Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $term->id()]);
-                $variables['vocabularies'][$field_name]['link_list']['items'][] =[
-                    'url_title' => $term->getName(),
-                    'url' => $url
+                $variables['vocabularies'][$field_name]['link_list']['items'][] = [
+                  'url_title' => $term->getName(),
+                  'url' => $url,
                 ];
               }
             }
@@ -48,17 +50,19 @@ function jcc_base_preprocess_node(&$variables) {
         }
       }
       break;
+
     case 'book':
-      if($variables['view_mode'] == 'full'){
+      if ($variables['view_mode'] == 'full') {
         $topics = $node->field_topics->referencedEntities();
-        $divisions =$node->field_division->referencedEntities();
+        $divisions = $node->field_division->referencedEntities();
         $termIds = '';
         $divisionIds = '';
         if (!empty($topics)) {
           foreach ($topics as $term) {
             if ($termIds == '') {
               $termIds = $term->id();
-            } else {
+            }
+            else {
               $termIds = $termIds . '+' . $term->id();
             }
           }
@@ -67,13 +71,14 @@ function jcc_base_preprocess_node(&$variables) {
           foreach ($divisions as $division) {
             if ($divisionIds == '') {
               $divisionIds = $division->id();
-            } else {
+            }
+            else {
               $divisionIds = $divisionIds . '+' . $division->id();
             }
           }
         }
 
-        $view = Drupal\views\Views::getView('faq');
+        $view = Views::getView('faq');
         $view->setDisplay('block_1');
         $view->setArguments([$termIds, $divisionIds]);
         $variables['faq_items'] = $view->render();

@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Preprocess input.
+ */
+
+/**
  * Implements hook_preprocess_input().
  */
 function jcc_base_preprocess_input(&$variables) {

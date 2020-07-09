@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * @file
+ * Preprocess pager.
+ */
+
 /**
  * Implements template_preprocess_pager() for pager.html.twig.
  */

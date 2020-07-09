@@ -139,6 +139,7 @@
         "drupal/facets": "^1.4",
         "drupal/feeds": "^3.0",
         "drupal/feeds_tamper": "^2.0",
+        "drupal/features": "^3.11",
         "drupal/field_group": "^3.0-rc1",
         "drupal/focal_point": "^1.0",
         "drupal/fullcalendar_view": "^4.5",
@@ -256,7 +257,7 @@
         "code-sniff": "echo 'No code sniff defined yet.'",
         "unit-test": "echo 'No unit test step defined.'",
         "artifact-sync": [
-            "rsync -KPar --delete --force --files-from=scripts/deploy.txt ./ data/artifact/"
+            "rsync -KPar --delete --force --exclude='node_modules' --files-from=scripts/deploy.txt ./ data/artifact/"
         ]
     },
     "extra": {

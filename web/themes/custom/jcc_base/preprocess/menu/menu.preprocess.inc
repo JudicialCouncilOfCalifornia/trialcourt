@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Theme and preprocess functions for menus.
@@ -40,10 +41,10 @@ function jcc_base_preprocess_menu(&$variables, $hook) {
 /**
  * Recursive function to set icon values on menu items.
  *
- * @param  array &$item
+ * @param array &$item
  *   The menu item.
  */
-function jcc_base_main_menu_set_content(&$item) {
+function jcc_base_main_menu_set_content(array &$item) {
   $icon = !empty($item['content']['#menu_link_content']->field_fa_icon) ? $item['content']['#menu_link_content']->field_fa_icon->first() : '';
   $item['content']['icon'] = !empty($icon) ? ['#markup' => $icon->value] : [];
 

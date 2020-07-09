@@ -5,7 +5,6 @@
  * Theme and preprocess functions for block.
  */
 
-use Drupal\Core\Render\Element;
 use Drupal\block\Entity\Block;
 
 /**

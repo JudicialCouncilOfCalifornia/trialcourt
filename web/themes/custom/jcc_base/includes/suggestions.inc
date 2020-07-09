@@ -2,12 +2,13 @@
 
 /**
  * @file
+ * Preprocess suggestions.
  */
 
 use Drupal\node\Entity\Node;
 
 /**
- * Implements HOOK_theme_suggestions_page_alter().
+ * Implements hook_theme_suggestions_page_alter().
  */
 function jcc_base_theme_suggestions_page_alter(array &$suggestions, array $variables) {
   // Add a template suggestions for node type.
@@ -34,7 +35,7 @@ function jcc_base_theme_suggestions_page_alter(array &$suggestions, array $varia
 }
 
 /**
- * Implements HOOK_theme_suggestions_user_alter().
+ * Implements hook_theme_suggestions_user_alter().
  */
 function jcc_base_theme_suggestions_user_alter(array &$suggestions, array $variables) {
   // Add a suggestion based on the view mode.
@@ -42,7 +43,7 @@ function jcc_base_theme_suggestions_user_alter(array &$suggestions, array $varia
 }
 
 /**
- * Implements HOOK_theme_suggestions_region_alter().
+ * Implements hook_theme_suggestions_region_alter().
  */
 function jcc_base_theme_suggestions_region_alter(array &$suggestions, array $variables) {
   // Add a suggestion based on the view mode.
