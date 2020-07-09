@@ -97,24 +97,31 @@ jobs:
                 command: scripts/theme.sh -a
 
             - run:
-                name: Deploy SLO
-                # Pass the SITE_CODE as the first argument.
-                command: .circleci/scripts/deploy.sh slo
+                name: Deploy ALL (See notes in config.yml if this times out.)
+                # Script will loop over projects to deploy all.
+                # Leaving below for reference to easily roll back if this
+                # times out. See also scripts/deploy.sh for more notes.
+                command: .circleci/scripts/deploy.sh
 
-            - run:
-                # Pass the SITE_CODE as the first argument.
-                name: Deploy OC
-                command: .circleci/scripts/deploy.sh oc
+            # - run:
+            #     name: Deploy SLO
+            #     # Pass the SITE_CODE as the first argument.
+            #     command: .circleci/scripts/deploy.sh slo
 
-            - run:
-                # Pass the SITE_CODE as the first argument.
-                name: Deploy Newsroom
-                command: .circleci/scripts/deploy.sh newsroom
+            # - run:
+            #     # Pass the SITE_CODE as the first argument.
+            #     name: Deploy OC
+            #     command: .circleci/scripts/deploy.sh oc
 
-            - run:
-                # Pass the SITE_CODE as the first argument.
-                name: Deploy Napa
-                command: .circleci/scripts/deploy.sh napa
+            # - run:
+            #     # Pass the SITE_CODE as the first argument.
+            #     name: Deploy Newsroom
+            #     command: .circleci/scripts/deploy.sh newsroom
+
+            # - run:
+            #     # Pass the SITE_CODE as the first argument.
+            #     name: Deploy Napa
+            #     command: .circleci/scripts/deploy.sh napa
 
 workflows:
   version: 2
