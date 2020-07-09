@@ -7,10 +7,16 @@ G="\033[32m"
 Y="\033[33m"
 RE="\033[0m"
 
-# Array of drupal multisite aliases to sync to.
-SUB_SITES+=('@local.oc')
-SUB_SITES+=('@local.napa')
-SUB_SITES+=('@local.newsroom')
+# Create array of drupal multisite aliases to sync to, from directories in
+# sites directory.
+for path in /app/web/sites/* ; do
+  # Skip if not a directory.
+  [ -d "${path}" ] || continue
+  dirname="$(basename "${path}")"
+  if [ "$dirname" != 'default' ] ; then
+    SUB_SITES+=("@local.${dirname}")
+  fi
+done
 
 feature_import() {
 
