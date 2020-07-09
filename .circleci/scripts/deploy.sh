@@ -2,10 +2,13 @@
 
 set -e
 
+DIR=$PWD
+
 # Loop over files to find project- config files and deploy each.
 # If this times out due to too many projects we may have to go back to calling
 # this script multiple times from config.yml and passing the project name.
 for path in .circleci/scripts/* ; do
+  cd $DIR
 
   name="$(basename "${path}")"
 
