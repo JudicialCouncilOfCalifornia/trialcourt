@@ -24,7 +24,7 @@ class JccBookNavigationBlock extends BookNavigationBlock {
     return [
       'icon_library' => "pattern_library",
       'nav_icon_expand' => "expand_more",
-      'nav_icon_collapse' => "expand_less"
+      'nav_icon_collapse' => "expand_less",
     ];
   }
 
@@ -80,8 +80,8 @@ class JccBookNavigationBlock extends BookNavigationBlock {
     }
 
     $this->configuration['icon_library'] = $form_state->getValue(['book_block_icons', 'book_block_icon_library']);
-    $this->configuration['nav_icon_expand'] = $form_state->getValue(['book_block_icons','book_block_child_expand']);
-    $this->configuration['nav_icon_collapse'] = $form_state->getValue(['book_block_icons','book_block_child_collapse']);
+    $this->configuration['nav_icon_expand'] = $form_state->getValue(['book_block_icons', 'book_block_child_expand']);
+    $this->configuration['nav_icon_collapse'] = $form_state->getValue(['book_block_icons', 'book_block_child_collapse']);
   }
 
   /**
@@ -107,7 +107,7 @@ class JccBookNavigationBlock extends BookNavigationBlock {
       if ($nid) {
         $tree = $this->bookManager->bookTreeAllData($node->book['bid'], $node->book);
 
-        // search for the book root
+        // Search for the book root.
         $book_parent_key = '';
         foreach ($tree as $key => $book) {
           if ($book['link']['nid'] == $current_bid) {
@@ -115,7 +115,7 @@ class JccBookNavigationBlock extends BookNavigationBlock {
             break;
           }
         }
-        // put it at the start of the tree
+        // Put it at the start of the tree.
         if ($book_parent_key) {
           $book_parent = $tree[$book_parent_key];
           unset($tree[$book_parent_key]);
@@ -129,11 +129,10 @@ class JccBookNavigationBlock extends BookNavigationBlock {
         $active_trail = $this->bookManager->getActiveTrailIds($node->book['bid'], $node->book);
         $build['#active_trail'] = $active_trail;
 
-        // Add icon library preferences
+        // Add icon library preferences.
         $build['#icon_library'] = $this->configuration['icon_library'];
         $build['#nav_icon_expand'] = $this->configuration['nav_icon_expand'];
         $build['#nav_icon_collapse'] = $this->configuration['nav_icon_collapse'];
-
 
         return $build;
       }
