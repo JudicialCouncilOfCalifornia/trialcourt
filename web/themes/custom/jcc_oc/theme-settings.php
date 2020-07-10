@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function jcc_base_form_system_theme_settings_alter(&$form, FormStateInterface $form_state, $form_id = NULL) {
+function jcc_oc_form_system_theme_settings_alter(&$form, FormStateInterface $form_state, $form_id = NULL) {
   // Work-around for a core bug affecting admin themes. See issue #943212.
   if (isset($form_id)) {
     return;
