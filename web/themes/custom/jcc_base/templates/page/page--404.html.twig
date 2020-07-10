@@ -58,12 +58,14 @@
       <div class="error-page">
         <h1 class="jcc-header-group__title">404</h1>
         <h2 class="jcc-header-group__body">{{ page.content }}</h2>
-        <div class="featured-links">
-          <p>Here are some helpful links instead:</p>
-          {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
-            link_list: my_link_list
-          } %}
-        </div>
+        {% if my_link_list.items|length > 0 %}
+          <div class="featured-links">
+            <p>Here are some helpful links instead:</p>
+            {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
+              link_list: my_link_list
+            } %}
+          </div>
+        {% endif %}
 
       </div>
     </main>
