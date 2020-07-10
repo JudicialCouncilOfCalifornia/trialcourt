@@ -20,9 +20,29 @@
  */
 #}
 
+{% if icon_library != "pattern_library" %}
+  {% set alt_expand = nav_icon_expand %}
+  {% set alt_collapse = nav_icon_collapse %}
+{% else %}
+  {% set patternlib_expand = nav_icon_expand %}
+  {% set patternlib_collapse = nav_icon_collapse %}
+{% endif %}
+
 {% include '@molecules/navigation/side-nav/side-nav.twig' with {
   side_nav: {
     aria_label: "Table of Contents",
+    expand_icon: {
+      name: patternlib_expand,
+      width: "width-3",
+      height: "height-3"
+    },
+    collapse_icon: {
+      name: patternlib_collapse,
+      width: "width-3",
+      height: "height-3"
+    },
+    alt_expand_icon: alt_expand,
+    alt_collapse_icon: alt_collapse,
     items: items
   }
 } %}
