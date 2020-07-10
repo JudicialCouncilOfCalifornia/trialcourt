@@ -29,11 +29,16 @@ function jcc_book_navigation_help($route_name, RouteMatchInterface $route_match)
  * Implements hook_theme().
  */
 function jcc_book_navigation_theme() {
-
-//
   return [
     'jcc_book_navigation_block' => [
-      'variables' => ['items' => [], 'attributes' => [], 'active_trail' => []],
+      'variables' => [
+        'items' => [],
+        'attributes' => [],
+        'active_trail' => [],
+        'icon_library' => [],
+        'nav_icon_expand' => [],
+        'nav_icon_collapse' => []
+      ],
     ],
     'book_navigation__clean' => [
       'template' => 'book-navigation--clean',
