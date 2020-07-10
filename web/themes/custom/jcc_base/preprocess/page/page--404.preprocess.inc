@@ -13,17 +13,19 @@ use Drupal\jcc_blocks\Plugin\Block\JccHeroBlock;
 function jcc_base_preprocess_page__404(&$variables) {
   $featuredLinks = JccHeroBlock::getFeaturedLinks();
   $links = [];
-  $icons = $featuredLinks['icons'];
-  foreach ($icons as $icon) {
-    $linkTitle = $icon['title'];
-    $linkUrl = $icon['url'];
+  if (isset($featuredLinks['icons'])) {
+    $icons = $featuredLinks['icons'];
+    foreach ($icons as $icon) {
+      $linkTitle = $icon['title'];
+      $linkUrl = $icon['url'];
 
-    $link = [
-      'url_title' => $linkTitle,
-      'url' => $linkUrl,
-    ];
+      $link = [
+        'url_title' => $linkTitle,
+        'url' => $linkUrl,
+      ];
 
-    array_push($links, $link);
+      array_push($links, $link);
+    }
   }
 
   $variables['my_link_list'] = [
