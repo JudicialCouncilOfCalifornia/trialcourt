@@ -94,7 +94,9 @@ fi
 if [ "$LANDO_SERVICE_NAME" = "node-cli" ] && [ -f /app/data/.composer-installed.fresh ] ; then
   if [ ! -f /app/data/.themes-built.fresh ] ; then
     echo -e "\nBuilding themes...\n"
-    /app/scripts/theme.sh -a
+    /app/scripts/theme.sh -b jcc_base
+    IFS=. SUBSITE=(${HOST})
+    /app/scripts/theme.sh -b jcc_${SUBSITE[1]}
     # Leave an indicator as a condition for later appserver commands.
     touch /app/data/.themes-built.fresh
   fi
