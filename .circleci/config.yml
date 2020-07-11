@@ -31,8 +31,9 @@ defaults: &defaults
 
 version: 2
 jobs:
-    "Build and Test":
+    build_test:
         <<: *defaults
+        name: Build and Test
         steps:
             - checkout
 
@@ -75,8 +76,12 @@ jobs:
                 #name: run functional tests with Behat
                 #command: ./tests/scripts/run-behat
 
-    "Deploy Default":
+    "deploy":
         <<: *defaults
+        matrix:
+          parameters:
+            site: ["default", "newsroom", "slo"]
+        name: Deploy << matrix.site >>
         steps:
             - add_ssh_keys:
                 fingerprints:
@@ -97,11 +102,11 @@ jobs:
                 command: scripts/theme.sh -a
 
             - run:
-                name: Deploy DEFAULT
+                name: Deploying << matrix.site >>
                 # Script will loop over projects to deploy all.
                 # Leaving below for reference to easily roll back if this
                 # times out. See also scripts/deploy.sh for more notes.
-                command: .circleci/scripts/deploy.sh default
+                command: .circleci/scripts/deploy.sh << matrix.site >>
 
             # - run:
             #     name: Deploy SLO
@@ -122,89 +127,15 @@ jobs:
             #     # Pass the SITE_CODE as the first argument.
             #     name: Deploy Napa
             #     command: .circleci/scripts/deploy.sh napa
-    "Deploy Newsroom":
-      <<: *defaults
-      steps:
-        - add_ssh_keys:
-            fingerprints:
-              - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
 
-        - checkout
-
-        - restore_cache:
-            keys:
-              - composer-cache
-
-        - run:
-            name: Run Composer Install
-            command: composer install -o --no-dev
-
-        - run:
-            name: Build assets
-            command: scripts/theme.sh -a
-
-        - run:
-            name: Deploy NEWSROOM
-            # Script will loop over projects to deploy all.
-            # Leaving below for reference to easily roll back if this
-            # times out. See also scripts/deploy.sh for more notes.
-            command: .circleci/scripts/deploy.sh newsroom
-
-    "Deploy SLO":
-      <<: *defaults
-      steps:
-        - add_ssh_keys:
-            fingerprints:
-              - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
-
-        - checkout
-
-        - restore_cache:
-            keys:
-              - composer-cache
-
-        - run:
-            name: Run Composer Install
-            command: composer install -o --no-dev
-
-        - run:
-            name: Build assets
-            command: scripts/theme.sh -a
-
-        - run:
-            name: Deploy SLO
-            # Script will loop over projects to deploy all.
-            # Leaving below for reference to easily roll back if this
-            # times out. See also scripts/deploy.sh for more notes.
-            command: .circleci/scripts/deploy.sh slo
 workflows:
   version: 2
   build_and_test:
     jobs:
       # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
-      - "Build and Test"
+      - build_test
       # Build deploy and test on target platform
-      - "Deploy Default":
-          requires:
-            - "Build and Test"
-          filters:
-            branches:
-              only:
-                - develop
-                - stage
-                - master
-                - /^epic-.*/
-      - "Deploy Newsroom":
-          requires:
-            - "Build and Test"
-          filters:
-            branches:
-              only:
-                - develop
-                - stage
-                - master
-                - /^epic-.*/
-      - "Deploy SLO":
+      - deploy:
           requires:
             - "Build and Test"
           filters:
