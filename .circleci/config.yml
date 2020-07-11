@@ -131,13 +131,14 @@ jobs:
 workflows:
   version: 2
   build_and_test:
+    name: Build, Test, Deploy
     jobs:
       # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
       - build_test
       # Build deploy and test on target platform
       - deploy:
           requires:
-            - "Build and Test"
+            - build_test
           filters:
             branches:
               only:
