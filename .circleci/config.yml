@@ -76,29 +76,22 @@ jobs:
                 #name: run functional tests with Behat
                 #command: ./tests/scripts/run-behat
 
-workflows:
-  version: 2
-  build_and_test:
-    jobs:
-      # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
-      - build_test
-      # Build deploy and test on target platform
-      - deploy:
-          <<: *defaults
-          name: Deploy << matrix.site >>
-          matrix:
-            parameters:
-              site: ["default", "newsroom", "slo"]
-          steps:
+    deploy:
+        <<: *defaults
+        parameters:
+            site:
+              type: string
+        name: Deploy << parameters.site >>
+        steps:
             - add_ssh_keys:
                 fingerprints:
-                  - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
+                    - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
 
             - checkout
 
             - restore_cache:
                 keys:
-                  - composer-cache
+                    - composer-cache
 
             - run:
                 name: Run Composer Install
@@ -109,11 +102,20 @@ workflows:
                 command: scripts/theme.sh -a
 
             - run:
-                name: Deploying << matrix.site >>
-                # Script will loop over projects to deploy all.
-                # Leaving below for reference to easily roll back if this
-                # times out. See also scripts/deploy.sh for more notes.
-                command: .circleci/scripts/deploy.sh << matrix.site >>
+                name: Deploying << parameters.site >>
+                command: .circleci/scripts/deploy.sh << parameters.site >>
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
+      - build_test
+      # Build deploy and test on target platform
+      - deploy:
+          matrix:
+            parameters:
+              site: ["default", "newsroom", "slo"]
           requires:
             - build_test
           filters:
