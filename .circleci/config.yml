@@ -29,11 +29,11 @@ defaults: &defaults
     # BUILD_TOOLS_VERSION: ^2.0.0-alpha4
     TERM: dumb
 
-version: 2
+version: 2.1
 jobs:
     build_test:
         <<: *defaults
-        name: Build and Test
+        description: Build and Test
         steps:
             - checkout
 
@@ -76,12 +76,12 @@ jobs:
                 #name: run functional tests with Behat
                 #command: ./tests/scripts/run-behat
 
-    "deploy":
+    deploy:
         <<: *defaults
-        matrix:
-          parameters:
-            site: ["default", "newsroom", "slo"]
-        name: Deploy << matrix.site >>
+        parameters:
+            site:
+              type: string
+        description: Deploy << parameters.site >>
         steps:
             - add_ssh_keys:
                 fingerprints:
@@ -102,40 +102,20 @@ jobs:
                 command: scripts/theme.sh -a
 
             - run:
-                name: Deploying << matrix.site >>
-                # Script will loop over projects to deploy all.
-                # Leaving below for reference to easily roll back if this
-                # times out. See also scripts/deploy.sh for more notes.
-                command: .circleci/scripts/deploy.sh << matrix.site >>
-
-            # - run:
-            #     name: Deploy SLO
-            #     # Pass the SITE_CODE as the first argument.
-            #     command: .circleci/scripts/deploy.sh slo
-
-            # - run:
-            #     # Pass the SITE_CODE as the first argument.
-            #     name: Deploy OC
-            #     command: .circleci/scripts/deploy.sh oc
-
-            # - run:
-            #     # Pass the SITE_CODE as the first argument.
-            #     name: Deploy Newsroom
-            #     command: .circleci/scripts/deploy.sh newsroom
-
-            # - run:
-            #     # Pass the SITE_CODE as the first argument.
-            #     name: Deploy Napa
-            #     command: .circleci/scripts/deploy.sh napa
+                name: Deploying << parameters.site >>
+                command: .circleci/scripts/deploy.sh << parameters.site >>
 
 workflows:
-  version: 2
+  version: 2.1
   build_and_test:
     jobs:
       # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
       - build_test
       # Build deploy and test on target platform
       - deploy:
+          matrix:
+            parameters:
+              site: ["default", "newsroom", "slo"]
           requires:
             - build_test
           filters:
