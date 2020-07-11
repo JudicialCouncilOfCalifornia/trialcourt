@@ -19,9 +19,16 @@ build_all () {
     echo
     echo -e "${GREEN}Now building:${RESET} ${YELLOW} $d ${RESET}"
     echo
-    npm install --prefix $d
-    npm run production --prefix $d
+    install_and_build $d &
   done
+
+  wait
+  echo -e "${GREEN}BUILD COMPLETE.${RESET}"
+}
+
+install_and_build () {
+    npm install --prefix $1
+    npm run production --prefix $1
 }
 
 name_check () {
