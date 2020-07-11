@@ -42,12 +42,16 @@ feature_import() {
     done
 
     for SITE in ${SUB_SITES[@]} ; do
-      echo -e "\nUpdating $SITE..."
-      drush $SITE fra -y --bundle=jcc_tc
-      echo -e "\nExporting config for $SITE..."
-      drush $SITE cex -y
+      drush_fra_cex $SITE &
     done
   fi
+}
+
+drush_fra_cex() {
+  echo -e "\nUpdating $SITE..."
+  drush $1 fra -y --bundle=jcc_tc
+  echo -e "\nExporting config for $1..."
+  drush $1 cex -y
 }
 
 feature_enable(){
@@ -64,9 +68,16 @@ feature_enable(){
   done
 
   for SITE in ${SUB_SITES[@]} ; do
-    drush $SITE en $1 -y
-    drush $SITE cex -y
+    drush_en_cex $SITE $1 &
   done
+
+  wait
+  echo -e "\n${G}Feature enable complete.${RE}"
+}
+
+drush_en_cex() {
+  drush $1 en $2 -y
+  drush $1 cex -y
 }
 
 if [ "$1" == 'docs' ] ; then
