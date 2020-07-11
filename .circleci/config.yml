@@ -33,7 +33,7 @@ version: 2.1
 jobs:
     build_test:
         <<: *defaults
-        name: Build and Test
+        description: Build and Test
         steps:
             - checkout
 
@@ -81,7 +81,7 @@ jobs:
         parameters:
             site:
               type: string
-        name: Deploy << parameters.site >>
+        description: Deploy << parameters.site >>
         steps:
             - add_ssh_keys:
                 fingerprints:
