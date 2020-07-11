@@ -7,14 +7,12 @@ DIR=$PWD
 # Loop over files to find project- config files and deploy each.
 # If this times out due to too many projects we may have to go back to calling
 # this script multiple times from config.yml and passing the project name.
-for path in .circleci/scripts/* ; do
+for name in "$@" ; do
   cd $DIR
-
-  name="$(basename "${path}")"
 
   if [[ $name == project-* ]] ; then
     # Include project variables.
-    . .circleci/scripts/${name}
+    . .circleci/scripts/project-${name}.sh
 
     # Leaving the old way here to roll back easily if loop method times out.
     # Remove the loop and name check condition, then call from config.yml
