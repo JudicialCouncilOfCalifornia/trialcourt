@@ -29,7 +29,7 @@ defaults: &defaults
     # BUILD_TOOLS_VERSION: ^2.0.0-alpha4
     TERM: dumb
 
-version: 2
+version: 2.1
 jobs:
     build_test:
         <<: *defaults
@@ -106,7 +106,7 @@ jobs:
                 command: .circleci/scripts/deploy.sh << parameters.site >>
 
 workflows:
-  version: 2
+  version: 2.1
   build_and_test:
     jobs:
       # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
