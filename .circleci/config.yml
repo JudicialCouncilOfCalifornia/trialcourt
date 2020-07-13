@@ -81,9 +81,6 @@ jobs:
       steps:
         - attach_workspace:
             at: ~/project
-        - add_ssh_keys:
-            fingerprints:
-              - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
 
         - checkout
 
@@ -112,6 +109,9 @@ jobs:
         steps:
             - attach_workspace:
                 at: ~/project
+            - add_ssh_keys:
+                fingerprints:
+                  - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
             - run:
                 name: Deploying << parameters.site >>
                 command: .circleci/scripts/deploy.sh << parameters.site >>
