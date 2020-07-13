@@ -123,7 +123,8 @@ workflows:
       # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
       - test
       - build
-          requires: test
+          requires:
+            - test
           filters:
             branches:
               only:
