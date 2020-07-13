@@ -31,7 +31,7 @@ defaults: &defaults
 
 version: 2.1
 jobs:
-    build_test:
+    test:
         <<: *defaults
         description: Build and Test
         steps:
@@ -76,6 +76,33 @@ jobs:
                 #name: run functional tests with Behat
                 #command: ./tests/scripts/run-behat
 
+    build:
+      <<: *defaults
+      steps:
+        - attach_workspace:
+            at: ~/project
+        - add_ssh_keys:
+            fingerprints:
+              - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
+
+        - checkout
+
+        - restore_cache:
+            keys:
+              - composer-cache
+
+        - run:
+            name: Run Composer Install
+            command: composer install -o --no-dev
+
+        - run:
+            name: Build assets
+            command: scripts/theme.sh -a
+
+        - persist_to_workspace:
+            root: .
+            paths: .
+
     deploy:
         <<: *defaults
         parameters:
@@ -83,24 +110,8 @@ jobs:
               type: string
         description: Deploy << parameters.site >>
         steps:
-            - add_ssh_keys:
-                fingerprints:
-                    - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
-
-            - checkout
-
-            - restore_cache:
-                keys:
-                    - composer-cache
-
-            - run:
-                name: Run Composer Install
-                command: composer install -o --no-dev
-
-            - run:
-                name: Build assets
-                command: scripts/theme.sh -a
-
+            - attach_workspace:
+                at: ~/project
             - run:
                 name: Deploying << parameters.site >>
                 command: .circleci/scripts/deploy.sh << parameters.site >>
@@ -110,14 +121,22 @@ workflows:
   build_and_test:
     jobs:
       # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
-      - build_test
-      # Build deploy and test on target platform
+      - test
+      - build
+          requires: test
+          filters:
+            branches:
+              only:
+                - develop
+                - stage
+                - master
+                - /^epic-.*/
       - deploy:
           matrix:
             parameters:
               site: ["default", "newsroom", "slo"]
           requires:
-            - build_test
+            - build
           filters:
             branches:
               only:
