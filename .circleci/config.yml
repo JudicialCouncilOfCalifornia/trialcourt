@@ -35,6 +35,9 @@ jobs:
         <<: *defaults
         description: Build and Test
         steps:
+            - attach_workspace:
+                at: ~/project
+
             - checkout
 
             - restore_cache:
@@ -49,16 +52,16 @@ jobs:
 
             - run:
                 name: run composer install to get the vendor directory
-                command: composer install
+                command: composer install -o --no-dev
 
             - save_cache:
                 key: composer-cache
                 paths:
                     - $HOME/.composer/cache
 
-            #- run:
-                #name: Build Themes
-                #command: scripts/theme.sh -a
+            - run:
+                name: Build Themes
+                command: scripts/theme.sh -a
 
             - run:
                 name: lint php code for syntax errors
@@ -72,6 +75,9 @@ jobs:
                 name: run unit tests
                 command: composer -n unit-test
 
+            - persist_to_workspace:
+                root: .
+                paths: .
             #- run:
                 #name: run functional tests with Behat
                 #command: ./tests/scripts/run-behat
@@ -83,24 +89,11 @@ jobs:
               type: string
         description: Deploy << parameters.site >>
         steps:
+            - attach_workspace:
+                at: ~/project
             - add_ssh_keys:
                 fingerprints:
-                    - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
-
-            - checkout
-
-            - restore_cache:
-                keys:
-                    - composer-cache
-
-            - run:
-                name: Run Composer Install
-                command: composer install -o --no-dev
-
-            - run:
-                name: Build assets
-                command: scripts/theme.sh -a
-
+                  - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
             - run:
                 name: Deploying << parameters.site >>
                 command: .circleci/scripts/deploy.sh << parameters.site >>
@@ -111,7 +104,6 @@ workflows:
     jobs:
       # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
       - build_test
-      # Build deploy and test on target platform
       - deploy:
           matrix:
             parameters:
