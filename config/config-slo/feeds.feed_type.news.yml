@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.field.node.news.body
     - field.field.node.news.field_attachments
+    - field.field.node.news.field_feed_imported_on
+    - field.field.node.news.field_feed_origin
     - field.field.node.news.field_feed_uid
     - field.field.node.news.field_links
     - field.field.node.news.field_news_type
@@ -36,7 +38,7 @@ third_party_settings:
         label: 'HTML entity decode'
         uuid: 7235eafc-fa33-4bb9-9902-e6212f2497a8
       fbbec44c-d219-49da-9799-a79c07f10c00:
-        text: feed
+        text: NewsLink
         plugin: rewrite
         source: feed
         weight: 0
@@ -135,3 +137,17 @@ mappings:
       language: ''
       reference_by: name
       autocreate: '1'
+  -
+    target: field_feed_origin
+    map:
+      value: 'parent:title'
+    unique: {  }
+    settings:
+      language: null
+  -
+    target: field_feed_imported_on
+    map:
+      value: 'parent:imported'
+    settings:
+      language: null
+      timezone: UTC
