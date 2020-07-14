@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.news.body
     - field.field.node.news.field_attachments
     - field.field.node.news.field_division
+    - field.field.node.news.field_images
     - field.field.node.news.field_links
     - field.field.node.news.field_metatag
     - field.field.node.news.field_news_type
@@ -114,7 +115,7 @@ third_party_settings:
         required_fields: true
       label: Media
 _core:
-  default_config_hash: LRmNbEsEWhYVEJpNvX9eUN2Og2tyTlUCLf0w86hYPlA
+  default_config_hash: CvI63xTL21UbkMToNx4VBbgD40H1hOQv2gTqgpvHAog
 id: node.news.default
 targetEntityType: node
 bundle: news
@@ -132,7 +133,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -246,13 +247,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 9
+    weight: 8
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -260,21 +261,21 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 5
     region: content
     third_party_settings: {  }
   status:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 10
+    weight: 9
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 6
     region: content
     third_party_settings: {  }
   title:
@@ -292,7 +293,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
@@ -301,6 +302,9 @@ content:
     region: content
     third_party_settings: {  }
 hidden:
+  feeds_item: true
+  field_feed_uid: true
+  field_images: true
   publish_on: true
   publish_state: true
   unpublish_on: true
