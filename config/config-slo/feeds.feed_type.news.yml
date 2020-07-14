@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.news.field_attachments
     - field.field.node.news.field_feed_imported_on
     - field.field.node.news.field_feed_origin
+    - field.field.node.news.field_feed_source
     - field.field.node.news.field_feed_uid
     - field.field.node.news.field_links
     - field.field.node.news.field_news_type
@@ -44,6 +45,17 @@ third_party_settings:
         weight: 0
         label: Rewrite
         uuid: fbbec44c-d219-49da-9799-a79c07f10c00
+      ca29546b-67f2-441e-abbe-51d5d51a32a3:
+        find: 'https://www.google.com/url?rct=j&sa=t&url='
+        replace: ''
+        case_sensitive: false
+        whole: false
+        plugin: find_replace
+        source: url
+        weight: 1
+        label: 'Find replace'
+        word_boundaries: false
+        uuid: ca29546b-67f2-441e-abbe-51d5d51a32a3
 id: news
 label: News
 description: 'Imports news from '
@@ -147,7 +159,22 @@ mappings:
   -
     target: field_feed_imported_on
     map:
-      value: 'parent:imported'
+      value: timestamp
     settings:
       language: null
       timezone: UTC
+  -
+    target: field_feed_source
+    map:
+      value: author_name
+    settings:
+      language: null
+      format: plain_text
+  -
+    target: field_attachments
+    map:
+      target_id: feed_image_uri
+    settings:
+      language: ''
+      reference_by: name
+      autocreate: '1'
