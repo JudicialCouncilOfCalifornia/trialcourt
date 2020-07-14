@@ -42,7 +42,10 @@ feature_import() {
     done
 
     for SITE in ${SUB_SITES[@]} ; do
-      drush_fra_cex $SITE &
+      echo -e "\nUpdating $SITE..."
+      drush $SITE fra -y --bundle=jcc_tc
+      echo -e "\nExporting config for $SITE..."
+      drush $SITE cex -y
     done
   fi
 }
@@ -68,7 +71,8 @@ feature_enable(){
   done
 
   for SITE in ${SUB_SITES[@]} ; do
-    drush_en_cex $SITE $1 &
+    drush $SITE en $1 -y
+    drush $SITE cex -y
   done
 
   wait
