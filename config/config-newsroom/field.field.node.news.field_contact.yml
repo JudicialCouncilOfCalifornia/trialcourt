@@ -1,26 +1,28 @@
-uuid: 62a078be-cbc5-455d-9017-85f3e8457e09
+uuid: fa2d60b3-a32d-4dc3-8acf-d9cf487040c8
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_images
-    - media.type.image
+    - field.storage.node.field_contact
     - node.type.news
-id: node.news.field_images
-field_name: field_images
+    - node.type.person
+_core:
+  default_config_hash: JEctML8knjy_jGzqsvwPgtL73tOSER39_pHbEx6KGng
+id: node.news.field_contact
+field_name: field_contact
 entity_type: node
 bundle: news
-label: Images
+label: Contact
 description: ''
 required: false
-translatable: true
+translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: 'default:media'
+  handler: 'default:node'
   handler_settings:
     target_bundles:
-      image: image
+      person: person
     sort:
       field: _none
     auto_create: false
