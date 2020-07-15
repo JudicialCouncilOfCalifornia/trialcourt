@@ -6,6 +6,7 @@ dependencies:
     - facets.facet.topics
     - field.field.node.news.body
     - field.field.node.news.field_attachments
+    - field.field.node.news.field_contact
     - field.field.node.news.field_division
     - field.field.node.news.field_images
     - field.field.node.news.field_links
@@ -23,7 +24,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: KQwMVA_Uf8nhd0xX3JtJezKbIst-lbEvYqBxEs3_ex0
+  default_config_hash: fPvBPshwpk-T94m-Y3P-xWTRCudHdv72f4XWWgANh6w
 id: node.news.default
 targetEntityType: node
 bundle: news
@@ -42,6 +43,14 @@ content:
     label: above
     settings: {  }
     third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 10
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
     region: content
   field_division:
     type: entity_reference_facet_link
