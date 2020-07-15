@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.news.body
     - field.field.node.news.field_attachments
     - field.field.node.news.field_division
+    - field.field.node.news.field_images
     - field.field.node.news.field_links
     - field.field.node.news.field_metatag
     - field.field.node.news.field_news_type
@@ -101,6 +102,7 @@ third_party_settings:
       label: 'News Header'
     group_media:
       children:
+        - field_images
         - field_attachments
       parent_name: group_news_content
       weight: 21
@@ -114,7 +116,7 @@ third_party_settings:
         required_fields: true
       label: Media
 _core:
-  default_config_hash: LRmNbEsEWhYVEJpNvX9eUN2Og2tyTlUCLf0w86hYPlA
+  default_config_hash: GrkjR1Ncu-cbpM7EO5K03tz20XbbPscrk0RAxUWHbF0
 id: node.news.default
 targetEntityType: node
 bundle: news
@@ -138,7 +140,7 @@ content:
     third_party_settings: {  }
   field_attachments:
     type: media_library_widget
-    weight: 3
+    weight: 4
     settings:
       media_types: {  }
     third_party_settings: {  }
@@ -160,6 +162,13 @@ content:
       size: 60
       selection_handler: default
     third_party_settings: {  }
+  field_images:
+    weight: 3
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+    type: media_library_widget
+    region: content
   field_links:
     weight: 5
     settings:
@@ -178,7 +187,7 @@ content:
     type: link_attributes
     region: content
   field_metatag:
-    weight: 11
+    weight: 12
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
@@ -286,7 +295,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -301,6 +310,8 @@ content:
     region: content
     third_party_settings: {  }
 hidden:
+  feeds_item: true
+  field_feed_uid: true
   publish_on: true
   publish_state: true
   unpublish_on: true
