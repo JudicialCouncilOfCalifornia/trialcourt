@@ -1,0 +1,181 @@
+uuid: e2bec503-1baf-4ff6-8011-4cb457a92cd0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.news.body
+    - field.field.node.news.field_feed_imported_on
+    - field.field.node.news.field_feed_origin
+    - field.field.node.news.field_feed_source
+    - field.field.node.news.field_feed_uid
+    - field.field.node.news.field_links
+    - field.field.node.news.field_news_type
+    - node.type.news
+  module:
+    - feeds_tamper
+    - node
+third_party_settings:
+  feeds_tamper:
+    tampers:
+      c4c90786-02d8-4c6f-8217-c6be8afd5dd6:
+        allowed_tags: ''
+        plugin: strip_tags
+        source: title
+        weight: 0
+        label: 'Strip tags'
+        uuid: c4c90786-02d8-4c6f-8217-c6be8afd5dd6
+      d7f2119b-9d59-407d-9524-91d6e34e94ec:
+        plugin: html_entity_decode
+        source: title
+        weight: 1
+        label: 'HTML entity decode'
+        uuid: d7f2119b-9d59-407d-9524-91d6e34e94ec
+      94b1c022-b21a-4e59-81f2-514b0089396d:
+        allowed_tags: ''
+        plugin: strip_tags
+        source: url
+        weight: -10
+        label: 'Strip tags'
+        uuid: 94b1c022-b21a-4e59-81f2-514b0089396d
+      8b588b64-6b19-45e7-81f4-3d4724885d1f:
+        find: '/.+?(?=\&url=)/'
+        replace: ''
+        limit: null
+        plugin: find_replace_regex
+        source: url
+        weight: -9
+        label: 'Find replace REGEX : strip bing redirection'
+        uuid: 8b588b64-6b19-45e7-81f4-3d4724885d1f
+      1228ac22-7fdb-4f6c-8453-cf03210d2f75:
+        method: rawurldecode
+        plugin: url_decode
+        source: url
+        weight: -7
+        label: 'URL Decode'
+        uuid: 1228ac22-7fdb-4f6c-8453-cf03210d2f75
+      9f09f69a-ae63-4128-9405-a08b45087276:
+        find: '&url='
+        replace: ''
+        case_sensitive: false
+        whole: false
+        plugin: find_replace
+        source: url
+        weight: -8
+        label: 'Find replace'
+        word_boundaries: false
+        uuid: 9f09f69a-ae63-4128-9405-a08b45087276
+      451be2a8-7f1f-4601-9096-f4986452a817:
+        text: NewsLink
+        plugin: rewrite
+        source: feed
+        weight: 0
+        label: Rewrite
+        uuid: 451be2a8-7f1f-4601-9096-f4986452a817
+      9faeb742-50d9-49e9-ba89-338f99bcfd70:
+        find: '/&/'
+        replace: '?'
+        limit: null
+        plugin: find_replace_regex
+        source: url
+        weight: -6
+        label: 'Find replace REGEX : Replace first argument & with ?'
+        uuid: 9faeb742-50d9-49e9-ba89-338f99bcfd70
+id: news_bing_feed
+label: 'News - Bing feed'
+description: 'Imports news from Bing'
+help: ''
+import_period: 86400
+fetcher: http
+fetcher_configuration:
+  auto_detect_feeds: false
+  use_pubsubhubbub: false
+  always_download: false
+  fallback_hub: ''
+  request_timeout: 30
+parser: syndication
+parser_configuration: {  }
+processor: 'entity:node'
+processor_configuration:
+  langcode: en
+  update_existing: 0
+  update_non_existent: _keep
+  expire: -1
+  owner_feed_author: false
+  owner_id: 0
+  authorize: true
+  skip_hash_check: false
+  values:
+    type: news
+custom_sources:
+  feed:
+    label: feed
+    value: feed
+    machine_name: feed
+  news_source:
+    label: 'News:Source'
+    value: 'News:Source'
+    machine_name: news_source
+  source:
+    label: Source
+    value: Source
+    machine_name: source
+mappings:
+  -
+    target: title
+    map:
+      value: title
+    unique: {  }
+    settings:
+      language: null
+  -
+    target: body
+    map:
+      value: description
+      summary: description
+    settings:
+      language: ''
+      format: full_html
+  -
+    target: field_feed_uid
+    map:
+      value: url
+    unique:
+      value: '1'
+    settings:
+      language: null
+  -
+    target: field_feed_source
+    map:
+      value: news_source
+    settings:
+      language: null
+      format: plain_text
+  -
+    target: field_links
+    map:
+      uri: url
+      title: title
+    settings:
+      language: null
+  -
+    target: field_news_type
+    map:
+      target_id: feed
+    settings:
+      language: null
+      reference_by: name
+      autocreate: false
+  -
+    target: field_feed_origin
+    map:
+      value: 'parent:title'
+    unique: {  }
+    settings:
+      language: null
+  -
+    target: field_feed_imported_on
+    map:
+      value: timestamp
+    settings:
+      language: null
+      timezone: UTC

@@ -53,12 +53,39 @@ third_party_settings:
         plugin: find_replace
         source: url
         weight: 1
-        label: 'Find replace'
+        label: 'Find replace : Remove google redirection'
         word_boundaries: false
         uuid: ca29546b-67f2-441e-abbe-51d5d51a32a3
+      f00745b8-6110-4268-b001-6523c286954e:
+        find: '/&ct(=[^&]*)?|^ct(=[^&]*)?&/'
+        replace: ''
+        limit: null
+        plugin: find_replace_regex
+        source: url
+        weight: 2
+        label: 'Find replace REGEX : remove CT parameter'
+        uuid: f00745b8-6110-4268-b001-6523c286954e
+      358912a5-4735-44f8-8658-fc9f7c1ac853:
+        find: '/&cd(=[^&]*)?|^cd(=[^&]*)?&/'
+        replace: ''
+        limit: null
+        plugin: find_replace_regex
+        source: url
+        weight: 3
+        label: 'Find replace REGEX : remove CD parameter'
+        uuid: 358912a5-4735-44f8-8658-fc9f7c1ac853
+      978a914d-06f3-42ad-8c20-f55d9c68bf57:
+        find: '/&/'
+        replace: '?'
+        limit: null
+        plugin: find_replace_regex
+        source: url
+        weight: 4
+        label: 'Find replace REGEX : Replace first argument & with ?'
+        uuid: 978a914d-06f3-42ad-8c20-f55d9c68bf57
 id: news
-label: News
-description: 'Imports news from '
+label: 'News - Google feed'
+description: 'Imports news from google'
 help: ''
 import_period: 86400
 fetcher: http
