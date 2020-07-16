@@ -14,7 +14,6 @@ function jcc_newsroom_preprocess_block__views_block__news_block_3(&$variables) {
   $tiles = [];
   $excerpt = '';
   $rows = $variables['elements']['content']['#view']->result;
-  $read_more_text = isset($variables['elements']['content']['#view']->field['view_node']->last_render_text) ? $variables['elements']['content']['#view']->field['view_node']->last_render_text : "";
 
   foreach ($rows as $row) {
     $brow = date("M j, Y", $row->_entity->created->value);
