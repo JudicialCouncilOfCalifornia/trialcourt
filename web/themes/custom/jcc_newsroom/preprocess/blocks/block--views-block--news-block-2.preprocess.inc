@@ -9,7 +9,7 @@
  * Implements hook_preprocess_HOOK().
  */
 function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
-  $tiles = [];
+  $cards = [];
   $excerpt = '';
   $rows = $variables['elements']['content']['#view']->result;
 
@@ -44,23 +44,21 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
       ];
     }
 
-    $recent_news_tile = [
-      'card' => [
-        'title' => $title,
-        'excerpt' => $excerpt,
-        'url' => $url,
-      ],
-      'img' => [
+    $featured_news_card = [
+      'title' => $title,
+      'excerpt' => $excerpt,
+      'excerpt_img' => [
         'src' => $img_src,
         'alt' => $img_alt,
         'renderer' => 'patternlab',
       ],
+      'url' => $url,
       'contextual_links' => $placeholder,
     ];
-    array_push($tiles, $recent_news_tile);
+    array_push($cards, $featured_news_card);
   }
 
   $variables['featured_news'] = [
-    'tiles' => $tiles,
+    'cards' => $cards,
   ];
 }
