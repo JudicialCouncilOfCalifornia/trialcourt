@@ -1,0 +1,53 @@
+{% set classes = [
+  'jcc-cards-with-button__container',
+]|merge(cards_with_button.classes|default([''])) %}
+
+<div class="{{ classes|join(' ')|trim }}"{% if cards_with_button.id %} id="{{ cards_with_button.id }}"{% endif %}>
+  {% if cards_with_button.headergroup %}
+    {% include '@molecules/text/header-group/header-group.twig' with {
+      headergroup: cards_with_button.headergroup
+    } %}
+  {% endif %}
+
+  <ul class="jcc-cards-with-button">
+    {% for card in cards_with_button.cards %}
+      <li class="jcc-cards-with-button__item">
+        {% include '@jcc_newsroom/_patterns/02-molecules/card/card.twig' with {
+          card: card
+        } %}
+
+        {% if card.read_more %}
+          {% set url_attributes = card.read_more.url_attributes|default(create_attribute().addClass("usa-link")) %}
+          <div class="jcc-cards-with-button__read_more">
+            <p><a href="{{ card.read_more.url }}"{{ url_attributes }}>
+              {{- card.read_more.label -}}
+
+              {% set icon = card.read_more.icon|default({
+                name: "chevron_right",
+                title: "Read more"|t,
+                decorative: false,
+              }) %}
+
+              <span class="jcc-cards-with-button__read_more_icon">
+                {% include '@atoms/icons/icon.twig' with  { icon: icon } %}
+              </span>
+            </a></p>
+          </div>
+        {% endif %}
+      </li>
+      {% if loop.first %}
+        </ul><ul class="jcc-cards-with-button">
+      {% endif %}
+    {% endfor %}
+  </ul>
+
+  <div class="jcc-cards-with-button__button-container">
+    <div class="jcc-cards-with-button__button">
+      {% if cards_with_button.button %}
+        {% include "@atoms/buttons/link-button.twig" with {
+          link_button: cards_with_button.button
+        } only %}
+      {% endif %}
+    </div>
+  </div>
+</div>
