@@ -1,0 +1,48 @@
+{% set classes = [
+  'jcc-tiles-list__container',
+]|merge(tiles_list.classes|default([''])) %}
+
+<div class="{{ classes|join(' ')|trim }}"{% if tiles_list.id %} id="{{ tiles_list.id }}"{% endif %}>
+  {% if tiles_list.headergroup %}
+    {% include '@molecules/text/header-group/header-group.twig' with {
+      headergroup: tiles_list.headergroup
+    } %}
+  {% endif %}
+
+  <ul class="jcc-tiles-list jcc-tiles-list--text-only">
+    {% for tile in tiles_list.tiles %}
+      {% set contextual = tile.contextual_links ? 'contextual-region' : false %}
+      <li class="jcc-tiles-list__tile {{ contextual }}">
+        {{ tile.contextual_links }}
+        {% if tile.date %}
+        <div class="jcc-tiles-list__date">
+          <div class="jcc-tiles-list__date-month">{{ tile.date|date('M') }}</div>
+          <div class="jcc-tiles-list__date-day">
+            <div class="jcc-tiles-list__date-day--text">
+              {{ tile.date|date('d') }}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% include '@molecules/blocks/card/card.twig' with {
+          card: tile.card
+        } %}
+        {% if tile.img.src %}
+        <div class="jcc-tiles-list__image">
+          {% include '@atoms/image/image.twig' with { image: tile.img } %}
+        </div>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+
+  <div class="jcc-tiles-list__button">
+    {% if tiles_list.button %}
+      {% include "@atoms/buttons/link-button.twig" with {
+        link_button: tiles_list.button
+      } only %}
+    {% endif %}
+  </div>
+
+
+</div>
