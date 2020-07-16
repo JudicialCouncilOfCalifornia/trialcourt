@@ -1,0 +1,38 @@
+{% set tag = card.tag|default('h3') %}
+{% set classes = [
+  'jcc-card',
+  card.contextual_links ? 'contextual-region' : '',
+  card.img ? 'jcc-card--has-icon' : '',
+  card.variant ? 'jcc-card--' ~ card.variant : '',
+]|merge(card.classes|default([''])) %}
+
+<div class="{{ classes|join(' ')|trim }}">
+  {{ card.contextual_links }}
+  {% if card.img %}
+    <div class="jcc-card__media">
+      {% include '@atoms/image/image.twig' with { image: card.img } %}
+    </div>
+  {% endif %}
+
+  <div class="jcc-card__body">
+    {% if card.excerpt_img %}
+      {% include '@atoms/image/image.twig' with { image: card.excerpt_img } %}
+    {% endif %}
+    {% if card.brow %}
+      <div class="jcc-card__brow">{{ card.brow }}</div>
+    {% endif %}
+    <{{ tag }} class="jcc-card__title">
+      {%  if card.url %}
+        <a class="usa-link" href="{{ card.url }}">{{ card.title }}</a>
+      {% else %}
+        {{ card.title }}
+      {% endif %}
+    </{{ tag }}>
+    {% if card.excerpt %}
+      <div class="jcc-card__excerpt">{{ card.excerpt }}</div>
+    {% endif %}
+    {% if card.footer %}
+      <div class="jcc-card__footer">{{ card.brow }}</div>
+    {% endif %}
+  </div>
+</div>
