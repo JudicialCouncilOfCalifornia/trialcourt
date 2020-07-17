@@ -40,9 +40,12 @@ function jcc_newsroom_preprocess_block__views_block__news_block_4(&$variables) {
   }
 
   $variables['news_links'] = [
-    'header' => htmlspecialchars_decode($header_title),
+    'headergroup' => [
+      'title' => htmlspecialchars_decode($header_title),
+    ],
     'items' => $links,
     'button' => $button,
     'columns' => 2,
+    'files_list' => TRUE,
   ];
 }
