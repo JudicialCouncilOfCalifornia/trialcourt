@@ -4,12 +4,13 @@ status: true
 dependencies:
   config:
     - field.storage.node.body
-    - field.storage.node.field_attachments
     - field.storage.node.field_feed_imported_on
     - field.storage.node.field_feed_origin
     - field.storage.node.field_feed_source
     - field.storage.node.field_links
+    - field.storage.node.field_news_image
     - field.storage.node.field_news_type
+    - image.style.media_library
     - node.type.news
     - user.role.administrator
     - user.role.author
@@ -19,6 +20,7 @@ dependencies:
     - datetime
     - link
     - node
+    - svg_image
     - text
     - user
 id: news_dashboard
@@ -348,10 +350,10 @@ display:
             - node_unpublish_action
           entity_type: node
           plugin_id: node_bulk_form
-        field_attachments:
-          id: field_attachments
-          table: node__field_attachments
-          field: field_attachments
+        field_news_image:
+          id: field_news_image
+          table: node__field_news_image
+          field: field_news_image
           relationship: none
           group_type: group
           admin_label: ''
@@ -359,7 +361,7 @@ display:
           exclude: false
           alter:
             alter_text: false
-            text: '{{ field_attachments }} '
+            text: ''
             make_link: false
             path: ''
             absolute: false
@@ -397,13 +399,18 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: entity_reference_entity_view
+          type: image
           settings:
-            view_mode: news_feed_overview
-          group_column: target_id
+            image_style: media_library
+            image_link: ''
+            svg_render_as_image: true
+            svg_attributes:
+              width: null
+              height: null
+          group_column: ''
           group_columns: {  }
           group_rows: true
-          delta_limit: 5
+          delta_limit: 0
           delta_offset: 0
           delta_reversed: false
           delta_first_last: false
@@ -899,11 +906,11 @@ display:
         - user.roles
       tags:
         - 'config:field.storage.node.body'
-        - 'config:field.storage.node.field_attachments'
         - 'config:field.storage.node.field_feed_imported_on'
         - 'config:field.storage.node.field_feed_origin'
         - 'config:field.storage.node.field_feed_source'
         - 'config:field.storage.node.field_links'
+        - 'config:field.storage.node.field_news_image'
         - 'config:field.storage.node.field_news_type'
   page_1:
     display_plugin: page
@@ -923,9 +930,9 @@ display:
         - user.roles
       tags:
         - 'config:field.storage.node.body'
-        - 'config:field.storage.node.field_attachments'
         - 'config:field.storage.node.field_feed_imported_on'
         - 'config:field.storage.node.field_feed_origin'
         - 'config:field.storage.node.field_feed_source'
         - 'config:field.storage.node.field_links'
+        - 'config:field.storage.node.field_news_image'
         - 'config:field.storage.node.field_news_type'

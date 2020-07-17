@@ -15,10 +15,12 @@ dependencies:
     - field.field.node.news.field_images
     - field.field.node.news.field_links
     - field.field.node.news.field_metatag
+    - field.field.node.news.field_news_image
     - field.field.node.news.field_news_type
     - field.field.node.news.field_subject_matter
     - field.field.node.news.field_tags
     - field.field.node.news.field_topics
+    - image.style.thumbnail
     - node.type.news
   module:
     - autocomplete_deluxe
@@ -29,6 +31,7 @@ dependencies:
     - metatag
     - path
     - straw
+    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -109,6 +112,7 @@ third_party_settings:
       label: 'News Header'
     group_media:
       children:
+        - field_news_image
         - field_images
         - field_attachments
       parent_name: group_news_content
@@ -147,7 +151,7 @@ content:
     third_party_settings: {  }
   field_attachments:
     type: media_library_widget
-    weight: 4
+    weight: 5
     settings:
       media_types: {  }
     third_party_settings: {  }
@@ -171,7 +175,7 @@ content:
     region: content
   field_division:
     type: autocomplete_deluxe
-    weight: 11
+    weight: 4
     region: content
     settings:
       limit: '10'
@@ -186,20 +190,20 @@ content:
       size: 60
       selection_handler: default
     third_party_settings: {  }
-  field_images:
-    weight: 3
-    settings:
-      media_types: {  }
-    third_party_settings: {  }
-    type: media_library_widget
-    region: content
   field_feed_source:
-    weight: 26
+    weight: 13
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: text_textfield
+    region: content
+  field_images:
+    weight: 4
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+    type: media_library_widget
     region: content
   field_links:
     weight: 5
@@ -223,6 +227,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
+    region: content
+  field_news_image:
+    weight: 3
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
     region: content
   field_news_type:
     type: autocomplete_deluxe
@@ -253,7 +265,7 @@ content:
     third_party_settings: {  }
   field_tags:
     type: autocomplete_deluxe
-    weight: 12
+    weight: 5
     region: content
     settings:
       limit: '10'
