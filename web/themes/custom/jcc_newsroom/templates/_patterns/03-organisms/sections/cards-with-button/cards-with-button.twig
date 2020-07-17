@@ -9,10 +9,10 @@
     } %}
   {% endif %}
 
-  <ul class="jcc-cards-with-button">
+  <ul class="jcc-cards-with-button jcc-cards-with-button-primary">
     {% for card in cards_with_button.cards %}
       <li class="jcc-cards-with-button__item">
-        {% include '@jcc_newsroom/_patterns/02-molecules/card/card.twig' with {
+        {% include '@jcc_newsroom/_patterns/02-molecules/blocks/card/card.twig' with {
           card: card
         } %}
 
@@ -36,7 +36,7 @@
         {% endif %}
       </li>
       {% if loop.first %}
-        </ul><ul class="jcc-cards-with-button">
+        </ul><ul class="jcc-cards-with-button jcc-cards-with-button--secondary">
       {% endif %}
     {% endfor %}
   </ul>

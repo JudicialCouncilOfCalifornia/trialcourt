@@ -9,10 +9,10 @@
     } %}
   {% endif %}
 
-  <ul class="jcc-tiles-list jcc-tiles-list--text-only">
+  <ul class="jcc-tiles-list">
     {% for tile in tiles_list.tiles %}
       {% set contextual = tile.contextual_links ? 'contextual-region' : false %}
-      <li class="jcc-tiles-list__tile {{ contextual }}">
+      <li class="jcc-tiles-list__tile {{ contextual }} {% if not tile.img.src %} jcc-tiles-list--text-only{% endif %}">
         {{ tile.contextual_links }}
         {% if tile.date %}
         <div class="jcc-tiles-list__date">
