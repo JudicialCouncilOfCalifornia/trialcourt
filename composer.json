@@ -238,11 +238,8 @@
         ],
         "post-install-cmd": [
             "DrupalProject\\composer\\ScriptHandler::createRequiredFiles",
-            "DrupalProject\\composer\\ScriptHandler::postInstall",
             "find ./vendor/ -type d -name .git | xargs rm -rf",
-            "find ./web/ -type d -name .git | xargs rm -rf",
-            "if [ ! -f web/sites/default/services.local.yml ]; then cp examples/example.services.local.yml web/sites/default/services.local.yml; fi",
-            "if [ ! -f web/sites/default/settings.local.php ]; then cp examples/example.settings.local.php web/sites/default/settings.local.php; fi"
+            "find ./web/ -type d -name .git | xargs rm -rf"
         ],
         "post-update-cmd": [
             "DrupalProject\\composer\\ScriptHandler::createRequiredFiles",
