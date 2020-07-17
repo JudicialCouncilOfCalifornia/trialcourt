@@ -93,7 +93,7 @@ example. Generally, check the related items in the following sections:
  can be overridden per content type.
  - Block - For views blocks for this content type, though you might want a
  separate feature for views and or blocks. Watch out for dependency issues and
- note that block placement is specific to a particular theme.
+ note that block placement is specific to a particular theme so capture custom block definitions, but not block placement config.
  - Content language settings - i.e. node.announcement
  - Content Type - Announcement
  - Entity Form Display - node.announcement.default
@@ -137,7 +137,7 @@ with that profile.
 
 ### Enabling a new Feature across all sites.
 
-- You could use drush and enable it for each local alias. `lando drush en jcc_tc_announcements`
+- You could use drush and enable it for each local alias. `lando drush @alias en jcc_tc_announcements`
 - Or write an update hook in a module all sites are certian to have enabled. `jcc_tc_custom` for example.
 - Or enable them through the UI on each local site.
 
@@ -149,7 +149,7 @@ The important part is, that once the Feature's config is installed into the
 site, the site must export it and manage it as standard config with `drush cex`.
 
 Standard config management is how configuration is deployed across environments.
-Feature config managment is simply for duplicating config across different sites.
+Feature config managment is simply for duplicating config across different sites and is done in a local development environment.
 
 ### Updating an existing feature module.
 
@@ -167,6 +167,12 @@ across multisites with `lando feature:sync`. This will re-import the Feature
 module's config with the new changes and then export the standard config
 changes for you.
 
+`lando feature:sync` loops over each local site alias and runs:
+ - `drush $SITE fra -y --bundle=jcc_tc` - to import feature changes.
+ - `drush $SITE cex -y`- to export config changes.
+
+ Run `lando drush | grep features` for more info about features drush commands.
+
 ### Destructive Behavior and Modules
 
 By design, Features does not do anything destructive with config. You can't
@@ -181,7 +187,7 @@ do that across sites, unless you're really sure.
 
 If you are really sure, you can write an update hook in the feature module to
 do the work. This is beyond the scope of this documentation but Feature modules
-are just modules. You can create a `.install` file for installation processes,
+are just modules. You can create an `.install` file for installation processes,
 update hooks, etc., or `.module` file for preprocess hooks, or anything you
 want.  Of course, keep it specific to a single purpose module.
 
@@ -202,10 +208,27 @@ Recap:
  - Import config from Features to multisites by enabling or syncing, manually or with tooling.
  - Export changes with config managemnt for each multisite, manually or with tooling.
 
+## Divergence
 
-UPDATE this doc for:
+Beyond the complexity and additional considerations for managing configuration accross multiple sites, the biggest risk is divergence of a site from the standard.
 
-Scenarios:
-  - Universal Features with immutable values
-  - site specific configurations
-  - universal config with mutable values
+### Scenarios:
+
+#### Universal Features With Immutable Values
+
+This is the ideal. These features are the same across all sites in the installation. Configuration is managed as described above. Config changes are captured in discrete features to install on all sites. Each site then uses configuration management to export the new config to it's own config directory for deployment to other environments.
+
+ - `lando feature:sync` - Sync latest feature updates to all multisites.
+ - `lando feature:enable [module]` - Enable a feature (or any) module AND export the new config changes, on all multisites.
+
+#### Site Specific Configurations
+
+There may be a considerable amount of configuration that is just not captured in a feature module. This will be specific to the each site and managed with the standard config management process.
+
+#### Universal Config With Mutable Values
+
+Feature modules can be enabled or disabled on a per site basis. If a site plans to remove a feature, or alter configuration provided by a base feature in a way that will not be rolled out to all other sites, that feature module should be disabled for that site.
+
+In doing this, you preserve the ability to run a scripted features import across all sites. The disabled feature modules on specific sites will not be re-imported for those sites. Any site specific configuration that diverges from that module will not be affected and will be managed with the site specific standard config management process.
+
+*Note: See README.md for notes on standard config management and enabling/disabling modules.*
