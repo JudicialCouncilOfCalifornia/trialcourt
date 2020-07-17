@@ -92,6 +92,27 @@ class ScriptHandler {
         }
       }
     }
+    // Install multisite local settings.
+    $dirs = array_filter(glob($drupalRoot . '/sites/*'), 'is_dir');
+    foreach ($dirs as $dir) {
+      $site = str_replace($drupalRoot . '/sites/', '', $dir);
+      if (!$fs->exists($drupalRoot . "/sites/$site/settings.local.php") and $fs->exists($drupalRoot . "/../scripts/local/settings.local.php")) {
+        $strings = file_get_contents($drupalRoot . '/../scripts/local/settings.local.php');
+        $replaced = str_replace('[site]', $site, $strings);
+        file_put_contents($drupalRoot . "/sites/$site/settings.local.php", $replaced);
+        $fs->chmod($drupalRoot . "/sites/$site/settings.local.php", 0666);
+        $event->getIO()->write("Create a sites/$site/settings.local.php file with chmod 0666");
+      }
+      else {
+        $event->getIO()->write("Not updating $site/settings.local.php");
+      }
+      if (!$fs->exists($drupalRoot . "/sites/$site/services.local.yml") and $fs->exists($drupalRoot . '/../scripts/local/services.local.yml')) {
+        $fs->copy($drupalRoot . '/../scripts/local/services.local.yml', $drupalRoot . "/sites/$site/services.local.yml");
+      }
+      else {
+        $event->getIO()->write("Not updating $site/services.local.yml");
+      }
+    }
   }
 
   /**

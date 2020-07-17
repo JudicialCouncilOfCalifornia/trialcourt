@@ -4,7 +4,7 @@
 
 In preparation for multisite, `sites/default` will become a base install. We can use this for reviewing and updating the base installation. `tc.lndo.site`
 
-Slo will live in `sites/slo`, and be accessed (with lando) at `tc-slo.lndo.site`.
+Slo will live in `sites/slo`, and be accessed (with lando) at `slo.lndo.site`.
 
 The config directories will become `config/config-default` and `config/config-slo` respectively.
 
@@ -28,7 +28,7 @@ You must now indicate which site to run on with the `-l` option. The choice of `
 
 To import a database use the (optional) `-f [path/to/file.sql|gz]`.
 
-i.e `lando fresh -l tc-slo.lndo.site -f data/slo-database.sql.gz`
+i.e `lando fresh -l slo.lndo.site -f data/slo-database.sql.gz`
 
 ### `lando multisite`
 
@@ -44,7 +44,7 @@ Installation on my local takes about 10 minutes. There is no progress indicator 
 
 ## Multisite Creation: All Steps
 
- - create new proxy in .lando.yml tc-[new].lndo.site
+ - create new proxy in .lando.yml [new].lndo.site
  - create new db service in .lando.yml db[new]
  - `lando rebuild`
 
@@ -53,7 +53,7 @@ Installation on my local takes about 10 minutes. There is no progress indicator 
    - delete `sites/[new]/files`
    - mkdir `config/config-[new]-local`
    - A series of pre install string changes for settings files.
-   - `drush si -l tc-${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com`
+   - `drush si -l ${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com`
 
    - POST INSTALL
      - Config export from the installed site.
@@ -85,12 +85,12 @@ For our use, we want to use one Drupal Multisite codebase for local development,
    - develop-jcc-napa.pantheonsite.io -> napa
  - Circle CI is configured to build_test the codebase, then deploy it to multiple Pantheon instances. Due to their configuration, it just works.
  - Each additional site requires one run command in the CI config.yml and a project-*.sh config file to complement the deploy.sh script.
-   - `run: command: command: .circleci/scripts/deploy.sh oc`
+   - `run: command: .circleci/scripts/deploy.sh oc`
    - `.circleci/scripts/project-oc.sh`
  - `project-*.sh` sets 3 variables and is imported by the main deploy.sh script.
-   - `UUID=` - the pantheon project UUID.
+   - `UUID=` - the pantheon project UUID (Find it in the url for the dashboard of that project.)
    - `SITE_CODE=` - the abbreviated site code i.e. slo, oc, napa.
-   - `LIVE=[true|false]` - if set to true, the deploy of `master` will get a pantheon live tag.
+   - `LIVE=[true|false]` - if set to true, the deploy of `master` will get a pantheon live tag. Otherwise, master will be viewable on the standard pantheon "Dev" environment, not to be confused with our multidev `develop` testing environment.
 
 ### Additional notes about managing multisite.
 
