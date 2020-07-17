@@ -16,7 +16,9 @@
 
   <div class="jcc-card__body">
     {% if card.excerpt_img %}
-      {% include '@atoms/image/image.twig' with { image: card.excerpt_img } %}
+      <div class="jcc-card__img">
+        {% include '@atoms/image/image.twig' with { image: card.excerpt_img } %}
+      </div>
     {% endif %}
     {% if card.brow %}
       <div class="jcc-card__brow">{{ card.brow }}</div>
