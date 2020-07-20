@@ -104,20 +104,32 @@ function main_menu_cleaning_helper(&$form, $field, $group) {
  */
 
 /**
- * Alters filters for home page locations.
+ * Alters views exposed widget for various views (remove empty taxonomy filters)
  */
 function jcc_tc_custom_form_views_exposed_form_alter(&$form, FormStateInterface $form_state) {
-  if (!array_key_exists('field_location_type_target_id', $form)) {
-    return;
+  if (array_key_exists('field_location_type_target_id', $form)) {
+    jcc_tc_custom_cleanup_empty_filters($form, 'field_location_type_target_id', 'node__field_location_type');
   }
-  $options = $form['field_location_type_target_id']['#options'];
+  elseif (array_key_exists('field_event_type_target_id', $form)) {
+    jcc_tc_custom_cleanup_empty_filters($form, 'field_event_type_target_id', 'node__field_event_type');
+  }
+  elseif (array_key_exists('field_news_type_target_id', $form)) {
+    jcc_tc_custom_cleanup_empty_filters($form, 'field_news_type_target_id', 'node__field_news_type');
+  }
+}
+
+/**
+ * Helper function for jcc_tc_custom_form_views_exposed_form_alter()
+ */
+function jcc_tc_custom_cleanup_empty_filters(&$form, $form_name, $field_name) {
+  $options = $form[$form_name]['#options'];
   $connection = Database::getConnection();
-  $sth = $connection->select('node__field_location_type', 'tags');
-  $sth->addField('tags', 'field_location_type_target_id');
-  $sth->groupBy('tags.field_location_type_target_id');
+  $sth = $connection->select($field_name, 'tags');
+  $sth->addField('tags', $form_name);
+  $sth->groupBy('tags.' . $form_name);
 
   $data = $sth->execute();
-  $results = array_flip($data->fetchAll(\PDO::FETCH_COLUMN, 'field_location_type_target_id'));
+  $results = array_flip($data->fetchAll(\PDO::FETCH_COLUMN, $form_name));
   $options = array_intersect_key($options, $results);
-  $form['field_location_type_target_id']['#options'] = $options;
+  $form[$form_name]['#options'] = $options;
 }
