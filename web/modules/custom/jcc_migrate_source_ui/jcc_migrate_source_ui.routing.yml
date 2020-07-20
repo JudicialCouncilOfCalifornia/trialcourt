@@ -1,9 +1,25 @@
 jcc_migrate_source_ui.form:
   path: '/admin/structure/migrate/jcc_migrate_source_ui'
   defaults:
-    _title: 'JCC Migrate source UI'
+    _title: 'JCC Migrate Source UI'
     _form: '\Drupal\jcc_migrate_source_ui\Form\JCCMigrateSourceUiForm'
   requirements:
     _permission: 'access jcc migrate source ui'
   options:
     _admin_route: TRUE
+jcc_migrate_source_ui.confirm:
+  path: '/admin/reports/jcc_migrate_source_ui/delete'
+  defaults:
+    _title: 'JCC Migrate Source Logs: Delete Logs'
+    _form: '\Drupal\jcc_migrate_source_ui\Form\JccMigrateSourceLogClearLogConfirmForm'
+  requirements:
+    _permission: 'access jcc migrate source ui'
+  options:
+    _admin_route: TRUE
+jcc_migrate_souce_ui.event:
+  path: '/admin/reports/jcc_migrate_source_ui/event/{event_id}'
+  defaults:
+    _controller: '\Drupal\jcc_migrate_source_ui\Controller\JccMigrateSourceLogController::eventDetails'
+    _title: 'Details'
+  requirements:
+    _permission: 'access jcc migrate source ui'
