@@ -5,9 +5,11 @@ namespace Drupal\jcc_migrate_source_ui\Form;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\DatabaseBackend;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Logger\LoggerChannel;
 use Drupal\Core\Messenger\Messenger;
 use Drupal\Core\State\StateInterface;
 use Drupal\file\FileUsage\DatabaseFileUsageBackend;
@@ -28,10 +30,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class JCCMigrateSourceUiForm extends FormBase {
 
   /**
-     * The migration plugin manager.
-     *
-     * @var \Drupal\migrate\Plugin\MigrationPluginManager
-     */
+   * The migration plugin manager.
+   *
+   * @var \Drupal\migrate\Plugin\MigrationPluginManager
+   */
   protected $pluginManagerMigration;
 
   /**
@@ -79,18 +81,22 @@ class JCCMigrateSourceUiForm extends FormBase {
   /**
    * MigrateSourceUiForm constructor.
    *
-   * @param MigrationPluginManager $plugin_manager_migration
+   * @param \Drupal\migrate\Plugin\MigrationPluginManager $plugin_manager_migration
    *   The migration plugin manager.
-   * @param Connection $database
+   * @param \Drupal\Core\Database\Connection $database
    *   The database service.
-   * @param StateInterface $state
+   * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
-   * @param DatabseBAckend $cache_discovery_migration
+   * @param \Drupal\Core\Cache\DatabaseBackend $cache_discovery_migration
    *   The cache service for discovery_migration.
-   * @param DatabaseFileUsageBackend $file_usage
+   * @param \Drupal\file\FileUsage\DatabaseFileUsageBackend $file_usage
    *   The file.usage service.
-   * @param Messenger $messenger
+   * @param \Drupal\Core\Messenger\Messenger $messenger
    *   The messenger service.
+   * @param \Drupal\Core\Logger\LoggerChannel $logger_channel
+   *   The logger channel.
+   * @param \Drupal\Core\Entity\EntityTypeManager $type_manager
+   *   Entity Type Manager.
    */
   public function __construct(
     MigrationPluginManager $plugin_manager_migration,
@@ -98,7 +104,10 @@ class JCCMigrateSourceUiForm extends FormBase {
     StateInterface $state,
     DatabaseBackend $cache_discovery_migration,
     DatabaseFileUsageBackend $file_usage,
-    Messenger $messenger) {
+    Messenger $messenger,
+    LoggerChannel $logger_channel,
+    EntityTypeManager $type_manager
+  ) {
 
     $this->pluginManagerMigration = $plugin_manager_migration;
     $this->definitions = $this->pluginManagerMigration->getDefinitions();
@@ -107,6 +116,8 @@ class JCCMigrateSourceUiForm extends FormBase {
     $this->cacheDiscoveryMigration = $cache_discovery_migration;
     $this->fileUsage = $file_usage;
     $this->messenger = $messenger;
+    $this->logger = $logger_channel;
+    $this->entityTypeManager = $type_manager;
   }
 
   /**
@@ -119,7 +130,9 @@ class JCCMigrateSourceUiForm extends FormBase {
       $container->get('state'),
       $container->get('cache.discovery_migration'),
       $container->get('file.usage'),
-      $container->get('messenger')
+      $container->get('messenger'),
+      $container->get('logger.factory')->get('jcc_migrate_source_ui'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -135,7 +148,6 @@ class JCCMigrateSourceUiForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Create form options of available migrations.
-    $migrationLabels = [];
     foreach ($this->definitions as $definition) {
       $migrationInstance = $this->pluginManagerMigration->createStubMigration($definition);
       if ($migrationInstance->getSourcePlugin() instanceof CSV || $migrationInstance->getSourcePlugin() instanceof Json || $migrationInstance->getSourcePlugin() instanceof Xml || $migrationInstance->getSourcePlugin() instanceof Url) {
@@ -152,27 +164,28 @@ class JCCMigrateSourceUiForm extends FormBase {
       'csv' => 'csv',
       'json' => 'json',
       'xml' => 'xml',
-      'url' => 'url'
+      'url' => 'url',
     ];
     // Limit type selection to avaialble types.
     $available_types = array_intersect_key($supported_types, $options);
 
     $form = [
-      '#tree' => TRUE
+      '#tree' => TRUE,
     ];
     $form['source_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Select source type'),
       '#required' => TRUE,
-      '#options' => $available_types
+      '#options' => $available_types,
     ];
     // Create selects for each type.
     foreach ($available_types as $type) {
       $opts = $options[$type];
       asort($opts);
+      $type_title = strtoupper($type) . ' ' . $this->t('Sources');
       $form['migrations'][$type] = [
         '#type' => 'select',
-        '#title' => $this->t(strtoupper($type) . ' Sources'),
+        '#title' => $type_title,
         '#options' => $opts,
         '#states' => [
           'visible' => [
@@ -192,8 +205,8 @@ class JCCMigrateSourceUiForm extends FormBase {
           '#states' => [
             'visible' => [
               ':input[name="source_type"]' => ['value' => $type],
-              ':input[name="migrations[' . $type . ']"]' => ['value' => $key]
-            ]
+              ':input[name="migrations[' . $type . ']"]' => ['value' => $key],
+            ],
           ],
         ];
       }
@@ -322,11 +335,15 @@ class JCCMigrateSourceUiForm extends FormBase {
       return;
     }
     else {
-      $this->setMigrationSource($migration_id, $form_state->getValue('file_path'), $type);
+      if (!empty($form_state->getValue('source_url'))) {
+        $this->setMigrationSource($migration_id, $form_state->getValue('file_path'), $type);
+      }
     }
 
     // Allows user to run migration from this page if desired.
     if ($form_state->getValue('run_migration')) {
+      $this->logger->log('notice', 'Run migration %id, TYPE: %type', ['%id' => $migration_id, '%type' => $type]);
+
       if (!$this->checkDependencies($migration_id)) {
         return;
       }
@@ -350,6 +367,12 @@ class JCCMigrateSourceUiForm extends FormBase {
     }
   }
 
+  /**
+   * Check the migration dependencies.
+   *
+   * @param string $migration_id
+   *   The id of the migration to check.
+   */
   public function checkDependencies($migration_id) {
     $migrationInstance = $this->pluginManagerMigration->createStubMigration($this->definitions[$migration_id]);
     $dependencies = $migrationInstance->getMigrationDependencies();
@@ -414,19 +437,24 @@ class JCCMigrateSourceUiForm extends FormBase {
     }
     $sources[$migration_id] = [
       'type' => $type,
-      'uri' => $uri
+      'uri' => $uri,
     ];
     // Set the update state value array and clear necessary caches for
     // migration discovery.
     $this->state->set('jcc_migrate_sources', $sources);
     $this->cacheDiscoveryMigration->invalidateAll();
     $this->messenger->addStatus($this->t('Migration source set for %s', ['%s' => $migration_id]));
+    $this->logger->log(
+      'notice',
+      'Set migration source %id, URI: %uri  TYPE: %type',
+      ['%id' => $migration_id, '%uri' => $uri, '%type' => $type]
+    );
   }
 
   /**
    * Load a migration source by migration id.
    *
-   * @param  string $migration_id
+   * @param string $migration_id
    *   The migration id as indicated in the migtation template.
    *
    * @return string|bool
@@ -440,7 +468,7 @@ class JCCMigrateSourceUiForm extends FormBase {
   /**
    * Delete a migration source.
    *
-   * @param  string $migration_id
+   * @param string $migration_id
    *   The migration id as indicated in the migtation template.
    * @param string $type
    *   The type of source, url or path, as required by the migrate source
@@ -462,6 +490,7 @@ class JCCMigrateSourceUiForm extends FormBase {
     $this->state->set('jcc_migrate_sources', $sources);
     $this->cacheDiscoveryMigration->invalidateAll();
     $this->messenger->addStatus($this->t('Migration source deleted for %s.', ['%s' => $migration_id]));
+    $this->logger->log('notice', 'Delete migration source %id, TYPE: %type', ['%id' => $migration_id, '%type' => $type]);
   }
 
   /**
@@ -472,10 +501,10 @@ class JCCMigrateSourceUiForm extends FormBase {
    * @param string $uri
    *   The uri of the local file or external source.
    * @param string $operation
-   *   The file usage operation. add|delete
+   *   The file usage operation. add|delete.
    */
   private function setFileUsage($migration_id, $uri, $operation) {
-    $files = \Drupal::entityTypeManager()
+    $files = $this->entityTypeManager()
       ->getStorage('file')
       ->loadByProperties(['uri' => $uri]);
     foreach ($files as $file) {

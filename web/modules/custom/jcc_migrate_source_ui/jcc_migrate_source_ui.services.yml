@@ -3,3 +3,8 @@ services:
     class: \Drupal\jcc_migrate_source_ui\JCCMigrateSourceUIOverrides
     tags:
       - {name: config.factory.override, priority: 5}
+  logger.jcc_migrate_source_ui:
+    class: Drupal\jcc_migrate_source_ui\Logger\JccMigrateSourceLog
+    arguments: ['@database', '@logger.log_message_parser']
+    tags:
+      - { name: logger }
