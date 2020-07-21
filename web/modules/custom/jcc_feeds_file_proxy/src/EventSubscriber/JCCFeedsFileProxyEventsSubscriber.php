@@ -79,7 +79,7 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
     $file = file_save_data($file_data, "public://newslink/" . $img_id . ".png", FILE_EXISTS_REPLACE);
     $media = Media::create([
       'bundle' => 'image',
-      'uid' => \Drupal::currentUser()->id(),
+      'uid' => '1',
       'field_media_image' => $file,
     ]);
     $media->setName($img_id)->setPublished(TRUE)->save();
