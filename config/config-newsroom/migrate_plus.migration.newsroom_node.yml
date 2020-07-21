@@ -1,0 +1,152 @@
+uuid: d98bc6f2-b719-4f02-a1ee-2147e9ae1e4c
+langcode: en
+status: true
+dependencies: {  }
+id: newsroom_node
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - newsroom
+  - node
+migration_group: jcc
+label: 'Newsroom: Import nodes'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: xml
+  urls:
+    - 'https://newsroom.courts.ca.gov/releases.xml'
+    - 'https://newsroom.courts.ca.gov/news.xml'
+  item_selector: /rss/channel/item
+  fields:
+    -
+      name: title
+      selector: title
+      label: Title
+    -
+      name: link
+      selector: link
+      label: Link
+    -
+      name: news_type
+      selector: contentType
+      label: 'Taxonomy: News Type'
+    -
+      name: subtitle
+      selector: subtitle
+      label: Subtitle
+    -
+      name: content
+      selector: content
+      label: Content
+    -
+      name: categories
+      selector: categories/category
+      label: Categories
+    -
+      name: modified_date
+      selector: modDate
+      label: 'Modified Date'
+    -
+      name: tags
+      selector: tags/tag
+      label: 'Taxonomy: Tags'
+    -
+      name: images
+      selector: attachments/attachment/attachment_url_prv
+      label: Images
+    -
+      name: contact_email
+      selector: contacts/contact/contact_email
+      label: 'Contact: Email'
+    -
+      name: description
+      selector: description
+      label: Description
+    -
+      name: published_date
+      selector: pubDate
+      label: 'Published Date'
+  ids:
+    link:
+      type: text_long
+  constants:
+    bool_0: 0
+    bool_1: 1
+    uid_root: 1
+    full_html: full_html
+process:
+  title:
+    -
+      plugin: callback
+      callable: htmlspecialchars_decode
+      source: title
+  sticky: constants/bool_0
+  promote: constants/bool_0
+  uid: constants/uid_root
+  body/value:
+    plugin: str_replace
+    source: content
+    search:
+      - '<![CDATA['
+      - ']]>'
+    replace:
+      - ''
+      - ''
+  body/summary: description
+  body/format: constants/full_html
+  created:
+    plugin: format_date
+    source: published_date
+    from_format: 'D, d M Y H:i:s T'
+    to_format: U
+    timezone: America/Los_Angeles
+  updated:
+    plugin: format_date
+    source: modified_date
+    from_format: 'D, d M Y H:i:s T'
+    to_format: U
+    timezone: America/Los_Angeles
+  field_images:
+    plugin: migration_lookup
+    migration:
+      - newsroom_image_media
+    source: images
+  field_news_type:
+    plugin: entity_generate
+    source: news_type
+    entity_type: taxonomy_term
+    bundle_key: vid
+    bundle: news_type
+    value_key: name
+  field_tags:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: tags
+    -
+      plugin: entity_generate
+      bundle: tags
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_topics:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: categories
+    -
+      plugin: entity_generate
+      bundle: topics
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+destination:
+  plugin: 'entity:node'
+  default_bundle: news
+migration_dependencies:
+  optional:
+    - newsroom_image_media
