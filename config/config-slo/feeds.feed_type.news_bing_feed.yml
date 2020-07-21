@@ -7,8 +7,8 @@ dependencies:
     - field.field.node.news.field_feed_imported_on
     - field.field.node.news.field_feed_origin
     - field.field.node.news.field_feed_source
+    - field.field.node.news.field_images
     - field.field.node.news.field_links
-    - field.field.node.news.field_news_image
     - field.field.node.news.field_news_type
     - node.type.news
   module:
@@ -160,6 +160,10 @@ custom_sources:
     label: 'News:Image'
     value: 'News:Image'
     machine_name: news_image
+  custom_entity_id:
+    label: custom_entity_id
+    value: custom_entity_id
+    machine_name: custom_entity_id
 mappings:
   -
     target: title
@@ -221,13 +225,10 @@ mappings:
       language: null
       timezone: UTC
   -
-    target: field_news_image
+    target: field_images
     map:
       target_id: news_image
-      alt: title
-      title: title
     settings:
       language: ''
-      reference_by: fid
-      existing: '0'
-      autocreate: 0
+      reference_by: mid
+      autocreate: '1'

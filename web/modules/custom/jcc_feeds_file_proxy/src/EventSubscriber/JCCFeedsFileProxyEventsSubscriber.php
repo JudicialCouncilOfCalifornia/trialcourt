@@ -2,6 +2,7 @@
 
 namespace Drupal\jcc_feeds_file_proxy\EventSubscriber;
 
+use Drupal\media\entity\Media;
 use Drupal\feeds\Event\FeedsEvents;
 use Drupal\feeds\Event\ParseEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -53,29 +54,36 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
     }
     else {
       foreach ($event->getParserResult() as $item) {
+        // 'news_image' should be set in feeds mappings
         $news_image = $item->get('news_image');
         if (!empty($news_image)) {
+          // Removing arguments in feeds url.
           $news_image = str_replace("&pid=News", "", $news_image);
           $url_components = parse_url($news_image);
           parse_str($url_components['query'], $img_url_args);
           $img_id = str_replace("ON.", "", $img_url_args['id']);
 
-          // Full url needed for reference
-          // (See https://www.drupal.org/project/feeds/issues/2969401)
-          $siteHost = $this->request->getSchemeAndHttpHost();
-          $proxy_image = $siteHost . '/sites/default/files/slo/newslink/' . $img_id . '.png';
-          $this->createImg($news_image, $img_id);
-          $item->set('news_image', $proxy_image);
+          // Creating a new media entity and altering the parser.
+          $newEntityId = $this->createImgEntity($news_image, $img_id);
+          $item->set('news_image', $newEntityId);
         }
       }
     }
   }
 
   /**
-   * Download Image in the public folder.
+   * Create image entity out of downloaded image.
    */
-  protected function createImg(string $img_url, string $img_id) {
-    system_retrieve_file($img_url, "public://newslink/" . $img_id . ".png", TRUE, FILE_EXISTS_REPLACE);
+  protected function createImgEntity(string $img_url, string $img_id) {
+    $file_data = file_get_contents($img_url);
+    $file = file_save_data($file_data, "public://newslink/" . $img_id . ".png", FILE_EXISTS_REPLACE);
+    $media = Media::create([
+      'bundle' => 'image',
+      'uid' => \Drupal::currentUser()->id(),
+      'field_media_image' => $file,
+    ]);
+    $media->setName($img_id)->setPublished(TRUE)->save();
+    return $media->id();
   }
 
   /**
