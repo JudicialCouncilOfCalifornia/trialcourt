@@ -4,10 +4,15 @@ status: true
 dependencies:
   config:
     - field.field.node.news.body
+    - field.field.node.news.feeds_item
     - field.field.node.news.field_attachments
     - field.field.node.news.field_contact
     - field.field.node.news.field_content_weight
     - field.field.node.news.field_division
+    - field.field.node.news.field_feed_imported_on
+    - field.field.node.news.field_feed_origin
+    - field.field.node.news.field_feed_source
+    - field.field.node.news.field_feed_uid
     - field.field.node.news.field_images
     - field.field.node.news.field_links
     - field.field.node.news.field_metatag
@@ -120,7 +125,7 @@ third_party_settings:
         required_fields: true
       label: Media
 _core:
-  default_config_hash: mbY5w2fpfDbGRhk3c_nC9pdL79Xx4-z6c6U2etN7ftg
+  default_config_hash: 2lBVkQTtbSRTsB-14vbDmNPnPs5KY52EVa5_ZHDRTBU
 id: node.news.default
 targetEntityType: node
 bundle: news
@@ -174,7 +179,7 @@ content:
     region: content
   field_division:
     type: autocomplete_deluxe
-    weight: 11
+    weight: 4
     region: content
     settings:
       limit: '10'
@@ -189,12 +194,16 @@ content:
       size: 60
       selection_handler: default
     third_party_settings: {  }
+  field_feed_source:
+    weight: 26
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textfield
+    region: content
   field_images:
     weight: 3
-    settings:
-      media_types: {  }
-    third_party_settings: {  }
-    type: media_library_widget
     region: content
   field_links:
     weight: 5
@@ -248,7 +257,7 @@ content:
     third_party_settings: {  }
   field_tags:
     type: autocomplete_deluxe
-    weight: 12
+    weight: 5
     region: content
     settings:
       limit: '10'
@@ -338,6 +347,8 @@ content:
     third_party_settings: {  }
 hidden:
   feeds_item: true
+  field_feed_imported_on: true
+  field_feed_origin: true
   field_feed_uid: true
   publish_on: true
   publish_state: true
