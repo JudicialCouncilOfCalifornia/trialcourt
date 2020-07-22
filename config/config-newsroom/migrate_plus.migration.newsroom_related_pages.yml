@@ -32,8 +32,6 @@ source:
   ids:
     link:
       type: text_long
-  constants:
-    URI_PREFIX: '/node/'
 process:
   nid:
     plugin: migration_lookup
@@ -43,8 +41,8 @@ process:
   field_links:
     plugin: sub_process
     source: related_pages
-    include_source: true
     process:
+      url_prefix: 'internal:/node/'
       related_page_nid:
         plugin: migration_lookup
         migration: newsroom_node
@@ -58,7 +56,7 @@ process:
         -
           plugin: concat
           source:
-            - constants/URI_PREFIX
+            - '@url_prefix'
             - '@related_page_nid'
       title: relatedPages_title
 destination:
