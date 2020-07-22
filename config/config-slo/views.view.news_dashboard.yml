@@ -4,7 +4,6 @@ status: true
 dependencies:
   config:
     - field.storage.node.body
-    - field.storage.node.field_attachments
     - field.storage.node.field_feed_imported_on
     - field.storage.node.field_feed_origin
     - field.storage.node.field_feed_source
@@ -20,7 +19,6 @@ dependencies:
     - datetime
     - link
     - node
-    - svg_image
     - text
     - user
 id: news_dashboard
@@ -413,74 +411,6 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        field_attachments:
-          id: field_attachments
-          table: node__field_attachments
-          field: field_attachments
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: '{{ field_attachments }} '
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: target_id
-          type: image
-          settings:
-            image_style: media_library
-            image_link: ''
-            svg_render_as_image: true
-            svg_attributes:
-              width: null
-              height: null
-          group_column: ''
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
         body:
           id: body
           table: node__body
@@ -810,7 +740,7 @@ display:
           group_type: group
           admin_label: ''
           label: 'Feed Origin'
-          exclude: false
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -969,7 +899,6 @@ display:
         - user.roles
       tags:
         - 'config:field.storage.node.body'
-        - 'config:field.storage.node.field_attachments'
         - 'config:field.storage.node.field_feed_imported_on'
         - 'config:field.storage.node.field_feed_origin'
         - 'config:field.storage.node.field_feed_source'
@@ -994,7 +923,6 @@ display:
         - user.roles
       tags:
         - 'config:field.storage.node.body'
-        - 'config:field.storage.node.field_attachments'
         - 'config:field.storage.node.field_feed_imported_on'
         - 'config:field.storage.node.field_feed_origin'
         - 'config:field.storage.node.field_feed_source'
