@@ -1,0 +1,71 @@
+uuid: 7fc348af-9bdd-4945-a607-d2d607ee234e
+langcode: en
+status: true
+dependencies: {  }
+id: newsroom_node_redirect
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - newsroom
+  - path
+migration_group: jcc
+label: 'Newsroom: Import Path Redirects'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: xml
+  urls:
+    - 'https://newsroom.courts.ca.gov/releases.xml'
+    - 'https://newsroom.courts.ca.gov/news.xml'
+  item_selector: /rss/channel/item
+  fields:
+    -
+      name: title
+      selector: title
+      label: Title
+    -
+      name: link
+      selector: link
+      label: Link
+  ids:
+    link:
+      type: text_long
+  constants:
+    uri_prefix: 'internal:/node/'
+    status_code: 301
+process:
+  nid:
+    plugin: migration_lookup
+    migration: newsroom_node
+    source: link
+    no_stub: true
+  path:
+    plugin: default_value
+    default_value: link
+  uid:
+    plugin: default_value
+    default_value: 1
+  redirect_source/path:
+    -
+      plugin: path_from_url
+      source: link
+    -
+      plugin: substr
+      start: 1
+  redirect_source/query: {  }
+  redirect_redirect/uri:
+    plugin: concat
+    source:
+      - constants/uri_prefix
+      - '@nid'
+  status_code: constants/status_code
+  language:
+    plugin: default_value
+    source: language
+    default_value: en
+destination:
+  plugin: 'entity:redirect'
+migration_dependencies:
+  required:
+    - newsroom_node
