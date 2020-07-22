@@ -33,7 +33,7 @@ source:
     link:
       type: text_long
   constants:
-    uri_prefix: '/node/'
+    URI_PREFIX: '/node/'
 process:
   nid:
     plugin: migration_lookup
@@ -43,6 +43,7 @@ process:
   field_links:
     plugin: sub_process
     source: related_pages
+    include_source: true
     process:
       related_page_nid:
         plugin: migration_lookup
@@ -50,10 +51,15 @@ process:
         no_stub: true
         source: relatedPages_url
       uri:
-        plugin: concat
-        source:
-          - '/node/'
-          - '@related_page_nid'
+        -
+          plugin: skip_on_empty
+          method: process
+          source: '@related_page_nid'
+        -
+          plugin: concat
+          source:
+            - constants/URI_PREFIX
+            - '@related_page_nid'
       title: relatedPages_title
 destination:
   plugin: 'entity:node'
