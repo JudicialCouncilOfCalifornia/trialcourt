@@ -76,6 +76,10 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
    */
   protected function createImgEntity(string $img_url, string $img_id) {
     $file_data = file_get_contents($img_url);
+
+    if (!file_exists('public://newslink/')) {
+      drupal_mkdir('public://newslink/');
+    }
     $file = file_save_data($file_data, "public://newslink/" . $img_id . ".png", FILE_EXISTS_REPLACE);
     $media = Media::create([
       'bundle' => 'image',
