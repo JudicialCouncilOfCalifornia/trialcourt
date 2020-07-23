@@ -8,16 +8,16 @@
 /**
  * Implements hook_preprocess_HOOK().
  */
-function jcc_newsroom_preprocess_block__views_block__videos_block_1(&$variables) {
+function jcc_newsroom_preprocess_block__views_block__news_block_3(&$variables) {
   $header_title = empty($variables['elements']['#configuration']['views_label']) ? $variables['elements']['content']['#title']['#markup'] : $variables['elements']['#configuration']['views_label'];
 
-  $cards = [];
-  $excerpt = '';
-
   if (isset($variables['elements']['content']['#view'])) {
+    $tiles = [];
+    $excerpt = '';
     $rows = $variables['elements']['content']['#view']->result;
 
     foreach ($rows as $row) {
+      $brow = date("M j, Y", $row->_entity->created->value);
       $title = $row->_entity->title->value;
       if ($row->_entity->body->value != NULL) {
         $excerpt = substr(strip_tags($row->_entity->body->value), 0, 200);
@@ -47,41 +47,48 @@ function jcc_newsroom_preprocess_block__views_block__videos_block_1(&$variables)
         ];
       }
 
-      $featured_news_card = [
-        'title' => $title,
-        'excerpt' => $excerpt,
-        'excerpt_img' => [
+      $recent_news_tile = [
+        'card' => [
+          'brow' => $brow,
+          'title' => $title,
+          'excerpt' => $excerpt,
+          'url' => $url,
+        ],
+        'img' => [
           'src' => $img_src,
           'alt' => $img_alt,
           'renderer' => 'patternlab',
         ],
-        'url' => $url,
         'contextual_links' => $placeholder,
       ];
-      array_push($cards, $featured_news_card);
+      array_push($tiles, $recent_news_tile);
     }
-  }
 
-  if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == TRUE) {
-    $button_text = $variables['elements']['content']['#view']->display_handler->display['display_options']['use_more_text'];
-    $button_url = '/news';
+    if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == TRUE) {
+      $button_text = $variables['elements']['content']['#view']->display_handler->display['display_options']['use_more_text'];
+      $button_url = '/news';
 
-    $button = [
-      'text' => $button_text,
-      'url' => $button_url,
-      'style' => 'primary',
+      $button = [
+        'text' => $button_text,
+        'url' => $button_url,
+        'style' => 'primary',
+      ];
+    } else {
+      $button = [];
+    }
+
+    $variables['news_stream'] = [
+      'headergroup' => [
+        'title' => htmlspecialchars_decode($header_title),
+      ],
+      'tiles' => $tiles,
+      'button' => $button,
+    ];
+  } else {
+    $variables['news_stream'] = [
+      'headergroup' => [
+        'title' => htmlspecialchars_decode($header_title),
+      ],
     ];
   }
-  else {
-    $button = [];
-  }
-
-  $variables['featured_videos'] = [
-    'headergroup' => [
-      'title' => htmlspecialchars_decode($header_title),
-    ],
-    'cards' => $cards,
-    'button' => $button,
-    'rows' => $variables,
-  ];
 }
