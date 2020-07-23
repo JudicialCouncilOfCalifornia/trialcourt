@@ -1,19 +1,17 @@
-uuid: 6552b34e-7b3d-4945-8a1b-d3a5504f0941
+uuid: 0c34095a-189d-45e9-ac78-f1e4beea0a39
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_division
+    - field.storage.node.field_person_type
     - node.type.person
-    - taxonomy.vocabulary.division
-_core:
-  default_config_hash: f4qIuJUg9TBc593I2OZMPCLLmMD_Jwu23ZStoft0kk4
-id: node.person.field_division
-field_name: field_division
+    - taxonomy.vocabulary.person_type
+id: node.person.field_person_type
+field_name: field_person_type
 entity_type: node
 bundle: person
-label: Division
-description: 'This is the division that the person belongs.'
+label: 'Person Type'
+description: 'This is the type of person category.'
 required: false
 translatable: true
 default_value: {  }
@@ -22,7 +20,7 @@ settings:
   handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      division: division
+      person_type: person_type
     sort:
       field: name
       direction: asc
