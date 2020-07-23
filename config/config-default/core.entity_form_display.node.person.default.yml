@@ -5,17 +5,21 @@ dependencies:
   config:
     - field.field.node.person.body
     - field.field.node.person.field_division
+    - field.field.node.person.field_email
     - field.field.node.person.field_first_name
     - field.field.node.person.field_images
     - field.field.node.person.field_last_name
     - field.field.node.person.field_links
+    - field.field.node.person.field_location
     - field.field.node.person.field_metatag
     - field.field.node.person.field_person_type
+    - field.field.node.person.field_phone
     - field.field.node.person.field_subject_matter
     - field.field.node.person.field_tags
     - field.field.node.person.field_topics
     - node.type.person
   module:
+    - address
     - autocomplete_deluxe
     - content_moderation
     - field_group
@@ -26,12 +30,14 @@ dependencies:
     - scheduler
     - scheduler_content_moderation_integration
     - straw
+    - telephone
     - text
 third_party_settings:
   field_group:
     group_person_content:
       children:
         - group_main_content
+        - group_contact
         - group_media
         - group_secondary_content
         - group_metadata
@@ -68,7 +74,7 @@ third_party_settings:
         - field_topics
         - field_subject_matter
       parent_name: group_person_content
-      weight: 3
+      weight: 4
       format_type: tab
       region: content
       format_settings:
@@ -95,7 +101,7 @@ third_party_settings:
       children:
         - field_images
       parent_name: group_person_content
-      weight: 1
+      weight: 2
       format_type: tab
       region: content
       format_settings:
@@ -109,7 +115,7 @@ third_party_settings:
       children:
         - field_links
       parent_name: group_person_content
-      weight: 2
+      weight: 3
       format_type: tab
       region: content
       format_settings:
@@ -119,8 +125,24 @@ third_party_settings:
         id: ''
         classes: ''
       label: 'Secondary Content'
+    group_contact:
+      children:
+        - field_email
+        - field_phone
+        - field_location
+      parent_name: group_person_content
+      weight: 1
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Contact
 _core:
-  default_config_hash: g7SlcedEb7RauAt3GEaDy9oGTjswnzDdLjn_sqi5XJI
+  default_config_hash: DYuaH2yX9VskM6QfYSyHrulp7ZRnecE-I7Mgi91wZc8
 id: node.person.default
 targetEntityType: node
 bundle: person
@@ -138,7 +160,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -159,6 +181,14 @@ content:
       size: 60
       selection_handler: default
     third_party_settings: {  }
+  field_email:
+    weight: 20
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: email_default
+    region: content
   field_first_name:
     weight: 11
     settings:
@@ -199,6 +229,12 @@ content:
     third_party_settings: {  }
     type: link_attributes
     region: content
+  field_location:
+    weight: 22
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
+    region: content
   field_metatag:
     weight: 17
     settings: {  }
@@ -221,6 +257,13 @@ content:
       selection_handler: default
     third_party_settings: {  }
     type: autocomplete_deluxe
+    region: content
+  field_phone:
+    weight: 21
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: telephone_default
     region: content
   field_subject_matter:
     type: super_term_reference_autocomplete_widget
@@ -326,7 +369,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
