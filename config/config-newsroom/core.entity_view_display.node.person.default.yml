@@ -5,25 +5,29 @@ dependencies:
   config:
     - field.field.node.person.body
     - field.field.node.person.field_division
+    - field.field.node.person.field_email
     - field.field.node.person.field_first_name
     - field.field.node.person.field_images
     - field.field.node.person.field_last_name
     - field.field.node.person.field_links
+    - field.field.node.person.field_location
     - field.field.node.person.field_metatag
     - field.field.node.person.field_person_type
+    - field.field.node.person.field_phone
     - field.field.node.person.field_subject_matter
     - field.field.node.person.field_tags
     - field.field.node.person.field_topics
     - image.style.thumbnail
     - node.type.person
   module:
+    - address
     - hierarchical_term_formatter
     - link
     - media
     - text
     - user
 _core:
-  default_config_hash: PIxmmBQKzwAXePZDJnW1tdFCeqzX9JmN7vesyHhYV1s
+  default_config_hash: 9hQXQYOPoiM-I-X63Z-L8DBzEVML4LsTFBudbtHBNFI
 id: node.person.default
 targetEntityType: node
 bundle: person
@@ -44,6 +48,13 @@ content:
     settings:
       link: true
     third_party_settings: {  }
+  field_email:
+    weight: 12
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
   field_first_name:
     weight: 1
     label: hidden
@@ -81,6 +92,13 @@ content:
     third_party_settings: {  }
     type: link
     region: content
+  field_location:
+    weight: 11
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
+    region: content
   field_person_type:
     weight: 3
     label: visually_hidden
@@ -88,6 +106,13 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+    region: content
+  field_phone:
+    weight: 10
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
     region: content
   field_subject_matter:
     type: hierarchical_term_formatter
