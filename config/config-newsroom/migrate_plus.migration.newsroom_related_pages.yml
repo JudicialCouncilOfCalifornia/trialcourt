@@ -42,7 +42,9 @@ process:
     plugin: sub_process
     source: related_pages
     process:
-      url_prefix: 'internal:/node/'
+      url_prefix:
+        plugin: default_value
+        default_value: 'internal:/node/'
       related_page_nid:
         plugin: migration_lookup
         migration: newsroom_node
