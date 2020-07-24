@@ -16,14 +16,13 @@ source:
   data_fetcher_plugin: http
   data_parser_plugin: xml
   urls:
-    - 'https://newsroom.courts.ca.gov/releases.xml'
     - 'https://newsroom.courts.ca.gov/news.xml'
-    - 'https://newsroom.courts.ca.gov/bios.xml'
+    - 'https://newsroom.courts.ca.gov/releases.xml'
   item_selector: /rss/channel/item/attachments/attachment
   fields:
     -
       name: attachment_url
-      selector: attachment_url_prv
+      selector: attachment_url
       label: 'Attachment URL'
     -
       name: attachment_title
@@ -35,12 +34,14 @@ source:
 process:
   pseudo_destination_filename:
     -
-      plugin: callback
-      callable: basename
+      plugin: path_from_url
       source: attachment_url
     -
+      plugin: callback
+      callable: basename
+    -
       plugin: skip_row_if_not_set
-      method: process
+      method: row
       message: 'Cannot import empty file url.'
   pseudo_destination_title:
     -
@@ -55,6 +56,7 @@ process:
     plugin: migration_lookup
     migration: newsroom_image_file
     source: attachment_url
+    no_stub: true
   field_media_image/alt: '@pseudo_destination_title'
 destination:
   plugin: 'entity:media'
