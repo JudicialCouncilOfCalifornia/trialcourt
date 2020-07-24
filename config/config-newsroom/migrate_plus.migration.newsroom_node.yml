@@ -116,12 +116,19 @@ process:
       - newsroom_image_media
     source: images
   field_news_type:
-    plugin: entity_generate
-    source: news_type
-    entity_type: taxonomy_term
-    bundle_key: vid
-    bundle: news_type
-    value_key: name
+    -
+      plugin: static_map
+      source: news_type
+      map:
+        news: Feature
+        releases: News
+      default_value: News
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: news_type
+      value_key: name
   field_tags:
     -
       plugin: skip_on_empty
