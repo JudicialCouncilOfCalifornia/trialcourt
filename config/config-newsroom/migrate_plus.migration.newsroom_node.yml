@@ -15,6 +15,7 @@ source:
   plugin: url
   data_fetcher_plugin: http
   data_parser_plugin: xml
+  data_parser_plugin_simple_array: true
   urls:
     - 'https://newsroom.courts.ca.gov/releases.xml'
     - 'https://newsroom.courts.ca.gov/news.xml'
@@ -57,9 +58,9 @@ source:
       selector: attachments/attachment/attachment_url_prv
       label: Images
     -
-      name: contact_email
-      selector: contacts/contact/contact_email
-      label: 'Contact: Email'
+      name: contact
+      selector: contacts/contact
+      label: 'Contact'
     -
       name: description
       selector: description
@@ -84,6 +85,7 @@ process:
       source: title
   sticky: constants/bool_0
   promote: constants/bool_0
+  status: constants/bool_1
   uid: constants/uid_root
   body/value:
     plugin: str_replace
@@ -144,9 +146,26 @@ process:
       bundle_key: vid
       entity_type: taxonomy_term
       ignore_case: true
+  field_contact:
+    plugin: sub_process
+    source: contact
+    process:
+      full_name:
+        plugin: concat
+        source:
+          - contact_first_name
+          - contact_last_name
+        delimiter: ' '
+      target_id:
+        plugin: entity_lookup
+        entity_type: node
+        bundle: person
+        value_key: title
+        source: '@full_name'
 destination:
   plugin: 'entity:node'
   default_bundle: news
 migration_dependencies:
   optional:
     - newsroom_image_media
+    - newsroom_contacts
