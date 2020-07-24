@@ -17,8 +17,8 @@ source:
   data_parser_plugin: xml
   data_parser_plugin_simple_array: true
   urls:
-    - 'https://newsroom.courts.ca.gov/releases.xml'
     - 'https://newsroom.courts.ca.gov/news.xml'
+    - 'https://newsroom.courts.ca.gov/releases.xml'
   item_selector: /rss/channel/item
   fields:
     -
@@ -55,7 +55,7 @@ source:
       label: 'Taxonomy: Tags'
     -
       name: images
-      selector: attachments/attachment/attachment_url_prv
+      selector: attachments/attachment/attachment_url
       label: Images
     -
       name: contact
@@ -115,6 +115,7 @@ process:
     migration:
       - newsroom_image_media
     source: images
+    no_stub: true
   field_news_type:
     -
       plugin: static_map
