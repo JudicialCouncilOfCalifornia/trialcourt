@@ -5,6 +5,7 @@ dependencies:
   config:
     - views.view.news
   module:
+    - ctools
     - system
     - views
   theme:
@@ -28,3 +29,10 @@ visibility:
     pages: '<front>'
     negate: false
     context_mapping: {  }
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      landing_page: landing_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
