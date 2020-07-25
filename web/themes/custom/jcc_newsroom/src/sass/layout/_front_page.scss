@@ -26,14 +26,8 @@
     }
   }
 
-  .jcc-tiles-list__container {
-    .jcc-tiles-list {
-      margin-top: 0;
-
-      > li:first-child {
-        padding-top: 0;
-      }
-    }
+  .jcc-link-list-simple {
+    padding-bottom: 4.5rem;
   }
 
   .page__right_sidebar {
@@ -71,27 +65,25 @@
       }
     }
 
-    #jcc-news-links {
-      margin-top: 4rem;
+    .jcc-link-list-with-button__container {
+      .jcc-link-list__item {
+        a {
+          font-size: 1.3rem;
+          text-decoration: none;
 
-      @media only screen and (min-width: 640px) {
-        .jcc-cards-with-button {
-          flex-direction: column;
-          -ms-flex-direction: column;
-
-          .jcc-cards-with-button__item {
-            margin-bottom: 2rem;
-
-            .jcc-card__brow {
-              margin-bottom: 0;
-            }
-
-            h3 {
-              margin-top: 0.5rem;
-              margin-bottom: 0.5rem;
-            }
+          &:hover:not(.usa-button) {
+            color: #009ec1;
           }
+
+          &:hover {
+            text-decoration: underline;
+          }
+
         }
+      }
+
+      .jcc-link-list__button-container {
+        left: 0;
       }
     }
   }
@@ -107,69 +99,5 @@
 
   .jcc-cards-with-button__button, .jcc-link-list__button {
     text-align: center;
-  }
-
-  .jcc-cards-with-button__container {
-    padding-top: 0;
-    padding-bottom: 0;
-    background-color: transparent;
-
-    ul {
-      li {
-        margin: 0 1rem 0 0;
-      }
-
-      li:last-child {
-        margin: 0;
-      }
-    }
-
-    .jcc-cards-with-button__button {
-      width: 100%;
-    }
-  }
-
-  .jcc-tiles-list__container {
-    .jcc-tiles-list {
-      .jcc-tiles-list--text-only {
-        .jcc-card {
-          width: 100%;
-        }
-      }
-
-      jcc-tiles-list__image {
-        width: 33%;
-      }
-    }
-  }
-
-  .jcc-link-list-simple {
-    padding-bottom: 4.5rem;
-  }
-
-  .page__right_sidebar {
-    .jcc-cards-with-button__container {
-      &> .jcc-header-group, .jcc-cards-with-button {
-        padding: 0;
-
-        .jcc-header-group__title {
-          margin-bottom: 0;
-        }
-
-        .jcc-cards-with-button__item {
-          border: none;
-          padding: 0;
-        }
-      }
-    }
-  }
-
-  .page__right_sidebar {
-    .jcc-cards-with-button--secondary {
-      .jcc-cards-with-button__item {
-        width: 50%;
-        flex: none;
-      }
-    }
   }
 }
