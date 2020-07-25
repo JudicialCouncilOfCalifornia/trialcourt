@@ -19,7 +19,8 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
       $title = $row->_entity->title->value;
       if ($row->_entity->body->value != NULL) {
         $excerpt = substr(strip_tags($row->_entity->body->value), 0, 200);
-      } else {
+      }
+      else {
         if ($row->_entity->field_attachments != NULL) {
           $excerpt = $row->_entity->field_attachments->entity->getName();
         }
