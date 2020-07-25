@@ -16,9 +16,8 @@ source:
   data_fetcher_plugin: http
   data_parser_plugin: xml
   urls:
-    - 'https://newsroom.courts.ca.gov/releases.xml'
     - 'https://newsroom.courts.ca.gov/news.xml'
-    - 'https://newsroom.courts.ca.gov/bios.xml'
+    - 'https://newsroom.courts.ca.gov/releases.xml'
   item_selector: /rss/channel/item/attachments/attachment
   fields:
     -
@@ -29,33 +28,67 @@ source:
       name: attachment_title
       selector: attachment_title
       label: 'Attachment Title'
+    -
+      name: attachment_description
+      selector: attachment_description
+      label: 'Attachment Description'
   ids:
     attachment_url:
       type: text_long
 process:
   pseudo_destination_filename:
     -
-      plugin: callback
-      callable: basename
+      plugin: path_from_url
       source: attachment_url
     -
+      plugin: callback
+      callable: basename
+    -
       plugin: skip_row_if_not_set
-      method: process
-      message: 'Cannot import empty file url.'
+      method: row
+      message: 'File entity not found.'
   pseudo_destination_title:
     -
       plugin: callback
-      callable: htmlspecialchars_decode
       source: attachment_title
+      callable: htmlspecialchars_decode
+  pseudo_description:
     -
-      plugin: default_value
-      default_value: '@pseudo_destination_filename'
-  name: '@pseudo_destination_title'
+      plugin: callback
+      callable: htmlspecialchars_decode
+      source: attachment_description
+    -
+      plugin: callback
+      callable: strip_tags
+    -
+      plugin: str_replace
+      search:
+        - '&nbsp;'
+      replace:
+        - ' '
+    -
+      plugin: substr
+      start: 0
+      length: 512
   field_media_image/target_id:
-    plugin: migration_lookup
-    migration: newsroom_image_file
-    source: attachment_url
-  field_media_image/alt: '@pseudo_destination_title'
+    -
+      plugin: migration_lookup
+      migration: newsroom_image_file
+      source: attachment_url
+      no_stub: true
+  name:
+    -
+      plugin: empty_coalesce
+      source:
+        - '@pseudo_destination_title'
+        - '@pseudo_destination_filename'
+  field_media_image/alt:
+    -
+      plugin: empty_coalesce
+      source:
+        - '@pseudo_description'
+        - '@pseudo_destination_title'
+        - '@pseudo_destination_filename'
 destination:
   plugin: 'entity:media'
   default_bundle: image

@@ -16,9 +16,8 @@ source:
   data_fetcher_plugin: http
   data_parser_plugin: xml
   urls:
-    - 'https://newsroom.courts.ca.gov/releases.xml'
     - 'https://newsroom.courts.ca.gov/news.xml'
-    - 'https://newsroom.courts.ca.gov/bios.xml'
+    - 'https://newsroom.courts.ca.gov/releases.xml'
   item_selector: /rss/channel/item/attachments/attachment
   fields:
     -
@@ -37,9 +36,11 @@ source:
 process:
   pseudo_destination_filename:
     -
+      plugin: path_from_url
+      source: attachment_url
+    -
       plugin: callback
       callable: basename
-      source: attachment_url
     -
       plugin: skip_on_empty
       method: row
