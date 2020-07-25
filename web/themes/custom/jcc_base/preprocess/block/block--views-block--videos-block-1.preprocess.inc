@@ -53,6 +53,7 @@ function jcc_newsroom_preprocess_block__views_block__videos_block_1(&$variables)
       'headergroup' => [
         'title' => htmlspecialchars_decode($header_title),
       ],
+      'highlight_first' => TRUE,
       'cards' => $cards,
       'button' => $button,
     ];

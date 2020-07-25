@@ -61,6 +61,7 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
   }
 
   $variables['featured_news'] = [
+    'highlight_first' => TRUE,
     'cards' => $cards,
   ];
 }
