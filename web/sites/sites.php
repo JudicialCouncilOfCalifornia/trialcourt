@@ -11,6 +11,7 @@ $sites['develop-jcc-tc.pantheonsite.io'] = 'slo';
 $sites['develop-jcc-oc.pantheonsite.io'] = 'oc';
 $sites['develop-jcc-napa.pantheonsite.io'] = 'napa';
 $sites['develop-jcc-newsroom.pantheonsite.io'] = 'newsroom';
+$sites['develop-jcc-deprep.pantheonsite.io'] = 'deprep';
 
 // Stage.
 $sites['stage-jcc-tc-default.pantheonsite.io'] = 'default';
@@ -18,6 +19,7 @@ $sites['stage-jcc-tc.pantheonsite.io'] = 'slo';
 $sites['stage-jcc-oc.pantheonsite.io'] = 'oc';
 $sites['stage-jcc-napa.pantheonsite.io'] = 'napa';
 $sites['stage-jcc-newsroom.pantheonsite.io'] = 'newsroom';
+$sites['stage-jcc-deprep.pantheonsite.io'] = 'deprep';
 
 // Live.
 $sites['dev-jcc-tc-default.pantheonsite.io'] = 'default';
@@ -44,6 +46,11 @@ $sites['test-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['live-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['live_url_goes_here'] = 'newsroom';
 
+$sites['dev-jcc-deprep.pantheonsite.io'] = 'deprep';
+$sites['test-jcc-deprep.pantheonsite.io'] = 'deprep';
+$sites['live-jcc-deprep.pantheonsite.io'] = 'deprep';
+$sites['live_url_goes_here'] = 'deprep';
+
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
 // sites.local.php next to this file. It will be ignored by git.
@@ -58,3 +65,14 @@ $sites['slo.lndo.site'] = 'slo';
 $sites['oc.lndo.site'] = 'oc';
 $sites['napa.lndo.site'] = 'napa';
 $sites['newsroom.lndo.site'] = 'newsroom';
+$sites['deprep.lndo.site'] = 'deprep';
+$sites['deprep.lndo.site'] = 'deprep';
+$sites['deprep.lndo.site'] = 'deprep';
+$sites['deprep.lndo.site'] = 'deprep';
+$sites['deprep.lndo.site'] = 'deprep';
+$sites['deprep.lndo.site'] = 'deprep';
+$sites['deprep.lndo.site'] = 'deprep';
+$sites['deprep.lndo.site'] = 'deprep';
+$sites['deprep.lndo.site'] = 'deprep';
+$sites['deprep.lndo.site'] = 'deprep';
+$sites['deprep.lndo.site'] = 'deprep';

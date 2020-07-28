@@ -1,0 +1,40 @@
+uuid: fc91d544-26d6-4e18-8641-d514d637e699
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_geolocation
+    - node.type.event
+  module:
+    - geocoder_field
+    - geolocation
+third_party_settings:
+  geocoder_field:
+    method: geocode
+    weight: 0
+    skip_not_empty_value: 0
+    disabled: false
+    hidden: true
+    providers:
+      - bingmaps
+    dumper: geolocation_geocoder_v3
+    failure:
+      handling: preserve
+      status_message: true
+      log: true
+    field: field_location
+    delta_handling: default
+_core:
+  default_config_hash: PxEiD_21VQEI9QcRSIufDVPo92I7mjDNlU0HOSq6GMU
+id: node.event.field_geolocation
+field_name: field_geolocation
+entity_type: node
+bundle: event
+label: Geolocation
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: geolocation
