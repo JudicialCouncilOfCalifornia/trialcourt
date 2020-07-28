@@ -72,8 +72,14 @@
             {% set title = row.content['#node'].title.value %}
 
             {% set excerpt %}
+              <div class="created">
+                {{ row.content['#node'].created.value|date(format="F j, Y" ) }}
+              </div>
+
               {% if row.content['#node'].body.value %}
-                {{ row.content['#node'].body.value|striptags|length > 600 ? row.content['#node'].body.value|striptags|slice(0, 600) ~ '...' : row.content['#node'].body.value|striptags }}
+                <div class="teaser-text">
+                  {{ row.content['#node'].body.value|striptags|length > 600 ? row.content['#node'].body.value|striptags|slice(0, 600) ~ '...' : row.content['#node'].body.value|striptags }}
+                </div>
               {% endif %}
 
               {% set division = row.content['#node'].field_division[0] %}
@@ -81,16 +87,11 @@
               {% set tags = row.content['#node'].field_tags[0] %}
               {% set topics = row.content['#node'].field_topics[0] %}
 
-              <div class="date_tags">
-                <div class="created">
-                  {{ row.content['#node'].created.value|date(format="F j, Y" ) }}
+              {% if division or subject_matter or tags or topics %}
+                <div class="tags">
+                  Categories: {{ division|view }} {{ subject_matter|view }} {{ tags|view }} {{ topics|view }}
                 </div>
-                {% if division or subject_matter or tags or topics %}
-                  <div class="tags">
-                    {{ division|view }} {{ subject_matter|view }} {{ tags|view }} {{ topics|view }}
-                  </div>
-                {% endif %}
-              </div>
+              {% endif %}
             {% endset %}
 
             {% set url = path('entity.node.canonical', {'node': row.content['#node'].nid[0].value}) %}
