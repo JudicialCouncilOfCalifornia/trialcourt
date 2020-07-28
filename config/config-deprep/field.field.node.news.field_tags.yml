@@ -1,0 +1,31 @@
+uuid: 485daf3f-5d5a-4a3e-baa4-91a7fc93ca0b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tags
+    - node.type.news
+    - taxonomy.vocabulary.tags
+_core:
+  default_config_hash: C0hCsz0a74rpZP1OWLY9TPfL5c0bH29yCxKh0aL4Pmw
+id: node.news.field_tags
+field_name: field_tags
+entity_type: node
+bundle: news
+label: Tags
+description: 'These are the tags that relate to the news item.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      tags: tags
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference
