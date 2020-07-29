@@ -1,4 +1,4 @@
-uuid: 859d98f2-be05-4d8c-8169-0f378de7c7a4
+uuid: db0d596e-f21a-47b5-93a2-91ef0acaa115
 langcode: en
 status: true
 dependencies:
@@ -16,6 +16,7 @@ dependencies:
     - field.field.node.news.field_links
     - field.field.node.news.field_metatag
     - field.field.node.news.field_news_type
+    - field.field.node.news.field_related_content
     - field.field.node.news.field_subject_matter
     - field.field.node.news.field_tags
     - field.field.node.news.field_topics
@@ -65,6 +66,7 @@ third_party_settings:
       label: Details
     group_secondary_content:
       children:
+        - field_related_content
         - field_links
       parent_name: group_news_content
       weight: 22
@@ -123,7 +125,7 @@ third_party_settings:
         required_fields: true
       label: Media
 _core:
-  default_config_hash: Seuo_G7LHaLe5dLPHYfdJrd6X1FWn8ueV3Or1HBUipI
+  default_config_hash: mkzVmXWXMHZsPMgyFtGyIiHcVPLW89gDFzArk9jFTl8
 id: node.news.default
 targetEntityType: node
 bundle: news
@@ -202,7 +204,7 @@ content:
       media_types: {  }
     third_party_settings: {  }
   field_links:
-    weight: 5
+    weight: 9
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -241,9 +243,26 @@ content:
       size: 60
       selection_handler: default
     third_party_settings: {  }
+  field_related_content:
+    weight: 8
+    settings:
+      limit: '10'
+      min_length: '0'
+      delimiter: ''
+      not_found_message: 'The term ''@term'' will be added'
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+      not_found_message_allow: 0
+      new_terms: 0
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+    third_party_settings: {  }
+    type: autocomplete_deluxe
+    region: content
   field_subject_matter:
     type: super_term_reference_autocomplete_widget
-    weight: 15
+    weight: 7
     region: content
     settings:
       match_operator: CONTAINS
@@ -269,7 +288,7 @@ content:
       selection_handler: default
     third_party_settings: {  }
   field_topics:
-    weight: 14
+    weight: 6
     settings:
       match_operator: CONTAINS
       match_limit: 10
