@@ -1,0 +1,30 @@
+uuid: 55736907-06e1-4975-9e49-5fe180d33b39
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.media.video_stream.field_media_oembed_video
+    - media.type.video_stream
+  module:
+    - media
+id: media.video_stream.default
+targetEntityType: media
+bundle: video_stream
+mode: default
+content:
+  field_media_oembed_video:
+    type: oembed
+    label: visually_hidden
+    weight: 0
+    settings:
+      max_width: 0
+      max_height: 0
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  langcode: true
+  name: true
+  search_api_excerpt: true
+  thumbnail: true
+  uid: true

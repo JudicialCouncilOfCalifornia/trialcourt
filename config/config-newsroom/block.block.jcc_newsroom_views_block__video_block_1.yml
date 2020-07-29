@@ -1,0 +1,38 @@
+uuid: d32fb3e7-b810-4fd2-a74d-1a5e7d99e685
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.videos
+  module:
+    - ctools
+    - system
+    - views
+  theme:
+    - jcc_newsroom
+id: jcc_newsroom_views_block__video_block_1
+theme: jcc_newsroom
+region: right_sidebar
+weight: -11
+provider: null
+plugin: 'views_block:videos-block_1'
+settings:
+  id: 'views_block:videos-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      landing_page: landing_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }
