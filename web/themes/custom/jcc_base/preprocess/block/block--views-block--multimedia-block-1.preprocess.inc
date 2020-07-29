@@ -8,7 +8,7 @@
 /**
  * Implements hook_preprocess_HOOK().
  */
-function jcc_newsroom_preprocess_block__views_block__videos_block_2(&$variables) {
+function jcc_newsroom_preprocess_block__views_block__multimedia_block_1(&$variables) {
   $header_title = empty($variables['elements']['#configuration']['views_label']) ? $variables['elements']['content']['#title']['#markup'] : $variables['elements']['#configuration']['views_label'];
 
   if (isset($variables['elements']['content']['#view'])) {
@@ -16,35 +16,51 @@ function jcc_newsroom_preprocess_block__views_block__videos_block_2(&$variables)
     $rows = $variables['elements']['content']['#view']->result;
 
     foreach ($rows as $row) {
-      $title = $row->_entity->title->value;
-
       $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
 
-      $video_url = $row->_entity->field_media_video->getValue();
+      $video = $row->_entity->field_multimedia_source->getValue();
+      // Get the video entity using target_id from media field
+      $video_entity = \Drupal\media\Entity\Media::load($video[0]["target_id"]);
+      // Video title
+      $video_title = $video_entity->label();
+      // Video embed
       $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
-      $storage = \Drupal::entityTypeManager()->getStorage('media');
-      $entity_id = $storage->load($video_url[0]['target_id']);
-      $build = $view_builder->view($entity_id, 'default');
+      $build = $view_builder->view($video_entity, 'default');
       $video_src = render($build);
 
       $featured_videos_card = [
-        'title' => $title,
+        'title' => $video_title,
         'url' => $url,
         'excerpt_vid' => $video_src,
       ];
       array_push($cards, $featured_videos_card);
     }
 
-    $variables['featured_webcast'] = [
+    if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == TRUE) {
+      $button_text = $variables['elements']['content']['#view']->display_handler->display['display_options']['use_more_text'];
+      $button_url = '/multimedia';
+
+      $button = [
+        'text' => $button_text,
+        'url' => $button_url,
+        'style' => 'primary',
+      ];
+    }
+    else {
+      $button = [];
+    }
+
+    $variables['featured_videos'] = [
       'headergroup' => [
         'title' => htmlspecialchars_decode($header_title),
       ],
       'highlight_first' => TRUE,
       'cards' => $cards,
+      'button' => $button,
     ];
   }
   else {
-    $variables['featured_webcast'] = [
+    $variables['featured_videos'] = [
       'headergroup' => [
         'title' => htmlspecialchars_decode($header_title),
       ],

@@ -1,16 +1,16 @@
-uuid: eba1b1fb-585c-4653-bff3-0d715df70015
+uuid: 91460cd7-5c2d-4b73-a56d-a6f62c6d8218
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.media.video_stream.field_media_oembed_video
-    - media.type.video_stream
+    - field.field.media.video_embed.field_media_video_embed_field
+    - media.type.video_embed
   module:
-    - media
     - path
-id: media.video_stream.default
+    - video_embed_field
+id: media.video_embed.default
 targetEntityType: media
-bundle: video_stream
+bundle: video_embed
 mode: default
 content:
   created:
@@ -19,13 +19,11 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_media_oembed_video:
-    type: oembed_textfield
+  field_media_video_embed_field:
     weight: 0
-    settings:
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
+    type: video_embed_field_textfield
     region: content
   langcode:
     type: language_select
@@ -33,6 +31,14 @@ content:
     region: content
     settings:
       include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   path:
     type: path
@@ -57,5 +63,4 @@ content:
       match_limit: 10
     region: content
     third_party_settings: {  }
-hidden:
-  name: true
+hidden: {  }

@@ -1,13 +1,13 @@
-uuid: 4c5d40fb-41bb-4c63-8cb9-ff4b24cb2442
+uuid: cf99efac-59b7-4eab-ad47-3dae8290520f
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.video.body
-    - field.field.node.video.field_content_weight
-    - field.field.node.video.field_media_video
-    - field.field.node.video.field_video_type
-    - node.type.video
+    - field.field.node.multimedia.body
+    - field.field.node.multimedia.field_content_weight
+    - field.field.node.multimedia.field_multimedia_source
+    - field.field.node.multimedia.field_multimedia_type
+    - node.type.multimedia
   module:
     - autocomplete_deluxe
     - content_moderation
@@ -20,7 +20,7 @@ dependencies:
     - weight
 third_party_settings:
   field_group:
-    group_video_header:
+    group_album_header:
       children:
         - title
       parent_name: ''
@@ -32,10 +32,10 @@ third_party_settings:
         classes: ''
         description: ''
         required_fields: true
-      label: 'Video Header'
-    group_video_content:
+      label: 'Album Header'
+    group_album_content:
       children:
-        - group_details
+        - group_album
       parent_name: ''
       weight: 1
       format_type: tabs
@@ -44,27 +44,26 @@ third_party_settings:
         id: ''
         classes: ''
         direction: vertical
-      label: 'Video Content'
-    group_details:
+      label: 'Album Content'
+    group_album:
       children:
-        - field_video_type
-        - field_media_video
+        - field_multimedia_type
+        - field_multimedia_source
         - body
-        - field_content_weight
-      parent_name: group_video_content
-      weight: 3
+      parent_name: group_album_content
+      weight: 2
       format_type: tab
       region: content
       format_settings:
-        id: ''
-        classes: ''
         description: ''
         formatter: open
         required_fields: true
+        id: ''
+        classes: ''
       label: Details
-id: node.video.default
+id: node.multimedia.default
 targetEntityType: node
-bundle: video
+bundle: multimedia
 mode: default
 content:
   body:
@@ -79,24 +78,24 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
   field_content_weight:
-    weight: 5
+    weight: 2
     settings: {  }
     third_party_settings: {  }
     type: weight_selector
     region: content
-  field_media_video:
+  field_multimedia_source:
     type: media_library_widget
     weight: 3
     settings:
       media_types: {  }
     third_party_settings: {  }
     region: content
-  field_video_type:
+  field_multimedia_type:
     weight: 2
     settings:
       match_operator: CONTAINS
@@ -122,13 +121,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 14
+    weight: 15
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 11
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -136,7 +135,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 7
     region: content
     third_party_settings: {  }
   publish_on:
@@ -147,7 +146,7 @@ content:
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -155,14 +154,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 16
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 8
     region: content
     third_party_settings: {  }
   title:
@@ -175,7 +174,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 5
     settings:
       match_operator: CONTAINS
       size: 60
@@ -185,18 +184,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 8
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 9
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 13
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
