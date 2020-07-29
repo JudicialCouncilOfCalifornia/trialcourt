@@ -60,7 +60,7 @@ if (file_exists('./sites/sites.local.php')) {
 
 // Local using Lando.
 // This list is at the end as it may be automatically ammended by installer.
-$sites['jcc.lndo.site'] = 'default';
+$sites['default.lndo.site'] = 'default';
 $sites['slo.lndo.site'] = 'slo';
 $sites['oc.lndo.site'] = 'oc';
 $sites['napa.lndo.site'] = 'napa';
