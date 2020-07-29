@@ -89,7 +89,18 @@
 
               {% if division or subject_matter or tags or topics %}
                 <div class="tags">
-                  Categories: {{ division|view }} {{ subject_matter|view }} {{ tags|view }} {{ topics|view }}
+                  {% if division %}
+                    <span class="usa-tag">{{ division|view }}</span>
+                  {% endif %}
+                  {% if subject_matter %}
+                    <span class="usa-tag">{{ subject_matter|view }}</span>
+                  {% endif %}
+                  {% if tags %}
+                    <span class="usa-tag">{{ tags|view }}</span>
+                  {% endif %}
+                  {% if topics %}
+                    <span class="usa-tag">{{ topics|view }}</span>
+                  {% endif %}
                 </div>
               {% endif %}
             {% endset %}
