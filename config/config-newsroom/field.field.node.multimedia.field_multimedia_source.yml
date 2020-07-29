@@ -1,0 +1,30 @@
+uuid: ffa1cd32-9517-4e7a-8ea6-89bb2e15df27
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_multimedia_source
+    - media.type.image
+    - media.type.video_embed
+    - node.type.multimedia
+id: node.multimedia.field_multimedia_source
+field_name: field_multimedia_source
+entity_type: node
+bundle: multimedia
+label: 'Multimedia Source'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+      video_embed: video_embed
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: image
+field_type: entity_reference

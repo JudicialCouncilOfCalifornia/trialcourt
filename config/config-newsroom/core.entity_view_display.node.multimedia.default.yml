@@ -1,20 +1,19 @@
-uuid: a58c31b6-34f4-46b6-a3cf-6b2350ee4e2a
+uuid: f199dbf6-174a-41e8-90b5-0e72b86e2627
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.video.body
-    - field.field.node.video.field_content_weight
-    - field.field.node.video.field_media_video
-    - field.field.node.video.field_video_type
-    - node.type.video
+    - field.field.node.multimedia.body
+    - field.field.node.multimedia.field_content_weight
+    - field.field.node.multimedia.field_multimedia_source
+    - field.field.node.multimedia.field_multimedia_type
+    - node.type.multimedia
   module:
     - text
     - user
-    - weight
-id: node.video.default
+id: node.multimedia.default
 targetEntityType: node
-bundle: video
+bundle: multimedia
 mode: default
 content:
   body:
@@ -24,25 +23,18 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
-  field_content_weight:
+  field_multimedia_source:
+    type: entity_reference_entity_view
     weight: 4
     label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    type: default_weight
-    region: content
-  field_media_video:
-    type: entity_reference_entity_view
-    weight: 1
-    label: visually_hidden
     settings:
       view_mode: default
       link: false
     third_party_settings: {  }
     region: content
-  field_video_type:
+  field_multimedia_type:
     weight: 2
-    label: hidden
+    label: visually_hidden
     settings:
       link: true
     third_party_settings: {  }
@@ -54,5 +46,6 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_content_weight: true
   langcode: true
   search_api_excerpt: true

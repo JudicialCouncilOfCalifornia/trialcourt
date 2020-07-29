@@ -1,0 +1,44 @@
+uuid: 7363b870-ca89-479f-9c58-138ddbc2af78
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.multimedia.body
+    - field.field.node.multimedia.field_content_weight
+    - field.field.node.multimedia.field_multimedia_source
+    - field.field.node.multimedia.field_multimedia_type
+    - node.type.multimedia
+  module:
+    - user
+id: node.multimedia.teaser
+targetEntityType: node
+bundle: multimedia
+mode: teaser
+content:
+  field_multimedia_source:
+    type: entity_reference_label
+    weight: 2
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+  field_multimedia_type:
+    type: entity_reference_label
+    weight: 1
+    region: content
+    label: visually_hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+  links:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  body: true
+  field_content_weight: true
+  langcode: true
+  search_api_excerpt: true
