@@ -1,9 +1,10 @@
-uuid: bbf19862-c454-4e5a-aa33-4d501ee93cb3
+uuid: 72647ab1-eb02-4ff9-a8e4-68ea77dd9de2
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - facets.facet.topics
     - field.field.node.news.body
     - field.field.node.news.feeds_item
     - field.field.node.news.field_attachments
@@ -21,12 +22,15 @@ dependencies:
     - field.field.node.news.field_subject_matter
     - field.field.node.news.field_tags
     - field.field.node.news.field_topics
+    - image.style.medium
     - node.type.news
   module:
+    - entity_reference_facet_link
+    - media
     - text
     - user
 _core:
-  default_config_hash: C81ab8n10iK-pYbHfVKh3ammMKxA-f8WDqjP_ivRcbg
+  default_config_hash: FhYHQE1WOhWeKgjqayq8QbcmqDKudhfi7KON2ruiPKI
 id: node.news.teaser
 targetEntityType: node
 bundle: news
@@ -40,6 +44,47 @@ content:
       trim_length: 300
     third_party_settings: {  }
     region: content
+  field_division:
+    type: entity_reference_facet_link
+    weight: 3
+    region: content
+    label: hidden
+    settings:
+      facet: division
+    third_party_settings: {  }
+  field_images:
+    type: media_thumbnail
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      image_style: medium
+      image_link: content
+    third_party_settings: {  }
+  field_subject_matter:
+    type: entity_reference_facet_link
+    weight: 4
+    region: content
+    label: hidden
+    settings:
+      facet: subject_matter
+    third_party_settings: {  }
+  field_tags:
+    type: entity_reference_facet_link
+    weight: 5
+    region: content
+    label: hidden
+    settings:
+      facet: tags
+    third_party_settings: {  }
+  field_topics:
+    type: entity_reference_facet_link
+    weight: 6
+    region: content
+    label: hidden
+    settings:
+      facet: topics
+    third_party_settings: {  }
   links:
     weight: 1
     region: content
@@ -49,12 +94,10 @@ hidden:
   feeds_item: true
   field_attachments: true
   field_contact: true
-  field_division: true
   field_feed_imported_on: true
   field_feed_origin: true
   field_feed_source: true
   field_feed_uid: true
-  field_images: true
   field_links: true
   field_metatag: true
   field_news_type: true
