@@ -37,6 +37,7 @@
   'view-id-' ~ id,
   'view-display-id-' ~ display_id,
   dom_id ? 'js-view-dom-id-' ~ dom_id,
+  'margin-top-neg-3',
 ] %}
 
 {% block view %}
@@ -66,7 +67,7 @@
 
     {% block content %}
       {% if rows %}
-        <div class="view__content news">
+        <div class="view__content news margin-top-neg-3">
           {% set tiles = [] %}
           {% for row in rows %}
             {% set title = row.content['#node'].title.value %}
