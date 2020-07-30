@@ -39,4 +39,15 @@ function jcc_base_form_system_theme_settings_alter(&$form, FormStateInterface $f
     '#default_value' => theme_get_setting('youtube'),
     '#placeholder' => 'https://www.youtube.com/user/[name]',
   ];
+  $form['global'] = [
+    '#type' => 'details',
+    '#title' => t('Global settings'),
+    '#collapsed'  => TRUE,
+  ];
+  $form['global']['hide_translation'] = [
+    '#type'          => 'checkbox',
+    '#title'         => t('Hide translation'),
+    '#default_value' => theme_get_setting('hide_translation'),
+    '#description'   => t("Hide translation dropdown from header."),
+  ];
 }
