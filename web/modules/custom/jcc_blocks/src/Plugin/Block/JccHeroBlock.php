@@ -23,21 +23,32 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
 
 
   /**
+   * Account interface.
+   *
    * @var \Drupal\Core\Session\AccountInterface
    */
   protected $account;
 
   /**
+   * Module handler.
+   *
    * @var \Drupal\Core\Extension\ModuleHandler
    */
   protected $moduleHandler;
 
   /**
+   * Block plugin construct.
+   *
    * @param array $configuration
+   *   Configuration.
    * @param string $plugin_id
+   *   Plugin id.
    * @param mixed $plugin_definition
+   *   Plugin definition.
    * @param \Drupal\Core\Session\AccountInterface $account
+   *   Account.
    * @param \Drupal\Core\Extension\ModuleHandler $module_handler
+   *   Module handler.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, AccountInterface $account, ModuleHandler $module_handler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -46,10 +57,16 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
   }
 
   /**
+   * Block plugin create.
+   *
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container.
    * @param array $configuration
+   *   Configuration.
    * @param string $plugin_id
+   *   Plugin id.
    * @param mixed $plugin_definition
+   *   Plugin definition.
    *
    * @return static
    */
@@ -99,9 +116,9 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
     $form['background_image'] = [
       '#type' => 'media_library',
       '#allowed_bundles' => ['image'],
-      '#title' => t('Background image'),
+      '#title' => $this->t('Background image'),
       '#default_value' => $this->configuration['background_image'],
-      '#description' => t('Upload or select the background image.'),
+      '#description' => $this->t('Upload or select the background image.'),
       '#weight' => '0',
     ];
     $form['featured_links'] = [
@@ -109,6 +126,19 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
       '#title' => $this->t('Enable Featured Links'),
       '#default_value' => $this->configuration['featured_links'],
       '#weight' => '0',
+    ];
+    $form['hero_style'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Style'),
+      '#default_value' => $this->configuration['hero_style'] ?: 'jcc-hero-icon-nav-style--default',
+      '#weight' => '0',
+      '#options' => [
+        'jcc-hero-icon-nav-style--default' => $this->t('Default'),
+        'jcc-hero-icon-nav-style--variant-one' => $this->t('Bar'),
+        'jcc-hero-icon-nav-style--variant-two' => $this->t('Square'),
+        'jcc-hero-icon-nav-style--variant-three' => $this->t('Round'),
+        'jcc-hero-icon-nav-style--variant-four' => $this->t('Pill'),
+      ],
     ];
 
     return $form;
@@ -123,6 +153,7 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
     $this->configuration['subtitle'] = $form_state->getValue('subtitle');
     $this->configuration['background_image'] = $form_state->getValue('background_image');
     $this->configuration['featured_links'] = $form_state->getValue('featured_links');
+    $this->configuration['hero_style'] = $form_state->getValue('hero_style');
   }
 
   /**
@@ -157,12 +188,13 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
     if ($this->configuration['featured_links']) {
       $build['#hero_icon_nav']['links'] = self::getFeaturedLinks();
     }
+    $build['#hero_icon_nav']['style'] = $this->configuration['hero_style'];
 
     return $build;
   }
 
   /**
-   *
+   * Get the menu items from Featured Links.
    */
   public static function getFeaturedLinks() {
     $menu_name = 'featured-links';
@@ -206,7 +238,7 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
   }
 
   /**
-   *
+   * Get the url of the file attached to media.
    */
   public static function getMediaUrl($media) {
     $background_image_url = '';
