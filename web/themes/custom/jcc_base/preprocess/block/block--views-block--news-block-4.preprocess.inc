@@ -17,7 +17,7 @@ function jcc_newsroom_preprocess_block__views_block__news_block_4(&$variables) {
     $rows = $variables['elements']['content']['#view']->result;
 
     foreach ($rows as $row) {
-      $brow = $row->_entity->field_feed_source->value;
+      $feed_source = $row->_entity->field_feed_source->value;
       $title = $row->_entity->title->value;
       $excerpt = date("M j, Y", $row->_entity->created->value);
       $url = $row->_entity->field_links->uri;
@@ -40,7 +40,7 @@ function jcc_newsroom_preprocess_block__views_block__news_block_4(&$variables) {
       }
 
       $featured_news_card = [
-        'brow' => $brow,
+        'brow' => $feed_source,
         'title' => $title,
         'excerpt' => $excerpt,
         'url' => $url,
@@ -51,7 +51,7 @@ function jcc_newsroom_preprocess_block__views_block__news_block_4(&$variables) {
 
     if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == TRUE) {
       $button_text = $variables['elements']['content']['#view']->display_handler->display['display_options']['use_more_text'];
-      $button_url = '/news';
+      $button_url = '/news?field_news_type_target_id[133]=133';
 
       $button = [
         'text' => $button_text,

@@ -10,17 +10,18 @@
  */
 function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
   $cards = [];
-  $excerpt = '';
 
   if (isset($variables['elements']['content']['#view'])) {
     $rows = $variables['elements']['content']['#view']->result;
 
     foreach ($rows as $row) {
       $title = $row->_entity->title->value;
-      if ($row->_entity->body->value != NULL) {
+      if ($row->_entity->body->summary != NULL) {
+        $excerpt = $row->_entity->body->summary;
+      }
+      else {
         $excerpt = substr(strip_tags($row->_entity->body->value), 0, 200);
       }
-
       $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
       $img_src = isset($row->_entity->field_images->entity->field_media_image->entity->uri->value) ? file_create_url($row->_entity->field_images->entity->field_media_image->entity->uri->value) : "";
       $img_alt = isset($row->_entity->field_images->entity->field_media_image->alt) ? $row->_entity->field_images->entity->field_media_image->alt : "";
@@ -44,12 +45,12 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
 
       $featured_news_card = [
         'title' => $title,
-        'excerpt' => $excerpt,
         'excerpt_img' => [
           'src' => $img_src,
           'alt' => $img_alt,
           'renderer' => 'patternlab',
         ],
+        'excerpt' => $excerpt,
         'url' => $url,
         'contextual_links' => $placeholder,
       ];
