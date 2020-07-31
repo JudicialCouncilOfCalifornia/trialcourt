@@ -51,7 +51,7 @@ function jcc_base_preprocess_block__views_block__news_block_4(&$variables) {
 
   if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == TRUE) {
     $button_text = $variables['elements']['content']['#view']->display_handler->display['display_options']['use_more_text'];
-    $button_url = '/news?field_news_type_target_id[133]=133';
+    $button_url = $variables['elements']['content']['#view']->display_handler->display['display_options']['link_url'];
 
     $button = [
       'text' => $button_text,
