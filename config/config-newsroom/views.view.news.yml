@@ -8,6 +8,8 @@ dependencies:
     - field.storage.node.body
     - node.type.news
     - taxonomy.vocabulary.news_type
+  content:
+    - 'taxonomy_term:news_type:a7723026-ab1e-4143-95a2-28fe4fde6625'
   module:
     - better_exposed_filters
     - jcc_block_field_decorator
@@ -671,11 +673,11 @@ display:
   block_2:
     display_plugin: block
     id: block_2
-    display_title: 'Featured News Block'
+    display_title: 'Featured News'
     position: 2
     display_options:
       display_extenders: {  }
-      display_description: 'Featured news block view'
+      display_description: ''
       title: 'Featured News'
       defaults:
         title: false
@@ -787,6 +789,52 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
+        field_news_type_target_id:
+          id: field_news_type_target_id
+          table: node__field_news_type
+          field: field_news_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: not
+          value:
+            - 133
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: news_type
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
         promote:
           id: promote
           table: node_field_data
@@ -832,10 +880,10 @@ display:
         groups:
           1: AND
       sorts:
-        field_content_weight_value:
-          id: field_content_weight_value
-          table: node__field_content_weight
-          field: field_content_weight_value
+        field_sorting_weight_value:
+          id: field_sorting_weight_value
+          table: node__field_sorting_weight
+          field: field_sorting_weight_value
           relationship: none
           group_type: group
           admin_label: ''
@@ -1110,6 +1158,7 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
@@ -1117,12 +1166,12 @@ display:
   block_3:
     display_plugin: block
     id: block_3
-    display_title: 'News Stream Block'
+    display_title: 'News Stream'
     position: 2
     display_options:
       display_extenders: {  }
-      display_description: 'News stream block view'
-      title: 'News, Updates & Notices'
+      display_description: ''
+      title: 'News Stream'
       defaults:
         title: false
         style: false
@@ -1233,6 +1282,52 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
+        field_news_type_target_id:
+          id: field_news_type_target_id
+          table: node__field_news_type
+          field: field_news_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: not
+          value:
+            - 133
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: news_type
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
       filter_groups:
         operator: AND
         groups:
@@ -1519,6 +1614,7 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
@@ -1526,12 +1622,12 @@ display:
   block_4:
     display_plugin: block
     id: block_4
-    display_title: 'News Links Block'
+    display_title: 'Featured News Links'
     position: 2
     display_options:
       display_extenders: {  }
-      display_description: 'News Links block view'
-      title: 'News Links'
+      display_description: ''
+      title: 'Featured News Links'
       defaults:
         title: false
         style: false
@@ -1642,6 +1738,52 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
+        field_news_type_target_id:
+          id: field_news_type_target_id
+          table: node__field_news_type
+          field: field_news_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: and
+          value:
+            - 133
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: news_type
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
       filter_groups:
         operator: AND
         groups:
@@ -1662,7 +1804,7 @@ display:
           entity_type: node
           entity_field: created
           plugin_id: date
-      block_description: 'News Links'
+      block_description: 'Featured News Links'
       pager:
         type: some
         options:
@@ -1922,12 +2064,13 @@ display:
           plugin_id: entity_link
       use_more: true
       use_more_always: false
-      use_more_text: 'More News Links'
+      use_more_text: 'More News'
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:

@@ -1,6 +1,7 @@
 .jcc-page--front {
   .grid-container {
     max-width: 87.5rem;
+    padding-top: 1rem;
   }
 
   .jcc-cards-with-button__container {
@@ -10,11 +11,13 @@
 
     ul {
       li {
-        margin: 0 1rem 0 0;
-      }
+        @media only screen and (min-width: 640px) {
+          margin: 0 1rem 0 0;
 
-      li:last-child {
-        margin: 0;
+          &:last-child {
+            margin: 0;
+          }
+        }
       }
     }
 
@@ -25,45 +28,84 @@
 
   .jcc-tiles-list__container {
     .jcc-tiles-list {
-      .jcc-tiles-list--text-only {
-        .jcc-card {
-          width: 100%;
-        }
-      }
+      margin-top: 0;
 
-      jcc-tiles-list__image {
-        width: 33%;
+      > li:first-child {
+        padding-top: 0;
       }
     }
   }
 
-  .jcc-link-list-simple {
-    padding-bottom: 4.5rem;
-  }
-
   .page__right_sidebar {
+    padding-top: 2rem;
+
+    h3 {
+      font-size: 1.3rem !important;
+    }
+
+    .jcc-header-group {
+      padding: 0;
+
+      .jcc-header-group__title {
+        margin-bottom: 0;
+        font-size: 1.78rem;
+      }
+    }
+
+    .jcc-cards-with-button {
+      padding: 0;
+    }
+
     .jcc-cards-with-button__container {
-      &> .jcc-header-group, .jcc-cards-with-button {
-        padding: 0;
+      margin-bottom: 2rem;
 
-        .jcc-header-group__title {
-          margin-bottom: 0;
-        }
-
+      .jcc-cards-with-button {
         .jcc-cards-with-button__item {
           border: none;
           padding: 0;
         }
       }
+
+      .jcc-cards__highlight + .jcc-cards-with-button {
+          margin-bottom: 1rem;
+      }
+    }
+
+    #jcc-news-links {
+      margin-top: 4rem;
+
+      @media only screen and (min-width: 640px) {
+        .jcc-cards-with-button {
+          flex-direction: column;
+          -ms-flex-direction: column;
+
+          .jcc-cards-with-button__item {
+            margin-bottom: 2rem;
+
+            .jcc-card__brow {
+              margin-bottom: 0;
+            }
+
+            h3 {
+              margin-top: .5rem;
+              margin-bottom: .5rem;
+            }
+          }
+        }
+      }
     }
   }
 
-  .page__right_sidebar {
-    .jcc-cards-with-button--secondary {
+  @media only screen and (min-width: 640px) {
+    .jcc-cards__highlight + .jcc-cards-with-button {
       .jcc-cards-with-button__item {
-        width: 50%;
+        width: 49%;
         flex: none;
       }
     }
+  }
+
+  .jcc-cards-with-button__button, .jcc-link-list__button {
+    text-align: center;
   }
 }

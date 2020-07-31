@@ -1,34 +1,29 @@
-uuid: a5630c5d-fc61-4373-a36d-369e70b6ec54
+uuid: cccfb2f0-8a1d-41f9-ba35-c6084c7a26cf
 langcode: en
 status: true
 dependencies:
   config:
-    - views.view.news
+    - views.view.multimedia
   module:
     - ctools
     - system
     - views
   theme:
     - jcc_newsroom
-id: jcc_newsroom_views_block__news_block_4
+id: jcc_newsroom_views_block__multimedia_block_2
 theme: jcc_newsroom
 region: right_sidebar
-weight: -11
+weight: -13
 provider: null
-plugin: 'views_block:news-block_4'
+plugin: 'views_block:multimedia-block_2'
 settings:
-  id: 'views_block:news-block_4'
+  id: 'views_block:multimedia-block_2'
   label: ''
   provider: views
   label_display: visible
   views_label: ''
   items_per_page: none
 visibility:
-  request_path:
-    id: request_path
-    pages: '<front>'
-    negate: false
-    context_mapping: {  }
   'entity_bundle:node':
     id: 'entity_bundle:node'
     bundles:
@@ -36,3 +31,8 @@ visibility:
     negate: false
     context_mapping:
       node: '@node.node_route_context:node'
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }
