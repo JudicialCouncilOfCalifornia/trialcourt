@@ -20,8 +20,22 @@ function jcc_base_preprocess_block__views_block__news_block_3(&$variables) {
     $rows = $variables['elements']['content']['#view']->result;
     foreach ($rows as $row) {
       $date = date("M j, Y", $row->_entity->created->value);
+      $title = $row->_entity->title->value;
+      $body = '';
+      if ($row->_entity->body->summary != NULL) {
+        $body = $row->_entity->body->summary;
+      }
+      elseif ($row->_entity->body->value != NULL) {
+        $body = substr(strip_tags($row->_entity->body->value), 0, 200);
+      }
+      else {
+        if (($row->_entity->field_attachments != NULL) && ($row->_entity->field_attachments->entity != NULL)) {
+          $body = $row->_entity->field_attachments->entity->getName();
+        }
+      }
 
-      // Get all possible categories as a single listing per node.
+      // BEGIN - Get all possible categories as a single listing per node.
+      $categories = '';
       $topics = $row->_entity->field_topics->getValue();
       $tags = $row->_entity->field_tags->getValue();
       $taxonomies = array_merge($topics, $tags);
@@ -47,17 +61,10 @@ function jcc_base_preprocess_block__views_block__news_block_3(&$variables) {
         }
       }
       // Return link array as string.
-      $categories = '<span class="usa-tag">' . implode('</span> <span class="usa-tag">', array_unique($links)) . '</span>';
-
-      $title = $row->_entity->title->value;
-
-      if ($row->_entity->body->summary != NULL) {
-        $body = $row->_entity->body->summary;
+      if (!empty($links)) {
+        $categories = '<span class="usa-tag">' . implode('</span> <span class="usa-tag">', array_unique($links)) . '</span>';
       }
-      else {
-        $body = substr(strip_tags($row->_entity->body->value), 0, 200);
-      }
-
+      // END.
       $excerpt = Markup::create('<div class="publish_date">' . $date . '</div>' . $body . '<div class="tags">' . $categories . '</div>');
       $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
       $img_src = isset($row->_entity->field_images->entity->field_media_image->entity->uri->value) ? file_create_url($row->_entity->field_images->entity->field_media_image->entity->uri->value) : "";
