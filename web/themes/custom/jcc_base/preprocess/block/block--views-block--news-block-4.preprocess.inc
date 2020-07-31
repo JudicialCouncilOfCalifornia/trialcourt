@@ -8,7 +8,7 @@
 /**
  * Implements hook_preprocess_HOOK().
  */
-function jcc_newsroom_preprocess_block__views_block__news_block_4(&$variables) {
+function jcc_base_preprocess_block__views_block__news_block_4(&$variables) {
   $header_title = empty($variables['elements']['#configuration']['views_label']) ? $variables['elements']['content']['#title']['#markup'] : $variables['elements']['#configuration']['views_label'];
   $cards = [];
 

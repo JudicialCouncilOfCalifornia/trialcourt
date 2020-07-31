@@ -8,7 +8,7 @@
 /**
  * Implements hook_preprocess_HOOK().
  */
-function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
+function jcc_base_preprocess_block__views_block__news_block_2(&$variables) {
   $cards = [];
 
   if (isset($variables['elements']['content']['#view'])) {
