@@ -19,6 +19,7 @@ dependencies:
     - field.field.node.news.field_news_type
     - field.field.node.news.field_related_content
     - field.field.node.news.field_sorting_weight
+    - field.field.node.news.field_send_email
     - field.field.node.news.field_subject_matter
     - field.field.node.news.field_tags
     - field.field.node.news.field_topics
@@ -118,6 +119,15 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     type: number_integer
+  field_send_email:
+    weight: 12
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
     region: content
   field_subject_matter:
     type: entity_reference_facet_link
@@ -142,6 +152,16 @@ content:
       facet: topics
     third_party_settings: {  }
     type: entity_reference_facet_link
+    region: content
+  flag_email_node:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  flag_subscribe_node:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
     region: content
 hidden:
   feeds_item: true
