@@ -17,6 +17,7 @@ dependencies:
     - field.field.node.news.field_metatag
     - field.field.node.news.field_news_type
     - field.field.node.news.field_related_content
+    - field.field.node.news.field_send_email
     - field.field.node.news.field_subject_matter
     - field.field.node.news.field_tags
     - field.field.node.news.field_topics
@@ -39,6 +40,7 @@ third_party_settings:
         - group_media
         - group_secondary_content
         - group_metadata
+        - group_social
       parent_name: ''
       weight: 1
       format_type: tabs
@@ -124,6 +126,21 @@ third_party_settings:
         formatter: closed
         required_fields: true
       label: Media
+    group_social:
+      children:
+        - field_send_email
+      parent_name: group_news_content
+      weight: 24
+      format_type: tab
+      region: content
+      format_settings:
+        direction: horizontal
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Social
 _core:
   default_config_hash: mkzVmXWXMHZsPMgyFtGyIiHcVPLW89gDFzArk9jFTl8
 id: node.news.default
@@ -188,14 +205,6 @@ content:
       size: 60
       selection_handler: default
     third_party_settings: {  }
-  field_feed_source:
-    weight: 26
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: text_textfield
-    region: content
   field_images:
     weight: 3
     region: content
@@ -260,6 +269,13 @@ content:
     third_party_settings: {  }
     type: autocomplete_deluxe
     region: content
+  field_send_email:
+    weight: 12
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
   field_subject_matter:
     type: super_term_reference_autocomplete_widget
     weight: 7
@@ -299,7 +315,7 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
@@ -364,6 +380,7 @@ hidden:
   feeds_item: true
   field_feed_imported_on: true
   field_feed_origin: true
+  field_feed_source: true
   field_feed_uid: true
   publish_on: true
   publish_state: true
