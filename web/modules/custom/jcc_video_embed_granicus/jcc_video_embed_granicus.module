@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_video_embed_granicus.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function jcc_video_embed_granicus_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the jcc_video_embed_granicus module.
+    case 'help.page.jcc_video_embed_granicus':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('JCC Video Embed for Granicus') . '</p>';
+      return $output;
+
+    default:
+  }
+}
