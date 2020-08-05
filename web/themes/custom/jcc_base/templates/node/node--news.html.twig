@@ -148,27 +148,43 @@
           } %}
         {% endif %}
       {% endset %}
-    {%  else %}
-      {% set body %}
+    {% else %}
+      {% set news_lead %}
         {% if content.body['#object'].body.summary %}
           <div class="summary">
-            {% set summary = content.body['#object'].body.summary %}
+            {{ content.body['#object'].body.summary }}
           </div>
         {% endif %}
+      {% endset %}
 
-        <div{{ author_attributes.addClass('node__submitted') }}>
-          By {{ content.field_contact[0] }}
-        </div>
+      {% set body %}
+        {% if content.field_contact[0] %}
+          <div{{ author_attributes.addClass('node__submitted') }}>
+            By {{ content.field_contact[0] }}
+          </div>
+        {% endif %}
 
         <div class="publish_date">
           {{ node.created.value|date(format="M j, Y") }}
         </div>
 
-        {{ content.body }}
+        {{ content.body.0 }}
       {% endset %}
     {%  endif %}
+    {% if (content.field_news_type[0]['#title'] == 'Feature') %}
+      {% set image_hero = file_url(content.field_images['#items'].entity.field_media_image.entity.uri.value) %}
+      {% set background_variant = 'has-background-color--dark jcc-hero--has-background-image' %}
 
-    {% if (content.field_news_type[0]['#title'] != 'Feature') %}
+      <style>
+        .jcc-hero--has-background-image {
+          background-image: url('{{ image_hero }}');
+        }
+
+        .jcc-hero--has-background-image .jcc-hero__brow a {
+          color: #fef0c8 !important;
+        }
+      </style>
+    {% else %}
       {% set background_variant = 'has-background-color--none' %}
     {% endif %}
 
@@ -176,6 +192,7 @@
       background_variant: background_variant,
       brow: news_type,
       title: title,
+      lead: news_lead,
       body: null,
     } %}
 

@@ -2,12 +2,12 @@
 {{ attach_library('colorbox/init') }}
 {{ attach_library('colorbox/example4') }}
 
-
-<div class="jcc-card">
-  <div class="jcc-card__body">
-    <h3 class="jcc-card__title">Media</h3>
-  </div>
-</div>
+{% include '@molecules/blocks/card/card.twig' with {
+  card: {
+    title: images['#title'],
+    excerpt: 'Click on an image below to view in full size'
+  }
+} %}
 
 {% for image in images['#items'] %}
   {% if image.entity.field_media_image.entity.uri.value %}
