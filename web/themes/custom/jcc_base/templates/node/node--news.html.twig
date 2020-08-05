@@ -158,9 +158,9 @@
       {% endset %}
 
       {% set body %}
-        {% if content.field_contact[0] %}
-          <div{{ author_attributes.addClass('node__submitted') }}>
-            By {{ content.field_contact[0] }}
+        {% if content.field_contact %}
+          <div class="contacts">
+            By {{- content.field_contact -}}
           </div>
         {% endif %}
 
@@ -196,10 +196,8 @@
       body: null,
     } %}
 
-    {% if (content.body.0 != null) %}
-      {% include '@jcc_base/_includes/section-body.html.twig'with {
-        no_title_decoration: true,
-      } %}
-    {% endif %}
+    {% include '@jcc_base/_includes/section-body.html.twig'with {
+      no_title_decoration: true,
+    } %}
   {% endblock %}
 </article>
