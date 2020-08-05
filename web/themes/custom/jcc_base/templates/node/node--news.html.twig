@@ -155,19 +155,19 @@
             {{ content.body['#object'].body.summary }}
           </div>
         {% endif %}
-      {% endset %}
 
-      {% set body %}
-        {% if content.field_contact %}
+        {% if content.field_contact[0] %}
           <div class="contacts">
-            By {{- content.field_contact -}}
+            By {{ content.field_contact }}
           </div>
         {% endif %}
 
         <div class="publish_date">
           {{ node.created.value|date(format="M j, Y") }}
         </div>
+      {% endset %}
 
+      {% set body %}
         {{ content.body.0 }}
       {% endset %}
     {%  endif %}
@@ -184,8 +184,6 @@
           color: #fef0c8 !important;
         }
       </style>
-    {% else %}
-      {% set background_variant = 'has-background-color--none' %}
     {% endif %}
 
     {% include '@jcc_base/_includes/section-hero.html.twig' with {
