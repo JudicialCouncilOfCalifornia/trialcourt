@@ -19,13 +19,17 @@
 
 {% set related %}
   <div class="body">
-    {{ content.body.0 }}
+    {{ body }}
   </div>
 {% endset %}
 
-{% if attachments or related_links or subject_matter or tags or topics %}
+{% if images or attachments or related_links or subject_matter or tags or topics %}
   {% set aside %}
-    {% if content.field_attachments[0] %}
+    {% if images['#items'] %}
+      {% include '@jcc_base/_includes/images.html.twig' %}
+    {% endif %}
+
+    {% if attachments %}
       {% include '@jcc_base/_includes/attachments.html.twig' %}
     {% endif %}
 

@@ -27,8 +27,10 @@ article > .jcc-hero {
   }
 }
 
-/* reducing spacing for secondary aside main column when used as body section */
+/* adjusting spacing for secondary aside main column */
 .jcc-text-section-aside__aside-main {
+  padding-right: 2rem !important;
+
   .body {
     margin-top: 2em;
   }
@@ -68,6 +70,11 @@ div[class^='jcc-'] .body p, .date, .location, .relevance, .geolocation-map-wrapp
   margin-bottom: 1.5em;
 }
 
+.tags.relevance {
+  margin-top: 0;
+}
+
+/* display metadata listings inline */
 .relevance {
   div {
     div:not(:first-child) {
@@ -76,4 +83,17 @@ div[class^='jcc-'] .body p, .date, .location, .relevance, .geolocation-map-wrapp
       }
     }
   }
+}
+
+/* display contacts listing inline */
+.contacts {
+  div {
+    display: inline;
+  }
+}
+
+/* Colorbox image gallery context fix (x of total) */
+#cboxCurrent {
+  left: 130px;
+  bottom: -4px;
 }
