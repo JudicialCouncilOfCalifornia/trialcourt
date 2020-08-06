@@ -21,11 +21,35 @@ function jcc_base_form_system_theme_settings_alter(&$form, FormStateInterface $f
     '#title' => t('Social Links'),
     '#collapsed'  => TRUE,
   ];
+  $form['social']['email'] = [
+    '#type' => 'textfield',
+    '#title' => t('Email'),
+    '#default_value' => theme_get_setting('email'),
+    '#placeholder' => 'https://newsroom.courts.ca.gov/alerts',
+  ];
   $form['social']['facebook'] = [
     '#type' => 'textfield',
     '#title' => t('Facebook'),
     '#default_value' => theme_get_setting('facebook'),
     '#placeholder' => 'https://www.facebook.com/[name]/',
+  ];
+  $form['social']['flickr'] = [
+    '#type' => 'textfield',
+    '#title' => t('Flickr'),
+    '#default_value' => theme_get_setting('flickr'),
+    '#placeholder' => 'https://www.flickr.com/photos/[name]/sets/',
+  ];
+  $form['social']['linkedin'] = [
+    '#type' => 'textfield',
+    '#title' => t('LinkedIn'),
+    '#default_value' => theme_get_setting('linkedin'),
+    '#placeholder' => 'https://www.linkedin.com/company/[name]/',
+  ];
+  $form['social']['rss'] = [
+    '#type' => 'textfield',
+    '#title' => t('RSS'),
+    '#default_value' => theme_get_setting('rss'),
+    '#placeholder' => 'https://newsroom.courts.ca.gov/rss',
   ];
   $form['social']['twitter'] = [
     '#type' => 'textfield',
