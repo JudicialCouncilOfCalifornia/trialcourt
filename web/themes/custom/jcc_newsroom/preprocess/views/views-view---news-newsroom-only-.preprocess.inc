@@ -11,6 +11,9 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
  * Implements hook_preprocess_HOOK().
  */
 function jcc_newsroom_preprocess_views_view__news_newsroom_only_(&$variables) {
+  if (empty($variables['rows'])) {
+    return;
+  }
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
 
@@ -46,8 +49,8 @@ function jcc_newsroom_preprocess_views_view__news_newsroom_only_(&$variables) {
 TEMPLATE;
 
     $image_url = $image_alt = "";
-    $node_images = $node->get('field_images');
-    if (!empty($node_images->entity)) {
+    $node_images = $node->get('field_images')->first();
+    if (!empty($node_images->entity) && $node_images->entity->hasField('field_media_image')) {
       $node_image = $node_images->entity->get('field_media_image');
 
       if ($node_image) {
