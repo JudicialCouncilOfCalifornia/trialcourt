@@ -46,14 +46,15 @@ function jcc_newsroom_preprocess_views_view__news_newsroom_only_(&$variables) {
 TEMPLATE;
 
     $image_url = $image_alt = "";
-    if (!$node->get('field_images')->isEmpty()) {
-      if (!empty($node->get('field_images')->entity)) {
+    $node_images = $node->get('field_images');
+    if (!empty($node_images->entity)) {
+      $node_image = $node_images->entity->get('field_media_image');
+
+      if ($node_image) {
         $image_url = file_create_url(
-          $node->get('field_images')->entity->get('field_media_image')
-            ->first()->entity->uri->value
+          $node_image->first()->entity->uri->value
         );
-        $image_alt = $node->get('field_images')->entity->get('field_media_image')
-          ->first()->alt;
+        $image_alt = $node_image->first()->alt;
       }
     }
 
