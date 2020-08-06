@@ -11,6 +11,9 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
  * Implements hook_preprocess_HOOK().
  */
 function jcc_newsroom_preprocess_views_view__news_main_categories(&$variables) {
+  if (empty($variables['rows'])) {
+    return;
+  }
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
 
@@ -46,13 +49,16 @@ function jcc_newsroom_preprocess_views_view__news_main_categories(&$variables) {
 TEMPLATE;
 
     $image_url = $image_alt = "";
-    if (!$node->get('field_images')->isEmpty()) {
-      $image_url = file_create_url(
-        $node->get('field_images')->entity->get('field_media_image')
-          ->first()->entity->uri->value
-      );
-      $image_alt = $node->get('field_images')->entity->get('field_media_image')
-        ->first()->alt;
+    $node_images = $node->get('field_images')->first();
+    if (!empty($node_images->entity) && $node_images->entity->hasField('field_media_image')) {
+      $node_image = $node_images->entity->get('field_media_image');
+
+      if ($node_image) {
+        $image_url = file_create_url(
+          $node_image->first()->entity->uri->value
+        );
+        $image_alt = $node_image->first()->alt;
+      }
     }
 
     $variables['tiles_list']['tiles'][] = [
