@@ -10,7 +10,7 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
 /**
  * Implements hook_preprocess_HOOK().
  */
-function jcc_newsroom_preprocess_views_view__news_main_categories(&$variables) {
+function jcc_newsroom_preprocess_views_view__news_newsroom_only_(&$variables) {
   if (empty($variables['rows'])) {
     return;
   }
@@ -61,11 +61,17 @@ TEMPLATE;
       }
     }
 
+    $node_link = $node->toUrl();
+    $news_types = $node->get('field_news_type')->getValue();
+    if (FALSE !== array_search('134', array_column($news_types, 'target_id'), TRUE)) {
+      $node_link = $node->get('field_links')->first()->getValue()['uri'];
+    }
+
     $variables['tiles_list']['tiles'][] = [
       'card' => [
         'title' => $node->getTitle(),
         'excerpt' => render($excerpt),
-        'url' => $node->toUrl(),
+        'url' => $node_link,
       ],
       'date' => '',
       'img' => [

@@ -104,30 +104,18 @@
       {% endif %}
     {% endset %}
 
-{#    {% set body %}#}
-{#
-{#    {% endset %}#}
-
-
-
     {% set attachments = content.field_attachments[0] %}
+    {% set images = content.field_images %}
     {% set related_links = content.field_links[0] %}
     {% set subject_matter = content.field_subject_matter[0] %}
     {% set tags = content.field_tags[0] %}
     {% set topics = content.field_topics[0] %}
 
-{#    If body is empty set url attachement as button in the body area#}
+    {# If body is empty set url attachement as button in the body area#}
     {% if (content.body.0 == null) and (content.field_attachments[0]) %}
       {# Display first document as primary download #}
       {% set primary_doc = content.field_attachments[0]['#url'] %}
       {% set body %}
-        {% if display_submitted %}#}
-          <div{{ author_attributes.addClass('node__submitted') }}>
-            <div class="author">By {{ author_name }}</div>
-            <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
-            {{ metadata }}
-          </div>
-        {% endif %}
         <div>
           {% include "@atoms/buttons/link-button.twig" with {
               link_button: {
@@ -160,24 +148,54 @@
           } %}
         {% endif %}
       {% endset %}
+    {% else %}
+      {% set news_lead %}
+        {% if content.body['#object'].body.summary %}
+          <div class="summary">
+            {{ content.body['#object'].body.summary }}
+          </div>
+        {% endif %}
 
-      {% include '@jcc_base/_includes/section-hero.html.twig' with {
-        brow: news_type,
-        title: title,
-        body: body
-      } %}
-    {%  else %}
-      {% include '@jcc_base/_includes/section-hero.html.twig' with {
-        brow: news_type,
-        title: title,
-        body: body
-      } %}
-      {% include '@jcc_base/_includes/section-body.html.twig'with {
-        no_title_decoration: true
-      } %}
+        {% if content.field_contact[0] %}
+          <div class="contacts">
+            By {{ content.field_contact }}
+          </div>
+        {% endif %}
+
+        <div class="publish_date">
+          {{ node.created.value|date(format="M j, Y") }}
+        </div>
+      {% endset %}
+
+      {% set body %}
+        {{ content.body.0 }}
+      {% endset %}
     {%  endif %}
+    {% if (content.field_news_type[0]['#title'] == 'Feature') %}
+      {% set image_hero = file_url(content.field_images['#items'].entity.field_media_image.entity.uri.value) %}
+      {% set background_variant = 'has-background-color--dark jcc-hero--has-background-image' %}
 
+      <style>
+        .jcc-hero--has-background-image {
+          background-image: url('{{ image_hero }}');
+        }
 
+        .jcc-hero--has-background-image .jcc-hero__brow a {
+          color: #fef0c8 !important;
+        }
+      </style>
+    {% endif %}
 
+    {% include '@jcc_base/_includes/section-hero.html.twig' with {
+      background_variant: background_variant,
+      brow: news_type,
+      title: title,
+      lead: news_lead,
+      body: null,
+    } %}
+
+    {% include '@jcc_base/_includes/section-body.html.twig'with {
+      no_title_decoration: true,
+    } %}
   {% endblock %}
 </article>

@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_tc_links.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function jcc_tc_links_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the jcc_tc_links module.
+    case 'help.page.jcc_tc_links':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('JCC Custom Menus and Links') . '</p>';
+      return $output;
+
+    default:
+  }
+}
