@@ -11,7 +11,7 @@ use Drupal\Core\Url;
 /**
  * Implements hook_preprocess_HOOK().
  */
-function jcc_base_preprocess_node(&$variables) {
+function jcc_base_preprocess_node(&$variables, $hook) {
   $node = $variables['node'];
   switch ($node->getType()) {
     case 'location':
@@ -83,5 +83,12 @@ function jcc_base_preprocess_node(&$variables) {
         $view->setArguments([$termIds, $divisionIds]);
         $variables['faq_items'] = $view->render();
       }
+  }
+
+  // Optionally, run node-type-specific preprocess functions, like
+  // foo_preprocess_node_page() or foo_preprocess_node_story().
+  $function = __FUNCTION__ . '_' . $node->getType();
+  if (function_exists($function)) {
+    $function($variables, $hook);
   }
 }
