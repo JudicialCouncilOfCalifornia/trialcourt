@@ -1,20 +1,19 @@
-uuid: c1aa6af2-6090-4171-b0a7-04a8353e643f
+uuid: 4a564d68-4e7b-410e-acf7-150d0b923eae
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_multimedia_source
+    - field.storage.node.field_images
     - media.type.image
-    - media.type.video_embed
     - node.type.multimedia
-id: node.multimedia.field_multimedia_source
-field_name: field_multimedia_source
+id: node.multimedia.field_images
+field_name: field_images
 entity_type: node
 bundle: multimedia
-label: 'Multimedia Source'
+label: Images
 description: ''
 required: false
-translatable: false
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:
@@ -22,9 +21,8 @@ settings:
   handler_settings:
     target_bundles:
       image: image
-      video_embed: video_embed
     sort:
       field: _none
     auto_create: false
-    auto_create_bundle: image
+    auto_create_bundle: ''
 field_type: entity_reference
