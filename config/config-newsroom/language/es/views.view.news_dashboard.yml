@@ -1,40 +1,13 @@
+label: NewsLinks
 display:
   default:
-    display_title: Master
     display_options:
-      exposed_form:
-        options:
-          submit_button: Apply
-          reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-      pager:
-        options:
-          tags:
-            previous: ‹‹
-            next: ››
-            first: '« First'
-            last: 'Last »'
-          expose:
-            items_per_page_label: 'Items per page'
-            items_per_page_options_all_label: '- All -'
-            offset_label: Offset
       fields:
-        field_feed_source:
-          separator: ', '
-        field_links:
-          separator: ', '
-        field_images:
-          separator: ', '
-        body:
-          separator: ', '
+        node_bulk_form:
+          action_title: Acción
         title:
-          label: Title
-          separator: ', '
+          alter:
+            text: "<div><code>{{ field_feed_source }} </code></div>\r\n<h3><a href=\"{{ field_links }}\" target=\"_blank\">{{ title }}</a></h3>\r\n<div>{{body}}</div>"
         field_feed_imported_on:
-          separator: ', '
-        field_feed_origin:
-          separator: ', '
-  page_1:
-    display_title: Page
+          label: 'Date imported'
+      title: NewsLinks
