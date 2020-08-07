@@ -21,8 +21,7 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
     $featured = $rows[0];
 
     $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $featured->_entity->nid->value);
-
-    if ($featured->_entity->field_videos) {
+    if (!empty($featured->_entity->field_videos->getValue())) {
       $video = $featured->_entity->field_videos->getValue();
       // Get  video entity by target id from media field.
       $video_entity = Media::load($video[0]["target_id"]);
@@ -42,16 +41,23 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
       array_push($cards, $featured_video_card);
     }
 
-    if ($featured->_entity->field_images) {
+    if (!empty($featured->_entity->field_images)) {
       $images = $featured->_entity->field_images->getValue();
-      foreach (array_slice($images, 0, 2) as $image) {
+      if (!empty($featured->_entity->field_videos->getValue())) {
+        $image_max = 2;
+      }
+      else {
+        $image_max = 3;
+      }
+
+      foreach (array_slice($images, 0, $image_max) as $image) {
         // Get image entity by target id from media field.
         $image_entity = Media::load($image["target_id"]);
         // Get image url & alt.
         $image_src = ImageStyle::load('large')->buildUrl($image_entity->field_media_image->entity->uri->value);
         $image_alt = $image_entity->field_media_image->alt;
         // Image element.
-        $image_elem = Markup::create('<img src="' . $image_src . '" alt="' . $image_alt . '" />');
+        $image_elem = Markup::create('<a aria-hidden="true" href="' . $image_src . '" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter"><img src="' . $image_src . '" alt="' . $image_alt . '"></a><img class="usa-sr-only" src="' . $image_src . '" alt="' . $image_alt . '" />');
 
         $featured_image_card = [
           'url' => $url,
