@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Theme override to display a block.
+ * Theme override to display a block for featured webcast.
  *
  * Available variables:
  * - plugin_id: The ID of the block implementation.
@@ -26,6 +26,8 @@
  */
 #}
 
-{% include '@organisms/sections/cards-with-button/cards-with-button.twig' with {
-  cards_with_button: featured_webcast
-} %}
+{% if featured_webcast.cards is not empty %}
+  {% include '@organisms/sections/cards-with-button/cards-with-button.twig' with {
+    cards_with_button: featured_webcast
+  } %}
+{% endif %}
