@@ -4,9 +4,10 @@ status: true
 dependencies:
   config:
     - field.field.node.multimedia.body
-    - field.field.node.multimedia.field_multimedia_source
+    - field.field.node.multimedia.field_images
     - field.field.node.multimedia.field_multimedia_type
     - field.field.node.multimedia.field_sorting_weight
+    - field.field.node.multimedia.field_videos
     - node.type.multimedia
   module:
     - content_moderation
@@ -47,8 +48,9 @@ third_party_settings:
     group_details:
       children:
         - field_multimedia_type
-        - field_multimedia_source
         - body
+        - field_videos
+        - field_images
       parent_name: group_album
       weight: 3
       format_type: tab
@@ -67,7 +69,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 6
+    weight: 5
     settings:
       rows: 9
       summary_rows: 3
@@ -81,12 +83,12 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_multimedia_source:
-    type: media_library_widget
-    weight: 5
+  field_images:
+    weight: 7
     settings:
       media_types: {  }
     third_party_settings: {  }
+    type: media_library_widget
     region: content
   field_multimedia_type:
     weight: 4
@@ -104,6 +106,13 @@ content:
     third_party_settings: {  }
     type: weight_selector
     region: content
+  field_videos:
+    type: media_library_widget
+    weight: 6
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+    region: content
   langcode:
     type: language_select
     weight: 3
@@ -113,13 +122,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 14
+    weight: 16
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 12
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -132,13 +141,13 @@ content:
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 11
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 10
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -146,14 +155,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 17
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 9
     region: content
     third_party_settings: {  }
   title:
@@ -176,18 +185,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 8
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 9
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 13
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }
