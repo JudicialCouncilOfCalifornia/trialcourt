@@ -165,6 +165,12 @@
         <div class="publish_date">
           {{ node.created.value|date(format="M j, Y") }}
         </div>
+
+        {% if share_buttons_available %}
+        <div class="jcc-social-share">
+          {{ drupal_block("better_social_sharing_buttons_block") }}
+        </div>
+        {% endif %}
       {% endset %}
 
       {% set body %}
