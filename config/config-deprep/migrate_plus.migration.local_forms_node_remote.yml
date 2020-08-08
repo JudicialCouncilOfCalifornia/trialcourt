@@ -22,6 +22,11 @@ source:
   ids:
     id:
       type: integer
+  constants:
+    bool_0: 0
+    bool_1: 1
+    uid_root: 1
+    full_html: full_html
   fields:
     -
       name: id
@@ -51,14 +56,76 @@ source:
       name: division
       selector: division
       label: 'Taxonomy terms for Division'
+    -
+      name: department
+      selector: department
+      label: 'Taxonomy terms for Department'
 process:
   type:
     plugin: default_value
     default_value: document
   title: title
+  body/value: body
+  body/format: constants/full_html
   sticky:
     plugin: default_value
     default_value: 0
+  field_tags:
+    -
+      plugin: explode
+      delimiter: ','
+      source: tags
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: tags
+      value_key: name
+  field_topics:
+    -
+      plugin: explode
+      delimiter: ','
+      source: topics
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: topics
+      value_key: name
+  field_division:
+    -
+      plugin: explode
+      delimiter: ','
+      source: division
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: division
+      value_key: name
+  field_department:
+    -
+      plugin: explode
+      delimiter: ','
+      source: department
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: department
+      value_key: name
   field_document_type:
     plugin: entity_lookup
     source: category
