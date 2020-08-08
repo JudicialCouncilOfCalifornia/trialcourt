@@ -56,9 +56,39 @@ process:
     plugin: default_value
     default_value: document
   title: title
+  body/value: body
+  body/format: constants/full_html
   sticky:
     plugin: default_value
     default_value: 0
+  field_division:
+    -
+      plugin: explode
+      delimiter: ','
+      source: division
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: division
+      value_key: name
+  field_department:
+    -
+      plugin: explode
+      delimiter: ','
+      source: department
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: department
+      value_key: name
   field_document_type:
     plugin: entity_lookup
     source: category
