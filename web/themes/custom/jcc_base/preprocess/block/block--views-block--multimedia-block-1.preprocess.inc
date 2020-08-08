@@ -5,6 +5,8 @@
  * Theme and preprocess functions for blocks.
  */
 
+use Drupal\Core\Render\Markup;
+use Drupal\image\Entity\ImageStyle;
 use Drupal\media\Entity\Media;
 
 /**
@@ -16,26 +18,54 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
   if (isset($variables['elements']['content']['#view'])) {
     $cards = [];
     $rows = $variables['elements']['content']['#view']->result;
+    $featured = $rows[0];
 
-    foreach ($rows as $row) {
-      $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
-
-      $video = $row->_entity->field_multimedia_source->getValue();
-      // Get the video entity using target_id from media field.
+    $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $featured->_entity->nid->value);
+    if (!empty($featured->_entity->field_videos->getValue())) {
+      $video = $featured->_entity->field_videos->getValue();
+      // Get  video entity by target id from media field.
       $video_entity = Media::load($video[0]["target_id"]);
       // Video title.
       $video_title = $video_entity->label();
       // Video embed.
       $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
       $build = $view_builder->view($video_entity, 'default');
-      $video_src = render($build);
+      $video_elem = render($build);
 
-      $featured_videos_card = [
+      $featured_video_card = [
         'title' => $video_title,
         'url' => $url,
-        'excerpt_vid' => $video_src,
+        'excerpt_vid' => $video_elem,
       ];
-      array_push($cards, $featured_videos_card);
+
+      array_push($cards, $featured_video_card);
+    }
+
+    if (!empty($featured->_entity->field_images)) {
+      $images = $featured->_entity->field_images->getValue();
+      if (!empty($featured->_entity->field_videos->getValue())) {
+        $image_max = 2;
+      }
+      else {
+        $image_max = 3;
+      }
+
+      foreach (array_slice($images, 0, $image_max) as $image) {
+        // Get image entity by target id from media field.
+        $image_entity = Media::load($image["target_id"]);
+        // Get image url & alt.
+        $image_src = ImageStyle::load('large')->buildUrl($image_entity->field_media_image->entity->uri->value);
+        $image_alt = $image_entity->field_media_image->alt;
+        // Image element.
+        $image_elem = Markup::create('<a aria-hidden="true" href="' . $image_src . '" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter"><img src="' . $image_src . '" alt="' . $image_alt . '"></a><img class="usa-sr-only" src="' . $image_src . '" alt="' . $image_alt . '" />');
+
+        $featured_image_card = [
+          'url' => $url,
+          'excerpt' => $image_elem,
+        ];
+
+        array_push($cards, $featured_image_card);
+      }
     }
 
     if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == TRUE) {
@@ -52,7 +82,7 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
       $button = [];
     }
 
-    $variables['featured_videos'] = [
+    $variables['featured_multimedia'] = [
       'headergroup' => [
         'title' => htmlspecialchars_decode($header_title),
       ],
@@ -62,7 +92,7 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
     ];
   }
   else {
-    $variables['featured_videos'] = [
+    $variables['featured_multimedia'] = [
       'headergroup' => [
         'title' => htmlspecialchars_decode($header_title),
       ],
