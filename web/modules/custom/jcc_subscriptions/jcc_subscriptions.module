@@ -7,12 +7,63 @@
 
 use Drupal\message\Entity\Message;
 use Drupal\views\Views;
+use Drupal\Core\Form\FormStateInterface;
+
+use MarkRoland\Emma\Client;
 
 /**
  * Implements hook_node_insert().
  */
+function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
+  if ($form['#id'] == 'node-news-form') {
+    // Connection to myEmma.
+    $emma = new Client('17412', 'f31827655ea23f7f82a1', '80bb75a03f35106c50c2');
+    $myemma_groups = $emma->list_groups();
+    $form_groups = [];
+    foreach ($myemma_groups as $group) {
+      $form_groups[$group->member_group_id] = $group->group_name;
+    }
+
+    // Creating list of groups form myEmma.
+    $form['myemma_groups'] = [
+      '#type' => 'checkboxes',
+      '#options' => $form_groups,
+      '#title' => t('Send to myEmma groups:'),
+      '#group' => 'group_social',
+    ];
+
+    // Moving the list to the social fieldgroup.
+    $form['#group_children']['myemma_groups'] = 'group_social';
+    $form['#fieldgroups']['group_social']->children[] = 'myemma_groups';
+    $form['group_social']['myemma_groups'] = $form['myemma_groups'];
+    unset($form['myemma_groups']);
+
+    // Adding extra action on submit.
+    $form['actions']['submit']['#submit'][] = 'jcc_subscriptions_form_submit';
+  }
+}
+
+/**
+ * Alters for submission - sends query.
+ */
+function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
+  if ($form['#id'] == 'node-news-form') {
+    // Getting data to send query to myemma.
+    $groups = $form_state->cleanValues()->getValues()['myemma_groups'];
+    $emma_groups = array_filter($groups, function ($item) {
+      return $item !== 0;
+    });
+
+    // dsm($emma_groups);
+  }
+}
+
+/**
+ * To salvage.
+ */
 function jcc_subscriptions_node_insert($node) {
   if ($node->getType() == "news") {
+
     $email_notification = $node->get('field_send_email')->getValue();
     if ($email_notification[0]['value'] == 1 && $node->get('status')->getValue()[0]['value'] == 1) {
       // Get Topics from the new node.
@@ -41,10 +92,11 @@ function jcc_subscriptions_node_insert($node) {
       $message->set('field_node_ref', $node);
       $message->set('field_news_topic', $topics_array);
       $message->save();
-      // $notifier = \Drupal::service('message_notify.sender');
-      // $notifier->send($message);
+
       $subscribers = \Drupal::service('message_subscribe.subscribers');
       $subscribers->sendMessage($node, $message);
+      // dsm($users_result);
+      // https://github.com/markroland/emma
     }
   }
 }
