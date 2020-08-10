@@ -19,9 +19,8 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
     $cards = [];
     $rows = $variables['elements']['content']['#view']->result;
     $featured = $rows[0];
-
     $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $featured->_entity->nid->value);
-    if (!empty($featured->_entity->field_videos->getValue())) {
+    if ($featured->_entity->field_videos != NULL && !empty($featured->_entity->field_videos->getValue())) {
       $video = $featured->_entity->field_videos->getValue();
       // Get  video entity by target id from media field.
       $video_entity = Media::load($video[0]["target_id"]);
