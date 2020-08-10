@@ -13,37 +13,38 @@ use Drupal\media\Entity\Media;
 function jcc_base_preprocess_block__views_block__multimedia_block_2(&$variables) {
   if (isset($variables['elements']['content']['#view'])) {
     $header_title = empty($variables['elements']['#configuration']['views_label']) ? $variables['elements']['content']['#title']['#markup'] : $variables['elements']['#configuration']['views_label'];
-
     $cards = [];
     $rows = $variables['elements']['content']['#view']->result;
-    $featured = $rows[0];
 
-    $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $featured->_entity->nid->value);
-    if ($featured->_entity->field_videos != NULL && !empty($featured->_entity->field_videos->getValue())) {
-      $video = $featured->_entity->field_videos->getValue();
-      // Get  video entity by target id from media field.
-      $video_entity = Media::load($video[0]["target_id"]);
-      // Video title.
-      $video_title = $video_entity->label();
-      // Video embed.
-      $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
-      $build = $view_builder->view($video_entity, 'default');
-      $video_elem = render($build);
+    if ($rows != NULL && !empty($rows)) {
+      $featured = $rows[0];
+      $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $featured->_entity->nid->value);
+      if ($featured->_entity->field_videos != NULL && !empty($featured->_entity->field_videos->getValue())) {
+        $video = $featured->_entity->field_videos->getValue();
+        // Get  video entity by target id from media field.
+        $video_entity = Media::load($video[0]["target_id"]);
+        // Video title.
+        $video_title = $video_entity->label();
+        // Video embed.
+        $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
+        $build = $view_builder->view($video_entity, 'default');
+        $video_elem = render($build);
 
-      $featured_video_card = [
-        'title' => $video_title,
-        'url' => $url,
-        'excerpt_vid' => $video_elem,
+        $featured_video_card = [
+          'title' => $video_title,
+          'url' => $url,
+          'excerpt_vid' => $video_elem,
+        ];
+
+        array_push($cards, $featured_video_card);
+      }
+
+      $variables['featured_webcast'] = [
+        'headergroup' => [
+          'title' => htmlspecialchars_decode($header_title),
+        ],
+        'cards' => $cards,
       ];
-
-      array_push($cards, $featured_video_card);
     }
-
-    $variables['featured_webcast'] = [
-      'headergroup' => [
-        'title' => htmlspecialchars_decode($header_title),
-      ],
-      'cards' => $cards,
-    ];
   }
 }
