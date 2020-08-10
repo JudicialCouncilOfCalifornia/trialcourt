@@ -5,8 +5,6 @@
  * Contains jcc_blocks.module.
  */
 
-use Drupal\message\Entity\Message;
-use Drupal\views\Views;
 use Drupal\Core\Form\FormStateInterface;
 
 use MarkRoland\Emma\Client;
@@ -55,52 +53,6 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     });
 
     // dsm($emma_groups);
+    // https://github.com/markroland/emma
   }
 }
-
-/**
- * To salvage.
- */
-function jcc_subscriptions_node_insert($node) {
-  if ($node->getType() == "news") {
-
-    $email_notification = $node->get('field_send_email')->getValue();
-    if ($email_notification[0]['value'] == 1 && $node->get('status')->getValue()[0]['value'] == 1) {
-      // Get Topics from the new node.
-      $topics_array = $node->get('field_topics')->getValue();
-      $topics = [];
-      foreach ($topics_array as $topic_id) {
-        array_push($topics, $topic_id['target_id']);
-      }
-
-      // Query the view to get users who have subscribed to right topics.
-      $view = Views::getView('jcc_system_user_subscription_view');
-      $view->setDisplay('default');
-      $view->setArguments($topics);
-      $view->execute();
-      $users_result = [];
-      $view_result = $view->result;
-
-      // Populating array of subscribers from view result.
-      foreach ($view_result as $data) {
-        $entity = $data->_entity;
-        array_push($users_result, $entity->get('mail')->value);
-      }
-
-      // Create message element.
-      $message = Message::create(['template' => 'news_message', 'uid' => $node->getOwnerId()]);
-      $message->set('field_node_ref', $node);
-      $message->set('field_news_topic', $topics_array);
-      $message->save();
-
-      $subscribers = \Drupal::service('message_subscribe.subscribers');
-      $subscribers->sendMessage($node, $message);
-      // dsm($users_result);
-      // https://github.com/markroland/emma
-    }
-  }
-}
-
-// TODO:Handle update
-// function jcc_subscriptions_node_update($node) {
-// }.
