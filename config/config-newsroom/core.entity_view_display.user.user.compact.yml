@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.user.compact
+    - field.field.user.user.field_subscriptions
+    - field.field.user.user.message_subscribe_email
     - field.field.user.user.user_picture
     - image.style.thumbnail
   module:
@@ -16,6 +18,16 @@ targetEntityType: user
 bundle: user
 mode: compact
 content:
+  flag_email_user:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  flag_subscribe_user:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   user_picture:
     type: image
     weight: 0
@@ -26,6 +38,8 @@ content:
     third_party_settings: {  }
     label: hidden
 hidden:
+  field_subscriptions: true
   langcode: true
   member_for: true
+  message_subscribe_email: true
   search_api_excerpt: true

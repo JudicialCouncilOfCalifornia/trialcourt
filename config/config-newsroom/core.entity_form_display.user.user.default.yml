@@ -3,11 +3,10 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.user.user.field_subscriptions
+    - field.field.user.user.message_subscribe_email
     - field.field.user.user.user_picture
-    - image.style.thumbnail
   module:
-    - path
-    - svg_image
     - user
 _core:
   default_config_hash: Kf54gV1vN66X5pD0MNrkCfroZfexJVSg2Lrg7xruIwo
@@ -17,38 +16,27 @@ bundle: user
 mode: default
 content:
   account:
-    weight: -10
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  contact:
-    weight: 5
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  language:
     weight: 0
     region: content
     settings: {  }
     third_party_settings: {  }
-  path:
-    type: path
-    weight: 30
-    region: content
+  field_subscriptions:
+    weight: 2
     settings: {  }
     third_party_settings: {  }
-  timezone:
-    weight: 6
+    type: options_buttons
     region: content
-    settings: {  }
-    third_party_settings: {  }
-  user_picture:
-    type: image_image
+  message_subscribe_email:
+    type: boolean_checkbox
+    weight: 1
     settings:
-      progress_indicator: throbber
-      preview_image_style: thumbnail
+      display_label: true
     third_party_settings: {  }
-    weight: -1
     region: content
 hidden:
+  contact: true
   langcode: true
+  language: true
+  path: true
+  timezone: true
+  user_picture: true
