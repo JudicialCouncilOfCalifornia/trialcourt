@@ -84,6 +84,31 @@ filters:
     status: true
     weight: -43
     settings: {  }
+  filter_url:
+    id: filter_url
+    provider: filter
+    status: false
+    weight: -38
+    settings:
+      filter_url_length: 72
+  filter_html_image_secure:
+    id: filter_html_image_secure
+    provider: filter
+    status: false
+    weight: -37
+    settings: {  }
+  filter_html_escape:
+    id: filter_html_escape
+    provider: filter
+    status: false
+    weight: -40
+    settings: {  }
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: false
+    weight: -39
+    settings: {  }
   insert_view_adv:
     id: insert_view_adv
     provider: insert_view_adv
@@ -93,6 +118,7 @@ filters:
       allowed_views:
         documents=default: documents=default
         documents=block_1: documents=block_1
+        documents=page_1: documents=page_1
         announcements=default: '0'
         announcements=block_1: '0'
         announcements=block_2: '0'
@@ -169,28 +195,3 @@ filters:
         who_s_online=who_s_online_block: '0'
       render_as_empty: 1
       hide_argument_input: false
-  filter_html_image_secure:
-    id: filter_html_image_secure
-    provider: filter
-    status: false
-    weight: -37
-    settings: {  }
-  filter_url:
-    id: filter_url
-    provider: filter
-    status: false
-    weight: -38
-    settings:
-      filter_url_length: 72
-  filter_autop:
-    id: filter_autop
-    provider: filter
-    status: false
-    weight: -39
-    settings: {  }
-  filter_html_escape:
-    id: filter_html_escape
-    provider: filter
-    status: false
-    weight: -40
-    settings: {  }
