@@ -17,14 +17,17 @@ use SendGrid\Client as SClient;
  * Implements hook_node_insert().
  */
 function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
-  // TODO: remove "Email subscriptions" checkbox from user form.
   if ($form['#id'] == 'node-news-form' || $form['#id'] == 'user-form') {
     // Connection to myEmma.
     $emma = new Client('17412', 'f31827655ea23f7f82a1', '80bb75a03f35106c50c2');
+
+    // Getting groups from myemma / only keeping ones with naming convention.
     $myemma_groups = $emma->list_groups();
     $form_groups = [];
     foreach ($myemma_groups as $group) {
-      $form_groups[$group->member_group_id] = $group->group_name;
+      if (strpos($group->group_name, 'Newsroom mailing') !== FALSE) {
+        $form_groups[$group->member_group_id] = $group->group_name;
+      }
     }
 
     // Creating list of groups form myEmma.
@@ -45,15 +48,16 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
     }
 
     if ($form['#id'] == 'user-form') {
-      // dsm($form);
       $user_req = $emma->get_member_detail_by_email($form['account']['mail']['#default_value']);
-      // dsm($user_req);
-      if (isset($user_req->error)) {
-        // TODO: create account.
-      }
-      else {
+      if (!isset($user_req->error)) {
+        // pre-populate active categories.
         $emma_user_id = $user_req->member_id;
-        // TODO: pre-populate active categories.
+        $user_groups_object = $emma->list_member_groups($emma_user_id);
+        $user_groups = [];
+        foreach ($user_groups_object as $group_objects) {
+          array_push($user_groups, $group_objects->member_group_id);
+        }
+        $form['myemma_groups']['#default_value'] = $user_groups;
       }
     }
 
@@ -74,11 +78,11 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       return $item !== 0;
     });
 
-    // dsm($form_state);
-    // dsm($emma_groups);
+    // TODO: Get the real values from form
     // Temporarly overriting emma_groups.
     $emma_groups = [0 => '13504516', 1 => '13572100'];
 
+    // Gathering emails to send emails to.
     $email_to_sendgrid = [];
     foreach ($emma_groups as $group) {
       $users_in_group = $emma->list_group_members($group);
@@ -88,7 +92,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
         }
       }
     }
-    // dsm($email_to_sendgrid);
+
     // Building query for sendgrid.
     $news_title = $form_state->cleanValues()->getValues()['title'];
     $news_summary = $form_state->cleanValues()->getValues()['body'];
@@ -105,14 +109,12 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
     $news_path_alias = \Drupal::service('path.alias_manager')->getAliasByPath($news_internal_path, $langcode);
 
-    // Temp var assignement
-    // https://github.com/markroland/emma
-    // Member ID : 23765286916
-    // Group ID 1 : 13504516
-    // Group ID 2 : 13572100.
+    // TODO: Replace with JCC official vars
+    // Temp var assignement.
     $to = 'baptiste.niviere@gmail.com';
     $sendgrid_api_key = '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';
     // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
+    // Creating email object.
     $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
     $email = new Email();
     $email->addTo($email_to_sendgrid)
@@ -151,6 +153,20 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     }
   }
   elseif ($form['#id'] == 'user-form') {
-    // TODO: update member / groups.
+    $emma = new Client('17412', 'f31827655ea23f7f82a1', '80bb75a03f35106c50c2');
+    $user_req = $emma->get_member_detail_by_email($form_state->cleanValues()->getValues()['mail']);
+
+    // Create / Update user.
+    $fields = [
+      'first_name' => $form_state->cleanValues()->getValues()['name'],
+    ];
+    $groups = [];
+    foreach ($form_state->cleanValues()->getValues()['myemma_groups'] as $val) {
+      if ($val !== 0) {
+        $groups[] = $val;
+      }
+    }
+    $response = $emma->import_single_member($user_req->email, $fields, $groups);
+    // TODO: User Drupal form email for new user.
   }
 }
