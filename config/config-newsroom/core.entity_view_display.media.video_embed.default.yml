@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.media.video_embed.field_media_video_embed_field
+    - image.style.large
     - media.type.video_embed
   module:
     - video_embed_field
@@ -16,12 +17,15 @@ content:
     label: visually_hidden
     weight: 0
     settings:
+      image_style: large
+      link_image_to: provider
+      autoplay: true
       responsive: true
       width: 854
       height: 480
-      autoplay: false
+      modal_max_width: 854
     third_party_settings: {  }
-    type: video_embed_field_video
+    type: video_embed_field_colorbox
     region: content
 hidden:
   created: true
