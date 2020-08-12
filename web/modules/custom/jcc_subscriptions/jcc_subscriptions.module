@@ -5,15 +5,20 @@
  * Contains jcc_blocks.module.
  */
 
+use SendGrid\Exception;
+use SendGrid\Email;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
 
 use MarkRoland\Emma\Client;
+use SendGrid\Client as SClient;
 
 /**
  * Implements hook_node_insert().
  */
 function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
-  if ($form['#id'] == 'node-news-form') {
+  // TODO: remove "Email subscriptions" checkbox from user form.
+  if ($form['#id'] == 'node-news-form' || $form['#id'] == 'user-form') {
     // Connection to myEmma.
     $emma = new Client('17412', 'f31827655ea23f7f82a1', '80bb75a03f35106c50c2');
     $myemma_groups = $emma->list_groups();
@@ -30,13 +35,29 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
       '#group' => 'group_social',
     ];
 
-    // Moving the list to the social fieldgroup.
-    $form['#group_children']['myemma_groups'] = 'group_social';
-    $form['#fieldgroups']['group_social']->children[] = 'myemma_groups';
-    $form['group_social']['myemma_groups'] = $form['myemma_groups'];
-    unset($form['myemma_groups']);
+    // Extra formatting if creating a news item.
+    if ($form['#id'] == 'node-news-form') {
+      // Moving the list to the social fieldgroup.
+      $form['#group_children']['myemma_groups'] = 'group_social';
+      $form['#fieldgroups']['group_social']->children[] = 'myemma_groups';
+      $form['group_social']['myemma_groups'] = $form['myemma_groups'];
+      unset($form['myemma_groups']);
+    }
 
-    // Adding extra action on submit.
+    if ($form['#id'] == 'user-form') {
+      // dsm($form);
+      $user_req = $emma->get_member_detail_by_email($form['account']['mail']['#default_value']);
+      // dsm($user_req);
+      if (isset($user_req->error)) {
+        // TODO: create account.
+      }
+      else {
+        $emma_user_id = $user_req->member_id;
+        // TODO: pre-populate active categories.
+      }
+    }
+
+    // Custom actions on submit.
     $form['actions']['submit']['#submit'][] = 'jcc_subscriptions_form_submit';
   }
 }
@@ -45,14 +66,91 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
  * Alters for submission - sends query.
  */
 function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
-  if ($form['#id'] == 'node-news-form') {
-    // Getting data to send query to myemma.
+  if ($form['#id'] == 'node-news-form' && $form_state->cleanValues()->getValues()['field_send_email']['value'] == 1) {
+    // Getting data from myemma.
+    $emma = new Client('17412', 'f31827655ea23f7f82a1', '80bb75a03f35106c50c2');
     $groups = $form_state->cleanValues()->getValues()['myemma_groups'];
     $emma_groups = array_filter($groups, function ($item) {
       return $item !== 0;
     });
 
+    // dsm($form_state);
     // dsm($emma_groups);
+    // Temporarly overriting emma_groups.
+    $emma_groups = [0 => '13504516', 1 => '13572100'];
+
+    $email_to_sendgrid = [];
+    foreach ($emma_groups as $group) {
+      $users_in_group = $emma->list_group_members($group);
+      foreach ($users_in_group as $user_group) {
+        if (!in_array($user_group->email, $email_to_sendgrid, TRUE)) {
+          array_push($email_to_sendgrid, $user_group->email);
+        }
+      }
+    }
+    // dsm($email_to_sendgrid);
+    // Building query for sendgrid.
+    $news_title = $form_state->cleanValues()->getValues()['title'];
+    $news_summary = $form_state->cleanValues()->getValues()['body'];
+    $news_nid = $form_state->cleanValues()->getValues()['nid'];
+    $news_post_date_unformated = $form_state->cleanValues()->getValues()['created'][0]['value'];
+    // TODO: Image field (feeds temp folder issue)
+    // $news_image = $form_state->cleanValues()->getValues()['field_images'];
+    // Date formatting.
+    $date = new DrupalDateTime($news_post_date_unformated, DATETIME_STORAGE_TIMEZONE);
+    $news_post_date = $date->format('F j, Y');
+
+    // Getting news item path alias.
+    $news_internal_path = '/node/' . (int) $news_nid;
+    $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    $news_path_alias = \Drupal::service('path.alias_manager')->getAliasByPath($news_internal_path, $langcode);
+
+    // Temp var assignement
     // https://github.com/markroland/emma
+    // Member ID : 23765286916
+    // Group ID 1 : 13504516
+    // Group ID 2 : 13572100.
+    $to = 'baptiste.niviere@gmail.com';
+    $sendgrid_api_key = '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';
+    // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
+    $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
+    $email = new Email();
+    $email->addTo($email_to_sendgrid)
+      ->setFrom($to)
+      ->setSubject('New content has been posted.')
+      ->setText('The is a test for the setText function')
+      ->setHtml('<div>%news_post_date%</div><h2><a href="%news_url%"> %news_title%</a></h2><p>%news_summary%</p><a><a href="%news_url%">Read more ></a></p>')
+      ->addSubstitution('%news_url%', [$news_path_alias])
+      ->addSubstitution('%news_title%', [$news_title[0]['value']])
+      ->addSubstitution('%news_summary%', [$news_summary[0]['value']])
+      ->addSubstitution('%news_post_date%', [$news_post_date])
+      ->addHeader('X-Sent-Using', 'SendGrid-API')
+      ->addHeader('X-Transport', 'web');
+
+    // Issue when simply calling $sendgrid->send($email);
+    // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
+    // Send an email using the template stored in SendGrid.
+    try {
+      $sendGridResponse = $sendgrid->send($email);
+
+      if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
+        $result = TRUE;
+        drupal_set_message(t('Email successfully sent'));
+      }
+      else {
+        // Show error.
+        $result = FALSE;
+        drupal_set_message(t('Email was not sent'));
+      }
+    }
+    catch (Exception $e) {
+      $eMessage = $e->getMessage();
+      if (strpos($eMessage, 'success') !== FALSE) {
+        \Drupal::logger('sendgrid_message')->notice('SendGrid: sent');
+      }
+    }
+  }
+  elseif ($form['#id'] == 'user-form') {
+    // TODO: update member / groups.
   }
 }
