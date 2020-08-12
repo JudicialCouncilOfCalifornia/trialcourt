@@ -4,9 +4,14 @@ status: true
 dependencies:
   config:
     - field.field.node.multimedia.body
+    - field.field.node.multimedia.field_division
     - field.field.node.multimedia.field_images
+    - field.field.node.multimedia.field_links
     - field.field.node.multimedia.field_multimedia_type
     - field.field.node.multimedia.field_sorting_weight
+    - field.field.node.multimedia.field_subject_matter
+    - field.field.node.multimedia.field_tags
+    - field.field.node.multimedia.field_topics
     - field.field.node.multimedia.field_videos
     - node.type.multimedia
   module:
@@ -15,6 +20,7 @@ dependencies:
     - entity_browser_entity_form
     - field_group
     - inline_entity_form
+    - link_attributes
     - media_library
     - path
     - scheduler
@@ -39,6 +45,8 @@ third_party_settings:
     group_album:
       children:
         - group_details
+        - group_secondary_content
+        - group_metadata
       parent_name: ''
       weight: 1
       format_type: tabs
@@ -65,6 +73,37 @@ third_party_settings:
         formatter: open
         required_fields: true
       label: Details
+    group_metadata:
+      children:
+        - field_division
+        - field_tags
+        - field_topics
+        - field_subject_matter
+      parent_name: group_album
+      weight: 5
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Metadata
+    group_secondary_content:
+      children:
+        - field_links
+      parent_name: group_album
+      weight: 4
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: 'Secondary Content'
 id: node.multimedia.default
 targetEntityType: node
 bundle: multimedia
@@ -86,12 +125,44 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_division:
+    weight: 17
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+    type: autocomplete_deluxe
+    region: content
   field_images:
     weight: 7
     settings:
       media_types: {  }
     third_party_settings: {  }
     type: media_library_widget
+    region: content
+  field_links:
+    weight: 17
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+      enabled_attributes:
+        id: false
+        name: false
+        target: true
+        rel: true
+        class: true
+        accesskey: false
+    third_party_settings: {  }
+    type: link_attributes
     region: content
   field_multimedia_type:
     weight: 4
@@ -115,6 +186,43 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: weight_selector
+    region: content
+  field_subject_matter:
+    weight: 20
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_tags:
+    weight: 18
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+    type: autocomplete_deluxe
+    region: content
+  field_topics:
+    weight: 19
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      match_limit: 10
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_videos:
     type: inline_entity_form_complex
@@ -144,13 +252,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 16
+    weight: 15
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 14
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -158,18 +266,18 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 7
     region: content
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 13
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 12
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -177,14 +285,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 17
+    weight: 16
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 9
+    weight: 8
     region: content
     third_party_settings: {  }
   title:
@@ -207,18 +315,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 10
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 11
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 15
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
