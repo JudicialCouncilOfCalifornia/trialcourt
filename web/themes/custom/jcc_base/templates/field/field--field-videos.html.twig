@@ -37,26 +37,21 @@
  */
 #}
 
-{% if multiple %}
-  {% for item in items %}
-    <div class="grid-col-12 tablet:grid-col-3 lightbox__card">
-      {% include '@molecules/blocks/card/card.twig' with {
-        card: {
-          title: item.content['#media'].name.value,
-          excerpt_vid: item.content,
-        }
-      } %}
-    </div>
-  {% endfor %}
-{% else %}
-  {% for item in items %}
-    <div class="grid-col-12 tablet:grid-col-3 lightbox__card">
-      {% include '@molecules/blocks/card/card.twig' with {
-        card: {
-          title: item.content['#media'].name.value,
-          excerpt_img: item.content,
-        }
-      } %}
-    </div>
-  {% endfor %}
-{% endif %}
+{% for item in items %}
+  <div class="grid-col-12 tablet:grid-col-3 lightbox__card">
+    {% set alternate %}
+      {% set video_url = item.content['#media'].field_media_video_embed_field.value %}
+      {% set video_title = item.content['#media'].name.value %}
+      <p><a href="{{ video_url }}" target="_blank" aria-label="Listen to {{ video_title}} through the original provider">
+        Alternate Player
+      </a></p>
+    {% endset %}
+    {% include '@molecules/blocks/card/card.twig' with {
+      card: {
+        title: video_title,
+        excerpt_vid: item.content,
+        excerpt: alternate,
+      }
+    } %}
+  </div>
+{% endfor %}
