@@ -78,10 +78,6 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       return $item !== 0;
     });
 
-    // TODO: Get the real values from form
-    // Temporarly overriting emma_groups.
-    $emma_groups = [0 => '13504516', 1 => '13572100'];
-
     // Gathering emails to send emails to.
     $email_to_sendgrid = [];
     foreach ($emma_groups as $group) {
@@ -154,7 +150,6 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
   }
   elseif ($form['#id'] == 'user-form') {
     $emma = new Client('17412', 'f31827655ea23f7f82a1', '80bb75a03f35106c50c2');
-    $user_req = $emma->get_member_detail_by_email($form_state->cleanValues()->getValues()['mail']);
 
     // Create / Update user.
     $fields = [
@@ -166,7 +161,6 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
         $groups[] = $val;
       }
     }
-    $response = $emma->import_single_member($user_req->email, $fields, $groups);
-    // TODO: User Drupal form email for new user.
+    $emma->import_single_member($form_state->cleanValues()->getValues()['mail'], $fields, $groups);
   }
 }
