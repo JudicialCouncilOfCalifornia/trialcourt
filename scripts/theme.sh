@@ -13,6 +13,8 @@ GREEN="\033[32m"
 YELLOW="\033[33m"
 RESET="\033[0m"
 
+PIDS=""
+
 build_all () {
   # Loop over sub themes and build them all.
   for d in $PWD/web/themes/custom/*/ ; do
@@ -20,15 +22,22 @@ build_all () {
     echo -e "${GREEN}Now building:${RESET} ${YELLOW} $d ${RESET}"
     echo
     install_and_build $d &
+    PIDS+=" $!"
   done
 
-  wait
+  for p in $PIDS; do
+    if wait $p; then
+      echo "Process $p success"
+    else
+      return 1
+    fi
+  done
   echo -e "${GREEN}BUILD COMPLETE.${RESET}"
 }
 
 install_and_build () {
-    npm install --prefix $1
-    npm run production --prefix $1
+  npm install --prefix $1
+  npm run production --prefix $1
 }
 
 name_check () {
