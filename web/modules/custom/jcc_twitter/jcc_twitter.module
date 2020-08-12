@@ -1,0 +1,79 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_twitter.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\Entity\Node;
+
+/**
+ * Implements hook_help().
+ */
+function jcc_twitter_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the jcc_twitter module.
+    case 'help.page.jcc_twitter':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('JCC Twitter Post') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function jcc_twitter_node_insert(Node $node) {
+  if ($node->bundle() == 'news') {
+
+    $news_types = [];
+    foreach ($node->field_news_type as $item) {
+      if ($item->entity) {
+        $news_types[$item->entity->id()] = $item->entity->label();
+      }
+    }
+    if (!in_array('NewsLink', $news_types) &&
+      $node->isPublished()
+    ) {
+
+      // Gets all the Twitter accounts associated to the current user.
+      /** @var \Drupal\social_post\Entity\SocialPost[] $accounts */
+      $accounts = \Drupal::service('social_post.user_manager')
+        ->getAccounts('social_post_twitter');
+
+      \Drupal::logger('twitter')->notice(print_r($accounts, TRUE));
+
+      // Gets instance of Social Post Twitter Network plugin.
+      /** @var \Abraham\TwitterOAuth\TwitterOAuth $client */
+      $client = \Drupal::service('plugin.network.manager')->createInstance('social_post_twitter')->getSdk();
+
+      // Gets the Twitter Post Manager to make requests to LinkeIn.
+      /** @var \Drupal\social_post_twitter\TwitterPostManager $post_manager */
+      $post_manager = \Drupal::service('twitter_post.manager');
+
+      $tweet = [
+        'status' => $node->getTitle() . ' - ' . $node->url(),
+      ];
+
+      /*
+       * Media files can be attached to the tweet.
+       * $img_paths = [
+       *   '/path/to/image.jpg',
+       * ];
+       *
+       * $tweet['media_paths'] => $img_paths;
+       */
+
+      foreach ($accounts as $account) {
+        $access_token = json_decode($account->getToken(), TRUE);
+
+        $post_manager->setClient($client)
+          ->doPost($access_token, $tweet);
+      }
+    }
+  }
+}
