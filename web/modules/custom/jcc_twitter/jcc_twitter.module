@@ -51,9 +51,22 @@ function jcc_twitter_node_insert(Node $node) {
         'uid' => Drupal::currentUser()->id(),
       ]);
 
+      $tweet = [
+        'status' => $node->getTitle() . ' - ' . $node->url(),
+      ];
+
+      /*
+       * Media files can be attached to the tweet.
+       * $img_paths = [
+       *   '/path/to/image.jpg',
+       * ];
+       *
+       * $tweet['media_paths'] => $img_paths;
+       */
+
       // Loop through each Twitter accounts.
       foreach ($accounts as $account) {
-        $twitterPost->doPost($account->getAccessToken(), $account->getAccessTokenSecret(), "My tweet");
+        $twitterPost->doPost($account->getAccessToken(), $account->getAccessTokenSecret(), $tweet);
       }
     }
   }
