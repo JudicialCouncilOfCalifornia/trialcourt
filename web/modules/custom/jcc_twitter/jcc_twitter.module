@@ -52,7 +52,7 @@ function jcc_twitter_node_insert(Node $node) {
       ]);
 
       $tweet = [
-        'status' => $node->getTitle() . ' - ' . $node->url(),
+        'status' => $node->getTitle() . ' - ' . $node->toLink(NULL, 'canonical', ['absolute' => TRUE]),
       ];
 
       /*
