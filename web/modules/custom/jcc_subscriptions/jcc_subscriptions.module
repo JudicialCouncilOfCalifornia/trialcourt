@@ -61,6 +61,7 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
       }
     }
 
+    // TODO: Action not hooked when document is uploaded
     // Custom actions on submit.
     $form['actions']['submit']['#submit'][] = 'jcc_subscriptions_form_submit';
   }
@@ -71,6 +72,7 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
  */
 function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
   if ($form['#id'] == 'node-news-form' && $form_state->cleanValues()->getValues()['field_send_email']['value'] == 1) {
+    global $base_url;
     // Getting data from myemma.
     $emma = new Client('17412', 'f31827655ea23f7f82a1', '80bb75a03f35106c50c2');
     $groups = $form_state->cleanValues()->getValues()['myemma_groups'];
@@ -103,7 +105,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     // Getting news item path alias.
     $news_internal_path = '/node/' . (int) $news_nid;
     $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
-    $news_path_alias = \Drupal::service('path.alias_manager')->getAliasByPath($news_internal_path, $langcode);
+    $news_path_alias = $base_url . \Drupal::service('path.alias_manager')->getAliasByPath($news_internal_path, $langcode);
 
     // TODO: Replace with JCC official vars
     // Temp var assignement.
