@@ -96,10 +96,15 @@
       {% set multimedia_type = content.field_multimedia_type.0 %}
     {% endif %}
 
-    {% if content.body[0] %}
+    {% if content.body['#object'].body.summary or content.body %}
+      {% set summary = content.body['#object'].body.summary %}
       {% set body %}
         <div class="body">
-          {{ content.body.0 }}
+          {% if summary %}
+            {{ summary }}
+          {% else %}
+            {{ content.body.0 }}
+          {% endif %}
         </div>
       {% endset %}
     {% endif %}
@@ -116,7 +121,7 @@
           <div class="grid-row lightbox__header">
             <h2>Videos</h2>
           </div>
-          <div class="grid-row">
+          <div class="grid-row flex-row">
             {# field/field--field-videos.html.twig #}
             {{ content.field_videos }}
           </div>
@@ -127,7 +132,7 @@
             <h2>Images</h2>
             <p aria-hidden="true">Click on an image below to view in full size</p>
           </div>
-          <div class="grid-row">
+          <div class="grid-row flex-row">
             {% for image in content.field_images['#items'] %}
               {% if image.entity.field_media_image.entity.uri.value %}
                 {% set image_id = image.entity.field_media_image.entity.fid.value %}
@@ -142,7 +147,7 @@
                 {% endset %}
               {% endif %}
 
-              <div class="grid-col-12 tablet:grid-col-3 lightbox__card image">
+              <div class="grid-col-12 tablet:grid-col-3 height-full lightbox__card image">
                 {% include '@molecules/blocks/card/card.twig' with {
                   card: {
                     title: image_alt,

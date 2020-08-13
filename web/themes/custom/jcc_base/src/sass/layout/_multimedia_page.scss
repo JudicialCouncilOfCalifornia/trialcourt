@@ -1,4 +1,4 @@
-.lightbox {
+.lightbox, .albums {
   max-width: 84rem !important;
   margin-bottom: 2rem;
 
@@ -17,21 +17,29 @@
     }
   }
 
-  .lightbox__card {
+  .lightbox__card, .album__card {
     margin: 0 1rem 1rem 0;
   }
 
-  .ligthbox_alt {
-    padding: 0 .6rem;
+  .lightbox__card {
+    &.video {
+      .jcc-card__title {
+        height: 3rem;
+      }
+    }
   }
 
   .jcc-card {
+    height: 100%;
     padding: .5rem .5rem 1rem;
     border: 1px solid #dbdbdb;
     box-shadow: 3px 3px 6px #ddd;
 
+    .jcc-card__title, .jcc-card__excerpt, .jcc-card__footer {
+      padding: 0 .2rem;
+    }
+
     .jcc-card__title {
-      padding: 0 .6rem;
       font-family: Lato,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
       font-size: 1.3rem;
     }
@@ -39,9 +47,34 @@
     .jcc-card__img  {
       height: 180px;
     }
+  }
+}
 
-    .jcc-card__excerpt {
-      padding: 0 .6rem;
+.albums {
+  margin-top: 2rem;
+
+  .album__card {
+    .jcc-card {
+      padding: 0 0 1rem;
+      border-radius: .5rem;
+
+      .jcc-card__title {
+        padding: 0 .6rem;
+
+        a {
+          text-decoration: none;
+        }
+      }
+
+      .jcc-card__img  {
+        height: 180px;
+        border-radius: .5rem .5rem 0 0;
+        background-color: $jcc-primary-blue-vivid-dark;
+      }
+
+      .jcc-card__excerpt {
+        padding: 0 .6rem;
+      }
     }
   }
 }
