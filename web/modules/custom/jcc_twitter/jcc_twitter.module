@@ -39,40 +39,21 @@ function jcc_twitter_node_insert(Node $node) {
     if (!in_array('NewsLink', $news_types) &&
       $node->isPublished()
     ) {
+      /* @var \Drupal\social_post_twitter\Plugin\Network\TwitterPostInterface $twitterPost */
+      // Gets instance of Social Post Twitter.
+      $twitterPost = \Drupal::service('plugin.network.manager')->createInstance('social_post_twitter');
+      // Gets the Twitter entity storage.
+      $twitterEntity = \Drupal::entityTypeManager()->getStorage('social_post_twitter_user');
 
-      // Gets all the Twitter accounts associated to the current user.
-      /** @var \Drupal\social_post\Entity\SocialPost[] $accounts */
-      $accounts = \Drupal::service('social_post.user_manager')
-        ->getAccounts('social_post_twitter');
+      /* @var \Drupal\social_post_twitter\Entity\TwitterUserInterface[] $accounts */
+      // Gets the Twitter accounts associated with the current user.
+      $accounts = $twitterEntity->loadByProperties([
+        'uid' => Drupal::currentUser()->id(),
+      ]);
 
-      \Drupal::logger('twitter')->notice(print_r($accounts, TRUE));
-
-      // Gets instance of Social Post Twitter Network plugin.
-      /** @var \Abraham\TwitterOAuth\TwitterOAuth $client */
-      $client = \Drupal::service('plugin.network.manager')->createInstance('social_post_twitter')->getSdk();
-
-      // Gets the Twitter Post Manager to make requests to LinkeIn.
-      /** @var \Drupal\social_post_twitter\TwitterPostManager $post_manager */
-      $post_manager = \Drupal::service('twitter_post.manager');
-
-      $tweet = [
-        'status' => $node->getTitle() . ' - ' . $node->url(),
-      ];
-
-      /*
-       * Media files can be attached to the tweet.
-       * $img_paths = [
-       *   '/path/to/image.jpg',
-       * ];
-       *
-       * $tweet['media_paths'] => $img_paths;
-       */
-
+      // Loop through each Twitter accounts.
       foreach ($accounts as $account) {
-        $access_token = json_decode($account->getToken(), TRUE);
-
-        $post_manager->setClient($client)
-          ->doPost($access_token, $tweet);
+        $twitterPost->doPost($account->getAccessToken(), $account->getAccessTokenSecret(), "My tweet");
       }
     }
   }
