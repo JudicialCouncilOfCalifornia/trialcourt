@@ -157,13 +157,17 @@
         {% endif %}
 
         {% if content.field_contact[0] %}
-          <div class="contacts">
-            By
-              {% if content.field_contact[0]['#options'].entity.field_email %}
-                <a href="mailto:{{ content.field_contact[0]['#options'].entity.field_email.value }}">{{ content.field_contact[0]['#options'].entity.title.value }}</a>
-              {% else %}
-                {{ content.field_contact }}
-              {% endif %}
+          <div class="contacts">By
+          {% set comma = "," %}
+          {% for i in range(1, content.field_contact['#items']|length) %}
+            {% set contact_name = content.field_contact[loop.index0]['#options'].entity.title.value %}
+            {% set contact_email = content.field_contact[loop.index0]['#options'].entity.field_email.value %}
+            {% if contact_email %}
+              <a href="mailto:{{ contact_email }}">{{- contact_name -}}</a>{% if loop.revindex0 > 0 %}{{- comma }} {% endif %}
+            {% else %}
+              {{- contact_name -}}{% if loop.revindex0 > 0 %}{{- comma }} {% endif %}
+            {% endif %}
+          {% endfor %}
           </div>
         {% endif %}
 
