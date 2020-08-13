@@ -38,19 +38,23 @@
 #}
 
 {% for item in items %}
-  <div class="grid-col-12 tablet:grid-col-3 lightbox__card">
+  {% set video_url = item.content['#media'].field_media_video_embed_field.value %}
+  {% set video_title = item.content['#media'].name.value %}
+  {% if video_title|length > 60 %}
+    {% set video_title = video_title|slice(0, 60) ~ '...' %}
+  {% endif %}
+
+  <div class="grid-col-12 tablet:grid-col-3 height-full lightbox__card video" title="{{ video_title }}">
     {% set alternate %}
-      {% set video_url = item.content['#media'].field_media_video_embed_field.value %}
-      {% set video_title = item.content['#media'].name.value %}
-      <p><a href="{{ video_url }}" target="_blank" aria-label="Listen to {{ video_title}} through the original provider">
+      <a href="{{ video_url }}" target="_blank" aria-label="Listen to {{ video_title}} through the original provider">
         Alternate Player
-      </a></p>
+      </a>
     {% endset %}
     {% include '@molecules/blocks/card/card.twig' with {
       card: {
         title: video_title,
         excerpt_vid: item.content,
-        excerpt: alternate,
+        footer: alternate,
       }
     } %}
   </div>
