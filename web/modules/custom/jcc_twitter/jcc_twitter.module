@@ -6,8 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\node\Entity\Node;
-use Drupal\Core\Url;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Implements hook_help().
@@ -26,19 +25,19 @@ function jcc_twitter_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_insert().
+ * Implements hook_ENTITY_TYPE_postinsert().
  */
-function jcc_twitter_node_insert(Node $node) {
-  if ($node->bundle() == 'news') {
+function jcc_twitter_node_postinsert(EntityInterface $entity) {
+  if ($entity->bundle() == 'news') {
 
     $news_types = [];
-    foreach ($node->field_news_type as $item) {
+    foreach ($entity->field_news_type as $item) {
       if ($item->entity) {
         $news_types[$item->entity->id()] = $item->entity->label();
       }
     }
     if (!in_array('NewsLink', $news_types) &&
-      $node->isPublished()
+      $entity->isPublished()
     ) {
       /* @var \Drupal\social_post_twitter\Plugin\Network\TwitterPostInterface $twitterPost */
       // Gets instance of Social Post Twitter.
@@ -52,10 +51,8 @@ function jcc_twitter_node_insert(Node $node) {
         'uid' => Drupal::currentUser()->id(),
       ]);
 
-      $url_options = ['absolute' => TRUE];
-      $url = Url::fromRoute('entity.node.canonical', ['node' => $node->nid], $url_options);
       $tweet = [
-        'status' => $node->getTitle() . ' - ' . $url->toString(),
+        'status' => $entity->getTitle() . ' ' . $entity->toUrl()->setAbsolute()->toString(),
       ];
 
       /*
