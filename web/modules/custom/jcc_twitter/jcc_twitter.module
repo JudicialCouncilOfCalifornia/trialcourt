@@ -26,9 +26,12 @@ function jcc_twitter_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_postinsert().
+ * Implements hook_ENTITY_TYPE_postsave().
  */
-function jcc_twitter_node_postinsert(EntityInterface $entity) {
+function jcc_twitter_node_postsave(EntityInterface $entity, $op) {
+  if ($op == 'delete') {
+    return;
+  }
   _jcc_twitter_post($entity);
 }
 
