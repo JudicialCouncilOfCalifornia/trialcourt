@@ -19,7 +19,8 @@ use SendGrid\Client as SClient;
 function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
   if ($form['#id'] == 'node-news-form' || $form['#id'] == 'user-form') {
     // Connection to myEmma.
-    $emma = new Client('17412', 'f31827655ea23f7f82a1', '80bb75a03f35106c50c2');
+    $emma_config = \Drupal::config('webform_myemma.settings');
+    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
     // Getting groups from myemma / only keeping ones with naming convention.
     $myemma_groups = $emma->list_groups();
@@ -74,7 +75,9 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
   if ($form['#id'] == 'node-news-form' && $form_state->cleanValues()->getValues()['field_send_email']['value'] == 1) {
     global $base_url;
     // Getting data from myemma.
-    $emma = new Client('17412', 'f31827655ea23f7f82a1', '80bb75a03f35106c50c2');
+    $emma_config = \Drupal::config('webform_myemma.settings');
+    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
+
     $groups = $form_state->cleanValues()->getValues()['myemma_groups'];
     $emma_groups = array_filter($groups, function ($item) {
       return $item !== 0;
@@ -110,7 +113,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     // TODO: Replace with JCC official vars
     // Temp var assignement.
     $to = 'baptiste.niviere@gmail.com';
-    $sendgrid_api_key = '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';
+    $sendgrid_api_key = Drupal::service('key.repository')->getKey('newsroom_sendgrid')->getKeyValue();
     // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
     // Creating email object.
     $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
@@ -119,11 +122,19 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       ->setFrom($to)
       ->setSubject('New content has been posted.')
       ->setText('The is a test for the setText function')
-      ->setHtml('<div>%news_post_date%</div><h2><a href="%news_url%"> %news_title%</a></h2><p>%news_summary%</p><a><a href="%news_url%">Read more ></a></p>')
+      ->setHtml('
+        <div>%news_post_date%</div>
+        <h2><a href="%news_url%"> %news_title%</a></h2>
+        <p>%news_summary%</p>
+        <p><a href="%news_url%">Read more ></a></p>
+        <br/>
+        <p>Email : %member_email% </p>
+        ')
       ->addSubstitution('%news_url%', [$news_path_alias])
       ->addSubstitution('%news_title%', [$news_title[0]['value']])
       ->addSubstitution('%news_summary%', [$news_summary[0]['value']])
       ->addSubstitution('%news_post_date%', [$news_post_date])
+      ->addSubstitution('%member_email%', [$email_to_sendgrid])
       ->addHeader('X-Sent-Using', 'SendGrid-API')
       ->addHeader('X-Transport', 'web');
 
@@ -151,18 +162,27 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     }
   }
   elseif ($form['#id'] == 'user-form') {
-    $emma = new Client('17412', 'f31827655ea23f7f82a1', '80bb75a03f35106c50c2');
+    $emma_config = \Drupal::config('webform_myemma.settings');
+    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
+    $user_req = $emma->get_member_detail_by_email($form_state->cleanValues()->getValues()['mail']);
+    $user_emma_id = $user_req->member_id;
     // Create / Update user.
     $fields = [
       'first_name' => $form_state->cleanValues()->getValues()['name'],
     ];
     $groups = [];
-    foreach ($form_state->cleanValues()->getValues()['myemma_groups'] as $val) {
+    $groups_to_remove = [];
+    foreach ($form_state->cleanValues()->getValues()['myemma_groups'] as $key => $val) {
       if ($val !== 0) {
         $groups[] = $val;
       }
+      else {
+        $groups_to_remove[] = $key;
+      }
     }
     $emma->import_single_member($form_state->cleanValues()->getValues()['mail'], $fields, $groups);
+    // Need an extra call to account for groups to remove.
+    $emma->remove_member_from_groups($user_emma_id, $groups_to_remove);
   }
 }
