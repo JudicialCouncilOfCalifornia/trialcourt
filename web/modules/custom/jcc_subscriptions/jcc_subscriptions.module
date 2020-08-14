@@ -63,8 +63,10 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
     }
 
     // TODO: Action not hooked when document is uploaded
+    // https://www.drupal.org/project/drupal/issues/2934463#comment-13180158
     // Custom actions on submit.
-    $form['actions']['submit']['#submit'][] = 'jcc_subscriptions_form_submit';
+    $form['actions']['submit']['#submit'] = ['jcc_subscriptions_form_submit'];
+    // dsm($form);
   }
 }
 
@@ -85,11 +87,14 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
 
     // Gathering emails to send emails to.
     $email_to_sendgrid = [];
+    $id_to_sendgrid = [];
     foreach ($emma_groups as $group) {
       $users_in_group = $emma->list_group_members($group);
       foreach ($users_in_group as $user_group) {
         if (!in_array($user_group->email, $email_to_sendgrid, TRUE)) {
           array_push($email_to_sendgrid, $user_group->email);
+          // Building array of ID's for opting out urls.
+          array_push($id_to_sendgrid, $user_group->member_id);
         }
       }
     }
@@ -128,13 +133,15 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
         <p>%news_summary%</p>
         <p><a href="%news_url%">Read more ></a></p>
         <br/>
-        <p>Email : %member_email% </p>
+        <p><a href="https://app.e2ma.net/app2/audience/signup/None/%emma_account%/%member_id%">manage your preferences</a><br>
+        or <a href="https://app.e2ma.net/app2/audience/signup/None/%emma_account%/%member_id%">opt out</a> using TrueRemove(r).</p>
         ')
       ->addSubstitution('%news_url%', [$news_path_alias])
       ->addSubstitution('%news_title%', [$news_title[0]['value']])
       ->addSubstitution('%news_summary%', [$news_summary[0]['value']])
       ->addSubstitution('%news_post_date%', [$news_post_date])
-      ->addSubstitution('%member_email%', [$email_to_sendgrid])
+      ->addSubstitution('%member_id%', $id_to_sendgrid)
+      ->addSubstitution('%emma_account%', [$emma_config->get('account_id')])
       ->addHeader('X-Sent-Using', 'SendGrid-API')
       ->addHeader('X-Transport', 'web');
 
