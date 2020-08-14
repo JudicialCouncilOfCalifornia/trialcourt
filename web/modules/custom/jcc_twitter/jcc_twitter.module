@@ -7,6 +7,7 @@
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_help().
@@ -28,6 +29,123 @@ function jcc_twitter_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_ENTITY_TYPE_postinsert().
  */
 function jcc_twitter_node_postinsert(EntityInterface $entity) {
+  _jcc_twitter_post($entity);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function jcc_twitter_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  if (!in_array($form['#form_id'], ['node_news_form', 'node_news_edit_form'])) {
+    return;
+  }
+
+  $twitter_names = [];
+  $twitter_accounts = _jcc_twitter_get_social_post_accounts();
+  foreach ($twitter_accounts as $twitter_account) {
+    $t_name = $twitter_account->get('screen_name')->first()->getValue()['value'];
+    $twitter_names[$t_name] = '@' . $t_name;
+  }
+
+  $form['twitter_fieldset'] = [
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#weight' => 100,
+  ];
+  $form['twitter_fieldset']['twitter_enable'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Post to Twitter'),
+    '#return_value' => 1,
+  ];
+  $form['twitter_fieldset']['twitter_accounts'] = [
+    '#type' => 'checkboxes',
+    '#title' => t('Select Twitter Accounts'),
+    '#options' => $twitter_names,
+    '#states' => [
+      'visible' => [
+        ':input[name="twitter_enable"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+  $form['twitter_fieldset']['twitter_message'] = [
+    '#type' => 'textarea',
+    '#title' => t('Message'),
+    '#default_value' => t(':title :link'),
+    '#states' => [
+      'visible' => [
+        ':input[name="twitter_enable"]' => ['checked' => TRUE],
+      ],
+    ],
+    '#description' => t('Use :title and :link as placeholders.'),
+  ];
+
+  $form['#validate'][] = 'jcc_twitter_form_validate';
+  foreach (array_keys($form['actions']) as $action) {
+    if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+      $form['actions'][$action]['#submit'][] = 'jcc_twitter_form_submit';
+    }
+  }
+}
+
+/**
+ * Implements custom validate handler.
+ *
+ * @param array $form
+ *   Existing form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Existing state.
+ */
+function jcc_twitter_form_validate(array $form, FormStateInterface $form_state) {
+  if ($form_state->getValue('twitter_enable')) {
+    $accounts = array_filter($form_state->getValue('twitter_accounts'));
+    if (empty($accounts)) {
+      $form_state->setErrorByName('twitter_accounts', t('Select a Twitter account.'));
+    }
+    $message = trim($form_state->getValue('twitter_message'));
+    if (empty($message)) {
+      $form_state->setErrorByName('twitter_message', t('Set a message.'));
+    }
+  }
+}
+
+/**
+ * Implements custom submit handler to process twitter posting.
+ *
+ * @param array $form
+ *   Existing form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Existing form state.
+ */
+function jcc_twitter_form_submit(array &$form, FormStateInterface $form_state) {
+  $tempstore = \Drupal::service('tempstore.shared')->get('jcc_twitter');
+
+  $twitter = [
+    'enable' => $form_state->getValue('twitter_enable'),
+    'accounts' => array_filter($form_state->getValue('twitter_accounts')),
+    'message' => $form_state->getValue('twitter_message'),
+  ];
+
+  $tempstore->set($form_state->getValue('nid'), $twitter);
+}
+
+/**
+ * Gets the accounts associated to the Drupal user.
+ *
+ * @return \Drupal\Core\Entity\EntityInterface[]
+ *   Returns all twitter accounts.
+ */
+function _jcc_twitter_get_social_post_accounts() {
+  return \Drupal::entityTypeManager()->getStorage('social_post_twitter_user')->loadMultiple();
+}
+
+/**
+ * Implements twitter post callback.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Existing entity.
+ */
+function _jcc_twitter_post(EntityInterface $entity) {
   if ($entity->bundle() == 'news') {
 
     $news_types = [];
@@ -39,6 +157,18 @@ function jcc_twitter_node_postinsert(EntityInterface $entity) {
     if (!in_array('NewsLink', $news_types) &&
       $entity->isPublished()
     ) {
+
+      $tempstore = \Drupal::service('tempstore.shared')->get('jcc_twitter');
+      $twitter = $tempstore->get($entity->id());
+      if (empty($twitter)) {
+        return;
+      }
+
+      if ((isset($twitter['enable']) && !$twitter['enable'])) {
+        $tempstore->delete($entity->id());
+        return;
+      }
+
       /* @var \Drupal\social_post_twitter\Plugin\Network\TwitterPostInterface $twitterPost */
       // Gets instance of Social Post Twitter.
       $twitterPost = \Drupal::service('plugin.network.manager')->createInstance('social_post_twitter');
@@ -48,11 +178,20 @@ function jcc_twitter_node_postinsert(EntityInterface $entity) {
       /* @var \Drupal\social_post_twitter\Entity\TwitterUserInterface[] $accounts */
       // Gets the Twitter accounts associated with the current user.
       $accounts = $twitterEntity->loadByProperties([
-        'uid' => Drupal::currentUser()->id(),
+        'screen_name' => $twitter['accounts'],
       ]);
 
       $tweet = [
-        'status' => $entity->getTitle() . ' ' . $entity->toUrl()->setAbsolute()->toString(),
+        'status' => str_replace(
+          [
+            ':link',
+            ':title',
+          ],
+          [
+            $entity->toUrl()->setAbsolute()->toString(),
+            $entity->getTitle(),
+          ],
+          $twitter['message']),
       ];
 
       /*
@@ -68,6 +207,8 @@ function jcc_twitter_node_postinsert(EntityInterface $entity) {
       foreach ($accounts as $account) {
         $twitterPost->doPost($account->getAccessToken(), $account->getAccessTokenSecret(), $tweet);
       }
+
+      $tempstore->delete($entity->id());
     }
   }
 }
