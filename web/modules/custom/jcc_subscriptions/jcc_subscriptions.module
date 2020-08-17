@@ -67,7 +67,9 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
     // https://www.drupal.org/project/drupal/issues/2934463#comment-13180158
     // Custom actions on submit.
     $form['actions']['submit']['#submit'] = ['jcc_subscriptions_form_submit'];
-    // dsm($form);
+  }
+  elseif ($form['#id'] == 'user-register-form') {
+    $form['actions']['submit']['#value'] = t('Subscribe');
   }
 }
 
@@ -135,7 +137,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
         <p><a href="%news_url%">Read more ></a></p>
         <br/>
         <p><a href="%base_url%/user">manage your preferences</a><br>
-        or <a href="https://app.e2ma.net/app2/audience/signup/None/%emma_account%/%member_id%">opt out</a> using TrueRemove(r).</p>
+        or <a href="%base_url%/subscriptions/%member_id%/delete-all">opt out</a> from all communications.</p>
         ')
       ->addSubstitution('%news_url%', [$news_path_alias])
       ->addSubstitution('%news_title%', [$news_title[0]['value']])
@@ -195,3 +197,5 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     $emma->remove_member_from_groups($user_emma_id, $groups_to_remove);
   }
 }
+
+// $response = $client->remove_member_from_all_groups(123456789);
