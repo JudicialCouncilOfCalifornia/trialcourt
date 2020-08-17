@@ -35,7 +35,7 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
     $form['myemma_groups'] = [
       '#type' => 'checkboxes',
       '#options' => $form_groups,
-      '#title' => t('Send to myEmma groups:'),
+      '#title' => t('Category subscriptions:'),
       '#group' => 'group_social',
     ];
 
@@ -134,7 +134,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
         <p>%news_summary%</p>
         <p><a href="%news_url%">Read more ></a></p>
         <br/>
-        <p><a href="https://app.e2ma.net/app2/audience/signup/None/%emma_account%/%member_id%">manage your preferences</a><br>
+        <p><a href="%base_url%/user">manage your preferences</a><br>
         or <a href="https://app.e2ma.net/app2/audience/signup/None/%emma_account%/%member_id%">opt out</a> using TrueRemove(r).</p>
         ')
       ->addSubstitution('%news_url%', [$news_path_alias])
@@ -143,6 +143,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       ->addSubstitution('%news_post_date%', [$news_post_date])
       ->addSubstitution('%member_id%', $id_to_sendgrid)
       ->addSubstitution('%emma_account%', [$emma_config->get('account_id')])
+      ->addSubstitution('%base_url%', [$base_url])
       ->addHeader('X-Sent-Using', 'SendGrid-API')
       ->addHeader('X-Transport', 'web');
 
