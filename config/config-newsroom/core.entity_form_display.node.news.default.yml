@@ -132,19 +132,17 @@ third_party_settings:
     group_social:
       children:
         - field_send_email
-        - field_myemmagroups
       parent_name: group_news_content
       weight: 24
       format_type: tab
       region: content
       format_settings:
-        direction: horizontal
+        description: ''
+        formatter: closed
+        required_fields: true
         id: ''
         classes: ''
-        formatter: closed
-        description: ''
-        required_fields: true
-      label: Social
+      label: Distribution
 _core:
   default_config_hash: mkzVmXWXMHZsPMgyFtGyIiHcVPLW89gDFzArk9jFTl8
 id: node.news.default
@@ -241,7 +239,8 @@ content:
     region: content
   field_metatag:
     weight: 13
-    settings: {  }
+    settings:
+      sidebar: true
     third_party_settings: {  }
     type: metatag_firehose
     region: content
