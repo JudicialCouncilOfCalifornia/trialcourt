@@ -17,7 +17,7 @@ use SendGrid\Client as SClient;
  * Implements hook_node_insert().
  */
 function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
-  if ($form['#id'] == 'node-news-form' || $form['#id'] == 'user-form') {
+  if ($form['#id'] == 'node-news-form' || $form['#id'] == 'user-form' || $form['#id'] == 'user_register') {
     // Connection to myEmma.
     $emma_config = \Drupal::config('webform_myemma.settings');
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
@@ -48,7 +48,7 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
       unset($form['myemma_groups']);
     }
 
-    if ($form['#id'] == 'user-form') {
+    if ($form['#id'] == 'user-form' || $form['#id'] == 'user_register') {
       $user_req = $emma->get_member_detail_by_email($form['account']['mail']['#default_value']);
       if (!isset($user_req->error)) {
         // pre-populate active categories.
@@ -63,6 +63,7 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
     }
 
     // TODO: Action not hooked when document is uploaded
+    // Potentially related:
     // https://www.drupal.org/project/drupal/issues/2934463#comment-13180158
     // Custom actions on submit.
     $form['actions']['submit']['#submit'] = ['jcc_subscriptions_form_submit'];
