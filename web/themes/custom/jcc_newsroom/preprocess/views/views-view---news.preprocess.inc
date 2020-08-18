@@ -95,9 +95,9 @@ TEMPLATE;
     }
 
     $node_link = $node->toUrl();
-    $news_types = $node->get('field_news_type')->getValue();
-    if (FALSE !== array_search('134', array_column($news_types, 'target_id'), TRUE)) {
-      $node_link = $node->get('field_links')->first()->getValue()['uri'];
+    if (in_array('NewsLink', $news_types)) {
+      $node_link_first = $node->get('field_links')->first();
+      $node_link = $node_link_first->getValue()['uri'];
     }
 
     $variables['tiles_list']['tiles'][] = [
