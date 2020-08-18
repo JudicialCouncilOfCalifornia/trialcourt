@@ -1,19 +1,16 @@
-uuid: da5aa7a5-d234-4866-84f8-90d55285063d
+uuid: c1c49e0b-f202-4dc4-a909-5d2dc5c599b3
 langcode: en
 status: true
 dependencies:
-  config:
-    - node.type.person
   module:
-    - node
-    - user
-id: staff_contacts
-label: 'Staff & Contacts'
+    - block_content
+id: main_navigation_submenu
+label: 'Main Navigation Submenu'
 module: views
 description: ''
 tag: ''
-base_table: node_field_data
-base_field: nid
+base_table: block_content_field_data
+base_field: id
 display:
   default:
     display_plugin: default
@@ -22,9 +19,8 @@ display:
     position: 0
     display_options:
       access:
-        type: perm
-        options:
-          perm: 'access content'
+        type: none
+        options: {  }
       cache:
         type: tag
         options: {  }
@@ -49,19 +45,19 @@ display:
       pager:
         type: some
         options:
-          items_per_page: 100
+          items_per_page: 1
           offset: 0
       style:
         type: default
       row:
-        type: fields
+        type: 'entity:block_content'
       fields:
-        title:
-          id: title
-          table: node_field_data
-          field: title
-          settings:
-            link_to_entity: true
+        info:
+          table: block_content_field_data
+          field: info
+          id: info
+          entity_type: null
+          entity_field: info
           plugin_id: field
           relationship: none
           group_type: group
@@ -109,6 +105,7 @@ display:
           hide_alter_empty: true
           click_sort_column: value
           type: string
+          settings: {  }
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -122,10 +119,10 @@ display:
       filters:
         status:
           value: '1'
-          table: node_field_data
+          table: block_content_field_data
           field: status
           plugin_id: boolean
-          entity_type: node
+          entity_type: block_content
           entity_field: status
           id: status
           expose:
@@ -133,44 +130,19 @@ display:
             operator_limit_selection: false
             operator_list: {  }
           group: 1
-        type:
-          id: type
-          table: node_field_data
-          field: type
-          value:
-            person: person
-          entity_type: node
-          entity_field: type
-          plugin_id: bundle
+        reusable:
+          id: reusable
+          plugin_id: boolean
+          table: block_content_field_data
+          field: reusable
+          value: '1'
+          entity_type: block_content
+          entity_field: reusable
           expose:
             operator_limit_selection: false
             operator_list: {  }
-      sorts:
-        field_first_name_value:
-          id: field_first_name_value
-          table: node__field_first_name
-          field: field_first_name_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          order: ASC
-          exposed: false
-          expose:
-            label: ''
-          plugin_id: standard
-        field_tags_target_id:
-          id: field_tags_target_id
-          table: node__field_tags
-          field: field_tags_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          order: ASC
-          exposed: false
-          expose:
-            label: ''
-          plugin_id: standard
-      title: 'Staff & Contacts'
+      sorts: {  }
+      title: Topics
       header: {  }
       footer: {  }
       empty: {  }
@@ -182,23 +154,19 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - 'user.node_grants:view'
-        - user.permissions
       tags: {  }
   block_1:
     display_plugin: block
     id: block_1
-    display_title: 'Staff & Contacts'
+    display_title: 'Main Navigation Submenu'
     position: 1
     display_options:
       display_extenders: {  }
       display_description: ''
-      block_description: 'Staff & Contacts'
+      block_description: 'Main Navigation Submenu'
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - 'user.node_grants:view'
-        - user.permissions
       tags: {  }

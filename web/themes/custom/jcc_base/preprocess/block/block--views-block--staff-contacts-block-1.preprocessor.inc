@@ -10,7 +10,7 @@
  */
 
 /**
- * Supports 1:1 relationship between user and tag, persons sorted by tags.
+ * Supports person per tag result, sorted alphabetically by name and then tag.
  */
 function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variables) {
   if (isset($variables['elements']['content']['#view'])) {
@@ -64,6 +64,7 @@ function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variab
       array_push($persons, $person);
     }
 
+    // Group persons by tag.
     $persons_by_tag = [];
     foreach ($persons as $value) {
       if ($value['tag']) {
@@ -71,6 +72,7 @@ function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variab
         $persons_by_tag[$tag][] = $value;
       }
     }
+    // Sort tag groups alphabetically.
     ksort($persons_by_tag);
 
     $variables['persons_by_tag'] = $persons_by_tag;
