@@ -1,0 +1,77 @@
+{% set classes = [
+  'jcc-link-list-simple',
+  link_list.columns ? 'jcc_link-list--multicolumn' : '',
+  link_list.files_list ? 'jcc-link-list--files' : '',
+]|merge(link_list.classes|default([''])) %}
+
+{% import _self as lists %}
+
+{% macro list_links(items, files_list) %}
+  {% set url_attributes = item.url_attributes ? item.url_attributes : create_attribute() %}
+  <ul class="jcc-link-list__list">
+    {% for item in items %}
+      <li class="jcc-link-list__item">
+        {% if files_list %}
+          {% set icon = item.icon|default({
+            name: "file",
+            title: "File"|t,
+            width: "width-2",
+            height: "height-2",
+            decorative: false,
+          }) %}
+
+          <span class="jcc-link-list__icon">
+            {% include '@atoms/icons/icon.twig' with  { icon: icon } %}
+          </span>
+        {% endif %}
+
+        <a href="{{ item.url }}">{{ item.url_title }}</a>
+
+        {# When we merge with the original/SRL link-list as a single base
+        {% if item.name %}
+          {{ item.name }}
+
+          (<a{% if link_list.files_list %} download{% endif %} href="{{ item.url }}"{{ url_attributes }}>
+          {{- item.url_title -}}
+        </a>)
+        {% else %}
+          <a href="{{ item.url }}">{{ item.url_title }}</a>
+        {% endif %}
+        #}
+      </li>
+    {% endfor %}
+  </ul>
+{% endmacro %}
+
+{% if link_list.header %}
+  {% set tag = tag|default('h2') %}
+  <{{ tag }}>
+  {{ link_list.header }}
+  </{{ tag }}>
+{% endif %}
+
+<div class="{{ classes|join(' ')|trim }}">
+  {% if link_list.columns and link_list.columns > 1 %}
+    <div class="jcc_link-list--multicolumn__row">
+      {% set group_items = link_list.items %}
+      {% set batch_size = group_items|length/link_list.columns %} {# max columns #}
+      {% for group_item in group_items|batch(batch_size) %}
+        {{ lists.list_links(group_item, link_list.files_list) }}
+      {% endfor %}
+    </div>
+  {% else %}
+    {{ lists.list_links(link_list.items, link_list.files_list) }}
+  {% endif %}
+
+  {% if link_list.button %}
+    <div class="jcc-cards-with-button__button-container">
+      <div class="jcc-cards-with-button__button">
+        {% if link_list.button %}
+          {% include "@atoms/buttons/link-button.twig" with {
+            link_button: link_list.button
+          } only %}
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</div>

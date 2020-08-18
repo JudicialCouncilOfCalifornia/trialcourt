@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.news.feeds_item
     - field.field.node.news.field_attachments
     - field.field.node.news.field_contact
+    - field.field.node.news.field_content_weight
     - field.field.node.news.field_division
     - field.field.node.news.field_feed_imported_on
     - field.field.node.news.field_feed_origin
@@ -17,6 +18,7 @@ dependencies:
     - field.field.node.news.field_metatag
     - field.field.node.news.field_news_type
     - field.field.node.news.field_related_content
+    - field.field.node.news.field_send_email
     - field.field.node.news.field_sorting_weight
     - field.field.node.news.field_subject_matter
     - field.field.node.news.field_tags
@@ -41,6 +43,7 @@ third_party_settings:
         - group_media
         - group_secondary_content
         - group_metadata
+        - group_social
       parent_name: ''
       weight: 1
       format_type: tabs
@@ -126,6 +129,20 @@ third_party_settings:
         formatter: closed
         required_fields: true
       label: Media
+    group_social:
+      children:
+        - field_send_email
+      parent_name: group_news_content
+      weight: 24
+      format_type: tab
+      region: content
+      format_settings:
+        description: ''
+        formatter: closed
+        required_fields: true
+        id: ''
+        classes: ''
+      label: Distribution
 _core:
   default_config_hash: mkzVmXWXMHZsPMgyFtGyIiHcVPLW89gDFzArk9jFTl8
 id: node.news.default
@@ -145,7 +162,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -173,6 +190,12 @@ content:
     third_party_settings: {  }
     type: autocomplete_deluxe
     region: content
+  field_content_weight:
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
+    type: weight_selector
+    region: content
   field_division:
     type: autocomplete_deluxe
     weight: 4
@@ -190,14 +213,6 @@ content:
       size: 60
       selection_handler: default
     third_party_settings: {  }
-  field_feed_source:
-    weight: 13
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: text_textfield
-    region: content
   field_images:
     weight: 3
     region: content
@@ -223,8 +238,9 @@ content:
     type: link_attributes
     region: content
   field_metatag:
-    weight: 12
-    settings: {  }
+    weight: 13
+    settings:
+      sidebar: true
     third_party_settings: {  }
     type: metatag_firehose
     region: content
@@ -261,6 +277,13 @@ content:
       selection_handler: default
     third_party_settings: {  }
     type: autocomplete_deluxe
+    region: content
+  field_send_email:
+    weight: 12
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
     region: content
   field_sorting_weight:
     weight: 2
@@ -314,13 +337,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 9
+    weight: 10
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -328,21 +351,21 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 5
     region: content
     third_party_settings: {  }
   status:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 10
+    weight: 11
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 8
     region: content
     third_party_settings: {  }
   title:
@@ -354,13 +377,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 11
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
@@ -372,6 +395,7 @@ hidden:
   feeds_item: true
   field_feed_imported_on: true
   field_feed_origin: true
+  field_feed_source: true
   field_feed_uid: true
   publish_on: true
   publish_state: true

@@ -18,6 +18,7 @@ dependencies:
     - field.field.node.news.field_metatag
     - field.field.node.news.field_news_type
     - field.field.node.news.field_related_content
+    - field.field.node.news.field_send_email
     - field.field.node.news.field_sorting_weight
     - field.field.node.news.field_subject_matter
     - field.field.node.news.field_tags
@@ -35,8 +36,19 @@ mode: teaser_secondary
 content:
   body:
     label: hidden
-    type: text_default
+    type: text_summary_or_trimmed
     weight: 1
+    settings:
+      trim_length: 250
+    third_party_settings: {  }
+    region: content
+  flag_email_node:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  flag_subscribe_node:
+    weight: 10
     settings: {  }
     third_party_settings: {  }
     region: content
@@ -49,6 +61,7 @@ hidden:
   feeds_item: true
   field_attachments: true
   field_contact: true
+  field_content_weight: true
   field_division: true
   field_feed_imported_on: true
   field_feed_origin: true
@@ -59,6 +72,7 @@ hidden:
   field_metatag: true
   field_news_type: true
   field_related_content: true
+  field_send_email: true
   field_sorting_weight: true
   field_subject_matter: true
   field_tags: true
