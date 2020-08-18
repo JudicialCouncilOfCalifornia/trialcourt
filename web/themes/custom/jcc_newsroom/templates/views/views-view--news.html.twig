@@ -1,11 +1,11 @@
 {#
 /**
  * @file
- * Default theme implementation for main view template.
+ * Theme override for a main view template.
  *
  * Available variables:
  * - attributes: Remaining HTML attributes for the element.
- * - css_name: A CSS-safe version of the view name.
+ * - css_name: A css-safe version of the view name.
  * - css_class: The user-specified classes names, if any.
  * - header: The optional header.
  * - footer: The optional footer.
@@ -28,50 +28,105 @@
  *   Javascript.
  *
  * @see template_preprocess_views_view()
- *
- * @ingroup themeable
  */
 #}
-{%
-  set classes = [
-    dom_id ? 'js-view-dom-id-' ~ dom_id,
-  ]
-%}
-<div{{ attributes.addClass(classes) }}>
+{% set tag = tag|default('div') %}
+{% set classes = [
+  'view',
+  'view-' ~ id|clean_class,
+  'view-id-' ~ id,
+  'view-display-id-' ~ display_id,
+  dom_id ? 'js-view-dom-id-' ~ dom_id,
+] %}
+
+{% block view %}
+  <{{ tag }}{{ attributes.addClass(classes) }}>
   {{ title_prefix }}
-  {{ title }}
   {{ title_suffix }}
 
-
-  {% if header %}
-    <header>
-      {{ header }}
-    </header>
-  {% endif %}
-
-  {{ attachment_before }}
-
-  {% block exposed %}
-    {% if view.exposed_widgets %}
-      {{ view.exposed_widgets }}
+  {% block title %}
+    {% if title %}
+      {{ title }}
     {% endif %}
   {% endblock %}
 
-  {% if rows -%}
-    {{ rows }}
-  {% elseif empty -%}
-    {{ empty }}
-  {% endif %}
-  {{ pager }}
+  {% block header %}
+    {% if header %}
+      <div class="view__header grid-container-widescreen margin-top-6">
+        {{ header }}
+      </div>
+    {% endif %}
+  {% endblock %}
 
-  {{ attachment_after }}
-  {{ more }}
+  {% block exposed %}
+    {% if exposed %}
+      <div class="view__filters">
+        {{ exposed }}
+      </div>
+    {% endif %}
+  {% endblock %}
 
-  {% if footer %}
-    <footer>
-      {{ footer }}
-    </footer>
-  {% endif %}
+  {% block attachment_before %}
+    {% if attachment_before %}
+      <div class="view__attachment view__attachment--before">
+        {{ attachment_before }}
+      </div>
+    {% endif %}
+  {% endblock %}
 
-  {{ feed_icons }}
-</div>
+  {% block content %}
+    {% if rows %}
+      <div class="view__content news">
+        {% include "@organisms/sections/tiles-list/tiles-list.twig" with {
+          tiles_list: tiles_list
+        } only %}
+      </div>
+    {% endif %}
+  {% endblock %}
+
+  {% block empty %}
+    {% if empty %}
+      <div class="view__content is-empty">
+        {{ empty }}
+      </div>
+    {% endif %}
+  {% endblock %}
+
+  {% block pager %}
+    {% if pager %}
+      {{ pager }}
+    {% endif %}
+  {% endblock %}
+
+  {% block attachment_after %}
+    {% if attachment_after %}
+      <div class="view__attachment view__attachment--after">
+        {{ attachment_after }}
+      </div>
+    {% endif %}
+  {% endblock %}
+
+  {% block more %}
+    {% if more %}
+      {{ more }}
+    {% endif %}
+  {% endblock %}
+
+  {% block footer %}
+    {% if footer %}
+      <div class="view-footer">
+        {{ footer }}
+      </div>
+    {% endif %}
+  {% endblock %}
+
+  {% block feed_icons %}
+    {% if feed_icons %}
+      <div class="feed-icons">
+        {{ feed_icons }}
+      </div>
+    {% endif %}
+  {% endblock %}
+
+  </{{ tag }}>
+{% endblock %}
