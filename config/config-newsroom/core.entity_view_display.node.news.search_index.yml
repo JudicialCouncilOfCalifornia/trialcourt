@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.news.feeds_item
     - field.field.node.news.field_attachments
     - field.field.node.news.field_contact
+    - field.field.node.news.field_content_weight
     - field.field.node.news.field_division
     - field.field.node.news.field_feed_imported_on
     - field.field.node.news.field_feed_origin
@@ -19,6 +20,7 @@ dependencies:
     - field.field.node.news.field_metatag
     - field.field.node.news.field_news_type
     - field.field.node.news.field_related_content
+    - field.field.node.news.field_send_email
     - field.field.node.news.field_sorting_weight
     - field.field.node.news.field_subject_matter
     - field.field.node.news.field_tags
@@ -112,15 +114,27 @@ content:
     third_party_settings: {  }
     type: entity_reference_facet_link
     region: content
+  flag_email_node:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  flag_subscribe_node:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    region: content
 hidden:
   feeds_item: true
   field_contact: true
+  field_content_weight: true
   field_feed_imported_on: true
   field_feed_origin: true
   field_feed_source: true
   field_feed_uid: true
   field_images: true
   field_related_content: true
+  field_send_email: true
   field_sorting_weight: true
   langcode: true
   links: true
