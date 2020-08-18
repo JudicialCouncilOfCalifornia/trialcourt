@@ -37,8 +37,12 @@
         {% for person in persons %}
           {% set person_name = person.first_name ~ ' ' ~ person.last_name %}
           {% set person_details %}
-            {{ person.title }}<br/>
-            {{ person.phone }}<br/>
+            {% if person.title %}
+              {{ person.title }}<br/>
+            {% endif %}
+            {% if person.phone %}
+              {{ person.phone }}<br/>
+            {% endif %}
             {{ person.email }}
           {% endset %}
 
