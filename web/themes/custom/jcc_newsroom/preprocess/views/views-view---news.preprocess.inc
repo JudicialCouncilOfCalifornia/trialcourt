@@ -12,7 +12,7 @@ use Drupal\Core\Link;
 /**
  * Implements hook_preprocess_HOOK().
  */
-function jcc_newsroom_preprocess_views_view__news_newsroom_only_(&$variables) {
+function jcc_newsroom_preprocess_views_view__news(&$variables) {
   if (empty($variables['rows'])) {
     return;
   }
