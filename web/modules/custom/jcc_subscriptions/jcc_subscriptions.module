@@ -32,7 +32,7 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
     }
 
     // Creating list of groups form myEmma.
-    $form['myemma_groups'] = [
+    $form['group_social']['myemma_groups'] = [
       '#type' => 'checkboxes',
       '#options' => $form_groups,
       '#title' => t('Category subscriptions:'),
@@ -41,16 +41,31 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
 
     // Extra formatting if creating a news item.
     if ($form['#form_id'] == 'node_news_form') {
+      // Adding invisible markup to empty fieldgroup.
+      $form['field_invisible'] = [
+        '#type' => 'markup',
+        '#markup' => '',
+        '#group' => 'group_social',
+      ];
+
+      $form['group_social']['field_send_email'] = [
+        '#type' => 'checkbox',
+        '#group' => 'group_social',
+        '#title' => t('Send an email when saving this news item.'),
+        '#default_value' => FALSE,
+      ];
+
       // Moving the list to the social fieldgroup.
       $form['#group_children']['myemma_groups'] = 'group_social';
       $form['#fieldgroups']['group_social']->children[] = 'myemma_groups';
-      $form['group_social']['myemma_groups'] = $form['myemma_groups'];
       $form['group_social']['myemma_groups']['#states'] = [
         'visible' => [
-          ':input[name="field_send_email[value]"]' => ['checked' => TRUE],
+          ':input[name="field_send_email"]' => ['checked' => TRUE],
         ],
       ];
-      unset($form['myemma_groups']);
+
+      $form['#group_children']['field_send_email'] = 'group_social';
+      $form['#fieldgroups']['group_social']->children[] = 'field_send_email';
     }
 
     if ($form['#form_id'] == 'user_form') {
@@ -63,13 +78,10 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
         foreach ($user_groups_object as $group_objects) {
           array_push($user_groups, $group_objects->member_group_id);
         }
-        $form['myemma_groups']['#default_value'] = $user_groups;
+        $form['group_social']['myemma_groups']['#default_value'] = $user_groups;
       }
     }
 
-    // TODO: Action not hooked when document is uploaded
-    // Potentially related:
-    // https://www.drupal.org/project/drupal/issues/2934463#comment-13180158
     // Custom actions on submit.
     foreach (array_keys($form['actions']) as $action) {
       if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
@@ -86,7 +98,7 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
  * Alters for submission - sends query.
  */
 function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
-  if ($form['#form_id'] == 'node_news_form' && $form_state->cleanValues()->getValues()['field_send_email']['value'] == 1) {
+  if ($form['#form_id'] == 'node_news_form' && $form_state->cleanValues()->getValues()['field_send_email'] == 1) {
     global $base_url;
     // Getting data from myemma.
     $emma_config = \Drupal::config('webform_myemma.settings');
