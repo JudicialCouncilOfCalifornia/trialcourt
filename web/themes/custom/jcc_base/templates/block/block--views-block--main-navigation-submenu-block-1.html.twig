@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Theme override to display a block for featured multimedia.
+ * Theme override to display a block.
  *
  * Available variables:
  * - plugin_id: The ID of the block implementation.
@@ -26,6 +26,12 @@
  */
 #}
 
-{% include '@organisms/sections/cards-with-button/cards-with-button.twig' with {
-  cards_with_button: featured_multimedia
-} %}
+<div class="jcc-landing-submenu">
+  {% include '@organisms/sections/hero-icon-nav/hero-icon-nav.twig' with {
+    hero_icon_nav: {
+      links: {
+        buttons: submenu_buttons,
+      },
+    },
+  } %}
+</div>
