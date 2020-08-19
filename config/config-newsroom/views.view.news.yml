@@ -9,7 +9,9 @@ dependencies:
     - node.type.news
     - taxonomy.vocabulary.news_type
   content:
+    - 'taxonomy_term:news_type:82782258-ef1f-4171-8fe8-7ee8e82859b5'
     - 'taxonomy_term:news_type:cc84a765-bfb4-4de9-9eb7-b9bcfa05cd64'
+    - 'taxonomy_term:news_type:d499af52-a40e-4f13-997b-5af3105dbfe6'
   module:
     - better_exposed_filters
     - jcc_block_field_decorator
@@ -2538,7 +2540,9 @@ display:
           group_type: group
           admin_label: ''
           operator: or
-          value: {  }
+          value:
+            3: 3
+            108: 108
           group: 1
           exposed: true
           expose:
@@ -2559,6 +2563,52 @@ display:
               editor: '0'
               author: '0'
               administrator: '0'
+            reduce: true
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: news_type
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_news_type_target_id_1:
+          id: field_news_type_target_id_1
+          table: node__field_news_type
+          field: field_news_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: not
+          value:
+            134: 134
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
             reduce: false
           is_grouped: false
           group_info:
