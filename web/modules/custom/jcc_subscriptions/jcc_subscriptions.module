@@ -17,7 +17,7 @@ use SendGrid\Client as SClient;
  * Implements hook_node_insert().
  */
 function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
-  if ($form['#id'] == 'node-news-form' || $form['#id'] == 'user-form') {
+  if (in_array($form['#form_id'], ['node_news_form', 'user_form'])) {
     // Connection to myEmma.
     $emma_config = \Drupal::config('webform_myemma.settings');
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
@@ -40,15 +40,20 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
     ];
 
     // Extra formatting if creating a news item.
-    if ($form['#id'] == 'node-news-form') {
+    if ($form['#form_id'] == 'node_news_form') {
       // Moving the list to the social fieldgroup.
       $form['#group_children']['myemma_groups'] = 'group_social';
       $form['#fieldgroups']['group_social']->children[] = 'myemma_groups';
       $form['group_social']['myemma_groups'] = $form['myemma_groups'];
+      $form['group_social']['myemma_groups']['#states'] = [
+        'visible' => [
+          ':input[name="field_send_email[value]"]' => ['checked' => TRUE],
+        ],
+      ];
       unset($form['myemma_groups']);
     }
 
-    if ($form['#id'] == 'user-form') {
+    if ($form['#form_id'] == 'user_form') {
       $user_req = $emma->get_member_detail_by_email($form['account']['mail']['#default_value']);
       if (!isset($user_req->error)) {
         // pre-populate active categories.
@@ -66,9 +71,13 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
     // Potentially related:
     // https://www.drupal.org/project/drupal/issues/2934463#comment-13180158
     // Custom actions on submit.
-    $form['actions']['submit']['#submit'] = ['jcc_subscriptions_form_submit'];
+    foreach (array_keys($form['actions']) as $action) {
+      if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+        $form['actions'][$action]['#submit'][] = 'jcc_subscriptions_form_submit';
+      }
+    }
   }
-  elseif ($form['#id'] == 'user-register-form') {
+  elseif ($form['#form_id'] == 'user_register_form') {
     $form['actions']['submit']['#value'] = t('Subscribe');
   }
 }
@@ -77,7 +86,7 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
  * Alters for submission - sends query.
  */
 function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
-  if ($form['#id'] == 'node-news-form' && $form_state->cleanValues()->getValues()['field_send_email']['value'] == 1) {
+  if ($form['#form_id'] == 'node_news_form' && $form_state->cleanValues()->getValues()['field_send_email']['value'] == 1) {
     global $base_url;
     // Getting data from myemma.
     $emma_config = \Drupal::config('webform_myemma.settings');
@@ -172,7 +181,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       }
     }
   }
-  elseif ($form['#id'] == 'user-form') {
+  elseif ($form['#form_id'] == 'user_form') {
     $emma_config = \Drupal::config('webform_myemma.settings');
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
