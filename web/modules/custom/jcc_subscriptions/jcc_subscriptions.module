@@ -165,12 +165,10 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       $sendGridResponse = $sendgrid->send($email);
 
       if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
-        $result = TRUE;
         drupal_set_message(t('Email successfully sent'));
       }
       else {
         // Show error.
-        $result = FALSE;
         drupal_set_message(t('Email was not sent'));
       }
     }
@@ -206,5 +204,3 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     $emma->remove_member_from_groups($user_emma_id, $groups_to_remove);
   }
 }
-
-// $response = $client->remove_member_from_all_groups(123456789);
