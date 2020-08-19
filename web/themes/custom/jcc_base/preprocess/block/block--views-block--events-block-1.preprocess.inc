@@ -42,7 +42,7 @@ function jcc_base_preprocess_block__views_block__events_block_1(&$variables) {
       ];
     }
 
-      $recentEventsCard = [
+    $recentEventsCard = [
       'card' => [
         'title' => $title,
         'excerpt' => $excerpt,
