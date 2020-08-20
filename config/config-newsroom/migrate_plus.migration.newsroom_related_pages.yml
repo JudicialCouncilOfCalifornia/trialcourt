@@ -29,6 +29,10 @@ source:
       name: related_pages
       selector: relatedPages/relatedPage
       label: 'Related Pages: URL'
+    -
+      name: related_links
+      selector: links/link_item
+      label: 'Related Links: URL'
   ids:
     link:
       type: text_long
@@ -38,34 +42,34 @@ process:
     migration: newsroom_node
     source: link
     no_stub: true
-  field_links:
+  field_related_content:
     plugin: sub_process
     source: related_pages
     process:
-      url_prefix:
-        plugin: default_value
-        default_value: 'internal:/node/'
-      related_page_nid:
+      target_id:
         plugin: migration_lookup
         migration: newsroom_node
         no_stub: true
         source: relatedPages_url
+  field_links:
+    plugin: sub_process
+    source: related_links
+    process:
+      title: link_title
       uri:
         -
-          plugin: skip_on_empty
-          method: process
-          source: '@related_page_nid'
-        -
-          plugin: concat
-          source:
-            - '@url_prefix'
-            - '@related_page_nid'
-      title: relatedPages_title
+          plugin: str_replace
+          source: link_href
+          search:
+            - 'http://newsroom.courts.ca.govhttp'
+          replace:
+            - http
 destination:
   plugin: 'entity:node'
   default_bundle: news
   overwrite_properties:
     - field_links
+    - field_related_content
 migration_dependencies:
   optional:
     - newsroom_node

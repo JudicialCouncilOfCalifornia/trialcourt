@@ -12,6 +12,7 @@ dependencies:
     - field.storage.node.field_links
     - node.type.news
     - taxonomy.vocabulary.news_type
+    - taxonomy.vocabulary.topics
     - user.role.administrator
     - user.role.author
     - user.role.editor
@@ -118,10 +119,18 @@ display:
                   placeholder_text: ''
                   collapsible: false
                   is_secondary: false
+              field_topics_target_id:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
       pager:
         type: full
         options:
-          items_per_page: 50
+          items_per_page: 150
           offset: 0
           id: 0
           total_pages: null
@@ -1128,7 +1137,12 @@ display:
           action_title: Action
           include_exclude: include
           selected_actions:
+            - node_break_lock_action
+            - node_make_sticky_action
+            - node_make_unsticky_action
+            - node_promote_action
             - node_publish_action
+            - node_unpromote_action
             - node_unpublish_action
           entity_type: node
           plugin_id: node_bulk_form
@@ -1614,6 +1628,55 @@ display:
           hierarchy: false
           error_message: true
           plugin_id: taxonomy_index_tid
+        field_topics_target_id:
+          id: field_topics_target_id
+          table: node__field_topics
+          field: field_topics_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_topics_target_id_op
+            label: Topics
+            description: ''
+            use_operator: false
+            operator: field_topics_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_topics_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              editor: '0'
+              author: '0'
+              administrator: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: topics
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
         created:
           id: created
           table: node_field_data
@@ -1716,6 +1779,52 @@ display:
           entity_type: node
           entity_field: created
           plugin_id: date
+        field_news_type_target_id_1:
+          id: field_news_type_target_id_1
+          table: node__field_news_type
+          field: field_news_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: not
+          value:
+            134: 134
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: news_type
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
       filter_groups:
         operator: AND
         groups:
