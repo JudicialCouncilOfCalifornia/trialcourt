@@ -88,14 +88,26 @@ process:
   status: constants/bool_1
   uid: constants/uid_root
   body/value:
-    plugin: str_replace
-    source: content
-    search:
-      - '<![CDATA['
-      - ']]>'
-    replace:
-      - ''
-      - ''
+    -
+      plugin: str_replace
+      source: content
+      search:
+        - '<![CDATA['
+        - ']]>'
+        - ']]&gt;'
+        - '<p>&nbsp;</p>'
+        - '&nbsp;'
+      replace:
+        - ''
+        - ''
+        - ''
+        - ' '
+        - ' '
+    -
+      plugin: callback
+      callable: htmlspecialchars_decode
+    -
+      plugin: inline_images
   body/summary: description
   body/format: constants/full_html
   created:
@@ -122,7 +134,7 @@ process:
       source: news_type
       map:
         news: Feature
-        releases: News
+        releases: 'News Release'
       default_value: News
     -
       plugin: entity_generate
