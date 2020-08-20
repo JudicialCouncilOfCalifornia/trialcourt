@@ -26,7 +26,9 @@
 {% if images or attachments or related_links or subject_matter or tags or topics %}
   {% set aside %}
     {% if images['#items'] %}
-      {% include '@jcc_base/_includes/images.html.twig' %}
+      {% include '@jcc_base/_includes/images.html.twig' with {
+        featured_image: featured_image
+      } %}
     {% endif %}
 
     {% if attachments %}

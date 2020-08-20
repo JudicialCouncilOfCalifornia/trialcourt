@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_form_mode.media.media_library
     - field.field.node.news.body
     - field.field.node.news.feeds_item
     - field.field.node.news.field_attachments
@@ -25,7 +26,9 @@ dependencies:
   module:
     - autocomplete_deluxe
     - content_moderation
+    - entity_browser_entity_form
     - field_group
+    - inline_entity_form
     - link_attributes
     - media_library
     - metatag
@@ -201,10 +204,22 @@ content:
   field_images:
     weight: 3
     region: content
-    type: media_library_widget
+    type: inline_entity_form_complex
     settings:
-      media_types: {  }
-    third_party_settings: {  }
+      form_mode: media_library
+      label_singular: ''
+      label_plural: ''
+      allow_new: true
+      allow_existing: true
+      match_operator: CONTAINS
+      revision: false
+      override_labels: false
+      collapsible: false
+      collapsed: false
+      allow_duplicate: false
+    third_party_settings:
+      entity_browser_entity_form:
+        entity_browser_id: media_entity_browser_modal
   field_links:
     weight: 9
     settings:
