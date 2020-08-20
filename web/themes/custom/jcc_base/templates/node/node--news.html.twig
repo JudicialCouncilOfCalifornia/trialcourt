@@ -175,6 +175,44 @@
 
       {% set body %}
         {{ content.body.0 }}
+
+        {% if content.field_related_content[0] %}
+          {% set related_news = [] %}
+          {% for content in content.field_related_content %}
+            {% if content['#title'] %}
+              {% set news_title = content['#title'] %}
+              {% set news_url = content['#url'] %}
+              {% if content['#options'].entity.field_images.entity.field_media_image.entity.uri.value %}
+                {% set content_image = content['#options'].entity.field_images.entity.field_media_image.entity %}
+                {% set image_url = file_url(content_image.uri.value) %}
+                {% set image_alt = content_image.alt %}
+                {% set media_image %}
+                  <img src="{{ image_url }}" alt="{{ image_alt }}">
+                {% endset %}
+              {% else %}
+                {% set media_image %}
+                  {% include '@jcc_base/_includes/placeholder-photo.html.twig' %}
+                {% endset %}
+              {% endif %}
+
+              {% set related_news = related_news|merge([{
+                variant: 'related_news__card',
+                excerpt_img: media_image,
+                title: news_title,
+                url: news_url,
+              }]) %}
+            {% endif %}
+          {% endfor %}
+
+          {% include '@organisms/sections/cards-with-button/cards-with-button.twig' with {
+            cards_with_button: {
+              headergroup: {
+                title: content.field_related_content['#title'],
+              },
+              cards: related_news,
+            },
+          } %}
+        {% endif %}
       {% endset %}
     {%  endif %}
     {% if (content.field_news_type[0]['#title'] == 'Feature') %}

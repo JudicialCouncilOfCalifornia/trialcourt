@@ -1,25 +1,34 @@
-{% set gallery_desc %}
-  <span aria-hidden="true">Click on an image below to view in full size</span>
+{% set gallery %}
+  <p aria-hidden="true">Click on an image below to view in full size</p>
+
+  <div class="grid-container padding-0 jcc-gallery-sidebar">
+    <div class="grid-row flex-row">
+      {% for image in images['#items'] %}
+        <div class="grid-col-12 tablet:grid-col-5 height-full jcc-gallery-sidebar__card">
+          <div class="jcc-gallery-sidebar__card-inner">
+            {% if image.entity.field_media_image.entity.uri.value %}
+              {% set image_id = image.entity.field_media_image.entity.fid.value %}
+              {% set image_url = file_url(image.entity.field_media_image.entity.uri.value) %}
+              {% set image_alt = image.entity.field_media_image.alt %}
+
+              {% if image_url %}
+                <a aria-hidden="true" href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter">
+                  <img src="{{ image_url }}" alt="{{ img_alt }}">
+                </a>
+                <img class="usa-sr-only" src="{{ image_url }}" alt="{{ img_alt }}">
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
 {% endset %}
 
 {% include '@molecules/blocks/card/card.twig' with {
   card: {
     title: images['#title'],
-    excerpt: gallery_desc,
+    excerpt: gallery,
   }
 } %}
 
-{% for image in images['#items'] %}
-  {% if image.entity.field_media_image.entity.uri.value %}
-    {% set image_id = image.entity.field_media_image.entity.fid.value %}
-    {% set image_url = file_url(image.entity.field_media_image.entity.uri.value) %}
-    {% set image_alt = image.entity.field_media_image.alt %}
-
-    {% if image_url %}
-      <a aria-hidden="true" href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter">
-        <img src="{{ image_url }}" alt="{{ img_alt }}">
-      </a>
-      <img class="usa-sr-only" src="{{ image_url }}" alt="{{ img_alt }}">
-    {% endif %}
-  {% endif %}
-{% endfor %}
