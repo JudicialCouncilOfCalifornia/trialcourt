@@ -16,10 +16,12 @@
   {% for doc in content.field_attachments %}
     {% set doc_title = doc['#title'] %}
     {% set doc_url = doc['#url'] %}
-    {% set docs = docs|merge([{
-      url_title: doc_title,
-      url: doc_url
-    }]) %}
+    {% if doc_title %}
+      {% set docs = docs|merge([{
+        url_title: doc_title,
+        url: doc_url
+      }]) %}
+    {% endif %}
   {% endfor %}
 
   {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
