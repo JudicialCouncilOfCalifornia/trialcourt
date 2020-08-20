@@ -78,6 +78,9 @@
             {% set url = path('entity.node.canonical', {'node': row.content['#node'].nid[0].value}) %}
             {% set start_date = row.content['#node'].field_date_range[0].start_date %}
             {% set img_src = file_url(row.content['#node'].field_images.entity.field_media_image.entity.uri.value) %}
+            {% if img_src == '/' %}
+              {% set img_src = "" %}
+            {% endif %}
             {% set img_alt = row.content['#node'].field_images.entity.field_media_image.alt %}
 
             {% set recent_event_card = {
