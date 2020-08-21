@@ -13,7 +13,7 @@ class ConfirmDeleteAllSubs extends ControllerBase {
   /**
    * Returns a render-able array.
    */
-  public function content(string $member_id = '') {
+  public function delete(string $member_id = '') {
     $emma_config = \Drupal::config('webform_myemma.settings');
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
     $emma->remove_member_from_all_groups($member_id);

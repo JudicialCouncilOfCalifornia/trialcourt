@@ -12,7 +12,7 @@ class DeleteAllSubs extends ControllerBase {
   /**
    * Returns a render-able array.
    */
-  public function delete(string $member_id = '') {
+  public function content(string $member_id = '') {
     $build = [
       '#markup' => '
         <div class="jcc-text-section-aside__container jcc-text-section-aside-secondary__container">
