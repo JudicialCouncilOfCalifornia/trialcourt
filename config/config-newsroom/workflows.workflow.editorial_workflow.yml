@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - node.type.announcement
+    - node.type.news
     - node.type.page
   module:
     - content_moderation
@@ -39,7 +40,9 @@ type_settings:
       label: Archive
       from:
         - archived
+        - draft
         - published
+        - ready_for_review
       to: archived
       weight: 1
     create_new_draft:
@@ -69,5 +72,6 @@ type_settings:
   entity_types:
     node:
       - announcement
+      - news
       - page
   default_moderation_state: draft
