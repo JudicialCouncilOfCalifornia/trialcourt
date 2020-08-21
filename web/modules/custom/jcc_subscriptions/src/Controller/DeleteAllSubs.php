@@ -17,7 +17,7 @@ class DeleteAllSubs extends ControllerBase {
       '#markup' => '
         <div class="jcc-text-section-aside__container jcc-text-section-aside-secondary__container">
             <div class="body">
-                <p><a class="usa-button usa-button--primary" href="/subscriptions/' . $member_id . '/delete-all/confirmed">' . $this->t("Unsubscribe from all communications.") . '</a></p>
+                <br><br><p><a class="usa-button usa-button--primary" href="/subscriptions/' . $member_id . '/delete-all/confirmed">' . $this->t("Unsubscribe from all communications.") . '</a></p><br><br>
             </div>
         </div>',
     ];
