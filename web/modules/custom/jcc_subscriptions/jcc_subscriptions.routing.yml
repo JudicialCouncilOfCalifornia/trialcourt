@@ -5,3 +5,11 @@ jcc_subscriptions.content:
     _title: 'Delete all subscriptions'
   requirements:
     _permission: 'access content'
+
+jcc_subscriptions.delete:
+  path: '/subscriptions/{member_id}/delete-all/confirmed'
+  defaults:
+    _controller: '\Drupal\jcc_subscriptions\Controller\ConfirmDeleteAllSubs::delete'
+    _title: 'Unsubscribed'
+  requirements:
+    _permission: 'access content'
