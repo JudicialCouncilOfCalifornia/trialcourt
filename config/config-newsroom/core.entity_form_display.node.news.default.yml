@@ -41,6 +41,7 @@ third_party_settings:
         - group_media
         - group_secondary_content
         - group_metadata
+        - group_social
       parent_name: ''
       weight: 1
       format_type: tabs
@@ -126,6 +127,20 @@ third_party_settings:
         formatter: closed
         required_fields: true
       label: Media
+    group_social:
+      children:
+        - field_send_email
+      parent_name: group_news_content
+      weight: 24
+      format_type: tab
+      region: content
+      format_settings:
+        description: ''
+        formatter: closed
+        required_fields: true
+        id: ''
+        classes: ''
+      label: Distribution
 _core:
   default_config_hash: mkzVmXWXMHZsPMgyFtGyIiHcVPLW89gDFzArk9jFTl8
 id: node.news.default
