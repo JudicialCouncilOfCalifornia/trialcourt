@@ -1070,7 +1070,17 @@ display:
             label: ''
           granularity: second
       title: NewsLinks
-      header: {  }
+      header:
+        result:
+          id: result
+          table: views
+          field: result
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: false
+          content: "<h3>Displaying @start - @end of @total</h3>\r\n<hr />"
+          plugin_id: result
       footer: {  }
       empty:
         area:
@@ -1592,8 +1602,6 @@ display:
             - node_break_lock_action
             - node_make_sticky_action
             - node_make_unsticky_action
-            - node_publish_action
-            - node_unpublish_action
           entity_type: node
           plugin_id: node_bulk_form
         field_feed_imported_on:
