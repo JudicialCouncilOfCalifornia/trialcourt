@@ -225,12 +225,11 @@
       {% endset %}
     {%  endif %}
     {% if (content.field_news_type[0]['#title'] == 'Feature') %}
-      {% set image_hero = file_url(content.field_images['#items'].entity.field_media_image.entity.uri.value) %}
       {% set background_variant = 'has-background-color--dark jcc-hero--has-background-image' %}
-
+      {% set featured_image = true %}
       <style>
         .jcc-hero--has-background-image {
-          background-image: url('{{ image_hero }}');
+          background-image: url('{{ hero_bckg_url }}');
         }
 
         .jcc-hero--has-background-image .jcc-hero__brow a {
@@ -249,6 +248,7 @@
 
     {% include '@jcc_base/_includes/section-body.html.twig'with {
       no_title_decoration: true,
+      featured_image: featured_image
     } %}
   {% endblock %}
 </article>
