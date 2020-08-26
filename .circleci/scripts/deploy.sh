@@ -93,7 +93,7 @@ for name in "$@" ; do
   # Give pantheon a chance for code to sync first.
   # May need to adjust this value.
 
-  WAIT=45
+  WAIT=90
   echo
   echo "Waiting $WAIT seconds for code to sync on host."
   sleep $WAIT
