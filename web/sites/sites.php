@@ -44,7 +44,10 @@ $sites['www.napa.courts.ca.gov'] = 'napa';
 $sites['dev-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['test-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['live-jcc-newsroom.pantheonsite.io'] = 'newsroom';
-$sites['live_url_goes_here'] = 'newsroom';
+$sites['newsroom.courts.ca.gov'] = 'newsroom';
+$sites['beta.newsroom.courts.ca.gov'] = 'newsroom';
+$sites['stage.newsroom.courts.ca.gov'] = 'newsroom';
+$sites['develop.newsroom.courts.ca.gov'] = 'newsroom';
 
 $sites['dev-jcc-deprep.pantheonsite.io'] = 'deprep';
 $sites['test-jcc-deprep.pantheonsite.io'] = 'deprep';
