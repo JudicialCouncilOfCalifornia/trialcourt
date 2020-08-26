@@ -1385,35 +1385,19 @@ display:
         groups:
           1: AND
       sorts:
-        sticky:
-          id: sticky
-          table: node_field_data
-          field: sticky
+        field_feed_imported_on_value:
+          id: field_feed_imported_on_value
+          table: node__field_feed_imported_on
+          field: field_feed_imported_on_value
           relationship: none
           group_type: group
           admin_label: ''
           order: DESC
-          exposed: false
-          expose:
-            label: ''
-          entity_type: node
-          entity_field: sticky
-          plugin_id: standard
-        created:
-          id: created
-          table: node_field_data
-          field: created
-          order: DESC
-          entity_type: node
-          entity_field: created
-          plugin_id: date
-          relationship: none
-          group_type: group
-          admin_label: ''
           exposed: false
           expose:
             label: ''
           granularity: second
+          plugin_id: datetime
       fields:
         field_feed_source:
           id: field_feed_source
@@ -3498,8 +3482,6 @@ display:
         - user.roles
       tags:
         - 'config:field.field.node.announcement.body'
-        - 'config:field.field.node.event.field_images'
         - 'config:field.field.node.news.field_feed_source'
         - 'config:field.storage.node.body'
         - 'config:field.storage.node.field_feed_source'
-        - 'config:field.storage.node.field_images'
