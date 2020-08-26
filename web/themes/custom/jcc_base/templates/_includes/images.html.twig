@@ -3,25 +3,34 @@
 
   <div class="grid-container padding-0 jcc-gallery-sidebar">
     <div class="grid-row flex-row">
-      {% for key, image in images['#items'] %}
-        {% if not (featured_image and key == 0) %}
-          <div class="grid-col-12 tablet:grid-col-5 height-full jcc-gallery-sidebar__card">
-            <div class="jcc-gallery-sidebar__card-inner">
-              {% if image.entity.field_media_image.entity.uri.value %}
-                {% set image_id = image.entity.field_media_image.entity.fid.value %}
-                {% set image_url = file_url(image.entity.field_media_image.entity.uri.value) %}
-                {% set image_alt = image.entity.field_media_image.alt %}
+      {% set gallery_title = images['#title'] %}
+      {% if featured_image %} {# If featured as hero, suppress first image from gallery #}
+        {% set images = images['#items']|slice(1) %}
+      {% else %}
+        {% set images = images['#items'] %}
+      {% endif %}
+      {% set batch_size = images|length/2 %} {# Break up images into two groups #}
+      {% for set in images|batch(batch_size) %} {# Display grouped images in separate columns #}
+        <div class="grid-col-12 tablet:grid-col-5 height-full">
+          {% for key, image in set %}
+              <div class="jcc-gallery-sidebar__card">
+                <div class="jcc-gallery-sidebar__card-inner">
+                  {% if image.entity.field_media_image.entity.uri.value %}
+                    {% set image_id = image.entity.field_media_image.entity.fid.value %}
+                    {% set image_url = file_url(image.entity.field_media_image.entity.uri.value) %}
+                    {% set image_alt = image.entity.field_media_image.alt %}
 
-                {% if image_url %}
-                  <a aria-hidden="true" href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter">
-                    <img src="{{ image_url }}" alt="{{ img_alt }}">
-                  </a>
-                  <img class="usa-sr-only" src="{{ image_url }}" alt="{{ img_alt }}">
-                {% endif %}
-              {% endif %}
-            </div>
-          </div>
-        {% endif %}
+                    {% if image_url %}
+                      <a aria-hidden="true" href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter">
+                        <img src="{{ image_url }}" alt="{{ img_alt }}">
+                      </a>
+                      <img class="usa-sr-only" src="{{ image_url }}" alt="{{ img_alt }}">
+                    {% endif %}
+                  {% endif %}
+                </div>
+              </div>
+          {% endfor %}
+        </div>
       {% endfor %}
     </div>
   </div>
@@ -29,7 +38,7 @@
 
 {% include '@molecules/blocks/card/card.twig' with {
   card: {
-    title: images['#title'],
+    title: gallery_title,
     excerpt: gallery,
   }
 } %}
