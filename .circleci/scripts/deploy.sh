@@ -79,6 +79,11 @@ for name in "$@" ; do
   # Disable strict host checking so we can run drush on all envs.
   echo -e "Host appserver.${PANTHEON_ENV}.${UUID}.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
+  # Clear cache before code deployment
+  echo
+  echo Clearing Cache for $PANTHEON_ENV
+  drush @${SITE_CODE}.${PANTHEON_ENV} cr
+
   echo
   echo "Pushing $CIRCLE_BRANCH"
   git push origin $CIRCLE_BRANCH -f --tags
@@ -88,14 +93,10 @@ for name in "$@" ; do
   # Give pantheon a chance for code to sync first.
   # May need to adjust this value.
 
-  WAIT=45
+  WAIT=90
   echo
   echo "Waiting $WAIT seconds for code to sync on host."
   sleep $WAIT
-
-  echo
-  echo Clearing Cache for $PANTHEON_ENV
-  drush @${SITE_CODE}.${PANTHEON_ENV} cr
 
   echo
   echo Running Database Updates for $PANTHEON_ENV
