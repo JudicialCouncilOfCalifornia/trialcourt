@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.announcement.body
+    - field.field.node.book.field_links
     - field.field.node.news.field_feed_source
     - field.storage.node.body
     - field.storage.node.field_contact
@@ -1911,6 +1912,73 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
+        field_links_1:
+          id: field_links_1
+          table: node__field_links
+          field: field_links
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: uri
+          type: link
+          settings:
+            trim_length: 80
+            url_only: false
+            url_plain: false
+            rel: '0'
+            target: '0'
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 1
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         title:
           id: title
           table: node_field_data
@@ -1918,11 +1986,11 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: Title
+          label: ''
           exclude: false
           alter:
             alter_text: true
-            text: "<abbr>{{ status }}</abbr> &nbsp;&nbsp; <abbr>{{ sticky }}</abbr>\r\n<br /><br />\r\n<div><code>{{ field_feed_source }} </code></div>\r\n<h3><a href=\"{{ field_links }}\" target=\"_blank\">{{ title }}</a></h3>\r\n<div>{{body}}</div>"
+            text: "<abbr>{{ status }}</abbr> &nbsp;&nbsp; <abbr>{{ sticky }}</abbr>\r\n<br /><br />\r\n<div><code>{{ field_feed_source }} </code></div>\r\n<h3><a href=\"{{ field_links }}\" target=\"_blank\">{{ title }}</a></h3>\r\n<div>{{body}}</div>\r\n<br />\r\n{{ field_links_1 }}"
             make_link: false
             path: ''
             absolute: false
@@ -1951,7 +2019,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: true
+          element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -2039,6 +2107,59 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
+        edit_node:
+          id: edit_node
+          table: node_field_revision
+          field: edit_node
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: true
+            text: '<a class="use-ajax button nowrap" data-dialog-type="modal" data-dialog-options="{&quot;width&quot;:1200}" href="{{ edit_node }}?destination=admin/content/news-link">FULL EDIT</a>'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: upper
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          text: edit
+          output_url_as_text: true
+          absolute: false
+          entity_type: node
+          plugin_id: entity_link_edit
         nid:
           id: nid
           table: node_field_data
@@ -2050,7 +2171,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '<a class="use-ajax" data-dialog-options="{&quot;width&quot;:800}" data-dialog-type="modal" href="/admin/content/news-link/edit/{{ nid__value }}">Quick edit</a>'
+            text: "<a class=\"use-ajax nowrap button button--primary\" data-dialog-options=\"{&quot;width&quot;:800}\" data-dialog-type=\"modal\" href=\"/admin/content/news-link/edit/{{ nid__value }}\">QUICK EDIT</a>\r\n<br /><br />\r\n{{ edit_node }}"
             make_link: false
             path: ''
             absolute: false
@@ -2105,59 +2226,6 @@ display:
           entity_type: node
           entity_field: nid
           plugin_id: field
-        edit_node:
-          id: edit_node
-          table: node_field_revision
-          field: edit_node
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: true
-            text: '<a class="use-ajax button button--primary" data-dialog-type="modal" data-dialog-options="{&quot;width&quot;:1200}" href="{{ edit_node }}?destination=admin/content/news-link">EDIT</a>'
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: upper
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          text: edit
-          output_url_as_text: true
-          absolute: false
-          entity_type: node
-          plugin_id: entity_link_edit
         field_feed_origin:
           id: field_feed_origin
           table: node__field_feed_origin
@@ -3416,6 +3484,62 @@ display:
             third_party_settings: {  }
           entity_type: node
           plugin_id: entity_form_field
+        form_field_field_links:
+          id: form_field_field_links
+          table: node_field_data
+          field: form_field_field_links
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          plugin:
+            hide_title: 0
+            hide_description: 1
+            type: link_default
+            settings: {  }
+            third_party_settings: {  }
+          entity_type: node
+          plugin_id: entity_form_field
       style:
         type: default
         options:
@@ -3482,6 +3606,8 @@ display:
         - user.roles
       tags:
         - 'config:field.field.node.announcement.body'
+        - 'config:field.field.node.book.field_links'
         - 'config:field.field.node.news.field_feed_source'
         - 'config:field.storage.node.body'
         - 'config:field.storage.node.field_feed_source'
+        - 'config:field.storage.node.field_links'
