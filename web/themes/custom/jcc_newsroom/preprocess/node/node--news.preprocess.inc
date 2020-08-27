@@ -24,7 +24,7 @@ function jcc_newsroom_preprocess_node__news(&$variables, $hook) {
     $fid = $media->field_media_image->target_id;
     $file = File::load($fid);
     $file_uri = $file->getFileUri();
-    $style = \Drupal::entityTypeManager()->getStorage('image_style')->load('focal_point_news');
+    $style = \Drupal::entityTypeManager()->getStorage('image_style')->load('crop_16x9');
 
     $destination_uri = $style->buildUri($file->uri->value);
     $style->createDerivative($file_uri, $destination_uri);
