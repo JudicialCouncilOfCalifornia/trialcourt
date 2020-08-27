@@ -1,0 +1,221 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_blocks.module.
+ */
+
+use SendGrid\Exception;
+use SendGrid\Email;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Form\FormStateInterface;
+
+use MarkRoland\Emma\Client;
+use SendGrid\Client as SClient;
+
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
+  if (in_array($form['#form_id'], ['node_news_form', 'user_form'])) {
+    // Connection to myEmma.
+    $emma_config = \Drupal::config('webform_myemma.settings');
+    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
+
+    // Getting groups from myemma / only keeping ones with naming convention.
+    $myemma_groups = $emma->list_groups();
+    $form_groups = [];
+    foreach ($myemma_groups as $group) {
+      if (strpos($group->group_name, 'Newsroom mailing') !== FALSE) {
+        if (!(strpos($group->group_name, 'Statewide Media') !== FALSE && $form['#form_id'] == 'user_form')) {
+          $form_groups[$group->member_group_id] = str_replace('Newsroom mailing ', '', $group->group_name);
+        }
+      }
+    }
+
+    // Creating list of groups form myEmma.
+    $form['group_social']['myemma_groups'] = [
+      '#type' => 'checkboxes',
+      '#options' => $form_groups,
+      '#title' => t('Category subscriptions:'),
+      '#group' => 'group_social',
+    ];
+
+    // Extra formatting if creating a news item.
+    if ($form['#form_id'] == 'node_news_form') {
+      // Adding invisible markup to empty fieldgroup.
+      $form['field_invisible'] = [
+        '#type' => 'markup',
+        '#markup' => '',
+        '#group' => 'group_social',
+      ];
+
+      $form['group_social']['field_send_email'] = [
+        '#type' => 'checkbox',
+        '#group' => 'group_social',
+        '#title' => t('Send an email when saving this news item.'),
+        '#default_value' => FALSE,
+      ];
+
+      // Moving the list to the social fieldgroup.
+      $form['#group_children']['myemma_groups'] = 'group_social';
+      $form['#fieldgroups']['group_social']->children[] = 'myemma_groups';
+      $form['group_social']['myemma_groups']['#states'] = [
+        'visible' => [
+          ':input[name="field_send_email"]' => ['checked' => TRUE],
+        ],
+      ];
+
+      $form['#group_children']['field_send_email'] = 'group_social';
+      $form['#fieldgroups']['group_social']->children[] = 'field_send_email';
+    }
+
+    if ($form['#form_id'] == 'user_form') {
+      $user_req = $emma->get_member_detail_by_email($form['account']['mail']['#default_value']);
+      if (!isset($user_req->error)) {
+        // pre-populate active categories.
+        $emma_user_id = $user_req->member_id;
+        $user_groups_object = $emma->list_member_groups($emma_user_id);
+        $user_groups = [];
+        foreach ($user_groups_object as $group_objects) {
+          array_push($user_groups, $group_objects->member_group_id);
+        }
+        $form['group_social']['myemma_groups']['#default_value'] = $user_groups;
+      }
+    }
+
+    // Custom actions on submit.
+    foreach (array_keys($form['actions']) as $action) {
+      if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+        $form['actions'][$action]['#submit'][] = 'jcc_subscriptions_form_submit';
+      }
+    }
+  }
+  elseif ($form['#form_id'] == 'user_register_form') {
+    $form['actions']['submit']['#value'] = t('Subscribe');
+  }
+}
+
+/**
+ * Alters for submission - sends query.
+ */
+function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
+  if ($form['#form_id'] == 'node_news_form' && $form_state->cleanValues()->getValues()['field_send_email'] == 1) {
+    global $base_url;
+    // Getting data from myemma.
+    $emma_config = \Drupal::config('webform_myemma.settings');
+    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
+
+    $groups = $form_state->cleanValues()->getValues()['myemma_groups'];
+    $emma_groups = array_filter($groups, function ($item) {
+      return $item !== 0;
+    });
+
+    // Gathering emails to send emails to.
+    $email_to_sendgrid = [];
+    $id_to_sendgrid = [];
+    foreach ($emma_groups as $group) {
+      $users_in_group = $emma->list_group_members($group);
+      foreach ($users_in_group as $user_group) {
+        if (!in_array($user_group->email, $email_to_sendgrid, TRUE)) {
+          array_push($email_to_sendgrid, $user_group->email);
+          // Building array of ID's for opting out urls.
+          array_push($id_to_sendgrid, $user_group->member_id);
+        }
+      }
+    }
+
+    // Building query for sendgrid.
+    $news_title = $form_state->cleanValues()->getValues()['title'];
+    $news_summary = $form_state->cleanValues()->getValues()['body'];
+    $news_nid = $form_state->cleanValues()->getValues()['nid'];
+    $news_post_date_unformated = $form_state->cleanValues()->getValues()['created'][0]['value'];
+    // TODO: Image field (feeds temp folder issue)
+    // $news_image = $form_state->cleanValues()->getValues()['field_images'];
+    // Date formatting.
+    $date = new DrupalDateTime($news_post_date_unformated, DATETIME_STORAGE_TIMEZONE);
+    $news_post_date = $date->format('F j, Y');
+
+    // Getting news item path alias.
+    $news_internal_path = '/node/' . (int) $news_nid;
+    $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    $news_path_alias = $base_url . \Drupal::service('path.alias_manager')->getAliasByPath($news_internal_path, $langcode);
+
+    // Getting from email.
+    $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
+    $to = $sendgrid_conf['from_name'];
+    $sendgrid_api_key = Drupal::service('key.repository')->getKey('newsroom_sendgrid')->getKeyValue();
+    // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
+    // Creating email object.
+    $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
+    $email = new Email();
+    $email->addTo($email_to_sendgrid)
+      ->setFrom($to)
+      ->setSubject('New content has been posted.')
+      ->setText('New content has been posted.')
+      ->setHtml('
+        <div>%news_post_date%</div>
+        <h2><a href="%news_url%"> %news_title%</a></h2>
+        <p>%news_summary%</p>
+        <p><a href="%news_url%">Read more ></a></p>
+        <br/>
+        <p><a href="%base_url%/subscriptions/%member_email%/manage">manage your preferences</a><br>
+        or <a href="%base_url%/subscriptions/%member_id%/delete-all">opt out</a> from all communications.</p>
+        ')
+      ->addSubstitution('%news_url%', [$news_path_alias])
+      ->addSubstitution('%news_title%', [$news_title[0]['value']])
+      ->addSubstitution('%news_summary%', [$news_summary[0]['value']])
+      ->addSubstitution('%news_post_date%', [$news_post_date])
+      ->addSubstitution('%member_id%', $id_to_sendgrid)
+      ->addSubstitution('%member_email%', $email_to_sendgrid)
+      ->addSubstitution('%emma_account%', [$emma_config->get('account_id')])
+      ->addSubstitution('%base_url%', [$base_url])
+      ->addHeader('X-Sent-Using', 'SendGrid-API')
+      ->addHeader('X-Transport', 'web');
+
+    // Issue when simply calling $sendgrid->send($email);
+    // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
+    // Send an email using the template stored in SendGrid.
+    try {
+      $sendGridResponse = $sendgrid->send($email);
+
+      if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
+        drupal_set_message(t('Email successfully sent'));
+      }
+      else {
+        // Show error.
+        drupal_set_message(t('Email was not sent'));
+      }
+    }
+    catch (Exception $e) {
+      $eMessage = $e->getMessage();
+      if (strpos($eMessage, 'success') !== FALSE) {
+        \Drupal::logger('sendgrid_message')->notice('SendGrid: sent');
+      }
+    }
+  }
+  elseif ($form['#form_id'] == 'user_form') {
+    $emma_config = \Drupal::config('webform_myemma.settings');
+    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
+
+    $user_req = $emma->get_member_detail_by_email($form_state->cleanValues()->getValues()['mail']);
+    $user_emma_id = $user_req->member_id;
+    // Create / Update user.
+    $fields = [
+      'first_name' => $form_state->cleanValues()->getValues()['name'],
+    ];
+    $groups = [];
+    $groups_to_remove = [];
+    foreach ($form_state->cleanValues()->getValues()['myemma_groups'] as $key => $val) {
+      if ($val !== 0) {
+        $groups[] = $val;
+      }
+      else {
+        $groups_to_remove[] = $key;
+      }
+    }
+    $emma->import_single_member($form_state->cleanValues()->getValues()['mail'], $fields, $groups);
+    // Need an extra call to account for groups to remove.
+    $emma->remove_member_from_groups($user_emma_id, $groups_to_remove);
+  }
+}
