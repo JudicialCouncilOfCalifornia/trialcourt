@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_form_mode.media.media_library
     - field.field.node.news.body
     - field.field.node.news.feeds_item
     - field.field.node.news.field_attachments
@@ -23,12 +22,11 @@ dependencies:
     - field.field.node.news.field_tags
     - field.field.node.news.field_topics
     - node.type.news
+    - workflows.workflow.editorial_workflow
   module:
     - autocomplete_deluxe
     - content_moderation
-    - entity_browser_entity_form
     - field_group
-    - inline_entity_form
     - link_attributes
     - media_library
     - metatag
@@ -73,6 +71,7 @@ third_party_settings:
       children:
         - field_related_content
         - field_links
+        - field_feed_source
       parent_name: group_news_content
       weight: 22
       format_type: tab
@@ -90,6 +89,7 @@ third_party_settings:
         - field_tags
         - field_topics
         - field_subject_matter
+        - field_sorting_weight
       parent_name: group_news_content
       weight: 23
       format_type: tab
@@ -148,7 +148,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -194,7 +194,7 @@ content:
       selection_handler: default
     third_party_settings: {  }
   field_feed_source:
-    weight: 13
+    weight: 12
     settings:
       size: 60
       placeholder: ''
@@ -204,24 +204,12 @@ content:
   field_images:
     weight: 3
     region: content
-    type: inline_entity_form_complex
+    type: media_library_widget
     settings:
-      form_mode: media_library
-      label_singular: ''
-      label_plural: ''
-      allow_new: true
-      allow_existing: true
-      match_operator: CONTAINS
-      revision: false
-      override_labels: false
-      collapsible: false
-      collapsed: false
-      allow_duplicate: false
-    third_party_settings:
-      entity_browser_entity_form:
-        entity_browser_id: media_entity_browser_modal
+      media_types: {  }
+    third_party_settings: {  }
   field_links:
-    weight: 9
+    weight: 11
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -238,8 +226,9 @@ content:
     type: link_attributes
     region: content
   field_metatag:
-    weight: 12
-    settings: {  }
+    weight: 13
+    settings:
+      sidebar: true
     third_party_settings: {  }
     type: metatag_firehose
     region: content
@@ -261,7 +250,7 @@ content:
       selection_handler: default
     third_party_settings: {  }
   field_related_content:
-    weight: 8
+    weight: 10
     settings:
       limit: '10'
       min_length: '0'
@@ -278,7 +267,7 @@ content:
     type: autocomplete_deluxe
     region: content
   field_sorting_weight:
-    weight: 2
+    weight: 8
     settings: {  }
     third_party_settings: {  }
     type: weight_selector
@@ -322,20 +311,20 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 3
+    weight: 4
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 9
+    weight: 10
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -343,21 +332,21 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 7
     region: content
     third_party_settings: {  }
   status:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 10
+    weight: 11
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 8
     region: content
     third_party_settings: {  }
   title:
@@ -369,13 +358,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 11
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 5
     settings:
       match_operator: CONTAINS
       size: 60
