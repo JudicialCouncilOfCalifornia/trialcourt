@@ -13,3 +13,11 @@ jcc_subscriptions.delete:
     _title: 'Unsubscribed'
   requirements:
     _permission: 'access content'
+
+jcc_subscriptions.manage:
+  path: '/subscriptions/{member_email}/manage'
+  defaults:
+    _form: '\Drupal\jcc_subscriptions\Form\ManageSubs'
+    _title: 'Manage subscriptions'
+  requirements:
+    _permission: 'access content'

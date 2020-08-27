@@ -27,7 +27,7 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
     $form_groups = [];
     foreach ($myemma_groups as $group) {
       if (strpos($group->group_name, 'Newsroom mailing') !== FALSE) {
-        $form_groups[$group->member_group_id] = $group->group_name;
+        $form_groups[$group->member_group_id] = str_replace('Newsroom mailing ', '', $group->group_name);
       }
     }
 
@@ -139,9 +139,9 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
     $news_path_alias = $base_url . \Drupal::service('path.alias_manager')->getAliasByPath($news_internal_path, $langcode);
 
-    // TODO: Replace with JCC official vars
-    // Temp var assignement.
-    $to = 'baptiste.niviere@gmail.com';
+    // Getting from email.
+    $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
+    $to = $sendgrid_conf['from_name'];
     $sendgrid_api_key = Drupal::service('key.repository')->getKey('newsroom_sendgrid')->getKeyValue();
     // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
     // Creating email object.
@@ -150,14 +150,14 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     $email->addTo($email_to_sendgrid)
       ->setFrom($to)
       ->setSubject('New content has been posted.')
-      ->setText('The is a test for the setText function')
+      ->setText('New content has been posted.')
       ->setHtml('
         <div>%news_post_date%</div>
         <h2><a href="%news_url%"> %news_title%</a></h2>
         <p>%news_summary%</p>
         <p><a href="%news_url%">Read more ></a></p>
         <br/>
-        <p><a href="%base_url%/user">manage your preferences</a><br>
+        <p><a href="%base_url%/subscriptions/%member_email%/manage">manage your preferences</a><br>
         or <a href="%base_url%/subscriptions/%member_id%/delete-all">opt out</a> from all communications.</p>
         ')
       ->addSubstitution('%news_url%', [$news_path_alias])
@@ -165,6 +165,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       ->addSubstitution('%news_summary%', [$news_summary[0]['value']])
       ->addSubstitution('%news_post_date%', [$news_post_date])
       ->addSubstitution('%member_id%', $id_to_sendgrid)
+      ->addSubstitution('%member_email%', $email_to_sendgrid)
       ->addSubstitution('%emma_account%', [$emma_config->get('account_id')])
       ->addSubstitution('%base_url%', [$base_url])
       ->addHeader('X-Sent-Using', 'SendGrid-API')
