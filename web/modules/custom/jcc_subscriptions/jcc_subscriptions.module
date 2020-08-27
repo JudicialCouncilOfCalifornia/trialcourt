@@ -27,7 +27,9 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
     $form_groups = [];
     foreach ($myemma_groups as $group) {
       if (strpos($group->group_name, 'Newsroom mailing') !== FALSE) {
-        $form_groups[$group->member_group_id] = str_replace('Newsroom mailing ', '', $group->group_name);
+        if (!(strpos($group->group_name, 'Statewide Media') !== FALSE && $form['#form_id'] == 'user_form')) {
+          $form_groups[$group->member_group_id] = str_replace('Newsroom mailing ', '', $group->group_name);
+        }
       }
     }
 
