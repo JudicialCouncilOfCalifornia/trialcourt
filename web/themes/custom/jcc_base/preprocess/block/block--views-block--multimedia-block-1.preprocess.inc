@@ -52,11 +52,13 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
       foreach (array_slice($images, 0, $image_max) as $image) {
         // Get image entity by target id from media field.
         $image_entity = Media::load($image["target_id"]);
-        // Get image url & alt.
-        $image_src = ImageStyle::load('large')->buildUrl($image_entity->field_media_image->entity->uri->value);
+        // Get image url, alt, and title.
+        $image_src = ImageStyle::load('max_1300x1300')->buildUrl($image_entity->field_media_image->entity->uri->value);
+        $image_thumb = ImageStyle::load('medium')->buildUrl($image_entity->field_media_image->entity->uri->value);
         $image_alt = $image_entity->field_media_image->alt;
+        $image_caption = strip_tags($image_entity->field_media_caption->value);
         // Image element.
-        $image_elem = Markup::create('<a aria-hidden="true" href="' . $image_src . '" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter"><img src="' . $image_src . '" alt="' . $image_alt . '"></a><img class="usa-sr-only" src="' . $image_src . '" alt="' . $image_alt . '" />');
+        $image_elem = Markup::create('<a aria-hidden="true" href="' . $image_src . '" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="' . $image_caption . '"><img src="' . $image_thumb . '" alt="' . $image_alt . '"></a><img class="usa-sr-only" src="' . $image_src . '" alt="' . $image_alt . '" />');
 
         $featured_image_card = [
           'url' => $url,
