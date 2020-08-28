@@ -62,7 +62,7 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
 
         $featured_image_card = [
           'url' => $url,
-          'excerpt' => $image_elem,
+          'excerpt_img' => $image_elem,
         ];
 
         array_push($cards, $featured_image_card);
