@@ -34,6 +34,7 @@ dependencies:
     - path
     - straw
     - text
+    - textfield_counter
     - weight
 third_party_settings:
   field_group:
@@ -302,10 +303,16 @@ content:
   field_tagline:
     weight: 26
     settings:
-      size: 60
+      size: 120
       placeholder: ''
+      use_field_maxlength: true
+      maxlength: null
+      counter_position: after
+      js_prevent_submit: true
+      count_html_characters: true
+      textcount_status_message: 'Maxlength: <span class="maxlength_count">@maxlength</span><br />Used: <span class="current_count">@current_length</span><br />Remaining: <span class="remaining_count">@remaining_count</span>'
     third_party_settings: {  }
-    type: text_textfield
+    type: text_textfield_with_counter
     region: content
   field_tags:
     type: autocomplete_deluxe
