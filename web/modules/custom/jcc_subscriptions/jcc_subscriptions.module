@@ -147,55 +147,57 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     $news_path_alias = $base_url . \Drupal::service('path.alias_manager')->getAliasByPath($news_internal_path, $langcode);
 
     // Getting from email.
-    $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
-    $to = $sendgrid_conf['from_name'];
-    $sendgrid_api_key = Drupal::service('key.repository')->getKey('newsroom_sendgrid')->getKeyValue();
-    // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
-    // Creating email object.
-    $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
-    $email = new Email();
-    $email->addTo($email_to_sendgrid)
-      ->setFrom($to)
-      ->setSubject('New content has been posted.')
-      ->setText('New content has been posted.')
-      ->setHtml('
-        <div>%news_post_date%</div>
-        <h2><a href="%news_url%"> %news_title%</a></h2>
-        <p>%news_summary%</p>
-        <p><a href="%news_url%">Read more ></a></p>
-        <br/>
-        <p><a href="%base_url%/subscriptions/%member_email%/manage">manage your preferences</a><br>
-        or <a href="%base_url%/subscriptions/%member_id%/delete-all">opt out</a> from all communications.</p>
-        ')
-      ->addSubstitution('%news_url%', [$news_path_alias])
-      ->addSubstitution('%news_title%', [$news_title[0]['value']])
-      ->addSubstitution('%news_summary%', [$news_summary[0]['value']])
-      ->addSubstitution('%news_post_date%', [$news_post_date])
-      ->addSubstitution('%member_id%', $id_to_sendgrid)
-      ->addSubstitution('%member_email%', $email_to_sendgrid)
-      ->addSubstitution('%emma_account%', [$emma_config->get('account_id')])
-      ->addSubstitution('%base_url%', [$base_url])
-      ->addHeader('X-Sent-Using', 'SendGrid-API')
-      ->addHeader('X-Transport', 'web');
+    if (!empty(\Drupal::service('key.repository')->getKey('newsroom_sendgrid'))) {
+      $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
+      $to = $sendgrid_conf['from_name'];
+      $sendgrid_api_key = \Drupal::service('key.repository')->getKey('newsroom_sendgrid')->getKeyValue();
+      // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
+      // Creating email object.
+      $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
+      $email = new Email();
+      $email->addTo($email_to_sendgrid)
+        ->setFrom($to)
+        ->setSubject('New content has been posted.')
+        ->setText('New content has been posted.')
+        ->setHtml('
+          <div>%news_post_date%</div>
+          <h2><a href="%news_url%"> %news_title%</a></h2>
+          <p>%news_summary%</p>
+          <p><a href="%news_url%">Read more ></a></p>
+          <br/>
+          <p><a href="%base_url%/subscriptions/%member_email%/manage">manage your preferences</a><br>
+          or <a href="%base_url%/subscriptions/%member_id%/delete-all">opt out</a> from all communications.</p>
+          ')
+        ->addSubstitution('%news_url%', [$news_path_alias])
+        ->addSubstitution('%news_title%', [$news_title[0]['value']])
+        ->addSubstitution('%news_summary%', [$news_summary[0]['value']])
+        ->addSubstitution('%news_post_date%', [$news_post_date])
+        ->addSubstitution('%member_id%', $id_to_sendgrid)
+        ->addSubstitution('%member_email%', $email_to_sendgrid)
+        ->addSubstitution('%emma_account%', [$emma_config->get('account_id')])
+        ->addSubstitution('%base_url%', [$base_url])
+        ->addHeader('X-Sent-Using', 'SendGrid-API')
+        ->addHeader('X-Transport', 'web');
 
-    // Issue when simply calling $sendgrid->send($email);
-    // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
-    // Send an email using the template stored in SendGrid.
-    try {
-      $sendGridResponse = $sendgrid->send($email);
+      // Issue when simply calling $sendgrid->send($email);
+      // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
+      // Send an email using the template stored in SendGrid.
+      try {
+        $sendGridResponse = $sendgrid->send($email);
 
-      if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
-        drupal_set_message(t('Email successfully sent'));
+        if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
+          drupal_set_message(t('Email successfully sent'));
+        }
+        else {
+          // Show error.
+          drupal_set_message(t('Email was not sent'));
+        }
       }
-      else {
-        // Show error.
-        drupal_set_message(t('Email was not sent'));
-      }
-    }
-    catch (Exception $e) {
-      $eMessage = $e->getMessage();
-      if (strpos($eMessage, 'success') !== FALSE) {
-        \Drupal::logger('sendgrid_message')->notice('SendGrid: sent');
+      catch (Exception $e) {
+        $eMessage = $e->getMessage();
+        if (strpos($eMessage, 'success') !== FALSE) {
+          \Drupal::logger('sendgrid_message')->notice('SendGrid: sent');
+        }
       }
     }
   }
