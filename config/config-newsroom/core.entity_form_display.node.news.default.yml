@@ -29,12 +29,12 @@ dependencies:
     - content_moderation
     - field_group
     - link_attributes
+    - maxlength
     - media_library
     - metatag
     - path
     - straw
     - text
-    - textfield_counter
     - weight
 third_party_settings:
   field_group:
@@ -134,8 +134,7 @@ third_party_settings:
         required_fields: true
       label: Media
     group_social:
-      children:
-        - field_send_email
+      children: {  }
       parent_name: group_news_content
       weight: 24
       format_type: tab
@@ -301,18 +300,15 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_tagline:
-    weight: 26
+    weight: 27
     settings:
       size: 120
       placeholder: ''
-      use_field_maxlength: true
-      maxlength: null
-      counter_position: after
-      js_prevent_submit: true
-      count_html_characters: true
-      textcount_status_message: 'Maxlength: <span class="maxlength_count">@maxlength</span><br />Used: <span class="current_count">@current_length</span><br />Remaining: <span class="remaining_count">@remaining_count</span>'
-    third_party_settings: {  }
-    type: text_textfield_with_counter
+    third_party_settings:
+      maxlength:
+        maxlength_js: 255
+        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+    type: text_textfield
     region: content
   field_tags:
     type: autocomplete_deluxe
