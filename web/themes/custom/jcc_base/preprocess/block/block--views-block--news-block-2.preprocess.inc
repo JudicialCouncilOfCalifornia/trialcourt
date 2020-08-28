@@ -5,6 +5,8 @@
  * Theme and preprocess functions for blocks.
  */
 
+use Drupal\Core\Render\Markup;
+
 /**
  * Implements hook_preprocess_HOOK().
  */
@@ -16,13 +18,13 @@ function jcc_base_preprocess_block__views_block__news_block_2(&$variables) {
 
     foreach ($rows as $row) {
       $title = $row->_entity->title->value;
-      $excerpt = '';
-      if ($row->_entity->field_tagline->value != NULL) {
-        $excerpt = $row->_entity->field_tagline->value;
-      }
+      $excerpt = $row->_entity->field_tagline->value;
       $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
       $img_src = isset($row->_entity->field_images->entity->field_media_image->entity->uri->value) ? file_create_url($row->_entity->field_images->entity->field_media_image->entity->uri->value) : "";
       $img_alt = isset($row->_entity->field_images->entity->field_media_image->alt) ? $row->_entity->field_images->entity->field_media_image->alt : "";
+      // Image element.
+      $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $img_src . '" alt="' . $img_alt . '"></a>');
+
 
       $moduleHandler = Drupal::service('module_handler');
       $user = Drupal::currentUser();
@@ -43,11 +45,7 @@ function jcc_base_preprocess_block__views_block__news_block_2(&$variables) {
 
       $featured_news_card = [
         'title' => $title,
-        'excerpt_img' => [
-          'src' => $img_src,
-          'alt' => $img_alt,
-          'renderer' => 'patternlab',
-        ],
+        'excerpt_img' => $img_elem,
         'excerpt' => $excerpt,
         'url' => $url,
         'contextual_links' => $placeholder,
