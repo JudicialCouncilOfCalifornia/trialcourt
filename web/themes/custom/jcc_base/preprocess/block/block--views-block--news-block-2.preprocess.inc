@@ -17,16 +17,8 @@ function jcc_base_preprocess_block__views_block__news_block_2(&$variables) {
     foreach ($rows as $row) {
       $title = $row->_entity->title->value;
       $excerpt = '';
-      if ($row->_entity->body->summary != NULL) {
-        $excerpt = $row->_entity->body->summary;
-      }
-      elseif ($row->_entity->body->value != NULL) {
-        $excerpt = substr(strip_tags($row->_entity->body->value), 0, 200);
-      }
-      else {
-        if (($row->_entity->field_attachments != NULL) && ($row->_entity->field_attachments->entity != NULL)) {
-          $excerpt = $row->_entity->field_attachments->entity->getName();
-        }
+      if ($row->_entity->field_tagline->value != NULL) {
+        $excerpt = $row->_entity->field_tagline->value;
       }
       $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
       $img_src = isset($row->_entity->field_images->entity->field_media_image->entity->uri->value) ? file_create_url($row->_entity->field_images->entity->field_media_image->entity->uri->value) : "";
