@@ -19,6 +19,7 @@ dependencies:
     - field.field.node.news.field_related_content
     - field.field.node.news.field_sorting_weight
     - field.field.node.news.field_subject_matter
+    - field.field.node.news.field_tagline
     - field.field.node.news.field_tags
     - field.field.node.news.field_topics
     - node.type.news
@@ -28,6 +29,7 @@ dependencies:
     - content_moderation
     - field_group
     - link_attributes
+    - maxlength
     - media_library
     - metatag
     - path
@@ -105,6 +107,7 @@ third_party_settings:
     group_news_header:
       children:
         - title
+        - field_tagline
       parent_name: ''
       weight: 0
       format_type: fieldset
@@ -131,8 +134,7 @@ third_party_settings:
         required_fields: true
       label: Media
     group_social:
-      children:
-        - field_send_email
+      children: {  }
       parent_name: group_news_content
       weight: 24
       format_type: tab
@@ -163,7 +165,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 6
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -175,7 +177,7 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 3
+    weight: 4
     settings:
       limit: '10'
       min_length: '0'
@@ -193,7 +195,7 @@ content:
     region: content
   field_division:
     type: autocomplete_deluxe
-    weight: 4
+    weight: 3
     region: content
     settings:
       limit: '10'
@@ -241,7 +243,7 @@ content:
     type: link_attributes
     region: content
   field_metatag:
-    weight: 13
+    weight: 12
     settings:
       sidebar: true
     third_party_settings: {  }
@@ -282,14 +284,14 @@ content:
     type: autocomplete_deluxe
     region: content
   field_sorting_weight:
-    weight: 8
+    weight: 7
     settings: {  }
     third_party_settings: {  }
     type: weight_selector
     region: content
   field_subject_matter:
     type: super_term_reference_autocomplete_widget
-    weight: 7
+    weight: 6
     region: content
     settings:
       match_operator: CONTAINS
@@ -297,9 +299,20 @@ content:
       match_limit: 10
       placeholder: ''
     third_party_settings: {  }
+  field_tagline:
+    weight: 27
+    settings:
+      size: 120
+      placeholder: ''
+    third_party_settings:
+      maxlength:
+        maxlength_js: 255
+        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+    type: text_textfield
+    region: content
   field_tags:
     type: autocomplete_deluxe
-    weight: 5
+    weight: 4
     region: content
     settings:
       limit: '10'
@@ -315,7 +328,7 @@ content:
       selection_handler: default
     third_party_settings: {  }
   field_topics:
-    weight: 6
+    weight: 5
     settings:
       match_operator: CONTAINS
       match_limit: 10
@@ -326,20 +339,20 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 4
+    weight: 3
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 10
+    weight: 9
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 9
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -347,21 +360,21 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 6
     region: content
     third_party_settings: {  }
   status:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 11
+    weight: 10
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 8
+    weight: 7
     region: content
     third_party_settings: {  }
   title:
@@ -373,13 +386,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 12
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
