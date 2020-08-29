@@ -1,0 +1,30 @@
+uuid: 886f154e-49b1-4a5f-a42d-3dbd9c8dabbc
+langcode: en
+status: true
+dependencies:
+  module:
+    - openid_connect
+    - user
+  theme:
+    - jcc_madera
+_core:
+  default_config_hash: t_iCf6dQahQRhmLeV8SFtHtVlyN5QKdL40-NbVqo5Q8
+id: jcc_madera_openidconnectlogin
+theme: jcc_madera
+region: footer
+weight: 0
+provider: null
+plugin: openid_connect_login
+settings:
+  id: openid_connect_login
+  label: 'OpenID Connect login'
+  provider: openid_connect
+  label_display: '0'
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      anonymous: anonymous
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
