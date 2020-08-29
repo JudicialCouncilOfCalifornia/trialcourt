@@ -64,11 +64,12 @@ function jcc_base_preprocess_block__views_block__news_block_4(&$variables) {
   }
 
   $variables['news_links'] = [
-    'id' => 'jcc-news-links',
+    'id' => 'jcc-newslinks-header',
     'headergroup' => [
       'title' => htmlspecialchars_decode($header_title),
     ],
-    'cards' => $cards,
-    'button' => $button,
   ];
+
+  $variables['newslinks_cards'] = $cards;
+  $variables['button'] = $button;
 }
