@@ -80,9 +80,9 @@ for name in "$@" ; do
   echo -e "Host appserver.${PANTHEON_ENV}.${UUID}.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
   # Clear cache before code deployment
-  echo
-  echo Clearing Cache for $PANTHEON_ENV
-  drush @${SITE_CODE}.${PANTHEON_ENV} cr
+#  echo
+#  echo Clearing Cache for $PANTHEON_ENV
+#  drush @${SITE_CODE}.${PANTHEON_ENV} cr
 
   echo
   echo "Pushing $CIRCLE_BRANCH"

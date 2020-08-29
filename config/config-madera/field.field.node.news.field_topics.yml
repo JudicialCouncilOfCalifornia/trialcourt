@@ -1,0 +1,31 @@
+uuid: 82d7e43e-618e-4ef0-9bbc-19988fd1fcef
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_topics
+    - node.type.news
+    - taxonomy.vocabulary.topics
+_core:
+  default_config_hash: k5AZbsRE8ZtXUiBOClhhZq8a_aDeg6u2dVlpZcNW_2w
+id: node.news.field_topics
+field_name: field_topics
+entity_type: node
+bundle: news
+label: Topics
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: straw
+  handler_settings:
+    target_bundles:
+      topics: topics
+    sort:
+      field: name
+      direction: asc
+    auto_create: 1
+    auto_create_bundle: ''
+field_type: entity_reference
