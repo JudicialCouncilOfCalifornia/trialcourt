@@ -69,7 +69,6 @@ function jcc_base_preprocess_block__views_block__news_block_4(&$variables) {
       'title' => htmlspecialchars_decode($header_title),
     ],
   ];
-
   $variables['newslinks_cards'] = $cards;
   $variables['button'] = $button;
 }
