@@ -12,6 +12,7 @@ $sites['develop-jcc-oc.pantheonsite.io'] = 'oc';
 $sites['develop-jcc-napa.pantheonsite.io'] = 'napa';
 $sites['develop-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['develop-jcc-deprep.pantheonsite.io'] = 'deprep';
+$sites['develop-jcc-madera.pantheonsite.io'] = 'madera';
 
 // Stage.
 $sites['stage-jcc-tc-default.pantheonsite.io'] = 'default';
@@ -20,6 +21,7 @@ $sites['stage-jcc-oc.pantheonsite.io'] = 'oc';
 $sites['stage-jcc-napa.pantheonsite.io'] = 'napa';
 $sites['stage-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['stage-jcc-deprep.pantheonsite.io'] = 'deprep';
+$sites['madera-jcc-deprep.pantheonsite.io'] = 'madera';
 
 // Live.
 $sites['dev-jcc-tc-default.pantheonsite.io'] = 'default';
@@ -52,7 +54,10 @@ $sites['develop.newsroom.courts.ca.gov'] = 'newsroom';
 $sites['dev-jcc-deprep.pantheonsite.io'] = 'deprep';
 $sites['test-jcc-deprep.pantheonsite.io'] = 'deprep';
 $sites['live-jcc-deprep.pantheonsite.io'] = 'deprep';
-$sites['live_url_goes_here'] = 'deprep';
+
+$sites['dev-jcc-madera.pantheonsite.io'] = 'madera';
+$sites['test-jcc-madera.pantheonsite.io'] = 'madera';
+$sites['live-jcc-madera.pantheonsite.io'] = 'madera';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
@@ -69,3 +74,5 @@ $sites['oc.lndo.site'] = 'oc';
 $sites['napa.lndo.site'] = 'napa';
 $sites['newsroom.lndo.site'] = 'newsroom';
 $sites['deprep.lndo.site'] = 'deprep';
+$sites['madera.lndo.site'] = 'madera';
+$sites['madera.lndo.site'] = 'madera';
