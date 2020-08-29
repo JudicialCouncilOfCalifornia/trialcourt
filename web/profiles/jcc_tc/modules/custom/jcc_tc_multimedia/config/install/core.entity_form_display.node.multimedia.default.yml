@@ -1,0 +1,333 @@
+uuid: df02fae1-8308-4295-a00c-a7f3b20c3d3b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.multimedia.body
+    - field.field.node.multimedia.field_division
+    - field.field.node.multimedia.field_images
+    - field.field.node.multimedia.field_links
+    - field.field.node.multimedia.field_multimedia_type
+    - field.field.node.multimedia.field_sorting_weight
+    - field.field.node.multimedia.field_subject_matter
+    - field.field.node.multimedia.field_tags
+    - field.field.node.multimedia.field_topics
+    - field.field.node.multimedia.field_videos
+    - node.type.multimedia
+  module:
+    - autocomplete_deluxe
+    - content_moderation
+    - entity_browser_entity_form
+    - field_group
+    - inline_entity_form
+    - link_attributes
+    - media_library
+    - path
+    - scheduler
+    - scheduler_content_moderation_integration
+    - text
+    - weight
+third_party_settings:
+  field_group:
+    group_album_header:
+      children:
+        - title
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Album Header'
+    group_album:
+      children:
+        - group_details
+        - group_secondary_content
+        - group_metadata
+      parent_name: ''
+      weight: 1
+      format_type: tabs
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: 'Album Content'
+    group_details:
+      children:
+        - field_multimedia_type
+        - body
+        - field_videos
+        - field_images
+      parent_name: group_album
+      weight: 3
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: open
+        required_fields: true
+      label: Details
+    group_metadata:
+      children:
+        - field_division
+        - field_tags
+        - field_topics
+        - field_subject_matter
+      parent_name: group_album
+      weight: 5
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Metadata
+    group_secondary_content:
+      children:
+        - field_links
+      parent_name: group_album
+      weight: 4
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: 'Secondary Content'
+id: node.multimedia.default
+targetEntityType: node
+bundle: multimedia
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 5
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+    region: content
+  created:
+    type: datetime_timestamp
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_division:
+    weight: 17
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+    type: autocomplete_deluxe
+    region: content
+  field_images:
+    weight: 7
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+    type: media_library_widget
+    region: content
+  field_links:
+    weight: 17
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+      enabled_attributes:
+        id: false
+        name: false
+        target: true
+        rel: true
+        class: true
+        accesskey: false
+    third_party_settings: {  }
+    type: link_attributes
+    region: content
+  field_multimedia_type:
+    weight: 4
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+    type: autocomplete_deluxe
+    region: content
+  field_sorting_weight:
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+    type: weight_selector
+    region: content
+  field_subject_matter:
+    weight: 20
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_tags:
+    weight: 18
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+    type: autocomplete_deluxe
+    region: content
+  field_topics:
+    weight: 19
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      match_limit: 10
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_videos:
+    type: inline_entity_form_complex
+    weight: 6
+    settings:
+      form_mode: default
+      label_singular: ''
+      label_plural: ''
+      allow_new: true
+      allow_existing: true
+      match_operator: CONTAINS
+      revision: false
+      override_labels: false
+      collapsible: false
+      collapsed: false
+      allow_duplicate: false
+    third_party_settings:
+      entity_browser_entity_form:
+        entity_browser_id: _none
+    region: content
+  langcode:
+    type: language_select
+    weight: 3
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 15
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 13
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 7
+    region: content
+    third_party_settings: {  }
+  publish_on:
+    type: datetime_timestamp_no_default
+    weight: 12
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  publish_state:
+    type: scheduler_moderation
+    weight: 11
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 16
+    region: content
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 8
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 4
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+      match_limit: 10
+    region: content
+    third_party_settings: {  }
+  unpublish_on:
+    type: datetime_timestamp_no_default
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  unpublish_state:
+    type: scheduler_moderation
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  url_redirects:
+    weight: 14
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

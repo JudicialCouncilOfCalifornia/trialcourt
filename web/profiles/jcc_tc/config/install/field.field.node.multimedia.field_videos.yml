@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_videos
+    - media.type.video_embed
+    - node.type.multimedia
+id: node.multimedia.field_videos
+field_name: field_videos
+entity_type: node
+bundle: multimedia
+label: Videos
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      video_embed: video_embed
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,4 +1,4 @@
-uuid: ac8c7e1e-2375-4dd7-8fef-fd2c7cafe312
+uuid: 4741543a-0a48-4e25-a8c6-c0993a2b4f2d
 langcode: en
 status: true
 dependencies:
@@ -11,6 +11,7 @@ dependencies:
     - field.storage.node.field_recurring_event
     - node.type.event
     - taxonomy.vocabulary.event_type
+    - views.view.event_type_legend
   module:
     - better_exposed_filters
     - datetime_range
@@ -22,7 +23,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: h62l2OI-QmuZRAx6mcbealQhc6o4VmMeOKZomZkvbjc
+  default_config_hash: '-mZVO0gf1ek0gp3kJ0CXIP3V_NWGcHw5hHA6SxvPcYY'
 id: events
 label: 'Events Views'
 module: views
@@ -1141,7 +1142,7 @@ display:
           default_date_source: now
           defaultDate: ''
           start: field_date_range
-          end: ''
+          end: field_date_range
           title: title
           right_buttons: 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
           left_buttons: 'prev,next today'
@@ -1168,6 +1169,7 @@ display:
             job: '#3a87ad'
             landing_page: '#3a87ad'
             location: '#3a87ad'
+            multimedia: '#3a87ad'
             news: '#3a87ad'
             page: '#3a87ad'
             person: '#3a87ad'
@@ -1176,13 +1178,10 @@ display:
           bundle_type: event
           classes: ''
           color_taxonomies:
-            1979: '#ffbc78'
-            2043: '#97d4ea'
-            1977: '#f2938c'
-            1992: '#d9e8f6'
-            1978: '#dfe1e2'
-            1980: '#f2e4d4'
-            1947: '#f0f0f0'
+            136: '#ffbc78'
+            132: '#d9e8f6'
+            138: '#f0f0f0'
+            133: '#f2938c'
       row:
         type: 'entity:node'
         options:
@@ -1571,19 +1570,17 @@ display:
           field_api_classes: false
           plugin_id: field
       footer:
-        area:
-          id: area
+        view_1:
+          id: view_1
           table: views
-          field: area
+          field: view
           relationship: none
           group_type: group
-          admin_label: ''
+          admin_label: 'Event type - Legend'
           empty: false
-          tokenize: false
-          content:
-            value: "<div class=\"calendar-legend\">\r\n<div class=\"legend-item\"><span class=\"legend-square arraignment accent-warm-light\"></span><label class=\"t-small\">Arraignment</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square civil-trial accent-cool-light\"></span><label class=\"t-small\">Civil Trial</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square hearing secondary-light\"></span><label class=\"t-small\">Hearing</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square holiday primary-lighter\"></span><label class=\"t-small\">Holiday</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square motion base-lighter\"></span><label class=\"t-small\">Motion</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square sentencing accent-warm-lighter\"></span><label class=\"t-small\">Sentencing</label></div>\r\n<div class=\"legend-item\"><span class=\"legend-square workshop base-lightest\"></span><label class=\"t-small\">Workshop</label></div>\r\n</div>"
-            format: full_html
-          plugin_id: text
+          view_to_insert: 'event_type_legend:default'
+          inherit_arguments: false
+          plugin_id: view
         view:
           id: view
           table: views
