@@ -76,3 +76,7 @@ $sites['newsroom.lndo.site'] = 'newsroom';
 $sites['deprep.lndo.site'] = 'deprep';
 $sites['madera.lndo.site'] = 'madera';
 $sites['madera.lndo.site'] = 'madera';
+$sites['madera.lndo.site'] = 'madera';
+$sites['madera.lndo.site'] = 'madera';
+$sites['madera.lndo.site'] = 'madera';
+$sites['madera.lndo.site'] = 'madera';

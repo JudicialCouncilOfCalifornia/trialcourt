@@ -1,16 +1,17 @@
-uuid: f270fa64-b7ef-4b2b-a289-e6cb736e7cb2
+uuid: 0e6e78ec-9c08-4b4f-932d-c45b964b875b
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.media.media_library
+    - field.field.media.image.field_media_caption
     - field.field.media.image.field_media_image
-    - image.style.medium
+    - image.style.media_library
     - media.type.image
   module:
     - svg_image
 _core:
-  default_config_hash: 0EunVtFlBr9XkUIZFfzW1EUbNz3f9UUyIr-CeaW_us0
+  default_config_hash: 3vUG4C8EbyjTKF72atR7-cuzfKKtP9bsyXaLtJu3KBw
 id: media.image.media_library
 targetEntityType: media
 bundle: image
@@ -20,13 +21,18 @@ content:
     type: image
     label: hidden
     settings:
-      image_style: medium
+      image_style: media_library
       image_link: ''
+      svg_render_as_image: true
+      svg_attributes:
+        width: null
+        height: null
     weight: 0
     third_party_settings: {  }
     region: content
 hidden:
   created: true
+  field_media_caption: true
   field_media_image: true
   langcode: true
   name: true
