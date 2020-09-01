@@ -73,6 +73,11 @@ sed -i "s/'..\/config\/config-default-local'/'..\/config\/config-${NEW}-local'/g
 
 sed -i "s/sites\/default\/files/sites\/default\/files\/${NEW}/g" /app/web/sites/${NEW}/settings.php
 
+sed -i "s/jcc-prod/jcc-${NEW}-live/g" /app/web/sites/${NEW}/settings.php
+sed -i "s/jcc-stage/jcc-${NEW}-stage/g" /app/web/sites/${NEW}/settings.php
+sed -i "s/jcc-dev/jcc-${NEW}-develop/g" /app/web/sites/${NEW}/settings.php
+sed -i "s/sandbox-1/jcc-${NEW}-sandbox-1/g" /app/web/sites/${NEW}/settings.php
+
 echo -e "\n${G}Multisite configured... now running installation. This will take a while...${RE}"
 
 cd /app

@@ -158,15 +158,14 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
     $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
   }
 
-
   if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array('live', 'dev'))) {
-    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-prod';
+    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-newsroom-live';
   }
   else if ($_ENV['PANTHEON_ENVIRONMENT'] == 'stage') {
-    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-stage';
+    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-newsroom-stage';
   }
   else {
-    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-dev';
+    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-newsroom-develop';
   }
 }
 
@@ -174,7 +173,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
 else {
   $config['config_split.config_split.local']['status'] = TRUE;
   $config['config_split.config_split.stage']['status'] = TRUE;
-  $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'sandbox-1';
+  $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-newsroom-sandbox-1';
 }
 
 /**
