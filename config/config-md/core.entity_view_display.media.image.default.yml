@@ -1,0 +1,42 @@
+uuid: fda38803-cabd-459c-9bb9-f4db6299f124
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.media.image.field_media_caption
+    - field.field.media.image.field_media_image
+    - image.style.large
+    - media.type.image
+  module:
+    - svg_image
+    - text
+_core:
+  default_config_hash: 3lkqwkoSFNW1nz8DJYQ8RGipV-vg1byKROOT49fNmxY
+id: media.image.default
+targetEntityType: media
+bundle: image
+mode: default
+content:
+  field_media_caption:
+    weight: 1
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_media_image:
+    label: visually_hidden
+    weight: 0
+    settings:
+      image_style: large
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+hidden:
+  created: true
+  langcode: true
+  name: true
+  search_api_excerpt: true
+  thumbnail: true
+  uid: true
