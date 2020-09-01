@@ -160,13 +160,13 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
 
 
   if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array('live', 'dev'))) {
-    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-prod';
+    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-deprep-prod';
   }
   else if ($_ENV['PANTHEON_ENVIRONMENT'] == 'stage') {
-    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-stage';
+    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-deprep-stage';
   }
   else {
-    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-dev';
+    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-deprep-develop';
   }
 }
 
@@ -174,7 +174,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
 else {
   $config['config_split.config_split.local']['status'] = TRUE;
   $config['config_split.config_split.stage']['status'] = TRUE;
-  $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'sandbox-1';
+  $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-deprep-sandbox-1';
 }
 
 /**
