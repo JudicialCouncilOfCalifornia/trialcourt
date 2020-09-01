@@ -158,7 +158,6 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
     $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
   }
 
-
   if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array('live', 'dev'))) {
     $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-newsroom-live';
   }
