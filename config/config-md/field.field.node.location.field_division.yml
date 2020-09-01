@@ -1,0 +1,31 @@
+uuid: 4a25413d-2c6b-45c6-befe-510097cce1af
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_division
+    - node.type.location
+    - taxonomy.vocabulary.division
+_core:
+  default_config_hash: xaHW1TdKfArKyPAQhritGmYBVsannlmXzLLP32Tstiw
+id: node.location.field_division
+field_name: field_division
+entity_type: node
+bundle: location
+label: Division
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      division: division
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference
