@@ -1,5 +1,5 @@
 # Pantheon Project UUID.
-UUID=a329b66d-9071-4a67-b27d-04e34a190501
-SITE_CODE=md
+UUID=22d69999-bf59-4468-bdc7-c1d7c14b9123
+SITE_CODE=madera
 # If false, pantheon will deploy to dev. If true it will get the Live tag.
 LIVE=false
