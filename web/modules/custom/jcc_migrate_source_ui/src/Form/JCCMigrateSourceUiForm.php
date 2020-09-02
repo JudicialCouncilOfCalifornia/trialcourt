@@ -3,7 +3,7 @@
 namespace Drupal\jcc_migrate_source_ui\Form;
 
 use Drupal\Component\Utility\UrlHelper;
-use Drupal\Core\Cache\DatabaseBackend;
+use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\File\FileSystemInterface;
@@ -87,7 +87,7 @@ class JCCMigrateSourceUiForm extends FormBase {
    *   The database service.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
-   * @param \Drupal\Core\Cache\DatabaseBackend $cache_discovery_migration
+   * @param \Drupal\Core\Cache\CacheBackendInterface $cache_discovery_migration
    *   The cache service for discovery_migration.
    * @param \Drupal\file\FileUsage\DatabaseFileUsageBackend $file_usage
    *   The file.usage service.
@@ -102,7 +102,7 @@ class JCCMigrateSourceUiForm extends FormBase {
     MigrationPluginManager $plugin_manager_migration,
     Connection $database,
     StateInterface $state,
-    DatabaseBackend $cache_discovery_migration,
+    CacheBackendInterface $cache_discovery_migration,
     DatabaseFileUsageBackend $file_usage,
     Messenger $messenger,
     LoggerChannel $logger_channel,
