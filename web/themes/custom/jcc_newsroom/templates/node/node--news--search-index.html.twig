@@ -87,14 +87,14 @@
 
   {% set news_type %}
     {% if content.field_news_type[0] %}
-      {{ node.getType }} ({{ content.field_news_type.0 }})
+      {{ content.field_news_type.0 }}
     {% else %}
       {{ node.getType }}
     {% endif %}
   {% endset %}
 
   {% set brow_info %}
-    {{ news_type }} - {{ node.published_at|date(format="F j, Y") }}
+    {{ news_type }} - {{ node.created.value|date(format="F j, Y") }}
   {% endset %}
 
   {% set images = node.field_images %}
@@ -105,6 +105,9 @@
         <div class="jcc-card__body">
           <div class="jcc-card__excerpt">
             <div>{{ content.body }}</div>
+            <div class="font-code-xs text-italic text-base search-news-links">
+              Related: {{ content.field_links }}
+            </div>
             <div class="jcc-tags">
               <div>
                 {{ content.field_tags }}
