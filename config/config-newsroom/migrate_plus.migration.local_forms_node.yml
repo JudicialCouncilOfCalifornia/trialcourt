@@ -56,9 +56,83 @@ process:
     plugin: default_value
     default_value: document
   title: title
+  body/value: body
+  body/format: constants/full_html
   sticky:
     plugin: default_value
     default_value: 0
+  field_tags:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: tags
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: tags
+      value_key: name
+      ignore_case: true
+  field_topics:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: topics
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: topics
+      value_key: name
+      ignore_case: true
+  field_division:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: division
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: division
+      value_key: name
+      ignore_case: true
+  field_department:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: department
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: department
+      value_key: name
+      ignore_case: true
   field_document_type:
     plugin: entity_lookup
     source: category
