@@ -105,9 +105,11 @@
         <div class="jcc-card__body">
           <div class="jcc-card__excerpt">
             <div>{{ content.body }}</div>
-            <div class="font-code-xs text-italic text-base search-news-links">
-              Related: {{ content.field_links }}
-            </div>
+            {% if content.field_links[0] %}
+              <div class="font-code-xs text-italic text-base search-news-links">
+                Related: {{ content.field_links }}
+              </div>
+            {% endif %}
             <div class="jcc-tags">
               <div>
                 {{ content.field_tags }}
