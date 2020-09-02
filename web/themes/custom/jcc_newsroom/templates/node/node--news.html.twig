@@ -146,9 +146,9 @@
       {% endset %}
     {% else %}
       {% set news_lead %}
-        {% if content.field_tagline %}
+        {% if content.body['#object'].body.summary %}
           <div class="summary">
-            {{ content.field_tagline }}
+            {{ content.body['#object'].body.summary }}
           </div>
         {% endif %}
 
