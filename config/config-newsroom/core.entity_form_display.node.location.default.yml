@@ -16,6 +16,7 @@ dependencies:
     - field.field.node.location.field_subject_matter
     - field.field.node.location.field_tags
     - field.field.node.location.field_topics
+    - field.field.node.location.field_website
     - node.type.location
   module:
     - address
@@ -23,6 +24,7 @@ dependencies:
     - content_moderation
     - field_group
     - geolocation
+    - link
     - metatag
     - office_hours
     - path
@@ -71,7 +73,7 @@ third_party_settings:
         - field_topics
         - field_subject_matter
       parent_name: group_location_content
-      weight: 26
+      weight: 27
       format_type: tab
       region: content
       format_settings:
@@ -99,6 +101,7 @@ third_party_settings:
         - field_location_type
         - field_location
         - field_mailing_address
+        - field_website
       parent_name: group_location_content
       weight: 22
       format_type: tab
@@ -158,7 +161,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 3
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -215,8 +218,9 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_metatag:
-    weight: 14
-    settings: {  }
+    weight: 17
+    settings:
+      sidebar: true
     third_party_settings: {  }
     type: metatag_firehose
     region: content
@@ -276,6 +280,14 @@ content:
     third_party_settings: {  }
     type: super_term_reference_autocomplete_widget
     region: content
+  field_website:
+    weight: 8
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+    region: content
   langcode:
     type: language_select
     weight: 2
@@ -285,13 +297,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 12
+    weight: 15
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 6
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -299,18 +311,18 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 4
+    weight: 6
     region: content
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 7
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 9
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -318,14 +330,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 13
+    weight: 16
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 5
+    weight: 7
     region: content
     third_party_settings: {  }
   title:
@@ -337,13 +349,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 2
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
@@ -353,18 +365,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 8
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 10
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 11
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }

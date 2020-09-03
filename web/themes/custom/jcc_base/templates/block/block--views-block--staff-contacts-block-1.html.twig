@@ -32,25 +32,47 @@
 {% for persons in persons_by_tag %}
   {% set person_group = persons[0].tag %}
   {% set person_cards %}
-    <div class="grid-container">
+    <div class="grid-container jcc-media-contacts">
       <div class="grid-row flex-row">
         {% for person in persons %}
           {% set person_name = person.first_name ~ ' ' ~ person.last_name %}
+          {% if person.court_name %}
+            {% set title = person.court_name %}
+            {% set url = person.court_website %}
+          {% else %}
+            {% set title = person_name %}
+            {% set url = person.url %}
+          {% endif %}
           {% set person_details %}
-            {% if person.title %}
-              {{ person.title }}<br/>
-            {% endif %}
-            {% if person.phone %}
-              {{ person.phone }}<br/>
-            {% endif %}
-            {{ person.email }}
+            <div class="jcc-person-details">
+              {% if person.court_name %}
+                <span class="jcc-person-details__contact name">
+                  {{ person_name }}
+                </span>
+              {% endif %}
+              {% if person.title %}
+                <span class="jcc-person-details__contact title">
+                  {{ person.title }}
+                </span>
+              {% endif %}
+              {% if person.phone %}
+                <span class="jcc-person-details__contact phone">
+                  {{ person.phone }}
+                </span>
+              {% endif %}
+              {% if person.email %}
+                <span class="jcc-person-details__contact email">
+                  <a href="mailto:{{ person.email }}">{{ person.email }}</a>
+                </span>
+              {% endif %}
+            </div>
           {% endset %}
 
-          <div class="grid-col-12 tablet:grid-col-3 height-full jcc-media-contacts__card">
+          <div class="grid-col-12 tablet:grid-col-4 height-full jcc-media-contacts__card">
             {% include '@molecules/blocks/card/card.twig' with {
               card: {
-                url: person.url,
-                title: person_name,
+                url: url,
+                title: title,
                 excerpt: person_details,
               }
             } %}

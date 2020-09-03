@@ -4,8 +4,13 @@ status: true
 dependencies:
   config:
     - node.type.person
+    - taxonomy.vocabulary.division
+    - taxonomy.vocabulary.tags
+  content:
+    - 'taxonomy_term:division:61ea2a8b-9adb-4ddf-881b-8220fb4fc81d'
   module:
     - node
+    - taxonomy
     - user
 id: staff_contacts
 label: 'Staff & Contacts'
@@ -145,7 +150,149 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: {  }
+          group: 1
+        field_active_contact_value:
+          id: field_active_contact_value
+          table: node__field_active_contact
+          field: field_active_contact_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: boolean
+        field_division_target_id:
+          id: field_division_target_id
+          table: node__field_division
+          field: field_division_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value:
+            - 163
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: division
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_tags_target_id:
+          id: field_tags_target_id
+          table: node__field_tags
+          field: field_tags_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: 'not empty'
+          value: {  }
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: tags
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
       sorts:
+        field_county_target_id:
+          id: field_county_target_id
+          table: node__field_county
+          field: field_county_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: standard
         field_first_name_value:
           id: field_first_name_value
           table: node__field_first_name
@@ -170,18 +317,23 @@ display:
           expose:
             label: ''
           plugin_id: standard
-      title: 'Staff & Contacts'
+      title: 'Media Contacts'
       header: {  }
       footer: {  }
       empty: {  }
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -193,12 +345,13 @@ display:
     display_options:
       display_extenders: {  }
       display_description: ''
-      block_description: 'Staff & Contacts'
+      block_description: 'Media Contacts'
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
