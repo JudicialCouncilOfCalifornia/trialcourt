@@ -33,7 +33,6 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
 
       $featured_video_card = [
         'title' => $video_title,
-        'url' => $url,
         'excerpt_vid' => $video_elem,
       ];
 
