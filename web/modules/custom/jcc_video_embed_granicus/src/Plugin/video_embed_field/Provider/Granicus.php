@@ -17,6 +17,27 @@ class Granicus extends ProviderPluginBase {
   /**
    * {@inheritdoc}
    */
+  public function renderThumbnail($image_style, $link_url) {
+    // Insert placeholder for thumbnail not found.
+    return [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      '#attributes' => [
+        'class' => 'jcc-placeholder-video',
+      ],
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'i',
+        '#attributes' => [
+          'class' => 'fa fa-play',
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function renderEmbedCode($width, $height, $autoplay) {
     return [
       '#type' => 'html_tag',
@@ -35,7 +56,8 @@ class Granicus extends ProviderPluginBase {
    * {@inheritdoc}
    */
   public function getRemoteThumbnailUrl() {
-    return sprintf('https://jcc.granicus.com/player/event/%s', $this->getVideoId());
+    // Remote thumbnail not supported at this time.
+    return NULL;
   }
 
   /**
