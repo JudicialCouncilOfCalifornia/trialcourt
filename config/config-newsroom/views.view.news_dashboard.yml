@@ -93,7 +93,6 @@ display:
               status:
                 plugin_id: bef
                 advanced:
-                  sort_options: false
                   rewrite:
                     filter_rewrite_values: ''
                   collapsible: false
@@ -101,16 +100,31 @@ display:
                 select_all_none: false
                 select_all_none_nested: false
                 display_inline: 1
+              moderation_state:
+                plugin_id: default
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
               field_feed_imported_on_value:
                 plugin_id: bef_datepicker
                 advanced:
-                  placeholder_text: ''
                   collapsible: false
                   is_secondary: false
               field_feed_imported_on_value_1:
                 plugin_id: bef_datepicker
                 advanced:
-                  placeholder_text: ''
+                  collapsible: false
+                  is_secondary: false
+              created:
+                plugin_id: bef_datepicker
+                advanced:
+                  collapsible: false
+                  is_secondary: false
+              created_1:
+                plugin_id: bef_datepicker
+                advanced:
                   collapsible: false
                   is_secondary: false
       pager:
@@ -146,21 +160,62 @@ display:
           summary: ''
           description: ''
           columns:
+            field_feed_source: field_feed_source
+            field_links: field_links
             node_bulk_form: node_bulk_form
             created: created
+            moderation_state: moderation_state
+            sticky: sticky
+            status: status
             body: body
+            field_links_1: field_links_1
             title: title
             field_images: field_images
             edit_node: edit_node
+            nid: nid
+            field_feed_origin: field_feed_origin
           info:
+            field_feed_source:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_links:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
             node_bulk_form:
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
             created:
-              sortable: true
+              sortable: false
               default_sort_order: desc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            moderation_state:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            sticky:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            status:
+              sortable: false
+              default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
@@ -168,6 +223,11 @@ display:
             body:
               sortable: false
               default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_links_1:
               align: ''
               separator: ''
               empty_column: false
@@ -185,6 +245,20 @@ display:
               empty_column: false
               responsive: ''
             edit_node:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            nid:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_feed_origin:
               sortable: false
               default_sort_order: asc
               align: ''
@@ -1278,10 +1352,10 @@ display:
           hierarchy: false
           error_message: true
           plugin_id: taxonomy_index_tid
-        field_feed_imported_on_value:
-          id: field_feed_imported_on_value
-          table: node__field_feed_imported_on
-          field: field_feed_imported_on_value
+        created:
+          id: created
+          table: node_field_data
+          field: created
           relationship: none
           group_type: group
           admin_label: ''
@@ -1294,14 +1368,14 @@ display:
           group: 1
           exposed: true
           expose:
-            operator_id: field_feed_imported_on_value_op
+            operator_id: created_op
             label: 'Start date'
             description: ''
             use_operator: false
-            operator: field_feed_imported_on_value_op
+            operator: created_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: field_feed_imported_on_value
+            identifier: created
             required: false
             remember: false
             multiple: false
@@ -1309,6 +1383,7 @@ display:
               authenticated: authenticated
               anonymous: '0'
               editor: '0'
+              subscriber: '0'
               author: '0'
               administrator: '0'
             placeholder: ''
@@ -1326,15 +1401,17 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: datetime
-        field_feed_imported_on_value_1:
-          id: field_feed_imported_on_value_1
-          table: node__field_feed_imported_on
-          field: field_feed_imported_on_value
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+        created_1:
+          id: created_1
+          table: node_field_data
+          field: created
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '<'
+          operator: '<='
           value:
             min: ''
             max: ''
@@ -1343,14 +1420,14 @@ display:
           group: 1
           exposed: true
           expose:
-            operator_id: field_feed_imported_on_value_1_op
+            operator_id: created_1_op
             label: 'End date'
             description: ''
             use_operator: false
-            operator: field_feed_imported_on_value_1_op
+            operator: created_1_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: field_feed_imported_on_value_1
+            identifier: created_1
             required: false
             remember: false
             multiple: false
@@ -1358,6 +1435,7 @@ display:
               authenticated: authenticated
               anonymous: '0'
               editor: '0'
+              subscriber: '0'
               author: '0'
               administrator: '0'
             placeholder: ''
@@ -1375,7 +1453,9 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: datetime
+          entity_type: node
+          entity_field: created
+          plugin_id: date
       defaults:
         filters: false
         filter_groups: false
@@ -1386,10 +1466,24 @@ display:
         groups:
           1: AND
       sorts:
-        field_feed_imported_on_value:
-          id: field_feed_imported_on_value
-          table: node__field_feed_imported_on
-          field: field_feed_imported_on_value
+        sticky:
+          id: sticky
+          table: node_field_data
+          field: sticky
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          entity_type: node
+          entity_field: sticky
+          plugin_id: standard
+        created:
+          id: created
+          table: node_field_data
+          field: created
           relationship: none
           group_type: group
           admin_label: ''
@@ -1398,7 +1492,9 @@ display:
           expose:
             label: ''
           granularity: second
-          plugin_id: datetime
+          entity_type: node
+          entity_field: created
+          plugin_id: date
       fields:
         field_feed_source:
           id: field_feed_source
@@ -1589,14 +1685,14 @@ display:
             - node_make_unsticky_action
           entity_type: node
           plugin_id: node_bulk_form
-        field_feed_imported_on:
-          id: field_feed_imported_on
-          table: node__field_feed_imported_on
-          field: field_feed_imported_on
+        created:
+          id: created
+          table: node_field_data
+          field: created
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Date imported'
+          label: 'Authored on'
           exclude: false
           alter:
             alter_text: false
@@ -1638,10 +1734,11 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: datetime_default
+          type: timestamp
           settings:
-            timezone_override: ''
-            format_type: html_date
+            date_format: custom
+            custom_date_format: 'F j, Y, g:ia'
+            timezone: ''
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -1652,6 +1749,8 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+          entity_type: node
+          entity_field: created
           plugin_id: field
         moderation_state:
           id: moderation_state
@@ -2301,7 +2400,6 @@ display:
         - user.roles
       tags:
         - 'config:field.storage.node.body'
-        - 'config:field.storage.node.field_feed_imported_on'
         - 'config:field.storage.node.field_feed_origin'
         - 'config:field.storage.node.field_feed_source'
         - 'config:field.storage.node.field_images'
@@ -2434,8 +2532,8 @@ display:
           click_sort_column: value
           type: timestamp
           settings:
-            date_format: long
-            custom_date_format: ''
+            date_format: custom
+            custom_date_format: 'F j, Y, g:ia'
             timezone: ''
           group_column: value
           group_columns: {  }
