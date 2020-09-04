@@ -27,7 +27,11 @@ function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variab
       }
       $email = $row->_entity->field_email->value;
       $phone = $row->_entity->field_phone->value;
-      $tag = "General";
+      // County information.
+      $location = $row->_entity->field_county->entity;
+      $court_name = $location->title->value;
+      $court_website = $location->field_website->uri;
+      // Contact category/subject by tagging.
       $tag_count = count($row->_entity->field_tags);
       if ($tag_count == 1) {
         $tag = $row->_entity->field_tags[0]->entity->label();
@@ -39,6 +43,8 @@ function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variab
           $existing = [
             'person_id' => $person_id,
             'url' => $url,
+            'court_name' => $court_name,
+            'court_website' => $court_website,
             'first_name' => $first_name,
             'last_name' => $last_name,
             'title' => $person_type,
@@ -55,6 +61,8 @@ function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variab
       $person = [
         'person_id' => $person_id,
         'url' => $url,
+        'court_name' => $court_name,
+        'court_website' => $court_website,
         'first_name' => $first_name,
         'last_name' => $last_name,
         'title' => $person_type,
