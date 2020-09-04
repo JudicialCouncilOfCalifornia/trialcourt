@@ -17,6 +17,7 @@ use SendGrid\Client as SClient;
  * Implements hook_form_alter().
  */
 function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
+
   if (in_array($form['#form_id'], ['node_news_form', 'user_form'])) {
     // Connection to myEmma.
     $emma_config = \Drupal::config('webform_myemma.settings');

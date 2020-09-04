@@ -8,6 +8,8 @@ use SendGrid\Email;
 use MarkRoland\Emma\Client;
 use SendGrid\Client as SClient;
 
+use Drupal\views\Views;
+
 /**
  * Class JCCSubscriptionsDigestCron.
  */
@@ -19,11 +21,24 @@ class JCCSubscriptionsDigestCron {
   public function cron() {
     $this->state = \Drupal::state();
     $now = \Drupal::time()->getRequestTime();
-    $this->send_digest();
+    // TODO: Remove line below to stop emailing at every cron.
+    $this->sendDigest();
     if ($this->shouldRun($now)) {
-      $this->queueTasks();
-      $this->state->set('jcc_subscriptions.last_cron', $now);
+      // Checks if there is any news item to send.
+      $view = Views::getView('news_digest');
+      $view->get_total_rows = TRUE;
+      $view->execute('default');
+      $rows = $view->total_rows;
+
+      if ($rows != 0) {
+        $this->queueTasks();
+        $this->state->set('jcc_subscriptions.last_cron', $now);
+      }
+      else {
+        \Drupal::logger('jcc_subscriptions')->notice('No new newslink item have queued for email today.');
+      }
     }
+
   }
 
   /**
@@ -49,7 +64,6 @@ class JCCSubscriptionsDigestCron {
    * Add task to the queue.
    */
   public function queueTasks() {
-    \Drupal::logger('jcc_subscriptions')->notice('TEST : SEND EMAIL');
     $this->sendDigest();
   }
 
@@ -62,7 +76,7 @@ class JCCSubscriptionsDigestCron {
     $emma_config = \Drupal::config('webform_myemma.settings');
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
-    // TEST 2 : 13606916
+    // TODO: Replace with final group id
     // test digest : 13977604.
     $emma_group = '13977604';
 
@@ -78,12 +92,7 @@ class JCCSubscriptionsDigestCron {
       }
     }
 
-    \Drupal::logger('jcc_subscriptions')->notice('$email_to_sendgrid');
-
-    // $email_body = views_embed_view('news_digest', 'default');
     $email_body = \Drupal::service('renderer')->render(views_embed_view('news_digest', 'default'));
-
-    \Drupal::logger('jcc_subscriptions')->notice($email_body);
 
     // Getting from email.
     if (!empty(\Drupal::service('key.repository')->getKey('newsroom_sendgrid'))) {
@@ -98,9 +107,78 @@ class JCCSubscriptionsDigestCron {
         ->setFrom($to)
         ->setSubject('News digest form newsroom')
         ->setText('News digest form newsroom')
-        ->setHtml('%email_body%')
-        // ->setHtml('<div>TEST</div>')
+        ->setHtml('
+          <table border="1" cellspacing="0" cellpadding="0" id="x_x_templateContainer" style="background-color:white;width:450pt;border:1pt solid #DDDDDD;">
+            <tbody>
+              <tr>
+                <td valign="top" style="padding:0;border-style:none;">
+                  <div align="center">
+                    <table border="1" cellspacing="0" cellpadding="0" id="x_x_templateHeader" style="background-color:white;width:450pt;border-style:none none solid none;border-bottom-width:1pt;border-bottom-color:#DDDDDD;">
+                      <tbody>
+                        <tr>
+                          <td style="padding:11.25pt 0;border-style:none;">
+                            <div>
+                              <p align="center" style="font-size:11pt;font-family:Calibri,sans-serif;text-align:center;margin:0;">
+                                <b><span style="color:#202020;font-size:25.5pt;font-family:Arial,sans-serif;">
+                                  <a href="%base_url%" target="_blank" rel="noopener noreferrer" data-auth="NotApplicable">
+                                    <span style="color:#0088CC;font-weight:normal;text-decoration:none;">
+                                      <img data-imagetype="External" src="%base_url%/sites/default/files/newsroom/NewsroomDrupalBanner%20Blue.png" originalsrc="%base_url%/sites/default/files/newsroom/NewsroomDrupalBanner%20Blue.png" border="0" id="x_x__x0000_i1025" style="width:450pt;height:32.99pt;">
+                                    </span>
+                                  </a></span>
+                                </b>
+                              </p>
+                              </div>
+                            <div style="margin-right:24pt;margin-left:24pt;">
+                              <p style="font-size:11pt;font-family:Calibri,sans-serif;margin:0;">
+                                <span style="color:#202020;font-size:10pt;font-family:Arial,sans-serif;">
+                                  <a href="%base_url%" target="_blank" rel="noopener noreferrer" data-auth="NotApplicable">
+                                    <span style="color:#0088CC;text-decoration:none;">See NewsLinks in California Courts Newsroom</span>
+                                  </a>
+                                </span>
+                              </p>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td valign="top" style="padding:0;border-style:none;">
+                  <div align="center">
+                    <table border="0" cellspacing="0" cellpadding="0" id="x_x_templateBody" style="width:450pt;">
+                      <tbody>
+                        <tr>
+                          <td valign="top" style="background-color:white;padding:0;">
+                            <table border="0" cellspacing="0" cellpadding="0" style="width:100%;">
+                              <tbody>
+                                <tr>
+                                  <td valign="top" style="padding:10pt;">
+                                    <h1 style="color:#202020;font-size:27pt;font-family:Arial,sans-serif;font-weight:bold;margin:0 0 15pt 0;">
+                                      <span style="font-size:16.5pt;">California Courts NewsLinks Digest</span>
+                                    </h1>
+                                    <h3>%today_date%</h3>
+                                    <br>
+                                    <div>%email_body%</div>
+                                    <br>
+                                    <p><a href="%base_url%/subscriptions/%member_email%/manage">manage your preferences</a><br>
+                                    or <a href="%base_url%/subscriptions/%member_id%/delete-all">opt out</a> from all communications.</p>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>')
         ->addSubstitution('%email_body%', [$email_body])
+        ->addSubstitution('%today_date%', [date("F j, Y")])
         ->addSubstitution('%member_id%', $id_to_sendgrid)
         ->addSubstitution('%member_email%', $email_to_sendgrid)
         ->addSubstitution('%emma_account%', [$emma_config->get('account_id')])
