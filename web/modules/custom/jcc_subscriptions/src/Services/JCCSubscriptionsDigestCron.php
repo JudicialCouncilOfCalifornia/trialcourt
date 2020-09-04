@@ -122,7 +122,7 @@ class JCCSubscriptionsDigestCron {
                                 <b><span style="color:#202020;font-size:25.5pt;font-family:Arial,sans-serif;">
                                   <a href="%base_url%" target="_blank" rel="noopener noreferrer" data-auth="NotApplicable">
                                     <span style="color:#0088CC;font-weight:normal;text-decoration:none;">
-                                      <img data-imagetype="External" src="%base_url%/sites/default/files/newsroom/NewsroomDrupalBanner%20Blue.png" originalsrc="%base_url%/sites/default/files/newsroom/NewsroomDrupalBanner%20Blue.png" border="0" id="x_x__x0000_i1025" style="width:450pt;height:32.99pt;">
+                                      <img data-imagetype="External" src="%base_url%/sites/default/files/newsroom/NewsroomDrupalBanner%20Blue.png" originalsrc="%base_url%/sites/default/files/newsroom/NewsroomDrupalBanner%20Blue.png" border="0" id="x_x__x0000_i1025" style="width:400pt;height:100pt;">
                                     </span>
                                   </a></span>
                                 </b>
