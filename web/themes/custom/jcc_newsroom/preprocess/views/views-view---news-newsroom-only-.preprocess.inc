@@ -5,7 +5,6 @@
  * Preprocessors for views.
  */
 
-use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
 
@@ -62,14 +61,8 @@ function jcc_newsroom_preprocess_views_view__news_newsroom_only_(&$variables) {
     $summary_markup = render($summary);
     $summary = [];
 
-    $tags_markup = '';
-    foreach (['field_division', 'field_tags', 'field_subject_matter'] as $tag) {
-      $display_options = EntityViewDisplay::collectRenderDisplay($node, 'teaser')
-        ->getComponent($tag);
-      $tag_render = [];
-      $tag_render = $node->$tag->view($display_options);
-      $tags_markup .= render($tag_render);
-    }
+    $tags_markup = _jcc_list_faceted_terms($node,
+      ['field_topics', 'field_tags', 'field_division', 'field_subject_matter']);
 
     $excerpt['#markup'] = <<<TEMPLATE
 <div class="source">{$source}</div>

@@ -5,9 +5,7 @@
  * Theme and preprocess functions for blocks.
  */
 
-use Drupal\Core\Link;
 use Drupal\Core\Render\Markup;
-use Drupal\taxonomy\Entity\Term;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -35,37 +33,11 @@ function jcc_base_preprocess_block__views_block__news_block_3(&$variables) {
       }
 
       // BEGIN - Get all possible categories as a single listing per node.
-      $categories = '';
-      $topics = $row->_entity->field_topics->getValue();
-      $tags = $row->_entity->field_tags->getValue();
-      $taxonomies = array_merge($topics, $tags);
-      $taxonomies = new RecursiveIteratorIterator(new RecursiveArrayIterator($taxonomies));
-      // Display categories as links.
-      $links = [];
-      $already_displayed = [];
-      foreach ($taxonomies as $taxonomy_id) {
-        // Get taxonomy object.
-        $taxonomy_entity = Term::load($taxonomy_id);
-        // Label.
-        $taxonomy_label = $taxonomy_entity->getName();
-        // If taxonomy repeated between metadata types, display term once.
-        if (!in_array(strtolower($taxonomy_label), $already_displayed)) {
-          // Url.
-          $taxonomy_url = $taxonomy_entity->toUrl();
-          // Build the links.
-          $link = Link::fromTextAndUrl($taxonomy_label, $taxonomy_url);
-          $link = $link->toRenderable();
-          array_push($links, render($link));
-          // Track terms already displayed for node.
-          $already_displayed[] = strtolower($taxonomy_label);
-        }
-      }
-      // Return link array as string.
-      if (!empty($links)) {
-        $categories = '<span class="usa-tag">' . implode('</span> <span class="usa-tag">', array_unique($links)) . '</span>';
-      }
+      $categories = _jcc_list_faceted_terms($row->_entity,
+        ['field_topics', 'field_tags', 'field_division', 'field_subject_matter']);
+
       // END.
-      $excerpt = Markup::create('<div class="publish_date">' . $date . '</div>' . $body . '<div class="tags">' . $categories . '</div>');
+      $excerpt = Markup::create('<div class="publish_date">' . $date . '</div>' . $body . '<div class="jcc-tags">' . $categories . '</div>');
       $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
       $img_src = isset($row->_entity->field_images->entity->field_media_image->entity->uri->value) ? file_create_url($row->_entity->field_images->entity->field_media_image->entity->uri->value) : "";
       $img_alt = isset($row->_entity->field_images->entity->field_media_image->alt) ? $row->_entity->field_images->entity->field_media_image->alt : "";
