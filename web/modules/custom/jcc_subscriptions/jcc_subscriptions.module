@@ -150,7 +150,6 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     $news_summary = $form_state->cleanValues()->getValues()['body'];
     $news_nid = $form_state->cleanValues()->getValues()['nid'];
     $news_post_date_unformated = $form_state->cleanValues()->getValues()['created'][0]['value'];
-    // TODO: Image field (feeds temp folder issue)
     // $news_image = $form_state->cleanValues()->getValues()['field_images'];
     // Date formatting.
     $date = new DrupalDateTime($news_post_date_unformated, DATETIME_STORAGE_TIMEZONE);
@@ -298,3 +297,12 @@ function jcc_subscriptions_tokens($type, $tokens, array $data, array $options, B
   }
   return $replacements;
 }
+
+/** 
+ * Implements hook_cron().
+ */
+function jcc_subscriptions_cron() {
+  $digest_cron_task = \Drupal::service('jcc_subscriptions.digestcron');
+  $digest_cron_task->cron();
+}
+
