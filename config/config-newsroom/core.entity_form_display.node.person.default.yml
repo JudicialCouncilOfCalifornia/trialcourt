@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.node.person.body
+    - field.field.node.person.field_active_contact
+    - field.field.node.person.field_county
     - field.field.node.person.field_division
     - field.field.node.person.field_email
     - field.field.node.person.field_first_name
@@ -87,6 +89,7 @@ third_party_settings:
     group_title_section:
       children:
         - title
+        - field_active_contact
       parent_name: ''
       weight: 0
       format_type: fieldset
@@ -129,6 +132,7 @@ third_party_settings:
       children:
         - field_email
         - field_phone
+        - field_county
         - field_location
       parent_name: group_person_content
       weight: 1
@@ -160,10 +164,34 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_active_contact:
+    weight: 1
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_county:
+    weight: 23
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+    type: autocomplete_deluxe
+    region: content
   field_division:
     type: autocomplete_deluxe
     weight: 18
@@ -230,7 +258,7 @@ content:
     type: link_attributes
     region: content
   field_location:
-    weight: 22
+    weight: 24
     settings: {  }
     third_party_settings: {  }
     type: address_default
@@ -268,7 +296,7 @@ content:
     region: content
   field_subject_matter:
     type: super_term_reference_autocomplete_widget
-    weight: 21
+    weight: 22
     region: content
     settings:
       match_operator: CONTAINS
@@ -294,7 +322,7 @@ content:
       selection_handler: default
     third_party_settings: {  }
   field_topics:
-    weight: 20
+    weight: 21
     settings:
       match_operator: CONTAINS
       match_limit: 10
@@ -370,7 +398,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
