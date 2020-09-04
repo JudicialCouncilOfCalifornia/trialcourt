@@ -28,9 +28,7 @@ function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variab
       $email = $row->_entity->field_email->value;
       $phone = $row->_entity->field_phone->value;
       // County information.
-      $location_id = $row->_entity->field_county->target_id;
-      $location_storage = \Drupal::entityTypeManager()->getStorage('node');
-      $location = $location_storage->load($location_id);
+      $location = $row->_entity->field_county->entity;
       $court_name = $location->title->value;
       $court_website = $location->field_website->uri;
       // Contact category/subject by tagging.

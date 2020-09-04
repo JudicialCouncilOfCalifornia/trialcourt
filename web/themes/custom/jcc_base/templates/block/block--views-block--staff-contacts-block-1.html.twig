@@ -39,16 +39,12 @@
           {% if person.court_name %}
             {% set title = person.court_name %}
             {% set url = person.court_website %}
-          {% else %}
-            {% set title = person_name %}
           {% endif %}
           {% set person_details %}
             <div class="jcc-person-details">
-              {% if person.court_name %}
-                <span class="jcc-person-details__contact name">
-                  {{ person_name }}
-                </span>
-              {% endif %}
+              <span class="jcc-person-details__contact name">
+                {{ person_name }}
+              </span>
               {% if person.title %}
                 <span class="jcc-person-details__contact title">
                   {{ person.title }}
