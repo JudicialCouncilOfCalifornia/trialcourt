@@ -41,3 +41,29 @@ function _jcc_list_faceted_terms($node, $vocabularies) {
 
   return $tags_markup;
 }
+
+/**
+ * Implements helper function,.
+ */
+function _jcc_get_first_image($node, $style = 'max_325x325') {
+  $image_url = $image_alt = "";
+  $node_images = $node->get('field_images')->first();
+  if (!empty($node_images->entity) && $node_images->entity->hasField('field_media_image')) {
+    $node_image = $node_images->entity->get('field_media_image');
+
+    if ($node_image) {
+      $uri = $node_image->first()->entity->uri;
+      $style = \Drupal::entityTypeManager()->getStorage('image_style')->load($style);
+      $image_url = $style->buildUrl($uri);
+
+      $image_alt = $node_image->first()->alt;
+
+      return [
+        'url' => $image_url,
+        'alt' => $image_alt,
+      ];
+    }
+  }
+
+  return FALSE;
+}
