@@ -19,7 +19,6 @@ dependencies:
     - content_moderation
     - entity_browser_entity_form
     - field_group
-    - inline_entity_form
     - link_attributes
     - media_library
     - path
@@ -225,20 +224,10 @@ content:
     type: entity_reference_autocomplete
     region: content
   field_videos:
-    type: inline_entity_form_complex
+    type: media_library_widget
     weight: 6
     settings:
-      form_mode: default
-      label_singular: ''
-      label_plural: ''
-      allow_new: true
-      allow_existing: true
-      match_operator: CONTAINS
-      revision: false
-      override_labels: false
-      collapsible: false
-      collapsed: false
-      allow_duplicate: false
+      media_types: {  }
     third_party_settings:
       entity_browser_entity_form:
         entity_browser_id: _none
