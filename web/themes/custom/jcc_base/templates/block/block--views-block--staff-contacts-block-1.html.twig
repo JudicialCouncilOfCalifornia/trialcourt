@@ -36,9 +36,9 @@
       <div class="grid-row flex-row">
         {% for person in persons %}
           {% set person_name = person.first_name ~ ' ' ~ person.last_name %}
-          {% if person.court_name %}
-            {% set title = person.court_name %}
-            {% set url = person.court_website %}
+          {% if person.location_name %}
+            {% set title = person.location_name %}
+            {% set url = person.location_website %}
           {% endif %}
           {% set person_details %}
             <div class="jcc-person-details">
@@ -63,7 +63,7 @@
             </div>
           {% endset %}
 
-          <div class="grid-col-12 tablet:grid-col-4 height-full jcc-media-contacts__card">
+          <div class="grid-col-12 tablet:grid-col-3 height-full jcc-media-contacts__card">
             {% include '@molecules/blocks/card/card.twig' with {
               card: {
                 url: url,
