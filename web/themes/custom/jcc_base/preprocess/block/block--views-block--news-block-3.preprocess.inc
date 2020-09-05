@@ -32,17 +32,17 @@ function jcc_base_preprocess_block__views_block__news_block_3(&$variables) {
         }
       }
 
-      // BEGIN - Get all possible categories as a single listing per node.
+      // Get all possible categories as a single listing per node.
       $categories = _jcc_list_faceted_terms($row->_entity,
         ['field_topics', 'field_tags', 'field_division', 'field_subject_matter']);
 
-      // END.
       $excerpt = Markup::create('<div class="publish_date">' . $date . '</div>' . $body . '<div class="jcc-tags">' . $categories . '</div>');
       $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
-      $img_src = isset($row->_entity->field_images->entity->field_media_image->entity->uri->value) ? file_create_url($row->_entity->field_images->entity->field_media_image->entity->uri->value) : "";
-      $img_alt = isset($row->_entity->field_images->entity->field_media_image->alt) ? $row->_entity->field_images->entity->field_media_image->alt : "";
-      // Image element.
-      $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $img_src . '" alt="' . $img_alt . '"></a>');
+
+      $first_image = _jcc_get_first_image($row->_entity);
+      if ($first_image) {
+        $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $first_image['url'] . '" alt="' . $first_image['alt'] . '"></a>');
+      }
 
       $moduleHandler = Drupal::service('module_handler');
       $user = Drupal::currentUser();
