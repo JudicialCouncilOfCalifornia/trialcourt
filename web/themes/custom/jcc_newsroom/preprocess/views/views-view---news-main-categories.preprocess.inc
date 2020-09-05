@@ -50,7 +50,7 @@ TEMPLATE;
       ],
       'date' => '',
       'img' => [
-        'src' => $first_image['src'] ?? '',
+        'src' => $first_image['url'] ?? '',
         'alt' => $first_image['alt'] ?? '',
         'renderer' => 'patternlab',
       ],
