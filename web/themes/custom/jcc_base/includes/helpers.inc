@@ -52,7 +52,7 @@ function _jcc_get_first_image($node, $style = 'max_325x325') {
     $node_image = $node_images->entity->get('field_media_image');
 
     if ($node_image) {
-      $uri = $node_image->first()->entity->uri;
+      $uri = $node_image->first()->entity->getFileUri();
       $style = \Drupal::entityTypeManager()->getStorage('image_style')->load($style);
       $image_url = $style->buildUrl($uri);
 
