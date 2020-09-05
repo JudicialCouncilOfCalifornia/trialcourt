@@ -40,18 +40,7 @@ function jcc_newsroom_preprocess_views_view__news_main_categories(&$variables) {
 </div>
 TEMPLATE;
 
-    $image_url = $image_alt = "";
-    $node_images = $node->get('field_images')->first();
-    if (!empty($node_images->entity) && $node_images->entity->hasField('field_media_image')) {
-      $node_image = $node_images->entity->get('field_media_image');
-
-      if ($node_image) {
-        $image_url = file_create_url(
-          $node_image->first()->entity->uri->value
-        );
-        $image_alt = $node_image->first()->alt;
-      }
-    }
+    $first_image = _jcc_get_first_image($node);
 
     $variables['tiles_list']['tiles'][] = [
       'card' => [
@@ -61,8 +50,8 @@ TEMPLATE;
       ],
       'date' => '',
       'img' => [
-        'src' => $image_url,
-        'alt' => $image_alt,
+        'src' => $first_image['src'] ?? '',
+        'alt' => $first_image['alt'] ?? '',
         'renderer' => 'patternlab',
       ],
     ];
