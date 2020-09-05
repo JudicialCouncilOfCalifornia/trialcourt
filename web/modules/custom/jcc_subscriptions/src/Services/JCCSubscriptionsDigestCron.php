@@ -198,6 +198,8 @@ class JCCSubscriptionsDigestCron {
         else {
           // Show error.
           drupal_set_message(t('Email was not sent'));
+          // Try again.
+          $sendGridResponse = $sendgrid->send($email);
         }
       }
       catch (Exception $e) {
