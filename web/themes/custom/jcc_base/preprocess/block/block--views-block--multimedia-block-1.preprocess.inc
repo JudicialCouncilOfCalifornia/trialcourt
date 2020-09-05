@@ -60,7 +60,6 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
         $image_elem = Markup::create('<a aria-hidden="true" href="' . $image_src . '" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="' . $image_caption . '"><img src="' . $image_thumb . '" alt="' . $image_alt . '"></a><img class="usa-sr-only" src="' . $image_src . '" alt="' . $image_alt . '" />');
 
         $featured_image_card = [
-          'url' => $url,
           'excerpt_img' => $image_elem,
           'excerpt' => $image_caption,
         ];
