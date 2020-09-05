@@ -87,21 +87,21 @@
 
   {% block content %}
     {% set person %}
-      {% set img %}
-        {% if node.field_images.entity.field_media_image.entity.fileuri %}
-          [
-            src: file_url(node.field_images.entity.field_media_image.entity.fileuri),
-            alt: node.field_images.entity.field_media_image.alt,
-            renderer: 'patternlab',
-          ]
-        {% else %}
+      {% if node.field_images.entity.field_media_image.entity.fileuri %}
+        {% set img = {
+          src: file_url(node.field_images.entity.field_media_image.entity.fileuri),
+          alt: node.field_images.entity.field_media_image.alt,
+          renderer: 'patternlab',
+        } %}
+      {% else %}
+        {% set img %}
           <div class="placeholder-profile-img">
             <div class="placeholder-photo placeholder-photo--person">
               <i class="fa fa-user" aria-hidden="true"></i>
             </div>
           </div>
-        {% endif %}
-      {% endset %}
+        {% endset %}
+      {% endif %}
       {% set person_name = node.field_first_name.entity.field_first_name.value ~ " " ~ node.field_last_name.entity.field_last_name.value %}
       {% set person_type %}
         {% if content.field_person_type[0] %}

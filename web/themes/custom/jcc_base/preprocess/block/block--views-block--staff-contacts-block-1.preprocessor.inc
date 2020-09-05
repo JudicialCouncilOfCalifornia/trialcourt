@@ -28,9 +28,13 @@ function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variab
       $email = $row->_entity->field_email->value;
       $phone = $row->_entity->field_phone->value;
       // County information.
+      $location_name = '';
+      $location_website = '';
       $location = $row->_entity->field_county->entity;
-      $court_name = $location->title->value;
-      $court_website = $location->field_website->uri;
+      if ($row->_entity->field_county->entity) {
+        $location_name = $location->title->value;
+        $location_website = $location->field_website->uri;
+      }
       // Contact category/subject by tagging.
       $tag_count = count($row->_entity->field_tags);
       if ($tag_count == 1) {
@@ -43,8 +47,8 @@ function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variab
           $existing = [
             'person_id' => $person_id,
             'url' => $url,
-            'court_name' => $court_name,
-            'court_website' => $court_website,
+            'location_name' => $location_name,
+            'location_website' => $location_website,
             'first_name' => $first_name,
             'last_name' => $last_name,
             'title' => $person_type,
@@ -61,8 +65,8 @@ function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variab
       $person = [
         'person_id' => $person_id,
         'url' => $url,
-        'court_name' => $court_name,
-        'court_website' => $court_website,
+        'location_name' => $location_name,
+        'location_website' => $location_website,
         'first_name' => $first_name,
         'last_name' => $last_name,
         'title' => $person_type,
@@ -73,6 +77,10 @@ function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variab
 
       array_push($persons, $person);
     }
+
+    // Sort persons by county.
+    $courts = array_column($persons, 'location_name');
+    array_multisort($courts, SORT_ASC, $persons);
 
     // Group persons by tag.
     $persons_by_tag = [];
