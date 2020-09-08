@@ -155,7 +155,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       // Creating email object.
       $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
       $email = new Email();
-      $email->addTo($email_to_sendgrid)
+      $email->addSmtpapiTo($email_to_sendgrid)
         ->setFrom($to)
         ->setSubject('New content has been posted.')
         ->setText('New content has been posted.')
