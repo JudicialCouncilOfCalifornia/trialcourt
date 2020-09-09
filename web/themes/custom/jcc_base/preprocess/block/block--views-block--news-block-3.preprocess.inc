@@ -67,7 +67,7 @@ function jcc_base_preprocess_block__views_block__news_block_3(&$variables) {
           'excerpt' => $excerpt,
           'url' => $url,
         ],
-        'img' => $img_elem,
+        'img' => $img_elem ?? '',
         'contextual_links' => $placeholder,
       ];
       array_push($tiles, $recent_news_tile);
