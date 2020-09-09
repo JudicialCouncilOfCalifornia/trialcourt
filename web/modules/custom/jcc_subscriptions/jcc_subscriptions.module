@@ -117,7 +117,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       return $item !== 0;
     });
 
-    $tempstore = \Drupal::service('tempstore.private');
+    $tempstore = \Drupal::service('tempstore.shared');
     $store = $tempstore->get('jcc_subscriptions');
 
     // Gathering emails to send emails to.
@@ -177,7 +177,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
           $news_post_date,
           $news_path_alias,
           $news_title[0]['value'],
-          $news_summary[0]['summary'] ?? strip_tags(substr($news_summary[0]['value'], 0, 300)),
+          $news_summary[0]['summary'] ?: strip_tags(substr($news_summary[0]['value'], 0, 300)),
           $base_url,
         ],
         '
