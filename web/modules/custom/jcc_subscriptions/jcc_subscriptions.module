@@ -271,10 +271,19 @@ function jcc_subscriptions_user_insert(EntityInterface $entity) {
  * Implements hook_token_info().
  */
 function jcc_subscriptions_token_info() {
-  $info = [];
-  $info['types']['jcc'] = ['name' => t('JCC Custom'), 'description' => t('JCC Custom Tokens')];
-  $info['tokens']['jcc']['subscription-mail-access-key'][] = '';
-  return $info;
+  $type = [
+    'name' => t('JCC Custom'),
+    'description' => t('JCC Custom Tokens.'),
+  ];
+  $jcc['subscription-mail-access-key'] = [
+    'name' => t("Subscription Mail Access Key"),
+    'description' => t('Subscription Access Key for Mail'),
+  ];
+
+  return [
+    'types' => ['jcc' => $type],
+    'tokens' => ['jcc' => $jcc],
+  ];
 }
 
 /**
@@ -299,7 +308,7 @@ function jcc_subscriptions_tokens($type, $tokens, array $data, array $options, B
   return $replacements;
 }
 
-/** 
+/**
  * Implements hook_cron().
  */
 function jcc_subscriptions_cron() {

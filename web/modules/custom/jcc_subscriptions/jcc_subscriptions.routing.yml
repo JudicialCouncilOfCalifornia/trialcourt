@@ -27,3 +27,11 @@ jcc_subscriptions.manage:
     _custom_access: '\Drupal\jcc_subscriptions\Form\ManageSubs::access'
   options:
     no_cache: 'TRUE'
+
+jcc_subscriptions.settings:
+  path: '/admin/config/services/jcc-subscriptions'
+  defaults:
+    _form: '\Drupal\jcc_subscriptions\Form\SettingsForm'
+    _title: 'JCC Subscription Settings'
+  requirements:
+    _permission: 'administer webform myemma'
