@@ -9,6 +9,8 @@ use SendGrid\Exception;
 use SendGrid\Email;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Entity\EntityInterface;
 
 use MarkRoland\Emma\Client;
 use SendGrid\Client as SClient;
@@ -17,7 +19,6 @@ use SendGrid\Client as SClient;
  * Implements hook_form_alter().
  */
 function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
-
   if (in_array($form['#form_id'], ['node_news_form', 'user_form'])) {
     // Connection to myEmma.
     $emma_config = \Drupal::config('webform_myemma.settings');
@@ -149,6 +150,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     $news_summary = $form_state->cleanValues()->getValues()['body'];
     $news_nid = $form_state->cleanValues()->getValues()['nid'];
     $news_post_date_unformated = $form_state->cleanValues()->getValues()['created'][0]['value'];
+    // TODO: Image field (feeds temp folder issue)
     // $news_image = $form_state->cleanValues()->getValues()['field_images'];
     // Date formatting.
     $date = new DrupalDateTime($news_post_date_unformated, DATETIME_STORAGE_TIMEZONE);
@@ -257,9 +259,50 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
 }
 
 /**
+ * Implements hook_entity_insert().
+ */
+function jcc_subscriptions_user_insert(EntityInterface $entity) {
+  $tempstore = \Drupal::service('tempstore.shared');
+  $store = $tempstore->get('jcc_subscriptions');
+  $store->set('member_email_' . $entity->get('mail')->value, user_password());
+}
+
+/**
  * Implements hook_cron().
  */
 function jcc_subscriptions_cron() {
   $digest_cron_task = \Drupal::service('jcc_subscriptions.digestcron');
   $digest_cron_task->cron();
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function jcc_subscriptions_token_info() {
+  $info = [];
+  $info['types']['jcc'] = ['name' => t('JCC Custom'), 'description' => t('JCC Custom Tokens')];
+  $info['tokens']['jcc']['subscription-mail-access-key'][] = '';
+  return $info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function jcc_subscriptions_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  $replacements = [];
+  if ($type == 'jcc' && !empty($data['user'])) {
+    /** @var \Drupal\user\UserInterface $account */
+    $account = $data['user'];
+
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'subscription-mail-access-key':
+          $tempstore = \Drupal::service('tempstore.shared');
+          $store = $tempstore->get('jcc_subscriptions');
+          $replacements[$original] = $store->get('member_email_' . $account->get('mail')->value);
+          break;
+      }
+    }
+  }
+  return $replacements;
 }
