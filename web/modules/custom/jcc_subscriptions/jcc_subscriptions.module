@@ -268,14 +268,6 @@ function jcc_subscriptions_user_insert(EntityInterface $entity) {
 }
 
 /**
- * Implements hook_cron().
- */
-function jcc_subscriptions_cron() {
-  $digest_cron_task = \Drupal::service('jcc_subscriptions.digestcron');
-  $digest_cron_task->cron();
-}
-
-/**
  * Implements hook_token_info().
  */
 function jcc_subscriptions_token_info() {
@@ -323,4 +315,3 @@ function jcc_subscriptions_cron() {
   $digest_cron_task = \Drupal::service('jcc_subscriptions.digestcron');
   $digest_cron_task->cron();
 }
-
