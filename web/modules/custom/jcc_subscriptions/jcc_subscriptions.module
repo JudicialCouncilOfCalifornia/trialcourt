@@ -9,6 +9,8 @@ use SendGrid\Exception;
 use SendGrid\Email;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Entity\EntityInterface;
 
 use MarkRoland\Emma\Client;
 use SendGrid\Client as SClient;
@@ -254,4 +256,45 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     // Need an extra call to account for groups to remove.
     $emma->remove_member_from_groups($user_emma_id, $groups_to_remove);
   }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function jcc_subscriptions_user_insert(EntityInterface $entity) {
+  $tempstore = \Drupal::service('tempstore.shared');
+  $store = $tempstore->get('jcc_subscriptions');
+  $store->set('member_email_' . $entity->get('mail')->value, user_password());
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function jcc_subscriptions_token_info() {
+  $info = [];
+  $info['types']['jcc'] = ['name' => t('JCC Custom'), 'description' => t('JCC Custom Tokens')];
+  $info['tokens']['jcc']['subscription-mail-access-key'][] = '';
+  return $info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function jcc_subscriptions_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  $replacements = [];
+  if ($type == 'jcc' && !empty($data['user'])) {
+    /** @var \Drupal\user\UserInterface $account */
+    $account = $data['user'];
+
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'subscription-mail-access-key':
+          $tempstore = \Drupal::service('tempstore.shared');
+          $store = $tempstore->get('jcc_subscriptions');
+          $replacements[$original] = $store->get('member_email_' . $account->get('mail')->value);
+          break;
+      }
+    }
+  }
+  return $replacements;
 }
