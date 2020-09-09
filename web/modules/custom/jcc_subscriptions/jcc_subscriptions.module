@@ -151,15 +151,23 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
       $to = $sendgrid_conf['from_name'];
       $sendgrid_api_key = \Drupal::service('key.repository')->getKey('newsroom_sendgrid')->getKeyValue();
-      // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
-      // Creating email object.
-      $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
-      $email = new Email();
-      $email->addSmtpapiTo($email_to_sendgrid)
-        ->setFrom($to)
-        ->setSubject('New content has been posted.')
-        ->setText('New content has been posted.')
-        ->setHtml('
+
+      $body = str_replace(
+        [
+          '%news_post_date%',
+          '%news_url%',
+          '%news_title%',
+          '%news_summary%',
+          '%base_url%',
+        ],
+        [
+          $news_post_date,
+          $news_path_alias,
+          $news_title[0]['value'],
+          $news_summary[0]['summary'] ?? strip_tags(substr($news_summary[0]['value'], 0, 300)),
+          $base_url,
+        ],
+        '
           <div>%news_post_date%</div>
           <h2><a href="%news_url%"> %news_title%</a></h2>
           <p>%news_summary%</p>
@@ -167,15 +175,20 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
           <br/>
           <p><a href="%base_url%/subscriptions/%member_email%/manage">manage your preferences</a><br>
           or <a href="%base_url%/subscriptions/%member_id%/delete-all">opt out</a> from all communications.</p>
-          ')
-        ->addSubstitution('%news_url%', [$news_path_alias])
-        ->addSubstitution('%news_title%', [$news_title[0]['value']])
-        ->addSubstitution('%news_summary%', [$news_summary[0]['value']])
-        ->addSubstitution('%news_post_date%', [$news_post_date])
+        '
+      );
+
+      // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
+      // Creating email object.
+      $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
+      $email = new Email();
+      $email->setSmtpapiTos($email_to_sendgrid)
+        ->setFrom($to)
+        ->setSubject($news_title[0]['value'])
+        ->setText($news_title[0]['value'])
+        ->setHtml($body)
         ->addSubstitution('%member_id%', $id_to_sendgrid)
         ->addSubstitution('%member_email%', $email_to_sendgrid)
-        ->addSubstitution('%emma_account%', [$emma_config->get('account_id')])
-        ->addSubstitution('%base_url%', [$base_url])
         ->addHeader('X-Sent-Using', 'SendGrid-API')
         ->addHeader('X-Transport', 'web');
 
