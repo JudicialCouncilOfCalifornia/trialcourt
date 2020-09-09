@@ -117,9 +117,14 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       return $item !== 0;
     });
 
+    $tempstore = \Drupal::service('tempstore.private');
+    $store = $tempstore->get('jcc_subscriptions');
+
     // Gathering emails to send emails to.
     $email_to_sendgrid = [];
     $id_to_sendgrid = [];
+    $email_access_keys = [];
+    $id_access_keys = [];
     foreach ($emma_groups as $group) {
       $users_in_group = $emma->list_group_members($group);
       foreach ($users_in_group as $user_group) {
@@ -127,6 +132,14 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
           array_push($email_to_sendgrid, $user_group->email);
           // Building array of ID's for opting out urls.
           array_push($id_to_sendgrid, $user_group->member_id);
+
+          $email_key = user_password();
+          array_push($email_access_keys, $email_key);
+          $store->set('member_email_' . $user_group->email, $email_key);
+
+          $id_key = user_password();
+          array_push($id_access_keys, $id_key);
+          $store->set('member_id_' . $user_group->member_id, $id_key);
         }
       }
     }
@@ -173,8 +186,8 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
           <p>%news_summary%</p>
           <p><a href="%news_url%">Read more ></a></p>
           <br/>
-          <p><a href="%base_url%/subscriptions/%member_email%/manage">manage your preferences</a><br>
-          or <a href="%base_url%/subscriptions/%member_id%/delete-all">opt out</a> from all communications.</p>
+          <p><a href="%base_url%/subscriptions/%member_email%/manage/%email_key%">manage your preferences</a><br>
+          or <a href="%base_url%/subscriptions/%member_id%/delete-all/%id_key%">opt out</a> from all communications.</p>
         '
       );
 
@@ -184,11 +197,14 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       $email = new Email();
       $email->setSmtpapiTos($email_to_sendgrid)
         ->setFrom($to)
+        ->setFromName(\Drupal::config('system.site')->get('name'))
         ->setSubject($news_title[0]['value'])
         ->setText($news_title[0]['value'])
         ->setHtml($body)
         ->addSubstitution('%member_id%', $id_to_sendgrid)
         ->addSubstitution('%member_email%', $email_to_sendgrid)
+        ->addSubstitution('%id_key%', $id_access_keys)
+        ->addSubstitution('%email_key%', $email_access_keys)
         ->addHeader('X-Sent-Using', 'SendGrid-API')
         ->addHeader('X-Transport', 'web');
 
