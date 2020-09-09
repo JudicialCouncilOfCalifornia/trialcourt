@@ -1,23 +1,23 @@
 jcc_subscriptions.content:
-  path: '/subscriptions/{member_id}/delete-all'
+  path: '/subscriptions/{member_id}/delete-all/{access_key}'
   defaults:
     _controller: '\Drupal\jcc_subscriptions\Controller\DeleteAllSubs::content'
     _title: 'Delete all subscriptions'
   requirements:
-    _permission: 'access content'
+    _custom_access: '\Drupal\jcc_subscriptions\Controller\DeleteAllSubs::access'
 
 jcc_subscriptions.delete:
-  path: '/subscriptions/{member_id}/delete-all/confirmed'
+  path: '/subscriptions/{member_id}/delete-all/confirmed/{access_key}'
   defaults:
     _controller: '\Drupal\jcc_subscriptions\Controller\ConfirmDeleteAllSubs::delete'
     _title: 'Unsubscribed'
   requirements:
-    _permission: 'access content'
+    _custom_access: '\Drupal\jcc_subscriptions\Controller\DeleteAllSubs::access'
 
 jcc_subscriptions.manage:
-  path: '/subscriptions/{member_email}/manage'
+  path: '/subscriptions/{member_email}/manage/{access_key}'
   defaults:
     _form: '\Drupal\jcc_subscriptions\Form\ManageSubs'
     _title: 'Manage subscriptions'
   requirements:
-    _permission: 'access content'
+    _custom_access: '\Drupal\jcc_subscriptions\Form\ManageSubs::access'

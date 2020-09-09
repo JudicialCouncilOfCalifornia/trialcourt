@@ -5,11 +5,40 @@ namespace Drupal\jcc_subscriptions\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use MarkRoland\Emma\Client;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
 
 /**
  * Deletes all groups from user.
  */
 class ManageSubs extends FormBase {
+
+  /**
+   * Temp store.
+   *
+   * @var Drupal\Core\TempStore\PrivateTempStoreFactory
+   */
+  protected $tempstore;
+
+  /**
+   * Class constructor.
+   */
+  public function __construct(PrivateTempStoreFactory $tempstore) {
+    $this->tempstore = $tempstore;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    // Instantiates this form class.
+    return new static(
+    // Load the service required to construct this class.
+      $container->get('tempstore.private')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -23,7 +52,7 @@ class ManageSubs extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, string $member_email = '') {
 
-    $emma_config = \Drupal::config('webform_myemma.settings');
+    $emma_config = self::config('webform_myemma.settings');
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
     $user = $emma->get_member_detail_by_email($member_email);
 
@@ -40,7 +69,7 @@ class ManageSubs extends FormBase {
     $form['myemma_groups'] = [
       '#type' => 'checkboxes',
       '#options' => $form_groups,
-      '#title' => t('Manage subscriptions:'),
+      '#title' => $this->t('Manage subscriptions:'),
     ];
 
     // Populating default values.
@@ -74,7 +103,7 @@ class ManageSubs extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $member_email = $form['email']['#value'];
-    $emma_config = \Drupal::config('webform_myemma.settings');
+    $emma_config = self::config('webform_myemma.settings');
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
     $user_req = $emma->get_member_detail_by_email($member_email);
@@ -96,6 +125,28 @@ class ManageSubs extends FormBase {
     $emma->import_single_member($member_email, $fields, $groups);
     // Need an extra call to account for groups to remove.
     $emma->remove_member_from_groups($user_emma_id, $groups_to_remove);
+  }
+
+  /**
+   * Checks access for a specific request.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Run access checks for this account.
+   * @param string $member_email
+   *   Member email.
+   * @param string $access_key
+   *   Member access key.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function access(AccountInterface $account, string $member_email = '', string $access_key = '') {
+    $store = $this->tempstore->get('jcc_subscriptions');
+    $value = $store->get('member_email_' . $member_email);
+
+    return AccessResult::allowedIf(
+      $account->hasPermission('access content')
+      && $access_key == $value);
   }
 
 }
