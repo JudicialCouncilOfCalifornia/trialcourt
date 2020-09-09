@@ -146,7 +146,7 @@ class ManageSubs extends FormBase {
 
     return AccessResult::allowedIf(
       $account->hasPermission('access content')
-      && $access_key == $value);
+      && ($access_key == $value || $account->getEmail() == $member_email));
   }
 
 }
