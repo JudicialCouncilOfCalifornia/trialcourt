@@ -21,9 +21,15 @@ class JCCSubscriptionsDigestCron {
   public function cron() {
     $this->state = \Drupal::state();
     $now = \Drupal::time()->getRequestTime();
-    // TODO: Remove line below to stop emailing at every cron.
-    $this->sendDigest();
-    if ($this->shouldRun($now)) {
+
+    $jcc_config = \Drupal::config('jcc_subscriptions.settings');
+
+    if ($jcc_config->get('newslink_digest_debug')) {
+      \Drupal::logger('jcc_subscriptions')->notice('Newslink digest debug enabled.');
+      $this->sendDigest();
+    }
+
+    if ($this->shouldRun($now, $jcc_config->get('newslink_digest_time'))) {
       // Checks if there is any news item to send.
       $view = Views::getView('news_digest');
       $view->get_total_rows = TRUE;
@@ -44,8 +50,7 @@ class JCCSubscriptionsDigestCron {
   /**
    * Test if cron should run.
    */
-  public function shouldRun($now) {
-    $scheduled = '17:00';
+  public function shouldRun($now, $scheduled = '17:00') {
     $timezone = new \DateTimeZone('America/Los_Angeles');
 
     $timestamp_last = $this->state->get('jcc_subscriptions.last_cron') ?? 0;
@@ -76,38 +81,50 @@ class JCCSubscriptionsDigestCron {
     $emma_config = \Drupal::config('webform_myemma.settings');
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
-    // TODO: Replace with final group id
     // test digest : 13977604.
-    $emma_group = '13977604';
+    $jcc_config = \Drupal::config('jcc_subscriptions.settings');
+    $emma_group = $jcc_config->get('newslink_digest_group');
+
+    $tempstore = \Drupal::service('tempstore.shared');
+    $store = $tempstore->get('jcc_subscriptions');
 
     // Gathering emails to send emails to.
     $email_to_sendgrid = [];
     $id_to_sendgrid = [];
+    $email_access_keys = [];
+    $id_access_keys = [];
     $users_in_group = $emma->list_group_members($emma_group);
     foreach ($users_in_group as $user_group) {
       if (!in_array($user_group->email, $email_to_sendgrid, TRUE)) {
         array_push($email_to_sendgrid, $user_group->email);
         // Building array of ID's for opting out urls.
         array_push($id_to_sendgrid, $user_group->member_id);
+
+        $email_key = user_password();
+        array_push($email_access_keys, $email_key);
+        $store->set('member_email_' . $user_group->email, $email_key);
+
+        $id_key = user_password();
+        array_push($id_access_keys, $id_key);
+        $store->set('member_id_' . $user_group->member_id, $id_key);
       }
     }
 
-    $email_body = \Drupal::service('renderer')->render(views_embed_view('news_digest', 'default'));
+    $view_digest = views_embed_view('news_digest', 'default');
+    $email_body = \Drupal::service('renderer')->render($view_digest);
 
-    // Getting from email.
-    if (!empty(\Drupal::service('key.repository')->getKey('newsroom_sendgrid'))) {
-      $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
-      $to = $sendgrid_conf['from_name'];
-      $sendgrid_api_key = \Drupal::service('key.repository')->getKey('newsroom_sendgrid')->getKeyValue();
-      // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
-      // Creating email object.
-      $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
-      $email = new Email();
-      $email->addTo($email_to_sendgrid)
-        ->setFrom($to)
-        ->setSubject('News digest form newsroom')
-        ->setText('News digest form newsroom')
-        ->setHtml('
+    $body = str_replace(
+      [
+        '%email_body%',
+        '%today_date%',
+        '%base_url%',
+      ],
+      [
+        $email_body,
+        date("F j, Y"),
+        $base_url,
+      ],
+      '
           <table border="1" cellspacing="0" cellpadding="0" id="x_x_templateContainer" style="background-color:white;width:450pt;border:1pt solid #DDDDDD;">
             <tbody>
               <tr>
@@ -162,8 +179,8 @@ class JCCSubscriptionsDigestCron {
                                     <br>
                                     <div>%email_body%</div>
                                     <br>
-                                    <p><a href="%base_url%/subscriptions/%member_email%/manage">manage your preferences</a><br>
-                                    or <a href="%base_url%/subscriptions/%member_id%/delete-all">opt out</a> from all communications.</p>
+                                    <p><a href="%base_url%/subscriptions/%member_email%/manage/%email_key%">manage your preferences</a><br>
+                                    or <a href="%base_url%/subscriptions/%member_id%/delete-all/%id_key%">opt out</a> from all communications.</p>
                                   </td>
                                 </tr>
                               </tbody>
@@ -176,13 +193,29 @@ class JCCSubscriptionsDigestCron {
                 </td>
               </tr>
             </tbody>
-          </table>')
-        ->addSubstitution('%email_body%', [$email_body])
-        ->addSubstitution('%today_date%', [date("F j, Y")])
+          </table>
+        '
+    );
+
+    // Getting from email.
+    if (!empty(\Drupal::service('key.repository')->getKey('newsroom_sendgrid'))) {
+      $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
+      $to = $sendgrid_conf['from_name'];
+      $sendgrid_api_key = \Drupal::service('key.repository')->getKey('newsroom_sendgrid')->getKeyValue();
+      // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
+      // Creating email object.
+      $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
+      $email = new Email();
+      $email->setSmtpapiTos($email_to_sendgrid)
+        ->setFrom($to)
+        ->setFromName(\Drupal::config('system.site')->get('name'))
+        ->setSubject('California Courts NewsLinks Digest - ' . date("F j, Y"))
+        ->setText('California Courts NewsLinks Digest - ' . date("F j, Y"))
+        ->setHtml($body)
         ->addSubstitution('%member_id%', $id_to_sendgrid)
         ->addSubstitution('%member_email%', $email_to_sendgrid)
-        ->addSubstitution('%emma_account%', [$emma_config->get('account_id')])
-        ->addSubstitution('%base_url%', [$base_url])
+        ->addSubstitution('%id_key%', $id_access_keys)
+        ->addSubstitution('%email_key%', $email_access_keys)
         ->addHeader('X-Sent-Using', 'SendGrid-API')
         ->addHeader('X-Transport', 'web');
 
@@ -193,13 +226,11 @@ class JCCSubscriptionsDigestCron {
         $sendGridResponse = $sendgrid->send($email);
 
         if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
-          drupal_set_message(t('Email successfully sent'));
+          drupal_set_message($this->t('Email successfully sent'));
         }
         else {
           // Show error.
-          drupal_set_message(t('Email was not sent'));
-          // Try again.
-          $sendGridResponse = $sendgrid->send($email);
+          drupal_set_message($this->t('Email was not sent'));
         }
       }
       catch (Exception $e) {
