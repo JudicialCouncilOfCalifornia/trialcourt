@@ -8,7 +8,7 @@ use MarkRoland\Emma\Client;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\Core\TempStore\SharedTempStoreFactory;
 
 /**
  * Deletes all groups from user.
@@ -18,14 +18,14 @@ class ManageSubs extends FormBase {
   /**
    * Temp store.
    *
-   * @var Drupal\Core\TempStore\PrivateTempStoreFactory
+   * @var Drupal\Core\TempStore\SharedTempStoreFactory
    */
   protected $tempstore;
 
   /**
    * Class constructor.
    */
-  public function __construct(PrivateTempStoreFactory $tempstore) {
+  public function __construct(SharedTempStoreFactory $tempstore) {
     $this->tempstore = $tempstore;
   }
 
@@ -36,7 +36,7 @@ class ManageSubs extends FormBase {
     // Instantiates this form class.
     return new static(
     // Load the service required to construct this class.
-      $container->get('tempstore.private')
+      $container->get('tempstore.shared')
     );
   }
 
