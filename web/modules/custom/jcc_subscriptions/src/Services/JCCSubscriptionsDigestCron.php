@@ -135,11 +135,11 @@ class JCCSubscriptionsDigestCron {
                         <tr>
                           <td style="padding:11.25pt 0;border-style:none;">
                             <div>
-                              <p align="center" style="font-size:11pt;font-family:Calibri,sans-serif;text-align:center;margin:0;">
+                              <p align="center" style="font-size:11pt;font-family:Calibri,sans-serif;margin:0;">
                                 <b><span style="color:#202020;font-size:25.5pt;font-family:Arial,sans-serif;">
                                   <a href="%base_url%" target="_blank" rel="noopener noreferrer" data-auth="NotApplicable">
                                     <span style="color:#0088CC;font-weight:normal;text-decoration:none;">
-                                      <img data-imagetype="External" src="%base_url%/sites/default/files/newsroom/NewsroomDrupalBanner%20Blue.png" originalsrc="%base_url%/sites/default/files/newsroom/NewsroomDrupalBanner%20Blue.png" border="0" id="x_x__x0000_i1025" style="width:400pt;height:100pt;">
+                                      <img data-imagetype="External" src="%base_url%/sites/default/files/newsroom/NewsroomDrupalBanner%20Blue.png" originalsrc="%base_url%/sites/default/files/newsroom/NewsroomDrupalBanner%20Blue.png" border="0" id="x_x__x0000_i1025" style="width:375px;">
                                     </span>
                                   </a></span>
                                 </b>
@@ -149,7 +149,7 @@ class JCCSubscriptionsDigestCron {
                               <p style="font-size:11pt;font-family:Calibri,sans-serif;margin:0;">
                                 <span style="color:#202020;font-size:10pt;font-family:Arial,sans-serif;">
                                   <a href="%base_url%" target="_blank" rel="noopener noreferrer" data-auth="NotApplicable">
-                                    <span style="color:#0088CC;text-decoration:none;">See NewsLinks in California Courts Newsroom</span>
+                                    <span style="color:#0088CC;text-decoration:none;">See NewsLinks in Newsroom</span>
                                   </a>
                                 </span>
                               </p>
@@ -173,7 +173,7 @@ class JCCSubscriptionsDigestCron {
                                 <tr>
                                   <td valign="top" style="padding:10pt;">
                                     <h1 style="color:#202020;font-size:27pt;font-family:Arial,sans-serif;font-weight:bold;margin:0 0 15pt 0;">
-                                      <span style="font-size:16.5pt;">California Courts NewsLinks Digest</span>
+                                      <span style="font-size:16.5pt;">NewsLinks Digest</span>
                                     </h1>
                                     <h3>%today_date%</h3>
                                     <br>
