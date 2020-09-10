@@ -22,6 +22,10 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
   if (in_array($form['#form_id'], ['node_news_form', 'user_form'])) {
     // Connection to myEmma.
     $emma_config = \Drupal::config('webform_myemma.settings');
+    if (!$emma_config->get('account_id')) {
+      return FALSE;
+    }
+
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
     // Getting groups from myemma / only keeping ones with naming convention.
@@ -111,6 +115,10 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     global $base_url;
     // Getting data from myemma.
     $emma_config = \Drupal::config('webform_myemma.settings');
+    if (!$emma_config->get('account_id')) {
+      return FALSE;
+    }
+
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
     $groups = $form_state->cleanValues()->getValues()['myemma_groups'];
@@ -234,6 +242,10 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
   }
   elseif ($form['#form_id'] == 'user_form') {
     $emma_config = \Drupal::config('webform_myemma.settings');
+    if (!$emma_config->get('account_id')) {
+      return FALSE;
+    }
+
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
     $user_req = $emma->get_member_detail_by_email($form_state->cleanValues()->getValues()['mail']);
