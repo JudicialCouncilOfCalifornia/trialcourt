@@ -18,7 +18,12 @@ use Drupal\file\Entity\File;
  */
 function jcc_newsroom_preprocess_node__news(&$variables, $hook) {
   // Forcing image field to use image_style formatting.
-  if (isset($variables['content']['field_images']['#items']) && $variables['content']['field_images']['#items'] != NULL) {
+  if (isset($variables['content']['field_images']['#items'])
+    && $variables['content']['field_images']['#items'] != NULL
+    && isset($variables['content']['field_news_type']['#items'])
+    && $variables['content']['field_news_type']['#items'] != NULL
+    && $variables['content']['field_news_type']['#items']->first()->entity->label() == 'Feature') {
+
     $referenced_img = $variables['content']['field_images']['#items']->first()->get('target_id')->getValue();
     $media = Media::load($referenced_img);
     if ($media) {
