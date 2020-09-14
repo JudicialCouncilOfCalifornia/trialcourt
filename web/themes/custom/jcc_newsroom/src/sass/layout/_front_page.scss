@@ -14,14 +14,30 @@
     background-color: transparent;
 
     > ul {
-      flex-direction: inherit;
+      display: block;
+      flex-direction: column;
+      -ms-flex-direction: column;
+
+      @media only screen and (min-width: 768px) {
+        display: flex;
+        flex-direction: inherit;
+        -ms-flex-direction: inherit;
+      }
+
+      li {
+        margin: 0 !important;
+
+        @media only screen and (min-width: 768px) {
+          &:not(last-child) {
+            margin-bottom: .5rem;
+          }
+        }
+      }
     }
 
     ul {
       li {
-        @media only screen and (min-width: 640px) {
-          margin: 0 1rem 0 0;
-
+        @media only screen and (min-width: 768px) {
           &:last-child {
             margin: 0;
           }
@@ -36,6 +52,26 @@
         font-size: 1rem;
       }
     }
+  }
+
+  .jcc-cards__highlight + .jcc-cards-with-button {
+    .jcc-cards-with-button__item {
+      width: 100%;
+      margin: 0 0 1rem 0 !important;
+
+      @media only screen and (min-width: 768px) {
+        width: 49%;
+        flex: none;
+
+        &:not(last-child) {
+          margin-right: 1rem !important;
+        }
+      }
+    }
+  }
+
+  .jcc-cards-with-button__button, .jcc-link-list__button {
+    text-align: center;
   }
 
   .jcc-tiles-list__container {
@@ -93,7 +129,7 @@
       }
 
       .jcc-cards__highlight + .jcc-cards-with-button {
-          margin-bottom: 1rem;
+        margin-bottom: 1rem;
       }
     }
 
@@ -130,18 +166,5 @@
         }
       }
     }
-  }
-
-  @media only screen and (min-width: 640px) {
-    .jcc-cards__highlight + .jcc-cards-with-button {
-      .jcc-cards-with-button__item {
-        width: 49%;
-        flex: none;
-      }
-    }
-  }
-
-  .jcc-cards-with-button__button, .jcc-link-list__button {
-    text-align: center;
   }
 }
