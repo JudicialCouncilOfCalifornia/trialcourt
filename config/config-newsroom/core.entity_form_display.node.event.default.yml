@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.media_directories_modal
     - field.field.node.event.body
     - field.field.node.event.field_date_range
     - field.field.node.event.field_division
@@ -22,10 +23,10 @@ dependencies:
     - autocomplete_deluxe
     - content_moderation
     - datetime_range
+    - entity_browser
     - field_group
     - geolocation
     - link_attributes
-    - media_library
     - path
     - scheduler
     - scheduler_content_moderation_integration
@@ -218,10 +219,18 @@ content:
     type: geolocation_latlng
     region: content
   field_images:
-    type: media_library_widget
+    type: entity_browser_entity_reference
     weight: 5
     settings:
-      media_types: {  }
+      entity_browser: media_directories_modal
+      field_widget_display: rendered_entity
+      field_widget_display_settings:
+        view_mode: media_library
+      field_widget_edit: true
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
+      field_widget_replace: false
     third_party_settings: {  }
     region: content
   field_links:
