@@ -65,7 +65,9 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
 
           // Creating a new media entity and altering the parser.
           $newEntityId = $this->createImgEntity($news_image, $img_id);
-          $item->set('news_image', $newEntityId);
+          if ($newEntityId) {
+            $item->set('news_image', $newEntityId);
+          }
         }
       }
     }
@@ -75,19 +77,37 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
    * Create image entity out of downloaded image.
    */
   protected function createImgEntity(string $img_url, string $img_id) {
+    $media = \Drupal::entityQuery("media")
+      ->condition("name", $img_id)
+      ->sort("mid", "DESC")
+      ->execute();
+    $mid = reset($media);
+    if ($mid) {
+      return $mid;
+    }
+
     $file_data = file_get_contents($img_url);
 
     if (!file_exists('public://newslink/')) {
       drupal_mkdir('public://newslink/');
     }
-    $file = file_save_data($file_data, "public://newslink/" . $img_id . ".png", FILE_EXISTS_REPLACE);
-    $media = Media::create([
-      'bundle' => 'image',
-      'uid' => '1',
-      'field_media_image' => $file,
-    ]);
-    $media->setName($img_id)->setPublished(TRUE)->save();
-    return $media->id();
+
+    $filename = "public://newslink/" . $img_id . ".png";
+    if (!file_exists($filename)) {
+      $file = file_save_data($file_data, $filename, FILE_EXISTS_REPLACE);
+      $media = Media::create([
+        'bundle' => 'image',
+        'uid' => '1',
+        'field_media_image' => $file,
+
+        // NewsLink in Media Directory.
+        'directory' => '188',
+      ]);
+      $media->setName($img_id)->setPublished(TRUE)->save();
+      return $media->id();
+    }
+
+    return FALSE;
   }
 
   /**
