@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.media_directories_modal
     - field.field.node.document.body
     - field.field.node.document.field_attachments
     - field.field.node.document.field_division
@@ -20,9 +21,9 @@ dependencies:
     - autocomplete_deluxe
     - content_moderation
     - datetime
+    - entity_browser
     - field_group
     - link_attributes
-    - media_library
     - metatag
     - path
     - scheduler
@@ -177,9 +178,17 @@ content:
   field_attachments:
     weight: 3
     settings:
-      media_types: {  }
+      entity_browser: media_directories_modal
+      field_widget_display: rendered_entity
+      field_widget_display_settings:
+        view_mode: media_library
+      field_widget_edit: true
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
+      field_widget_replace: false
     third_party_settings: {  }
-    type: media_library_widget
+    type: entity_browser_entity_reference
     region: content
   field_division:
     weight: 6
@@ -249,7 +258,8 @@ content:
     region: content
   field_metatag:
     weight: 17
-    settings: {  }
+    settings:
+      sidebar: true
     third_party_settings: {  }
     type: metatag_firehose
     region: content
