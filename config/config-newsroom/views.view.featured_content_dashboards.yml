@@ -7,6 +7,9 @@ dependencies:
     - node.type.news
     - taxonomy.vocabulary.multimedia_type
     - taxonomy.vocabulary.news_type
+    - user.role.administrator
+    - user.role.author
+    - user.role.editor
   content:
     - 'taxonomy_term:multimedia_type:9de250f9-e7f5-47d5-83c9-b1d7a28ccb2a'
     - 'taxonomy_term:news_type:cc84a765-bfb4-4de9-9eb7-b9bcfa05cd64'
@@ -31,9 +34,12 @@ display:
     position: 0
     display_options:
       access:
-        type: perm
+        type: role
         options:
-          perm: 'access content'
+          role:
+            editor: editor
+            author: author
+            administrator: administrator
       cache:
         type: tag
         options: {  }
@@ -372,7 +378,7 @@ display:
         - 'languages:language_interface'
         - user
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags: {  }
   attachment_1:
     display_plugin: attachment
@@ -831,7 +837,7 @@ display:
         - 'languages:language_interface'
         - user
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags: {  }
   page_1:
     display_plugin: page
@@ -1035,7 +1041,7 @@ display:
         - 'languages:language_interface'
         - user
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags: {  }
   page_2:
     display_plugin: page
@@ -1383,7 +1389,7 @@ display:
         - 'languages:language_interface'
         - user
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags: {  }
   page_3:
     display_plugin: page
@@ -1561,7 +1567,7 @@ display:
         - 'languages:language_interface'
         - user
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags: {  }
   page_4:
     display_plugin: page
@@ -1890,5 +1896,5 @@ display:
         - 'languages:language_interface'
         - user
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags: {  }

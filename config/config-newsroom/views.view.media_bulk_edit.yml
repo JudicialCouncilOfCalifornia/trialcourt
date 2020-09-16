@@ -7,6 +7,7 @@ dependencies:
     - image.style.thumbnail
     - media.type.image
     - taxonomy.vocabulary.news_type
+    - user.role.administrator
   content:
     - 'taxonomy_term:news_type:cc84a765-bfb4-4de9-9eb7-b9bcfa05cd64'
   module:
@@ -32,9 +33,10 @@ display:
     position: 0
     display_options:
       access:
-        type: perm
+        type: role
         options:
-          perm: 'view media'
+          role:
+            administrator: administrator
       cache:
         type: tag
         options: {  }
@@ -587,7 +589,7 @@ display:
         - url
         - url.query_args
         - user
-        - user.permissions
+        - user.roles
       tags:
         - 'config:field.storage.node.field_news_type'
   page_1:
@@ -606,6 +608,6 @@ display:
         - url
         - url.query_args
         - user
-        - user.permissions
+        - user.roles
       tags:
         - 'config:field.storage.node.field_news_type'
