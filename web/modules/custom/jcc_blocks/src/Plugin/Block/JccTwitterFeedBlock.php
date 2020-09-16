@@ -96,7 +96,7 @@ class JccTwitterFeedBlock extends BlockBase implements ContainerFactoryPluginInt
       '#size' => 64,
       '#description' => $this->t('Enter the URL for the twitter feed embed (e.g. https://twitter.com/CalCourts?ref_src=twsrc%5Etfw).'),
       '#weight' => '1',
-      '#required' => TRUE
+      '#required' => TRUE,
     ];
 
     $form['width'] = [
@@ -146,9 +146,10 @@ class JccTwitterFeedBlock extends BlockBase implements ContainerFactoryPluginInt
       'feed_embed_url' => $this->configuration['feed_embed_url'],
       'height' => $this->configuration['height'],
       'width' => $this->configuration['width'],
-      'embed_parameters' => $this->configuration['embed_parameters']
+      'embed_parameters' => $this->configuration['embed_parameters'],
     ];
 
     return $build;
   }
+
 }
