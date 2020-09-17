@@ -60,8 +60,10 @@ class ManageSubs extends FormBase {
     $myemma_groups = $emma->list_groups();
     $form_groups = [];
     foreach ($myemma_groups as $group) {
-      if (strpos($group->group_name, 'Newsroom mailing') !== FALSE && strpos($group->group_name, 'Statewide Media') == FALSE) {
-        $form_groups[$group->member_group_id] = str_replace('Newsroom mailing ', '', $group->group_name);
+      if (strpos($group->group_name, 'Newsroom mailing') !== FALSE
+        && stripos($group->group_name, 'internal-only') == FALSE) {
+        $form_groups[$group->member_group_id] =
+          str_replace('Newsroom mailing ', '', $group->group_name);
       }
     }
 
