@@ -34,8 +34,17 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
     $form_groups = [];
     foreach ($myemma_groups as $group) {
       if (strpos($group->group_name, 'Newsroom mailing') !== FALSE) {
-        if (!(strpos($group->group_name, 'Statewide Media') !== FALSE && $form['#form_id'] == 'user_form')) {
-          $form_groups[$group->member_group_id] = str_replace('Newsroom mailing ', '', $group->group_name);
+        if (!(strpos($group->group_name, 'internal-only') !== FALSE && $form['#form_id'] == 'user_form')) {
+          $form_groups[$group->member_group_id] = str_ireplace(
+            [
+              'internal-only ',
+              'Newsroom mailing ',
+            ],
+            [
+              '',
+              '',
+            ],
+            $group->group_name);
         }
       }
     }
@@ -327,4 +336,3 @@ function jcc_subscriptions_cron() {
   $digest_cron_task = \Drupal::service('jcc_subscriptions.digestcron');
   $digest_cron_task->cron();
 }
-
