@@ -15,13 +15,15 @@ module:
   stage_file_proxy: 0
 theme: {  }
 blacklist:
+  - geocoder.geocoder_provider.bingmaps
   - jcc_subscriptions.settings
   - key.key.newsroom_sendgrid
   - openid_connect.settings.windows_aad
   - social_post_twitter.settings
   - webform_myemma.settings
-  - geocoder.geocoder_provider.bingmaps
-graylist: {  }
-graylist_dependents: true
-graylist_skip_equal: false
+graylist:
+  - key.key.solr_admin_password
+  - key.key.solr_admin_user
+graylist_dependents: false
+graylist_skip_equal: true
 weight: 0
