@@ -102,16 +102,18 @@ class JccTwitterFeedBlock extends BlockBase implements ContainerFactoryPluginInt
     $form['width'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Display Width'),
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#default_value' => $this->configuration['width'],
+      '#maxlength' => 4,
+      '#size' => 4,
       '#weight' => '1',
     ];
 
     $form['height'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Display Height'),
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#default_value' => $this->configuration['height'],
+      '#maxlength' => 4,
+      '#size' => 4,
       '#weight' => '1',
     ];
 
@@ -142,6 +144,12 @@ class JccTwitterFeedBlock extends BlockBase implements ContainerFactoryPluginInt
   public function build() {
     $build = [];
     $build['#theme'] = 'jcc_twitter_feed_block';
+    $build['#block_title'] = [
+      'id' => 'jcc-twitter-header',
+      'headergroup' => [
+        'title' => $this->label(),
+      ],
+    ];
     $build['#twitter_settings'] = [
       'feed_embed_url' => $this->configuration['feed_embed_url'],
       'height' => $this->configuration['height'],
