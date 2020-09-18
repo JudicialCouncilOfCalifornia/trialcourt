@@ -30,7 +30,13 @@ function jcc_tc_custom_form_node_form_alter(&$form, FormStateInterface $form_sta
     }
   }
 
-  if (in_array($form['#form_id'], ['node_news_form', 'user_form'])) {
+  if (in_array($form['#form_id'],
+    [
+      'node_news_form',
+      'node_news_edit_form',
+      'user_form',
+    ]
+  )) {
     $form['group_social']['promote_fieldset'] = [
       '#type' => 'fieldset',
       '#collapsible' => FALSE,
@@ -42,6 +48,7 @@ function jcc_tc_custom_form_node_form_alter(&$form, FormStateInterface $form_sta
       '#type' => 'checkbox',
       '#title' => t('Promoted to front page'),
       '#return_value' => 1,
+      '#default_value' => $form['promote']['widget']['value']['#default_value'],
     ];
   }
 }

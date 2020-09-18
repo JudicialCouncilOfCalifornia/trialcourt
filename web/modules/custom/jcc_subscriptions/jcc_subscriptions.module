@@ -19,7 +19,14 @@ use SendGrid\Client as SClient;
  * Implements hook_form_alter().
  */
 function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
-  if (in_array($form['#form_id'], ['node_news_form', 'user_form'])) {
+
+  if (in_array($form['#form_id'],
+    [
+      'node_news_form',
+      'node_news_edit_form',
+      'user_form',
+    ]
+  )) {
     // Connection to myEmma.
     $emma_config = \Drupal::config('webform_myemma.settings');
     if (!$emma_config->get('account_id')) {
@@ -65,7 +72,7 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
     ];
 
     // Extra formatting if creating a news item.
-    if ($form['#form_id'] == 'node_news_form') {
+    if (in_array($form['#form_id'], ['node_news_form', 'node_news_edit_form'])) {
       // Adding invisible markup to empty fieldgroup.
       $form['field_invisible'] = [
         '#type' => 'markup',
@@ -100,7 +107,7 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
         foreach ($user_groups_object as $group_objects) {
           array_push($user_groups, $group_objects->member_group_id);
         }
-        $form['group_social']['myemma_groups']['#default_value'] = $user_groups;
+        $form['group_social']['subscriptions_fieldset']['myemma_groups']['#default_value'] = $user_groups;
       }
     }
 
@@ -120,7 +127,8 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
  * Alters for submission - sends query.
  */
 function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
-  if ($form['#form_id'] == 'node_news_form' && $form_state->cleanValues()->getValues()['field_send_email'] == 1) {
+  if (in_array($form['#form_id'], ['node_news_form', 'node_news_edit_form'])
+    && $form_state->cleanValues()->getValues()['field_send_email'] == 1) {
     global $base_url;
     // Getting data from myemma.
     $emma_config = \Drupal::config('webform_myemma.settings');
