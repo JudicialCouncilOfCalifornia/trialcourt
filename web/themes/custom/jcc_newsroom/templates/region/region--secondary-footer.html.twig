@@ -15,21 +15,11 @@
 
 {% set cards =[] %}
 
-{% set twitterfeed%}
-  <div class="twitterfeed">
-      <a class="twitter-timeline" data-lang="en" data-width="500" data-height="400" href="https://twitter.com/CalCourts?ref_src=twsrc%5Etfw" data-chrome="noheader nofooter">California Courts on Twitter</a>
-    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-  </div>
-{% endset %}
-
-{% set subscriptions %}
-  <div class="subscriptions">
-    {% if not logged_in %}
-      {{ drupal_block('formblock_user_register') }}
-    {% else %}
-      <div><a class="usa-button usa-button--primary" href="/subscriptions/{{ user.email }}/manage/access">Manage subscriptions</a></div>
-    {% endif %}
-  </div>
+{% set flickr%}
+  <a data-flickr-embed="true" href="https://www.flickr.com/photos/californiacourts/albums/72157714371125621" title="Supreme Court Oral Arguments">
+    <img src="https://live.staticflickr.com/31337/49914238877_ea2b1a906d_z.jpg" width="95%" alt="Supreme Court Oral Arguments">
+  </a>
+  <script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script>
 {% endset %}
 
 {% set connected %}
@@ -38,15 +28,23 @@
       social_links: footer.social_links
     } %}
   </div>
+
+  <div class="subscriptions">
+    <h3 class="jcc-card__title">Subscriptions</h3>
+    {% if not logged_in %}
+      {{ drupal_block('formblock_user_register') }}
+    {% else %}
+      <div><a class="usa-button usa-button--primary" href="/subscriptions/{{ user.email }}/manage/access">Manage subscriptions</a></div>
+    {% endif %}
+  </div>
 {% endset %}
 
 {% set cards = [
-  { 'title': 'California Courts on Twitter', 'excerpt': twitterfeed },
-  { 'title': 'Subscriptions', 'excerpt': subscriptions },
+  { 'title': 'California Courts on Flickr', 'excerpt': flickr },
   { 'title': 'Stay Connected', 'excerpt': connected }
 ] %}
 
-<div class="jcc-footer-secondary">
+<div class="jcc-footer-secondary jcc-footer-secondary__wideleft">
 {% include '@organisms/sections/card-section/card-section.twig' with {
     card_section: {
       column_variant: "has-three-columns",
