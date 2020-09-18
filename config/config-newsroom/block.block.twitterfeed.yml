@@ -1,0 +1,38 @@
+uuid: 1680e284-d877-4299-b211-e7c125093a5f
+langcode: en
+status: true
+dependencies:
+  module:
+    - ctools
+    - jcc_blocks
+    - system
+  theme:
+    - jcc_newsroom
+id: twitterfeed
+theme: jcc_newsroom
+region: right_sidebar
+weight: 0
+provider: null
+plugin: twitter_feed
+settings:
+  id: twitter_feed
+  label: 'California Courts on Twitter'
+  provider: jcc_blocks
+  label_display: '0'
+  feed_embed_url: 'https://twitter.com/CalCourts?ref_src=twsrc%5Etfw'
+  width: ''
+  height: '1000'
+  embed_parameters: ''
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      landing_page: landing_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }
