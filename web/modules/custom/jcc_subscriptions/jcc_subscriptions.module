@@ -208,7 +208,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
         ],
         '
           <div>%news_post_date%</div>
-          <h2><a href="%news_url%"> %news_title%</a></h2>
+          <h2><a href="%news_url%">%news_title%</a></h2>
           <p>%news_summary%</p>
           <p><a href="%news_url%">Read more ></a></p>
           <br/>
@@ -224,7 +224,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       $email->setSmtpapiTos($email_to_sendgrid)
         ->setFrom($to)
         ->setFromName(\Drupal::config('system.site')->get('name'))
-        ->setSubject($news_title[0]['value'])
+        ->setSubject('California Courts: ' . $news_title[0]['value'])
         ->setText($news_title[0]['value'])
         ->setHtml($body)
         ->addSubstitution('%member_id%', $id_to_sendgrid)
