@@ -1,10 +1,10 @@
-uuid: 48c1ee94-4c76-49a5-a4d7-99edae488638
+uuid: c917cc15-71c9-4f8d-a05f-f7e8e9c1c0dc
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.sidebar_locations
-    - facets.facet.location_type
+    - core.entity_view_mode.node.teaser_secondary
+    - facets.facet.tags
     - field.field.node.location.body
     - field.field.node.location.field_division
     - field.field.node.location.field_geolocation
@@ -25,27 +25,37 @@ dependencies:
     - address
     - entity_reference_facet_link
     - geolocation
+    - link
+    - metatag
     - office_hours
     - telephone
     - text
     - user
 _core:
-  default_config_hash: uOXg_kFo_pGhT3C-tZn_am1oNbO91oIGisc8XWbK5yY
-id: node.location.sidebar_locations
+  default_config_hash: DmQsdKh5aeriejRgtdEcoihWuxM978eMG_d1iaKhWdc
+id: node.location.teaser_secondary
 targetEntityType: node
 bundle: location
-mode: sidebar_locations
+mode: teaser_secondary
 content:
   body:
     label: hidden
     type: text_default
-    weight: 0
+    weight: 101
     settings: {  }
     third_party_settings: {  }
     region: content
+  field_division:
+    weight: 103
+    label: hidden
+    settings:
+      facet: division
+    third_party_settings: {  }
+    type: entity_reference_facet_link
+    region: content
   field_geolocation:
-    weight: 1
-    label: above
+    weight: 112
+    label: hidden
     settings:
       set_marker: true
       title: '[node:title]'
@@ -81,6 +91,12 @@ content:
           weight: 0
           enable: false
           map_center_id: location_plugins
+        freeogeoip:
+          weight: 0
+          enable: false
+          map_center_id: location_plugins
+          settings:
+            location_option_id: freeogeoip
         ipstack:
           settings:
             access_key: ''
@@ -88,15 +104,9 @@ content:
           weight: 0
           enable: false
           map_center_id: location_plugins
-        freeogeoip:
-          weight: 0
-          enable: false
-          map_center_id: location_plugins
-          settings:
-            location_option_id: freeogeoip
       map_provider_id: leaflet
       map_provider_settings:
-        height: 250px
+        height: 400px
         width: 100%
         zoom: '15'
         map_features:
@@ -515,7 +525,6 @@ content:
                 location_priority:
                   lat: null
                   lng: null
-                remove_duplicates: false
             enabled: false
           leaflet_control_fullscreen:
             weight: 0
@@ -545,36 +554,42 @@ content:
             enabled: false
       use_overridden_map_settings: false
       common_map: true
-      show_delta_label: false
       data_provider_settings: {  }
     third_party_settings: {  }
     type: geolocation_map
     region: content
   field_location:
-    weight: 2
-    label: above
+    weight: 102
+    label: hidden
     settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
   field_location_type:
-    weight: 4
-    label: above
+    weight: 105
+    label: hidden
     settings:
       facet: location_type
     third_party_settings: {  }
     type: entity_reference_facet_link
     region: content
   field_mailing_address:
-    weight: 3
-    label: above
+    weight: 104
+    label: hidden
     settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
+  field_metatag:
+    weight: 106
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
+    region: content
   field_office_hours:
-    weight: 5
-    label: above
+    weight: 109
+    label: hidden
     settings:
       show_closed: open
       office_hours_first_day: ''
@@ -600,16 +615,16 @@ content:
     type: office_hours
     region: content
   field_phone:
-    weight: 6
-    label: above
+    weight: 110
+    label: hidden
     settings:
       title: ''
     third_party_settings: {  }
     type: telephone_link
     region: content
   field_phone_hours:
-    weight: 7
-    label: above
+    weight: 111
+    label: hidden
     settings:
       show_closed: open
       office_hours_first_day: ''
@@ -634,13 +649,47 @@ content:
     third_party_settings: {  }
     type: office_hours
     region: content
+  field_subject_matter:
+    weight: 107
+    label: hidden
+    settings:
+      facet: subject_matter
+    third_party_settings: {  }
+    type: entity_reference_facet_link
+    region: content
+  field_tags:
+    weight: 108
+    label: hidden
+    settings:
+      facet: tags
+    third_party_settings: {  }
+    type: entity_reference_facet_link
+    region: content
+  field_topics:
+    weight: 113
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_website:
+    weight: 114
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
-  field_division: true
-  field_metatag: true
-  field_subject_matter: true
-  field_tags: true
-  field_topics: true
-  field_website: true
   langcode: true
-  links: true
   search_api_excerpt: true
