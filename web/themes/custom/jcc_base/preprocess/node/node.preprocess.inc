@@ -31,7 +31,7 @@ function jcc_base_preprocess_node(&$variables, $hook) {
         $address = [
           $variables['content']['field_location'][0]['address_line1']['#value'],
           $variables['content']['field_location'][0]['address_line2']['#value'],
-          "<br>",
+          ",",
           $variables['content']['field_location'][0]['locality']['#value'],
           $variables['content']['field_location'][0]['administrative_area']['#value'],
           $variables['content']['field_location'][0]['postal_code']['#value'],
