@@ -106,6 +106,11 @@ div[class^='jcc-'] .body p, .date, .location, .relevance, .geolocation-map-wrapp
   padding: 1rem;
   background-color: rgba(0,0,0,0.5);
 }
+
+/* ensure scrollbars do not appear */
+#cboxLoadedContent {
+  overflow: hidden !important;
+}
 /* END */
 
 .jcc-social-share {
@@ -141,15 +146,15 @@ div[class^='jcc-'] .body p, .date, .location, .relevance, .geolocation-map-wrapp
 }
 
 .node {
-  .align-left.embedded-entity, img[align="left"] {
+  .align-left .embedded-entity, .align-left.embedded-entity, img[align="left"] {
     margin-right: 1rem;
   }
 
-  .align-right.embedded-entity, img[align="right"] {
+  .align-right .embedded-entity, .align-right.embedded-entity, img[align="right"] {
     margin-left: 1rem;
   }
 
-  .align-center.embedded-entity, img[align="center"] {
+  .align-center .embedded-entity, .align-center.embedded-entity, img[align="center"] {
     text-align: center;
   }
 }
