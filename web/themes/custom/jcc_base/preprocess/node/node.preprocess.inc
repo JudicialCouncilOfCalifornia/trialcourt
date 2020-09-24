@@ -44,7 +44,8 @@ function jcc_base_preprocess_node(&$variables, $hook) {
             'text' => $subject->getName(),
           ];
         }
-        if ($variables['content']['field_office_hours'][0] || $variables['content']['field_phone_hours'][0]) {
+        if ((isset($variables['content']['field_office_hours'][0]) && $variables['content']['field_office_hours'][0])
+          || (isset($variables['content']['field_phone_hours'][0]) && $variables['content']['field_phone_hours'][0])) {
           $variables['content']['hours_formatted'] = [];
           if ($variables['content']['field_office_hours']) {
             $variables['content']['hours_formatted'][] = [
@@ -54,8 +55,8 @@ function jcc_base_preprocess_node(&$variables, $hook) {
           }
           if ($variables['content']['field_phone_hours']) {
             $variables['content']['hours_formatted'][] = [
-              'label' => $variables['content']['field_phone_hours']['#title'],
-              'details' => $variables['content']['field_phone_hours'][0],
+              'label' => $variables['content']['field_phone_hours']['#title'] ?? '',
+              'details' => $variables['content']['field_phone_hours'][0] ?? '',
             ];
           }
         }
