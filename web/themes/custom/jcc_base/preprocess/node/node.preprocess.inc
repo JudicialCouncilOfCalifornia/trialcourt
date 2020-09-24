@@ -39,7 +39,7 @@ function jcc_base_preprocess_node(&$variables, $hook) {
         $variables['content']['formatted_address'] = implode(" ", $address);
         $subjects = $node->field_subject_matter->referencedEntities();
         $variables['content']['subject_matter'] = [];
-        foreach ($subjects as $key => $subject) {
+        foreach ($subjects as $subject) {
           $variables['content']['subject_matter'][] = [
             'text' => $subject->getName(),
           ];
