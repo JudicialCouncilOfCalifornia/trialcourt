@@ -14,7 +14,7 @@ for path in /app/web/sites/* ; do
   [ -d "${path}" ] || continue
   dirname="$(basename "${path}")"
 
-  skip=("oc" "napa")
+  skip=("oc" "napa" "default")
   if [[ ! "${skip[@]}" =~ "${dirname}" ]]; then
     SUB_SITES+=("@local.${dirname}")
   fi
