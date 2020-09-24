@@ -20,6 +20,41 @@ for path in /app/web/sites/* ; do
   fi
 done
 
+TARGET_FEATURE=""
+OPTIONS=f:
+LONGOPTS=feature:
+
+# -regarding ! and PIPESTATUS see above
+# -temporarily store output to be able to check for errors
+# -activate quoting/enhanced mode (e.g. by writing out “--options”)
+# -pass arguments only via   -- "$@"   to separate them correctly
+! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@")
+if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
+    # e.g. return value is 1
+    #  then getopt has complained about wrong arguments to stdout
+    exit 2
+fi
+# read getopt’s output this way to handle the quoting right:
+eval set -- "$PARSED"
+
+# now enjoy the options in order and nicely split until we see --
+while true; do
+    case "$1" in
+        -f|--feature)
+            TARGET_FEATURE="$2"
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "Programming error"
+            exit 3
+            ;;
+    esac
+done
+
 feature_import() {
 
   TARGET_SITE=$1
@@ -30,8 +65,13 @@ feature_import() {
 
   # Import feature changes to target or all sub sites.
   if [ "$TARGET_SITE" ] ; then
-    echo -e "${G}\nImporting feature changes to $TARGET_SITE${RE}"
-    drush @local.$TARGET_SITE fra -y --bundle=jcc_tc
+    if [ "$TARGET_FEATURE" ] ; then
+      echo -e "${G}\nImporting $TARGET_FEATURE changes to $TARGET_SITE${RE}"
+      drush @local.$TARGET_SITE fr $TARGET_FEATURE -y --bundle=jcc_tc
+    else
+      echo -e "${G}\nImporting feature changes to $TARGET_SITE${RE}"
+      drush @local.$TARGET_SITE fra -y --bundle=jcc_tc
+    fi
     echo -e "\nExporting config for @local.${TARGET_SITE}..."
     drush @local.$TARGET_SITE cex -y
   else
@@ -42,8 +82,13 @@ feature_import() {
     done
 
     for SITE in ${SUB_SITES[@]} ; do
-      echo -e "\nUpdating $SITE..."
-      drush $SITE fra -y --bundle=jcc_tc
+      if [ "$TARGET_FEATURE" ] ; then
+        echo -e "\nUpdating $TARGET_FEATURE of $SITE..."
+        drush $SITE fr $TARGET_FEATURE -y --bundle=jcc_tc
+      else
+        echo -e "\nUpdating all features of $SITE..."
+        drush $SITE fra -y --bundle=jcc_tc
+      fi
       echo -e "\nExporting config for $SITE..."
       drush $SITE cex -y
     done
