@@ -217,7 +217,12 @@ class JCCSubscriptionsDigestCron {
         ->addSubstitution('%id_key%', $id_access_keys)
         ->addSubstitution('%email_key%', $email_access_keys)
         ->addHeader('X-Sent-Using', 'SendGrid-API')
-        ->addHeader('X-Transport', 'web');
+        ->addHeader('X-Transport', 'web')
+        ->setCategories(
+          [
+            'California Courts NewsLinks Digest - ' . date("F j, Y"),
+          ]
+        );
 
       // Issue when simply calling $sendgrid->send($email);
       // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
