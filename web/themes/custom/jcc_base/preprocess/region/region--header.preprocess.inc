@@ -19,50 +19,7 @@ function jcc_base_preprocess_region__header(&$variables) {
   $config = \Drupal::config('system.site');
   $site_name = $config->get('name');
   // END.
-  $variables['header'] = [
-    'mobile' => [
-      'globe' => [
-        'name' => 'globe',
-        'title' => (string) t('Translate'),
-        'decorative' => TRUE,
-      ],
-      'search' => [
-        'name' => 'search',
-        'title' => (string) t('Search'),
-        'decorative' => TRUE,
-      ],
-      'logo' => [
-        'src' => $theme_logo,
-        'alt' => $site_name . ' logo',
-        'renderer' => 'patternlab',
-      ],
-    ],
-    'header_topbar' => [
-      'logo' => [
-        'src' => $theme_logo,
-        'alt' => $site_name . ' logo',
-        'renderer' => 'patternlab',
-      ],
-      'search' => [
-        'form_action' => '/search',
-        'search_input' => [
-          'form_input_name' => 'keywords',
-          'placeholder' => \Drupal::request()->query->get('keywords') ?: 'Search',
-        ],
-      ],
-      'dropbutton' => [
-        'icon' => [
-          'name' => "globe-2",
-          'title' => "Translate",
-          'decorative' => TRUE,
-        ],
-        'label' => "Translate",
-      ],
-      'hide_translation' => $hide_translation,
-    ],
-  ];
-
-  $variables['header']['header_topbar']['dropbutton']['links'] = jcc_base_translation_menu();
+  $translation_links = jcc_base_translation_menu();
 
   $menu_name = 'main';
   $menu_tree = \Drupal::menuTree();
@@ -80,24 +37,55 @@ function jcc_base_preprocess_region__header(&$variables) {
 
   if (!empty($main_nav['#items'])) {
     $menu_link_tree_handler = Drupal::getContainer()->get('menu_item_extras.menu_link_tree_handler');
-    $variables['header']['primary_nav']['lowercase_titles'] = TRUE;
-    $variables['header']['primary_nav']['items'] = jcc_base_mainnavigation_build($main_nav['#items'], $menu_link_tree_handler);
+    $primary_nav['mega'] = FALSE;
+    $primary_nav['links'] = jcc_base_mainnavigation_build($main_nav['#items'], $menu_link_tree_handler);
+  }
 
-    $moduleHandler = Drupal::service('module_handler');
-    $user = Drupal::currentUser();
-    if ($moduleHandler->moduleExists('contextual') && $user->hasPermission('access contextual links')) {
-      $contextual_links = [
-        'menu' => [
-          'route_parameters' => [
-            'menu' => $menu_name,
-          ],
+  $variables['header'] = [
+    'height_variant' => 'basic',
+    'skip' => 'Skip to main content',
+    'global_bar' => [
+      'logo_text' => [
+        'title' => 'Judicial Branch of California',
+        'url' => '/',
+      ],
+      'logo' => 'jcc-logo-branch-text-white.svg',
+    ],
+    'title' => $site_name,
+    'logo' => '',
+    'menu_icon' => [
+      'name' => 'menu',
+      'title' => "Menu",
+      'decorative' => FALSE,
+    ],
+    'close_icon' => [
+      'name' => 'close',
+      'title' => 'close',
+      'decorative' => FALSE,
+    ],
+    'primary_nav' => $primary_nav,
+    'secondary_nav' => [],
+    'nav_secondary' => [
+      'search' => [
+        'form_action' => "/search",
+        'search_input' => [
+          'form_input_name' => "keyword",
         ],
-      ];
-      $variables['header']['primary_nav']['contextual_links'] = [
-        '#type' => 'contextual_links_placeholder',
-        '#id' => _contextual_links_to_id($contextual_links),
-      ];
-    }
+      ],
+      'accordion_button' => [
+        'id' => 'extended-nav-section-two',
+        'icon' => [
+          'name' => "translate",
+          'title' => "Translate",
+          'decorative' => TRUE,
+        ],
+        'label' => "Translate",
+        'links' => $translation_links,
+      ],
+    ],
+  ];
+  if ($hide_translation) {
+    $variables['header']['nav_secondary']['accordion_button'] = [];
   }
 }
 
@@ -156,14 +144,15 @@ function jcc_base_mainnavigation_build(array $original_items, MenuLinkTreeHandle
   foreach ($original_items as $original_item) {
     $entity = $menu_link_tree_handler->getMenuLinkItemEntity($original_item['original_link']);
     $item = [
-      'name' => $original_item['title'],
-      'url' => $original_item['url'],
+      'text' => $original_item['title'],
     ];
-    $item['description'] = $entity->field_text && !$entity->field_text->isEmpty() ? $entity->field_text->first()->getValue()['value'] : NULL;
-    $item['icon'] = $entity->field_fa_icon && !$entity->field_fa_icon->isEmpty() ? ['#markup' => $entity->field_fa_icon->first()->getValue()['value']] : NULL;
-
     if (!empty($original_item['below'])) {
-      $item['sublinks'] = jcc_base_mainnavigation_build($original_item['below'], $menu_link_tree_handler);
+      $item['id'] = 'menu-item-' . $entity->id();
+      $item['is_current'] = $original_item['in_active_trail'];
+      $item['links'] = jcc_base_mainnavigation_build($original_item['below'], $menu_link_tree_handler);
+    }
+    else {
+      $item['href'] = $original_item['url'];
     }
     $items[] = $item;
   }
