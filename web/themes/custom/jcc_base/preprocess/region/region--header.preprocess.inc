@@ -42,7 +42,7 @@ function jcc_base_preprocess_region__header(&$variables) {
   }
 
   $variables['header'] = [
-    'height_variant' => 'basic',
+    'height_variant' => 'extended',
     'skip' => 'Skip to main content',
     'global_bar' => [
       'logo_text' => [
@@ -50,6 +50,24 @@ function jcc_base_preprocess_region__header(&$variables) {
         'url' => '/',
       ],
       'logo' => 'jcc-logo-branch-text-white.svg',
+    ],
+    'primary_nav' => $primary_nav,
+    'secondary_nav' => [
+      'items' => [
+        [
+          'name' => 'Supreme Court',
+          'url' => 'https://www.courts.ca.gov/supremecourt.htm',
+        ], [
+          'name' => 'Courts of Appeal',
+          'url' => 'https://www.courts.ca.gov/courtsofappeal.htm',
+        ], [
+          'name' => 'Superior Court',
+          'url' => 'https://www.courts.ca.gov/superiorcourts.htm',
+        ], [
+          'name' => 'Judicial court',
+          'url' => 'https://www.courts.ca.gov/home.htm',
+        ],
+      ],
     ],
     'title' => $site_name,
     'logo' => [
@@ -66,8 +84,6 @@ function jcc_base_preprocess_region__header(&$variables) {
       'title' => 'close',
       'decorative' => FALSE,
     ],
-    'primary_nav' => $primary_nav,
-    'secondary_nav' => [],
     'nav_secondary' => [
       'search' => [
         'form_action' => "/search",
