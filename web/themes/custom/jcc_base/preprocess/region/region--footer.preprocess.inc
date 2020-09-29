@@ -37,43 +37,13 @@ function jcc_base_preprocess_region__footer(&$variables) {
   }
 
   $variables['footer_base'] = [
-    'title' => $site->get('name'),
+    'title' => 'Judicial Branch of California | ' . $site->get('name'),
     'links' => [],
-    'social_links' => [
-      'items' => [
-        [
-          'icon' => [
-            'name' => 'youtube',
-            'title' => (string) t('YouTube'),
-            'decorative' => FALSE,
-          ],
-          'title' => (string) t('YouTube'),
-          'url' => theme_get_setting('youtube', $theme),
-        ],
-        [
-          'icon' => [
-            'name' => 'facebook',
-            'title' => (string) t('Facebook'),
-            'decorative' => FALSE,
-          ],
-          'title' => (string) t('Facebook'),
-          'url' => theme_get_setting('facebook', $theme),
-        ],
-        [
-          'icon' => [
-            'name' => 'twitter',
-            'title' => (string) t('Twitter'),
-            'decorative' => FALSE,
-          ],
-          'title' => (string) t('Twitter'),
-          'url' => theme_get_setting('twitter', $theme),
-        ],
-      ],
-    ],
+    'social_links' => [],
     'global_bar' => [
       'logo_text' => [
         'title' => 'Judicial Branch of California',
-        'url' => '#',
+        'url' => '/',
       ],
       'logo' => 'jcc-logo-branch-text-white.svg',
       'secondary_nav' => [
