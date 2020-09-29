@@ -12,7 +12,7 @@ use Drupal\menu_item_extras\Service\MenuLinkTreeHandler;
  */
 function jcc_base_preprocess_region__header(&$variables) {
   // Get theme logo from appearance setting.
-  $theme_logo = theme_get_setting('logo.url');
+  // $theme_logo = theme_get_setting('logo.url');
   // Get translation hiding settings.
   $hide_translation = theme_get_setting('hide_translation');
   // BEGIN Get basic site settings (e.g. site name for logo alt)
