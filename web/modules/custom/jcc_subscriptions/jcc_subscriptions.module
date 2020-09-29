@@ -175,6 +175,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     $news_summary = $form_state->cleanValues()->getValues()['body'];
     $news_nid = $form_state->cleanValues()->getValues()['nid'];
     $news_post_date_unformated = $form_state->cleanValues()->getValues()['created'][0]['value'];
+    // TODO: Image field (feeds temp folder issue)
     // $news_image = $form_state->cleanValues()->getValues()['field_images'];
     // Date formatting.
     $date = new DrupalDateTime($news_post_date_unformated, DATETIME_STORAGE_TIMEZONE);
@@ -232,7 +233,13 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
         ->addSubstitution('%id_key%', $id_access_keys)
         ->addSubstitution('%email_key%', $email_access_keys)
         ->addHeader('X-Sent-Using', 'SendGrid-API')
-        ->addHeader('X-Transport', 'web');
+        ->addHeader('X-Transport', 'web')
+        ->setCategories(
+          [
+            'News Alert',
+            $news_title[0]['value'],
+          ]
+        );
 
       // Issue when simply calling $sendgrid->send($email);
       // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
