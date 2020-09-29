@@ -82,6 +82,7 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
     }
 
     $variables['featured_multimedia'] = [
+      'id' => 'jcc-multimedia-cards',
       'headergroup' => [
         'title' => htmlspecialchars_decode($header_title),
       ],

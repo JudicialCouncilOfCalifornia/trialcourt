@@ -1,4 +1,4 @@
-uuid: 8f764bff-a301-4d41-bb44-a17fef7d84fb
+uuid: 04dd32d2-4df1-4da6-b91d-998f9d8ac31a
 langcode: en
 status: true
 dependencies: {  }
@@ -17,7 +17,7 @@ source:
   plugin: url
   data_fetcher_plugin: http
   data_parser_plugin: google_sheets
-  urls: 'https://spreadsheets.google.com/feeds/list/1ikloWixAQWjTVsk2zbfzfvZxlUy_NHage6u1ANxO-w8/8/public/values?alt=json'
+  urls: 'https://spreadsheets.google.com/feeds/list/1iP_8UVQ2cX9X5c1CbhdtEEALbzIx6o9avykpuLeiJYo/8/public/values?alt=json'
   item_selector: entry
   ids:
     id:
@@ -51,23 +51,123 @@ source:
       name: division
       selector: division
       label: 'Taxonomy terms for Division'
+    -
+      name: date
+      selector: date
+      label: Date
 process:
   type:
     plugin: default_value
     default_value: document
   title: title
+  body/value: body
+  body/format: constants/full_html
   sticky:
     plugin: default_value
     default_value: 0
+  field_tags:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: tags
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: tags
+      value_key: name
+      ignore_case: true
+  field_topics:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: topics
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: topics
+      value_key: name
+      ignore_case: true
+  field_division:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: division
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: division
+      value_key: name
+      ignore_case: true
+  field_department:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: department
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: department
+      value_key: name
+      ignore_case: true
   field_document_type:
-    plugin: entity_lookup
-    source: category
-    ignore_case: true
+    -
+      plugin: skip_on_empty
+      method: process
+      source: category
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: document_type
+      value_key: name
+      ignore_case: true
   field_attachments:
     plugin: migration_lookup
     migration:
       - local_forms_media
     source: id
+  field_upload_date_label:
+    plugin: default_value
+    default_value: updated
+  field_upload_date/value:
+    plugin: format_date
+    from_format: n/j/y
+    to_format: Y-m-d
+    source: date
 destination:
   plugin: 'entity:node'
 migration_dependencies:
