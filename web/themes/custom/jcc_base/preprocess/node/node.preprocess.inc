@@ -27,6 +27,42 @@ function jcc_base_preprocess_node(&$variables, $hook) {
         $variables['directions_url'] = "https://bing.com/maps/default.aspx?where1=" . $query;
         $variables['content']['field_subject_matter']['#label_display'] = 'hidden';
       }
+      elseif ($variables['view_mode'] == 'teaser_secondary') {
+        $address = [
+          $variables['content']['field_location'][0]['address_line1']['#value'],
+          $variables['content']['field_location'][0]['address_line2']['#value'],
+          ",",
+          $variables['content']['field_location'][0]['locality']['#value'],
+          $variables['content']['field_location'][0]['administrative_area']['#value'],
+          $variables['content']['field_location'][0]['postal_code']['#value'],
+        ];
+        $variables['content']['formatted_address'] = implode(" ", $address);
+        $subjects = $node->field_subject_matter->referencedEntities();
+        $variables['content']['subject_matter'] = [];
+        foreach ($subjects as $key => $subject) {
+          $variables['content']['subject_matter'][] = [
+            'text' => $subject->getName(),
+          ];
+        }
+        if ($variables['content']['field_office_hours'][0] || $variables['content']['field_phone_hours'][0]) {
+          $variables['content']['hours_formatted'] = [];
+          if ($variables['content']['field_office_hours']) {
+            $variables['content']['hours_formatted'][] = [
+              'label' => $variables['content']['field_office_hours']['#title'],
+              'details' => $variables['content']['field_office_hours'][0],
+            ];
+          }
+          if ($variables['content']['field_phone_hours']) {
+            $variables['content']['hours_formatted'][] = [
+              'label' => $variables['content']['field_phone_hours']['#title'],
+              'details' => $variables['content']['field_phone_hours'][0],
+            ];
+          }
+        }
+        else {
+          $variables['content']['hours_formatted'] = NULL;
+        }
+      }
       break;
 
     case 'faq':
