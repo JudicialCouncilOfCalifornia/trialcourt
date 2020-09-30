@@ -1,4 +1,4 @@
-uuid: 25dc4494-25ab-495d-a439-d5d2740d995a
+uuid: 8da85fca-852d-4167-8a6c-27348507ec16
 langcode: en
 status: true
 dependencies:
@@ -17,19 +17,21 @@ dependencies:
     - field.field.node.location.field_subject_matter
     - field.field.node.location.field_tags
     - field.field.node.location.field_topics
+    - field.field.node.location.field_website
     - filter.format.basic_html
     - node.type.location
   module:
     - address
     - entity_reference_facet_link
     - geolocation
+    - link
     - metatag
     - office_hours
     - telephone
     - text
     - user
 _core:
-  default_config_hash: 4HmM4S01jcEMZxRQhmE5CvpiarDrW6_aYrxPRZFc6_I
+  default_config_hash: DmQsdKh5aeriejRgtdEcoihWuxM978eMG_d1iaKhWdc
 id: node.location.default
 targetEntityType: node
 bundle: location
@@ -606,7 +608,7 @@ content:
         open_text: 'Currently open!'
         closed_text: 'Currently closed'
       schema:
-        enabled: 0
+        enabled: false
       timezone_field: ''
     third_party_settings: {  }
     type: office_hours
@@ -641,7 +643,7 @@ content:
         open_text: 'Currently open!'
         closed_text: 'Currently closed'
       schema:
-        enabled: 0
+        enabled: false
       timezone_field: ''
     third_party_settings: {  }
     type: office_hours
@@ -669,6 +671,18 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+    region: content
+  field_website:
+    weight: 114
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
     region: content
   links:
     weight: 100

@@ -148,6 +148,18 @@ function jcc_tc_custom_form_views_exposed_form_alter(&$form, FormStateInterface 
  */
 function jcc_tc_custom_cleanup_empty_filters(&$form, $form_name, $field_name) {
   $options = $form[$form_name]['#options'];
+
+  // Filterable Block options are structured differently.
+  // Flatten them before altering.
+  if (isset($options[0]->option)) {
+    unset($options['All']);
+    $flattened_options = [];
+    foreach ($options as $opt) {
+      $flattened_options += $opt->option;
+    }
+    $options = $flattened_options;
+  }
+
   $connection = Database::getConnection();
   $sth = $connection->select($field_name, 'tags');
   $sth->addField('tags', $form_name);

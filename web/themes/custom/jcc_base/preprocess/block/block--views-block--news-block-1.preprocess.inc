@@ -13,7 +13,7 @@ function jcc_base_preprocess_block__views_block__news_block_1(&$variables) {
 
   $cards = [];
   $excerpt = '';
-  $rows = $variables['elements']['content']['#view']->result;
+  $rows = $variables['elements']['content']['#view']->result ?? [];
   $read_more_text = isset($variables['elements']['content']['#view']->field['view_node']->last_render_text) ? $variables['elements']['content']['#view']->field['view_node']->last_render_text : "";
 
   foreach ($rows as $row) {
@@ -60,7 +60,8 @@ function jcc_base_preprocess_block__views_block__news_block_1(&$variables) {
     array_push($cards, $recent_news_card);
   }
 
-  if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == TRUE) {
+  if (isset($variables['elements']['content']['#view'])
+    && $variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == TRUE) {
     $button_text = $variables['elements']['content']['#view']->display_handler->display['display_options']['use_more_text'];
     $button_url = '/news';
 
