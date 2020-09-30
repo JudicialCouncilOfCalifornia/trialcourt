@@ -36,8 +36,19 @@ function jcc_base_preprocess_region__footer(&$variables) {
     }
   }
 
+  $variables['footer'] = [
+    'layout_variant' => 'minimal',
+    'copyright_owner' => $site->get('name'),
+    'links' => [
+      'patternlab' => TRUE,
+      'inline_nav' => [
+        'items' => [],
+      ],
+    ],
+  ];
+
   $variables['footer_base'] = [
-    'title' => 'Judicial Branch of California | ' . $site->get('name'),
+    'title' => 'Judicial Council of California | ' . $site->get('name'),
     'links' => [],
     'social_links' => [],
     'global_bar' => [
