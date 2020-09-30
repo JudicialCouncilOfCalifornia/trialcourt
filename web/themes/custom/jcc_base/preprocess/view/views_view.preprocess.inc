@@ -45,6 +45,10 @@ function jcc_base_preprocess_views_view(&$variables) {
         ];
 
         $variables['sidebar']['description'] = t('There @verb @num Court @noun', $replacements);
+
+        // Hide checkboxes if there's only one filter.
+        $variables['exposed_enabled'] = count($variables['exposed']['field_location_type_target_id']['#options']) > 1
+          && $view->args[0] == 'all' ?? TRUE;
       }
       break;
 

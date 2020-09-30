@@ -33,7 +33,7 @@ function jcc_base_preprocess_block__views_block__location_filterable_block_1(&$v
     array_push($cards, $location_card);
   }
 
-  $note_text = $variables['elements']['#configuration']['contextual_filter']['note_text']['value'];
+  $note_text = $variables['elements']['#configuration']['contextual_filter']['note_text']['value'] ?? '';
 
   $location_card = [
     'excerpt' => $note_text,
