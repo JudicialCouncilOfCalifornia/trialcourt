@@ -64,13 +64,15 @@
           <div class="location-sidebar">
             <div class="location-sidebar__title margin-bottom-3">
               <h2>Locations</h2>
-              {% block exposed %}
-                {% if exposed %}
-                  <div class="view__filters">
-                    {{ exposed }}
-                  </div>
-                {% endif %}
-              {% endblock %}
+              {% if exposed_enabled %}
+                {% block exposed %}
+                  {% if exposed %}
+                    <div class="view__filters">
+                      {{ exposed }}
+                    </div>
+                  {% endif %}
+                {% endblock %}
+              {% endif %}
             </div>
 
             <div class="location-sidebar__items grid-row grid-gap">
