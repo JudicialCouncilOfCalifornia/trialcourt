@@ -1,0 +1,36 @@
+{#
+/**
+ * @file
+ * Default theme implementation of a views exposed form.
+ *
+ * Available variables:
+ * - form: A render element representing the form.
+ *
+ * @see template_preprocess_views_exposed_form()
+ *
+ * @ingroup themeable
+ */
+#}
+{% if q is not empty %}
+  {#
+    This ensures that, if clean URLs are off, the 'q' is added first,
+    as a hidden form element, so that it shows up first in the POST URL.
+  #}
+  {{ q }}
+{% endif %}
+{% set exposed_form %}
+  <div class="grid-container-widescreen region--exposed-filters">
+    <div class="grid-row display-flex flex-row flex-align-stretch radius-md">
+      <div class="views--exposed-filters">
+      {{ form }}
+      </div>
+    </div>
+  </div>
+{% endset %}
+
+{% include "@molecules/blocks/callout/callout.twig" with {
+  callout: {
+    content: exposed_form,
+  }
+} %}
+
