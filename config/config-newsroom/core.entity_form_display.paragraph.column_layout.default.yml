@@ -1,0 +1,51 @@
+uuid: 08c9bc93-b6da-4772-aba1-f274a0151bc9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.column_layout.field_css_classes
+    - field.field.paragraph.column_layout.field_id
+    - paragraphs.paragraphs_type.column_layout
+  module:
+    - field_group
+third_party_settings:
+  field_group:
+    group_settings:
+      children:
+        - field_id
+        - field_css_classes
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        required_fields: true
+        description: ''
+      label: Settings
+id: paragraph.column_layout.default
+targetEntityType: paragraph
+bundle: column_layout
+mode: default
+content:
+  field_css_classes:
+    weight: 23
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_id:
+    weight: 22
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+hidden:
+  created: true
+  status: true
