@@ -43,7 +43,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
     'global_bar' => [
       'logo_text' => [
         'title' => 'Judicial Branch of California',
-        'url' => '/',
+        'url' => 'https://www.courts.ca.gov',
       ],
       'logo' => 'jcc-logo-branch-text-white.svg',
       'secondary_nav' => [

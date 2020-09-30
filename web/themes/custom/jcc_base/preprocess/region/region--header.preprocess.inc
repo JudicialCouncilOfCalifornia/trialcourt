@@ -47,7 +47,7 @@ function jcc_base_preprocess_region__header(&$variables) {
     'global_bar' => [
       'logo_text' => [
         'title' => 'Judicial Branch of California',
-        'url' => '/',
+        'url' => 'https://www.courts.ca.gov',
       ],
       'logo' => 'jcc-logo-branch-text-white.svg',
     ],
@@ -61,11 +61,11 @@ function jcc_base_preprocess_region__header(&$variables) {
           'name' => 'Courts of Appeal',
           'url' => 'https://www.courts.ca.gov/courtsofappeal.htm',
         ], [
-          'name' => 'Superior Court',
+          'name' => 'Superior Courts',
           'url' => 'https://www.courts.ca.gov/superiorcourts.htm',
         ], [
-          'name' => 'Judicial court',
-          'url' => 'https://www.courts.ca.gov/home.htm',
+          'name' => 'Judicial Council',
+          'url' => 'https://www.courts.ca.gov/policyadmin-jc.htm',
         ],
       ],
     ],
