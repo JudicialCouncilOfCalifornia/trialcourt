@@ -15,14 +15,11 @@ dependencies:
     - field.storage.node.field_division
     - field.storage.node.field_document_type
     - field.storage.node.field_event_type
-    - field.storage.node.field_first_name
     - field.storage.node.field_help_links
     - field.storage.node.field_images
-    - field.storage.node.field_last_name
     - field.storage.node.field_links
     - field.storage.node.field_location_type
     - field.storage.node.field_news_type
-    - field.storage.node.field_person_type
     - field.storage.node.field_phone
     - field.storage.node.field_subject_matter
     - field.storage.node.field_tags
@@ -138,14 +135,6 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_event_type
-  field_first_name:
-    label: 'First Name'
-    datasource_id: 'entity:node'
-    property_path: field_first_name
-    type: string
-    dependencies:
-      config:
-        - field.storage.node.field_first_name
   field_help_links:
     label: 'Links to Guides'
     datasource_id: 'entity:node'
@@ -162,14 +151,6 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_images
-  field_last_name:
-    label: 'Last Name'
-    datasource_id: 'entity:node'
-    property_path: field_last_name
-    type: string
-    dependencies:
-      config:
-        - field.storage.node.field_last_name
   field_links:
     label: 'Related Links'
     datasource_id: 'entity:node'
@@ -194,14 +175,6 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_news_type
-  field_person_type:
-    label: 'Person Type'
-    datasource_id: 'entity:node'
-    property_path: field_person_type
-    type: integer
-    dependencies:
-      config:
-        - field.storage.node.field_person_type
   field_phone:
     label: Phone
     datasource_id: 'entity:node'
@@ -325,7 +298,8 @@ datasource_settings:
   'entity:node':
     bundles:
       default: true
-      selected: {  }
+      selected:
+        - person
     languages:
       default: true
       selected: {  }
