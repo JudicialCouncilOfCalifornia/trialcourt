@@ -13,6 +13,7 @@ $sites['develop-jcc-napa.pantheonsite.io'] = 'napa';
 $sites['develop-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['develop-jcc-deprep.pantheonsite.io'] = 'deprep';
 $sites['develop-jcc-md.pantheonsite.io'] = 'md';
+$sites['develop-jcc-webservices.pantheonsite.io'] = 'webservices';
 
 // Stage.
 $sites['stage-jcc-tc-default.pantheonsite.io'] = 'default';
@@ -22,6 +23,7 @@ $sites['stage-jcc-napa.pantheonsite.io'] = 'napa';
 $sites['stage-jcc-newsroom.pantheonsite.io'] = 'newsroom';
 $sites['stage-jcc-deprep.pantheonsite.io'] = 'deprep';
 $sites['stage-jcc-md.pantheonsite.io'] = 'md';
+$sites['stage-jcc-webservices.pantheonsite.io'] = 'webservices';
 
 // Live.
 $sites['dev-jcc-tc-default.pantheonsite.io'] = 'default';
@@ -59,6 +61,11 @@ $sites['dev-jcc-md.pantheonsite.io'] = 'md';
 $sites['test-jcc-md.pantheonsite.io'] = 'md';
 $sites['live-jcc-md.pantheonsite.io'] = 'md';
 
+$sites['dev-jcc-webservices.pantheonsite.io'] = 'webservices';
+$sites['test-jcc-webservices.pantheonsite.io'] = 'webservices';
+$sites['live-jcc-webservices.pantheonsite.io'] = 'webservices';
+$sites['webservices.courts.ca.gov'] = 'webservices';
+
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
 // sites.local.php next to this file. It will be ignored by git.
@@ -75,3 +82,4 @@ $sites['napa.lndo.site'] = 'napa';
 $sites['newsroom.lndo.site'] = 'newsroom';
 $sites['deprep.lndo.site'] = 'deprep';
 $sites['md.lndo.site'] = 'md';
+$sites['webservices.lndo.site'] = 'webservices';
