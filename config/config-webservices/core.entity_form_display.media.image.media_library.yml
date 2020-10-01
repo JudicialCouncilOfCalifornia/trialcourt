@@ -1,0 +1,71 @@
+uuid: bb8053af-37cf-4b82-91eb-5d1fce3bd753
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.image.field_media_caption
+    - field.field.media.image.field_media_image
+    - image.style.max_325x325
+    - media.type.image
+  module:
+    - image_widget_crop
+    - text
+_core:
+  default_config_hash: Sp_HI-rp2LgdO40IRDm05KjBM5GKtbIEeKQp-iPkCnI
+id: media.image.media_library
+targetEntityType: media
+bundle: image
+mode: media_library
+content:
+  field_media_caption:
+    type: text_textarea
+    weight: 3
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_media_image:
+    weight: 2
+    settings:
+      show_default_crop: true
+      warn_multiple_usages: true
+      preview_image_style: max_325x325
+      crop_preview_image_style: crop_thumbnail
+      crop_list:
+        - crop_1x1
+        - crop_16x9
+        - crop_4x3
+        - free_crop
+      progress_indicator: throbber
+      crop_types_required: {  }
+      show_crop_area: false
+    third_party_settings: {  }
+    type: image_widget_crop
+    region: content
+  langcode:
+    type: language_select
+    weight: 1
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    weight: 0
+    third_party_settings: {  }
+    region: content
+  translation:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  path: true
+  status: true
+  uid: true
