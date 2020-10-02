@@ -39,12 +39,13 @@ function jcc_base_preprocess_node(&$variables, $hook) {
         $variables['content']['formatted_address'] = implode(" ", $address);
         $subjects = $node->field_subject_matter->referencedEntities();
         $variables['content']['subject_matter'] = [];
-        foreach ($subjects as $key => $subject) {
+        foreach ($subjects as $subject) {
           $variables['content']['subject_matter'][] = [
             'text' => $subject->getName(),
           ];
         }
-        if ($variables['content']['field_office_hours'][0] || $variables['content']['field_phone_hours'][0]) {
+        if ((isset($variables['content']['field_office_hours'][0]) && $variables['content']['field_office_hours'][0])
+          || (isset($variables['content']['field_phone_hours'][0]) && $variables['content']['field_phone_hours'][0])) {
           $variables['content']['hours_formatted'] = [];
           if ($variables['content']['field_office_hours']) {
             $variables['content']['hours_formatted'][] = [
@@ -54,8 +55,8 @@ function jcc_base_preprocess_node(&$variables, $hook) {
           }
           if ($variables['content']['field_phone_hours']) {
             $variables['content']['hours_formatted'][] = [
-              'label' => $variables['content']['field_phone_hours']['#title'],
-              'details' => $variables['content']['field_phone_hours'][0],
+              'label' => $variables['content']['field_phone_hours']['#title'] ?? '',
+              'details' => $variables['content']['field_phone_hours'][0] ?? '',
             ];
           }
         }
