@@ -11,6 +11,7 @@
 function jcc_base_preprocess_region__footer(&$variables) {
   $theme = \Drupal::service('theme.manager')->getActiveTheme()->getName();
   $site = \Drupal::config('system.site');
+  $variables['footer_extended'] = theme_get_setting('footer_extended');
 
   // Get links from footer menu directly.
   $menu_name = 'footer';

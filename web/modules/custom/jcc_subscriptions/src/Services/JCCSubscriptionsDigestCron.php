@@ -220,7 +220,8 @@ class JCCSubscriptionsDigestCron {
         ->addHeader('X-Transport', 'web')
         ->setCategories(
           [
-            'California Courts NewsLinks Digest - ' . date("F j, Y"),
+            'NewsLinks Digest',
+            'NewsLinks Digest - ' . date("F j, Y"),
           ]
         );
 

@@ -74,4 +74,33 @@ function jcc_base_form_system_theme_settings_alter(&$form, FormStateInterface $f
     '#default_value' => theme_get_setting('hide_translation'),
     '#description'   => t("Hide translation dropdown from header."),
   ];
+  $form['theme'] = [
+    '#type' => 'details',
+    '#title' => t('Theme settings'),
+    '#collapsed'  => TRUE,
+  ];
+  $form['theme']['header_extended'] = [
+    '#type'          => 'checkbox',
+    '#title'         => t('Extended Header'),
+    '#default_value' => theme_get_setting('header_extended'),
+    '#description'   => t('Set the patternlab <a target="_blank" href=":extended">extended header variant</a> instead of the <a target="_blank" href=":default">default one</a>.', [':extended' => 'http://patternlab.courts.ca.gov/?p=organisms-header-base-extended', ':default' => 'http://patternlab.courts.ca.gov/?p=organisms-header-base']),
+  ];
+  $form['theme']['mega_menu'] = [
+    '#type'          => 'checkbox',
+    '#title'         => t('Mega menu'),
+    '#default_value' => theme_get_setting('mega_menu'),
+    '#description'   => t('Set the patternlab <a target="_blank" href=":mega">Mega menu variant</a>. (This will only apply if the header is set to extended)', [':mega' => 'http://localhost:3000/?p=organisms-header-base-extended-mega']),
+  ];
+  $form['theme']['footer_extended'] = [
+    '#type'          => 'checkbox',
+    '#title'         => t('Extended footer'),
+    '#default_value' => theme_get_setting('footer_extended'),
+    '#description'   => t('Set the patternlab <a target="_blank" href=":extended_footer">Extended footer variant</a> instead of the <a target="_blank" href=":default_footer">default one</a>.', [':extended_footer' => 'http://localhost:3000/?p=organisms-footer-tall', ':default_footer' => 'http://localhost:3000/?p=organisms-footer-base']),
+  ];
+  $form['theme']['color_inverted'] = [
+    '#type'          => 'checkbox',
+    '#title'         => t('Inverted Color'),
+    '#default_value' => theme_get_setting('color_inverted'),
+    '#description'   => t('Set the patternlab inverted color variant for the <a target="_blank" href=":inverted_header">header</a> and the <a target="_blank" href=":inverted_footer">footer</a>.', [':inverted_header' => 'http://localhost:3000/?p=organisms-header-base-inverted', ':inverted_footer' => 'http://localhost:3000/?p=organisms-footer-base-inverted']),
+  ];
 }

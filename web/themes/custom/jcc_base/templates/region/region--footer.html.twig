@@ -13,10 +13,14 @@
  */
 #}
 
-{% include '@organisms/global/footer/footer.twig' with {
-  footer: footer
-} %}
+{% if(footer_extended) %}
+  {% include '@organisms/global/footer-base/footer-base.twig' with {
+    footer_base: footer_base
+  } %}
+{% else %}
+  {% include '@organisms/global/footer/footer.twig' with {
+    footer: footer
+  } %}
+{% endif %}
 
-{#{% include '@organisms/global/footer-base/footer-base.twig' with {#}
-{#  footer_base: footer_base#}
-{#} %}#}
+

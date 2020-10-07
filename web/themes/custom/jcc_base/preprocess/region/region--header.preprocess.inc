@@ -15,6 +15,11 @@ function jcc_base_preprocess_region__header(&$variables) {
   $theme_logo = theme_get_setting('logo.url');
   // Get translation hiding settings.
   $hide_translation = theme_get_setting('hide_translation');
+  // Get theme variations.
+  $header_extended = theme_get_setting('header_extended');
+  $mega_menu = theme_get_setting('mega_menu');
+  $inverted_color = theme_get_setting('color_inverted');
+
   // BEGIN Get basic site settings (e.g. site name for logo alt)
   $config = \Drupal::config('system.site');
   $site_name = $config->get('name');
@@ -37,12 +42,35 @@ function jcc_base_preprocess_region__header(&$variables) {
 
   if (!empty($main_nav['#items'])) {
     $menu_link_tree_handler = Drupal::getContainer()->get('menu_item_extras.menu_link_tree_handler');
-    $primary_nav['mega'] = FALSE;
     $primary_nav['links'] = jcc_base_mainnavigation_build($main_nav['#items'], $menu_link_tree_handler);
+    if ($header_extended) {
+      $header_height_variant = "extended";
+      if ($mega_menu) {
+        $primary_nav['mega'] = TRUE;
+      }
+      else {
+        $primary_nav['mega'] = FALSE;
+      }
+    }
+    else {
+      $header_height_variant = "basic";
+    }
   }
 
+  if ($inverted_color) {
+    $background_variant = 'inverted';
+    $logo = FALSE;
+  }
+  else {
+    $background_variant = FALSE;
+    $logo['desktop'] = $theme_logo;
+    $logo['mobile'] = $theme_logo;
+  }
+
+  $variables['extended_header'] = TRUE;
   $variables['header'] = [
-    'height_variant' => 'extended',
+    'height_variant' => $header_height_variant,
+    'background_variant' => $background_variant,
     'skip' => 'Skip to main content',
     'global_bar' => [
       'logo_text' => [
@@ -70,10 +98,7 @@ function jcc_base_preprocess_region__header(&$variables) {
       ],
     ],
     'title' => $site_name,
-    'logo' => [
-      'desktop' => $theme_logo,
-      'mobile' => $theme_logo,
-    ],
+    'logo' => $logo,
     'menu_icon' => [
       'name' => 'menu',
       'title' => "Menu",
@@ -164,6 +189,7 @@ function jcc_base_mainnavigation_build(array $original_items, MenuLinkTreeHandle
     $entity = $menu_link_tree_handler->getMenuLinkItemEntity($original_item['original_link']);
     $item = [
       'text' => $original_item['title'],
+      'is_current' => $original_item['in_active_trail'],
     ];
     if (!empty($original_item['below'])) {
       $item['id'] = 'menu-item-' . $entity->id();
