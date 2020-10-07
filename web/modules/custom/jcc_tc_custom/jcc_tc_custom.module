@@ -109,6 +109,9 @@ function jcc_tc_custom_form_alter(&$form, &$form_state, $form_id) {
   elseif (strpos($form['#action'], 'admin/content/news-link/edit') != FALSE && strpos($form['#action'], 'wrapper_format=drupal_modal') != FALSE) {
     $form['#action'] = strtok($form['#action'], '?');
   }
+  if ($form['#form_id'] == 'menu_link_content_main_form') {
+    $form['group_details_sidebar']['expanded']['widget']['value']['#default_value'] = TRUE;
+  }
 }
 
 /**
