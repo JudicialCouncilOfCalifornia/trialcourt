@@ -19,6 +19,24 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
     $cards = [];
     $rows = $variables['elements']['content']['#view']->result;
     $featured = $rows[0];
+
+    $moduleHandler = Drupal::service('module_handler');
+    $user = Drupal::currentUser();
+    $placeholder = FALSE;
+    if ($moduleHandler->moduleExists('contextual') && $user->hasPermission('access contextual links')) {
+      $contextual_links = [
+        'node' => [
+          'route_parameters' => [
+            'node' => $rows[0]->_entity->id(),
+          ],
+        ],
+      ];
+      $placeholder = [
+        '#type' => 'contextual_links_placeholder',
+        '#id' => _contextual_links_to_id($contextual_links),
+      ];
+    }
+
     if ($featured->_entity->field_videos != NULL && !empty($featured->_entity->field_videos->getValue())) {
       $video = $featured->_entity->field_videos->getValue();
       // Get  video entity by target id from media field.
@@ -33,6 +51,7 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
       $featured_video_card = [
         'title' => $video_title,
         'excerpt_vid' => $video_elem,
+        'contextual_links' => $placeholder,
       ];
 
       array_push($cards, $featured_video_card);
@@ -61,6 +80,7 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
         $featured_image_card = [
           'excerpt_img' => $image_elem,
           'excerpt' => $image_caption,
+          'contextual_links' => $placeholder,
         ];
 
         array_push($cards, $featured_image_card);
