@@ -89,18 +89,24 @@ function jcc_base_form_system_theme_settings_alter(&$form, FormStateInterface $f
     '#type'          => 'checkbox',
     '#title'         => t('Mega menu'),
     '#default_value' => theme_get_setting('mega_menu'),
-    '#description'   => t('Set the patternlab <a target="_blank" href=":mega">Mega menu variant</a>. (This will only apply if the header is set to extended)', [':mega' => 'http://localhost:3000/?p=organisms-header-base-extended-mega']),
+    '#description'   => t('Set the patternlab <a target="_blank" href=":mega">Mega menu variant</a>. (This will only apply if the header is set to extended)', [':mega' => 'http://patternlab.courts.ca.gov/?p=organisms-header-base-extended-mega']),
   ];
   $form['theme']['footer_extended'] = [
     '#type'          => 'checkbox',
     '#title'         => t('Extended footer'),
     '#default_value' => theme_get_setting('footer_extended'),
-    '#description'   => t('Set the patternlab <a target="_blank" href=":extended_footer">Extended footer variant</a> instead of the <a target="_blank" href=":default_footer">default one</a>.', [':extended_footer' => 'http://localhost:3000/?p=organisms-footer-tall', ':default_footer' => 'http://localhost:3000/?p=organisms-footer-base']),
+    '#description'   => t('Set the patternlab <a target="_blank" href=":extended_footer">Extended footer variant</a> instead of the <a target="_blank" href=":default_footer">default one</a>.', [':extended_footer' => 'http://patternlab.courts.ca.gov/?p=organisms-footer-tall', ':default_footer' => 'http://patternlab.courts.ca.gov/?p=organisms-footer-base']),
+  ];
+  $form['theme']['footer_extended_message'] = [
+    '#type'          => 'textfield',
+    '#title'         => t('Custom footer message'),
+    '#default_value' => theme_get_setting('footer_extended_message'),
+    '#description'   => t('Set the footer message in the second part of the footer.'),
   ];
   $form['theme']['color_inverted'] = [
     '#type'          => 'checkbox',
     '#title'         => t('Inverted Color'),
     '#default_value' => theme_get_setting('color_inverted'),
-    '#description'   => t('Set the patternlab inverted color variant for the <a target="_blank" href=":inverted_header">header</a> and the <a target="_blank" href=":inverted_footer">footer</a>.', [':inverted_header' => 'http://localhost:3000/?p=organisms-header-base-inverted', ':inverted_footer' => 'http://localhost:3000/?p=organisms-footer-base-inverted']),
+    '#description'   => t('Set the patternlab inverted color variant for the <a target="_blank" href=":inverted_header">header</a> and the <a target="_blank" href=":inverted_footer">footer</a>.', [':inverted_header' => 'http://patternlab.courts.ca.gov/?p=organisms-header-base-inverted', ':inverted_footer' => 'http://patternlab.courts.ca.gov/?p=organisms-footer-base-inverted']),
   ];
 }
