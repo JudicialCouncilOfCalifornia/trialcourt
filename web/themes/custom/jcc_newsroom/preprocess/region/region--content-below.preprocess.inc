@@ -8,7 +8,7 @@
 /**
  * Implements hook_preprocess_HOOK().
  */
-function jcc_newsroom_preprocess_region__secondary_footer(&$variables) {
+function jcc_newsroom_preprocess_region__content_below(&$variables) {
   $theme = \Drupal::service('theme.manager')->getActiveTheme()->getName();
   $site = \Drupal::config('system.site');
 
