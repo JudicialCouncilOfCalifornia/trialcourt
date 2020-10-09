@@ -33,7 +33,7 @@
 {% endset %}
 
 {% set connected %}
-  <div class="social-media-suite">
+  <div class="stayconnected">
     {% include '@molecules/blocks/social-links/social-links.twig' with {
       social_links: footer.social_links
     } %}
@@ -43,15 +43,12 @@
 {% set cards = [
   { 'title': 'California Courts on Twitter', 'excerpt': twitterfeed },
   { 'title': 'Subscriptions', 'excerpt': subscriptions },
-  { 'title': 'Social Media Suite', 'excerpt': connected }
+  { 'title': 'Stay Connected', 'excerpt': connected }
 ] %}
 
-<div class="jcc-stay-connected">
+<div class="jcc-footer-secondary">
 {% include '@organisms/sections/card-section/card-section.twig' with {
     card_section: {
-      headergroup: {
-        title: "Stay Connected",
-      },
       column_variant: "has-three-columns",
       cards: cards
     }
