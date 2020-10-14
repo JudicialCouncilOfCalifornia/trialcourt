@@ -79,7 +79,9 @@ TEMPLATE;
     $node_link = $node->toUrl();
     if (in_array('NewsLink', $news_types)) {
       $node_link_first = $node->get('field_links')->first();
-      $node_link = $node_link_first->getValue()['uri'];
+      if ($node_link_first) {
+        $node_link = $node_link_first->getValue()['uri'];
+      }
     }
 
     $variables['tiles_list']['tiles'][] = [
