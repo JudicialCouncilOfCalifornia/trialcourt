@@ -113,7 +113,7 @@ function jcc_base_preprocess_region__header(&$variables) {
       'search' => [
         'form_action' => "/search",
         'search_input' => [
-          'form_input_name' => "keyword",
+          'form_input_name' => "keywords",
         ],
       ],
       'accordion_button' => [

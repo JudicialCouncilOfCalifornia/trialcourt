@@ -1,0 +1,34 @@
+uuid: 73d6e157-4273-4b7a-9b40-9f44951b7602
+langcode: en
+status: true
+dependencies:
+  module:
+    - ctools
+    - jcc_book_navigation
+  theme:
+    - jcc_webservices
+_core:
+  default_config_hash: WOV62XbRBs4neM96LYiGQxm_4b8tjxTs70YvRTzmn5U
+id: jcc_webservices_jccbooknavigationblock
+theme: jcc_webservices
+region: left_sidebar
+weight: 0
+provider: null
+plugin: jcc_book_navigation_block
+settings:
+  id: jcc_book_navigation_block
+  label: 'JCC Book Navigation Block'
+  provider: jcc_book_navigation
+  label_display: '0'
+  icon_library: pattern_library
+  nav_icon_expand: expand_more
+  nav_icon_collapse: expand_less
+  block_mode: 'book pages'
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      book: book
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

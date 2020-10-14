@@ -1,0 +1,31 @@
+uuid: df2b6a82-ad3b-410d-b396-c825709b1562
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_multimedia_type
+    - node.type.multimedia
+    - taxonomy.vocabulary.multimedia_type
+_core:
+  default_config_hash: m3R66848Lkeizd6_j0rD2_r7jRk0AMVpb-02yCvq-f0
+id: node.multimedia.field_multimedia_type
+field_name: field_multimedia_type
+entity_type: node
+bundle: multimedia
+label: 'Multimedia Type'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      multimedia_type: multimedia_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
