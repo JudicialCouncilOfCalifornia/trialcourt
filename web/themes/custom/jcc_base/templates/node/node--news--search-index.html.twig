@@ -85,8 +85,49 @@
   {{ title_prefix }}
   {{ title_suffix }}
 
+  {% set news_type %}
+    {% if content.field_news_type[0] %}
+      {{ content.field_news_type.0 }}
+    {% else %}
+      {{ node.getType }}
+    {% endif %}
+  {% endset %}
+
   {% set brow_info %}
-    {{ node.getType }} - {{ node.published_at|date(format="F j, Y") }}
+    {{ news_type }} - {{ node.created.value|date(format="F j, Y") }}
+  {% endset %}
+
+  {% set images = node.field_images %}
+
+  {% set body %}
+    <div class="jcc-tiles-list__tile ">
+      <div class="jcc-card">
+        <div class="jcc-card__body">
+          <div class="jcc-card__excerpt">
+            <div>{{ content.body }}</div>
+            {% if content.field_links[0] %}
+              <div class="font-code-xs text-italic text-base search-news-links">
+                Related: {{ content.field_links }}
+              </div>
+            {% endif %}
+            <div class="jcc-tags">
+              <div>
+                {{ content.field_tags }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endset %}
+
+
+  {% set image %}
+    {% if content.field_images[0] %}
+      <div class="jcc-tiles-list__image">
+        {{ content.field_images.0 }}
+      </div>
+    {% endif %}
   {% endset %}
 
   {% block content %}
@@ -107,7 +148,8 @@
           title: title,
           brow: brow_info,
         },
-        column_content_left: content.body,
+        column_content_left: body,
+        column_content_right: image,
       }
     } %}
 
