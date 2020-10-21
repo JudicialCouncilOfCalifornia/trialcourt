@@ -12,6 +12,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
   $theme = \Drupal::service('theme.manager')->getActiveTheme()->getName();
   $site = \Drupal::config('system.site');
   $variables['footer_extended'] = theme_get_setting('footer_extended');
+  $variables['footer_extended_message'] = theme_get_setting('footer_extended_message');
 
   // Get links from footer menu directly.
   $menu_name = 'footer';
@@ -27,6 +28,20 @@ function jcc_base_preprocess_region__footer(&$variables) {
   $tree = $menu_tree->transform($tree, $manipulators);
   $footer_nav = $menu_tree->build($tree);
 
+  // Get secondary footer menu.
+  $sec_footer_menu_name = 'secondary-footer';
+  $sec_footer_menu_parameters = $menu_tree->getCurrentRouteMenuTreeParameters($sec_footer_menu_name);
+  $sec_footer_menu_parameters->setMinDepth(0);
+  $sec_footer_menu_parameters->onlyEnabledLinks();
+
+  $sec_footer_menu_tree = $menu_tree->load($sec_footer_menu_name, $sec_footer_menu_parameters);
+  $sec_footer_menu_tree = $menu_tree->transform($sec_footer_menu_tree, $manipulators);
+  $main_nav = $menu_tree->build($sec_footer_menu_tree);
+
+  if (!$variables['footer_extended_message']) {
+    $variables['footer_extended_message'] = 'Judicial Council of California | ' . $site->get('name');
+  }
+
   $footer_menu = [];
   if (isset($footer_nav['#items']) && !empty($footer_nav['#items'])) {
     foreach ($footer_nav['#items'] as $key => $item) {
@@ -34,6 +49,14 @@ function jcc_base_preprocess_region__footer(&$variables) {
         'name' => $item['title'],
         'url' => $item['url'],
       ];
+    }
+  }
+
+  $footer_menu_primary = [];
+  if ($variables['footer_extended']) {
+    if (!empty($main_nav['#items'])) {
+      $menu_link_tree_handler = Drupal::getContainer()->get('menu_item_extras.menu_link_tree_handler');
+      $footer_menu_primary = jcc_base_mainnavigation_build($main_nav['#items'], $menu_link_tree_handler);
     }
   }
 
@@ -49,9 +72,40 @@ function jcc_base_preprocess_region__footer(&$variables) {
   ];
 
   $variables['footer_base'] = [
-    'title' => 'Judicial Council of California | ' . $site->get('name'),
-    'links' => [],
-    'social_links' => [],
+    'height_variant' => 'big',
+    'title' => $variables['footer_extended_message'],
+    'links' => $footer_menu_primary,
+    'social_links' => [
+      'items' => [
+        [
+          'icon' => [
+            'name' => 'youtube',
+            'title' => (string) t('YouTube'),
+            'decorative' => FALSE,
+          ],
+          'title' => (string) t('YouTube'),
+          'url' => theme_get_setting('youtube', $theme),
+        ],
+        [
+          'icon' => [
+            'name' => 'facebook2',
+            'title' => (string) t('Facebook'),
+            'decorative' => FALSE,
+          ],
+          'title' => (string) t('Facebook'),
+          'url' => theme_get_setting('facebook', $theme),
+        ],
+        [
+          'icon' => [
+            'name' => 'twitter',
+            'title' => (string) t('Twitter'),
+            'decorative' => FALSE,
+          ],
+          'title' => (string) t('Twitter'),
+          'url' => theme_get_setting('twitter', $theme),
+        ],
+      ],
+    ],
     'global_bar' => [
       'logo_text' => [
         'title' => 'Judicial Branch of California',
