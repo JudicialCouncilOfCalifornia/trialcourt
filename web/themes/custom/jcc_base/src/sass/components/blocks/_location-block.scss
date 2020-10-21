@@ -1,6 +1,6 @@
 .view-location {
 
-  &.view-display-id-block {
+  &.view-display-id-block{
     display: flex;
     flex-direction: row;
 
@@ -48,6 +48,74 @@
     .view__content {
       flex: 6 0 auto;
       display: none;
+
+      @media screen and (min-width: 640px) {
+        display: block;
+      }
+    }
+    .views-exposed-form {
+      .grid-container-widescreen.region--exposed-filters {
+        padding: 0 !important;
+      }
+    }
+  }
+  // Small map version
+  &.view-display-id-block_1{
+    background: $jcc-primary-blue-darker;
+    color: $theme-color-base-lightest;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    .location-content-inner{
+      display: flex;
+      flex-direction: row;
+    }
+    .location-sidebar {
+      flex-basis: 70%;
+      overflow-y: auto;
+      padding: 0rem;
+      overflow:hidden;
+      @media screen and (min-width: 1025px) {
+        max-width: 50rem;
+        height: 300px;
+      }
+      @media screen and (max-width: 1024px) {
+        max-width: 100% !important;
+      }
+
+      a {
+        color: $jcc-accent-warm-light !important;
+      }
+
+      &__location {
+        margin: 1rem 0;
+
+        h5 {
+          font-size: 1.1rem;
+        }
+
+        a {
+          text-decoration: underline;
+        }
+
+        i {
+          margin-right: 1rem;
+          color: $theme-color-accent-cool;
+        }
+
+        > div {
+          margin-left: 2rem;
+        }
+      }
+    }
+
+    .view__content {
+      flex-basis: 30%;
+      display: none;
+      text-align:center;
+      .geolocation-map-container {
+        height: 275px;
+        max-height:275px;
+      }
 
       @media screen and (min-width: 640px) {
         display: block;
