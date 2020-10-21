@@ -60,7 +60,7 @@ function jcc_base_preprocess_views_view(&$variables) {
         if ($view->current_display == 'block_1') {
           if ($view->args[0]) {
             $term = Term::load($view->args[0]);
-            $variables['view_title'] = $term->getName();
+            $variables['view_title'] = $term->getName() . ' locations';
           }
           else {
             $variables['view_title'] = $view['title'];
