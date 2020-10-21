@@ -9,15 +9,17 @@ label: Local
 description: 'Local '
 folder: ../config/config-default-local
 module:
-  features_ui: 0
   devel: 0
+  features_ui: 0
   kint: 0
   stage_file_proxy: 0
 theme: {  }
 blacklist:
-  - geocoder.geocoder_provider.bingmaps
   - openid_connect.settings.windows_aad
-graylist: {  }
-graylist_dependents: true
-graylist_skip_equal: false
+  - geocoder.geocoder_provider.bingmaps
+graylist:
+  - key.key.solr_admin_password
+  - key.key.solr_admin_user
+graylist_dependents: false
+graylist_skip_equal: true
 weight: 0
