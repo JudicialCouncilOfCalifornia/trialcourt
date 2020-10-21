@@ -60,6 +60,9 @@ function jcc_base_preprocess_node(&$variables, $hook) {
             ];
           }
         }
+        elseif ($variables['view_mode'] == 'teaser') {
+          $variables['content']['field_subject_matter']['#label_display'] = 'hidden';
+        }
         else {
           $variables['content']['hours_formatted'] = NULL;
         }
