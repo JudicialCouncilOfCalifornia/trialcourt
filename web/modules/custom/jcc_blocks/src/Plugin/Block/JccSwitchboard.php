@@ -113,16 +113,6 @@ class JccSwitchboard extends BlockBase implements ContainerFactoryPluginInterfac
       '#addrow' => TRUE,
       '#add_row' => 1,
     ];
-//    $form['secondary'] = [
-//      '#type' => 'tablefield',
-//      '#title' => $this->t('Secondary Items (brow, title, url)'),
-//      '#default_value' => $this->configuration['secondary'],
-//      '#weight' => '0',
-//      '#cols' => 3,
-//      '#rows' => count($this->configuration['secondary']) ?: 1,
-//      '#addrow' => TRUE,
-//      '#add_row' => 1,
-//    ];
 
     $form['dark_bg'] = [
       '#type' => 'checkbox',
@@ -141,7 +131,6 @@ class JccSwitchboard extends BlockBase implements ContainerFactoryPluginInterfac
     $this->configuration['brow'] = $form_state->getValue('brow');
     $this->configuration['title'] = $form_state->getValue('title');
     $this->configuration['primary'] = $form_state->getValue('primary')['tablefield']['table'];
-//    $this->configuration['secondary'] = $form_state->getValue('secondary')['tablefield']['table'];
     $this->configuration['dark_bg'] = $form_state->getValue('dark_bg');
   }
 
@@ -149,7 +138,7 @@ class JccSwitchboard extends BlockBase implements ContainerFactoryPluginInterfac
    * {@inheritdoc}
    */
   public function build() {
-    $primary_items = $secondary_items = [];
+    $primary_items = [];
     foreach ($this->configuration['primary'] as $primary_row) {
       $primary_items[] = [
         'brow' => $primary_row[0],
@@ -157,13 +146,6 @@ class JccSwitchboard extends BlockBase implements ContainerFactoryPluginInterfac
         'url' => $primary_row[2],
       ];
     }
-//    foreach ($this->configuration['secondary'] as $secondary_row) {
-//      $secondary_items[] = [
-//        'brow' => $secondary_row[0],
-//        'title' => $secondary_row[1],
-//        'url' => $secondary_row[2],
-//      ];
-//    }
 
     $build = [];
     $build['#theme'] = 'jcc_switchboard';
@@ -176,13 +158,10 @@ class JccSwitchboard extends BlockBase implements ContainerFactoryPluginInterfac
       ],
       'items' => [
         'primary' => $primary_items,
-//        'secondary' => $secondary_items,
       ],
     ];
 
     return $build;
   }
-
-
 
 }
