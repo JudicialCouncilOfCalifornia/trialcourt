@@ -41,6 +41,7 @@ class Granicus extends ProviderPluginBase {
   public function renderEmbedCode($width, $height, $autoplay) {
     return [
       '#type' => 'html_tag',
+      '#provider' => 'granicus',
       '#tag' => 'embed',
       '#attributes' => [
         'width' => $width,
@@ -64,7 +65,7 @@ class Granicus extends ProviderPluginBase {
    * {@inheritdoc}
    */
   public static function getIdFromInput($input) {
-    preg_match('/^https?:\/\/jcc.granicus.com\/(player\/[a-zA-Z0-9]*\/)?(?<id>[0-9]*)(\/[a-zA-Z0-9]+)?(\#t=(\d+)s)?$/', $input, $matches);
+    preg_match('/^https?:\/\/jcc.granicus.com\/(player\/event\/)?(?<id>[0-9]*)(\/[a-zA-Z0-9]+)?(\#t=(\d+)s)?$/', $input, $matches);
     return isset($matches['id']) ? $matches['id'] : FALSE;
   }
 
