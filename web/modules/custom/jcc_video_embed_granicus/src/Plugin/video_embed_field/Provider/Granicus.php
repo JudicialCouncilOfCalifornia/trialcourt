@@ -83,34 +83,12 @@ class Granicus extends ProviderPluginBase {
       case 'clip':
         $embedParams = $videoType . '/' . $videoId . '?' . '&entrytime=' . $videoStart . '&stoptime=' . $videoStop;
         break;
-        
+
       default:
         $embedParams = $videoType . '/' . $videoId . '?';
     }
 
     return $embedParams;
-  }
-
-  /**
-   * Get the starting point within the recording.
-   *
-   * @return int|false
-   *   A timeline parameter to pass to the embed src or FALSE if none is found.
-   */
-  protected function getEntryTime() {
-    preg_match('/[&\?]entrytime=((?<entrytime>\d+))?/', $this->input, $matches);
-    return isset($matches['entrytime']) ? $matches['entrytime'] : FALSE;
-  }
-
-  /**
-   * Get the stopping point within the recording.
-   *
-   * @return int|false
-   *   A timeline parameter to pass to the embed src or FALSE if none is found.
-   */
-  protected function getStopTime() {
-    preg_match('/[&\?]stoptime=((?<stoptime>\d+))?/', $this->input, $matches);
-    return isset($matches['stoptime']) ? $matches['stoptime'] : FALSE;
   }
 
 }
