@@ -113,7 +113,16 @@ class JccSwitchboard extends BlockBase implements ContainerFactoryPluginInterfac
       '#addrow' => TRUE,
       '#add_row' => 1,
     ];
-
+    $form['style'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Style'),
+      '#default_value' => $this->configuration['style'],
+      '#options' => [
+        'switchboard' => $this->t("Switchboard"),
+        'box_nav' => $this->t("Box Nav"),
+      ],
+      '#weight' => '0',
+    ];
     $form['dark_bg'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Dark Background'),
@@ -131,6 +140,7 @@ class JccSwitchboard extends BlockBase implements ContainerFactoryPluginInterfac
     $this->configuration['brow'] = $form_state->getValue('brow');
     $this->configuration['title'] = $form_state->getValue('title');
     $this->configuration['primary'] = $form_state->getValue('primary')['tablefield']['table'];
+    $this->configuration['style'] = $form_state->getValue('style');
     $this->configuration['dark_bg'] = $form_state->getValue('dark_bg');
   }
 
@@ -160,6 +170,7 @@ class JccSwitchboard extends BlockBase implements ContainerFactoryPluginInterfac
         'primary' => $primary_items,
       ],
     ];
+    $build['#style'] = $this->configuration['style'];
 
     return $build;
   }
