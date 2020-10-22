@@ -48,7 +48,7 @@ class Granicus extends ProviderPluginBase {
         'height' => $height,
         'frameborder' => '0',
         'allowfullscreen' => 'allowfullscreen',
-        'src' => sprintf('//jcc.granicus.com/player/%s&redirect=true&autostart=%d&embed=1', $this->getVideoId(), $autoplay),
+        'src' => sprintf('//jcc.granicus.com/player/%s&autostart=%d&embed=1', $this->getVideoId(), $autoplay),
       ],
     ];
     return $embed_code;
@@ -81,7 +81,7 @@ class Granicus extends ProviderPluginBase {
 
     switch ($videoType) {
       case 'clip':
-        $embedParams = $videoType . '/' . $videoId . '?' . '&entrytime=' . $videoStart . '&stoptime=' . $videoStop;
+        $embedParams = $videoType . '/' . $videoId . '?&redirect=true' . '&entrytime=' . $videoStart . '&stoptime=' . $videoStop;
         break;
 
       default:
