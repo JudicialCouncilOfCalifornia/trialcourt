@@ -39,17 +39,19 @@ class Granicus extends ProviderPluginBase {
    * {@inheritdoc}
    */
   public function renderEmbedCode($width, $height, $autoplay) {
-    return [
+    $embed_code = [
       '#type' => 'html_tag',
+      '#provider' => 'granicus',
       '#tag' => 'embed',
       '#attributes' => [
         'width' => $width,
         'height' => $height,
         'frameborder' => '0',
         'allowfullscreen' => 'allowfullscreen',
-        'src' => sprintf('//jcc.granicus.com/player/event/%s?&autostart=%d&embed=1', $this->getVideoId(), $autoplay),
+        'src' => sprintf('//jcc.granicus.com/player/%s&autostart=%d&embed=1', $this->getVideoId(), $autoplay),
       ],
     ];
+    return $embed_code;
   }
 
   /**
@@ -61,11 +63,32 @@ class Granicus extends ProviderPluginBase {
   }
 
   /**
+   * Handling all parameters since wysiwyg embed only sees id currently.
+   *
    * {@inheritdoc}
    */
   public static function getIdFromInput($input) {
-    preg_match('/^https?:\/\/jcc.granicus.com\/(player\/[a-zA-Z0-9]*\/)?(?<id>[0-9]*)(\/[a-zA-Z0-9]+)?(\#t=(\d+)s)?$/', $input, $matches);
-    return isset($matches['id']) ? $matches['id'] : FALSE;
+    preg_match('/^https?:\/\/jcc.granicus.com\/(player\/(?<type>[a-zA-Z0-9]*))/', $input, $matchType);
+    $videoType = isset($matchType['type']) ? $matchType['type'] : FALSE;
+    preg_match('/\/(player\/([a-zA-Z0-9]*))\/(?<id>[0-9A-Za-z_-]*)/', $input, $matchId);
+    $videoId = isset($matchId['id']) ? $matchId['id'] : FALSE;
+    if ($videoType == 'clip') {
+      preg_match('/[&|&amp;\?]entrytime=((?<entrytime>\d+))?/', $input, $matchStart);
+      $videoStart = isset($matchStart['entrytime']) ? $matchStart['entrytime'] : FALSE;
+      preg_match('/[&|&amp;\?]stoptime=((?<stoptime>\d+))?/', $input, $matchStop);
+      $videoStop = isset($matchStop['stoptime']) ? $matchStop['stoptime'] : FALSE;
+    }
+
+    switch ($videoType) {
+      case 'clip':
+        $embedParams = $videoType . '/' . $videoId . '?&redirect=true' . '&entrytime=' . $videoStart . '&stoptime=' . $videoStop;
+        break;
+
+      default:
+        $embedParams = $videoType . '/' . $videoId . '?';
+    }
+
+    return $embedParams;
   }
 
 }

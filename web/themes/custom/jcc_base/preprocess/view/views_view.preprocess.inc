@@ -2,6 +2,13 @@
 
 /**
  * @file
+ * Taxonomy term manipulation.
+ */
+
+use Drupal\taxonomy\Entity\Term;
+
+/**
+ * @file
  * Preprocessors for views.
  */
 
@@ -12,7 +19,7 @@ function jcc_base_preprocess_views_view(&$variables) {
   $view = $variables['view'];
   switch ($view->id()) {
     case 'location':
-      if ($view->current_display == 'block') {
+      if ($view->current_display == 'block' || $view->current_display == 'block_1') {
         $moduleHandler = Drupal::service('module_handler');
         $user = Drupal::currentUser();
 
@@ -49,6 +56,16 @@ function jcc_base_preprocess_views_view(&$variables) {
         // Hide checkboxes if there's only one filter.
         $variables['exposed_enabled'] = count($variables['exposed']['field_location_type_target_id']['#options']) > 1
           && $view->args[0] == 'all' ?? TRUE;
+
+        if ($view->current_display == 'block_1') {
+          if ($view->args[0]) {
+            $term = Term::load($view->args[0]);
+            $variables['view_title'] = $term->getName() . ' locations';
+          }
+          else {
+            $variables['view_title'] = $view['title'];
+          }
+        }
       }
       break;
 

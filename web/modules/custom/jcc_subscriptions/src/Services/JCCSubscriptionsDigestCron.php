@@ -39,6 +39,8 @@ class JCCSubscriptionsDigestCron {
       if ($rows != 0) {
         $this->queueTasks();
         $this->state->set('jcc_subscriptions.last_cron', $now);
+        $log_message = 'Newslink digest ran with ' . $rows . ' results, at ' . $now;
+        \Drupal::logger('jcc_subscriptions')->notice($log_message);
       }
       else {
         \Drupal::logger('jcc_subscriptions')->notice('No new newslink item have queued for email today.');
@@ -81,7 +83,7 @@ class JCCSubscriptionsDigestCron {
     $emma_config = \Drupal::config('webform_myemma.settings');
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
-    // test digest : 13977604.
+    // Test digest : 13977604.
     $jcc_config = \Drupal::config('jcc_subscriptions.settings');
     $emma_group = $jcc_config->get('newslink_digest_group');
 
@@ -233,6 +235,8 @@ class JCCSubscriptionsDigestCron {
 
         if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
           drupal_set_message($this->t('Email successfully sent'));
+          $log_message_sendgrid = 'Newslink digest was sent to sendgrid to  ' . count($email_to_sendgrid) . ' email addresses';
+          \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
         }
         else {
           // Show error.
