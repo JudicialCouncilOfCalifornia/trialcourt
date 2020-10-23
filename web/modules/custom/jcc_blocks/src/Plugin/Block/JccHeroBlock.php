@@ -138,6 +138,7 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
         'jcc-hero-icon-nav-style--variant-two' => $this->t('Square'),
         'jcc-hero-icon-nav-style--variant-three' => $this->t('Round'),
         'jcc-hero-icon-nav-style--variant-four' => $this->t('Pill'),
+        'jcc-hero-icon-nav-style--variant-five' => $this->t('Box'),
       ],
     ];
 
