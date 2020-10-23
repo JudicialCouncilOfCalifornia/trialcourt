@@ -224,12 +224,7 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
           ['uuid' => $item->link->getDerivativeId()]
         );
       $entity = array_pop($menu_item_extra);
-      $icon = NULL;
-      if (self::getMediaUrl($entity->get('field_icon')->entity)) {
-        $icon = self::getMediaUrl($entity->get('field_icon')->entity);
-      } else if ($entity->field_pattern_library_icon->value) {
-        $icon = $entity->field_pattern_library_icon->value;
-      }
+      $icon = self::getMediaUrl($entity->get('field_icon')->entity);
 
       $links[$index < 4 ? 'icons' : 'buttons'][] = [
         'title' => $item->link->getTitle(),
