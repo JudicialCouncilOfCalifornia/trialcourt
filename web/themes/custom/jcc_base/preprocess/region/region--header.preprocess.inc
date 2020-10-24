@@ -195,6 +195,9 @@ function jcc_base_mainnavigation_build(array $original_items, MenuLinkTreeHandle
       $item['id'] = 'menu-item-' . $entity->id();
       $item['is_current'] = $original_item['in_active_trail'];
       $item['links'] = jcc_base_mainnavigation_build($original_item['below'], $menu_link_tree_handler);
+      if ($original_item['url']->getRouteName() != '<nolink>') {
+        $item['href'] = $original_item['url'];
+      }
     }
     else {
       $item['href'] = $original_item['url'];
