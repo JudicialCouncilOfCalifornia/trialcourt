@@ -53,24 +53,6 @@ function jcc_newsroom_preprocess_region__content_below(&$variables) {
           'title' => (string) t('LinkedIn'),
           'url' => theme_get_setting('linkedin', $theme),
         ],
-        [
-          'icon' => [
-            'name' => 'rss2',
-            'title' => (string) t('RSS'),
-            'decorative' => FALSE,
-          ],
-          'title' => (string) t('RSS'),
-          'url' => theme_get_setting('rss', $theme),
-        ],
-        [
-          'icon' => [
-            'name' => 'email',
-            'title' => (string) t('Email'),
-            'decorative' => FALSE,
-          ],
-          'title' => (string) t('Email'),
-          'url' => theme_get_setting('email', $theme),
-        ],
       ],
     ],
     'links' => [
