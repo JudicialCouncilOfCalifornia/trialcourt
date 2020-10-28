@@ -131,6 +131,8 @@ if (isset($_SERVER['PANTHEON_ENVIRONMENT']) && ($_SERVER['HTTPS'] === 'OFF') && 
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
 
+  $settings['class_loader_auto_detect'] = FALSE;
+
   if (file_exists($app_root . '/' . $site_path . '/settings.pantheon.php')) {
     include $app_root . '/' . $site_path . '/settings.pantheon.php';
   }
