@@ -5,7 +5,7 @@ namespace Drupal\jcc_subscriptions\Services;
 use SendGrid\Exception;
 use SendGrid\Email;
 
-use MarkRoland\Emma\Client;
+use JudicialCouncil\Emma\Client;
 use SendGrid\Client as SClient;
 
 use Drupal\views\Views;
@@ -116,20 +116,30 @@ class JCCSubscriptionsDigestCron {
     $id_to_sendgrid = [];
     $email_access_keys = [];
     $id_access_keys = [];
-    $users_in_group = $emma->list_group_members($emma_group);
-    foreach ($users_in_group as $user_group) {
-      if (!in_array($user_group->email, $email_to_sendgrid, TRUE)) {
-        array_push($email_to_sendgrid, $user_group->email);
-        // Building array of ID's for opting out urls.
-        array_push($id_to_sendgrid, $user_group->member_id);
 
-        $email_key = user_password();
-        array_push($email_access_keys, $email_key);
-        $store->set('member_email_' . $user_group->email, $email_key);
+    $group_details = $emma->get_group_detail($emma_group);
+    if ($group_details != NULL) {
+      $users_ammount = $group_details->active_count;
+      $loops = ceil($users_ammount / 500);
 
-        $id_key = user_password();
-        array_push($id_access_keys, $id_key);
-        $store->set('member_id_' . $user_group->member_id, $id_key);
+      for ($x = 0; $x < $loops; $x++) {
+        $start = ($x * 500);
+        $users_in_group = $emma->list_group_members('9415684', 0, $start);
+        foreach ($users_in_group as $user_group) {
+          if (!in_array($user_group->email, $email_to_sendgrid, TRUE)) {
+            array_push($email_to_sendgrid, $user_group->email);
+            // Building array of ID's for opting out urls.
+            array_push($id_to_sendgrid, $user_group->member_id);
+
+            $email_key = user_password();
+            array_push($email_access_keys, $email_key);
+            $store->set('member_email_' . $user_group->email, $email_key);
+
+            $id_key = user_password();
+            array_push($id_access_keys, $id_key);
+            $store->set('member_id_' . $user_group->member_id, $id_key);
+          }
+        }
       }
     }
 
@@ -248,6 +258,9 @@ class JCCSubscriptionsDigestCron {
           ]
         );
 
+      $log_message_sendgrid = 'Newslink digest was sent to sendgrid to  ' . count($email_to_sendgrid) . ' email addresses';
+      \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
+
       // Issue when simply calling $sendgrid->send($email);
       // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
       // Send an email using the template stored in SendGrid.
@@ -256,8 +269,6 @@ class JCCSubscriptionsDigestCron {
 
         if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
           drupal_set_message($this->t('Email successfully sent'));
-          $log_message_sendgrid = 'Newslink digest was sent to sendgrid to  ' . count($email_to_sendgrid) . ' email addresses';
-          \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
         }
         else {
           // Show error.
