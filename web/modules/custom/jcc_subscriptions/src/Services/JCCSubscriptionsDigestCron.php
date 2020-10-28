@@ -5,7 +5,7 @@ namespace Drupal\jcc_subscriptions\Services;
 use SendGrid\Exception;
 use SendGrid\Email;
 
-use MarkRoland\Emma\Client;
+use JudicialCouncil\Emma\Client;
 use SendGrid\Client as SClient;
 
 use Drupal\views\Views;
