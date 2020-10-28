@@ -53,10 +53,17 @@ function jcc_base_preprocess_region__footer(&$variables) {
   }
 
   $footer_menu_primary = [];
+  $secondary_menu_cols = '3';
   if ($variables['footer_extended']) {
     if (!empty($main_nav['#items'])) {
       $menu_link_tree_handler = Drupal::getContainer()->get('menu_item_extras.menu_link_tree_handler');
       $footer_menu_primary = jcc_base_mainnavigation_build($main_nav['#items'], $menu_link_tree_handler);
+      if (count($footer_menu_primary) == 2) {
+        $secondary_menu_cols = '6';
+      }
+      elseif (count($footer_menu_primary) == 3) {
+        $secondary_menu_cols = '4';
+      }
     }
   }
 
@@ -75,6 +82,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
     'height_variant' => 'big',
     'title' => $variables['footer_extended_message'],
     'links' => $footer_menu_primary,
+    'secondary_menu_cols' => $secondary_menu_cols,
     'social_links' => [
       'items' => [
         [

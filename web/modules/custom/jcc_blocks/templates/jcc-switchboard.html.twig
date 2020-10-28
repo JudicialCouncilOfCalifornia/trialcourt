@@ -12,9 +12,19 @@
     'clear-both',
 ] %}
 <div{{ attributes.addClass(classes) }}>
-  {% include '@organisms/sections/switchboard/switchboard.twig' with {
-    switchboard: switchboard
-  } %}
+  {%  if style == 'switchboard' %}
+    {% include '@organisms/sections/switchboard/switchboard.twig' with {
+      switchboard: switchboard
+    } %}
+  {% else %}
+    {% include '@organisms/sections/box-nav/box-nav.twig' with {
+      hero_box_nav: {
+        links: {
+          highlights: switchboard.items.primary
+        }
+      }
+    } %}
+  {% endif %}
 </div>
 
 
