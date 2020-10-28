@@ -47,7 +47,6 @@ class JCCSubscriptionsDigestCron {
         \Drupal::logger('jcc_subscriptions')->notice('No new newslink item have queued for email today.');
       }
     }
-
   }
 
   /**
@@ -77,6 +76,23 @@ class JCCSubscriptionsDigestCron {
    */
   public function queueTasks() {
     $this->sendDigest();
+    $this->flagNewsItems();
+  }
+
+  /**
+   * Flag news items which have been sent.
+   */
+  public function flagNewsItems() {
+    $view = Views::getView('news_digest');
+    $view->get_total_rows = TRUE;
+    $view->execute('page_2');
+    $view_result = $view->result;
+
+    foreach ($view_result as $data) {
+      $entity = $data->_entity;
+      $entity->set('field_has_been_sent', TRUE);
+      $entity->save();
+    }
   }
 
   /**
