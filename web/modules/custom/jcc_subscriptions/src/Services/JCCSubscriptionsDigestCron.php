@@ -5,7 +5,7 @@ namespace Drupal\jcc_subscriptions\Services;
 use SendGrid\Exception;
 use SendGrid\Email;
 
-use JudicialCouncil\Emma\Client;
+use MarkRoland\Emma\Client;
 use SendGrid\Client as SClient;
 
 use Drupal\views\Views;
@@ -120,11 +120,12 @@ class JCCSubscriptionsDigestCron {
     $group_details = $emma->get_group_detail($emma_group);
     if ($group_details != NULL) {
       $users_ammount = $group_details->active_count;
-      $loops = ceil($users_ammount / 500);
+//      $loops = ceil($users_ammount / 500);
+      $loops = 1;
 
       for ($x = 0; $x < $loops; $x++) {
         $start = ($x * 500);
-        $users_in_group = $emma->list_group_members('9415684', 0, $start);
+        $users_in_group = $emma->list_group_members('9415684', 0);
         foreach ($users_in_group as $user_group) {
           if (!in_array($user_group->email, $email_to_sendgrid, TRUE)) {
             array_push($email_to_sendgrid, $user_group->email);
