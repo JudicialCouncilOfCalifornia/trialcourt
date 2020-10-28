@@ -6,7 +6,10 @@ dependencies:
     - core.entity_view_mode.media.media_library
   module:
     - editor
+    - entity_embed
     - glossify_taxonomy
+    - jcc_ckeditor
+    - linkit
     - media
 _core:
   default_config_hash: hewPmBgni9jlDK_IjLxUx1HsTbinK-hdl0lOwjbteIY
@@ -18,31 +21,31 @@ filters:
     id: filter_align
     provider: filter
     status: true
-    weight: 8
+    weight: -48
     settings: {  }
   filter_caption:
     id: filter_caption
     provider: filter
     status: true
-    weight: 9
+    weight: -47
     settings: {  }
   filter_htmlcorrector:
     id: filter_htmlcorrector
     provider: filter
     status: true
-    weight: 10
+    weight: -46
     settings: {  }
   editor_file_reference:
     id: editor_file_reference
     provider: editor
     status: true
-    weight: 11
+    weight: -45
     settings: {  }
   filter_html:
     id: filter_html
     provider: filter
     status: false
-    weight: -10
+    weight: -43
     settings:
       allowed_html: '<a href hreflang> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <s> <sup> <sub> <img src alt data-entity-type data-entity-uuid data-align data-caption> <table> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <hr> <p> <h1> <pre>'
       filter_html_help: true
@@ -51,7 +54,7 @@ filters:
     id: media_embed
     provider: media
     status: true
-    weight: 100
+    weight: -44
     settings:
       default_view_mode: default
       allowed_media_types:
@@ -62,10 +65,54 @@ filters:
     id: glossify_taxonomy
     provider: glossify_taxonomy
     status: true
-    weight: -10
+    weight: -50
     settings:
       glossify_taxonomy_case_sensitivity: '0'
       glossify_taxonomy_first_only: '1'
       glossify_taxonomy_type: tooltips
       glossify_taxonomy_vocabs: glossary
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+  entity_embed:
+    id: entity_embed
+    provider: entity_embed
+    status: false
+    weight: -37
+    settings: {  }
+  filter_html_image_secure:
+    id: filter_html_image_secure
+    provider: filter
+    status: false
+    weight: -38
+    settings: {  }
+  filter_url:
+    id: filter_url
+    provider: filter
+    status: false
+    weight: -40
+    settings:
+      filter_url_length: 72
+  filter_html_escape:
+    id: filter_html_escape
+    provider: filter
+    status: false
+    weight: -42
+    settings: {  }
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: false
+    weight: -41
+    settings: {  }
+  filter_token_links:
+    id: filter_token_links
+    provider: jcc_ckeditor
+    status: false
+    weight: -39
+    settings: {  }
+  linkit:
+    id: linkit
+    provider: linkit
+    status: true
+    weight: -49
+    settings:
+      title: true
