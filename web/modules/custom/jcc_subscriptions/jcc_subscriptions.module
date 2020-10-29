@@ -136,7 +136,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       return FALSE;
     }
 
-    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
+    $emma = new JccClient($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
     $groups = $form_state->cleanValues()->getValues()['myemma_groups'];
     $emma_groups = array_filter($groups, function ($item) {
@@ -276,7 +276,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
       return FALSE;
     }
 
-    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
+    $emma = new JccClient($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
     $user_req = $emma->get_member_detail_by_email($form_state->cleanValues()->getValues()['mail']);
     $user_emma_id = $user_req->member_id;
