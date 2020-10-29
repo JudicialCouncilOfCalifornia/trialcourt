@@ -143,6 +143,22 @@ div[class^='jcc-'] .body p, .date, .location, .relevance, .geolocation-map-wrapp
   .jcc-person-details__contact {
     display: block;
   }
+
+  &__inline {
+    .jcc-person-details__contact {
+      display: inline;
+    }
+
+    div {
+      .jcc-person-details__contact {
+        &:not(:last-child) {
+          &:after {
+            content: ", ";
+          }
+        }
+      }
+    }
+  }
 }
 
 .node {
