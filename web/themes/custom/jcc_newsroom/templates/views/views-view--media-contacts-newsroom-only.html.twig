@@ -47,36 +47,54 @@
     {% block content %}
       {% if rows %}
         {% set body %}
-          {% for persons in persons_by_tag %}
-            <h2>{{ persons[0].tag }}</h2>
-            {% for person in persons %}
-              {% set person_name = person.first_name ~ ' ' ~ person.last_name %}
-              <div class="jcc-person-details jcc-person-details__inline">
-                <h3>
-                  <a href="{{ person.location_website }}">{{  person.location_name }}</a>
-                </h3>
-                <span class="jcc-person-details__contact name">
-                  {{ person_name -}}{% if person.title %},{% endif %}
-                </span>
-                {% if person.title %}
-                  <span class="jcc-person-details__contact title">
-                    {{ person.title -}}
-                  </span>
-                {% endif %}
-                <div>
-                  {% if person.phone %}
-                    <span class="jcc-person-details__contact phone">
-                      {{ person.phone -}}
-                    </span>
-                  {% endif %}
-                  {% if person.email %}
-                    <span class="jcc-person-details__contact email">
-                      <a href="mailto:{{ person.email }}">{{ person.email -}}</a>
-                    </span>
-                  {% endif %}
-                </div>
+
+          {% for group in persons_by_tag %}
+            {% set batch_size = group|length/2 %}
+            <h2>{{ group[0].tag }}</h2>
+            <div class="grid-container jcc-mediacontacts">
+              <div class="grid-row flex-row">
+                {% for persons in group|batch(batch_size) %}
+                  <div class="grid-col-12 desktop:grid-col-5 height-full jcc-media-contacts__column">
+                    {% for person in persons %}
+                      {% set person_details %}
+                        {% set person_name = person.first_name ~ ' ' ~ person.last_name %}
+                        <div class="jcc-person-details jcc-person-details__inline">
+                          <span class="jcc-person-details__contact name">
+                            {{ person_name -}}{% if person.title %},{% endif %}
+                          </span>
+                          {% if person.title %}
+                            <span class="jcc-person-details__contact title">
+                              {{ person.title -}}
+                            </span>
+                          {% endif %}
+                          <div>
+                            {% if person.phone %}
+                              <span class="jcc-person-details__contact phone">
+                                {{ person.phone -}}
+                              </span>
+                            {% endif %}
+                            {% if person.email %}
+                              <span class="jcc-person-details__contact email">
+                                <a href="mailto:{{ person.email }}">{{ person.email -}}</a>
+                              </span>
+                            {% endif %}
+                          </div>
+                        </div>
+                      {% endset %}
+
+                      {% include '@molecules/blocks/card/card.twig' with {
+                        card: {
+                          variant: 'media-contacts',
+                          url: person.location_website ,
+                          title: person.location_name,
+                          excerpt: person_details,
+                        }
+                      } %}
+                    {% endfor %}
+                  </div>
+                {% endfor %}
               </div>
-            {% endfor %}
+            </div>
           {% endfor %}
         {% endset %}
       {% endif %}
