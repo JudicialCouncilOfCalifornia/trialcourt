@@ -48,7 +48,7 @@ class Granicus extends ProviderPluginBase {
         'height' => $height,
         'frameborder' => '0',
         'allowfullscreen' => 'allowfullscreen',
-        'src' => sprintf('//jcc.granicus.com/player/%s&autostart=%d&embed=1', $this->getVideoId(), $autoplay),
+        'src' => sprintf('//jcc.granicus.com/player/%s/%s?redirect=true%s%s&autostart=%d&embed=1', $this->getType($this->getInput()), $this->getVideoId(), $this->getStartTime($this->getInput()), $this->getStopTime($this->getInput()), $autoplay),
       ],
     ];
     return $embed_code;
@@ -63,32 +63,41 @@ class Granicus extends ProviderPluginBase {
   }
 
   /**
-   * Handling all parameters since wysiwyg embed only sees id currently.
+   * Determine if Granicus stream or recording.
    *
    * {@inheritdoc}
    */
+  public static function getType($input) {
+    preg_match('/^https?:\/\/jcc.granicus.com\/(player\/(?<type>[a-zA-Z0-9]*))/', $input, $matches);
+    return isset($matches['type']) ? $matches['type'] : FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function getIdFromInput($input) {
-    preg_match('/^https?:\/\/jcc.granicus.com\/(player\/(?<type>[a-zA-Z0-9]*))/', $input, $matchType);
-    $videoType = isset($matchType['type']) ? $matchType['type'] : FALSE;
-    preg_match('/\/(player\/([a-zA-Z0-9]*))\/(?<id>[0-9A-Za-z_-]*)/', $input, $matchId);
-    $videoId = isset($matchId['id']) ? $matchId['id'] : FALSE;
-    if ($videoType == 'clip') {
-      preg_match('/[&|&amp;\?]entrytime=((?<entrytime>\d+))?/', $input, $matchStart);
-      $videoStart = isset($matchStart['entrytime']) ? $matchStart['entrytime'] : FALSE;
-      preg_match('/[&|&amp;\?]stoptime=((?<stoptime>\d+))?/', $input, $matchStop);
-      $videoStop = isset($matchStop['stoptime']) ? $matchStop['stoptime'] : FALSE;
-    }
+    preg_match('/^https?:\/\/jcc.granicus.com\/(player\/([a-zA-Z0-9]*))\/(?<id>[0-9A-Za-z_-]*)/', $input, $matches);
+    return isset($matches['id']) ? $matches['id'] : FALSE;
+  }
 
-    switch ($videoType) {
-      case 'clip':
-        $embedParams = $videoType . '/' . $videoId . '?&redirect=true' . '&entrytime=' . $videoStart . '&stoptime=' . $videoStop;
-        break;
+  /**
+   * If Granicus recording, optional auto start time marker.
+   *
+   * {@inheritdoc}
+   */
+  public static function getStartTime($input) {
+    preg_match('/[&|&amp;\?]entrytime=((?<entrytime>\d+))?/', $input, $matches);
+    return isset($matches['entrytime']) ? '&entrytime=' . $matches['entrytime'] : FALSE;
+  }
 
-      default:
-        $embedParams = $videoType . '/' . $videoId . '?';
-    }
-
-    return $embedParams;
+  /**
+   * If Granicus recording, optional auto stop time marker.
+   *
+   * {@inheritdoc}
+   */
+  public static function getStopTime($input) {
+    preg_match('/[&|&amp;\?]stoptime=((?<stoptime>\d+))?/', $input, $matches);
+    return isset($matches['stoptime']) ? '&stoptime=' . $matches['stoptime'] : FALSE;
   }
 
 }
