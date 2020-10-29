@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 
-use JudicialCouncil\Emma\Client;
+use JudicialCouncil\Emma\JccClient;
 use SendGrid\Client as SClient;
 
 /**
@@ -33,7 +33,7 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
       return FALSE;
     }
 
-    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
+    $emma = new JccClient($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
     // Getting groups from myemma / only keeping ones with naming convention.
     $myemma_groups = $emma->list_groups();

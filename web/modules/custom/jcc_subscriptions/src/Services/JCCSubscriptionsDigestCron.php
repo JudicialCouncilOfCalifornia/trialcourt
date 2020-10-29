@@ -5,7 +5,7 @@ namespace Drupal\jcc_subscriptions\Services;
 use SendGrid\Exception;
 use SendGrid\Email;
 
-use JudicialCouncil\Emma\Client;
+use JudicialCouncil\Emma\JccClient;
 use SendGrid\Client as SClient;
 
 use Drupal\views\Views;
@@ -102,7 +102,7 @@ class JCCSubscriptionsDigestCron {
     global $base_url;
     // Getting data from myemma.
     $emma_config = \Drupal::config('webform_myemma.settings');
-    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
+    $emma = new JccClient($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
     // Test digest : 13977604.
     $jcc_config = \Drupal::config('jcc_subscriptions.settings');
