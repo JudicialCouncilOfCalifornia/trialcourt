@@ -32,7 +32,7 @@
 {% for persons in persons_by_tag %}
   {% set person_group = persons[0].tag %}
   {% set person_cards %}
-    <div class="grid-container jcc-media-contacts">
+    <div class="grid-container jcc-contacts">
       <div class="grid-row flex-row">
         {% for person in persons %}
           {% set person_name = person.first_name ~ ' ' ~ person.last_name %}
@@ -63,7 +63,7 @@
             </div>
           {% endset %}
 
-          <div class="grid-col-12 desktop:grid-col-3 height-full jcc-media-contacts__card">
+          <div class="grid-col-12 desktop:grid-col-3 height-full jcc-contacts__card">
             {% include '@molecules/blocks/card/card.twig' with {
               card: {
                 url: url,

@@ -120,12 +120,12 @@ div[class^='jcc-'] .body p, .date, .location, .relevance, .geolocation-map-wrapp
   }
 }
 
-.jcc-media-contacts {
+.jcc-contacts {
   max-width: 84rem !important;
   margin: 0 !important;
   padding: 0 !important;
 
-  .jcc-media-contacts__card {
+  .jcc-contacts__card {
     margin-bottom: 2rem;
     @media only screen and (min-width: 640px) {
       padding-right: 1.5rem;
@@ -142,6 +142,22 @@ div[class^='jcc-'] .body p, .date, .location, .relevance, .geolocation-map-wrapp
 .jcc-person-details {
   .jcc-person-details__contact {
     display: block;
+  }
+
+  &__inline {
+    .jcc-person-details__contact {
+      display: inline;
+    }
+
+    div {
+      .jcc-person-details__contact {
+        &:not(:last-child) {
+          &:after {
+            content: ", ";
+          }
+        }
+      }
+    }
   }
 }
 
