@@ -12,6 +12,7 @@ function jcc_newsroom_preprocess_views_view__media_contacts_newsroom_only(&$vari
   if (empty($variables['rows'])) {
     return;
   }
+  $title = $variables['view_array']['#title']['#markup'];
   $persons = [];
 
   foreach ($variables['rows'][0]['#rows'] as $row) {
@@ -91,6 +92,7 @@ function jcc_newsroom_preprocess_views_view__media_contacts_newsroom_only(&$vari
   // Sort tag groups alphabetically.
   ksort($persons_by_tag);
 
+  $variables['title'] = $title;
   $variables['persons_by_tag'] = $persons_by_tag;
 
 }
