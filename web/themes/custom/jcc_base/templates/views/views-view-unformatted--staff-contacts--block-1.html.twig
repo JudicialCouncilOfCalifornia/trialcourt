@@ -1,0 +1,91 @@
+{#
+/**
+ * @file
+ * Theme override to display a block.
+ *
+ * Available variables:
+ * - plugin_id: The ID of the block implementation.
+ * - label: The configured label of the block if visible.
+ * - configuration: A list of the block's configuration values.
+ *   - label: The configured label for the block.
+ *   - label_display: The display settings for the label.
+ *   - provider: The module or other provider that provided this block plugin.
+ *   - Block plugin specific settings will also be stored here.
+ * - content: The content of this block.
+ * - attributes: array of HTML attributes populated by modules, intended to
+ *   be added to the main container tag of this template.
+ *   - id: A valid HTML ID and guaranteed unique.
+ * - title_attributes: Same as attributes, except applied to the main title
+ *   tag that appears in the template.
+ * - title_prefix: Additional output populated by modules, intended to be
+ *   displayed in front of the main title tag that appears in the template.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+ *
+ * @see template_preprocess_block()
+ */
+#}
+
+{% set contacts = [] %}
+{% set person_cards = [] %}
+
+{% for persons in all_contacts %}
+  {% set person_group = persons[0].tag %}
+  {% set person_cards %}
+    <div class="grid-container jcc-contacts">
+      <div class="grid-row flex-row">
+        {% for person in persons %}
+          {% set person_name = person.first_name ~ ' ' ~ person.last_name %}
+          {% if person.location_name %}
+            {% set title = person.location_name %}
+            {% set url = person.location_website %}
+          {% endif %}
+          {% set person_details %}
+            <div class="jcc-person-details">
+              <span class="jcc-person-details__contact name">
+                {{ person_name }}
+              </span>
+              {% if person.title %}
+                <span class="jcc-person-details__contact title">
+                  {{ person.title }}
+                </span>
+              {% endif %}
+              {% if person.phone %}
+                <span class="jcc-person-details__contact phone">
+                  {{ person.phone }}
+                </span>
+              {% endif %}
+              {% if person.email %}
+                <span class="jcc-person-details__contact email">
+                  <a href="mailto:{{ person.email }}">{{ person.email }}</a>
+                </span>
+              {% endif %}
+            </div>
+          {% endset %}
+
+          <div class="grid-col-12 desktop:grid-col-3 height-full jcc-contacts__card">
+            {% include '@molecules/blocks/card/card.twig' with {
+              card: {
+                url: url,
+                title: title,
+                excerpt: person_details,
+              }
+            } %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endset %}
+
+  {% set contacts = contacts|merge([{
+    title: person_group,
+    body: person_cards,
+  }]) %}
+{% endfor %}
+
+{% include '@molecules/interactive/accordion/accordion.twig' with {
+  accordion: {
+    expand_first: "no",
+    items: contacts,
+  }
+} %}
