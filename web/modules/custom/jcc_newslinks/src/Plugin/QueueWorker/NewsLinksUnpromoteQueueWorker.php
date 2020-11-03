@@ -4,7 +4,7 @@
  * Contains \Drupal\jcc_newslinks\Plugin\QueueWorker\NewsLinksUnpromoteQueueWorker.
  */
 
-namespace Drupal\jcc_newslinks\Plugin\NewsLinksUnpromoteQueueWorker;
+namespace Drupal\jcc_newslinks\Plugin\QueueWorker;
 
 use Drupal\Core\Queue\QueueWorkerBase;
 
@@ -23,8 +23,6 @@ class NewsLinksUnpromoteQueueWorker extends QueueWorkerBase {
    * {@inheritdoc}
    */
   public function processItem($item) {
-
-    \Drupal::logger('jcc_newslinks')->notice("Cron processed this item...");
 
     // Load the node
     $node = \Drupal\node\Entity\Node::load($item->nid);
