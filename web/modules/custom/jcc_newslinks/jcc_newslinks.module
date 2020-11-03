@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * Implements hook_cron().
+ *
+ * Automatically unpromote NewsLinks after the 4th ranking that are older than 2 weeks.
+ */
+function jcc_newslinks_cron() {
+  $oldTimeValue = time() - (14 * 24 * 60 * 60); // timestamp for 14 days previous
+  $query = \Drupal::entityQuery('node')
+    ->condition('type', 'news')
+    ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
+    ->condition('promote', true) // items that only are promoted
+    ->condition('created', $oldTimeValue, '<') // items older than 14 days ago
+    ->condition('field_sorting_weight', -7, '>'); // items older than 4th ranking
+  $results = $query->execute();
+
+  $queue = \Drupal::queue('newslinks_unpromote_queue');
+  foreach ($results as $result) {
+    $item = (object) ['nid' => $result];
+    $queue->createItem($item);
+  }
+}
