@@ -32,7 +32,7 @@ function jcc_base_preprocess_block__views_block__multimedia_block_2(&$variables)
         // Video alternate player.
         $video_alt_desc = 'View with calendar or agenda details';
         $video_origin = $video_entity->field_media_video_embed_field->value;
-        $video_alternate = Markup::create('<a href="' . $video_origin . '" target="_blank">' . $video_alt_desc .'</a>');
+        $video_alternate = Markup::create('<a href="' . $video_origin . '" target="_blank">' . $video_alt_desc . '</a>');
 
         $featured_video_card = [
           'title' => $video_title,
