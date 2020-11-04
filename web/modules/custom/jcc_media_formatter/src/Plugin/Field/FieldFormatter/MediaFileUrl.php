@@ -62,6 +62,10 @@ class MediaFileUrl extends EntityReferenceFormatterBase {
           }
         }
 
+        if (empty(parse_url($value, PHP_URL_SCHEME))) {
+          $value = 'internal:' . $value;
+        }
+
         $elements[$delta] = [
           '#type' => 'link',
           '#title' => $media->getName() ?: $label,

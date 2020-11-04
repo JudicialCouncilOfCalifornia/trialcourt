@@ -53,8 +53,11 @@ source:
       label: 'Taxonomy terms for Division'
 process:
   field_media_file:
-    plugin: file_remote_url
-    source: file_url
+    -
+      plugin: url_shortener
+      source: file_url
+    -
+      plugin: file_remote_url
   name: title
 destination:
   plugin: 'entity:media'
