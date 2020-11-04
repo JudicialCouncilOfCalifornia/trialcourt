@@ -24,13 +24,12 @@ use Drupal\redirect\Entity\Redirect;
  * @MigrateProcessPlugin(
  *   id = "url_shortener"
  * )
- *
  */
 class UrlShortener extends ProcessPluginBase {
 
   /**
-  * {@inheritdoc}
-  */
+   * {@inheritdoc}
+   */
   public function transform($value, MigrateExecutableInterface $migrateExecutable, Row $row, $destinationProperty) {
     if (empty($value) || strlen($value) < 100) {
       return $value;
@@ -46,4 +45,5 @@ class UrlShortener extends ProcessPluginBase {
 
     return $source;
   }
+
 }
