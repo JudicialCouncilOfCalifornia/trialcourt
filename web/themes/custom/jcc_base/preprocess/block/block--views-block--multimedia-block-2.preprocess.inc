@@ -5,6 +5,7 @@
  * Theme and preprocess functions for blocks.
  */
 
+use Drupal\Core\Render\Markup;
 use Drupal\media\Entity\Media;
 
 /**
@@ -28,10 +29,15 @@ function jcc_base_preprocess_block__views_block__multimedia_block_2(&$variables)
         $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
         $build = $view_builder->view($video_entity, 'default');
         $video_elem = render($build);
+        // Video alternate player.
+        $video_alt_desc = 'View with calendar or agenda details';
+        $video_origin = $video_entity->field_media_video_embed_field->value;
+        $video_alternate = Markup::create('<a href="' . $video_origin . '" target="_blank">' . $video_alt_desc . '</a>');
 
         $featured_video_card = [
           'title' => $video_title,
           'excerpt_vid' => $video_elem,
+          'footer' => $video_alternate,
         ];
 
         array_push($cards, $featured_video_card);
