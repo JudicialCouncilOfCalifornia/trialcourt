@@ -6,6 +6,7 @@ use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
 use Drupal\redirect\Entity\Redirect;
+use Drupal\Core\Database\Query\Condition;
 
 /**
  * Provides url_shortener plugin.
@@ -35,6 +36,22 @@ class UrlShortener extends ProcessPluginBase {
       return $value;
     }
 
+    // Check if a redirect already exists.
+    $value = trim($value);
+    $database = \Drupal::database();
+    $query = $database->select('redirect');
+    $query->addField('redirect', 'redirect_source__path');
+    $query_or = new Condition('OR');
+    $query_or->condition('redirect_redirect__uri', $value, '=');
+    $query->condition($query_or);
+    $source_path = $query->execute()->fetchCol();
+    if ($source_path) {
+      foreach ($source_path as $s) {
+        return $s;
+      }
+    }
+
+    // Otherwise create a new one.
     $source = '/r/' . user_password(20);
     $redirect = Redirect::create();
     $redirect->setStatusCode('301');
