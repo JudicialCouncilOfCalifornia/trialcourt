@@ -6,13 +6,31 @@
  * Automatically unpromote NewsLinks after the 4th ranking that are older than 2 weeks.
  */
 function jcc_newslinks_cron() {
+  $fourth_sorting_weight = 0; // default to 0 for 4th item sorting weight
+  // First find the field_sorting_weight of the 4th item
+  $queryNid = \Drupal::entityQuery('node')
+    ->condition('type', 'news')
+    ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
+    ->condition('promote', true) // items that only are promoted
+    ->range(3, 1) // get the 4th item; indexed at 0.
+    ->sort('field_sorting_weight', 'ASC');
+  // Get the nid from the query
+  $nid = $queryNid->execute();
+
+  foreach ($nid as $record) {
+    // Then load the node and get 4th sorting weight value
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $node = $node_storage->load($record);
+    $fourth_sorting_weight = intval($node->get('field_sorting_weight')->getString());
+  }
+
   $oldTimeValue = time() - (14 * 24 * 60 * 60); // timestamp for 14 days previous
   $query = \Drupal::entityQuery('node')
     ->condition('type', 'news')
     ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
     ->condition('promote', true) // items that only are promoted
     ->condition('created', $oldTimeValue, '<') // items older than 14 days ago
-    ->condition('field_sorting_weight', -7, '>'); // items older than 4th ranking
+    ->condition('field_sorting_weight', $fourth_sorting_weight, '>'); // items older than 4th ranking
   $results = $query->execute();
 
   $queue = \Drupal::queue('newslinks_unpromote_queue');
