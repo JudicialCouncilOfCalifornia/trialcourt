@@ -152,7 +152,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     $email_access_keys = [];
     $id_access_keys = [];
 
-    $group_details = $emma->get_group_detail($emma_group);
+    $group_details = $emma->get_group_detail($emma_groups);
     if ($group_details != NULL) {
       $users_ammount = $group_details->active_count;
       $loops = ceil($users_ammount / 500);
