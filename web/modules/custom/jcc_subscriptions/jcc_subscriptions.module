@@ -154,13 +154,13 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
 
     foreach ($emma_groups as $emma_group) {
       $group_details = $emma->get_group_detail($emma_group);
-      if (isset($group_details)) {
+      if (isset($group_details->active_count)) {
         $users_ammount = $group_details->active_count;
         $loops = ceil($users_ammount / 500);
 
         for ($x = 0; $x < $loops; $x++) {
           $start = ($x * 500);
-          $users_in_group = $emma->list_group_members('9415684', 0, $start);
+          $users_in_group = $emma->list_group_members($emma_group, 0, $start);
           foreach ($users_in_group as $user_group) {
             if (!in_array($user_group->email, $email_to_sendgrid, TRUE)) {
               array_push($email_to_sendgrid, $user_group->email);
