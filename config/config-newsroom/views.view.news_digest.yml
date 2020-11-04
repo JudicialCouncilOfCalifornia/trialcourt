@@ -4,11 +4,13 @@ status: true
 dependencies:
   config:
     - field.storage.node.body
+    - field.storage.node.field_links
     - node.type.news
     - taxonomy.vocabulary.news_type
   content:
     - 'taxonomy_term:news_type:cc84a765-bfb4-4de9-9eb7-b9bcfa05cd64'
   module:
+    - link
     - node
     - taxonomy
     - text
@@ -207,7 +209,7 @@ display:
           group_type: group
           admin_label: ''
           label: ''
-          exclude: false
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -252,6 +254,73 @@ display:
           absolute: true
           entity_type: node
           plugin_id: entity_link
+        field_links:
+          id: field_links
+          table: node__field_links
+          field: field_links
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: '<a href="{{ field_links__uri }}">Read Full Article</a>'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: '{{ view_node }}'
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: uri
+          type: link_separate
+          settings:
+            trim_length: 80
+            url_only: false
+            url_plain: false
+            rel: '0'
+            target: '0'
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         nothing:
           id: nothing
           table: views
@@ -494,6 +563,7 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.body'
+        - 'config:field.storage.node.field_links'
   page_1:
     display_plugin: page
     id: page_1
@@ -513,6 +583,7 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.body'
+        - 'config:field.storage.node.field_links'
   page_2:
     display_plugin: page
     id: page_2

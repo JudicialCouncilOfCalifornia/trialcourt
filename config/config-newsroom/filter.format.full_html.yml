@@ -98,6 +98,8 @@ filters:
         documents_by_category=block_1: documents_by_category=block_1
         documents_by_category=block_2: documents_by_category=block_2
         documents_by_category=block_3: documents_by_category=block_3
+        staff_contacts=block_1: staff_contacts=block_1
+        staff_contacts=block_2: staff_contacts=block_2
         announcements=default: '0'
         announcements=block_1: '0'
         announcements=block_2: '0'
@@ -185,6 +187,8 @@ filters:
         news_dashboard=page_2: '0'
         news_dashboard=page_3: '0'
         news_digest=default: '0'
+        news_digest=page_1: '0'
+        news_digest=page_2: '0'
         news_main_categories=default: '0'
         news_main_categories=block_1: '0'
         news_main_categories=block_2: '0'
@@ -203,7 +207,6 @@ filters:
         search=default: '0'
         search=page_1: '0'
         staff_contacts=default: '0'
-        staff_contacts=block_1: '0'
         taxonomy_term=default: '0'
         taxonomy_term=feed_1: '0'
         taxonomy_term=page_1: '0'
@@ -228,11 +231,23 @@ filters:
     status: true
     weight: -41
     settings: {  }
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: false
+    weight: -37
+    settings: {  }
   filter_html_image_secure:
     id: filter_html_image_secure
     provider: filter
     status: false
     weight: -35
+    settings: {  }
+  filter_html_escape:
+    id: filter_html_escape
+    provider: filter
+    status: false
+    weight: -38
     settings: {  }
   filter_url:
     id: filter_url
@@ -241,18 +256,6 @@ filters:
     weight: -36
     settings:
       filter_url_length: 72
-  filter_html_escape:
-    id: filter_html_escape
-    provider: filter
-    status: false
-    weight: -38
-    settings: {  }
-  filter_autop:
-    id: filter_autop
-    provider: filter
-    status: false
-    weight: -37
-    settings: {  }
   linkit:
     id: linkit
     provider: linkit
