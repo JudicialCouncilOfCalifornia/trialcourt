@@ -43,6 +43,7 @@ class JCCSubscriptionsDigestCron {
         \Drupal::logger('jcc_subscriptions')->notice($log_message);
       }
       else {
+        $this->state->set('jcc_subscriptions.last_cron', $now);
         \Drupal::logger('jcc_subscriptions')->notice('No new newslink item have queued for email today.');
       }
     }
@@ -61,10 +62,14 @@ class JCCSubscriptionsDigestCron {
 
     $next->setTime(...explode(':', $scheduled));
 
-    if (($next->getTimestamp() <= $last->getTimestamp()) && (time() >= strtotime($scheduled))) {
+    if (($next->getTimestamp() <= $last->getTimestamp())) {
       $next->modify('+1 day');
     }
-    return $next->getTimestamp() <= $now;
+
+    $cron_timing_log_message = 'Last JCC_subs cron: ' . date('m/d/Y H:i:s', $last->getTimestamp()) . ' --- Next:  ' . date('m/d/Y H:i:s', $next->getTimestamp());
+    \Drupal::logger('jcc_subscriptions')->notice($cron_timing_log_message);
+
+    return ($next->getTimestamp() <= $now) && (time() >= strtotime($scheduled));
   }
 
   /**
