@@ -19,18 +19,17 @@ class Granicus extends ProviderPluginBase {
    */
   public function renderThumbnail($image_style, $link_url) {
     // Insert placeholder for thumbnail not found.
+    $theme = 'jcc-video--granicus';
+    $classes = $theme;
+    $tag = $this->getTag($this->getInput());
+    if (isset($tag) && !empty($tag)) {
+      $classes = $theme . ' ' . $tag;
+    }
     return [
       '#type' => 'html_tag',
       '#tag' => 'div',
       '#attributes' => [
-        'class' => 'jcc-placeholder-video',
-      ],
-      [
-        '#type' => 'html_tag',
-        '#tag' => 'i',
-        '#attributes' => [
-          'class' => 'fa fa-play',
-        ],
+        'class' => $classes,
       ],
     ];
   }
@@ -86,7 +85,7 @@ class Granicus extends ProviderPluginBase {
    * {@inheritdoc}
    */
   public static function getStartTime($input) {
-    preg_match('/[&|&amp;\?]entrytime=((?<entrytime>\d+))?/', $input, $matches);
+    preg_match('/[&|&amp;\?]entrytime=(?<entrytime>\d+)?/', $input, $matches);
     return isset($matches['entrytime']) ? '&entrytime=' . $matches['entrytime'] : FALSE;
   }
 
@@ -96,8 +95,18 @@ class Granicus extends ProviderPluginBase {
    * {@inheritdoc}
    */
   public static function getStopTime($input) {
-    preg_match('/[&|&amp;\?]stoptime=((?<stoptime>\d+))?/', $input, $matches);
+    preg_match('/[&|&amp;\?]stoptime=(?<stoptime>\d+)?/', $input, $matches);
     return isset($matches['stoptime']) ? '&stoptime=' . $matches['stoptime'] : FALSE;
+  }
+
+  /**
+   * If Granicus recording, optional tag.
+   *
+   * {@inheritdoc}
+   */
+  public static function getTag($input) {
+    preg_match('/[&|&amp;\?]tag=(?<tag>\D+)?/', $input, $matches);
+    return isset($matches['tag']) ? $matches['tag'] : FALSE;
   }
 
 }
