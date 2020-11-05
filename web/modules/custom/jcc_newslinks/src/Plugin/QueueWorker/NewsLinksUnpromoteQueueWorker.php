@@ -1,11 +1,8 @@
 <?php
-/**
- * @file
- * Contains \Drupal\jcc_newslinks\Plugin\QueueWorker\NewsLinksUnpromoteQueueWorker.
- */
 
 namespace Drupal\jcc_newslinks\Plugin\QueueWorker;
 
+use Drupal\node\Entity\Node;
 use Drupal\Core\Queue\QueueWorkerBase;
 
 /**
@@ -23,14 +20,15 @@ class NewsLinksUnpromoteQueueWorker extends QueueWorkerBase {
    * {@inheritdoc}
    */
   public function processItem($item) {
+    // Load the node.
+    $node = Node::load($item->nid);
 
-    // Load the node
-    $node = \Drupal\node\Entity\Node::load($item->nid);
-
-    // Unpromote the node
+    // Unpromote the node.
     if ($node->isPromoted() == TRUE) {
       $node->setPromoted(FALSE);
       $node->save();
+      $message = $node->get('title')->value . ' is unpromoted';
+      \Drupal::logger('jcc_newslinks')->notice($message);
     }
   }
 
