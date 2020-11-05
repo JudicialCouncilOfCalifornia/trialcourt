@@ -1,3 +1,5 @@
+$icon-supremecourt: "/libraries/courtyard-artifact/public/images/logos/supreme-logo.svg";
+
 .lightbox, .albums {
   max-width: 84rem !important;
   margin-bottom: 2rem;
@@ -82,21 +84,30 @@
   }
 }
 
-.jcc-placeholder-video {
+.jcc-video--granicus {
   display: block;
   position: relative;
-  height: 200px;
-  background-color: #f3f3f3;
+  height: 220px;
+  background-color: #333;
+  background-image: url("/libraries/courtyard-artifact/public/images/logos/jcc-logo.svg");
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: 50% 16%;
   text-align: center;
   cursor: pointer;
 
-  i {
-    position: relative;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-    font-size: 5rem;
-    color: #e2e2e2;
-    line-height: inherit;
+  &.supreme_court {
+    background-image: url($icon-supremecourt);
+  }
+
+  &.supremecourt {
+    background-image: url($icon-supremecourt);
+  }
+}
+
+.jcc-block--webcast {
+  .jcc-video--granicus {
+    height: 250px;
+    background-position: center center;
   }
 }
