@@ -1,16 +1,30 @@
-console.log('test');
+// <a class="jcc-newsroom-widget" href="http://newsroom.lndo.site/feed/news/32" data-subject="32" data-origin="http://newsroom.lndo.site">Covid-19 News</a>
+// <script async src="http://newsroom.lndo.site/themes/custom/jcc_newsroom/feed-widget.js" charset="utf-8"></script>
 
-var jsonRequestUrl = 'http://www.reddit.com/r/funny/comments/1v6rrq.json';
-var decoder = $('<div />');
-var decodedText = '';
+var embeds = document.getElementsByClassName("jcc-newsroom-widget");
+for (let embed of embeds) {
+  let embedArg = embed.dataset.subject;
+  let originUrl = embed.dataset.origin;
+  embed.insertAdjacentHTML('afterend', '<div class="embed-list" id="jcc_embed_' + embedArg + '"></div>');
 
-$.getJSON(jsonRequestUrl, function foo(result) {
-  var elements = result[1].data.children.slice(0, 10);
 
-  $.each(elements, function (index, value) {
-    decoder.html(value.data.body_html);
-    decodedText += decoder.text();
-  });
+  fetch(originUrl + '/feed/news/32')
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      appendData(data.items, embedArg, originUrl);
+    })
+    .catch(function (err) {
+      console.log('error: ' + err);
+    });
+}
 
-  $('#content').append(decodedText);
-});
+function appendData(data, embedArg, originUrl) {
+  var mainContainer = document.getElementById('jcc_embed_' + embedArg);
+  for (var i = 0; i < data.length; i++) {
+    var div = document.createElement("div");
+    div.innerHTML = '<h3>' + data[i].title + '</h3><p>' + data[i].content_html + '</p><p><a target="_blank" href="' + originUrl + '/node/' + data[i].id + '">Read Full Article</a></p>';
+    mainContainer.appendChild(div);
+  }
+}
