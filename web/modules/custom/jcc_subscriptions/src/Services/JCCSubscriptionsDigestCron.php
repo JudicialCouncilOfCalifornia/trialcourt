@@ -61,10 +61,16 @@ class JCCSubscriptionsDigestCron {
 
     $next->setTime(...explode(':', $scheduled));
 
-    if (($next->getTimestamp() <= $last->getTimestamp()) && (time() >= strtotime($scheduled))) {
+    if (($next->getTimestamp() <= $last->getTimestamp())) {
       $next->modify('+1 day');
     }
-    return $next->getTimestamp() <= $now;
+
+    if (($next->getTimestamp() <= $now) && (time() >= strtotime($scheduled))) {
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
   }
 
   /**
