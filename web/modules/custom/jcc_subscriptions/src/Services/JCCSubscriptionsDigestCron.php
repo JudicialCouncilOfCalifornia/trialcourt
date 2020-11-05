@@ -69,12 +69,7 @@ class JCCSubscriptionsDigestCron {
     $cron_timing_log_message = 'Last JCC_subs cron: ' . date('m/d/Y H:i:s', $last->getTimestamp()) . ' --- Next:  ' . date('m/d/Y H:i:s', $next->getTimestamp());
     \Drupal::logger('jcc_subscriptions')->notice($cron_timing_log_message);
 
-    if (($next->getTimestamp() <= $now) && (time() >= strtotime($scheduled))) {
-      return TRUE;
-    }
-    else {
-      return FALSE;
-    }
+    return ($next->getTimestamp() <= $now) && (time() >= strtotime($scheduled));
   }
 
   /**
