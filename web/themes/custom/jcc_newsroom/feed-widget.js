@@ -8,7 +8,7 @@ for (let embed of embeds) {
   embed.insertAdjacentHTML('afterend', '<div class="embed-list" id="jcc_embed_' + embedArg + '"></div>');
 
 
-  fetch(originUrl + '/feed/news/32')
+  fetch(originUrl + '/feed/news/' . originUrl)
     .then(function (response) {
       return response.json();
     })
