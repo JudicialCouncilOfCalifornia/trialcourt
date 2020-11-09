@@ -1,22 +1,28 @@
-// <a class="jcc-newsroom-widget" href="http://newsroom.lndo.site/feed/news/32" data-subject="32" data-origin="http://newsroom.lndo.site">Covid-19 News</a>
-// <script async src="http://newsroom.lndo.site/themes/custom/jcc_newsroom/feed-widget.js" charset="utf-8"></script>
+var embedArg = "";
+var originUrl = "";
 
 var embeds = document.getElementsByClassName("jcc-newsroom-widget");
 for (let embed of embeds) {
-  let embedArg = embed.dataset.subject;
-  let originUrl = embed.dataset.origin;
+  embedArg = embed.dataset.subject;
+  originUrl = embed.dataset.origin;
   embed.insertAdjacentHTML('afterend', '<div class="embed-list" id="jcc_embed_' + embedArg + '"></div>');
 
-  fetch(originUrl + '/feed/news/' + embedArg + "?callback=appendData")
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (data) {
-      appendData(data.items, embedArg, originUrl);
-    })
-    .catch(function (err) {
-      console.log('error: ' + err);
-    });
+  // fetch(originUrl + '/feed/news/' + embedArg + "?callback=appendData")
+  //   .then(function (response) {
+  //     return response.json();
+  //   })
+  //   .then(function (data) {
+  //     appendData(data.items, embedArg, originUrl);
+  //   })
+  //   .catch(function (err) {
+  //     console.log('error: ' + err);
+  //   });
+
+  var script = document.createElement('script');
+  script.src = originUrl + '/feed/news/' + embedArg + '?callback=appendData';
+
+  document.getElementsByTagName('head')[0].appendChild(script);
+
 }
 
 function appendData(data, embedArg, originUrl) {
@@ -27,3 +33,4 @@ function appendData(data, embedArg, originUrl) {
     mainContainer.appendChild(div);
   }
 }
+
