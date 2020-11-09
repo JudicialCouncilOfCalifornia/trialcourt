@@ -7,7 +7,7 @@ for (let embed of embeds) {
   let originUrl = embed.dataset.origin;
   embed.insertAdjacentHTML('afterend', '<div class="embed-list" id="jcc_embed_' + embedArg + '"></div>');
 
-  fetch(originUrl + '/feed/news/' + embedArg)
+  fetch(originUrl + '/feed/news/' + embedArg + "?callback=appendData")
     .then(function (response) {
       return response.json();
     })
