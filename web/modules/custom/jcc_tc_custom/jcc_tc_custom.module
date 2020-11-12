@@ -56,8 +56,8 @@ function jcc_tc_custom_form_node_form_alter(&$form, FormStateInterface $form_sta
 /**
  * Implements hook_views_post_render().
  */
-function jcc_tc_custom_views_post_render(&$view, &$output, &$cache) {
-  if ($view->name = 'feed_embed' && $view->current_display = 'json_feed_1') {
+function jcc_tc_custom_views_post_render($view, &$output, $cache) {
+  if ($view->id() == 'feed_embed' && $view->current_display == 'json_feed_1') {
     $output['#markup'] = "jsonCallback(" . $output['#markup'] . ")";
   }
 }
