@@ -101,12 +101,12 @@ function jcc_base_preprocess_region__header(&$variables) {
     'logo' => $logo,
     'menu_icon' => [
       'name' => 'menu',
-      'title' => "Menu",
+      'title' => "Main navigation",
       'decorative' => FALSE,
     ],
     'close_icon' => [
       'name' => 'close',
-      'title' => 'close',
+      'title' => 'Close main navigation',
       'decorative' => FALSE,
     ],
     'nav_secondary' => [
