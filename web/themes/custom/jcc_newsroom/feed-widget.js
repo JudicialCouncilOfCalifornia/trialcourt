@@ -7,7 +7,7 @@ function jsonCallback(jsonData){
   for (var i = 0; i < data.length; i++) {
     var div = document.createElement("div");
     div.className = "jcc-news-element";
-    div.innerHTML = '<div class="jcc-element-date">' + data[i].date_published + '</div><div class="jcc-element-title"><a href="' + originUrl + '/node/' + data[i].id + '">' + data[i].title + '</a></div><p class="jcc-element-description">' + data[i].content_html + '</p><p class="jcc-element-read-more"><a target="_blank" href="' + originUrl + '/node/' + data[i].id + '">Read Full Article</a></p>';
+    div.innerHTML = '<div class="jcc-element-date">' + data[i].date_published + '</div><div class="jcc-element-title"><a href="' + originUrl + '/node/' + data[i].id + '">' + data[i].title + '</a></div><p class="jcc-element-description">' + data[i].content_html + '</p>';
     mainContainer.appendChild(div);
   }
 }
