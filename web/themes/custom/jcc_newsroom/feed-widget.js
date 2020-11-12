@@ -15,13 +15,11 @@ var embeds = document.getElementsByClassName("jcc-newsroom-widget");
 for (let embed of embeds) {
   embedArg = embed.dataset.subject;
   originUrl = embed.dataset.origin;
-  //originUrl = "https://develop-jcc-newsroom.pantheonsite.io";
   embed.insertAdjacentHTML('afterend', '<div class="embed-list" id="jcc_embed_' + embedArg + '"></div>');
 
   var s = document.createElement("script"),
     callback = "jsonpCallback_" + new Date().getTime(),
     url = originUrl + '/feed/news/' + embedArg + "?callback=" + callback;
-    //url = originUrl + "/themes/custom/jcc_newsroom/test.json?callback=" + callback;
     s.type = "application/javascript";
     s.src = url;
   document.body.appendChild(s);
