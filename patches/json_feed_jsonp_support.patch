@@ -1,0 +1,17 @@
+diff --git a/src/Plugin/views/display/JsonFeed.php b/src/Plugin/views/display/JsonFeed.php
+index c2d40d0..9d9240b 100644
+--- a/src/Plugin/views/display/JsonFeed.php
++++ b/src/Plugin/views/display/JsonFeed.php
+@@ -123,7 +123,11 @@ class JsonFeed extends Feed {
+       return $this->view->style_plugin->render();
+     });
+ 
+-    $this->view->element['#content_type'] = $this->view->getRequest()->getMimeType('json');
++    if($this->view->current_display == "json_feed_1"){
++	    $this->view->element['#content_type'] = "application/javascript";
++	  }else{
++			$this->view->element['#content_type'] = $this->view->getRequest()->getMimeType('json');
++	  }
+ 
+     // Encode and wrap the output in a pre tag if this is for a live preview.
+     if (!empty($this->view->live_preview)) {
