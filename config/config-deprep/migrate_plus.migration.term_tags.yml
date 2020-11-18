@@ -1,0 +1,57 @@
+uuid: c2e7bf52-2ee0-455e-92e8-c7ec1dc0c1f4
+langcode: en
+status: true
+dependencies: {  }
+id: term_tags
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - tags
+  - taxonomy
+migration_group: jcc
+label: 'Taxonomy: Tags'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: 'https://spreadsheets.google.com/feeds/list/15L6AqVIzFREN9LPWnCQ2nfg1T1lOdd6wiL-Nyb_QJBo/12/public/values?alt=json'
+  item_selector: entry
+  ids:
+    term:
+      type: string
+  constants:
+    bool_0: 0
+    bool_1: 1
+    uid_root: 1
+    full_html: full_html
+  fields:
+    -
+      name: term
+      selector: term
+      label: 'Term Name'
+    -
+      name: parent
+      selector: parent
+      label: 'Term Parent'
+    -
+      name: weight
+      selector: weight
+      label: 'Term Weight'
+process:
+  name: term
+  parent:
+    -
+      plugin: migration_lookup
+      migration: term_tags
+      source: parent
+    -
+      plugin: default_value
+      default_value: 0
+  weight:
+    plugin: default_value
+    default_value: 0
+    source: weight
+destination:
+  plugin: 'entity:taxonomy_term'
+  default_bundle: tags
