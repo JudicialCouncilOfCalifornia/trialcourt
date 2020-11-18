@@ -77,7 +77,10 @@ process:
     plugin: default_value
     default_value: document
   title: title
-  body/value: body
+  body/value:
+    plugin: callback
+    callable: nl2br
+    source: body
   body/format: constants/full_html
   sticky:
     plugin: default_value
