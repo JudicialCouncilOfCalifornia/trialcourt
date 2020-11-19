@@ -22,7 +22,6 @@ function jcc_base_preprocess_views_view_unformatted__staff_contacts__block_2(&$v
   foreach ($variables['rows'] as $row) {
     $row = $row['content']['#node'];
     $person_id = $row->nid->value;
-    $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
     $first_name = $row->field_first_name->value;
     $last_name = $row->field_last_name->value;
     if ($row->field_person_type[0]) {
@@ -49,7 +48,6 @@ function jcc_base_preprocess_views_view_unformatted__staff_contacts__block_2(&$v
         $tag_label = $tag_entity->entity->label();
         $existing = [
           'person_id' => $person_id,
-          'url' => $url,
           'location_name' => $location_name,
           'location_website' => $location_website,
           'first_name' => $first_name,
@@ -67,7 +65,6 @@ function jcc_base_preprocess_views_view_unformatted__staff_contacts__block_2(&$v
 
     $person = [
       'person_id' => $person_id,
-      'url' => $url,
       'location_name' => $location_name,
       'location_website' => $location_website,
       'first_name' => $first_name,

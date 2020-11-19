@@ -23,13 +23,19 @@ function jcc_deprep_preprocess_views_view_field__body(&$variables) {
 
     $doc = new DOMDocument();
     $doc->formatOutput = TRUE;
-    $doc->loadXML($variables['output']->__toString());
 
-    $fragment = $doc->createDocumentFragment();
-    $fragment->appendXML("<i>{$title}</i> {$year} {$citation}");
+    if (isset($variables['output']) && $variables['output']) {
+      $doc->loadXML($variables['output']->__toString());
 
-    $doc->getElementsByTagName("a")->item(0)->nodeValue = '';
-    $doc->getElementsByTagName("a")->item(0)->appendChild($fragment);
+      $citation_title = "<i>{$title}</i> {$year} {$citation}";
+      $citation_title = preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $citation_title);
+
+      $fragment = $doc->createDocumentFragment();
+      $fragment->appendXML($citation_title);
+
+      $doc->getElementsByTagName("a")->item(0)->nodeValue = '';
+      $doc->getElementsByTagName("a")->item(0)->appendChild($fragment);
+    }
 
     $variables['output'] = Markup::create($doc->saveHTML());
   }

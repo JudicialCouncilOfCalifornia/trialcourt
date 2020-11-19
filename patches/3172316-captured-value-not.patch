@@ -1,0 +1,15 @@
+diff --git a/src/RegexRedirectRepository.php b/src/RegexRedirectRepository.php
+index 39ba753..01e9ff9 100644
+--- a/src/RegexRedirectRepository.php
++++ b/src/RegexRedirectRepository.php
+@@ -349,8 +349,8 @@ class RegexRedirectRepository {
+     // matched values from the source.
+     $redirect_regex_url = str_replace('base:', '', $redirect->getRedirectUrl()->toUriString());
+     foreach ($this->namedGroupReference as $key => $value) {
+-      $pattern = '/<' . $key . '>/';
+-      $redirect_regex_url = preg_replace($pattern, $value, $redirect_regex_url);
++        $pattern = '%3C' . $key . '%3E';
++        $redirect_regex_url = str_replace($pattern, $value, $redirect_regex_url);
+     }
+ 
+     $redirect->setRedirect($redirect_regex_url);

@@ -8,6 +8,7 @@
 use Drupal\Core\Database\Database;
 use Drupal\user\Entity\User;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Utility\Xss;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -58,7 +59,8 @@ function jcc_tc_custom_form_node_form_alter(&$form, FormStateInterface $form_sta
  */
 function jcc_tc_custom_views_post_render($view, &$output, $cache) {
   if ($view->id() == 'feed_embed' && $view->current_display == 'json_feed_1') {
-    $output['#markup'] = "jsonCallback(" . $output['#markup'] . ")";
+    $index = \Drupal::request()->query->get('index');
+    $output['#markup'] = "jsonCallback(" . $output['#markup'] . ", " . Xss::filter($index) . ")";
   }
 }
 
