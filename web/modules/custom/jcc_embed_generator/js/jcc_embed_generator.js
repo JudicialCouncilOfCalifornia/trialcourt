@@ -1,15 +1,17 @@
 (function ($, Drupal) {
   Drupal.behaviors.jccEmbedGenerator = {
       // TODO : Style
-      // TODO : Taxonomy Views
+      // TODO : Remove select tag from available tags in autocomplete
       attach: function (context, settings) {
         var data_count = "10",
           block_width = "150",
           hide_date = "no",
           hide_description = "no",
-          taxonomy_id = "",
-          taxonomy_name = "",
-          data_origin = "https://develop-jcc-newsroom.pantheonsite.io"; //"http://newsroom.lndo.site"
+          selected_taxonomy_ids = [],
+          selected_taxonomy_names = [],
+          taxonomy_term_list = [],
+          taxonomy_term_ids = [],
+          data_origin="https://newsroom.courts.ca.gov";
 
         // DATA-COUNT
         $('<select id="items-select-data-count"></select>').appendTo('#data-count');
@@ -62,6 +64,8 @@
 
         // Global elements
         $('<textarea readonly></textarea>').appendTo('.generator_result_wrapper');
+        $('<form autocomplete="off"><div class="jcc-autocomplete" style="width:300px;"><input id="tag-selector" type="text" name="tag" placeholder="Tag"></div></form>').appendTo('#term-selector');
+        initAutocomplete();
         generateCode();
 
         //Copy to clipboard event
@@ -70,11 +74,111 @@
           e.preventDefault();
           this.select();
           document.execCommand("copy");
-        })
+        });
 
+        // Gather data from html
+        function initAutocomplete(){
+          $('.taxonomy-term').each(function(){
+            taxonomy_term_list.push($(this).html());
+            taxonomy_term_ids.push($(this).attr('data-tid'));
+          });
+          jccAutocomplete(document.getElementById("tag-selector"), taxonomy_term_list, taxonomy_term_ids);
+        }
 
+        // Autocomplete functionality
+        function jccAutocomplete(inp, arrTerms, arrIds) {
+          var currentFocus;
+          inp.addEventListener("input", function(e) {
+            var a, b, i, val = this.value;
+            closeAllLists();
+            if (!val) { return false;}
+            currentFocus = -1;
+            a = document.createElement("DIV");
+            a.setAttribute("id", this.id + "autocomplete-list");
+            a.setAttribute("class", "jcc-autocomplete-items");
+            this.parentNode.appendChild(a);
+            for (i = 0; i < arrTerms.length; i++) {
+              /*check if the item starts with the same letters as the text field value:*/
+              if (arrTerms[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                b = document.createElement("DIV");
+                b.innerHTML = "<strong>" + arrTerms[i].substr(0, val.length) + "</strong>";
+                b.innerHTML += arrTerms[i].substr(val.length);
+                b.innerHTML += "<input type='hidden' value='" + arrTerms[i] + "'>";
+                b.addEventListener("click", function(e) {
+                  inp.value = '';
+                  addTag(this.getElementsByTagName("input")[0].value);
+                  closeAllLists();
+                });
+                a.appendChild(b);
+              }
+            }
+          });
+          /*execute a function presses a key on the keyboard:*/
+          inp.addEventListener("keydown", function(e) {
+            var x = document.getElementById(this.id + "autocomplete-list");
+            if (x) x = x.getElementsByTagName("div");
+            if (e.keyCode == 40) { //down
+              currentFocus++;
+              addActive(x);
+            } else if (e.keyCode == 38) { //up
+              currentFocus--;
+              addActive(x);
+            } else if (e.keyCode == 13) { //enter
+              e.preventDefault();
+              if (currentFocus > -1) {
+                if (x) x[currentFocus].click();
+              }
+            }
+          });
+          function addActive(x) {
+            if (!x) return false;
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            x[currentFocus].classList.add("jcc-autocomplete-active");
+          }
+          function removeActive(x) {
+            for (var i = 0; i < x.length; i++) {
+              x[i].classList.remove("jcc-autocomplete-active");
+            }
+          }
+          function closeAllLists(elmnt) {
+            var x = document.getElementsByClassName("jcc-autocomplete-items");
+            for (var i = 0; i < x.length; i++) {
+              if (elmnt != x[i] && elmnt != inp) {
+                x[i].parentNode.removeChild(x[i]);
+              }
+            }
+          }
+          /*execute a function when someone clicks in the document:*/
+          document.addEventListener("click", function (e) {
+            closeAllLists(e.target);
+          });
+        }
+
+        function removeTag(element){
+          selected_taxonomy_ids.splice( $.inArray(element.attr('data-id'),selected_taxonomy_ids) ,1 );
+          selected_taxonomy_names.splice( $.inArray(element.attr('data-name'),selected_taxonomy_names) ,1 );
+          $('.selected-tag[data-id="' + element.attr('data-id') + '"]').remove();
+          generateCode();
+        }
+
+        function addTag(name){
+          let termId =  Object.keys(taxonomy_term_list).find(key => taxonomy_term_list[key] === name);
+          $('<div class="selected-tag" data-id="' + taxonomy_term_ids[termId] + '">' + name + '<span class="remove-term" data-id="' + taxonomy_term_ids[termId] + '" data-name="' + name + '">X</span></div>').appendTo($('#selected-tags'));
+          $('.remove-term[data-id="' + taxonomy_term_ids[termId] + '"]').click(function(){
+            removeTag($(this));
+          });
+          selected_taxonomy_names.push(name);
+          selected_taxonomy_ids.push(taxonomy_term_ids[termId]);
+          generateCode();
+        }
+
+        // Generate code snippet / Refresh preview window
         function generateCode() {
-          var embed_code = '<a class="jcc-newsroom-widget" href="' + data_origin + 'feed/news/32" data-subject="32" data-hide-date="' + hide_date + '" data-hide-description="' + hide_description + '" data-block-width="' + block_width + '" data-origin="' + data_origin + '" data-count="' + data_count + '">Term 32 News</a><script async type="application/javascript" src="' + data_origin + '/themes/custom/jcc_newsroom/feed-widget.js" charset="utf-8"></script>';
+          let generatedTermsId = selected_taxonomy_ids.join('+');
+          let generatedTermsName = selected_taxonomy_names.join(', ');
+          var embed_code = '<a class="jcc-newsroom-widget" href="' + data_origin + 'feed/news/' + generatedTermsId + '" data-subject="' + generatedTermsId + '" data-hide-date="' + hide_date + '" data-hide-description="' + hide_description + '" data-block-width="' + block_width + '" data-origin="' + data_origin + '" data-count="' + data_count + '">' + generatedTermsName + '</a><script async type="application/javascript" src="' + data_origin + '/themes/custom/jcc_newsroom/feed-widget.js" charset="utf-8"></script>';
           $('.generator_result_wrapper textarea').text(embed_code);
           // Generate preview
           $('.generator_result_preview').html(embed_code);

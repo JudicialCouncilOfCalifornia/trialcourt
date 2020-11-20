@@ -13,24 +13,31 @@ class Generate extends ControllerBase {
    * Returns a render-able array.
    */
   public function content() {
-    // $term_select_view = views_embed_view('taxonomy_term_list', 'default');
-    // $term_select = \Drupal::service('renderer')->render($term_select_view);
-    // kint($term_select_view);
-    $term_select = "";
+    $term_select_view = views_embed_view('taxonomy_term_list', 'default');
+    if ($term_select_view != NULL) {
+      $term_select = \Drupal::service('renderer')->render($term_select_view);
+    }
+    else {
+      $term_select = "";
+    }
 
     $build = [
       '#markup' => '
       <div class="jcc_generator_embed">
         <div class="tag-list">' . $term_select . '</div>
         <div class="generator_form">
+            <div class="form-item" id="term-selector"></div>
+            <div class="form-item" id="selected-tags"></div>
             <div class="form-item" id="data-count"></div>
             <div class="form-item" id="data-hide-date"></div>
             <div class="form-item" id="data-hide-description"></div>
             <div class="form-item" id="block-width"></div>
         </div>
-        <div class="generator_result_wrapper">
-        </div>
-        <div class="generator_result_preview">
+        <div class="generated-dashboard">
+          <div class="generator_result_wrapper">
+          </div>
+          <div class="generator_result_preview">
+          </div>
         </div>
       </div>
       ',
