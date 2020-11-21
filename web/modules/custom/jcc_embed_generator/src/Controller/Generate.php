@@ -24,14 +24,19 @@ class Generate extends ControllerBase {
     $build = [
       '#markup' => '
       <div class="jcc_generator_embed">
+        <h1 class="jcc-title">Embed Code generator</h1>
         <div class="tag-list">' . $term_select . '</div>
         <div class="generator_form">
-            <div class="form-item" id="term-selector"></div>
-            <div class="form-item" id="selected-tags"></div>
-            <div class="form-item" id="data-count"></div>
-            <div class="form-item" id="data-hide-date"></div>
-            <div class="form-item" id="data-hide-description"></div>
-            <div class="form-item" id="block-width"></div>
+            <div class="left-col">
+                <div class="form-item" id="term-selector"></div>
+                <div class="form-item" id="selected-tags"></div>
+            </div>
+            <div class="right-col">
+                <div class="form-item" id="data-count"></div>
+                <div class="form-item jcc-checkbox" id="data-hide-date"></div>
+                <div class="form-item jcc-checkbox" id="data-hide-description"></div>
+                <div class="form-item" id="block-width"></div>
+            </div>
         </div>
         <div class="generated-dashboard">
           <div class="generator_result_wrapper">

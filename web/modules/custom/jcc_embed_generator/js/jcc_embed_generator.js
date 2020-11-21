@@ -1,7 +1,7 @@
 (function ($, Drupal) {
   Drupal.behaviors.jccEmbedGenerator = {
       // TODO : Style
-      // TODO : Remove select tag from available tags in autocomplete
+      // TODO : Remove select tag from available tags in autocomplete?
       attach: function (context, settings) {
         var data_count = "10",
           block_width = "150",
@@ -14,7 +14,7 @@
           data_origin="https://newsroom.courts.ca.gov";
 
         // DATA-COUNT
-        $('<select id="items-select-data-count"></select>').appendTo('#data-count');
+        $('<select class="usa-select" id="items-select-data-count"></select>').appendTo('#data-count');
         $('#items-select-data-count', context).append(`<option value="" selected disabled hidden>Items to show</option>`);
         $('#items-select-data-count', context).append(`<option value="5">5</option>`);
         $('#items-select-data-count', context).append(`<option value="10">10</option>`);
@@ -27,7 +27,7 @@
         });
 
         // BLOCK-WIDTH
-        $('<select id="items-select-block-width"></select>').appendTo('#block-width');
+        $('<select class="usa-select" id="items-select-block-width"></select>').appendTo('#block-width');
         $('#items-select-block-width').append(`<option value="" selected disabled hidden>Block Width</option>`);
         $('#items-select-block-width').append(`<option value="150">150</option>`);
         $('#items-select-block-width').append(`<option value="300">300</option>`);
@@ -39,7 +39,7 @@
         });
 
         // HIDE-DATE
-        $('<label for="hide-date">Hide Date</label><input  id="items-select-data-hide-date" type="checkbox" name="hide-date" value="yes" />').appendTo('#data-hide-date');
+        $('<input class="" id="items-select-data-hide-date" type="checkbox" name="hide-date" value="yes" /><label for="hide-date">Hide Date</label>').appendTo('#data-hide-date');
 
         $('#items-select-data-hide-date').on('change', function () {
           if (this.checked) {
@@ -51,7 +51,7 @@
         });
 
         // HIDE-DATE
-        $('<label for="hide-description">Hide Description</label><input id="items-select-data-hide-description" type="checkbox" name="hide-description" value="yes" />').appendTo('#data-hide-description');
+        $('<input id="items-select-data-hide-description" type="checkbox" name="hide-description" value="yes" /><label for="hide-description" >Hide Description</label>').appendTo('#data-hide-description');
 
         $('#items-select-data-hide-description').on('change', function () {
           if (this.checked) {
@@ -63,17 +63,21 @@
         });
 
         // Global elements
-        $('<textarea readonly></textarea>').appendTo('.generator_result_wrapper');
+        $('<textarea readonly></textarea><div class="message">Copied to clipboard</div>').appendTo('.generator_result_wrapper');
         $('<form autocomplete="off"><div class="jcc-autocomplete" style="width:300px;"><input id="tag-selector" type="text" name="tag" placeholder="Tag"></div></form>').appendTo('#term-selector');
         initAutocomplete();
         generateCode();
+        let searchParams = new URLSearchParams(window.location.search);
+        if(searchParams.has('tid')){
+          addTag('', searchParams.get('tid'));
+        }
 
         //Copy to clipboard event
-        // TODO: Tooltip to notify of the click
         $('.generator_result_wrapper textarea').on('click', function (e) {
           e.preventDefault();
           this.select();
           document.execCommand("copy");
+          $('.generator_result_wrapper .message').show().fadeOut(1500, 'swing');
         });
 
         // Gather data from html
@@ -163,25 +167,43 @@
           generateCode();
         }
 
-        function addTag(name){
-          let termId =  Object.keys(taxonomy_term_list).find(key => taxonomy_term_list[key] === name);
-          $('<div class="selected-tag" data-id="' + taxonomy_term_ids[termId] + '">' + name + '<span class="remove-term" data-id="' + taxonomy_term_ids[termId] + '" data-name="' + name + '">X</span></div>').appendTo($('#selected-tags'));
-          $('.remove-term[data-id="' + taxonomy_term_ids[termId] + '"]').click(function(){
-            removeTag($(this));
-          });
-          selected_taxonomy_names.push(name);
-          selected_taxonomy_ids.push(taxonomy_term_ids[termId]);
-          generateCode();
+        function addTag(name = '', id = ''){
+          let lookupError = false;
+          if(name != '') {
+            var termName = name;
+            var termIdKey = Object.keys(taxonomy_term_list).find(key => taxonomy_term_list[key] === termName);
+            var termId = taxonomy_term_ids[termIdKey];
+            if(termIdKey == undefined){lookupError = true;}
+          } else {
+            var termId = id;
+            var termNameKey = Object.keys(taxonomy_term_ids).find(key => taxonomy_term_ids[key] === termId);
+            var termName = taxonomy_term_list[termNameKey];
+            if(termNameKey == undefined){lookupError = true;}
+          }
+          if (!lookupError) {
+            $('<div class="selected-tag" data-id="' + termId + '">' + termName + '<span class="remove-term" data-id="' + termId + '" data-name="' + termName + '">X</span></div>').appendTo($('#selected-tags'));
+            $('.remove-term[data-id="' + termId + '"]').click(function () {
+              removeTag($(this));
+            });
+            selected_taxonomy_names.push(termName);
+            selected_taxonomy_ids.push(termId);
+            generateCode();
+          }
         }
 
         // Generate code snippet / Refresh preview window
         function generateCode() {
-          let generatedTermsId = selected_taxonomy_ids.join('+');
-          let generatedTermsName = selected_taxonomy_names.join(', ');
-          var embed_code = '<a class="jcc-newsroom-widget" href="' + data_origin + 'feed/news/' + generatedTermsId + '" data-subject="' + generatedTermsId + '" data-hide-date="' + hide_date + '" data-hide-description="' + hide_description + '" data-block-width="' + block_width + '" data-origin="' + data_origin + '" data-count="' + data_count + '">' + generatedTermsName + '</a><script async type="application/javascript" src="' + data_origin + '/themes/custom/jcc_newsroom/feed-widget.js" charset="utf-8"></script>';
-          $('.generator_result_wrapper textarea').text(embed_code);
-          // Generate preview
-          $('.generator_result_preview').html(embed_code);
+          if (selected_taxonomy_ids.length > 0) {
+            let generatedTermsId = selected_taxonomy_ids.join('+');
+            let generatedTermsName = selected_taxonomy_names.join(', ');
+            var embed_code = '<a class="jcc-newsroom-widget" href="' + data_origin + '/feed/news/' + generatedTermsId + '" data-subject="' + generatedTermsId + '" data-hide-date="' + hide_date + '" data-hide-description="' + hide_description + '" data-block-width="' + block_width + '" data-origin="' + data_origin + '" data-count="' + data_count + '">' + generatedTermsName + '</a><script async type="application/javascript" src="' + data_origin + '/themes/custom/jcc_newsroom/feed-widget.js" charset="utf-8"></script>';
+            $('.generator_result_wrapper textarea').text(embed_code);
+            // Generate preview
+            $('.generator_result_preview').html(embed_code);
+          } else {
+            $('.generator_result_wrapper textarea').text('Please select a tag.');
+            $('.generator_result_preview').html('');
+          }
         }
       }
   };
