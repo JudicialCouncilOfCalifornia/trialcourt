@@ -14,7 +14,7 @@
           data_origin="https://newsroom.courts.ca.gov";
 
         // DATA-COUNT
-        $('<select class="usa-select" id="items-select-data-count"></select>').appendTo('#data-count');
+        $('<label for="data-count">Choose the number of items to display</label><select class="usa-select" name="data-count" id="items-select-data-count"></select>').appendTo('#data-count');
         $('#items-select-data-count', context).append(`<option value="" selected disabled hidden>Items to show</option>`);
         $('#items-select-data-count', context).append(`<option value="5">5</option>`);
         $('#items-select-data-count', context).append(`<option value="10">10</option>`);
@@ -63,8 +63,8 @@
         });
 
         // Global elements
-        $('<textarea readonly></textarea><div class="message">Copied to clipboard</div>').appendTo('.generator_result_wrapper');
-        $('<form autocomplete="off"><div class="jcc-autocomplete" style="width:300px;"><input id="tag-selector" type="text" name="tag" placeholder="Tag"></div></form>').appendTo('#term-selector');
+        $('<label>Copy the embed code</label><textarea readonly></textarea><div class="message">Copied to clipboard</div>').appendTo('.generator_result_wrapper');
+        $('<form autocomplete="off"><div class="jcc-autocomplete" style="width:300px;"><label for="tag">Select the topics you want to embed</label><input id="tag-selector" type="text" name="tag" placeholder="Tag"></div></form>').appendTo('#term-selector');
         initAutocomplete();
         generateCode();
         let searchParams = new URLSearchParams(window.location.search);
@@ -199,7 +199,7 @@
             var embed_code = '<a class="jcc-newsroom-widget" href="' + data_origin + '/feed/news/' + generatedTermsId + '" data-subject="' + generatedTermsId + '" data-hide-date="' + hide_date + '" data-hide-description="' + hide_description + '" data-block-width="' + block_width + '" data-origin="' + data_origin + '" data-count="' + data_count + '">' + generatedTermsName + '</a><script async type="application/javascript" src="' + data_origin + '/themes/custom/jcc_newsroom/feed-widget.js" charset="utf-8"></script>';
             $('.generator_result_wrapper textarea').text(embed_code);
             // Generate preview
-            $('.generator_result_preview').html(embed_code);
+            $('.generator_result_preview').html('<label>Preview widget</label>' + embed_code);
           } else {
             $('.generator_result_wrapper textarea').text('Please select a tag.');
             $('.generator_result_preview').html('');
