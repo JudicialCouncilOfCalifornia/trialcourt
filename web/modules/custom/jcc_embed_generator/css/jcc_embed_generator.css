@@ -1,0 +1,137 @@
+.jcc_generator_embed{
+  max-width: 84rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+}
+.jcc_generator_embed .tag-list{
+  display: none;
+}
+.jcc_generator_embed .jcc-title {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.form-item {
+  padding: 10px;
+}
+.form-item.jcc-checkbox label{
+  padding-left: 10px;
+}
+.jcc-embed-style {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #eff6fb;
+}
+.jcc-embed-style .form-item {
+  padding: 10px 0;
+}
+.jcc-autocomplete {
+  /*the container must be positioned relative:*/
+  position: relative;
+  display: inline-block;
+}
+.jcc-autocomplete input {
+  border: 1px solid transparent;
+  background-color: #eff6fb;
+  padding: 10px;
+  font-size: 16px;
+}
+.jcc-autocomplete input[type=text] {
+  background-color: #eff6fb;
+  width: 100%;
+}
+.jcc-autocomplete input[type=submit] {
+  background-color: #eff6fb;
+  color: #fff;
+}
+.jcc-autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.jcc-autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+.jcc-autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9;
+}
+.jcc-autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+.selected-tag {
+  padding: 5px;
+  background: #eff6fb;
+  display: inline-block;
+  margin: 5px;
+}
+.selected-tag .remove-term {
+  cursor: pointer;
+  padding-left: 10px;
+  font-weight: bold;
+}
+.generator_form {
+  display: flex;
+  flex-direciton: row;
+}
+.generator_form .left-col,
+.generator_form .right-col{
+  flex-basis: 50%;
+  padding: 20px;
+}
+.generated-dashboard{
+  display: flex;
+  flex-direciton: row;
+}
+.generator_result_wrapper{
+  flex-basis: 50%;
+  padding: 20px;
+  position: relative;
+}
+.generator_result_wrapper .message{
+  position: absolute;
+  top:20px;
+  right:20px;
+  background: #ffffff;
+  padding:10px;
+  display: none;
+}
+.generator_result_wrapper textarea {
+  background: #eff6fb;
+  width: 100%;
+  min-height: 300px;
+  padding: 20px;
+  cursor:pointer;
+}
+.generator_result_preview{
+  flex-basis: 50%;
+  padding: 20px;
+}
+.generator_result_preview .embed-list{
+  border: 1px solid black;
+  padding: 20px;
+}
+@media (max-width:768px){
+  .generator_result_preview,
+  .generator_result_wrapper,
+  .generator_form .left-col,
+  .generator_form .right-col{
+    flex-basis: 100%;
+  }
+  .generator_form,
+  .generated-dashboard{
+    flex-direction: column;
+  }
+}
