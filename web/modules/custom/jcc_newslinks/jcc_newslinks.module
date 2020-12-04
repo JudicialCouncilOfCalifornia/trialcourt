@@ -33,24 +33,67 @@ function jcc_newslinks_cron() {
     $fourth_sorting_weight = intval($node->get('field_sorting_weight')->getString());
   }
 
-  // Timestamp for 14 days previous.
+  // Unpromote newslinks after 14 days.
   $oldTimeValue = time() - (14 * 24 * 60 * 60);
-  $query = \Drupal::entityQuery('node')
+  $queryUnpromote = \Drupal::entityQuery('node')
     ->condition('type', 'news')
     ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
-  // Items that only are promoted.
+    // Items that only are promoted.
     ->condition('promote', TRUE)
-  // Items older than 14 days ago.
+    // Items older than 14 days ago.
     ->condition('created', $oldTimeValue, '<')
-  // Items older than 4th ranking.
+    // Items older than 4th ranking.
     ->condition('field_sorting_weight', $fourth_sorting_weight, '>');
-  $results = $query->execute();
+  $unpromoteItems = $queryUnpromote->execute();
 
-  $queue = \Drupal::queue('newslinks_unpromote_queue');
-  foreach ($results as $result) {
+  $unpromoteQueue = \Drupal::queue('newslinks_unpromote_queue');
+  foreach ($unpromoteItems as $result) {
     $item = (object) ['nid' => $result];
-    $queue->createItem($item);
+    $unpromoteQueue->createItem($item);
   }
-  $message = count($results) . ' newslinks are queued to be unpromoted';
-  \Drupal::logger('jcc_newslinks')->notice($message);
+  $unpromoteMessage = count($unpromoteItems) . ' newslinks are queued to be unpromoted';
+  \Drupal::logger('jcc_newslinks')->notice($unpromoteMessage);
+
+  // Archive newslink drafts after 5 days.
+  $draftTimeLimit = time() - (5 * 24 * 60 * 60);
+  $queryDrafts = \Drupal::entityQuery('node')
+    ->condition('type', 'news')
+    ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
+    // Items that are in draft.
+    ->condition('moderation_state', 'draft')
+    // Items older than 5 days ago.
+    ->condition('created', $draftTimeLimit, '<');
+  $draftItems = $queryDrafts->execute();
+
+  $archiveQueue = \Drupal::queue('newslinks_archive_queue');
+  foreach ($draftItems as $result) {
+    $item = (object) ['nid' => $result];
+    $archiveQueue->createItem($item);
+  }
+  $archiveMessage = count($draftItems) . ' newslink drafts are queued to be archived';
+  \Drupal::logger('jcc_newslinks')->notice($archiveMessage);
+
+  // Purge media from archived newslinks after 10 days.
+  // Process in batches to avoid time limit concerns.
+  $archiveTimeLimit = time() - (10 * 24 * 60 * 60);
+  $queryArchived = \Drupal::entityQuery('node')
+    ->condition('type', 'news')
+    ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
+    // Items that are archived.
+    ->condition('moderation_state', 'archived')
+    // Items older than 10 days ago.
+    ->condition('created', $archiveTimeLimit, '<')
+    // Items have media image entities.
+    ->exists('field_images')
+    ->range(0, 200);
+  $purgeItems = $queryArchived->execute();
+
+  $purgeQueue = \Drupal::queue('newslinks_archive_queue');
+  foreach ($purgeItems as $result) {
+    $item = (object) ['nid' => $result];
+    $purgeQueue->createItem($item);
+  }
+
+  $purgeMessage = count($purgeItems) . ' archived newslinks are queued for media purge';
+  \Drupal::logger('jcc_newslinks')->notice($purgeMessage);
 }
