@@ -33,9 +33,7 @@ function jcc_newslinks_cron() {
     $fourth_sorting_weight = intval($node->get('field_sorting_weight')->getString());
   }
 
-  /**
-   * Unpromote newslinks after 14 days.
-   */
+  // Unpromote newslinks after 14 days.
   $oldTimeValue = time() - (14 * 24 * 60 * 60);
   $queryUnpromote = \Drupal::entityQuery('node')
     ->condition('type', 'news')
@@ -56,18 +54,15 @@ function jcc_newslinks_cron() {
   $unpromoteMessage = count($unpromoteItems) . ' newslinks are queued to be unpromoted';
   \Drupal::logger('jcc_newslinks')->notice($unpromoteMessage);
 
-  /**
-   * Archive newslink drafts after 5 days.
-   */
-  $draftTimeLimit = time() - (1 * 24 * 60 * 60);
+  // Archive newslink drafts after 5 days.
+  $draftTimeLimit = time() - (5 * 24 * 60 * 60);
   $queryDrafts = \Drupal::entityQuery('node')
     ->condition('type', 'news')
     ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
     // Items that are in draft.
-    ->condition('moderation_state','draft')
+    ->condition('moderation_state', 'draft')
     // Items older than 5 days ago.
-    ->condition('created', $draftTimeLimit, '<')
-    ->range(0,1);
+    ->condition('created', $draftTimeLimit, '<');
   $draftItems = $queryDrafts->execute();
 
   $archiveQueue = \Drupal::queue('newslinks_archive_queue');
@@ -78,10 +73,8 @@ function jcc_newslinks_cron() {
   $archiveMessage = count($draftItems) . ' newslink drafts are queued to be archived';
   \Drupal::logger('jcc_newslinks')->notice($archiveMessage);
 
-  /**
-   * Purge media from archived newslinks after 10 days.
-   * Process 200 every hour to avoid time concerns.
-   */
+  // Purge media from archived newslinks after 10 days.
+  // Process in batches to avoid time limit concerns.
   $archiveTimeLimit = time() - (10 * 24 * 60 * 60);
   $queryArchived = \Drupal::entityQuery('node')
     ->condition('type', 'news')
@@ -90,14 +83,13 @@ function jcc_newslinks_cron() {
     ->condition('moderation_state', 'archived')
     // Items older than 10 days ago.
     ->condition('created', $archiveTimeLimit, '<')
-    // Items have a media image
+    // Items have media image entities.
     ->exists('field_images')
-    ->range(0,100);
+    ->range(0, 200);
   $purgeItems = $queryArchived->execute();
 
   $purgeQueue = \Drupal::queue('newslinks_archive_queue');
   foreach ($purgeItems as $result) {
-    // Items only with images
     $item = (object) ['nid' => $result];
     $purgeQueue->createItem($item);
   }

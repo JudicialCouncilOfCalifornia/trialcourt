@@ -1,11 +1,8 @@
 <?php
-/**
- * @file
- * Contains \Drupal\jcc_newslinks\Plugin\QueueWorker\NewsLinksArchiveQueueWorker.
- */
 
 namespace Drupal\jcc_newslinks\Plugin\QueueWorker;
 
+use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -17,7 +14,7 @@ use Drupal\node\Entity\Node;
  * @QueueWorker(
  *   id = "newslinks_archive_queue",
  *   title = @Translation("NewsLinks: Archive items in queue."),
- *   cron = {"time" = 90}
+ *   cron = {"time" = 1200}
  * )
  */
 class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
@@ -32,18 +29,28 @@ class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
 
     switch ($moderationState) {
       case 'draft':
-        // Archive newslink drafts.
-        //$node->setPublished(FALSE);
-        //$node->set('moderation_state', 'archived');
-        //$node->save();
+        // Archive newslink draft.
+        // Step 1: Update moderation state.
+        $node->set('moderation_state', 'archived');
+        $node->save();
+        // Step 2: Create new revision not done by previous step.
+        $storage = \Drupal::entityTypeManager()->getStorage($node->getEntityTypeId());
+        $revision = $storage->createRevision($node);
+        if ($revision instanceof EntityChangedInterface) {
+          $revision->setChangedTime(time());
+        }
+        $revision->setRevisionLogMessage('Auto changed moderation state to archived after five days of inactivity');
+        $revision->setRevisionCreationTime($revision->getChangedTime());
+        $revision->save();
 
-        $message =  'Archiving draft: "' . $node->get('title')->value . '"';
+        $message = 'Archiving draft: "' . $node->get('title')->value . '"';
         \Drupal::logger('jcc_newslinks')->notice($message);
         break;
+
       case 'archived':
         // Purge image from archived newslinks.
         $newsImages = $node->field_images;
-        foreach($newsImages as $key => $value) {
+        foreach ($newsImages as $key => $value) {
           if (isset($node->field_images[$key]->entity->mid->value)) {
             $mid = $node->field_images[$key]->entity->mid->value;
             $media = Media::load($mid);
@@ -51,13 +58,13 @@ class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
             $file = File::load($fid);
             $fileName = $file->label();
 
-            // Removing media image from node.
+            // Step 1: Removing media image from node.
             unset($node->field_images[$key]);
             $node->save();
             $removeMsg = 'Removing ' . $fileName . ' from "' . $node->get('title')->value . '"';
             \Drupal::logger('jcc_newslinks')->notice($removeMsg);
 
-            // If media image is not referenced by any nodes.
+            // Step 2: If media image is not referenced by any nodes.
             sleep(3);
             $queryMediaUsage = \Drupal::entityQuery('node')
               ->condition('type', 'news')
@@ -92,6 +99,7 @@ class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
           }
         }
         break;
+
       default:
         \Drupal::logger('jcc_newslinks')->info('Nothing to archive: "' . $node->get('title')->value . '"');
     }
