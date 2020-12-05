@@ -14,7 +14,7 @@ use Drupal\node\Entity\Node;
  * @QueueWorker(
  *   id = "newslinks_archive_queue",
  *   title = @Translation("NewsLinks: Archive items in queue."),
- *   cron = {"time" = 1200}
+ *   cron = {"time" = 90}
  * )
  */
 class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
@@ -65,7 +65,6 @@ class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
             \Drupal::logger('jcc_newslinks')->notice($removeMsg);
 
             // Step 2: Deleting unused media image entity/page.
-            sleep(3);
             $queryMediaUsage = \Drupal::entityQuery('node')
               ->condition('type', 'news')
               ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
@@ -78,7 +77,6 @@ class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
               \Drupal::logger('jcc_newslinks')->notice($deleteMsg);
 
               // Mark the associated image file for auto deletion.
-              sleep(3);
               $fileUsage = \Drupal::service('file.usage');
               $usage = $fileUsage->listUsage($file);
               if (empty($usage)) {
@@ -94,13 +92,13 @@ class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
             }
           }
           else {
-            \Drupal::logger('jcc_newslinks')->warning('No image media found: "' . $node->get('title')->value . '"');
+            \Drupal::logger('jcc_newslinks')->error('Unable to purge image: "' . $node->get('title')->value . '"');
           }
         }
         break;
 
       default:
-        \Drupal::logger('jcc_newslinks')->info('Nothing to archive: "' . $node->get('title')->value . '"');
+        \Drupal::logger('jcc_newslinks')->notice('Nothing to archive: "' . $node->get('title')->value . '"');
     }
   }
 
