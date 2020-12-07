@@ -192,10 +192,17 @@ function jcc_tc_custom_cleanup_empty_filters(&$form, $form_name, $field_name) {
  */
 function jcc_tc_custom_search_api_solr_query_alter(Query $solarium_query, QueryInterface $query) {
   $index = $query->getIndex();
+
   $fields = $index->getServerInstance()
     ->getBackend()
     ->getSolrFieldNames($index);
   $solrField = !empty($fields['created']) ? $fields['created'] : '';
+
+  $solarium_query->addParam(
+    'qf',
+    '(field_topics,field_tags)^5.0'
+  );
+
   if ($solrField != '') {
     $solarium_query->addParam(
       'boost',
