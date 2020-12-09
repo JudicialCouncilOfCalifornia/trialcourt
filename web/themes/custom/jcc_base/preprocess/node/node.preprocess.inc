@@ -91,6 +91,16 @@ function jcc_base_preprocess_node(&$variables, $hook) {
       }
       break;
 
+    case 'document':
+      if ($variables['view_mode'] == 'search_index') {
+        $variables['formatted_body'] = $node->body->view([
+          'label' => 'hidden',
+          'type' => 'text_summary_or_trimmed',
+          'settings' => ['trim_length' => 300],
+        ]);
+      }
+      break;
+
     case 'book':
       if ($variables['view_mode'] == 'full') {
         $topics = $node->field_topics->referencedEntities();
