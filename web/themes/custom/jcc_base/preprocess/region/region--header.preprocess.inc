@@ -78,25 +78,25 @@ function jcc_base_preprocess_region__header(&$variables) {
         'url' => 'https://www.courts.ca.gov',
       ],
       'logo' => '../../images/logos/jcc-logo-branch-text-white.svg',
-    ],
-    'primary_nav' => $primary_nav,
-    'secondary_nav' => [
-      'items' => [
-        [
-          'name' => 'Supreme Court',
-          'url' => 'https://www.courts.ca.gov/supremecourt.htm',
-        ], [
-          'name' => 'Courts of Appeal',
-          'url' => 'https://www.courts.ca.gov/courtsofappeal.htm',
-        ], [
-          'name' => 'Superior Courts',
-          'url' => 'https://www.courts.ca.gov/superiorcourts.htm',
-        ], [
-          'name' => 'Judicial Council',
-          'url' => 'https://www.courts.ca.gov/policyadmin-jc.htm',
+      'secondary_nav' => [
+        'items' => [
+          [
+            'name' => 'Supreme Court',
+            'url' => 'https://www.courts.ca.gov/supremecourt.htm',
+          ], [
+            'name' => 'Courts of Appeal',
+            'url' => 'https://www.courts.ca.gov/courtsofappeal.htm',
+          ], [
+            'name' => 'Superior Courts',
+            'url' => 'https://www.courts.ca.gov/superiorcourts.htm',
+          ], [
+            'name' => 'Judicial Council',
+            'url' => 'https://www.courts.ca.gov/policyadmin-jc.htm',
+          ],
         ],
       ],
     ],
+    'primary_nav' => $primary_nav,
     'title' => $site_name,
     'logo' => $logo,
     'menu_icon' => [

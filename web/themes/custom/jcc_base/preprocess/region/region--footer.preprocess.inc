@@ -5,6 +5,8 @@
  * Theme and preprocess functions for region.
  */
 
+use Drupal\system\Entity\Menu;
+
 /**
  * Implements hook_preprocess_HOOK().
  */
@@ -30,6 +32,8 @@ function jcc_base_preprocess_region__footer(&$variables) {
 
   // Get secondary footer menu.
   $sec_footer_menu_name = 'secondary-footer';
+  $menu = Menu::load($sec_footer_menu_name);
+  $footer_aria_label = $menu->getThirdPartySetting('sitemap', 'sitemap_display_name');
   $sec_footer_menu_parameters = $menu_tree->getCurrentRouteMenuTreeParameters($sec_footer_menu_name);
   $sec_footer_menu_parameters->setMinDepth(0);
   $sec_footer_menu_parameters->onlyEnabledLinks();
@@ -68,6 +72,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
   }
 
   $variables['footer'] = [
+    'aria_label' => $footer_aria_label,
     'layout_variant' => 'minimal',
     'copyright_owner' => $site->get('name'),
     'links' => [
@@ -79,6 +84,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
   ];
 
   $variables['footer_base'] = [
+    'aria_label' => $footer_aria_label,
     'height_variant' => 'big',
     'title' => $variables['footer_extended_message'],
     'links' => $footer_menu_primary,
