@@ -91,7 +91,17 @@ function jcc_newslinks_cron() {
   $purgeQueue = \Drupal::queue('newslinks_archive_queue');
   foreach ($purgeItems as $result) {
     $item = (object) ['nid' => $result];
-    $purgeQueue->createItem($item);
+    // Check in case item is still in queue.
+    $queue_item_exists = \Drupal::database()->query('SELECT item_id  FROM {queue} WHERE name = :name AND data LIKE :nid LIMIT 1',
+      [
+        ':name' => 'newslinks_archive_queue',
+        ':nid' => '%"' . $item->nid . '%',
+      ]
+    )->fetchField();
+    // Only add new items.
+    if (!$queue_item_exists) {
+      $purgeQueue->createItem($item);
+    }
   }
 
   $purgeMessage = count($purgeItems) . ' archived newslinks are queued for media purge';
