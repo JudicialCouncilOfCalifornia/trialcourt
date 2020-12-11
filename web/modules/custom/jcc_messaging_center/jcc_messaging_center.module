@@ -9,7 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 
-use JudicialCouncil\Emma\JccClient;
+use Drupal\views\Views;
 
 /**
  * Implements hook_form_alter().
@@ -49,36 +49,34 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
 function jcc_messaging_center_form_submit($form, FormStateInterface $form_state) {
   if (in_array($form['#form_id'], ['node_messaging_news_item_edit_form'])
     && $form_state->cleanValues()->getValues()['field_send_email'] == 1) {
-    global $base_url;
-    // dsm('SEND EMAIL');.
+    // Global $base_url;.
+    $form_group_values = $form_state->cleanValues()->getValues()['field_mailing_group'];
+
+    $emails_array = [];
+    $groups_array = [];
+    if ($form_group_values) {
+      foreach ($form_group_values as $data) {
+        $groups_array[] = $data['target_id'];
+      }
+    }
+    $view = Views::getView('users_by_group');
+    $view->get_total_rows = TRUE;
+    $view->setArguments([implode('+', $groups_array)]);
+    $view->execute('default');
+    $rows = $view->total_rows;
+
+    if ($rows != 0) {
+      $view_result = $view->result;
+
+      foreach ($view_result as $row) {
+        foreach ($view->field as $field) {
+          $emails_array[] = $field->getValue($row);
+        }
+      }
+    }
+    // dsm($emails_array);
   }
   elseif ($form['#form_id'] == 'user_form') {
-    $emma_config = \Drupal::config('webform_myemma.settings');
-    if (!$emma_config->get('account_id')) {
-      return FALSE;
-    }
-
-    $emma = new JccClient($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
-
-    $user_req = $emma->get_member_detail_by_email($form_state->cleanValues()->getValues()['mail']);
-    $user_emma_id = $user_req->member_id;
-    // Create / Update user.
-    $fields = [
-      'first_name' => $form_state->cleanValues()->getValues()['name'],
-    ];
-    $groups = [];
-    $groups_to_remove = [];
-    foreach ($form_state->cleanValues()->getValues()['myemma_groups'] as $key => $val) {
-      if ($val !== 0) {
-        $groups[] = $val;
-      }
-      else {
-        $groups_to_remove[] = $key;
-      }
-    }
-    $emma->import_single_member($form_state->cleanValues()->getValues()['mail'], $fields, $groups);
-    // Need an extra call to account for groups to remove.
-    $emma->remove_member_from_groups($user_emma_id, $groups_to_remove);
   }
 }
 
@@ -130,12 +128,4 @@ function jcc_messaging_center_tokens($type, $tokens, array $data, array $options
     }
   }
   return $replacements;
-}
-
-/**
- * Implements hook_cron().
- */
-function jcc_messaging_center_cron() {
-  $digest_cron_task = \Drupal::service('jcc_subscriptions.digestcron');
-  $digest_cron_task->cron();
 }
