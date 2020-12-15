@@ -151,9 +151,11 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     $id_to_sendgrid = [];
     $email_access_keys = [];
     $id_access_keys = [];
+    $groups_string_list = '';
 
     foreach ($emma_groups as $emma_group) {
       $group_details = $emma->get_group_detail($emma_group);
+      $groups_string_list = $groups_string_list . $emma_group->group_name . ' / ';
       if (isset($group_details->active_count)) {
         $users_ammount = $group_details->active_count;
         $loops = ceil($users_ammount / 500);
@@ -249,6 +251,8 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
             'News Alert - ' . $news_title[0]['value'],
           ]
         );
+
+      \Drupal::logger('sendgrid_message')->notice($news_title[0]['value'] . ' has been emailed to the following groups: ' . $groups_string_list . ' (' . count($email_to_sendgrid) . ' users total)');
 
       // Issue when simply calling $sendgrid->send($email);
       // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
