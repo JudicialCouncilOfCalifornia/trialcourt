@@ -238,6 +238,15 @@ function jcc_messaging_center_tokens($type, $tokens, array $data, array $options
   return $replacements;
 }
 
+/**
+ * Implements hook_entity_type_build().
+ */
+function jcc_messaging_center_entity_type_build(array &$entity_types) {
+  $entity_types['user']->setFormClass('group_edit', 'Drupal\user\ProfileForm');
+}
+
 // TODO : user creation - api accessible via user/new/%email%/groups
 // TODO : unsub from all with token
 // TODO : Manage groups / profile with token.
+// HELPER: https://www.droptica.com/blog/custom-entity-forms-example-user-editing-and-registration/
+// https://medium.com/charlottes-digital-web/in-drupal-7-we-had-view-modes-where-we-could-specify-different-views-for-an-entity-and-show-8a5b4abb6c04
