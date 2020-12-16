@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_blocks.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_node_edit_form_alter(&$form, &$form_state, $form_id) {
+  if (isset($form['field_tagline'])) {
+    $form['field_tagline']['widget']['#after_build'][] = '_allowed_formats_remove_option';
+  }
+}
+
+/**
+ * Unset/Suppress formatting option elements.
+ */
+function _allowed_formats_remove_option($form_element, FormStateInterface $form_state) {
+  if (isset($form_element[0]['format'])) {
+    // All this stuff is needed to hide the help text.
+    unset($form_element[0]['format']['guidelines']);
+    unset($form_element[0]['format']['help']);
+    unset($form_element[0]['format']['#type']);
+    unset($form_element[0]['format']['#theme_wrappers']);
+    $form_element[0]['format']['format']['#access'] = FALSE;
+  }
+  return $form_element;
+}

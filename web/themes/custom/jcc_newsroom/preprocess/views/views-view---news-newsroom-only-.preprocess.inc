@@ -27,7 +27,7 @@ function jcc_newsroom_preprocess_views_view__news_newsroom_only_(&$variables) {
 
     $source = $node->field_feed_source->value;
     if ($source) {
-      $source = '<span class="usa-tag usa-tag--big bg-base-lighter text-base-darker"><code>' . $source . '</code></span>';
+      $source = '<span>' . $source . '</span>';
     }
 
     $links = $node->field_links->getValue();
@@ -40,10 +40,10 @@ function jcc_newsroom_preprocess_views_view__news_newsroom_only_(&$variables) {
       if (!empty($links)) {
         $l_markup = [];
         foreach ($links as $l) {
-          $url = Url::fromUri($l['uri'], ['attributes' => ['class' => 'text-base']]);
+          $url = Url::fromUri($l['uri']);
           $l_markup[] = Link::fromTextAndUrl($l['title'], $url)->toString()->getGeneratedLink();
         }
-        $links_markup = '<p class="font-code-xs text-italic text-base">Related: ' . implode(', ', $l_markup) . '</p>';
+        $links_markup = '<p class="font-code-xs text-italic">Related: ' . implode(', ', $l_markup) . '</p>';
       }
     }
 
