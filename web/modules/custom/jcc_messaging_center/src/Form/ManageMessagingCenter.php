@@ -2,57 +2,32 @@
 
 namespace Drupal\jcc_messaging_center\Form;
 
-use Drupal\Core\Form\FormBase;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Session\AccountInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\user\Entity\User;
 
 /**
- * Deletes all groups from user.
+ * Dashboard to edit user groups.
  */
-class ManageMessagingCenter extends FormBase {
-
-  /**
-   * Temp store.
-   *
-   * @var Drupal\Core\TempStore\SharedTempStoreFactory
-   */
-  protected $tempstore;
-
-  /**
-   * Class constructor.
-   */
-  public function __construct(SharedTempStoreFactory $tempstore) {
-    $this->tempstore = $tempstore;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    // Instantiates this form class.
-    return new static(
-    // Load the service required to construct this class.
-      $container->get('tempstore.shared')
-    );
-  }
+class ManageMessagingCenter extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'manage_subs_form';
+    return 'manage_messaging_center_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, string $member_email = '') {
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    self::setEntity(User::load($this->currentUser()->id()));
 
-    $entity = user_load_by_mail($member_email);
-    $form = \Drupal::service('entity.form_builder')->getForm($entity, 'group_edit');
+    /* @var $entity \Drupal\user\Entity\User */
+    $form = parent::buildForm($form, $form_state);
 
     // dsm($form);
     return $form;
@@ -61,8 +36,11 @@ class ManageMessagingCenter extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Regular action on user_save.
+  public function save(array $form, FormStateInterface $form_state) {
+    parent::save($form, $form_state);
+
+    $form_state->setRedirect('entity.user.edit_form',
+     ['user' => $this->entity->id()]);
   }
 
   /**
@@ -79,12 +57,12 @@ class ManageMessagingCenter extends FormBase {
    *   The access result.
    */
   public function access(AccountInterface $account, string $member_email = '', string $access_key = '') {
-    $store = $this->tempstore->get('jcc_messaging_center');
-    $value = $store->get('member_email_' . $member_email);
-
-    return AccessResult::allowedIf(
-      $account->hasPermission('access content')
-      && ($access_key == $value || $account->getEmail() == $member_email));
+    // $store = $this->tempstore->get('jcc_messaging_center');
+    // $value = $store->get('member_email_' . $member_email);
+    // return AccessResult::allowedIf(
+    // $account->hasPermission('access content')
+    // && ($access_key == $value || $account->getEmail() == $member_email));
+    return AccessResult::allowedIf($account->hasPermission('access content'));
   }
 
 }
