@@ -15,4 +15,9 @@ function jcc_base_preprocess_form_element(&$variables) {
   if (in_array($element['#type'], ['checkbox', 'radio'])) {
     $variables['label']['#attributes']['class'][] = 'form-check-label';
   }
+  if (in_array($element['#type'], ['checkbox'])) {
+    if (str_contains($variables['name'], 'field_mailing_group')) {
+      $variables['label']['#attributes'] = ['class' => ['usa-checkbox__label']];
+    }
+  }
 }

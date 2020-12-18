@@ -2,11 +2,10 @@
 
 namespace Drupal\jcc_messaging_center\Form;
 
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\user\Entity\User;
 
 /**
  * Dashboard to edit user groups.
@@ -23,13 +22,12 @@ class ManageMessagingCenter extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    self::setEntity(User::load($this->currentUser()->id()));
+  public function buildForm(array $form, FormStateInterface $form_state, $member_email = '') {
+    self::setEntity(user_load_by_mail($member_email));
 
     /* @var $entity \Drupal\user\Entity\User */
     $form = parent::buildForm($form, $form_state);
 
-    // dsm($form);
     return $form;
   }
 
@@ -39,6 +37,7 @@ class ManageMessagingCenter extends ContentEntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
 
+    // TODO: redirect to thank you page.
     $form_state->setRedirect('entity.user.edit_form',
      ['user' => $this->entity->id()]);
   }
@@ -57,11 +56,11 @@ class ManageMessagingCenter extends ContentEntityForm {
    *   The access result.
    */
   public function access(AccountInterface $account, string $member_email = '', string $access_key = '') {
-    // $store = $this->tempstore->get('jcc_messaging_center');
+    // TODO: token lookup
     // $value = $store->get('member_email_' . $member_email);
     // return AccessResult::allowedIf(
     // $account->hasPermission('access content')
-    // && ($access_key == $value || $account->getEmail() == $member_email));
+    // && ($access_key == $value || $account->getEmail() == $member_email));.
     return AccessResult::allowedIf($account->hasPermission('access content'));
   }
 
