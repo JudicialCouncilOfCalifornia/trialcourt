@@ -1,0 +1,38 @@
+uuid: 819f9fee-23c5-457a-9859-da536587781d
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.messaging_news_item.body
+    - field.field.node.messaging_news_item.field_date
+    - field.field.node.messaging_news_item.field_external_url
+    - field.field.node.messaging_news_item.field_mailing_group
+    - node.type.messaging_news_item
+  module:
+    - text
+    - user
+id: node.messaging_news_item.teaser
+targetEntityType: node
+bundle: messaging_news_item
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_date: true
+  field_external_url: true
+  field_mailing_group: true
+  langcode: true
+  search_api_excerpt: true
