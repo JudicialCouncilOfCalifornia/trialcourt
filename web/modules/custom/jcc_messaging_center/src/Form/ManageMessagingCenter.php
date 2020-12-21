@@ -36,10 +36,6 @@ class ManageMessagingCenter extends ContentEntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
-
-    // TODO: redirect to thank you page.
-    $form_state->setRedirect('entity.user.edit_form',
-     ['user' => $this->entity->id()]);
   }
 
   /**
@@ -56,12 +52,14 @@ class ManageMessagingCenter extends ContentEntityForm {
    *   The access result.
    */
   public function access(AccountInterface $account, string $member_email = '', string $access_key = '') {
-    // TODO: token lookup
-    // $value = $store->get('member_email_' . $member_email);
-    // return AccessResult::allowedIf(
-    // $account->hasPermission('access content')
-    // && ($access_key == $value || $account->getEmail() == $member_email));.
-    return AccessResult::allowedIf($account->hasPermission('access content'));
+    $tempstore = \Drupal::service('tempstore.shared');
+    $store = $tempstore->get('jcc_messaging_center');
+    $value = $store->get('member_email_' . $member_email);
+
+    return AccessResult::allowedIf(
+     $account->hasPermission('access content')
+     && ($access_key == $value || $account->getEmail() == $member_email));
+
   }
 
 }

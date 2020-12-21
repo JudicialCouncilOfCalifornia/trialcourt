@@ -5,13 +5,13 @@ namespace Drupal\jcc_messaging_center\Controller;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Deletes all groups from user.
  */
-class DeleteAllSubs extends ControllerBase {
+class MCConfirmDeleteAllSubs extends ControllerBase {
 
   /**
    * Temp store.
@@ -41,14 +41,13 @@ class DeleteAllSubs extends ControllerBase {
   /**
    * Returns a render-able array.
    */
-  public function content(string $member_id = '', string $access_key = '') {
+  public function delete(string $member_email = '', string $access_key = '') {
+    $user = user_load_by_mail($member_email);
+    $user->set('field_mailing_group', []);
+    $user->save();
+
     $build = [
-      '#markup' => '
-        <div class="jcc-text-section-aside__container jcc-text-section-aside-secondary__container">
-            <div class="body">
-                <br><br><p><a class="usa-button usa-button--primary" href="/subscriptions/' . $member_id . '/delete-all/confirmed/' . $access_key . '">' . $this->t("Unsubscribe from all communications") . '</a></p><br><br>
-            </div>
-        </div>',
+      '#markup' => '<div class="jcc-text-section-aside__container jcc-text-section-aside-secondary__container"><div class="body"><br><br><p>' . $member_email . ' ' . $this->t('has been removed from all communications.') . '</p><br><br></div></div>',
     ];
 
     return $build;
@@ -59,7 +58,7 @@ class DeleteAllSubs extends ControllerBase {
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Run access checks for this account.
-   * @param string $member_id
+   * @param string $member_email
    *   Member email.
    * @param string $access_key
    *   Member access key.
@@ -67,9 +66,9 @@ class DeleteAllSubs extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function access(AccountInterface $account, string $member_id = '', string $access_key = '') {
-    $store = $this->tempstore->get('jcc_subscriptions');
-    $value = $store->get('member_id_' . $member_id);
+  public function access(AccountInterface $account, string $member_email = '', string $access_key = '') {
+    $store = $this->tempstore->get('jcc_messaging_center');
+    $value = $store->get('member_email_' . $member_email);
 
     return AccessResult::allowedIf(
       $account->hasPermission('access content')

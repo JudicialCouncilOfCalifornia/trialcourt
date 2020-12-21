@@ -56,9 +56,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     global $base_url;
     // Gathering emails to send emails to.
     $email_to_sendgrid = [];
-    $id_to_sendgrid = [];
     $email_access_keys = [];
-    $id_access_keys = [];
     $form_group_values = $form_state->cleanValues()->getValues()['field_mailing_group'];
 
     $groups_array = [];
@@ -81,7 +79,6 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
       foreach ($view_result as $key => $row) {
         if (!array_search($view->field['mail']->getValue($row), $email_to_sendgrid)) {
           $email_to_sendgrid[] = $view->field['mail']->getValue($row);
-          $id_to_sendgrid[] = $view->field['uid']->getValue($row);
 
           // Opt out custom tokens.
           $email_key = user_password();
@@ -89,7 +86,6 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
           $store->set('member_email_' . $view->field['mail']->getValue($row), $email_key);
 
           $id_key = user_password();
-          array_push($id_access_keys, $id_key);
           $store->set('member_id_' . $view->field['uid']->getValue($row), $id_key);
 
         }
@@ -135,8 +131,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
           <p><a href="%news_url%">Read more ></a></p>
           <br/>
           <p><a href="%base_url%/messaging-center/%member_email%/manage/%email_key%">manage your preferences</a><br>
-          <p><a href="%base_url%/user/%member_id%/edit">manage your preferences - test</a><br>
-          or <a href="%base_url%/messaing-center/%member_id%/delete-all/%id_key%">opt out</a> from all communications.</p>
+          or <a href="%base_url%/messaging-center/%member_email%/delete-all/%email_key%">opt out</a> from all communications.</p>
         '
       );
 
@@ -150,9 +145,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
         ->setSubject('California Courts: ' . $news_title[0]['value'])
         ->setText($news_title[0]['value'])
         ->setHtml($body)
-        ->addSubstitution('%member_id%', $id_to_sendgrid)
         ->addSubstitution('%member_email%', $email_to_sendgrid)
-        ->addSubstitution('%id_key%', $id_access_keys)
         ->addSubstitution('%email_key%', $email_access_keys)
         ->addHeader('X-Sent-Using', 'SendGrid-API')
         ->addHeader('X-Transport', 'web')

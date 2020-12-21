@@ -1,20 +1,20 @@
 jcc_messaging_center.content:
-  path: '/messaging-center/{member_id}/delete-all/{access_key}'
+  path: '/messaging-center/{member_email}/delete-all/{access_key}'
   defaults:
-    _controller: '\Drupal\jcc_messaging_center\Controller\DeleteAllSubs::content'
+    _controller: '\Drupal\jcc_messaging_center\Controller\MCDeleteAllSubs::content'
     _title: 'Delete all subscriptions'
   requirements:
-    _custom_access: '\Drupal\jcc_messaging_center\Controller\DeleteAllSubs::access'
+    _custom_access: '\Drupal\jcc_messaging_center\Controller\MCDeleteAllSubs::access'
   options:
     no_cache: 'TRUE'
 
 jcc_messaging_center.delete:
-  path: '/messaging-center/{member_id}/delete-all/confirmed/{access_key}'
+  path: '/messaging-center/{member_email}/delete-all/confirmed/{access_key}'
   defaults:
-    _controller: '\Drupal\jcc_messaging_center\Controller\ConfirmDeleteAllSubs::delete'
+    _controller: '\Drupal\jcc_messaging_center\Controller\MCConfirmDeleteAllSubs::delete'
     _title: 'Unsubscribed'
   requirements:
-    _custom_access: '\Drupal\jcc_messaging_center\Controller\DeleteAllSubs::access'
+    _custom_access: '\Drupal\jcc_messaging_center\Controller\MCDeleteAllSubs::access'
   options:
     no_cache: 'TRUE'
 
