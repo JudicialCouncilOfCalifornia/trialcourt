@@ -81,7 +81,7 @@
 
 {{ attach_library('classy/node') }}
 
-<article{{ attributes.addClass(classes)|without('role') }}>
+<article{{ attributes.addClass(classes)|without('role') }} aria-label="{{ label }} event teaser">
   {% block content %}
     {% if label and not page %}
       {% set title %}
