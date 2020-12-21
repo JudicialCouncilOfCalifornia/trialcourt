@@ -21,6 +21,7 @@ use SendGrid\Client as SClient;
 function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
   if (in_array($form['#form_id'],
     [
+      'node_messaging_news_item_form',
       'node_messaging_news_item_edit_form',
   // 'user_form',
     ]
@@ -28,7 +29,8 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
     if ($form['#form_id'] == 'user_form') {
       // kint('user_form');.
     }
-    elseif ($form['#form_id'] == 'node_messaging_news_item_edit_form') {
+    elseif ($form['#form_id'] == 'node_messaging_news_item_edit_form' ||
+      $form['#form_id'] == 'node_messaging_news_item_form') {
       $form['group_messaging_options']['field_send_email'] = [
         '#type' => 'checkbox',
         '#title' => t('Send an email when saving this news item.'),
