@@ -47,6 +47,7 @@ function jcc_base_preprocess_block__views_block__news_block_2(&$variables) {
       $featured_news_card = [
         'title' => $title,
         'excerpt_img' => $img_elem,
+        'excerpt_img_only' => TRUE,
         'excerpt' => $excerpt,
         'url' => $url,
         'contextual_links' => $placeholder,
