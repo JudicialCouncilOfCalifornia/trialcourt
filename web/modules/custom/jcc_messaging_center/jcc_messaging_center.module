@@ -105,6 +105,15 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     $date = new DrupalDateTime($news_post_date_unformated, DATETIME_STORAGE_TIMEZONE);
     $news_post_date = $date->format('F j, Y');
 
+    // Additional news.
+    $formatted_additional_items = '';
+    $news_additional = $form_state->cleanValues()->getValues()['field_additional_item'];
+    if ($news_additional) {
+      foreach ($news_additional as $additional_item) {
+        $formatted_additional_items .= '<div class="additional_item"><h2><a href="' . $additional_item['inline_entity_form']['field_url'][0]['value'] . '">' . $additional_item['inline_entity_form']['field_title'][0]['value'] . '</a></h2><div>' . $additional_item['inline_entity_form']['field_description'][0]['value'] . '</div><div><p><a href="' . $additional_item['inline_entity_form']['field_url'][0]['value'] . '">Read more ></a></p></div></div><br/>';
+      }
+    }
+
     // Getting from email.
     if (!empty(\Drupal::service('key.repository')->getKey('sendgrid_webservices'))) {
       $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
@@ -118,6 +127,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
           '%news_title%',
           '%news_summary%',
           '%base_url%',
+          '%additional_items%',
         ],
         [
           $news_post_date,
@@ -125,12 +135,15 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
           $news_title[0]['value'],
           $news_summary[0]['summary'] ?: strip_tags(substr($news_summary[0]['value'], 0, 300)),
           $base_url,
+          $formatted_additional_items,
         ],
         '
           <div>%news_post_date%</div>
           <h2><a href="%news_url%">%news_title%</a></h2>
           <p>%news_summary%</p>
           <p><a href="%news_url%">Read more ></a></p>
+          <br/>
+          <div>%additional_items%</div>
           <br/>
           <p><a href="%base_url%/messaging-center/%member_email%/manage/%email_key%">manage your preferences</a><br>
           or <a href="%base_url%/messaging-center/%member_email%/delete-all/%email_key%">opt out</a> from all communications.</p>
@@ -144,7 +157,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
       $email->setSmtpapiTos($email_to_sendgrid)
         ->setFrom($to)
         ->setFromName(\Drupal::config('system.site')->get('name'))
-        ->setSubject('California Courts: ' . $news_title[0]['value'])
+        ->setSubject($news_title[0]['value'])
         ->setText($news_title[0]['value'])
         ->setHtml($body)
         ->addSubstitution('%member_email%', $email_to_sendgrid)

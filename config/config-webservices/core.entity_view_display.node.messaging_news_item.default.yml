@@ -4,12 +4,14 @@ status: true
 dependencies:
   config:
     - field.field.node.messaging_news_item.body
+    - field.field.node.messaging_news_item.field_additional_item
     - field.field.node.messaging_news_item.field_date
     - field.field.node.messaging_news_item.field_external_url
     - field.field.node.messaging_news_item.field_mailing_group
     - node.type.messaging_news_item
   module:
     - datetime
+    - entity_reference_revisions
     - text
     - user
 id: node.messaging_news_item.default
@@ -22,6 +24,15 @@ content:
     type: text_default
     weight: 101
     settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_additional_item:
+    type: entity_reference_revisions_entity_view
+    weight: 105
+    label: above
+    settings:
+      view_mode: default
+      link: ''
     third_party_settings: {  }
     region: content
   field_date:
