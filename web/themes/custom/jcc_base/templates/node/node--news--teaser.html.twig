@@ -78,7 +78,7 @@
 
 {{ attach_library('classy/node') }}
 
-<article{{ attributes.addClass(classes)|without('role') }}>
+<article{{ attributes.addClass(classes)|without('role') }} aria-label="{{ label }} news teaser">
   {% if view.title %}
     {% set header_title = view.title|t %}
   {% endif %}

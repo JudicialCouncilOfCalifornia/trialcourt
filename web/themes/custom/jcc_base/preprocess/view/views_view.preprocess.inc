@@ -85,6 +85,14 @@ function jcc_base_preprocess_views_view(&$variables) {
         ksort($groups);
       }
       break;
+
+    case 'news_newsroom_only_':
+      if ($view->current_display == 'page_3') {
+        if ($view->pager->current_page != 0) {
+          $variables['header'] = [];
+        }
+      }
+      break;
   }
 }
 

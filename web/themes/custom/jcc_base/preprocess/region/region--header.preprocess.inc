@@ -71,7 +71,6 @@ function jcc_base_preprocess_region__header(&$variables) {
   $variables['header'] = [
     'height_variant' => $header_height_variant,
     'background_variant' => $background_variant,
-    'skip' => 'Skip to main content',
     'global_bar' => [
       'logo_text' => [
         'title' => 'Judicial Branch of California',
