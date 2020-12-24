@@ -14,7 +14,9 @@ dependencies:
     - field.field.node.event.field_links
     - field.field.node.event.field_location
     - field.field.node.event.field_recurring_event
+    - field.field.node.event.field_sorting_weight
     - field.field.node.event.field_subject_matter
+    - field.field.node.event.field_tagline
     - field.field.node.event.field_tags
     - field.field.node.event.field_topics
     - filter.format.basic_html
@@ -620,6 +622,15 @@ content:
     third_party_settings: {  }
     type: string
     region: content
+  field_sorting_weight:
+    weight: 16
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
+    region: content
   field_subject_matter:
     weight: 9
     label: above
@@ -627,6 +638,13 @@ content:
       facet: subject_matter
     third_party_settings: {  }
     type: entity_reference_facet_link
+    region: content
+  field_tagline:
+    weight: 15
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
     region: content
   field_tags:
     weight: 10
