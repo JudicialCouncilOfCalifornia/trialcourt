@@ -4,10 +4,16 @@
   <div class="grid-container padding-0 jcc-gallery-sidebar">
     <div class="grid-row flex-row">
       {% set gallery_title = images['#title'] %}
-      {% if featured_image %} {# If featured as hero, suppress first image from gallery #}
-        {% set images = images['#items']|slice(1) %}
-      {% else %}
-        {% set images = images['#items'] %}
+      {% set images = images['#items'] %}
+      {# If featured as hero, suppress image from gallery #}
+      {% if content.field_news_type[0]['#title'] == 'Feature' and featured_image_idx %}
+        {% set featuredRemoved = [] %}
+        {% for image in images %}
+          {% if loop.index != featured_image_idx %}
+            {% set featuredRemoved = featuredRemoved|merge([image]) %}
+          {% endif %}
+        {% endfor %}
+        {% set images = featuredRemoved %}
       {% endif %}
       {% set batch_size = images|length/2 %} {# Break up images into two groups #}
       {% for set in images|batch(batch_size) %} {# Display grouped images in separate columns #}
