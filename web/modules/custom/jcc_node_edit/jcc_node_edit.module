@@ -14,7 +14,6 @@ function jcc_node_edit_form_alter(&$form, &$form_state, $form_id) {
   // Node editing only customizations.
   if (str_starts_with($form_id, 'node_')) {
     $node = $form_state->getFormObject()->getEntity();
-    $tid = $node->get('field_news_type')->getString();
 
     // Suppress format options from tagline field.
     if (isset($form['field_tagline'])) {
@@ -23,6 +22,7 @@ function jcc_node_edit_form_alter(&$form, &$form_state, $form_id) {
 
     switch ($form_id) {
       case 'node_news_edit_form':
+        $tid = $node->get('field_news_type')->getString();
         $newsType = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid)->label();
 
         // Add hero image preference option to news feature only.
