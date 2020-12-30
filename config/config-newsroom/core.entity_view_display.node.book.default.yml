@@ -7,10 +7,13 @@ dependencies:
     - field.field.node.book.body
     - field.field.node.book.field_attachments
     - field.field.node.book.field_division
+    - field.field.node.book.field_images
     - field.field.node.book.field_links
     - field.field.node.book.field_metatag
     - field.field.node.book.field_related_content
+    - field.field.node.book.field_sorting_weight
     - field.field.node.book.field_subject_matter
+    - field.field.node.book.field_tagline
     - field.field.node.book.field_tags
     - field.field.node.book.field_topics
     - node.type.book
@@ -50,6 +53,14 @@ content:
     settings:
       facet: division
     third_party_settings: {  }
+  field_images:
+    weight: 10
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
   field_links:
     weight: 2
     label: above
@@ -77,6 +88,15 @@ content:
     third_party_settings: {  }
     type: entity_reference_label
     region: content
+  field_sorting_weight:
+    weight: 11
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
+    region: content
   field_subject_matter:
     type: entity_reference_facet_link
     weight: 5
@@ -85,6 +105,13 @@ content:
     settings:
       facet: subject_matter
     third_party_settings: {  }
+  field_tagline:
+    weight: 9
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
   field_tags:
     type: entity_reference_facet_link
     weight: 6

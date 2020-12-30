@@ -11,8 +11,26 @@ use Drupal\Core\Form\FormStateInterface;
  * Implements hook_form_alter().
  */
 function jcc_node_edit_form_alter(&$form, &$form_state, $form_id) {
-  if (isset($form['field_tagline'])) {
-    $form['field_tagline']['widget']['#after_build'][] = '_allowed_formats_remove_option';
+  // Node editing only customizations.
+  if (str_starts_with($form_id, 'node_')) {
+    $node = $form_state->getFormObject()->getEntity();
+
+    // Suppress format options from tagline field.
+    if (isset($form['field_tagline'])) {
+      $form['field_tagline']['widget']['#after_build'][] = '_allowed_formats_remove_option';
+    }
+
+    switch ($form_id) {
+      case 'node_news_edit_form':
+        $tid = $node->get('field_news_type')->getString();
+        $newsType = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid)->label();
+
+        // Add hero image preference option to news feature only.
+        if ($newsType != 'Feature') {
+          unset($form['field_second_image_as_hero']);
+        }
+        break;
+    }
   }
 }
 

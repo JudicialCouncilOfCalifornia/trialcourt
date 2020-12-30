@@ -176,8 +176,6 @@
 
     {% if (content.field_news_type[0]['#title'] == 'Feature') %}
       {% set image_hero = file_url(content.field_images['#items'].entity.field_media_image.entity.uri.value) %}
-      {% set background_variant = 'has-background-color--dark jcc-hero--has-background-image parallax' %}
-      {% set featured_image = true %}
       <style>
         .jcc-hero--has-background-image {
           background-image: url('{{ image_hero }}');
@@ -190,7 +188,7 @@
     {% endif %}
 
     {% include '@jcc_base/_includes/section-hero.html.twig' with {
-      background_variant: background_variant,
+      background_variant: 'has-background-color--dark jcc-hero--has-background-image parallax',
       brow: news_type,
       title: title,
       lead: news_lead,
@@ -199,7 +197,7 @@
 
     {% include '@jcc_base/_includes/section-body.html.twig'with {
       no_title_decoration: true,
-      featured_image: featured_image,
+      featured_image_idx: 1,
       related: null,
       attachments: null,
       related_links: null,
