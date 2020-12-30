@@ -7,9 +7,12 @@ dependencies:
     - field.field.node.page.body
     - field.field.node.page.field_attachments
     - field.field.node.page.field_division
+    - field.field.node.page.field_images
     - field.field.node.page.field_links
     - field.field.node.page.field_metatag
+    - field.field.node.page.field_sorting_weight
     - field.field.node.page.field_subject_matter
+    - field.field.node.page.field_tagline
     - field.field.node.page.field_tags
     - field.field.node.page.field_topics
     - node.type.page
@@ -20,12 +23,14 @@ dependencies:
     - entity_browser
     - field_group
     - link_attributes
+    - maxlength
     - metatag
     - path
     - scheduler
     - scheduler_content_moderation_integration
     - straw
     - text
+    - weight
 third_party_settings:
   field_group:
     group_main_content:
@@ -62,6 +67,7 @@ third_party_settings:
         - field_tags
         - field_topics
         - field_subject_matter
+        - field_sorting_weight
       parent_name: group_basic_page_content
       weight: 24
       format_type: tab
@@ -92,6 +98,7 @@ third_party_settings:
     group_content_header:
       children:
         - title
+        - field_tagline
       parent_name: ''
       weight: 0
       format_type: fieldset
@@ -104,6 +111,7 @@ third_party_settings:
       label: 'Page Header'
     group_media:
       children:
+        - field_images
         - field_attachments
       parent_name: group_basic_page_content
       weight: 22
@@ -140,7 +148,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_attachments:
-    weight: 2
+    weight: 23
     settings:
       entity_browser: media_directories_modal
       field_widget_display: rendered_entity
@@ -171,6 +179,21 @@ content:
     third_party_settings: {  }
     type: autocomplete_deluxe
     region: content
+  field_images:
+    weight: 22
+    settings:
+      entity_browser: media_directories_modal
+      field_widget_display: rendered_entity
+      field_widget_display_settings:
+        view_mode: media_library
+      field_widget_edit: true
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
+      field_widget_replace: false
+    third_party_settings: {  }
+    type: entity_browser_entity_reference
+    region: content
   field_links:
     weight: 19
     settings:
@@ -195,6 +218,12 @@ content:
     third_party_settings: {  }
     type: metatag_firehose
     region: content
+  field_sorting_weight:
+    weight: 25
+    settings: {  }
+    third_party_settings: {  }
+    type: weight_selector
+    region: content
   field_subject_matter:
     weight: 24
     settings:
@@ -204,6 +233,17 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: super_term_reference_autocomplete_widget
+    region: content
+  field_tagline:
+    weight: 24
+    settings:
+      size: 120
+      placeholder: ''
+    third_party_settings:
+      maxlength:
+        maxlength_js: 255
+        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+    type: text_textfield
     region: content
   field_tags:
     weight: 22
@@ -260,7 +300,7 @@ content:
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 11
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -286,14 +326,17 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight: 23
     region: content
     settings:
       size: 60
       placeholder: ''
-    third_party_settings: {  }
+    third_party_settings:
+      maxlength:
+        maxlength_js: null
+        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
   translation:
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
