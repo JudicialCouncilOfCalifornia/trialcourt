@@ -58,7 +58,7 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
  * Alters for submission - sends query.
  */
 function jcc_messaging_center_form_submit($form, FormStateInterface $form_state) {
-  if (in_array($form['#form_id'], ['node_messaging_news_item_edit_form'])
+  if (in_array($form['#form_id'], ['node_messaging_news_item_edit_form', 'node_messaging_news_item_form'])
     && $form_state->cleanValues()->getValues()['field_send_email'] == 1) {
     global $base_url;
     // Gathering emails to send emails to.

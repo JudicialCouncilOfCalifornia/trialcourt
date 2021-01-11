@@ -412,7 +412,20 @@ display:
           inherit_arguments: true
           plugin_id: view
       footer: {  }
-      empty: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: '<div class="jcc-text-section-aside__container"><br><p>There are no user in this group.</p><br><br></div>'
+            format: full_html
+          plugin_id: text
       relationships: {  }
       arguments:
         field_mailing_group_target_id:
@@ -471,7 +484,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: user-groups-management
+      path: messenger/groups/users
     cache_metadata:
       max-age: -1
       contexts:
