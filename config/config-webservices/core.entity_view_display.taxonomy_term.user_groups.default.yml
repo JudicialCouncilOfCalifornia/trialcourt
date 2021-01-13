@@ -1,0 +1,32 @@
+uuid: 18674407-f971-4fba-a953-b60ad65a4325
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.user_groups.field_author
+    - taxonomy.vocabulary.user_groups
+  module:
+    - text
+id: taxonomy_term.user_groups.default
+targetEntityType: taxonomy_term
+bundle: user_groups
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_author:
+    weight: 1
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+hidden:
+  langcode: true
+  search_api_excerpt: true

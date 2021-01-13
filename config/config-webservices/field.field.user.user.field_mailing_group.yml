@@ -1,0 +1,30 @@
+uuid: 689ddc75-e631-4700-838e-d79996672da2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_mailing_group
+    - taxonomy.vocabulary.user_groups
+  module:
+    - user
+id: user.user.field_mailing_group
+field_name: field_mailing_group
+entity_type: user
+bundle: user
+label: 'Mailing group'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      user_groups: user_groups
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

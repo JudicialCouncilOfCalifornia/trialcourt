@@ -1,0 +1,40 @@
+uuid: 56ce5f57-7dfe-4029-9248-58e5ea8a7c12
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_additional_item
+    - node.type.messaging_news_item
+    - paragraphs.paragraphs_type.mailing_item_additional_article
+  module:
+    - entity_reference_revisions
+id: node.messaging_news_item.field_additional_item
+field_name: field_additional_item
+entity_type: node
+bundle: messaging_news_item
+label: 'Additional Item'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      mailing_item_additional_article: mailing_item_additional_article
+    target_bundles_drag_drop:
+      block:
+        weight: 5
+        enabled: false
+      content:
+        weight: 6
+        enabled: false
+      layouts:
+        weight: 7
+        enabled: false
+      mailing_item_additional_article:
+        enabled: true
+        weight: 8
+field_type: entity_reference_revisions

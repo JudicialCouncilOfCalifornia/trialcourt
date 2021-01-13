@@ -1,0 +1,29 @@
+uuid: 1fa08943-2081-46b3-a7f2-6d90c8b495b5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_mailing_group
+    - node.type.messaging_news_item
+    - taxonomy.vocabulary.user_groups
+id: node.messaging_news_item.field_mailing_group
+field_name: field_mailing_group
+entity_type: node
+bundle: messaging_news_item
+label: 'Mailing group'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      user_groups: user_groups
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,259 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_blocks.module.
+ */
+
+use Drupal\user\Entity\User;
+use SendGrid\Exception;
+use SendGrid\Email;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Entity\EntityInterface;
+
+use Drupal\views\Views;
+use SendGrid\Client as SClient;
+
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
+  if (in_array($form['#form_id'],
+    [
+      'node_messaging_news_item_form',
+      'node_messaging_news_item_edit_form',
+      'taxonomy_term_user_groups_form',
+  // 'user_form',
+    ]
+  )) {
+    if ($form['#form_id'] == 'user_form') {
+      // kint('user_form');.
+    }
+    elseif ($form['#form_id'] == 'node_messaging_news_item_edit_form' ||
+      $form['#form_id'] == 'node_messaging_news_item_form') {
+      $form['group_messaging_options']['field_send_email'] = [
+        '#type' => 'checkbox',
+        '#title' => t('Send an email when saving this news item.'),
+        '#default_value' => FALSE,
+        '#weight' => 50,
+      ];
+    }
+    elseif ($form['#form_id'] == 'taxonomy_term_user_groups_form') {
+      $form['field_author']['widget'][0]['target_id']['#default_value'] = User::load(\Drupal::currentUser()->id());
+    }
+    foreach (array_keys($form['actions']) as $action) {
+      if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+        $form['actions'][$action]['#submit'][] = 'jcc_messaging_center_form_submit';
+      }
+    }
+  }
+  elseif ($form['#form_id'] == 'user_register_form') {
+    $form['actions']['submit']['#value'] = t('Subscribe');
+  }
+}
+
+/**
+ * Alters for submission - sends query.
+ */
+function jcc_messaging_center_form_submit($form, FormStateInterface $form_state) {
+  if (in_array($form['#form_id'], ['node_messaging_news_item_edit_form', 'node_messaging_news_item_form'])
+    && $form_state->cleanValues()->getValues()['field_send_email'] == 1) {
+    global $base_url;
+    // Gathering emails to send emails to.
+    $email_to_sendgrid = [];
+    $email_access_keys = [];
+    $form_group_values = $form_state->cleanValues()->getValues()['field_mailing_group'];
+
+    $groups_array = [];
+    if ($form_group_values) {
+      foreach ($form_group_values as $data) {
+        $groups_array[] = $data['target_id'];
+      }
+    }
+    $view = Views::getView('users_by_group');
+    $view->get_total_rows = TRUE;
+    $view->setArguments([implode('+', $groups_array)]);
+    $view->execute('default');
+    $rows = $view->total_rows;
+
+    $tempstore = \Drupal::service('tempstore.shared');
+    $store = $tempstore->get('jcc_messaging_center');
+
+    if ($rows != 0) {
+      $view_result = $view->result;
+      foreach ($view_result as $key => $row) {
+        if (!array_search($view->field['mail']->getValue($row), $email_to_sendgrid)) {
+          $email_to_sendgrid[] = $view->field['mail']->getValue($row);
+
+          // Opt out custom tokens.
+          $email_key = user_password();
+          array_push($email_access_keys, $email_key);
+          $store->set('member_email_' . $view->field['mail']->getValue($row), $email_key);
+
+          $id_key = user_password();
+          $store->set('member_id_' . $view->field['uid']->getValue($row), $id_key);
+
+        }
+      }
+    }
+
+    // SENDING EMAIL TO SENDGRID
+    // Building query for sendgrid.
+    $news_title = $form_state->cleanValues()->getValues()['title'];
+    $news_summary = $form_state->cleanValues()->getValues()['body'];
+    $news_url = $form_state->cleanValues()->getValues()['field_external_url'][0]['value'];
+    $news_post_date_unformated = $form_state->cleanValues()->getValues()['field_date'][0]['value'];
+    // $news_image = $form_state->cleanValues()->getValues()['field_images'];
+    // Date formatting.
+    $date = new DrupalDateTime($news_post_date_unformated, DATETIME_STORAGE_TIMEZONE);
+    $news_post_date = $date->format('F j, Y');
+
+    // Additional news.
+    $formatted_additional_items = '';
+    $news_additional = $form_state->cleanValues()->getValues()['field_additional_item'];
+    if ($news_additional) {
+      foreach ($news_additional as $additional_item) {
+        $formatted_additional_items .= '<div class="additional_item"><h2><a href="' . $additional_item['inline_entity_form']['field_url'][0]['value'] . '">' . $additional_item['inline_entity_form']['field_title'][0]['value'] . '</a></h2><div>' . $additional_item['inline_entity_form']['field_description'][0]['value'] . '</div><div><p><a href="' . $additional_item['inline_entity_form']['field_url'][0]['value'] . '">Read more ></a></p></div></div><br/>';
+      }
+    }
+
+    // Getting from email.
+    if (!empty(\Drupal::service('key.repository')->getKey('sendgrid_webservices'))) {
+      $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
+      $to = $sendgrid_conf['from_name'];
+      $sendgrid_api_key = \Drupal::service('key.repository')->getKey('sendgrid_webservices')->getKeyValue();
+
+      $body = str_replace(
+        [
+          '%news_post_date%',
+          '%news_url%',
+          '%news_title%',
+          '%news_summary%',
+          '%base_url%',
+          '%additional_items%',
+        ],
+        [
+          $news_post_date,
+          $news_url,
+          $news_title[0]['value'],
+          $news_summary[0]['summary'] ?: strip_tags(substr($news_summary[0]['value'], 0, 300)),
+          $base_url,
+          $formatted_additional_items,
+        ],
+        '
+          <div>%news_post_date%</div>
+          <h2><a href="%news_url%">%news_title%</a></h2>
+          <p>%news_summary%</p>
+          <p><a href="%news_url%">Read more ></a></p>
+          <br/>
+          <div>%additional_items%</div>
+          <br/>
+          <p><a href="%base_url%/messaging-center/%member_email%/manage/%email_key%">manage your preferences</a><br>
+          or <a href="%base_url%/messaging-center/%member_email%/delete-all/%email_key%">opt out</a> from all communications.</p>
+        '
+      );
+
+      // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
+      // Creating email object.
+      $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
+      $email = new Email();
+      $email->setSmtpapiTos($email_to_sendgrid)
+        ->setFrom($to)
+        ->setFromName(\Drupal::config('system.site')->get('name'))
+        ->setSubject($news_title[0]['value'])
+        ->setText($news_title[0]['value'])
+        ->setHtml($body)
+        ->addSubstitution('%member_email%', $email_to_sendgrid)
+        ->addSubstitution('%email_key%', $email_access_keys)
+        ->addHeader('X-Sent-Using', 'SendGrid-API')
+        ->addHeader('X-Transport', 'web')
+        ->setCategories(
+          [
+            'News Alert',
+            'News Alert - ' . $news_title[0]['value'],
+          ]
+        );
+
+      // Issue when simply calling $sendgrid->send($email);
+      // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
+      // Send an email using the template stored in SendGrid.
+      try {
+        \Drupal::logger('sendgrid_message')->notice('firing send event');
+        $sendGridResponse = $sendgrid->send($email);
+
+        if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
+          drupal_set_message(t('Email successfully sent'));
+        }
+        else {
+          // Show error.
+          drupal_set_message(t('Email was not sent'));
+        }
+      }
+      catch (Exception $e) {
+        $eMessage = $e->getMessage();
+        if (strpos($eMessage, 'success') !== FALSE) {
+          \Drupal::logger('sendgrid_message')->notice('SendGrid: sent');
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function jcc_messaging_center_user_insert(EntityInterface $entity) {
+  $tempstore = \Drupal::service('tempstore.shared');
+  $store = $tempstore->get('jcc_subscriptions');
+  $store->set('member_email_' . $entity->get('mail')->value, user_password());
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function jcc_messaging_center_token_info() {
+  $type = [
+    'name' => t('JCC Custom'),
+    'description' => t('JCC Custom Tokens.'),
+  ];
+  $jcc['messaging-mail-access-key'] = [
+    'name' => t("Messaging Center Mail Access Key"),
+    'description' => t('Messaging Center Access Key for Mail'),
+  ];
+
+  return [
+    'types' => ['jcc' => $type],
+    'tokens' => ['jcc' => $jcc],
+  ];
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function jcc_messaging_center_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  $replacements = [];
+  if ($type == 'jcc' && !empty($data['user'])) {
+    /** @var \Drupal\user\UserInterface $account */
+    $account = $data['user'];
+
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'messaging-mail-access-key':
+          $tempstore = \Drupal::service('tempstore.shared');
+          $store = $tempstore->get('jcc_messaging_center');
+          $replacements[$original] = $store->get('member_email_' . $account->get('mail')->value);
+          break;
+      }
+    }
+  }
+  return $replacements;
+}
+
+/**
+ * Implements hook_entity_type_build().
+ */
+function jcc_messaging_center_entity_type_build(array &$entity_types) {
+  $entity_types['user']->setFormClass('group_edit', 'Drupal\jcc_messaging_center\Form\ManageMessagingCenter');
+}
