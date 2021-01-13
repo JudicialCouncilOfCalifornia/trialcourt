@@ -1,0 +1,32 @@
+uuid: 329c0972-5c8f-4e93-8fab-56b05a0c9dff
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_author
+    - taxonomy.vocabulary.user_groups
+  content:
+    - 'user:user:acd49fd4-905b-4679-bb91-9d2a13a8739f'
+id: taxonomy_term.user_groups.field_author
+field_name: field_author
+entity_type: taxonomy_term
+bundle: user_groups
+label: Author
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    target_uuid: acd49fd4-905b-4679-bb91-9d2a13a8739f
+default_value_callback: ''
+settings:
+  handler: 'default:user'
+  handler_settings:
+    include_anonymous: false
+    filter:
+      type: _none
+    target_bundles: null
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference

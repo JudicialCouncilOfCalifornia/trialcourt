@@ -1,0 +1,70 @@
+uuid: 8ddd1cbc-05c2-4f83-b135-2a1f13692ab3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.messaging_news_item.body
+    - field.field.node.messaging_news_item.field_additional_item
+    - field.field.node.messaging_news_item.field_date
+    - field.field.node.messaging_news_item.field_external_url
+    - field.field.node.messaging_news_item.field_mailing_group
+    - node.type.messaging_news_item
+  module:
+    - datetime
+    - entity_reference_revisions
+    - text
+    - user
+id: node.messaging_news_item.default
+targetEntityType: node
+bundle: messaging_news_item
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_additional_item:
+    type: entity_reference_revisions_entity_view
+    weight: 105
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_date:
+    weight: 102
+    label: above
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_external_url:
+    weight: 103
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_mailing_group:
+    weight: 104
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  langcode: true
+  search_api_excerpt: true
