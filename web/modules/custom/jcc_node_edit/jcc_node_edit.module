@@ -22,11 +22,16 @@ function jcc_node_edit_form_alter(&$form, &$form_state, $form_id) {
 
     switch ($form_id) {
       case 'node_news_edit_form':
+        // Display hero image preference option to news feature only.
         $tid = $node->get('field_news_type')->getString();
-        $newsType = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid)->label();
+        if (isset($tid) && $tid != "") {
+          $newsType = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid)->label();
 
-        // Add hero image preference option to news feature only.
-        if ($newsType != 'Feature') {
+          if ($newsType != 'Feature') {
+            unset($form['field_second_image_as_hero']);
+          }
+        }
+        else {
           unset($form['field_second_image_as_hero']);
         }
         break;
