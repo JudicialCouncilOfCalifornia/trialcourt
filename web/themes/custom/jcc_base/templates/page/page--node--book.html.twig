@@ -53,39 +53,41 @@
     {% endif %}
   {% endif %}
 
-  {%  if page.messaging|render %}
-    {{ page.messaging }}
-  {% endif %}
-
   {% if page.tabs|render %}
     <div class="page__tabs">
       {{ page.tabs }}
     </div>
   {% endif %}
 
-  <div class="jcc-book-container grid-container-widescreen">
-    {%  if page.breadcrumb|render %}
-      {{ page.breadcrumb }}
+  <main id="main-content"> {# link is in html.html.twig #}
+    {%  if page.messaging|render %}
+      {{ page.messaging }}
     {% endif %}
 
-    <div class="grid-row grid-gap">
-      <div class="usa-layout-docs__sidenav desktop:grid-col-3">
-        {{ page.left_sidebar }}
-      </div>
+    <div class="jcc-book-container grid-container-widescreen">
+      {%  if page.breadcrumb|render %}
+        {{ page.breadcrumb }}
+      {% endif %}
 
-      <main id="main-content" class="usa-layout-docs__main desktop:grid-col-9 usa-prose usa-layout-docs"> {# link is in html.html.twig #}
-        <div class="page__content">
-          {{ page.content }}
+      <div class="grid-row grid-gap">
+        <div class="usa-layout-docs__main desktop:grid-col-9 usa-prose usa-layout-docs order-last">
+          <div class="page__content">
+            {{ page.content }}
+          </div>
+
+          {% if page.content_below|render %}
+            <div class="page__content-below">
+              {{ page.content_below }}
+            </div>
+          {% endif %}
         </div>
 
-        {% if page.content_below|render %}
-          <div class="page__content-below">
-            {{ page.content_below }}
-          </div>
-        {% endif %}
-      </main>
+        <div class="usa-layout-docs__sidenav desktop:grid-col-3 order-first">
+          {{ page.left_sidebar }}
+        </div>
+      </div>
     </div>
-  </div>
+  </main>
 
   {% if not node.field_hide_footer.value %}
     {% if page.secondary_footer %}

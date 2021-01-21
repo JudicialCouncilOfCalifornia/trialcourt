@@ -54,10 +54,6 @@
     {% endif %}
   {% endif %}
 
-  {%  if page.messaging|render %}
-    {{ page.messaging }}
-  {% endif %}
-
   {% if page.tabs|render %}
     <div class="page__tabs">
       {{ page.tabs }}
@@ -85,9 +81,12 @@
   {% set views_without_titles = [
   ] %}
 
-  <main>
+  <main id="main-content"> {# link is in html.html.twig #}
+    {%  if page.messaging|render %}
+      {{ page.messaging }}
+    {% endif %}
 
-    <div id="main-content" class="grid-container"> {# link is in html.html.twig #}
+    <div class="grid-container">
       <div class="grid-row">
         <div class="page__content grid-col-12 desktop:grid-col-8">
           <h1>Search results</h1>
