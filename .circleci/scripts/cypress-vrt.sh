@@ -13,7 +13,7 @@ npx cypress run --spec test/cypress/integration/visualRegression.spec.js --confi
 # Message Slack with diffs.
 if [ -d "test/cypress/snapshots/visualRegression.spec.js/__diff_output__" ] ; then
 
-  DIFFS=${CIRCLE_BUILD_URL}/artifacts/${CIRCLE_NODE_INDEX}/snapshots/__diff_output__
+  DIFFS=${CIRCLE_BUILD_URL}/artifacts/${CIRCLE_NODE_INDEX}/vrt_diff
 
 read -r -d '' MESSAGE <<-EOF
 {
@@ -48,6 +48,8 @@ read -r -d '' MESSAGE <<-EOF
 }
 EOF
 
-  curl -s -i -d "$MESSAGE" https://hooks.slack.com/services/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 #> /dev/null
-
+  if [ $CALVIN_SLACK ] ; then
+    curl -s -i -d "$MESSAGE" $CALVIN_SLACK #> /dev/null
+    echo -e "\nPinged Slack.\n"
+  fi
 fi
