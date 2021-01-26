@@ -32,20 +32,16 @@ defaults: &defaults
 cypress: &cypress
   docker:
     - image: cypress/base:10
-  # working_directory: ~/project/tests
-  parallelism: 1
+  working_directory: ~/project
   environment:
-    - CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
+    CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
 
 version: 2.1
-
-# orbs:
-#   cypress: cypress-io/cypress@1
 
 jobs:
     build_test:
         <<: *defaults
-        description: Build and Test
+        description: Build and Linting/Static Test
         steps:
             - checkout
 
@@ -79,57 +75,118 @@ jobs:
             - run:
                 name: run unit tests
                 command: composer -n unit-test
-    end_to_end:
-      <<: *cypress
-      description: Cypress End to End Testing
-      steps:
-        - run:
-            command: echo "Assuming dependencies were installed using cypress/install job"
 
-        - attach_workspace:
-            at: ~/
+    vrt_base:
+        <<: *cypress
+        parameters:
+            site:
+                type: string
+        description: Spin up Cypress and take base images for VRT
+        steps:
+            - run:
+                command: echo "Assuming dependencies were installed using cypress/install job"
 
-        - checkout
+            - attach_workspace:
+                at: ~/
 
-        - restore_cache:
-            keys:
-            - cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
+            - checkout
 
-        - run:
-            name: Install
-            working_directory: ''
-            command: "if [[ ! -z \"\" ]]; then\n  echo \"Installing using custom command\"\n  echo \"\"\n  \nelif [ \"false\" = \"true\" ]; then\n  echo \"Installing using Yarn\"\n  yarn install --frozen-lockfile\nelif [ ! -e ./package-lock.json ]; then\n  echo \"The Cypress orb uses 'npm ci' to install 'node_modules', which requires a 'package-lock.json'.\"\n  echo \"A 'package-lock.json' file was not found. Please run 'npm install' in your project,\"\n  echo \"and commit 'package-lock.json' to your repo.\"\n  exit 1\nelse\n  echo \"Installing dependencies using NPM ci\"\n  npm ci\nfi\n"
+            - restore_cache:
+                keys:
+                    - cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
 
-        - run:
-            name: Verify Cypress
-            command: npx cypress verify
-            working_directory: ''
+            - run:
+                name: Install
+                working_directory: ''
+                command: "if [[ ! -z \"\" ]]; then\n  echo \"Installing using custom command\"\n  echo \"\"\n  \nelif [ \"false\" = \"true\" ]; then\n  echo \"Installing using Yarn\"\n  yarn install --frozen-lockfile\nelif [ ! -e ./package-lock.json ]; then\n  echo \"The Cypress orb uses 'npm ci' to install 'node_modules', which requires a 'package-lock.json'.\"\n  echo \"A 'package-lock.json' file was not found. Please run 'npm install' in your project,\"\n  echo \"and commit 'package-lock.json' to your repo.\"\n  exit 1\nelse\n  echo \"Installing dependencies using NPM ci\"\n  npm ci\nfi\n"
 
-        - save_cache:
-            key: cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
-            paths:
-            - ~/.npm
-            - ~/.cache
+            - run:
+                name: Verify Cypress
+                command: npx cypress verify
+                working_directory: ''
 
-        - persist_to_workspace:
-            root: ~/
-            paths:
-            - project
-            - .cache/Cypress
+            - save_cache:
+                key: cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
+                paths:
+                    - ~/.npm
+                    - ~/.cache
 
-        - run:
-            name: TC spec
-            command: npx cypress run --spec test/cypress/integration/tc.spec.js
+            - persist_to_workspace:
+                root: ~/
+                paths:
+                    - project
+                    - .cache/Cypress
 
-        - store_artifacts:
-            path: /root/project/test/cypress/videos
-            destination: /videos
+            - run:
+                name: VRT set base images
+                command: .circleci/scripts/cypress-vrt.sh -b << parameters.site >>
+                no_output_timeout: 10m
+                working_directory: ''
+
+    cypress:
+        <<: *cypress
+        parameters:
+            site:
+                type: string
+        description: Cypress End to End and Visual Regression Testing
+        steps:
+            - run:
+                command: echo "Assuming dependencies were installed using cypress/install job"
+
+            - attach_workspace:
+                at: ~/
+
+            - checkout
+
+            - restore_cache:
+                keys:
+                    - cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
+
+            - run:
+                name: Install
+                working_directory: ''
+                command: "if [[ ! -z \"\" ]]; then\n  echo \"Installing using custom command\"\n  echo \"\"\n  \nelif [ \"false\" = \"true\" ]; then\n  echo \"Installing using Yarn\"\n  yarn install --frozen-lockfile\nelif [ ! -e ./package-lock.json ]; then\n  echo \"The Cypress orb uses 'npm ci' to install 'node_modules', which requires a 'package-lock.json'.\"\n  echo \"A 'package-lock.json' file was not found. Please run 'npm install' in your project,\"\n  echo \"and commit 'package-lock.json' to your repo.\"\n  exit 1\nelse\n  echo \"Installing dependencies using NPM ci\"\n  npm ci\nfi\n"
+
+            - run:
+                name: Verify Cypress
+                command: npx cypress verify
+                working_directory: ''
+
+            - save_cache:
+                key: cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
+                paths:
+                    - ~/.npm
+                    - ~/.cache
+
+            - persist_to_workspace:
+                root: ~/
+                paths:
+                    - project
+                    - .cache/Cypress
+
+            - run:
+                name: Run CI specs.
+                command: .circleci/scripts/cypress-ci.sh << parameters.site >>
+                no_output_timeout: 10m
+                working_directory: ''
+
+            - store_artifacts:
+                path: /root/project/test/cypress/videos
+                destination: /videos
+
+            - store_artifacts:
+                path: /root/project/test/cypress/reports
+                destination: /reports
+
+            - store_artifacts:
+                path: /root/project/test/cypress/snapshots
+                destination: /snapshots
 
     deploy:
         <<: *defaults
         parameters:
             site:
-              type: string
+                type: string
         description: Deploy << parameters.site >>
         steps:
             - add_ssh_keys:
@@ -154,25 +211,22 @@ jobs:
                 name: Deploying << parameters.site >>
                 command: .circleci/scripts/deploy.sh << parameters.site >>
 
-    vrt:
-        <<: *cypress
-        steps:
-          - run:
-              name: VRT set base images and compare this deploy.
-              command: .circleci/scripts/cypress-vrt.sh
-              no_output_timeout: 10m
-              working_directory: ''
-          - store_artifacts:
-              path: /root/project/test/cypress/snapshots/visualRegression.spec.js/__diff_output__
-              destination: /vrt_diff
-
 workflows:
   version: 2.1
   build_and_test:
     jobs:
       # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
       - build_test
-      - end_to_end
+      - vrt_base:
+          matrix:
+            parameters:
+              site: ["newsroom", "tc"]
+          filters:
+            branches:
+              only:
+                - develop
+                - stage
+                - master
       - deploy:
           matrix:
             parameters:
@@ -186,7 +240,10 @@ workflows:
                 - stage
                 - master
                 - /^epic-.*/
-      - vrt:
+      - cypress:
+          matrix:
+            parameters:
+              site: ["newsroom", "tc"]
           requires:
             - deploy
           filters:
@@ -194,6 +251,7 @@ workflows:
               only:
                 - develop
                 - stage
+                - master
 
 experimental:
   notify:

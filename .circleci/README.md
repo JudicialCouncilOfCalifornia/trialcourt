@@ -91,6 +91,12 @@ If your project has drush aliases configured for your hosting platform, you can 
  * `drush @[site.env] cim -y` Config Import
  * `drush @[site.env] cr` Cache Rebuild
 
+### Cypress End to End Testing
+
+Cypress testing has been added to test integrations. It runs after deployment to a test or live environment and generates reports for quality assurance. Failed End to End tests will NOT prevent deployment to an environment. It's purpose is to test integration of new code on test environments so you can catch things early in the QA process. It runs on production as a final smoke test, just in case.
+
+See `test/cypress` for more information.
+
 ### The Current Configuration for Pantheon
 
 The repo is configured for "parallel testing environments". In this case, `develop` and `stage` are Multidev environments and code is synced based on branch name. `master` is the production branch and new releases will be synced to the Live environment with a `pantheon_live_N` tag.

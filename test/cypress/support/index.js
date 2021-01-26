@@ -14,7 +14,26 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import './commands';
+import addContext from 'mochawesome/addContext';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+// Clean up titles so they can be used in filenames.
+function cleanTitle(title) {
+  return title.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")
+}
+
+Cypress.on('test:after:run', (test, runnable) => {
+  // Add screenshots to report.
+  const parentTitle = cleanTitle(runnable.parent.title);
+  const title = cleanTitle(test.title);
+
+  const screenshot = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/${parentTitle} -- ${title} (failed).png`;
+  addContext({ test }, screenshot);
+
+  // Add videos to report.
+  const video = `${Cypress.config('videosFolder')}/${Cypress.spec.name}.mp4`;
+  addContext({ test }, video);
+});

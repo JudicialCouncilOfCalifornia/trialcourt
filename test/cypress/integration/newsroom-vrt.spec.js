@@ -1,10 +1,4 @@
-// Set some environment variables.
-const env = {
-  "failOnSnapshotDiff": false,
-}
-
-Cypress.env('failOnSnapshotDiff', false);
-
+// Presets at: https://docs.cypress.io/api/commands/viewport.html#Arguments
 const sizes = [
   ['iphone-6', 'landscape'],
   'iphone-6',
@@ -15,10 +9,9 @@ const sizes = [
 
 const pages = [
   '/',
-  '/online-services',
 ];
 
-describe('VRT', () => {
+describe('Newsroom VRT', () => {
   sizes.forEach((size) => {
     pages.forEach((page) => {
       it(`${page} -- ${size}`, () => {

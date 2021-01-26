@@ -26,8 +26,7 @@
 
 import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
 
-addMatchImageSnapshotCommand();
-
+// Default config.
 addMatchImageSnapshotCommand({
   failureThreshold: 0.00,
   failureThresholdType: 'percent',
@@ -35,10 +34,11 @@ addMatchImageSnapshotCommand({
   capture: 'viewport',
 });
 
+// Helper for setting viewport in visual regression tests.
 Cypress.Commands.add("setResolution", (size) => {
   if (Cypress._.isArray(size)) {
-     cy.viewport(size[0], size[1]);
-   } else {
+    cy.viewport(size[0], size[1]);
+  } else {
     cy.viewport(size);
   }
- })
+});
