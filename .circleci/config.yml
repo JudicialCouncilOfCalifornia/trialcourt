@@ -111,18 +111,18 @@ jobs:
                     - ~/.npm
                     - ~/.cache
 
-            - persist_to_workspace:
-                root: ~/
-                paths:
-                    - project
-                    - .cache/Cypress
-
             - run:
                 name: VRT set base images
                 command: .circleci/scripts/cypress-ci.sh -b << parameters.site >>
                 no_output_timeout: 10m
                 working_directory: ''
 
+            - persist_to_workspace:
+                root: ~/
+                paths:
+                    - project
+                    - .cache/Cypress
+                    - test/cypress
     cypress:
         <<: *cypress
         parameters:
@@ -181,6 +181,10 @@ jobs:
             - store_artifacts:
                 path: /root/project/test/cypress/snapshots
                 destination: /snapshots
+
+            - store_artifacts:
+                path: /root/project/test/cypress/screenshots
+                destination: /screenshots
 
     deploy:
         <<: *defaults

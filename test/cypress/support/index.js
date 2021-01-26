@@ -30,10 +30,10 @@ Cypress.on('test:after:run', (test, runnable) => {
   const parentTitle = cleanTitle(runnable.parent.title);
   const title = cleanTitle(test.title);
 
-  const screenshot = `${Cypress.config('screenshotsFolder')}/${Cypress.spec.name}/${parentTitle} -- ${title} (failed).png`;
+  const screenshot = `../screenshots/${Cypress.spec.name}/${parentTitle} -- ${title} (failed).png`;
   addContext({ test }, screenshot);
 
   // Add videos to report.
-  const video = `${Cypress.config('videosFolder')}/${Cypress.spec.name}.mp4`;
+  const video = `../videos/${Cypress.spec.name}.mp4`;
   addContext({ test }, video);
 });

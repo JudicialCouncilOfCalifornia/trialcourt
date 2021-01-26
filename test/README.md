@@ -18,7 +18,7 @@ Only select tests are integrated into the CI/CD pipeline.
 
 `-b sitename sitename ...` = runs only the base snapshots for Visual Regression Testing. This should be run first.
 
-`-e [env] sitename sitename ...`: [env] is the environment branch to test. `develop`, `stage`, `master`.
+`-e [env] sitename sitename ...`: [env] is the environment branch to test. `develop`, `stage`, `master`. **For local purposes only. In CI the env is determined by the $CIRCLE_BRANCH which maps to the environment.**
 
 Example:
   - `.circleci/scripts/cypress-ci.sh -b newsroom tc` - first set the base snapshots from live for newsroom and slo.
