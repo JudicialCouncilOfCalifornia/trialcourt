@@ -1,0 +1,30 @@
+uuid: eefbc0d6-456a-41c8-a22d-6f0a417f4bcd
+langcode: en
+status: true
+dependencies:
+  module:
+    - openid_connect
+    - user
+  theme:
+    - jcc_sandiego
+_core:
+  default_config_hash: t_iCf6dQahQRhmLeV8SFtHtVlyN5QKdL40-NbVqo5Q8
+id: jcc_sandiego_openidconnectlogin
+theme: jcc_sandiego
+region: footer
+weight: 0
+provider: null
+plugin: openid_connect_login
+settings:
+  id: openid_connect_login
+  label: 'OpenID Connect login'
+  provider: openid_connect
+  label_display: '0'
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      anonymous: anonymous
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'

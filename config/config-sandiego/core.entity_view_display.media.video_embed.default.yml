@@ -1,0 +1,38 @@
+uuid: c1aad624-9ebb-4583-9e44-3fec1ca683dc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.media.video_embed.field_media_video_embed_field
+    - image.style.large
+    - media.type.video_embed
+  module:
+    - video_embed_field
+_core:
+  default_config_hash: BGlAlRzk72mKsmN3DK8xXX3RJHtecpHfxBRJ65If6sU
+id: media.video_embed.default
+targetEntityType: media
+bundle: video_embed
+mode: default
+content:
+  field_media_video_embed_field:
+    label: visually_hidden
+    weight: 0
+    settings:
+      image_style: large
+      link_image_to: provider
+      responsive: true
+      width: 854
+      height: 480
+      modal_max_width: 854
+      autoplay: false
+    third_party_settings: {  }
+    type: video_embed_field_colorbox
+    region: content
+hidden:
+  created: true
+  langcode: true
+  name: true
+  search_api_excerpt: true
+  thumbnail: true
+  uid: true

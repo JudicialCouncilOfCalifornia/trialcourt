@@ -1,0 +1,32 @@
+uuid: 13542248-8a23-4f94-819b-2b8e44e8e6e5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_attachments
+    - media.type.file
+    - media.type.image
+    - node.type.news
+_core:
+  default_config_hash: QO4A97x21Vu8ZW_L2T3oYNOk2e0y03zgfQjHxjZqBO8
+id: node.news.field_attachments
+field_name: field_attachments
+entity_type: node
+bundle: news
+label: Attachments
+description: 'This will allow a user to attach a file to a news item.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      file: file
+      image: image
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: file
+field_type: entity_reference
