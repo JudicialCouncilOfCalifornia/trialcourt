@@ -57,9 +57,9 @@ for name in "$@" ; do
 
   # Run Visual Regression Tests
   echo -e "\nComparing snapshots to base for ${name}"
-  # if [ -f $vrtSpec ] ; then
-    npx cypress run --spec ${vrtSpec} --config baseUrl=${baseUrl} --env failOnSnapshotDiff=false
-  # fi
+  if [ -f $vrtSpec ] ; then
+    npx cypress run --spec ${vrtSpec} --config baseUrl=${baseUrl}
+  fi
 
   if [ -d "test/cypress/snapshots/${name}-vrt.spec.js/__diff_output__" ] ; then
     vrtFail=true
@@ -73,45 +73,6 @@ npx marge test/cypress/reports/mocha/index.json -f cypress-report.html -o test/c
 # Message Slack with artifacts.
 
 # Set an empty diff message block.
-read -r -d '' diffBlock <<-EOF
-{
-  "type": "section",
-  "text": {
-    "type": "mrkdwn",
-    "text": "Visual Regression Testing: No Diffs :tada:"
-  }
-}
-EOF
-
-if [ "$vrtFail" == true ] ; then
-  # Figure out how to properly set the artifact url.
-  snapshots=${CIRCLE_BUILD_URL}/artifacts/${CIRCLE_NODE_INDEX}/snapshots
-
-  # We have diffs so set the diffBlock with the new message and link.
-  read -r -d '' diffBlock <<-EOF
-{
-  "type": "section",
-  "text": {
-    "type": "mrkdwn",
-    "text": "Visual Regression Testing"
-  },
-  "accessory": {
-    "type": "button",
-    "text": {
-      "type": "plain_text",
-      "text": "See Diffs :eyes:",
-      "emoji": true
-    },
-    "value": "diffs",
-    "url": "${snapshots}",
-    "action_id": "button-action"
-  }
-}
-EOF
-
-fi
-
-# Set an empty diff message block.
 read -r -d '' reportBlock <<-EOF
 {
   "type": "section",
@@ -123,7 +84,7 @@ read -r -d '' reportBlock <<-EOF
 EOF
 
 if [ -f "test/cypress/reports/cypress-report.html" ] ; then
-  # Figure out how to properly set the artifact url.
+  # Set the artifact url.
   report=${CIRCLE_BUILD_URL}/artifacts/${CIRCLE_NODE_INDEX}/reports/cypress-report.html
   # We have a report so set the reportBlock with the new message and link.
   read -r -d '' reportBlock <<-EOF
@@ -149,7 +110,41 @@ EOF
 
 fi
 
-videos=${CIRCLE_BUILD_URL}/artifacts/${CIRCLE_NODE_INDEX}/videos
+# Set an empty diff message block.
+read -r -d '' diffBlock <<-EOF
+{
+  "type": "section",
+  "text": {
+    "type": "mrkdwn",
+    "text": "Visual Regression Testing: No Diffs :tada:"
+  }
+}
+EOF
+
+if [[ "$vrtFail" == true && -f "test/cypress/reports/cypress-report.html" ]] ; then
+  # We have diffs so set the diffBlock with the new message and link.
+  read -r -d '' diffBlock <<-EOF
+{
+  "type": "section",
+  "text": {
+    "type": "mrkdwn",
+    "text": "Visual Regression Testing"
+  },
+  "accessory": {
+    "type": "button",
+    "text": {
+      "type": "plain_text",
+      "text": "See Diffs :eyes:",
+      "emoji": true
+    },
+    "value": "diffs",
+    "url": "${report}",
+    "action_id": "button-action"
+  }
+}
+EOF
+
+fi
 
 read -r -d '' MESSAGE <<-EOF
 {
@@ -158,30 +153,12 @@ read -r -d '' MESSAGE <<-EOF
       "type": "header",
       "text": {
         "type": "plain_text",
-        "text": "Cypress Tests",
+        "text": "Cypress Tests: ${baseUrl}",
         "emoji": true
       }
     },
     ${reportBlock},
-    ${diffBlock},
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": "Test Videos"
-      },
-      "accessory": {
-        "type": "button",
-        "text": {
-          "type": "plain_text",
-          "text": "Watch :film_projector:",
-          "emoji": true
-        },
-        "value": "videos",
-        "url": "${videos}",
-        "action_id": "button-action"
-      }
-    }
+    ${diffBlock}
   ]
 }
 EOF

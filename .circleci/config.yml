@@ -163,6 +163,9 @@ jobs:
                 paths:
                     - project
                     - .cache/Cypress
+            - run:
+                name: Sync base snapshots from workspace to active job.
+                command: cp -af ~/test/cypress/snapshots test/cypress/snapshots
 
             - run:
                 name: Run CI specs.
