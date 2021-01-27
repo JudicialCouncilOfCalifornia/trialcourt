@@ -53,10 +53,6 @@
     {% endif %}
   {% endif %}
 
-  {%  if page.messaging|render %}
-    {{ page.messaging }}
-  {% endif %}
-
   {% if page.tabs|render %}
     <div class="page__tabs">
       {{ page.tabs }}
@@ -100,6 +96,9 @@
   {% endif %}
 
   <main id="main-content"> {# link is in html.html.twig #}
+    {%  if page.messaging|render %}
+      {{ page.messaging }}
+    {% endif %}
 
     <div class="page__left_sidebar">
       {{ page.left_sidebar }}
