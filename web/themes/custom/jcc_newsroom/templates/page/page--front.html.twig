@@ -54,10 +54,6 @@
     {% endif %}
   {% endif %}
 
-  {%  if page.messaging|render %}
-    {{ page.messaging }}
-  {% endif %}
-
   {% if page.tabs|render %}
     <div class="page__tabs">
       {{ page.tabs }}
@@ -100,27 +96,33 @@
     {% endif %}
   {% endif %}
 
-  <main id="main-content" class="grid-container"> {# link is in html.html.twig #}
-    <div class="grid-row">
-      {#
-      <div class="page__left_sidebar">
-        {{ page.left_sidebar }}
-      </div>
-      #}
+  <main id="main-content"> {# link is in html.html.twig #}
+    {%  if page.messaging|render %}
+      {{ page.messaging }}
+    {% endif %}
 
-      <div class="page__content grid-col-12 desktop:grid-col-8">
-        {{ page.content }}
-      </div>
-
-      <div class="page__right_sidebar grid-col-12 desktop:grid-col-4">
-        {{ page.right_sidebar }}
-      </div>
-
-      {% if page.content_below|render %}
-        <div class="page__content-below grid-col-12">
-          {{ page.content_below }}
+    <div class="grid-container">
+      <div class="grid-row">
+        {#
+        <div class="page__left_sidebar">
+          {{ page.left_sidebar }}
         </div>
-      {% endif %}
+        #}
+
+        <div class="page__content grid-col-12 desktop:grid-col-8">
+          {{ page.content }}
+        </div>
+
+        <div class="page__right_sidebar grid-col-12 desktop:grid-col-4">
+          {{ page.right_sidebar }}
+        </div>
+
+        {% if page.content_below|render %}
+          <div class="page__content-below grid-col-12">
+            {{ page.content_below }}
+          </div>
+        {% endif %}
+      </div>
     </div>
   </main>
 
