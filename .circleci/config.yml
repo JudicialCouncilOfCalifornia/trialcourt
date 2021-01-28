@@ -158,14 +158,9 @@ jobs:
                     - ~/.npm
                     - ~/.cache
 
-            - persist_to_workspace:
-                root: ~/
-                paths:
-                    - project
-                    - .cache/Cypress
             - run:
                 name: Sync base snapshots from workspace to active job.
-                command: cp -af ~/test/cypress/snapshots test/cypress/snapshots
+                command: ls -al && ls -al ~ && cp -af ~/test/cypress/snapshots test/cypress/snapshots
 
             - run:
                 name: Run CI specs.
@@ -252,6 +247,7 @@ workflows:
             parameters:
               site: ["newsroom", "tc"]
           requires:
+            - vrt_base
             - deploy
           filters:
             branches:
