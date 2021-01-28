@@ -83,9 +83,6 @@ jobs:
                 type: string
         description: Spin up Cypress and take base images for VRT
         steps:
-            - run:
-                command: echo "Assuming dependencies were installed using cypress/install job"
-
             - attach_workspace:
                 at: ~/
 
@@ -120,9 +117,8 @@ jobs:
             - persist_to_workspace:
                 root: ~/
                 paths:
-                    - project
-                    - .cache/Cypress
-                    - test/cypress
+                  - test/cypress/<< parameters.site >>-vrt.spec.js
+
     cypress:
         <<: *cypress
         parameters:
@@ -130,8 +126,6 @@ jobs:
                 type: string
         description: Cypress End to End and Visual Regression Testing
         steps:
-            - run:
-                command: echo "Assuming dependencies were installed using cypress/install job"
 
             - attach_workspace:
                 at: ~/
