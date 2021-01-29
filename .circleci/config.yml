@@ -76,48 +76,34 @@ jobs:
                 name: run unit tests
                 command: composer -n unit-test
 
-    vrt_base:
-        <<: *cypress
+    deploy:
+        <<: *defaults
         parameters:
             site:
                 type: string
-        description: Spin up Cypress and take base images for VRT
+        description: Deploy << parameters.site >>
         steps:
-            - attach_workspace:
-                at: ~/
+            - add_ssh_keys:
+                fingerprints:
+                  - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
 
             - checkout
 
             - restore_cache:
                 keys:
-                    - cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
+                  - composer-cache
 
             - run:
-                name: Install
-                working_directory: ''
-                command: "if [[ ! -z \"\" ]]; then\n  echo \"Installing using custom command\"\n  echo \"\"\n  \nelif [ \"false\" = \"true\" ]; then\n  echo \"Installing using Yarn\"\n  yarn install --frozen-lockfile\nelif [ ! -e ./package-lock.json ]; then\n  echo \"The Cypress orb uses 'npm ci' to install 'node_modules', which requires a 'package-lock.json'.\"\n  echo \"A 'package-lock.json' file was not found. Please run 'npm install' in your project,\"\n  echo \"and commit 'package-lock.json' to your repo.\"\n  exit 1\nelse\n  echo \"Installing dependencies using NPM ci\"\n  npm ci\nfi\n"
+                name: run composer install to get the vendor directory
+                command: composer install -o --no-dev
 
             - run:
-                name: Verify Cypress
-                command: npx cypress verify
-                working_directory: ''
-
-            - save_cache:
-                key: cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
-                paths:
-                    - ~/.npm
-                    - ~/.cache
+                name: Build Themes
+                command: scripts/theme.sh -a
 
             - run:
-                name: VRT set base images
-                command: .circleci/scripts/cypress-ci.sh -b << parameters.site >>
-                no_output_timeout: 10m
-                working_directory: ''
-
-            - persist_to_workspace:
-                root: ~/
-                paths:
-                  - test/cypress/<< parameters.site >>-vrt.spec.js
+                name: Deploying << parameters.site >>
+                command: .circleci/scripts/deploy.sh << parameters.site >>
 
     cypress:
         <<: *cypress
@@ -152,9 +138,17 @@ jobs:
                     - ~/.npm
                     - ~/.cache
 
+            - persist_to_workspace:
+                root: ~/
+                paths:
+                    - project
+                    - .cache/Cypress
+
             - run:
-                name: Sync base snapshots from workspace to active job.
-                command: ls -al && ls -al ~ && cp -af ~/test/cypress/snapshots test/cypress/snapshots
+                name: VRT set base images
+                command: .circleci/scripts/cypress-ci.sh -b << parameters.site >>
+                no_output_timeout: 10m
+                working_directory: ''
 
             - run:
                 name: Run CI specs.
@@ -178,51 +172,12 @@ jobs:
                 path: /root/project/test/cypress/screenshots
                 destination: /screenshots
 
-    deploy:
-        <<: *defaults
-        parameters:
-            site:
-                type: string
-        description: Deploy << parameters.site >>
-        steps:
-            - add_ssh_keys:
-                fingerprints:
-                  - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
-
-            - checkout
-
-            - restore_cache:
-                keys:
-                  - composer-cache
-
-            - run:
-                name: run composer install to get the vendor directory
-                command: composer install -o --no-dev
-
-            - run:
-                name: Build Themes
-                command: scripts/theme.sh -a
-
-            - run:
-                name: Deploying << parameters.site >>
-                command: .circleci/scripts/deploy.sh << parameters.site >>
-
 workflows:
   version: 2.1
   build_and_test:
     jobs:
       # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
       - build_test
-      - vrt_base:
-          matrix:
-            parameters:
-              site: ["newsroom", "tc"]
-          filters:
-            branches:
-              only:
-                - develop
-                - stage
-                - master
       - deploy:
           matrix:
             parameters:
@@ -241,14 +196,12 @@ workflows:
             parameters:
               site: ["newsroom", "tc"]
           requires:
-            - vrt_base
             - deploy
           filters:
             branches:
               only:
                 - develop
                 - stage
-                - master
 
 experimental:
   notify:
