@@ -56,6 +56,9 @@ $sites['develop.newsroom.courts.ca.gov'] = 'newsroom';
 $sites['dev-jcc-deprep.pantheonsite.io'] = 'deprep';
 $sites['test-jcc-deprep.pantheonsite.io'] = 'deprep';
 $sites['live-jcc-deprep.pantheonsite.io'] = 'deprep';
+$sites['develop.jcart.courts.ca.gov'] = 'deprep';
+$sites['stage.jcart.courts.ca.gov'] = 'deprep';
+$sites['jcart.courts.ca.gov'] = 'deprep';
 
 $sites['dev-jcc-md.pantheonsite.io'] = 'md';
 $sites['test-jcc-md.pantheonsite.io'] = 'md';
