@@ -82,6 +82,10 @@
 {#      </div>#}
       <div class="jcc-text-section-aside">
         <div class="jcc-text-section-aside__aside">
+{#          <a href="/messenger/ajax/groups/users/2" class="use-ajax">#}
+{#            This link will load the view {view_id} display {display_id} with the#}
+{#            arguments {args}#}
+{#          </a>#}
           {% block content %}
             {% if rows %}
               <div class="view-group-management-content">
@@ -93,7 +97,9 @@
           {% endblock %}
         </div>
         <div class="jcc-text-section-aside__content">
-          {{ drupal_view('user_groups_management', 'page_1', 2) }}
+          <div class="js-view-dom-id-jcc_messaging_center_users_in_group">
+            <p>Please select a group.</p>
+          </div>
         </div>
 
       </div>
