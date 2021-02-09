@@ -49,7 +49,11 @@ function jcc_newsroom_preprocess_node__news(&$variables, $hook) {
 
         $destination_uri = $style->buildUri($file->uri->value);
         $style->createDerivative($file_uri, $destination_uri);
-        $variables['hero_bckg_url'] = $style->buildUrl($file_uri);
+        $variables['hero_image'] = [
+          'src' => $style->buildUrl($file_uri),
+          'alt' => $media->field_media_image->alt,
+          'renderer' => 'patternlab',
+        ];
       }
     }
     $variables['featured_image_idx'] = $imageIdx;

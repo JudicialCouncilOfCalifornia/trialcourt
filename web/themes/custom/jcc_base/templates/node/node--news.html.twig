@@ -174,17 +174,7 @@
       {% endset %}
     {%  endif %}
 
-    {% if (content.field_news_type[0]['#title'] == 'Feature') %}
-      {% set image_hero = file_url(content.field_images['#items'].entity.field_media_image.entity.uri.value) %}
-      <style>
-        .jcc-hero--has-background-image {
-          background-image: url('{{ image_hero }}');
-        }
-      </style>
-    {% endif %}
-
     {% include '@jcc_base/_includes/section-hero.html.twig' with {
-      background_variant: 'has-background-image parallax',
       brow: news_type,
       title: title,
       lead: news_lead,

@@ -183,16 +183,10 @@
       {% endset %}
     {%  endif %}
 
-    {% if (content.field_news_type[0]['#title'] == 'Feature') %}
-      <style>
-        .jcc-hero--has-background-image {
-          background-image: url('{{ hero_bckg_url }}');
-        }
-      </style>
-    {% endif %}
-
     {% include '@jcc_base/_includes/section-hero.html.twig' with {
-      background_variant: 'has-background-image parallax',
+      background_variant: 'has-background-image',
+      background_parallax: true,
+      img: hero_image,
       brow: news_type,
       title: title,
       lead: news_lead,
