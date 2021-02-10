@@ -1,8 +1,8 @@
 {% set related_news = [] %}
 {% for content in related_content.items %}
   {% if content['#title'] %}
-    {% if content['#title']|length > 55 %}
-      {% set news_title = content['#title']|truncate(55) ~ '…' %}
+    {% if content['#title']|length > 45 %}
+      {% set news_title = content['#title']|truncate(45) ~ '…' %}
     {% else %}
       {% set news_title = content['#title'] %}
     {% endif %}
