@@ -107,12 +107,6 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
       '#size' => 64,
       '#weight' => '0',
     ];
-    $form['subtitle'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('Subtitle'),
-      '#default_value' => $this->configuration['subtitle'],
-      '#weight' => '0',
-    ];
     $form['background_image'] = [
       '#type' => 'media_library',
       '#allowed_bundles' => ['image'],
@@ -127,20 +121,6 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
       '#default_value' => $this->configuration['featured_links'],
       '#weight' => '0',
     ];
-    $form['hero_style'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Style'),
-      '#default_value' => $this->configuration['hero_style'] ?: 'jcc-hero-icon-nav-style--default',
-      '#weight' => '0',
-      '#options' => [
-        'jcc-hero-icon-nav-style--default' => $this->t('Default'),
-        'jcc-hero-icon-nav-style--variant-one' => $this->t('Bar'),
-        'jcc-hero-icon-nav-style--variant-two' => $this->t('Square'),
-        'jcc-hero-icon-nav-style--variant-three' => $this->t('Round'),
-        'jcc-hero-icon-nav-style--variant-four' => $this->t('Pill'),
-        'jcc-hero-icon-nav-style--variant-five' => $this->t('Box'),
-      ],
-    ];
 
     return $form;
   }
@@ -154,7 +134,6 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
     $this->configuration['subtitle'] = $form_state->getValue('subtitle');
     $this->configuration['background_image'] = $form_state->getValue('background_image');
     $this->configuration['featured_links'] = $form_state->getValue('featured_links');
-    $this->configuration['hero_style'] = $form_state->getValue('hero_style');
   }
 
   /**
@@ -163,11 +142,16 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
   public function build() {
     $build = [];
     $build['#theme'] = 'jcc_hero_block';
-    $build['#hero_icon_nav']['hero_img_banner'] = [
-      'background_img' => $this->getMediaUrl($this->configuration['background_image']),
+
+    $build['#hero_icon_nav']['hero_banner'] = [
       'brow' => $this->configuration['brow'],
       'title' => $this->configuration['title'],
       'subtitle' => $this->configuration['subtitle'],
+    ];
+    $build['#hero_icon_nav']['media'] = [
+      'src' => $this->getMediaUrl($this->configuration['background_image']),
+      'alt' => Media::load($this->configuration['background_image'])->field_media_image->alt,
+      'renderer' => 'patternlab',
     ];
 
     $placeholder = FALSE;
@@ -187,9 +171,11 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
 
     $build['#hero_icon_nav']['contextual_links'] = $placeholder;
     if ($this->configuration['featured_links']) {
-      $build['#hero_icon_nav']['links'] = self::getFeaturedLinks();
+      $build['#hero_icon_nav']['card_section'] = [
+        'theme' => 'jcc-cards--tiles',
+        'cards' => self::getFeaturedLinks(),
+      ];
     }
-    $build['#hero_icon_nav']['style'] = $this->configuration['hero_style'];
 
     return $build;
   }
@@ -214,7 +200,7 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
 
     $index = 0;
     foreach ($tree as $item) {
-      if ($index > 6) {
+      if ($index > 4) {
         break;
       }
 
@@ -224,12 +210,22 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
           ['uuid' => $item->link->getDerivativeId()]
         );
       $entity = array_pop($menu_item_extra);
-      $icon = self::getMediaUrl($entity->get('field_icon')->entity);
+      $icon = $entity->field_service_type->value;
+      $link_title = $item->link->getTitle();
 
-      $links[$index < 4 ? 'icons' : 'buttons'][] = [
-        'title' => $item->link->getTitle(),
-        'url' => $item->link->getUrlObject()->toString(),
-        'icon' => $index < 4 ? $icon : '',
+      $links[] = [
+        'title' => $link_title,
+        'action' => [
+          'style' => 'card',
+          'url' => $item->link->getUrlObject()->toString(),
+        ],
+        'width' => 'grid-col-6',
+        'media_style' => "icon",
+        'media' => [
+          'src' => '/libraries/courtyard-artifact/public/images/icons/light/' . $icon . '.svg',
+          'alt' => $link_title . ' decorative image',
+          'renderer' => 'patternlab',
+        ],
       ];
 
       $index++;
