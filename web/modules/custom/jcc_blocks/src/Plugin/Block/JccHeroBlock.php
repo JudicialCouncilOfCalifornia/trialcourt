@@ -210,7 +210,7 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
           ['uuid' => $item->link->getDerivativeId()]
         );
       $entity = array_pop($menu_item_extra);
-      $icon = $entity->field_service_type->value;
+      $icon = $entity->field_featured_type->value;
       $link_title = $item->link->getTitle();
 
       $links[] = [
