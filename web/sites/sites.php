@@ -63,6 +63,9 @@ $sites['jcart.courts.ca.gov'] = 'deprep';
 $sites['dev-jcc-md.pantheonsite.io'] = 'md';
 $sites['test-jcc-md.pantheonsite.io'] = 'md';
 $sites['live-jcc-md.pantheonsite.io'] = 'md';
+$sites['develop.madera.courts.ca.gov'] = 'md';
+$sites['stage.madera.courts.ca.gov'] = 'md';
+$sites['www.madera.courts.ca.gov'] = 'md';
 
 $sites['dev-jcc-webservices.pantheonsite.io'] = 'webservices';
 $sites['test-jcc-webservices.pantheonsite.io'] = 'webservices';
