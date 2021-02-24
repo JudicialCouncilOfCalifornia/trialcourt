@@ -222,7 +222,7 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
         'width' => 'grid-col-6',
         'media_style' => "icon",
         'media' => [
-          'src' => '/libraries/courtyard-artifact/public/images/icons/light/' . $icon . '.svg',
+          'src' => '/libraries/courtyard-artifact/1.x/public/images/icons/light/' . $icon . '.svg',
           'alt' => $link_title . ' decorative image',
           'renderer' => 'patternlab',
         ],
