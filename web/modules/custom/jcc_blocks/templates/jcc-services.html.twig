@@ -12,15 +12,13 @@
     'clear-both',
 ] %}
 <div{{ attributes.addClass(classes) }}>
-{#    {% include '@organisms/sections/box-nav/box-nav.twig' with {#}
-{#      hero_box_nav: {#}
-{#        links: {#}
-{#          highlights: switchboard.items.primary#}
-{#        }#}
-{#      }#}
-{#    } %}#}
-  <div class="jccservices">
-    JCC SERVICES BLOCK
+  <div class="jcc_services_block">
+    <h2 class="jcc-header-group__title">{{ jccservices.headergroup.title }}</h2>
+    <div>
+      {% for service in jccservices.items.services %}
+        <div>{{ service.title }} / {{ service.description }}</div>
+      {% endfor %}
+    </div>
   </div>
 </div>
 

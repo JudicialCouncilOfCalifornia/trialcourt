@@ -104,13 +104,6 @@ class JccServices extends BlockBase implements ContainerFactoryPluginInterface {
       '#weight' => '0',
     ];
 
-    $form['test'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('test'),
-      '#default_value' => $this->configuration['test'],
-      '#weight' => '0',
-    ];
-
     $form['services'] = [
       '#type' => 'tablefield',
       '#title' => $this->t('Services (Title, Description, Url)'),
@@ -131,7 +124,6 @@ class JccServices extends BlockBase implements ContainerFactoryPluginInterface {
   public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['title'] = $form_state->getValue('title');
     $this->configuration['link'] = $form_state->getValue('link');
-    $this->configuration['test'] = $form_state->getValue('test');
     $this->configuration['services'] = $form_state->getValue('services')['tablefield']['table'];
   }
 
@@ -153,6 +145,7 @@ class JccServices extends BlockBase implements ContainerFactoryPluginInterface {
     $build['#jccservices'] = [
       'headergroup' => [
         'title' => $this->configuration['title'],
+        'link' => $this->configuration['link'],
       ],
       'items' => [
         'services' => $service_items,
