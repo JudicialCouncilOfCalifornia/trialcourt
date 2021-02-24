@@ -22,7 +22,7 @@ class PatternLab extends PluginBase implements CKEditorPluginInterface, CKEditor
   protected $patternlabData;
 
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
-    $this->patternlabData = file_get_contents(\Drupal::root() . '/libraries/courtyard-artifact/public/styleguide/data/patternlab-data.json');
+    $this->patternlabData = file_get_contents(\Drupal::root() . '/libraries/courtyard-artifact/1.x/public/styleguide/data/patternlab-data.json');
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
@@ -113,7 +113,7 @@ class PatternLab extends PluginBase implements CKEditorPluginInterface, CKEditor
           $menu_items[$menu_sub_item_name] = [
             'label' => $pattern_subtype_items->patternName,
             'group' => $menu_item_name,
-            'path' => base_path() . 'libraries/courtyard-artifact/public/patterns/' . $pattern_path,
+            'path' => base_path() . 'libraries/courtyard-artifact/1.x/public/patterns/' . $pattern_path,
           ];
         }
         $menu_items[$menu_item_name]['items'] = $pattern_sub_items;
