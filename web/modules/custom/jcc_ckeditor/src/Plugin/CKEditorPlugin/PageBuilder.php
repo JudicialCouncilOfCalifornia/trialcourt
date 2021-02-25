@@ -22,7 +22,7 @@ class PageBuilder extends PluginBase implements CKEditorPluginInterface, CKEdito
   protected $patternlabData;
 
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
-    $this->patternlabData = file_get_contents(\Drupal::root() . '/libraries/courtyard-artifact/public/styleguide/data/patternlab-data.json');
+    $this->patternlabData = file_get_contents(\Drupal::root() . '/libraries/courtyard-artifact/1.x/public/styleguide/data/patternlab-data.json');
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
