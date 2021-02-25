@@ -3,8 +3,10 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.menu_link_content.featured-links.field_icon
+    - field.field.menu_link_content.featured-links.field_featured_type
     - system.menu.featured-links
+  module:
+    - options
 _core:
   default_config_hash: mHZ0Wn6Ry3zxqf3ih9sERkoJ6wOQbwUnKJdeA5Iklas
 id: menu_link_content.featured-links.default
@@ -13,18 +15,16 @@ bundle: featured-links
 mode: default
 content:
   children:
-    weight: 1
+    weight: 0
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
-  field_icon:
-    type: entity_reference_entity_view
-    weight: 2
+  field_featured_type:
+    weight: 1
     label: above
-    settings:
-      view_mode: default
-      link: false
+    settings: {  }
     third_party_settings: {  }
+    type: list_default
     region: content
 hidden:
   langcode: true
