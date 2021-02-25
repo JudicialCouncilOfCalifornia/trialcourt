@@ -12,17 +12,10 @@
     'clear-both',
 ] %}
 <div{{ attributes.addClass(classes) }}>
-  <div class="jcc_services_block">
-    <div>
-      {% for service in jccservices.items.services %}
-        <div>{{ service.title }} / {{ service.description }}</div>
-      {% endfor %}
-
-      --- test ---
-      {% include '@organisms/sections/box-nav/box-nav.twig' with {
+  <div class="jcc_services_block jcc-text-section-aside">
+      {% include '@organisms/sections/list-excerpts-with-button/list-excerpts-with-button.twig' with {
         list_excerpt_with_button: jccservices
       } %}
-    </div>
   </div>
 </div>
 

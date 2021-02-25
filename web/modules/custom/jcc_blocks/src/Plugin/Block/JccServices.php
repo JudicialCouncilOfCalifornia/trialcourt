@@ -97,6 +97,12 @@ class JccServices extends BlockBase implements ContainerFactoryPluginInterface {
       '#default_value' => $this->configuration['title'],
       '#weight' => '0',
     ];
+    $form['button_label'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Button label'),
+      '#default_value' => $this->configuration['button_label'],
+      '#weight' => '0',
+    ];
     $form['link'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Link'),
@@ -124,6 +130,7 @@ class JccServices extends BlockBase implements ContainerFactoryPluginInterface {
   public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['title'] = $form_state->getValue('title');
     $this->configuration['link'] = $form_state->getValue('link');
+    $this->configuration['button_label'] = $form_state->getValue('button_label');
     $this->configuration['services'] = $form_state->getValue('services')['tablefield']['table'];
   }
 
@@ -145,10 +152,11 @@ class JccServices extends BlockBase implements ContainerFactoryPluginInterface {
     $build['#jccservices'] = [
       'headergroup' => [
         'title' => $this->configuration['title'],
-        'link' => $this->configuration['link'],
       ],
-      'items' => [
-        'services' => $service_items,
+      'items' => $service_items,
+      'button' => [
+        'text' => $this->configuration['title'],
+        'url' => $this->configuration['link'],
       ],
     ];
 
