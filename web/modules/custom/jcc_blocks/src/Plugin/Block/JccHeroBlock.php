@@ -150,7 +150,7 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
     ];
     $build['#hero_icon_nav']['media'] = [
       'src' => $this->getMediaUrl($this->configuration['background_image']),
-      'alt' => Media::load($this->configuration['background_image'])->field_media_image->alt,
+      'alt' => $this->getMediaAlt($this->configuration['background_image']),
       'renderer' => 'patternlab',
     ];
 
@@ -247,6 +247,18 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
     }
 
     return $background_image_url;
+  }
+
+  /**
+   * Get the alt for the media.
+   */
+  public static function getMediaAlt($media) {
+    $background_image_alt = '';
+    if ($media) {
+      $background_image_alt = Media::load($media)->field_media_image->alt;
+    }
+
+    return $background_image_alt;
   }
 
 }
