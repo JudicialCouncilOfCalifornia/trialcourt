@@ -13,11 +13,15 @@
 ] %}
 <div{{ attributes.addClass(classes) }}>
   <div class="jcc_services_block">
-    <h2 class="jcc-header-group__title">{{ jccservices.headergroup.title }}</h2>
     <div>
       {% for service in jccservices.items.services %}
         <div>{{ service.title }} / {{ service.description }}</div>
       {% endfor %}
+
+      --- test ---
+      {% include '@organisms/sections/box-nav/box-nav.twig' with {
+        list_excerpt_with_button: jccservices
+      } %}
     </div>
   </div>
 </div>
