@@ -147,6 +147,14 @@ class JccServices extends BlockBase implements ContainerFactoryPluginInterface {
       ];
     }
 
+    $button = [];
+    if ($this->configuration['button_label']) {
+      $button = [
+        'text' => $this->configuration['button_label'],
+        'url' => $this->configuration['link'],
+      ];
+    }
+
     $build = [];
     $build['#theme'] = 'jcc_services';
     $build['#jccservices'] = [
@@ -154,10 +162,7 @@ class JccServices extends BlockBase implements ContainerFactoryPluginInterface {
         'title' => $this->configuration['title'],
       ],
       'items' => $service_items,
-      'button' => [
-        'text' => $this->configuration['title'],
-        'url' => $this->configuration['link'],
-      ],
+      'button' => $button,
     ];
 
     return $build;
