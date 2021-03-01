@@ -128,7 +128,7 @@ class JCCSubscriptionsDigestCron {
 
       for ($x = 0; $x < $loops; $x++) {
         $start = ($x * 500);
-        $users_in_group = $emma->list_group_members('9415684', 0, $start);
+        $users_in_group = $emma->list_group_members($emma_group, 0, $start);
         foreach ($users_in_group as $user_group) {
           if (!in_array($user_group->email, $email_to_sendgrid, TRUE)) {
             array_push($email_to_sendgrid, $user_group->email);
