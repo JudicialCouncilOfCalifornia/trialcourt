@@ -97,12 +97,23 @@ function jcc_base_form_system_theme_settings_alter(&$form, FormStateInterface $f
     '#default_value' => theme_get_setting('footer_extended'),
     '#description'   => t('Set the patternlab <a target="_blank" href=":extended_footer">Extended footer variant</a> instead of the <a target="_blank" href=":default_footer">default one</a>.', [':extended_footer' => 'http://patternlab.courts.ca.gov/?p=organisms-footer-tall', ':default_footer' => 'http://patternlab.courts.ca.gov/?p=organisms-footer-base']),
   ];
-  $form['theme']['footer_extended_message'] = [
-    '#type'          => 'textfield',
-    '#title'         => t('Custom footer message'),
-    '#default_value' => theme_get_setting('footer_extended_message'),
-    '#description'   => t('Set the footer message in the second part of the footer.'),
+  // BEGIN Footer extension settings.
+  $form['theme']['footer_extended_settings'] = [
+    '#type' => 'container',
+    '#states' => [
+      // Hide the extended footer settings when using basic setting.
+      'invisible' => [
+        'input[name="footer_extended"]' => ['checked' => FALSE],
+      ],
+    ],
   ];
+  $form['theme']['footer_extended_settings']['footer_extended_message'] = [
+    '#type'          => 'textfield',
+    '#title'         => t('Optional site name adjustment'),
+    '#default_value' => theme_get_setting('footer_extended_message'),
+    '#description'   => t('Adjust the site name if a variant is needed from the <a target="_blank" href=":basic_site_settings">basic site setting</a>.', [':basic_site_settings' => '/admin/config/system/site-information']),
+  ];
+  // END.
   $form['theme']['color_inverted'] = [
     '#type'          => 'checkbox',
     '#title'         => t('Inverted Color'),

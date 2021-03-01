@@ -42,13 +42,14 @@ function jcc_base_preprocess_region__footer(&$variables) {
   $sec_footer_menu_tree = $menu_tree->transform($sec_footer_menu_tree, $manipulators);
   $main_nav = $menu_tree->build($sec_footer_menu_tree);
 
-  if (!$variables['footer_extended_message']) {
-    $variables['footer_extended_message'] = 'Judicial Council of California | ' . $site->get('name');
+  $site_name = $site->get('name');
+  if (!empty($variables['footer_extended']) && $variables['footer_extended_message']) {
+    $site_name = $variables['footer_extended_message'];
   }
 
   $footer_menu = [];
   if (isset($footer_nav['#items']) && !empty($footer_nav['#items'])) {
-    foreach ($footer_nav['#items'] as $key => $item) {
+    foreach ($footer_nav['#items'] as $item) {
       $footer_menu[] = [
         'name' => $item['title'],
         'url' => $item['url'],
@@ -86,7 +87,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
   $variables['footer_base'] = [
     'aria_label' => $footer_aria_label,
     'height_variant' => 'big',
-    'title' => $variables['footer_extended_message'],
+    'title' => 'Superior Court of California | ' . $site_name,
     'links' => $footer_menu_primary,
     'secondary_menu_cols' => $secondary_menu_cols,
     'social_links' => [
