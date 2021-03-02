@@ -89,3 +89,4 @@ $sites['newsroom.lndo.site'] = 'newsroom';
 $sites['deprep.lndo.site'] = 'deprep';
 $sites['md.lndo.site'] = 'md';
 $sites['webservices.lndo.site'] = 'webservices';
+$sites['sc.lndo.site'] = 'sc';

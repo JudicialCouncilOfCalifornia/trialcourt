@@ -28,10 +28,11 @@ proxy:
     # Default (Base for starting multisites.)
     - default.lndo.site
     # Multi Sites (Don't forget to update web/sites/sites.php)
-    - slo.lndo.site
-    - newsroom.lndo.site
     - deprep.lndo.site
     - md.lndo.site
+    - newsroom.lndo.site
+    - sc.lndo.site
+    - slo.lndo.site
     - webservices.lndo.site
 
 # Additional services and features.
@@ -70,6 +71,12 @@ services:
       password: drupal8
       database: drupal8
   dbwebservices:
+    type: mysql:5.7
+    creds:
+      user: drupal8
+      password: drupal8
+      database: drupal8
+  dbsc:
     type: mysql:5.7
     creds:
       user: drupal8
