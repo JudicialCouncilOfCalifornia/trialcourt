@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Installation items for jcc_components_profile profile.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function hook_install() {
+  \Drupal::configFactory()
+    ->getEditable('system.theme')
+    ->set('default', 'jcc_components')
+    ->save();
+}
