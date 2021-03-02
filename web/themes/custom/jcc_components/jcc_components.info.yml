@@ -1,0 +1,72 @@
+name: JCC Components
+type: theme
+description: Drupal theme built with an Atomic Pattern Library leveraging the US Web Design System (USWDS).
+screenshot: screenshot.png
+core_version_requirement: ^8 || ^9
+logo: ../../../libraries/courtyard-artifact/2.x/public/images/jcc-logo.svg
+
+stylesheets-remove:
+  - system.theme.css
+  - system.menus.css
+  - system.admin.css
+
+regions:
+  logo: 'Logo'
+  header: Header
+  messaging: 'Messaging'
+  breadcrumb: 'Breadcrumb' # Disabled as a block but in use
+  title: 'Title' # Disabled block and not in use
+  tabs: 'Tabs'
+  left_sidebar: 'Left Sidebar'
+  content: 'Content'
+  content_below: 'Content: Below'
+  secondary_footer: 'Secondary Footer'
+  footer: 'Footer'
+
+libraries:
+  - jcc_components/courtyard
+
+libraries-override:
+  core/normalize: false
+  extlink/drupal.extlink:
+    css:
+      theme:
+        extlink.css: false
+  system/admin:
+    css:
+      theme:
+        /core/themes/stable/css/system/system.admin.css: false
+  system/base:
+    css:
+      component:
+        /core/themes/stable/css/system/components/details.module.css: false
+        /core/themes/stable/css/system/components/fieldgroup.module.css: false
+        /core/themes/stable/css/system/components/item-list.module.css: false
+        /core/themes/stable/css/system/components/nowrap.module.css: false
+        /core/themes/stable/css/system/components/progress.module.css: false
+        /core/themes/stable/css/system/components/reset-appearance.module.css: false
+        /core/themes/stable/css/system/components/sticky-header.module.css: false
+        /core/themes/stable/css/system/components/system-status-counter.css: false
+        /core/themes/stable/css/system/components/system-status-report-counters.css: false
+        /core/themes/stable/css/system/components/system-status-report-general-info.css: false
+        /core/themes/stable/css/system/components/tabledrag.module.css: false
+        /core/themes/stable/css/system/components/tree-child.module.css: false
+        # The files listed below are those we have chosen to keep.
+        # /core/themes/stable/css/system/components/align.module.css: false
+        # /core/themes/stable/css/system/components/ajax-progress.module.css: false
+        # /core/themes/stable/css/system/components/autocomplete-loading.module.css: false
+        # /core/themes/stable/css/system/components/clearfix.module.css: false
+        # /core/themes/stable/css/system/components/container-inline.module.css: false
+        # /core/themes/stable/css/system/components/hidden.module.css: false
+        # /core/themes/stable/css/system/components/js.module.css: false
+        # /core/themes/stable/css/system/components/position-container.module.css: false
+        # /core/themes/stable/css/system/components/resize.module.css: false
+        # /core/themes/stable/css/system/components/tablesort.module.css: false
+
+components:
+  namespaces:
+    protons: ../../../libraries/courtyard-artifact/2.x/source/_patterns/00-protons
+    atoms: ../../../libraries/courtyard-artifact/2.x/source/_patterns/01-atoms
+    molecules: ../../../libraries/courtyard-artifact/2.x/source/_patterns/02-molecules
+    organisms: ../../../libraries/courtyard-artifact/2.x/source/_patterns/03-organisms
+
