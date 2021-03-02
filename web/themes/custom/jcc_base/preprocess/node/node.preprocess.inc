@@ -133,6 +133,13 @@ function jcc_base_preprocess_node(&$variables, $hook) {
         $view->setArguments([$termIds, $divisionIds]);
         $variables['faq_items'] = $view->render();
       }
+      break;
+
+    case 'landing_page':
+      if (isset($variables['content']['book_navigation'])) {
+        unset($variables['content']['book_navigation']);
+      }
+      break;
   }
 
   // Optionally, run node-type-specific preprocess functions, like
