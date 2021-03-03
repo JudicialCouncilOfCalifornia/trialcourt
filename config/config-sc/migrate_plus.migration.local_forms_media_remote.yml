@@ -1,0 +1,62 @@
+uuid: 95b33fef-1a8e-47b5-b495-74aace4201a5
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: RjaSkIyQxjeqBXw80kKIiYaYey2Lv-1MHfTF8cCqUVE
+id: local_forms_media_remote
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - document
+  - media
+migration_group: jcc
+label: 'Document: Import media remote'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: 'https://spreadsheets.google.com/feeds/list/1ikloWixAQWjTVsk2zbfzfvZxlUy_NHage6u1ANxO-w8/8/public/values?alt=json'
+  item_selector: entry
+  ids:
+    id:
+      type: integer
+  fields:
+    -
+      name: id
+      selector: id
+      label: 'Primary key'
+    -
+      name: category
+      selector: category
+      label: 'Taxonomy term for News Type'
+    -
+      name: file_url
+      selector: fileurl
+      label: 'Attachment file url'
+    -
+      name: title
+      selector: title
+      label: 'News title'
+    -
+      name: tags
+      selector: tags
+      label: 'Taxonomy terms for Tag'
+    -
+      name: topics
+      selector: topics
+      label: 'Taxonomy terms for Topics'
+    -
+      name: division
+      selector: division
+      label: 'Taxonomy terms for Division'
+process:
+  field_media_file:
+    plugin: file_remote_url
+    source: file_url
+  name: title
+destination:
+  plugin: 'entity:media'
+  default_bundle: file
+migration_dependencies: null
