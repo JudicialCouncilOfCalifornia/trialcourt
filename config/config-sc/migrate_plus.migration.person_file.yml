@@ -1,0 +1,102 @@
+uuid: c2e2f7e4-21f3-4979-bce3-9d043e389531
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: 2hz2Hf2dW5ZdM--C-F1KWuAqUWqpboXi8zFCkdy3zfU
+id: person_file
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - person
+  - file
+migration_group: jcc
+label: 'Person: Import file'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: 'https://spreadsheets.google.com/feeds/list/1ikloWixAQWjTVsk2zbfzfvZxlUy_NHage6u1ANxO-w8/4/public/values?alt=json'
+  item_selector: entry
+  ids:
+    id:
+      type: integer
+  fields:
+    -
+      name: id
+      selector: id
+      label: 'Primary key'
+    -
+      name: category
+      selector: category
+      label: 'Taxonomy term for Person Type'
+    -
+      name: title
+      selector: title
+      label: 'Person title'
+    -
+      name: first_name
+      selector: firstname
+      label: 'First name'
+    -
+      name: last_name
+      selector: lastname
+      label: 'Last name'
+    -
+      name: image_url
+      selector: imageurl
+      label: 'Image URL'
+    -
+      name: body
+      selector: body
+      label: 'Person body'
+    -
+      name: tags
+      selector: tags
+      label: 'Taxonomy terms for Tag'
+    -
+      name: topics
+      selector: topics
+      label: 'Taxonomy terms for Topics'
+    -
+      name: division
+      selector: division
+      label: 'Taxonomy terms for Division'
+    -
+      name: department
+      selector: department
+      label: 'Taxonomy terms for Department'
+  constants:
+    DRUPAL_FILE_DIRECTORY: 'public://person-photos/'
+process:
+  pseudo_destination_filename:
+    -
+      plugin: callback
+      callable: basename
+      source: image_url
+    -
+      plugin: skip_on_empty
+      method: row
+      message: 'Cannot import empty image filename.'
+  pseudo_destination_path:
+    -
+      plugin: concat
+      source:
+        - constants/DRUPAL_FILE_DIRECTORY
+        - '@pseudo_destination_filename'
+  uri:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: image_url
+    -
+      plugin: file_copy
+      source:
+        - image_url
+        - '@pseudo_destination_path'
+      file_exists: rename
+      move: false
+destination:
+  plugin: 'entity:file'
+migration_dependencies: null
