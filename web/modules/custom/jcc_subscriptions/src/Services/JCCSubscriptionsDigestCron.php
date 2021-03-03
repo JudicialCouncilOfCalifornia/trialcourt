@@ -27,6 +27,7 @@ class JCCSubscriptionsDigestCron {
     if ($jcc_config->get('newslink_digest_debug')) {
       \Drupal::logger('jcc_subscriptions')->notice('Newslink digest debug enabled.');
       $this->sendDigest();
+      // $this->queueTasks();
     }
 
     if ($this->shouldRun($now, $jcc_config->get('newslink_digest_time'))) {
@@ -44,7 +45,7 @@ class JCCSubscriptionsDigestCron {
       }
       else {
         $this->state->set('jcc_subscriptions.last_cron', $now);
-        \Drupal::logger('jcc_subscriptions')->notice('No new newslink item have queued for email today.');
+        \Drupal::logger('jcc_subscriptions')->notice('No new newslink item are queued for email today.');
       }
     }
   }
@@ -53,9 +54,7 @@ class JCCSubscriptionsDigestCron {
    * Test if cron should run.
    */
   public function shouldRun($now, $scheduled = '17:00') {
-    if (!isset($_ENV['PANTHEON_ENVIRONMENT']) || $_ENV['PANTHEON_ENVIRONMENT'] != 'live') {
-      return FALSE;
-    }
+    // If (!isset($_ENV['PANTHEON_ENVIRONMENT']) || $_ENV['PANTHEON_ENVIRONMENT'] != 'live') {return FALSE;}.
     $timezone = new \DateTimeZone('America/Los_Angeles');
 
     $timestamp_last = $this->state->get('jcc_subscriptions.last_cron') ?? 0;
@@ -79,8 +78,12 @@ class JCCSubscriptionsDigestCron {
    * Add task to the queue.
    */
   public function queueTasks() {
+    $log_message_sendgrid = 'subscriptions --- QUEUETASKS() START';
+    \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
     $this->sendDigest();
     $this->flagNewsItems();
+    $log_message_sendgrid = 'subscriptions --- QUEUETASKS() END';
+    \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
   }
 
   /**
@@ -147,8 +150,14 @@ class JCCSubscriptionsDigestCron {
       }
     }
 
+    $log_message_sendgrid = 'subscriptions --- SENDDIGEST() myEmma recipients: ' . count($id_access_keys);
+    \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
+
     $view_digest = views_embed_view('news_digest', 'default');
     $email_body = \Drupal::service('renderer')->render($view_digest);
+
+    $log_message_sendgrid = 'subscriptions --- SENDDIGEST() email view loaded with vars :' . $email_body . ' ---date--- ' . date("F j, Y") . ' ---base_url--- ' . $base_url;
+    \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
 
     $body = str_replace(
       [
@@ -272,11 +281,13 @@ class JCCSubscriptionsDigestCron {
         $sendGridResponse = $sendgrid->send($email);
 
         if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
-          drupal_set_message($this->t('Email successfully sent'));
+          $log_message_sendgrid = 'Subscription Sendgrid response: Email(s) successfully sent.';
+          \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
         }
         else {
           // Show error.
-          drupal_set_message($this->t('Email was not sent'));
+          $log_message_sendgrid = 'Subscription Sendgrid response: Email(s) was not sent.';
+          \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
         }
       }
       catch (Exception $e) {
