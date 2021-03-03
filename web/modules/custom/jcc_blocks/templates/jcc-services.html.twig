@@ -1,0 +1,24 @@
+{#
+/**
+* @file
+* Default theme implementation to display a block.
+*
+* @see template_preprocess_block()
+*
+* @ingroup themeable
+*/
+#}
+{% set classes = [
+    'clear-both',
+] %}
+<div{{ attributes.addClass(classes) }}>
+  <div class="jcc-text-section-aside__container">
+    <div class="jcc_services_block jcc-text-section-aside">
+      {% include '@organisms/sections/list-excerpts-with-button/list-excerpts-with-button.twig' with {
+        list_excerpt_with_button: jccservices
+      } %}
+    </div>
+  </div>
+</div>
+
+

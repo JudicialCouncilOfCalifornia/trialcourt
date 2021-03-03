@@ -13,8 +13,23 @@ use Drupal\system\Entity\Menu;
 function jcc_base_preprocess_region__footer(&$variables) {
   $theme = \Drupal::service('theme.manager')->getActiveTheme()->getName();
   $site = \Drupal::config('system.site');
+  $variables['site_entity_type'] = theme_get_setting('site_entity_type');
   $variables['footer_extended'] = theme_get_setting('footer_extended');
   $variables['footer_extended_message'] = theme_get_setting('footer_extended_message');
+
+  // Site branding.
+  $site_name = $site->get('name');
+  if (!empty($variables['footer_extended']) && $variables['footer_extended_message']) {
+    $site_name = $variables['footer_extended_message'];
+  }
+  switch ($variables['site_entity_type']) {
+    case 'superior':
+      $site_title = 'Superior Court of California | ' . $site_name;
+      break;
+
+    default:
+      $site_title = $site_name;
+  }
 
   // Get links from footer menu directly.
   $menu_name = 'footer';
@@ -42,13 +57,9 @@ function jcc_base_preprocess_region__footer(&$variables) {
   $sec_footer_menu_tree = $menu_tree->transform($sec_footer_menu_tree, $manipulators);
   $main_nav = $menu_tree->build($sec_footer_menu_tree);
 
-  if (!$variables['footer_extended_message']) {
-    $variables['footer_extended_message'] = 'Judicial Council of California | ' . $site->get('name');
-  }
-
   $footer_menu = [];
   if (isset($footer_nav['#items']) && !empty($footer_nav['#items'])) {
-    foreach ($footer_nav['#items'] as $key => $item) {
+    foreach ($footer_nav['#items'] as $item) {
       $footer_menu[] = [
         'name' => $item['title'],
         'url' => $item['url'],
@@ -64,9 +75,6 @@ function jcc_base_preprocess_region__footer(&$variables) {
       $footer_menu_primary = jcc_base_mainnavigation_build($main_nav['#items'], $menu_link_tree_handler);
       if (count($footer_menu_primary) == 2) {
         $secondary_menu_cols = '6';
-      }
-      elseif (count($footer_menu_primary) == 3) {
-        $secondary_menu_cols = '4';
       }
     }
   }
@@ -86,7 +94,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
   $variables['footer_base'] = [
     'aria_label' => $footer_aria_label,
     'height_variant' => 'big',
-    'title' => $variables['footer_extended_message'],
+    'title' => $site_title,
     'links' => $footer_menu_primary,
     'secondary_menu_cols' => $secondary_menu_cols,
     'social_links' => [
