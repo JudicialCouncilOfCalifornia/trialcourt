@@ -65,9 +65,6 @@ function jcc_base_preprocess_region__footer(&$variables) {
       if (count($footer_menu_primary) == 2) {
         $secondary_menu_cols = '6';
       }
-      elseif (count($footer_menu_primary) == 3) {
-        $secondary_menu_cols = '4';
-      }
     }
   }
 
