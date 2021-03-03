@@ -1,0 +1,243 @@
+/* Nav Tabs */
+
+.nav-tabs {
+  background: var(--bg-gray-10);
+  margin-bottom: 0;
+}
+
+.nav-tabs * {
+  font-size: 1rem;
+  line-height: 3rem;
+}
+
+.nav-tabs__tabs {
+  clear: both;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* Bottom border cannot not affect overall container height. */
+.nav-tabs__tabs:before {
+  border-bottom: 1px solid transparent;
+  bottom: 0;
+  content: '';
+  display: block;
+  height: 1px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  z-index: 10;
+}
+
+/* Collapsed state
+  Note: These rules ensure only the first item, or when tabbing via keyboard, the currently focused item, is visible. */
+.is-collapse-enabled .nav-tabs__tabs {
+  max-height: 0;
+  overflow: hidden;
+  padding-top: calc(3rem + 2px);
+}
+
+.is-collapse-enabled .nav-tabs__tabs:before {
+  right: var(--width-7);
+}
+
+.is-collapse-enabled .nav-tabs__tabs.is-open::before {
+  display: none;
+}
+
+/* Collapsed and open. */
+.nav-tabs__tabs.is-open {
+  max-height: 999em;
+}
+
+/* Horizontal state */
+.is-horizontal .nav-tabs__tabs {
+  border-bottom: 0;
+  max-height: none;
+  overflow: visible;
+  padding-top: 0;
+}
+
+/* Tab List Item */
+
+.nav-tabs__tabs .nav-tabs__item {
+  display: block;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Show active item at the top of the list when collapsed. */
+.is-collapse-enabled .nav-tabs__item.is-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% - var(--width-7));
+  z-index: 15;
+}
+
+.is-horizontal .nav-tabs__item {
+  float: left;
+  width: auto;
+  height: auto;
+  text-align: center;
+}
+
+/* Override the states above */
+.is-horizontal .nav-tabs__item.is-active,
+.is-horizontal .nav-tabs__tabs.nav-tabs__tabs--primary .nav-tabs__item.is-active {
+  position: relative;
+  top: 0;
+  width: auto;
+}
+
+/* Tab Link */
+
+.nav-tabs__tabs .nav-tabs__link {
+  border: solid 1px transparent;
+  display: block;
+  position: relative;
+  text-decoration: none;
+}
+
+.nav-tabs__tabs .nav-tabs__link.is-active {
+    font-weight: 700;
+}
+
+.nav-tabs__tabs .nav-tabs__link.is-active:after {
+  background-color: currentColor;
+  bottom: 0;
+  content: '';
+  height: 4px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  z-index: 16;
+}
+
+.nav-tabs__tabs .nav-tabs__link:active,
+.nav-tabs__tabs .nav-tabs__link:hover {
+  text-decoration: underline;
+}
+
+.nav-tabs__tabs .nav-tabs__link:focus {
+  /* Focus styles provided do not work with overflow: hidden; */
+  outline-offset: -2px;
+}
+
+/* Tab Trigger & Nav Positioning */
+
+.tabs__trigger,
+.is-horizontal .tabs__trigger {
+  display: none;
+}
+
+/* JS dependent styling */
+.is-collapse-enabled .tabs__trigger {
+  background-color: var(--text-primary-vivid);
+  border: 0;
+  border-radius: 0;
+  color: #000;
+  cursor: pointer;
+  display: block;
+  font-size: 1rem;
+  height: calc(3rem + 2px);
+  left: auto;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 0;
+  width: var(--width-7);
+  z-index: 10;
+}
+
+.is-collapse-enabled .tabs__trigger:focus {
+  z-index: 20;
+}
+
+/* Tabs: Primary */
+
+.is-collapse-enabled .nav-tabs__tabs--primary:before,
+.is-horizontal .nav-tabs__tabs--primary:before {
+  border-color: var(--text-base-lighter);
+}
+
+.nav-tabs__tabs--primary .nav-tabs__link {
+  background-color: var(--text-gray-10);
+  border-color: var(--text-base-lighter);
+  color: var(--text-primary-light);
+  border-radius: 0;
+  border-width: 1px 0 0 0;
+  padding: 0 1.65rem;
+  position: relative;
+}
+
+.nav-tabs__tabs--primary .nav-tabs__link.is-active {
+  border-bottom: 0;
+}
+
+.nav-tabs__tabs--primary .nav-tabs__link.is-active:after {
+  background-color: var(--text-primary-vivid);
+}
+
+.nav-tabs__tabs--primary .nav-tabs__link.is-active:focus {
+  outline-color: var(--text-primary-vivid);
+}
+
+.is-horizontal .nav-tabs__tabs--primary {
+  border-width: 1px 0 0 1px;
+}
+
+.is-horizontal .nav-tabs__tabs--primary li:first-child .nav-tabs__link {
+  border-width: 1px 0 0 0;
+}
+
+/* Tabs: Secondary */
+
+.nav-tabs__tabs--secondary {
+  background: var(--bg-gray-5);
+}
+
+.nav-tabs__tabs--secondary .is-collapse-enabled &:before,
+.nav-tabs__tabs--secondary .is-horizontal &:before {
+  border-color: var(--text-base-lighter);
+}
+
+.nav-tabs__tabs--secondary .nav-tabs__link {
+  background-color: transparnt;
+  border-color: var(--text-base-lighter);
+  color: var(--text-primary-light);
+  border-width: 1px 0 1px 4px;
+  padding: 0 1.65rem;
+  font-size: 0.923rem;
+}
+
+/* Borders are used for the active item when collapsed. */
+.nav-tabs__tabs--secondary .nav-tabs__link.is-active::after {
+  display: none;
+}
+
+.nav-tabs__tabs--secondary .nav-tabs__link.is-active {
+  border-color: var(--text-primary-vivid);
+  color: var(--text-primary-light);
+}
+
+.nav-tabs__tabs--secondary .nav-tabs__link.is-active:focus {
+  outline-color: var(--text-primary-vivid);
+}
+
+.is-horizontal .nav-tabs__tabs--secondary .nav-tabs__link {
+  border: 0;
+}
+
+.is-horizontal .nav-tabs__tabs--secondary .nav-tabs__link:after {
+  display: block;
+  background-color: var(--text-primary-vivid);
+}

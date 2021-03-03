@@ -53,21 +53,21 @@
  *
  */
 #}
-{{ attach_library('seven/drupal.nav-tabs') }}
+{{ attach_library('jcc_components/nav-tabs') }}
 
 {% if primary or secondary %}
-  <div class="nav-tabs__wrapper">
+  <div class="nav-tabs">
     {% if primary %}
       <h2 class="visually-hidden" id="primary-tabs-title">{{ 'Primary tabs'|t }}</h2>
       <nav aria-labelledby="primary-tabs-title" class="is-horizontal is-collapsible" role="navigation" data-drupal-nav-tabs>
         <button class="reset-appearance tabs__trigger" aria-label="{{ 'Primary tabs display toggle'|t }}" data-drupal-nav-tabs-trigger>&bull;&bull;&bull;</button>
-        <ul class="tabs nav-tabs nav-tabs--primary clearfix" data-drupal-nav-tabs-target>{{ primary }}</ul>
+        <ul class="tabs nav-tabs__tabs nav-tabs__tabs--primary clearfix" data-drupal-nav-tabs-target>{{ primary }}</ul>
       </nav>
     {% endif %}
     {% if secondary %}
       <h2 class="visually-hidden" id="secondary-tabs-title">{{ 'Secondary tabs'|t }}</h2>
       <nav aria-labelledby="secondary-tabs-title" class="is-horizontal" data-drupal-nav-tabs role="navigation">
-        <ul class="tabs nav-tabs nav-tabs--secondary clearfix">{{ secondary }}</ul>
+        <ul class="tabs nav-tabs__tabs nav-tabs__tabs--secondary clearfix">{{ secondary }}</ul>
       </nav>
     {% endif %}
   </div>
