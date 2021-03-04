@@ -72,6 +72,11 @@ $sites['test-jcc-webservices.pantheonsite.io'] = 'webservices';
 $sites['live-jcc-webservices.pantheonsite.io'] = 'webservices';
 $sites['webservices.courts.ca.gov'] = 'webservices';
 
+$sites['dev-jcc-sc.pantheonsite.io'] = 'sc';
+$sites['test-jcc-sc.pantheonsite.io'] = 'sc';
+$sites['live-jcc-sc.pantheonsite.io'] = 'sc';
+$sites['epic-comp-jcc-sc.pantheonsite.io'] = 'sc'
+
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
 // sites.local.php next to this file. It will be ignored by git.
