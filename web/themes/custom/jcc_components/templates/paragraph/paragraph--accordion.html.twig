@@ -51,15 +51,17 @@
 {% endfor %}
 
 {# Include the component template and pass in the structured data. #}
-{% include "@organisms/accordion/accordion.twig" with {
-    accordion: {
-      collapse_first: content.field_toggle['#items'].value,
-      item_tag: "h3",
-      classes: [],
-      heading: {
-        title: content.field_heading|render,
-        lead: content.field_lead|render
-      },
-      items: items
-    }
-} %}
+<div class="paragraph">
+  {% include "@organisms/accordion/accordion.twig" with {
+      accordion: {
+        collapse_first: content.field_toggle['#items'].value,
+        item_tag: "h3",
+        classes: [],
+        heading: {
+          title: content.field_heading|render,
+          lead: content.field_lead|render
+        },
+        items: items
+      }
+  } %}
+</div>
