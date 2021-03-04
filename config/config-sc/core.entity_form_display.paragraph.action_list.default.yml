@@ -1,32 +1,31 @@
-uuid: cc328aec-fe3b-457a-8294-cc35d6210cd1
+uuid: 4ac0a81e-def0-4abb-9a66-a1659beab21e
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.accordion.field_components
-    - field.field.paragraph.accordion.field_heading
-    - field.field.paragraph.accordion.field_lead
-    - field.field.paragraph.accordion.field_toggle
-    - paragraphs.paragraphs_type.accordion
+    - field.field.paragraph.action_list.field_components
+    - field.field.paragraph.action_list.field_heading
+    - field.field.paragraph.action_list.field_lead
+    - paragraphs.paragraphs_type.action_list
   module:
     - paragraphs
     - text
-id: paragraph.accordion.default
+id: paragraph.action_list.default
 targetEntityType: paragraph
-bundle: accordion
+bundle: action_list
 mode: default
 content:
   field_components:
-    type: entity_reference_paragraphs
-    weight: 3
+    weight: 2
     settings:
-      title: 'Accordion Item'
-      title_plural: 'Accordion Items'
+      title: Item
+      title_plural: Items
       edit_mode: preview
       add_mode: dropdown
       form_display_mode: default
-      default_paragraph_type: accordion_item
+      default_paragraph_type: action_list_item
     third_party_settings: {  }
+    type: entity_reference_paragraphs
     region: content
   field_heading:
     weight: 0
@@ -43,13 +42,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textarea
-    region: content
-  field_toggle:
-    weight: 2
-    settings:
-      display_label: true
-    third_party_settings: {  }
-    type: boolean_checkbox
     region: content
 hidden:
   created: true
