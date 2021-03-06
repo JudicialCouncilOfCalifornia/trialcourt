@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
  */
 function jcc_node_edit_form_alter(&$form, &$form_state, $form_id) {
   // Node editing only customizations.
-  if ($form['#theme']['1'] == 'node_form' && strpos($form_id, '_edit_form') !== FALSE) {
+  if ((isset($form['#theme']['1']) && $form['#theme']['1'] == 'node_form') && strpos($form_id, '_edit_form') !== FALSE) {
     $node = $form_state->getFormObject()->getEntity();
 
     // Suppress format options from tagline field.
