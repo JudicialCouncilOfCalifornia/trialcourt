@@ -2,11 +2,9 @@
 
 namespace Drupal\jcc_subscriptions\Services;
 
-use SendGrid\Exception;
 use SendGrid\Email;
 
 use JudicialCouncil\Emma\JccClient;
-use SendGrid\Client as SClient;
 
 use Drupal\views\Views;
 
@@ -25,9 +23,9 @@ class JCCSubscriptionsDigestCron {
     $jcc_config = \Drupal::config('jcc_subscriptions.settings');
 
     if ($jcc_config->get('newslink_digest_debug')) {
-      \Drupal::logger('jcc_subscriptions')->notice('Newslink digest debug enabled.');
-      $this->sendDigest();
-      // $this->queueTasks();
+      \Drupal::logger('jcc_subscriptions')->notice('Subscriptions --- Newslink digest debug enabled.');
+      // $this->sendDigest();
+      $this->queueTasks();
     }
 
     if ($this->shouldRun($now, $jcc_config->get('newslink_digest_time'))) {
@@ -40,7 +38,7 @@ class JCCSubscriptionsDigestCron {
       if ($rows != 0) {
         $this->queueTasks();
         $this->state->set('jcc_subscriptions.last_cron', $now);
-        $log_message = 'Newslink digest ran with ' . $rows . ' results, at ' . $now;
+        $log_message = 'Subscriptions --- Newslink digest ran with ' . $rows . ' results, at ' . $now;
         \Drupal::logger('jcc_subscriptions')->notice($log_message);
       }
       else {
@@ -70,7 +68,7 @@ class JCCSubscriptionsDigestCron {
       $next->modify('+1 day');
     }
 
-    $cron_timing_log_message = 'Last JCC_subs cron: ' . date('m/d/Y H:i:s', $last->getTimestamp()) . ' --- Next:  ' . date('m/d/Y H:i:s', $next->getTimestamp());
+    $cron_timing_log_message = 'Subscriptions --- Last JCC_subs cron: ' . date('m/d/Y H:i:s', $last->getTimestamp()) . ' --- Next:  ' . date('m/d/Y H:i:s', $next->getTimestamp());
     \Drupal::logger('jcc_subscriptions')->notice($cron_timing_log_message);
 
     return ($next->getTimestamp() <= $now) && (time() >= strtotime($scheduled));
@@ -80,11 +78,11 @@ class JCCSubscriptionsDigestCron {
    * Add task to the queue.
    */
   public function queueTasks() {
-    $log_message_sendgrid = 'subscriptions --- QUEUETASKS() START';
+    $log_message_sendgrid = 'Subscriptions --- QUEUETASKS() START';
     \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
     $this->sendDigest();
     $this->flagNewsItems();
-    $log_message_sendgrid = 'subscriptions --- QUEUETASKS() END';
+    $log_message_sendgrid = 'Subscriptions --- QUEUETASKS() END';
     \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
   }
 
@@ -152,13 +150,13 @@ class JCCSubscriptionsDigestCron {
       }
     }
 
-    $log_message_sendgrid = 'subscriptions --- SENDDIGEST() myEmma recipients: ' . count($id_access_keys);
+    $log_message_sendgrid = 'Subscriptions --- SENDDIGEST() myEmma recipients: ' . count($id_access_keys);
     \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
 
     $view_digest = views_embed_view('news_digest', 'default');
     $email_body = \Drupal::service('renderer')->render($view_digest);
 
-    $log_message_sendgrid = 'subscriptions --- SENDDIGEST() email view loaded with vars :' . $email_body . ' ---date--- ' . date("F j, Y") . ' ---base_url--- ' . $base_url;
+    $log_message_sendgrid = 'Subscriptions --- SENDDIGEST() email view loaded with vars :' . $email_body . ' ---date--- ' . date("F j, Y") . ' ---base_url--- ' . $base_url;
     \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
 
     $body = str_replace(
@@ -249,10 +247,6 @@ class JCCSubscriptionsDigestCron {
     if (!empty(\Drupal::service('key.repository')->getKey('newsroom_sendgrid'))) {
       $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
       $to = $sendgrid_conf['from_name'];
-      $sendgrid_api_key = \Drupal::service('key.repository')->getKey('newsroom_sendgrid')->getKeyValue();
-      // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
-      // Creating email object.
-      $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
       $email = new Email();
       $email->setSmtpapiTos($email_to_sendgrid)
         ->setFrom($to)
@@ -273,29 +267,21 @@ class JCCSubscriptionsDigestCron {
           ]
         );
 
-      $log_message_sendgrid = 'Newslink digest was sent to sendgrid to  ' . count($email_to_sendgrid) . ' email addresses';
-      \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
-
       // Issue when simply calling $sendgrid->send($email);
       // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
       // Send an email using the template stored in SendGrid.
-      try {
-        $sendGridResponse = $sendgrid->send($email);
+      $data = [];
+      $data['email'] = $email;
+      $data['email_ammount'] = count($email_to_sendgrid);
 
-        if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
-          $log_message_sendgrid = 'Subscription Sendgrid response: Email(s) successfully sent.';
-          \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
-        }
-        else {
-          // Show error.
-          $log_message_sendgrid = 'Subscription Sendgrid response: Email(s) was not sent.';
-          \Drupal::logger('jcc_subscriptions')->notice($log_message_sendgrid);
-        }
+      $subscriptionQueue = \Drupal::queue('send_subscriptions_queue');
+      if ($subscriptionQueue->numberOfItems() == 0) {
+        $subscriptionQueue->createQueue();
+        $subscriptionQueue->createItem($data);
+        \Drupal::logger('jcc_subscriptions')->notice('Subscriptions --- Request to sendgrid queue worker sent.');
       }
-      catch (Exception $e) {
-        $eMessage = $e->getMessage();
-        if (strpos($eMessage, 'success') !== FALSE) {
-        }
+      else {
+        \Drupal::logger('jcc_subscriptions')->notice('Subscriptions --- ' . $subscriptionQueue->numberOfItems() . ' digest item(s) is(are) already being processed in the subscription queue worker.');
       }
     }
   }
