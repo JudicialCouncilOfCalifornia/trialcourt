@@ -1,0 +1,48 @@
+uuid: 0f700fc7-ee4e-4f49-81f5-dbd735291fb4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.tiles.field_components
+    - field.field.paragraph.tiles.field_heading
+    - field.field.paragraph.tiles.field_lead
+    - paragraphs.paragraphs_type.tiles
+  module:
+    - paragraphs
+    - text
+id: paragraph.tiles.default
+targetEntityType: paragraph
+bundle: tiles
+mode: default
+content:
+  field_components:
+    weight: 2
+    settings:
+      title: Tile
+      title_plural: Tiles
+      edit_mode: preview
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: tile
+    third_party_settings: {  }
+    type: entity_reference_paragraphs
+    region: content
+  field_heading:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_lead:
+    weight: 1
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+hidden:
+  created: true
+  status: true
