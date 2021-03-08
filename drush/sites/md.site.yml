@@ -1,31 +1,7 @@
-develop:
-  host: appserver.develop.20a66e82-0c11-4987-91b8-da039ca575e2.drush.in
-  user: develop.20a66e82-0c11-4987-91b8-da039ca575e2
-  uri: develop-jcc-md.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-stage:
-  host: appserver.stage.20a66e82-0c11-4987-91b8-da039ca575e2.drush.in
-  user: stage.20a66e82-0c11-4987-91b8-da039ca575e2
-  uri: stage-jcc-md.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-dev:
-  host: appserver.dev.20a66e82-0c11-4987-91b8-da039ca575e2.drush.in
-  user: dev.20a66e82-0c11-4987-91b8-da039ca575e2
-  uri: dev-jcc-md.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-live:
-  host: appserver.live.20a66e82-0c11-4987-91b8-da039ca575e2.drush.in
-  user: live.20a66e82-0c11-4987-91b8-da039ca575e2
-  uri: live-jcc-md.pantheonsite.io
+'*':
+  host: appserver.${env-name}.20a66e82-0c11-4987-91b8-da039ca575e2.drush.in
+  user: ${env-name}.20a66e82-0c11-4987-91b8-da039ca575e2
+  uri: ${env-name}-jcc-md.pantheonsite.io
   ssh:
     tty: false
     options: '-p 2222 -o "AddressFamily inet"'
