@@ -1,31 +1,7 @@
-develop:
-  host: appserver.develop.47ffed5c-09ba-48f1-951f-09be642c6962.drush.in
-  user: develop.47ffed5c-09ba-48f1-951f-09be642c6962
-  uri: develop-jcc-deprep.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-stage:
-  host: appserver.stage.47ffed5c-09ba-48f1-951f-09be642c6962.drush.in
-  user: stage.47ffed5c-09ba-48f1-951f-09be642c6962
-  uri: stage-jcc-deprep.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-dev:
-  host: appserver.dev.47ffed5c-09ba-48f1-951f-09be642c6962.drush.in
-  user: dev.47ffed5c-09ba-48f1-951f-09be642c6962
-  uri: dev-jcc-deprep.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-live:
-  host: appserver.live.47ffed5c-09ba-48f1-951f-09be642c6962.drush.in
-  user: live.47ffed5c-09ba-48f1-951f-09be642c6962
-  uri: live-jcc-deprep.pantheonsite.io
+'*':
+  host: appserver.${env-name}.47ffed5c-09ba-48f1-951f-09be642c6962.drush.in
+  user: ${env-name}.47ffed5c-09ba-48f1-951f-09be642c6962
+  uri: ${env-name}-jcc-deprep.pantheonsite.io
   ssh:
     tty: false
     options: '-p 2222 -o "AddressFamily inet"'
