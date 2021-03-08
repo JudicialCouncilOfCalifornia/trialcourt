@@ -52,9 +52,9 @@ class JCCSubscriptionsDigestCron {
    * Test if cron should run.
    */
   public function shouldRun($now, $scheduled = '17:00') {
-    if (!isset($_ENV['PANTHEON_ENVIRONMENT']) || $_ENV['PANTHEON_ENVIRONMENT'] != 'live') {
-      return FALSE;
-    }
+    // If (!isset($_ENV['PANTHEON_ENVIRONMENT']) || $_ENV['PANTHEON_ENVIRONMENT'] != 'live') {
+    //      return FALSE;
+    //    }.
     $timezone = new \DateTimeZone('America/Los_Angeles');
 
     $timestamp_last = $this->state->get('jcc_subscriptions.last_cron') ?? 0;
