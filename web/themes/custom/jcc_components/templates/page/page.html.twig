@@ -47,6 +47,7 @@
 ]|merge(classes|default([])) %}
 
 <div{{ attributes.addClass(classes) }}>
+
   {% if not node.field_hide_header.value %}
     {% if page.header|render %}
       {{ page.header }}
@@ -63,56 +64,18 @@
     {{ page.breadcrumb }}
   {% endif %}
 
-  {# Specify content types by nodes that do not require hero title component #}
-  {% set nodes_without_titles = [
-    'announcement',
-    'book',
-    'document',
-    'event',
-    'job',
-    'location',
-    'news',
-    'page',
-    'person',
-    'landing_page',
-  ] %}
-
-  {% set views_without_titles = [
-  ] %}
-
-  {% if page.title|render %}
-    {% if (not (
-
-      node.bundle() in nodes_without_titles
-
-      or (page.content['system_main']['#view_id'] and
-          page.content['system_main']['#view_id'] in views_without_titles)
-    ))
-    %}
-    <div class="page__title">
-      {{ page.title }}
-    </div>
-    {% endif %}
-  {% endif %}
+  <div class="page__title">
+    {{ page.title }}
+  </div>
 
   <main id="main-content"> {# link is in html.html.twig #}
     {%  if page.messaging|render %}
       {{ page.messaging }}
     {% endif %}
 
-    <div class="page__left_sidebar">
-      {{ page.left_sidebar }}
-    </div>
-
     <div class="page__content">
       {{ page.content }}
     </div>
-
-    {% if page.content_below|render %}
-      <div class="page__content-below">
-        {{ page.content_below }}
-      </div>
-    {% endif %}
   </main>
 
   {% if not node.field_hide_footer.value %}

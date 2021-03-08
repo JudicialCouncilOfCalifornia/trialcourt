@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for jcc_components_variants module.
+ */
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function jcc_components_variants_field_widget_entity_reference_paragraphs_form_alter(
+  &$element,
+  &$form_state,
+  $context) {
+  if (!empty($element['subform']['field_variant'])) {
+    $variants = jcc_components_variants_preview($element['#paragraph_type']);
+    if (!empty($variants['options'])) {
+      $element['subform']['field_variant']['widget']['#prefix'] = $variants['prefix'];
+      $element['subform']['field_variant']['widget']['#suffix'] = "</details>";
+      $element['subform']['field_variant']['widget']['#attributes']['readonly'] = 'readonly';
+      $element['subform']['field_variant']['widget']['#options'] = $variants['options'];
+      $element['subform']['#attached']['library'][] = 'jcc_components_variants/variants';
+    }
+  }
+}
+
+/**
+ * Generate variants preview.
+ *
+ * @param string $type
+ *   The type of component.
+ *
+ * @return array
+ *   The populated details for this components variants.
+ */
+function jcc_components_variants_preview($type) {
+  $path = drupal_get_path('module', 'jcc_components_variants');
+  $dir = "${path}/variants/${type}/";
+  $files = preg_grep('/^([^.])/', scandir($dir));
+  $variants = '';
+  $options = [];
+
+  foreach ($files as $file) {
+    if (is_file($dir . $file)) {
+      $variant = [
+        'name' => pathinfo($file, PATHINFO_FILENAME),
+        'file' => $file,
+      ];
+      $variants .= "<button class='variant variant-${type}' data-variant='" . $variant['name'] . "'><img src='/${path}/variants/${type}/" . $variant['file'] . "' /></button>";
+      $options[$variant['name']] = $variant['name'];
+    }
+  }
+
+  $prefix = [
+    '#type' => "inline_template",
+    '#template' => "<details><summary>Variants</summary><div class='variants'>$variants</div>",
+  ];
+
+  $preview = [
+    'prefix' => render($prefix),
+    'options' => $options,
+  ];
+
+  return $preview;
+}
