@@ -1,39 +1,7 @@
-develop:
-  host: appserver.develop.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in
-  user: develop.6ddcfee9-feb2-4443-94b9-4449c69bd8a3
-  uri: develop-jcc-tc.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-stage:
-  host: appserver.stage.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in
-  user: stage.6ddcfee9-feb2-4443-94b9-4449c69bd8a3
-  uri: stage-jcc-tc.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-dev:
-  host: appserver.dev.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in
-  user: dev.6ddcfee9-feb2-4443-94b9-4449c69bd8a3
-  uri: dev-jcc-tc.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-live:
-  host: appserver.live.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in
-  user: live.6ddcfee9-feb2-4443-94b9-4449c69bd8a3
-  uri: live-jcc-tc.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-epic-multi:
-  host: appserver.epic-multi.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in
-  user: epic-multi.6ddcfee9-feb2-4443-94b9-4449c69bd8a3
-  uri: epic-multi-jcc-tc.pantheonsite.io
+'*':
+  host: appserver.${env-name}.6ddcfee9-feb2-4443-94b9-4449c69bd8a3.drush.in
+  user: ${env-name}.6ddcfee9-feb2-4443-94b9-4449c69bd8a3
+  uri: ${env-name}-jcc-tc.pantheonsite.io
   ssh:
     tty: false
     options: '-p 2222 -o "AddressFamily inet"'
