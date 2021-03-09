@@ -1,48 +1,100 @@
-uuid: 42aee52b-16a7-44be-91e7-212e06789d5c
+uuid: 66eb6bc7-7dc5-4f9a-8a53-38e58d8011db
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.landing_page.field_components
-    - node.type.landing_page
+    - field.field.node.alert.body
+    - field.field.node.alert.field_alert_type
+    - field.field.node.alert.field_node_reference
+    - field.field.node.alert.field_switch
+    - field.field.node.alert.field_toggle
+    - node.type.alert
   module:
-    - paragraphs
+    - field_group
     - path
     - scheduler
     - scheduler_content_moderation_integration
-id: node.landing_page.default
+    - text
+third_party_settings:
+  field_group:
+    group_options:
+      children:
+        - field_alert_type
+        - field_toggle
+        - field_switch
+        - field_node_reference
+      parent_name: ''
+      weight: 2
+      format_type: details
+      region: content
+      format_settings:
+        description: ''
+        open: true
+        required_fields: true
+        id: ''
+        classes: ''
+      label: Options
+id: node.alert.default
 targetEntityType: node
-bundle: landing_page
+bundle: alert
 mode: default
 content:
+  body:
+    weight: 1
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+    type: text_textarea_with_summary
+    region: content
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_components:
-    type: entity_reference_paragraphs
+  field_alert_type:
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
+  field_node_reference:
+    weight: 3
+    settings:
+      match_operator: CONTAINS
+      match_limit: 20
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_switch:
+    weight: 2
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_toggle:
     weight: 1
     settings:
-      title: Component
-      title_plural: Components
-      edit_mode: preview
-      add_mode: dropdown
-      form_display_mode: default
-      default_paragraph_type: _none
+      display_label: true
     third_party_settings: {  }
+    type: boolean_checkbox
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -50,23 +102,23 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 5
+    weight: 7
     region: content
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 9
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 11
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
   scheduler_settings:
-    weight: 7
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -74,14 +126,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 14
+    weight: 16
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 8
     region: content
     third_party_settings: {  }
   title:
@@ -94,7 +146,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 5
     settings:
       match_operator: CONTAINS
       size: 60
@@ -104,18 +156,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 12
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 13
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }
