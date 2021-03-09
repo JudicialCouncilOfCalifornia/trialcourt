@@ -1,0 +1,34 @@
+{#
+/**
+ * @file
+ * Theme override for a breadcrumb trail.
+ *
+ * Available variables:
+ * - breadcrumb: Breadcrumb trail items.
+ */
+#}
+
+{# Create an items array for breadcrumbs. #}
+{% set items = [] %}
+
+{% for item in breadcrumb %}
+  {% if item.url %}
+    {% set item = {
+      label: item.text,
+      url: item.url
+    } %}
+  {% else %}
+    {% set item = {
+      label: item.text
+    } %}
+  {% endif %}
+  {% set items = items|merge([item]) %}
+{% endfor %}
+
+{# Include component template and pass in the structured data. #}
+{% include "@molecules/breadcrumb/breadcrumb.twig" with {
+  breadcrumb: {
+    items: items,
+    classes: [],
+  }
+} %}
