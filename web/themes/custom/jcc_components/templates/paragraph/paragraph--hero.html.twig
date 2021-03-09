@@ -40,13 +40,14 @@
 #}
 
 {% set parent_type = paragraph.getParentEntity().getType() %}
-{% set dark = parent_type == 'landing_page' %}
+{# Temp styling until PL is done. #}
+{% set dark = parent_type == 'landing_page' ? '#1a4480' : '#f6f6f6' %}
 
 {% block paragraph %}
   {% block content %}
-    <div class="paragraph">
-      {{ "Dark Background: " ~ dark }}
+    <div class="paragraph" style="background-color: {{ dark }}">
       {{ content }}
+      <i><small style="color: #999;">* Temp styling until PL is done.</small></i>
     </div>
   {% endblock %}
 {% endblock paragraph %}
