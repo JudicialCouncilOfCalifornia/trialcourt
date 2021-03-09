@@ -17,9 +17,9 @@ third_party_settings:
       children:
         - field_heading
         - field_lead
-      parent_name: ''
-      weight: 0
-      format_type: details
+      parent_name: group_content
+      weight: 1
+      format_type: tab
       region: content
       format_settings:
         description: ''
@@ -27,14 +27,15 @@ third_party_settings:
         required_fields: true
         id: ''
         classes: ''
+        formatter: closed
       label: 'Main Content'
     group_aside:
       children:
         - field_subheading
         - field_aside
-      parent_name: ''
-      weight: 1
-      format_type: details
+      parent_name: group_content
+      weight: 2
+      format_type: tab
       region: content
       format_settings:
         description: ''
@@ -42,7 +43,21 @@ third_party_settings:
         required_fields: true
         id: ''
         classes: ''
+        formatter: closed
       label: Aside
+    group_content:
+      children:
+        - group_main_content
+        - group_aside
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        direction: horizontal
+      label: Content
 id: paragraph.hero.default
 targetEntityType: paragraph
 bundle: hero

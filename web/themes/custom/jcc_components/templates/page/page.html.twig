@@ -54,14 +54,18 @@
     {% endif %}
   {% endif %}
 
+  {%  if page.navigation|render %}
+    {{ page.navigation }}
+  {% endif %}
+
+  {%  if page.messaging|render %}
+    {{ page.messaging }}
+  {% endif %}
+
   {% if page.tabs|render %}
     <div class="page__tabs">
       {{ page.tabs }}
     </div>
-  {% endif %}
-
-  {%  if page.breadcrumb|render %}
-    {{ page.breadcrumb }}
   {% endif %}
 
   <div class="page__title">
@@ -69,22 +73,16 @@
   </div>
 
   <main id="main-content"> {# link is in html.html.twig #}
-    {%  if page.messaging|render %}
-      {{ page.messaging }}
-    {% endif %}
-
     <div class="page__content">
       {{ page.content }}
     </div>
   </main>
 
-  {% if not node.field_hide_footer.value %}
-    {% if page.secondary_footer %}
-      {{ page.secondary_footer }}
-    {% endif %}
+  {% if page.secondary_footer %}
+    {{ page.secondary_footer }}
+  {% endif %}
 
-    {% if page.footer %}
-      {{ page.footer }}
-    {% endif %}
+  {% if page.footer %}
+    {{ page.footer }}
   {% endif %}
 </div>
