@@ -1,0 +1,28 @@
+uuid: f1f21bf5-20d3-438b-83fb-a7d0569bc990
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_promotion_image
+    - media.type.image
+    - node.type.news
+id: node.news.field_promotion_image
+field_name: field_promotion_image
+entity_type: node
+bundle: news
+label: 'Promotion Image'
+description: '<p>If needed, select a specific image to be used when promoting content (e.g. featured on home page) rather than rely on the first image from the gallery above.</p>'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
