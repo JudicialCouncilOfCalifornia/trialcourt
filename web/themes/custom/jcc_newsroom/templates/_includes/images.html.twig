@@ -6,6 +6,19 @@
       {% set gallery_title = images['#title'] %}
       {% set gallery_images = images['#items'] %}
 
+      {# BEGIN Suppress first image used as hero for Feature typed news #}
+      {% if node.type.entity.label|default == 'News' and content.field_news_type[0]['#title'] == 'Feature' %}
+        {% set nonFeaturedImages = [] %}
+        {% for image in gallery_images %}
+          {% if loop.index != 1 %}
+            {% set nonFeaturedImages = nonFeaturedImages|merge([image]) %}
+          {% endif %}
+        {% endfor %}
+
+        {% set gallery_images = nonFeaturedImages %}
+      {% endif %}
+      {# END #}
+
       {% set batch_size = gallery_images|length/2 %} {# Break up images into two groups #}
       {% for set in gallery_images|batch(batch_size) %} {# Display grouped images in separate columns #}
         <div class="grid-col-12 tablet:grid-col-5 height-full">
@@ -34,9 +47,11 @@
   </div>
 {% endset %}
 
-{% include '@molecules/blocks/card/card.twig' with {
-  card: {
-    title: gallery_title,
-    excerpt: gallery,
-  }
-} %}
+{% if gallery_images|length != 0 %}
+  {% include '@molecules/blocks/card/card.twig' with {
+    card: {
+      title: gallery_title,
+      excerpt: gallery,
+    }
+  } %}
+{% endif %}
