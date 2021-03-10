@@ -183,19 +183,28 @@
       {% endset %}
     {%  endif %}
 
+    {# BEGIN Set hero image for Feature typed news #}
+    {% set hero_background = null %}
+    {% set hero_parallax = null %}
+    {% set hero_backgroud_img = null %}
+    {% if node.type.entity.label|default == 'News' and content.field_news_type[0]['#title'] == 'Feature' %}
+      {% set hero_background = 'has-background-image' %}
+      {% set hero_parallax = true %}
+      {% set hero_backgroud_img = hero_image %}
+    {% endif %}
+    {# END #}
     {% include '@jcc_base/_includes/section-hero.html.twig' with {
-      background_variant: 'has-background-image',
-      background_parallax: true,
-      img: hero_image,
+      background_variant: hero_background,
+      background_parallax: hero_parallax,
+      img: hero_backgroud_img,
       brow: news_type,
       title: title,
       lead: news_lead,
       body: null,
     } %}
 
-    {% include '@jcc_base/_includes/section-body.html.twig'with {
+    {% include '@jcc_newsroom/_includes/section-body.html.twig'with {
       no_title_decoration: true,
-      featured_image_idx: featured_image_idx,
       related: null,
       attachments: null,
       related_links: null,

@@ -6,11 +6,13 @@
  */
 
 use Drupal\Core\Render\Markup;
+use Drupal\media\Entity\Media;
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_preprocess_HOOK().
  */
-function jcc_base_preprocess_block__views_block__news_block_2(&$variables) {
+function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
   $cards = [];
 
   if (isset($variables['elements']['content']['#view'])) {
@@ -24,7 +26,23 @@ function jcc_base_preprocess_block__views_block__news_block_2(&$variables) {
       // Placeholder if no image available.
       $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><div class="placeholder-photo"><span class="fas fa-camera" aria-label="Camera icon indicating no image provided"></span></div></a>');
 
-      if (isset($row->_entity->field_images)) {
+      // Use promotion image or get first gallery image.
+      if (isset($row->_entity->field_promotion_image->target_id)) {
+        $promo_media_id = $row->_entity->get('field_promotion_image')->target_id;
+        if (isset($promo_media_id)) {
+          $promo_media = Media::load($promo_media_id);
+          $promo_img_file = File::load($promo_media->field_media_image->target_id);
+          if ($promo_img_file) {
+            $file_uri = $promo_img_file->getFileUri();
+            $img_style = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_1300x1300');
+            $promo_image_url = $img_style->buildUrl($file_uri);
+            $promo_image_alt = $promo_img_file->alt;
+
+            $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $promo_image_url . '" alt="' . $promo_image_alt . '"></a>');
+          }
+        }
+      }
+      elseif (isset($row->_entity->field_images)) {
         $first_image = _jcc_get_first_image($row->_entity, 'max_1300x1300');
         if ($first_image) {
           $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $first_image['url'] . '" alt="' . $first_image['alt'] . '"></a>');
