@@ -1,0 +1,23 @@
+uuid: 4b18770c-dac0-4f8e-b3a7-cdf4b2f86051
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: menu_based_join_path_
+label: 'Menu based join path.'
+type: 'canonical_entities:node'
+pattern: '[node:menu-link:root]/[node:menu-link:parents:join-path]'
+selection_criteria:
+  3562b613-c763-433a-85d4-8ceb4b232702:
+    id: node_type
+    bundles:
+      landing_page: landing_page
+      subpage: subpage
+    negate: false
+    context_mapping:
+      node: node
+    uuid: 3562b613-c763-433a-85d4-8ceb4b232702
+selection_logic: and
+weight: -5
+relationships: {  }
