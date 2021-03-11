@@ -40,14 +40,22 @@
 #}
 
 {% set parent_type = paragraph.getParentEntity().getType() %}
-{# Temp styling until PL is done. #}
-{% set dark = parent_type == 'landing_page' ? '#1a4480' : '#f6f6f6' %}
 
-{% block paragraph %}
-  {% block content %}
-    <div class="paragraph" style="background-color: {{ dark }}">
-      {{ content }}
-      <i><small style="color: #999;">* Temp styling until PL is done.</small></i>
-    </div>
-  {% endblock %}
-{% endblock paragraph %}
+{% include "@molecules/hero/hero.twig" with {
+  hero: {
+    alt_background: parent_type == 'landing_page',
+    main: {
+      title: content.field_heading.0|render,
+      lead: content.field_lead|render,
+      brow: ''
+    },
+    aside: {
+      title: content.field_subheading.0|render,
+      text: content.field_aside.0|render,
+      link_url: paragraph.field_link.0.uri,
+      link_text: paragraph.field_link.0.title
+    },
+    full_width_main: full_width,
+    classes: []
+  }
+} %}
