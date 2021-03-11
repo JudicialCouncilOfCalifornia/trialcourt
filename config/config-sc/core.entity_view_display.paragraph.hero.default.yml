@@ -6,9 +6,11 @@ dependencies:
     - field.field.paragraph.hero.field_aside
     - field.field.paragraph.hero.field_heading
     - field.field.paragraph.hero.field_lead
+    - field.field.paragraph.hero.field_link
     - field.field.paragraph.hero.field_subheading
     - paragraphs.paragraphs_type.hero
   module:
+    - link
     - text
 id: paragraph.hero.default
 targetEntityType: paragraph
@@ -36,6 +38,18 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: text_default
+    region: content
+  field_link:
+    weight: 4
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
     region: content
   field_subheading:
     weight: 2
