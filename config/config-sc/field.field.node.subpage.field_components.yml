@@ -5,6 +5,10 @@ dependencies:
   config:
     - field.storage.node.field_components
     - node.type.subpage
+    - paragraphs.paragraphs_type.accordion_item
+    - paragraphs.paragraphs_type.action_list_item
+    - paragraphs.paragraphs_type.alert
+    - paragraphs.paragraphs_type.card
   module:
     - entity_reference_revisions
 id: node.subpage.field_components
@@ -20,30 +24,34 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
-    target_bundles: null
+    negate: 1
+    target_bundles:
+      accordion_item: accordion_item
+      action_list_item: action_list_item
+      alert: alert
+      card: card
     target_bundles_drag_drop:
       accordion:
         weight: 10
         enabled: false
       accordion_item:
+        enabled: true
         weight: 11
-        enabled: false
       action_list:
         weight: 12
         enabled: false
       action_list_item:
+        enabled: true
         weight: 13
-        enabled: false
       alert:
+        enabled: true
         weight: 14
-        enabled: false
       body:
         weight: 15
         enabled: false
       card:
+        enabled: true
         weight: 16
-        enabled: false
       cards:
         weight: 17
         enabled: false
