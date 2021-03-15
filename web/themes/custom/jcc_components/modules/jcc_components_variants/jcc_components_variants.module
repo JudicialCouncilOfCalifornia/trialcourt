@@ -14,6 +14,7 @@ function jcc_components_variants_field_widget_entity_reference_paragraphs_form_a
   &$element,
   &$form_state,
   $context) {
+
   if (!empty($element['subform']['field_variant'])) {
     $variants = jcc_components_variants_preview($element['#paragraph_type']);
     if (!empty($variants['options'])) {
@@ -22,8 +23,6 @@ function jcc_components_variants_field_widget_entity_reference_paragraphs_form_a
         '#template' => $variants['prefix'],
       ];
       $element['subform']['field_variant']['widget']['#prefix'] = render($prefix);
-      $element['subform']['field_variant']['widget']['#attributes']['readonly'] = 'readonly';
-      $element['subform']['field_variant']['widget']['#options'] = $variants['options'];
       $element['subform']['#attached']['library'][] = 'jcc_components_variants/variants';
     }
   }
@@ -47,13 +46,14 @@ function jcc_components_variants_field_widget_entity_reference_paragraphs_form_a
       }
     }
 
-    $prefix = [
-      '#type' => 'inline_template',
-      '#template' => $prefix,
-    ];
-    $element['subform']['field_sub_variant']['widget']['#prefix'] = render($prefix);
-    $element['subform']['field_sub_variant']['widget']['#attributes']['class'][] = 'hidden';
-    $element['subform']['#attached']['library'][] = 'jcc_components_variants/variants';
+    if (!empty($prefix)) {
+      $prefix = [
+        '#type' => 'inline_template',
+        '#template' => $prefix,
+      ];
+      $element['subform']['field_sub_variant']['widget']['#prefix'] = render($prefix);
+      $element['subform']['#attached']['library'][] = 'jcc_components_variants/variants';
+    }
   }
 }
 
@@ -77,11 +77,12 @@ function jcc_components_variants_preview($type) {
   // Generate details and buttons for each variant image provided.
   foreach ($files as $file) {
     if (is_file($dir . $file)) {
+      $name = substr(pathinfo($file, PATHINFO_FILENAME), 2);
       $variant = [
-        'name' => pathinfo($file, PATHINFO_FILENAME),
+        'name' => $name,
         'file' => $file,
       ];
-      $variants .= "<button class='variant' data-variant='" . $type . ":" . $variant['name'] . "'><img src='/${path}/variants/${type}/" . $variant['file'] . "' /></button>";
+      $variants .= "<button class='variant' data-variant='" . $type . ":" . $variant['name'] . "'><img src='/${path}/variants/${type}/" . $variant['file'] . "' />\"${type}\":\"${name}\"</button>";
       $options[$variant['name']] = $variant['name'];
     }
   }
