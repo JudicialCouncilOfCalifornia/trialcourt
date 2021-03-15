@@ -89,6 +89,14 @@
           variant.addEventListener('click', setVariant);
         }
       }
+
+      // Hide text fields with JS so they're still visible if JS is disabled.
+      const variantFields = document.querySelectorAll('.field--name-field-variant .form-item, .field--name-field-sub-variant .form-item');
+
+      for (const item of variantFields) {
+        console.log(item);
+        item.classList.add('hidden');
+      }
     }
   }
 })(Drupal);
