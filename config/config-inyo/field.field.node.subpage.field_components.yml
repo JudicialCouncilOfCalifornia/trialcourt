@@ -1,0 +1,61 @@
+uuid: c55fda3d-fec3-4554-bafa-dad48000327e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_components
+    - node.type.subpage
+    - paragraphs.paragraphs_type.accordion_item
+    - paragraphs.paragraphs_type.action_list_item
+    - paragraphs.paragraphs_type.alert
+    - paragraphs.paragraphs_type.card
+  module:
+    - entity_reference_revisions
+id: node.subpage.field_components
+field_name: field_components
+entity_type: node
+bundle: subpage
+label: Components
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 1
+    target_bundles:
+      accordion_item: accordion_item
+      action_list_item: action_list_item
+      alert: alert
+      card: card
+    target_bundles_drag_drop:
+      accordion:
+        weight: 10
+        enabled: false
+      accordion_item:
+        enabled: true
+        weight: 11
+      action_list:
+        weight: 12
+        enabled: false
+      action_list_item:
+        enabled: true
+        weight: 13
+      alert:
+        enabled: true
+        weight: 14
+      body:
+        weight: 15
+        enabled: false
+      card:
+        enabled: true
+        weight: 16
+      cards:
+        weight: 17
+        enabled: false
+      hero:
+        weight: 18
+        enabled: false
+field_type: entity_reference_revisions
