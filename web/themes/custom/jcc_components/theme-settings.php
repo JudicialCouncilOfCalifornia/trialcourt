@@ -16,6 +16,17 @@ function jcc_components_form_system_theme_settings_alter(&$form, FormStateInterf
     return;
   }
 
+  $form['scheme'] = [
+    '#type' => "select",
+    '#title' => t('Scheme'),
+    '#options' => [
+      'base' => t('Base'),
+      'local' => t('Local'),
+    ],
+    '#default_value' => theme_get_setting('scheme'),
+    '#description' => t('A scheme sets the general look and feel of the site. You still have the same building blocks from the component library, but global styles such as color, spacing, etc., can vary according to the selected scheme.'),
+  ];
+
   $form['social'] = [
     '#type' => 'details',
     '#title' => t('Social Links'),
