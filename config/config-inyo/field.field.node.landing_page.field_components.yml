@@ -1,0 +1,69 @@
+uuid: d1402cab-f9b4-4c9f-9bb3-47b72da475e1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_components
+    - node.type.landing_page
+    - paragraphs.paragraphs_type.accordion_item
+    - paragraphs.paragraphs_type.action_list_item
+    - paragraphs.paragraphs_type.alert
+    - paragraphs.paragraphs_type.card
+    - paragraphs.paragraphs_type.icon_link
+  module:
+    - entity_reference_revisions
+id: node.landing_page.field_components
+field_name: field_components
+entity_type: node
+bundle: landing_page
+label: Components
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 1
+    target_bundles:
+      accordion_item: accordion_item
+      action_list_item: action_list_item
+      alert: alert
+      card: card
+      icon_link: icon_link
+    target_bundles_drag_drop:
+      accordion:
+        weight: 10
+        enabled: false
+      accordion_item:
+        enabled: true
+        weight: 11
+      action_list:
+        weight: 12
+        enabled: false
+      action_list_item:
+        enabled: true
+        weight: 13
+      alert:
+        enabled: true
+        weight: 14
+      body:
+        weight: 15
+        enabled: false
+      card:
+        enabled: true
+        weight: 16
+      cards:
+        weight: 17
+        enabled: false
+      hero:
+        weight: 18
+        enabled: false
+      hero_banner:
+        weight: 21
+        enabled: false
+      icon_link:
+        enabled: true
+        weight: 22
+field_type: entity_reference_revisions
