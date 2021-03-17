@@ -77,6 +77,11 @@ $sites['test-jcc-sc.pantheonsite.io'] = 'sc';
 $sites['live-jcc-sc.pantheonsite.io'] = 'sc';
 $sites['epic-comp-jcc-sc.pantheonsite.io'] = 'sc';
 
+$sites['dev-jcc-inyo.pantheonsite.io'] = 'inyo';
+$sites['test-jcc-inyo.pantheonsite.io'] = 'inyo';
+$sites['live-jcc-inyo.pantheonsite.io'] = 'inyo';
+$sites['epic-comp-jcc-inyo.pantheonsite.io'] = 'inyo';
+
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
 // sites.local.php next to this file. It will be ignored by git.
@@ -95,3 +100,4 @@ $sites['deprep.lndo.site'] = 'deprep';
 $sites['md.lndo.site'] = 'md';
 $sites['webservices.lndo.site'] = 'webservices';
 $sites['sc.lndo.site'] = 'sc';
+$sites['inyo.lndo.site'] = 'inyo';
