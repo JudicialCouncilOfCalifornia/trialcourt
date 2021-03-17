@@ -5,9 +5,32 @@
  * Contains jcc_custom.module.
  */
 
+use Drupal\editor\Entity\Editor;
+
 /**
  * Implements hook_page_attachments().
  */
 function jcc_custom_page_attachments(array &$attachments) {
   $attachments['#attached']['library'][] = 'jcc_custom/fontawesome';
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function jcc_custom_ckeditor_css_alter(array &$css, Editor $editor) {
+  if ($scheme = theme_get_setting('scheme', 'jcc_components')) {
+    if (!$editor->hasAssociatedFilterFormat()) {
+      return;
+    }
+
+    $known_formats = [
+      'basic_html',
+      'full_html',
+      'body',
+    ];
+
+    if (in_array($editor->getFilterFormat()->id(), $known_formats)) {
+      $css[] = drupal_get_path('core', NULL) . "/../libraries/courtyard-artifact/2.x/public/css/${scheme}.css";
+    }
+  }
 }
