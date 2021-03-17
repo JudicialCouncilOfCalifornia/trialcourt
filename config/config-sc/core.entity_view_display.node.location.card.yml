@@ -1,9 +1,9 @@
-uuid: 02c5d78d-bdb4-4401-b8fa-8b7bd73be2b6
+uuid: b140ac94-1d67-401d-9d01-517a4534b28c
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.teaser
+    - core.entity_view_mode.node.card
     - field.field.node.location.body
     - field.field.node.location.field_address
     - field.field.node.location.field_components
@@ -14,26 +14,41 @@ dependencies:
     - node.type.location
   module:
     - address
+    - telephone
     - user
-id: node.location.teaser
+id: node.location.card
 targetEntityType: node
 bundle: location
-mode: teaser
+mode: card
 content:
   field_address:
-    type: address_plain
-    weight: 0
-    region: content
+    weight: 1
     label: hidden
     settings: {  }
     third_party_settings: {  }
+    type: address_default
+    region: content
+  field_location_type:
+    weight: 0
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_phone:
+    weight: 2
+    label: hidden
+    settings:
+      title: ''
+    third_party_settings: {  }
+    type: telephone_link
+    region: content
 hidden:
   body: true
   field_components: true
   field_geolocation: true
-  field_location_type: true
   field_matters_served: true
-  field_phone: true
   langcode: true
   links: true
   search_api_excerpt: true
