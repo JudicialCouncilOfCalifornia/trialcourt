@@ -46,6 +46,7 @@
 
 {% for k, component in content.field_components if k|first != "#" %}
   {% set item = {
+    style: sub_variants.card,
     title: component['#paragraph'].field_heading.value,
     brow: '',
     body: {
@@ -53,12 +54,10 @@
       '#text': component['#paragraph'].field_text.value,
       '#format': component['#paragraph'].field_text.format
     },
-    action: {
-      style: sub_variants.card,
+    link: {
       url: component['#paragraph'].field_link.0.uri,
       text: component['#paragraph'].field_link.0.title
     },
-    borderless: paragraph.field_toggle['#items'].value,
     classes: []
   } %}
   {% set items = items|merge([item]) %}
@@ -67,13 +66,13 @@
 {# Include the component template and pass in the structured data. #}
 {% include "@organisms/cards/cards.twig" with {
     cards: {
-      variant: variant.cards,
+      background: variant.cards,
+      num_cols: paragraph.field_columns.value,
       heading: {
         title: content.field_heading.0|render,
         lead: content.field_lead|render
       },
       items: items,
-      num_cols: paragraph.field_columns.value
-    },
-    classes: [],
+      classes: []
+    }
 } %}
