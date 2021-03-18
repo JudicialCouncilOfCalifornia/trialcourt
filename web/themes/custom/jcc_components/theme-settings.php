@@ -16,7 +16,13 @@ function jcc_components_form_system_theme_settings_alter(&$form, FormStateInterf
     return;
   }
 
-  $form['scheme'] = [
+  $form['theme'] = [
+    '#type' => 'details',
+    '#title' => t('Theme settings'),
+    '#collapsed'  => TRUE,
+  ];
+
+  $form['theme']['scheme'] = [
     '#type' => "select",
     '#title' => t('Scheme'),
     '#options' => [
@@ -25,6 +31,57 @@ function jcc_components_form_system_theme_settings_alter(&$form, FormStateInterf
     ],
     '#default_value' => theme_get_setting('scheme'),
     '#description' => t('A scheme sets the general look and feel of the site. You still have the same building blocks from the component library, but global styles such as color, spacing, etc., can vary according to the selected scheme.'),
+  ];
+
+  $form['theme']['header_footer_variant'] = [
+    '#type' => 'select',
+    '#title' => t('Header/Footer Variant'),
+    '#options' => [
+      'default' => t('Default'),
+      'alt' => t('Alt'),
+    ],
+    '#default_value' => theme_get_setting('header_footer_variant'),
+    '#description' => t('Set the patternlab variant for the <a target="_blank" href=":header">header</a> and <a target="_blank" href=":footer">footer</a>.', [':header' => 'http://patternlab.courts.ca.gov/2.x/public/?p=viewall-organisms-header', ':footer' => 'http://patternlab.courts.ca.gov/2.x/public/?p=viewall-organisms-footer']),
+  ];
+
+  $form['theme']['site_name_first'] = [
+    '#type' => 'textfield',
+    '#title' => t("Site Name: First"),
+    '#placeholder' => t("Superior Court of California"),
+    '#default_value' => theme_get_setting('site_name_first'),
+    '#description' => t('Site name is split into two parts to improve presentation on small screens.'),
+  ];
+
+  $form['theme']['site_name_second'] = [
+    '#type' => 'textfield',
+    '#title' => t("Site Name: Second"),
+    '#placeholder' => t("County of ..."),
+    '#default_value' => theme_get_setting('site_name_second'),
+    '#description' => t('Site name is split into two parts to improve presentation on small screens.'),
+  ];
+
+  $form['theme']['hat_shoe_text'] = [
+    '#type' => 'textfield',
+    '#title' => t("Hat/Shoe Text"),
+    '#placeholder' => t("Judicial Branch of California"),
+    '#default_value' => theme_get_setting('hat_shoe_text'),
+    '#description' => t("A link that shows at the very top and bottom."),
+  ];
+
+  $form['theme']['hat_shoe_url'] = [
+    '#type' => 'url',
+    '#title' => t("Hat/Shoe URL"),
+    '#placeholder' => "https://www.courts.ca.gov",
+    '#default_value' => theme_get_setting('hat_shoe_url'),
+    '#description' => t("A link that shows at the very top and bottom."),
+  ];
+
+  $form['theme']['site_name_second'] = [
+    '#type' => 'textfield',
+    '#title' => t("Site Name: Second"),
+    '#placeholder' => t("County of ..."),
+    '#default_value' => theme_get_setting('site_name_second'),
+    '#description' => t('Site name is split into two parts to improve presentation on small screens.'),
   ];
 
   $form['social'] = [
@@ -84,40 +141,5 @@ function jcc_components_form_system_theme_settings_alter(&$form, FormStateInterf
     '#title'         => t('Hide translation'),
     '#default_value' => theme_get_setting('hide_translation'),
     '#description'   => t("Hide translation dropdown from header."),
-  ];
-  $form['theme'] = [
-    '#type' => 'details',
-    '#title' => t('Theme settings'),
-    '#collapsed'  => TRUE,
-  ];
-  $form['theme']['header_extended'] = [
-    '#type'          => 'checkbox',
-    '#title'         => t('Extended Header'),
-    '#default_value' => theme_get_setting('header_extended'),
-    '#description'   => t('Set the patternlab <a target="_blank" href=":extended">extended header variant</a> instead of the <a target="_blank" href=":default">default one</a>.', [':extended' => 'http://patternlab.courts.ca.gov/?p=organisms-header-base-extended', ':default' => 'http://patternlab.courts.ca.gov/?p=organisms-header-base']),
-  ];
-  $form['theme']['mega_menu'] = [
-    '#type'          => 'checkbox',
-    '#title'         => t('Mega menu'),
-    '#default_value' => theme_get_setting('mega_menu'),
-    '#description'   => t('Set the patternlab <a target="_blank" href=":mega">Mega menu variant</a>. (This will only apply if the header is set to extended)', [':mega' => 'http://patternlab.courts.ca.gov/?p=organisms-header-base-extended-mega']),
-  ];
-  $form['theme']['footer_extended'] = [
-    '#type'          => 'checkbox',
-    '#title'         => t('Extended footer'),
-    '#default_value' => theme_get_setting('footer_extended'),
-    '#description'   => t('Set the patternlab <a target="_blank" href=":extended_footer">Extended footer variant</a> instead of the <a target="_blank" href=":default_footer">default one</a>.', [':extended_footer' => 'http://patternlab.courts.ca.gov/?p=organisms-footer-tall', ':default_footer' => 'http://patternlab.courts.ca.gov/?p=organisms-footer-base']),
-  ];
-  $form['theme']['footer_extended_message'] = [
-    '#type'          => 'textfield',
-    '#title'         => t('Custom footer message'),
-    '#default_value' => theme_get_setting('footer_extended_message'),
-    '#description'   => t('Set the footer message in the second part of the footer.'),
-  ];
-  $form['theme']['color_inverted'] = [
-    '#type'          => 'checkbox',
-    '#title'         => t('Inverted Color'),
-    '#default_value' => theme_get_setting('color_inverted'),
-    '#description'   => t('Set the patternlab inverted color variant for the <a target="_blank" href=":inverted_header">header</a> and the <a target="_blank" href=":inverted_footer">footer</a>.', [':inverted_header' => 'http://patternlab.courts.ca.gov/?p=organisms-header-base-inverted', ':inverted_footer' => 'http://patternlab.courts.ca.gov/?p=organisms-footer-base-inverted']),
   ];
 }
