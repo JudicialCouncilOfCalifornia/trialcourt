@@ -82,7 +82,15 @@
     {{ page.secondary_footer }}
   {% endif %}
 
-  {% if page.footer %}
-    {{ page.footer }}
-  {% endif %}
+  {% include '@organisms/footer/footer.twig' with {
+    footer: {
+      background: header_footer_variant,
+      links: footer_links,
+      title: site_name,
+      social_links: social_links,
+      shoe: shoe,
+      classes: []
+    }
+  } %}
+
 </div>
