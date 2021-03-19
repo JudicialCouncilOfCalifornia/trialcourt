@@ -40,10 +40,13 @@
 #}
 
 {% set parent_type = paragraph.getParentEntity().getType() %}
+{% set variant = paragraph.field_variant.value|json_decode %}
+{% set background = parent_type == 'landing_page' ? 'alt' : 'default' %}
 
 {% include "@molecules/hero/hero.twig" with {
   hero: {
-    alt_background: parent_type == 'landing_page',
+    layout: variant.hero,
+    background: background,
     main: {
       title: content.field_heading.0|render,
       lead: content.field_lead|render,
@@ -55,7 +58,6 @@
       link_url: paragraph.field_link.0.uri,
       link_text: paragraph.field_link.0.title
     },
-    full_width_main: full_width,
     classes: []
   }
 } %}
