@@ -8,6 +8,7 @@ dependencies:
     - field.field.paragraph.hero.field_lead
     - field.field.paragraph.hero.field_link
     - field.field.paragraph.hero.field_subheading
+    - field.field.paragraph.hero.field_variant
     - paragraphs.paragraphs_type.hero
   module:
     - field_group
@@ -20,7 +21,7 @@ third_party_settings:
         - field_heading
         - field_lead
       parent_name: group_content
-      weight: 1
+      weight: 2
       format_type: tab
       region: content
       format_settings:
@@ -37,7 +38,7 @@ third_party_settings:
         - field_aside
         - field_link
       parent_name: group_content
-      weight: 2
+      weight: 3
       format_type: tab
       region: content
       format_settings:
@@ -50,10 +51,11 @@ third_party_settings:
       label: Aside
     group_content:
       children:
+        - field_variant
         - group_main_content
         - group_aside
       parent_name: ''
-      weight: 0
+      weight: 1
       format_type: tabs
       region: content
       format_settings:
@@ -106,6 +108,14 @@ content:
     third_party_settings: {  }
     type: string_textfield
     region: content
+  field_variant:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
 hidden:
   created: true
   status: true
