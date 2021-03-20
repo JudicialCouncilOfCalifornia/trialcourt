@@ -74,13 +74,24 @@ $sites['webservices.courts.ca.gov'] = 'webservices';
 
 $sites['dev-jcc-sc.pantheonsite.io'] = 'sc';
 $sites['test-jcc-sc.pantheonsite.io'] = 'sc';
+$sites['develop-jcc-sc.pantheonsite.io'] = 'sc';
+$sites['stage-jcc-sc.pantheonsite.io'] = 'sc';
 $sites['live-jcc-sc.pantheonsite.io'] = 'sc';
 $sites['epic-comp-jcc-sc.pantheonsite.io'] = 'sc';
 
 $sites['dev-jcc-inyo.pantheonsite.io'] = 'inyo';
 $sites['test-jcc-inyo.pantheonsite.io'] = 'inyo';
+$sites['develop-jcc-inyo.pantheonsite.io'] = 'inyo';
+$sites['stage-jcc-inyo.pantheonsite.io'] = 'inyo';
 $sites['live-jcc-inyo.pantheonsite.io'] = 'inyo';
 $sites['epic-comp-jcc-inyo.pantheonsite.io'] = 'inyo';
+
+$sites['dev-jcc-slo2.pantheonsite.io'] = 'slo2';
+$sites['test-jcc-slo2.pantheonsite.io'] = 'slo2';
+$sites['develop-jcc-slo2.pantheonsite.io'] = 'slo2';
+$sites['stage-jcc-slo2.pantheonsite.io'] = 'slo2';
+$sites['live-jcc-slo2.pantheonsite.io'] = 'slo2';
+$sites['epic-comp-jcc-slo2.pantheonsite.io'] = 'slo2';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
@@ -101,3 +112,4 @@ $sites['md.lndo.site'] = 'md';
 $sites['webservices.lndo.site'] = 'webservices';
 $sites['sc.lndo.site'] = 'sc';
 $sites['inyo.lndo.site'] = 'inyo';
+$sites['slo2.lndo.site'] = 'slo2';
