@@ -1,0 +1,43 @@
+uuid: b7fafd62-d9bc-47ee-9154-09c12c8b9276
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_components
+    - paragraphs.paragraphs_type.action_list
+    - paragraphs.paragraphs_type.action_list_item
+  module:
+    - entity_reference_revisions
+id: paragraph.action_list.field_components
+field_name: field_components
+entity_type: paragraph
+bundle: action_list
+label: Components
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      action_list_item: action_list_item
+    target_bundles_drag_drop:
+      accordion:
+        weight: 6
+        enabled: false
+      accordion_item:
+        weight: 7
+        enabled: false
+      action_list:
+        weight: 8
+        enabled: false
+      action_list_item:
+        enabled: true
+        weight: 9
+      hero:
+        weight: 10
+        enabled: false
+field_type: entity_reference_revisions
