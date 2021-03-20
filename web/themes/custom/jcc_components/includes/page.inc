@@ -65,6 +65,7 @@ function jcc_components_get_menu_array($menu_name) {
  *   An array of links, formatted for a component.
  */
 function jcc_components_menu_to_array(array $tree) {
+  $links = [];
   foreach ($tree as $element) {
     $links[] = [
       'text' => $element->link->getTitle(),
