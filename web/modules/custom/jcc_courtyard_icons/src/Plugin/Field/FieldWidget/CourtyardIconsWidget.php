@@ -79,7 +79,7 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
     }
 
     if (!in_array($value, $this->getIconList())) {
-      $form_state->setError($element, t("An invalid icon was selected."));
+      $form_state->setError($element, $this->t("An invalid icon was selected."));
     }
   }
 
