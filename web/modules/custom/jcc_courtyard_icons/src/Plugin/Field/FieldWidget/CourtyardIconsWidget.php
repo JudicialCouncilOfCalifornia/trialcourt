@@ -102,11 +102,12 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
         $name = $match[0];
         $this->iconList[$name] = $name;
       }
-      return $this->iconList;
     }
     else {
-      return $this->t('Icons not configured.');
+      $this->iconList = [];
     }
+
+    return $this->iconList;
   }
 
   /**
@@ -116,6 +117,7 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
    *   The markup for courtyard icon buttons.
    */
   public function getIconButtons() {
+    $buttons = [];
     foreach ($this->getIconList() as $name) {
       $buttons[] = "<button class='jcc-courtyard-icons__button' data-icon-name='$name'>
         <svg width='35' height='35' role='img' aria-label='$name'>
@@ -124,7 +126,16 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
       </button>";
     }
 
-    return "<div class='jcc-courtyard-icons'>" . implode(' ', $buttons) . "</div>";
+    if (!empty($buttons)) {
+      return "<div class='jcc-courtyard-icons'>" . implode(' ', $buttons) . "</div>";
+    }
+    else {
+      return '<h3>' . $this->t('Icons Not Configured') . '</h3>
+        <p>' .
+          $this->t('See <a href="/admin/config/system/jcc-courtyard-icons">JCC Courtyard Icons settings</a>') . '
+        </p>
+      ';
+    }
   }
 
 }
