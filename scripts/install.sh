@@ -81,7 +81,7 @@ sed -i "s/sandbox-1/jcc-${NEW}-sandbox-1/g" /app/web/sites/${NEW}/settings.php
 echo -e "\n${G}Multisite configured... now running installation. This will take a while...${RE}"
 
 cd /app
-drush si jcc_tc -l ${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com"
+drush si -l ${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com"
 
 echo -e "\nExporting config..."
 drush cex -y -l ${NEW}.lndo.site
