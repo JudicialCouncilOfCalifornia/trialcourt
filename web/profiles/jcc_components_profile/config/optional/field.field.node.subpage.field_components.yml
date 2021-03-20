@@ -1,0 +1,79 @@
+uuid: c55fda3d-fec3-4554-bafa-dad48000327e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_components
+    - node.type.subpage
+    - paragraphs.paragraphs_type.accordion
+    - paragraphs.paragraphs_type.action_list
+    - paragraphs.paragraphs_type.body
+    - paragraphs.paragraphs_type.cards
+    - paragraphs.paragraphs_type.hero
+    - paragraphs.paragraphs_type.hero_banner
+    - paragraphs.paragraphs_type.views_reference
+  module:
+    - entity_reference_revisions
+id: node.subpage.field_components
+field_name: field_components
+entity_type: node
+bundle: subpage
+label: Components
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      accordion: accordion
+      action_list: action_list
+      body: body
+      cards: cards
+      hero: hero
+      hero_banner: hero_banner
+      views_reference: views_reference
+    target_bundles_drag_drop:
+      accordion:
+        enabled: true
+        weight: 10
+      accordion_item:
+        weight: 11
+        enabled: false
+      action_list:
+        enabled: true
+        weight: 12
+      action_list_item:
+        weight: 13
+        enabled: false
+      alert:
+        weight: 14
+        enabled: false
+      body:
+        enabled: true
+        weight: 15
+      card:
+        weight: 16
+        enabled: false
+      cards:
+        enabled: true
+        weight: 17
+      hero:
+        enabled: true
+        weight: 18
+      hero_banner:
+        enabled: true
+        weight: 23
+      hours:
+        weight: 24
+        enabled: false
+      icon_link:
+        weight: 25
+        enabled: false
+      views_reference:
+        enabled: true
+        weight: 26
+field_type: entity_reference_revisions
