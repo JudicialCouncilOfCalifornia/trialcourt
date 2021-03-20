@@ -31,7 +31,7 @@ class CourtyardIconsFormatter extends FormatterBase {
           '#type' => 'processed_text',
           '#format' => 'full_html',
           '#text' => "<svg role='img' aria-label='$name'><use xlink:href='#$name'></use></svg>",
-          'name' => $name,
+          '#name' => $name,
         ];
       }
     }
