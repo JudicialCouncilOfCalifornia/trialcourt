@@ -1,0 +1,111 @@
+{#
+/**
+ * @file
+ * Theme override for main view template.
+ *
+ * Available variables:
+ * - attributes: Remaining HTML attributes for the element.
+ * - css_name: A CSS-safe version of the view name.
+ * - css_class: The user-specified classes names, if any.
+ * - header: The optional header.
+ * - footer: The optional footer.
+ * - rows: The results of the view query, if any.
+ * - empty: The content to display if there are no rows.
+ * - pager: The optional pager next/prev links to display.
+ * - exposed: Exposed widget form/info to display.
+ * - feed_icons: Optional feed icons to display.
+ * - more: An optional link to the next page of results.
+ * - title: Title of the view, only used when displaying in the admin preview.
+ * - title_prefix: Additional output populated by modules, intended to be
+ *   displayed in front of the view title.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the view title.
+ * - attachment_before: An optional attachment view to be displayed before the
+ *   view content.
+ * - attachment_after: An optional attachment view to be displayed after the
+ *   view content.
+ * - dom_id: Unique id for every view being printed to give unique class for
+ *   Javascript.
+ *
+ * @see template_preprocess_views_view()
+ */
+#}
+
+{% set cards = [] %}
+{% set items = [] %}
+
+{% for k, row in rows.0['#rows'] if k|first != "#" %}
+  {% if row['#node'].sticky.value %}
+    {% set card = {
+      style: 'cta',
+      title: row['#node'].title(),
+      brow: row['#node'].field_date.0.value|date('M d, Y'),
+      body: '',
+      link: {
+        url: row['#node'].path.value.0.alias,
+        text: "Read More"|t
+      },
+      classes: []
+    } %}
+    {% set cards = cards|merge([card]) %}
+  {% else %}
+    {% set item %}
+      <div class='news--sticky-list__item'>
+        <div class='news--sticky-list__item-brow'>
+          {{ row['#node'].field_date.0.value|date('M d, Y') }}
+        </div>
+        <div class='news--sticky-list__item-title'>
+          <h5><a href='{{ row['#node'].path.value.0.alias}}'>{{ row['#node'].title() }}</a></h5>
+        </div>
+    {% endset %}
+    {% set items = items|merge([item]) %}
+  {% endif %}
+{% endfor %}
+{# Set non-sticky news list to a borderlist card. #}
+{% set card = {
+  style: 'borderless',
+  title: '',
+  brow: '',
+  body: {
+    '#type': 'processed_text',
+    '#text': items|join,
+    '#format': 'basic_html'
+  },
+  link: {},
+  classes: []
+} %}
+{% set cards = cards|merge([card]) %}
+
+{# Set More News as a borderless card on it's own, that always appears below the non-sticky list, by placing 2 empty cards between them. #}
+{% for i in 0..2 %}
+  {% set link_text = "More News" %}
+  {% set body = loop.last ? {
+    '#type': 'processed_text',
+    '#text': '<a class="usa-button" href="/news">' ~ link_text|t ~ '</a>',
+    '#format': 'full_html'
+  } : '' %}
+
+  {% set card = {
+    style: 'borderless',
+    title: '',
+    brow: '',
+    body: body,
+    link: {},
+    classes: []
+  } %}
+  {% set cards = cards|merge([card]) %}
+{% endfor %}
+
+{# Include the component template and pass in the structured data. #}
+{% include "@organisms/cards/cards.twig" with {
+  cards: {
+    background: 'alt',
+    num_cols: paragraph.field_columns.value,
+    heading: {
+      title: content.field_heading.0|render,
+      lead: content.field_lead|render
+    },
+    items: cards,
+    classes: []
+  }
+} %}
