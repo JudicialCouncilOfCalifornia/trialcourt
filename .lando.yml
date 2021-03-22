@@ -28,62 +28,62 @@ proxy:
     # Default (Base for starting multisites.)
     - default.lndo.site
     # Multi Sites (Don't forget to update web/sites/sites.php)
-    - deprep.lndo.site
+    # - deprep.lndo.site
     - inyo.lndo.site
-    - md.lndo.site
-    - newsroom.lndo.site
-    - sc.lndo.site
-    - slo.lndo.site
+    # - md.lndo.site
+    # - newsroom.lndo.site
+    # - sc.lndo.site
+    # - slo.lndo.site
     - slo2.lndo.site
-    - webservices.lndo.site
+    # - webservices.lndo.site
 
 # Additional services and features.
 services:
   # Theme.
-  node-cli:
-    type: compose
-    services:
-      image: node:13.13.0
-      # Required. See Below
-      command: docker-php-entrypoint apache2-foreground
-      volumes:
-        - .:/app
-  dbslo:
-    type: mysql:5.7
-    creds:
-      user: drupal8
-      password: drupal8
-      database: drupal8
-  dbnewsroom:
-    type: mysql:5.7
-    creds:
-      user: drupal8
-      password: drupal8
-      database: drupal8
-  dbdeprep:
-    type: mysql:5.7
-    creds:
-      user: drupal8
-      password: drupal8
-      database: drupal8
-  dbmd:
-    type: mysql:5.7
-    creds:
-      user: drupal8
-      password: drupal8
-      database: drupal8
-  dbwebservices:
-    type: mysql:5.7
-    creds:
-      user: drupal8
-      password: drupal8
-      database: drupal8
-  dbsc:
-    type: mysql:5.7
-    creds:
-      user: drupal8
-      password: drupal8
-      database: drupal8
+  # node-cli:
+  #   type: compose
+  #   services:
+  #     image: node:13.13.0
+  #     # Required. See Below
+  #     command: docker-php-entrypoint apache2-foreground
+  #     volumes:
+  #       - .:/app
+  # dbslo:
+  #   type: mysql:5.7
+  #   creds:
+  #     user: drupal8
+  #     password: drupal8
+  #     database: drupal8
+  # dbnewsroom:
+  #   type: mysql:5.7
+  #   creds:
+  #     user: drupal8
+  #     password: drupal8
+  #     database: drupal8
+  # dbdeprep:
+  #   type: mysql:5.7
+  #   creds:
+  #     user: drupal8
+  #     password: drupal8
+  #     database: drupal8
+  # dbmd:
+  #   type: mysql:5.7
+  #   creds:
+  #     user: drupal8
+  #     password: drupal8
+  #     database: drupal8
+  # dbwebservices:
+  #   type: mysql:5.7
+  #   creds:
+  #     user: drupal8
+  #     password: drupal8
+  #     database: drupal8
+  # dbsc:
+  #   type: mysql:5.7
+  #   creds:
+  #     user: drupal8
+  #     password: drupal8
+  #     database: drupal8
   dbinyo:
     type: mysql:5.7
     creds:
