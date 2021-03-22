@@ -48,19 +48,9 @@
       classes: []
     } %}
     {% set cards = cards|merge([card]) %}
-  {% else %}
-    {% set item %}
-      <div class='news--sticky-list__item'>
-        <div class='news--sticky-list__item-brow'>
-          {{ row['#node'].field_date.0.value|date('M d, Y') }}
-        </div>
-        <div class='news--sticky-list__item-title'>
-          <h5><a href='{{ row['#node'].path.value.0.alias}}'>{{ row['#node'].title() }}</a></h5>
-        </div>
-    {% endset %}
-    {% set items = items|merge([item]) %}
   {% endif %}
 {% endfor %}
+
 {# Set non-sticky news list to a borderlist card. #}
 {% set card = {
   style: 'borderless',
@@ -68,7 +58,7 @@
   brow: '',
   body: {
     '#type': 'processed_text',
-    '#text': items|join,
+    '#text': attachment_after.0|render,
     '#format': 'basic_html'
   },
   link: {},
@@ -99,7 +89,7 @@
 {# Include the component template and pass in the structured data. #}
 {% include "@organisms/cards/cards.twig" with {
   cards: {
-    background: 'alt',
+    background: 'default',
     num_cols: paragraph.field_columns.value,
     heading: {
       title: content.field_heading.0|render,
