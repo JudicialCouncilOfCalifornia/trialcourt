@@ -1,0 +1,32 @@
+uuid: 7a6b8559-ecce-4bb2-8b18-4e9e7949f6b4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.file_list.field_file_media
+    - field.field.paragraph.file_list.field_heading
+    - paragraphs.paragraphs_type.file_list
+id: paragraph.file_list.default
+targetEntityType: paragraph
+bundle: file_list
+mode: default
+content:
+  field_file_media:
+    type: entity_reference_entity_view
+    weight: 1
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_heading:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  search_api_excerpt: true
