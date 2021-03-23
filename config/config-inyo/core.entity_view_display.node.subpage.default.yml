@@ -3,16 +3,25 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.subpage.body
     - field.field.node.subpage.field_components
     - node.type.subpage
   module:
     - entity_reference_revisions
+    - text
     - user
 id: node.subpage.default
 targetEntityType: node
 bundle: subpage
 mode: default
 content:
+  body:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
   field_components:
     weight: 0
     label: hidden

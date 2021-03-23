@@ -34,3 +34,13 @@ function jcc_custom_ckeditor_css_alter(array &$css, Editor $editor) {
     }
   }
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function jcc_custom_form_node_subpage_edit_form_alter(&$form, $form_state) {
+  $user = \Drupal::currentUser();
+  $access = $user->hasPermission('access migration body');
+
+  $form['body']['#access'] = $access;
+}
