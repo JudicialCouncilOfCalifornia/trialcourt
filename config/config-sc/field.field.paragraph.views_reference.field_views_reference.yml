@@ -1,10 +1,10 @@
-uuid: 8c20b260-a565-40c3-9ded-cabebf11d3c0
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.paragraph.field_views_reference
     - paragraphs.paragraphs_type.views_reference
+    - views.view.alerts
   module:
     - viewsreference
 id: paragraph.views_reference.field_views_reference
@@ -15,7 +15,16 @@ label: 'Views Reference'
 description: ''
 required: true
 translatable: false
-default_value: {  }
+default_value:
+  -
+    options:
+      title: 0
+      argument: ''
+    display_id: alerts
+    argument: null
+    title: 0
+    data: null
+    target_uuid: 532a6438-f876-4995-a71c-089d0389f77d
 default_value_callback: ''
 settings:
   handler: 'default:view'
@@ -24,12 +33,13 @@ settings:
     auto_create: 0
   plugin_types:
     block: block
+    page: page
     default: 0
-    page: 0
     attachment: 0
     feed: 0
   preselect_views:
     location: location
+    news: news
     alerts: 0
     block_content: 0
     content: 0

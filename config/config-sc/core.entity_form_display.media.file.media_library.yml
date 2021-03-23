@@ -1,0 +1,41 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - entity_browser.browser.media_entity_browser
+    - field.field.media.file.field_media_file
+    - media.type.file
+  module:
+    - entity_browser
+id: media.file.media_library
+targetEntityType: media
+bundle: file
+mode: media_library
+content:
+  field_media_file:
+    type: entity_browser_file
+    weight: 0
+    region: content
+    settings:
+      entity_browser: media_entity_browser
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_edit: true
+      field_widget_replace: false
+      open: false
+      view_mode: default
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  translation:
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  langcode: true
+  name: true
+  path: true
+  status: true
+  uid: true

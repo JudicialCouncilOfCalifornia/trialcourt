@@ -1,4 +1,3 @@
-uuid: af389db4-a2e5-4657-b64d-24b05ed5db9a
 langcode: en
 status: true
 dependencies:
@@ -9,7 +8,6 @@ dependencies:
     - glossify_taxonomy
     - linkit
     - media
-    - video_embed_wysiwyg
 name: Body
 format: body
 weight: 0
@@ -20,7 +18,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <b> <i class=""> <cite> <ul type> <ol start type> <li> <dl> <dt> <dd> <h3 id> <h4 id> <h5 id> <h6 id> <table class=""> <img src alt data-entity-type data-entity-uuid data-align data-caption> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class=" usa-button usa-button--primary usa-button--secondary usa-button--inverse usa-button--cta-link usa-button--unstyled"> <blockquote cite class=" blockquote--alert"> <p> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <button class=" usa-button usa-button--primary usa-button--secondary usa-button--inverse usa-button--cta-link usa-button--unstyled"> <hr>'
+      allowed_html: '<em> <strong> <b> <i class=""> <cite> <ul type> <ol start type> <li> <dl> <dt> <dd> <h3 id> <h4 id> <h5 id> <h6 id> <table class=""> <img src alt data-entity-type data-entity-uuid data-align data-caption> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class=" usa-button usa-button--primary usa-button--secondary usa-button--inverse usa-button--cta-link usa-button--unstyled"> <blockquote cite class=" blockquote--alert"> <p> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <button class=" usa-button usa-button--primary usa-button--secondary usa-button--inverse usa-button--cta-link usa-button--unstyled"> <hr> <video> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title>'
       filter_html_help: false
       filter_html_nofollow: false
   entity_embed:
@@ -85,13 +83,9 @@ filters:
     weight: 100
     settings:
       default_view_mode: default
-      allowed_media_types:
-        image: image
       allowed_view_modes:
         full: full
-  video_embed_wysiwyg:
-    id: video_embed_wysiwyg
-    provider: video_embed_wysiwyg
-    status: true
-    weight: 0
-    settings: {  }
+      allowed_media_types:
+        file: file
+        image: image
+        remote_video: remote_video
