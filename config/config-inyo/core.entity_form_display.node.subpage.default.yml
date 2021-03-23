@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.subpage.body
     - field.field.node.subpage.field_components
     - node.type.subpage
   module:
@@ -10,11 +11,22 @@ dependencies:
     - path
     - scheduler
     - scheduler_content_moderation_integration
+    - text
 id: node.subpage.default
 targetEntityType: node
 bundle: subpage
 mode: default
 content:
+  body:
+    weight: 26
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+    type: text_textarea_with_summary
+    region: content
   created:
     type: datetime_timestamp
     weight: 4
