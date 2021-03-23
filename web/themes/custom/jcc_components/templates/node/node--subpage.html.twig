@@ -83,7 +83,9 @@
 
 <article{{ attributes }}>
   <div{{ content_attributes }}>
+    {% set has_components = FALSE %}
     {% for k, component in content.field_components if k|first != "#" %}
+      {% set has_components = TRUE %}
       {# Inject tertiary menu before content if hero is not first. #}
       {% if (k == 0 and component['#paragraph'].type.0.target_id != 'hero') %}
         {{ tertiary }}
@@ -94,5 +96,29 @@
         {{ tertiary }}
       {% endif %}
     {% endfor %}
+
+    {% if not has_components %}
+
+      {% include "@molecules/hero/hero.twig" with {
+        hero: {
+          layout: 'full-main',
+          background: 'default',
+          main: {
+            title: label,
+            lead: '',
+            brow: ''
+          },
+          aside: {},
+          classes: []
+        }
+      } %}
+      {% include '@molecules/section/section.twig' with {
+        section: {
+          background: 'default',
+          container: 'container',
+          content: content.body
+        }
+      } %}
+    {% endif %}
   </div>
 </article>
