@@ -47,16 +47,25 @@
 ]|merge(classes|default([])) %}
 
 <div{{ attributes.addClass(classes) }}>
-
-  {% if not node.field_hide_header.value %}
-    {% if page.header|render %}
-      {{ page.header }}
-    {% endif %}
-  {% endif %}
-
-  {%  if page.navigation|render %}
-    {{ page.navigation }}
-  {% endif %}
+  {% include '@organisms/global/header.twig' with {
+    header: {
+      background: header_footer_variant,
+      skip: {
+        text: "Skip to main content."|t,
+        url: '#main-content'
+      },
+      hat: hat_shoe,
+      logo: {
+        title: site_name.second,
+        svg: '/sites/sc/jcc.svg'
+      },
+      links: main_links,
+      translate: {
+        text: "Translate"|t,
+        links: translation_links,
+      }
+    }
+  } %}
 
   {%  if page.messaging|render %}
     {{ page.messaging }}
@@ -82,13 +91,13 @@
     {{ page.secondary_footer }}
   {% endif %}
 
-  {% include '@organisms/footer/footer.twig' with {
+  {% include '@organisms/global/footer.twig' with {
     footer: {
       background: header_footer_variant,
       links: footer_links,
       title: site_name,
       social_links: social_links,
-      shoe: shoe,
+      shoe: hat_shoe,
       classes: []
     }
   } %}

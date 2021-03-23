@@ -6,26 +6,48 @@
  */
 
 use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_preprocess_HOOK().
  */
 function jcc_components_preprocess_page(&$variables) {
-  // Get the footer menu.
   $variables['header_footer_variant'] = theme_get_setting('header_footer_variant', 'jcc_components');
+
   $variables['site_name'] = [
     'first' => theme_get_setting('site_name_first', 'jcc_components'),
     'second' => theme_get_setting('site_name_second', 'jcc_components'),
   ];
+
+  $variables['main_links'] = jcc_components_get_menu_array('main');
   $variables['footer_links'] = jcc_components_get_menu_array('footer');
   $variables['social_links'] = jcc_components_social_links();
-  $variables['shoe'] = [
+
+  $variables['hat_shoe'] = [
     'title' => [
       'text' => theme_get_setting('hat_shoe_text', 'jcc_components'),
       'url' => theme_get_setting('hat_shoe_url', 'jcc_components'),
     ],
     'links' => jcc_components_get_menu_array('shoe'),
   ];
+
+  $path = \Drupal::service('path.current')->getPath();
+  $langcodes = \Drupal::languageManager()->getLanguages();
+
+  foreach ($langcodes as $langcode => $language) {
+    $url = \Drupal::service('path.alias_manager')->getAliasByPath($path, $langcode);
+    // If there's no alias use the path from the current route.
+    if (empty($url)) {
+      $default = \Drupal::languageManager()->getDefaultLanguage()->getId();
+      $url = Url::fromRoute('<current>')->toString();
+      // Add langcode prefix if not the default language.
+      $url = ($langcode == $default) ? $url : "/${langcode}${url}";
+    }
+    $variables['translation_links'][] = [
+      'text' => $language->getName(),
+      'url' => $url,
+    ];
+  }
 }
 
 /**
@@ -52,7 +74,7 @@ function jcc_components_get_menu_array($menu_name) {
     ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
   ];
   $tree = $menu_tree->transform($tree, $manipulators);
-  return jcc_components_menu_to_array($tree);
+  return jcc_components_menu_to_array($tree, $menu_name);
 }
 
 /**
@@ -60,17 +82,28 @@ function jcc_components_get_menu_array($menu_name) {
  *
  * @param array $tree
  *   The tree of the menu to array-ify.
+ * @param string $menu_name
+ *   The name of the menu.
  *
  * @return array
  *   An array of links, formatted for a component.
  */
-function jcc_components_menu_to_array(array $tree) {
+function jcc_components_menu_to_array(array $tree, $menu_name) {
   $links = [];
+
   foreach ($tree as $element) {
+    if ($menu_name == 'main' && $element->depth = 1 && $element->hasChildren) {
+      $section_link = [
+        'text' => $element->link->getTitle(),
+        'url' => $element->link->getUrlObject(),
+      ];
+    }
     $links[] = [
       'text' => $element->link->getTitle(),
       'url' => $element->link->getUrlObject(),
-      'links' => jcc_components_menu_to_array($element->subtree),
+      'is_current' => $element->inActiveTrail,
+      'links' => jcc_components_menu_to_array($element->subtree, $menu_tree),
+      'section_link' => $section_link,
     ];
   }
   return $links;
