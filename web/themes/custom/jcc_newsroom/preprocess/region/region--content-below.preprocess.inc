@@ -37,6 +37,15 @@ function jcc_newsroom_preprocess_region__content_below(&$variables) {
         ],
         [
           'icon' => [
+            'name' => 'rss2',
+            'title' => (string) t('RSS Feeds'),
+            'decorative' => FALSE,
+          ],
+          'title' => (string) t('Feeds Directory'),
+          'url' => theme_get_setting('rss', $theme),
+        ],
+        [
+          'icon' => [
             'name' => 'flickr',
             'title' => (string) t('Flickr'),
             'decorative' => FALSE,
