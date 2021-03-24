@@ -1,3 +1,4 @@
+uuid: 6d8f82f4-6d38-429b-be81-11cc7353183e
 langcode: en
 status: true
 dependencies:
@@ -15,7 +16,7 @@ mode: media_library
 content:
   field_media_file:
     type: entity_browser_file
-    weight: 0
+    weight: 1
     region: content
     settings:
       entity_browser: media_entity_browser
@@ -27,15 +28,22 @@ content:
       view_mode: default
       preview_image_style: thumbnail
     third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   translation:
-    weight: 1
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
   created: true
   langcode: true
-  name: true
   path: true
   status: true
   uid: true
