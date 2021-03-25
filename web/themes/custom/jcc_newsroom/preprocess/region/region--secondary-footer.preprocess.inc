@@ -19,21 +19,21 @@ function jcc_newsroom_preprocess_region__secondary_footer(&$variables) {
       'items' => [
         [
           'icon' => [
-            'name' => 'twitter',
-            'title' => (string) t('Twitter'),
-            'decorative' => FALSE,
-          ],
-          'title' => (string) t('Twitter'),
-          'url' => theme_get_setting('twitter', $theme),
-        ],
-        [
-          'icon' => [
             'name' => 'youtube',
             'title' => (string) t('YouTube'),
             'decorative' => FALSE,
           ],
           'title' => (string) t('YouTube'),
           'url' => theme_get_setting('youtube', $theme),
+        ],
+        [
+          'icon' => [
+            'name' => 'twitter',
+            'title' => (string) t('Twitter'),
+            'decorative' => FALSE,
+          ],
+          'title' => (string) t('Twitter'),
+          'url' => theme_get_setting('twitter', $theme),
         ],
         [
           'icon' => [

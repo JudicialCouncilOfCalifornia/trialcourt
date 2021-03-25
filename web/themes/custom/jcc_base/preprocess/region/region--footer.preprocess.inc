@@ -110,21 +110,21 @@ function jcc_base_preprocess_region__footer(&$variables) {
         ],
         [
           'icon' => [
-            'name' => 'facebook2',
-            'title' => (string) t('Facebook'),
-            'decorative' => FALSE,
-          ],
-          'title' => (string) t('Facebook'),
-          'url' => theme_get_setting('facebook', $theme),
-        ],
-        [
-          'icon' => [
             'name' => 'twitter',
             'title' => (string) t('Twitter'),
             'decorative' => FALSE,
           ],
           'title' => (string) t('Twitter'),
           'url' => theme_get_setting('twitter', $theme),
+        ],
+        [
+          'icon' => [
+            'name' => 'rss2',
+            'title' => (string) t('RSS'),
+            'decorative' => FALSE,
+          ],
+          'title' => (string) t('RSS'),
+          'url' => theme_get_setting('rss', $theme),
         ],
       ],
     ],
