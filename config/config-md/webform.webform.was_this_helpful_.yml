@@ -12,7 +12,7 @@ id: was_this_helpful_
 title: 'Was this helpful?'
 description: ''
 category: ''
-elements: "url:\n  '#type': hidden\n  '#title': Url\n  '#default_value': '[current-page:url]'\nwas_this_helpful_:\n  '#type': radios\n  '#title': 'Was this helpful?'\n  '#options':\n    'yes': 'Yes'\n    'no': 'No'\n  '#options_display': buttons_horizontal\nany_additional_feedback_:\n  '#type': textarea\n  '#title': 'Any additional feedback?'\n  '#states':\n    visible-slide:\n      ':input[name=\"was_this_helpful_\"]':\n        checked: true\nemail_optional_:\n  '#type': email\n  '#title': 'Email (optional)'\n  '#states':\n    visible-slide:\n      ':input[name=\"was_this_helpful_\"]':\n        checked: true"
+elements: "url:\n  '#type': hidden\n  '#title': Url\n  '#default_value': '[current-page:url]'\nwas_this_helpful_:\n  '#type': radios\n  '#title': 'Was this page helpful?'\n  '#options':\n    'yes': 'Yes'\n    'no': 'No'\n  '#options_display': buttons_horizontal\nany_additional_feedback_:\n  '#type': textarea\n  '#title': 'Any additional feedback?'\n  '#states':\n    visible-slide:\n      ':input[name=\"was_this_helpful_\"]':\n        checked: true\nemail_optional_:\n  '#type': email\n  '#title': 'Email (optional)'\n  '#states':\n    visible-slide:\n      ':input[name=\"was_this_helpful_\"]':\n        checked: true"
 css: ''
 javascript: ''
 settings:
@@ -191,5 +191,42 @@ access:
     roles: {  }
     users: {  }
     permissions: {  }
-handlers: {  }
+handlers:
+  email:
+    id: email
+    label: Email
+    notes: ''
+    handler_id: email
+    status: true
+    conditions: {  }
+    weight: 0
+    settings:
+      states:
+        - completed
+      to_mail: ivan.bueno@jud.ca.gov
+      to_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      from_mail: do-not-reply@courtinfo.ca.gov
+      from_options: {  }
+      from_name: 'Judicial Council of California'
+      subject: 'Madera User Feedback'
+      body: "Submitted on [webform_submission:created]<br />\r\n<br />\r\n[webform_submission:values]"
+      excluded_elements: {  }
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: true
+      attachments: false
+      twig: false
+      debug: false
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      theme_name: ''
+      parameters: {  }
 variants: {  }
