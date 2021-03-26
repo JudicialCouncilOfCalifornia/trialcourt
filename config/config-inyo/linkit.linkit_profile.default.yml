@@ -5,7 +5,7 @@ dependencies:
   module:
     - node
 _core:
-  default_config_hash: Tt8DtxZ3Nooo0PoWPpJvszA3R_5d8MmpUW7LM_R-BzY
+  default_config_hash: ccZ_Hz3zt8hbBwyhCLYlm2Tyed8Wh62YyQNBzJ7t3tw
 id: default
 label: Default
 description: 'A default Linkit profile'
@@ -17,7 +17,18 @@ matchers:
     settings:
       metadata: 'by [node:author] | [node:created:medium]'
       bundles: {  }
-      group_by_bundle: false
+      group_by_bundle: true
       include_unpublished: false
+      substitution_type: canonical
+      limit: 100
+  fde6ff29-d13a-4615-90e3-80d6ef4fb129:
+    uuid: fde6ff29-d13a-4615-90e3-80d6ef4fb129
+    id: 'entity:media'
+    weight: 0
+    settings:
+      metadata: '[media:field_media_file:description]'
+      bundles:
+        file: file
+      group_by_bundle: true
       substitution_type: canonical
       limit: 100
