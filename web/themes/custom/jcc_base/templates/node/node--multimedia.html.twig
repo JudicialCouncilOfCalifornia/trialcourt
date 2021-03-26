@@ -148,11 +148,10 @@
                 {% set media_image %}
                   <div class="contextual-region">
                     {{ contextual_links('media:media=' ~ media_id) }}
-                    <a aria-hidden="true" href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ media_caption }}">
+                    <a href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ media_caption }}" aria-label="Click to view larger image">
                       <img src="{{ image_url }}" alt="{{ image_alt }}">
                     </a>
                   </div>
-                  <img class="usa-sr-only" src="{{ image_url }}" alt="{{ image_alt }}">
                 {% endset %}
               {% endif %}
               <div class="grid-col-12 tablet:grid-col-3 height-full lightbox__card image">

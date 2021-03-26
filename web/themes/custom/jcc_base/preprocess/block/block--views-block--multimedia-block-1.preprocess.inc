@@ -75,7 +75,7 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
         $image_alt = $image_entity->field_media_image->alt;
         $image_caption = strip_tags($image_entity->field_media_caption->value);
         // Image element.
-        $image_elem = Markup::create('<a aria-hidden="true" href="' . $image_src . '" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="' . $image_caption . '"><img src="' . $image_thumb . '" alt="' . $image_alt . '"></a><img class="usa-sr-only" src="' . $image_src . '" alt="' . $image_alt . '" />');
+        $image_elem = Markup::create('<a href="' . $image_src . '" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="' . $image_caption . '" aria-label="Click to view larger image"><img src="' . $image_thumb . '" alt="' . $image_alt . '"></a>');
 
         $featured_image_card = [
           'excerpt_img' => $image_elem,
