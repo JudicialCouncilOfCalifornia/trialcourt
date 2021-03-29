@@ -33,27 +33,27 @@ proxy:
     # - md.lndo.site
     # - newsroom.lndo.site
     - sc.lndo.site
-    # - slo.lndo.site
+    - slo.lndo.site
     - slo2.lndo.site
     # - webservices.lndo.site
 
 # Additional services and features.
 services:
   # Theme.
-  # node-cli:
-  #   type: compose
-  #   services:
-  #     image: node:13.13.0
-  #     # Required. See Below
-  #     command: docker-php-entrypoint apache2-foreground
-  #     volumes:
-  #       - .:/app
-  # dbslo:
-  #   type: mysql:5.7
-  #   creds:
-  #     user: drupal8
-  #     password: drupal8
-  #     database: drupal8
+  node-cli:
+    type: compose
+    services:
+      image: node:13.13.0
+      # Required. See Below
+      command: docker-php-entrypoint apache2-foreground
+      volumes:
+        - .:/app
+  dbslo:
+    type: mysql:5.7
+    creds:
+      user: drupal8
+      password: drupal8
+      database: drupal8
   # dbnewsroom:
   #   type: mysql:5.7
   #   creds:
