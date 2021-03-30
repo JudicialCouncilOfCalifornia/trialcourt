@@ -10,7 +10,7 @@ The config directories will become `config/config-default` and `config/config-sl
 
 If you have a `config/config-local` you should rename that to `config/config-default-local`
 
-The pattern will be `sites/[sitecode]` and `config/config-[sitecode]` where `[sitecode]` is a short abbreviation for the court. i.e. `slo`
+The pattern will be `sites/[sitecode]` and `config/config-[sitecode]` where `[sitecode]` is a short name for the site. i.e. `slo`, or `madera`
 
 
 ## Features
@@ -20,7 +20,12 @@ This project uses Features module to share configuration across multisites, and 
 
 ## Lando Changes
 
-Lando will have a proxy and a database service for each multisite, including default. It will require a `lando rebuild` to activate, each time a proxy and datbase service are added.  See `proxy` and `services` in the `.lando.yml` file for examples.
+Lando no longer needs a proxy and a database service for each multisite.
+Instead we use a wildcard proxy "*.lndo.site" to catch them all and we create multiple databases in the single database service.
+
+It will no longer require a `lando rebuild` to activate. The multisite installer simply creates a new database for the site in the database container.
+
+There is tooling and a helper script for this. `scripts/dbcreate.sh` runs on `lando start/rebuild` and creates a database for every directory in `/app/web/sites/`. It also creates a new database when `lando multisite` is run.
 
 ### `lando fresh` also changes to accommodate multisite.
 
@@ -30,23 +35,21 @@ To import a database use the (optional) `-f [path/to/file.sql|gz]`.
 
 i.e `lando fresh -l slo.lndo.site -f data/slo-database.sql.gz`
 
+NOTE: This still works with the database changes mentioned above.
+
 ### `lando multisite`
 
 There's a new command for starting multisites. `lando multsite [sitecode]`
 
-Before you run this you should edit the `.lando.yml` file to add a proxy and a db service, then run `lando rebuild` to install them.
+You no longer need to edit the `.lando.yml` file to add a proxy and a db service, or run `lando rebuild`.
 
-Once those are enabled `lando multisite [sitecode]` will perform the rest of the steps to install the multisite on your local by cloning the default sites directory, and updating certian strings in settings file. It then runs `drush site-install` for you. There is one prompt to make sure you're ready to install.
+Simply run `lando multisite [sitecode]` and it will perform all of the steps to install the multisite on your local by cloning the default sites directory, and updating certain strings in settings file. It then runs `drush site-install` for you. This no longer prompts you to drop the database. It assumes yes, so you can run the command and take a nap or something.
 
 Installation on my local takes about 10 minutes. There is no progress indicator on the commandline installer.
 
 ----
 
 ## Multisite Creation: All Steps
-
- - create new proxy in .lando.yml [new].lndo.site
- - create new db service in .lando.yml db[new]
- - `lando rebuild`
 
  - `lando multisite [new]`  ~10min Does the following.
    - copy `sites/default` to `sites/[new]`
@@ -94,6 +97,6 @@ For our use, we want to use one Drupal Multisite codebase for local development,
 
 ### Additional notes about managing multisite.
 
- - Each multisite needs a drush alias file in `drush/sites`. Copy one and update the UUID in the entries.
- - Remember to add environment urls to sites.php for each environment pointing to the appropriate multisite directory.
- - When creating a new multisite, export the local database and import it to the necessary Pantheon environment(s).
+ - Each multisite needs a drush alias file in `drush/sites`. Copy one and update the UUID in the entries as well as the URI. UUID is found on the pantheon dashboard for that project. It's the long id string in the url.
+ - Remember to add environment urls to sites.php for each environment pointing to the appropriate multisite directory. This is only necessary for custom domains that do not have the sitename pattern. See sites.php for more info.
+ - When creating a new multisite, export the local database and import it to the necessary Pantheon environment(s) so we have compatible config import/export moving forward.

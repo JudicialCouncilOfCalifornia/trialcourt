@@ -21,6 +21,8 @@ for path in /app/web/sites/* ; do
 done
 
 TARGET_FEATURE=""
+TARGET_SITE=""
+FEATURE_BUNDLE="jcc_tc2"
 OPTIONS=f:
 LONGOPTS=feature:
 
@@ -28,20 +30,32 @@ LONGOPTS=feature:
 # -temporarily store output to be able to check for errors
 # -activate quoting/enhanced mode (e.g. by writing out “--options”)
 # -pass arguments only via   -- "$@"   to separate them correctly
-! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@")
-if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
-    # e.g. return value is 1
-    #  then getopt has complained about wrong arguments to stdout
-    exit 2
-fi
-# read getopt’s output this way to handle the quoting right:
-eval set -- "$PARSED"
+# ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@")
+# if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
+#     # e.g. return value is 1
+#     #  then getopt has complained about wrong arguments to stdout
+#     exit 2
+# fi
+# # read getopt’s output this way to handle the quoting right:
+# eval set -- "$PARSED"
 
-# now enjoy the options in order and nicely split until we see --
-while true; do
+# PARSE THE ARGZZ
+while (( "$#" )); do
     case "$1" in
+        -b|--bundle)
+            FEATURE_BUNDLE="$2"
+            shift 2
+            ;;
+        -c|--command)
+            command="$2"
+            shift 2
+            ;;
         -f|--feature)
             TARGET_FEATURE="$2"
+            shift 2
+            ;;
+        -s|--site)
+            TARGET_SITE="$2"
             shift 2
             ;;
         --)
@@ -49,15 +63,12 @@ while true; do
             break
             ;;
         *)
-            echo "Programming error"
-            exit 3
+            shift
             ;;
     esac
 done
 
 feature_import() {
-
-  TARGET_SITE=$1
 
   # Export any updated features from source.
   echo -e "\n${Y}Make sure your features are updated and exported!${RE}"
@@ -67,10 +78,10 @@ feature_import() {
   if [ "$TARGET_SITE" ] ; then
     if [ "$TARGET_FEATURE" ] ; then
       echo -e "${G}\nImporting $TARGET_FEATURE changes to $TARGET_SITE${RE}"
-      drush @local.$TARGET_SITE fr $TARGET_FEATURE -y --bundle=jcc_tc
+      drush @local.$TARGET_SITE fr $TARGET_FEATURE -y --bundle=$FEATURE_BUNDLE
     else
       echo -e "${G}\nImporting feature changes to $TARGET_SITE${RE}"
-      drush @local.$TARGET_SITE fra -y --bundle=jcc_tc
+      drush @local.$TARGET_SITE fra -y --bundle=$FEATURE_BUNDLE
     fi
     echo -e "\nExporting config for @local.${TARGET_SITE}..."
     drush @local.$TARGET_SITE cex -y
@@ -84,10 +95,10 @@ feature_import() {
     for SITE in ${SUB_SITES[@]} ; do
       if [ "$TARGET_FEATURE" ] ; then
         echo -e "\nUpdating $TARGET_FEATURE of $SITE..."
-        drush $SITE fr $TARGET_FEATURE -y --bundle=jcc_tc
+        drush $SITE fr $TARGET_FEATURE -y --bundle=$FEATURE_BUNDLE
       else
         echo -e "\nUpdating all features of $SITE..."
-        drush $SITE fra -y --bundle=jcc_tc
+        drush $SITE fra -y --bundle=$FEATURE_BUNDLE
       fi
       echo -e "\nExporting config for $SITE..."
       drush $SITE cex -y
@@ -97,7 +108,7 @@ feature_import() {
 
 drush_fra_cex() {
   echo -e "\nUpdating $SITE..."
-  drush $1 fra -y --bundle=jcc_tc
+  drush $1 fra -y --bundle=$FEATURE_BUNDLE
   echo -e "\nExporting config for $1..."
   drush $1 cex -y
 }
@@ -129,23 +140,28 @@ drush_en_cex() {
   drush $1 cex -y
 }
 
-if [ "$1" == 'docs' ] ; then
-  more FEATURES.md
-  clear
-  echo
+if [ "$command" == 'docs' ] ; then
+  echo -e "\n${G}feature:[command] -b -f -s${RE}"
+  echo -e "\n${Y}This command needs work. It's a little tricky right now with two separate groups of sites running different feature bundles, we can't roll out all features to all sites.\n\t@todo: Refactor this for more concise commands. \n\t@todo: Hurry to migrate old sites to the new profile/feature set.\n\t@todo: Develop process for feature syncing in stage environment so developers don't need to have every multisite running locally to sync feature config.${RE}"
+  echo -e "${R}features:enable${RE} will not really work effectively for the reasons mentioned above."
+  echo -e "${G}features:sync${RE} can be used for mass deployment via the -b [bundle] option as only sites with features of the specified bundle will have related feature config imported."
+  echo -e "\t-b|--bundle\tjcc_tc or jcc_tc2 (default)"
+  echo -e "\t-f|--feature\tThe target feature to import config"
+  echo -e "\t-s|--site\tThe target site to import config"
+  echo -e "\n${G}More Info:${RE}"
   echo https://github.com/JudicialCouncilOfCalifornia/trialcourt/blob/master/FEATURES.md
   echo
   exit 0
 fi
 
-if [ "$1" == 'enable' ] ; then
-  feature_enable $2
+if [ "$command" == 'enable' ] ; then
+  feature_enable $TARGET_FEATURE
   exit 0
 fi
 
-if [ "$1" == 'sync' ] ; then
-  feature_import $2
+if [ "$command" == 'sync' ] ; then
+  feature_import
   exit 0
 fi
 
-echo -e "\n${R}No such command: ${1}${RE}\n"
+echo -e "\n${R}No such command: ${command}${RE}\n"
