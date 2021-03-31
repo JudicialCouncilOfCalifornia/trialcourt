@@ -4,20 +4,61 @@ status: true
 dependencies:
   config:
     - core.entity_form_mode.media.media_library
+    - field.field.media.remote_video.field_height
+    - field.field.media.remote_video.field_media_image
     - field.field.media.remote_video.field_media_oembed_video
+    - field.field.media.remote_video.field_provider
+    - field.field.media.remote_video.field_video_id
+    - field.field.media.remote_video.field_width
+    - image.style.thumbnail
     - media.type.remote_video
+  module:
+    - svg_image
 _core:
   default_config_hash: oW6wDwmG-qX9Xzz-qLKOF5oUTVe3ZJM0oyQGEwGUMSE
 id: media.remote_video.media_library
 targetEntityType: media
 bundle: remote_video
 mode: media_library
-content: {  }
+content:
+  field_media_image:
+    type: image_image
+    weight: 3
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_media_oembed_video:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_video_id:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
 hidden:
   created: true
-  field_media_oembed_video: true
+  field_height: true
+  field_provider: true
+  field_width: true
   langcode: true
-  name: true
   path: true
   status: true
   uid: true
