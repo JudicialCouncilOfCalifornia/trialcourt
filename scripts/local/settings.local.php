@@ -99,11 +99,11 @@ $settings['container_yamls'][] = DRUPAL_ROOT . '/sites/[site]/services.local.yml
  * Database settings: *.
  */
 $databases['default']['default'] = [
-  'database' => 'drupal8',
+  'database' => '[site]',
   'username' => 'drupal8',
   'password' => 'drupal8',
   'prefix' => '',
-  'host' => 'db[site]',
+  'host' => 'database',
   'port' => '3306',
   'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
   'driver' => 'mysql',
