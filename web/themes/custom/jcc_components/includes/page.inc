@@ -92,6 +92,7 @@ function jcc_components_menu_to_array(array $tree, $menu_name) {
   $links = [];
 
   foreach ($tree as $element) {
+    $section_link = [];
     if ($menu_name == 'main' && $element->depth = 1 && $element->hasChildren) {
       $section_link = [
         'text' => $element->link->getTitle(),
@@ -102,7 +103,7 @@ function jcc_components_menu_to_array(array $tree, $menu_name) {
       'text' => $element->link->getTitle(),
       'url' => $element->link->getUrlObject(),
       'is_current' => $element->inActiveTrail,
-      'links' => jcc_components_menu_to_array($element->subtree, $menu_tree),
+      'links' => jcc_components_menu_to_array($element->subtree, $menu_name),
       'section_link' => $section_link,
     ];
   }
