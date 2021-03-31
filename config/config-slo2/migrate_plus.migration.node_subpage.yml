@@ -15,7 +15,7 @@ source:
   plugin: url
   data_fetcher_plugin: http
   data_parser_plugin: google_sheets
-  urls: 'https://spreadsheets.google.com/feeds/list/1ZXKepMImqcR57_zpTT48BaFlW2wdN78ya57RNZPWJHE/11/public/values?alt=json'
+  urls: ''
   item_selector: entry
   fields:
     -
@@ -31,21 +31,9 @@ source:
       label: Title
       selector: title
     -
-      name: headerh1
-      label: 'Header H1'
-      selector: headerh1
-    -
-      name: division
-      label: Division
-      selector: division
-    -
       name: body
       label: Body
       selector: body
-    -
-      name: htmlbody
-      label: 'HTML Body'
-      selector: htmlbody
   ids:
     src_unique_id:
       type: integer
@@ -75,11 +63,11 @@ process:
   uid:
     plugin: default_value
     default_value: 1
-  title: headerh1
+  title: title
   path/pathauto:
     plugin: default_value
     default_value: 1
-  body/value: htmlbody
+  body/value: body
   body/format:
     plugin: default_value
     default_value: full_html
