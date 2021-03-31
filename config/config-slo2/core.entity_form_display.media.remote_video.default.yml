@@ -4,7 +4,6 @@ status: true
 dependencies:
   config:
     - field.field.media.remote_video.field_height
-    - field.field.media.remote_video.field_help_text
     - field.field.media.remote_video.field_media_image
     - field.field.media.remote_video.field_media_oembed_video
     - field.field.media.remote_video.field_provider
@@ -14,7 +13,6 @@ dependencies:
     - media.type.remote_video
   module:
     - field_group
-    - markup
     - media
     - path
     - svg_image
@@ -31,9 +29,9 @@ third_party_settings:
       format_type: details
       region: content
       format_settings:
+        description: 'Do <em><b>not</b></em> edit/alter these fields unless you know what you are doing.'
         id: ''
         classes: ''
-        description: ''
         open: false
         required_fields: false
       label: Advanced
@@ -56,12 +54,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: number
-    region: content
-  field_help_text:
-    weight: 13
-    settings: {  }
-    third_party_settings: {  }
-    type: markup
     region: content
   field_media_image:
     weight: 3
