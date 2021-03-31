@@ -94,7 +94,8 @@ fi
 if [ "$LANDO_SERVICE_NAME" = "node-cli" ] && [ -f /app/data/.composer-installed.fresh ] ; then
   if [ ! -f /app/data/.themes-built.fresh ] ; then
     echo -e "\nBuilding themes...\n"
-    /app/scripts/theme.sh -a
+    echo -e "\n${Y}Theme Build Suspended. Build manually and include assets in the repo. The sub themes will be removed when old sites migrate to new profile so building every theme is time consuming. New theme will not need build as this is handled in the pattern library.${RE}"
+    # /app/scripts/theme.sh -a
 
     # Leave an indicator as a condition for later appserver commands.
     touch /app/data/.themes-built.fresh
