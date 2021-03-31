@@ -3,7 +3,12 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.media.remote_video.field_height
+    - field.field.media.remote_video.field_media_image
     - field.field.media.remote_video.field_media_oembed_video
+    - field.field.media.remote_video.field_provider
+    - field.field.media.remote_video.field_video_id
+    - field.field.media.remote_video.field_width
     - media.type.remote_video
   module:
     - media
@@ -67,4 +72,9 @@ content:
       match_limit: 10
     region: content
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_height: true
+  field_media_image: true
+  field_provider: true
+  field_video_id: true
+  field_width: true
