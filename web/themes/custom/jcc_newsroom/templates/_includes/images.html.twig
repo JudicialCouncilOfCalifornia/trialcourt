@@ -32,10 +32,9 @@
                   {% set media_caption = image.entity.field_media_caption.value|join(' ')|striptags %}
 
                   {% if image_url %}
-                    <a aria-hidden="true" href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ media_caption }}">
+                    <a href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ media_caption }}" aria-label="Click to view larger image">
                       <img src="{{ image_url }}" alt="{{ img_alt }}">
                     </a>
-                    <img class="usa-sr-only" src="{{ image_url }}" alt="{{ img_alt }}">
                   {% endif %}
                 {% endif %}
               </div>
