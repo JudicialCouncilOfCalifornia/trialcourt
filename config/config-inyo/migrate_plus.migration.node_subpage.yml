@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: FXK0yFMIlQ4_vEIZBPYxkzGDZvnmX3I-_BJYCBNt3ks
+  default_config_hash: UyW9gMsmo1_-FX43YD0qxY4YWZlsK4FjjUIUXgJhuDk
 id: node_subpage
 class: null
 field_plugin_method: null
@@ -23,7 +23,7 @@ source:
     -
       name: src_unique_id
       label: 'Unique ID'
-      selector: id
+      selector: url
     -
       name: url
       label: Url
@@ -33,55 +33,27 @@ source:
       label: Title
       selector: title
     -
-      name: headerh1
-      label: 'Header H1'
-      selector: headerh1
-    -
-      name: division
-      label: Division
-      selector: division
-    -
       name: body
       label: Body
       selector: body
-    -
-      name: htmlbody
-      label: 'HTML Body'
-      selector: htmlbody
   ids:
     src_unique_id:
-      type: integer
-    url:
       type: string
-  constants:
-    os: 'Online Services'
-    ff: 'Forms & Filing'
-    sh: 'Self Help'
-    gi: 'General Information'
-    dv: Division
 process:
-  topic_code:
-    plugin: substr
-    source: url
-    start: 30
-    length: 2
-  topic_name:
-    plugin: static_map
-    source: '@topic_code'
-    map:
-      os: 'Online Services'
-      ff: 'Forms & Filing'
-      sh: 'Self Help'
-      gi: 'General Information'
-      dv: Division
   uid:
     plugin: default_value
     default_value: 1
-  title: headerh1
+  title:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: TITLE
   path/pathauto:
     plugin: default_value
     default_value: 1
-  body/value: htmlbody
+  body/value: body
   body/format:
     plugin: default_value
     default_value: full_html
