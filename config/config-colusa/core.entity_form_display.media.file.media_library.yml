@@ -10,7 +10,7 @@ dependencies:
   module:
     - entity_browser
 _core:
-  default_config_hash: UQFtE2dDvvmN1cfDlQYO4T5iMTP25Qjn2U8Z29qvtKE
+  default_config_hash: ukvkAXB3ZherYN4VpabbtTpA_KYoLBoWqC0ZShlpl7g
 id: media.file.media_library
 targetEntityType: media
 bundle: file
@@ -18,7 +18,7 @@ mode: media_library
 content:
   field_media_file:
     type: entity_browser_file
-    weight: 0
+    weight: 1
     region: content
     settings:
       entity_browser: media_entity_browser
@@ -30,15 +30,22 @@ content:
       view_mode: default
       preview_image_style: thumbnail
     third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   translation:
-    weight: 1
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
   created: true
   langcode: true
-  name: true
   path: true
   status: true
   uid: true

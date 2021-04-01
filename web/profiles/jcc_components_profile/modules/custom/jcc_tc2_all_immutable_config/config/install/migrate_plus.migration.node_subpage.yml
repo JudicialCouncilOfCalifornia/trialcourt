@@ -21,7 +21,7 @@ source:
     -
       name: src_unique_id
       label: 'Unique ID'
-      selector: id
+      selector: url
     -
       name: url
       label: Url
@@ -36,34 +36,18 @@ source:
       selector: body
   ids:
     src_unique_id:
-      type: integer
-    url:
       type: string
-  constants:
-    os: 'Online Services'
-    ff: 'Forms & Filing'
-    sh: 'Self Help'
-    gi: 'General Information'
-    dv: Division
 process:
-  topic_code:
-    plugin: substr
-    source: url
-    start: 30
-    length: 2
-  topic_name:
-    plugin: static_map
-    source: '@topic_code'
-    map:
-      os: 'Online Services'
-      ff: 'Forms & Filing'
-      sh: 'Self Help'
-      gi: 'General Information'
-      dv: Division
   uid:
     plugin: default_value
     default_value: 1
-  title: title
+  title:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: TITLE
   path/pathauto:
     plugin: default_value
     default_value: 1

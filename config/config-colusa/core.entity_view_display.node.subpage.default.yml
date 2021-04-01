@@ -8,14 +8,22 @@ dependencies:
     - node.type.subpage
   module:
     - entity_reference_revisions
+    - text
     - user
 _core:
-  default_config_hash: FVUW6J4d3JgSTqCtbMazdO8TxRrS_AonV_0V2m2EGe8
+  default_config_hash: 4nX8ji3yQ5npDRhheqmr0-Y6g41REP3fSANGi-QtO4g
 id: node.subpage.default
 targetEntityType: node
 bundle: subpage
 mode: default
 content:
+  body:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
   field_components:
     weight: 0
     label: hidden
@@ -26,7 +34,6 @@ content:
     type: entity_reference_revisions_entity_view
     region: content
 hidden:
-  body: true
   langcode: true
   links: true
   search_api_excerpt: true
