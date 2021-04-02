@@ -17,6 +17,7 @@
 
         const wrapper = this.closest('.form-wrapper');
         const field = wrapper.querySelector('select');
+
         // Check for selected button class and reassign to clicked button.
         const selected = wrapper.querySelector('.jcc-courtyard-icons__button.selected');
 
