@@ -25,12 +25,34 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginInterface {
 
   /**
+   * Icon types array.
+   *
+   * Groups icons by type indicated by prefix:
+   * 'icon-prefix' => $this->t('Label')
+   *
+   * Any icons that don't have a prefix match will be placed in the group
+   * "Other". Add additional prefix/Label pairs to the array to expand.
+   *
+   * This groups the Icon Buttons as well as the Select Options.
+   *
+   * @var array
+   */
+  private $types = [];
+
+  /**
    * {@inheritDoc}
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $config) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->config = $config;
     $this->iconsPath = $this->config->get('jcc_courtyard_icons.settings')->get('icons_path');
+    // Any icons that don't have a prefix match will be placed in the group
+    // "Other". Add additional prefix/Label pairs to the array to expand.
+    $this->types = [
+      'icon-fa' => $this->t('Font Awesome'),
+      'icon-line-white' => $this->t('Line: White'),
+      'icon-line-dark' => $this->t('Line: Dark'),
+    ];
   }
 
   /**
@@ -60,7 +82,9 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
 
     $element['value'] = [
       '#type' => 'select',
-      '#options' => $this->getIconList(),
+      '#options' => $this->getIconOptions(),
+      // Do not allow chosen module to control the field.
+      '#chosen' => FALSE,
       '#default_value' => $items[$delta]->value,
     ] + $element;
 
@@ -118,16 +142,29 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
    */
   public function getIconButtons() {
     $buttons = [];
+    $current = '';
     foreach ($this->getIconList() as $name) {
-      $buttons[] = "<button class='jcc-courtyard-icons__button' data-icon-name='$name'>
-        <svg width='35' height='35' role='img' aria-label='$name'>
-          <use xlink:href='/$this->iconsPath#$name'></use>
-        </svg>
-      </button>";
+      foreach ($this->types as $prefix => $label) {
+        if (strpos($name, $prefix) !== FALSE) {
+          if ($current != $prefix) {
+            $buttons[$prefix][] = "<h5>" . (string) $label . "</h5>";
+            $current = $prefix;
+          }
+          $buttons[$prefix][] = "<button class='jcc-courtyard-icons__button' data-icon-name='$name'>
+            <svg role='img' aria-label='$name'>
+              <use xlink:href='/$this->iconsPath#$name'></use>
+            </svg>
+          </button>";
+        }
+      }
+    }
+
+    foreach ($buttons as $group) {
+      $groups[] = implode(' ', $group);
     }
 
     if (!empty($buttons)) {
-      return "<div class='jcc-courtyard-icons'>" . implode(' ', $buttons) . "</div>";
+      return "<div class='jcc-courtyard-icons'>" . implode(' ', $groups) . "</div>";
     }
     else {
       return '<h3>' . $this->t('Icons Not Configured') . '</h3>
@@ -136,6 +173,34 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
         </p>
       ';
     }
+  }
+
+  /**
+   * Get icon options from the icon list and expand to option groups.
+   *
+   * @return array
+   *   Associative array with 2 levels. Group -> options.
+   */
+  public function getIconOptions() {
+    $options = [];
+    $grouped = [];
+    $list = $this->getIconList();
+
+    foreach ($list as $name) {
+      foreach ($this->types as $prefix => $label) {
+        if (strpos($name, $prefix) !== FALSE) {
+          $options[(string) $label][$name] = $name;
+          $grouped[$name] = $name;
+        }
+      }
+    }
+    $others = array_diff($list, $grouped);
+    $other_label = $this->t('Other');
+    foreach ($others as $other) {
+      $options[(string) $other_label][$other] = $other;
+    }
+
+    return $options;
   }
 
 }
