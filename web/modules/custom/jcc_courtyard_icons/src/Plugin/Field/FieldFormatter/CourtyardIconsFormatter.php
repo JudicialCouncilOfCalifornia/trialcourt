@@ -2,8 +2,12 @@
 
 namespace Drupal\jcc_courtyard_icons\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Formatter that shows and icon from Courtyard.
@@ -16,7 +20,32 @@ use Drupal\Core\Field\FormatterBase;
  *   }
  * )
  */
-class CourtyardIconsFormatter extends FormatterBase {
+class CourtyardIconsFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * {@inheritDoc}
+   */
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, ConfigFactoryInterface $config) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
+    $this->config = $config;
+    $this->iconsPath = $this->config->get('jcc_courtyard_icons.settings')->get('icons_path');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['label'],
+      $configuration['view_mode'],
+      $configuration['third_party_settings'],
+      $container->get('config.factory')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -30,8 +59,13 @@ class CourtyardIconsFormatter extends FormatterBase {
         $elements[$delta] = [
           '#type' => 'processed_text',
           '#format' => 'full_html',
-          '#text' => "<svg role='img' aria-label='$name'><use xlink:href='#$name'></use></svg>",
+          '#text' => "<svg role='img' aria-label='$name'><use xlink:href='/$this->iconsPath#$name'></use></svg>",
           '#name' => $name,
+          '#attached' => [
+            'library' => [
+              'jcc_courtyard_icons/widget',
+            ],
+          ],
         ];
       }
     }
