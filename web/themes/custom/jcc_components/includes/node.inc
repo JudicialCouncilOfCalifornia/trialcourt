@@ -100,9 +100,11 @@ function jcc_components_node_subpage(array &$variables) {
             'url' => $content->link->getUrlObject(),
           ];
         }
+
         $variables['tertiary_menu']['items'][] = [
           'title' => $sub_content->link->getTitle(),
           'url' => $sub_content->link->getUrlObject(),
+          'in_active_trail' => $sub_content->inActiveTrail,
         ];
       }
     }
