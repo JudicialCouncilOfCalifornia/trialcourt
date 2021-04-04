@@ -29,6 +29,11 @@ class CourtyardIconsFormatter extends FormatterBase implements ContainerFactoryP
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
     $this->config = $config;
     $this->iconsPath = $this->config->get('jcc_courtyard_icons.settings')->get('icons_path');
+    $sets = $this->config->get('jcc_courtyard_icons.settings')->get('icon_sets');
+    $sets = explode(PHP_EOL, $sets);
+    foreach ($sets as $set) {
+      $this->sets[] = trim($set);
+    }
   }
 
   /**
@@ -56,11 +61,18 @@ class CourtyardIconsFormatter extends FormatterBase implements ContainerFactoryP
 
     foreach ($items as $delta => $item) {
       foreach ($item->toArray() as $name) {
+        foreach ($this->sets as $set) {
+          if (strpos($name, "icon-$set-") !== FALSE) {
+            $set_name = $set;
+            $icon_name = str_replace("icon-$set-", '', $name);
+          }
+        }
         $elements[$delta] = [
           '#type' => 'processed_text',
           '#format' => 'full_html',
           '#text' => "<svg role='img' aria-label='$name'><use xlink:href='/$this->iconsPath#$name'></use></svg>",
-          '#name' => $name,
+          '#icon_set' => $set_name,
+          '#icon_name' => $icon_name,
           '#attached' => [
             'library' => [
               'jcc_courtyard_icons/widget',

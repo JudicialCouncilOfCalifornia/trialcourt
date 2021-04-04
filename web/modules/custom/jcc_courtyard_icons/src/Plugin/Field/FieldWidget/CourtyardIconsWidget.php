@@ -25,21 +25,6 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginInterface {
 
   /**
-   * Icon types array.
-   *
-   * Groups icons by type indicated by prefix:
-   * 'icon-prefix' => $this->t('Label')
-   *
-   * Any icons that don't have a prefix match will be placed in the group
-   * "Other". Add additional prefix/Label pairs to the array to expand.
-   *
-   * This groups the Icon Buttons as well as the Select Options.
-   *
-   * @var array
-   */
-  private $types = [];
-
-  /**
    * {@inheritDoc}
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $config) {
@@ -48,11 +33,11 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
     $this->iconsPath = $this->config->get('jcc_courtyard_icons.settings')->get('icons_path');
     // Any icons that don't have a prefix match will be placed in the group
     // "Other". Add additional prefix/Label pairs to the array to expand.
-    $this->types = [
-      'icon-fa' => $this->t('Font Awesome'),
-      'icon-line-white' => $this->t('Line: White'),
-      'icon-line-dark' => $this->t('Line: Dark'),
-    ];
+    $sets = $this->config->get('jcc_courtyard_icons.settings')->get('icon_sets');
+    $sets = explode(PHP_EOL, $sets);
+    foreach ($sets as $set) {
+      $this->sets[] = trim($set);
+    }
   }
 
   /**
@@ -144,13 +129,13 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
     $buttons = [];
     $current = '';
     foreach ($this->getIconList() as $name) {
-      foreach ($this->types as $prefix => $label) {
-        if (strpos($name, $prefix) !== FALSE) {
-          if ($current != $prefix) {
-            $buttons[$prefix][] = "<h5>" . (string) $label . "</h5>";
-            $current = $prefix;
+      foreach ($this->sets as $set) {
+        if (strpos($name, "icon-$set-") !== FALSE) {
+          if ($current != $set) {
+            $buttons[$set][] = "<h5>" . (string) $set . "</h5>";
+            $current = $set;
           }
-          $buttons[$prefix][] = "<button class='jcc-courtyard-icons__button' data-icon-name='$name'>
+          $buttons[$set][] = "<button class='jcc-courtyard-icons__button' data-icon-name='$name'>
             <svg role='img' aria-label='$name'>
               <use xlink:href='/$this->iconsPath#$name'></use>
             </svg>
@@ -187,15 +172,17 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
     $list = $this->getIconList();
 
     foreach ($list as $name) {
-      foreach ($this->types as $prefix => $label) {
-        if (strpos($name, $prefix) !== FALSE) {
-          $options[(string) $label][$name] = $name;
+      foreach ($this->sets as $set) {
+        if (strpos($name, "icon-$set-") !== FALSE) {
+          $options[$set][$name] = $name;
           $grouped[$name] = $name;
         }
       }
     }
+
     $others = array_diff($list, $grouped);
     $other_label = $this->t('Other');
+
     foreach ($others as $other) {
       $options[(string) $other_label][$other] = $other;
     }
