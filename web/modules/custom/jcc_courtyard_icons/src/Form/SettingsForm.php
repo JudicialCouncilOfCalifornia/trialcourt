@@ -34,6 +34,14 @@ class SettingsForm extends ConfigFormBase {
       '#description' => $this->t('path/to/icons.svg'),
       '#default_value' => $this->config('jcc_courtyard_icons.settings')->get('icons_path'),
     ];
+
+    $form['icon_sets'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Icon set prefixes for grouping icons. i.e. fa, line-white, line-dark'),
+      '#description' => $this->t('One prefix per line. Expects SVG Sprite icon names in this format: icon-[set]-[name]  i.e. icon-line-white-circle-information'),
+      '#default_value' => $this->config('jcc_courtyard_icons.settings')->get('icon_sets'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -55,6 +63,9 @@ class SettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('jcc_courtyard_icons.settings')
       ->set('icons_path', $form_state->getValue('icons_path'))
+      ->save();
+    $this->config('jcc_courtyard_icons.settings')
+      ->set('icon_sets', $form_state->getValue('icon_sets'))
       ->save();
     parent::submitForm($form, $form_state);
   }
