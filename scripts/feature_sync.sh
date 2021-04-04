@@ -116,7 +116,7 @@ drush_fra_cex() {
 feature_enable(){
   if [ ! $1 ] ; then
     echo -e "\n${R}No feature module indicated.${RE}"
-    echo -e "${Y}Include the feature module machine name, i.e. jcc_tc_announcements${RE}"
+    echo -e "${Y}Include the feature module machine name, i.e. -f jcc_tc_announcements${RE}"
     exit 1
   fi
 

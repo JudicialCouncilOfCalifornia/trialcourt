@@ -70,55 +70,71 @@
  *   in different view modes.
  */
 #}
-{% set tertiary %}
-  <ul>
-    {% if tertiary_menu.parent %}
-      <li class='tertiary_menu--parent'><a href="{{ path(tertiary_menu.parent.url.routeName, {'node': tertiary_menu.parent.url.routeParameters.node}) }}">< {{ tertiary_menu.parent.title|t }}</a></li>
-    {% endif %}
-    {% for item in tertiary_menu.items %}
-      <li class='tertiary_menu--item'><a href="{{ path(item.url.routeName, {'node': item.url.routeParameters.node}) }}">{{ item.title|t }}</a></li>
-    {% endfor %}
-  </ul>
+
+{% set sub_links = [] %}
+
+{% if tertiary_menu.parent %}
+  {% set back_link = {
+    url: path(tertiary_menu.parent.url.routeName, {'node': tertiary_menu.parent.url.routeParameters.node}),
+    text: tertiary_menu.parent.title
+  } %}
+{% endif %}
+
+{% for item in tertiary_menu.items %}
+  {% set link = {
+    text: item.title,
+    url: path(item.url.routeName, {'node': item.url.routeParameters.node}),
+    is_current: item.in_active_trail
+  } %}
+  {% set sub_links = sub_links|merge([link]) %}
+{% endfor %}
+
+{% set tertiary_nav %}
+  {% include "@molecules/sub-nav/sub-nav.twig" with {
+    sub_nav: {
+      back_link: back_link,
+      links: sub_links,
+      classes: []
+    }
+  } %}
 {% endset %}
 
 <article{{ attributes }}>
-  <div{{ content_attributes }}>
-    {% set has_components = FALSE %}
-    {% for k, component in content.field_components if k|first != "#" %}
-      {% set has_components = TRUE %}
-      {# Inject tertiary menu before content if hero is not first. #}
-      {% if (k == 0 and component['#paragraph'].type.0.target_id != 'hero') %}
-        {{ tertiary }}
-      {% endif %}
-      {{ component }}
-      {# Inject tertiary menu after the first hero if it exists. #}
-      {% if (k == 0 and component['#paragraph'].type.0.target_id == 'hero') %}
-        {{ tertiary }}
-      {% endif %}
-    {% endfor %}
-
-    {% if not has_components %}
-
-      {% include "@molecules/hero/hero.twig" with {
-        hero: {
-          layout: 'full-main',
-          background: 'default',
-          main: {
-            title: label,
-            lead: '',
-            brow: ''
-          },
-          aside: {},
-          classes: []
-        }
-      } %}
-      {% include '@molecules/section/section.twig' with {
-        section: {
-          background: 'default',
-          container: 'container',
-          content: content.body
-        }
-      } %}
+  {% set has_components = FALSE %}
+  {% for k, component in content.field_components if k|first != "#" %}
+    {% set has_components = TRUE %}
+    {# Inject tertiary menu before content if hero is not first. #}
+    {% if (k == 0 and component['#paragraph'].type.0.target_id != 'hero') %}
+      {{ tertiary_nav }}
     {% endif %}
-  </div>
+    {{ component }}
+    {# Inject tertiary menu after the first hero if it exists. #}
+    {% if (k == 0 and component['#paragraph'].type.0.target_id == 'hero') %}
+      {{ tertiary_nav }}
+    {% endif %}
+  {% endfor %}
+
+  {% if not has_components %}
+
+    {% include "@molecules/hero/hero.twig" with {
+      hero: {
+        layout: 'full-main',
+        background: 'default',
+        main: {
+          title: label,
+          lead: '',
+          brow: ''
+        },
+        aside: {},
+        classes: []
+      }
+    } %}
+    {% include '@molecules/section/section.twig' with {
+      section: {
+        background: 'default',
+        container: 'container',
+        content: content.body
+      }
+    } %}
+  {% endif %}
 </article>
