@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Preprocess and functions for paragraphs.
+ * Preprocess and functions for media.
  */
 
 /**
