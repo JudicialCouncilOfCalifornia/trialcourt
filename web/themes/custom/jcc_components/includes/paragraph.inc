@@ -88,7 +88,7 @@ function jcc_components_views_reference_news(array &$variables, ViewEntityInterf
   $display = $executable->executeDisplay();
 
   if ($sticky_list) {
-    $variables['sticky_list'] = $display['#rows'][0]['#rows'];
+    $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
   }
   // Reset the executable for the sticky_list_attachment.
   $executable = $view ? $view->getExecutable() : NULL;
@@ -100,7 +100,7 @@ function jcc_components_views_reference_news(array &$variables, ViewEntityInterf
   $path = \Drupal::service('path.validator')->isValid('/news') ? '/news' : $view_url;
 
   if ($sticky_list_attachment) {
-    $variables['sticky_list_attachment'] = $display['#rows'][0]['#rows'];
+    $variables['sticky_list_attachment'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
     $variables['news_url'] = $path;
   }
 
