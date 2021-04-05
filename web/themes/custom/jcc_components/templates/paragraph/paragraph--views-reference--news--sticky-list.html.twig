@@ -64,19 +64,21 @@
 {% endfor %}
 
 {# Include the component template and pass in the structured data. #}
-{% include "@templates/news/news-highlights.twig" with {
-  news_highlights: {
-    background: variant.views_reference,
-    heading: {
-      title: content.field_heading|render,
-      lead: content.field_lead|render
-    },
-    primary_items: primary_items,
-    secondary_items: secondary_items,
-    link: {
-      url: news_url,
-      text: 'More News'|t
-    },
-    classes: []
-  }
-} %}
+{% if primary_items is not empty and secondary_items is not empty %}
+  {% include "@templates/news/news-highlights.twig" with {
+    news_highlights: {
+      background: variant.views_reference,
+      heading: {
+        title: content.field_heading|render,
+        lead: content.field_lead|render
+      },
+      primary_items: primary_items,
+      secondary_items: secondary_items,
+      link: {
+        url: news_url,
+        text: 'More News'|t
+      },
+      classes: []
+    }
+  } %}
+{% endif %}
