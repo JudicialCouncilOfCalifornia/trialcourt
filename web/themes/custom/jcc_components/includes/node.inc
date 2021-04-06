@@ -121,7 +121,7 @@ function jcc_components_node_location(array &$variables, NodeInterface $node) {
         $label = $component->field_heading->first()->view();
       }
       if (!empty($component->field_hours)) {
-        $details = $component->field_hours->view();
+        $details = $component->field_hours->view('default');
       }
       $variables['hours'][] = [
         'label' => $label,
