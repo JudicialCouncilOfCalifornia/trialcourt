@@ -13,16 +13,9 @@ use Drupal\node\NodeInterface;
  */
 function jcc_components_preprocess_node(&$variables) {
   $node = $variables['node'];
-
-  switch ($node->getType()) {
-    case 'alert':
-      jcc_components_node_alert($variables, $node);
-      break;
-
-    case 'subpage':
-      jcc_components_node_subpage($variables, $node);
-      break;
-
+  $function = "jcc_components_node_" . $node->bundle();
+  if (function_exists($function)) {
+    $function($variables, $node);
   }
 }
 
@@ -108,5 +101,43 @@ function jcc_components_node_subpage(array &$variables) {
         ];
       }
     }
+  }
+}
+
+/**
+ * Node: location preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node object.
+ */
+function jcc_components_node_location(array &$variables, NodeInterface $node) {
+  // Format the hours content in a format the PL template can recieve.
+  if (!empty($node->field_components)) {
+    $components = $node->field_components->referencedEntities();
+    foreach ($components as $component) {
+      if (!empty($component->field_heading) && !$component->field_heading->isEmpty()) {
+        $label = $component->field_heading->first()->view();
+      }
+      if (!empty($component->field_hours)) {
+        $details = $component->field_hours->view();
+      }
+      $variables['hours'][] = [
+        'label' => $label,
+        'details' => $details,
+      ];
+    }
+  }
+  // Format the address for the directions link.
+  if (!empty($node->field_address)) {
+    $address = render($node->field_address->view());
+    $address = trim(strip_tags($address));
+    $address = str_replace(PHP_EOL, '<br />', $address);
+    $variables['processed_address'] = [
+      '#type' => 'processed_text',
+      '#text' => $address,
+      '#format' => 'basic_html',
+    ];
   }
 }
