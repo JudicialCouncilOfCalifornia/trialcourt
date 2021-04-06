@@ -9,19 +9,15 @@ dependencies:
     - search_api
     - search_api_attachments
   config:
+    - field.storage.node.body
     - field.storage.node.field_alert_type
     - field.storage.node.field_attachments
-    - field.storage.node.body
     - field.storage.node.field_department
     - field.storage.node.field_division
-    - field.storage.node.field_document_type
     - field.storage.node.field_event_type
     - field.storage.node.field_images
-    - field.storage.node.field_help_links
-    - field.storage.node.field_location_type
-    - field.storage.node.field_news_type
-    - field.storage.node.field_phone
     - field.storage.node.field_links
+    - field.storage.node.field_news_type
     - field.storage.node.field_subject_matter
     - field.storage.node.field_tags
     - field.storage.node.field_topics
@@ -120,14 +116,6 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_division
-  field_document_type:
-    label: 'Document Type'
-    datasource_id: 'entity:node'
-    property_path: field_document_type
-    type: integer
-    dependencies:
-      config:
-        - field.storage.node.field_document_type
   field_event_type:
     label: 'Event Type'
     datasource_id: 'entity:node'
@@ -136,14 +124,6 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_event_type
-  field_help_links:
-    label: 'Links to Guides'
-    datasource_id: 'entity:node'
-    property_path: field_help_links
-    type: string
-    dependencies:
-      config:
-        - field.storage.node.field_help_links
   field_images:
     label: Images
     datasource_id: 'entity:node'
@@ -160,14 +140,6 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_links
-  field_location_type:
-    label: 'Location Type'
-    datasource_id: 'entity:node'
-    property_path: field_location_type
-    type: integer
-    dependencies:
-      config:
-        - field.storage.node.field_location_type
   field_news_type:
     label: 'News Type'
     datasource_id: 'entity:node'
@@ -176,14 +148,6 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_news_type
-  field_phone:
-    label: Phone
-    datasource_id: 'entity:node'
-    property_path: field_phone
-    type: string
-    dependencies:
-      config:
-        - field.storage.node.field_phone
   field_subject_matter:
     label: 'Subject Matter'
     datasource_id: 'entity:node'
@@ -277,6 +241,8 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: status
     type: boolean
+    indexed_locked: true
+    type_locked: true
     dependencies:
       module:
         - node
@@ -285,8 +251,6 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: status
     type: boolean
-    indexed_locked: true
-    type_locked: true
     dependencies:
       module:
         - node
@@ -322,6 +286,8 @@ datasource_settings:
     bundles:
       default: true
       selected:
+        - document
+        - location
         - person
     languages:
       default: true
