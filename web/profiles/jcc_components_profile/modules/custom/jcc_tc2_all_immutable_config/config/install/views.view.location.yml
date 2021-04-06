@@ -4,7 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.card
-    - core.entity_view_mode.node.teaser
+    - core.entity_view_mode.node.full
     - field.storage.node.field_geolocation
     - node.type.location
   module:
@@ -107,7 +107,7 @@ display:
         type: 'entity:node'
         options:
           relationship: none
-          view_mode: teaser
+          view_mode: full
       fields: {  }
       filters:
         status:
@@ -165,34 +165,15 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-  attachment_1:
-    display_plugin: attachment
-    id: attachment_1
-    display_title: 'Mini List'
-    position: 3
-    display_options:
-      display_extenders: {  }
-      display_description: ''
-      title: 'Location Mini List'
-      defaults:
-        title: false
-      displays:
-        block_2: block_2
-    cache_metadata:
-      max-age: -1
-      contexts:
-        - 'languages:language_interface'
-        - 'user.node_grants:view'
-        - user.permissions
-      tags: {  }
-  block_1:
-    display_plugin: block
-    id: block_1
+  list:
+    display_plugin: page
+    id: list
     display_title: List
     position: 2
     display_options:
       display_extenders: {  }
       display_description: ''
+      path: location
     cache_metadata:
       max-age: -1
       contexts:
@@ -201,9 +182,9 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-  block_2:
+  map_list:
     display_plugin: block
-    id: block_2
+    id: map_list
     display_title: 'Map with Mini List'
     position: 2
     display_options:
@@ -226,8 +207,8 @@ display:
             fit_bounds:
               enable: true
               settings:
-                min_zoom: 15
-                reset_zoom: true
+                min_zoom: 9
+                reset_zoom: false
               weight: 0
               map_center_id: fit_bounds
             fixed_boundaries:
@@ -713,9 +694,9 @@ display:
                   transparent: false
                   identify: false
                 enabled: false
-            height: 400px
+            height: 100%
             width: 100%
-            zoom: '15'
+            zoom: '7'
       defaults:
         style: false
         row: false
@@ -879,3 +860,23 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.field_geolocation'
+  map_list_attachment:
+    display_plugin: attachment
+    id: map_list_attachment
+    display_title: 'Mini List'
+    position: 3
+    display_options:
+      display_extenders: {  }
+      display_description: ''
+      title: 'Location Mini List'
+      defaults:
+        title: false
+      displays:
+        map_list: map_list
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
