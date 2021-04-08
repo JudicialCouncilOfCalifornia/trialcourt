@@ -9,7 +9,10 @@ dependencies:
     - paragraphs.paragraphs_type.action_list_item
   module:
     - link
+    - maxlength
     - text
+_core:
+  default_config_hash: MktpGn6nLsDNbD9ai5sItJkZVVwruwG4OVNLWUqSX7w
 id: paragraph.action_list_item.default
 targetEntityType: paragraph
 bundle: action_list_item
@@ -28,7 +31,10 @@ content:
     settings:
       placeholder_url: ''
       placeholder_title: ''
-    third_party_settings: {  }
+    third_party_settings:
+      maxlength:
+        maxlength_js: 64
+        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
     type: link_default
     region: content
   field_text:
