@@ -41,7 +41,7 @@
 
 {% set tiles = [] %}
 {% set variant = paragraph.field_variant.value|json_decode %}
-{% set image_url = content.field_image_media is not empty ? file_url(content.field_image_media.0['#media'].field_media_image.entity.fileuri) : NULL %}
+{% set image_uri = content.field_image_media is not empty ? content.field_image_media.0['#media'].field_media_image.entity.fileuri : NULL %}
 
 {% for icon_link in content.icon_links %}
   {% set item = {
@@ -59,7 +59,10 @@
 {% include "@molecules/hero/hero-tiles.twig" with {
   hero_tiles: {
     style: variant.hero_banner,
-    image: image_url,
+    images: {
+      side: image_uri ? image_uri|image_style('hero_side'),
+      banner: image_uri ? image_uri|image_style('hero_banner')
+    },
     title: {
       first: content.field_brow.0|render,
       second: content.field_heading.0|render
