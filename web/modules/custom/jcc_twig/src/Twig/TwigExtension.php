@@ -5,6 +5,7 @@ namespace Drupal\jcc_twig\Twig;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Template\TwigEnvironment;
+use Drupal\image\Entity\ImageStyle;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
@@ -24,6 +25,7 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFilter('remove_html_comments', [$this, 'removeHtmlComments']),
       new \Twig_SimpleFilter('unescape', [$this, 'unescape']),
       new \Twig_SimpleFilter('auto_convert_urls', [$this, 'autoConvertUrls']),
+      new \Twig_SimpleFilter('image_style', [$this, 'imageStyle']),
     ];
   }
 
@@ -140,6 +142,33 @@ class TwigExtension extends \Twig_Extension {
    */
   public function unescape($value) {
     return Html::decodeEntities($value);
+  }
+
+  /**
+   * Returns the URL of this image derivative for an original image path or URI.
+   *
+   * @param string $path
+   *   The path or URI to the original image.
+   * @param string $style
+   *   The image style.
+   *
+   * @return string|null
+   *   The absolute URL where a style image can be downloaded, suitable for use
+   *   in an <img> tag. Requesting the URL will cause the image to be created.
+   */
+  public function imageStyle($path, $style) {
+    // @phpcs:ignore DrupalPractice.Objects.GlobalClass.GlobalClass
+    if (!$image_style = ImageStyle::load($style)) {
+      trigger_error(sprintf('Could not load image style %s.', $style));
+      return;
+    }
+
+    if (!$image_style->supportsUri($path)) {
+      trigger_error(sprintf('Could not apply image style %s.', $style));
+      return;
+    }
+
+    return file_url_transform_relative($image_style->buildUrl($path));
   }
 
   /**
