@@ -41,6 +41,29 @@
 
 {# Create an items array from referenced card items. #}
 {% set variant = paragraph.field_variant.value|json_decode %}
+<<<<<<< HEAD
+=======
+{% set sub_variants = paragraph.field_sub_variant.value|json_decode %}
+
+{% for k, component in paragraph.field_components if k|first != "#" %}
+  {% set item = {
+    style: sub_variants.card,
+    title: component.entity.field_heading.value,
+    brow: '',
+    body: {
+      '#type': 'processed_text',
+      '#text': component.entity.field_text.value,
+      '#format': component.entity.field_text.format
+    },
+    link: {
+      url: component.entity.field_link.0.url|render,
+      text: component.entity.field_link.0.title
+    },
+    classes: []
+  } %}
+  {% set items = items|merge([item]) %}
+{% endfor %}
+>>>>>>> TCI-258 Fix internal links in cards
 
 {# Include the component template and pass in the structured data. #}
 {% include "@organisms/cards/cards.twig" with {
