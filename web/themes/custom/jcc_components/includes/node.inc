@@ -102,6 +102,11 @@ function jcc_components_node_subpage(array &$variables) {
       }
     }
   }
+
+  // Breadcrumbs get displayed on subpages.
+  $variables['breadcrumb'] = \Drupal::service('breadcrumb')
+    ->build(\Drupal::routeMatch())
+    ->toRenderable();
 }
 
 /**

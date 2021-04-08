@@ -12,6 +12,7 @@ use Drupal\Core\Url;
  * Implements hook_preprocess_HOOK().
  */
 function jcc_components_preprocess_page(&$variables) {
+  $variables['logo'] = theme_get_setting('logo', 'jcc_components');
   $variables['header_footer_variant'] = theme_get_setting('header_footer_variant', 'jcc_components');
 
   $variables['site_name'] = [
