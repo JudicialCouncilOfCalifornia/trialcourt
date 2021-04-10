@@ -136,7 +136,11 @@ function jcc_components_node_location(array &$variables, NodeInterface $node) {
   }
   // Format the address for the directions link.
   if (!empty($node->field_address)) {
-    $address = render($node->field_address->view());
+    $address = $node->field_address->view();
+    // No label; no country.
+    $address['#label_display'] = 'hidden';
+    $address[0]['country']['#value'] = '';
+    $address = render($address);
     $address = trim(strip_tags($address));
     $address = str_replace(PHP_EOL, '<br />', $address);
     $variables['processed_address'] = [
