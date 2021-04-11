@@ -1,0 +1,27 @@
+{#
+/**
+* @file
+* Default theme implementation to display a block.
+*
+* @see template_preprocess_block()
+*
+* @ingroup themeable
+*/
+#}
+
+{{ attach_library('jcc_blocks/twitterfeed_js') }}
+
+{% set twitterfeed %}
+  <div class="twitterfeed">
+    <a class="twitter-timeline" href="https://twitter.com{{ twitter.timeline }}" data-height="{{ twitter.height|default(twitter.height_default)}}" data-chrome="{{ twitter.options }}">{{ twitter.timeline_label }}</a>
+  </div>
+{% endset %}
+
+<div class="jcc-twitter">
+  {% include '@organisms/sections/cards-with-button/cards-with-button.twig' with {
+    cards_with_button: {
+      headergroup: headergroup,
+      cards: [{ excerpt: twitterfeed }],
+    }
+  } %}
+</div>

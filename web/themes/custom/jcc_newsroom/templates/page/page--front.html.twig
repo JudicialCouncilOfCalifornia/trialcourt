@@ -115,25 +115,6 @@
 
         <div class="page__right_sidebar grid-col-12 desktop:grid-col-4">
           {{ page.right_sidebar }}
-
-          {% set twittertitle = 'California Courts on Twitter' %}
-          {% set twitterfeed %}
-          <div class="twitterfeed">
-            <a class="twitter-timeline" href="https://twitter.com/CalCourts/timelines/1322208380912500737?ref_src=twsrc%5Etfw" data-height="1400" data-chrome="noheader">Curated tweets by CalCourts</a>
-            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-          </div>
-          {% endset %}
-
-          <div class="jcc-twitter">
-            {% include '@organisms/sections/cards-with-button/cards-with-button.twig' with {
-              cards_with_button: {
-                headergroup: {
-                  title: twittertitle,
-                },
-                cards: [{ excerpt: twitterfeed }],
-              }
-            } %}
-          </div>
         </div>
 
         {% if page.content_below|render %}
