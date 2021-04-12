@@ -3,9 +3,10 @@ langcode: en
 status: true
 dependencies:
   module:
+    - file
     - node
 _core:
-  default_config_hash: ccZ_Hz3zt8hbBwyhCLYlm2Tyed8Wh62YyQNBzJ7t3tw
+  default_config_hash: twkYUup62aLlo_oJzx7lRzql5vdvDuwlDYvZzU12A1M
 id: default
 label: Default
 description: 'A default Linkit profile'
@@ -16,19 +17,27 @@ matchers:
     weight: 0
     settings:
       metadata: 'by [node:author] | [node:created:medium]'
-      bundles: {  }
+      bundles:
+        landing_page: landing_page
+        news: news
+        subpage: subpage
       group_by_bundle: true
       include_unpublished: false
       substitution_type: canonical
       limit: 100
-  fde6ff29-d13a-4615-90e3-80d6ef4fb129:
-    uuid: fde6ff29-d13a-4615-90e3-80d6ef4fb129
-    id: 'entity:media'
+  f25b6aa6-dd57-4728-b651-74ebc9ec8cc0:
+    uuid: f25b6aa6-dd57-4728-b651-74ebc9ec8cc0
+    id: 'entity:file'
     weight: 0
     settings:
-      metadata: '[media:field_media_file:description]'
-      bundles:
-        file: file
-      group_by_bundle: true
-      substitution_type: canonical
+      file_extensions: pdf
+      file_status: 1
+      images:
+        show_dimensions: false
+        show_thumbnail: false
+        thumbnail_image_style: null
+      substitution_type: file
+      metadata: ''
+      bundles: null
+      group_by_bundle: null
       limit: 100
