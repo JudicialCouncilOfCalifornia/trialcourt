@@ -143,8 +143,8 @@ drush_en_cex() {
 if [ "$command" == 'docs' ] ; then
   echo -e "\n${G}feature:[command] -b -f -s${RE}"
   echo -e "\n${Y}This command needs work. It's a little tricky right now with two separate groups of sites running different feature bundles, we can't roll out all features to all sites.\n\t@todo: Refactor this for more concise commands. \n\t@todo: Hurry to migrate old sites to the new profile/feature set.\n\t@todo: Develop process for feature syncing in stage environment so developers don't need to have every multisite running locally to sync feature config.${RE}"
-  echo -e "${R}features:enable${RE} will not really work effectively for the reasons mentioned above."
-  echo -e "${G}features:sync${RE} can be used for mass deployment via the -b [bundle] option as only sites with features of the specified bundle will have related feature config imported."
+  echo -e "${R}feature:enable${RE} will not really work effectively for the reasons mentioned above."
+  echo -e "${G}feature:sync${RE} can be used for mass deployment via the -b [bundle] option as only sites with features of the specified bundle will have related feature config imported."
   echo -e "\t-b|--bundle\tjcc_tc or jcc_tc2 (default)"
   echo -e "\t-f|--feature\tThe target feature to import config"
   echo -e "\t-s|--site\tThe target site to import config"
