@@ -39,6 +39,35 @@ function jcc_components_theme_suggestions_alter(&$suggestions, $variables, $hook
 }
 
 /**
+ * Helper function for cards paragraphs.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $paragraph) {
+  $sub_variants = !empty($paragraph->field_sub_variant) ? json_decode($paragraph->field_sub_variant->first()->value, TRUE) : ['card' => 'cta'];
+  // Prep the cards due to special handling of linkit links.
+  $cards = $paragraph->field_components->referencedEntities();
+  foreach ($cards as $card) {
+    $title = !empty($card->field_heading) ? $card->field_heading->first()->value : '';
+    $link = $card->field_link->view();
+    $variables['cards'][] = [
+      'style' => $sub_variants['card'],
+      'title' => $title,
+      'brow' => '',
+      'body' => $card->field_text->view(),
+      'link' => [
+        'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
+        'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
+      ],
+      'classes' => [],
+    ];
+  }
+}
+
+/**
  * Helper function for hero_banner paragraphs.
  *
  * @param array $variables
