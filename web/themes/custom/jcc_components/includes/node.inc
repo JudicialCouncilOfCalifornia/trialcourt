@@ -122,9 +122,11 @@ function jcc_components_node_location(array &$variables, NodeInterface $node) {
   if (!empty($node->field_components)) {
     $components = $node->field_components->referencedEntities();
     foreach ($components as $component) {
+      $label = '';
       if (!empty($component->field_heading) && !$component->field_heading->isEmpty()) {
         $label = $component->field_heading->first()->view();
       }
+      $details = '';
       if (!empty($component->field_hours)) {
         $details = $component->field_hours->view('default');
       }
