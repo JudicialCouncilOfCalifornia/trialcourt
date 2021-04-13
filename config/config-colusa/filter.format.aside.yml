@@ -6,6 +6,8 @@ dependencies:
     - glossify_taxonomy
     - linkit
     - media
+_core:
+  default_config_hash: ZVR7yRZFceJ89cf1JlZTaaqVnS8KMqVMnhwvCezyf00
 name: Aside
 format: aside
 weight: 0
@@ -16,7 +18,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <ul type> <ol type start> <li> <a href hreflang title class=" usa-button usa-button--primary usa-button--secondary usa-button--cta-link">'
+      allowed_html: '<em> <strong> <ul type> <ol type start> <li> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary jcc-button--cta-link">'
       filter_html_help: true
       filter_html_nofollow: false
   glossify_taxonomy:
@@ -56,3 +58,12 @@ filters:
     weight: 0
     settings:
       filter_url_length: 72
+  media_embed:
+    id: media_embed
+    provider: media
+    status: false
+    weight: 100
+    settings:
+      default_view_mode: default
+      allowed_media_types: {  }
+      allowed_view_modes: {  }
