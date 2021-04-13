@@ -52,12 +52,12 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
   $cards = $paragraph->field_components->referencedEntities();
   foreach ($cards as $card) {
     $title = !empty($card->field_heading) ? $card->field_heading->first()->value : '';
-    $link = $card->field_link->view();
+    $link = $card->field_link->view('default');
     $variables['cards'][] = [
       'style' => $sub_variants['card'],
       'title' => $title,
       'brow' => '',
-      'body' => $card->field_text->view(),
+      'body' => $card->field_text->view('default'),
       'link' => [
         'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
         'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
@@ -81,8 +81,8 @@ function jcc_components_paragraph_hero_banner(array &$variables, ParagraphInterf
   foreach ($components as $component) {
     if (!empty($component->field_icon)) {
       $variables['content']['icon_links'][] = [
-        'icon' => !empty($component->field_icon->view()[0]) ? $component->field_icon->view()[0] : NULL,
-        'link' => !empty($component->field_link->view()[0]) ? $component->field_link->view()[0] : NULL,
+        'icon' => !empty($component->field_icon->view('default')[0]) ? $component->field_icon->view('default')[0] : NULL,
+        'link' => !empty($component->field_link->view('default')[0]) ? $component->field_link->view('default')[0] : NULL,
       ];
     }
   }
@@ -166,7 +166,7 @@ function jcc_components_paragraph_views_reference_location(array &$variables, Vi
     foreach ($display['#rows'][0]['#rows'] as $row) {
       $variables['map_list_attachment'][] = [
         'title' => $row['#node']->getTitle(),
-        'address' => $row['#node']->field_address->view(),
+        'address' => $row['#node']->field_address->view('default'),
       ];
     }
   }
