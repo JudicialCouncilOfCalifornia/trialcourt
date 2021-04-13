@@ -86,7 +86,9 @@
     title: label,
     brow: content.field_location_type,
     address: processed_address|render,
-    map: content.field_geolocation.0,
+    map: {
+      html: content.field_geolocation.0,
+    },
     directions_text: 'Get Directions'|t,
     phone: {
       text: content.field_phone.0['#title'],
