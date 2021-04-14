@@ -57,7 +57,7 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
     $variables['cards'][] = [
       'style' => $sub_variants['card'],
       'title' => $title,
-      'brow' => '',
+      'brow' => $card->field_brow->view('default'),
       'body' => $card->field_text->view('default'),
       'link' => [
         'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
@@ -167,6 +167,20 @@ function jcc_components_paragraph_views_reference_location_map_list(array &$vari
         'address' => $row['#node']->field_address->view('default'),
       ];
     }
+  }
+}
+
+/**
+ * Helper function for text share paragraphs.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_components_paragraph_text_share(array &$variables, ParagraphInterface $paragraph) {
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    $variables['page_title'] = $node->title->value;
   }
 }
 

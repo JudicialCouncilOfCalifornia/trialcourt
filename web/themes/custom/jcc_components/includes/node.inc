@@ -152,3 +152,17 @@ function jcc_components_node_location(array &$variables, NodeInterface $node) {
     ];
   }
 }
+
+/**
+ * Node: News preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_components_node_news(array &$variables, NodeInterface $node) {
+  $variables['breadcrumb'] = \Drupal::service('breadcrumb')
+    ->build(\Drupal::routeMatch())
+    ->toRenderable();
+}
