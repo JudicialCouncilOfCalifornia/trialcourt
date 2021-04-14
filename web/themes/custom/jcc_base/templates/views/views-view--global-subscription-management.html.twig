@@ -59,7 +59,7 @@
     {% endblock %}
 
     <div class="jcc-text-section-aside__container">
-      <div class="view-group-management-wrapper">
+      <div class="view-group-management-wrapper jcc-text-section-aside">
         {% block exposed %}
           {% if exposed %}
             <div class="view-group-management-filters">
@@ -79,16 +79,15 @@
             </div>
           {% endif %}
         {% endblock %}
+        {% block empty %}
+          {% if empty %}
+            <div class="view__content is-empty">
+              {{ empty }}
+            </div>
+          {% endif %}
+        {% endblock %}
       </div>
     </div>
-
-    {% block empty %}
-      {% if empty %}
-        <div class="view__content is-empty">
-          {{ empty }}
-        </div>
-      {% endif %}
-    {% endblock %}
 
     {% block pager %}
       {% if pager %}

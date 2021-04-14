@@ -35,3 +35,29 @@ jcc_messaging_center.settings:
     _title: 'JCC Subscription Settings'
   requirements:
     _permission: 'administer Messaging center'
+
+jcc_messaging_center.overall_dashboard:
+  path: '/messenger/subscriptions'
+  requirements:
+    _permission: 'administer Messaging center'
+  options:
+    no_cache: 'TRUE'
+
+jcc_messaging_center.groups_dashboard:
+  path: '/messenger/groups'
+  requirements:
+    _permission: 'administer Messaging center'
+  options:
+    no_cache: 'TRUE'
+
+jcc_messaging_center.views_ajax:
+  path: '/messenger/ajax/groups/users/{group}'
+  defaults:
+    _controller: '\Drupal\jcc_messaging_center\Controller\JccMessagingCenterAjaxController::ajaxView'
+  requirements:
+    _permission: 'access content'
+
+jcc_messaging_center.messages:
+  path: '/messenger/messages'
+  requirements:
+    _permission: 'access content'
