@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_form_mode.media.media_library
     - entity_browser.browser.media_entity_browser
+    - field.field.media.file.field_document_type
     - field.field.media.file.field_media_file
     - media.type.file
   module:
@@ -16,9 +17,19 @@ targetEntityType: media
 bundle: file
 mode: media_library
 content:
+  field_document_type:
+    type: entity_reference_autocomplete
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_media_file:
     type: entity_browser_file
-    weight: 1
+    weight: 2
     region: content
     settings:
       entity_browser: media_entity_browser
@@ -39,7 +50,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 2
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
