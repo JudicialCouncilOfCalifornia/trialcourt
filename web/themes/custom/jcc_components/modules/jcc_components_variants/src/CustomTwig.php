@@ -31,7 +31,11 @@ class CustomTwig extends AbstractExtension {
    *   The object or array equivalent of the JSON string.
    */
   public static function jsonDecode($value, $assoc = FALSE) {
-    return json_decode($value, $assoc);
+    if (is_string($value)) {
+      return json_decode($value, $assoc);
+    }
+
+    return [];
   }
 
 }
