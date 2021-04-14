@@ -5,6 +5,7 @@
  * Preprocess and functions for media.
  */
 
+use Drupal\block\Entity\Block;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
 
@@ -98,10 +99,15 @@ function jcc_components_paragraph_hero_banner(array &$variables, ParagraphInterf
  */
 function jcc_components_paragraph_views_reference(array &$variables, ParagraphInterface $paragraph) {
   // In some cases we need to pass the views results to the paragraph.
-  $view = !empty($paragraph->field_views_reference) ? $paragraph->field_views_reference->referencedEntities()[0] : NULL;
-  $function = 'jcc_components_paragraph_views_reference_' . $view->id();
+  if (!empty($paragraph->field_views_reference)) {
+    $view = $paragraph->field_views_reference->referencedEntities()[0];
+    $reference = $paragraph->field_views_reference->first();
+    $target_id = $reference->target_id;
+    $display_id = $reference->display_id;
+    $function = "jcc_components_paragraph_views_reference_${target_id}_${display_id}";
+  }
 
-  if (function_exists($function)) {
+  if (!empty($function) && function_exists($function)) {
     $function($variables, $view);
   }
 }
@@ -114,7 +120,7 @@ function jcc_components_paragraph_views_reference(array &$variables, ParagraphIn
  * @param Drupal\views\ViewEntityInterface $view
  *   The news view.
  */
-function jcc_components_paragraph_views_reference_news(array &$variables, ViewEntityInterface $view) {
+function jcc_components_paragraph_views_reference_news_sticky_list(array &$variables, ViewEntityInterface $view) {
   $executable = $view ? $view->getExecutable() : NULL;
   // Start with the sticky_list display.
   $sticky_list = $executable ? $executable->setDisplay('sticky_list') : FALSE;
@@ -147,7 +153,7 @@ function jcc_components_paragraph_views_reference_news(array &$variables, ViewEn
  * @param Drupal\views\ViewEntityInterface $view
  *   The news view.
  */
-function jcc_components_paragraph_views_reference_location(array &$variables, ViewEntityInterface $view) {
+function jcc_components_paragraph_views_reference_location_map_list(array &$variables, ViewEntityInterface $view) {
   $executable = $view ? $view->getExecutable() : NULL;
 
   // Start with the map_list display.
@@ -170,4 +176,27 @@ function jcc_components_paragraph_views_reference_location(array &$variables, Vi
       ];
     }
   }
+}
+
+/**
+ * Helper function for views_reference paragraphs of type forms.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param Drupal\views\ViewEntityInterface $view
+ *   The news view.
+ */
+function jcc_components_paragraph_views_reference_forms_search_forms(array &$variables, ViewEntityInterface $view) {
+  // We need to inject the exposed filters form so it can be added to template.
+  // We it uses AJAX and autosubmit, and a text field so we must use block to
+  // prevent redirecting to the view page on submit and losing focus on the
+  // text field when it submits as you're still typing. Just loading the form
+  // from the view doesn't prevent this. the block is configured but disabled
+  // otherwise we don't have access to it by the bid.
+  $bid = 'exposedformformssearch_forms';
+  $block = Block::load($bid);
+  $render = \Drupal::entityTypeManager()
+    ->getViewBuilder('block')
+    ->view($block);
+  $variables['exposed_form'] = $render;
 }

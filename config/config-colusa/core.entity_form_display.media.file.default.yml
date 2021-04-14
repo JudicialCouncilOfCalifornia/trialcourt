@@ -3,13 +3,14 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.media.file.field_document_type
     - field.field.media.file.field_media_file
     - media.type.file
   module:
     - file
     - path
 _core:
-  default_config_hash: WscnfcsBp4IDiw-g9-MmS6iCtq_0FWpa5FusZlfllQI
+  default_config_hash: itlaK79qQgLxk7ODrs2dD2vYy2cTg7G6_6_vpGhIuGc
 id: media.file.default
 targetEntityType: media
 bundle: file
@@ -17,12 +18,18 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_document_type:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
   field_media_file:
-    weight: 0
+    weight: 2
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
@@ -30,14 +37,14 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   name:
     type: string_textfield
-    weight: -5
+    weight: 0
     region: content
     settings:
       size: 60
@@ -45,7 +52,7 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -53,17 +60,17 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 100
+    weight: 8
     region: content
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
