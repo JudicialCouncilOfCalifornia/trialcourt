@@ -59,26 +59,49 @@
     {% endblock %}
 
     <div class="jcc-text-section-aside__container">
-      <div class="view-group-management-wrapper">
-        {% block exposed %}
-          {% if exposed %}
-            <div class="view-group-management-filters">
-              <div class="view__filters">
-                {{ exposed }}
-              </div>
-            </div>
-          {% endif %}
-        {% endblock %}
+{#      <div class="view-group-management-wrapper">#}
+{#        {% block exposed %}#}
+{#          {% if exposed %}#}
+{#            <div class="view-group-management-filters">#}
+{#              <div class="view__filters">#}
+{#                {{ exposed }}#}
+{#              </div>#}
+{#            </div>#}
+{#          {% endif %}#}
+{#        {% endblock %}#}
 
-        {% block content %}
-          {% if rows %}
-            <div class="view-group-management-content">
-              <div class="view__content">
-                {{ rows }}
+{#        {% block content %}#}
+{#          {% if rows %}#}
+{#            <div class="view-group-management-content">#}
+{#              <div class="view__content">#}
+{#                {{ rows }}#}
+{#              </div>#}
+{#            </div>#}
+{#          {% endif %}#}
+{#        {% endblock %}#}
+{#      </div>#}
+      <div class="jcc-text-section-aside">
+        <div class="jcc-text-section-aside__aside">
+{#          <a href="/messenger/ajax/groups/users/2" class="use-ajax">#}
+{#            This link will load the view {view_id} display {display_id} with the#}
+{#            arguments {args}#}
+{#          </a>#}
+          {% block content %}
+            {% if rows %}
+              <div class="view-group-management-content">
+                <div class="view__content">
+                  {{ rows }}
+                </div>
               </div>
-            </div>
-          {% endif %}
-        {% endblock %}
+            {% endif %}
+          {% endblock %}
+        </div>
+        <div class="jcc-text-section-aside__content">
+          <div class="js-view-dom-id-jcc_messaging_center_users_in_group">
+            <p>Please select a group.</p>
+          </div>
+        </div>
+
       </div>
     </div>
 

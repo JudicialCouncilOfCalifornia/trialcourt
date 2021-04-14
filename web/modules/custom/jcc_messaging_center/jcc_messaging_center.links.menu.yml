@@ -1,5 +1,23 @@
-jcc_messaging_center.admin:
-  title: 'JCC Messaging Center'
+jcc_messaging_center.settings:
+  title: 'Messaging center'
   parent: system.admin_config_services
   route_name: jcc_messaging_center.settings
   weight: 100
+
+jcc_messaging_center.admin:
+  title: 'Manage users'
+  parent: jcc_messaging_center.settings
+  route_name: jcc_messaging_center.overall_dashboard
+  weight: 100
+
+jcc_messaging_center.groups:
+  title: 'Manage groups'
+  parent: jcc_messaging_center.settings
+  route_name: jcc_messaging_center.groups_dashboard
+  weight: 101
+
+jcc_messaging_center.messages:
+  title: 'Manage messages'
+  parent: jcc_messaging_center.settings
+  route_name: jcc_messaging_center.messages
+  weight: 102
