@@ -119,12 +119,39 @@ function jcc_base_preprocess_region__footer(&$variables) {
         ],
         [
           'icon' => [
+            'name' => 'flickr',
+            'title' => (string) t('Flickr'),
+            'decorative' => FALSE,
+          ],
+          'title' => (string) t('Flickr'),
+          'url' => theme_get_setting('flickr', $theme),
+        ],
+        [
+          'icon' => [
+            'name' => 'linkedin2',
+            'title' => (string) t('LinkedIn'),
+            'decorative' => FALSE,
+          ],
+          'title' => (string) t('LinkedIn'),
+          'url' => theme_get_setting('linkedin', $theme),
+        ],
+        [
+          'icon' => [
             'name' => 'rss2',
             'title' => (string) t('RSS'),
             'decorative' => FALSE,
           ],
           'title' => (string) t('RSS'),
           'url' => theme_get_setting('rss', $theme),
+        ],
+        [
+          'icon' => [
+            'name' => 'email',
+            'title' => (string) t('Email'),
+            'decorative' => FALSE,
+          ],
+          'title' => (string) t('Email'),
+          'url' => theme_get_setting('email', $theme),
         ],
       ],
     ],

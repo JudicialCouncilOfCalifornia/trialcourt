@@ -13,14 +13,25 @@
  */
 #}
 
+{% set links = footer_base.links %}
+{% if links_custom %}
+  {% set links = links_custom %}
+{% endif %}
+
 {% if(footer_extended) %}
   {% include '@organisms/global/footer-base/footer-base.twig' with {
-    footer_base: footer_base
+    footer_base: {
+      aria_label: footer_base.aria_label,
+      height_variant: footer_base.height_variant,
+      title: footer_base.title,
+      links: links,
+      secondary_menu_cols: footer_base.secondary_menu_cols,
+      social_links: footer_base.social_links,
+      global_bar: footer_base.global_bar,
+    }
   } %}
 {% else %}
   {% include '@organisms/global/footer/footer.twig' with {
     footer: footer
   } %}
 {% endif %}
-
-
