@@ -129,20 +129,12 @@ function jcc_components_paragraph_views_reference_news_sticky_list(array &$varia
   if ($sticky_list) {
     $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
   }
-  // Reset the executable for the sticky_list_attachment.
-  $executable = $view ? $view->getExecutable() : NULL;
-  $sticky_list_attachment = $executable->setDisplay('sticky_list_attachment');
-  $display = $executable->executeDisplay();
   // Also get the More News path. Should be a node with path /news but fallback
   // to view url if it exists.
   $view_url = !empty($executable->getUrl()) ? $executable->getUrl()->toString() : '';
   $path = \Drupal::service('path.validator')->isValid('/news') ? '/news' : $view_url;
 
-  if ($sticky_list_attachment) {
-    $variables['sticky_list_attachment'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
-    $variables['news_url'] = $path;
-  }
-
+  $variables['news_url'] = $path;
 }
 
 /**
