@@ -43,18 +43,18 @@
 {% set primary_items = [] %}
 {% set secondary_items = [] %}
 
-{% for row in sticky_list %}
-  {% if row['#node'].sticky.value %}
-    {% set item = {
-      title: row['#node'].title(),
-      date: row['#node'].field_date.0.value|date('M d, Y'),
-      url: row['#node'].path.value.0.alias,
-    } %}
-    {% set primary_items = primary_items|merge([item]) %}
-  {% endif %}
+{% for i in 0..1 %}
+  {% set row = sticky_list[i] %}
+  {% set item = {
+    title: row['#node'].title(),
+    date: row['#node'].field_date.0.value|date('M d, Y'),
+    url: row['#node'].path.value.0.alias,
+  } %}
+  {% set primary_items = primary_items|merge([item]) %}
 {% endfor %}
 
-{% for row in sticky_list_attachment %}
+{% for i in 2..4 %}
+  {% set row = sticky_list[i] %}
   {% set item = {
     title: row['#node'].title(),
     date: row['#node'].field_date.0.value|date('M d, Y'),
