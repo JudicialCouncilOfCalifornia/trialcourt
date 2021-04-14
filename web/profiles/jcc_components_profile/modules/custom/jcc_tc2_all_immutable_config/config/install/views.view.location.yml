@@ -200,28 +200,28 @@ display:
           marker_icon_path: ''
           marker_row_number: 0
           centre:
-            client_location:
-              enable: true
-              weight: 0
-              map_center_id: client_location
             fit_bounds:
               enable: true
               settings:
                 min_zoom: 9
                 reset_zoom: false
-              weight: 0
+              weight: -10
               map_center_id: fit_bounds
+            client_location:
+              enable: true
+              weight: -9
+              map_center_id: client_location
             fixed_boundaries:
               settings:
                 north: ''
                 east: ''
                 south: ''
                 west: ''
-              weight: 0
+              weight: -8
               enable: false
               map_center_id: fixed_boundaries
             first_row:
-              weight: 0
+              weight: -7
               enable: false
               map_center_id: location_plugins
               settings:
@@ -231,11 +231,11 @@ display:
                 latitude: null
                 longitude: null
                 location_option_id: fixed_value
-              weight: 0
+              weight: -6
               enable: false
               map_center_id: location_plugins
             freeogeoip:
-              weight: 0
+              weight: -5
               enable: false
               map_center_id: location_plugins
               settings:
@@ -244,7 +244,7 @@ display:
               settings:
                 access_key: ''
                 location_option_id: ipstack
-              weight: 0
+              weight: -4
               enable: false
               map_center_id: location_plugins
           even_empty: 1
