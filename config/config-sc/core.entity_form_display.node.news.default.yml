@@ -5,18 +5,20 @@ dependencies:
   config:
     - field.field.node.news.body
     - field.field.node.news.field_byline
+    - field.field.node.news.field_components
     - field.field.node.news.field_date
-    - field.field.node.news.field_media
     - field.field.node.news.field_news_type
     - node.type.news
   module:
     - allowed_formats
     - datetime
-    - media_library
+    - paragraphs
     - path
     - scheduler
     - scheduler_content_moderation_integration
     - text
+_core:
+  default_config_hash: TXU55ecIqrR9rjvSzNra2GUR6f9by6eIj9RqPacqg3Y
 id: node.news.default
 targetEntityType: node
 bundle: news
@@ -24,7 +26,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 4
+    weight: 5
     settings:
       rows: 9
       placeholder: ''
@@ -49,18 +51,23 @@ content:
     third_party_settings: {  }
     type: string_textfield
     region: content
+  field_components:
+    weight: 4
+    settings:
+      title: Component
+      title_plural: Components
+      edit_mode: preview
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: text_share
+    third_party_settings: {  }
+    type: entity_reference_paragraphs
+    region: content
   field_date:
     weight: 2
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
-    region: content
-  field_media:
-    type: media_library_widget
-    weight: 5
-    settings:
-      media_types: {  }
-    third_party_settings: {  }
     region: content
   field_news_type:
     weight: 0
