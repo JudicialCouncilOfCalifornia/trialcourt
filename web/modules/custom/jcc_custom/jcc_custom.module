@@ -36,11 +36,22 @@ function jcc_custom_ckeditor_css_alter(array &$css, Editor $editor) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_alter().
  */
-function jcc_custom_form_node_subpage_edit_form_alter(&$form, $form_state) {
-  $user = \Drupal::currentUser();
-  $access = $user->hasPermission('access migration body');
-
-  $form['body']['#access'] = $access;
+function jcc_custom_form_alter(&$form, $form_state, $form_id) {
+  // The body field on these content types is only used for migration of
+  // content and temporary display on the initial site build. Editors should
+  // not have access.
+  // The field will only render if there are no components added by paragraph
+  // reference. See respective node templates.
+  switch ($form_id) {
+    case 'node_news_edit_form':
+    case 'node_subpage_edit_form':
+    case 'node_news_form':
+    case 'node_subpage_form':
+      $user = \Drupal::currentUser();
+      $access = $user->hasPermission('access migration body');
+      $form['body']['#access'] = $access;
+      break;
+  }
 }
