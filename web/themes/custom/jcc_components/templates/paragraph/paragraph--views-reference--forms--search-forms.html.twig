@@ -39,9 +39,12 @@
  */
 #}
 
-{# Available separately as a block to prevent issues with autosubmit. #}
-{% if exposed_form %}
-  {{ exposed_form }}
-{% endif %}
-
-{{ content }}
+{% include "@molecules/section/section.twig" with {
+  section: {
+    heading: {
+      title: paragraph.field_heading.value,
+      lead: paragraph.field_lead.value ? content.field_lead,
+    },
+    content: content.field_views_reference,
+  }
+} %}
