@@ -76,6 +76,9 @@ feature_import() {
 
   # Import feature changes to target or all sub sites.
   if [ "$TARGET_SITE" ] ; then
+    echo -e "${G}\nRunning updates in case config should be deleted on $TARGET_SITE${RE}"
+    drush @local.$TARGET_SITE updb -y
+
     if [ "$TARGET_FEATURE" ] ; then
       echo -e "${G}\nImporting $TARGET_FEATURE changes to $TARGET_SITE${RE}"
       drush @local.$TARGET_SITE fr $TARGET_FEATURE -y --bundle=$FEATURE_BUNDLE
@@ -83,23 +86,29 @@ feature_import() {
       echo -e "${G}\nImporting feature changes to $TARGET_SITE${RE}"
       drush @local.$TARGET_SITE fra -y --bundle=$FEATURE_BUNDLE
     fi
+
     echo -e "\nExporting config for @local.${TARGET_SITE}..."
     drush @local.$TARGET_SITE cex -y
   else
     echo -e "\n${G}Importing feature changes from Bundle: $FEATURE_BUNDLE to all multisites.${RE}"
     echo -e "\n${Y}The following sites must be installed locally with Features module enabled.${RE}"
+
     for SITE in ${SUB_SITES[@]} ; do
       echo $SITE
     done
 
     for SITE in ${SUB_SITES[@]} ; do
+      echo -e "${G}\nRunning updates in case config should be deleted on $SITE${RE}"
+      drush $SITE updb -y
+
       if [ "$TARGET_FEATURE" ] ; then
         echo -e "\nUpdating $TARGET_FEATURE of $SITE..."
-        drush $SITE fr $TARGET_FEATURE -y --bundle=$FEATURE_BUNDLE
+        drush $SITE fra $TARGET_FEATURE -y --bundle=$FEATURE_BUNDLE
       else
         echo -e "\nUpdating all features of $SITE from Bundle: $FEATURE_BUNDLE"
         drush $SITE fra -y --bundle=$FEATURE_BUNDLE
       fi
+
       echo -e "\nExporting config for $SITE..."
       drush $SITE cex -y
     done

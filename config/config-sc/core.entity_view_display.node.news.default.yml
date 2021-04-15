@@ -5,14 +5,17 @@ dependencies:
   config:
     - field.field.node.news.body
     - field.field.node.news.field_byline
+    - field.field.node.news.field_components
     - field.field.node.news.field_date
-    - field.field.node.news.field_media
     - field.field.node.news.field_news_type
     - node.type.news
   module:
     - datetime
+    - entity_reference_revisions
     - text
     - user
+_core:
+  default_config_hash: ketHgdUnxJbljNksQY5HXoDRG1hv4-Y3ojQB2Kr0Y00
 id: node.news.default
 targetEntityType: node
 bundle: news
@@ -33,6 +36,15 @@ content:
     third_party_settings: {  }
     type: string
     region: content
+  field_components:
+    weight: 4
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    type: entity_reference_revisions_entity_view
+    region: content
   field_date:
     weight: 2
     label: hidden
@@ -42,20 +54,11 @@ content:
     third_party_settings: {  }
     type: datetime_custom
     region: content
-  field_media:
-    type: entity_reference_entity_view
-    weight: 4
-    label: hidden
-    settings:
-      view_mode: full
-      link: false
-    third_party_settings: {  }
-    region: content
   field_news_type:
     weight: 0
     label: hidden
     settings:
-      link: true
+      link: false
     third_party_settings: {  }
     type: entity_reference_label
     region: content
