@@ -5,7 +5,6 @@
  * Preprocess and functions for media.
  */
 
-use Drupal\block\Entity\Block;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
 
@@ -182,27 +181,4 @@ function jcc_components_paragraph_text_share(array &$variables, ParagraphInterfa
   if ($node = \Drupal::routeMatch()->getParameter('node')) {
     $variables['page_title'] = $node->title->value;
   }
-}
-
-/**
- * Helper function for views_reference paragraphs of type forms.
- *
- * @param array $variables
- *   The paragraph variables.
- * @param Drupal\views\ViewEntityInterface $view
- *   The news view.
- */
-function jcc_components_paragraph_views_reference_forms_search_forms(array &$variables, ViewEntityInterface $view) {
-  // We need to inject the exposed filters form so it can be added to template.
-  // We it uses AJAX and autosubmit, and a text field so we must use block to
-  // prevent redirecting to the view page on submit and losing focus on the
-  // text field when it submits as you're still typing. Just loading the form
-  // from the view doesn't prevent this. the block is configured but disabled
-  // otherwise we don't have access to it by the bid.
-  $bid = 'exposedformformssearch_forms';
-  $block = Block::load($bid);
-  $render = \Drupal::entityTypeManager()
-    ->getViewBuilder('block')
-    ->view($block);
-  $variables['exposed_form'] = $render;
 }
