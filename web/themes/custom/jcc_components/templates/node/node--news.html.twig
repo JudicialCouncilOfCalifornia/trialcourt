@@ -78,15 +78,38 @@
 
 <article{{ attributes }}>
   {{ breadcrumb }}
+  {% if components is not empty %}
+    {% include "@templates/news/news-full.twig" with {
+      news_full: {
+        title: node.title.value,
+        type: node.field_news_type.0.entity.name.value,
+        date: content.field_date|render|striptags,
+        byline: content.field_byline|render|striptags,
+        components: components,
+      }
+    } %}
+  {% else %}
+    {# Show migrated content in body field if no components added. #}
+    {% include "@molecules/hero/hero.twig" with {
+      hero: {
+        layout: 'full-main',
+        background: 'default',
+        main: {
+          title: label,
+          lead: '',
+          brow: ''
+        },
+        aside: {},
+        classes: []
+      }
+    } %}
 
-  {% include "@templates/news/news-full.twig" with {
-    news_full: {
-      title: node.title.value,
-      type: node.field_news_type.0.entity.name.value,
-      date: content.field_date|render|striptags,
-      byline: content.field_byline|render|striptags,
-      components: components,
-    }
-  } %}
-
+    {% include '@molecules/section/section.twig' with {
+      section: {
+        background: 'default',
+        container: 'container',
+        content: content.body
+      }
+    } %}
+  {% endif %}
 </article>

@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @file
+ * Updates for profile.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+
+/**
+ * Remove field_media from news content type.
+ */
+function jcc_tc2_all_immutable_config_update_8001() {
+  // Deleting field.
+  $field = FieldConfig::loadByName('node', 'news', 'field_media');
+  if (!empty($field)) {
+    $field->delete();
+  }
+}
