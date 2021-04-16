@@ -17,3 +17,15 @@ function jcc_tc2_all_immutable_config_update_8001() {
     $field->delete();
   }
 }
+
+/**
+ * Remove exposedformformssearch_forms block.
+ */
+function jcc_tc2_all_immutable_config_update_8002() {
+  $block_storage = \Drupal::service('entity_type.manager')->getStorage('block');
+  $blocks = $block_storage->loadMultiple();
+
+  if (!empty($blocks['exposedformformssearch_forms'])) {
+    $blocks['exposedformformssearch_forms']->delete();
+  }
+}
