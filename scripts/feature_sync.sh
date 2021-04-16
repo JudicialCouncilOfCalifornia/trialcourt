@@ -136,6 +136,7 @@ feature_enable(){
   done
 
   for SITE in ${SUB_SITES[@]} ; do
+    echo -e "\n${G}Enabling $1 on ${SITE}.${RE}"
     drush $SITE en $1 -y
     drush $SITE cex -y
   done
