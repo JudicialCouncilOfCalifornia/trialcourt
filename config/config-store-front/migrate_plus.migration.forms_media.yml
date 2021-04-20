@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: eTTKPOBwS7sAUDqIln9S6qsEpKWjBc-qf2RzVTLioFI
+  default_config_hash: 3FYHzBDCqvpDXuTHie4dnphY5PinKZF5tF-1ggMQEgc
 id: forms_media
 class: null
 field_plugin_method: null
@@ -36,6 +36,10 @@ source:
       selector: title
       label: Title
 process:
+  pseudo_encoded_title:
+    plugin: callback
+    callable: htmlspecialchars_decode
+    source: title
   pseudo_destination_filename:
     -
       plugin: path_from_url
@@ -48,17 +52,22 @@ process:
       method: process
       message: 'Cannot import empty filename.'
   name:
-    -
-      plugin: callback
-      callable: htmlspecialchars_decode
-      source: title
-    -
-      plugin: default_value
-      default_value: '@pseudo_destination_filename'
+    plugin: null_coalesce
+    source:
+      - '@pseudo_encoded_title'
+      - '@pseudo_destination_filename'
   field_media_file/target_id:
-    plugin: migration_lookup
-    migration: forms_file
-    source: id
+    -
+      plugin: migration_lookup
+      migration: forms_file
+      source: id
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'Cannot import empty filename.'
+  uid:
+    plugin: default_value
+    default_value: 1
 destination:
   plugin: 'entity:media'
   default_bundle: file
