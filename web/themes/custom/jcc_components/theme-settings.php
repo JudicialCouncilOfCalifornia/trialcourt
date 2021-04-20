@@ -41,7 +41,13 @@ function jcc_components_form_system_theme_settings_alter(&$form, FormStateInterf
       'alt' => t('Alt'),
     ],
     '#default_value' => theme_get_setting('header_footer_variant'),
-    '#description' => t('Set the patternlab variant for the <a target="_blank" href=":header">header</a> and <a target="_blank" href=":footer">footer</a>.', [':header' => 'http://patternlab.courts.ca.gov/2.x/public/?p=viewall-organisms-header', ':footer' => 'http://patternlab.courts.ca.gov/2.x/public/?p=viewall-organisms-footer']),
+    '#description' => t(
+      'Set the patternlab variant for the <a target="_blank" href=":header">header</a> and <a target="_blank" href=":footer">footer</a>.',
+      [
+        ':header' => 'http://patternlab.courts.ca.gov/2.x/public/?p=viewall-organisms-header',
+        ':footer' => 'http://patternlab.courts.ca.gov/2.x/public/?p=viewall-organisms-footer',
+      ]
+    ),
   ];
 
   $form['theme']['site_name_first'] = [
@@ -135,11 +141,5 @@ function jcc_components_form_system_theme_settings_alter(&$form, FormStateInterf
     '#type' => 'details',
     '#title' => t('Global settings'),
     '#collapsed'  => TRUE,
-  ];
-  $form['global']['hide_translation'] = [
-    '#type'          => 'checkbox',
-    '#title'         => t('Hide translation'),
-    '#default_value' => theme_get_setting('hide_translation'),
-    '#description'   => t("Hide translation dropdown from header."),
   ];
 }

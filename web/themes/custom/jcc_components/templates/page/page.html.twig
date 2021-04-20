@@ -45,6 +45,14 @@
 {% set classes = [
   'page',
 ]|merge(classes|default([])) %}
+{% set translate = {} %}
+
+{% if translation_links is not empty %}
+  {% set translate = {
+    text: "Translate"|t,
+    links: translation_links
+  } %}
+{% endif %}
 
 <div{{ attributes.addClass(classes) }}>
   {% include '@organisms/global/header.twig' with {
@@ -60,10 +68,8 @@
         svg: logo.url
       },
       links: main_links,
-      translate: {
-        text: "Translate"|t,
-        links: translation_links,
-      }
+      translate: translate,
+      search: search_form
     }
   } %}
 

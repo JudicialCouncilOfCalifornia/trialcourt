@@ -42,21 +42,32 @@ function jcc_components_preprocess_page(&$variables) {
 
   $path = \Drupal::service('path.current')->getPath();
   $langcodes = \Drupal::languageManager()->getLanguages();
-
-  foreach ($langcodes as $langcode => $language) {
-    $url = \Drupal::service('path.alias_manager')->getAliasByPath($path, $langcode);
-    // If there's no alias use the path from the current route.
-    if (empty($url)) {
-      $default = \Drupal::languageManager()->getDefaultLanguage()->getId();
-      $url = Url::fromRoute('<current>')->toString();
-      // Add langcode prefix if not the default language.
-      $url = ($langcode == $default) ? $url : "/${langcode}${url}";
+  if (count($langcodes) > 1) {
+    foreach ($langcodes as $langcode => $language) {
+      $url = \Drupal::service('path.alias_manager')->getAliasByPath($path, $langcode);
+      // If there's no alias use the path from the current route.
+      if (empty($url)) {
+        $default = \Drupal::languageManager()->getDefaultLanguage()->getId();
+        $url = Url::fromRoute('<current>')->toString();
+        // Add langcode prefix if not the default language.
+        $url = ($langcode == $default) ? $url : "/${langcode}${url}";
+      }
+      $variables['translation_links'][] = [
+        'text' => $language->getName(),
+        'url' => $url,
+      ];
     }
-    $variables['translation_links'][] = [
-      'text' => $language->getName(),
-      'url' => $url,
-    ];
   }
+
+  $variables['search_form'] = [
+    '#type' => 'processed_text',
+    '#format' => 'full_html',
+    '#text' => '<form class="usa-search usa-search--small " role="search">
+  <label class="usa-sr-only" for="extended-search-field-small">Search small</label>
+  <input class="usa-input" id="extended-search-field-small" type="search" name="search">
+  <button class="jcc-button--unstyled" type="submit"><span class="usa-sr-only">Search</span></button>
+</form>',
+  ];
 }
 
 /**
