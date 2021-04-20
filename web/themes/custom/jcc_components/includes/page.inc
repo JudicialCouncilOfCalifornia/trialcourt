@@ -24,7 +24,15 @@ function jcc_components_preprocess_page(&$variables) {
   $variables['footer_links'] = jcc_components_get_menu_array('footer');
   $variables['social_links'] = jcc_components_social_links();
 
-  $variables['hat_shoe'] = [
+  $variables['hat'] = [
+    'title' => [
+      'text' => theme_get_setting('hat_shoe_text', 'jcc_components'),
+      'url' => theme_get_setting('hat_shoe_url', 'jcc_components'),
+    ],
+    'links' => jcc_components_get_menu_array('hat'),
+  ];
+
+  $variables['shoe'] = [
     'title' => [
       'text' => theme_get_setting('hat_shoe_text', 'jcc_components'),
       'url' => theme_get_setting('hat_shoe_url', 'jcc_components'),
@@ -70,6 +78,7 @@ function jcc_components_get_menu_array($menu_name) {
   $tree = $menu_tree->load($menu_name, $parameters);
   $manipulators = [
     // Only show links that are accessible for the current user.
+    ['callable' => 'menu.default_tree_manipulators:checkNodeAccess'],
     ['callable' => 'menu.default_tree_manipulators:checkAccess'],
     // Use the default sorting of menu links.
     ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
@@ -93,6 +102,11 @@ function jcc_components_menu_to_array(array $tree, $menu_name) {
   $links = [];
 
   foreach ($tree as $element) {
+    // Don't include links the user doesnt' have access to.
+    if (!$element->access->isAllowed()) {
+      continue;
+    }
+
     $section_link = [];
     if ($menu_name == 'main' && $element->depth = 1 && $element->hasChildren) {
       $section_link = [
