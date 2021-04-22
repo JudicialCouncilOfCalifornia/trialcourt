@@ -76,13 +76,20 @@ process:
   type:
     plugin: default_value
     default_value: document
-  title: title
+  title:
+    plugin: substr
+    source: title
+    start: 0
+    length: 254
   body/value:
     plugin: callback
     callable: nl2br
     source: body
   body/format: constants/full_html
   sticky:
+    plugin: default_value
+    default_value: 0
+  promote:
     plugin: default_value
     default_value: 0
   field_tags:

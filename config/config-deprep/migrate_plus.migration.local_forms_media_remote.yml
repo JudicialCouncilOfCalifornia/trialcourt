@@ -58,7 +58,11 @@ process:
       source: file_url
     -
       plugin: file_remote_url
-  name: title
+  name:
+    - plugin: substr
+      source: title
+      start: 0
+      length: 254
 destination:
   plugin: 'entity:media'
   default_bundle: file
