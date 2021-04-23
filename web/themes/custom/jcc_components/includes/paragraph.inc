@@ -54,16 +54,6 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
     $title = !empty($card->field_heading) ? $card->field_heading->first()->value : '';
 
     if (!empty($card->field_link)) {
-      // Link field formatter double encodes urls which becomes a problem when
-      // we allow file urls that have special characters like spaces in the
-      // filename. Decode the uri before allowing it to render. It will be re-
-      // encoded by the core link field formatter.
-      // There's also a decoder in the LinkitWidget to prevent double encoding
-      // paths on successive saves.
-      // Consider a core patch to LinkFormatter.
-      $link_value = $card->field_link->first()->getValue();
-      $link_value['uri'] = rawurldecode($link_value['uri']);
-      $card->field_link->setValue($link_value);
       $link = $card->field_link->view('default');
     }
 
