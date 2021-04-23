@@ -20,20 +20,18 @@ function jcc_components_preprocess_paragraph(&$variables) {
 }
 
 /**
- * Implements hook_theme_suggestions_alter().
+ * Implements hook_theme_suggestions_HOOK_alter().
  */
-function jcc_components_theme_suggestions_alter(&$suggestions, $variables, $hook) {
-  if ($hook == 'paragraph') {
-    $paragraph = $variables['elements']['#paragraph'];
-    if ($paragraph->bundle() == 'views_reference') {
-      if (!empty($paragraph->field_views_reference)) {
-        $target_id = $paragraph->field_views_reference->first()->target_id;
-        $display_id = $paragraph->field_views_reference->first()->display_id;
-        $suggestion = 'paragraph__' . $paragraph->bundle();
-        $suggestion = !empty($target_id) ? $suggestion . "__$target_id" : $suggestion;
-        $suggestion = !empty($display_id) ? $suggestion . "__$display_id" : $suggestion;
-        $suggestions[] = $suggestion;
-      }
+function jcc_components_theme_suggestions_paragraph_alter(&$suggestions, $variables) {
+  $paragraph = $variables['elements']['#paragraph'];
+  if ($paragraph->bundle() == 'views_reference') {
+    if (!empty($paragraph->field_views_reference)) {
+      $target_id = $paragraph->field_views_reference->first()->target_id;
+      $display_id = $paragraph->field_views_reference->first()->display_id;
+      $suggestion = 'paragraph__' . $paragraph->bundle();
+      $suggestion = !empty($target_id) ? $suggestion . "__$target_id" : $suggestion;
+      $suggestion = !empty($display_id) ? $suggestion . "__$display_id" : $suggestion;
+      $suggestions[] = $suggestion;
     }
   }
 }
