@@ -1,31 +1,29 @@
-uuid: ee403e97-ee33-48a5-b77a-9f9427cd62a1
+uuid: 3582df6e-5d75-4bd5-b92d-bcc72710c8ba
 langcode: en
 status: true
 dependencies:
   config:
-    - facets.facet.topics
+    - facets.facet.contact
   module:
     - facets
     - system
   theme:
     - jcc_newsroom
-_core:
-  default_config_hash: FBVf1deFRzKLcjxXFu5z6XzxEHznGI2Szkpt2vYiSS0
-id: jcc_newsroom_topics
+id: contact
 theme: jcc_newsroom
 region: title
-weight: -11
+weight: -1
 provider: null
-plugin: 'facet_block:topics'
+plugin: 'facet_block:contact'
 settings:
-  id: 'facet_block:topics'
-  label: Topics
+  id: 'facet_block:contact'
+  label: Author
   provider: facets
   label_display: '0'
-  block_id: topics
+  block_id: contact
 visibility:
   request_path:
     id: request_path
-    pages: "/search\r\n/search/*"
+    pages: "/search\r\n/search*\r\n/search/*"
     negate: false
     context_mapping: {  }
