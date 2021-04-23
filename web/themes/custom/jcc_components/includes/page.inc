@@ -58,16 +58,6 @@ function jcc_components_preprocess_page(&$variables) {
       ];
     }
   }
-
-  $variables['search_form'] = [
-    '#type' => 'processed_text',
-    '#format' => 'full_html',
-    '#text' => '<form class="usa-search usa-search--small " role="search">
-  <label class="usa-sr-only" for="extended-search-field-small">Search small</label>
-  <input class="usa-input" id="extended-search-field-small" type="search" name="search">
-  <button class="jcc-button--unstyled" type="submit"><span class="usa-sr-only">Search</span></button>
-</form>',
-  ];
 }
 
 /**
