@@ -45,7 +45,6 @@
 {% set classes = [
   'page',
 ]|merge(classes|default([])) %}
-{% set translate = {} %}
 
 {% if translation_links is not empty %}
   {% set translate = {
@@ -69,7 +68,7 @@
       },
       links: main_links,
       translate: translate,
-      search: search_form
+      search_action: '/search'
     }
   } %}
 
