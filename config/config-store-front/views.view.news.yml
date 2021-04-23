@@ -14,7 +14,7 @@ dependencies:
     - taxonomy
     - user
 _core:
-  default_config_hash: JEgfj4RL8bekJc7Ax4Y6eHiyD2maJb8L1IqQ11_rVEM
+  default_config_hash: D7j4D0BbWPk2z1Gk07jOpJt1qZ3CD_HZwtK8DidAhbk
 id: news
 label: News
 module: views
@@ -78,7 +78,7 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 5
+          items_per_page: 16
           offset: 0
           id: 0
           total_pages: null
@@ -269,16 +269,16 @@ display:
             operator: combine_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: combine
+            identifier: search
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
               editor: '0'
               author: '0'
               administrator: '0'
+              anonymous: '0'
             placeholder: 'Search title or topic'
           is_grouped: false
           group_info:
@@ -322,22 +322,22 @@ display:
           exposed: true
           expose:
             operator_id: field_news_type_target_id_op
-            label: 'Filter by type'
+            label: ''
             description: ''
             use_operator: false
             operator: field_news_type_target_id_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: field_news_type_target_id
+            identifier: type
             required: false
             remember: false
             multiple: true
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
               editor: '0'
               author: '0'
               administrator: '0'
+              anonymous: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -365,7 +365,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          operator: between
+          operator: '>='
           value:
             min: ''
             max: ''
@@ -375,25 +375,77 @@ display:
           exposed: true
           expose:
             operator_id: field_date_value_op
-            label: 'Filter by date'
+            label: ''
             description: ''
             use_operator: false
             operator: field_date_value_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: field_date_value
+            identifier: date_start
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
               editor: '0'
               author: '0'
               administrator: '0'
+              anonymous: '0'
             placeholder: ''
-            min_placeholder: Oldest
-            max_placeholder: Newest
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: 'Publication Date (field_date)'
+            description: null
+            identifier: field_date_value
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1: {  }
+              2: {  }
+              3: {  }
+          plugin_id: datetime
+        field_date_value_1:
+          id: field_date_value_1
+          table: node__field_date
+          field: field_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '<='
+          value:
+            min: ''
+            max: ''
+            value: ''
+            type: date
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_date_value_1_op
+            label: ''
+            description: ''
+            use_operator: false
+            operator: field_date_value_1_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: date_end
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              editor: '0'
+              author: '0'
+              administrator: '0'
+              anonymous: '0'
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -446,7 +498,7 @@ display:
         operator: AND
         groups:
           1: AND
-      use_ajax: true
+      use_ajax: false
     cache_metadata:
       max-age: -1
       contexts:
@@ -490,6 +542,11 @@ display:
               secondary_label: 'Advanced options'
               secondary_open: false
             filter:
+              combine:
+                plugin_id: default
+                advanced:
+                  collapsible: false
+                  is_secondary: false
               field_news_type_target_id:
                 plugin_id: bef
                 advanced:
@@ -502,11 +559,6 @@ display:
                 display_inline: 0
               field_date_value:
                 plugin_id: bef_datepicker
-                advanced:
-                  collapsible: false
-                  is_secondary: false
-              title:
-                plugin_id: default
                 advanced:
                   collapsible: false
                   is_secondary: false
