@@ -61,7 +61,7 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
       'brow' => $card->field_brow->view('default'),
       'body' => $card->field_text->view('default'),
       'link' => [
-        'url' => !empty($link[0]) ? $link[0]['#url'] : NULL,
+        'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
         'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
       ],
       'classes' => [],
