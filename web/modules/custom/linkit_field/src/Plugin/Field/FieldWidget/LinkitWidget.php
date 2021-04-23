@@ -85,6 +85,8 @@ class LinkitWidget extends WidgetBase {
       $uri_as_url = $uri;
     }
     else {
+      // Decode stored URI so it's not double encoded when generating the URL.
+      $uri = rawurldecode($uri);
       $uri_as_url = !empty($uri) ? Url::fromUri($uri)->toString() : '';
     }
     $linkit_profile_id = $this->getSetting('linkit_profile');
