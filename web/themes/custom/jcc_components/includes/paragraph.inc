@@ -52,6 +52,7 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
   $cards = $paragraph->field_components->referencedEntities();
   foreach ($cards as $card) {
     $title = !empty($card->field_heading) ? $card->field_heading->first()->value : '';
+
     $link = $card->field_link->view('default');
     $variables['cards'][] = [
       'style' => $sub_variants['card'],
@@ -59,7 +60,7 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
       'brow' => $card->field_brow->view('default'),
       'body' => $card->field_text->view('default'),
       'link' => [
-        'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
+        'url' => !empty($link[0]) ? $link[0]['#url'] : NULL,
         'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
       ],
       'classes' => [],
