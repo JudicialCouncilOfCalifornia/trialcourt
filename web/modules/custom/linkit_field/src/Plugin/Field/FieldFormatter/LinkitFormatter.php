@@ -92,6 +92,17 @@ class LinkitFormatter extends LinkFormatter {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
+    // Link field formatter double encodes urls which becomes a problem when
+    // we allow file urls that have special characters like spaces in the
+    // filename. Decode the uri before allowing it to render. It will be re-
+    // encoded by the core link field formatter.
+    foreach ($items as $delta => $item) {
+      $link_value = $item->getValue();
+      $link_value['uri'] = rawurldecode($link_value['uri']);
+      $item->setValue($link_value);
+      $items[$delta] = $item;
+    }
+
     $elements = parent::viewElements($items, $langcode);
 
     // Loop over the elements and substitute the URL.
