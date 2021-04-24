@@ -47,36 +47,27 @@
 ]|merge(classes|default([])) %}
 
 <div{{ attributes.addClass(classes) }}>
-  {% if not node.field_hide_header.value %}
-    {% if page.header|render %}
-      {{ page.header }}
-    {% endif %}
-  {% endif %}
-  <div class="grid-container-widescreen padding-y-4 region--exposed-filters">
-    <main id="main-content" class="usa-layout-docs__main desktop:grid-col-9 usa-prose usa-layout-docs"> {# link is in html.html.twig #}
-      <div class="error-page">
-        <h1 class="jcc-header-group__title">404</h1>
-        <h2 class="jcc-header-group__body">{{ page.content }}</h2>
-        {% if my_link_list.items|length > 0 %}
-          <div class="featured-links">
-            <p>Here are some helpful links instead:</p>
-            {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
-              link_list: my_link_list
-            } %}
-          </div>
-        {% endif %}
+  {% include directory ~ "/templates/page/page-header.twig" %}
 
-      </div>
-    </main>
-  </div>
+  {% set content %}
+    <h2>{{ page.content }}</h2>
+  {% endset %}
 
-  {% if not node.field_hide_footer.value %}
-    {% if page.secondary_footer %}
-      {{ page.secondary_footer }}
-    {% endif %}
+  {% include "@molecules/hero/hero.twig" with {
+    hero: {
+      layout: 'full-main',
+      background: header_footer_variant,
+      main: {
+        title: "404",
+      },
+    }
+  } %}
 
-    {% if page.footer %}
-      {{ page.footer }}
-    {% endif %}
-  {% endif %}
+  {% include '@molecules/section/section.twig' with {
+    section: {
+      content: content,
+    }
+  } %}
+
+  {% include directory ~ "/templates/page/page-footer.twig" %}
 </div>
