@@ -1,3 +1,4 @@
+@@ -1,105 +1,105 @@
 {#
 /**
  * @file
@@ -54,23 +55,7 @@
 {% endif %}
 
 <div{{ attributes.addClass(classes) }}>
-  {% include '@organisms/global/header.twig' with {
-    header: {
-      background: header_footer_variant,
-      skip: {
-        text: "Skip to main content."|t,
-        url: '#main-content'
-      },
-      hat: hat,
-      logo: {
-        title: site_name.second,
-        svg: logo.url
-      },
-      links: main_links,
-      translate: translate,
-      search_action: '/search'
-    }
-  } %}
+  {% include directory ~ "/templates/page/page-header.twig" %}
 
   {%  if page.messaging|render %}
     {{ page.messaging }}
@@ -96,15 +81,5 @@
     {{ page.secondary_footer }}
   {% endif %}
 
-  {% include '@organisms/global/footer.twig' with {
-    footer: {
-      background: header_footer_variant,
-      links: footer_links,
-      title: site_name,
-      social_links: social_links,
-      shoe: shoe,
-      classes: []
-    }
-  } %}
-
+  {% include directory ~ "/templates/page/page-footer.twig" %}
 </div>
