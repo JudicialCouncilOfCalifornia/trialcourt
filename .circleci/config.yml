@@ -124,7 +124,7 @@ jobs:
 
             - run:
                 name: Build Themes
-                command: scripts/theme.sh -b << parameters.site >>
+                command: scripts/theme.sh -i << parameters.site >> && scripts/theme.sh -b << parameters.site >>
 
             - run:
                 name: Deploying << parameters.site >>
