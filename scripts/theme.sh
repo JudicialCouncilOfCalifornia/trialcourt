@@ -73,7 +73,6 @@ while getopts "h?abiw:" opt; do
         ;;
     b)
         name_check $2
-        echo $2
         # Check for jcc_ prefix. If not there add it and also run the jcc_base
         # build. Happens when theme.sh -b <theme> is called from CI config.yml.
         # Previously, every project would build every theme. This limits it to
@@ -90,7 +89,18 @@ while getopts "h?abiw:" opt; do
         ;;
     i)
         name_check $2
-        npm install --prefix $PWD/web/themes/custom/$2
+        # Check for jcc_ prefix. If not there add it and also run the jcc_base
+        # build. Happens when theme.sh -b <theme> is called from CI config.yml.
+        # Previously, every project would build every theme. This limits it to
+        # only the base theme and the project theme, at least.
+        if [[ $2 != jcc_* ]] ; then
+          theme_name="jcc_$2"
+          echo "No jcc_ prefix detected. Installing jcc_base first."
+          npm install --prefix $PWD/web/themes/custom/jcc_base
+        else
+          theme_name=$2
+        fi
+        npm install --prefix $PWD/web/themes/custom/$theme_name
         exit 0
         ;;
     w)
