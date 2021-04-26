@@ -7,10 +7,12 @@ dependencies:
     - field.field.paragraph.cards.field_components
     - field.field.paragraph.cards.field_heading
     - field.field.paragraph.cards.field_lead
+    - field.field.paragraph.cards.field_link
     - field.field.paragraph.cards.field_sub_variant
     - field.field.paragraph.cards.field_variant
     - paragraphs.paragraphs_type.cards
   module:
+    - link
     - paragraphs
     - text
 _core:
@@ -27,7 +29,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_components:
-    weight: 5
+    weight: 6
     settings:
       title: Card
       title_plural: Cards
@@ -54,6 +56,14 @@ content:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
+  field_link:
+    weight: 5
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+    region: content
   field_sub_variant:
     type: string_textfield
     weight: 3
