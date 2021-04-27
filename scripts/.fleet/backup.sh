@@ -5,7 +5,7 @@ BASEDIR=$(dirname $(dirname $(realpath $0)))
 case $1 in
 
   --help|-h|-?)
-    echo -e "\n${B}This script runs a pantheon backup for all sites in the sites directory. Just pass in the environment.${RE}\n(Assumes pantheon site names jcc-[site], i.e. jcc-colusa)\nUsage:\n\t/scripts/fleet/backup.sh [env]\nOr:\n\tscripts/fleet/backup [env]"
+    echo -e "\n${B}This script runs a pantheon backup for all sites in the sites directory. Just pass in the environment.${RE}\n(Assumes pantheon site names jcc-[site], i.e. jcc-colusa)\n\nUsage:\n\tscripts/fleet backup [env]"
     exit
     ;;
   *)

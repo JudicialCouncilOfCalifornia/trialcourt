@@ -3,7 +3,7 @@
 case $1 in
 
   --help|-h|-?)
-    echo -e "\n${B}Syncs source database to it local counterpart.${RE}\n(Assumes pantheon site names jcc-[site], i.e. jcc-colusa)\nUsage:\n\t/scripts/fleet/db-syncdown.sh [env]\nOr:\n\tscripts/fleet/db-syncdown [env]"
+    echo -e "\n${B}Syncs source database to its local counterpart.${RE}\n(Assumes pantheon site names jcc-[site], i.e. jcc-colusa)\nUsage:\n\tscripts/fleet db-pull [env]"
     exit
     ;;
   *)
