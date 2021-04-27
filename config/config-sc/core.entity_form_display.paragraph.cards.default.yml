@@ -7,25 +7,29 @@ dependencies:
     - field.field.paragraph.cards.field_components
     - field.field.paragraph.cards.field_heading
     - field.field.paragraph.cards.field_lead
+    - field.field.paragraph.cards.field_link
     - field.field.paragraph.cards.field_sub_variant
     - field.field.paragraph.cards.field_variant
     - paragraphs.paragraphs_type.cards
   module:
+    - link
     - paragraphs
     - text
+_core:
+  default_config_hash: IeFZtAuUYt8m-enaUSZ_WQ_SrYhMWRn5QNj5Qu-1VJw
 id: paragraph.cards.default
 targetEntityType: paragraph
 bundle: cards
 mode: default
 content:
   field_columns:
+    type: options_select
     weight: 4
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: options_select
-    region: content
   field_components:
-    weight: 5
+    weight: 6
     settings:
       title: Card
       title_plural: Cards
@@ -37,37 +41,45 @@ content:
     type: entity_reference_paragraphs
     region: content
   field_heading:
+    type: string_textfield
     weight: 1
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_lead:
+    type: text_textarea
     weight: 2
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
+  field_link:
+    weight: 5
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
     region: content
   field_sub_variant:
+    type: string_textfield
     weight: 3
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_variant:
+    type: string_textfield
     weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
 hidden:
   created: true
   status: true
