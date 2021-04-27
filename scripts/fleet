@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+BASEDIR=$(dirname $(dirname $(realpath $0)))
+
+command=$1
+shift
+sites=$(ls -d $BASEDIR/web/sites/* | grep -v '\.' | sed "s#${BASEDIR}/web/sites/##")
+
+# Include color file.
+. ${BASEDIR}/scripts/colors.sh
+
+case $command in
+
+  "db-pull")
+    . ${BASEDIR}/scripts/.fleet/db-pull.sh
+    ;;
+
+  "backup")
+    . ${BASEDIR}/scripts/.fleet/backup.sh
+    ;;
+
+  *)
+    echo -e "\nFleet commands run the same process on all sites in the ${P}web/sites${RE} directory."
+    echo -e "\n${B}Valid commands are:${RE}"
+    echo -e "\tbackup [env] [--help] ${B}Back up the given environment.${RE}"
+    echo -e "\tdb-pull [env] [--help] ${B}Pull the database from given environment and install locally.${RE}"
+    ;;
+esac
+
+echo -e "\n${Y}Processes may be running in parallel in the background.${RE}\n"
+echo -e "Use ${P}ps${RE} to see running processes; stdout will still be displayed."
