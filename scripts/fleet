@@ -3,8 +3,9 @@
 BASEDIR=$(dirname $(dirname $(realpath $0)))
 
 command=$1
-shift
 sites=$(ls -d $BASEDIR/web/sites/* | grep -v '\.' | sed "s#${BASEDIR}/web/sites/##")
+
+shift
 
 # Include color file.
 . ${BASEDIR}/scripts/colors.sh
