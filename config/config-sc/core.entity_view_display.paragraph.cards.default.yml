@@ -7,12 +7,16 @@ dependencies:
     - field.field.paragraph.cards.field_components
     - field.field.paragraph.cards.field_heading
     - field.field.paragraph.cards.field_lead
+    - field.field.paragraph.cards.field_link
     - field.field.paragraph.cards.field_sub_variant
     - field.field.paragraph.cards.field_variant
     - paragraphs.paragraphs_type.cards
   module:
     - entity_reference_revisions
+    - link
     - text
+_core:
+  default_config_hash: 13uAUn8zX8SErXWez8IjfEM93GnwwcnzUqts2ZJXIUg
 id: paragraph.cards.default
 targetEntityType: paragraph
 bundle: cards
@@ -41,6 +45,18 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: text_default
+    region: content
+  field_link:
+    weight: 3
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
     region: content
 hidden:
   field_columns: true
