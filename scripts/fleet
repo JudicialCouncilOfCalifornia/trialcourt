@@ -10,21 +10,31 @@ shift
 # Include color file.
 . ${BASEDIR}/scripts/colors.sh
 
-case $command in
+show_help() {
+  echo -e "\nFleet commands run the same process on all sites in the ${P}web/sites${RE} directory. ${Y}\n(Assumes pantheon site names jcc-[site], i.e. jcc-colusa)${RE}"
+  echo -e "\n${B}Valid commands are:${RE}"
+  . ${BASEDIR}/scripts/.fleet/backup.sh --help
+  . ${BASEDIR}/scripts/.fleet/db-pull.sh --help
+  . ${BASEDIR}/scripts/.fleet/drush.sh --help
+}
 
-  "db-pull")
-    . ${BASEDIR}/scripts/.fleet/db-pull.sh
-    ;;
+case $command in
 
   "backup")
     . ${BASEDIR}/scripts/.fleet/backup.sh
     ;;
 
+  "db-pull")
+    . ${BASEDIR}/scripts/.fleet/db-pull.sh
+    ;;
+
+  "drush")
+    . ${BASEDIR}/scripts/.fleet/drush.sh
+    ;;
+
   *)
-    echo -e "\nFleet commands run the same process on all sites in the ${P}web/sites${RE} directory."
-    echo -e "\n${B}Valid commands are:${RE}"
-    echo -e "\tbackup [env] [--help] ${B}Back up the given environment.${RE}"
-    echo -e "\tdb-pull [env] [--help] ${B}Pull the database from given environment and install locally.${RE}"
+    show_help
+    exit
     ;;
 esac
 
