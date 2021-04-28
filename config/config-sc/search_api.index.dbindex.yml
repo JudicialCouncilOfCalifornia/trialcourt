@@ -260,74 +260,12 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  tokenizer:
-    all_fields: false
-    fields:
-      - rendered_item
-    ignored: ._-
-    spaces: ''
-    overlap_cjk: 1
-    minimum_word_size: '3'
-    weights:
-      preprocess_index: -44
-      preprocess_query: -6
+  add_url: {  }
   aggregated_field: {  }
-  language_with_fallback: {  }
-  transliteration:
-    all_fields: false
-    fields:
-      - rendered_item
-      - title
-    weights:
-      preprocess_index: -49
-      preprocess_query: -20
-  rendered_item: {  }
   content_access:
     weights:
       preprocess_query: -30
-  ignorecase:
-    all_fields: true
-    fields:
-      - field_aside
-      - field_brow
-      - field_brow_1
-      - field_heading
-      - field_heading_1
-      - field_subheading
-      - name
-      - processed
-      - processed_1
-      - processed_6
-      - processed_7
-      - rendered_item
-      - summary_processed
-      - title
-    weights:
-      preprocess_index: -20
-      preprocess_query: -20
-  stemmer:
-    all_fields: true
-    fields:
-      - field_aside
-      - field_brow
-      - field_brow_1
-      - field_heading
-      - field_heading_1
-      - field_subheading
-      - name
-      - processed
-      - processed_1
-      - processed_6
-      - processed_7
-      - rendered_item
-      - summary_processed
-      - title
-    exceptions:
-      mexican: mexic
-      texan: texa
-    weights:
-      preprocess_index: -42
-      preprocess_query: 0
+  entity_status: {  }
   highlight:
     highlight: always
     highlight_partial: true
@@ -367,6 +305,70 @@ processor_settings:
     weights:
       preprocess_index: -15
       preprocess_query: -15
+  ignorecase:
+    all_fields: true
+    fields:
+      - field_aside
+      - field_brow
+      - field_brow_1
+      - field_heading
+      - field_heading_1
+      - field_subheading
+      - name
+      - processed
+      - processed_1
+      - processed_6
+      - processed_7
+      - rendered_item
+      - summary_processed
+      - title
+    weights:
+      preprocess_index: -20
+      preprocess_query: -20
+  language_with_fallback: {  }
+  rendered_item: {  }
+  stemmer:
+    all_fields: true
+    fields:
+      - field_aside
+      - field_brow
+      - field_brow_1
+      - field_heading
+      - field_heading_1
+      - field_subheading
+      - name
+      - processed
+      - processed_1
+      - processed_6
+      - processed_7
+      - rendered_item
+      - summary_processed
+      - title
+    exceptions:
+      mexican: mexic
+      texan: texa
+    weights:
+      preprocess_index: -42
+      preprocess_query: 0
+  tokenizer:
+    all_fields: false
+    fields:
+      - rendered_item
+    ignored: ._-
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
+    weights:
+      preprocess_index: -44
+      preprocess_query: -6
+  transliteration:
+    all_fields: false
+    fields:
+      - rendered_item
+      - title
+    weights:
+      preprocess_index: -49
+      preprocess_query: -20
   type_boost:
     boosts:
       'entity:node':
@@ -378,8 +380,6 @@ processor_settings:
           subpage: !!float 2
     weights:
       preprocess_index: -50
-  entity_status: {  }
-  add_url: {  }
   file_attachments:
     excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
     number_indexed: 0
