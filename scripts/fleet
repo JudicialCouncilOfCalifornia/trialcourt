@@ -17,6 +17,7 @@ show_help() {
   . ${BASEDIR}/scripts/.fleet/config-sync.sh -h
   . ${BASEDIR}/scripts/.fleet/db-pull.sh -h
   . ${BASEDIR}/scripts/.fleet/drush.sh -h
+  . ${BASEDIR}/scripts/.fleet/reset.sh -h
   . ${BASEDIR}/scripts/.fleet/terminus.sh -h
 }
 
@@ -36,6 +37,10 @@ case $command in
 
   "drush")
     . ${BASEDIR}/scripts/.fleet/drush.sh
+    ;;
+
+  "reset")
+    . ${BASEDIR}/scripts/.fleet/reset.sh
     ;;
 
   "terminus")
