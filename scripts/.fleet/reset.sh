@@ -22,6 +22,7 @@ do_command() {
 
   for site in $sites
   do
+    [[ "$env" == "local" ]] && alias="@local.${site}" || alias="@${site}.${env}"
     # Now generate login links at the end.
     lando drush $alias uli
   done
