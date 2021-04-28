@@ -13,9 +13,11 @@ shift
 show_help() {
   echo -e "\nFleet commands run the same process on all sites in the ${P}web/sites${RE} directory. ${Y}\n(Assumes pantheon site names jcc-[site], i.e. jcc-colusa)${RE}"
   echo -e "\n${B}Valid commands are:${RE}"
-  . ${BASEDIR}/scripts/.fleet/backup.sh --help
-  . ${BASEDIR}/scripts/.fleet/db-pull.sh --help
-  . ${BASEDIR}/scripts/.fleet/drush.sh --help
+  . ${BASEDIR}/scripts/.fleet/backup.sh -h
+  . ${BASEDIR}/scripts/.fleet/config-sync.sh -h
+  . ${BASEDIR}/scripts/.fleet/db-pull.sh -h
+  . ${BASEDIR}/scripts/.fleet/drush.sh -h
+  . ${BASEDIR}/scripts/.fleet/terminus.sh -h
 }
 
 case $command in
@@ -24,12 +26,20 @@ case $command in
     . ${BASEDIR}/scripts/.fleet/backup.sh
     ;;
 
+  "config-sync")
+    . ${BASEDIR}/scripts/.fleet/config-sync.sh $@
+    ;;
+
   "db-pull")
     . ${BASEDIR}/scripts/.fleet/db-pull.sh
     ;;
 
   "drush")
     . ${BASEDIR}/scripts/.fleet/drush.sh
+    ;;
+
+  "terminus")
+    . ${BASEDIR}/scripts/.fleet/terminus.sh
     ;;
 
   *)
