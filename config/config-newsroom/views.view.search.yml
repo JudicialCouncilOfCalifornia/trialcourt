@@ -221,8 +221,13 @@ display:
             remember_roles:
               authenticated: authenticated
               anonymous: '0'
+              editor: '0'
+              subscriber: '0'
+              author: '0'
               administrator: '0'
             placeholder: 'Search for keywords'
+            expose_fields: false
+            searched_fields_id: ''
           is_grouped: false
           group_info:
             label: ''
@@ -237,7 +242,8 @@ display:
             group_items: {  }
           parse_mode: terms
           min_length: null
-          fields: {  }
+          fields:
+            - title_1
           plugin_id: search_api_fulltext
         type:
           id: type
