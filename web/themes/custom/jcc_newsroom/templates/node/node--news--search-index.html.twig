@@ -93,14 +93,8 @@
     {% endif %}
   {% endset %}
 
-  {% set author %}
-    {% if content.field_contact[0] %}
-      (by {{ content.field_contact.0 }})
-    {% endif %}
-  {% endset %}
-
   {% set brow_info %}
-    {{ news_type }} - {{ node.created.value|date(format="F j, Y") }} {{ author }}
+    {{ news_type }} - {{ node.created.value|date(format="F j, Y") }}
   {% endset %}
 
   {% set images = node.field_images %}
