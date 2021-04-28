@@ -12,10 +12,10 @@ show_help() {
 do_command() {
   for site in $sites
     do
-      source="@${site}.${1}"
+      source="@${site}.${env}"
       local="@local.${site}"
       echo -e "\n${B}Syncing database from ${source} to ${local}"
-      lando drush sql:sync $source $local -y &
+      lando drush sql:sync $source $local -y
     done
 }
 
