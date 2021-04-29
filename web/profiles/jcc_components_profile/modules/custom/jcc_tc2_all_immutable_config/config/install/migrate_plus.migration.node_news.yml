@@ -41,7 +41,12 @@ source:
   ids:
     src_unique_id:
       type: string
+  constants:
+    break: '</p><p>'
 process:
+  pseudo_file_path:
+    plugin: path_from_url
+    source: url
   uid:
     plugin: default_value
     default_value: 1
@@ -64,10 +69,15 @@ process:
   path/pathauto:
     plugin: default_value
     default_value: 1
-  body/value: body
+  body/value:
+    plugin: concat
+    source:
+      - body
+      - constants/break
+      - url
   body/format:
     plugin: default_value
-    default_value: full_html
+    default_value: body
 destination:
   plugin: 'entity:node'
   default_bundle: news
