@@ -63,6 +63,7 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
       'link' => [
         'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
         'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
+        'type' => !empty($link[0]) ? _jcc_components_get_url_type($link[0]['#url']->toString()) : NULL,
       ],
       'classes' => [],
     ];
@@ -183,4 +184,24 @@ function jcc_components_paragraph_text_share(array &$variables, ParagraphInterfa
   if ($node = \Drupal::routeMatch()->getParameter('node')) {
     $variables['page_title'] = $node->title->value;
   }
+}
+
+/**
+ * Helper function to get the type of URL (file, etc).
+ *
+ * @param string $url
+ *   The URL to test.
+ *
+ * @return string|null
+ *   The type of URL.
+ */
+function _jcc_components_get_url_type($url) {
+  $extensions = ['pdf', 'doc', 'docx', 'png', 'jpg', 'jpeg', 'gif'];
+  $extension = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
+
+  if (in_array(strtolower($extension), $extensions)) {
+    return 'file';
+  }
+
+  return NULL;
 }
