@@ -4,6 +4,9 @@ BASEDIR=$(dirname $(dirname $(realpath $0)))
 
 command=$1
 sites=$(ls -d $BASEDIR/web/sites/* | grep -v '\.' | sed "s#${BASEDIR}/web/sites/##")
+# Remove default from sites array.
+# It's not a site but it's needed for other things.
+sites=${sites[@]/"default"}
 
 shift
 
@@ -21,37 +24,13 @@ show_help() {
   . ${BASEDIR}/scripts/.fleet/terminus.sh -h
 }
 
-case $command in
-
-  "backup")
-    . ${BASEDIR}/scripts/.fleet/backup.sh
-    ;;
-
-  "config-sync")
-    . ${BASEDIR}/scripts/.fleet/config-sync.sh $@
-    ;;
-
-  "db-pull")
-    . ${BASEDIR}/scripts/.fleet/db-pull.sh
-    ;;
-
-  "drush")
-    . ${BASEDIR}/scripts/.fleet/drush.sh
-    ;;
-
-  "reset")
-    . ${BASEDIR}/scripts/.fleet/reset.sh
-    ;;
-
-  "terminus")
-    . ${BASEDIR}/scripts/.fleet/terminus.sh
-    ;;
-
-  *)
-    show_help
-    exit
-    ;;
-esac
+# Run the command.
+if [[ -f ${BASEDIR}/scripts/.fleet/${command}.sh ]] ; then
+  . ${BASEDIR}/scripts/.fleet/${command}.sh
+else
+  show_help
+  exit
+fi
 
 echo -e "\n${Y}Processes may be running in parallel in the background.${RE}\n"
 echo -e "Use ${P}ps${RE} to see running processes; stdout will still be displayed."
