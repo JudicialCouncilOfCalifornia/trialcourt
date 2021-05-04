@@ -39,6 +39,8 @@ function jcc_components_preprocess_page(&$variables) {
     ],
     'links' => jcc_components_get_menu_array('shoe'),
   ];
+  // Add text-only copyright to footer links.
+  $variables['shoe']['links'][]['text'] = '© ' . date('Y');
 
   $path = \Drupal::service('path.current')->getPath();
   $langcodes = \Drupal::languageManager()->getLanguages();
