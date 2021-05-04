@@ -265,7 +265,24 @@ processor_settings:
   content_access:
     weights:
       preprocess_query: -30
+  double_quote_workaround:
+    all_fields: false
+    fields:
+      - rendered_item
+      - title
+    replacement: '|9999999998|'
+    weights:
+      postprocess_query: 0
+      preprocess_index: -47
+      preprocess_query: -15
   entity_status: {  }
+  file_attachments:
+    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
+    number_indexed: 0
+    number_first_bytes: '1 MB'
+    max_filesize: '0'
+    excluded_private: 1
+    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
   highlight:
     highlight: always
     highlight_partial: true
@@ -327,6 +344,9 @@ processor_settings:
       preprocess_query: -20
   language_with_fallback: {  }
   rendered_item: {  }
+  solr_date_range:
+    weights:
+      preprocess_index: 0
   stemmer:
     all_fields: true
     fields:
@@ -380,26 +400,6 @@ processor_settings:
           subpage: !!float 2
     weights:
       preprocess_index: -50
-  file_attachments:
-    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
-    number_indexed: 0
-    number_first_bytes: '1 MB'
-    max_filesize: '0'
-    excluded_private: 1
-    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
-  solr_date_range:
-    weights:
-      preprocess_index: 0
-  double_quote_workaround:
-    all_fields: false
-    fields:
-      - rendered_item
-      - title
-    replacement: '|9999999998|'
-    weights:
-      postprocess_query: 0
-      preprocess_index: -47
-      preprocess_query: -15
 tracker_settings:
   default:
     indexing_order: fifo
