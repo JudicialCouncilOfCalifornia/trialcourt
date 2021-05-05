@@ -4,7 +4,7 @@ show_help() {
   name="config-sync"
   description="Deploys featurized config to all sites and exports their new config.\n\t\t-b\tjcc_tc (legacy) or jcc_tc2 (default)\n\t\t-e\tThe environment (${R}EXPERIMENTAL and DANGEROUS!${RE} Do not use on live.)\n\t\t-f\tThe target feature to import config\n\t\t-s\tThe target site to import config\n\t\t${G}More Info:${RE} https://github.com/JudicialCouncilOfCalifornia/trialcourt/blob/master/FEATURES.md"
   usage="scripts/fleet config-sync [-b -e -f -s]"
-
+  # Use this exact template in all show_help functions for consistentency.
   echo -e "\n${G}${name}${RE}\t${Y}Usage:${RE}\t${usage}"
   echo -e "\n\t\t${description}"
 }
