@@ -1,0 +1,93 @@
+<?php
+
+/**
+ * @file
+ * Installation items for jcc_components_profile profile.
+ */
+
+/**
+ * TCI-284: Update field formats for existing paragraph content.
+ */
+function jcc_components_profile_update_8001() {
+  $table = 'paragraphs_item';
+  $type = 'paragraph';
+  $id = 'id';
+  $formats = [
+    'default' => [
+      'field_lead' => 'minimal',
+      'field_aside' => 'aside',
+      'field_text' => 'body',
+    ],
+    'action_list_item' => [
+      'field_text' => 'minimal',
+    ],
+    'alert' => [
+      'field_text' => 'minimal',
+    ],
+    'card' => [
+      'field_text' => 'minimal',
+    ],
+    'hero' => [
+      'field_aside' => 'minimal',
+    ],
+  ];
+
+  jcc_components_profile_set_field_format($table, $type, $id, $formats);
+}
+
+/**
+ * TCI-284: Update field formats for existing node content.
+ */
+function jcc_components_profile_update_8002() {
+  $table = 'node';
+  $type = 'node';
+  $id = 'nid';
+  $formats = [
+    'default' => [
+      'body' => 'body',
+    ],
+    'alert' => [
+      'body' => 'minimal',
+    ],
+    'subpage' => [
+      'body' => 'full_html',
+    ],
+  ];
+
+  jcc_components_profile_set_field_format($table, $type, $id, $formats);
+}
+
+/**
+ * Set the field formats for existing content.
+ *
+ * @param string $table
+ *   The name of the table to fetch ids.
+ * @param string $type
+ *   The entity type.
+ * @param string $id
+ *   The entity type id name. id, nid.
+ * @param array $formats
+ *   An assoiative array mapping bundle => field => format.
+ *   Should include a 'default' bundle and only overrides for each other
+ *   bundle as necessary.
+ */
+function jcc_components_profile_set_field_format($table, $type, $id, array $formats) {
+  $query = \Drupal::database()->select($table, 'e');
+  $query->fields('e', [$id]);
+  $result = $query->execute();
+
+  while ($entity_id = $result->fetchField()) {
+    $entity = \Drupal::entityTypeManager()->getStorage($type)->load($entity_id);
+    $bundle = $entity->bundle();
+    $bundle_formats = array_key_exists($bundle, $formats) ? array_merge($formats['default'], $formats[$bundle]) : $formats['default'];
+
+    foreach ($bundle_formats as $field => $format) {
+      if (!empty($entity->$field)) {
+        if ($entity->$field->format && $entity->$field->format !== $format) {
+          $entity->$field->format = $format;
+          $entity->save();
+        }
+      }
+    }
+  }
+}

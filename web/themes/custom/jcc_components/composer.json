@@ -1,0 +1,41 @@
+{
+  "name": "judicialcouncil/jcc_components",
+  "description": "Drupal theme built with an Atomic Pattern Library leveraging the US Web Design System (USWDS).",
+  "type": "drupal-theme",
+  "homepage": "https://www.drupal.org/project/jcc_components",
+  "authors": [
+    {
+      "name": "Calvin Tyndall",
+      "email": "calvin@chapterthree.com",
+      "homepage": "https://drupal.org/project/jcc_components",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "issues": "https://drupal.org/project/jcc_components/issues"
+  },
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "repositories": {
+    "drupal": {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  },
+  "require": {
+    "drupal/components": "^1.0",
+    "judicialcouncil/courtyard-artifact": "~0.1.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Drush\\Commands\\jcc_components\\": "Commands/jcc_components/"
+    }
+  },
+  "extra": {
+    "drush": {
+      "services": {
+        "drush.services.yml": "^9||^10"
+      }
+    }
+  }
+}

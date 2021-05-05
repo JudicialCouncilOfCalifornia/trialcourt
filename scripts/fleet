@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+BASEDIR=$(dirname $(dirname $(realpath $0)))
+
+command=$1
+sites=$(ls -d $BASEDIR/web/sites/* | grep -v '\.' | sed "s#${BASEDIR}/web/sites/##")
+# Remove default from sites array.
+# It's not a site but it's needed for other things.
+sites=${sites[@]/"default"}
+
+shift
+
+# Include color file.
+. ${BASEDIR}/scripts/colors.sh
+
+show_help() {
+  echo -e "\nFleet commands run the same process on all sites in the ${P}web/sites${RE} directory. ${Y}\n(Assumes pantheon site names jcc-[site], i.e. jcc-colusa)${RE}"
+  echo -e "\n${B}Valid commands are:${RE}"
+  . ${BASEDIR}/scripts/.fleet/backup.sh -h
+  . ${BASEDIR}/scripts/.fleet/config-sync.sh -h
+  . ${BASEDIR}/scripts/.fleet/db-pull.sh -h
+  . ${BASEDIR}/scripts/.fleet/drush.sh -h
+  . ${BASEDIR}/scripts/.fleet/reset.sh -h
+  . ${BASEDIR}/scripts/.fleet/terminus.sh -h
+}
+
+# Run the command.
+if [[ -f ${BASEDIR}/scripts/.fleet/${command}.sh ]] ; then
+  . ${BASEDIR}/scripts/.fleet/${command}.sh
+else
+  show_help
+  exit
+fi
+
+echo -e "\n${Y}Processes may be running in parallel in the background.${RE}\n"
+echo -e "Use ${P}ps${RE} to see running processes; stdout will still be displayed."
