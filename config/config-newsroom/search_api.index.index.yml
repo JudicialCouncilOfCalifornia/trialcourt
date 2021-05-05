@@ -12,6 +12,7 @@ dependencies:
     - field.storage.node.field_alert_type
     - field.storage.node.field_attachments
     - field.storage.node.body
+    - field.storage.node.field_contact
     - field.storage.node.field_department
     - field.storage.node.field_division
     - field.storage.node.field_document_type
@@ -297,6 +298,17 @@ field_settings:
     type: text
     boost: !!float 3
     dependencies:
+      module:
+        - node
+  title_1:
+    label: 'Contact Title'
+    datasource_id: 'entity:node'
+    property_path: 'field_contact:entity:title'
+    type: text
+    boost: !!float 2
+    dependencies:
+      config:
+        - field.storage.node.field_contact
       module:
         - node
   type:
