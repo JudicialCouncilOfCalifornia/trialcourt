@@ -4,7 +4,7 @@ show_help() {
   name="terminus"
   description="Runs a terminus command on all sites, in the given environment."
   usage="scripts/fleet terminus [env] [command] [options]"
-
+  # Use this exact template in all show_help functions for consistentency.
   echo -e "\n${G}${name}${RE}\t${Y}Usage:${RE}\t${usage}"
   echo -e "\n\t\t${description}"
 }
