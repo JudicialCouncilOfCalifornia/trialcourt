@@ -1,0 +1,65 @@
+uuid: e956b3eb-5604-46b0-961f-187fac57959e
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.body
+  module:
+    - ckeditor
+format: body
+editor: ckeditor
+settings:
+  toolbar:
+    rows:
+      -
+        -
+          name: Formatting
+          items:
+            - Bold
+            - Italic
+            - Format
+            - Styles
+        -
+          name: Links
+          items:
+            - DrupalLink
+            - DrupalUnlink
+        -
+          name: Lists
+          items:
+            - BulletedList
+            - NumberedList
+        -
+          name: Media
+          items:
+            - Blockquote
+            - DrupalMediaLibrary
+        -
+          name: Tools
+          items:
+            - HorizontalRule
+            - Table
+            - Source
+  plugins:
+    drupallink:
+      linkit_enabled: true
+      linkit_profile: default
+    language:
+      language_list: un
+    stylescombo:
+      styles: "blockquote.blockquote--alert|Alert\r\nbutton.usa-button.usa-button--primary|Button Primary\r\nbutton.usa-button.usa-button--secondary|Button Secondary\r\nbutton.usa-button.usa-button--inverse|Button Inverse\r\nbutton.usa-button.usa-button--cta-link|Button CTA Link\r\nbutton.usa-button.usa-button--unstyled|Button Unstyled\r\na.usa-button.usa-button--primary|Primary\r\na.usa-button.usa-button--secondary|Secondary\r\na.usa-button.usa-button--inverse|Inverse\r\na.usa-button.usa-button--cta-link|CTA Link\r\na.usa-button.usa-button--unstyled|Unstyled"
+    video_embed:
+      defaults:
+        children:
+          autoplay: false
+          responsive: true
+          width: '854'
+          height: '480'
+image_upload:
+  status: true
+  scheme: public
+  directory: inline-images
+  max_size: ''
+  max_dimensions:
+    width: null
+    height: null

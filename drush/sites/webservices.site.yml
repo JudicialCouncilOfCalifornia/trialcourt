@@ -1,31 +1,7 @@
-develop:
-  host: appserver.develop.bc83d911-f93f-46ce-a62b-bf0fdd038b78.drush.in
-  user: develop.bc83d911-f93f-46ce-a62b-bf0fdd038b78
-  uri: develop-jcc-webservices.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-stage:
-  host: appserver.stage.bc83d911-f93f-46ce-a62b-bf0fdd038b78.drush.in
-  user: stage.bc83d911-f93f-46ce-a62b-bf0fdd038b78
-  uri: stage-jcc-webservices.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-dev:
-  host: appserver.dev.bc83d911-f93f-46ce-a62b-bf0fdd038b78.drush.in
-  user: dev.bc83d911-f93f-46ce-a62b-bf0fdd038b78
-  uri: dev-jcc-webservices.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-live:
-  host: appserver.live.bc83d911-f93f-46ce-a62b-bf0fdd038b78.drush.in
-  user: live.bc83d911-f93f-46ce-a62b-bf0fdd038b78
-  uri: live-jcc-webservices.pantheonsite.io
+'*':
+  host: appserver.${env-name}.bc83d911-f93f-46ce-a62b-bf0fdd038b78.drush.in
+  user: ${env-name}.bc83d911-f93f-46ce-a62b-bf0fdd038b78
+  uri: ${env-name}-jcc-webservices.pantheonsite.io
   ssh:
     tty: false
     options: '-p 2222 -o "AddressFamily inet"'

@@ -1,0 +1,20 @@
+<?php
+/**
+ * @file
+ * Theme hooks for JCC Components.
+ */
+
+// Include all files from the includes directory.
+$includes_path = dirname(__FILE__) . '/includes/*.inc';
+foreach (glob($includes_path) as $filename) {
+  require_once dirname(__FILE__) . '/includes/' . basename($filename);
+}
+
+// Also include all inc files the in the directories in the preprocess dir.
+$preprocess_path = dirname(__FILE__) . '/preprocess/*';
+$dirs = array_filter(glob($preprocess_path), 'is_dir');
+foreach ($dirs as $dir) {
+  foreach (glob("$dir/*.inc") as $filename) {
+    require_once "$dir/" . basename($filename);
+  }
+}

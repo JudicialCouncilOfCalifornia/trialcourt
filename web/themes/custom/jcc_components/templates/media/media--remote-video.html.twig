@@ -1,0 +1,24 @@
+{#
+/**
+ * @file
+ * Theme override to display a media item.
+ *
+ * Available variables:
+ * - name: Name of the media.
+ * - content: Media content.
+ *
+ * @see template_preprocess_media()
+ */
+#}
+
+{% set image = media.field_media_image.0.entity.uri.value %}
+
+{% include "@molecules/video/video.twig" with {
+  video: {
+    video_id: video_id,
+    provider: media.field_provider.0.value,
+    width: media.field_width.0.value,
+    height: media.field_height.0.value,
+    cover: image ? file_url(image),
+  }
+} %}

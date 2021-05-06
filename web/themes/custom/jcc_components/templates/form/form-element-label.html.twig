@@ -1,0 +1,39 @@
+{#
+/**
+ * @file
+ * Theme override for a form element label.
+ *
+ * Available variables:
+ * - title: The label's text.
+ * - title_display: Elements title_display setting.
+ * - required: An indicator for whether the associated form element is required.
+ * - attributes: A list of HTML attributes for the label.
+ *
+ * @see template_preprocess_form_element_label()
+ */
+#}
+{% set classes = [
+  title_display == 'after' ? 'option',
+  title_display == 'invisible' ? 'visually-hidden',
+  required ? 'js-form-required',
+  required ? 'form-required',
+  (errors and required) ? 'usa-label--required' : '',
+  errors ? 'usa-label--error'
+] %}
+
+{% if element['#form_element_type'] == 'checkbox' %}
+  {% set classes = classes|merge(['usa-checkbox__label']) %}
+
+{% elseif element['#form_element_type'] == 'radio' %}
+  {% set classes = classes|merge(['usa-radio__label']) %}
+
+{% elseif element['#form_element_type'] == 'select' %}
+  {% set classes = classes|merge(['jcc-dropdown__Label']) %}
+
+{% else %}
+  {% set classes = classes|merge(['usa-label']) %}
+{% endif %}
+
+{% if title is not empty or required -%}
+  <label{{ attributes.addClass(classes) }}>{{ title }}</label>
+{%- endif %}
