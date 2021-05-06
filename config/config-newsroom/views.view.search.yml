@@ -347,21 +347,9 @@ display:
           group_type: group
           admin_label: ''
           order: DESC
-          exposed: true
+          exposed: false
           expose:
             label: Relevance
-          plugin_id: search_api
-        created:
-          id: created
-          table: search_api_index_index
-          field: created
-          relationship: none
-          group_type: group
-          admin_label: ''
-          order: DESC
-          exposed: true
-          expose:
-            label: Date
           plugin_id: search_api
       title: Search
       header: {  }
@@ -378,7 +366,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - 'url.query_args:sort_by'
         - user
         - 'user.node_grants:view'
       tags:
@@ -404,7 +391,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - 'url.query_args:sort_by'
         - user
         - 'user.node_grants:view'
       tags:
