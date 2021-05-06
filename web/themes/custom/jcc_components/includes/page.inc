@@ -39,10 +39,12 @@ function jcc_components_preprocess_page(&$variables) {
     ],
     'links' => jcc_components_get_menu_array('shoe'),
   ];
+  // Add text-only copyright to footer links.
+  $variables['shoe']['links'][]['text'] = '© ' . date('Y');
 
   $path = \Drupal::service('path.current')->getPath();
   $langcodes = \Drupal::languageManager()->getLanguages();
-  if (count($langcodes) > 1) {
+  if (count($langcodes) > 1 && !theme_get_setting('hide_translation', 'jcc_components')) {
     foreach ($langcodes as $langcode => $language) {
       $url = \Drupal::service('path.alias_manager')->getAliasByPath($path, $langcode);
       // If there's no alias use the path from the current route.
