@@ -1,0 +1,52 @@
+uuid: 86030487-a560-4654-b08b-fbee53e21c45
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.hours.field_heading
+    - field.field.paragraph.hours.field_hours
+    - paragraphs.paragraphs_type.hours
+  module:
+    - office_hours
+id: paragraph.hours.default
+targetEntityType: paragraph
+bundle: hours
+mode: default
+content:
+  field_heading:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_hours:
+    weight: 1
+    label: hidden
+    settings:
+      show_closed: open
+      office_hours_first_day: ''
+      day_format: long
+      time_format: g
+      grouped: true
+      closed_format: Closed
+      separator:
+        days: '<br />'
+        grouped_days: ' - '
+        day_hours: ': '
+        hours_hours: '-'
+        more_hours: ', '
+      current_status:
+        position: ''
+        open_text: 'Currently open!'
+        closed_text: 'Currently closed'
+      schema:
+        enabled: true
+      compress: false
+      timezone_field: ''
+    third_party_settings: {  }
+    type: office_hours
+    region: content
+hidden:
+  search_api_excerpt: true

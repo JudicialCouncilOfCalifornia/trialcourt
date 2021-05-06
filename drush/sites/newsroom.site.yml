@@ -1,39 +1,7 @@
-develop:
-  host: appserver.develop.f133e233-51e4-4133-a7b7-5ad6567cbffc.drush.in
-  user: develop.f133e233-51e4-4133-a7b7-5ad6567cbffc
-  uri: develop-jcc-newsroom.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-stage:
-  host: appserver.stage.f133e233-51e4-4133-a7b7-5ad6567cbffc.drush.in
-  user: stage.f133e233-51e4-4133-a7b7-5ad6567cbffc
-  uri: stage-jcc-newsroom.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-dev:
-  host: appserver.dev.f133e233-51e4-4133-a7b7-5ad6567cbffc.drush.in
-  user: dev.f133e233-51e4-4133-a7b7-5ad6567cbffc
-  uri: dev-jcc-newsroom.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-live:
-  host: appserver.live.f133e233-51e4-4133-a7b7-5ad6567cbffc.drush.in
-  user: live.f133e233-51e4-4133-a7b7-5ad6567cbffc
-  uri: live-jcc-newsroom.pantheonsite.io
-  ssh:
-    tty: false
-    options: '-p 2222 -o "AddressFamily inet"'
-
-epic-multi:
-  host: appserver.epic-multi.f133e233-51e4-4133-a7b7-5ad6567cbffc.drush.in
-  user: epic-multi.f133e233-51e4-4133-a7b7-5ad6567cbffc
-  uri: epic-multi-jcc-newsroom.pantheonsite.io
+'*':
+  host: appserver.${env-name}.f133e233-51e4-4133-a7b7-5ad6567cbffc.drush.in
+  user: ${env-name}.f133e233-51e4-4133-a7b7-5ad6567cbffc
+  uri: ${env-name}-jcc-newsroom.pantheonsite.io
   ssh:
     tty: false
     options: '-p 2222 -o "AddressFamily inet"'

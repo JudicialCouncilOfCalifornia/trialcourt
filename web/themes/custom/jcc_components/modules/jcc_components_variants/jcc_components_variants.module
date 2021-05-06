@@ -1,0 +1,99 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for jcc_components_variants module.
+ */
+
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function jcc_components_variants_field_widget_entity_reference_paragraphs_form_alter(
+  &$element,
+  &$form_state,
+  $context) {
+
+  if (!empty($element['subform']['field_variant'])) {
+    $variants = jcc_components_variants_preview($element['#paragraph_type']);
+    if (!empty($variants['options'])) {
+      $prefix = [
+        '#type' => "inline_template",
+        '#template' => $variants['prefix'],
+      ];
+      $element['subform']['field_variant']['widget']['#prefix'] = render($prefix);
+      $element['subform']['#attached']['library'][] = 'jcc_components_variants/variants';
+    }
+  }
+  // We set sub component variant on the parent component so that it's applied
+  // to all instances of the sub component. Authors can't mix and match variants
+  // at the sub component.  i.e. every 'card' under 'cards' must be the same
+  // card variant.
+  if (!empty($element['subform']['field_components']) && !empty($element['subform']['field_sub_variant'])) {
+    // Set up variants for each component allowed on the components field.
+    $components = Element::children($element['subform']['field_components']['widget']['add_more']);
+    $prefix = '';
+
+    foreach ($components as $component) {
+      if (strpos($component, 'add_more_button_') === 0) {
+        $sub_variant = $element['subform']['field_components']['widget']['add_more'][$component]['#bundle_machine_name'];
+        $variants = jcc_components_variants_preview($sub_variant);
+
+        if (!empty($variants['options'])) {
+          $prefix .= $variants['prefix'];
+        }
+      }
+    }
+
+    if (!empty($prefix)) {
+      $prefix = [
+        '#type' => 'inline_template',
+        '#template' => $prefix,
+      ];
+      $element['subform']['field_sub_variant']['widget']['#prefix'] = render($prefix);
+      $element['subform']['#attached']['library'][] = 'jcc_components_variants/variants';
+    }
+  }
+}
+
+/**
+ * Generate variants preview.
+ *
+ * @param string $type
+ *   The type of component.
+ *
+ * @return array
+ *   The populated details for this components variants.
+ */
+function jcc_components_variants_preview($type) {
+  // Variants are defined by available variant preview images.
+  $path = drupal_get_path('module', 'jcc_components_variants');
+  $dir = "${path}/variants/${type}/";
+  $files = preg_grep('/^([^.])/', scandir($dir));
+  $variants = '';
+  $options = [];
+
+  // Generate details and buttons for each variant image provided.
+  foreach ($files as $file) {
+    if (is_file($dir . $file)) {
+      $name = substr(pathinfo($file, PATHINFO_FILENAME), 2);
+      $variant = [
+        'name' => $name,
+        'file' => $file,
+      ];
+      $variants .= "<button class='variant' data-variant='" . $type . ":" . $variant['name'] . "'><img src='/${path}/variants/${type}/" . $variant['file'] . "' />\"${type}\":\"${name}\"</button>";
+      $options[$variant['name']] = $variant['name'];
+    }
+  }
+
+  $label = t(':type Variants', [':type' => $type]);
+  $prefix = "<details><summary>${label}</summary><div class='variants variants--${type}'>${variants}</div></details>";
+
+  $preview = [
+    'prefix' => $prefix,
+    'options' => $options,
+  ];
+
+  return $preview;
+}

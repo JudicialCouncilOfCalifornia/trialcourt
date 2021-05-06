@@ -1,0 +1,46 @@
+uuid: eedcaec8-a0aa-4f6d-98ce-81e9c134a0e0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.iframe.field_heading
+    - field.field.paragraph.iframe.field_lead
+    - field.field.paragraph.iframe.field_link
+    - paragraphs.paragraphs_type.iframe
+  module:
+    - link
+    - text
+id: paragraph.iframe.default
+targetEntityType: paragraph
+bundle: iframe
+mode: default
+content:
+  field_heading:
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_lead:
+    weight: 2
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_link:
+    weight: 0
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+hidden:
+  search_api_excerpt: true

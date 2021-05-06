@@ -1,0 +1,44 @@
+{#
+/**
+ * @file
+ * Theme override for status messages.
+ *
+ * Displays status, error, and warning messages, grouped by type.
+ *
+ * Available variables:
+ * - message_list: List of messages to be displayed, grouped by type.
+ * - status_headings: List of all status types.
+ * - attributes: HTML attributes for the element, including:
+ *   - class: HTML classes.
+ */
+#}
+
+{% for type, messages in message_list %}
+  {% set type = type == "status" ? "success" : type %}
+  {% set text = '' %}
+
+  {% if messages|length > 1 %}
+    {% for message in messages %}
+      {% set text = text ~ "<li>" ~ message ~ "</li>" %}
+    {% endfor %}
+    {% set text = "<ul>" ~ text ~ "</ul>" %}
+  {% else %}
+    {% set text = messages|first %}
+  {% endif %}
+
+  {% include "@molecules/alert/alert.twig" with {
+    alert: {
+      type: type,
+      size: 'slim',
+      width: 'centered',
+      heading: null,
+      text: {
+        '#type': 'processed_text',
+        '#text': text,
+        '#format': 'full_html'
+      },
+      close: false,
+      classes: []
+    }
+  } %}
+{% endfor %}

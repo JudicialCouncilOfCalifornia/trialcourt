@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+# Fleet commands are defined in the .fleet directory.
+# Each command has its own {command}.sh file that includes
+# a show_help function that formats a command description for the
+# fleet --help list. It also must include a do_command function that loops over
+# the sites array and executes the command on each site. It should also manage
+# any options required for the command.
+# See existing commands for examples:
+#   backup.sh is very simple
+#   config-sync.sh is more complex
+
+BASEDIR=$(dirname $(dirname $(realpath $0)))
+
+command=$1
+sites=$(ls -d $BASEDIR/web/sites/* | grep -v '\.' | sed "s#${BASEDIR}/web/sites/##")
+# Remove default from sites array.
+# It's not a site but it's needed for other things.
+sites=${sites[@]/"default"}
+
+shift
+
+# Include color file.
+. ${BASEDIR}/scripts/colors.sh
+
+show_help() {
+  # Commands are defined in the .fleet directory.
+  # Get all available command file paths.
+  commands=$(ls $BASEDIR/scripts/.fleet/*.sh)
+
+  echo -e "\nFleet commands run the same process on all sites in the ${P}web/sites${RE} directory. ${Y}\n(Assumes pantheon site names jcc-[site], i.e. jcc-colusa)${RE}"
+  echo -e "\n${B}Valid commands are:${RE}"
+
+  # Every command needs to handle the -h option to show help.
+  # All commands should include a show_help function in the following format:
+  # show_help() {
+  #   name="backup"
+  #   description="Runs a pantheon backup for all sites in the sites directory."
+  #   usage="scripts/fleet backup [env]"
+  #   # Use this exact template in all show_help functions for consistentency.
+  #   echo -e "\n${G}${name}${RE}\t\t${Y}Usage:${RE}\t${usage}"
+  #   echo -e "\n\t\t${description}"
+  # }
+
+  # Call each command's help function.
+  for command in $commands
+    do
+      . $command -h
+    done
+}
+
+# Run the command.
+if [[ -f ${BASEDIR}/scripts/.fleet/${command}.sh ]] ; then
+  . ${BASEDIR}/scripts/.fleet/${command}.sh
+else
+  show_help
+  exit
+fi
+
+echo -e "\n${Y}Processes may be running in parallel in the background.${RE}\n"
+echo -e "Use ${P}ps${RE} to see running processes; stdout will still be displayed."
