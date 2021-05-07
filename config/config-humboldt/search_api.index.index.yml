@@ -1,0 +1,219 @@
+uuid: 253be3a7-01dc-4b02-af42-9c9291166487
+langcode: en
+status: true
+dependencies:
+  module:
+    - search_api_solr
+    - media
+    - file
+    - node
+    - search_api
+  config:
+    - field.storage.node.body
+    - field.storage.node.field_alert_type
+    - field.storage.node.field_byline
+    - field.storage.node.field_news_type
+    - search_api.server.solr
+    - core.entity_view_mode.node.full
+third_party_settings:
+  search_api_solr:
+    finalize: false
+    commit_before_finalize: false
+    commit_after_finalize: false
+    multilingual:
+      limit_to_content_language: false
+      include_language_independent: true
+    highlighter:
+      maxAnalyzedChars: 51200
+      fragmenter: gap
+      regex:
+        slop: 0.5
+        pattern: blank
+        maxAnalyzedChars: 10000
+      usePhraseHighlighter: true
+      highlightMultiTerm: true
+      preserveMulti: false
+      highlight:
+        mergeContiguous: false
+        requireFieldMatch: false
+        snippets: 3
+        fragsize: 0
+    mlt:
+      mintf: 1
+      mindf: 1
+      maxdf: 0
+      maxdfpct: 0
+      minwl: 0
+      maxwl: 0
+      maxqt: 100
+      maxntp: 2000
+      boost: false
+      interestingTerms: none
+    advanced:
+      index_prefix: ''
+      collection: ''
+      timezone: ''
+_core:
+  default_config_hash: YuEg34JerqG9HYKOog0BRG1wlcGuSTK2g6HQ7qgBFNo
+id: index
+name: Index
+description: ''
+read_only: false
+field_settings:
+  body:
+    label: Body
+    datasource_id: 'entity:node'
+    property_path: body
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.body
+  bundle:
+    label: 'Media type'
+    datasource_id: 'entity:media'
+    property_path: bundle
+    type: string
+    dependencies:
+      module:
+        - media
+  field_alert_type:
+    label: 'Alert Type'
+    datasource_id: 'entity:node'
+    property_path: field_alert_type
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_alert_type
+  field_byline:
+    label: Byline
+    datasource_id: 'entity:node'
+    property_path: field_byline
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_byline
+  field_news_type:
+    label: 'News Type'
+    datasource_id: 'entity:node'
+    property_path: field_news_type
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_news_type
+  filename:
+    label: Filename
+    datasource_id: 'entity:file'
+    property_path: filename
+    type: string
+    dependencies:
+      module:
+        - file
+  langcode:
+    label: Language
+    datasource_id: 'entity:media'
+    property_path: langcode
+    type: string
+    dependencies:
+      module:
+        - media
+  language_with_fallback:
+    label: 'Language (with fallback)'
+    property_path: language_with_fallback
+    type: string
+  name:
+    label: Name
+    datasource_id: 'entity:media'
+    property_path: name
+    type: string
+    dependencies:
+      module:
+        - media
+  rendered_item:
+    label: 'Rendered HTML output'
+    property_path: rendered_item
+    type: text
+    configuration:
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:file':
+          file: ''
+        'entity:media':
+          file: ''
+        'entity:node':
+          alert: full
+          document: full
+          landing_page: full
+          news: full
+          subpage: full
+  status:
+    label: Published
+    datasource_id: 'entity:media'
+    property_path: status
+    type: boolean
+    dependencies:
+      module:
+        - media
+  thumbnail:
+    label: Thumbnail
+    datasource_id: 'entity:media'
+    property_path: thumbnail
+    type: integer
+    dependencies:
+      module:
+        - media
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: string
+    dependencies:
+      module:
+        - node
+  type:
+    label: 'Content type'
+    datasource_id: 'entity:node'
+    property_path: type
+    type: string
+    dependencies:
+      module:
+        - node
+  uri:
+    label: URI
+    datasource_id: 'entity:file'
+    property_path: uri
+    type: string
+    dependencies:
+      module:
+        - file
+datasource_settings:
+  'entity:file': {  }
+  'entity:media':
+    bundles:
+      default: false
+      selected:
+        - file
+    languages:
+      default: true
+      selected: {  }
+  'entity:node':
+    bundles:
+      default: true
+      selected:
+        - location
+    languages:
+      default: true
+      selected: {  }
+processor_settings:
+  add_url: {  }
+  aggregated_field: {  }
+  language_with_fallback: {  }
+  rendered_item: {  }
+  solr_date_range: {  }
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  index_directly: true
+  cron_limit: 50
+server: solr
