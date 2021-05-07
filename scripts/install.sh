@@ -64,7 +64,7 @@ drush si -l ${NEW}.lndo.site -vvv -y --site-name="SITE NAME" --account-mail="jcc
 
 echo -e "\nExporting config and enabling features..."
 # Enable the main feature and ensure it's imported.
-drush en jcc_tc2_all_immutable_config -l ${NEW}.lndo.site
+drush en jcc_tc2_all_immutable_config -l ${NEW}.lndo.site -y
 drush fra -y -l ${NEW}.lndo.site --bundle=jcc_tc2
 # Export to capture all initial config.
 drush cex -y -l ${NEW}.lndo.site
