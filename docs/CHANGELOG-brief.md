@@ -66,7 +66,7 @@ Other commands may have been modified a little but should still work essentially
 
 The new sites take a different approach to Feature management. Rather than multiple feature modules for discrete, modularized features, there's one feature module that contains only the configuration that should be enforced across all sites. See the Features documentation for detailed info.
 
-The tooling for feature sync to individual environments is removed and new "fleet" wide tooling has been created to support keeping multiple sites in sync. More on "fleet" elsewhere but it allows for using "bundle" to indicate wether to update the new sites or the legacy site features.  Default bundle is `jcc_tc2`.  The legacy bundle is `jcc_tc`. When configuration is synced across the sites by bundle, only the sites affected by that bundle will be affected. So we can update v2 and legacy sites independently via the same mechanism.
+The tooling for feature sync to individual environments is removed and new "fleet" wide tooling has been created to support keeping multiple sites in sync. More on "fleet" elsewhere but it allows for using "bundle" to indicate whether to update the new sites or the legacy site features.  Default bundle is `jcc_tc2`.  The legacy bundle is `jcc_tc`. When configuration is synced across the sites by bundle, only the sites affected by that bundle will be affected. So we can update v2 and legacy sites independently via the same mechanism.
 
 If there is still a need to target specific legacy sites' features, you can use `drush` commands directly.  `lando drush | grep feature` for options.
 
