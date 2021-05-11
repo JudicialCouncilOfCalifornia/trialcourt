@@ -125,6 +125,21 @@
                     "type": "zip"
                 }
             }
+        },
+        "inserthtml4x": {
+            "type": "package",
+            "package": {
+                "name": "ckeditor/inserthtml4x",
+                "version": "2.0.0",
+                "type": "drupal-library",
+                "extra": {
+                    "installer-name": "ckeditor/plugins/inserthtml4x"
+                },
+                "dist": {
+                    "url": "https://download.ckeditor.com/inserthtml4x/releases/inserthtml4x_2.0_0.zip",
+                    "type": "zip"
+                }
+            }
         }
     },
     "require": {
@@ -132,6 +147,7 @@
         "ckeditor-plugin/a11ychecker": "^1.1.1",
         "ckeditor-plugin/balloonpanel": "^4.14",
         "ckeditor-plugin/templates": "^4.13",
+        "ckeditor/inserthtml4x": "^2.0",
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "^1.6.5",
         "drupal/access_unpublished": "^1.0",
@@ -146,7 +162,9 @@
         "drupal/better_social_sharing_buttons": "^2.0",
         "drupal/block_field": "^1.0@alpha",
         "drupal/chosen": "^2.8",
-        "drupal/ckeditor_a11ychecker": "^1.0",
+        "drupal/ckeditor_a11ychecker": "1.x-dev#a2099d09",
+        "drupal/ckeditor_balloonpanel": "1.x-dev#8070eaaa",
+        "drupal/ckeditor_inserthtml": "^1.0",
         "drupal/ckeditor_templates": "^1.1",
         "drupal/ckeditor_templates_ui": "^1.2",
         "drupal/colorbox": "^1.6",
@@ -181,6 +199,7 @@
         "drupal/ga_login": "^1.0@alpha",
         "drupal/geocoder": "^3.0",
         "drupal/geolocation": "^3.1.0",
+        "drupal/gin": "^3.0@alpha",
         "drupal/glossify": "^1.0@beta",
         "drupal/google_tag": "^1.2",
         "drupal/hierarchical_term_formatter": "^1.1",
@@ -196,6 +215,7 @@
         "drupal/libraries": "^3.0@beta",
         "drupal/link_attributes": "^1.10",
         "drupal/linkit": "^6.0@beta",
+        "drupal/linkit_media_library": "^1.0",
         "drupal/login_emailusername": "^1.1",
         "drupal/maxlength": "^1.0@RC",
         "drupal/media_directories": "2.x-dev",
@@ -214,6 +234,7 @@
         "drupal/openid_connect": "^1.0@beta",
         "drupal/openid_connect_windows_aad": "^1.1",
         "drupal/paragraphs": "^1.11",
+        "drupal/password_policy": "^3.0@beta",
         "drupal/pathauto": "^1.4",
         "drupal/queue_ui": "^2.2",
         "drupal/range": "^1.1",
@@ -239,6 +260,7 @@
         "drupal/svg_image": "^1.14",
         "drupal/tablefield": "^2.0",
         "drupal/tfa": "^1.0@alpha",
+        "drupal/tmgmt": "^1.12",
         "drupal/twig_tweak": "^2.4",
         "drupal/video_embed_field": "^2.4",
         "drupal/views_bulk_edit": "^2.5",
@@ -247,6 +269,7 @@
         "drupal/views_daterange_filters": "1.x-dev",
         "drupal/views_entity_form_field": "^1.0@beta",
         "drupal/views_taxonomy_term_name_depth": "^6.0",
+        "drupal/viewsreference": "^1.7",
         "drupal/webform": "^5.0",
         "drupal/webform_myemma": "^1.0@RC",
         "drupal/webp": "^1.0@beta",
@@ -304,12 +327,19 @@
         "post-install-cmd": [
             "DrupalProject\\composer\\ScriptHandler::createRequiredFiles",
             "find ./vendor/ -type d -name .git | xargs rm -rf",
-            "find ./web/ -type d -name .git | xargs rm -rf"
+            "find ./web/modules/ -type d -name .git | xargs rm -rf",
+            "find ./web/themes/custom/ -type d -name .git | xargs rm -rf",
+            "find ./web/profiles/ -type d -name .git | xargs rm -rf",
+            "find ./web/libraries/ -type d -name .git | xargs rm -rf"
         ],
         "post-update-cmd": [
             "DrupalProject\\composer\\ScriptHandler::createRequiredFiles",
             "find ./vendor/ -type d -name .git | xargs rm -rf",
-            "find ./web/ -type d -name .git | xargs rm -rf"
+            "find ./web/ -type d -name .git | xargs rm -rf",
+            "find ./web/modules/ -type d -name .git | xargs rm -rf",
+            "find ./web/themes/custom/ -type d -name .git | xargs rm -rf",
+            "find ./web/profiles/ -type d -name .git | xargs rm -rf",
+            "find ./web/libraries/ -type d -name .git | xargs rm -rf"
         ],
         "build-assets": [
             "@prepare-for-pantheon",

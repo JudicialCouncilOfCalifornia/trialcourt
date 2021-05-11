@@ -1,0 +1,54 @@
+<?php
+
+/**
+ * @file
+ * Updates for profile.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+
+/**
+ * Remove field_media from news content type.
+ */
+function jcc_tc2_all_immutable_config_update_8001() {
+  // Deleting field.
+  $field = FieldConfig::loadByName('node', 'news', 'field_media');
+  if (!empty($field)) {
+    $field->delete();
+  }
+}
+
+/**
+ * Remove exposedformformssearch_forms block.
+ */
+function jcc_tc2_all_immutable_config_update_8002() {
+  $block_storage = \Drupal::service('entity_type.manager')->getStorage('block');
+  $blocks = $block_storage->loadMultiple();
+
+  if (!empty($blocks['exposedformformssearch_forms'])) {
+    $blocks['exposedformformssearch_forms']->delete();
+  }
+}
+
+/**
+ * Remove field_media from news content type.
+ */
+function jcc_tc2_all_immutable_config_update_8003() {
+  // Deleting field.
+  $field = FieldConfig::loadByName('node', 'news', 'field_media');
+  if (!empty($field)) {
+    $field->delete();
+  }
+}
+
+/**
+ * Remove exposedformformssearch_forms block.
+ */
+function jcc_tc2_all_immutable_config_update_8004() {
+  $block_storage = \Drupal::service('entity_type.manager')->getStorage('block');
+  $blocks = $block_storage->loadMultiple();
+
+  if (!empty($blocks['exposedformformssearch_forms'])) {
+    $blocks['exposedformformssearch_forms']->delete();
+  }
+}

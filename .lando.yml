@@ -25,17 +25,15 @@ config:
 
 proxy:
   appserver:
-    # Default (Base for starting multisites.)
-    - default.lndo.site
-    # Multi Sites (Don't forget to update web/sites/sites.php)
-    - slo.lndo.site
-    - newsroom.lndo.site
-    - deprep.lndo.site
-    - md.lndo.site
-    - webservices.lndo.site
+    - "*.lndo.site"
 
 # Additional services and features.
 services:
+  appserver:
+    webroot: web
+    xdebug: debug
+    config:
+      php: .vscode/php.ini
   # Theme.
   node-cli:
     type: compose
@@ -45,81 +43,33 @@ services:
       command: docker-php-entrypoint apache2-foreground
       volumes:
         - .:/app
-  dbslo:
-    type: mysql:5.7
-    creds:
-      user: drupal8
-      password: drupal8
-      database: drupal8
-  dbnewsroom:
-    type: mysql:5.7
-    creds:
-      user: drupal8
-      password: drupal8
-      database: drupal8
-  dbdeprep:
-    type: mysql:5.7
-    creds:
-      user: drupal8
-      password: drupal8
-      database: drupal8
-  dbmd:
-    type: mysql:5.7
-    creds:
-      user: drupal8
-      password: drupal8
-      database: drupal8
-  dbwebservices:
-    type: mysql:5.7
-    creds:
-      user: drupal8
-      password: drupal8
-      database: drupal8
-
-  # solr:
-  #   # Use solr version 5.5
-  #   type: solr:5.5
-  #   # Optionally allow access to the database at localhost:9999
-  #   # You will need to make sure port 9999 is open on your machine
-  #   #
-  #   # You can also set `portforward: true` to have Lando dynamically assign
-  #   # a port. Unlike specifying an actual port setting this to true will give you
-  #   # a different port every time you restart your app
-  #   portforward: 9999
-  #   # Optionally declare the name of the solr core.
-  #   # This setting is only applicable for versions 5.5 and above
-  #   core: freedom
-  #   config:
-  #     conf: web/modules/contrib/search_api_solr/solr-conf/5.x
-
-  appserver:
-    extras:
-     # Apache Tika
-     - apt-get update -y
-     - apt-get install -y openjdk-8-jre-headless
-     - apt-get install -y openjdk-8-jdk
-     - mkdir -p /app/srv/bin && cd /app/srv/bin
-     - cd /app/srv/bin && curl -OL http://archive.apache.org/dist/tika/tika-app-1.18.jar
-     - apt-get remove openjdk-8-jdk -y
+  database:
+    # Create databases for each multisite.
+    run_as_root:
+      - /bin/sh -c "/app/scripts/dbcreate.sh"
 
 # Custom Lando commands
 tooling:
+  dbim:
+    service: database
+    cmd: /app/scripts/dbimport.sh
+    description: "dbim <file> -d [slo|newsroom|...]\nThis is a helper script similar to 'lando db-import' but supports multisite with multiple databases in one container/service instead of requiring a service for every multisite.\n-h|--help\t\t\tShow this help message.\n-d|--database [database]\tThere is a database for every directory in the web/sites/ directory.\n--no-wipe\t\t\tDo not wipe the database before import."
   dbget:
-    description: "dbget [drush-alias]\tPull the database for alias. i.e. lando dbget @slo.live"
+    description: "dbget [drush-alias]\tDownload the database for alias. i.e. lando dbget @slo.live"
     service: appserver
     cmd: scripts/dbget.sh
   feature:docs:
     description: "Show documentation for managing features on this project. FEATURES.md"
     service: appserver
-    cmd: clear && scripts/feature_sync.sh docs
+    cmd: clear && scripts/feature_sync.sh -c docs
   feature:enable:
     description: "lando feature:enable [module]\t\t\tEnable a new feature on all multisites."
     service: appserver
-    cmd: scripts/feature_sync.sh enable
+    cmd: scripts/feature_sync.sh -c enable
   feature:sync:
     description: "lando feature:sync [site code (oc)]\tSync latest feature updates to all multisites."
     service: appserver
-    cmd: scripts/feature_sync.sh sync
+    cmd: scripts/feature_sync.sh -c sync
   fresh:
     description: "Run all the things to get local to a fresh state for this branch. (Checkout master branch first if starting a new feature.)
       \n -h\tShow this help message.
@@ -133,14 +83,10 @@ tooling:
       - node-cli: scripts/fresh.sh
       - appserver: scripts/fresh.sh
   multisite:
-    service: appserver
-    description: "Helper for creating new multisites.
-      \n FIRST take these steps: ([new] = short site code like slo)
-      \n  - create new proxy in .lando.yml tc-[new].lndo.site
-      \n  - create new db service in .lando.yml db[new]
-      \n  - lando rebuild
-      \n THEN run (lando multisite [new])"
-    cmd: scripts/install.sh
+    description: "lando multisite [new] - no other steps required"
+    cmd:
+      - database: scripts/dbcreate.sh -i
+      - appserver: scripts/install.sh
   node:
     service: node-cli
   npm:

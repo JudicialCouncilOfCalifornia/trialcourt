@@ -1,0 +1,25 @@
+uuid: 4b18770c-dac0-4f8e-b3a7-cdf4b2f86051
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: Lirky7l7AOdLyw1CWH_PdG7OyyXKa_2Xch_wv9w16A0
+id: menu_based_join_path_
+label: 'Menu based join path.'
+type: 'canonical_entities:node'
+pattern: '[node:menu-link:parents:join-path]/[node:title]'
+selection_criteria:
+  36a24b53-94f4-432e-9d45-ed3dd5725c01:
+    id: node_type
+    bundles:
+      landing_page: landing_page
+      subpage: subpage
+    negate: false
+    context_mapping:
+      node: node
+    uuid: 36a24b53-94f4-432e-9d45-ed3dd5725c01
+selection_logic: and
+weight: -5
+relationships: {  }

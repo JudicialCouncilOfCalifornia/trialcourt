@@ -98,8 +98,33 @@ jobs:
                 command: composer install -o --no-dev
 
             - run:
+                name: Deploying << parameters.site >>
+                command: .circleci/scripts/deploy.sh << parameters.site >>
+
+    deploy_legacy:
+        <<: *defaults
+        parameters:
+            site:
+                type: string
+        description: Deploy << parameters.site >>
+        steps:
+            - add_ssh_keys:
+                fingerprints:
+                  - "7c:41:a8:b4:67:5e:d4:b3:03:d3:ec:be:46:af:3b:6d"
+
+            - checkout
+
+            - restore_cache:
+                keys:
+                  - composer-cache
+
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install -o --no-dev
+
+            - run:
                 name: Build Themes
-                command: scripts/theme.sh -a
+                command: scripts/theme.sh -i << parameters.site >> && scripts/theme.sh -b << parameters.site >>
 
             - run:
                 name: Deploying << parameters.site >>
@@ -179,6 +204,19 @@ workflows:
       # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
       - build_test
       - deploy:
+          matrix:
+            parameters:
+              site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt"]
+          requires:
+            - build_test
+          filters:
+            branches:
+              only:
+                - develop
+                - stage
+                - master
+                - /^epic-.*/
+      - deploy_legacy:
           matrix:
             parameters:
               site: ["md", "newsroom", "deprep", "webservices"]

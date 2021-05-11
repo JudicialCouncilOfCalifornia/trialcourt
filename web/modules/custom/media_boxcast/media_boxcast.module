@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Media: Boxcast module.
+ *
+ * @DCG
+ * This file is no longer required in Drupal 8.
+ * @see https://www.drupal.org/node/2217931
+ */
+
+use Drupal\media_boxcast\Form\BoxcastForm;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function media_boxcast_help($route_name, RouteMatchInterface $arg) {
+  switch ($route_name) {
+    case 'help.page.media_boxcast':
+      $output = '';
+      $output .= '<p>' . t('Creates a Boxcast Media type for easily adding streams from Boxcast.') . '</p>';
+      return ['#markup' => $output];
+  }
+}
+
+/**
+ * Implements hook_media_source_info_alter().
+ */
+function media_boxcast_media_source_info_alter(array &$sources) {
+  $sources['boxcast_stream']['forms']['media_library_add'] = BoxcastForm::class;
+}
