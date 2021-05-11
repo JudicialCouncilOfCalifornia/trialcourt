@@ -9,10 +9,12 @@ dependencies:
     module:
       - media_library
   module:
-    - image
     - media
     - media_library
+    - svg_image
     - user
+_core:
+  default_config_hash: hLG1O8RxhHCKFohZ17BzvxllbGLhthB9u3tsnipe7hQ
 id: media_library
 label: 'Media library'
 module: views
@@ -473,13 +475,23 @@ display:
     cache_metadata:
       max-age: 0
       contexts:
+        - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
         - 'url.query_args:sort_by'
         - user
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:core.entity_view_display.media.boxcast_stream.default'
+        - 'config:core.entity_view_display.media.boxcast_stream.media_library'
+        - 'config:core.entity_view_display.media.file.default'
+        - 'config:core.entity_view_display.media.file.list'
+        - 'config:core.entity_view_display.media.file.media_library'
+        - 'config:core.entity_view_display.media.image.default'
+        - 'config:core.entity_view_display.media.image.media_library'
+        - 'config:core.entity_view_display.media.remote_video.default'
+        - 'config:core.entity_view_display.media.remote_video.media_library'
   page:
     display_plugin: page
     id: page
@@ -776,7 +788,16 @@ display:
         - 'url.query_args:sort_by'
         - user
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:core.entity_view_display.media.boxcast_stream.default'
+        - 'config:core.entity_view_display.media.boxcast_stream.media_library'
+        - 'config:core.entity_view_display.media.file.default'
+        - 'config:core.entity_view_display.media.file.list'
+        - 'config:core.entity_view_display.media.file.media_library'
+        - 'config:core.entity_view_display.media.image.default'
+        - 'config:core.entity_view_display.media.image.media_library'
+        - 'config:core.entity_view_display.media.remote_video.default'
+        - 'config:core.entity_view_display.media.remote_video.media_library'
   widget:
     display_plugin: page
     id: widget
@@ -1096,7 +1117,16 @@ display:
         - url.query_args
         - 'url.query_args:sort_by'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:core.entity_view_display.media.boxcast_stream.default'
+        - 'config:core.entity_view_display.media.boxcast_stream.media_library'
+        - 'config:core.entity_view_display.media.file.default'
+        - 'config:core.entity_view_display.media.file.list'
+        - 'config:core.entity_view_display.media.file.media_library'
+        - 'config:core.entity_view_display.media.image.default'
+        - 'config:core.entity_view_display.media.image.media_library'
+        - 'config:core.entity_view_display.media.remote_video.default'
+        - 'config:core.entity_view_display.media.remote_video.media_library'
   widget_table:
     display_plugin: page
     id: widget_table
