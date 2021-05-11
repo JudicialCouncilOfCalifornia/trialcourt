@@ -2,4 +2,4 @@
 UUID=a20eef7f-63dc-4fc3-910e-b5991ffceba3
 SITE_CODE=lake
 # If false, pantheon will deploy to dev. If true it will get the Live tag.
-LIVE=false
+LIVE=true
