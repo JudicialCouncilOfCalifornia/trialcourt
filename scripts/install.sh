@@ -6,15 +6,11 @@
 
 # Reset in case getopts has been used previously in the shell.
 OPTIND=1
+BASEDIR=$(dirname $(dirname $(realpath $0)))
 
-R="\033[31m"
-G="\033[32m"
-Y="\033[33m"
-RE="\033[0m"
+. ${BASEDIR}/scripts/colors.sh
 
 NEW=$1
-NOPROXY=false
-NODB=false
 
 if [ "$NEW" = '' ] ; then
   echo -e "\n${R}No new site code provided.${RE}
@@ -60,7 +56,7 @@ sed -i "s/sandbox-1/jcc-${NEW}-sandbox-1/g" /app/web/sites/${NEW}/settings.php
 echo -e "\n${G}Multisite configured... now running installation. This will take a while...${RE}"
 
 cd /app
-drush si -l ${NEW}.lndo.site -vvv -y --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com"
+drush si -l ${NEW}.lndo.site -vvv -y --site-name="SITE NAME" --site-mail="hosting@chapterthree.com" --account-name="JCC" --account-mail="hosting@chapterthree.com"
 
 echo -e "\nExporting config and enabling features..."
 # Enable the main feature and ensure it's imported.
@@ -77,6 +73,11 @@ fi
 if [ -f /app/config/config-${NEW}/locale.settings.yml ] ; then
   echo -e "\nUpdating locale.settings."
   sed -i "s/sites\/default\/files\/default/sites\/default\/files\/${NEW}/g" /app/config/config-${NEW}/locale.settings.yml
+fi
+
+if [ -f ${BASEDIR}/scripts/users.sh ] ; then
+  echo -e "\n${B}Adding users.${RE}"
+  . ${BASEDIR}/scripts/users.sh
 fi
 
 drush uli -l ${NEW}.lndo.site --druplicon
