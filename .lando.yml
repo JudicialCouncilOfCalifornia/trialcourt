@@ -53,9 +53,9 @@ tooling:
   dbim:
     service: database
     cmd: /app/scripts/dbimport.sh
-    description: "dbim -d [slo|newsroom|...] <file>\nThis is a helper script similar to 'lando db-import' but supports multisite with multiple databases in one container/service instead of requiring a service for every multisite.\n-h|--help\t\t\tShow this help message.\n-d|--database [database]\tThere is a database for every directory in the web/sites/ directory.\n--no-wipe\t\t\tDo not wipe the database before import."
+    description: "dbim <file> -d [slo|newsroom|...]\nThis is a helper script similar to 'lando db-import' but supports multisite with multiple databases in one container/service instead of requiring a service for every multisite.\n-h|--help\t\t\tShow this help message.\n-d|--database [database]\tThere is a database for every directory in the web/sites/ directory.\n--no-wipe\t\t\tDo not wipe the database before import."
   dbget:
-    description: "dbget [drush-alias]\tPull the database for alias. i.e. lando dbget @slo.live"
+    description: "dbget [drush-alias]\tDownload the database for alias. i.e. lando dbget @slo.live"
     service: appserver
     cmd: scripts/dbget.sh
   feature:docs:

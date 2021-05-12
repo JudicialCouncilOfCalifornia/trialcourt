@@ -26,7 +26,7 @@ cat << EOF > ${BASEDIR}/.circleci/scripts/project-${name}.sh
 UUID=$id
 SITE_CODE=$name
 # If false, pantheon will deploy to dev. If true it will get the Live tag.
-LIVE=false
+LIVE=true
 EOF
 
 # Update .circleci/config.yml to include the new site in the matrix.
