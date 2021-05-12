@@ -77,6 +77,7 @@ fi
 
 if [ -f ${BASEDIR}/scripts/users.sh ] ; then
   echo -e "\n${B}Adding users.${RE}"
+  # This script should contain drush commands to create new users and assign roles.
   . ${BASEDIR}/scripts/users.sh
 fi
 
