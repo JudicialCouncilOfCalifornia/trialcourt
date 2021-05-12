@@ -94,9 +94,13 @@ process:
     default_value: 0
   field_tags:
     -
+      plugin: str_replace
+      source: tags
+      search: ;
+      replace: ','
+    -
       plugin: explode
       delimiter: ','
-      source: tags
     -
       plugin: callback
       callable: trim
@@ -108,9 +112,13 @@ process:
       value_key: name
   field_topics:
     -
+      plugin: str_replace
+      source: topics
+      search: ;
+      replace: ','
+    -
       plugin: explode
       delimiter: ','
-      source: topics
     -
       plugin: callback
       callable: trim
@@ -122,9 +130,13 @@ process:
       value_key: name
   field_division:
     -
+      plugin: str_replace
+      source: division
+      search: ;
+      replace: ','
+    -
       plugin: explode
       delimiter: ','
-      source: division
     -
       plugin: callback
       callable: trim
@@ -136,9 +148,13 @@ process:
       value_key: name
   field_department:
     -
+      plugin: str_replace
+      source: department
+      search: ;
+      replace: ','
+    -
       plugin: explode
       delimiter: ','
-      source: department
     -
       plugin: callback
       callable: trim
@@ -159,11 +175,15 @@ process:
     source: id
   field_upload_date_label: updated
   field_upload_date:
-    plugin: format_date
-    source: year
-    from_format: 'Y'
-    to_format: Y-m-d
-    timezone: America/Los_Angeles
+    -
+      plugin: callback
+      callable: trim
+      source: year
+    -
+      plugin: format_date
+      from_format: (Y)
+      to_format: Y-m-d
+      timezone: America/Los_Angeles
   field_links/title: citation
   field_links/uri: file_url
 destination:
