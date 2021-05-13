@@ -46,6 +46,8 @@ Add your author information for historical reference and professional context, a
    - [Commandline](./docs/migrations.md#user-content-command-line)
    - [Drupal UI](./docs/migrations.md#user-content-drupal-ui)
    - [Other Migrate Commands](./docs/migrations.md#user-content-other-migrate-commands)
+ - [Creating New Sites](./docs/creating-new-sites.md)
+ - [Feature and Config Management](./docs/feature-config-management.md)
  - **Other Documentation**
    - [Multisite Management](./docs/MULTISITE.md)
    - [Features Management](./docs/FEATURES.md)
