@@ -37,6 +37,10 @@ $sites['jcart.courts.ca.gov'] = 'deprep';
 $sites['develop.madera.courts.ca.gov'] = 'md';
 $sites['stage.madera.courts.ca.gov'] = 'md';
 $sites['www.madera.courts.ca.gov'] = 'md';
+// = 'santacruz';
+$sites['develop.santacruz.courts.ca.gov'] = 'sc';
+$sites['stage.santacruz.courts.ca.gov'] = 'sc';
+$sites['www.santacruz.courts.ca.gov'] = 'sc';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
