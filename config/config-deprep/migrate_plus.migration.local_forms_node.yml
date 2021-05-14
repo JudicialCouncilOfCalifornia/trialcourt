@@ -96,7 +96,7 @@ process:
       plugin: str_replace
       source: tags
       search: ;
-      replace: ,
+      replace: ','
     -
       plugin: explode
       delimiter: ','
@@ -114,7 +114,7 @@ process:
       plugin: str_replace
       source: topics
       search: ;
-      replace: ,
+      replace: ','
     -
       plugin: explode
       delimiter: ','
@@ -132,7 +132,7 @@ process:
       plugin: str_replace
       source: division
       search: ;
-      replace: ,
+      replace: ','
     -
       plugin: explode
       delimiter: ','
@@ -166,7 +166,7 @@ process:
   field_attachments:
     plugin: migration_lookup
     migration:
-      - local_forms_media_remote
+      - local_forms_media
     source: id
   field_upload_date_label: updated
   field_upload_date:
@@ -176,7 +176,7 @@ process:
       source: year
     -
       plugin: format_date
-      from_format: '(Y)'
+      from_format: (Y)
       to_format: Y-m-d
       timezone: America/Los_Angeles
   field_links/title: citation
@@ -186,5 +186,3 @@ destination:
 migration_dependencies:
   required:
     - local_forms_media
-    - local_forms_media_remote
-    - local_forms_node_remote
