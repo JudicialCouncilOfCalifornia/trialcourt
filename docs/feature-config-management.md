@@ -1,11 +1,32 @@
 # Feature and Config Management
 
+Meta:
+
+ - This takes attention to detail.
+ - There are a lot of moving parts.
+ - I've tried to make the steps clear and scalable for dozens of sites.
+ - This would be necessary regardless of hosting platform, (not a because we're running multisite on pantheon issue it's because we want to keep the fleet in sync with all updates)
+ - There are some drupal quirks with config diff sort.
+
+---
+
 There is one feature module on this profile. JCC Components All Immutable Config
 As it's name suggests, this is for config that is unchanging and enforced across all sites.  Almost all config is captured in this feature. That which is not is considered site by site and should be managed as normal config.
 
 When config changes are made on the primary site (inyo) the steps to sync are:
 
-  - export primary site config as normal with cex
+  - `git checkout [feature branch]`
+  - `git pull [feature branch]` to make sure it's up to date.
+    - `git pull origin master --rebase` to also make sure it has the latest master code.
+  - `lando composer install`
+
+  - `scripts/fleet db-pull live` to get every site's database installed.
+    - Watch for any failures. If there are any, not which site and update individual sites with `lando drush sql-sync @[site].live @local.[site]`
+  - `scripts/fleet reset local -y` to get local in a reset state.
+    - I'll run this twice to catch dependencies.
+    - Watch for errors and troubleshoot as necesary
+
+  - export primary site config as normal with cex  (Already done if you're pulling a PR branch, but do it anyway after RESET.)
   - Use features UI to update the Immutable Config feature
     - Add any new config that should be added, and don't add any that should be unique to every site.
     - Do NOT ignore config arbitrarily. Degradation of the system makes it harder and harder to manage over time. Every decision should be made in favor of maintaining integrity.
