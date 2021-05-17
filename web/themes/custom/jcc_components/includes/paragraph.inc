@@ -196,7 +196,11 @@ function jcc_components_paragraph_text_share(array &$variables, ParagraphInterfa
  *   The type of URL.
  */
 function _jcc_components_get_url_type($url) {
-  $extensions = ['pdf', 'doc', 'docx', 'png', 'jpg', 'jpeg', 'gif'];
+  $extensions = [
+    'pdf',
+    'zip',
+    'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
+  ];
   $extension = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
 
   if (in_array(strtolower($extension), $extensions)) {
