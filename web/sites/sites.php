@@ -41,6 +41,16 @@ $sites['www.madera.courts.ca.gov'] = 'md';
 $sites['develop.santacruz.courts.ca.gov'] = 'sc';
 $sites['stage.santacruz.courts.ca.gov'] = 'sc';
 $sites['www.santacruz.courts.ca.gov'] = 'sc';
+// = 'sierra';
+$sites['develop-jcc-sierra.pantheonsite.io'] = 'sierra';
+$sites['stage-jcc-sierra.pantheonsite.io'] = 'sierra';
+$sites['live-jcc-sierra.pantheonsite.io'] = 'sierra';
+$sites['www.sierra.courts.ca.gov'] = 'sierra';
+// = 'tularesuperiorcourt';
+$sites['develop-jcc-tularesuperiorcourt.pantheonsite.io'] = 'tularesuperiorcourt';
+$sites['stage-jcc-tularesuperiorcourt.pantheonsite.io'] = 'tularesuperiorcourt';
+$sites['live-jcc-tularesuperiorcourt.pantheonsite.io'] = 'tularesuperiorcourt';
+$sites['www.tularesuperiorcourt.ca.gov'] = 'tularesuperiorcourt';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
