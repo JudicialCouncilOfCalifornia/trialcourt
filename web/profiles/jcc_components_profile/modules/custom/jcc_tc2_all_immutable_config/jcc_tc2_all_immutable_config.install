@@ -52,3 +52,12 @@ function jcc_tc2_all_immutable_config_update_8004() {
     $blocks['exposedformformssearch_forms']->delete();
   }
 }
+
+/**
+ * Install menu_admin_per_menu.
+ */
+function jcc_tc2_all_immutable_config_update_8005() {
+  $modules = ['menu_admin_per_menu'];
+
+  \Drupal::service('module_installer')->install($modules);
+}
