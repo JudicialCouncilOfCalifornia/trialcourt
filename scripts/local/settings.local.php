@@ -116,7 +116,12 @@ $settings['file_temporary_path'] = $config['system.file']['path']['temporary'];
 $settings['file_private_path'] = $config['system.file']['path']['private'];
 
 /* Performance/Cache settings */
-$config['system.performance']['cache'] = ['page' => ['max_age' => 0, 'use_internal' => FALSE]];
+$config['system.performance']['cache'] = [
+  'page' => [
+    'max_age' => 0,
+    'use_internal' => FALSE,
+  ],
+];
 $config['system.performance']['fast_404'] = ['enabled' => FALSE];
 $config['system.performance']['css'] = ['preprocess' => FALSE, 'gzip' => FALSE];
 $config['system.performance']['js'] = ['preprocess' => FALSE, 'gzip' => FALSE];
@@ -127,7 +132,7 @@ $config['devel.settings']['devel_dumper'] = 'var_dumper';
 $config['system.logging']['error_level'] = 'verbose';
 
 /* Stage File Proxy Settings */
-$config['stage_file_proxy.settings']['origin'] = 'https://develop-jcc-tc.pantheonsite.io';
+$config['stage_file_proxy.settings']['origin'] = 'https://live-jcc-[site].pantheonsite.io';
 $config['stage_file_proxy.settings']['use_imagecache_root'] = 0;
 $config['stage_file_proxy.settings']['hotlink'] = 1;
 
