@@ -12,6 +12,11 @@ use Drupal\editor\Entity\Editor;
  */
 function jcc_custom_page_attachments(array &$attachments) {
   $attachments['#attached']['library'][] = 'jcc_custom/fontawesome';
+
+  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
+  if (!$is_admin) {
+    $attachments['#attached']['library'][] = 'jcc_custom/filelink';
+  }
 }
 
 /**
