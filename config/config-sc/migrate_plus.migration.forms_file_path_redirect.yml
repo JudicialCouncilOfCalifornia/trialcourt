@@ -47,6 +47,9 @@ process:
       plugin: callback
       callable: basename
     -
+      plugin: callback
+      callable: urldecode
+    -
       plugin: skip_on_empty
       method: process
       message: 'Cannot import empty image filename.'
@@ -55,8 +58,11 @@ process:
     default_value: 1
   redirect_source/path:
     -
-      plugin: path_from_url
+      plugin: callback
+      callable: urldecode
       source: url
+    -
+      plugin: path_from_url
     -
       plugin: substr
       start: 1
