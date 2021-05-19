@@ -11,30 +11,14 @@ use Drupal\Core\Form\FormStateInterface;
  * Implements hook_form_alter().
  */
 function jcc_node_edit_form_alter(&$form, &$form_state, $form_id) {
-  // Node editing only customizations.
-  if ((isset($form['#theme']['1']) && $form['#theme']['1'] == 'node_form') && strpos($form_id, '_edit_form') !== FALSE) {
-    $node = $form_state->getFormObject()->getEntity();
-
-    // Suppress format options from tagline field.
+  // Node creation and editing only customizations.
+  if ((isset($form['#theme']['1']) && $form['#theme']['1'] == 'node_form')) {
+    // Suppress format options from certain fields.
     if (isset($form['field_tagline'])) {
       $form['field_tagline']['widget']['#after_build'][] = '_allowed_formats_remove_option';
     }
-
-    switch ($form_id) {
-      case 'node_news_edit_form':
-        // Display hero image preference option to news feature only.
-        $tid = $node->get('field_news_type')->getString();
-        if (isset($tid) && $tid != "") {
-          $newsType = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid)->label();
-
-          if ($newsType != 'Feature') {
-            unset($form['field_second_image_as_hero']);
-          }
-        }
-        else {
-          unset($form['field_second_image_as_hero']);
-        }
-        break;
+    if (isset($form['field_feed_source'])) {
+      $form['field_feed_source']['widget']['#after_build'][] = '_allowed_formats_remove_option';
     }
   }
 }
