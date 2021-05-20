@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: 3l7samzVpKvUNwi6jerwxfyzShvpKoCyWxuQwvGkXJY
+  default_config_hash: Kv5sBFynorJInlnletJp3Au8EoBQXpYGAOUPf4TsWKs
 id: forms_file
 class: null
 field_plugin_method: null
@@ -34,6 +34,10 @@ source:
   constants:
     DRUPAL_FILE_DIRECTORY: 'public://documents/'
 process:
+  pseudo_decoded_url:
+    plugin: callback
+    callable: urldecode
+    source: url
   pseudo_destination_filename:
     -
       plugin: path_from_url
@@ -41,6 +45,9 @@ process:
     -
       plugin: callback
       callable: basename
+    -
+      plugin: callback
+      callable: urldecode
     -
       plugin: skip_on_empty
       method: process
@@ -59,7 +66,7 @@ process:
     -
       plugin: file_copy
       source:
-        - url
+        - '@pseudo_decoded_url'
         - '@pseudo_destination_path'
       file_exists: replace
       move: false
