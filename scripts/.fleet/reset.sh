@@ -14,7 +14,7 @@ do_command() {
   do
     [[ "$env" == "local" ]] && alias="@local.${site}" || alias="@${site}.${env}"
 
-    echo -e "\n${B}Resetting ${alias}"
+    echo -e "\n${B}Resetting ${alias}${RE}"
     lando drush $alias cr
     lando drush $alias updb $@
     lando drush $alias cim $@
