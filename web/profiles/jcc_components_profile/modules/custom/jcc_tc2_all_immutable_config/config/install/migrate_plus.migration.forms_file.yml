@@ -32,6 +32,10 @@ source:
   constants:
     DRUPAL_FILE_DIRECTORY: 'public://documents/'
 process:
+  pseudo_decoded_url:
+    plugin: callback
+    callable: urldecode
+    source: url
   pseudo_destination_filename:
     -
       plugin: path_from_url
@@ -39,6 +43,9 @@ process:
     -
       plugin: callback
       callable: basename
+    -
+      plugin: callback
+      callable: urldecode
     -
       plugin: skip_on_empty
       method: process
@@ -57,7 +64,7 @@ process:
     -
       plugin: file_copy
       source:
-        - url
+        - '@pseudo_decoded_url'
         - '@pseudo_destination_path'
       file_exists: replace
       move: false
