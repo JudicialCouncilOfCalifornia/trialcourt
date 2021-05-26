@@ -81,7 +81,7 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
 function jcc_components_paragraph_action_list(array &$variables, ParagraphInterface $paragraph) {
   // Prep the action list items due to special handling of linkit links.
   $items = $paragraph->field_components->referencedEntities();
-  
+
   foreach ($items as $item) {
     $title = !empty($item->field_heading) ? $item->field_heading->first()->value : '';
 
