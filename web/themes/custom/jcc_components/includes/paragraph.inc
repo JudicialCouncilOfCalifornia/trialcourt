@@ -71,6 +71,37 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
 }
 
 /**
+ * Helper function for action_items paragraphs.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_components_paragraph_action_list(array &$variables, ParagraphInterface $paragraph) {
+  // Prep the action list items due to special handling of linkit links.
+  $items = $paragraph->field_components->referencedEntities();
+  
+  foreach ($items as $item) {
+    $title = !empty($item->field_heading) ? $item->field_heading->first()->value : '';
+
+    if (!empty($item->field_link)) {
+      $link = $item->field_link->view('default');
+    }
+
+    $variables['action_items'][] = [
+      'title' => $title,
+      'body' => $item->field_text->view('default'),
+      'link' => [
+        'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
+        'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
+      ],
+      'classes' => [],
+    ];
+  }
+}
+
+/**
  * Helper function for hero_banner paragraphs.
  *
  * @param array $variables
