@@ -8,11 +8,11 @@ dependencies:
     - field.field.paragraph.action_list_item.field_text
     - paragraphs.paragraphs_type.action_list_item
   module:
-    - link
+    - linkit_field
     - maxlength
     - text
 _core:
-  default_config_hash: MktpGn6nLsDNbD9ai5sItJkZVVwruwG4OVNLWUqSX7w
+  default_config_hash: GPKwsL_-XeW7cQYfVoGCaaxuQ60opb40jih6CAWZ39Q
 id: paragraph.action_list_item.default
 targetEntityType: paragraph
 bundle: action_list_item
@@ -29,13 +29,12 @@ content:
   field_link:
     weight: 2
     settings:
-      placeholder_url: ''
-      placeholder_title: ''
+      linkit_profile: default
     third_party_settings:
       maxlength:
         maxlength_js: 64
         maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
-    type: link_default
+    type: linkit_field_linkit
     region: content
   field_text:
     weight: 1
@@ -47,9 +46,9 @@ content:
     region: content
   translation:
     weight: 10
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
 hidden:
   created: true
   status: true
