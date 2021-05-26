@@ -1,0 +1,82 @@
+uuid: 608556a9-e6e6-40dd-b486-91654128fd28
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.event.body
+    - field.field.node.event.field_date_range
+    - field.field.node.event.field_event_moreinfo
+    - field.field.node.event.field_recurring_event
+    - node.type.event
+  module:
+    - feeds_ical
+    - node
+id: ical_feed
+label: 'iCal Feed'
+description: ''
+help: ''
+import_period: 3600
+fetcher: http
+fetcher_configuration:
+  auto_detect_feeds: false
+  use_pubsubhubbub: false
+  always_download: false
+  fallback_hub: ''
+  request_timeout: 30
+parser: feeds_ical
+parser_configuration: {  }
+processor: 'entity:node'
+processor_configuration:
+  langcode: en
+  update_existing: 1
+  update_non_existent: _delete
+  expire: -1
+  owner_feed_author: false
+  owner_id: 0
+  authorize: true
+  skip_hash_check: false
+  values:
+    type: event
+custom_sources:
+  rrule:
+    label: RRULE
+    value: RRULE
+    machine_name: rrule
+mappings:
+  -
+    target: title
+    map:
+      value: summary
+    unique: {  }
+    settings:
+      language: null
+  -
+    target: body
+    map:
+      value: description
+      summary: description
+    settings:
+      language: null
+      format: plain_text
+  -
+    target: field_date_range
+    map:
+      value: dtstart
+      end_value: dtend
+    settings:
+      language: ''
+      timezone: America/Los_Angeles
+  -
+    target: field_recurring_event
+    map:
+      value: rrule
+    unique: {  }
+    settings:
+      language: null
+  -
+    target: field_event_moreinfo
+    map:
+      value: location
+    settings:
+      language: null
+      format: plain_text

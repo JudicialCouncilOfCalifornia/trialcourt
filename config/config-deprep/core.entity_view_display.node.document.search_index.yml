@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.search_index
+    - facets.facet.tags
     - field.field.node.document.body
     - field.field.node.document.field_attachments
     - field.field.node.document.field_division
@@ -18,6 +19,7 @@ dependencies:
     - field.field.node.document.field_upload_date_label
     - node.type.document
   module:
+    - entity_reference_facet_link
     - jcc_media_formatter
     - text
     - user
@@ -50,13 +52,20 @@ content:
     settings:
       link: true
     third_party_settings: {  }
+  field_tags:
+    type: entity_reference_facet_link
+    weight: 3
+    region: content
+    label: hidden
+    settings:
+      facet: tags
+    third_party_settings: {  }
 hidden:
   field_division: true
   field_help_links: true
   field_links: true
   field_metatag: true
   field_subject_matter: true
-  field_tags: true
   field_topics: true
   field_upload_date: true
   field_upload_date_label: true
