@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\link\LinkItemInterface;
 use Drupal\link\Plugin\Field\FieldFormatter\LinkFormatter;
+use Drupal\linkit\SubstitutionManagerInterface;
 use Drupal\linkit_field\Utility\LinkitHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -36,6 +37,9 @@ class LinkitFormatter extends LinkFormatter {
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
     $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->substitutionManager = $container->get('plugin.manager.linkit.substitution');
+    $instance->pathValidator = $container->get('path.validator');
+
     return $instance;
   }
 
@@ -111,7 +115,7 @@ class LinkitFormatter extends LinkFormatter {
       $link_item = $items->get($delta);
       $substituted_url = $this->getSubstitutedUrl($link_item);
       // Convert generated URL into a URL object.
-      if ($substituted_url && ($url = \Drupal::pathValidator()->getUrlIfValid($substituted_url->getGeneratedUrl()))) {
+      if ($substituted_url && ($url = $this->pathValidator->getUrlIfValid($substituted_url->getGeneratedUrl()))) {
         // Keep query and fragment.
         $parsed_url = parse_url($link_item->uri);
         if (!empty($parsed_url['query'])) {
@@ -152,6 +156,39 @@ class LinkitFormatter extends LinkFormatter {
    *   The substitution URL, or NULL if not able to retrieve it from the item.
    */
   protected function getSubstitutedUrl(LinkItemInterface $item) {
+    $value = $item->getValue();
+
+    if (strpos($value['uri'], 'entity:') === 0) {
+      list($type, $entity_id) = explode('/', $value['uri']);
+      $entity_type = substr($type, strpos($type, ':') + 1);
+    }
+
+    if ($entity_type === '' || $entity_id === '') {
+      return NULL;
+    }
+
+    switch ($entity_type) {
+      case 'file':
+      case 'media':
+        $substitution_type = $entity_type;
+        break;
+
+      default:
+        $substitution_type = SubstitutionManagerInterface::DEFAULT_SUBSTITUTION;
+
+    }
+
+    $entity = LinkitHelper::getEntityFromUri($value['uri']);
+
+    if ($entity) {
+      /** @var \Drupal\Core\GeneratedUrl $url */
+      $url = $this->substitutionManager
+        ->createInstance($substitution_type)
+        ->getUrl($entity);
+
+      return $url;
+    }
+
     return NULL;
   }
 
