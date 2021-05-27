@@ -96,6 +96,11 @@ function jcc_components_node_subpage(array &$variables) {
   $parameters->setActiveTrail($menu_active_trail);
   // Load the tree.
   $tree = \Drupal::menuTree()->load($menu_name, $parameters);
+  $manipulators = [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ];
+  $tree = \Drupal::menuTree()->transform($tree, $manipulators);
 
   foreach ($tree as $content) {
     // We only want links for the secondary active trail.
