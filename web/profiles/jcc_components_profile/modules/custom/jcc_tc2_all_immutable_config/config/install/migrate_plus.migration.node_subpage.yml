@@ -53,11 +53,15 @@ process:
   path/pathauto:
     plugin: default_value
     default_value: 1
-  body/value: body
+  body/value:
+    plugin: media_replace_file_link
+    source: body
   body/format:
     plugin: default_value
     default_value: full_html
 destination:
   plugin: 'entity:node'
   default_bundle: subpage
-migration_dependencies: null
+migration_dependencies:
+  required:
+    - forms_media
