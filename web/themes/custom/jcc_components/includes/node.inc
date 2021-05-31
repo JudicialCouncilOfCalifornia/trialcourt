@@ -5,6 +5,7 @@
  * Preprocess and functions for alert content type and component.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\node\NodeInterface;
 
@@ -63,6 +64,20 @@ function jcc_components_node_alert(array &$variables, NodeInterface $node) {
 }
 
 /**
+ * Implements hook_entity_build_defaults_alter().
+ */
+function jcc_custom_entity_build_defaults_alter(&$build, EntityInterface $entity, $view_mode) {
+  switch ($entity->bundle()) {
+    // Add cache context url.path to alert node content because we only want it
+    // to render on specific page sometimes as controlled on the node itself.
+    case 'alert':
+      $build['#cache']['contexts'][] = 'url.path';
+      break;
+
+  }
+}
+
+/**
  * Node: Subpage preprocess.
  *
  * @param array $variables
@@ -81,6 +96,11 @@ function jcc_components_node_subpage(array &$variables) {
   $parameters->setActiveTrail($menu_active_trail);
   // Load the tree.
   $tree = \Drupal::menuTree()->load($menu_name, $parameters);
+  $manipulators = [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ];
+  $tree = \Drupal::menuTree()->transform($tree, $manipulators);
 
   foreach ($tree as $content) {
     // We only want links for the secondary active trail.

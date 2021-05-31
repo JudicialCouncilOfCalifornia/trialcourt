@@ -6,6 +6,7 @@
  */
 
 use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Remove field_media from news content type.
@@ -58,6 +59,108 @@ function jcc_tc2_all_immutable_config_update_8004() {
  */
 function jcc_tc2_all_immutable_config_update_8005() {
   $modules = ['menu_admin_per_menu'];
+
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * TCI-437-438 Changing field_columns from list_integer to list_string.
+ */
+function jcc_tc2_all_immutable_config_update_8006() {
+
+  $fields = [
+    'field_columns' => [
+      'table' => 'paragraph__field_columns',
+      'revision_table' => 'paragraph_revision__field_columns',
+    ],
+  ];
+
+  $database = \Drupal::database();
+
+  foreach ($fields as $field_name => $f) {
+    $table = $f['table'];
+    $revision_table = $f['revision_table'];
+    // Entity type here.
+    $entity_type = 'paragraph';
+
+    // Step 1: Get field storage.
+    $field_storage = FieldStorageConfig::loadByName($entity_type, $field_name);
+
+    // Check if field not found.
+    if (is_null($field_storage)) {
+      continue;
+    }
+
+    // Step 2: Store data.
+    $rows = NULL;
+    $revision_rows = NULL;
+    if ($database->schema()->tableExists($table)) {
+      // The table data to restore after the update is completed.
+      $rows = $database->select($table, 'n')->fields('n')->execute()
+        ->fetchAll();
+      $revision_rows = $database->select($revision_table, 'n')->fields('n')->execute()
+        ->fetchAll();
+    }
+
+    // Step 3: Save new field configs & delete existing fields.
+    $new_fields = [];
+    foreach ($field_storage->getBundles() as $bundle => $label) {
+      $field = FieldConfig::loadByName($entity_type, $bundle, $field_name);
+      $new_field = $field->toArray();
+      $new_field['field_type'] = 'list_string';
+      $new_fields[] = $new_field;
+      // Delete field.
+      $field->delete();
+    }
+
+    // Step 4: Create new storage configs from existing.
+    $new_field_storage = $field_storage->toArray();
+    $new_field_storage['type'] = 'list_string';
+    $new_field_storage['module'] = 'options';
+    $new_field_storage['settings'] = [
+      'allowed_values' => [
+        '1' => '1',
+        '2-50-50' => '50% / 50%',
+        '2-75-25' => '75% / 25%',
+        '3' => '3',
+        '4' => '4',
+      ],
+    ];
+
+    // Step 5: Purge deleted fields data.
+    // This is required to create new fields.
+    field_purge_batch(250);
+
+    // Step 6: Create new fieldstorage.
+    FieldStorageConfig::create($new_field_storage)->save();
+
+    // Step 7: Create new fields for all bundles.
+    foreach ($new_fields as $new_field) {
+      $new_field = FieldConfig::create($new_field);
+      $new_field->save();
+    }
+
+    // Step 8: Restore existing data in fields & revision tables.
+    if (!is_null($rows)) {
+      foreach ($rows as $row) {
+        $row = (array) $row;
+        $database->insert($table)->fields($row)->execute();
+      }
+    }
+    if (!is_null($revision_rows)) {
+      foreach ($revision_rows as $row) {
+        $row = (array) $row;
+        $database->insert($revision_table)->fields($row)->execute();
+      }
+    }
+  }
+}
+
+/**
+ * Install ckeditor_inserthtml.
+ */
+function jcc_tc2_all_immutable_config_update_8007() {
+  $modules = ['ckeditor_inserthtml'];
 
   \Drupal::service('module_installer')->install($modules);
 }

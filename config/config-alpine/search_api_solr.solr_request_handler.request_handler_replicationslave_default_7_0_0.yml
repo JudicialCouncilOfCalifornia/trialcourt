@@ -1,0 +1,28 @@
+uuid: d85ccdb1-5410-4d4a-8f0e-05c7af87b320
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: nqwqhHJ_crrFcBXUtcYNRoIcIBEOzZM6V4NNTYvB5iQ
+id: request_handler_replicationslave_default_7_0_0
+label: 'Replication Slave'
+minimum_solr_version: 7.0.0
+environments: {  }
+recommended: false
+request_handler:
+  name: /replication
+  class: solr.ReplicationHandler
+  lst:
+    -
+      name: slave
+      str:
+        -
+          name: enable
+          VALUE: '${solr.replication.slave:false}'
+        -
+          name: masterUrl
+          VALUE: '${solr.replication.masterUrl:http://localhost:8983/solr}/replication'
+        -
+          name: pollInterval
+          VALUE: '${solr.replication.pollInterval:00:00:60}'
+solr_configs: null
