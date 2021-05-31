@@ -48,6 +48,7 @@
 - Site email
 - Front page: /node/1  (or your home page if not node/1)
 - Bing Maps API Key (default for webservices:
+  - `/admin/config/system/geocoder/geocoder-provider`
   - AsFHz4uyv4g8Kpx4IRQe31MzyAUqjfasyD5-96D-Im22cepaCQZTUIGC4Tku06e0
 
 
@@ -72,7 +73,7 @@ This file is git ignored as it may vary from site to site, or based on what test
 
 - uninstall dev modules: devel stage_file_proxy features_ui twig_xdebug  @see require-dev in composer.json
   - NOTES:  Initial deploy fails because of missing dev modules that are in the split configuration. This is due to db dump of local which has these modules enabled, trying to run on an env that doesn't allow that config.
-  - lando drush @local.[site]
+  - lando drush @local.[site] pmu devel stage_file_proxy features_ui twig_xdebug
 
 - Export config
   - lando drush @local.[site] cex -y
