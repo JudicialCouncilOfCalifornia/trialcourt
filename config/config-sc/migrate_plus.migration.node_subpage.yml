@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: UyW9gMsmo1_-FX43YD0qxY4YWZlsK4FjjUIUXgJhuDk
+  default_config_hash: _daBsoK7vUMovbFgUfO9dwVw17Wl875rJhZAZpA_uBI
 id: node_subpage
 class: null
 field_plugin_method: null
@@ -53,11 +53,15 @@ process:
   path/pathauto:
     plugin: default_value
     default_value: 1
-  body/value: body
+  body/value:
+    plugin: media_replace_file_link
+    source: body
   body/format:
     plugin: default_value
     default_value: full_html
 destination:
   plugin: 'entity:node'
   default_bundle: subpage
-migration_dependencies: null
+migration_dependencies:
+  required:
+    - forms_media
