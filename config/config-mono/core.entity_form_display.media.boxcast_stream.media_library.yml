@@ -1,0 +1,37 @@
+uuid: eaa40426-b347-4214-9db1-6875b66be53e
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.boxcast_stream.field_media_boxcast_stream
+    - media.type.boxcast_stream
+  module:
+    - media_boxcast
+_core:
+  default_config_hash: t2Uf-O6ZF2UIyBlWPsX6q5zYTACa6gL3itw9TyeoGOc
+id: media.boxcast_stream.media_library
+targetEntityType: media
+bundle: boxcast_stream
+mode: media_library
+content:
+  field_media_boxcast_stream:
+    type: boxcast_content_widget
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    weight: 0
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  langcode: true
+  path: true
+  status: true
+  uid: true
