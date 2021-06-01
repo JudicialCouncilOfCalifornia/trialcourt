@@ -99,6 +99,10 @@ for name in "$@" ; do
   sleep $WAIT
 
   echo
+  echo Clearing Cache for $PANTHEON_ENV
+  drush @${SITE_CODE}.${PANTHEON_ENV} cr
+
+  echo
   echo Running Database Updates for $PANTHEON_ENV
   drush @${SITE_CODE}.${PANTHEON_ENV} updb -y
 
