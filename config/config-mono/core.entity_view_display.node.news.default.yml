@@ -1,0 +1,68 @@
+uuid: 40e60ee8-7d2a-4c4a-9520-938384d05df8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.news.body
+    - field.field.node.news.field_byline
+    - field.field.node.news.field_components
+    - field.field.node.news.field_date
+    - field.field.node.news.field_news_type
+    - node.type.news
+  module:
+    - datetime
+    - entity_reference_revisions
+    - text
+    - user
+_core:
+  default_config_hash: ketHgdUnxJbljNksQY5HXoDRG1hv4-Y3ojQB2Kr0Y00
+id: node.news.default
+targetEntityType: node
+bundle: news
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_byline:
+    weight: 3
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_components:
+    weight: 4
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    type: entity_reference_revisions_entity_view
+    region: content
+  field_date:
+    weight: 2
+    label: hidden
+    settings:
+      timezone_override: America/Los_Angeles
+      date_format: 'M d, Y'
+    third_party_settings: {  }
+    type: datetime_custom
+    region: content
+  field_news_type:
+    weight: 0
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+hidden:
+  langcode: true
+  links: true
+  search_api_excerpt: true
