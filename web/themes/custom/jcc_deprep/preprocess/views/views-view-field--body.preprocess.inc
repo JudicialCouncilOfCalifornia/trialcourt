@@ -35,8 +35,10 @@ function jcc_deprep_preprocess_views_view_field__body(&$variables) {
         $fragment = $doc->createDocumentFragment();
         $fragment->appendXML($citation_title);
 
-        $doc->getElementsByTagName("a")->item(0)->nodeValue = '';
-        $doc->getElementsByTagName("a")->item(0)->appendChild($fragment);
+        if ($doc->getElementsByTagName("a")->item(0)) {
+          $doc->getElementsByTagName("a")->item(0)->nodeValue = '';
+          $doc->getElementsByTagName("a")->item(0)->appendChild($fragment);
+        }
       }
 
       $variables['output'] = Markup::create($doc->saveHTML());
