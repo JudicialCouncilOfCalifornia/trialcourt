@@ -1,0 +1,49 @@
+uuid: bfb0caf0-e7af-425c-83f9-213e34e96ef7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.action_list_item.field_heading
+    - field.field.paragraph.action_list_item.field_link
+    - field.field.paragraph.action_list_item.field_text
+    - paragraphs.paragraphs_type.action_list_item
+  module:
+    - linkit_field
+    - text
+_core:
+  default_config_hash: ftpkS9UlhgmBvMkFBJx9g8gH1ejTmpny5jVOZt5IloQ
+id: paragraph.action_list_item.default
+targetEntityType: paragraph
+bundle: action_list_item
+mode: default
+content:
+  field_heading:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_link:
+    weight: 2
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+      linkit_profile: default
+    third_party_settings: {  }
+    type: linkit_field_linkit
+    region: content
+  field_text:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+hidden:
+  search_api_excerpt: true
