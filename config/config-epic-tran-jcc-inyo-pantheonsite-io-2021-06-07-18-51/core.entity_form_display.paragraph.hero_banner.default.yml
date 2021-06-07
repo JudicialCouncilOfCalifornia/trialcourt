@@ -1,0 +1,72 @@
+uuid: d1b8f890-922f-4294-aa48-308bb3d717e9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.hero_banner.field_brow
+    - field.field.paragraph.hero_banner.field_components
+    - field.field.paragraph.hero_banner.field_heading
+    - field.field.paragraph.hero_banner.field_image_media
+    - field.field.paragraph.hero_banner.field_variant
+    - paragraphs.paragraphs_type.hero_banner
+  module:
+    - media_library
+    - paragraphs
+_core:
+  default_config_hash: Q9qgE2BE2HBRiSsgjoNlVz7k56PmD_tk9fW0TQAlK3U
+id: paragraph.hero_banner.default
+targetEntityType: paragraph
+bundle: hero_banner
+mode: default
+content:
+  field_brow:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_components:
+    weight: 5
+    settings:
+      title: Link
+      title_plural: Links
+      edit_mode: preview
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: icon_link
+    third_party_settings: {  }
+    type: entity_reference_paragraphs
+    region: content
+  field_heading:
+    weight: 2
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_image_media:
+    type: media_library_widget
+    weight: 4
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+    region: content
+  field_variant:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  translation:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
