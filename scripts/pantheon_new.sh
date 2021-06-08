@@ -11,11 +11,6 @@ label=$2
 echo -e "\n${B}Creating new Pantheon site ${RE}jcc-${name} \"$label\""
 terminus site:create jcc-${name} "$label" empty --org=judicial-council-of-california
 
-# Create multidevs
-echo -e "\n${B}Creating multidev environments develop and stage for ${RE}jcc-${name}"
-terminus multidev:create jcc-${name}.dev develop &
-terminus multidev:create jcc-${name}.dev stage &
-
 # Get the id
 id=$(terminus site:info jcc-$name --fields=id | grep ID | awk '{print $2}')
 
@@ -59,6 +54,47 @@ cat << EOF > ${BASEDIR}/drush/sites/${name}.site.yml
     tty: false
     options: '-p 2222 -o "AddressFamily inet"'
 EOF
+
+# Initialize Live Environment to work around the pantheon.yml hotfix issue.
+# https://pantheon.io/docs/pantheon-yml#deploying-hotfixes
+# Our deployment process bypasses Pantheon's serial workflow and deploys to
+# Live by tagging the production repo master branch with `pantheon_live_N`
+# ourselves, which prevents changes in the pantheon.yml file from being
+# initialized on the live environment.
+#
+# This set up step clones the production repo from Pantheon, syncs our code
+# the way it would on deployment, then uses terminus to deploy it through the
+# Pantheon workflow. After the Live environment is initialized, our parallel
+# workflow will deploy without issue.
+
+# Switch to git mode.
+terminus connection:set jcc-${name}.dev git
+
+# Disable strict host checking so we can pull/push code.
+echo -e "Host codeserver.dev.${id}.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
+# Clone the pantheon repo.
+rm -rf data/artifact
+git clone ssh://codeserver.dev.${id}@codeserver.dev.${id}.drush.in:2222/~/repository.git data/artifact
+cp pantheon.yml data/artifact/pantheon.yml
+
+cd data/artifact
+git add .
+git commit -m "Initialize environments with pantheon.yml"
+git push origin master
+
+echo "waiting..."
+sleep 5
+
+echo -e "\n${P}Initializing test environment.${RE}"
+terminus env:deploy jcc-${name}.test --note="Initialize from pantheon_new.sh"
+echo "\n${P}Initializing live environment.${RE}"
+terminus env:deploy jcc-${name}.live --note="Initialize from pantheon_new.sh"
+
+# Create multidevs
+echo -e "\n${P}Creating multidev environments develop and stage for ${RE}jcc-${name}"
+terminus multidev:create jcc-${name}.live develop
+terminus multidev:create jcc-${name}.live stage
 
 # Complete message and next steps.
 echo -e "\n${G}*** COMPLETE ***${RE}"
