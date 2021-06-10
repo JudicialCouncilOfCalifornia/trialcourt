@@ -163,7 +163,7 @@ read -r -d '' MESSAGE <<-EOF
 }
 EOF
 
-if [ $CALVIN_SLACK ] ; then
-  curl -s -i -d "$MESSAGE" $CALVIN_SLACK #> /dev/null
+if [ $SLACK_WEBHOOK ] ; then
+  curl -s -i -d "$MESSAGE" $SLACK_WEBHOOK #> /dev/null
   echo -e "\nPinged Slack.\n"
 fi
