@@ -31,7 +31,7 @@ for name in "$@" ; do
   PANTHEON_ENV=$CIRCLE_BRANCH
 
   git config --global user.email "$GIT_EMAIL"
-  git config --global user.name "Ch3-P0"
+  git config --global user.name "JCC-Webdev"
 
   echo "\nClone artifact.\n"
   mkdir -p data
