@@ -163,7 +163,7 @@ class LinkitFormatter extends LinkFormatter {
       $entity_type = substr($type, strpos($type, ':') + 1);
     }
 
-    if ($entity_type === '' || $entity_id === '') {
+    if (empty($entity_type) || empty($entity_id)) {
       return NULL;
     }
 
