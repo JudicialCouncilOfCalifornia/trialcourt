@@ -15,41 +15,39 @@ Add your author information for historical reference and professional context, a
  [host]: https://pantheon.io
  [ci]: https://circleci.com
  [backend]: https://drupal.org/8
- [frontend]: https://drupal.org/project/jcc_base
+ [frontend]: https://drupal.org/project/jcc_components
  [parallelpdf]: ParallelPantheon.pdf
 
  - Working Repo: [Github][repo]
  - Hosting: [Pantheon][host]
  - CI/CD: [CircleCI][ci] - [![CircleCI](https://circleci.com/gh/JudicialCouncilOfCalifornia/trialcourt/tree/master.svg?style=svg)](https://circleci.com/gh/JudicialCouncilOfCalifornia/trialcourt/tree/master)
  - Backend: [Drupal 8][backend]
- - Frontend: [Drupal 8 Theme - JCCBase][frontend] subtheme(s).
+ - Frontend: [Drupal 8 Theme - JCC Components][frontend].
 
 ### Contents
 
  - [Local Development](./docs/local-development.md)
-   - [Acquire a database dump.](./docs/local-developmentl.md#user-content-acquire-a-database-dump)
+   - [Acquire a database dump.](./docs/local-development.md#acquire-a-database-dump)
    - [Spin up the local.](./docs/local-development.md#user-content-spin-up-the-local)
  - [Code Management](./docs/code-management.md)
    - [Adding Contrib Modules](./docs/code-management.md#user-content-adding-contrib-modules)
-   - [Updating Core](./docs/code-management.md#user-content-updating-core)
-   - [Updating Contrib Modules](./docs/code-management.md#user-content-updating-contrib-modules)
-   - [Removing Contrib Modules](./docs/code-management.md#user-content-removing-contrib-modules)
-   - [Applying Patches](./docs/code-management.md#user-content-applying-patches)
+   - [Updating Core](./docs/code-management.md#updating-core)
+   - [Updating Contrib Modules](./docs/code-management.md#updating-contrib-modules)
+   - [Removing Contrib Modules](./docs/code-management.md#removing-contrib-modules)
+   - [Applying Patches](./docs/code-management.md#applying-patches)
  - [GitOps Workflow and Deploying Code](./docs/git-ops-workflow-deploying-code.md)
-   - [Parallel Workflow](./docs/git-ops-workflow-deploying-code.md#user-content-git-workflow-and-deploying-code)
-   - [Parallel Git Worfklow on Pantheon](./docs/ParallelPantheon.pdf)
-   - [Alternative Release Options](./docs/git-ops-workflow-deploying-code.md#user-content-alternative-release-options)
-   - [Testing and Approval](./docs/git-ops-workflow-deploying-code.md#user-content-testing-and-approval)
-   - [Automated Testing](./docs/git-ops-workflow-deploying-code.md#user-content-automated-testing)
-   - [Deploying Code](./docs/git-ops-workflow-deploying-code.md#user-content-deploying-code)
+   - [Parallel Workflow](./docs/git-ops-workflow-deploying-code.md#gitops-workflow-and-deploying-code)
+   - [Parallel Git Workflow on Pantheon](./docs/ParallelPantheon.pdf)
+   - [Alternative Release Options](./docs/git-ops-workflow-deploying-code.md#alternative-release-options)
+   - [Testing and Approval](./docs/git-ops-workflow-deploying-code.md#testing-and-approval)
+   - [Deploying Code](./docs/git-ops-workflow-deploying-code.md#deploying-code)
  - [Migrating Content](./docs/migrations.md)
-   - [Commandline](./docs/migrations.md#user-content-command-line)
-   - [Drupal UI](./docs/migrations.md#user-content-drupal-ui)
-   - [Other Migrate Commands](./docs/migrations.md#user-content-other-migrate-commands)
+   - [Commandline](./docs/migrations.md#command-line)
+   - [Drupal UI](./docs/migrations.md#drupal-ui)
+   - [Other Migrate Commands](./docs/migrations.md#other-migrate-commands)
+   - [Important Forms File Migration](./docs/migrations.mk#forms-file)
  - [Creating New Sites](./docs/creating-new-sites.md)
  - [Feature and Config Management](./docs/feature-config-management.md)
  - **Other Documentation**
    - [Multisite Management](./docs/MULTISITE.md)
-   - [Features Management](./docs/FEATURES.md)
-
-
+     - [Pantheon Multisite Hackery!](./docs/MULTISITE.md#pantheon-multisite-hackery)

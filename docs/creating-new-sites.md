@@ -1,13 +1,5 @@
 # Creating New Site
 
-## Build a new multisite
-
-  - `lando multisite [name]`
-    - make sure [name] will pattern match to the identifying portion of the live url.
-      - i.e. www.kings.courts.ca.gov => `kings`
-    - Do initial configurations and export (SEE Initial configurations)
-    - Dump the database to install at Pantheon
-
 
 ## Spin up a pantheon instance and add deployment tooling
 
@@ -15,11 +7,21 @@
     - i.e. `scripts/pantheon_new.sh kings "Judicial Council | Kings"
       - Keeping the Label consistently formatted helps to easily identify the site on Pantheon.
       - The Convention I've used is "Judicial Council | [site]" But capitalize the site.
+    - **make sure [site] will pattern match to the identifying portion of the live url.**
+      - i.e. www.kings.courts.ca.gov => `kings`
 
-    - Change to git mode.
-    - For some reason multi devs aren't being created by terminus... unhelpful error messages. Must manually create develop and stage after deploy to master.
-    - Initialize live env before deploying code.
-    - Upload database export before pushing code.
+This script will create a new Pantheon instance, initialize the Live environment, create multidev environments develop and stage for parallel git workflow and update the tooling files in the repo, required for deploying and managing the new site.
+
+After this runs it will give you instructions to set up the new Drupal instance locally.
+
+
+## Build a New Drupal Instance Multisite
+
+  - `lando multisite [name]`
+    - make sure `[name]` will pattern match to the identifying portion of the live url. It should be the same as `[site]` from the `pantheon_new.sh` command above.
+      - i.e. www.kings.courts.ca.gov => `kings`
+    - Do initial configurations and export (@see Initial configurations)
+    - Dump the database to import at Pantheon
 
 ## Initial configurations
 
@@ -71,18 +73,18 @@ This file is git ignored as it may vary from site to site, or based on what test
 
 - Verify everything is ok
 
-- uninstall dev modules: devel stage_file_proxy features_ui twig_xdebug  @see require-dev in composer.json
-  - NOTES:  Initial deploy fails because of missing dev modules that are in the split configuration. This is due to db dump of local which has these modules enabled, trying to run on an env that doesn't allow that config.
-  - lando drush @local.[site] pmu devel stage_file_proxy features_ui twig_xdebug
+- Uninstall dev modules: devel stage_file_proxy features_ui twig_xdebug  @see require-dev in composer.json
+  - NOTES:  Initial deploy fails because of missing dev modules that are in the split configuration. This is due to db dump of local which has these modules enabled, trying to run on an env that doesn't have those modules.
+  - `lando drush @local.[site] pmu devel stage_file_proxy features_ui twig_xdebug`
 
 - Export config
-  - lando drush @local.[site] cex -y
+  - `lando drush @local.[site] cex -y`
 
 - Export db from local
-  - lando drush @local.[site] sql-dump > data/[site]-install.sql
+  - `lando drush @local.[site] sql-dump > data/[site]-install.sql`
 
-- Import the initial database dump to the required environment(s) to prepare pantheon for deployment.  (develop, stage, live)
+- Import the initial database dump to live environment to prepare pantheon for deployment.
 
 - Commit changes and deploy to appropriate environment(s) for testing and other pre-launch work.  Live (master), is where content creation will happen pre-launch.
 
----
+- Sync the db and files from live to develop and stage on Pantheon.
