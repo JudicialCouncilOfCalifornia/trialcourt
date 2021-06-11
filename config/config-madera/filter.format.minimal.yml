@@ -5,8 +5,9 @@ dependencies:
   module:
     - glossify_taxonomy
     - linkit
+    - media
 _core:
-  default_config_hash: soLItuOItkiSloHxK0GCW1Jy_dic_00MovB-Z5LCi94
+  default_config_hash: IKSnb9HYzLRSq7bN4wcBVyMEm0LRoeYONBh7PBYqlqA
 name: Minimal
 format: minimal
 weight: 0
@@ -17,7 +18,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <a href hreflang title>'
+      allowed_html: '<em> <strong> <a href hreflang title data-entity-substitution data-entity-type data-entity-uuid>'
       filter_html_help: true
       filter_html_nofollow: false
   glossify_taxonomy:
@@ -57,3 +58,12 @@ filters:
     weight: 0
     settings:
       filter_url_length: 72
+  media_embed:
+    id: media_embed
+    provider: media
+    status: false
+    weight: 100
+    settings:
+      default_view_mode: default
+      allowed_media_types: {  }
+      allowed_view_modes: {  }
