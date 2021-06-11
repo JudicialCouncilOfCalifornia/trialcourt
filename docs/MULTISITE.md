@@ -1,21 +1,15 @@
-# MULTISITE CHANGELOG
+# MULTISITE
 
-## Codebase Changes
+**NOTE:** See [creating-new-sites.md](./creating-new-sites.md) for how to spin up a new site. This document only describes how multisites are configured. Don't miss the part on Pantheon at the end!
 
-In preparation for multisite, `sites/default` will become a base install. We can use this for reviewing and updating the base installation. `tc.lndo.site`
+Sites live in `sites/[site]`, and are accessed (with lando) at `[site].lndo.site`.
 
-Slo will live in `sites/slo`, and be accessed (with lando) at `slo.lndo.site`.
-
-The config directories will become `config/config-default` and `config/config-slo` respectively.
-
-If you have a `config/config-local` you should rename that to `config/config-default-local`
-
-The pattern will be `sites/[sitecode]` and `config/config-[sitecode]` where `[sitecode]` is a short name for the site. i.e. `slo`, or `madera`
+The config directories are `config/config-[site]` and `config/config-[site]-local`
 
 
 ## Features
 
-This project uses Features module to share configuration across multisites, and with the installation profile. For detailed information about creating, managing and deploying features, please see the [FEATURES.md](FEATURES.md).
+This project uses Features module to share configuration across multisites, and with the installation profile. For detailed information about creating, managing and deploying features, please see the [feature-config-management.md](./feature-config-management.md).
 
 
 ## Lando Changes
@@ -23,9 +17,9 @@ This project uses Features module to share configuration across multisites, and 
 Lando no longer needs a proxy and a database service for each multisite.
 Instead we use a wildcard proxy "*.lndo.site" to catch them all and we create multiple databases in the single database service.
 
-It will no longer require a `lando rebuild` to activate. The multisite installer simply creates a new database for the site in the database container.
+It will no longer require a `lando rebuild` to activate a new multisite. The multisite installer simply creates a new database for the site in the single database container.
 
-There is tooling and a helper script for this. `scripts/dbcreate.sh` runs on `lando start/rebuild` and creates a database for every directory in `/app/web/sites/`. It also creates a new database when `lando multisite` is run.
+There is tooling and a helper script for this. `scripts/dbcreate.sh` runs on `lando start|rebuild` and creates a database for every directory in `/app/web/sites/`. It also creates a new database when `lando multisite` is run.
 
 ### `lando fresh` also changes to accommodate multisite.
 
@@ -39,7 +33,7 @@ NOTE: This still works with the database changes mentioned above.
 
 ### `lando multisite`
 
-There's a new command for starting multisites. `lando multsite [sitecode]`
+There's a new command for starting multisites. `lando multsite [site]`
 
 You no longer need to edit the `.lando.yml` file to add a proxy and a db service, or run `lando rebuild`.
 
@@ -57,10 +51,24 @@ Installation on my local takes about 10 minutes. There is no progress indicator 
    - mkdir `config/config-[new]-local`
    - A series of pre install string changes for settings files.
    - `drush si -l ${NEW}.lndo.site -vvv --site-name="SITE NAME" --account-mail="jcc@example.com" --account-name="JCC" --account-mail="jcc@example.com`
-
+   - If you have a `scripts/users.sh` it will run that to create users.
    - POST INSTALL
      - Config export from the installed site.
      - A few more string replacements to key config files, updating site directories.
+
+Example `scripts/users.sh` file, (update to add the users and assign the roles you want):
+
+```
+#!/usr/bin/env bash
+
+[ -z $NEW ] && NEW=$1
+
+drush @local.${NEW} ucrt Steph --mail="stephanie@chapterthreellc.com"
+drush @local.${NEW} ucrt Michael --mail="michael@chapterthreellc.com"
+drush @local.${NEW} urol administrator Steph,Michael
+```
+---
+
 
 ## Pantheon Multisite Hackery!
 
@@ -70,9 +78,9 @@ There are 2 key tricks to this.
 
 One is to set the files directories for each multisite in settings.php for a subdirectory in the default files directory and NOT in `/sites/*/files/`.  i.e.
 
-`/sites/default/files`
-`/sites/default/files/slo`
-`/sites/default/files/oc`
+  - `/sites/default/files`
+  - `/sites/default/files/slo`
+  - `/sites/default/files/oc`
 etc.
 
 The reason for this is that in test and live environments, nothing outside of `/sites/default/files` is writable.
@@ -86,9 +94,11 @@ For our use, we want to use one Drupal Multisite codebase for local development,
  - Our sites.php file is configured with the appropriate urls pointing to the appropriate site directories. i.e.:
    - develop-jcc-oc.pantheonsite.io -> oc
    - develop-jcc-napa.pantheonsite.io -> napa
+   - Actually, this is partly true. We can manually create these mappings if we need too, but there's a pattern match in `sites.php` now that will just direct to the correct path if it detects that path name in the url.  i.e.
+     - `www.napa.courts.ca.gov` -> `sites/napa` because it detects `.napa.`.
  - Circle CI is configured to build_test the codebase, then deploy it to multiple Pantheon instances. Due to their configuration, it just works.
- - Each additional site requires one run command in the CI config.yml and a project-*.sh config file to complement the deploy.sh script.
-   - `run: command: .circleci/scripts/deploy.sh oc`
+ - Each additional site only requires it's name be added to the "matrix" array in CI config.yml and a project-*.sh config file to complement the deploy.sh script. **This is all done automatically by the [creating new sites process](./creating-new-sites.md).** You don't need to do it manually.
+   - `site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera"]`
    - `.circleci/scripts/project-oc.sh`
  - `project-*.sh` sets 3 variables and is imported by the main deploy.sh script.
    - `UUID=` - the pantheon project UUID (Find it in the url for the dashboard of that project.)
@@ -97,6 +107,6 @@ For our use, we want to use one Drupal Multisite codebase for local development,
 
 ### Additional notes about managing multisite.
 
- - Each multisite needs a drush alias file in `drush/sites`. Copy one and update the UUID in the entries as well as the URI. UUID is found on the pantheon dashboard for that project. It's the long id string in the url.
- - Remember to add environment urls to sites.php for each environment pointing to the appropriate multisite directory. This is only necessary for custom domains that do not have the sitename pattern. See sites.php for more info.
+ - Each multisite needs a drush alias file in `drush/sites`. Copy one and update the UUID in the entries as well as the URI. UUID is found on the pantheon dashboard for that project. It's the long id string in the url. **Again, this id done for you automatically.**
+ - Remember to add environment urls to sites.php for each environment pointing to the appropriate multisite directory. **Automatic!** This is only necessary for custom domains that do not have the site name pattern. See sites.php for more info.
  - When creating a new multisite, export the local database and import it to the necessary Pantheon environment(s) so we have compatible config import/export moving forward.

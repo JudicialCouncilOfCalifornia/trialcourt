@@ -2,7 +2,7 @@
 
 **NOTE: Always reset your local to a production like state before starting a new feature. Configuration should be imported from `master` and/or a production database should be imported before starting work, so that config changes from the new feature are clean when exported.**
 
-This project is configured for a [Parallel Git Workflow on Pantheon][parallelpdf] using multidev environments.
+This project is configured for a [Parallel Git Workflow on Pantheon](./ParallelPantheon.pdf) using multidev environments.
 
 ENV -> GIT BRANCH
 
@@ -40,7 +40,7 @@ A **solo dev** with limited oversight could be trusted to approve at the develop
 
 Features should always be approved by the product owner on stage. Avoid doing internal review on stage because if it fails, stage would be contaminated with a feature not ready for product owner review which can be confusing to the product owner or PM.
 
-Though a solo dev may be trusted to deploy a feature or update without approval, requiring approval and signoff is recommended to help spot issues we may have blind spots for, and to protect us from breakage on production.
+Though a solo dev may be trusted to deploy a feature or update without approval, requiring approval and sign-off is recommended to help spot issues we may have blind spots for, and to protect us from breakage on production.
 
 
 ### Deploying Code
@@ -52,3 +52,23 @@ It does this by syncing the production code from the working repo, to a separate
 After code syncs to the host, post deploy drush commands like `updb -y`, `cim -y`, `cr` are run.  Make sure you check this for failure.
 
 This process keeps working code separate from production code.
+
+#### Epic Branches
+
+If you need a persistent development branch, the system is configured to deploy branches prefixed with `epic-` in the same way as the other env branches.
+
+Create a multidev on Pantheon called `epic-[name]` and remember Pantheon's branch naming rules. 12 characters or less, and no `/`. Keep it short. i.e. `epic-cart`.
+
+An epic branch is typically used for developing a set of features that depend on each other together.
+
+  - The epic is branched from master to start clean.
+  - Features for the epic branch from the epic to inherit any dependencies from the epic.
+  - Once complete the epic is treated like a "super feature" and deployed through the regular workflow for QA testing on `develop`, review and approval on `stage`, and finally to `master` for production.
+
+### Troubleshooting and Conflicts
+
+Conflicts should be resolved on a local machine by merging a feature into an environment branch and manually resolving conflicts.
+
+Resolving conflicts on Github results in Github rebasing the base branch into the feature. This is a bad practice in a parallel git workflow as merging develop or stage into a feature is forbidden, due to the fact that they could contaminate your feature with unapproved code and potential bugs.
+
+Once conflicts are resolved on the environment branch locally, pushing the env branch (develop, stage, master or epic) will trigger build/test/deploy to the corresponding environments.
