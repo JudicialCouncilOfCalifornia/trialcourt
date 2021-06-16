@@ -7,7 +7,7 @@ dependencies:
     - linkit
     - media
 _core:
-  default_config_hash: xPxqpULQW4iL98EIEg6Wld1Z3fTnaNAAEYV13exZ7lI
+  default_config_hash: ZvMRFdUPIW3xdMucL1nUpcTzRx1PBH2txWaEoZV5czE
 name: 'Full HTML'
 format: full_html
 weight: 0
@@ -23,6 +23,15 @@ filters:
       glossify_taxonomy_type: tooltips
       glossify_taxonomy_vocabs: ''
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+  media_embed:
+    id: media_embed
+    provider: media
+    status: false
+    weight: 100
+    settings:
+      default_view_mode: default
+      allowed_media_types: {  }
+      allowed_view_modes: {  }
   filter_html:
     id: filter_html
     provider: filter
@@ -39,12 +48,3 @@ filters:
     weight: 0
     settings:
       title: true
-  media_embed:
-    id: media_embed
-    provider: media
-    status: false
-    weight: 100
-    settings:
-      default_view_mode: default
-      allowed_media_types: {  }
-      allowed_view_modes: {  }
