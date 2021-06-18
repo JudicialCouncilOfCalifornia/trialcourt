@@ -3,6 +3,11 @@
 namespace Drupal\jcc_twig\Twig;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldItemInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Template\TwigEnvironment;
 use Drupal\image\Entity\ImageStyle;
@@ -26,6 +31,7 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFilter('unescape', [$this, 'unescape']),
       new \Twig_SimpleFilter('auto_convert_urls', [$this, 'autoConvertUrls']),
       new \Twig_SimpleFilter('image_style', [$this, 'imageStyle']),
+      new \Twig_SimpleFilter('view', [$this, 'view']),
     ];
   }
 
@@ -169,6 +175,41 @@ class TwigExtension extends \Twig_Extension {
     }
 
     return file_url_transform_relative($image_style->buildUrl($path));
+  }
+
+  /**
+   * Returns a render array for entity, field list or field item.
+   *
+   * @param mixed $object
+   *   The object to build a render array from.
+   * @param string|array $display_options
+   *   Can be either the name of a view mode, or an array of display settings.
+   * @param string $langcode
+   *   (optional) For which language the entity should be rendered, defaults to
+   *   the current content language.
+   * @param bool $check_access
+   *   (optional) Indicates that access check for an entity is required.
+   *
+   * @return array
+   *   A render array to represent the object.
+   */
+  public function view($object, $display_options = 'default', $langcode = NULL, $check_access = TRUE) {
+    if ($object instanceof FieldItemListInterface || $object instanceof FieldItemInterface) {
+      return $object->view($display_options);
+    }
+    elseif ($object instanceof EntityInterface) {
+      $access = $check_access ? $object->access('view', NULL, TRUE) : AccessResult::allowed();
+      if ($access->isAllowed()) {
+        $build = \Drupal::entityTypeManager()
+          ->getViewBuilder($object->getEntityTypeId())
+          ->view($object, $display_options, $langcode);
+        CacheableMetadata::createFromRenderArray($build)
+          ->merge(CacheableMetadata::createFromObject($object))
+          ->merge(CacheableMetadata::createFromObject($access))
+          ->applyTo($build);
+        return $build;
+      }
+    }
   }
 
   /**
