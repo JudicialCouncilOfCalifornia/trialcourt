@@ -39,13 +39,15 @@
  */
 #}
 
-{% set variant = paragraph.field_variant.value|json_decode %}
 {% set locations = [] %}
+{% for row in location_items %}
+  {% set address %}
+    {{ row.address|view }} {{ row.phone|view }}
+  {% endset %}
 
-{% for row in map_list_attachment %}
   {% set item = {
-    title: row['#node'].title(),
-    address: row['#node'].field_address.value
+    title: row.title,
+    address: address
   } %}
   {% set locations = locations|merge([item]) %}
 {% endfor %}
@@ -54,7 +56,7 @@
 {% if locations is not empty %}
   {% include "@molecules/location/location-map.twig" with {
     location_map: {
-      locations: map_list_attachment,
+      locations: locations,
       map: map_list|render,
       title: content.field_heading|render,
       text: content.field_lead|render,
