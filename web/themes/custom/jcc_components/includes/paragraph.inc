@@ -195,9 +195,14 @@ function jcc_components_paragraph_views_reference_location_map_list(array &$vari
 
   if ($map_list_attachment && !empty($display['#rows'])) {
     foreach ($display['#rows'][0]['#rows'] as $row) {
+
+      // Removing Country from paragraph display.
+      $address_no_country = $row['#node']->field_address->view('default');
+      $address_no_country[0]['country']['#value'] = "";
+
       $variables['map_list_attachment'][] = [
         'title' => $row['#node']->getTitle(),
-        'address' => $row['#node']->field_address->view('default'),
+        'address' => $address_no_country,
       ];
     }
   }
