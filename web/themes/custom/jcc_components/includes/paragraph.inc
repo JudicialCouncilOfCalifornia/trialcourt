@@ -171,7 +171,7 @@ function jcc_components_paragraph_views_reference_news_sticky_list(array &$varia
 }
 
 /**
- * Helper function for views_reference paragrpahs of type location.
+ * Helper function for views_reference paragraphs of type location.
  *
  * @param array $variables
  *   The paragraph variables.
@@ -195,9 +195,10 @@ function jcc_components_paragraph_views_reference_location_map_list(array &$vari
 
   if ($map_list_attachment && !empty($display['#rows'])) {
     foreach ($display['#rows'][0]['#rows'] as $row) {
-      $variables['map_list_attachment'][] = [
+      $variables['location_items'][] = [
         'title' => $row['#node']->getTitle(),
-        'address' => $row['#node']->field_address->view('default'),
+        'address' => $row['#node']->field_address,
+        'phone' => $row['#node']->field_phone,
       ];
     }
   }
