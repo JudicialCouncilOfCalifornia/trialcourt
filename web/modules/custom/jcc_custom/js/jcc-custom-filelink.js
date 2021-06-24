@@ -21,6 +21,7 @@
           filelinks.push(this);
         }
         $(filelinks).addClass('file');
+        $(filelinks).attr('target', '_blank');
       });
 
     }
