@@ -197,8 +197,11 @@ function jcc_components_paragraph_views_reference_location_map_list(array &$vari
     foreach ($display['#rows'][0]['#rows'] as $row) {
 
       // Excluding country from address view to add it as additional variable.
-      $address_no_country = $row['#node']->field_address->view('default');
-      $address_no_country[0]['country']['#value'] = "";
+      $address_no_country = !empty($row['#node']->field_address) ? $row['#node']->field_address->view('default') : "";
+
+      if (!empty($address_no_country[0]['country']['#value'])) {
+        $address_no_country[0]['country']['#value'] = "";
+      }
 
       $variables['location_items'][] = [
         'title' => $row['#node']->getTitle(),
