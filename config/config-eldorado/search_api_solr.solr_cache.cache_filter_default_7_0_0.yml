@@ -1,0 +1,21 @@
+uuid: 4db7908c-c07a-4da1-9784-9ea5010b05eb
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: Q2rL_3dm7b9MT0mKzpkdJOXP94YP_cbu6uisBNrBl3s
+id: cache_filter_default_7_0_0
+label: 'Filter Cache'
+minimum_solr_version: 7.0.0
+environments: {  }
+cache:
+  name: filter
+  class: solr.FastLRUCache
+  size: 512
+  initialSize: 512
+  autowarmCount: 0
+solr_configs:
+  query:
+    -
+      name: useFilterForSortedQuery
+      VALUE: 'false'
