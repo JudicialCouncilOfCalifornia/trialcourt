@@ -53,6 +53,9 @@ $sites['develop-jcc-tularesuperiorcourt.pantheonsite.io'] = 'tularesuperiorcourt
 $sites['stage-jcc-tularesuperiorcourt.pantheonsite.io'] = 'tularesuperiorcourt';
 $sites['live-jcc-tularesuperiorcourt.pantheonsite.io'] = 'tularesuperiorcourt';
 $sites['www.tularesuperiorcourt.ca.gov'] = 'tularesuperiorcourt';
+// = 'eldorado';
+$sites['www.eldoradocourt.org'] = 'eldorado';
+$sites['eldoradocourt.org'] = 'eldorado';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
