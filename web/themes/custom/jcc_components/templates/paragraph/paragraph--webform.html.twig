@@ -38,9 +38,11 @@
  * @ingroup themeable
  */
 #}
+{% set custom_class = ['usa-paragraph-webform'] %}
 
 {% include "@molecules/section/section.twig" with {
   section: {
+    classes: custom_class,
     heading: {
       title: paragraph.field_heading.value,
       lead: paragraph.field_lead.value ? content.field_lead,
