@@ -9,6 +9,24 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 
 /**
+ * Implements hook_install().
+ */
+function jcc_tc2_all_immutable_config_install() {
+  // Create empty Sendgrid API key.
+  $storage = \Drupal::entityTypeManager()->getStorage('key');
+  if ($storage && !$storage->load('sendgrid')) {
+    $args = [
+      'id' => 'sendgrid',
+      'label' => 'Sendgrid',
+      'key_type' => 'authentication',
+      'key_provider' => 'config',
+    ];
+    $key = $storage->create($args);
+    $key->save();
+  }
+}
+
+/**
  * Remove field_media from news content type.
  */
 function jcc_tc2_all_immutable_config_update_8001() {
@@ -183,7 +201,7 @@ function jcc_tc2_all_immutable_config_update_8009() {
   \Drupal::service('module_installer')->install($modules);
 }
 
-/*
+/**
  * Install google_tag.
  */
 function jcc_tc2_all_immutable_config_update_8010() {
@@ -199,4 +217,31 @@ function jcc_tc2_all_immutable_config_update_8011() {
   $modules = ['tmgmt', 'tmgmt_content', 'tmgmt_file'];
 
   \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Install 'mailsystem', 'sendgrid_integration'.
+ */
+function jcc_tc2_all_immutable_config_update_8012() {
+  $modules = ['mailsystem', 'sendgrid_integration'];
+
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Create empty Sendgrid key if needed.
+ */
+function jcc_tc2_all_immutable_config_update_8013() {
+  $storage = \Drupal::entityTypeManager()->getStorage('key');
+
+  if (!$key = $storage->load('sendgrid')) {
+    $args = [
+      'id' => 'sendgrid',
+      'label' => 'Sendgrid',
+      'key_type' => 'authentication',
+      'key_provider' => 'config',
+    ];
+    $key = $storage->create($args);
+    $key->save();
+  }
 }
