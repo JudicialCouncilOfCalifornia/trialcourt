@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.location.field_location_type
     - field.field.node.location.field_matters_served
     - field.field.node.location.field_phone
+    - field.field.node.location.field_weight
     - node.type.location
   module:
     - address
@@ -20,6 +21,7 @@ dependencies:
     - scheduler_content_moderation_integration
     - telephone
     - text
+    - weight
 id: node.location.default
 targetEntityType: node
 bundle: location
@@ -87,6 +89,12 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: telephone_default
+    region: content
+  field_weight:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: weight_selector
     region: content
   langcode:
     type: language_select
