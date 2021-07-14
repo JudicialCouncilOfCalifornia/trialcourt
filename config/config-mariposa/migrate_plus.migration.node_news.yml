@@ -1,0 +1,86 @@
+uuid: 2793f693-afdd-4c06-9a03-a2713042e8f2
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: aHDZyTPmG82zDSI3e4JT8OCSaV1IPFpTYf5j_tLKEJQ
+id: node_news
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - node
+  - news
+migration_group: jcc2
+label: 'News: Import Node'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  fields:
+    -
+      name: src_unique_id
+      label: 'Unique ID'
+      selector: url
+    -
+      name: url
+      label: Url
+      selector: url
+    -
+      name: title
+      label: Title
+      selector: title
+    -
+      name: date
+      label: Date
+      selector: date
+    -
+      name: body
+      label: Body
+      selector: body
+  ids:
+    src_unique_id:
+      type: string
+  constants:
+    break: '</p><p>'
+process:
+  pseudo_file_path:
+    plugin: path_from_url
+    source: url
+  uid:
+    plugin: default_value
+    default_value: 1
+  title:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: TITLE
+  field_date:
+    -
+      plugin: callback
+      callable: strtotime
+      source: date
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m-d
+  path/pathauto:
+    plugin: default_value
+    default_value: 1
+  body/value:
+    plugin: concat
+    source:
+      - body
+      - constants/break
+      - url
+  body/format:
+    plugin: default_value
+    default_value: body
+destination:
+  plugin: 'entity:node'
+  default_bundle: news
+migration_dependencies: null

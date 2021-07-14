@@ -56,6 +56,24 @@ $sites['www.tularesuperiorcourt.ca.gov'] = 'tularesuperiorcourt';
 // = 'eldorado';
 $sites['www.eldoradocourt.org'] = 'eldorado';
 $sites['eldoradocourt.org'] = 'eldorado';
+// = 'sacramento';
+$sites['www.saccourt.ca.gov'] = 'sacramento';
+$sites['saccourt.ca.gov'] = 'sacramento';
+// = 'glenn';
+$sites['www.glenncourt.ca.gov'] = 'glenn';
+$sites['glenncourt.ca.gov'] = 'glenn';
+// = 'yuba';
+$sites['www.yubacourts.org'] = 'yuba';
+$sites['yubacourts.org'] = 'yuba';
+// = 'sanfrancisco';
+$sites['www.sfsuperiorcourt.org'] = 'sanfrancisco';
+$sites['sfsuperiorcourt.org'] = 'sanfrancisco';
+// = 'sutter';
+$sites['www.suttercourts.com'] = 'sutter';
+$sites['suttercourts.com'] = 'sutter';
+// = 'mariposa';
+$sites['www.mariposacourt.org'] = 'mariposa';
+$sites['mariposacourt.org'] = 'mariposa';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
