@@ -71,6 +71,9 @@ $sites['sfsuperiorcourt.org'] = 'sanfrancisco';
 // = 'sutter';
 $sites['www.suttercourts.com'] = 'sutter';
 $sites['suttercourts.com'] = 'sutter';
+// = 'mariposa';
+$sites['www.mariposacourt.org'] = 'mariposa';
+$sites['mariposacourt.org'] = 'mariposa';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
