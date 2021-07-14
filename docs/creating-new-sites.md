@@ -29,30 +29,36 @@ After this runs it will give you instructions to set up the new Drupal instance 
 
   However, when tasked to spin up a new site, you can do some initial configuration.  (Some of this may be automated in the future.)
 
-## Theme Settings
+### Theme Settings
 
-`/admin/appearance/settings/jcc_components`
-
+Configure theme at `/admin/appearance/settings/jcc_components`:
 - Add the logo.svg to /web/sites/[site]/logo.svg
-- Set the theme setting to not use default
+- Set the theme setting to not use default.
 - Set the path to sites/[site]/logo.svg
 - Set the various other theme settings. When in doubt, use the placeholders.
 
-## create node 1 and set it as the front page
+### Create node 1 to use as front page:
 
 - Create Landing Page
-- Title: Home
-- Heading: Do Not Delete
-- Lead: Do not delete this node, it is configured as the home page.  Edit this node to update the homepage.
+  * Title: Home
+  * Heading: Do Not Delete
+  * Lead: Do not delete this node, it is configured as the home page.  Edit this node to update the homepage.
 
-- /admin/config/system/site-information
-- Site Name: Superior Court of California | County of ...
-- Site email
-- Front page: /node/1  (or your home page if not node/1)
-- Bing Maps API Key (default for webservices:
-  - `/admin/config/system/geocoder/geocoder-provider`
-  - AsFHz4uyv4g8Kpx4IRQe31MzyAUqjfasyD5-96D-Im22cepaCQZTUIGC4Tku06e0
+### Configure site and modules
 
+- At `/admin/config/system/site-information`:
+  * Site Name: `Superior Court of California | County of ...`
+  * Site email: `no-reply@courtinfo.ca.gov`
+  * Front page: `/node/1`  (or your home page if not node/1)
+- Configure Bing Maps API Key (default for webservices):
+  * `/admin/config/system/geocoder/geocoder-provider`
+  * AsFHz4uyv4g8Kpx4IRQe31MzyAUqjfasyD5-96D-Im22cepaCQZTUIGC4Tku06e0
+- Configure SendGrid:
+  * `/admin/config/system/keys/manage/sendgrid`
+  * See JIRA [ticket TCI-500](https://judasdg.atlassian.net/browse/TCI-500) for key.
+  * Note: site's email address needs to be `no-reply@courtinfo.ca.gov` for SendGrid to work.
+
+### Create users
 
 - Create QA users with appropriate roles:
   - `lando drush @local.[site] ucrt [username] --mail=""`
@@ -71,9 +77,11 @@ drush @local.${NEW} urol administrator [name,name,name]
 
 This file is git ignored as it may vary from site to site, or based on what test users are needed.
 
+### Final steps
+
 - Verify everything is ok
 
-- Uninstall dev modules: devel stage_file_proxy features_ui twig_xdebug  @see require-dev in composer.json
+- Uninstall dev modules: `devel stage_file_proxy features_ui twig_xdebug`  @see `require-dev` in `composer.json`.
   - NOTES:  Initial deploy fails because of missing dev modules that are in the split configuration. This is due to db dump of local which has these modules enabled, trying to run on an env that doesn't have those modules.
   - `lando drush @local.[site] pmu devel stage_file_proxy features_ui twig_xdebug`
 
@@ -85,6 +93,6 @@ This file is git ignored as it may vary from site to site, or based on what test
 
 - Import the initial database dump to live environment to prepare pantheon for deployment.
 
-- Commit changes and deploy to appropriate environment(s) for testing and other pre-launch work.  Live (master), is where content creation will happen pre-launch.
+- Commit changes and deploy to appropriate environment(s) for testing and other pre-launch work. Live (master), is where content creation will happen pre-launch.
 
 - Sync the db and files from live to develop and stage on Pantheon.

@@ -1,0 +1,43 @@
+uuid: 52a385ec-d12a-4a51-a19c-4e64bb64649c
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: '-NjkinImDENXTjfD3jFWh-wjm8VwrdAC7FV9MpL0utQ'
+id: request_handler_elevate_default_7_0_0
+label: Elevator
+minimum_solr_version: 7.0.0
+environments: {  }
+recommended: false
+request_handler:
+  name: /elevate
+  class: solr.SearchHandler
+  startup: lazy
+  lst:
+    -
+      name: defaults
+      str:
+        -
+          name: echoParams
+          VALUE: explicit
+        -
+          name: df
+          VALUE: id
+  arr:
+    -
+      name: last-components
+      str:
+        -
+          VALUE: elevator
+solr_configs:
+  searchComponents:
+    -
+      name: elevator
+      class: solr.QueryElevationComponent
+      str:
+        -
+          name: queryFieldType
+          VALUE: string
+        -
+          name: config-file
+          VALUE: elevate.xml
