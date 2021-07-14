@@ -9,22 +9,22 @@ dependencies:
     - search_api_attachments
     - media
   config:
-    - field.storage.node.body
     - field.storage.node.field_alert_type
     - field.storage.node.field_attachments
+    - field.storage.node.body
     - field.storage.node.field_department
     - field.storage.node.field_division
     - field.storage.node.field_document_type
     - field.storage.node.field_event_type
     - field.storage.node.field_first_name
-    - field.storage.node.field_help_links
     - field.storage.node.field_images
     - field.storage.node.field_last_name
-    - field.storage.node.field_links
+    - field.storage.node.field_help_links
     - field.storage.node.field_location_type
     - field.storage.node.field_news_type
     - field.storage.node.field_person_type
     - field.storage.node.field_phone
+    - field.storage.node.field_links
     - field.storage.node.field_subject_matter
     - field.storage.node.field_tags
     - field.storage.node.field_topics
@@ -282,8 +282,6 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: status
     type: boolean
-    indexed_locked: true
-    type_locked: true
     dependencies:
       module:
         - node
@@ -292,6 +290,8 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: status
     type: boolean
+    indexed_locked: true
+    type_locked: true
     dependencies:
       module:
         - node
@@ -299,7 +299,7 @@ field_settings:
     label: Title
     datasource_id: 'entity:node'
     property_path: title
-    type: text
+    type: solr_text_unstemmed
     boost: !!float 3
     dependencies:
       module:
@@ -409,7 +409,8 @@ processor_settings:
       - body
       - rendered_item
       - saa_field_attachments
-    ignorable: '[''¿¡!?,.:;]'
+      - title
+    ignorable: '[''¿¡!?,.:;"]'
     ignorable_classes:
       - Pc
       - Pd
