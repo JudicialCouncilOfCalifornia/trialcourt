@@ -62,6 +62,9 @@ $sites['saccourt.ca.gov'] = 'sacramento';
 // = 'glenn';
 $sites['www.glenncourt.ca.gov'] = 'glenn';
 $sites['glenncourt.ca.gov'] = 'glenn';
+// = 'yuba';
+$sites['www.yubacourts.org'] = 'yuba';
+$sites['yubacourts.org'] = 'yuba';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
