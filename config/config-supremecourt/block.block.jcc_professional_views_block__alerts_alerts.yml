@@ -1,0 +1,34 @@
+uuid: 785a4451-a929-4662-a905-9e5ab21904ff
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.alerts
+  module:
+    - ctools
+    - views
+  theme:
+    - jcc_professional
+_core:
+  default_config_hash: iVzcZbjBqrTLf1RjxI-Q9VUz2XmoV3neHLlXLruszmA
+id: jcc_professional_views_block__alerts_alerts
+theme: jcc_professional
+region: header
+weight: 0
+provider: null
+plugin: 'views_block:alerts-alerts'
+settings:
+  id: 'views_block:alerts-alerts'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      alert: alert
+    negate: true
+    context_mapping:
+      node: '@node.node_route_context:node'
