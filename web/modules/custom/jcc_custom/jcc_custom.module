@@ -63,3 +63,24 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       break;
   }
 }
+
+/**
+ * Implements hook_sendgrid_integration_categories_alter().
+ */
+function jcc_custom_sendgrid_integration_categories_alter($message, $categories) {
+  // Remove full site name from categories (verbose).
+  $siteName = \Drupal::config('system.site')->get('name');
+  if (isset($categories[0]) && $categories[0] == $siteName) {
+    unset($categories[0]);
+  }
+
+  // Tag outgoing emails with the trial court site.
+  $sitePath = explode('/', \Drupal::service('site.path'));
+  $siteName = $sitePath[1];
+  $categories[] = $siteName;
+
+  // Also add generic TC tag.
+  $categories[] = 'Trial Court';
+
+  return $categories;
+}
