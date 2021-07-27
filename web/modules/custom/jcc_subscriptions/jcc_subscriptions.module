@@ -167,12 +167,9 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     foreach ($emma_groups as $emma_group) {
       // Populate the field_groups_sent_to
       $groups_sent_to = $form_state->cleanValues()->getValues()['field_groups_sent_to'];
-      $form_state->setValue('field_groups_sent_to', array (
-          0 =>  array (
-            'value' => $groups_sent_to . '<br>' . $emma_group->group_name,
-          ),
-        )
-      );
+      $entity = $form_state->getFormObject()->getEntity();
+      $entity->set('field_groups_sent_to', $groups_sent_to[0]['value'] . ' / ' . $emma_group->group_name);
+      $entity->save();
 
       $group_details = $emma->get_group_detail($emma_group);
       $groups_string_list = $groups_string_list . $emma_group->group_name . ' / ';
