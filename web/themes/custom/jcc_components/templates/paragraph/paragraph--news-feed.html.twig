@@ -41,14 +41,27 @@
 
 {% set parent_type = paragraph.getParentEntity().getType() %}
 
+{% if 'lndo.site' in url('<current>')|render|render %}
+  {% set domain = "http://newsroom.lndo.site" %}
+{% elseif '.courts.ca.gov' in url('<current>')|render|render %}
+  {% set domain = "https://newsrooms.courts.ca.gov" %}
+{% else %}
+  {% if 'stage-' in url('<current>')|render|render %}
+    {% set domain = "https://stage-jcc-newsroom.pantheonsite.io" %}
+  {% else %}
+    {% set domain = "https://develop-jcc-newsroom.pantheonsite.io" %}
+  {% endif %}
+{% endif %}
+
 {% set newsfeed %}
 <div class="jcc-newsroom-widget"
-  href="https://newsroom.courts.ca.gov/feed/news/{{ content.field_topic_ids.0 }}"
+  href="{{ domain }}/feed/news/{{ content.field_topic_ids.0 }}"
   data-subject="{{ content.field_topic_ids.0}}"
-  data-hide-date="{{ content.field_hide_publish_date.getString()|lower }}"
-  data-hide-description="{{ content.field_hide_description.getString()|lower }}"
+  data-hide-thumbnail="{{ content.field_hide_thumbnail.0|default('no') }}"
+  data-hide-date="{{ content.field_hide_publish_date.0|default('no') }}"
+  data-hide-description="{{ content.field_hide_description.0|default('no') }}"
   data-block-width="{{ content.field_hide_date.0 }}"
-  data-origin="https://newsroom.courts.ca.gov"
+  data-origin="{{ domain }}"
   data-count="{{ content.field_max_articles.0 }}">
 </div>
 {% endset %}
@@ -65,4 +78,4 @@
   }
 } %}
 
-<script async type="application/javascript" src="https://newsroom.courts.ca.gov/themes/custom/jcc_newsroom/feed-widget.js" charset="utf-8"></script>
+<script async type="application/javascript" src="{{ domain }}/themes/custom/jcc_newsroom/feed-widget.js" charset="utf-8"></script>

@@ -7,6 +7,7 @@ dependencies:
     - field.field.paragraph.news_feed.field_heading
     - field.field.paragraph.news_feed.field_hide_description
     - field.field.paragraph.news_feed.field_hide_publish_date
+    - field.field.paragraph.news_feed.field_hide_thumbnail
     - field.field.paragraph.news_feed.field_lead
     - field.field.paragraph.news_feed.field_max_articles
     - field.field.paragraph.news_feed.field_topic_ids
@@ -21,7 +22,7 @@ mode: default
 content:
   field_feed_width:
     type: options_select
-    weight: 6
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -35,12 +36,19 @@ content:
     region: content
   field_hide_description:
     type: boolean_checkbox
-    weight: 5
+    weight: 6
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_hide_publish_date:
+    weight: 5
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_hide_thumbnail:
     weight: 4
     settings:
       display_label: true

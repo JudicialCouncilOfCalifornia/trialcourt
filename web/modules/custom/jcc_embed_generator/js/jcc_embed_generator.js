@@ -5,6 +5,7 @@
       attach: function (context, settings) {
         var data_count = "10",
           block_width = "150",
+          hide_thumbnail = "no",
           hide_date = "no",
           hide_description = "no",
           selected_taxonomy_ids = [],
@@ -38,6 +39,18 @@
           generateCode();
         });
 
+        // HIDE-THUMBNAIL
+        $('<input class="" id="items-select-data-hide-thumbnail" type="checkbox" name="hide-thumbnail" value="yes" /><label for="hide-thumbnail">Hide Thumbnail</label>').appendTo('#data-hide-thumbnail');
+
+        $('#items-select-data-hide-thumbnail').on('change', function () {
+          if (this.checked) {
+            hide_thumbnail = this.value;
+          } else {
+            hide_thumbnail = "no";
+          }
+          generateCode();
+        });
+
         // HIDE-DATE
         $('<input class="" id="items-select-data-hide-date" type="checkbox" name="hide-date" value="yes" /><label for="hide-date">Hide Date</label>').appendTo('#data-hide-date');
 
@@ -50,7 +63,7 @@
           generateCode();
         });
 
-        // HIDE-DATE
+        // HIDE-DESCRIPTION
         $('<input id="items-select-data-hide-description" type="checkbox" name="hide-description" value="yes" /><label for="hide-description" >Hide Description</label>').appendTo('#data-hide-description');
 
         $('#items-select-data-hide-description').on('change', function () {
@@ -196,7 +209,7 @@
           if (selected_taxonomy_ids.length > 0) {
             let generatedTermsId = selected_taxonomy_ids.join('+');
             let generatedTermsName = selected_taxonomy_names.join(', ');
-            var embed_code = '<a class="jcc-newsroom-widget" href="' + data_origin + '/feed/news/' + generatedTermsId + '" data-subject="' + generatedTermsId + '" data-hide-date="' + hide_date + '" data-hide-description="' + hide_description + '" data-block-width="' + block_width + '" data-origin="' + data_origin + '" data-count="' + data_count + '">' + generatedTermsName + '</a><script async type="application/javascript" src="' + data_origin + '/themes/custom/jcc_newsroom/feed-widget.js" charset="utf-8"></script>';
+            var embed_code = '<a class="jcc-newsroom-widget" href="' + data_origin + '/feed/news/' + generatedTermsId + '" data-subject="' + generatedTermsId + '" data-hide-thumbnail="' + hide_thumbnail + '" data-hide-date="' + hide_date + '" data-hide-description="' + hide_description + '" data-block-width="' + block_width + '" data-origin="' + data_origin + '" data-count="' + data_count + '">' + generatedTermsName + '</a><script async type="application/javascript" src="' + data_origin + '/themes/custom/jcc_newsroom/feed-widget.js" charset="utf-8"></script>';
             $('.generator_result_wrapper textarea').text(embed_code);
             // Generate preview
             $('.generator_result_preview').html('<label>Preview widget</label>' + embed_code);

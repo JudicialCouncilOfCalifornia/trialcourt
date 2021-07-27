@@ -1,26 +1,28 @@
-uuid: bd3239f5-2196-48ac-b958-bdf4bc537387
+uuid: 83bd9819-08ac-47c5-90ca-542e4170f282
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.paragraph.field_max_articles
+    - field.storage.paragraph.field_hide_thumbnail
     - paragraphs.paragraphs_type.news_feed
   module:
     - tmgmt_content
 third_party_settings:
   tmgmt_content:
     excluded: false
-id: paragraph.news_feed.field_max_articles
-field_name: field_max_articles
+id: paragraph.news_feed.field_hide_thumbnail
+field_name: field_hide_thumbnail
 entity_type: paragraph
 bundle: news_feed
-label: 'Max Articles to Display'
-description: 'Limit 100'
+label: 'Hide Thumbnail'
+description: ''
 required: false
 translatable: false
 default_value:
   -
-    value: '10'
+    value: 0
 default_value_callback: ''
-settings: {  }
-field_type: string
+settings:
+  on_label: 'yes'
+  off_label: 'no'
+field_type: boolean
