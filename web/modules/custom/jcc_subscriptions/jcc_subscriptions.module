@@ -166,12 +166,24 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
 
     foreach ($emma_groups as $emma_group) {
       // Populate the field_groups_sent_to
+      $group_details = $emma->get_group_detail($emma_group);
+
+      $group_name_sent_to = str_ireplace(
+        [
+          'internal-only ',
+          'Newsroom mailing ',
+        ],
+        [
+          '',
+          '',
+        ],
+        $group_details->group_name);
+
       $groups_sent_to = $form_state->cleanValues()->getValues()['field_groups_sent_to'];
       $entity = $form_state->getFormObject()->getEntity();
-      $entity->set('field_groups_sent_to', $groups_sent_to[0]['value'] . ' / ' . $emma_group->group_name);
+      $entity->set('field_groups_sent_to', $groups_sent_to[0]['value'] . ' / ' . $group_name_sent_to);
       $entity->save();
 
-      $group_details = $emma->get_group_detail($emma_group);
       $groups_string_list = $groups_string_list . $emma_group->group_name . ' / ';
       if (isset($group_details->active_count)) {
         $users_ammount = $group_details->active_count;
