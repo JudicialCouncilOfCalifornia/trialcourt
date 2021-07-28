@@ -1,0 +1,37 @@
+{#
+/**
+* @file
+* Default theme implementation to display a block.
+*
+* @see template_preprocess_block()
+*
+* @ingroup themeable
+*/
+#}
+
+{% set parent_type = paragraph.getParentEntity().getType() %}
+
+{% if 'lndo.site' in url('<current>')|render|render %}
+  {% set domain = "http://newsroom.lndo.site" %}
+{% elseif '.courts.ca.gov' in url('<current>')|render|render %}
+  {% set domain = "https://newsrooms.courts.ca.gov" %}
+{% else %}
+  {% if 'stage-' in url('<current>')|render|render %}
+    {% set domain = "https://stage-jcc-newsroom.pantheonsite.io" %}
+  {% else %}
+    {% set domain = "https://develop-jcc-newsroom.pantheonsite.io" %}
+  {% endif %}
+{% endif %}
+
+<div class="jcc-newsroom-widget"
+  href="{{ domain }}/feed/news/{{ feed.topic_ids }}"
+  data-subject="{{ feed.topic_ids }}"
+  data-hide-thumbnail="{{ feed.hide_thumbnail|default('no') }}"
+  data-hide-date="{{ feed.hide_publish_date|default('no') }}"
+  data-hide-description="{{ feed.hide_description|default('no') }}"
+  data-block-width="{{ feed.hide_date }}"
+  data-origin="{{ domain }}"
+  data-count="{{ feed.max_articles }}">
+</div>
+
+<script async type="application/javascript" src="{{ domain }}/themes/custom/jcc_newsroom/feed-widget.js" charset="utf-8"></script>

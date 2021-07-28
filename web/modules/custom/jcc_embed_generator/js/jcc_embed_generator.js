@@ -77,7 +77,7 @@
 
         // Global elements
         $('<label>Copy the embed code</label><textarea readonly></textarea><div class="message">Copied to clipboard</div>').appendTo('.generator_result_wrapper');
-        $('<form autocomplete="off"><div class="jcc-autocomplete" style="width:300px;"><label for="tag">Select the topics you want to embed</label><input id="tag-selector" type="text" name="tag" placeholder="Tag"></div></form>').appendTo('#term-selector');
+        $('<form autocomplete="off"><div class="jcc-autocomplete" style="width:300px;"><label for="tag">Select the topics you want to embed</label><input id="tag-selector" type="text" name="tag" placeholder="Topic"></div></form>').appendTo('#term-selector');
         initAutocomplete();
         generateCode();
         let searchParams = new URLSearchParams(window.location.search);
@@ -194,7 +194,7 @@
             if(termNameKey == undefined){lookupError = true;}
           }
           if (!lookupError) {
-            $('<div class="selected-tag" data-id="' + termId + '">' + termName + '<span class="remove-term" data-id="' + termId + '" data-name="' + termName + '">X</span></div>').appendTo($('#selected-tags'));
+            $('<div class="selected-tag" data-id="' + termId + '">' + termName + ' (' + termId + ') <span class="remove-term" data-id="' + termId + '" data-name="' + termName + '">X</span></div>').appendTo($('#selected-tags'));
             $('.remove-term[data-id="' + termId + '"]').click(function () {
               removeTag($(this));
             });
@@ -214,7 +214,7 @@
             // Generate preview
             $('.generator_result_preview').html('<label>Preview widget</label>' + embed_code);
           } else {
-            $('.generator_result_wrapper textarea').text('Please select a tag.');
+            $('.generator_result_wrapper textarea').text('Please select a topic.');
             $('.generator_result_preview').html('');
           }
         }
