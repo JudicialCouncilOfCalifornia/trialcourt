@@ -32,12 +32,12 @@ function jsonCallback(jsonData, index){
 
     // Card image ... extract Drupal image element in JSON result (e.g. media library thumbnail)
     var image = decodeURIComponent(data[i].image);
-    var imageDomain = window.location.hostname;
-    var imagePath = image.match(/src="([^"]*)/)[1];
+    var imageDomain = 'https://newsroom.courts.ca.gov';
+    var imageUrl = imageDomain + image.match(/src="([^"]*)/)[1];
     var imageAlt = image.match(/alt="([^"]*)/)[1];
     var divImage = document.createElement("div");
     divImage.className = "jcc-element-image usa-card__media";
-    divImage.innerHTML = '<a href="' + data[i].url + '"><span><img src="' + imageDomain + imagePath + '" alt="' + imageAlt + '"></span></a>';
+    divImage.innerHTML = '<a href="' + data[i].url + '"><span><img src="' + imageUrl + '" alt="' + imageAlt + '"></span></a>';
 
     // Card container ... collect text block & image into single container
     var divContainer = document.createElement("div");
