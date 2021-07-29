@@ -11,12 +11,11 @@
 
 {% set parent_type = paragraph.getParentEntity().getType() %}
 
+{% set domain = "https://newsrooms.courts.ca.gov" %}
 {% if 'lndo.site' in url('<current>')|render|render %}
   {% set domain = "http://newsroom.lndo.site" %}
-{% elseif '.courts.ca.gov' in url('<current>')|render|render %}
-  {% set domain = "https://newsrooms.courts.ca.gov" %}
-{% else %}
-  {% if 'stage-' in url('<current>')|render|render %}
+{% elseif 'pantheonsite.io' in url('<current>')|render|render %}
+  {% if 'stage-jcc-newsroom.pantheonsite.io' in url('<current>')|render|render %}
     {% set domain = "https://stage-jcc-newsroom.pantheonsite.io" %}
   {% else %}
     {% set domain = "https://develop-jcc-newsroom.pantheonsite.io" %}
