@@ -32,8 +32,8 @@ function jsonCallback(jsonData, index){
 
     // Card image ... extract Drupal image element in JSON result (e.g. media library thumbnail)
     var image = decodeURIComponent(data[i].image);
-    var imageDomain = 'https://newsroom.courts.ca.gov';
-    var imageUrl = imageDomain + image.match(/src="([^"]*)/)[1];
+    //var imageDomain = 'https://newsroom.courts.ca.gov';
+    var imageUrl = originUrl[i] + image.match(/src="([^"]*)/)[1];
     var imageAlt = image.match(/alt="([^"]*)/)[1];
     var divImage = document.createElement("div");
     divImage.className = "jcc-element-image usa-card__media";
