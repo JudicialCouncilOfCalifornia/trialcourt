@@ -20,7 +20,7 @@ function jsonCallback(jsonData, index){
     // Teaser
     var divBody = document.createElement("div");
     divBody.className = "usa-card__body usa-prose";
-    divBody.innerHTML =  '<p class="jcc-element-description usa-card__body usa-prose">' + data[i].content_html + '</p>';
+    divBody.innerHTML = '<p class="jcc-element-description usa-card__body usa-prose">' + data[i].content_html + '</p>';
 
     // Card text ... collect date, title, & body as single block
     var divText = document.createElement("div");
@@ -30,13 +30,14 @@ function jsonCallback(jsonData, index){
       divText.appendChild(divBody);
     }
 
-    // Card image ... extract Drupal data from "dirtied" JSON result (e.g. media library thumbnail)
+    // Card image ... extract Drupal image element in JSON result (e.g. media library thumbnail)
     var image = decodeURIComponent(data[i].image);
-    var imageURL = image.match(/src="([^"]*)/)[1];
+    var imageDomain = window.location.hostname;
+    var imagePath = image.match(/src="([^"]*)/)[1];
     var imageAlt = image.match(/alt="([^"]*)/)[1];
     var divImage = document.createElement("div");
     divImage.className = "jcc-element-image usa-card__media";
-    divImage.innerHTML = '<a href="' + data[i].url + '"><img src="' + imageURL + '" alt="' + imageAlt + '"></a>';
+    divImage.innerHTML = '<a href="' + data[i].url + '"><span><img src="' + imageDomain + imagePath + '" alt="' + imageAlt + '"></span></a>';
 
     // Card container ... collect text block & image into single container
     var divContainer = document.createElement("div");
