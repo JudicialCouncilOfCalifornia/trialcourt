@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the JCC Custom JCart module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function jcc_custom_jcart_install() {
+  // Update Case Summary titles to include year and citation.
+  $documents = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
+    'field_document_type' => 28,
+    'type' => 'document',
+  ]);
+
+  foreach ($documents as $doc) {
+    $title = trim($doc->getTitle());
+    $year = $doc->get('field_upload_date')->getString() ?
+      '(' . date('Y', strtotime($doc->get('field_upload_date')
+        ->getString())) . ')'
+      : '';
+    $citation = trim($doc->get('field_links')->title);
+    $citation_title = "{$title} {$year} {$citation}";
+
+    \Drupal::logger('jcart')
+      ->notice(
+        'Updating Case Summary title to: @title',
+        ['@title' => $citation_title]
+      );
+
+    $doc->setTitle($citation_title);
+    $doc->save();
+  }
+}

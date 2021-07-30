@@ -17,11 +17,6 @@ function jcc_deprep_preprocess_views_view_field__body(&$variables) {
 
     if ($document_type == 'Case Summaries') {
       $title = $node->getTitle();
-      $year = $node->get('field_upload_date')->getString() ?
-        '(' . date('Y', strtotime($node->get('field_upload_date')
-          ->getString())) . ')'
-        : '';
-      $citation = $node->get('field_links')->title;
 
       $doc = new DOMDocument();
       $doc->formatOutput = TRUE;
@@ -29,11 +24,8 @@ function jcc_deprep_preprocess_views_view_field__body(&$variables) {
       if (isset($variables['output']) && $variables['output']) {
         $doc->loadXML($variables['output']->__toString());
 
-        $citation_title = "<i>{$title}</i> {$year} {$citation}";
-        $citation_title = preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $citation_title);
-
         $fragment = $doc->createDocumentFragment();
-        $fragment->appendXML($citation_title);
+        $fragment->appendXML($title);
 
         if ($doc->getElementsByTagName("a")->item(0)) {
           $doc->getElementsByTagName("a")->item(0)->nodeValue = '';
