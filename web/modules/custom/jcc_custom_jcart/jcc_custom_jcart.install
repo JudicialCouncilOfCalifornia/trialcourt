@@ -9,28 +9,65 @@
  * Implements hook_install().
  */
 function jcc_custom_jcart_install() {
-  // Update Case Summary titles to include year and citation.
-  $documents = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
-    'field_document_type' => 28,
-    'type' => 'document',
-  ]);
+  // Reset the schema version, so our update hooks can be processed
+  // after installation.
+  drupal_set_installed_schema_version('jcc_custom_jcart', '8000');
+}
 
-  foreach ($documents as $doc) {
-    $title = trim($doc->getTitle());
-    $year = $doc->get('field_upload_date')->getString() ?
-      '(' . date('Y', strtotime($doc->get('field_upload_date')
-        ->getString())) . ')'
-      : '';
-    $citation = trim($doc->get('field_links')->title);
-    $citation_title = "{$title} {$year} {$citation}";
+/**
+ * Update case summary titles to have year and citation.
+ */
+function jcc_custom_jcart_update_8001(&$sandbox) {
+  // Unsure we have current element set to 0.
+  if (!isset($sandbox['current'])) {
+    $sandbox['current'] = 0;
+    $sandbox['total'] = \Drupal::entityTypeManager()->getStorage('node')->getQuery()
+      ->condition('type', 'document')
+      ->condition('field_document_type', 28)
+      ->count()
+      ->accessCheck(FALSE)
+      ->execute();
 
     \Drupal::logger('jcart')
       ->notice(
-        'Updating Case Summary title to: @title',
-        ['@title' => $citation_title]
+        'Total: @total',
+        ['@total' => $sandbox['total']]
       );
+  }
 
-    $doc->setTitle($citation_title);
-    $doc->save();
+  $items_per_batch = 100;
+  $docs = \Drupal::entityTypeManager()->getStorage('node')->getQuery()
+    ->condition('type', 'document')
+    ->condition('field_document_type', 28)
+    ->sort('nid', 'ASC')
+    ->range($sandbox['current'], $items_per_batch)
+    ->accessCheck(FALSE)
+    ->execute();
+
+  if (empty($docs)) {
+    $sandbox['#finished'] = 1;
+  }
+  else {
+    $documents = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($docs);
+    foreach ($documents as $doc) {
+      $title = trim($doc->getTitle());
+      $year = $doc->get('field_upload_date')->getString() ?
+        '(' . date('Y', strtotime($doc->get('field_upload_date')
+          ->getString())) . ')'
+        : '';
+      $citation = trim($doc->get('field_links')->title);
+      $citation_title = "{$title} {$year} {$citation}";
+
+      \Drupal::logger('jcart')
+        ->notice(
+          'Updating Case Summary title to: @title',
+          ['@title' => $citation_title]
+        );
+
+      $doc->setTitle($citation_title);
+      $doc->save();
+      $sandbox['current']++;
+    }
+    $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
   }
 }
