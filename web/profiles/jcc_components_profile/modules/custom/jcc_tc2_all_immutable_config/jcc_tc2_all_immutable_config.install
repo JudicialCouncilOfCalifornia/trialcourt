@@ -245,3 +245,12 @@ function jcc_tc2_all_immutable_config_update_8013() {
     $key->save();
   }
 }
+
+/**
+ * Install 'pantheon_advanced_page_cache'.
+ */
+function jcc_tc2_all_immutable_config_update_8014() {
+  $modules = ['pantheon_advanced_page_cache'];
+
+  \Drupal::service('module_installer')->install($modules);
+}
