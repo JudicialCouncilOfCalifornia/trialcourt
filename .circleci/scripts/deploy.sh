@@ -13,6 +13,12 @@ for name in "$@" ; do
   # Include project variables.
   . .circleci/scripts/project-${name}.sh
 
+  # Skip deployment step for master branch if "DEPLOY_MASTER" is set explicitly to false.
+  if [ "$CIRCLE_BRANCH" = "master" ] && [ "$DEPLOY_MASTER" = false ]; then
+    echo "Skipping deployment."
+    circleci-agent step halt
+  fi
+
   # Leaving the old way here to roll back easily if loop method times out.
   # Remove the loop and name check condition, then call from config.yml
   # with multiple run steps passing project name like:
