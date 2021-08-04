@@ -100,10 +100,11 @@ For our use, we want to use one Drupal Multisite codebase for local development,
  - Each additional site only requires it's name be added to the "matrix" array in CI config.yml and a project-*.sh config file to complement the deploy.sh script. **This is all done automatically by the [creating new sites process](./creating-new-sites.md).** You don't need to do it manually.
    - `site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera"]`
    - `.circleci/scripts/project-oc.sh`
- - `project-*.sh` sets 3 variables and is imported by the main deploy.sh script.
+ - `project-*.sh` sets 4 variables and is imported by the main deploy.sh script.
    - `UUID=` - the pantheon project UUID (Find it in the url for the dashboard of that project.)
    - `SITE_CODE=` - the abbreviated site code i.e. slo, oc, napa.
    - `LIVE=[true|false]` - if set to true, the deploy of `master` will get a pantheon live tag. Otherwise, master will be viewable on the standard pantheon "Dev" environment, not to be confused with our multidev `develop` testing environment.
+   - `DEPLOY_MASTER=[true|false]` - if set to false, the deploy of the `master` branch will skip deployments.
 
 ### Additional notes about managing multisite.
 
