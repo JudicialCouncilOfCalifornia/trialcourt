@@ -103,7 +103,7 @@
       {% set doc_title = doc['#title'] %}
       {% set doc_url = doc['#url'] %}
       {% set docs = docs|merge([{
-        url_title: doc_title,
+        url_title: "Download Document",
         url: doc_url
       }]) %}
     {% endif %}
@@ -112,14 +112,15 @@
     {% set dl_body %}
       {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
         link_list: {
-          header: content.body,
+          header: formatted_body.0,
           list_icons: false,
           items: docs,
+          files_list: true
         },
         tag: 'p'
       } %}
-      
-      <div class="jcc-tags">
+
+      <div class="jcc-tags margin-top-2">
         <div>
           {{ content.field_tags }}
         </div>
@@ -134,7 +135,7 @@
 
   {% block content %}
       {% set title %}
-        <span class="teaser">{{ label }}</span>
+        <span class="teaser"><a href="{{ url }}">{{ label }}</a></span>
       {% endset %}
 
     {% include '@organisms/sections/text-section/text-section.twig' with {
