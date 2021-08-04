@@ -57,6 +57,8 @@ Configure theme at `/admin/appearance/settings/jcc_components`:
   * `/admin/config/system/keys/manage/sendgrid`
   * See JIRA [ticket TCI-500](https://judasdg.atlassian.net/browse/TCI-500) for key.
   * Note: site's email address needs to be `no-reply@courtinfo.ca.gov` for SendGrid to work.
+- Setup defaults for Google Tag module:
+  * `lando drush @local.[site] cim --partial --source=/app/web/modules/contrib/google_tag/config/install/`
 
 ### Create users
 
