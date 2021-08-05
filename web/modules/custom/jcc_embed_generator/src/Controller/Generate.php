@@ -35,6 +35,7 @@ class Generate extends ControllerBase {
                 <div class="form-item" id="data-count"></div>
                 <div class="jcc-embed-style">
                     <label>Set the style of the widget</label>
+                    <div class="form-item jcc-checkbox" id="data-hide-thumbnail"></div>
                     <div class="form-item jcc-checkbox" id="data-hide-date"></div>
                     <div class="form-item jcc-checkbox" id="data-hide-description"></div>
                     <div class="form-item" id="block-width"></div>

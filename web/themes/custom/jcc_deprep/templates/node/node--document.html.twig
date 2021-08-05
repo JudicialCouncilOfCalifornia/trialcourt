@@ -1,0 +1,224 @@
+{#
+/**
+ * @file
+ * Theme override to display a node.
+ *
+ * Available variables:
+ * - node: The node entity with limited access to object properties and methods.
+ *   Only method names starting with "get", "has", or "is" and a few common
+ *   methods such as "id", "label", and "bundle" are available. For example:
+ *   - node.getCreatedTime() will return the node creation timestamp.
+ *   - node.hasField('field_example') returns TRUE if the node bundle includes
+ *     field_example. (This does not indicate the presence of a value in this
+ *     field.)
+ *   - node.isPublished() will return whether the node is published or not.
+ *   Calling other methods, such as node.delete(), will result in an exception.
+ *   See \Drupal\node\Entity\Node for a full list of public properties and
+ *   methods for the node object.
+ * - label: (optional) The title of the node.
+ * - content: All node items. Use {{ content }} to print them all,
+ *   or print a subset such as {{ content.field_example }}. Use
+ *   {{ content|without('field_example') }} to temporarily suppress the printing
+ *   of a given child element.
+ * - author_picture: The node author user entity, rendered using the "compact"
+ *   view mode.
+ * - metadata: Metadata for this node.
+ * - date: (optional) Themed creation date field.
+ * - author_name: (optional) Themed author name field.
+ * - url: Direct URL of the current node.
+ * - display_submitted: Whether submission information should be displayed.
+ * - attributes: HTML attributes for the containing element.
+ *   The attributes.class element may contain one or more of the following
+ *   classes:
+ *   - node: The current template type (also known as a "theming hook").
+ *   - node--type-[type]: The current node type. For example, if the node is an
+ *     "Article" it would result in "node--type-article". Note that the machine
+ *     name will often be in a short form of the human readable label.
+ *   - node--view-mode-[view_mode]: The View Mode of the node; for example, a
+ *     teaser would result in: "node--view-mode-teaser", and
+ *     full: "node--view-mode-full".
+ *   The following are controlled through the node publishing options.
+ *   - node--promoted: Appears on nodes promoted to the front page.
+ *   - node--sticky: Appears on nodes ordered above other non-sticky nodes in
+ *     teaser listings.
+ *   - node--unpublished: Appears on unpublished nodes visible only to site
+ *     admins.
+ * - title_attributes: Same as attributes, except applied to the main title
+ *   tag that appears in the template.
+ * - content_attributes: Same as attributes, except applied to the main
+ *   content tag that appears in the template.
+ * - author_attributes: Same as attributes, except applied to the author of
+ *   the node tag that appears in the template.
+ * - title_prefix: Additional output populated by modules, intended to be
+ *   displayed in front of the main title tag that appears in the template.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+ * - view_mode: View mode; for example, "teaser" or "full".
+ * - teaser: Flag for the teaser state. Will be true if view_mode is 'teaser'.
+ * - page: Flag for the full page state. Will be true if view_mode is 'full'.
+ * - readmore: Flag for more state. Will be true if the teaser content of the
+ *   node cannot hold the main body content.
+ * - logged_in: Flag for authenticated user status. Will be true when the
+ *   current user is a logged-in member.
+ * - is_admin: Flag for admin user status. Will be true when the current user
+ *   is an administrator.
+ *
+ * @see template_preprocess_node()
+ *
+ * @todo Remove the id attribute (or make it a class), because if that gets
+ *   rendered twice on a page this is invalid CSS for example: two lists
+ *   in different view modes.
+ */
+#}
+{% set classes = [
+  'node',
+  node.isPromoted() ? 'node--promoted',
+  node.isSticky() ? 'node--sticky',
+  not node.isPublished() ? 'node--unpublished',
+  node.bundle|clean_class,
+  node.bundle|clean_class ~ '--' ~ view_mode|clean_class,
+]|merge(classes|default([])) %}
+
+{{ attach_library('classy/node') }}
+
+<article{{ attributes.addClass(classes)|without('role') }} aria-label="Document details">
+  {{ title_prefix }}
+  {{ title_suffix }}
+
+  {% block content %}
+    {% if label and not page %}
+      {% set title %}
+        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+      {% endset %}
+    {% elseif label and page %}
+      {% set title %}
+        {{ label }}
+      {% endset %}
+    {% endif %}
+
+    {% set document_type %}
+      {% if content.field_document_type[0] %}
+        {{ content.field_document_type.0 }}
+      {% else %}
+        Document
+      {% endif %}
+    {% endset %}
+
+    {% set body %}
+      {# Default author history if needed later ... needs to be enabled for node in Drupal
+      {% if display_submitted %}
+        <div{{ author_attributes.addClass('node__submitted') }}>
+          <div class="author">By {{ author_name }}</div>
+          <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
+          {{ metadata }}
+        </div>
+      {% endif %}
+      #}
+      <div class="publish_date">
+        {#
+          Automatically displays first uploaded date (new node creation) or updated date unless author specifies publish date manually.
+          Because a change date occurs during node creation, any edits on creation day will not denote an update for now.
+        #}
+        {% if content.field_upload_date[0] %}
+          {{ content.field_upload_date_label.0 }}:
+          {{ content.field_upload_date }}
+        {% else %}
+          {% set createDate = node.createdtime|date("Y-m-d") %}
+          {% set lastPubDate = node.changedtime|date("Y-m-d") %}
+          {% if lastPubDate > createDate %}
+            Updated: {{ lastPubDate|date(format="D, m/d/Y")|raw }}
+          {% else %}
+            Uploaded: {{ createDate|date(format="D, m/d/Y")|raw }}
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <div class="body">
+        {{ content.body.0 }}
+      </div>
+
+      {% if content.field_attachments[0] %}
+        {# Display first document as primary download #}
+        {% set primary_doc = content.field_attachments[0]['#url'] %}
+        <div>
+          {% include "@atoms/buttons/link-button.twig" with {
+            link_button: {
+              text: 'View document',
+              url: primary_doc
+            }
+          } only %}
+        </div>
+
+        {# Display other documents as secondary downloads #}
+        {% set other_docs = [] %}
+        {% for other_doc in content.field_attachments %}
+          {% if other_doc['#title'] %}
+            {% set doc_title = other_doc['#title'] %}
+            {% set doc_url = other_doc['#url'] %}
+            {% set other_docs = other_docs|merge([{
+              url_title: doc_title,
+              url: doc_url
+            }]) %}
+          {% endif %}
+        {% endfor %}
+        {% set other_docs = other_docs|slice(1) %} {# Skip the primary document #}
+        {% if other_docs|length > 0 %}
+          {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
+            link_list: {
+              list_icons: true,
+              header: 'Related Downloads',
+              items: other_docs,
+            }
+          } %}
+        {% endif %}
+      {% endif %}
+    {% endset %}
+
+    {% include '@jcc_base/_includes/section-hero.html.twig' with {
+      brow: document_type,
+      title: title,
+      body: body
+    } %}
+
+    {% if content.field_help_links[0] %}
+      {% set help_links = [] %}
+      {% for link in node.field_help_links %}
+        {% set help_links = help_links|merge([{
+          brow: link.options.attributes.name,
+          title: link.title,
+          url: link.url
+        }]) %}
+      {% endfor %}
+
+      {% include '@organisms/sections/switchboard/switchboard.twig' with {
+        switchboard: {
+          background_variant: 'has-background-color--dark--primary',
+          headergroup: {
+            title: 'Guides'
+          },
+          items: {
+            primary: help_links
+          }
+        }
+      } %}
+    {% endif %}
+
+    {% set related_links = [] %}
+    {% for link in node.field_links %}
+      {% if not primary_doc.toString is same as(link.url.toString) %}
+        {% set related_links = related_links|merge([link]) %}
+      {% endif %}
+    {% endfor %}
+
+    {% set subject_matter = content.field_subject_matter[0] %}
+    {% set tags = content.field_tags[0] %}
+    {% set topics = content.field_topics[0] %}
+
+    {% include '@jcc_deprep/_includes/section-secondary.html.twig'with {
+      no_title_decoration: true,
+      related_links: related_links
+    } %}
+
+    <div class="grid-container-widescreen text-italic">Reference ID: {{ node.id }}</div>
+  {% endblock %}
+</article>

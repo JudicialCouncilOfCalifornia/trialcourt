@@ -12,7 +12,7 @@ id: was_this_helpful_
 title: 'Was this helpful?'
 description: ''
 category: ''
-elements: "url:\n  '#type': hidden\n  '#title': Url\n  '#default_value': '[current-page:url]'\nwas_this_helpful_:\n  '#type': radios\n  '#title': 'Was this page helpful?'\n  '#options':\n    'yes': 'Yes'\n    'no': 'No'\n  '#options_display': buttons_horizontal\nany_additional_feedback_:\n  '#type': textarea\n  '#title': 'Any additional feedback?'\n  '#states':\n    visible-slide:\n      ':input[name=\"was_this_helpful_\"]':\n        checked: true\nemail_optional_:\n  '#type': email\n  '#title': 'Email (optional)'\n  '#states':\n    visible-slide:\n      ':input[name=\"was_this_helpful_\"]':\n        checked: true"
+elements: "url:\n  '#type': hidden\n  '#title': Url\n  '#default_value': '[current-page:url]'\nwas_this_helpful_:\n  '#type': radios\n  '#title': 'Was this page helpful?'\n  '#options':\n    'yes': 'Yes'\n    'no': 'No'\n  '#options_display': buttons_horizontal\n  '#required': true\nany_additional_feedback_:\n  '#type': textarea\n  '#title': 'Any additional feedback?'\n  '#states':\n    visible-slide:\n      ':input[name=\"was_this_helpful_\"]':\n        checked: true\nemail_optional_:\n  '#type': email\n  '#title': 'Email (optional)'\n  '#states':\n    visible-slide:\n      ':input[name=\"was_this_helpful_\"]':\n        checked: true\nactions:\n  '#type': webform_actions\n  '#title': 'Submit button(s)'\n  '#states':\n    visible-slide:\n      ':input[name=\"was_this_helpful_\"]':\n        checked: true"
 css: ''
 javascript: ''
 settings:
@@ -203,7 +203,7 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: ivan.bueno@jud.ca.gov
+      to_mail: 'peter.clarke@jud.ca.gov, mark.gelade@jud.ca.gov'
       to_options: {  }
       cc_mail: ''
       cc_options: {  }

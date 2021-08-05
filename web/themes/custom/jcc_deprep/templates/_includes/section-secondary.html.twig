@@ -1,0 +1,44 @@
+{#
+/**
+ * @file
+ * Consistent presentation of secondary content.
+ * Required variables from parent template:
+ * - related
+ * - aside
+ *
+ * Supported variables from parent template:
+ * - attachments
+ * - related_links
+ * - subject_matter
+ * - tags
+ * - topics
+ *
+ */
+ #}
+
+{% if attachments or related_links %}
+  {% set related %}
+    {% if attachments %}
+      {% include '@jcc_base/_includes/attachments.html.twig' %}
+    {% endif %}
+
+    {% if related_links %}
+      {% include '@jcc_deprep/_includes/relatedlinks.html.twig' with {
+        columns: 2,
+        related_links: related_links
+      } %}
+    {% endif %}
+  {% endset %}
+{% endif %}
+
+{% if subject_matter or tags or topics %}
+  {% set aside %}
+    {% include '@jcc_base/_includes/metadata.html.twig' %}
+  {% endset %}
+{% endif %}
+
+{% if related or aside %}
+  {% include '@jcc_base/_includes/aside-secondary--related.html.twig' with {
+    no_title_decoration: no_title_decoration
+  } %}
+{% endif %}
