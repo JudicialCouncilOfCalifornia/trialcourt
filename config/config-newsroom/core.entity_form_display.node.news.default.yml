@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_directories_modal
+    - entity_browser.browser.media_directories_editor_browser
     - field.field.node.news.body
     - field.field.node.news.feeds_item
     - field.field.node.news.field_attachments
@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.news.field_feed_origin
     - field.field.node.news.field_feed_source
     - field.field.node.news.field_feed_uid
+    - field.field.node.news.field_groups_sent_to
     - field.field.node.news.field_has_been_sent
     - field.field.node.news.field_images
     - field.field.node.news.field_links
@@ -140,6 +141,7 @@ third_party_settings:
     group_social:
       children:
         - field_has_been_sent
+        - field_groups_sent_to
       parent_name: group_news_content
       weight: 25
       format_type: tab
@@ -230,6 +232,19 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textfield
+    region: content
+  field_groups_sent_to:
+    weight: 13
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings:
+      maxlength:
+        maxlength_js: null
+        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+        maxlength_js_enforce: false
+        maxlength_js_truncate_html: false
+    type: string_textarea
     region: content
   field_has_been_sent:
     type: boolean_checkbox
