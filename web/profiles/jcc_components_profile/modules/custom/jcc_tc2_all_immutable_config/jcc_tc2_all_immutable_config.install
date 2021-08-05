@@ -254,3 +254,15 @@ function jcc_tc2_all_immutable_config_update_8014() {
 
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * Update config ignore settings to correctly import config.
+ */
+function jcc_tc2_all_immutable_config_update_8015() {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('config_ignore.settings');
+  $ignored = $config->get('ignored_config_entities');
+  array_push($ignored, '~webform.webform.was_this_helpful');
+  $config->set('ignored_config_entities', $ignored);
+  $config->save(TRUE);
+}
