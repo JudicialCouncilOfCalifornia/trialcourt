@@ -1,4 +1,4 @@
-uuid: 254476ed-008c-4225-a854-add2fe47a6d4
+uuid: ddb14615-fb9e-42dc-8094-5a173a1ba89c
 langcode: en
 status: open
 dependencies: {  }
@@ -8,11 +8,11 @@ weight: 0
 uid: 1
 template: false
 archive: false
-id: was_this_helpful_
+id: was_this_helpful
 title: 'Was this helpful?'
 description: ''
 category: ''
-elements: "url:\n  '#type': hidden\n  '#title': Url\n  '#default_value': '[current-page:url]'\nwas_this_helpful_:\n  '#type': radios\n  '#title': 'Was this page helpful?'\n  '#options':\n    'yes': 'Yes'\n    'no': 'No'\n  '#options_display': buttons_horizontal\n  '#required': true\nany_additional_feedback_:\n  '#type': textarea\n  '#title': 'Any additional feedback?'\n  '#states':\n    visible-slide:\n      ':input[name=\"was_this_helpful_\"]':\n        checked: true\nemail_optional_:\n  '#type': email\n  '#title': 'Email (optional)'\n  '#states':\n    visible-slide:\n      ':input[name=\"was_this_helpful_\"]':\n        checked: true\nactions:\n  '#type': webform_actions\n  '#title': 'Submit button(s)'\n  '#states':\n    visible-slide:\n      ':input[name=\"was_this_helpful_\"]':\n        checked: true"
+elements: "was_helpful:\n  '#type': radios\n  '#title': 'Was this helpful?'\n  '#title_display': none\n  '#description_display': invisible\n  '#options': yes_no\n  '#required': true\nany_additional_feedback_:\n  '#type': textfield\n  '#title': 'Any additional feedback?'\n  '#autocomplete': 'off'\nemail:\n  '#type': email\n  '#title': 'Email (optional)'"
 css: ''
 javascript: ''
 settings:
@@ -20,7 +20,7 @@ settings:
   ajax_scroll_top: form
   ajax_progress_type: throbber
   ajax_effect: fade
-  ajax_speed: 500
+  ajax_speed: null
   page: true
   page_submit_path: ''
   page_confirm_path: ''
@@ -30,7 +30,7 @@ settings:
   form_exception_message: ''
   form_open_message: ''
   form_close_message: ''
-  form_previous_submissions: false
+  form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
   form_remote_addr: true
@@ -112,12 +112,12 @@ settings:
   draft_loaded_message: ''
   draft_pending_single_message: ''
   draft_pending_multiple_message: ''
-  confirmation_type: message
+  confirmation_type: inline
   confirmation_title: ''
-  confirmation_message: ''
+  confirmation_message: 'Thank you for your feedback!'
   confirmation_url: ''
   confirmation_attributes: {  }
-  confirmation_back: true
+  confirmation_back: false
   confirmation_back_label: ''
   confirmation_back_attributes: {  }
   confirmation_exclude_query: false
@@ -194,7 +194,7 @@ access:
 handlers:
   email:
     id: email
-    label: Email
+    label: current-pageEmail
     notes: ''
     handler_id: email
     status: true
@@ -203,17 +203,17 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: 'peter.clarke@jud.ca.gov, mark.gelade@jud.ca.gov'
+      to_mail: Peter.Clarke@jud.ca.gov
       to_options: {  }
       cc_mail: ''
       cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
-      from_mail: do-not-reply@courtinfo.ca.gov
+      from_mail: noreply@courtinfo.ca.gov
       from_options: {  }
-      from_name: 'Judicial Council of California'
-      subject: 'Madera User Feedback'
-      body: "Submitted on [webform_submission:created]<br />\r\n<br />\r\n[webform_submission:values]"
+      from_name: ''
+      subject: _default
+      body: "Submitted on [webform_submission:created]<br />\r\n<br />\r\nSubmitted by: [webform_submission:user]<br />\r\n<br />\r\n<br />\r\nSubmitted values are:<br />\r\n<br />\r\nPage: [webform_submission:source-title]<br />\r\n<br />\r\nURL: [current-page:url:absolute]<br />\r\n<br />\r\nFeedback: [webform_submission:values]"
       excluded_elements: {  }
       ignore_access: false
       exclude_empty: true
