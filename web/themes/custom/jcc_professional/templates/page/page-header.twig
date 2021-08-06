@@ -1,17 +1,38 @@
+{# Insert special content/feature only for home page - set /admin/appearance/settings/jcc_professional #}
+{% if node.label == 'Home' %}
+  {% set body %}
+    {% if header_body %}
+      {% autoescape false %}{{ header_body.value }}{% endautoescape %}
+    {% endif %}
+  {% endset %}
+{% endif %}
+
+{# Masthead variant setting from or inherited from landing page #}
+{% set variant = node.field_masthead_color.value|default('masthead') %}
+{% if parent_masthead_color %}
+  {% set variant = parent_masthead_color %}
+{% endif %}
+
 {% include '@organisms/global/header.twig' with {
   header: {
-    background: 'transparent',
+    variant: variant,
     skip: {
       text: 'Skip to main content.'|t,
-      url: '#main-content'
+      url: '#main-content',
     },
     hat: hat,
     logo: {
       title: site_name.second,
-      svg: logo.url
+      svg: logo.url,
+      lead: 'The State\'s Highest Court.',
     },
     links: main_links,
     translate: translate,
-    search_action: '/search'
+    search_action: '/search',
+    body: body,
+    media: {
+      src: file_url(node.field_media.entity.field_media_image.entity.uri.value),
+      alt: node.field_media.entity.field_media_image.alt,
+    }
   }
 } %}
