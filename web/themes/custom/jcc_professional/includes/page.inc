@@ -46,7 +46,8 @@ function jcc_professional_preprocess_page(&$variables) {
     $root_id = basename($breadcrumb->getLinks()[0]->getUrl()->getInternalPath());
     if ($root_id) {
       $parent_masthead_color = Node::load($root_id)->field_masthead_color->getString();
-      $variables['parent_masthead_color'] = str_replace('-mega', '', $parent_masthead_color);
+      // Never allow mega masthead for subpages.
+      $variables['parent_masthead_color'] = str_replace('mega ', '', $parent_masthead_color);
     }
   }
 }
