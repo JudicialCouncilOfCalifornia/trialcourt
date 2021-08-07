@@ -168,8 +168,8 @@ function jcc_professional_form_system_theme_settings_alter(&$form, FormStateInte
 
   $form['special']['header_body'] = [
     '#type' => 'text_format',
-    '#title' => 'Header Body',
-    '#description' => t('For inserting special content or features into header area (e.g. Granicus live cast embed).'),
+    '#title' => 'Homepage Header Body',
+    '#description' => t('For inserting special content or features into the homepage header area (e.g. Granicus live cast embed).'),
     '#default_value' => $header_body_value,
     '#format' => $header_body_format,
   ];
