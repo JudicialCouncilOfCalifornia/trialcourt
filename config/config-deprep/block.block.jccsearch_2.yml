@@ -1,0 +1,29 @@
+uuid: be150e1d-25ab-4281-98ab-365424c61b89
+langcode: en
+status: true
+dependencies:
+  module:
+    - jcc_blocks
+    - system
+  theme:
+    - jcc_deprep
+id: jccsearch_2
+theme: jcc_deprep
+region: content
+weight: 0
+provider: null
+plugin: jcc_search
+settings:
+  id: jcc_search
+  label: 'JCC Search'
+  provider: jcc_blocks
+  label_display: '0'
+  form_action: /search
+  filter: 'document_type:2'
+  placeholder: 'Search for Case Law'
+visibility:
+  request_path:
+    id: request_path
+    pages: "/case-law\r\n/case-law/*"
+    negate: false
+    context_mapping: {  }

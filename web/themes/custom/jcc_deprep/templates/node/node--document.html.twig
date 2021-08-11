@@ -143,7 +143,7 @@
         <div>
           {% include "@atoms/buttons/link-button.twig" with {
             link_button: {
-              text: 'Download Document',
+              text: 'View document',
               url: primary_doc
             }
           } only %}
@@ -203,13 +203,20 @@
       } %}
     {% endif %}
 
-    {% set related_links = content.field_links[0] %}
+    {% set related_links = [] %}
+    {% for link in node.field_links %}
+      {% if not primary_doc.toString is same as(link.url.toString) %}
+        {% set related_links = related_links|merge([link]) %}
+      {% endif %}
+    {% endfor %}
+
     {% set subject_matter = content.field_subject_matter[0] %}
     {% set tags = content.field_tags[0] %}
     {% set topics = content.field_topics[0] %}
 
-    {% include '@jcc_base/_includes/section-secondary.html.twig'with {
-      no_title_decoration: true
+    {% include '@jcc_deprep/_includes/section-secondary.html.twig'with {
+      no_title_decoration: true,
+      related_links: related_links
     } %}
 
     <div class="grid-container-widescreen text-italic">Reference ID: {{ node.id }}</div>
