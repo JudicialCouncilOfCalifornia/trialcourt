@@ -12,7 +12,7 @@ use Drupal\taxonomy\Entity\Term;
  * Implements hook_preprocess_HOOK().
  */
 function jcc_newsroom_preprocess_views_view_row_rss(&$variables) {
-  // Extending RSS content
+  // Extending RSS content.
   $item = $variables['row'];
   $node = Node::load($item->nid);
 
@@ -25,9 +25,11 @@ function jcc_newsroom_preprocess_views_view_row_rss(&$variables) {
       case 'News':
         $tid = $node->get('field_news_type')->target_id;
         break;
+
       case 'Event':
         $tid = $node->get('field_event_type')->target_id;
         break;
+
       default:
         break;
     }
@@ -35,7 +37,7 @@ function jcc_newsroom_preprocess_views_view_row_rss(&$variables) {
     $variables['type'] = $term->getName();
     // Author, not page creator.
     $variables['author'] = Node::load($node->get('field_contact')->target_id);
-    // Body and teaser
+    // Body and teaser.
     $variables['body'] = $node->body->view('full');
     $variables['teaser'] = $node->body->view('teaser');
     // Attached images not inline with body.
