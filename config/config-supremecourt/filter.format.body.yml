@@ -21,7 +21,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <b> <i class=""> <cite> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id class> <h3 id> <h4 id> <h5 id> <h6 id> <table class=""> <img src alt data-entity-type data-entity-uuid data-align data-caption> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary jcc-button--cta-link"> <blockquote cite class="blockquote blockquote--alert blockquote--callout"> <p> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <hr> <video> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title> <iframe longdesc name scrolling src title align height frameborder width>'
+      allowed_html: '<em> <strong> <b> <i class=""> <cite> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id class> <h3 id> <h4 id> <h5 id> <h6 id> <table class=""> <img src alt data-entity-type data-entity-uuid data-align data-caption> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary jcc-button--cta-link"> <blockquote cite class="blockquote blockquote--alert blockquote--callout"> <p> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <hr> <video> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title> <iframe longdesc name scrolling src title align height frameborder width><embed>'
       filter_html_help: false
       filter_html_nofollow: false
   entity_embed:
@@ -47,12 +47,6 @@ filters:
     provider: filter
     status: true
     weight: 10
-    settings: {  }
-  filter_html_image_secure:
-    id: filter_html_image_secure
-    provider: filter
-    status: true
-    weight: 9
     settings: {  }
   filter_url:
     id: filter_url
@@ -86,9 +80,9 @@ filters:
     weight: 100
     settings:
       default_view_mode: default
-      allowed_view_modes:
-        full: full
       allowed_media_types:
         boxcast_stream: boxcast_stream
         image: image
         remote_video: remote_video
+      allowed_view_modes:
+        full: full

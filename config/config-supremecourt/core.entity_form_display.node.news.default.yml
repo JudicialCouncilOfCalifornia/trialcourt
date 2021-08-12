@@ -4,9 +4,11 @@ status: true
 dependencies:
   config:
     - field.field.node.news.body
+    - field.field.node.news.field_author
     - field.field.node.news.field_byline
     - field.field.node.news.field_components
     - field.field.node.news.field_date
+    - field.field.node.news.field_media
     - field.field.node.news.field_news_type
     - node.type.news
   module:
@@ -43,6 +45,14 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_author:
+    weight: 28
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
   field_byline:
     weight: 3
     settings:
@@ -68,6 +78,16 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
+    region: content
+  field_media:
+    weight: 27
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_news_type:
     weight: 0
