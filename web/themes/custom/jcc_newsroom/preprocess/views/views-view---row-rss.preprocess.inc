@@ -18,10 +18,11 @@ function jcc_newsroom_preprocess_views_view_row_rss(&$variables) {
 
   if (isset($node)) {
     // Content type.
-    $variables['content_type'] = $node->type->entity->label();
+    $content_type = $node->type->entity->label();
+    $variables['content_type'] = $content_type;
     // "Sub-type" tag.
     $tid = '';
-    switch ($node->type->entity->label()) {
+    switch ($content_type) {
       case 'News':
         $tid = $node->get('field_news_type')->target_id;
         break;
@@ -33,15 +34,22 @@ function jcc_newsroom_preprocess_views_view_row_rss(&$variables) {
       default:
         break;
     }
-    $term = Term::load($tid);
-    $variables['type'] = $term->getName();
+    if (isset($tid)) {
+      $term = Term::load($tid);
+      $variables['type'] = $term->getName();
+    }
     // Author, not page creator.
-    $variables['author'] = Node::load($node->get('field_contact')->target_id);
+    if (isset($node->field_contact) && !empty($node->get('field_contact')->target_id)) {
+      $author_id = $node->get('field_contact')->target_id;
+      $variables['author'] = Node::load($author_id);
+    }
+    // Tagline.
+    $variables['tagline'] = $node->get('field_tagline')->value;
     // Body and teaser.
     $variables['body'] = $node->body->view('full');
     $variables['teaser'] = $node->body->view('teaser');
     // Attached images not inline with body.
-    if (!empty($node->get('field_images'))) {
+    if (isset($node->field_images) && !empty($node->get('field_images'))) {
       $first_image = _jcc_get_first_image($node);
       $variables['image'] = $first_image['url'];
     }

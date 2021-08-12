@@ -1,4 +1,4 @@
-uuid: 38794c5f-f357-402f-ae07-12b426471a77
+uuid: e4fdb13c-a89e-4874-9e2b-eda00e066d2d
 langcode: en
 status: true
 dependencies:
@@ -6,6 +6,7 @@ dependencies:
     - core.base_field_override.node.news.status
     - field.field.node.news.body
     - field.field.node.news.field_author
+    - field.field.node.news.field_byline
     - field.field.node.news.field_date
     - field.field.node.news.field_media
     - field.field.node.news.field_news_type
@@ -17,9 +18,9 @@ dependencies:
 third_party_settings:
   feeds_tamper:
     tampers:
-      2abfd60b-c5dc-41c8-b33c-4b5d3eb70c8d:
-        find: 'src="/sites/default/files/newsroom/inline-images/'
-        replace: 'src="https://newsroom.courts.ca.gov/sites/default/files/newsroom/inline-images/'
+      29ac8476-c7a5-41ac-8fa0-7979d3cf3902:
+        find: 'src="/sites/default/files/newsroom/'
+        replace: 'src="https://newsroom.courts.ca.gov/sites/default/files/newsroom/'
         case_sensitive: false
         whole: false
         plugin: find_replace
@@ -27,9 +28,9 @@ third_party_settings:
         weight: 0
         label: 'Find replace'
         word_boundaries: false
-        uuid: 2abfd60b-c5dc-41c8-b33c-4b5d3eb70c8d
-id: ca_courts_newsroom_feeds
-label: 'CA Courts Newsroom News Feed'
+        uuid: 29ac8476-c7a5-41ac-8fa0-7979d3cf3902
+id: ca_courts_news_feeds
+label: 'CA Courts News Feeds'
 description: ''
 help: ''
 import_period: 3600
@@ -45,6 +46,9 @@ parser_configuration:
   context:
     value: //item
   sources:
+    type:
+      label: type
+      value: type
     title:
       label: title
       value: title
@@ -54,9 +58,6 @@ parser_configuration:
     teaser:
       label: teaser
       value: teaser
-    type:
-      label: type
-      value: type
     author:
       label: author
       value: author
@@ -66,9 +67,12 @@ parser_configuration:
     image:
       label: image
       value: image
-    published_status:
+    pubstatus:
       label: pubStatus
       value: pubStatus
+    tagline:
+      label: tagline
+      value: tagline
   use_tidy: false
   display_errors: false
   source_encoding:
@@ -88,10 +92,10 @@ processor_configuration:
   values:
     type: news
 custom_sources:
-  title:
-    label: title
-    value: title
-    machine_name: title
+  type:
+    label: type
+    value: type
+    machine_name: type
   body:
     label: body
     value: body
@@ -100,10 +104,6 @@ custom_sources:
     label: teaser
     value: teaser
     machine_name: teaser
-  type:
-    label: type
-    value: type
-    machine_name: type
   author:
     label: author
     value: author
@@ -116,15 +116,27 @@ custom_sources:
     label: image
     value: image
     machine_name: image
-  pubstate:
-    label: pubState
-    value: pubState
-    machine_name: pubstate
-  published_status:
+  pubstatus:
     label: pubStatus
     value: pubStatus
-    machine_name: published_status
+    machine_name: pubstatus
+  title:
+    label: title
+    value: title
+    machine_name: title
+  tagline:
+    label: tagline
+    value: tagline
+    machine_name: tagline
 mappings:
+  -
+    target: field_news_type
+    map:
+      target_id: type
+    settings:
+      language: ''
+      reference_by: name
+      autocreate: '1'
   -
     target: title
     map:
@@ -142,13 +154,12 @@ mappings:
       language: ''
       format: body
   -
-    target: field_news_type
+    target: field_author
     map:
-      target_id: type
+      value: author
+    unique: {  }
     settings:
-      language: ''
-      reference_by: name
-      autocreate: '1'
+      language: null
   -
     target: field_date
     map:
@@ -165,15 +176,15 @@ mappings:
       reference_by: name
       autocreate: '1'
   -
-    target: field_author
+    target: status
     map:
-      value: author
-    unique: {  }
+      value: pubstatus
     settings:
       language: null
   -
-    target: status
+    target: field_byline
     map:
-      value: published_status
+      value: tagline
+    unique: {  }
     settings:
       language: null
