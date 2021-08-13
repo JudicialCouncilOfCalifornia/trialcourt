@@ -186,3 +186,17 @@ function jcc_components_node_news(array &$variables, NodeInterface $node) {
     ->build(\Drupal::routeMatch())
     ->toRenderable();
 }
+
+/**
+ * Node: News preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_components_node_event(array &$variables, NodeInterface $node) {
+  $variables['breadcrumb'] = \Drupal::service('breadcrumb')
+    ->build(\Drupal::routeMatch())
+    ->toRenderable();
+}
