@@ -1,0 +1,65 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display an item in a views RSS feed.
+ *
+ * Available variables:
+ * - title: RSS item title.
+ * - link: RSS item link.
+ * - description: RSS body text.
+ * - item_elements: RSS item elements to be rendered as XML (pubDate, creator,
+ *   guid).
+ *
+ * @see template_preprocess_views_view_row_rss()
+ *
+ * @ingroup themeable
+ */
+#}
+<item>
+  <title>{{ title }}</title>
+  <link>{{ link }}</link>
+  <description>{{ description }}</description>
+  {% for item in item_elements -%}
+  <{{ item.key }}{{ item.attributes -}}
+  {% if item.value -%}
+  >{{ item.value }}</{{ item.key }}>
+  {% else -%}
+    {{ ' />' }}
+    {% endif %}
+  {%- endfor %}
+
+  {% if content_type %}
+    <contentType>{{ content_type }}</contentType>
+  {% endif %}
+  {% if type %}
+    <type>{{ type }}</type>
+  {% endif %}
+  {% if author %}
+    <author>{{ author.label }}</author>
+  {% endif %}
+  {% if tagline %}
+    <tagline>{{ tagline }}</tagline>
+  {% endif %}
+  {% if startDate %}
+    <startDate>{{ startDate }}</startDate>
+    <endDate>{{ endDate }}</endDate>
+  {% endif %}
+  {% if body %}
+    <body>
+    {% if extended_details %}
+      <![CDATA[{{ body.0 }}{{ extended_details.0 }}]]>
+    {% else %}
+      <![CDATA[{{ body.0 }}]]>
+    {% endif %}
+    </body>
+  {% endif %}
+  {% if teaser %}
+    <teaser>{{ teaser.0 }}</teaser>
+  {% endif %}
+  {% if image %}
+    <image>{{ image }}</image>
+  {% endif %}
+  {% if pubStatus %}
+    <pubStatus>{{ pubStatus }}</pubStatus>
+  {% endif %}
+</item>

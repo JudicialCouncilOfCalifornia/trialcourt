@@ -1,46 +1,35 @@
-uuid: 40e60ee8-7d2a-4c4a-9520-938384d05df8
+uuid: d7d3195c-b4c3-4d8b-9a7b-50bc933491b1
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.news.body
-    - field.field.node.news.feeds_item
-    - field.field.node.news.field_author
-    - field.field.node.news.field_byline
-    - field.field.node.news.field_components
-    - field.field.node.news.field_date
-    - field.field.node.news.field_media
-    - field.field.node.news.field_news_type
-    - node.type.news
+    - field.field.node.event.body
+    - field.field.node.event.feeds_item
+    - field.field.node.event.field_byline
+    - field.field.node.event.field_components
+    - field.field.node.event.field_date_range
+    - field.field.node.event.field_event_type
+    - field.field.node.event.field_media
+    - node.type.event
   module:
-    - datetime
+    - datetime_range
     - entity_reference_revisions
     - text
     - user
-_core:
-  default_config_hash: ketHgdUnxJbljNksQY5HXoDRG1hv4-Y3ojQB2Kr0Y00
-id: node.news.default
+id: node.event.default
 targetEntityType: node
-bundle: news
+bundle: event
 mode: default
 content:
   body:
     label: hidden
     type: text_default
-    weight: 1
+    weight: 101
     settings: {  }
     third_party_settings: {  }
     region: content
-  field_author:
-    weight: 2
-    label: hidden
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-    region: content
   field_byline:
-    weight: 4
+    weight: 102
     label: hidden
     settings:
       link_to_entity: false
@@ -48,7 +37,7 @@ content:
     type: string
     region: content
   field_components:
-    weight: 5
+    weight: 103
     label: hidden
     settings:
       view_mode: default
@@ -56,33 +45,38 @@ content:
     third_party_settings: {  }
     type: entity_reference_revisions_entity_view
     region: content
-  field_date:
-    weight: 3
+  field_date_range:
+    weight: 106
     label: hidden
     settings:
-      timezone_override: America/Los_Angeles
-      date_format: 'M d, Y'
+      timezone_override: ''
+      date_format: 'l F d, Y @ g:i a'
+      separator: '-'
     third_party_settings: {  }
-    type: datetime_custom
+    type: daterange_custom
     region: content
-  field_media:
-    weight: 6
+  field_event_type:
+    weight: 105
     label: hidden
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
     region: content
-  field_news_type:
-    weight: 0
+  field_media:
+    weight: 104
     label: hidden
     settings:
-      link: false
+      link: true
     third_party_settings: {  }
     type: entity_reference_label
     region: content
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   feeds_item: true
   langcode: true
-  links: true
   search_api_excerpt: true

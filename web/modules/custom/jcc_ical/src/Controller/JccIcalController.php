@@ -77,8 +77,7 @@ class JccIcalController extends ControllerBase {
 
     // @todo: Detect date fields instead of hardcoding field_date_range.
     // Or have the module add the fields to configured content types.
-
-    $address = !empty($node->field_location->first()) ? $node->field_location->first()->getValue() : [];
+    $address = isset($node->field_location) && !empty($node->field_location->first()) ? $node->field_location->first()->getValue() : [];
     // Concatenate address elements.
     $location = !empty($address)
       ? $address['address_line1'] . ' '
