@@ -79,7 +79,7 @@
 <article{{ attributes }}>
   {{ breadcrumb }}
   {% if components is not empty %}
-    {#
+    {# NON-MIGRATION/IMPORT COMING SOON
     {% include "@templates/event/event-full.twig" with {
       event_full: {
         title: node.title.value,
@@ -92,16 +92,23 @@
     #}
   {% else %}
     {# Show migrated content in body field if no components added. #}
+    {% set download %}
+      Add event to your calendar
+      {{ content.links }}
+    {% endset %}
+
     {% include "@molecules/hero/hero.twig" with {
       hero: {
-        layout: 'full-main',
+        layout: 'default',
         background: 'default',
         main: {
           title: label,
           lead: content.field_byline|render|striptags,
           brow: node.field_event_type.0.entity.name.value
         },
-        aside: {},
+        aside: {
+          text: download,
+        },
         classes: []
       }
     } %}
@@ -110,14 +117,13 @@
       {% if content.field_date_range %}
         {% set date_start = node.field_date_range.value %}
         {% set date_end = node.field_date_range.end_value %}
+        {{ date_start|date(format="g:i a") }} to {{ date_end|date(format="g:i a") }}<br>
         {% if date_end|date("Y-m-d") > date_start|date("Y-m-d") %}
-          {{ date_start }}
-          to {{ date_end }}
+          {{ date_start|date(format='l F j, Y') }}
+          to {{ date_end|date(format='l F j, Y') }}
         {% else %}
-          {{ date_start|date(format='l M j, Y') }}
+          {{ date_start|date(format='l F j, Y') }}
         {% endif %}
-        <br>
-        {{ date_start|date(format="g:i a") }} - {{ date_end|date(format="g:i a") }}
       {% endif %}
 
       {{ content.body }}

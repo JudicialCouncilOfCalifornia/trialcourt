@@ -57,6 +57,10 @@ function jcc_newsroom_preprocess_views_view_row_rss(&$variables) {
       // Body and teaser.
       $variables['body'] = $node->body->view('full');
       $variables['teaser'] = $node->body->view('teaser');
+      // 1.x Extended event content to concat with main body.
+      if ($content_type == 'Event' && !empty($node->get('field_event_moreinfo'))) {
+        $variables['extended_details'] = $node->field_event_moreinfo->view('full');
+      }
       // Attached images not inline with body.
       if (isset($node->field_images) && !empty($node->get('field_images'))) {
         $first_image = _jcc_get_first_image($node);

@@ -45,7 +45,13 @@
     <endDate>{{ endDate }}</endDate>
   {% endif %}
   {% if body %}
-    <body><![CDATA[{{ body.0 }}]]></body>
+    <body>
+    {% if extended_details %}
+      <![CDATA[{{ body.0 }}{{ extended_details.0 }}]]>
+    {% else %}
+      <![CDATA[{{ body.0 }}]]>
+    {% endif %}
+    </body>
   {% endif %}
   {% if teaser %}
     <teaser>{{ teaser.0 }}</teaser>
