@@ -188,7 +188,7 @@ function jcc_components_node_news(array &$variables, NodeInterface $node) {
 }
 
 /**
- * Node: News preprocess.
+ * Node: Event preprocess.
  *
  * @param array $variables
  *   The preprocess variables.
