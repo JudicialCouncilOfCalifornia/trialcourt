@@ -79,35 +79,51 @@
 <article{{ attributes }}>
   {{ breadcrumb }}
   {% if components is not empty %}
-    {% include "@templates/news/news-full.twig" with {
-      news_full: {
+    {# NON-MIGRATION/IMPORT COMING SOON
+    {% include "@templates/event/event-full.twig" with {
+      event_full: {
         title: node.title.value,
-        type: node.field_news_type.0.entity.name.value,
-        date: content.field_date|render|striptags,
+        type: node.field_event_type.0.entity.name.value,
+        date: content.field_date_range|render|striptags,
         byline: content.field_byline|render|striptags,
         components: components,
       }
     } %}
+    #}
   {% else %}
     {# Show migrated content in body field if no components added. #}
+    {% set download %}
+      Add event to your calendar
+      {{ content.links }}
+    {% endset %}
+
     {% include "@molecules/hero/hero.twig" with {
       hero: {
-        layout: 'full-main',
+        layout: 'default',
         background: 'default',
         main: {
           title: label,
           lead: content.field_byline|render|striptags,
-          brow: node.field_news_type.0.entity.name.value
+          brow: node.field_event_type.0.entity.name.value
         },
-        aside: {},
+        aside: {
+          text: download,
+        },
         classes: []
       }
     } %}
 
     {% set body %}
-      {% if content.field_date or content.field_author %}
-        {% if content.field_date or content.field_author %}By {{ content.field_author|render|striptags }}<br>{% endif %}
-        {{ content.field_date|render|striptags }}
+      {% if content.field_date_range %}
+        {% set date_start = node.field_date_range.value %}
+        {% set date_end = node.field_date_range.end_value %}
+        {{ date_start|date(format="g:i a") }} to {{ date_end|date(format="g:i a") }}<br>
+        {% if date_end|date("Y-m-d") > date_start|date("Y-m-d") %}
+          {{ date_start|date(format='l F j, Y') }}
+          to {{ date_end|date(format='l F j, Y') }}
+        {% else %}
+          {{ date_start|date(format='l F j, Y') }}
+        {% endif %}
       {% endif %}
 
       {{ content.body }}

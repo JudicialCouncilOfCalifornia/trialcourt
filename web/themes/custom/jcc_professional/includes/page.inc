@@ -21,7 +21,7 @@ function jcc_professional_preprocess_page(&$variables) {
 
   $variables['main_links'] = jcc_components_get_menu_array('main');
   $variables['footer_links'] = jcc_components_get_menu_array('footer');
-  $variables['social_links'] = jcc_components_social_links();
+  $variables['social_links'] = jcc_professional_social_links();
   $variables['header_body'] = theme_get_setting('header_body');
 
   $variables['hat'] = [
@@ -40,7 +40,7 @@ function jcc_professional_preprocess_page(&$variables) {
     'links' => jcc_components_get_menu_array('shoe'),
   ];
 
-  if ($variables['node']) {
+  if (isset($variables['node'])) {
     // Inherit masthead color setting if subpage.
     $breadcrumb = \Drupal::service('breadcrumb')->build(\Drupal::routeMatch());
     $root_id = basename($breadcrumb->getLinks()[0]->getUrl()->getInternalPath());
@@ -50,4 +50,55 @@ function jcc_professional_preprocess_page(&$variables) {
       $variables['parent_masthead_color'] = str_replace('mega ', '', $parent_masthead_color);
     }
   }
+}
+
+/**
+ * Generate link array for social links.
+ *
+ * @return array
+ *   An array of links formatted for a component.
+ */
+function jcc_professional_social_links() {
+  $social = [
+    [
+      'name' => 'email',
+      'title' => t('Email'),
+    ],
+    [
+      'name' => 'facebook',
+      'title' => t('Facebook'),
+    ],
+    [
+      'name' => 'flickr',
+      'title' => t('Flickr'),
+    ],
+    [
+      'name' => 'linkedin',
+      'title' => t('LinkedIn'),
+    ],
+    [
+      'name' => 'rss',
+      'title' => t('RSS'),
+    ],
+    [
+      'name' => 'twitter',
+      'title' => t('Twitter'),
+    ],
+    [
+      'name' => 'youtube',
+      'title' => t('YouTube'),
+    ],
+  ];
+
+  foreach ($social as $k => $item) {
+    $url = theme_get_setting($item['name'], 'jcc_professional');
+    if (!empty($url)) {
+      $social[$k]['url'] = $url;
+    }
+    else {
+      unset($social[$k]);
+    }
+  }
+
+  return $social;
 }
