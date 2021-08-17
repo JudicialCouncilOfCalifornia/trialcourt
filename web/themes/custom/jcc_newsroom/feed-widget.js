@@ -74,7 +74,7 @@ Array.prototype.forEach.call(embeds, function (embed, i) {
   hideDescription[i] = embed.dataset.hideDescription || "no";
   hideDate[i] = embed.dataset.hideDate || "no";
   hideThumbnail[i] = embed.dataset.hideThumbnail || "no";
-  embed.insertAdjacentHTML('beforebegin', '<div class="embed-list" id="jcc_embed_' + embedArg[i] + '_' + i + '"></div>');
+  embed.insertAdjacentHTML('beforebegin', '<div class="embed-list jcc-card--content-stream" id="jcc_embed_' + embedArg[i] + '_' + i + '"></div>');
 
   let s = document.createElement("script"),
     callback = "jsonpCallback_" + new Date().getTime(),
