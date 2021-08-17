@@ -1,0 +1,29 @@
+uuid: a8e97225-0c05-4ee6-8997-1b8279912731
+langcode: en
+status: true
+dependencies:
+  module:
+    - jcc_blocks
+    - system
+  theme:
+    - jcc_deprep
+id: jccsearch
+theme: jcc_deprep
+region: content
+weight: 0
+provider: null
+plugin: jcc_search
+settings:
+  id: jcc_search
+  label: 'JCC Search'
+  provider: jcc_blocks
+  label_display: '0'
+  form_action: /search
+  filter: 'document_type:12'
+  placeholder: 'Search for Dependency Hot Topics'
+visibility:
+  request_path:
+    id: request_path
+    pages: "/dependency-hot-topics\r\n/dependency-hot-topics/*"
+    negate: false
+    context_mapping: {  }

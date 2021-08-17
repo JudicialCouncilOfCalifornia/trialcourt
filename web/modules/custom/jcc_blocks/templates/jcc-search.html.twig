@@ -1,0 +1,28 @@
+{#
+/**
+* @file
+* Default theme implementation to display a block.
+*
+* @see template_preprocess_block()
+*
+* @ingroup themeable
+*/
+#}
+{% set classes = [
+  'clear-both',
+  'width-mobile',
+  'margin-top-2',
+  'usa-form',
+  'jcc-form',
+] %}
+<div class="clear-both display-flex flex-column flex-align-end">
+<form{{ attributes.addClass(classes)}} action="{{ search.form_action|default('/search') }}">
+  {% include '@atoms/forms/search-input.twig' with {
+    search_input: search.search_input,
+  }%}
+
+  {% if search.filter %}
+  <input type="hidden" id="searchFilter" name="f[0]" value="{{ search.filter }}" />
+  {% endif %}
+</form>
+</div>
