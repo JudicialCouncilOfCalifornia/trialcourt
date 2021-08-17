@@ -34,19 +34,14 @@
 {% set items = [] %}
 {% for k, row in rows.0['#rows'] if k|first != "#" %}
   {% if row['#node'] %}
-    {% set image = '' %}
-    {% if loop.first %}
-      {% set image %}
-        <img src="{{ row['#node'].field_media.0.entity.name.value }}"/>
-      {% endset %}
-    {% endif %}
-
     {% set items = items|merge([{
       style: 'borderless usa-card--media-left',
       brow: row['#node'].field_date.0.value|date('M d, Y'),
       title: row['#node'].title.value,
       body: row['#node'].body.summary,
-      media: image,
+      media: {
+        src: row['#node'].field_media.0.entity.name.value,
+      },
       link: {
         url: row['#node'].path.value.0.alias,
       },
@@ -54,11 +49,8 @@
   {% endif %}
 {% endfor %}
 
-{% include "@organisms/cards/cards.twig" with {
-  cards: {
-    num_cols: 1,
-    spacing: 'none',
-    background: 'landing_page jcc-card--content-stream',
+{% include "@templates/content-stream/content-stream.twig" with {
+  content_stream: {
     items: items,
   }
 } %}
