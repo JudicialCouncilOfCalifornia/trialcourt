@@ -40,7 +40,7 @@ function jcc_professional_preprocess_page(&$variables) {
     'links' => jcc_components_get_menu_array('shoe'),
   ];
 
-  if ($variables['node']) {
+  if (isset($variables['node'])) {
     // Inherit masthead color setting if subpage.
     $breadcrumb = \Drupal::service('breadcrumb')->build(\Drupal::routeMatch());
     $root_id = basename($breadcrumb->getLinks()[0]->getUrl()->getInternalPath());
