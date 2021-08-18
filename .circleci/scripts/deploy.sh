@@ -17,6 +17,7 @@ for name in "$@" ; do
   if [ "$CIRCLE_BRANCH" = "master" ] && [ "$DEPLOY_MASTER" = false ]; then
     echo "Skipping deployment."
     circleci-agent step halt
+    exit 0
   fi
 
   # Leaving the old way here to roll back easily if loop method times out.

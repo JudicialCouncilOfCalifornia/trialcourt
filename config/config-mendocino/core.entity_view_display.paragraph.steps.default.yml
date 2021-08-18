@@ -1,0 +1,45 @@
+uuid: 0d2d039f-94df-4640-89ff-e9af40d333e5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.steps.field_components
+    - field.field.paragraph.steps.field_heading
+    - field.field.paragraph.steps.field_lead
+    - paragraphs.paragraphs_type.steps
+  module:
+    - entity_reference_revisions
+    - text
+_core:
+  default_config_hash: CmiIDEQLH1rgI-lSbWZFFZIu6kTh04DPc26yX0jEdhs
+id: paragraph.steps.default
+targetEntityType: paragraph
+bundle: steps
+mode: default
+content:
+  field_components:
+    weight: 2
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    type: entity_reference_revisions_entity_view
+    region: content
+  field_heading:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_lead:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+hidden:
+  search_api_excerpt: true
