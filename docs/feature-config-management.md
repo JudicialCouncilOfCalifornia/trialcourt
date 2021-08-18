@@ -20,6 +20,7 @@ When config changes are made on the primary site (inyo) the steps to sync are:
   - `lando start`
   - `lando composer install`
   - `scripts/fleet db-pull live` - (install all live databases to local)
+    - if you're encountering timeouts or rsync errors, use `scripts/fleet db-sync live` instead
   - `scripts/fleet reset local -y` - (updb, cim, cr - should have no updates and nothing to import)
   - `git checkout (new feature)` - The one we want to sync to fleet
   - `lando reset -l inyo.lndo.site` - reset inyo for the feature branch where the initial work was done.
