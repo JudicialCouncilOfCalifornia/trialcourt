@@ -138,7 +138,7 @@ function jcc_components_node_subpage(array &$variables) {
  *   The node object.
  */
 function jcc_components_node_location(array &$variables, NodeInterface $node) {
-  // Format the hours content in a format the PL template can recieve.
+  // Format the hours content in a format the PL template can receive.
   if (!empty($node->field_components)) {
     $components = $node->field_components->referencedEntities();
     foreach ($components as $component) {
@@ -171,6 +171,8 @@ function jcc_components_node_location(array &$variables, NodeInterface $node) {
       '#format' => 'basic_html',
     ];
   }
+  // Set an unique location id.
+  $variables['location_id'] = str_replace(' ', '-', strtolower($node->getTitle())) . '-' . $node->id();
 }
 
 /**
