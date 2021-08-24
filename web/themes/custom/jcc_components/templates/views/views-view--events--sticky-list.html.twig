@@ -31,37 +31,23 @@
  */
 #}
 
-{% include "@molecules/hero/hero.twig" with {
-  hero: {
-    layout: 'full-main',
-    background: 'default',
-    main: {
-      title: view.title,
-      lead: '',
-      brow: ''
-    },
-    classes: []
-  }
-} %}
-
 {% set items = [] %}
 {% for k, row in rows.0['#rows'] if k|first != "#" %}
   {% if row['#node'] %}
     {% set items = items|merge([{
-      title: {
-        text: row['#node'].title.value,
+      style: 'borderless',
+      brow: row['#node'].field_date_range.value|date('M d, Y'),
+      title: row['#node'].title.value,
+      body: row['#node'].body.summary,
+      link: {
         url: row['#node'].path.value.0.alias,
       },
-      date: row['#node'].field_date.0.value|date('M d, Y'),
-      type: row['#node'].field_news_type.0.entity.name.value
     }]) %}
   {% endif %}
 {% endfor %}
 
-{% include "@templates/news/news-listing.twig" with {
-  news_listing: {
+{% include "@templates/content-stream/content-stream.twig" with {
+  content_stream: {
     items: items,
-    form: exposed,
-    pager: pager,
   }
 } %}
