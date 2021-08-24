@@ -34,11 +34,16 @@
 {% set items = [] %}
 {% for k, row in rows.0['#rows'] if k|first != "#" %}
   {% if row['#node'] %}
+    {% set body %}
+      {{ row['#node'].body.summary }}
+      <div class="jcc-metadata">{{ row['#node'].field_event_type.0.entity.name.value }}</div>
+    {% endset %}
+
     {% set items = items|merge([{
       style: 'borderless',
-      brow: row['#node'].field_date_range.value|date('M d, Y'),
+      brow: row['#node'].field_date_range.value|date('F d, Y'),
       title: row['#node'].title.value,
-      body: row['#node'].body.summary,
+      body: body,
       link: {
         url: row['#node'].path.value.0.alias,
       },
