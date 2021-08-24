@@ -82,7 +82,7 @@
 {% if content.field_components %}
   {% set components %}
     {% for k, component in content.field_components if k|first != "#" %}
-      {% if components_aside and k|first and component['#paragraph'].type.target_id != 'hero' %}
+      {% if components_aside and component['#paragraph'].type.target_id != 'hero' %}
         {{ component }}
       {% endif %}
     {% endfor %}
