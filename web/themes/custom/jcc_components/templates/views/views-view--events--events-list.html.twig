@@ -47,13 +47,19 @@
 {% set items = [] %}
 {% for k, row in rows.0['#rows'] if k|first != "#" %}
   {% if row['#node'] %}
+    {% set date %}
+      {{ row['#node'].field_date_range.value|date('F d, Y') }} &bull;
+      {{ row['#node'].field_date_range.value|date(format="g:ia") }} -
+      {{ row['#node'].field_date_range.end_value|date(format="g:ia") }}
+    {% endset %}
+
     {% set items = items|merge([{
       title: {
         text: row['#node'].title.value,
         url: row['#node'].path.value.0.alias,
       },
-      date: row['#node'].field_date.0.value|date('F d, Y'),
-      type: row['#node'].field_news_type.0.entity.name.value
+      date: date,
+      type: row['#node'].field_event_type.0.entity.name.value
     }]) %}
   {% endif %}
 {% endfor %}
