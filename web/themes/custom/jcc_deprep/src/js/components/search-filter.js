@@ -19,7 +19,7 @@
                   <div class="usa-alert__body">
                     <p class="usa-alert__text">
                       <div class="text-accent-warm-darker">Search <a href="/search?keywords=${keyword}" class="text-no-underline"><span class="usa-tag bg-accent-warm-darker padding-y-05 hover:bg-accent-cool-dark">ALL</span></a> or within:</div>
-                      <a href="/search?keywords=${keyword}&f[0]=document_type%3A28" class="text-no-underline"><span class="usa-tag bg-accent-warm-darker padding-y-05 hover:bg-accent-cool-dark">Case Summaries</span></a><br />
+                      <a href="/search?keywords=${keyword}&f[0]=document_type%3A28" class="text-no-underline"><span class="usa-tag bg-accent-warm-darker padding-y-05 hover:bg-accent-cool-dark">Case Law</span></a><br />
                       <a href="/search?keywords=${keyword}&f[0]=document_type%3A26" class="text-no-underline"><span class="usa-tag bg-accent-warm-darker padding-y-05 hover:bg-accent-cool-dark">Publications</span></a><br />
                       <a href="/search?keywords=${keyword}&f[0]=document_type%3A23" class="text-no-underline"><span class="usa-tag bg-accent-warm-darker padding-y-05 hover:bg-accent-cool-dark">Training</span></a><br />
                       <a href="/search?keywords=${keyword}&f[0]=document_type%3A5" class="text-no-underline"><span class="usa-tag bg-accent-warm-darker padding-y-05 hover:bg-accent-cool-dark">Legal and Policy Resources</span></a>
