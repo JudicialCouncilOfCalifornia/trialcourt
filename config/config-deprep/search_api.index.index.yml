@@ -78,7 +78,7 @@ field_settings:
     label: Body
     datasource_id: 'entity:node'
     property_path: body
-    type: text
+    type: 'solr_text_custom:ngram'
     boost: !!float 2
     dependencies:
       config:
@@ -253,7 +253,7 @@ field_settings:
   rendered_item:
     label: 'Rendered HTML output'
     property_path: rendered_item
-    type: text
+    type: 'solr_text_custom:ngram'
     configuration:
       roles:
         anonymous: anonymous
@@ -299,7 +299,7 @@ field_settings:
     label: Title
     datasource_id: 'entity:node'
     property_path: title
-    type: solr_text_unstemmed
+    type: 'solr_text_custom:ngram'
     boost: !!float 3
     dependencies:
       module:

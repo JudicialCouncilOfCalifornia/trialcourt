@@ -71,70 +71,50 @@
  */
 #}
 
-{% set components = [] %}
-{% for k, component in content.field_components if k|first != "#" %}
-  {% set components = components|merge([component]) %}
-{% endfor %}
+{% if content.field_components_aside %}
+  {% set components_aside %}
+    {% for k, component_aside in content.field_components_aside if k|first != "#" %}
+      {{ component_aside }}
+    {% endfor %}
+  {% endset %}
+{% endif %}
+
+{% if content.field_components %}
+  {% set components %}
+    {% for k, component in content.field_components if k|first != "#" %}
+      {% if components_aside and component['#paragraph'].type.target_id != 'hero' %}
+        {{ component }}
+      {% endif %}
+    {% endfor %}
+  {% endset %}
+{% endif %}
 
 <article{{ attributes }}>
-  {{ breadcrumb }}
-  {% if components is not empty %}
-    {# NON-MIGRATION/IMPORT COMING SOON
-    {% include "@templates/event/event-full.twig" with {
-      event_full: {
-        title: node.title.value,
-        type: node.field_event_type.0.entity.name.value,
-        date: content.field_date_range|render|striptags,
-        byline: content.field_byline|render|striptags,
-        components: components,
-      }
-    } %}
-    #}
-  {% else %}
-    {# Show migrated content in body field if no components added. #}
-    {% set download %}
-      Add event to your calendar
-      {{ content.links }}
-    {% endset %}
-
+  {% if components_aside %}
     {% include "@molecules/hero/hero.twig" with {
       hero: {
-        layout: 'default',
+        layout: 'full-main',
         background: 'default',
         main: {
           title: label,
-          lead: content.field_byline|render|striptags,
-          brow: node.field_event_type.0.entity.name.value
-        },
-        aside: {
-          text: download,
+          lead: '',
+          brow: ''
         },
         classes: []
       }
     } %}
 
-    {% set body %}
-      {% if content.field_date_range %}
-        {% set date_start = node.field_date_range.value %}
-        {% set date_end = node.field_date_range.end_value %}
-        {{ date_start|date(format="g:ia") }} - {{ date_end|date(format="g:ia") }}<br>
-        {% if date_end|date("Y-m-d") > date_start|date("Y-m-d") %}
-          {{ date_start|date(format='l F j, Y') }}
-          to {{ date_end|date(format='l F j, Y') }}
-        {% else %}
-          {{ date_start|date(format='l F j, Y') }}
-        {% endif %}
-      {% endif %}
-
-      {{ content.body }}
-    {% endset %}
-
-    {% include '@molecules/section/section.twig' with {
-      section: {
-        background: 'default',
-        container: 'container',
-        content: body
+    {% include "@molecules/body/body.twig" with {
+      body: {
+        main: {
+          text: components,
+        },
+        aside: {
+          text: components_aside,
+        }
       }
     } %}
+  {% else %}
+    {{ components }}
   {% endif %}
 </article>
