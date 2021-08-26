@@ -39,14 +39,13 @@
  */
 #}
 
-{% if content.field_heading or content.field_lead %}
-  {% include "@molecules/section/section-heading.twig" with {
-    section_heading: {
+{% include "@molecules/section/section.twig" with {
+  section: {
+    heading: {
       title: content.field_heading.0|render,
       lead: content.field_lead|render,
       width: "partial",
-    }
-  } %}
-{% endif %}
-
-{{ content.field_content_stream }}
+    },
+    content: content.field_content_stream,
+  }
+} %}
