@@ -78,11 +78,7 @@
       size: 'slim',
       width: 'centered',
       heading: label,
-      text: {
-        '#type': 'processed_text',
-        '#text': content.body.0['#text'],
-        '#format': 'basic_html'
-      },
+      text: content.body|render,
       close: node.field_toggle.value,
       classes: []
     }
