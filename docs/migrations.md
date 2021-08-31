@@ -7,7 +7,8 @@ https://docs.google.com/spreadsheets/d/1zsZ-cEIZGWvmv0dXVTyL8Hh4Y9ld64Gcqy3TuxQA
 - run migrations:
   - term_subject_matter - built in csv
   - Set sheet urls in `/admin/structure/migrate/jcc_migrate_source_ui`
-    - https://spreadsheets.google.com/feeds/list/{{ sheet id }}/{{ tab }}/public/values?alt=json
+    - https://sheets.googleapis.com/v4/spreadsheets/{{ sheet id }}/values/{{ tab_name }}?alt=json&key={{ apikey}}
+      Note: get an API key for Google Sheets API v4 here: https://console.developers.google.com/apis/credentials (create an empty project for it).
     - Set tab for the appropriate sheet number in the set for each migration
       - node_subpage, node_subpage_path_redirect (1 at time of writing)
       - node_news (2 at time of writing)

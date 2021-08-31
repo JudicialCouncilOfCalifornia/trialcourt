@@ -28,7 +28,7 @@ foreach ($dirs as $dir) {
 // add it manually below.
 $sites['www.occourts.org'] = 'oc';
 
-// @todo perhaps move these sites to dir that mathches their domain.
+// @todo perhaps move these sites to dir that matches their domain.
 // = 'jcart';
 $sites['develop.jcart.courts.ca.gov'] = 'deprep';
 $sites['stage.jcart.courts.ca.gov'] = 'deprep';
