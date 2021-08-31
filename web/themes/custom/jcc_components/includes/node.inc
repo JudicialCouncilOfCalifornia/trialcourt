@@ -138,7 +138,7 @@ function jcc_components_node_subpage(array &$variables) {
  *   The node object.
  */
 function jcc_components_node_location(array &$variables, NodeInterface $node) {
-  // Format the hours content in a format the PL template can recieve.
+  // Format the hours content in a format the PL template can receive.
   if (!empty($node->field_components)) {
     $components = $node->field_components->referencedEntities();
     foreach ($components as $component) {
@@ -171,6 +171,13 @@ function jcc_components_node_location(array &$variables, NodeInterface $node) {
       '#format' => 'basic_html',
     ];
   }
+  // Set a unique location id.
+  // Exclude special characters and convert to lowercase.
+  $node_title = preg_replace('/[^A-Za-z0-9\-]/', ' ', strtolower($node->getTitle()));
+  // Get the first two words joined by hyphen.
+  $node_title = implode('-', array_slice(array_filter(explode(' ', $node_title)), 0, 2));
+  // Set location_id variable to be consumed by twig.
+  $variables['location_id'] = $node_title . '-' . $node->id();
 }
 
 /**
