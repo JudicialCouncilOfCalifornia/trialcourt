@@ -10,6 +10,7 @@ settings:
   default_form_exception_message: 'Unable to display this webform. Please contact the site administrator.'
   default_submit_button_label: Submit
   default_reset_button_label: Reset
+  default_delete_button_label: Delete
   default_form_submit_once: false
   default_form_confidential_message: 'This form is confidential. You must <a href="[site:login-url]/logout?destination=[current-page:url:relative]">Log out</a> to submit it.'
   default_form_access_denied_message: 'Please login to access this form.'
@@ -83,6 +84,20 @@ settings:
     wide:
       title: Wide
       width: 1000
+  webform_bulk_form: true
+  webform_bulk_form_actions:
+    - webform_open_action
+    - webform_close_action
+    - webform_archive_action
+    - webform_unarchive_action
+    - webform_delete_action
+  webform_submission_bulk_form: true
+  webform_submission_bulk_form_actions:
+    - webform_submission_make_sticky_action
+    - webform_submission_make_unsticky_action
+    - webform_submission_make_lock_action
+    - webform_submission_make_unlock_action
+    - webform_submission_delete_action
 assets:
   css: ''
   javascript: ''
@@ -182,7 +197,9 @@ ui:
   dialog_disabled: false
   offcanvas_disabled: false
   promotions_disabled: false
+  support_disabled: false
   description_help: true
+  toolbar_item: false
 libraries:
   excluded_libraries:
     - choices
@@ -190,6 +207,7 @@ libraries:
 requirements:
   cdn: true
   bootstrap: true
+  clientside_validation: true
   spam: true
 langcode: en
 third_party_settings:
