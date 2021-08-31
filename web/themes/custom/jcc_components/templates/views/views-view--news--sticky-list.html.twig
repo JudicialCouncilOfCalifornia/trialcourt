@@ -34,11 +34,16 @@
 {% set items = [] %}
 {% for k, row in rows.0['#rows'] if k|first != "#" %}
   {% if row['#node'] %}
+    {% set body %}
+      {{ row['#node'].body.summary }}
+      <div class="jcc-metadata">{{ row['#node'].field_news_type.0.entity.name.value }}</div>
+    {% endset %}
+
     {% set items = items|merge([{
       style: 'borderless usa-card--media-left',
-      brow: row['#node'].field_date.0.value|date('M d, Y'),
+      brow: row['#node'].field_date.0.value|date('F d, Y'),
       title: row['#node'].title.value,
-      body: row['#node'].body.summary,
+      body: body,
       media: {
         src: row['#node'].field_media.0.entity.name.value,
       },

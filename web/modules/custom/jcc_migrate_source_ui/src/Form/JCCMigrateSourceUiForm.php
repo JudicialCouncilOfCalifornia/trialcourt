@@ -233,6 +233,7 @@ class JCCMigrateSourceUiForm extends FormBase {
       ],
       '#prefix' => '<div id="migrate-source-url">',
       '#suffix' => '</div>',
+      '#maxlength' => 255,
     ];
     $form['run_migration'] = [
       '#type' => 'checkbox',
@@ -342,7 +343,10 @@ class JCCMigrateSourceUiForm extends FormBase {
 
     // Allows user to run migration from this page if desired.
     if ($form_state->getValue('run_migration')) {
-      $this->logger->log('notice', 'Run migration %id, TYPE: %type', ['%id' => $migration_id, '%type' => $type]);
+      $this->logger->log('notice', 'Run migration %id, TYPE: %type', [
+        '%id' => $migration_id,
+        '%type' => $type,
+      ]);
 
       if (!$this->checkDependencies($migration_id)) {
         return;
@@ -353,7 +357,9 @@ class JCCMigrateSourceUiForm extends FormBase {
       $status = $migration->getStatus();
       if ($status !== MigrationInterface::STATUS_IDLE) {
         $migration->setStatus(MigrationInterface::STATUS_IDLE);
-        $this->messenger()->addWarning($this->t('Migration @id reset to Idle', ['@id' => $migration_id]));
+        $this->messenger()->addWarning($this->t('Migration @id reset to Idle', [
+          '@id' => $migration_id,
+        ]));
       }
       $options = [
         'file_path' => $form_state->getValue('file_path'),
@@ -379,12 +385,18 @@ class JCCMigrateSourceUiForm extends FormBase {
     $depends_on = implode(', ', $dependencies['required']);
     foreach ($dependencies['required'] as $id) {
       if (!$this->getMigrationSource($id)) {
-        $this->messenger()->addError($this->t('@migration_id depends on: @ids', ['@migration_id' => $migration_id, '@ids' => $depends_on]));
+        $this->messenger()->addError($this->t('@migration_id depends on: @ids', [
+          '@migration_id' => $migration_id,
+          '@ids' => $depends_on,
+        ]));
         return FALSE;
       }
     }
     if ($depends_on) {
-      $this->messenger()->addMessage($this->t('@migration_id depends on: @ids', ['@migration_id' => $migration_id, '@ids' => $depends_on]));
+      $this->messenger()->addMessage($this->t('@migration_id depends on: @ids', [
+        '@migration_id' => $migration_id,
+        '@ids' => $depends_on,
+      ]));
     }
 
     return TRUE;
@@ -490,7 +502,10 @@ class JCCMigrateSourceUiForm extends FormBase {
     $this->state->set('jcc_migrate_sources', $sources);
     $this->cacheDiscoveryMigration->invalidateAll();
     $this->messenger->addStatus($this->t('Migration source deleted for %s.', ['%s' => $migration_id]));
-    $this->logger->log('notice', 'Delete migration source %id, TYPE: %type', ['%id' => $migration_id, '%type' => $type]);
+    $this->logger->log('notice', 'Delete migration source %id, TYPE: %type', [
+      '%id' => $migration_id,
+      '%type' => $type,
+    ]);
   }
 
   /**

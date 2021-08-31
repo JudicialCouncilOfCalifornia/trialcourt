@@ -39,14 +39,13 @@
  */
 #}
 
-{% include "@molecules/body/body.twig" with {
-  body: {
-    alt_background: parent_type == 'landing_page',
-    main: {
+{% include "@molecules/section/section.twig" with {
+  section: {
+    heading: {
       title: content.field_heading.0|render,
       lead: content.field_lead|render,
-      text: content.field_content_stream,
+      width: "partial",
     },
-    classes: []
+    content: content.field_content_stream,
   }
 } %}

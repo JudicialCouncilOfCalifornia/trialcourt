@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.landing_page.field_components
+    - field.field.node.landing_page.field_components_aside
     - field.field.node.landing_page.field_masthead_color
     - field.field.node.landing_page.field_media
     - node.type.landing_page
@@ -20,6 +21,15 @@ content:
   field_components:
     type: entity_reference_revisions_entity_view
     weight: 0
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_components_aside:
+    type: entity_reference_revisions_entity_view
+    weight: 1
     label: hidden
     settings:
       view_mode: default

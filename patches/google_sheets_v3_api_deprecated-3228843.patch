@@ -1,0 +1,50 @@
+diff --git a/src/Plugin/migrate_plus/data_parser/GoogleSheets.php b/src/Plugin/migrate_plus/data_parser/GoogleSheets.php
+index c3ca84a..f6a4699 100644
+--- a/src/Plugin/migrate_plus/data_parser/GoogleSheets.php
++++ b/src/Plugin/migrate_plus/data_parser/GoogleSheets.php
+@@ -17,6 +17,8 @@ use GuzzleHttp\Exception\RequestException;
+  */
+ class GoogleSheets extends Json implements ContainerFactoryPluginInterface {
+
++  protected $columns = [];
++
+   /**
+    * {@inheritdoc}
+    */
+@@ -37,8 +39,15 @@ class GoogleSheets extends Json implements ContainerFactoryPluginInterface {
+       $array = json_decode($response, TRUE);
+
+       // For Google Sheets, the actual row data lives under feed->entry.
+-      if (isset($array['feed']) && isset($array['feed']['entry'])) {
+-        $array = $array['feed']['entry'];
++      if (isset($array['values'])) {
++        $columns = array_shift($array['values']);
++        $data = [];
++        foreach ($array['values'] as $key => $entry) {
++          foreach ($columns as $index => $column) {
++            $data[$key][$column] = $entry[$index] ?? NULL;
++          }
++        }
++        $array = $data;
+       }
+       else {
+         $array = [];
+@@ -51,18 +60,4 @@ class GoogleSheets extends Json implements ContainerFactoryPluginInterface {
+     }
+   }
+
+-  /**
+-   * {@inheritdoc}
+-   */
+-  protected function fetchNextRow() {
+-    $current = $this->iterator->current();
+-    if ($current) {
+-      foreach ($this->fieldSelectors() as $field_name => $selector) {
+-        // Actual values are stored in gsx$<field>['$t'].
+-        $this->currentItem[$field_name] = $current['gsx$' . $selector]['$t'];
+-      }
+-      $this->iterator->next();
+-    }
+-  }
+-
+ }

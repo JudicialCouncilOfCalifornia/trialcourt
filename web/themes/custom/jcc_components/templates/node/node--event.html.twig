@@ -117,7 +117,7 @@
       {% if content.field_date_range %}
         {% set date_start = node.field_date_range.value %}
         {% set date_end = node.field_date_range.end_value %}
-        {{ date_start|date(format="g:i a") }} to {{ date_end|date(format="g:i a") }}<br>
+        {{ date_start|date(format="g:ia") }} - {{ date_end|date(format="g:ia") }}<br>
         {% if date_end|date("Y-m-d") > date_start|date("Y-m-d") %}
           {{ date_start|date(format='l F j, Y') }}
           to {{ date_end|date(format='l F j, Y') }}

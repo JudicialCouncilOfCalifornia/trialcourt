@@ -40,7 +40,9 @@ function jcc_newsroom_preprocess_views_view_row_rss(&$variables) {
       // "Sub-type" tag.
       if (isset($tid)) {
         $term = Term::load($tid);
-        $variables['type'] = $term->getName();
+        if (isset($term)) {
+          $variables['type'] = $term->getName();
+        }
       }
       // Author, not page creator, when applicable such as news contact.
       if (isset($node->field_contact) && !empty($node->get('field_contact')->target_id)) {
@@ -48,7 +50,10 @@ function jcc_newsroom_preprocess_views_view_row_rss(&$variables) {
         $variables['author'] = Node::load($author_id);
       }
       // Tagline.
-      $variables['tagline'] = $node->get('field_tagline')->value;
+      if ($node->hasField('field_tagline')) {
+        $variables['tagline'] = $node->get('field_tagline')->value;
+      }
+
       // Date range when applicable such an event.
       if (isset($node->field_date_range) && !empty($node->get('field_date_range'))) {
         $variables['startDate'] = $node->get('field_date_range')->value;
