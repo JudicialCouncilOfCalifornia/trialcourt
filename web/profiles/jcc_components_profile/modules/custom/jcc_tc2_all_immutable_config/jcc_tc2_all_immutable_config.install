@@ -266,3 +266,12 @@ function jcc_tc2_all_immutable_config_update_8015() {
   $config->set('ignored_config_entities', $ignored);
   $config->save(TRUE);
 }
+
+/**
+ * Install 'webform_translation_permissions'.
+ */
+function jcc_tc2_all_immutable_config_update_8016() {
+  $modules = ['webform_translation_permissions'];
+
+  \Drupal::service('module_installer')->install($modules);
+}
