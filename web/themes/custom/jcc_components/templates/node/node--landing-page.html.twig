@@ -89,6 +89,8 @@
 
 <article{{ attributes }}>
   {% if components_aside|render|striptags|trim %}
+    {% set width_main = 60 %}
+    {% set width_aside = 40 %}
     {% include "@molecules/hero/hero.twig" with {
       hero: {
         layout: 'full-main',
@@ -102,16 +104,25 @@
       }
     } %}
 
-    {% include "@molecules/body/body.twig" with {
-      body: {
-        main: {
-          text: components,
-        },
-        aside: {
-          text: components_aside,
+    {% block components_section %}
+      {% include '@molecules/section/section.twig' with {
+        section: {
+          background: 'default',
+          spacing: 'none',
+          container: 'container',
+          sub_sections: [
+            {
+              content: components,
+              width: width_main,
+            },
+            {
+              content: components_aside,
+              width: width_aside,
+            }
+          ]
         }
-      }
-    } %}
+      } %}
+    {% endblock %}
   {% else %}
     {{ components }}
   {% endif %}
