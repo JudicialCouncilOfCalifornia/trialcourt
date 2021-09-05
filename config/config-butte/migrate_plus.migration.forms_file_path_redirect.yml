@@ -50,6 +50,9 @@ process:
       plugin: callback
       callable: urldecode
     -
+      plugin: filename_from_query
+      url: url
+    -
       plugin: skip_on_empty
       method: process
       message: 'Cannot import empty image filename.'
@@ -66,7 +69,10 @@ process:
     -
       plugin: substr
       start: 1
-  redirect_source/query: {  }
+  redirect_source/query:
+    -
+      plugin: query_from_url
+      source: url
   redirect_redirect/uri:
     plugin: concat
     source:

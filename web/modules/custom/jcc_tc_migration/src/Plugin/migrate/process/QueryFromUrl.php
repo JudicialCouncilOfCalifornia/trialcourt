@@ -7,9 +7,9 @@ use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
 
 /**
- * Provides a path_from_url plugin.
+ * Provides a query_from_url plugin.
  *
- * Returns the path portion of a url.
+ * Returns the query portion of a url as an array.
  *
  * Usage:
  *
@@ -21,23 +21,18 @@ use Drupal\migrate\Row;
  * @endcode
  *
  * @MigrateProcessPlugin(
- *   id = "path_from_url"
+ *   id = "query_from_url"
  * )
  */
-class PathFromUrl extends ProcessPluginBase {
+class QueryFromUrl extends ProcessPluginBase {
 
   /**
    * {@inheritdoc}
    */
   public function transform($value, MigrateExecutableInterface $migrateExecutable, Row $row, $destinationProperty) {
+    parse_str(parse_url($value, PHP_URL_QUERY), $query);
 
-    $path = parse_url($value, PHP_URL_PATH);
-
-    // Remove trailing slash.
-    // @see https://www.drupal.org/project/redirect/issues/2932615
-    $path = rtrim($path, '/');
-
-    return $path;
+    return $query;
   }
 
 }
