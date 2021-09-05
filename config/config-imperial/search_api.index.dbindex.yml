@@ -1,0 +1,409 @@
+uuid: 0419ecbb-8d0c-4275-ba7f-bfa454229758
+langcode: en
+status: true
+dependencies:
+  module:
+    - search_api_solr
+    - paragraphs
+    - media
+    - node
+    - search_api
+    - search_api_attachments
+  config:
+    - field.storage.node.field_components
+    - field.storage.paragraph.field_aside
+    - field.storage.paragraph.field_brow
+    - field.storage.paragraph.field_components
+    - field.storage.paragraph.field_heading
+    - field.storage.paragraph.field_subheading
+    - field.storage.node.field_media
+    - field.storage.node.body
+    - field.storage.paragraph.field_lead
+    - field.storage.paragraph.field_text
+    - search_api.server.database
+third_party_settings:
+  search_api_solr:
+    finalize: false
+    commit_before_finalize: false
+    commit_after_finalize: false
+    multilingual:
+      limit_to_content_language: false
+      include_language_independent: true
+    highlighter:
+      maxAnalyzedChars: 51200
+      fragmenter: gap
+      regex:
+        slop: 0.5
+        pattern: blank
+        maxAnalyzedChars: 10000
+      usePhraseHighlighter: true
+      highlightMultiTerm: true
+      preserveMulti: false
+      highlight:
+        mergeContiguous: false
+        requireFieldMatch: false
+        snippets: 3
+        fragsize: 0
+    mlt:
+      mintf: 1
+      mindf: 1
+      maxdf: 0
+      maxdfpct: 0
+      minwl: 0
+      maxwl: 0
+      maxqt: 100
+      maxntp: 2000
+      boost: false
+      interestingTerms: none
+    advanced:
+      index_prefix: ''
+      collection: ''
+      timezone: ''
+_core:
+  default_config_hash: i4WP-g8cI8Ln8bvWUs-Rq1xDkKomK3XiSVRgh-uvQAg
+id: dbindex
+name: 'DB Index'
+description: ''
+read_only: false
+field_settings:
+  field_aside:
+    label: 'Components » Paragraph » Aside'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_aside'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_aside
+      module:
+        - paragraphs
+  field_brow:
+    label: 'Components » Paragraph » Brow'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_brow'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_brow
+      module:
+        - paragraphs
+  field_brow_1:
+    label: 'Components » Paragraph » Components » Paragraph » Brow'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_components:entity:field_brow'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_brow
+        - field.storage.paragraph.field_components
+      module:
+        - paragraphs
+  field_heading:
+    label: 'Components » Paragraph » Components » Paragraph » Heading'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_components:entity:field_heading'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_components
+        - field.storage.paragraph.field_heading
+      module:
+        - paragraphs
+  field_heading_1:
+    label: 'Components » Paragraph » Heading'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_heading'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_heading
+      module:
+        - paragraphs
+  field_subheading:
+    label: 'Components » Paragraph » Components » Paragraph » Subheading'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_components:entity:field_subheading'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_components
+        - field.storage.paragraph.field_subheading
+      module:
+        - paragraphs
+  name:
+    label: 'Media: Files » Media » Name'
+    datasource_id: 'entity:node'
+    property_path: 'field_media:entity:name'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_media
+      module:
+        - media
+  node_grants:
+    label: 'Node access information'
+    property_path: search_api_node_grants
+    type: string
+    indexed_locked: true
+    type_locked: true
+    hidden: true
+  processed:
+    label: 'Components » Paragraph » Components » Paragraph » Aside » Processed text'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_components:entity:field_aside:processed'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_aside
+        - field.storage.paragraph.field_components
+      module:
+        - paragraphs
+  processed_1:
+    label: 'Body » Processed text'
+    datasource_id: 'entity:node'
+    property_path: 'body:processed'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.body
+  processed_6:
+    label: 'Components » Paragraph » Components » Paragraph » Lead » Processed text'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_components:entity:field_lead:processed'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_components
+        - field.storage.paragraph.field_lead
+      module:
+        - paragraphs
+  processed_7:
+    label: 'Components » Paragraph » Components » Paragraph » Text » Processed text'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_components:entity:field_text:processed'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_components
+        - field.storage.paragraph.field_text
+      module:
+        - paragraphs
+  rendered_item:
+    label: 'Rendered HTML output'
+    property_path: rendered_item
+    type: text
+    configuration:
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:node':
+          alert: default
+          document: default
+          landing_page: default
+          news: default
+          subpage: default
+  status:
+    label: status
+    datasource_id: 'entity:node'
+    property_path: status
+    type: boolean
+    indexed_locked: true
+    type_locked: true
+    dependencies:
+      module:
+        - node
+  summary_processed:
+    label: 'Body » Processed summary'
+    datasource_id: 'entity:node'
+    property_path: 'body:summary_processed'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.body
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: text
+    dependencies:
+      module:
+        - node
+  uid:
+    label: uid
+    datasource_id: 'entity:node'
+    property_path: uid
+    type: integer
+    indexed_locked: true
+    type_locked: true
+    dependencies:
+      module:
+        - node
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: false
+      selected:
+        - alert
+        - document
+        - landing_page
+        - news
+        - subpage
+    languages:
+      default: true
+      selected: {  }
+processor_settings:
+  add_url: {  }
+  aggregated_field: {  }
+  content_access:
+    weights:
+      preprocess_query: -30
+  double_quote_workaround:
+    all_fields: false
+    fields:
+      - rendered_item
+      - title
+    replacement: '|9999999998|'
+    weights:
+      postprocess_query: 0
+      preprocess_index: -47
+      preprocess_query: -15
+  entity_status: {  }
+  file_attachments:
+    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
+    number_indexed: 0
+    number_first_bytes: '1 MB'
+    max_filesize: '0'
+    excluded_private: 1
+    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
+  highlight:
+    highlight: always
+    highlight_partial: true
+    excerpt: true
+    excerpt_length: 256
+    exclude_fields:
+      - rendered_item
+    prefix: '<strong>'
+    suffix: '</strong>'
+    weights:
+      postprocess_query: 0
+  html_filter:
+    all_fields: true
+    fields:
+      - field_aside
+      - field_brow
+      - field_brow_1
+      - field_heading
+      - field_heading_1
+      - field_subheading
+      - name
+      - processed
+      - processed_1
+      - processed_6
+      - processed_7
+      - rendered_item
+      - summary_processed
+      - title
+    title: true
+    alt: true
+    tags:
+      b: 2
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+    weights:
+      preprocess_index: -15
+      preprocess_query: -15
+  ignorecase:
+    all_fields: true
+    fields:
+      - field_aside
+      - field_brow
+      - field_brow_1
+      - field_heading
+      - field_heading_1
+      - field_subheading
+      - name
+      - processed
+      - processed_1
+      - processed_6
+      - processed_7
+      - rendered_item
+      - summary_processed
+      - title
+    weights:
+      preprocess_index: -20
+      preprocess_query: -20
+  language_with_fallback: {  }
+  rendered_item: {  }
+  solr_date_range:
+    weights:
+      preprocess_index: 0
+  stemmer:
+    all_fields: true
+    fields:
+      - field_aside
+      - field_brow
+      - field_brow_1
+      - field_heading
+      - field_heading_1
+      - field_subheading
+      - name
+      - processed
+      - processed_1
+      - processed_6
+      - processed_7
+      - rendered_item
+      - summary_processed
+      - title
+    exceptions:
+      mexican: mexic
+      texan: texa
+    weights:
+      preprocess_index: -42
+      preprocess_query: 0
+  tokenizer:
+    all_fields: false
+    fields:
+      - rendered_item
+    ignored: ._-
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
+    weights:
+      preprocess_index: -44
+      preprocess_query: -6
+  transliteration:
+    all_fields: false
+    fields:
+      - rendered_item
+      - title
+    weights:
+      preprocess_index: -49
+      preprocess_query: -20
+  type_boost:
+    boosts:
+      'entity:node':
+        datasource_boost: !!float 1
+        bundle_boosts:
+          document: !!float 2
+          landing_page: !!float 2
+          news: !!float 3
+          subpage: !!float 2
+    weights:
+      preprocess_index: -50
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  index_directly: true
+  cron_limit: 50
+server: database
