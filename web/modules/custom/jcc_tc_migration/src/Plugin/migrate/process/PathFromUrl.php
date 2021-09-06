@@ -23,16 +23,19 @@ use Drupal\migrate\Row;
  * @MigrateProcessPlugin(
  *   id = "path_from_url"
  * )
- *
  */
 class PathFromUrl extends ProcessPluginBase {
 
   /**
-  * {@inheritdoc}
-  */
+   * {@inheritdoc}
+   */
   public function transform($value, MigrateExecutableInterface $migrateExecutable, Row $row, $destinationProperty) {
 
     $path = parse_url($value, PHP_URL_PATH);
+
+    // Remove trailing slash.
+    // @see https://www.drupal.org/project/redirect/issues/2932615
+    $path = rtrim($path, '/');
 
     return $path;
   }
