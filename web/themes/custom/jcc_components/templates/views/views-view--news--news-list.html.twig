@@ -39,16 +39,19 @@
         text: row['#node'].title.value,
         url: row['#node'].path.value.0.alias,
       },
+      summary: row['#node'].body.summary,
       date: row['#node'].field_date.0.value|date('F d, Y'),
       type: row['#node'].field_news_type.0.entity.name.value
     }]) %}
   {% endif %}
 {% endfor %}
 
-{% include "@templates/news/news-listing.twig" with {
-  news_listing: {
-    items: items,
-    form: exposed,
-    pager: pager,
-  }
-} %}
+{% block views_listing %}
+  {% include "@templates/news/news-listing.twig" with {
+    news_listing: {
+      items: items,
+      form: exposed,
+      pager: pager,
+    }
+  } %}
+{% endblock %}

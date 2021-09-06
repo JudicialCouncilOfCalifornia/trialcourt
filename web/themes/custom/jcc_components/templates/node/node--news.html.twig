@@ -106,19 +106,27 @@
 
     {% set body %}
       {% if content.field_date or content.field_author %}
-        {% if content.field_date or content.field_author %}By {{ content.field_author|render|striptags }}<br>{% endif %}
-        {{ content.field_date|render|striptags }}
+        <div class="jcc-about">
+          {% if content.field_author %}
+            <span>By {{ content.field_author|render|striptags }}</span>
+          {% endif %}
+          {% if content.field_date %}
+            <span>{{ content.field_date|render|striptags }}</span>
+          {% endif %}
+        </div>
       {% endif %}
 
       {{ content.body }}
     {% endset %}
 
-    {% include '@molecules/section/section.twig' with {
-      section: {
-        background: 'default',
-        container: 'container',
-        content: body
-      }
-    } %}
+    {% block node_section__no_components %}
+      {% include '@molecules/section/section.twig' with {
+        section: {
+          background: 'default',
+          container: 'container',
+          content: body
+        }
+      } %}
+    {% endblock %}
   {% endif %}
 </article>

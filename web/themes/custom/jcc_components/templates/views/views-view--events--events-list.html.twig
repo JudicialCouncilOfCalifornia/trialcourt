@@ -40,21 +40,28 @@
       {{ row['#node'].field_date_range.end_value|date(format="g:ia") }}
     {% endset %}
 
+    {% set body %}
+      {{ row['#node'].body.summary }}
+      <div class="jcc-metadata">{{ row['#node'].field_event_type.0.entity.name.value }}</div>
+    {% endset %}
+
     {% set items = items|merge([{
-      title: {
-        text: row['#node'].title.value,
+      brow: date,
+      title: row['#node'].title.value,
+      body: body,
+      link: {
         url: row['#node'].path.value.0.alias,
-      },
-      date: date,
-      type: row['#node'].field_event_type.0.entity.name.value
+      }
     }]) %}
   {% endif %}
 {% endfor %}
 
-{% include "@templates/news/news-listing.twig" with {
-  news_listing: {
-    items: items,
-    form: exposed,
-    pager: pager,
-  }
-} %}
+{% block views_listing %}
+  {% include "@templates/content-stream/content-stream-filtering.twig" with {
+    content_stream_filtering: {
+      items: items,
+      form: exposed,
+      pager: pager,
+    }
+  } %}
+{% endblock %}
