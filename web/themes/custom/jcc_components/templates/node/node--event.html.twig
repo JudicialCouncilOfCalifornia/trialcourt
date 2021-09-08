@@ -94,7 +94,7 @@
     {# Show migrated content in body field if no components added. #}
     {% set download %}
       Add event to your calendar
-      {{ content.links }}
+      <div class="jcc-links jcc-links__buttons">{{ content.links }}</div>
     {% endset %}
 
     {% include "@molecules/hero/hero.twig" with {
@@ -117,24 +117,30 @@
       {% if content.field_date_range %}
         {% set date_start = node.field_date_range.value %}
         {% set date_end = node.field_date_range.end_value %}
-        {{ date_start|date(format="g:ia") }} - {{ date_end|date(format="g:ia") }}<br>
-        {% if date_end|date("Y-m-d") > date_start|date("Y-m-d") %}
-          {{ date_start|date(format='l F j, Y') }}
-          to {{ date_end|date(format='l F j, Y') }}
-        {% else %}
-          {{ date_start|date(format='l F j, Y') }}
-        {% endif %}
+        <div class="jcc-about">
+          <span>{{ date_start|date(format="g:ia") }} - {{ date_end|date(format="g:ia") }}</span>
+          <span>
+            {% if date_end|date("Y-m-d") > date_start|date("Y-m-d") %}
+              {{ date_start|date(format='l F j, Y') }}
+              to {{ date_end|date(format='l F j, Y') }}
+            {% else %}
+              {{ date_start|date(format='l F j, Y') }}
+            {% endif %}
+          </span>
+        </div>
       {% endif %}
 
       {{ content.body }}
     {% endset %}
 
-    {% include '@molecules/section/section.twig' with {
-      section: {
-        background: 'default',
-        container: 'container',
-        content: body
-      }
-    } %}
+    {% block node_section__no_components %}
+      {% include '@molecules/section/section.twig' with {
+        section: {
+          background: 'default',
+          container: 'container',
+          content: body
+        }
+      } %}
+    {% endblock %}
   {% endif %}
 </article>
