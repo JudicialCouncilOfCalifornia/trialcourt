@@ -137,10 +137,10 @@
         {{ content.body.0 }}
       </div>
 
-      {% if content.field_attachments[0] %}
+      {% if content.field_attachments[0] or content.field_remote_attachment[0] %}
         {# Display first document as primary download #}
-        {% set primary_doc = content.field_attachments[0]['#url'] %}
-        <div>
+        {% set primary_doc = content.field_remote_attachment[0]['#url']|default(content.field_attachments[0]['#url']) %}
+        <div class="margin-bottom-3">
           {% include "@atoms/buttons/link-button.twig" with {
             link_button: {
               text: 'View document',
@@ -161,7 +161,10 @@
             }]) %}
           {% endif %}
         {% endfor %}
-        {% set other_docs = other_docs|slice(1) %} {# Skip the primary document #}
+
+        {% if content.field_remote_attachment[0] is empty %}
+          {% set other_docs = other_docs|slice(1) %} {# Skip the primary document #}
+        {% endif %}
         {% if other_docs|length > 0 %}
           {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
             link_list: {

@@ -5,7 +5,6 @@
  * Primary module hooks for jcc_ical module.
  */
 
-use Drupal\Core\Link;
 use Drupal\core\Url;
 use Drupal\node\NodeInterface;
 
@@ -21,7 +20,7 @@ function jcc_ical_node_links_alter(array &$links, NodeInterface $entity, array &
   if (!empty($types[$entity->getType()])) {
     // Generate link for iCal route.
     $url = Url::fromRoute('jcc_ical.content', ['node' => $entity->id()]);
-    $class = array('class' => 'usa-button usa-button--primary');
+    $class = ['class' => 'jcc-button--primary usa-button usa-button--primary'];
 
     $links['node']['#links']['ical'] = [
       'title' => t('Download Event'),

@@ -1,0 +1,21 @@
+{% extends 'themes/custom/jcc_components/templates/node/node--landing-page.html.twig' %}
+
+{% block components_section %}
+  {% include '@molecules/section/section.twig' with {
+    section: {
+      background: 'alt',
+      spacing: 'none',
+      container: 'container',
+      sub_sections: [
+        {
+          content: components,
+          width: width_main,
+        },
+        {
+          content: components_aside,
+          width: width_aside,
+        }
+      ]
+    }
+  } %}
+{% endblock %}
