@@ -95,15 +95,29 @@
   {% endif %}
 {% endset %}
 
-{% if content.field_attachments[0] %}
+{% if content.field_attachments[0] or content.field_remote_attachment[0] %}
   {% set docs = [] %}
+
+  {% if content.field_remote_attachment[0]['#url'] %}
+    {% set docs = docs|merge([{
+      url_title: "View document",
+      url: content.field_remote_attachment[0]['#url']
+    }]) %}
+  {% endif %}
+
   {# Display documents as downloads #}
   {% for doc in content.field_attachments %}
     {% if doc['#title'] %}
-      {% set doc_title = doc['#title'] %}
+
+      {% if content.field_remote_attachment[0]['#url'] %}
+        {% set doc_title = doc['#title'] %}
+      {% else %}
+        {% set doc_title = "View document" %}
+      {% endif %}
+
       {% set doc_url = doc['#url'] %}
       {% set docs = docs|merge([{
-        url_title: "View document",
+        url_title: doc_title,
         url: doc_url
       }]) %}
     {% endif %}
