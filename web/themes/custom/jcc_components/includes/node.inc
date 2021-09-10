@@ -103,7 +103,15 @@ function jcc_components_node_subpage(array &$variables) {
   $tree = \Drupal::menuTree()->transform($tree, $manipulators);
 
   foreach ($tree as $content) {
-    // We only want links for the secondary active trail.
+    // If we want all parent pages.
+    $variables['full_menu']['items'][] = [
+      'title' => $content->link->getTitle(),
+      'url' => $content->link->getUrlObject(),
+      'in_active_trail' => $content->inActiveTrail,
+      'has_children' => $content->hasChildren,
+    ];
+
+    // If we want links for the secondary active trail.
     if ($content->inActiveTrail) {
       foreach ($content->subtree as $sub_content) {
         // If we're in the third level, add the parent for link to second level.
