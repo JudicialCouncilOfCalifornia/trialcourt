@@ -275,3 +275,11 @@ function jcc_tc2_all_immutable_config_update_8016() {
 
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * Copy media module icons into file directories.
+ */
+function jcc_tc2_all_immutable_config_update_8017() {
+  module_load_include('install', 'media');
+  media_install();
+}
