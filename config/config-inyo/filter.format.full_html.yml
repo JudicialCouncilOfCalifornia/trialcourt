@@ -5,12 +5,11 @@ dependencies:
   module:
     - glossify_taxonomy
     - linkit
-    - media
 _core:
   default_config_hash: ZvMRFdUPIW3xdMucL1nUpcTzRx1PBH2txWaEoZV5czE
 name: 'Full HTML'
 format: full_html
-weight: 0
+weight: -5
 filters:
   glossify_taxonomy:
     id: glossify_taxonomy
@@ -23,15 +22,6 @@ filters:
       glossify_taxonomy_type: tooltips
       glossify_taxonomy_vocabs: ''
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
-  media_embed:
-    id: media_embed
-    provider: media
-    status: false
-    weight: 100
-    settings:
-      default_view_mode: default
-      allowed_media_types: {  }
-      allowed_view_modes: {  }
   filter_html:
     id: filter_html
     provider: filter
