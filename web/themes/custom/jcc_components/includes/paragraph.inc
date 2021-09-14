@@ -168,6 +168,7 @@ function jcc_components_paragraph_views_reference_news_sticky_list(array &$varia
   $path = \Drupal::service('path.validator')->isValid('/news') ? '/news' : $view_url;
 
   $variables['news_url'] = $path;
+  $variables['#cache']['tags'][] = 'node_list:news';
 }
 
 /**
@@ -202,6 +203,7 @@ function jcc_components_paragraph_views_reference_location_map_list(array &$vari
       ];
     }
   }
+  $variables['#cache']['tags'][] = 'node_list:location';
 }
 
 /**
