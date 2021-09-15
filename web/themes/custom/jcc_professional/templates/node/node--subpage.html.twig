@@ -1,0 +1,80 @@
+{% set left_nav %}
+  {% set links = [] %}
+  {% set sub_links = [] %}
+  {% set sublink_is_current = 0 %}
+
+  {% for item in tertiary_menu.items %}
+    {% if item.in_active_trail %}
+      {% set sublink_is_current = sublink_is_current + 1 %}
+    {% endif %}
+
+    {% set link = {
+      text: item.title,
+      url: path(item.url.routeName, {'node': item.url.routeParameters.node}),
+      is_current: item.in_active_trail
+    } %}
+    {% set sub_links = sub_links|merge([link]) %}
+  {% endfor %}
+
+  {% for item in full_menu.items %}
+    {% set link = {
+      text: item.title,
+      url: path(item.url.routeName, {'node': item.url.routeParameters.node}),
+      is_current: item.has_children and (sublink_is_current > 0) ? false : item.in_active_trail,
+      below: item.has_children ? sub_links,
+    } %}
+    {% set links = links|merge([link]) %}
+  {% endfor %}
+
+  {% include "@molecules/sub-nav/sub-nav.twig" with {
+    sub_nav: {
+      config: 'sidenav',
+      links: links,
+      classes: []
+    }
+  } %}
+{% endset %}
+
+{% set components %}
+  {% for k, component in content.field_components if k|first != "#" %}
+    {{ component }}
+  {% endfor %}
+{% endset %}
+
+<article{{ attributes }}>
+  {# Display breadcrumb #}
+  {{ breadcrumb }}
+
+  {% include "@molecules/hero/hero.twig" with {
+    hero: {
+      layout: 'full-main',
+      background: 'default',
+      main: {
+        title: label,
+        lead: '',
+        brow: ''
+      },
+      aside: {},
+      classes: []
+    }
+  } %}
+
+  {% include '@molecules/section/section.twig' with {
+    section: {
+      background: 'alt',
+      spacing: 'default',
+      layout: 'sidenav',
+      container: 'container',
+      sub_sections: [
+        {
+          content: components,
+          width: 75,
+        },
+        {
+          content: left_nav,
+          width: 25,
+        }
+      ]
+    }
+  } %}
+</article>
