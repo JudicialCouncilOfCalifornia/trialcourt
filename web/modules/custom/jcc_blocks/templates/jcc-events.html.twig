@@ -1,0 +1,44 @@
+{#
+/**
+* @file
+* Default theme implementation to display a block.
+*
+* @see template_preprocess_block()
+*
+* @ingroup themeable
+*/
+#}
+{% set classes = [
+  'clear-both',
+] %}
+
+<div class="grid-container-widescreen padding-y-4">
+  <div class="grid-row grid-gap">
+    <div class="desktop:grid-col">
+      {{ events.first_column|raw }}
+    </div>
+    <div class="desktop:grid-col">
+      {{ events.second_column|raw }}
+    </div>
+    <div class="desktop:grid-col">
+      {{ events.third_column|raw }}
+
+      {% set view = drupal_view_result('events_list', 'block_1')|length %}
+      {% if view > 0 %}
+        <div class="jcc-tiles-list__container padding-top-2">
+
+          <header class="jcc-header-group ">
+            <h2 class="jcc-header-group__title required">Calendar</h2>
+          </header>
+
+          {{ drupal_view('events_list', 'block_1') }}
+
+          <div class="jcc-tiles-list__button">
+            <a class="usa-button usa-button--primary" href="/calendar">Full Calendar</a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
