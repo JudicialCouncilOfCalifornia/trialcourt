@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.event.body
+    - field.field.node.event.feeds_item
     - field.field.node.event.field_date_range
     - field.field.node.event.field_event_moreinfo
     - field.field.node.event.field_recurring_event
@@ -80,3 +81,11 @@ mappings:
     settings:
       language: null
       format: plain_text
+  -
+    target: feeds_item
+    map:
+      url: ''
+      guid: uid
+    unique:
+      guid: '1'
+    settings: {  }
