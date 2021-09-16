@@ -32,6 +32,10 @@ source:
       name: status
       selector: status
       label: Status
+    -
+      name: pass
+      selector: pass
+      label: Password
 process:
   name: email
   mail: email
@@ -40,8 +44,13 @@ process:
     delimiter: ','
     source: roles
   status: status
+  pass:
+    plugin: callback
+    callable: md5
+    source: pass
 destination:
   plugin: 'entity:user'
+  md5_passwords: true
 migration_dependencies:
   required: {  }
   optional: {  }
