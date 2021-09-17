@@ -144,12 +144,12 @@
 
     {% set related %} {# Always set due to location being required #}
       {% if content.field_event_moreinfo[0] %}
-        <div class="body">
+        <div class="body padding-y-3">
           {{ content.field_event_moreinfo.0 }}
         </div>
       {% endif %}
 
-      {% if content.field_location[0] %}
+      {% if content.field_location[0]['locality']['#value'] %}
         {% include '@jcc_base/_includes/location.html.twig' %}
       {% endif %}
     {% endset %}
