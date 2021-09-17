@@ -96,13 +96,13 @@ class JccIcalController extends ControllerBase {
     // Or have the module add the fields to configured content types.
     $address = isset($node->field_location) && !empty($node->field_location->first()) ? $node->field_location->first()->getValue() : [];
     // Concatenate address elements.
-    $location = !empty($address)
+    $location = !empty($address['locality'])
       ? $address['address_line1'] . ' '
       . $address['address_line2'] . ' '
       . $address['locality'] . ', '
       . $address['administrative_area'] . ', '
       . $address['country_code'] . ' '
-      : '';
+      : $node->field_event_moreinfo->value;
 
     $daterange = $node->field_date_range->first()->getValue();
     $dtstart = \DateTime::createFromFormat('Y-m-d\TH:i:s', $daterange['value']);
