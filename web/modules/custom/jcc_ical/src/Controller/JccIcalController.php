@@ -8,6 +8,7 @@ use Drupal\pathauto\AliasCleaner;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Drupal\Core\Mail\MailFormatHelper;
 
 /**
  * Returns responses for jcc_ical routes.
@@ -43,6 +44,22 @@ class JccIcalController extends ControllerBase {
    */
   public function __construct(AliasCleaner $alias_cleaner) {
     $this->aliasCleaner = $alias_cleaner;
+  }
+
+  /**
+   * Format content.
+   */
+  public function formatContent($content) {
+    $temp = str_replace(["\r\n"], "\n", $content);
+    $lines = explode("\n", $temp);
+    $new_lines = [];
+    foreach ($lines as $line) {
+      if (!empty($line)) {
+        $new_lines[] = trim($line);
+      }
+    }
+    $desc = implode("\r\n ", $new_lines);
+    return $desc;
   }
 
   /**
@@ -88,8 +105,8 @@ class JccIcalController extends ControllerBase {
       : '';
 
     $daterange = $node->field_date_range->first()->getValue();
-    $dtstart = \DateTime::createFromFormat ( 'Y-m-d\TH:i:s', $daterange['value']);
-    $dtend = \DateTime::createFromFormat ( 'Y-m-d\TH:i:s', $daterange['end_value']);
+    $dtstart = \DateTime::createFromFormat('Y-m-d\TH:i:s', $daterange['value']);
+    $dtend = \DateTime::createFromFormat('Y-m-d\TH:i:s', $daterange['end_value']);
     $title = $node->getTitle();
     // Set the file name.
     $this->name = $this->aliasCleaner->cleanString($title);
@@ -99,10 +116,12 @@ VERSION:2.0
 PRODID:-//JudicialCouncil//NONSGML v1.0//EN
 BEGIN:VEVENT
 UID:event" . $node->id() . "@trial.court
-DTSTAMP:" . gmdate('Ymd').'T'. gmdate('His') . "Z
+DTSTAMP:" . gmdate('Ymd') . 'T' . gmdate('His') . "Z
 DTSTART:" . $dtstart->format('Ymd\THis\Z') . "
 DTEND:" . $dtend->format('Ymd\THis\Z') . "
 SUMMARY:" . $title . "
+DESCRIPTION:" . $this->formatContent(MailFormatHelper::htmlToText($node->body->value)) . "
+X-ALT-DESC;FMTTYPE=text/html:" . $this->formatContent($node->body->value) . "
 LOCATION:" . $location . "
 END:VEVENT
 END:VCALENDAR";
