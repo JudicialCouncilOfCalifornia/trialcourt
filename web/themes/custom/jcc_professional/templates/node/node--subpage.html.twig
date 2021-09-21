@@ -4,10 +4,9 @@
 
     {% if tertiary_menu.items %}
       {% set sub_links = [] %}
+      {% set sublink_is_current = 0 %}
 
       {% for item in tertiary_menu.items %}
-        {% set sublink_is_current = 0 %}
-
         {% if item.in_active_trail %}
           {% set sublink_is_current = sublink_is_current + 1 %}
         {% endif %}
