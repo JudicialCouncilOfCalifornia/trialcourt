@@ -1,39 +1,43 @@
-{% set left_nav %}
-  {% set links = [] %}
-  {% set sub_links = [] %}
-  {% set sublink_is_current = 0 %}
+{% if full_menu.items and (full_menu.items|length > 1 or tertiary_menu.items) %}
+  {% set left_nav %}
+    {% set links = [] %}
 
-  {% for item in tertiary_menu.items %}
-    {% if item.in_active_trail %}
-      {% set sublink_is_current = sublink_is_current + 1 %}
+    {% if tertiary_menu.items %}
+      {% set sub_links = [] %}
+      {% set sublink_is_current = 0 %}
+
+      {% for item in tertiary_menu.items %}
+        {% if item.in_active_trail %}
+          {% set sublink_is_current = sublink_is_current + 1 %}
+        {% endif %}
+        {% set link = {
+          text: item.title,
+          url: path(item.url.routeName, {'node': item.url.routeParameters.node}),
+          is_current: item.in_active_trail
+        } %}
+        {% set sub_links = sub_links|merge([link]) %}
+      {% endfor %}
     {% endif %}
 
-    {% set link = {
-      text: item.title,
-      url: path(item.url.routeName, {'node': item.url.routeParameters.node}),
-      is_current: item.in_active_trail
-    } %}
-    {% set sub_links = sub_links|merge([link]) %}
-  {% endfor %}
+    {% for item in full_menu.items %}
+      {% set link = {
+        text: item.title,
+        url: path(item.url.routeName, {'node': item.url.routeParameters.node}),
+        is_current: item.has_children and (sublink_is_current == 1) ? false : item.in_active_trail,
+        below: item.has_children and item.in_active_trail ? sub_links,
+      } %}
+      {% set links = links|merge([link]) %}
+    {% endfor %}
 
-  {% for item in full_menu.items %}
-    {% set link = {
-      text: item.title,
-      url: path(item.url.routeName, {'node': item.url.routeParameters.node}),
-      is_current: item.has_children and (sublink_is_current > 0) ? false : item.in_active_trail,
-      below: item.has_children ? sub_links,
+    {% include "@molecules/sub-nav/sub-nav.twig" with {
+      sub_nav: {
+        config: 'sidenav',
+        links: links,
+        classes: []
+      }
     } %}
-    {% set links = links|merge([link]) %}
-  {% endfor %}
-
-  {% include "@molecules/sub-nav/sub-nav.twig" with {
-    sub_nav: {
-      config: 'sidenav',
-      links: links,
-      classes: []
-    }
-  } %}
-{% endset %}
+  {% endset %}
+{% endif %}
 
 {% set components %}
   {% for k, component in content.field_components if k|first != "#" %}
@@ -63,7 +67,7 @@
     section: {
       background: 'alt',
       spacing: 'default',
-      layout: 'sidenav',
+      layout: left_nav ? 'sidenav' : '',
       container: 'container',
       sub_sections: [
         {
