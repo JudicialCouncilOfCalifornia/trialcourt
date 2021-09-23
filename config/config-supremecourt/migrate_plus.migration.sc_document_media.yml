@@ -53,10 +53,15 @@ process:
       method: process
       message: 'Cannot import empty filename.'
   name:
-    plugin: null_coalesce
-    source:
-      - '@pseudo_encoded_title'
-      - '@pseudo_destination_filename'
+    -
+      plugin: null_coalesce
+      source:
+        - '@pseudo_encoded_title'
+        - '@pseudo_destination_filename'
+    -
+      plugin: substr
+      start: 0
+      length: 250
   field_media_file/target_id:
     -
       plugin: migration_lookup
