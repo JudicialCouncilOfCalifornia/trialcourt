@@ -78,6 +78,52 @@ function jcc_custom_entity_build_defaults_alter(&$build, EntityInterface $entity
 }
 
 /**
+ * Node: Landing preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ */
+function jcc_components_node_landing_page(array &$variables, NodeInterface $node) {
+  // If home page check.
+  $variables['is_front'] = \Drupal::service('path.matcher')->isFrontPage();
+
+  // Breadcrumbs.
+  $variables['breadcrumb'] = \Drupal::service('breadcrumb')
+    ->build(\Drupal::routeMatch())
+    ->toRenderable();
+
+  // Populate menu if items are defined.
+  $menu_name = 'main';
+  $parameters = new MenuTreeParameters();
+  $parameters->onlyEnabledLinks();
+  // We only want items at second level.
+  $parameters->setMinDepth(1);
+  $parameters->setMaxDepth(2);
+  $menu_active_trail = \Drupal::service('menu.active_trail')
+    ->getActiveTrailIds($menu_name);
+  $parameters->setActiveTrail($menu_active_trail);
+  // Load the tree.
+  $tree = \Drupal::menuTree()->load($menu_name, $parameters);
+  $manipulators = [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ];
+  $tree = \Drupal::menuTree()->transform($tree, $manipulators);
+
+  foreach ($tree as $content) {
+    if ($content->inActiveTrail) {
+      foreach ($content->subtree as $sub_content) {
+        $variables['secondary_menu']['items'][] = [
+          'title' => $sub_content->link->getTitle(),
+          'url' => $sub_content->link->getUrlObject(),
+          'in_active_trail' => $sub_content->inActiveTrail,
+        ];
+      }
+    }
+  }
+}
+
+/**
  * Node: Subpage preprocess.
  *
  * @param array $variables
@@ -115,7 +161,7 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
     $section = $menu_link_manager->createInstance($content->link->getParent())->getUrlObject()->toString();
     $section = trim($section, '/');
     if ($section == $current_section) {
-      $variables['full_menu']['items'][] = [
+      $variables['secondary_menu']['items'][] = [
         'title' => $content->link->getTitle(),
         'url' => $content->link->getUrlObject(),
         'in_active_trail' => $content->inActiveTrail,
