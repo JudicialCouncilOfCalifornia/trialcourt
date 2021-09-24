@@ -8,7 +8,9 @@
     {{ breadcrumb }}
 
     {# Optional columns, either left nav or right column (prioritized) but not both. #}
-    {% if components_aside %}
+    {% if components_aside|render|striptags|trim %}
+      {% set width_main = 60 %}
+      {% set width_aside = 40 %}
       {% set aside = components_aside %}
     {% elseif secondary_menu.items  %}
       {% set width_main = 75 %}
