@@ -120,9 +120,9 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
 
   // Subpage node information.
   $current_path = \Drupal::service('path.current')->getPath();
-  $current_path = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
-  $current_path = explode('/', trim($current_path, '/'));
-  $current_section = $current_path[0];
+  $current_path_alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+  preg_match('/^\/[^\/]*/', $current_path_alias, $parent_path);
+  $current_section = $parent_path[0];
 
   // Populate the menu - second and third levels only.
   $menu_items = jcc_get_menu_items('main', 2, 3);
@@ -130,7 +130,6 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
   foreach ($menu_items as $content) {
     // If we want links for primary active trail/parents of the current section.
     $section = $menu_link_manager->createInstance($content->link->getParent())->getUrlObject()->toString();
-    $section = trim($section, '/');
     if ($section == $current_section) {
       $variables['secondary_menu']['items'][] = [
         'title' => $content->link->getTitle(),
