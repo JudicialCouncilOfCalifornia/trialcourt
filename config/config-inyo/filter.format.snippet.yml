@@ -1,14 +1,20 @@
-uuid: 3b683ae7-2931-47b7-902b-dfb230f08ef3
+uuid: 4d2671df-c826-43a1-85bc-a48ac17b722e
 langcode: en
 status: true
 dependencies:
   module:
     - glossify_taxonomy
     - linkit
-name: Aside
-format: aside
-weight: -7
+name: Snippet
+format: snippet
+weight: -10
 filters:
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: true
+    weight: 0
+    settings: {  }
   filter_html:
     id: filter_html
     provider: filter
@@ -18,6 +24,19 @@ filters:
       allowed_html: '<em> <strong> <ul type> <ol type start> <li> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary jcc-button--cta-link"> <blockquote class="blockquote blockquote--callout">'
       filter_html_help: true
       filter_html_nofollow: false
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
+    provider: filter
+    status: true
+    weight: 10
+    settings: {  }
+  filter_url:
+    id: filter_url
+    provider: filter
+    status: true
+    weight: 0
+    settings:
+      filter_url_length: 72
   glossify_taxonomy:
     id: glossify_taxonomy
     provider: glossify_taxonomy
@@ -36,22 +55,3 @@ filters:
     weight: 0
     settings:
       title: true
-  filter_autop:
-    id: filter_autop
-    provider: filter
-    status: true
-    weight: 0
-    settings: {  }
-  filter_htmlcorrector:
-    id: filter_htmlcorrector
-    provider: filter
-    status: true
-    weight: 10
-    settings: {  }
-  filter_url:
-    id: filter_url
-    provider: filter
-    status: true
-    weight: 0
-    settings:
-      filter_url_length: 72
