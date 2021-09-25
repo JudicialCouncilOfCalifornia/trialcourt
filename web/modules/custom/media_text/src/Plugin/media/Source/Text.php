@@ -11,23 +11,30 @@ use Drupal\media\MediaInterface;
  * @MediaSource(
  *   id = "text",
  *   label = @Translation("Text"),
+ *   description = @Translation("Embed text content"),
  *   allowed_field_types = {"text_long"},
  *   thumbnail_alt_metadata_attribute = "alt",
  *   default_thumbnail_filename = "generic.png",
  *   forms = {
- *     "media_library_add" = "\Drupal\media_text\Form\CreateForm"
+ *     "media_library_add" = "\Drupal\media_text\Form\TextForm"
  *   }
  * )
  */
 class Text extends MediaSourceBase {
 
   /**
+   * Key for "Name" metadata attribute.
+   *
+   * @var string
+   */
+  const METADATA_ATTRIBUTE_NAME = 'name';
+
+  /**
    * {@inheritdoc}
    */
   public function getMetadataAttributes() {
     return [
-      'name' => $this->t('Name'),
-      'text' => $this->t('Text field'),
+      static::METADATA_ATTRIBUTE_NAME => $this->t('Name'),
     ];
   }
 
@@ -35,13 +42,13 @@ class Text extends MediaSourceBase {
    * {@inheritdoc}
    */
   public function getMetadata(MediaInterface $media, $attribute_name) {
-    switch ($attribute_name) {
-      case 'name':
-      case 'default_name':
-        return 'Text';
+    $text = $media->get($this->configuration['source_field'])->getValue();
 
-      case 'text':
-        return $media->get($this->configuration['source_field'])->getValue();
+    switch ($attribute_name) {
+      // The first bit of text as the default name.
+      case static::METADATA_ATTRIBUTE_NAME:
+      case 'default_name':
+        return isset($text) ? substr(strip_tags($text[0]['value']), 0, 40) : $this->t('Text');
 
       default:
         return parent::getMetadata($media, $attribute_name);
