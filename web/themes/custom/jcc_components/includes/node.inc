@@ -83,12 +83,20 @@ function jcc_custom_entity_build_defaults_alter(&$build, EntityInterface $entity
  * @param array $variables
  *   The preprocess variables.
  */
-function jcc_components_node_subpage(array &$variables) {
-  // Populate the tertiary menu.
+function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
+  $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
+
+  // Subpage node information.
+  $current_path = \Drupal::service('path.current')->getPath();
+  $current_path = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+  $current_path = explode('/', trim($current_path, '/'));
+  $current_section = $current_path[0];
+
+  // Populate the menu.
   $menu_name = 'main';
   $parameters = new MenuTreeParameters();
   $parameters->onlyEnabledLinks();
-  // We only want items at second and thrid levels.
+  // We only want items at second and third levels.
   $parameters->setMinDepth(2);
   $parameters->setMaxDepth(3);
   $menu_active_trail = \Drupal::service('menu.active_trail')
@@ -103,7 +111,19 @@ function jcc_components_node_subpage(array &$variables) {
   $tree = \Drupal::menuTree()->transform($tree, $manipulators);
 
   foreach ($tree as $content) {
-    // We only want links for the secondary active trail.
+    // If we want links for primary active trail/parents of the current section.
+    $section = $menu_link_manager->createInstance($content->link->getParent())->getUrlObject()->toString();
+    $section = trim($section, '/');
+    if ($section == $current_section) {
+      $variables['full_menu']['items'][] = [
+        'title' => $content->link->getTitle(),
+        'url' => $content->link->getUrlObject(),
+        'in_active_trail' => $content->inActiveTrail,
+        'has_children' => $content->hasChildren,
+      ];
+    }
+
+    // If we want links for the secondary active trail.
     if ($content->inActiveTrail) {
       foreach ($content->subtree as $sub_content) {
         // If we're in the third level, add the parent for link to second level.
