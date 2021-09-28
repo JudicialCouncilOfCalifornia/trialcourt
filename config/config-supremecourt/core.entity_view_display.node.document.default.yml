@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.document.body
     - field.field.node.document.field_case
     - field.field.node.document.field_date
     - field.field.node.document.field_date_range
@@ -12,6 +13,7 @@ dependencies:
   module:
     - datetime
     - datetime_range
+    - text
     - user
 _core:
   default_config_hash: s3ZbBblAp0YI3Gth6mcSbpuVsx1yxnU5zA9zGX5nVXk
@@ -20,6 +22,13 @@ targetEntityType: node
 bundle: document
 mode: default
 content:
+  body:
+    weight: 5
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
   field_case:
     weight: 2
     label: above
