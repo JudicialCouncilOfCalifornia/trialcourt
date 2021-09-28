@@ -283,3 +283,16 @@ function jcc_tc2_all_immutable_config_update_8017() {
   module_load_include('install', 'media');
   media_install();
 }
+
+/**
+ * Install 'entity_usage', 'media_revisions_ui' and 'media_text'.
+ */
+function jcc_tc2_all_immutable_config_update_8018() {
+  $modules = [
+    'entity_usage',
+    'media_revisions_ui',
+    'media_text',
+  ];
+
+  \Drupal::service('module_installer')->install($modules);
+}
