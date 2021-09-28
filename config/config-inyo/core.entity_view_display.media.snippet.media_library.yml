@@ -1,0 +1,36 @@
+uuid: ba47f1dc-b19f-426a-9711-1efec64bfa3f
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.media_library
+    - field.field.media.snippet.field_media_text
+    - image.style.medium
+    - media.type.snippet
+  module:
+    - svg_image
+id: media.snippet.media_library
+targetEntityType: media
+bundle: snippet
+mode: media_library
+content:
+  thumbnail:
+    type: image
+    label: hidden
+    settings:
+      image_style: medium
+      image_link: ''
+      svg_attributes:
+        width: null
+        height: null
+      svg_render_as_image: true
+    weight: 0
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  field_media_text: true
+  langcode: true
+  name: true
+  search_api_excerpt: true
+  uid: true
