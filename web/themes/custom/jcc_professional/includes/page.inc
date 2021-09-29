@@ -40,15 +40,15 @@ function jcc_professional_preprocess_page(&$variables) {
     'links' => jcc_components_get_menu_array('shoe'),
   ];
 
-  if (isset($variables['node'])) {
-    // Inherit masthead color setting if subpage.
-    $breadcrumb = \Drupal::service('breadcrumb')->build(\Drupal::routeMatch());
-    $root_id = basename($breadcrumb->getLinks()[0]->getUrl()->getInternalPath());
-    if ($root_id) {
-      $parent_masthead_color = Node::load($root_id)->field_masthead_color->getString();
-      // Never allow mega masthead for subpages.
-      $variables['parent_masthead_color'] = str_replace('mega ', '', $parent_masthead_color);
-    }
+  // Inherit landing page masthead color setting if sub-page.
+  $current_path = \Drupal::service('path.current')->getPath();
+  $current_path_alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+  preg_match('/^\/[^\/]*/', $current_path_alias, $parent_path);
+  $parent_node_path = \Drupal::service('path.alias_manager')->getPathByAlias($parent_path[0]);
+  if (preg_match('/node\/(\d+)/', $parent_node_path, $node_path) && ($parent_node_path != $current_path)) {
+    $parent_masthead_color = Node::load($node_path[1])->field_masthead_color->getString();
+    // Never allow mega masthead for subpages.
+    $variables['parent_masthead_color'] = str_replace('mega ', '', $parent_masthead_color);
   }
 }
 

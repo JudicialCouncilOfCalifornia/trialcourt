@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.document.body
     - field.field.node.document.field_case
     - field.field.node.document.field_date
     - field.field.node.document.field_date_range
@@ -17,6 +18,7 @@ dependencies:
     - path
     - scheduler
     - scheduler_content_moderation_integration
+    - text
 _core:
   default_config_hash: aFguc8Xn18AynNT-hqQx-5UgdCa7D7pAMBKaYGKxRM8
 id: node.document.default
@@ -24,6 +26,16 @@ targetEntityType: node
 bundle: document
 mode: default
 content:
+  body:
+    weight: 30
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+    type: text_textarea_with_summary
+    region: content
   created:
     type: datetime_timestamp
     weight: 4

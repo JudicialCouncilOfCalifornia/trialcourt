@@ -1,4 +1,4 @@
-{% if full_menu.items and (full_menu.items|length > 1 or tertiary_menu.items) %}
+{% if secondary_menu.items and (secondary_menu.items|length > 1 or tertiary_menu.items) %}
   {% set left_nav %}
     {% set links = [] %}
 
@@ -19,7 +19,7 @@
       {% endfor %}
     {% endif %}
 
-    {% for item in full_menu.items %}
+    {% for item in secondary_menu.items %}
       {% set link = {
         text: item.title,
         url: path(item.url.routeName, {'node': item.url.routeParameters.node}),
@@ -66,7 +66,6 @@
   {% include '@molecules/section/section.twig' with {
     section: {
       background: 'alt',
-      spacing: 'default',
       layout: left_nav ? 'sidenav' : '',
       container: 'container',
       sub_sections: [

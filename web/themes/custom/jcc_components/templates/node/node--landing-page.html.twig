@@ -88,23 +88,10 @@
 {% endif %}
 
 <article{{ attributes }}>
-  {% if components_aside|render|striptags|trim %}
-    {% set width_main = 60 %}
-    {% set width_aside = 40 %}
-    {% include "@molecules/hero/hero.twig" with {
-      hero: {
-        layout: 'full-main',
-        background: 'default',
-        main: {
-          title: label,
-          lead: '',
-          brow: ''
-        },
-        classes: []
-      }
-    } %}
-
-    {% block components_section %}
+  {% block components_section %}
+    {% if components_aside|render|striptags|trim %}
+      {% set width_main = 60 %}
+      {% set width_aside = 40 %}
       {% include '@molecules/section/section.twig' with {
         section: {
           background: 'default',
@@ -121,8 +108,8 @@
           ]
         }
       } %}
-    {% endblock %}
-  {% else %}
-    {{ components }}
-  {% endif %}
+    {% else %}
+      {{ components }}
+    {% endif %}
+  {% endblock %}
 </article>

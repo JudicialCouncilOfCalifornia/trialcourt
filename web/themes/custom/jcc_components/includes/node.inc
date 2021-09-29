@@ -78,6 +78,38 @@ function jcc_custom_entity_build_defaults_alter(&$build, EntityInterface $entity
 }
 
 /**
+ * Node: Landing preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ */
+function jcc_components_node_landing_page(array &$variables, NodeInterface $node) {
+  // If home page check.
+  $variables['is_front'] = \Drupal::service('path.matcher')->isFrontPage();
+
+  // Breadcrumbs.
+  $variables['breadcrumb'] = \Drupal::service('breadcrumb')
+    ->build(\Drupal::routeMatch())
+    ->toRenderable();
+
+  // Populate menu if items are defined - second level only.
+  $menu_items = jcc_get_menu_items('main', 1, 2);
+
+  foreach ($menu_items as $content) {
+    if ($content->inActiveTrail) {
+      // If we want parent links for the current section.
+      foreach ($content->subtree as $sub_content) {
+        $variables['secondary_menu']['items'][] = [
+          'title' => $sub_content->link->getTitle(),
+          'url' => $sub_content->link->getUrlObject(),
+          'in_active_trail' => $sub_content->inActiveTrail,
+        ];
+      }
+    }
+  }
+}
+
+/**
  * Node: Subpage preprocess.
  *
  * @param array $variables
@@ -88,34 +120,18 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
 
   // Subpage node information.
   $current_path = \Drupal::service('path.current')->getPath();
-  $current_path = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
-  $current_path = explode('/', trim($current_path, '/'));
-  $current_section = $current_path[0];
+  $current_path_alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+  preg_match('/^\/[^\/]*/', $current_path_alias, $parent_path);
+  $current_section = $parent_path[0];
 
-  // Populate the menu.
-  $menu_name = 'main';
-  $parameters = new MenuTreeParameters();
-  $parameters->onlyEnabledLinks();
-  // We only want items at second and third levels.
-  $parameters->setMinDepth(2);
-  $parameters->setMaxDepth(3);
-  $menu_active_trail = \Drupal::service('menu.active_trail')
-    ->getActiveTrailIds($menu_name);
-  $parameters->setActiveTrail($menu_active_trail);
-  // Load the tree.
-  $tree = \Drupal::menuTree()->load($menu_name, $parameters);
-  $manipulators = [
-    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
-    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
-  ];
-  $tree = \Drupal::menuTree()->transform($tree, $manipulators);
+  // Populate the menu - second and third levels only.
+  $menu_items = jcc_get_menu_items('main', 2, 3);
 
-  foreach ($tree as $content) {
+  foreach ($menu_items as $content) {
     // If we want links for primary active trail/parents of the current section.
     $section = $menu_link_manager->createInstance($content->link->getParent())->getUrlObject()->toString();
-    $section = trim($section, '/');
     if ($section == $current_section) {
-      $variables['full_menu']['items'][] = [
+      $variables['secondary_menu']['items'][] = [
         'title' => $content->link->getTitle(),
         'url' => $content->link->getUrlObject(),
         'in_active_trail' => $content->inActiveTrail,
@@ -226,4 +242,37 @@ function jcc_components_node_event(array &$variables, NodeInterface $node) {
   $variables['breadcrumb'] = \Drupal::service('breadcrumb')
     ->build(\Drupal::routeMatch())
     ->toRenderable();
+}
+
+/**
+ * Get menu items to build navigation onto nodes.
+ *
+ * @param string $menu_name
+ *   The menu structure name.
+ * @param int $min_depth
+ *   The starting level to retrieve items.
+ * @param int $max_depth
+ *   The deepest level to retrieve items.
+ *
+ * @return \Drupal\Core\Menu\MenuLinkTreeElement[]
+ *   The menu items.
+ */
+function jcc_get_menu_items($menu_name, $min_depth, $max_depth) {
+  $menu_name = $menu_name;
+  $parameters = new MenuTreeParameters();
+  $parameters->onlyEnabledLinks();
+  $parameters->setMinDepth($min_depth);
+  $parameters->setMaxDepth($max_depth);
+  $menu_active_trail = \Drupal::service('menu.active_trail')
+    ->getActiveTrailIds($menu_name);
+  $parameters->setActiveTrail($menu_active_trail);
+  // Load the tree.
+  $tree = \Drupal::menuTree()->load($menu_name, $parameters);
+  $manipulators = [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ];
+  $tree = \Drupal::menuTree()->transform($tree, $manipulators);
+
+  return $tree;
 }

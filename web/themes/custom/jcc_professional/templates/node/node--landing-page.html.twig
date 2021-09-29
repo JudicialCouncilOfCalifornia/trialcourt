@@ -1,9 +1,62 @@
 {% extends 'themes/custom/jcc_components/templates/node/node--landing-page.html.twig' %}
 
 {% block components_section %}
+  {% if is_front %}
+    {% set hero_visibility = 'default usa-sr-only'%}
+  {% else %}
+    {# Display breadcrumb #}
+    {{ breadcrumb }}
+
+    {# Optional columns, either left nav or right column (prioritized) but not both. #}
+    {% if components_aside|render|striptags|trim %}
+      {% set width_main = 60 %}
+      {% set width_aside = 40 %}
+      {% set aside = components_aside %}
+    {% elseif secondary_menu.items  %}
+      {% set width_main = 75 %}
+      {% set width_aside = 25 %}
+
+      {% set left_nav %}
+        {% set links = [] %}
+
+        {% for item in secondary_menu.items %}
+          {% set link = {
+            text: item.title,
+            url: path(item.url.routeName, {'node': item.url.routeParameters.node}),
+          } %}
+          {% set links = links|merge([link]) %}
+        {% endfor %}
+
+        {% include "@molecules/sub-nav/sub-nav.twig" with {
+          sub_nav: {
+            config: 'sidenav',
+            links: links,
+            classes: []
+          }
+        } %}
+      {% endset %}
+
+      {% set aside = left_nav %}
+    {% endif %}
+  {% endif %}
+
+  {% include "@molecules/hero/hero.twig" with {
+    hero: {
+      layout: 'full-main',
+      background: hero_visibility ? hero_visibility : 'default',
+      main: {
+        title: label,
+        lead: '',
+        brow: ''
+      },
+      classes: []
+    }
+  } %}
+
   {% include '@molecules/section/section.twig' with {
     section: {
       background: 'alt',
+      layout: left_nav ? 'sidenav' : '',
       container: 'container',
       sub_sections: [
         {
@@ -11,7 +64,7 @@
           width: width_main,
         },
         {
-          content: components_aside,
+          content: aside,
           width: width_aside,
         }
       ]
