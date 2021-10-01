@@ -1,0 +1,29 @@
+uuid: 50397baa-ff83-4d99-9928-79841b9523d1
+langcode: en
+status: true
+dependencies:
+  module:
+    - jcc_blocks
+    - system
+  theme:
+    - jcc_deprep
+id: jccsearch_4
+theme: jcc_deprep
+region: content
+weight: 0
+provider: null
+plugin: jcc_search
+settings:
+  id: jcc_search
+  label: 'JCC Search'
+  provider: jcc_blocks
+  label_display: '0'
+  form_action: /search
+  filter: 'document_type:26'
+  placeholder: 'Search for Publications'
+visibility:
+  request_path:
+    id: request_path
+    pages: "/publications\r\n/publications/*"
+    negate: false
+    context_mapping: {  }

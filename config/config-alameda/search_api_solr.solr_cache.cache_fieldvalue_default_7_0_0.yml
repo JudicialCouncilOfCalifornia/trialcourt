@@ -1,0 +1,21 @@
+uuid: 5c4f15df-e8c0-439a-91be-ba0363282ec6
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: gXSJTkVX1U77VklU-Nyr5kolyRth5WfEgecfhGvXMI8
+id: cache_fieldvalue_default_7_0_0
+label: 'Field Value Cache'
+minimum_solr_version: 7.0.0
+environments: {  }
+cache:
+  name: fieldValue
+  class: solr.FastLRUCache
+  size: 512
+  autowarmCount: 128
+  showItems: 32
+solr_configs:
+  query:
+    -
+      name: enableLazyFieldLoading
+      VALUE: 'true'

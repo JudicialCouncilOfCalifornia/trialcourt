@@ -1,0 +1,190 @@
+uuid: e4fdb13c-a89e-4874-9e2b-eda00e066d2d
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.base_field_override.node.news.status
+    - field.field.node.news.body
+    - field.field.node.news.field_author
+    - field.field.node.news.field_byline
+    - field.field.node.news.field_date
+    - field.field.node.news.field_media
+    - field.field.node.news.field_news_type
+    - node.type.news
+  module:
+    - feeds_ex
+    - feeds_tamper
+    - node
+third_party_settings:
+  feeds_tamper:
+    tampers:
+      29ac8476-c7a5-41ac-8fa0-7979d3cf3902:
+        find: 'src="/sites/default/files/newsroom/'
+        replace: 'src="https://newsroom.courts.ca.gov/sites/default/files/newsroom/'
+        case_sensitive: false
+        whole: false
+        plugin: find_replace
+        source: body
+        weight: 0
+        label: 'Find replace'
+        word_boundaries: false
+        uuid: 29ac8476-c7a5-41ac-8fa0-7979d3cf3902
+id: ca_courts_news_feeds
+label: 'CA Courts News Feeds'
+description: ''
+help: ''
+import_period: 3600
+fetcher: http
+fetcher_configuration:
+  auto_detect_feeds: false
+  use_pubsubhubbub: false
+  always_download: false
+  fallback_hub: ''
+  request_timeout: 30
+parser: xml
+parser_configuration:
+  context:
+    value: //item
+  sources:
+    type:
+      label: type
+      value: type
+    title:
+      label: title
+      value: title
+    body:
+      label: body
+      value: body
+    teaser:
+      label: teaser
+      value: teaser
+    author:
+      label: author
+      value: author
+    pubdate:
+      label: pubDate
+      value: pubDate
+    image:
+      label: image
+      value: image
+    pubstatus:
+      label: pubStatus
+      value: pubStatus
+    tagline:
+      label: tagline
+      value: tagline
+  use_tidy: false
+  display_errors: false
+  source_encoding:
+    - auto
+  debug_mode: false
+  line_limit: 100
+processor: 'entity:node'
+processor_configuration:
+  langcode: en
+  update_existing: 2
+  update_non_existent: _keep
+  expire: -1
+  owner_feed_author: false
+  owner_id: 7
+  authorize: true
+  skip_hash_check: false
+  values:
+    type: news
+custom_sources:
+  type:
+    label: type
+    value: type
+    machine_name: type
+  body:
+    label: body
+    value: body
+    machine_name: body
+  teaser:
+    label: teaser
+    value: teaser
+    machine_name: teaser
+  author:
+    label: author
+    value: author
+    machine_name: author
+  pubdate:
+    label: pubDate
+    value: pubDate
+    machine_name: pubdate
+  image:
+    label: image
+    value: image
+    machine_name: image
+  pubstatus:
+    label: pubStatus
+    value: pubStatus
+    machine_name: pubstatus
+  title:
+    label: title
+    value: title
+    machine_name: title
+  tagline:
+    label: tagline
+    value: tagline
+    machine_name: tagline
+mappings:
+  -
+    target: field_news_type
+    map:
+      target_id: type
+    settings:
+      language: ''
+      reference_by: name
+      autocreate: '1'
+  -
+    target: title
+    map:
+      value: title
+    unique:
+      value: '1'
+    settings:
+      language: null
+  -
+    target: body
+    map:
+      value: body
+      summary: teaser
+    settings:
+      language: ''
+      format: body
+  -
+    target: field_author
+    map:
+      value: author
+    unique: {  }
+    settings:
+      language: null
+  -
+    target: field_date
+    map:
+      value: pubdate
+    settings:
+      language: null
+      timezone: UTC
+  -
+    target: field_media
+    map:
+      target_id: image
+    settings:
+      language: ''
+      reference_by: name
+      autocreate: '1'
+  -
+    target: status
+    map:
+      value: pubstatus
+    settings:
+      language: null
+  -
+    target: field_byline
+    map:
+      value: tagline
+    unique: {  }
+    settings:
+      language: null

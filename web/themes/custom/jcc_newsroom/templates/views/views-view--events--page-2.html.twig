@@ -121,7 +121,12 @@
               <div class="jcc-card__title">
                 Related
               </div>
-              <div>{{ drupal_block('related_news_custom') }}</div>
+              {% set _block = drupal_entity('block', 'relatednews') %}
+              {% if _block is not empty %}
+                <div>{{ drupal_entity('block', 'relatednews') }}</div>
+              {% else %}
+                <div>{{ drupal_block('related_news_custom') }}</div>
+              {% endif %}
             </div>
           </div>
         </div>

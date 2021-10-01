@@ -78,32 +78,68 @@ function jcc_custom_entity_build_defaults_alter(&$build, EntityInterface $entity
 }
 
 /**
+ * Node: Landing preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ */
+function jcc_components_node_landing_page(array &$variables, NodeInterface $node) {
+  // If home page check.
+  $variables['is_front'] = \Drupal::service('path.matcher')->isFrontPage();
+
+  // Breadcrumbs.
+  $variables['breadcrumb'] = \Drupal::service('breadcrumb')
+    ->build(\Drupal::routeMatch())
+    ->toRenderable();
+
+  // Populate menu if items are defined - second level only.
+  $menu_items = jcc_get_menu_items('main', 1, 2);
+
+  foreach ($menu_items as $content) {
+    if ($content->inActiveTrail) {
+      // If we want parent links for the current section.
+      foreach ($content->subtree as $sub_content) {
+        $variables['secondary_menu']['items'][] = [
+          'title' => $sub_content->link->getTitle(),
+          'url' => $sub_content->link->getUrlObject(),
+          'in_active_trail' => $sub_content->inActiveTrail,
+        ];
+      }
+    }
+  }
+}
+
+/**
  * Node: Subpage preprocess.
  *
  * @param array $variables
  *   The preprocess variables.
  */
-function jcc_components_node_subpage(array &$variables) {
-  // Populate the tertiary menu.
-  $menu_name = 'main';
-  $parameters = new MenuTreeParameters();
-  $parameters->onlyEnabledLinks();
-  // We only want items at second and thrid levels.
-  $parameters->setMinDepth(2);
-  $parameters->setMaxDepth(3);
-  $menu_active_trail = \Drupal::service('menu.active_trail')
-    ->getActiveTrailIds($menu_name);
-  $parameters->setActiveTrail($menu_active_trail);
-  // Load the tree.
-  $tree = \Drupal::menuTree()->load($menu_name, $parameters);
-  $manipulators = [
-    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
-    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
-  ];
-  $tree = \Drupal::menuTree()->transform($tree, $manipulators);
+function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
+  $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
 
-  foreach ($tree as $content) {
-    // We only want links for the secondary active trail.
+  // Subpage node information.
+  $current_path = \Drupal::service('path.current')->getPath();
+  $current_path_alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+  preg_match('/^\/[^\/]*/', $current_path_alias, $parent_path);
+  $current_section = $parent_path[0];
+
+  // Populate the menu - second and third levels only.
+  $menu_items = jcc_get_menu_items('main', 2, 3);
+
+  foreach ($menu_items as $content) {
+    // If we want links for primary active trail/parents of the current section.
+    $section = $menu_link_manager->createInstance($content->link->getParent())->getUrlObject()->toString();
+    if ($section == $current_section) {
+      $variables['secondary_menu']['items'][] = [
+        'title' => $content->link->getTitle(),
+        'url' => $content->link->getUrlObject(),
+        'in_active_trail' => $content->inActiveTrail,
+        'has_children' => $content->hasChildren,
+      ];
+    }
+
+    // If we want links for the secondary active trail.
     if ($content->inActiveTrail) {
       foreach ($content->subtree as $sub_content) {
         // If we're in the third level, add the parent for link to second level.
@@ -138,7 +174,7 @@ function jcc_components_node_subpage(array &$variables) {
  *   The node object.
  */
 function jcc_components_node_location(array &$variables, NodeInterface $node) {
-  // Format the hours content in a format the PL template can recieve.
+  // Format the hours content in a format the PL template can receive.
   if (!empty($node->field_components)) {
     $components = $node->field_components->referencedEntities();
     foreach ($components as $component) {
@@ -171,6 +207,13 @@ function jcc_components_node_location(array &$variables, NodeInterface $node) {
       '#format' => 'basic_html',
     ];
   }
+  // Set a unique location id.
+  // Exclude special characters and convert to lowercase.
+  $node_title = preg_replace('/[^A-Za-z0-9\-]/', ' ', strtolower($node->getTitle()));
+  // Get the first two words joined by hyphen.
+  $node_title = implode('-', array_slice(array_filter(explode(' ', $node_title)), 0, 2));
+  // Set location_id variable to be consumed by twig.
+  $variables['location_id'] = $node_title . '-' . $node->id();
 }
 
 /**
@@ -185,4 +228,51 @@ function jcc_components_node_news(array &$variables, NodeInterface $node) {
   $variables['breadcrumb'] = \Drupal::service('breadcrumb')
     ->build(\Drupal::routeMatch())
     ->toRenderable();
+}
+
+/**
+ * Node: Event preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_components_node_event(array &$variables, NodeInterface $node) {
+  $variables['breadcrumb'] = \Drupal::service('breadcrumb')
+    ->build(\Drupal::routeMatch())
+    ->toRenderable();
+}
+
+/**
+ * Get menu items to build navigation onto nodes.
+ *
+ * @param string $menu_name
+ *   The menu structure name.
+ * @param int $min_depth
+ *   The starting level to retrieve items.
+ * @param int $max_depth
+ *   The deepest level to retrieve items.
+ *
+ * @return \Drupal\Core\Menu\MenuLinkTreeElement[]
+ *   The menu items.
+ */
+function jcc_get_menu_items($menu_name, $min_depth, $max_depth) {
+  $menu_name = $menu_name;
+  $parameters = new MenuTreeParameters();
+  $parameters->onlyEnabledLinks();
+  $parameters->setMinDepth($min_depth);
+  $parameters->setMaxDepth($max_depth);
+  $menu_active_trail = \Drupal::service('menu.active_trail')
+    ->getActiveTrailIds($menu_name);
+  $parameters->setActiveTrail($menu_active_trail);
+  // Load the tree.
+  $tree = \Drupal::menuTree()->load($menu_name, $parameters);
+  $manipulators = [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ];
+  $tree = \Drupal::menuTree()->transform($tree, $manipulators);
+
+  return $tree;
 }

@@ -1,0 +1,88 @@
+uuid: 72f9e573-c6a2-4028-a94f-8aa333152939
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_components_aside
+    - node.type.landing_page
+    - paragraphs.paragraphs_type.cards
+    - paragraphs.paragraphs_type.content_stream
+  module:
+    - entity_reference_revisions
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.landing_page.field_components_aside
+field_name: field_components_aside
+entity_type: node
+bundle: landing_page
+label: 'Components Aside'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      cards: cards
+      content_stream: content_stream
+    target_bundles_drag_drop:
+      accordion:
+        weight: 19
+        enabled: false
+      accordion_item:
+        weight: 20
+        enabled: false
+      action_list:
+        weight: 21
+        enabled: false
+      action_list_item:
+        weight: 22
+        enabled: false
+      alert:
+        weight: 23
+        enabled: false
+      body:
+        weight: 24
+        enabled: false
+      card:
+        weight: 25
+        enabled: false
+      cards:
+        enabled: true
+        weight: 26
+      content_stream:
+        enabled: true
+        weight: 27
+      hero:
+        weight: 28
+        enabled: false
+      hero_banner:
+        weight: 29
+        enabled: false
+      hours:
+        weight: 30
+        enabled: false
+      icon_link:
+        weight: 31
+        enabled: false
+      step:
+        weight: 32
+        enabled: false
+      steps:
+        weight: 33
+        enabled: false
+      text_share:
+        weight: 34
+        enabled: false
+      views_reference:
+        weight: 35
+        enabled: false
+      webform:
+        weight: 36
+        enabled: false
+field_type: entity_reference_revisions

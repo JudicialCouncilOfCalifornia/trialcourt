@@ -1,0 +1,167 @@
+uuid: bad42f12-8668-4d73-8668-870f97477191
+langcode: en
+status: true
+dependencies: {  }
+id: sc_document_node
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - node
+  - document
+migration_group: supremecourt
+label: 'Document: Import Node'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  fields:
+    -
+      name: src_unique_id
+      label: 'Unique ID'
+      selector: url
+    -
+      name: url
+      label: Url
+      selector: url
+    -
+      name: title
+      label: Title
+      selector: title
+    -
+      name: hearing_date
+      label: 'Hearing Date'
+      selector: hearing_date
+    -
+      name: hearing_date_end
+      label: 'Hearing Date End'
+      selector: hearing_date_end
+    -
+      name: filing_date
+      label: 'Filing Date'
+      selector: filing_date
+    -
+      name: category
+      label: Category
+      selector: category
+    -
+      name: case
+      label: Case
+      selector: case
+    -
+      name: body
+      label: Body
+      selector: body
+  ids:
+    src_unique_id:
+      type: string
+  constants:
+    bool_0: 0
+    bool_1: 1
+    uid_root: 1
+    full_html: full_html
+process:
+  status: constants/bool_1
+  sticky: constants/bool_0
+  promote: constants/bool_0
+  uid: constants/uid_root
+  title:
+    -
+      plugin: callback
+      callable: trim
+      source: title
+    -
+      plugin: callback
+      callable: htmlspecialchars_decode
+    -
+      plugin: default_value
+      default_value: TITLE
+  body/value: body
+  body/format: constants/full_html
+  field_date:
+    -
+      plugin: callback
+      callable: strtotime
+      source: filing_date
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m-d
+  field_date_range/value:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: hearing_date
+    -
+      plugin: callback
+      callable: strtotime
+    -
+      plugin: format_date
+      from_format: U
+      to_format: 'Y-m-d\TH:i:s'
+  field_date_range/end_value:
+    -
+      plugin: get
+      source: hearing_date_end
+    -
+      plugin: default_value
+      default_value: hearing_date
+    -
+      plugin: callback
+      callable: strtotime
+    -
+      plugin: format_date
+      from_format: U
+      to_format: 'Y-m-d\TH:i:s'
+  field_document_type:
+    -
+      plugin: skip_on_empty
+      source: category
+      method: process
+      message: 'No category found.'
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      bundle: document_type
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_case:
+    -
+      plugin: skip_on_empty
+      source: case
+      method: process
+      message: 'No case found.'
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      bundle: case
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_media:
+    -
+      plugin: migration_lookup
+      migration: sc_document_media
+      source: src_unique_id
+    -
+      plugin: skip_on_empty
+      method: row
+      message: 'Cannot import empty media.'
+  path/pathauto:
+    plugin: default_value
+    default_value: 1
+destination:
+  plugin: 'entity:node'
+  default_bundle: document
+migration_dependencies:
+  optional:
+    - sc_document_media

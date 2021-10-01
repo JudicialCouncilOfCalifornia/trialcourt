@@ -1,0 +1,34 @@
+uuid: 63fa6a74-c7a5-40c5-9f63-7deb3b708d3f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_case
+    - node.type.document
+    - taxonomy.vocabulary.case
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.document.field_case
+field_name: field_case
+entity_type: node
+bundle: document
+label: Case
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      case: case
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

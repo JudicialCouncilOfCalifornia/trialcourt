@@ -1,0 +1,29 @@
+{% extends 'themes/custom/jcc_components/templates/views/views-view--events--events-list.html.twig' %}
+
+{% block views_listing %}
+  <nav class="usa-breadcrumb usa-breadcrumb--container" aria-label="Breadcrumbs">
+    <ol class="usa-breadcrumb__list">
+      <li class="usa-breadcrumb__list-item">
+        <a href="/" class="usa-breadcrumb__link">
+          <span>Supreme Court</span>
+        </a>
+      </li>
+      <li class="usa-breadcrumb__list-item">
+        <a href="/news-and-events" class="usa-breadcrumb__link">
+          <span>News and Events</span>
+        </a>
+      </li>
+      <li class="usa-breadcrumb__list-item"></li>
+    </ol>
+  </nav>
+
+  {% include "@templates/content-stream/content-stream-filtering.twig" with {
+    content_stream_filtering: {
+      title: 'All Events',
+      background_color: 'alt',
+      items: items,
+      form: exposed,
+      pager: pager,
+    }
+  } %}
+{% endblock %}

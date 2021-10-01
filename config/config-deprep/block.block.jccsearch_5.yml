@@ -1,0 +1,29 @@
+uuid: f8cb7b70-a800-4aaa-aa21-a8224c3c43e4
+langcode: en
+status: true
+dependencies:
+  module:
+    - jcc_blocks
+    - system
+  theme:
+    - jcc_deprep
+id: jccsearch_5
+theme: jcc_deprep
+region: content
+weight: 0
+provider: null
+plugin: jcc_search
+settings:
+  id: jcc_search
+  label: 'JCC Search'
+  provider: jcc_blocks
+  label_display: '0'
+  form_action: /search
+  filter: 'document_type:10'
+  placeholder: 'Search for Regulations'
+visibility:
+  request_path:
+    id: request_path
+    pages: /legal-and-policy-resources/regulations
+    negate: false
+    context_mapping: {  }

@@ -1,0 +1,29 @@
+uuid: 74399bf8-f647-4983-9d02-cf8ae9fe092c
+langcode: en
+status: true
+dependencies:
+  module:
+    - jcc_blocks
+    - system
+  theme:
+    - jcc_deprep
+id: jccsearch_3
+theme: jcc_deprep
+region: content
+weight: 0
+provider: null
+plugin: jcc_search
+settings:
+  id: jcc_search
+  label: 'JCC Search'
+  provider: jcc_blocks
+  label_display: '0'
+  form_action: /search
+  filter: 'document_type:23'
+  placeholder: 'Search for Training'
+visibility:
+  request_path:
+    id: request_path
+    pages: "/training\r\n/training/*"
+    negate: false
+    context_mapping: {  }

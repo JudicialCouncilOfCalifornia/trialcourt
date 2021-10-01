@@ -2,15 +2,18 @@ uuid: 3b683ae7-2931-47b7-902b-dfb230f08ef3
 langcode: en
 status: true
 dependencies:
+  config:
+    - core.entity_view_mode.media.full
   module:
+    - entity_embed
     - glossify_taxonomy
     - linkit
     - media
 _core:
-  default_config_hash: rk_R2dstT4H54o7h5TUYSnCPXL_fLGDjbFhVu7XycuY
+  default_config_hash: yxHMy5DBw0dfIEGhcknxXKvzfz3GmdgR7ymJBrUoTCQ
 name: Aside
 format: aside
-weight: 0
+weight: -7
 filters:
   filter_html:
     id: filter_html
@@ -18,7 +21,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <ul type> <ol type start> <li> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary jcc-button--cta-link"> <blockquote class="blockquote blockquote--callout">'
+      allowed_html: '<em> <strong> <ul type> <ol type start> <li> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary jcc-button--cta-link"> <blockquote class="blockquote blockquote--callout"> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title>'
       filter_html_help: true
       filter_html_nofollow: false
   glossify_taxonomy:
@@ -61,9 +64,17 @@ filters:
   media_embed:
     id: media_embed
     provider: media
-    status: false
+    status: true
     weight: 100
     settings:
       default_view_mode: default
-      allowed_media_types: {  }
-      allowed_view_modes: {  }
+      allowed_media_types:
+        snippet: snippet
+      allowed_view_modes:
+        full: full
+  entity_embed:
+    id: entity_embed
+    provider: entity_embed
+    status: true
+    weight: 100
+    settings: {  }

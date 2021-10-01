@@ -206,7 +206,7 @@ workflows:
       - deploy:
           matrix:
             parameters:
-              site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera", "yolo", "elcondado", "modoc", "eldorado", "trinity", "fresno", "sacramento", "glenn", "yuba", "sanfrancisco", "sutter", "mariposa"]
+              site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera", "yolo", "elcondado", "modoc", "eldorado", "trinity", "fresno", "sacramento", "glenn", "yuba", "sanfrancisco", "sutter", "mariposa", "alameda", "butte", "imperial"]
           requires:
             - build_test
           filters:
@@ -219,7 +219,7 @@ workflows:
       - deploy_legacy:
           matrix:
             parameters:
-              site: ["md", "newsroom", "deprep", "webservices"]
+              site: ["newsroom", "deprep", "webservices"]
           requires:
             - build_test
           filters:

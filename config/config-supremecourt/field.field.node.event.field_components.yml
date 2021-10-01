@@ -1,0 +1,82 @@
+uuid: 117232c1-47b6-4e24-8b2e-3be0df53c197
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_components
+    - node.type.event
+    - paragraphs.paragraphs_type.cards
+    - paragraphs.paragraphs_type.text_share
+  module:
+    - entity_reference_revisions
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.event.field_components
+field_name: field_components
+entity_type: node
+bundle: event
+label: Components
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      cards: cards
+      text_share: text_share
+    target_bundles_drag_drop:
+      accordion:
+        weight: 17
+        enabled: false
+      accordion_item:
+        weight: 18
+        enabled: false
+      action_list:
+        weight: 19
+        enabled: false
+      action_list_item:
+        weight: 20
+        enabled: false
+      alert:
+        weight: 21
+        enabled: false
+      body:
+        weight: 22
+        enabled: false
+      card:
+        weight: 23
+        enabled: false
+      cards:
+        enabled: true
+        weight: 24
+      content_stream:
+        weight: 25
+        enabled: false
+      hero:
+        weight: 26
+        enabled: false
+      hero_banner:
+        weight: 27
+        enabled: false
+      hours:
+        weight: 28
+        enabled: false
+      icon_link:
+        weight: 29
+        enabled: false
+      text_share:
+        enabled: true
+        weight: 30
+      views_reference:
+        weight: 31
+        enabled: false
+      webform:
+        weight: 32
+        enabled: false
+field_type: entity_reference_revisions

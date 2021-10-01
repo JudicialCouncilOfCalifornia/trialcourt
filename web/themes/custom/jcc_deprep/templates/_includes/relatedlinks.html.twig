@@ -1,0 +1,54 @@
+{#
+/**
+ * @file
+ * Consistent presentation of related links for relevant content types.
+ * Requires data from field_links form field
+ * - title
+ * - url
+ * - options.attributes.class: optional value to change default icon defined in list components
+ *
+ * Optional variables:
+ * - singlecolumn: if passed from parent template, uses single column list component rather than the default multi-column variant
+ *
+ */
+ #}
+
+{% set link_list %}
+  {% set links = [] %}
+  {% for link in related_links %}
+    {% if link.options.attributes.class|join(" ") is not empty %}
+      {% set link_name = link.options.attributes.class|join(" ") %}
+      {% set icon =
+        {
+          name: link_name,
+          title: link_name.name|capitalize|t,
+          decorative: false
+        }
+      %}
+    {% else %}
+      {% set icon = default %}
+    {% endif %}
+
+    {% set links = links|merge([{
+      icon: icon,
+      url_title: link.title|default('View document'),
+      url: link.url,
+      renderer: patternlib
+    }]) %}
+  {% endfor %}
+
+  {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
+    link_list: {
+      columns: columns,
+      files_list: true,
+      items: links
+    }
+  } %}
+{% endset %}
+
+{% include '@molecules/blocks/card/card.twig' with {
+  card: {
+    title: node.field_links.fieldDefinition.label,
+    excerpt: link_list,
+  }
+} only %}

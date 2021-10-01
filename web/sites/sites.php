@@ -28,15 +28,15 @@ foreach ($dirs as $dir) {
 // add it manually below.
 $sites['www.occourts.org'] = 'oc';
 
-// @todo perhaps move these sites to dir that mathches their domain.
+// @todo perhaps move these sites to dir that matches their domain.
 // = 'jcart';
 $sites['develop.jcart.courts.ca.gov'] = 'deprep';
 $sites['stage.jcart.courts.ca.gov'] = 'deprep';
 $sites['jcart.courts.ca.gov'] = 'deprep';
 // = 'madera';
-$sites['develop.madera.courts.ca.gov'] = 'md';
-$sites['stage.madera.courts.ca.gov'] = 'md';
-$sites['www.madera.courts.ca.gov'] = 'md';
+//$sites['develop.madera.courts.ca.gov'] = 'md';
+//$sites['stage.madera.courts.ca.gov'] = 'md';
+//$sites['www.madera.courts.ca.gov'] = 'md';
 // = 'santacruz';
 $sites['develop.santacruz.courts.ca.gov'] = 'sc';
 $sites['stage.santacruz.courts.ca.gov'] = 'sc';
@@ -53,6 +53,8 @@ $sites['develop-jcc-tularesuperiorcourt.pantheonsite.io'] = 'tularesuperiorcourt
 $sites['stage-jcc-tularesuperiorcourt.pantheonsite.io'] = 'tularesuperiorcourt';
 $sites['live-jcc-tularesuperiorcourt.pantheonsite.io'] = 'tularesuperiorcourt';
 $sites['www.tularesuperiorcourt.ca.gov'] = 'tularesuperiorcourt';
+$sites['www.tulare.courts.ca.gov'] = 'tularesuperiorcourt';
+$sites['tulare.courts.ca.gov'] = 'tularesuperiorcourt';
 // = 'eldorado';
 $sites['www.eldoradocourt.org'] = 'eldorado';
 $sites['eldoradocourt.org'] = 'eldorado';
@@ -74,6 +76,9 @@ $sites['suttercourts.com'] = 'sutter';
 // = 'mariposa';
 $sites['www.mariposacourt.org'] = 'mariposa';
 $sites['mariposacourt.org'] = 'mariposa';
+// = 'butte';
+$sites['www.buttecourt.ca.gov'] = 'butte';
+$sites['buttecourt.ca.gov'] = 'butte';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in

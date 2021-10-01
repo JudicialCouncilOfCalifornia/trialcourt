@@ -1,0 +1,168 @@
+uuid: 0e12425f-a92e-41a9-b7e1-40f7b35ee2ca
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.base_field_override.node.event.status
+    - field.field.node.event.body
+    - field.field.node.event.field_byline
+    - field.field.node.event.field_date_range
+    - field.field.node.event.field_event_type
+    - field.field.node.event.field_media
+    - node.type.event
+  module:
+    - feeds_ex
+    - node
+id: ca_courts_event_feeds
+label: 'CA Courts Event Feeds'
+description: ''
+help: ''
+import_period: 3600
+fetcher: http
+fetcher_configuration:
+  auto_detect_feeds: false
+  use_pubsubhubbub: false
+  always_download: false
+  fallback_hub: ''
+  request_timeout: 30
+parser: xml
+parser_configuration:
+  context:
+    value: //item
+  sources:
+    type:
+      label: type
+      value: type
+    title:
+      label: title
+      value: title
+    body:
+      label: body
+      value: body
+    teaser:
+      label: teaser
+      value: teaser
+    tagline:
+      label: tagline
+      value: tagline
+    image:
+      label: image
+      value: image
+    pubstatus:
+      label: pubStatus
+      value: pubStatus
+    startdate:
+      label: startDate
+      value: startDate
+    enddate:
+      label: endDate
+      value: endDate
+  use_tidy: false
+  display_errors: false
+  source_encoding:
+    - auto
+  debug_mode: false
+  line_limit: 100
+processor: 'entity:node'
+processor_configuration:
+  langcode: en
+  update_existing: 2
+  update_non_existent: _keep
+  expire: -1
+  owner_feed_author: false
+  owner_id: 7
+  authorize: true
+  skip_hash_check: false
+  values:
+    type: event
+custom_sources:
+  type:
+    label: type
+    value: type
+    machine_name: type
+  title:
+    label: title
+    value: title
+    machine_name: title
+  body:
+    label: body
+    value: body
+    machine_name: body
+  teaser:
+    label: teaser
+    value: teaser
+    machine_name: teaser
+  tagline:
+    label: tagline
+    value: tagline
+    machine_name: tagline
+  image:
+    label: image
+    value: image
+    machine_name: image
+  pubstatus:
+    label: pubStatus
+    value: pubStatus
+    machine_name: pubstatus
+  startdate:
+    label: startDate
+    value: startDate
+    machine_name: startdate
+  enddate:
+    label: endDate
+    value: endDate
+    machine_name: enddate
+mappings:
+  -
+    target: field_event_type
+    map:
+      target_id: type
+    settings:
+      language: ''
+      reference_by: name
+      autocreate: '1'
+  -
+    target: title
+    map:
+      value: title
+    unique:
+      value: '1'
+    settings:
+      language: null
+  -
+    target: body
+    map:
+      value: body
+      summary: teaser
+    settings:
+      language: ''
+      format: body
+  -
+    target: field_byline
+    map:
+      value: tagline
+    unique: {  }
+    settings:
+      language: null
+  -
+    target: field_media
+    map:
+      target_id: image
+    settings:
+      language: ''
+      reference_by: name
+      autocreate: '1'
+  -
+    target: status
+    map:
+      value: pubstatus
+    settings:
+      language: null
+  -
+    target: field_date_range
+    map:
+      value: startdate
+      end_value: enddate
+    settings:
+      language: ''
+      timezone: UTC

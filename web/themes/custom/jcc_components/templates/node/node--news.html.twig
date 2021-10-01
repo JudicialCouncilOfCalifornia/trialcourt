@@ -96,20 +96,37 @@
         background: 'default',
         main: {
           title: label,
-          lead: '',
-          brow: ''
+          lead: content.field_byline|render|striptags,
+          brow: node.field_news_type.0.entity.name.value
         },
         aside: {},
         classes: []
       }
     } %}
 
-    {% include '@molecules/section/section.twig' with {
-      section: {
-        background: 'default',
-        container: 'container',
-        content: content.body
-      }
-    } %}
+    {% set body %}
+      {% if content.field_date or content.field_author %}
+        <div class="jcc-about">
+          {% if content.field_author %}
+            <span>By {{ content.field_author|render|striptags }}</span>
+          {% endif %}
+          {% if content.field_date %}
+            <span>{{ content.field_date|render|striptags }}</span>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {{ content.body }}
+    {% endset %}
+
+    {% block node_section__no_components %}
+      {% include '@molecules/section/section.twig' with {
+        section: {
+          background: 'default',
+          container: 'container',
+          content: body
+        }
+      } %}
+    {% endblock %}
   {% endif %}
 </article>

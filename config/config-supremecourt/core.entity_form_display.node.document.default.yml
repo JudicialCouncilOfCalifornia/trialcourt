@@ -3,13 +3,22 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.document.body
+    - field.field.node.document.field_case
+    - field.field.node.document.field_date
+    - field.field.node.document.field_date_range
+    - field.field.node.document.field_document_type
     - field.field.node.document.field_media
     - node.type.document
   module:
+    - autocomplete_deluxe
+    - datetime
+    - datetime_range
     - media_library
     - path
     - scheduler
     - scheduler_content_moderation_integration
+    - text
 _core:
   default_config_hash: aFguc8Xn18AynNT-hqQx-5UgdCa7D7pAMBKaYGKxRM8
 id: node.document.default
@@ -17,12 +26,68 @@ targetEntityType: node
 bundle: document
 mode: default
 content:
+  body:
+    weight: 30
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+    type: text_textarea_with_summary
+    region: content
   created:
     type: datetime_timestamp
     weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_case:
+    weight: 27
+    settings:
+      limit: '10'
+      min_length: '0'
+      delimiter: ''
+      not_found_message_allow: '1'
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: '1'
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+    third_party_settings: {  }
+    type: autocomplete_deluxe
+    region: content
+  field_date:
+    weight: 28
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_date_range:
+    weight: 29
+    settings: {  }
+    third_party_settings: {  }
+    type: daterange_default
+    region: content
+  field_document_type:
+    weight: 26
+    settings:
+      limit: '10'
+      min_length: '0'
+      delimiter: ''
+      not_found_message_allow: '1'
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: '1'
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+    third_party_settings: {  }
+    type: autocomplete_deluxe
+    region: content
   field_media:
     weight: 1
     settings:

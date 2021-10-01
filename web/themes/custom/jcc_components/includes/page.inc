@@ -44,7 +44,7 @@ function jcc_components_preprocess_page(&$variables) {
 
   $path = \Drupal::service('path.current')->getPath();
   $langcodes = \Drupal::languageManager()->getLanguages();
-  if (count($langcodes) > 1 && !theme_get_setting('hide_translation', 'jcc_components')) {
+  if (count($langcodes) > 1 && !theme_get_setting('hide_translation')) {
     foreach ($langcodes as $langcode => $language) {
       $url = \Drupal::service('path.alias_manager')->getAliasByPath($path, $langcode);
       // If there's no alias use the path from the current route.
@@ -58,6 +58,14 @@ function jcc_components_preprocess_page(&$variables) {
         'text' => $language->getName(),
         'url' => $url,
       ];
+    }
+  }
+
+  // Add Google Translate block.
+  if (theme_get_setting('show_google_translate')) {
+    $google_translate = \Drupal::service('plugin.manager.block')->createInstance('google_translate_block', []);
+    if (isset($google_translate) && !empty($google_translate)) {
+      $variables['google_translate'] = $google_translate->build();
     }
   }
 }

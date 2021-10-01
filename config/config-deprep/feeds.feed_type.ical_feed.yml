@@ -4,13 +4,27 @@ status: true
 dependencies:
   config:
     - field.field.node.event.body
+    - field.field.node.event.feeds_item
     - field.field.node.event.field_date_range
     - field.field.node.event.field_event_moreinfo
     - field.field.node.event.field_recurring_event
     - node.type.event
   module:
     - feeds_ical
+    - feeds_tamper
     - node
+third_party_settings:
+  feeds_tamper:
+    tampers:
+      b1548a05-fa78-4e1b-82cb-f48d8536d841:
+        find: /\n/
+        replace: '<br />'
+        limit: null
+        plugin: find_replace_regex
+        source: description
+        weight: 0
+        label: 'Find replace REGEX'
+        uuid: b1548a05-fa78-4e1b-82cb-f48d8536d841
 id: ical_feed
 label: 'iCal Feed'
 description: ''
@@ -28,12 +42,12 @@ parser_configuration: {  }
 processor: 'entity:node'
 processor_configuration:
   langcode: en
-  update_existing: 1
-  update_non_existent: _delete
+  update_existing: 2
+  update_non_existent: _keep
   expire: -1
   owner_feed_author: false
   owner_id: 0
-  authorize: true
+  authorize: false
   skip_hash_check: false
   values:
     type: event
@@ -56,8 +70,8 @@ mappings:
       value: description
       summary: description
     settings:
-      language: null
-      format: plain_text
+      language: ''
+      format: full_html
   -
     target: field_date_range
     map:
@@ -80,3 +94,11 @@ mappings:
     settings:
       language: null
       format: plain_text
+  -
+    target: feeds_item
+    map:
+      url: ''
+      guid: uid
+    unique:
+      guid: '1'
+    settings: {  }
