@@ -46,12 +46,12 @@ function jcc_professional_theme_suggestions_paragraph_alter(&$suggestions, $vari
  */
 function jcc_professional_paragraph_cards(array &$variables, ParagraphInterface $paragraph) {
   $sub_variants = !empty($paragraph->field_sub_variant) ? json_decode($paragraph->field_sub_variant->first()->value, TRUE) : ['card' => 'cta'];
-  $extra = '';
   // Prep the cards due to special handling of linkit links.
   $cards = $paragraph->field_components->referencedEntities();
   // Clear cards from preprocessed jcc_component parent theme.
   $variables['cards'] = [];
   foreach ($cards as $card) {
+    $extra = NULL;
     $title = !empty($card->field_heading) ? $card->field_heading->first()->value : '';
 
     if (!empty($card->field_link)) {
