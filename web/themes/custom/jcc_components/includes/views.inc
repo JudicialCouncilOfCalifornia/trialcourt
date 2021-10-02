@@ -126,7 +126,7 @@ function jcc_components_preprocess_views_view__oral_arguments__block_5(&$variabl
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $row = $row['#node'];
     $page = [
-      'year' => $row->field_date->date->format('Y'),
+      'year' => $row->field_date->date ? $row->field_date->date->format('Y') : 'Undefined',
       'link' => $row->toLink(NULL, 'canonical', ['absolute' => TRUE]),
     ];
     array_push($pages, $page);
