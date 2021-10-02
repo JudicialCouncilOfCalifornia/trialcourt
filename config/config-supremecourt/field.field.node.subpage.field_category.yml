@@ -1,0 +1,60 @@
+uuid: 1691a949-6058-4bf1-9ad4-e7bc10946cdb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_category
+    - node.type.subpage
+    - taxonomy.vocabulary.case
+    - taxonomy.vocabulary.department
+    - taxonomy.vocabulary.division
+    - taxonomy.vocabulary.document_type
+    - taxonomy.vocabulary.event_type
+    - taxonomy.vocabulary.glossary
+    - taxonomy.vocabulary.location_type
+    - taxonomy.vocabulary.matters_served
+    - taxonomy.vocabulary.multimedia_type
+    - taxonomy.vocabulary.news_type
+    - taxonomy.vocabulary.person_type
+    - taxonomy.vocabulary.subject_matter
+    - taxonomy.vocabulary.tags
+    - taxonomy.vocabulary.topics
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.subpage.field_category
+field_name: field_category
+entity_type: node
+bundle: subpage
+label: Category
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      case: case
+      department: department
+      division: division
+      document_type: document_type
+      event_type: event_type
+      glossary: glossary
+      location_type: location_type
+      matters_served: matters_served
+      multimedia_type: multimedia_type
+      news_type: news_type
+      person_type: person_type
+      subject_matter: subject_matter
+      tags: tags
+      topics: topics
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: department
+field_type: entity_reference
