@@ -4,11 +4,13 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.content_stream.field_content_stream
+    - field.field.paragraph.content_stream.field_filter_by_date
     - field.field.paragraph.content_stream.field_heading
     - field.field.paragraph.content_stream.field_lead
     - paragraphs.paragraphs_type.content_stream
   module:
     - block_field
+    - datetime_range
     - text
 id: paragraph.content_stream.default
 targetEntityType: paragraph
@@ -21,6 +23,16 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: block_field
+    region: content
+  field_filter_by_date:
+    weight: 3
+    label: above
+    settings:
+      separator: '-'
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    type: daterange_default
     region: content
   field_heading:
     weight: 0

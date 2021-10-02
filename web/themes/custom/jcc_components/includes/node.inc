@@ -126,35 +126,39 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
 
   // Populate the menu - second and third levels only.
   $menu_items = jcc_get_menu_items('main', 2, 3);
+  $is_menu_item = $menu_link_manager->loadLinksByRoute('entity.node.canonical', ['node' => $node->nid->value]);
 
-  foreach ($menu_items as $content) {
-    // If we want links for primary active trail/parents of the current section.
-    $section = $menu_link_manager->createInstance($content->link->getParent())->getUrlObject()->toString();
-    if ($section == $current_section) {
-      $variables['secondary_menu']['items'][] = [
-        'title' => $content->link->getTitle(),
-        'url' => $content->link->getUrlObject(),
-        'in_active_trail' => $content->inActiveTrail,
-        'has_children' => $content->hasChildren,
-      ];
-    }
+  // Return links only if subpage is within menu & menu depth.
+  if ($menu_items && $is_menu_item) {
+    foreach ($menu_items as $content) {
+      // If we want links for primary active trail/parents of current section.
+      $section = $menu_link_manager->createInstance($content->link->getParent())->getUrlObject()->toString();
+      if ($section == $current_section) {
+        $variables['secondary_menu']['items'][] = [
+          'title' => $content->link->getTitle(),
+          'url' => $content->link->getUrlObject(),
+          'in_active_trail' => $content->inActiveTrail,
+          'has_children' => $content->hasChildren,
+        ];
+      }
 
-    // If we want links for the secondary active trail.
-    if ($content->inActiveTrail) {
-      foreach ($content->subtree as $sub_content) {
-        // If we're in the third level, add the parent for link to second level.
-        if ($sub_content->inActiveTrail) {
-          $variables['tertiary_menu']['parent'] = [
-            'title' => $content->link->getTitle(),
-            'url' => $content->link->getUrlObject(),
+      // If we want links for the secondary active trail.
+      if ($content->inActiveTrail) {
+        foreach ($content->subtree as $sub_content) {
+          // If we're in the third level, add parent for link to second level.
+          if ($sub_content->inActiveTrail) {
+            $variables['tertiary_menu']['parent'] = [
+              'title' => $content->link->getTitle(),
+              'url' => $content->link->getUrlObject(),
+            ];
+          }
+
+          $variables['tertiary_menu']['items'][] = [
+            'title' => $sub_content->link->getTitle(),
+            'url' => $sub_content->link->getUrlObject(),
+            'in_active_trail' => $sub_content->inActiveTrail,
           ];
         }
-
-        $variables['tertiary_menu']['items'][] = [
-          'title' => $sub_content->link->getTitle(),
-          'url' => $sub_content->link->getUrlObject(),
-          'in_active_trail' => $sub_content->inActiveTrail,
-        ];
       }
     }
   }
