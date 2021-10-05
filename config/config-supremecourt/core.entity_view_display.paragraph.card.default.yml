@@ -5,12 +5,19 @@ dependencies:
   config:
     - field.field.paragraph.card.field_brow
     - field.field.paragraph.card.field_display_document_list
+    - field.field.paragraph.card.field_dark_brow
     - field.field.paragraph.card.field_heading
+    - field.field.paragraph.card.field_icon
+    - field.field.paragraph.card.field_image_media
     - field.field.paragraph.card.field_link
+    - field.field.paragraph.card.field_overlay
     - field.field.paragraph.card.field_text
+    - field.field.paragraph.card.field_top_background
     - paragraphs.paragraphs_type.card
   module:
+    - jcc_courtyard_icons
     - linkit_field
+    - options
     - text
 _core:
   default_config_hash: ugUiQVYqHezZLrsaOM-o2LgOIm7yBnM_fakktTSEloI
@@ -34,6 +41,15 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+  field_dark_brow:
+    weight: 5
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
     region: content
   field_heading:
     weight: 1
@@ -42,6 +58,22 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
+  field_icon:
+    weight: 6
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: courtyard_icons_formatter
+    region: content
+  field_image_media:
+    weight: 7
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    type: entity_reference_entity_view
     region: content
   field_link:
     weight: 3
@@ -56,12 +88,29 @@ content:
     third_party_settings: {  }
     type: linkit_field_linkit
     region: content
+  field_overlay:
+    weight: 9
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
   field_text:
     weight: 2
     label: hidden
     settings: {  }
     third_party_settings: {  }
     type: text_default
+    region: content
+  field_top_background:
+    weight: 10
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
     region: content
 hidden:
   search_api_excerpt: true
