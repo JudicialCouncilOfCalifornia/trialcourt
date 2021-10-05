@@ -59,29 +59,23 @@ function jcc_professional_paragraph_cards(array &$variables, ParagraphInterface 
     $media = [];
     $bgcolor = NULL;
     $brow = NULL;
-    $sub_variants['card'] = '';
+    $sub_variants['card'] = 'cta';
     $title = !empty($card->field_heading) ? $card->field_heading->first()->value : '';
 
     if (!empty($card->field_link)) {
       $link = $card->field_link->view('default');
     }
 
-
     if ($card->get('field_display_document_list')->target_id) {
       $view = Views::getView('weekly_conference_results');
       $extra = $view->buildRenderable('default', [$card->get('field_display_document_list')->target_id]);
     }
 
-    if (!empty($card->field_brow)) {
+    if (!empty($card->field_brow) && $card->field_brow->value) {
       $brow = $card->field_brow->view('default');
-    }
-
-    if (!empty($card->field_dark_brow) && $card->field_dark_brow->value == '1' && $card->field_brow->value != NULL) {
-      $sub_variants['card'] = 'cta-color';
-    }
-
-    if ($card->field_icon->value) {
-      $icon['name'] = str_replace("icon-fa-", "", $card->field_icon->value);
+      if (!empty($card->field_dark_brow) && $card->field_dark_brow->value == '1') {
+        $sub_variants['card'] = 'cta-color';
+      }
     }
 
     if (!$card->field_image_media->isEmpty()) {
@@ -109,6 +103,10 @@ function jcc_professional_paragraph_cards(array &$variables, ParagraphInterface 
           $sub_variants['card'] = 'media-full';
         }
       }
+    }
+
+    if ($card->field_icon->value) {
+      $icon['name'] = str_replace("icon-fa-", "", $card->field_icon->value);
     }
 
     $variables['cards'][] = [
