@@ -1,0 +1,28 @@
+uuid: 5a847c78-afb0-44d2-b806-ed82ed20c5f6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_weight
+    - taxonomy.vocabulary.case
+  module:
+    - tmgmt_content
+    - weight
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: taxonomy_term.case.field_weight
+field_name: field_weight
+entity_type: taxonomy_term
+bundle: case
+label: 'Sort Order'
+description: 'Adjust the order for a collection of cases rather than against all available cases'
+required: false
+translatable: false
+default_value:
+  -
+    value: '0'
+default_value_callback: ''
+settings:
+  range: '20'
+field_type: weight
