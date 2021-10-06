@@ -7,6 +7,7 @@
 
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
+use Drupal\views\Views;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -217,6 +218,25 @@ function jcc_components_paragraph_views_reference_location_map_list(array &$vari
 function jcc_components_paragraph_text_share(array &$variables, ParagraphInterface $paragraph) {
   if ($node = \Drupal::routeMatch()->getParameter('node')) {
     $variables['page_title'] = $node->title->value;
+  }
+}
+
+/**
+ * Helper function for content streams.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_components_paragraph_content_stream(array &$variables, ParagraphInterface $paragraph) {
+  $arg1 = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Ymd') : NULL;
+  $arg2 = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Ymd') : NULL;
+
+  if ($arg1 && $arg2) {
+    $view = Views::getView('oral_arguments');
+    $stream = $view->buildRenderable('default', [$arg1, $arg2]);
+    $variables['filtered_content'] = $stream;
   }
 }
 

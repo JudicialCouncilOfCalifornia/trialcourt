@@ -1,0 +1,59 @@
+uuid: a0e8bcd9-65d6-427c-8aae-30c7fcd99e49
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.case.field_weight
+    - taxonomy.vocabulary.case
+  module:
+    - path
+    - text
+    - weight
+id: taxonomy_term.case.default
+targetEntityType: taxonomy_term
+bundle: case
+mode: default
+content:
+  description:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      placeholder: ''
+      rows: 5
+    third_party_settings: {  }
+  field_weight:
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+    type: weight_selector
+    region: content
+  langcode:
+    type: language_select
+    weight: 3
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 5
+    region: content
+    third_party_settings: {  }
+hidden: {  }

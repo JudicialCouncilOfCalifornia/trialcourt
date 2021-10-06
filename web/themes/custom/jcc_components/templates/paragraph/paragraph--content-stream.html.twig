@@ -39,6 +39,11 @@
  */
 #}
 
+{% set content = content.field_content_stream %}
+{% if filtered_content %}
+  {% set content = filtered_content %}
+{% endif %}
+
 {% include "@molecules/section/section.twig" with {
   section: {
     heading: {
@@ -46,6 +51,6 @@
       lead: content.field_lead|render,
       width: "partial",
     },
-    content: content.field_content_stream,
+    content: content,
   }
 } %}
