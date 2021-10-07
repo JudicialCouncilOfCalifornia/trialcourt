@@ -33,7 +33,7 @@
 
 {% set items = [] %}
 {% for k, row in rows.0['#rows'] if k|first != "#" %}
-  {% if row['#node'] and (row['#node'].field_date_range.value|date('F d, Y') > 'now'|date('F d, Y')) %}
+  {% if row['#node'] and (row['#node'].field_date_range.value|date('Ymd') > 'now'|date('Ymd')) %}
     {% set body %}
       {{ row['#node'].body.summary }}
       {% if row['#node'].field_event_type.0.entity.name %}
