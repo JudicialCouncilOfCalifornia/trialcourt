@@ -21,7 +21,9 @@
   {% for item in items %}
     {% set body %}
       {{ item.summary }}
-      <div class="jcc-metadata">{{ item.type }}</div>
+      {% if item.type %}
+        <div class="jcc-metadata">{{ item.type }}</div>
+      {% endif %}
     {% endset %}
 
     {% set content = content|merge([{
