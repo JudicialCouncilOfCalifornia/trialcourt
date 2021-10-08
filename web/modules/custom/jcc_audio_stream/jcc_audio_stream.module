@@ -9,5 +9,8 @@
  * Implements hook_preprocess_paragraph__TYPE().
  */
 function jcc_audio_stream_preprocess_paragraph__accordion(&$variables) {
+  // This is an unusual field/paragraph to attach the JS to, but it couldn't be
+  // attached the normal way given how the accordion item paragraph is rendered
+  // in twig.
   $variables["content"]["field_heading"][0]['#attached']['library'][] = 'jcc_audio_stream/jcc_audio_stream';
 }
