@@ -168,14 +168,14 @@ function jcc_components_preprocess_views_view__case_information__block_1(&$varia
     }
   }
 
-  $docs = [];
+  $minutes = [];
   foreach ($pages as $item) {
     if ($item['year']) {
       $year = $item['year'];
-      $docs[$year][] = $item;
+      $minutes[$year][] = $item;
     }
   }
-  $variables['items'] = $docs;
+  $variables['items'] = $minutes;
 }
 
 /**

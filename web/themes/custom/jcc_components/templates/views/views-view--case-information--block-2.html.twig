@@ -1,26 +1,37 @@
-{% set minutes = [] %}
+{% set summaries = [] %}
 {% for k, item in items if k|first != "#" %}
-  {% set links %}
-    <ul>
-      {% for meeting in item %}
-        {% set description = 'View or download Supreme Court summary for the week of ' ~ meeting.filing_date %}
-        <li>
-          <a href="{{ meeting.url }}" aria-label="{{ description }}">{{ meeting.filing_date }}</a>
-        </li>
-      {% endfor %}
-    </ul>
+  {% set lists %}
+    {% set links = [] %}
+    {% for summary in item %}
+      {% set description = 'View or download Supreme Court summary for the week of ' ~ meeting.filing_date %}
+      {% set link = {
+        url_title: summary.filing_date,
+        url: summary.url,
+        aria_label: description,
+      } %}
+      {% set links = links|merge([link]) %}
+    {% endfor %}
+
+    {% include "@molecules/list/list.twig" with {
+      list: {
+        columns: 3,
+        items: links,
+      }
+    } %}
   {% endset %}
+
   {% set accordion = {
     title: item[0].year == dateTime|date('Y') ? 'Current Year' : item[0].year,
-    body: links
+    body: lists
   } %}
-  {% set minutes = minutes|merge([accordion]) %}
+
+  {% set summaries = summaries|merge([accordion]) %}
 {% endfor %}
 {% include "@organisms/accordion/accordion.twig" with {
   accordion: {
     collapse_first: content.field_toggle['#items'].value,
     item_tag: "h2",
     classes: [],
-    items: minutes
+    items: summaries
   }
 } %}
