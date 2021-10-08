@@ -1,0 +1,26 @@
+{% set minutes = [] %}
+{% for k, item in items if k|first != "#" %}
+  {% set links %}
+    <ul>
+      {% for meeting in item %}
+        {% set description = 'View or download Supreme Court minutes for ' ~ meeting.filing_date %}
+        <li>
+          <a href="{{ meeting.url }}" aria-label="{{ description }}">{{ meeting.filing_date }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endset %}
+  {% set accordion = {
+    title: item[0].year == dateTime|date('Y') ? 'Current Year' : item[0].year,
+    body: links
+  } %}
+  {% set minutes = minutes|merge([accordion]) %}
+{% endfor %}
+{% include "@organisms/accordion/accordion.twig" with {
+  accordion: {
+    collapse_first: content.field_toggle['#items'].value,
+    item_tag: "h2",
+    classes: [],
+    items: minutes
+  }
+} %}
