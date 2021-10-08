@@ -36,7 +36,9 @@
   {% if row['#node'] %}
     {% set body %}
       {{ row['#node'].body.summary }}
-      <div class="jcc-metadata">{{ row['#node'].field_news_type.0.entity.name.value }}</div>
+      {% if row['#node'].field_news_type.0.entity.name %}
+        <div class="jcc-metadata">{{ row['#node'].field_news_type.0.entity.name.value }}</div>
+      {% endif %}
     {% endset %}
 
     {% set items = items|merge([{

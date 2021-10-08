@@ -33,10 +33,12 @@
 
 {% set items = [] %}
 {% for k, row in rows.0['#rows'] if k|first != "#" %}
-  {% if row['#node'] %}
+  {% if row['#node'] and (row['#node'].field_date_range.value|date('Ymd') > 'now'|date('Ymd')) %}
     {% set body %}
       {{ row['#node'].body.summary }}
-      <div class="jcc-metadata">{{ row['#node'].field_event_type.0.entity.name.value }}</div>
+      {% if row['#node'].field_event_type.0.entity.name %}
+        <div class="jcc-metadata">{{ row['#node'].field_event_type.0.entity.name.value }}</div>
+      {% endif %}
     {% endset %}
 
     {% set items = items|merge([{

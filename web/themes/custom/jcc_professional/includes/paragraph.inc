@@ -6,10 +6,10 @@
  */
 
 use Drupal\paragraphs\ParagraphInterface;
-use Drupal\views\Views;
 use Drupal\media\Entity\Media;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\views\Views;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -54,7 +54,7 @@ function jcc_professional_paragraph_cards(array &$variables, ParagraphInterface 
 
   $variables['cards'] = [];
   foreach ($cards as $card) {
-  $extra = NULL;
+    $extra = NULL;
     $icon = [];
     $media = [];
     $bgcolor = NULL;
@@ -76,6 +76,11 @@ function jcc_professional_paragraph_cards(array &$variables, ParagraphInterface 
       if (!empty($card->field_dark_brow) && $card->field_dark_brow->value == '1') {
         $sub_variants['card'] = 'cta-color';
       }
+    }
+
+    if ($card->get('field_display_document_list')->target_id) {
+      $view = Views::getView('weekly_conference_results');
+      $extra = $view->buildRenderable('default', [$card->get('field_display_document_list')->target_id]);
     }
 
     if (!$card->field_image_media->isEmpty()) {
@@ -112,9 +117,9 @@ function jcc_professional_paragraph_cards(array &$variables, ParagraphInterface 
     $variables['cards'][] = [
       'style' => $sub_variants['card'],
       'title' => $title,
-      'extra_content' => $extra,
       'brow' => $brow,
       'body' => $card->field_text->view('default'),
+      'extra_content' => $extra,
       'icon' => $icon,
       'link' => [
         'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
