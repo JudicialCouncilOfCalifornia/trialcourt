@@ -140,3 +140,75 @@ function jcc_components_preprocess_views_view__oral_arguments__block_2(&$variabl
   }
   $variables['items'] = $briefs;
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function jcc_components_preprocess_views_view__case_information__block_1(&$variables) {
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $current_year = date('Y');
+  $pages = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $row = $row['#node'];
+    $doc_year = $row->field_date->date ? $row->field_date->date->format('Y') : 'Undefined';
+    $years_past = $current_year - $doc_year;
+    if ($years_past < 3) {
+      $media = Media::load($row->field_media->target_id);
+      $file = File::load($media->field_media_file->target_id);
+      $page = [
+        'year' => $doc_year,
+        'url' => file_create_url($file->uri->value),
+        'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
+      ];
+      array_push($pages, $page);
+    }
+  }
+
+  $minutes = [];
+  foreach ($pages as $item) {
+    if ($item['year']) {
+      $year = $item['year'];
+      $minutes[$year][] = $item;
+    }
+  }
+  $variables['items'] = $minutes;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function jcc_components_preprocess_views_view__case_information__block_2(&$variables) {
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $current_year = date('Y');
+  $pages = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $row = $row['#node'];
+    $doc_year = $row->field_date->date ? $row->field_date->date->format('Y') : 'Undefined';
+    $years_past = $current_year - $doc_year;
+    if ($years_past < 3) {
+      $media = Media::load($row->field_media->target_id);
+      $file = File::load($media->field_media_file->target_id);
+      $page = [
+        'year' => $doc_year,
+        'url' => file_create_url($file->uri->value),
+        'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
+      ];
+      array_push($pages, $page);
+    }
+  }
+
+  $summaries = [];
+  foreach ($pages as $item) {
+    if ($item['year']) {
+      $year = $item['year'];
+      $summaries[$year][] = $item;
+    }
+  }
+  $variables['items'] = $summaries;
+}
