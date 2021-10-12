@@ -39,9 +39,9 @@
  */
 #}
 
-{% set content = content.field_content_stream %}
+{% set stream = content.field_content_stream %}
 {% if filtered_content %}
-  {% set content = filtered_content %}
+  {% set stream = filtered_content %}
 {% endif %}
 
 {% include "@molecules/section/section.twig" with {
@@ -51,6 +51,6 @@
       lead: content.field_lead|render,
       width: "partial",
     },
-    content: content,
+    content: stream,
   }
 } %}
