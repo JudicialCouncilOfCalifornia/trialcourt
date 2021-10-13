@@ -197,9 +197,18 @@ function jcc_components_paragraph_views_reference_location_map_list(array &$vari
 
   if ($map_list_attachment && !empty($display['#rows'])) {
     foreach ($display['#rows'][0]['#rows'] as $row) {
+
+      // Excluding country from address view to add it as additional variable.
+      $address_no_country = !empty($row['#node']->field_address) ? $row['#node']->field_address->view('default') : "";
+
+      if (!empty($address_no_country[0]['country']['#value'])) {
+        $address_no_country[0]['country']['#value'] = "";
+      }
+
       $variables['location_items'][] = [
         'title' => $row['#node']->getTitle(),
         'address' => $row['#node']->field_address,
+        'address_no_country' => $address_no_country,
         'phone' => $row['#node']->field_phone,
       ];
     }
@@ -234,9 +243,13 @@ function jcc_components_paragraph_content_stream(array &$variables, ParagraphInt
   $arg2 = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Ymd') : NULL;
 
   if ($arg1 && $arg2) {
-    $view = Views::getView('oral_arguments');
-    $stream = $view->buildRenderable('default', [$arg1, $arg2]);
-    $variables['filtered_content'] = $stream;
+    // If Oral Arguments case documents listing.
+    if ($paragraph->field_content_stream->plugin_id == 'views_block:oral_arguments-block_1') {
+      $view = Views::getView('oral_arguments');
+      $view->storage->invalidateCaches();
+      $stream = $view->buildRenderable('default', [$arg1, $arg2]);
+      $variables['filtered_content'] = $stream;
+    }
   }
 }
 
