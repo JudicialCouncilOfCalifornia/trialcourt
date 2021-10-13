@@ -234,9 +234,13 @@ function jcc_components_paragraph_content_stream(array &$variables, ParagraphInt
   $arg2 = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Ymd') : NULL;
 
   if ($arg1 && $arg2) {
-    $view = Views::getView('oral_arguments');
-    $stream = $view->buildRenderable('default', [$arg1, $arg2]);
-    $variables['filtered_content'] = $stream;
+    // If Oral Arguments case documents listing.
+    if ($paragraph->field_content_stream->plugin_id == 'views_block:oral_arguments-block_1') {
+      $view = Views::getView('oral_arguments');
+      $view->storage->invalidateCaches();
+      $stream = $view->buildRenderable('default', [$arg1, $arg2]);
+      $variables['filtered_content'] = $stream;
+    }
   }
 }
 
