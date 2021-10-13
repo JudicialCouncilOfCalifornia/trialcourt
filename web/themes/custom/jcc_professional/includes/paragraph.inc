@@ -66,6 +66,11 @@ function jcc_professional_paragraph_cards(array &$variables, ParagraphInterface 
       $link = $card->field_link->view('default');
     }
 
+    if ($card->get('field_display_document_list')->target_id) {
+      $view = Views::getView('weekly_conference_results');
+      $extra = $view->buildRenderable('default', [$card->get('field_display_document_list')->target_id]);
+    }
+
     if (!empty($card->field_brow) && $card->field_brow->value) {
       $brow = $card->field_brow->view('default');
       if (!empty($card->field_dark_brow) && $card->field_dark_brow->value == '1') {
