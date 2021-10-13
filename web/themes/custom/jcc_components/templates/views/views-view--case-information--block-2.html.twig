@@ -1,0 +1,37 @@
+{% set summaries = [] %}
+{% for k, item in items if k|first != "#" %}
+  {% set lists %}
+    {% set links = [] %}
+    {% for summary in item %}
+      {% set description = 'View or download Supreme Court summary for the week of ' ~ meeting.filing_date %}
+      {% set link = {
+        url_title: summary.filing_date,
+        url: summary.url,
+        aria_label: description,
+      } %}
+      {% set links = links|merge([link]) %}
+    {% endfor %}
+
+    {% include "@molecules/list/list.twig" with {
+      list: {
+        columns: 3,
+        items: links,
+      }
+    } %}
+  {% endset %}
+
+  {% set accordion = {
+    title: item[0].year == dateTime|date('Y') ? 'Current Year' : item[0].year,
+    body: lists
+  } %}
+
+  {% set summaries = summaries|merge([accordion]) %}
+{% endfor %}
+{% include "@organisms/accordion/accordion.twig" with {
+  accordion: {
+    collapse_first: content.field_toggle['#items'].value,
+    item_tag: "h2",
+    classes: [],
+    items: summaries
+  }
+} %}
