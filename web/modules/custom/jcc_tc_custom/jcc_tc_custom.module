@@ -35,28 +35,6 @@ function jcc_tc_custom_form_node_form_alter(&$form, FormStateInterface $form_sta
       $form['unpublish_state']['widget'][0]['#default_value'] = empty($default_value) ? ['archived'] : $default_value;
     }
   }
-
-  if (in_array($form['#form_id'],
-    [
-      'node_news_form',
-      'node_news_edit_form',
-      'user_form',
-    ]
-  )) {
-    $form['group_social']['promote_fieldset'] = [
-      '#type' => 'fieldset',
-      '#collapsible' => FALSE,
-      '#collapsed' => FALSE,
-      '#weight' => 100,
-    ];
-
-    $form['group_social']['promote_fieldset']['promote[value]'] = [
-      '#type' => 'checkbox',
-      '#title' => t('Promoted to front page'),
-      '#return_value' => 1,
-      '#default_value' => $form['promote']['widget']['value']['#default_value'],
-    ];
-  }
 }
 
 /**
