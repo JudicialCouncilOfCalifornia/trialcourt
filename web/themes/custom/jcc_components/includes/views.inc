@@ -55,8 +55,6 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
     return;
   }
 
-  $variables['view']->storage->invalidateCaches();
-
   $node = \Drupal::routeMatch()->getParameter('node');
   if ($node instanceof NodeInterface) {
     foreach ($node->field_components as $component) {
