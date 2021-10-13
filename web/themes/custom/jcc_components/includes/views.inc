@@ -48,12 +48,14 @@ function jcc_components_preprocess_views_view(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK().
+ * Implements hook_preprocess_HOOK() for oral arguments case documents listing.
  */
 function jcc_components_preprocess_views_view__oral_arguments__default(&$variables) {
   if (empty($variables['rows'][0]['#rows'])) {
     return;
   }
+
+  $variables['view']->storage->invalidateCaches();
 
   $node = \Drupal::routeMatch()->getParameter('node');
   if ($node instanceof NodeInterface) {
@@ -115,7 +117,7 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
 }
 
 /**
- * Implements hook_preprocess_HOOK().
+ * Implements hook_preprocess_HOOK() for oral arguments briefs listing.
  */
 function jcc_components_preprocess_views_view__oral_arguments__block_2(&$variables) {
   if (empty($variables['rows'][0]['#rows'])) {
@@ -142,7 +144,7 @@ function jcc_components_preprocess_views_view__oral_arguments__block_2(&$variabl
 }
 
 /**
- * Implements hook_preprocess_HOOK().
+ * Implements hook_preprocess_HOOK() for minutes.
  */
 function jcc_components_preprocess_views_view__case_information__block_1(&$variables) {
   if (empty($variables['rows'][0]['#rows'])) {
@@ -178,7 +180,7 @@ function jcc_components_preprocess_views_view__case_information__block_1(&$varia
 }
 
 /**
- * Implements hook_preprocess_HOOK().
+ * Implements hook_preprocess_HOOK() for weekly case summaries.
  */
 function jcc_components_preprocess_views_view__case_information__block_2(&$variables) {
   if (empty($variables['rows'][0]['#rows'])) {
