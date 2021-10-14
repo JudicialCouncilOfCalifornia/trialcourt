@@ -5,20 +5,30 @@ show_help() {
   name="backup"
   description="Runs a pantheon backup for all sites in the sites directory."
   usage="scripts/fleet backup [env]"
-  # Use this exact template in all show_help functions for consistentency.
+  # Use this exact template in all show_help functions for consistency.
   echo -e "\n${G}${name}${RE}\t\t${Y}Usage:${RE}\t${usage}"
   echo -e "\n\t\t${description}"
 }
 
 do_command() {
   PIDS=""
-  declare -A sitemap
+  declare -a sitemap
+
+  echo -e "\n${B}Creating backup for SRL${RE}"
+  terminus backup:create "jcc-srl.${env}" &
 
   for site in $sites
     do
       site="jcc-${site}.${env}"
       echo -e "\n${B}Creating backup for ${site}${RE}"
-      terminus backup:create ${site} &
+      if [ ${site} == "jcc-newsroom.${env}" ] || [ ${site} == "jcc-supremecourt.${env}" ]
+      then
+        echo -e "\n${G}*** Database only for ${site}${RE}"
+        terminus backup:create ${site} --element=db &
+      else
+        terminus backup:create ${site} &
+      fi
+
       PIDS+=" $!"
       sitemap["$!"]="${site}"
     done
