@@ -43,6 +43,13 @@
 {% set items = [] %}
 
 {% for k, item in content.field_components if k|first != "#" %}
+
+  {% if item['#paragraph'].field_custom_index.value != null %}
+    {% set custom_index = item['#paragraph'].field_custom_index.value %}
+  {% else %}
+    {% set custom_index = false %}
+  {% endif %}
+  
   {% set step = {
     title: item['#paragraph'].field_heading.value,
     body: {
@@ -50,7 +57,7 @@
       '#text': item['#paragraph'].field_text.value,
       '#format': item['#paragraph'].field_text.format
     },
-    index: item['#paragraph'].field_custom_index.value
+    index: custom_index
   } %}
   {% set items = items|merge([step]) %}
 {% endfor %}
