@@ -59,6 +59,9 @@ Configure theme at `/admin/appearance/settings/jcc_components`:
   * Note: site's email address needs to be `no-reply@courtinfo.ca.gov` for SendGrid to work.
 - Setup defaults for Google Tag module:
   * `lando drush @local.[site] cim --partial --source=/app/web/modules/contrib/google_tag/config/install/`
+- Configure GoogleRecaptcha:
+  * `/admin/config/people/captcha/recaptcha`
+  * See JIRA [ticket TCI-635](https://judasdg.atlassian.net/browse/TCI-635) for keys.
 
 ### Create users
 
