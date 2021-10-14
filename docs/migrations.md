@@ -103,6 +103,10 @@ When you run the migration, if there are any fails for forms_file after this, it
    - Body content is migrated into the node body field. This field only renders when there are no Paragraphs on the node. The body field can not be used by editors to add content to a new node. (Same for news nodes).
  - `node_subpage_path_redirect` creates redirects from old page urls to their new Drupal equivalents.
 
+## Other notes
+
+- It's useful to disable the search index while doing the imports and reenable it afterwards (avoids some notices on your local).
+
 ## Missing Pieces
 
 There was discussion about migrating additional taxonomy references with `forms_file` but that was never fully defined. Works needs to be done to flesh the rest of the taxonomy structure out and ensure the appropriate entities have the appropriate taxonomy reference fields.
