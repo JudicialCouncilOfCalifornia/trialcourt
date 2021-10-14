@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.step.field_custom_index
     - field.field.paragraph.step.field_heading
     - field.field.paragraph.step.field_text
     - paragraphs.paragraphs_type.step
@@ -15,6 +16,14 @@ targetEntityType: paragraph
 bundle: step
 mode: default
 content:
+  field_custom_index:
+    weight: 2
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
   field_heading:
     weight: 0
     label: hidden

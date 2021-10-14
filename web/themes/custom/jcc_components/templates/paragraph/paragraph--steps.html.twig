@@ -49,7 +49,8 @@
       '#type': 'processed_text',
       '#text': item['#paragraph'].field_text.value,
       '#format': item['#paragraph'].field_text.format
-    }
+    },
+    index: item['#paragraph'].field_custom_index.value
   } %}
   {% set items = items|merge([step]) %}
 {% endfor %}
