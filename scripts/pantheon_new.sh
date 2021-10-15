@@ -9,6 +9,9 @@ label=$2
 
 # Create new pantheon project.
 echo -e "\n${B}Creating new Pantheon site ${RE}jcc-${name} \"$label\""
+
+sed
+exit
 terminus site:create jcc-${name} "$label" empty --org=judicial-council-of-california
 
 # Get the id
