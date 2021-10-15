@@ -48,6 +48,23 @@ function jcc_components_preprocess_views_view(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for news + sticky listing.
+ */
+function jcc_components_preprocess_views_view__news__sticky_list(&$variables) {
+  if ($variables['view']->current_display == 'sticky_list' && $variables['view']->args) {
+    switch ($variables['view']->args[0]) {
+      case '201':
+        $variables['more_custom_title'] = 'See All ' . Term::load($variables['view']->args[0])->get('name')->value . 's';
+        $variables['more_custom_url'] = '/views/news?search=&type[201]=201&date_start=&date_end=';
+        break;
+
+      default:
+        // No default intentional for now.
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK() for oral arguments case documents listing.
  */
 function jcc_components_preprocess_views_view__oral_arguments__default(&$variables) {

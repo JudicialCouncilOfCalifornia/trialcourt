@@ -42,12 +42,11 @@
     {% endset %}
 
     {% set items = items|merge([{
-      style: 'borderless usa-card--media-left',
       brow: row['#node'].field_date.0.value|date('F d, Y'),
       title: row['#node'].title.value,
       body: body,
       media: {
-        src: row['#node'].field_media.0.entity.name.value,
+        src: row['#node'].field_media.0.entity.name.value
       },
       link: {
         url: row['#node'].path.value.0.alias,
@@ -56,12 +55,22 @@
   {% endif %}
 {% endfor %}
 
+{% set more_url = more['#url'] %}
+{% if more_custom_url %}
+  {% set more_url = more_custom_url %}
+{% endif %}
+{% set more_title = more['#title'] %}
+{% if more_custom_title %}
+  {% set more_title = more_custom_title %}
+{% endif %}
+
+
 {% include "@templates/content-stream/content-stream.twig" with {
   content_stream: {
     items: items,
     link: {
-      text: more['#title'],
-      url: more['#url'],
+      text: more_title,
+      url: more_url,
       align: 'left',
     },
   }
