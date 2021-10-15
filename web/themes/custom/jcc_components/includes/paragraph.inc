@@ -244,7 +244,7 @@ function jcc_components_paragraph_content_stream(array &$variables, ParagraphInt
   $date_end = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Ymd') : NULL;
 
   if ($taxonomy) {
-    // If News + Sticky listing.
+    // If News + Sticky listing, filter by taxonomy option.
     if ($paragraph->field_content_stream->plugin_id == 'views_block:news-sticky_list') {
       $view = Views::getView('news');
       $view->storage->invalidateCaches();
@@ -254,7 +254,7 @@ function jcc_components_paragraph_content_stream(array &$variables, ParagraphInt
   }
 
   if ($date_start && $date_end) {
-    // If Oral Arguments case documents listing.
+    // If Oral Arguments case documents listing, filter by date range.
     if ($paragraph->field_content_stream->plugin_id == 'views_block:oral_arguments-block_1') {
       $view = Views::getView('oral_arguments');
       $view->storage->invalidateCaches();
