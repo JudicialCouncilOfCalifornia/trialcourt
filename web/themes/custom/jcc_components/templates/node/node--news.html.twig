@@ -107,7 +107,7 @@
     {% set body %}
       {% if content.field_date or content.field_author %}
         <div class="jcc-about">
-          {% if content.field_author %}
+          {% if content.field_author|render %}
             <span>By {{ content.field_author|render|striptags }}</span>
           {% endif %}
           {% if content.field_date %}
