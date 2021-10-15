@@ -1,0 +1,34 @@
+uuid: 88298863-829e-40bc-a248-b2f26e746a7a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_taxonomy
+    - paragraphs.paragraphs_type.content_stream
+    - taxonomy.vocabulary.news_type
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: paragraph.content_stream.field_taxonomy
+field_name: field_taxonomy
+entity_type: paragraph
+bundle: content_stream
+label: 'Filter by Taxonomy'
+description: 'Filter the stream to a specific tag or taxonomy. Currently supported by the following streams: News & Sticky List.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      news_type: news_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

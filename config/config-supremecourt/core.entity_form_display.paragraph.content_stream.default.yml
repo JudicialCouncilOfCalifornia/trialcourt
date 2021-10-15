@@ -7,6 +7,7 @@ dependencies:
     - field.field.paragraph.content_stream.field_filter_by_date
     - field.field.paragraph.content_stream.field_heading
     - field.field.paragraph.content_stream.field_lead
+    - field.field.paragraph.content_stream.field_taxonomy
     - paragraphs.paragraphs_type.content_stream
   module:
     - block_field
@@ -27,7 +28,7 @@ content:
     type: block_field_default
     region: content
   field_filter_by_date:
-    weight: 3
+    weight: 4
     settings: {  }
     third_party_settings: {  }
     type: daterange_default
@@ -47,6 +48,16 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textarea
+    region: content
+  field_taxonomy:
+    weight: 3
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
 hidden:
   created: true

@@ -230,15 +230,26 @@ function jcc_components_paragraph_text_share(array &$variables, ParagraphInterfa
  *   The paragraph.
  */
 function jcc_components_paragraph_content_stream(array &$variables, ParagraphInterface $paragraph) {
-  $arg1 = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Ymd') : NULL;
-  $arg2 = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Ymd') : NULL;
+  $taxonomy = $paragraph->field_taxonomy->target_id ? $paragraph->field_taxonomy->target_id : NULL;
+  $date_start = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Ymd') : NULL;
+  $date_end = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Ymd') : NULL;
 
-  if ($arg1 && $arg2) {
+  if ($taxonomy) {
+    // If News + Sticky listing.
+    if ($paragraph->field_content_stream->plugin_id == 'views_block:news-sticky_list') {
+      $view = Views::getView('news');
+      $view->storage->invalidateCaches();
+      $stream = $view->buildRenderable('sticky_list', [$taxonomy]);
+      $variables['filtered_content'] = $stream;
+    }
+  }
+
+  if ($date_start && $date_end) {
     // If Oral Arguments case documents listing.
     if ($paragraph->field_content_stream->plugin_id == 'views_block:oral_arguments-block_1') {
       $view = Views::getView('oral_arguments');
       $view->storage->invalidateCaches();
-      $stream = $view->buildRenderable('default', [$arg1, $arg2]);
+      $stream = $view->buildRenderable('default', [$date_start, $date_end]);
       $variables['filtered_content'] = $stream;
     }
   }
