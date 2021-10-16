@@ -1,0 +1,34 @@
+{% set variant = paragraph.field_variant.value|json_decode %}
+{% set sub_variants = paragraph.field_sub_variant.value|json_decode %}
+
+{% set cards %}
+  {% include "@organisms/cards/cards.twig" with {
+    cards: {
+      no_container: 'true',
+      background: variant.cards,
+      num_cols: paragraph.field_columns.value,
+      items: cards1,
+    }
+  } %}
+
+  {% include "@organisms/cards/cards.twig" with {
+    cards: {
+      no_container: 'true',
+      background: variant.cards,
+      num_cols: paragraph.field_columns2.value,
+      items: cards2,
+    }
+  } %}
+{% endset %}
+
+{% include "@molecules/section/section.twig" with {
+  section: {
+    background: 'default',
+    heading: {
+      width: 'partial',
+      title: content.field_heading.0|render,
+      lead: content.field_lead|render,
+    },
+    content: cards,
+  }
+} %}

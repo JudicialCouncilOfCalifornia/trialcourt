@@ -49,26 +49,26 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
   $sub_variants = !empty($paragraph->field_sub_variant) ? json_decode($paragraph->field_sub_variant->first()->value, TRUE) : ['card' => 'cta'];
   // Prep the cards due to special handling of linkit links.
   $cards = $paragraph->field_components->referencedEntities();
-  foreach ($cards as $card) {
-    $title = !empty($card->field_heading) ? $card->field_heading->first()->value : '';
+  $variables['cards'] = _jcc_components_generate_cards($cards, $sub_variants);
+}
 
-    if (!empty($card->field_link)) {
-      $link = $card->field_link->view('default');
-    }
+/**
+ * Helper function for cards with mixed column formats paragraphs.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_components_paragraph_cards_mixed_column_formats(array &$variables, ParagraphInterface $paragraph) {
+  $sub_variants = !empty($paragraph->field_sub_variant) ? json_decode($paragraph->field_sub_variant->first()->value, TRUE) : ['card' => 'cta'];
+  // Prep the cards due to special handling of linkit links.
+  $cards1 = $paragraph->field_components->referencedEntities();
+  $variables['cards1'] = _jcc_components_generate_cards($cards1, $sub_variants);
 
-    $variables['cards'][] = [
-      'style' => $sub_variants['card'],
-      'title' => $title,
-      'brow' => $card->field_brow->view('default'),
-      'body' => $card->field_text->view('default'),
-      'link' => [
-        'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
-        'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
-        'type' => !empty($link[0]) ? _jcc_components_get_url_type($link[0]['#url']->toString()) : NULL,
-      ],
-      'classes' => [],
-    ];
-  }
+  // Prep the cards due to special handling of linkit links.
+  $cards2 = $paragraph->field_components2->referencedEntities();
+  $variables['cards2'] = _jcc_components_generate_cards($cards2, $sub_variants);
 }
 
 /**
@@ -230,15 +230,26 @@ function jcc_components_paragraph_text_share(array &$variables, ParagraphInterfa
  *   The paragraph.
  */
 function jcc_components_paragraph_content_stream(array &$variables, ParagraphInterface $paragraph) {
-  $arg1 = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Ymd') : NULL;
-  $arg2 = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Ymd') : NULL;
+  $taxonomy = $paragraph->field_taxonomy->target_id ? $paragraph->field_taxonomy->target_id : NULL;
+  $date_start = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Ymd') : NULL;
+  $date_end = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Ymd') : NULL;
 
-  if ($arg1 && $arg2) {
-    // If Oral Arguments case documents listing.
+  if ($taxonomy) {
+    // If News + Sticky listing, filter by taxonomy option.
+    if ($paragraph->field_content_stream->plugin_id == 'views_block:news-sticky_list') {
+      $view = Views::getView('news');
+      $view->storage->invalidateCaches();
+      $stream = $view->buildRenderable('sticky_list', [$taxonomy]);
+      $variables['filtered_content'] = $stream;
+    }
+  }
+
+  if ($date_start && $date_end) {
+    // If Oral Arguments case documents listing, filter by date range.
     if ($paragraph->field_content_stream->plugin_id == 'views_block:oral_arguments-block_1') {
       $view = Views::getView('oral_arguments');
       $view->storage->invalidateCaches();
-      $stream = $view->buildRenderable('default', [$arg1, $arg2]);
+      $stream = $view->buildRenderable('default', [$date_start, $date_end]);
       $variables['filtered_content'] = $stream;
     }
   }
@@ -266,4 +277,45 @@ function _jcc_components_get_url_type($url) {
   }
 
   return NULL;
+}
+
+/**
+ * Helper function for cards creation.
+ */
+function _jcc_components_generate_cards($cards, $sub_variants) {
+  foreach ($cards as $card) {
+    $title = !empty($card->field_heading) ? $card->field_heading->first()->value : '';
+
+    if (!empty($card->field_link)) {
+      $link = $card->field_link->view('default');
+    }
+
+    if (!empty($card->field_brow) && $card->field_brow->value) {
+      if (!empty($card->field_dark_brow) && $card->field_dark_brow->value == '1') {
+        $sub_variants['card'] = 'cta-color';
+      }
+    }
+
+    if (!empty($card->field_icon)) {
+      $name_array = explode('-', $card->field_icon->value);
+      $icon = $name_array[2];
+    }
+
+    $set[] = [
+      'style' => $sub_variants['card'],
+      'title' => $title,
+      'brow' => $card->field_brow->view('default'),
+      'brow_color' => $card->field_dark_brow->value,
+      'icon' => ['name' => $icon],
+      'body' => $card->field_text->view('default'),
+      'link' => [
+        'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
+        'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
+        'type' => !empty($link[0]) ? _jcc_components_get_url_type($link[0]['#url']->toString()) : NULL,
+      ],
+      'classes' => [],
+    ];
+  }
+
+  return $set;
 }

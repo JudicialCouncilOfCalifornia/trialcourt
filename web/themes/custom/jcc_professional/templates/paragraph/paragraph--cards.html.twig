@@ -1,0 +1,20 @@
+{% extends 'themes/custom/jcc_components/templates/paragraph/paragraph--cards.html.twig' %}
+
+{% block cards_section %}
+  {% include "@organisms/cards/cards.twig" with {
+      cards: {
+        background: variant.cards,
+        num_cols: paragraph.field_columns.value,
+        heading: {
+          width: 'partial',
+          title: content.field_heading.0|render,
+          lead: content.field_lead|render
+        },
+        items: cards,
+        link: {
+          url: content.field_link.0['#url']|render,
+          text: paragraph.field_link.0.title,
+        }
+      }
+  } %}
+{% endblock %}
