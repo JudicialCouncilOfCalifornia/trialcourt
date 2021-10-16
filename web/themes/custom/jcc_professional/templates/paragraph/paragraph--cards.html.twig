@@ -1,5 +1,19 @@
 {% extends 'themes/custom/jcc_components/templates/paragraph/paragraph--cards.html.twig' %}
 
+{% block cards_mixedlayout_section %}
+  {% include "@molecules/section/section.twig" with {
+    section: {
+      background: 'default',
+      heading: {
+        width: 'partial',
+        title: content.field_heading.0|render,
+        lead: content.field_lead|render,
+      },
+      content: cards,
+    }
+  } %}
+{% endblock %}
+
 {% block cards_section %}
   {% include "@organisms/cards/cards.twig" with {
       cards: {

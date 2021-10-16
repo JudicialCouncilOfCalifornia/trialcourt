@@ -4,7 +4,9 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.cards.field_columns
+    - field.field.paragraph.cards.field_columns2
     - field.field.paragraph.cards.field_components
+    - field.field.paragraph.cards.field_components2
     - field.field.paragraph.cards.field_heading
     - field.field.paragraph.cards.field_lead
     - field.field.paragraph.cards.field_link
@@ -13,8 +15,54 @@ dependencies:
     - paragraphs.paragraphs_type.cards
   module:
     - entity_reference_revisions
+    - field_group
     - link
+    - options
     - text
+third_party_settings:
+  field_group:
+    group_cards:
+      children:
+        - group_row_1
+        - group_row_2_optional_
+      parent_name: ''
+      weight: 5
+      format_type: accordion
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+        effect: none
+      label: Cards
+    group_row_1:
+      children:
+        - field_columns
+        - field_components
+      parent_name: group_cards
+      weight: 7
+      format_type: accordion_item
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+      label: 'Row 1'
+    group_row_2_optional_:
+      children:
+        - field_columns2
+        - field_components2
+      parent_name: group_cards
+      weight: 8
+      format_type: accordion_item
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+      label: 'Row 2 (Optional)'
 _core:
   default_config_hash: yNjhdoINVX12Tx2_x3cgxxYEYrJyQZ7pEfO76KwfDX4
 id: paragraph.cards.default
@@ -22,9 +70,32 @@ targetEntityType: paragraph
 bundle: cards
 mode: default
 content:
-  field_components:
+  field_columns:
+    type: list_default
+    weight: 0
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  field_columns2:
     weight: 2
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
+  field_components:
+    weight: 1
     label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    type: entity_reference_revisions_entity_view
+    region: content
+  field_components2:
+    weight: 3
+    label: above
     settings:
       view_mode: default
       link: ''
@@ -47,7 +118,7 @@ content:
     type: text_default
     region: content
   field_link:
-    weight: 3
+    weight: 4
     label: hidden
     settings:
       trim_length: 80
@@ -58,8 +129,21 @@ content:
     third_party_settings: {  }
     type: link
     region: content
+  field_sub_variant:
+    type: string
+    weight: 3
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_variant:
+    type: string
+    weight: 2
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
 hidden:
-  field_columns: true
-  field_sub_variant: true
-  field_variant: true
   search_api_excerpt: true
