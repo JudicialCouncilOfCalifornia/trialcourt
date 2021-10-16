@@ -50,25 +50,13 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
   // Prep the cards due to special handling of linkit links.
   $cards = $paragraph->field_components->referencedEntities();
   $variables['cards'] = _jcc_components_generate_cards($cards, $sub_variants);
-}
 
-/**
- * Helper function for cards with mixed column formats paragraphs.
- *
- * @param array $variables
- *   The paragraph variables.
- * @param \Drupal\paragraphs\ParagraphInterface $paragraph
- *   The paragraph.
- */
-function jcc_components_paragraph_cards_mixed_column_formats(array &$variables, ParagraphInterface $paragraph) {
-  $sub_variants = !empty($paragraph->field_sub_variant) ? json_decode($paragraph->field_sub_variant->first()->value, TRUE) : ['card' => 'cta'];
-  // Prep the cards due to special handling of linkit links.
-  $cards1 = $paragraph->field_components->referencedEntities();
-  $variables['cards1'] = _jcc_components_generate_cards($cards1, $sub_variants);
-
-  // Prep the cards due to special handling of linkit links.
-  $cards2 = $paragraph->field_components2->referencedEntities();
-  $variables['cards2'] = _jcc_components_generate_cards($cards2, $sub_variants);
+  // Option to select a different column layouts for next row.
+  if ($paragraph->field_components2) {
+    // Prep the cards due to special handling of linkit links.
+    $cards2 = $paragraph->field_components2->referencedEntities();
+    $variables['cards2'] = _jcc_components_generate_cards($cards2, $sub_variants);
+  }
 }
 
 /**
