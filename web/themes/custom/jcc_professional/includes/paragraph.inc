@@ -106,7 +106,18 @@ function jcc_professional_paragraph_cards(array &$variables, ParagraphInterface 
     }
 
     if ($card->field_icon->value) {
-      $icon['name'] = str_replace("icon-fa-", "", $card->field_icon->value);
+      if (str_contains($card->field_icon->value, "icon-fa-")) {
+        $icon['set'] = "fa";
+        $icon['name'] = str_replace("icon-fa-", "", $card->field_icon->value);
+      }
+      elseif (str_contains($card->field_icon->value, "icon-line-dark-")) {
+        $icon['set'] = "line-dark";
+        $icon['name'] = str_replace("icon-line-dark-", "", $card->field_icon->value);
+      }
+      elseif (str_contains($card->field_icon->value, "icon-line-white-")) {
+        $icon['set'] = "line-white";
+        $icon['name'] = str_replace("icon-line-white-", "", $card->field_icon->value);
+      }
     }
 
     $variables['cards'][] = [
