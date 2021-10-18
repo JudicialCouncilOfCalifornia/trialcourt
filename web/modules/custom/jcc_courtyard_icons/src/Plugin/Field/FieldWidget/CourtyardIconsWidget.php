@@ -171,6 +171,7 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
     $grouped = [];
     $list = $this->getIconList();
 
+    $options[0] = " - none - ";
     foreach ($list as $name) {
       foreach ($this->sets as $set) {
         if (strpos($name, "icon-$set-") !== FALSE) {
