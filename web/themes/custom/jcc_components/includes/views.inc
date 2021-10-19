@@ -79,30 +79,30 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
     $hearing_range_date = $hearing_start_date . ' - ' . $hearing_end_date;
     if (isset($hearing_range_date) && $hearing_range_date == $date_range) {
       $media = Media::load($row->field_media->target_id);
-      $file = File::load($media->mid[0]->value);
+      $file = File::load($media->field_media_file->target_id);
+      $filename = $file->get('filename')->value;
+      // File order weight through file naming convention.
+      $file_weight = explode('-', $filename);
       $case = Term::load($row->field_case->target_id);
       $doc = [
         'case' => [
-          'name' => $case->get('name')->value,
-          'description' => $case->get('description')->value,
-          'weight' => $case->get('field_weight')->value ? $case->get('field_weight')->value : 0,
+          'name' => $case && $case->get('name')->value ? $case->get('name')->value : 'NO CASE ASSIGNED',
+          'description' => $case && $case->get('description')->value ? $case->get('description')->value : NULL,
+          'weight' => $case && $case->get('field_weight')->value ? $case->get('field_weight')->value : 0,
         ],
         'title' => $row->title->value,
         'url' => $file ? $file->createFileUrl() : NULL,
         'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
+        'file_weight' => $file_weight[0],
       ];
       array_push($docs, $doc);
     }
   }
 
-  /**
-   * Group docs by case.
-   */
-  function cmp($b, $a) {
-    return strcmp($b['case']['weight'], $a['case']['weight']);
-  }
-
-  usort($docs, 'cmp');
+  // Sort cases and documents by weight.
+  usort($docs, function ($a, $b) {
+    return ($a['file_weight'] <=> $b['file_weight']) * 1000 + ($a['case']['weight'] <=> $b['case']['weight']) * 100;
+  });
 
   $cases = [];
   foreach ($docs as $item) {
