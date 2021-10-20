@@ -48,6 +48,17 @@ function jcc_components_preprocess_views_view(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for news + sticky listing.
+ */
+function jcc_components_preprocess_views_view__news__sticky_list(&$variables) {
+  if ($variables['view']->args && $variables['view']->args[0] != 'all') {
+    $taxonomy_id = $variables['view']->args[0];
+    $variables['more_custom_title'] = 'See All ' . Term::load($taxonomy_id)->get('name')->value . 's';
+    $variables['more_custom_url'] = '/views/news?search=&type[' . $taxonomy_id . ']=' . $taxonomy_id . '&date_start=&date_end=';
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK() for oral arguments case documents listing.
  */
 function jcc_components_preprocess_views_view__oral_arguments__default(&$variables) {
@@ -211,4 +222,40 @@ function jcc_components_preprocess_views_view__case_information__block_2(&$varia
     }
   }
   $variables['items'] = $summaries;
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for weekly conference results.
+ */
+function jcc_components_preprocess_views_view__case_information__block_3(&$variables) {
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $current_year = date('Y');
+  $pages = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $row = $row['#node'];
+    $doc_year = $row->field_date->date ? $row->field_date->date->format('Y') : 'Undefined';
+    $years_past = $current_year - $doc_year;
+    if ($years_past < 3) {
+      $media = Media::load($row->field_media->target_id);
+      $file = File::load($media->field_media_file->target_id);
+      $page = [
+        'year' => $doc_year,
+        'url' => file_create_url($file->uri->value),
+        'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
+      ];
+      array_push($pages, $page);
+    }
+  }
+
+  $results = [];
+  foreach ($pages as $item) {
+    if ($item['year']) {
+      $year = $item['year'];
+      $results[$year][] = $item;
+    }
+  }
+  $variables['items'] = $results;
 }
