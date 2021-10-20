@@ -48,6 +48,17 @@ function jcc_components_preprocess_views_view(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for news + sticky listing.
+ */
+function jcc_components_preprocess_views_view__news__sticky_list(&$variables) {
+  if ($variables['view']->args && $variables['view']->args[0] != 'all') {
+    $taxonomy_id = $variables['view']->args[0];
+    $variables['more_custom_title'] = 'See All ' . Term::load($taxonomy_id)->get('name')->value . 's';
+    $variables['more_custom_url'] = '/views/news?search=&type[' . $taxonomy_id . ']=' . $taxonomy_id . '&date_start=&date_end=';
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK() for oral arguments case documents listing.
  */
 function jcc_components_preprocess_views_view__oral_arguments__default(&$variables) {
