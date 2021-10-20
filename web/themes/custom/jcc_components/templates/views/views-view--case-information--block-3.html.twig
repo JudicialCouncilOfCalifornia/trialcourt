@@ -1,12 +1,12 @@
-{% set minutes = [] %}
+{% set summaries = [] %}
 {% for k, item in items if k|first != "#" %}
   {% set lists %}
     {% set links = [] %}
-    {% for meeting in item %}
-      {% set description = 'View or download minutes for ' ~ meeting.filing_date %}
+    {% for summary in item %}
+      {% set description = 'View or download conference results for the week of ' ~ meeting.filing_date %}
       {% set link = {
-        url_title: meeting.filing_date,
-        url: meeting.url,
+        url_title: summary.filing_date,
+        url: summary.url,
         aria_label: description,
       } %}
       {% set links = links|merge([link]) %}
@@ -25,13 +25,13 @@
     body: lists
   } %}
 
-  {% set minutes = minutes|merge([accordion]) %}
+  {% set summaries = summaries|merge([accordion]) %}
 {% endfor %}
 {% include "@organisms/accordion/accordion.twig" with {
   accordion: {
     collapse_first: content.field_toggle['#items'].value,
     item_tag: "h2",
     classes: [],
-    items: minutes
+    items: summaries
   }
 } %}

@@ -296,7 +296,8 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
     }
 
     if ($card->field_display_document_list && $card->get('field_display_document_list')->target_id) {
-      $view = Views::getView('weekly_conference_results');
+      $view = Views::getView('documents');
+      $view->storage->invalidateCaches();
       $extra = $view->buildRenderable('default', [$card->get('field_display_document_list')->target_id]);
     }
 
