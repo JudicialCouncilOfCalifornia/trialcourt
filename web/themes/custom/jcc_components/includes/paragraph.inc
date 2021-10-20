@@ -6,6 +6,9 @@
  */
 
 use Drupal\paragraphs\ParagraphInterface;
+use Drupal\media\Entity\Media;
+use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
 use Drupal\views\ViewEntityInterface;
 use Drupal\views\Views;
 
@@ -49,25 +52,13 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
   $sub_variants = !empty($paragraph->field_sub_variant) ? json_decode($paragraph->field_sub_variant->first()->value, TRUE) : ['card' => 'cta'];
   // Prep the cards due to special handling of linkit links.
   $cards = $paragraph->field_components->referencedEntities();
-  foreach ($cards as $card) {
-    $title = !empty($card->field_heading) ? $card->field_heading->first()->value : '';
+  $variables['cards'] = _jcc_components_generate_cards($cards, $sub_variants);
 
-    if (!empty($card->field_link)) {
-      $link = $card->field_link->view('default');
-    }
-
-    $variables['cards'][] = [
-      'style' => $sub_variants['card'],
-      'title' => $title,
-      'brow' => $card->field_brow->view('default'),
-      'body' => $card->field_text->view('default'),
-      'link' => [
-        'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
-        'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
-        'type' => !empty($link[0]) ? _jcc_components_get_url_type($link[0]['#url']->toString()) : NULL,
-      ],
-      'classes' => [],
-    ];
+  // Option to select a different column layouts for next row.
+  if ($paragraph->field_components2) {
+    // Prep the cards due to special handling of linkit links.
+    $cards2 = $paragraph->field_components2->referencedEntities();
+    $variables['cards2'] = _jcc_components_generate_cards($cards2, $sub_variants);
   }
 }
 
@@ -230,15 +221,26 @@ function jcc_components_paragraph_text_share(array &$variables, ParagraphInterfa
  *   The paragraph.
  */
 function jcc_components_paragraph_content_stream(array &$variables, ParagraphInterface $paragraph) {
-  $arg1 = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Ymd') : NULL;
-  $arg2 = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Ymd') : NULL;
+  $taxonomy = $paragraph->field_taxonomy ? $paragraph->field_taxonomy->target_id : NULL;
+  $date_start = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Ymd') : NULL;
+  $date_end = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Ymd') : NULL;
 
-  if ($arg1 && $arg2) {
-    // If Oral Arguments case documents listing.
+  if ($taxonomy) {
+    // If News + Sticky listing, filter by taxonomy option.
+    if ($paragraph->field_content_stream->plugin_id == 'views_block:news-sticky_list') {
+      $view = Views::getView('news');
+      $view->storage->invalidateCaches();
+      $stream = $view->buildRenderable('sticky_list', [$taxonomy]);
+      $variables['filtered_content'] = $stream;
+    }
+  }
+
+  if ($date_start && $date_end) {
+    // If Oral Arguments case documents listing, filter by date range.
     if ($paragraph->field_content_stream->plugin_id == 'views_block:oral_arguments-block_1') {
       $view = Views::getView('oral_arguments');
       $view->storage->invalidateCaches();
-      $stream = $view->buildRenderable('default', [$arg1, $arg2]);
+      $stream = $view->buildRenderable('default', [$date_start, $date_end]);
       $variables['filtered_content'] = $stream;
     }
   }
@@ -266,4 +268,86 @@ function _jcc_components_get_url_type($url) {
   }
 
   return NULL;
+}
+
+/**
+ * Helper function for cards creation.
+ */
+function _jcc_components_generate_cards($cards, $sub_variants) {
+  $set = [];
+
+  foreach ($cards as $card) {
+    $extra = NULL;
+    $icon = [];
+    $media = [];
+    $bgcolor = NULL;
+    $brow = NULL;
+    $title = !empty($card->field_heading) ? $card->field_heading->first()->value : '';
+
+    if (!empty($card->field_link)) {
+      $link = $card->field_link->view('default');
+    }
+
+    if (!empty($card->field_brow) && $card->field_brow->value) {
+      $brow = $card->field_brow->view('default');
+      if (!empty($card->field_dark_brow) && $card->field_dark_brow->value == '1') {
+        $sub_variants['card'] = 'cta-color';
+      }
+    }
+
+    if ($card->field_display_document_list && $card->get('field_display_document_list')->target_id) {
+      $view = Views::getView('weekly_conference_results');
+      $extra = $view->buildRenderable('default', [$card->get('field_display_document_list')->target_id]);
+    }
+
+    if ($card->field_image_media && !$card->field_image_media->isEmpty()) {
+      $img_media = Media::load($card->field_image_media[0]->getValue('target_id')['target_id']);
+      $fid = $img_media->field_media_image->target_id;
+      $file = File::load($fid);
+      $styled_image_url = ImageStyle::load('max_650x650')->buildUrl($file->getFileUri());
+
+      $bgcolor = $card->field_overlay->value;
+      $media['src'] = $styled_image_url;
+      $media['alt'] = $title;
+      if ($card->field_top_background->value) {
+        if ($card->field_overlay->value) {
+          $sub_variants['card'] = 'media-top-overlay';
+        }
+        else {
+          $sub_variants['card'] = 'media-top';
+        }
+      }
+      else {
+        if ($card->field_overlay->value) {
+          $sub_variants['card'] = 'media-full-overlay';
+        }
+        else {
+          $sub_variants['card'] = 'media-full';
+        }
+      }
+    }
+
+    if ($card->field_icon && $card->field_icon->value) {
+      $icon['name'] = str_replace("icon-fa-", "", $card->field_icon->value);
+    }
+
+    $set[] = [
+      'style' => $sub_variants['card'],
+      'title' => $title,
+      'brow' => $brow,
+      'body' => $card->field_text->view('default'),
+      'extra_content' => $extra,
+      'icon' => $icon,
+      'link' => [
+        'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
+        'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
+        'type' => !empty($link[0]) ? _jcc_components_get_url_type($link[0]['#url']->toString()) : NULL,
+      ],
+      'classes' => [],
+      'bgcolor' => $bgcolor,
+      'media' => $media,
+    ];
+  }
+
+  return $set;
 }
