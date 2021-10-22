@@ -46,14 +46,17 @@ function jcc_components_preprocess_page(&$variables) {
   $langcodes = \Drupal::languageManager()->getLanguages();
   if (count($langcodes) > 1 && !theme_get_setting('hide_translation')) {
     foreach ($langcodes as $langcode => $language) {
-      $url = \Drupal::service('path.alias_manager')->getAliasByPath($path, $langcode);
+      $default = \Drupal::languageManager()->getDefaultLanguage()->getId();
+      $url = \Drupal::service('path_alias.manager')->getAliasByPath($path, $langcode);
+
       // If there's no alias use the path from the current route.
       if (empty($url)) {
-        $default = \Drupal::languageManager()->getDefaultLanguage()->getId();
         $url = Url::fromRoute('<current>')->toString();
-        // Add langcode prefix if not the default language.
-        $url = ($langcode == $default) ? $url : "/${langcode}${url}";
       }
+
+      // Add langcode prefix if not the default language.
+      $url = ($langcode == $default) ? $url : "/${langcode}${url}";
+
       $variables['translation_links'][] = [
         'text' => $language->getName(),
         'url' => $url,
