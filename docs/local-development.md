@@ -21,7 +21,7 @@ It first checks for an existing one of the same name and prompts to replace or s
 
  - Drush Alias
    - `lando drush @[alias] sql-dump --gzip > data/[alias]-YYYY-MM-DD.sql.gz`
-   - `lando sql-sync @[site].live @local.[site]` to directly sync a live db to local site.
+   - `lando drush sql-sync @[site].live @local.[site]` to directly sync a live db to local site.
  - Terminus
    - `terminus backup:create [project].[env] --element=db`
    - `terminus backup:get [project].[env] --element=db`
