@@ -1,12 +1,23 @@
 {% set briefs = [] %}
 {% for k, item in items if k|first != "#" %}
   {% set links %}
-    <ul>
-      {% for brief in item %}
-        <li>{{ brief.link }}</li>
-      {% endfor %}
-    </ul>
+    {% set docs = [] %}
+    {% for brief in item %}
+      {% set link = {
+        description: brief.link
+      } %}
+      {% set docs = docs|merge([link]) %}
+    {% endfor %}
+
+    {% include "@molecules/list/list.twig" with {
+      list: {
+        style: 'none',
+        columns: 1,
+        items: docs,
+      }
+    } %}
   {% endset %}
+
   {% set accordion = {
     title: item[0].year == dateTime|date('Y') ? 'Current Year' : item[0].year,
     body: links
