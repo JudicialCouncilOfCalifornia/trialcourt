@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
-
-
+echo $BASEDIR
 show_help() {
-  name="backup"
+  name="backup-verbose"
   description="Runs a pantheon backup for all sites in the sites directory."
   usage="scripts/fleet backup [env]"
   # Use this exact template in all show_help functions for consistency.
-  echo -e "\n${G}${name}${RE}\t\t${Y}Usage:${RE}\t${usage}"
-  echo -e "\n\t\t${description}"
+  . ${BASEDIR}/scripts/.fleet/templates/show_help.sh
 }
 
 do_command() {
