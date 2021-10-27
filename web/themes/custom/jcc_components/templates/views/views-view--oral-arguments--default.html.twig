@@ -1,11 +1,11 @@
 {% set cases %}
   {% for item in items %}
-    <h2>{{ item[0].case.name }}</h2>
-    {% if item[0].case.description %}
-      {{ item[0].case.description|raw }}
+    <h2>{{ item.docs[0].case.name }}</h2>
+    {% if item.docs[0].case.description %}
+      {{ item.docs[0].case.description|raw }}
     {% endif %}
     <ol>
-      {% for doc in item %}
+      {% for doc in item.docs %}
         <li>
           <a href="{{ doc.url }}" aria-label="View or download document {{ doc.title }}">{{ doc.title }}</a>
           Filed on {{ doc.filing_date }}
