@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_blocks.module.
+ */
+
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_bulk_document_importer_form_alter(&$form, &$form_state, $form_id) {
+  // Node creation and editing only customizations.
+  if ((isset($form['#theme']['1']) && $form['#theme']['1'] == 'node_form')) {
+    // Suppress format options from certain fields.
+    if (isset($form['field_tagline'])) {
+      $form['field_tagline']['widget']['#after_build'][] = '_allowed_formats_remove_option';
+    }
+    if (isset($form['field_feed_source'])) {
+      $form['field_feed_source']['widget']['#after_build'][] = '_allowed_formats_remove_option';
+    }
+  }
+}
