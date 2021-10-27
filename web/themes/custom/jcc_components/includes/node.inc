@@ -246,6 +246,9 @@ function jcc_components_node_event(array &$variables, NodeInterface $node) {
   $variables['breadcrumb'] = \Drupal::service('breadcrumb')
     ->build(\Drupal::routeMatch())
     ->toRenderable();
+
+  $variables['startDate'] = jcc_timezone_adjust($node->field_date_range->start_date);
+  $variables['endDate'] = jcc_timezone_adjust($node->field_date_range->end_date);
 }
 
 /**
@@ -279,4 +282,15 @@ function jcc_get_menu_items($menu_name, $min_depth, $max_depth) {
   $tree = \Drupal::menuTree()->transform($tree, $manipulators);
 
   return $tree;
+}
+
+/**
+ * Date timezone adjustment.
+ */
+function jcc_timezone_adjust($date) {
+  $formatted = \Drupal::service('date.formatter')->format(
+    $date->getTimestamp(), 'custom', 'Y-m-d H:i:s P'
+  );
+
+  return $formatted;
 }
