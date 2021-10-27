@@ -5,6 +5,7 @@
  * Functions for views processing.
  */
 
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\media\Entity\Media;
@@ -56,6 +57,35 @@ function jcc_components_preprocess_views_view__news__sticky_list(&$variables) {
     $variables['more_custom_title'] = 'See All ' . Term::load($taxonomy_id)->get('name')->value . 's';
     $variables['more_custom_url'] = '/views/news?search=&type[' . $taxonomy_id . ']=' . $taxonomy_id . '&date_start=&date_end=';
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for events full listing.
+ */
+function jcc_components_preprocess_views_view__events__events_list(&$variables) {
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $events = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $row = $row['#node'];
+    $nid = $row->id();
+    $startDate = jcc_timezone_adjust($row->field_date_range->start_date);
+    $endDate = jcc_timezone_adjust($row->field_date_range->end_date);
+
+    $event = [
+      'title' => $row->title->value,
+      'url' => Url::fromRoute('entity.node.canonical', ['node' => $nid], ['absolute' => FALSE])->toString(),
+      'type' => Term::load($row->field_event_type->target_id)->get('name')->value,
+      'start_date' => $startDate,
+      'end_date' => $endDate,
+      'summary' => $row->body->view('teaser'),
+    ];
+    array_push($events, $event);
+  }
+
+  $variables['rows'] = $events;
 }
 
 /**
