@@ -1,12 +1,12 @@
 {% set cases %}
   {% for item in items %}
-    <h2>{{ item[0].case.name }}</h2>
-    {% if item[0].case.description %}
-      {{ item[0].case.description|raw }}
+    <h2>{{ item.docs[0].case.name }}</h2>
+    {% if item.docs[0].case.description %}
+      {{ item.docs[0].case.description|raw }}
     {% endif %}
 
     {% set docs = [] %}
-    {% for doc in item %}
+    {% for doc in item.docs %}
       {% set link = {
         url_title: doc.title,
         url: doc.url,

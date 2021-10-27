@@ -140,18 +140,26 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
     }
   }
 
-  // Sort cases and documents by weight.
+  // Sort documents by weight.
   usort($docs, function ($a, $b) {
-    return ($a['file_weight'] <=> $b['file_weight']) * 1000 + ($a['case']['weight'] <=> $b['case']['weight']) * 100;
+    return strnatcmp($a['file_weight'], $b['file_weight']);
   });
 
+  // Group documents by case.
   $cases = [];
   foreach ($docs as $item) {
     if ($item['case']['name']) {
       $case = $item['case']['name'];
-      $cases[$case][] = $item;
+      $cases[$case]['weight'] = $item['case']['weight'];
+      $cases[$case]['docs'][] = $item;
     }
   }
+
+  // Sort cases by weight.
+  uasort($cases, function ($a, $b) {
+    return ($a['weight'] <=> $b['weight']);
+  });
+
   $variables['items'] = $cases;
 }
 
