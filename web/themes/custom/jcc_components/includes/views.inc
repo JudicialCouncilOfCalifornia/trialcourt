@@ -5,6 +5,7 @@
  * Functions for views processing.
  */
 
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\media\Entity\Media;
@@ -59,6 +60,35 @@ function jcc_components_preprocess_views_view__news__sticky_list(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for events full listing.
+ */
+function jcc_components_preprocess_views_view__events__events_list(&$variables) {
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $events = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $row = $row['#node'];
+    $nid = $row->id();
+    $startDate = jcc_timezone_adjust($row->field_date_range->start_date);
+    $endDate = jcc_timezone_adjust($row->field_date_range->end_date);
+
+    $event = [
+      'title' => $row->title->value,
+      'url' => Url::fromRoute('entity.node.canonical', ['node' => $nid], ['absolute' => FALSE])->toString(),
+      'type' => Term::load($row->field_event_type->target_id)->get('name')->value,
+      'start_date' => $startDate,
+      'end_date' => $endDate,
+      'summary' => $row->body->view('teaser'),
+    ];
+    array_push($events, $event);
+  }
+
+  $variables['rows'] = $events;
+}
+
+/**
  * Implements hook_preprocess_HOOK() for oral arguments case documents listing.
  */
 function jcc_components_preprocess_views_view__oral_arguments__default(&$variables) {
@@ -110,18 +140,26 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
     }
   }
 
-  // Sort cases and documents by weight.
+  // Sort documents by weight.
   usort($docs, function ($a, $b) {
-    return ($a['file_weight'] <=> $b['file_weight']) * 1000 + ($a['case']['weight'] <=> $b['case']['weight']) * 100;
+    return strnatcmp($a['file_weight'], $b['file_weight']);
   });
 
+  // Group documents by case.
   $cases = [];
   foreach ($docs as $item) {
     if ($item['case']['name']) {
       $case = $item['case']['name'];
-      $cases[$case][] = $item;
+      $cases[$case]['weight'] = $item['case']['weight'];
+      $cases[$case]['docs'][] = $item;
     }
   }
+
+  // Sort cases by weight.
+  uasort($cases, function ($a, $b) {
+    return ($a['weight'] <=> $b['weight']);
+  });
+
   $variables['items'] = $cases;
 }
 

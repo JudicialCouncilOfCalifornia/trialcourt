@@ -32,30 +32,28 @@
 #}
 
 {% set items = [] %}
-{% for k, row in rows.0['#rows'] if k|first != "#" %}
-  {% if row['#node'] %}
-    {% set date %}
-      {{ row['#node'].field_date_range.value|date('F d, Y') }} &bull;
-      {{ row['#node'].field_date_range.value|date(format="g:ia") }} -
-      {{ row['#node'].field_date_range.end_value|date(format="g:ia") }}
-    {% endset %}
+{% for k, row in rows if k|first != "#" %}
+  {% set date %}
+    {{ row.start_date|date('F d, Y') }} &bull;
+    {{ row.start_date|date(format="g:ia") }} -
+    {{ row.end_date|date(format="g:ia") }}
+  {% endset %}
 
-    {% set body %}
-      {{ row['#node'].body.summary }}
-      {% if row['#node'].field_event_type.0.entity.name %}
-        <div class="jcc-metadata">{{ row['#node'].field_event_type.0.entity.name.value }}</div>
-      {% endif %}
-    {% endset %}
+  {% set body %}
+    {{ row.summary }}
+    {% if row.type %}
+      <div class="jcc-metadata">{{ row.type }}</div>
+    {% endif %}
+  {% endset %}
 
-    {% set items = items|merge([{
-      brow: date,
-      title: row['#node'].title.value,
-      body: body,
-      link: {
-        url: row['#node'].path.value.0.alias,
-      }
-    }]) %}
-  {% endif %}
+  {% set items = items|merge([{
+    brow: date,
+    title: row.title,
+    body: body,
+    link: {
+      url: row.url,
+    }
+  }]) %}
 {% endfor %}
 
 {% block views_listing %}
