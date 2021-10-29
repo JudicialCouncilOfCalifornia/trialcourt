@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.storage.node.field_components
     - node.type.event
+    - paragraphs.paragraphs_type.body
     - paragraphs.paragraphs_type.cards
     - paragraphs.paragraphs_type.text_share
   module:
@@ -28,6 +29,7 @@ settings:
   handler_settings:
     negate: 0
     target_bundles:
+      body: body
       cards: cards
       text_share: text_share
     target_bundles_drag_drop:
@@ -47,8 +49,8 @@ settings:
         weight: 21
         enabled: false
       body:
+        enabled: true
         weight: 22
-        enabled: false
       card:
         weight: 23
         enabled: false
@@ -69,6 +71,15 @@ settings:
         enabled: false
       icon_link:
         weight: 29
+        enabled: false
+      introduction_banner:
+        weight: 33
+        enabled: false
+      step:
+        weight: 34
+        enabled: false
+      steps:
+        weight: 35
         enabled: false
       text_share:
         enabled: true
