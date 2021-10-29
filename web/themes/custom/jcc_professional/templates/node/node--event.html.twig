@@ -1,11 +1,64 @@
 {% extends 'themes/custom/jcc_components/templates/node/node--event.html.twig' %}
 
-{% block node_section__no_components %}
-  {% include '@molecules/section/section.twig' with {
-    section: {
-      background: 'alt',
-      container: 'container',
-      content: body
-    }
-  } %}
-{% endblock %}
+  {% block layout %}
+    {% set download %}
+      Add event to your calendar
+      <div class="jcc-links jcc-links__buttons">{{ content.links }}</div>
+    {% endset %}
+
+    {% include "@molecules/hero/hero.twig" with {
+      hero: {
+        layout: 'default',
+        background: 'default',
+        main: {
+          title: label,
+          lead: content.field_byline|render|striptags,
+          brow: node.field_event_type.0.entity.name.value
+        },
+        aside: {
+          text: download,
+        },
+        classes: []
+      }
+    } %}
+
+    {% set body %}
+      {% if content.field_date_range %}
+        {% set date_start = node.field_date_range.value %}
+        {% set date_end = node.field_date_range.end_value %}
+        <div class="jcc-about">
+          <span>{{ startDate|date('g:ia') }} - {{ endDate|date('g:ia') }}</span>
+          <span>
+                {% if endDate|date('Ymd') > startDate|date('Ymd') %}
+                  {{ startDate|date('l F j, Y') }}
+                  to {{ endDate|date('l F j, Y') }}
+                {% else %}
+                  {{ startDate|date('l F j, Y') }}
+                {% endif %}
+              </span>
+        </div>
+      {% endif %}
+
+      {% if components is not empty %}
+        {{ components }}
+      {% else %}
+        {# Show migrated content in body field if no components added. #}
+        {% include "@molecules/body/body.twig" with {
+          body: {
+            main: {
+              text: content.body|render
+            },
+            classes: []
+          }
+        } %}
+      {% endif %}
+    {% endset %}
+
+    {% include '@molecules/section/section.twig' with {
+      section: {
+        background: 'alt',
+        container: 'container',
+        content: body
+      }
+    } %}
+  {% endblock %}

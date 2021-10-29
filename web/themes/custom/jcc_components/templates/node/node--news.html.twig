@@ -78,48 +78,49 @@
 
 <article{{ attributes }}>
   {{ breadcrumb }}
-  {% if components is not empty %}
-    {% include "@templates/news/news-full.twig" with {
-      news_full: {
-        title: node.title.value,
-        type: node.field_news_type.0.entity.name.value,
-        date: content.field_date|render|striptags,
-        byline: content.field_byline|render|striptags,
-        components: components,
-      }
-    } %}
-  {% else %}
-    {# Show migrated content in body field if no components added. #}
-    {% include "@molecules/hero/hero.twig" with {
-      hero: {
-        layout: 'full-main',
-        background: 'default',
-        main: {
-          title: label,
-          lead: content.field_byline|render|striptags,
-          brow: node.field_news_type.0.entity.name.value
-        },
-        aside: {},
-        classes: []
-      }
-    } %}
 
-    {% set body %}
-      {% if content.field_date or content.field_author %}
-        <div class="jcc-about">
-          {% if content.field_author|render %}
-            <span>By {{ content.field_author|render|striptags }}</span>
-          {% endif %}
-          {% if content.field_date %}
-            <span>{{ content.field_date|render|striptags }}</span>
-          {% endif %}
-        </div>
-      {% endif %}
+  {% block layout %}
+    {% if components is not empty %}
+      {% include "@templates/news/news-full.twig" with {
+        news_full: {
+          title: node.title.value,
+          type: node.field_news_type.0.entity.name.value,
+          date: content.field_date|render|striptags,
+          byline: content.field_byline|render|striptags,
+          components: components,
+        }
+      } %}
+    {% else %}
+      {# Show migrated content in body field if no components added. #}
+      {% include "@molecules/hero/hero.twig" with {
+        hero: {
+          layout: 'full-main',
+          background: 'default',
+          main: {
+            title: label,
+            lead: content.field_byline|render|striptags,
+            brow: node.field_news_type.0.entity.name.value
+          },
+          aside: {},
+          classes: []
+        }
+      } %}
 
-      {{ content.body }}
-    {% endset %}
+      {% set body %}
+        {% if content.field_date or content.field_author %}
+          <div class="jcc-about">
+            {% if content.field_author|render %}
+              <span>By {{ content.field_author|render|striptags }}</span>
+            {% endif %}
+            {% if content.field_date %}
+              <span>{{ content.field_date|render|striptags }}</span>
+            {% endif %}
+          </div>
+        {% endif %}
 
-    {% block node_section__no_components %}
+        {{ content.body }}
+      {% endset %}
+
       {% include '@molecules/section/section.twig' with {
         section: {
           background: 'default',
@@ -127,6 +128,6 @@
           content: body
         }
       } %}
-    {% endblock %}
-  {% endif %}
+    {% endif %}
+  {% endblock %}
 </article>
