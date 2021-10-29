@@ -22,14 +22,13 @@ class BulkImporterForm extends FormBase{
     // Defaulting document type to oral argument
     $default_doc_type = Term::load('5');
 
-    // TODO: expose file metadata after upload (Title)
     $form['document_upload'] = [
       '#type' => 'managed_file',
       '#title' => $this->t('Upload Documents'),
       '#upload_location' => 'public://documents',
       '#multiple' => TRUE,
       '#upload_validators' => [
-        'file_validate_extensions' => ['pdf jpg jpeg png doc docx'],
+        'file_validate_extensions' => ['pdf zip doc docx xls xlsx ppt pptx'],
       ],
     ];
 
@@ -114,44 +113,46 @@ class BulkImporterForm extends FormBase{
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $form_files = $form_state->getValue('document_upload', 0);
 
-    foreach ($form_files as $document) {
-      if (isset($document) && !empty($document)) {
-        $file = File::load($document);
-        $file->setPermanent();
-        $file->save();
+    if ($form_files) {
+      foreach ($form_state->getUserInput()['document_upload']['documents'] as $document) {
+        if (isset($document) && !empty($document)) {
+          $file = File::load($document['doc_id']);
+          $file->setPermanent();
+          $file->save();
 
-        $media = Media::create([
-          'bundle'           => 'file',
-          'uid'              => \Drupal::currentUser()->id(),
-          'field_media_file' => [
-            'target_id' => $file->id(),
-          ],
-        ]);
-        $media->setName('FILE_TITLE')->setPublished(TRUE)->save();
+          $media = Media::create([
+            'bundle' => 'file',
+            'uid' => \Drupal::currentUser()->id(),
+            'field_media_file' => [
+              'target_id' => $file->id(),
+            ],
+            'field_document_type' => $form_state->getValue('document_type', 0),
+          ]);
+          $media->setName($document['custom_title'])->setPublished(TRUE)->save();
 
-        // Save node
-        // Create node object with attached file.
-        $node = Node::create([
-          'type' => 'document',
-          'title' => 'FILE_TITLE',
-          'field_media' => [
-            'target_id' => $media->id(),
-            'alt' => 'FILE_TITLE',
-            'title' => 'FILE_TITLE'
-          ],
-          'field_date_range' => [
-            'value'=> $form_state->getValue('document_daterange_start', 0) . 'T00:00:00',
-            'end_value' => $form_state->getValue('document_daterange_end', 0) . 'T00:00:00'
-          ],
-          'field_date' => $form_state->getValue('filing_date', 0),
-          'field_document_type' => $form_state->getValue('document_type', 0),
-          'field_case' => $form_state->getValue('document_case_bundle', 0),
-          'body' => $form_state->getValue('body', 0)
-        ]);
-        $node->save();
+          // Save node
+          // Create node object with attached file.
+          $node = Node::create([
+            'type' => 'document',
+            'title' => $document['custom_title'],
+            'field_media' => [
+              'target_id' => $media->id(),
+              'alt' => $document['custom_title'],
+              'title' => $document['custom_title']
+            ],
+            'field_date_range' => [
+              'value' => $form_state->getValue('document_daterange_start', 0) . 'T00:00:00',
+              'end_value' => $form_state->getValue('document_daterange_end', 0) . 'T00:00:00'
+            ],
+            'field_date' => $form_state->getValue('filing_date', 0),
+            'field_document_type' => $form_state->getValue('document_type', 0),
+            'field_case' => $form_state->getValue('document_case_bundle', 0),
+            'body' => $form_state->getValue('body', 0)
+          ]);
+          $node->save();
+        }
       }
     }
-
   }
 
 }
