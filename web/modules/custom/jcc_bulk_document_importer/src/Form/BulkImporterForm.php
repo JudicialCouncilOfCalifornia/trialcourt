@@ -52,18 +52,6 @@ class BulkImporterForm extends FormBase{
       ],
     ];
 
-//    $form['filing_date'] = [
-//      '#title' => $this->t('Filing date'),
-//      '#type' => 'date',
-//      '#attributes' => array(
-//        'type'=> 'date',
-//        'min'=> '-12 months',
-//        'max' => '+12 months'
-//      ),
-//      '#default_value' => date("Y-m-d"),
-//      '#date_date_format' => 'Y/m/d',
-//    ];
-
     $form['hearing_date'] = array(
       '#type' => 'fieldset',
       '#title' => t('Hearing Date'),
