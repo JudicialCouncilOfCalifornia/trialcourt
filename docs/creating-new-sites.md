@@ -52,16 +52,16 @@ Configure theme at `/admin/appearance/settings/jcc_components`:
   * Front page: `/node/1`  (or your home page if not node/1)
 - Configure Bing Maps API Key (default for webservices):
   * `/admin/config/system/geocoder/geocoder-provider`
-  * AsFHz4uyv4g8Kpx4IRQe31MzyAUqjfasyD5-96D-Im22cepaCQZTUIGC4Tku06e0
+  * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
 - Configure SendGrid:
   * `/admin/config/system/keys/manage/sendgrid`
-  * See JIRA [ticket TCI-500](https://judasdg.atlassian.net/browse/TCI-500) for key.
+  * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
   * Note: site's email address needs to be `no-reply@courtinfo.ca.gov` for SendGrid to work.
 - Setup defaults for Google Tag module:
   * `lando drush @local.[site] cim --partial --source=/app/web/modules/contrib/google_tag/config/install/`
 - Configure GoogleRecaptcha:
   * `/admin/config/people/captcha/recaptcha`
-  * See JIRA [ticket TCI-635](https://judasdg.atlassian.net/browse/TCI-635) for keys.
+  * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
 
 ### Create users
 
