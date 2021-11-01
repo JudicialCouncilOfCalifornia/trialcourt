@@ -21,6 +21,7 @@ class BulkImporterForm extends FormBase{
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Defaulting document type to oral argument
     $default_doc_type = Term::load('5');
+    $form['#attached']['library'][] = 'jcc_bulk_document_importer/importer_styling';
 
     $form['document_upload'] = [
       '#type' => 'managed_file',
@@ -49,18 +50,6 @@ class BulkImporterForm extends FormBase{
       '#selection_settings' => [
         'target_bundles' => array('document_type'),
       ],
-    ];
-
-    $form['filing_date'] = [
-      '#title' => $this->t('Filing date'),
-      '#type' => 'date',
-      '#attributes' => array(
-        'type'=> 'date',
-        'min'=> '-12 months',
-        'max' => '+12 months'
-      ),
-      '#default_value' => date("Y-m-d"),
-      '#date_date_format' => 'Y/m/d',
     ];
 
     $form['hearing_date'] = array(
@@ -144,10 +133,12 @@ class BulkImporterForm extends FormBase{
               'value' => $form_state->getValue('document_daterange_start', 0) . 'T00:00:00',
               'end_value' => $form_state->getValue('document_daterange_end', 0) . 'T00:00:00'
             ],
-            'field_date' => $form_state->getValue('filing_date', 0),
+//            'field_date' => $form_state->getValue('filing_date', 0),
+            'field_date' => $document['filing_date'],
             'field_document_type' => $form_state->getValue('document_type', 0),
             'field_case' => $form_state->getValue('document_case_bundle', 0),
-            'body' => $form_state->getValue('body', 0)
+            'body' => $form_state->getValue('body', 0),
+            'status' => 1
           ]);
           $node->save();
         }

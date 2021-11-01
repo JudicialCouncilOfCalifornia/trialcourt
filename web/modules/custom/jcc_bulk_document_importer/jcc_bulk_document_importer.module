@@ -70,6 +70,19 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
           '#default_value' => 'file ' . $document_id,
           '#title' => t ('Document title'),
         );
+
+        $element['documents'][$document_id]['filing_date'] = [
+          '#title' => t('Filing date'),
+          '#type' => 'date',
+          '#attributes' => array(
+            'type'=> 'date',
+            'min'=> '-12 months',
+            'max' => '+12 months'
+          ),
+          '#default_value' => date("Y-m-d"),
+          '#date_date_format' => 'Y/m/d',
+        ];
+
         $element['documents'][$document_id]['doc_id'] = array(
           '#type' => 'hidden',
           '#value' => $document_id,
