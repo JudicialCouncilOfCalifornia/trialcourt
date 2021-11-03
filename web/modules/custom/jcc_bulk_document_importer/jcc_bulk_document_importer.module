@@ -1,0 +1,99 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_blocks.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_bulk_document_importer_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_state->getCompleteForm()['#form_id'] == 'jcc_bulk_importer_form') {
+    // Node creation and editing only customizations.
+    if ((isset($form['#theme']['1']) && $form['#theme']['1'] == 'node_form')) {
+      // Suppress format options from certain fields.
+      if (isset($form['field_tagline'])) {
+        $form['field_tagline']['widget']['#after_build'][] = '_allowed_formats_remove_option';
+      }
+      if (isset($form['field_feed_source'])) {
+        $form['field_feed_source']['widget']['#after_build'][] = '_allowed_formats_remove_option';
+      }
+    }
+  }
+}
+
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function jcc_bulk_document_importer_element_info_alter(array &$info) {
+  $info['managed_file']['#process'][] = 'jcc_bulk_document_importer_managed_file_process';
+}
+
+/**
+ * Custom ajax callback for managed files.
+ *
+ * Overrides \Drupal\file\Element\ManagedFile::uploadAjaxCallback()
+ *
+ * @see \Drupal\file\Element\ManagedFile::uploadAjaxCallback
+ */
+function jcc_bulk_document_importer_managed_file_ajax_callback(array &$form, FormStateInterface $form_state) {
+  // Retrieve the original response.
+  $response = \Drupal\file\Element\ManagedFile::uploadAjaxCallback($form, $form_state, \Drupal::request());
+
+  if ($form_state->getCompleteForm()['#form_id'] == 'jcc_bulk_importer_form') {
+    $response->addCommand(new \Drupal\jcc_bulk_document_importer\Ajax\ManagedFileUploadCompleteEventCommand());
+  }
+  return $response;
+}
+
+
+/**
+ * Custom process callback added to managed_file elements.
+ */
+function jcc_bulk_document_importer_managed_file_process(array &$element, FormStateInterface $form_state) {
+  if ($form_state->getCompleteForm()['#form_id'] == 'jcc_bulk_importer_form'){
+    $element['upload_button']['#ajax']['callback'] = 'jcc_bulk_document_importer_managed_file_ajax_callback';
+
+    if(!empty($element['fids']['#value'])){
+      foreach($element['fids']['#value'] as $document_id){
+
+        $element['documents'][$document_id] = array(
+          '#type' => 'fieldset',
+          '#collapsible' => FALSE,
+        );
+        $element['documents'][$document_id]['custom_title'] = array (
+          '#type' => 'textfield',
+          '#default_value' => 'file ' . $document_id,
+          '#title' => t ('Document title'),
+        );
+
+        $element['documents'][$document_id]['filing_date'] = [
+          '#title' => t('Filing date'),
+          '#type' => 'date',
+          '#attributes' => array(
+            'type'=> 'date',
+            'min'=> '-12 months',
+            'max' => '+12 months'
+          ),
+          '#default_value' => date("Y-m-d"),
+          '#date_date_format' => 'Y/m/d',
+        ];
+
+        $element['documents'][$document_id]['doc_id'] = array(
+          '#type' => 'hidden',
+          '#value' => $document_id,
+        );
+        $element['documents'][$document_id]['file'] = $element['file_' . $document_id];
+        unset($element['file_' . $document_id]);
+      }
+    } else {
+      $element['documents'] = [];
+    }
+  }
+
+  return $element;
+}
