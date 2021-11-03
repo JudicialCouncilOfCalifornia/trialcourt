@@ -58,6 +58,7 @@ Configure theme at `/admin/appearance/settings/jcc_components`:
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
   * Note: site's email address needs to be `no-reply@courtinfo.ca.gov` for SendGrid to work.
 - Setup defaults for Google Tag module:
+  (Doesn't this happen on install?)
   * `lando drush @local.[site] cim --partial --source=/app/web/modules/contrib/google_tag/config/install/`
 - Configure GoogleRecaptcha:
   * `/admin/config/people/captcha/recaptcha`
@@ -86,9 +87,9 @@ This file is git ignored as it may vary from site to site, or based on what test
 
 - Verify everything is ok
 
-- Uninstall dev modules: `devel stage_file_proxy features_ui twig_xdebug`  @see `require-dev` in `composer.json`.
+- Uninstall dev modules: `devel masquerade stage_file_proxy features_ui twig_xdebug`  @see `require-dev` in `composer.json`.
   - NOTES:  Initial deploy fails because of missing dev modules that are in the split configuration. This is due to db dump of local which has these modules enabled, trying to run on an env that doesn't have those modules.
-  - `lando drush @local.[site] pmu devel stage_file_proxy features_ui twig_xdebug`
+  - `lando drush @local.[site] pmu devel masquerade stage_file_proxy features_ui twig_xdebug`
 
 - Export config
   - `lando drush @local.[site] cex -y`
