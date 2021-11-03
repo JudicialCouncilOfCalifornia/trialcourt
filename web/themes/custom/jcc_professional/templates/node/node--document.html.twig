@@ -1,0 +1,38 @@
+{% extends 'themes/custom/jcc_components/templates/node/node--document.html.twig' %}
+
+{% block custom %}
+  {% if node.field_date.value %}
+    <h2>Filing Date</h2>
+    {{ node.field_date.value|date('l F j, Y') }}
+  {% endif %}
+
+  {% if node.field_case.0.entity.name %}
+    <h2>{{ content.field_case['#title'] }}</h2>
+    <a href="{{ path('entity.taxonomy_term.canonical', {'taxonomy_term': node.field_case.0.entity.tid.value}) }}">
+      {{ node.field_case.0.entity.name.value }}
+    </a>
+
+    {% if content.field_date_range %}
+      {% set date_start = node.field_date_range.value %}
+      {% set date_end = node.field_date_range.end_value %}
+      <p>
+        {% if date_end|date('Ymd') > date_start|date('Ymd') %}
+          {{ date_start|date('l F j, Y') }}
+          to {{ date_end|date('l F j, Y') }}
+        {% else %}
+          {{ date_start|date('l F j, Y') }}
+        {% endif %}
+      </p>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{% block section %}
+  {% include '@molecules/section/section.twig' with {
+    section: {
+      background: 'alt',
+      container: 'container',
+      content: body
+    }
+  } %}
+{% endblock %}
