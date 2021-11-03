@@ -282,7 +282,7 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
     $media = [];
     $bgcolor = NULL;
     $brow = NULL;
-    $title = !empty($card->field_heading) ? $card->field_heading->first()->value : '';
+    $title = !empty($card->field_heading->first()->value) ? $card->field_heading->first()->value : '';
 
     if (!empty($card->field_link)) {
       $link = $card->field_link->view('default');

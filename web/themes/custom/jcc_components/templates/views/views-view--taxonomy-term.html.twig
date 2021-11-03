@@ -31,36 +31,62 @@
  */
 #}
 
-{% set items = [] %}
-{% for k, row in rows if k|first != "#" %}
-  {% set date %}
-    {{ row.start_date|date('F d, Y') }} &bull;
-    {{ row.start_date|date(format="g:ia") }} -
-    {{ row.end_date|date(format="g:ia") }}
-  {% endset %}
+{% set title = header.entity_taxonomy_term['#taxonomy_term'].name.value %}
+{% set vocab_name = header.entity_taxonomy_term['#taxonomy_term'].vid.entity.label %}
+{% set lead %}
+  {% block taxonomy_description %}{% endblock %}
 
+  <p class="jcc-text-4">
+    <a href="{{ url }}">
+      {% include "@atoms/icon/icon.twig" with {
+        icon: {
+          name: 'rss',
+          set: 'fa',
+          height: 24,
+          width: 24,
+        }
+      } %}
+      Subscribe to this {{ vocab_name }}
+    </a>
+  </p>
+{% endset %}
+
+{% set items = [] %}
+{% for k, row in rows.0['#rows'] if k|first != "#" %}
   {% set body %}
-    {{ row.summary }}
-    {% if row.type %}
-      <div class="jcc-metadata">{{ row.type }}</div>
+    {{ row['#node'].body.summary }}
+
+    {% if rows.0['#rows'].0['#node'].getType == 'document' %}
+      {% if row['#node'].field_media.entity.field_media_file %}
+        <p>{{ row['#node'].field_media.entity.field_media_file.entity.filename.value }}</p>
+      {% endif %}
+
+      {% if row['#node'].field_date_range and row['#node'].field_date_range.value %}
+        <p>Filed on {{ row['#node'].field_date.value|date('F d, Y') }}</p>
+      {% endif %}
+
+      {% if row['#node'].field_document_type and row['#node'].field_document_type.0.entity.name %}
+        <div class="jcc-metadata">{{ row['#node'].field_document_type.0.entity.name.value }}</div>
+      {% endif %}
     {% endif %}
   {% endset %}
 
   {% set items = items|merge([{
-    brow: date,
-    title: row.title,
+    style: 'borderless',
+    title: row['#node'].title.value,
     body: body,
     link: {
-      url: row.url,
-    }
+      url: row['#node'].path.value.0.alias,
+    },
   }]) %}
 {% endfor %}
 
-{% block views_listing %}
+{% block search_result %}
   {% include "@templates/content-stream/content-stream-filtering.twig" with {
     content_stream_filtering: {
+      title: title,
+      lead: lead,
       items: items,
-      form: exposed,
       pager: pager,
     }
   } %}

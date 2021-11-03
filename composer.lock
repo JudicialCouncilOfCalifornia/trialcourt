@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "11e4c06c79ba8a086b85e25f4df405e3",
+    "content-hash": "7d3db53b52cc28a6caccfd76c0196ccd",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -2738,6 +2738,10 @@
                 {
                     "name": "Martin Keereman",
                     "homepage": "https://www.drupal.org/u/etroid"
+                },
+                {
+                    "name": "chr.fritsch",
+                    "homepage": "https://www.drupal.org/user/2103716"
                 },
                 {
                     "name": "jkopel",
@@ -10212,6 +10216,71 @@
             }
         },
         {
+            "name": "drupal/smart_date",
+            "version": "dev-3.4.x",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/smart_date.git",
+                "reference": "c61e224584f83c3bfdf022f61955350c22d91bba"
+            },
+            "require": {
+                "drupal/core": "^8 || ^9",
+                "php": ">=7.1",
+                "simshaun/recurr": "^4"
+            },
+            "suggest": {
+                "drupal/multiple_fields_remove_button": "Provides a button for editors to remove unwanted rows."
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-3.4.x": "3.4.x-dev"
+                },
+                "drupal": {
+                    "version": "3.4.2+6-dev",
+                    "datestamp": "1634465521",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Dev releases are not covered by Drupal security advisories."
+                    }
+                },
+                "drush": {
+                    "services": {
+                        "drush.services.yml": "^9"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "mandclu",
+                    "homepage": "https://www.drupal.org/user/52136"
+                },
+                {
+                    "name": "mparker17",
+                    "homepage": "https://www.drupal.org/user/536298"
+                },
+                {
+                    "name": "stefan.korn",
+                    "homepage": "https://www.drupal.org/user/1942204"
+                }
+            ],
+            "description": "Adds app-like date and recurring date functionality.",
+            "homepage": "https://www.drupal.org/project/smart_date",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "https://git.drupalcode.org/project/smart_date",
+                "issues": "https://www.drupal.org/project/issues/smart_date",
+                "documentation": "https://www.drupal.org/docs/contributed-modules/smart-date"
+            },
+            "time": "2021-10-17T10:11:35+00:00"
+        },
+        {
             "name": "drupal/smart_trim",
             "version": "1.3.0",
             "source": {
@@ -13153,16 +13222,16 @@
         },
         {
             "name": "judicialcouncil/courtyard-artifact",
-            "version": "0.1.234",
+            "version": "0.1.249",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JudicialCouncilOfCalifornia/courtyard-artifact.git",
-                "reference": "e20b0d9f3053b8cb0fc236f53f9d42123b74c9a1"
+                "reference": "d37cdac72205bfb7c3ad0b642aa2a1b7bfe1e1a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JudicialCouncilOfCalifornia/courtyard-artifact/zipball/e20b0d9f3053b8cb0fc236f53f9d42123b74c9a1",
-                "reference": "e20b0d9f3053b8cb0fc236f53f9d42123b74c9a1",
+                "url": "https://api.github.com/repos/JudicialCouncilOfCalifornia/courtyard-artifact/zipball/d37cdac72205bfb7c3ad0b642aa2a1b7bfe1e1a7",
+                "reference": "d37cdac72205bfb7c3ad0b642aa2a1b7bfe1e1a7",
                 "shasum": ""
             },
             "type": "drupal-library",
@@ -13177,7 +13246,7 @@
                 }
             ],
             "description": "A build artifact of the Courtyard Pattern Lab pattern library.",
-            "time": "2021-10-20T20:51:55+00:00"
+            "time": "2021-11-03T01:07:04+00:00"
         },
         {
             "name": "judicialcouncil/emma",
@@ -15393,6 +15462,60 @@
             ],
             "description": "A simple PHP library for GPX import/export",
             "time": "2021-02-05T12:08:31+00:00"
+        },
+        {
+            "name": "simshaun/recurr",
+            "version": "v4.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/simshaun/recurr.git",
+                "reference": "08b0b46879f598cd11dd42b4c1a9c221a0562749"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/simshaun/recurr/zipball/08b0b46879f598cd11dd42b4c1a9c221a0562749",
+                "reference": "08b0b46879f598cd11dd42b4c1a9c221a0562749",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/collections": "~1.3",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.7"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Recurr\\": "src/Recurr/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shaun Simmons",
+                    "email": "shaun@shaun.pub",
+                    "homepage": "https://shaun.pub"
+                }
+            ],
+            "description": "PHP library for working with recurrence rules",
+            "homepage": "https://github.com/simshaun/recurr",
+            "keywords": [
+                "dates",
+                "events",
+                "recurrence",
+                "recurring",
+                "rrule"
+            ],
+            "time": "2021-03-25T23:00:49+00:00"
         },
         {
             "name": "solarium/solarium",
@@ -19180,6 +19303,7 @@
         "drupal/regex_redirect": 15,
         "drupal/search_api_attachments": 10,
         "drupal/sendgrid_integration": 20,
+        "drupal/smart_date": 20,
         "drupal/social_api": 20,
         "drupal/social_post_twitter": 20,
         "drupal/tfa": 15,

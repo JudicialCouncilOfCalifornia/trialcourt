@@ -5,6 +5,7 @@
  * Functions for views processing.
  */
 
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\media\Entity\Media;
@@ -59,6 +60,35 @@ function jcc_components_preprocess_views_view__news__sticky_list(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for events full listing.
+ */
+function jcc_components_preprocess_views_view__events__events_list(&$variables) {
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $events = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $row = $row['#node'];
+    $nid = $row->id();
+    $startDate = jcc_timezone_adjust($row->field_date_range->start_date);
+    $endDate = jcc_timezone_adjust($row->field_date_range->end_date);
+
+    $event = [
+      'title' => $row->title->value,
+      'url' => Url::fromRoute('entity.node.canonical', ['node' => $nid], ['absolute' => FALSE])->toString(),
+      'type' => Term::load($row->field_event_type->target_id)->get('name')->value,
+      'start_date' => $startDate,
+      'end_date' => $endDate,
+      'summary' => $row->body->view('teaser'),
+    ];
+    array_push($events, $event);
+  }
+
+  $variables['rows'] = $events;
+}
+
+/**
  * Implements hook_preprocess_HOOK() for oral arguments case documents listing.
  */
 function jcc_components_preprocess_views_view__oral_arguments__default(&$variables) {
@@ -90,10 +120,17 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
     $hearing_range_date = $hearing_start_date . ' - ' . $hearing_end_date;
     if (isset($hearing_range_date) && $hearing_range_date == $date_range) {
       $media = Media::load($row->field_media->target_id);
-      $file = File::load($media->field_media_file->target_id);
-      $filename = $file->get('filename')->value;
-      // File order weight through file naming convention.
-      $file_weight = explode('-', $filename);
+      if ($media->field_media_file->target_id) {
+        $file = File::load($media->field_media_file->target_id);
+        $filename = $file->get('filename')->value;
+        // File order weight through file naming convention.
+        $file_weight = explode('-', $filename);
+      }
+      else {
+        $file = NULL;
+        $filename = NULL;
+        $file_weight = "0";
+      }
       $case = Term::load($row->field_case->target_id);
       $doc = [
         'case' => [
@@ -104,24 +141,32 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
         'title' => $row->title->value,
         'url' => $file ? $file->createFileUrl() : NULL,
         'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
-        'file_weight' => $file_weight[0],
+        'file_weight' => $file_weight ? $file_weight[0] : "0",
       ];
       array_push($docs, $doc);
     }
   }
 
-  // Sort cases and documents by weight.
+  // Sort documents by weight.
   usort($docs, function ($a, $b) {
-    return ($a['file_weight'] <=> $b['file_weight']) * 1000 + ($a['case']['weight'] <=> $b['case']['weight']) * 100;
+    return strnatcmp($a['file_weight'], $b['file_weight']);
   });
 
+  // Group documents by case.
   $cases = [];
   foreach ($docs as $item) {
     if ($item['case']['name']) {
       $case = $item['case']['name'];
-      $cases[$case][] = $item;
+      $cases[$case]['weight'] = $item['case']['weight'];
+      $cases[$case]['docs'][] = $item;
     }
   }
+
+  // Sort cases by weight.
+  uasort($cases, function ($a, $b) {
+    return ($a['weight'] <=> $b['weight']);
+  });
+
   $variables['items'] = $cases;
 }
 
