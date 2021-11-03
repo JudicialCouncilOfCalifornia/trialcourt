@@ -78,62 +78,53 @@
 
 <article{{ attributes }}>
   {{ breadcrumb }}
-  {% if components is not empty %}
-    {# NON-MIGRATION/IMPORT COMING SOON
-    {% include "@templates/event/event-full.twig" with {
-      event_full: {
-        title: node.title.value,
-        type: node.field_event_type.0.entity.name.value,
-        date: content.field_date_range|render|striptags,
-        byline: content.field_byline|render|striptags,
-        components: components,
-      }
-    } %}
-    #}
-  {% else %}
-    {# Show migrated content in body field if no components added. #}
-    {% set download %}
-      Add event to your calendar
-      <div class="jcc-links jcc-links__buttons">{{ content.links }}</div>
-    {% endset %}
 
-    {% include "@molecules/hero/hero.twig" with {
-      hero: {
-        layout: 'default',
-        background: 'default',
-        main: {
-          title: label,
-          lead: content.field_byline|render|striptags,
-          brow: node.field_event_type.0.entity.name.value
-        },
-        aside: {
-          text: download,
-        },
-        classes: []
-      }
-    } %}
+  {% block layout %}
+    {% if components is not empty %}
+      {{ components }}
+    {% else %}
+      {# Show migrated content in body field if no components added. #}
+      {% set download %}
+        Add event to your calendar
+        <div class="jcc-links jcc-links__buttons">{{ content.links }}</div>
+      {% endset %}
 
-    {% set body %}
-      {% if content.field_date_range %}
-        {% set date_start = node.field_date_range.value %}
-        {% set date_end = node.field_date_range.end_value %}
-        <div class="jcc-about">
-          <span>{{ startDate|date('g:ia') }} - {{ endDate|date('g:ia') }}</span>
-          <span>
-            {% if endDate|date('Ymd') > startDate|date('Ymd') %}
-              {{ startDate|date('l F j, Y') }}
-              to {{ endDate|date('l F j, Y') }}
-            {% else %}
-              {{ startDate|date('l F j, Y') }}
-            {% endif %}
-          </span>
-        </div>
-      {% endif %}
+      {% include "@molecules/hero/hero.twig" with {
+        hero: {
+          layout: 'default',
+          background: 'default',
+          main: {
+            title: label,
+            lead: content.field_byline|render|striptags,
+            brow: node.field_event_type.0.entity.name.value
+          },
+          aside: {
+            text: download,
+          },
+          classes: []
+        }
+      } %}
 
-      {{ content.body }}
-    {% endset %}
+      {% set body %}
+        {% if content.field_date_range %}
+          {% set date_start = node.field_date_range.value %}
+          {% set date_end = node.field_date_range.end_value %}
+          <div class="jcc-about">
+            <span>{{ startDate|date('g:ia') }} - {{ endDate|date('g:ia') }}</span>
+            <span>
+              {% if endDate|date('Ymd') > startDate|date('Ymd') %}
+                {{ startDate|date('l F j, Y') }}
+                to {{ endDate|date('l F j, Y') }}
+              {% else %}
+                {{ startDate|date('l F j, Y') }}
+              {% endif %}
+            </span>
+          </div>
+        {% endif %}
 
-    {% block node_section__no_components %}
+        {{ content.body }}
+      {% endset %}
+
       {% include '@molecules/section/section.twig' with {
         section: {
           background: 'default',
@@ -141,6 +132,6 @@
           content: body
         }
       } %}
-    {% endblock %}
-  {% endif %}
+    {% endif %}
+  {% endblock %}
 </article>
