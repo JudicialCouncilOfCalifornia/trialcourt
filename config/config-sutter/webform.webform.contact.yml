@@ -14,10 +14,10 @@ uid: null
 template: false
 archive: false
 id: contact
-title: Contact
+title: 'Contact Form - Civil'
 description: 'Basic email contact webform.'
 category: ''
-elements: "name:\n  '#title': 'Your Name'\n  '#type': textfield\n  '#required': true\n  '#default_value': '[current-user:display-name]'\nemail:\n  '#title': 'Your Email'\n  '#type': email\n  '#required': true\n  '#default_value': '[current-user:mail]'\nsubject:\n  '#title': Subject\n  '#type': textfield\n  '#required': true\n  '#test': 'Testing contact webform from [site:name]'\nmessage:\n  '#title': Message\n  '#type': textarea\n  '#required': true\n  '#test': 'Please ignore this email.'\nactions:\n  '#type': webform_actions\n  '#title': 'Submit button(s)'\n  '#submit__label': 'Send message'\n"
+elements: "name:\n  '#type': textfield\n  '#title': 'Your Name'\n  '#description': 'Your full name'\n  '#required': true\n  '#default_value': '[current-user:display-name]'\ncase_number:\n  '#type': textfield\n  '#title': 'Case Number'\n  '#placeholder': 'Enter your Case Number'\ncontact_preference:\n  '#type': select\n  '#title': 'Contact Preference'\n  '#options':\n    Email: Email\n    Phone: Phone\n  '#empty_option': '- Select -'\n  '#sort_options': true\n  '#required': true\nemail:\n  '#type': email\n  '#title': 'Your Email'\n  '#description': 'An email address at which the Court may reach you.'\n  '#required': true\n  '#default_value': '[current-user:mail]'\nyour_phone_number:\n  '#type': tel\n  '#title': 'Your Phone Number'\n  '#description': 'Enter your 10-digit phone number here.'\n  '#required': true\nmessage:\n  '#type': textarea\n  '#title': 'Your Message'\n  '#required': true\nactions:\n  '#type': webform_actions\n  '#title': 'Submit button(s)'\n  '#submit__label': 'Send message'"
 css: ''
 javascript: ''
 settings:
@@ -117,10 +117,10 @@ settings:
   draft_loaded_message: ''
   draft_pending_single_message: ''
   draft_pending_multiple_message: ''
-  confirmation_type: url_message
+  confirmation_type: inline
   confirmation_title: ''
   confirmation_message: 'Your message has been sent.'
-  confirmation_url: '<front>'
+  confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: true
   confirmation_back_label: ''
@@ -142,7 +142,7 @@ settings:
   entity_limit_user_interval: null
   purge: none
   purge_days: null
-  results_disabled: false
+  results_disabled: true
   results_disabled_ignore: false
   results_customize: false
   token_view: false
@@ -197,43 +197,6 @@ access:
     users: {  }
     permissions: {  }
 handlers:
-  email_confirmation:
-    id: email
-    label: 'Email confirmation'
-    notes: ''
-    handler_id: email_confirmation
-    status: true
-    conditions: {  }
-    weight: 1
-    settings:
-      states:
-        - completed
-      to_mail: '[current-user:mail]'
-      to_options: {  }
-      cc_mail: ''
-      cc_options: {  }
-      bcc_mail: ''
-      bcc_options: {  }
-      from_mail: _default
-      from_options: {  }
-      from_name: _default
-      subject: '[webform_submission:values:subject:raw]'
-      body: '[webform_submission:values:message:value]'
-      excluded_elements: {  }
-      ignore_access: false
-      exclude_empty: true
-      exclude_empty_checkbox: false
-      exclude_attachments: false
-      html: true
-      attachments: false
-      twig: false
-      theme_name: ''
-      parameters: {  }
-      debug: false
-      reply_to: ''
-      return_path: ''
-      sender_mail: ''
-      sender_name: ''
   email_notification:
     id: email
     label: 'Email notification'
@@ -245,23 +208,23 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: _default
+      to_mail: civildivision@suttercourts.com
       to_options: {  }
       cc_mail: ''
       cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
-      from_mail: '[webform_submission:values:email:raw]'
+      from_mail: _default
       from_options: {  }
-      from_name: '[webform_submission:values:name:raw]'
-      subject: '[webform_submission:values:subject:raw]'
-      body: '[webform_submission:values:message:value]'
+      from_name: 'Sutter Superior Court - Civil'
+      subject: 'Sutter Court - [webform_submission:source-title] - [webform_submission:values:name]'
+      body: "Submitted on [webform_submission:created]\r\nSubmitted by: [webform_submission:values:name]\r\n\r\nSubmitted values are:\r\n[webform_submission:values]\r\n"
       excluded_elements: {  }
       ignore_access: false
       exclude_empty: true
       exclude_empty_checkbox: false
       exclude_attachments: false
-      html: true
+      html: false
       attachments: false
       twig: false
       theme_name: ''

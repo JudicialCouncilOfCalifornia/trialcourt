@@ -86,8 +86,8 @@ process:
       source: filing_date
       from_format: n/j/Y
       to_format: Y-m-d
-      from_timezone: 'America/Los_Angeles'
-      to_timezone: 'America/Los_Angeles'
+      from_timezone: America/Los_Angeles
+      to_timezone: America/Los_Angeles
   field_date_range/value:
     -
       plugin: skip_on_empty
@@ -97,8 +97,8 @@ process:
       plugin: format_date
       from_format: 'n/j/Y G:i:s'
       to_format: 'Y-m-d\TH:i:s'
-      from_timezone: 'America/Los_Angeles'
-      to_timezone: 'UTC'
+      from_timezone: America/Los_Angeles
+      to_timezone: UTC
   pseudo_hearing_end_date:
     -
       plugin: skip_on_empty
@@ -108,10 +108,11 @@ process:
       plugin: format_date
       from_format: 'n/j/Y G:i:s'
       to_format: 'Y-m-d\TH:i:s'
-      from_timezone: 'America/Los_Angeles'
-      to_timezone: 'UTC'
+      from_timezone: America/Los_Angeles
+      to_timezone: UTC
   field_date_range/end_value:
-    - plugin: null_coalesce
+    -
+      plugin: null_coalesce
       source:
         - '@pseudo_hearing_end_date'
         - '@field_date_range/value'
