@@ -5,8 +5,7 @@ show_help() {
   description="Convenience command: runs updb, cim, cr on the fleet for a given env."
   usage="scripts/fleet reset [env]"
   # Use this exact template in all show_help functions for consistentency.
-  echo -e "\n${G}${name}${RE}\t\t${Y}Usage:${RE}\t${usage}"
-  echo -e "\n\t\t${description}"
+  . ${BASEDIR}/scripts/.fleet/templates/show_help.sh
 }
 
 do_command() {
