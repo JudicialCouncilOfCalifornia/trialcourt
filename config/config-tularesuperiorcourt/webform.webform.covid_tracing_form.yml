@@ -1,0 +1,232 @@
+uuid: a63916f0-68bf-48ed-bc10-dcb597e72180
+langcode: en
+status: open
+dependencies: {  }
+open: null
+close: null
+weight: 0
+uid: 7
+template: false
+archive: false
+id: covid_tracing_form
+title: 'Covid Tracing Form'
+description: ''
+category: ''
+elements: "covid_tracing_form_intro:\n  '#type': webform_markup\n  '#markup': |\n    <p>This form is to be completed ONLY if an employee has tested POSITIVE for COVID-19, has COVID-19 symptoms and is awaiting test results</p>\n    <p>OR</p>\n    \n    <p>is considered a HIGH RISK EXPOSURE.</p>\n    <p>A member of the Court Covid Task Force will follow up with you after form is submitted.</p>\n    \n    \n    \n    <h2>COVID-19 Risk Levels:</h2>\n    \n    <ol>\n    \t<li>Tested POSITIVE for COVID-19 or has COVID-19 symptoms and is awaiting test results.</li>\n    \t<li>HIGH RISK EXPOSURE: You have had direct physical contact with OR live in the same household as a COVID-19 POSITIVE individual OR have been within 6 feet for 15 minutes or more of a COVID-19 POSITIVE individual. Complete this form immediately.</li>\n    </ol>\n    <p>All fields with an asterisk (*) are required</p>\n    \nhorizontal_rule:\n  '#type': webform_horizontal_rule\npersonal_information:\n  '#type': webform_section\n  '#title': 'Personal Information'\n  email_address:\n    '#type': email\n    '#title': 'Email Address'\n    '#required': true\n  name:\n    '#type': webform_name\n    '#title': Name\n    '#required': true\n    '#title__required': true\n    '#title__type': textfield\n    '#first__title': 'First Name'\n    '#first__required': true\n    '#middle__access': false\n    '#last__title': 'Last Name'\n    '#last__required': true\n    '#suffix__access': false\n    '#degree__access': false\n    '#flexbox': '0'\n  department_location:\n    '#type': textfield\n    '#title': 'Department / Location'\n    '#required': true\n  phone_number:\n    '#type': tel\n    '#title': 'Phone Number'\n    '#required': true\n  date_of_birth:\n    '#type': date\n    '#title': 'Date of Birth'\n    '#required': true\n    '#date_date_format': ''\nhorizontal_rule_01:\n  '#type': webform_horizontal_rule\ncontact_tracing_information:\n  '#type': webform_section\n  '#title': 'Contact Tracing Information'\n  '#description': 'Select all that apply.'\n  _tested_positive_for_covid_19:\n    '#type': checkbox\n    '#title': ' Tested Positive for Covid-19'\n  high_risk_exposure_:\n    '#type': checkbox\n    '#title': 'High Risk Exposure:'\n    '#description': 'You live in the same household as a COVID-19 POSITIVE individual OR was within 6 feet for 15 minutes or more of a COVID-19 POSITIVE individual.'\nhorizontal_rule_02:\n  '#type': webform_horizontal_rule\npertinent_dates:\n  '#type': webform_section\n  '#title': 'Pertinent Dates'\n  last_date_onsite:\n    '#type': date\n    '#title': 'Last Date Onsite'\n    '#date_date_format': ''\n  symptom_onset_title:\n    '#type': webform_markup\n    '#markup': |\n      <h3>Symptom Onset Information</h3>\n      \n      <p>Select either date or asymptomatic</p>\n      \n  symptom_onset_dates_flexbox:\n    '#type': webform_flexbox\n    '#align_items': center\n    symptoms_onset_date:\n      '#type': date\n      '#title': 'Symptoms Onset Date'\n      '#date_date_format': ''\n    asymptomatic_:\n      '#type': checkbox\n      '#title': 'Asymptomatic:'\n  risk_exposure_date:\n    '#type': date\n    '#title': 'Risk Exposure Date'\n    '#description': 'What was the date of your exposure to the Covid 19 positive individual?'\n    '#date_date_format': ''\n  testing_date_title_markup:\n    '#type': webform_markup\n    '#markup': |\n      <h3>Testing Information</h3>\n      \n      <p>Select either testing date, or pending</p>\n      \n  testing_date_flexbox:\n    '#type': webform_flexbox\n    '#align_items': center\n    covid_testing_date_:\n      '#type': date\n      '#title': 'Covid Testing Date:'\n      '#date_date_format': ''\n    test_date_pending_:\n      '#type': checkbox\n      '#title': 'Test Date Pending:'\nhorizontal_rule_03:\n  '#type': webform_horizontal_rule\ncovid_19_risk_level_selection:\n  '#type': webform_section\n  '#title': 'Covid-19 Risk Level Selection'\n  if_applicable_please_identify_the_below_symptoms_:\n    '#type': checkboxes\n    '#title': Symptoms\n    '#description': 'If applicable, please identify your symptoms:'\n    '#options':\n      fever_chills: 'Fever or Chills'\n      cough: Cough\n      shortness_breath: 'Shortness of Breath'\n      fatigue: Fatigue\n      muscle_aches: 'Muscle or body aches'\n      headache: Headache\n      loss_taste_smell: 'Loss of taste or smell'\n      sore_throat: 'Sore throat'\n      congestion_runny_nose: 'Congestion or runny nose '\n      nausea_vomiting: 'Nausea or vomiting'\n    '#options_display': three_columns\n    '#options__properties': ''\n  close_contacts:\n    '#type': textarea\n    '#title': 'Close Contacts'\n    '#description': 'List any members of&nbsp;<strong>staff or the public</strong>&nbsp;whom you may have had a high-risk encounter with, within 48 hours of symptom onset or test collection date. (High risk encounter: Within 6 feet for a cumulative 15 minutes or more) If none, please indicate NONE.'\n  court_staff_living_in_your_home:\n    '#type': textarea\n    '#title': 'Court Staff Living in your Home'\n    '#description': 'List any staff members employed by the court that reside in your home. If none, please indicate NONE.'\n  locations_traveled_within_the_court:\n    '#type': textarea\n    '#title': 'Locations Traveled within the Court'\n    '#description': '<strong>List all locations traveled within the Court.</strong>&nbsp;(Be specific. Include where you enter/exit, restrooms used, and any other location you would have been during your infectious period of 48 hours prior to your exposure or the onset of symptoms and any time after that you were onsite.)'\nhorizontal_rule_04:\n  '#type': webform_horizontal_rule\ncaptcha:\n  '#type': captcha"
+css: ''
+javascript: ''
+settings:
+  ajax: false
+  ajax_scroll_top: form
+  ajax_progress_type: ''
+  ajax_effect: ''
+  ajax_speed: null
+  page: true
+  page_submit_path: ''
+  page_confirm_path: ''
+  page_theme_name: ''
+  form_title: both
+  form_submit_once: false
+  form_exception_message: ''
+  form_open_message: ''
+  form_close_message: ''
+  form_previous_submissions: true
+  form_confidential: false
+  form_confidential_message: ''
+  form_remote_addr: true
+  form_convert_anonymous: false
+  form_prepopulate: false
+  form_prepopulate_source_entity: false
+  form_prepopulate_source_entity_required: false
+  form_prepopulate_source_entity_type: ''
+  form_reset: false
+  form_disable_autocomplete: false
+  form_novalidate: false
+  form_disable_inline_errors: false
+  form_required: false
+  form_unsaved: false
+  form_disable_back: false
+  form_submit_back: false
+  form_autofocus: false
+  form_details_toggle: false
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
+  share: false
+  share_node: false
+  share_theme_name: ''
+  share_title: true
+  share_page_body_attributes: {  }
+  submission_label: ''
+  submission_log: false
+  submission_views: {  }
+  submission_views_replace: {  }
+  submission_user_columns: {  }
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
+  submission_exception_message: ''
+  submission_locked_message: ''
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
+  previous_submission_message: ''
+  previous_submissions_message: ''
+  autofill: false
+  autofill_message: ''
+  autofill_excluded_elements: {  }
+  wizard_progress_bar: true
+  wizard_progress_pages: false
+  wizard_progress_percentage: false
+  wizard_progress_link: false
+  wizard_progress_states: false
+  wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
+  wizard_start_label: ''
+  wizard_preview_link: false
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
+  wizard_track: ''
+  wizard_prev_button_label: ''
+  wizard_next_button_label: ''
+  wizard_toggle: false
+  wizard_toggle_show_label: ''
+  wizard_toggle_hide_label: ''
+  preview: 0
+  preview_label: ''
+  preview_title: ''
+  preview_message: ''
+  preview_attributes: {  }
+  preview_excluded_elements: {  }
+  preview_exclude_empty: true
+  preview_exclude_empty_checkbox: false
+  draft: none
+  draft_multiple: false
+  draft_auto_save: false
+  draft_saved_message: ''
+  draft_loaded_message: ''
+  draft_pending_single_message: ''
+  draft_pending_multiple_message: ''
+  confirmation_type: page
+  confirmation_title: ''
+  confirmation_message: ''
+  confirmation_url: ''
+  confirmation_attributes: {  }
+  confirmation_back: true
+  confirmation_back_label: ''
+  confirmation_back_attributes: {  }
+  confirmation_exclude_query: false
+  confirmation_exclude_token: false
+  confirmation_update: false
+  limit_total: null
+  limit_total_interval: null
+  limit_total_message: ''
+  limit_total_unique: false
+  limit_user: null
+  limit_user_interval: null
+  limit_user_message: ''
+  limit_user_unique: false
+  entity_limit_total: null
+  entity_limit_total_interval: null
+  entity_limit_user: null
+  entity_limit_user_interval: null
+  purge: none
+  purge_days: null
+  results_disabled: true
+  results_disabled_ignore: false
+  results_customize: false
+  token_view: false
+  token_update: false
+  token_delete: false
+  serial_disabled: false
+access:
+  create:
+    roles:
+      - anonymous
+      - authenticated
+    users: {  }
+    permissions: {  }
+  view_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  update_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  purge_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  view_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  update_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  administer:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+handlers:
+  email:
+    id: email
+    label: 'Covid Tracing Form Email'
+    notes: ''
+    handler_id: email
+    status: true
+    conditions: {  }
+    weight: 0
+    settings:
+      states:
+        - completed
+      to_mail: '#HR_Admin@tulare.courts.ca.gov'
+      to_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      from_mail: no-reply@courtinfo.ca.gov
+      from_options: {  }
+      from_name: 'Tulare Superior Court - Covid Tracing Form'
+      subject: 'Tulare COVID Tracing - [webform_submission:source-title] - [webform_submission:values:name]'
+      body: "Submitted on [webform_submission:created]\r\nSubmitted by: [webform_submission:values:name]\r\n\r\nSubmitted values are:\r\n[webform_submission:values]\r\n"
+      excluded_elements: {  }
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: false
+      attachments: false
+      twig: false
+      debug: false
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      theme_name: ''
+      parameters: {  }
+variants: {  }

@@ -49,9 +49,6 @@ process:
       plugin: callback
       callable: urldecode
     -
-      plugin: filename_from_query
-      url: url
-    -
       plugin: skip_on_empty
       method: process
       message: 'Cannot import empty image filename.'
@@ -71,7 +68,7 @@ process:
       source:
         - '@pseudo_decoded_url'
         - '@pseudo_destination_path'
-      file_exists: rename
+      file_exists: replace
       move: false
 destination:
   plugin: 'entity:file'

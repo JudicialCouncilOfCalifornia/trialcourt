@@ -208,13 +208,13 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: '[current-user:mail]'
+      to_mail: '[webform_submission:values:email:raw]'
       to_options: {  }
       cc_mail: ''
       cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
-      from_mail: _default
+      from_mail: no-reply@courtinfo.ca.gov
       from_options: {  }
       from_name: _default
       subject: '[webform_submission:values:subject:raw]'
@@ -224,7 +224,7 @@ handlers:
       exclude_empty: true
       exclude_empty_checkbox: false
       exclude_attachments: false
-      html: true
+      html: false
       attachments: false
       twig: false
       theme_name: ''
@@ -251,9 +251,9 @@ handlers:
       cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
-      from_mail: '[webform_submission:values:email:raw]'
+      from_mail: no-reply@courtinfo.ca.gov
       from_options: {  }
-      from_name: '[webform_submission:values:name:raw]'
+      from_name: _default
       subject: '[webform_submission:values:subject:raw]'
       body: '[webform_submission:values:message:value]'
       excluded_elements: {  }
@@ -261,7 +261,7 @@ handlers:
       exclude_empty: true
       exclude_empty_checkbox: false
       exclude_attachments: false
-      html: true
+      html: false
       attachments: false
       twig: false
       theme_name: ''
