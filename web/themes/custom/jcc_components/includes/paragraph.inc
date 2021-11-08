@@ -306,7 +306,7 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       $img_media = Media::load($card->field_image_media[0]->getValue('target_id')['target_id']);
       $fid = $img_media->field_media_image->target_id;
       $file = File::load($fid);
-      $styled_image_url = ImageStyle::load('max_650x650')->buildUrl($file->getFileUri());
+      $styled_image_url = ImageStyle::load('card_image_background')->buildUrl($file->getFileUri());
 
       $bgcolor = $card->field_overlay->value;
       $media['src'] = $styled_image_url;
