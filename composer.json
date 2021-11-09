@@ -10,6 +10,10 @@
         }
     ],
     "repositories": {
+        "lenient": {
+            "type": "composer",
+            "url": "https://packages.drupal.org/lenient"
+        },
         "drupal": {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
@@ -158,6 +162,7 @@
         "drupal/allowed_formats": "^1.1",
         "drupal/autocomplete_deluxe": "^2.0.0",
         "drupal/autosave_form": "^1.0",
+        "drupal/backward_compatibility": "^1.0",
         "drupal/better_exposed_filters": "^5.0",
         "drupal/better_social_sharing_buttons": "^3.0",
         "drupal/block_field": "^1.0@alpha",
@@ -416,11 +421,14 @@
             },
             "drupal/jquery_ui_touch_punch": {
                 "Jquery UI Touch Punch Library": "https://www.drupal.org/files/issues/2020-11-10/3159222-29_0.patch"
+            },
+            "drupal/ckeditor_inserthtml": {
+                "Drupal 9 readiness": "https://www.drupal.org/files/issues/2021-08-26/Drupal_9_readiness-3139458-6.patch"
             }
         },
-        "installer-types": [
-            "library"
-        ],
+        "installer-types": {
+            "library": "https://www.drupal.org/files/issues/2021-08-26/Drupal_9_readiness-3139458-6.patch"
+        },
         "installer-paths": {
             "web/core": [
                 "type:drupal-core"
