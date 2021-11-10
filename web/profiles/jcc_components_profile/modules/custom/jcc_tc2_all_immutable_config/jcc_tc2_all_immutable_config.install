@@ -314,8 +314,13 @@ function jcc_tc2_all_immutable_config_update_8019() {
  */
 function jcc_tc2_all_immutable_config_update_8020() {
   $modules = ['ban'];
-
-  \Drupal::service('module_installer')->install($modules);
+  
+  foreach ($modules as $module) {
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      continue;
+    }
+    \Drupal::service('module_installer')->install([$module]);
+  }
 }
 
 /**
