@@ -308,3 +308,36 @@ function jcc_tc2_all_immutable_config_update_8019() {
 
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * TCI-642: Install menu_admin_per_menu.
+ */
+function jcc_tc2_all_immutable_config_update_8020() {
+  $modules = ['ban'];
+  
+  foreach ($modules as $module) {
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      continue;
+    }
+    \Drupal::service('module_installer')->install([$module]);
+  }
+}
+
+/**
+ * TCI-642: Ban some ips.
+ */
+function jcc_tc2_all_immutable_config_update_8021() {
+  $ban_manager = \Drupal::service('ban.ip_manager');
+  $ips = [
+    '103.123.25.63',
+    '5.62.16.17',
+    '35.243.231.177',
+    '37.0.8.34',
+    '134.122.72.91',
+  ];
+
+  foreach ($ips as $ip) {
+    $ban_manager->banIp($ip);
+  }
+
+}

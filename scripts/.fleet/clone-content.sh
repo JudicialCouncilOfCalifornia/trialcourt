@@ -5,8 +5,7 @@ show_help() {
   description="Clone database and files from one environemnt to another for each site. You may include any valid [options] for the env:clone-content command.\n\t\t--options | -o\tShow detailed [options] for the terminus command."
   usage="scripts/fleet clone-content [source-env] [target-env] [options]"
   # Use this exact template in all show_help functions for consistentency.
-  echo -e "\n${G}${name}${RE}\t${Y}Usage:${RE}\t${usage}"
-  echo -e "\n\t\t${description}"
+  . ${BASEDIR}/scripts/.fleet/templates/show_help.sh
 }
 
 do_command() {

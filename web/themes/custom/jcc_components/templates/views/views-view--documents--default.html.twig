@@ -31,25 +31,63 @@
  */
 #}
 
+{# Number of most recent docs to consistently display, max ten #}
+{% set max = 4 %}
+
 {% if rows -%}
-  {% set docs = [] %}
-  {% for row in rows[0]['#rows'] %}
-    {% set doc = row['#node'] %}
-    {% set doc = {
-      url: file_url(doc.field_media.entity.field_media_file.entity.fileuri),
-      url_title: doc.title.value,
-      description: doc.field_date.value|date('M d, Y'),
-      aria_label: description,
+  {% set global = rows[0]['#rows'][0]['#node'] %}
+  {% set items = [] %}
+
+  {% if global.field_document_type.0.entity.name and global.field_document_type.0.entity.name.value == 'Oral Argument' %}
+    {# Display recent 4 cases rather than document titles for Oral Arguments #}
+    {% set hearing = global.field_date_range %}
+
+    <h3>{{ hearing.end_value and hearing.end_value|date('Ymd') > hearing.value|date('Ymd') ? hearing.value|date('F d') ~ ' to ' ~ hearing_end|date('d, Y') : hearing.value|date('F d, Y') }} Hearing</h3>
+
+    {% set unique = [] %}
+    {% for row in rows[0]['#rows'] if unique|length < max %}
+      {% set item = row['#node'] %}
+      {# Display case once #}
+      {% if item.field_case.target_id not in unique %}
+        {% set unique = unique|merge([item.field_case.target_id]) %}
+        {% set title = item.field_case.entity.name.value %}
+        {% set case = {
+          url_title: title and title|length < 35 ? title : title|striptags|slice(0, 35) ~ '...',
+        } %}
+        {% set items = items|merge([case]) %}
+      {% endif %}
+    {% endfor %}
+
+    {# Briefs page link #}
+    {% set hearing_alias = hearing.value|date('F-j')|lower %}
+    {% if hearing.end_value and hearing.end_value|date('Ymd') > hearing.value|date('Ymd') %}
+      {% set hearing_alias = hearing.value|date('F-j')|lower ~ '-' ~ hearing.end_value|date('F-j')|lower %}
+    {% endif %}
+    {% set more_link = {
+      url_title: 'View all ' ~ hearing.value|date('F Y') ~ ' cases',
+      url: '/case-information/oral-arguments/briefs-argued-cases/' ~ hearing_alias ~ '-oral-argument-cases',
     } %}
-    {% set docs = docs|merge([doc]) %}
-  {% endfor %}
+    {% set items = items|merge([more_link]) %}
+  {% else %}
+    {% set anchor_align = 'right' %}
+    {% for row in rows[0]['#rows']|slice(0, max) %}
+      {% set item = row['#node'] %}
+      {% set doc = {
+        url: file_url(item.field_media.entity.field_media_file.entity.fileuri),
+        url_title: item.title.value,
+        description: item.field_date.value|date('M d, Y'),
+        aria_label: description,
+      } %}
+      {% set items = items|merge([doc]) %}
+    {% endfor %}
+  {% endif %}
 
   {% include "@molecules/list/list.twig" with {
     list: {
       style: 'none',
       columns: 1,
-      anchor_align: 'right',
-      items: docs,
+      anchor_align: anchor_align,
+      items: items,
     }
   } %}
 {% elseif empty -%}
