@@ -5,6 +5,7 @@
  * Contains jcc_custom.module.
  */
 
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\editor\Entity\Editor;
 
 /**
@@ -61,6 +62,15 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       $user = \Drupal::currentUser();
       $access = $user->hasPermission('access migration body');
       $form['body']['#access'] = $access;
+      break;
+
+    case 'node_document_form':
+      $startDate = $form['field_date_range']['widget'][0]['value']['#default_value'];
+      if ($startDate && $startDate instanceof DrupalDateTime) {
+        $startDate->setTime(0, 0, 0);
+        $form['field_date_range']['widget'][0]['value']['#default_value'] = $startDate;
+        $form['field_date_range']['widget'][0]['end_value']['#default_value'] = $startDate;
+      }
       break;
   }
 }
