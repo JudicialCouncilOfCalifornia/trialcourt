@@ -28,6 +28,7 @@ class BulkImporterForm extends FormBase{
       '#title' => $this->t('Upload Documents'),
       '#upload_location' => 'public://documents',
       '#multiple' => TRUE,
+      '#unlimited' => TRUE,
       '#upload_validators' => [
         'file_validate_extensions' => ['pdf zip doc docx xls xlsx ppt pptx'],
       ],
