@@ -329,7 +329,7 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       }
     }
 
-    if ($card->field_icon->value) {
+    if ($card->field_icon && $card->field_icon->value) {
       $icon['name'] = str_replace("icon-fa-", "", $card->field_icon->value);
       if (str_contains($card->field_icon->value, "icon-fa-")) {
         $icon['set'] = "fa";
@@ -345,7 +345,7 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       }
     }
 
-    if ($card->field_entire_card_clickable->value) {
+    if ($card->field_entire_card_clickable && $card->field_entire_card_clickable->value) {
       $is_clickable = TRUE;
     }
 
