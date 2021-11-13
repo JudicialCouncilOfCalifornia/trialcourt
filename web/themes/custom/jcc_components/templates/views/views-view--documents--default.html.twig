@@ -31,15 +31,13 @@
  */
 #}
 
-{# Number of most recent docs to consistently display, max ten #}
-{% set max = 4 %}
-
 {% if rows -%}
   {% set global = rows[0]['#rows'][0]['#node'] %}
   {% set items = [] %}
 
   {% if global.field_document_type.0.entity.name and global.field_document_type.0.entity.name.value == 'Oral Argument' %}
-    {# Display recent 4 cases rather than document titles for Oral Arguments #}
+    {# Display documents by case name for Oral Arguments. Query hook returns more than view default to ensure sufficient cases to display. #}
+    {% set max = 4 %}
     {% set hearing = global.field_date_range %}
 
     <h3>{{ hearing.end_value and hearing.end_value|date('Ymd') > hearing.value|date('Ymd') ? hearing.value|date('F d') ~ ' to ' ~ hearing_end|date('d, Y') : hearing.value|date('F d, Y') }} Hearing</h3>
@@ -65,7 +63,7 @@
     {% endif %}
     {% set more_link = {
       url_title: 'View all ' ~ hearing.value|date('F Y') ~ ' cases',
-      url: '/case-information/oral-arguments/briefs-argued-cases/' ~ hearing_alias ~ '-oral-argument-cases',
+      url: args_url,
     } %}
     {% set items = items|merge([more_link]) %}
   {% else %}
