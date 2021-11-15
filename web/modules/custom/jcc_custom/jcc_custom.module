@@ -95,7 +95,7 @@ function jcc_custom_views_query_alter(&$view, &$query) {
     case 'documents':
       // Override query max for sufficient cases to display from docs.
       if (Term::load($view->args[0])->get('name')->value == 'Oral Argument') {
-        $view->getPager()->setItemsPerPage(30);
+        $view->getPager()->setItemsPerPage(20);
       }
       break;
   }
