@@ -310,9 +310,10 @@ function jcc_components_preprocess_views_view__case_information__block_3(&$varia
  * Implements hook_preprocess_HOOK() for short document listing.
  */
 function jcc_components_preprocess_views_view__documents__default(&$variables) {
-  // Get latest Oral Arguments page through docs.
-  $latest = $variables['rows'][0]['#rows'][0]['#node'];
-  $term_id = $latest->field_document_type ? $latest->field_document_type->target_id : NULL;
+  // Get latest Oral Arguments page for docs.
+  $latest_doc = $variables['rows'][0]['#rows'][0]['#node'];
+  $hearing_date = $latest_doc->field_date_range->start_date;
+  $term_id = $latest_doc->field_document_type ? $latest_doc->field_document_type->target_id : NULL;
 
   if (Term::load($term_id)->get('name')->value == 'Oral Argument') {
     $nids = \Drupal::entityQuery('node')->condition('type', 'subpage')->execute();
@@ -330,8 +331,10 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
       return strnatcmp($b->field_date->date->format('Ymd'), $a->field_date->date->format('Ymd'));
     });
 
-    // Return link fors the latest published oral arguments.
+    // Return published oral arguments if available.
     $latest_oa = array_slice($oral_args, 0, 1);
-    $variables['args_url'] = $latest_oa[0]->toUrl()->toString();
+    if ($latest_oa && str_contains($latest_oa[0]->label(), $hearing_date->format('F j')) && str_contains($latest_oa[0]->label(), strval(date('Y')))) {
+      $variables['args_url'] = $latest_oa[0]->toUrl()->toString();
+    }
   }
 }

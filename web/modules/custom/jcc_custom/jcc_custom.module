@@ -8,6 +8,7 @@
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\editor\Entity\Editor;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_page_attachments().
@@ -100,12 +101,12 @@ function jcc_custom_sendgrid_integration_categories_alter($message, $categories)
 /**
  * Implements hook_views_query_alter().
  */
-function jcc_custom_views_query_alter(&$view, &$query) {
+function jcc_custom_views_query_alter(ViewExecutable $view) {
   switch ($view->storage->id()) {
     case 'documents':
       // Override query max for sufficient cases to display from docs.
       if (Term::load($view->args[0])->get('name')->value == 'Oral Argument') {
-        $view->getPager()->setItemsPerPage(30);
+        $view->getPager()->setItemsPerPage(20);
       }
       break;
   }
