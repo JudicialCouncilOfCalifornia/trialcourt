@@ -14,20 +14,24 @@
  */
  #}
 
-{% set breadcrumbs_source = drupal_block("system_breadcrumb_block").content["#links"] %}
-{% set breadcrumbs = [] %}
-{% for breadcrumb in breadcrumbs_source %}
-  {% if not loop.last %}
-    {% set url = breadcrumb.url %}
-  {% else %}
-    {% set url = null %}
-  {% endif %}
-  {% set label = breadcrumb.text %}
-  {% set breadcrumbs = breadcrumbs|merge([{
-    url: url,
-    label: label|length > 30 ? label|slice(0, 30) ~ '…' : label,
-  }]) %}
-{% endfor %}
+{% if breadcrumbs != 'disabled' %}
+  {% set breadcrumbs_source = drupal_block("system_breadcrumb_block").content["#links"] %}
+  {% set breadcrumbs = [] %}
+  {% for breadcrumb in breadcrumbs_source %}
+    {% if not loop.last %}
+      {% set url = breadcrumb.url %}
+    {% else %}
+      {% set url = null %}
+    {% endif %}
+    {% set label = breadcrumb.text %}
+    {% set breadcrumbs = breadcrumbs|merge([{
+      url: url,
+      label: label|length > 30 ? label|slice(0, 30) ~ '…' : label,
+    }]) %}
+  {% endfor %}
+{% else %}
+  {% set breadcrumbs = false %}
+{% endif %}
 
 {% include '@molecules/blocks/hero/hero.twig' with {
   hero: {
