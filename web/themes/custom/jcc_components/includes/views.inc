@@ -11,6 +11,7 @@ use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\media\Entity\Media;
 use Drupal\file\Entity\File;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -303,4 +304,37 @@ function jcc_components_preprocess_views_view__case_information__block_3(&$varia
     }
   }
   $variables['items'] = $results;
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for short document listing.
+ */
+function jcc_components_preprocess_views_view__documents__default(&$variables) {
+  // Get latest Oral Arguments page for docs.
+  $latest_doc = $variables['rows'][0]['#rows'][0]['#node'];
+  $hearing_date = $latest_doc->field_date_range->start_date;
+  $term_id = $latest_doc->field_document_type ? $latest_doc->field_document_type->target_id : NULL;
+
+  if (Term::load($term_id)->get('name')->value == 'Oral Argument') {
+    $nids = \Drupal::entityQuery('node')->condition('type', 'subpage')->execute();
+    $nodes = Node::loadMultiple($nids);
+
+    $oral_args = [];
+    foreach ($nodes as $node) {
+      if ($node->field_category->target_id == $term_id) {
+        array_push($oral_args, $node);
+      }
+    }
+
+    // Sort pages by publication date field.
+    uasort($oral_args, function ($a, $b) {
+      return strnatcmp($b->field_date->date->format('Ymd'), $a->field_date->date->format('Ymd'));
+    });
+
+    // Return published oral arguments if available.
+    $latest_oa = array_slice($oral_args, 0, 1);
+    if ($latest_oa && str_contains($latest_oa[0]->label(), $hearing_date->format('F j')) && str_contains($latest_oa[0]->label(), strval(date('Y')))) {
+      $variables['args_url'] = $latest_oa[0]->toUrl()->toString();
+    }
+  }
 }

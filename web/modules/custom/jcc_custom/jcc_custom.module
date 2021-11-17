@@ -5,7 +5,10 @@
  * Contains jcc_custom.module.
  */
 
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\editor\Entity\Editor;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_page_attachments().
@@ -62,6 +65,15 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       $access = $user->hasPermission('access migration body');
       $form['body']['#access'] = $access;
       break;
+
+    case 'node_document_form':
+      $startDate = $form['field_date_range']['widget'][0]['value']['#default_value'];
+      if ($startDate && $startDate instanceof DrupalDateTime) {
+        $startDate->setTime(0, 0, 0);
+        $form['field_date_range']['widget'][0]['value']['#default_value'] = $startDate;
+        $form['field_date_range']['widget'][0]['end_value']['#default_value'] = $startDate;
+      }
+      break;
   }
 }
 
@@ -84,4 +96,18 @@ function jcc_custom_sendgrid_integration_categories_alter($message, $categories)
   $categories[] = 'Trial Court';
 
   return $categories;
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function jcc_custom_views_query_alter(ViewExecutable $view) {
+  switch ($view->storage->id()) {
+    case 'documents':
+      // Override query max for sufficient cases to display from docs.
+      if (Term::load($view->args[0])->get('name')->value == 'Oral Argument') {
+        $view->getPager()->setItemsPerPage(20);
+      }
+      break;
+  }
 }
