@@ -26,47 +26,55 @@
  *   view content.
  * - dom_id: Unique id for every view being printed to give unique class for
  *   Javascript.
+ * - args_url: Oral Arguments page URL for the docs found if available - preprocessor variable.
  *
  * @see template_preprocess_views_view()
  */
 #}
-
-{# Number of most recent docs to consistently display, max ten #}
-{% set max = 4 %}
 
 {% if rows -%}
   {% set global = rows[0]['#rows'][0]['#node'] %}
   {% set items = [] %}
 
   {% if global.field_document_type.0.entity.name and global.field_document_type.0.entity.name.value == 'Oral Argument' %}
-    {# Display recent 4 cases rather than document titles for Oral Arguments #}
+    {# Display documents by case name for Oral Arguments. Query hook returns more than view default to ensure sufficient cases to display. #}
+    {% set max = 4 %}
     {% set hearing = global.field_date_range %}
 
-    <h3>{{ hearing.end_value and hearing.end_value|date('Ymd') > hearing.value|date('Ymd') ? hearing.value|date('F d') ~ ' to ' ~ hearing_end|date('d, Y') : hearing.value|date('F d, Y') }} Hearing</h3>
+    <h3>{{ hearing.end_value and hearing.end_value|date('Ymd') > hearing.value|date('Ymd') ? hearing.value|date('F j') ~ ' to ' ~ hearing.end_value|date('j, Y') : hearing.value|date('F j, Y') }} Argued Cases</h3>
 
     {% set unique = [] %}
     {% for row in rows[0]['#rows'] if unique|length < max %}
       {% set item = row['#node'] %}
-      {# Display case once #}
-      {% if item.field_case.target_id not in unique %}
+      {# Display most recent cases once #}
+      {% if item.field_date_range.value|date('Ymd') == hearing.value|date('Ymd') and item.field_case.target_id not in unique %}
         {% set unique = unique|merge([item.field_case.target_id]) %}
         {% set title = item.field_case.entity.name.value %}
         {% set case = {
-          url_title: title and title|length < 35 ? title : title|striptags|slice(0, 35) ~ '...',
+          url: user.hasPermission('administer nodes') ? '/node/' ~ item.id ~ '/edit' : '',
+          url_title: 'Missing case name'|t|upper,
+          description: user.hasPermission('administer nodes') ? 'Use link to fix document' : ''
         } %}
+        {% if title %}
+          {% set case = {
+            url_title: title and title|length < 35 ? title : title|striptags|slice(0, 35) ~ '...',
+          } %}
+        {% endif %}
         {% set items = items|merge([case]) %}
       {% endif %}
     {% endfor %}
 
     {# Briefs page link #}
-    {% set hearing_alias = hearing.value|date('F-j')|lower %}
-    {% if hearing.end_value and hearing.end_value|date('Ymd') > hearing.value|date('Ymd') %}
-      {% set hearing_alias = hearing.value|date('F-j')|lower ~ '-' ~ hearing.end_value|date('F-j')|lower %}
+    {% if args_url %}
+      {% set more_link = {
+        url_title: 'View briefs of current cases'|t,
+        url: args_url,
+      } %}
+    {% else %}
+      {% set more_link = {
+        url_title: '(Briefs of current cases coming soon)'|t,
+      } %}
     {% endif %}
-    {% set more_link = {
-      url_title: 'View all ' ~ hearing.value|date('F Y') ~ ' cases',
-      url: '/case-information/oral-arguments/briefs-argued-cases/' ~ hearing_alias ~ '-oral-argument-cases',
-    } %}
     {% set items = items|merge([more_link]) %}
   {% else %}
     {% set anchor_align = 'right' %}
