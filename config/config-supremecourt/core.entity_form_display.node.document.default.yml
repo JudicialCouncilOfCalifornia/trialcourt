@@ -13,11 +13,11 @@ dependencies:
   module:
     - autocomplete_deluxe
     - datetime
+    - datetime_range
     - media_library
     - path
     - scheduler
     - scheduler_content_moderation_integration
-    - smart_date
     - text
 _core:
   default_config_hash: aFguc8Xn18AynNT-hqQx-5UgdCa7D7pAMBKaYGKxRM8
@@ -67,14 +67,9 @@ content:
     region: content
   field_date_range:
     weight: 29
-    settings:
-      default_duration_increments: "30\r\n60|1 hour\r\n90\r\n120|2 hours\r\ncustom"
-      default_duration: 60
-      hide_date: false
-      modal: false
-      show_extra: true
+    settings: {  }
     third_party_settings: {  }
-    type: smartdate_only
+    type: daterange_default
     region: content
   field_document_type:
     weight: 26
