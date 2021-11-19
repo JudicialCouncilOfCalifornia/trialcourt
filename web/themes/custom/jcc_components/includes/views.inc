@@ -131,7 +131,7 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
 
       // Contextual edit link to help find/correct docs.
       $user = User::load(\Drupal::currentUser()->id());
-      $can_edit = $node->access('update', $user);
+      $can_edit = $row->access('update', $user);
       $edit = NULL;
       if ($can_edit) {
         $url = Url::fromRoute('entity.node.edit_form', ['node' => $row->id()]);
