@@ -46,14 +46,12 @@
 {% endset %}
 
 <article{{ attributes }}>
-  {# Display breadcrumb #}
-  {{ breadcrumb }}
-
   {% include "@molecules/hero/hero.twig" with {
     hero: {
       layout: 'full-main',
       background: 'default',
       main: {
+        trail: breadcrumb,
         title: label,
         lead: '',
         brow: ''
