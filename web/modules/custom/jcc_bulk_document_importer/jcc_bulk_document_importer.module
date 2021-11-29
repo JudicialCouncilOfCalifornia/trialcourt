@@ -65,10 +65,17 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
           '#type' => 'fieldset',
           '#collapsible' => FALSE,
         );
+
         $element['documents'][$document_id]['custom_title'] = array (
           '#type' => 'textfield',
           '#default_value' => 'file ' . $document_id,
-          '#title' => t ('Document title'),
+          '#title' => t('Title'),
+        );
+
+        $element['documents'][$document_id]['custom_verbose_title'] = array (
+          '#type' => 'textarea',
+          '#title' => t('Verbose title'),
+          '#description' => t('Optional verbose title to display where needed (e.g. Oral Arguments case document)'),
         );
 
         $element['documents'][$document_id]['filing_date'] = [
