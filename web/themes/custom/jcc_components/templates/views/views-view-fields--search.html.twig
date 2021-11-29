@@ -34,7 +34,7 @@
   {# Court documents may require longer, complete titles than default title allows #}
   {% for field in fields|without('title') %}
     {# Exclude verbose title from excerpt body #}
-    {% if field.class != 'field-verbose-title' %}
+    {% if not field.class == 'field-verbose-title' %}
       {{ field.content }}
     {% endif %}
   {% endfor %}
