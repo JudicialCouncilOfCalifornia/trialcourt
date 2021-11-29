@@ -120,7 +120,7 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
 
     if (isset($start_date) && isset($hearing_start_date) && $hearing_start_date == $start_date) {
       $media = Media::load($row->field_media->target_id);
-      if ($media->field_media_file->target_id) {
+      if (isset($media) && $media->field_media_file->target_id) {
         $file = File::load($media->field_media_file->target_id);
         $filename = $file->get('filename')->value;
         // File order weight through file naming convention.
