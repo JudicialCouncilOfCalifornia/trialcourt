@@ -112,6 +112,10 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
   $docs = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $row = $row['#node'];
+    $title = $row->title->value;
+    if ($row->field_verbose_title->value) {
+      $title = $row->field_verbose_title->value;
+    }
     $hearing_start_date = $row->field_date_range->start_date->format('Ydm');
     // Migration could exclude hearing end date so assume single day.
     $hearing_end_date = $hearing_start_date;
@@ -139,7 +143,7 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
           'description' => $case && $case->get('description')->value ? $case->get('description')->value : NULL,
           'weight' => $case && $case->get('field_weight')->value ? $case->get('field_weight')->value : 0,
         ],
-        'title' => $row->title->value,
+        'title' => $title,
         'url' => $file ? $file->createFileUrl() : NULL,
         'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
         'file_weight' => $file_weight ? $file_weight[0] : "0",
