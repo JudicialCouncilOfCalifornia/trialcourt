@@ -53,6 +53,11 @@
 
 {% set items = [] %}
 {% for k, row in rows.0['#rows'] if k|first != "#" %}
+  {% set doc_title = row['#node'].title.value %}
+  {% if row['#node'].field_verbose_title.value %}
+    {% set doc_title = row['#node'].field_verbose_title.value %}
+  {% endif %}
+
   {% set body %}
     {{ row['#node'].body.summary }}
 
@@ -73,7 +78,7 @@
 
   {% set items = items|merge([{
     style: 'borderless',
-    title: row['#node'].title.value,
+    title: doc_title,
     body: body,
     link: {
       url: row['#node'].path.value.0.alias,
