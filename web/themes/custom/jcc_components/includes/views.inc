@@ -5,6 +5,7 @@
  * Functions for views processing.
  */
 
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\paragraphs\Entity\Paragraph;
@@ -12,6 +13,7 @@ use Drupal\media\Entity\Media;
 use Drupal\file\Entity\File;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\node\Entity\Node;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -102,9 +104,7 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
     foreach ($node->field_components as $component) {
       $para = Paragraph::load($component->target_id);
       if (isset($para->field_content_stream)) {
-        $start_date = $para->field_filter_by_date->start_date->format('Ydm');
-        $end_date = $para->field_filter_by_date->end_date->format('Ydm');
-        $date_range = $start_date . ' - ' . $end_date;
+        $start_date = $para->field_filter_by_date->start_date->format('Ymd');
       }
     }
   }
@@ -112,16 +112,11 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
   $docs = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $row = $row['#node'];
-    $hearing_start_date = $row->field_date_range->start_date->format('Ydm');
-    // Migration could exclude hearing end date so assume single day.
-    $hearing_end_date = $hearing_start_date;
-    if ($row->field_date_range->end_date) {
-      $hearing_end_date = $row->field_date_range->end_date->format('Ydm');
-    }
-    $hearing_range_date = $hearing_start_date . ' - ' . $hearing_end_date;
-    if (isset($hearing_range_date) && $hearing_range_date == $date_range) {
+    $hearing_start_date = $row->field_date_range->start_date->format('Ymd');
+
+    if (isset($start_date) && isset($hearing_start_date) && $hearing_start_date == $start_date) {
       $media = Media::load($row->field_media->target_id);
-      if ($media->field_media_file->target_id) {
+      if (isset($media) && $media->field_media_file->target_id) {
         $file = File::load($media->field_media_file->target_id);
         $filename = $file->get('filename')->value;
         // File order weight through file naming convention.
@@ -133,6 +128,18 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
         $file_weight = "0";
       }
       $case = Term::load($row->field_case->target_id);
+
+      // Contextual edit link to help find/correct docs.
+      $user = User::load(\Drupal::currentUser()->id());
+      $can_edit = $row->access('update', $user);
+      $edit = NULL;
+      if ($can_edit) {
+        $url = Url::fromRoute('entity.node.edit_form', ['node' => $row->id()]);
+        $edit = Link::fromTextAndUrl(t('Edit'), $url);
+        $edit = $edit->toRenderable();
+        $edit['#attributes'] = ['aria-label' => ['Edit document ' . $row->title->value]];
+      }
+
       $doc = [
         'case' => [
           'name' => $case && $case->get('name')->value ? $case->get('name')->value : 'NO CASE ASSIGNED',
@@ -143,6 +150,7 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
         'url' => $file ? $file->createFileUrl() : NULL,
         'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
         'file_weight' => $file_weight ? $file_weight[0] : "0",
+        'edit_option' => $edit ? render($edit) : NULL,
       ];
       array_push($docs, $doc);
     }

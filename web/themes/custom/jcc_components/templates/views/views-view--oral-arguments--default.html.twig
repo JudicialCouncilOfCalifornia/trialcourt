@@ -7,11 +7,14 @@
 
     {% set docs = [] %}
     {% for doc in item.docs %}
+      {% set description %}
+        Filed on {{ doc.filing_date }} {% if doc.edit_option %}({{ doc.edit_option}}){% endif %}
+      {% endset %}
       {% set link = {
         url_title: doc.title,
         url: doc.url,
         aria_label: 'View or download document ' ~ doc.title,
-        description: 'Filed on ' ~ doc.filing_date
+        description: description
       } %}
       {% set docs = docs|merge([link]) %}
     {% endfor %}
