@@ -4,9 +4,6 @@
   {% if is_front %}
     {% set hero_visibility = 'default usa-sr-only'%}
   {% else %}
-    {# Display breadcrumb #}
-    {{ breadcrumb }}
-
     {# Optional columns, either left nav or right column (prioritized) but not both. #}
     {% if components_aside|render|striptags|trim %}
       {% set width_main = 60 %}
@@ -45,6 +42,7 @@
       layout: 'full-main',
       background: hero_visibility ? hero_visibility : 'default',
       main: {
+        trail: breadcrumb,
         title: label,
         lead: '',
         brow: ''

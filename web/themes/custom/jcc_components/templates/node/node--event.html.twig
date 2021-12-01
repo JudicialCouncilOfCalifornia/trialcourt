@@ -77,9 +77,10 @@
 {% endfor %}
 
 <article{{ attributes }}>
-  {{ breadcrumb }}
-
   {% block layout %}
+    {# Display breadcrumb #}
+    {{ breadcrumb }}
+
     {% if components is not empty %}
       {{ components }}
     {% else %}

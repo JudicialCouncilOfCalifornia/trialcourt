@@ -125,6 +125,7 @@ class BulkImporterForm extends FormBase{
           $node = Node::create([
             'type' => 'document',
             'title' => $document['custom_title'],
+            'field_verbose_title' => $document['custom_verbose_title'],
             'field_media' => [
               'target_id' => $media->id(),
               'alt' => $document['custom_title'],
