@@ -77,9 +77,10 @@
 {% endfor %}
 
 <article{{ attributes }}>
-  {{ breadcrumb }}
-
   {% block layout %}
+    {# Display breadcrumb #}
+    {{ breadcrumb }}
+
     {% if components is not empty %}
       {% include "@templates/news/news-full.twig" with {
         news_full: {
