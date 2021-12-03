@@ -321,10 +321,10 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       }
       else {
         if ($card->field_overlay->value) {
-          $sub_variants['card'] = 'media-full-overlay';
+          $sub_variants['card'] = $card->field_entire_card_clickable->value ? 'media-full-overlay usa-card--hover' : 'media-full-overlay';
         }
         else {
-          $sub_variants['card'] = 'media-full';
+          $sub_variants['card'] = $card->field_entire_card_clickable->value ? 'media-full usa-card--hover' : 'media-full';
         }
       }
     }
