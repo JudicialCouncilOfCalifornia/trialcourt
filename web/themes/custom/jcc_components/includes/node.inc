@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\media\Entity\Media;
 use Drupal\node\NodeInterface;
 
 /**
@@ -261,9 +262,13 @@ function jcc_components_node_event(array &$variables, NodeInterface $node) {
  *   The node.
  */
 function jcc_components_node_document(array &$variables, NodeInterface $node) {
+  $media = Media::load($node->field_media->target_id);
+
   // Ensure date range field timezone.
   $variables['startDate'] = jcc_timezone_adjust($node->field_date_range->start_date);
   $variables['endDate'] = jcc_timezone_adjust($node->field_date_range->end_date);
+  // Contextual edit media file option.
+  $variables['edit_option'] = _jcc_components_can_edit_entity($media, t('Edit'));
 }
 
 /**
