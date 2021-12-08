@@ -5,7 +5,6 @@
  * Functions for views processing.
  */
 
-use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\paragraphs\Entity\Paragraph;
@@ -13,7 +12,6 @@ use Drupal\media\Entity\Media;
 use Drupal\file\Entity\File;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\node\Entity\Node;
-use Drupal\user\Entity\User;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -133,17 +131,6 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
       }
       $case = Term::load($row->field_case->target_id);
 
-      // Contextual edit link to help find/correct docs.
-      $user = User::load(\Drupal::currentUser()->id());
-      $can_edit = $row->access('update', $user);
-      $edit = NULL;
-      if ($can_edit) {
-        $url = Url::fromRoute('entity.node.edit_form', ['node' => $row->id()]);
-        $edit = Link::fromTextAndUrl(t('Edit'), $url);
-        $edit = $edit->toRenderable();
-        $edit['#attributes'] = ['aria-label' => ['Edit document ' . $row->title->value]];
-      }
-
       $doc = [
         'case' => [
           'name' => $case && $case->get('name')->value ? $case->get('name')->value : 'NO CASE ASSIGNED',
@@ -154,7 +141,8 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
         'url' => $file ? $file->createFileUrl() : NULL,
         'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
         'file_weight' => $file_weight ? $file_weight[0] : "0",
-        'edit_option' => $edit ? render($edit) : NULL,
+        // Contextual edit document option.
+        'edit_option' => _jcc_components_can_edit_entity($row, t('Edit')),
       ];
       array_push($docs, $doc);
     }
@@ -315,6 +303,42 @@ function jcc_components_preprocess_views_view__case_information__block_3(&$varia
       $results[$year][] = $item;
     }
   }
+  $variables['items'] = $results;
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for calendar results.
+ */
+function jcc_components_preprocess_views_view__case_information__block_4(&$variables) {
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $results = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $row = $row['#node'];
+    $media = Media::load($row->field_media->target_id);
+    $file = File::load($media->field_media_file->target_id);
+    // BEGIN - Create amended identifier from filename.
+    $file_name = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file->filename->value);
+    $file_amended = NULL;
+    if (preg_match("/^[a-z]$/i", substr($file_name, -1))) {
+      $file_amended = strtolower(substr($file_name, -1));
+    }
+    // END.
+    $notes = strip_tags($row->body->processed, '<strong><em><a>');
+    $result = [
+      'title' => $row->title->value,
+      'amended_code' => $file_amended,
+      'url' => file_create_url($file->uri->value),
+      'hearing_date' => jcc_timezone_adjust($row->field_date_range->start_date),
+      'publish_date' => $row->field_date->date ? $row->field_date->date->format('m/d/Y') : 'Undefined',
+      'notes' => $notes,
+      'edit_option' => _jcc_components_can_edit_entity($row, t('Edit')),
+    ];
+    array_push($results, $result);
+  }
+
   $variables['items'] = $results;
 }
 

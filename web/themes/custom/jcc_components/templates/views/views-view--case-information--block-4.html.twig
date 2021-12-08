@@ -1,0 +1,35 @@
+{% set links = [] %}
+
+{% for k, item in items if k|first != "#" %}
+  {% set hearing_date = item.hearing_date|date('F j, Y') %}
+  {% set title = hearing_date %}
+  {% if item.amended_code %}
+    {% set title = hearing_date ~ '(' ~ item.amended_code ~ ')' %}
+  {% endif %}
+  {% set aria_label = 'View or download the ' ~ item.hearing_date ~ ' calendar'%}
+  {% set description %}
+    {% if item.amended_code %}
+      Amended
+    {% else %}
+      Posted
+    {% endif %}
+    {% if item.publish_date %}{{ item.publish_date }}{% endif %}
+    {% if item.notes %}{{ item.notes|raw }}{% endif %}
+    {% if item.edit_option %}<span class="jcc-metadata jcc-pro-contextual-edit">({{ item.edit_option}})</span>{% endif %}
+  {% endset %}
+  {% set link = {
+    url_title: title,
+    url: item.url,
+    aria_label: aria_label,
+    description: description,
+  } %}
+  {% set links = links|merge([link]) %}
+{% endfor %}
+
+{% include "@molecules/list/list.twig" with {
+  list: {
+    style: 'none',
+    columns: 1,
+    items: links,
+  }
+} %}
