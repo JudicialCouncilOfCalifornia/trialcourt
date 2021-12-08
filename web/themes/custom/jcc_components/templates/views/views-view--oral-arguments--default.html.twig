@@ -8,7 +8,8 @@
     {% set docs = [] %}
     {% for doc in item.docs %}
       {% set description %}
-        Filed on {{ doc.filing_date }} {% if doc.edit_option %}({{ doc.edit_option}}){% endif %}
+        Filed on {{ doc.filing_date }}
+        {% if doc.edit_option %}<span class="jcc-metadata jcc-pro-contextual-edit">({{ doc.edit_option}})</span>{% endif %}
       {% endset %}
       {% set link = {
         url_title: doc.title,
