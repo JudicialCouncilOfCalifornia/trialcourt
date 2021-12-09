@@ -196,6 +196,37 @@ jobs:
             - store_artifacts:
                 path: /root/project/test/cypress/screenshots
                 destination: /screenshots
+    exp:
+        <<: *defaults
+        parameters:
+            site:
+                type: string
+        description: Test Job
+        steps:
+            - checkout
+
+            - restore_cache:
+                keys:
+                    - composer-cache
+
+            - run:
+                # Set TERMINUS_ENV and related environment variables.
+                # https://github.com/pantheon-systems/docker-build-tools-ci/blob/1.x/scripts/set-environment
+                name: environment
+                command: /build-tools-ci/scripts/set-environment
+
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install
+
+            - save_cache:
+                key: composer-cache
+                paths:
+                    - $HOME/.composer/cache
+
+            - run:
+                name: test drush
+                command: drush @.<< parameters.site >>.live status -r ~/project/web
 
 workflows:
   version: 2.1
@@ -240,6 +271,14 @@ workflows:
               only:
                 - develop
                 - stage
+      - exp:
+          matrix:
+            parameters:
+              site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "sacramento", "glenn", "yuba", "sanfrancisco", "sutter", "mariposa", "alameda", "butte", "imperial", "idm", "placer", "stanislaus", "sanbenito", "riverside"]
+          filters:
+            branches:
+              only:
+                - /^exp/.*/
 
 experimental:
   notify:
