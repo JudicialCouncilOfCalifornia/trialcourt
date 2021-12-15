@@ -341,3 +341,31 @@ function jcc_tc2_all_immutable_config_update_8021() {
   }
 
 }
+
+/**
+ * TCI-718: Bulk Ban module.
+ */
+function jcc_tc2_all_immutable_config_update_8022() {
+  $modules = ['bulk_ban'];
+  
+  foreach ($modules as $module) {
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      continue;
+    }
+    \Drupal::service('module_installer')->install([$module]);
+  }
+}
+
+/**
+ * TCI-572: Mimemail module.
+ */
+function jcc_tc2_all_immutable_config_update_8023() {
+  $modules = ['mimemail'];
+  
+  foreach ($modules as $module) {
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      continue;
+    }
+    \Drupal::service('module_installer')->install([$module]);
+  }
+}

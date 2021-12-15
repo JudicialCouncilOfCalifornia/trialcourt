@@ -14,10 +14,10 @@ uid: 10
 template: false
 archive: false
 id: civil_contact
-title: 'Civil Contact'
-description: 'Basic email contact webform.'
+title: 'Placer Main Contact Form'
+description: 'This form contains a division pulldown list that will send an email with the div. specific subject to an email account.&nbsp;&nbsp;'
 category: ''
-elements: "your_first_name:\n  '#type': textfield\n  '#title': 'Your First Name'\n  '#required': true\n  '#default_value': '[current-user:display-name]'\nname:\n  '#type': textfield\n  '#title': 'Your Last Name'\n  '#required': true\n  '#default_value': '[current-user:display-name]'\nemail:\n  '#title': 'Your Email'\n  '#type': email\n  '#required': true\n  '#default_value': '[current-user:mail]'\nsubject:\n  '#type': textfield\n  '#title': 'Case Number'\nmessage:\n  '#title': Message\n  '#type': textarea\n  '#required': true\n  '#test': 'Please ignore this email.'\ncaptcha:\n  '#type': captcha\nactions:\n  '#type': webform_actions\n  '#title': 'Submit button(s)'\n  '#submit__label': 'Send message'"
+elements: "select_division:\n  '#type': select\n  '#title': 'Select Division'\n  '#options':\n    Civil: Civil\n    Criminal: Criminal\n    'Family Support & Law': 'Family Support & Law'\n    Juvenile: Juvenile\n    'Self-Help Center': 'Self-Help Center'\n    Traffic: Traffic\n    'Tahoe Courthouse': 'Tahoe Courthouse'\n  '#required': true\n  '#required_error': 'Please select a division from the list.'\nyour_first_name:\n  '#type': textfield\n  '#title': 'Your First Name'\n  '#required': true\n  '#default_value': '[current-user:display-name]'\nname:\n  '#type': textfield\n  '#title': 'Your Last Name'\n  '#required': true\n  '#default_value': '[current-user:display-name]'\nemail:\n  '#title': 'Your Email'\n  '#type': email\n  '#required': true\n  '#default_value': '[current-user:mail]'\nsubject:\n  '#type': textfield\n  '#title': 'Case Number'\nmessage:\n  '#title': Message\n  '#type': textarea\n  '#required': true\n  '#test': 'Please ignore this email.'\ncaptcha:\n  '#type': captcha\nactions:\n  '#type': webform_actions\n  '#title': 'Submit button(s)'\n  '#submit__label': 'Send message'"
 css: ''
 javascript: ''
 settings:
@@ -142,7 +142,7 @@ settings:
   entity_limit_user_interval: null
   purge: none
   purge_days: null
-  results_disabled: false
+  results_disabled: true
   results_disabled_ignore: false
   results_customize: false
   token_view: false
@@ -197,78 +197,284 @@ access:
     users: {  }
     permissions: {  }
 handlers:
-  email_confirmation:
+  civil_contact_email:
     id: email
-    label: 'Email confirmation'
+    label: 'Civil Contact Email'
     notes: ''
-    handler_id: email_confirmation
+    handler_id: civil_contact_email
     status: true
-    conditions: {  }
+    conditions:
+      enabled:
+        ':input[name="select_division"]':
+          value: Civil
     weight: 1
     settings:
       states:
         - completed
-      to_mail: '[current-user:mail]'
+      to_mail: cic@placer.courts.ca.gov
       to_options: {  }
       cc_mail: ''
       cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
-      from_mail: _default
+      from_mail: no-reply@courtinfo.ca.gov
       from_options: {  }
-      from_name: _default
-      subject: '[webform_submission:values:subject:raw]'
-      body: '[webform_submission:values:message:value]'
+      from_name: 'Placer Superior Court'
+      subject: 'Placer Contact Form - [webform_submission:values:select_division] - [webform_submission:values:your_first_name] [webform_submission:values:name] '
+      body: "Submitted on [webform_submission:created]\r\nSubmitted by: [webform_submission:values:your_first_name] [webform_submission:values:name] \r\n\r\nSubmitted values are:\r\n[webform_submission:values]\r\n"
       excluded_elements: {  }
       ignore_access: false
       exclude_empty: true
       exclude_empty_checkbox: false
       exclude_attachments: false
-      html: true
+      html: false
       attachments: false
       twig: false
-      theme_name: ''
-      parameters: {  }
       debug: false
       reply_to: ''
       return_path: ''
       sender_mail: ''
       sender_name: ''
-  email_notification:
+      theme_name: ''
+      parameters: {  }
+  criminal_contact_email:
     id: email
-    label: 'Email notification'
+    label: 'Criminal Contact Email'
     notes: ''
-    handler_id: email_notification
+    handler_id: criminal_contact_email
     status: true
-    conditions: {  }
+    conditions:
+      enabled:
+        ':input[name="select_division"]':
+          value: Criminal
     weight: 2
     settings:
       states:
         - completed
-      to_mail: _default
+      to_mail: cic@placer.courts.ca.gov
       to_options: {  }
       cc_mail: ''
       cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
-      from_mail: '[webform_submission:values:email:raw]'
+      from_mail: no-reply@courtinfo.ca.gov
       from_options: {  }
-      from_name: '[webform_submission:values:name:raw]'
-      subject: '[webform_submission:values:subject:raw]'
-      body: '[webform_submission:values:message:value]'
+      from_name: 'Placer Superior Court'
+      subject: 'Placer Contact Form - [webform_submission:values:select_division] - [webform_submission:values:your_first_name] [webform_submission:values:name] '
+      body: "Submitted on [webform_submission:created]\r\nSubmitted by: [webform_submission:values:your_first_name] [webform_submission:values:name] \r\n\r\nSubmitted values are:\r\n[webform_submission:values]\r\n"
       excluded_elements: {  }
       ignore_access: false
       exclude_empty: true
       exclude_empty_checkbox: false
       exclude_attachments: false
-      html: true
+      html: false
       attachments: false
       twig: false
-      theme_name: ''
-      parameters: {  }
       debug: false
       reply_to: ''
       return_path: ''
       sender_mail: ''
       sender_name: ''
+      theme_name: ''
+      parameters: {  }
+  self_help_center_contact_email:
+    id: email
+    label: ' Self-Help Center Contact Email'
+    notes: ''
+    handler_id: self_help_center_contact_email
+    status: true
+    conditions:
+      enabled:
+        ':input[name="select_division"]':
+          value: Juvenile
+    weight: 4
+    settings:
+      states:
+        - completed
+      to_mail: cic@placer.courts.ca.gov
+      to_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      from_mail: no-reply@courtinfo.ca.gov
+      from_options: {  }
+      from_name: 'Placer Superior Court'
+      subject: 'Placer Contact Form - [webform_submission:values:select_division] - [webform_submission:values:your_first_name] [webform_submission:values:name] '
+      body: "Submitted on [webform_submission:created]\r\nSubmitted by: [webform_submission:values:your_first_name] [webform_submission:values:name]\r\n\r\nSubmitted values are:\r\n[webform_submission:values]\r\n"
+      excluded_elements: {  }
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: false
+      attachments: false
+      twig: false
+      debug: false
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      theme_name: ''
+      parameters: {  }
+  traffic_contact_email:
+    id: email
+    label: 'Traffic Contact Email'
+    notes: ''
+    handler_id: traffic_contact_email
+    status: true
+    conditions:
+      enabled:
+        ':input[name="select_division"]':
+          value: Civil
+    weight: 5
+    settings:
+      states:
+        - completed
+      to_mail: cic@placer.courts.ca.gov
+      to_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      from_mail: no-reply@courtinfo.ca.gov
+      from_options: {  }
+      from_name: 'Placer Superior Court'
+      subject: 'Placer Contact Form - [webform_submission:values:select_division] - [webform_submission:values:your_first_name] [webform_submission:values:name] '
+      body: "Submitted on [webform_submission:created]\r\nSubmitted by: [webform_submission:values:your_first_name] [webform_submission:values:name]\r\n\r\nSubmitted values are:\r\n[webform_submission:values]\r\n"
+      excluded_elements: {  }
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: false
+      attachments: false
+      twig: false
+      debug: false
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      theme_name: ''
+      parameters: {  }
+  tahoe_courthouse_contact_email:
+    id: email
+    label: 'Tahoe Courthouse Contact Email'
+    notes: ''
+    handler_id: tahoe_courthouse_contact_email
+    status: true
+    conditions:
+      enabled:
+        ':input[name="select_division"]':
+          value: Criminal
+    weight: 6
+    settings:
+      states:
+        - completed
+      to_mail: cic@placer.courts.ca.gov
+      to_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      from_mail: no-reply@courtinfo.ca.gov
+      from_options: {  }
+      from_name: 'Placer Superior Court'
+      subject: 'Placer Contact Form - [webform_submission:values:select_division] - [webform_submission:values:your_first_name] [webform_submission:values:name] '
+      body: "Submitted on [webform_submission:created]\r\nSubmitted by: [webform_submission:values:your_first_name] [webform_submission:values:name] \r\n\r\nSubmitted values are:\r\n[webform_submission:values]\r\n"
+      excluded_elements: {  }
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: false
+      attachments: false
+      twig: false
+      debug: false
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      theme_name: ''
+      parameters: {  }
+  family_support_law_contact_email:
+    id: email
+    label: 'Family Support & Law Contact Email'
+    notes: ''
+    handler_id: family_support_law_contact_email
+    status: true
+    conditions:
+      enabled:
+        ':input[name="select_division"]':
+          value: 'Family Support & Law'
+    weight: 7
+    settings:
+      states:
+        - completed
+      to_mail: cic@placer.courts.ca.gov
+      to_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      from_mail: no-reply@courtinfo.ca.gov
+      from_options: {  }
+      from_name: 'Placer Superior Court'
+      subject: 'Placer Contact Form - [webform_submission:values:select_division] - [webform_submission:values:your_first_name] [webform_submission:values:name] '
+      body: "Submitted on [webform_submission:created]\r\nSubmitted by: [webform_submission:values:your_first_name] [webform_submission:values:name] \r\n\r\nSubmitted values are:\r\n[webform_submission:values]\r\n"
+      excluded_elements: {  }
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: false
+      attachments: false
+      twig: false
+      debug: false
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      theme_name: ''
+      parameters: {  }
+  juvenile_contact_email:
+    id: email
+    label: 'Juvenile Contact Email'
+    notes: ''
+    handler_id: juvenile_contact_email
+    status: true
+    conditions:
+      enabled:
+        ':input[name="select_division"]':
+          value: Juvenile
+    weight: 8
+    settings:
+      states:
+        - completed
+      to_mail: cic@placer.courts.ca.gov
+      to_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      from_mail: no-reply@courtinfo.ca.gov
+      from_options: {  }
+      from_name: 'Placer Superior Court'
+      subject: 'Placer Contact Form - [webform_submission:values:select_division] - [webform_submission:values:your_first_name] [webform_submission:values:name] '
+      body: "Submitted on [webform_submission:created]\r\nSubmitted by: [webform_submission:values:your_first_name] [webform_submission:values:name]\r\n\r\nSubmitted values are:\r\n[webform_submission:values]\r\n"
+      excluded_elements: {  }
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: false
+      attachments: false
+      twig: false
+      debug: false
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      theme_name: ''
+      parameters: {  }
 variants: {  }
