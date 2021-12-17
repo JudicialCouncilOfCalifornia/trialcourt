@@ -11,7 +11,7 @@ config:
   # default: web | lightning: docroot
   webroot: web
 
-  php: '7.3'
+  php: '7.4'
 
   database: mariadb
 
@@ -47,6 +47,7 @@ services:
     # Create databases for each multisite.
     run_as_root:
       - /bin/sh -c "/app/scripts/dbcreate.sh"
+    type: mysql:5.7
 
 # Custom Lando commands
 tooling:
