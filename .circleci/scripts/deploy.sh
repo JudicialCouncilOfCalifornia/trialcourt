@@ -118,6 +118,10 @@ for name in "$@" ; do
   drush @${SITE_CODE}.${PANTHEON_ENV} cim -y
 
   echo
+  echo Importing Features for $PANTHEON_ENV
+  drush @${SITE_CODE}.${PANTHEON_ENV} fra -y
+
+  echo
   echo Clearing Cache for $PANTHEON_ENV
   drush @${SITE_CODE}.${PANTHEON_ENV} cr
 
