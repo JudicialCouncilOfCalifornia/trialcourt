@@ -17,7 +17,7 @@ do_command() {
     lando drush $alias cr
     lando drush $alias updb $@
     lando drush $alias cim $@
-    lando drush $alias fra
+    lando drush $alias fra --bundle=jcc_tc2 $@
     lando drush $alias cr
   done
 
