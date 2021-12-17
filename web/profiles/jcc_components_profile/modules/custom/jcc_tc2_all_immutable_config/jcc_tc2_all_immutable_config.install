@@ -314,7 +314,7 @@ function jcc_tc2_all_immutable_config_update_8019() {
  */
 function jcc_tc2_all_immutable_config_update_8020() {
   $modules = ['ban'];
-  
+
   foreach ($modules as $module) {
     if (\Drupal::moduleHandler()->moduleExists($module)) {
       continue;
@@ -347,7 +347,7 @@ function jcc_tc2_all_immutable_config_update_8021() {
  */
 function jcc_tc2_all_immutable_config_update_8022() {
   $modules = ['bulk_ban'];
-  
+
   foreach ($modules as $module) {
     if (\Drupal::moduleHandler()->moduleExists($module)) {
       continue;
@@ -361,11 +361,24 @@ function jcc_tc2_all_immutable_config_update_8022() {
  */
 function jcc_tc2_all_immutable_config_update_8023() {
   $modules = ['mimemail'];
-  
+
   foreach ($modules as $module) {
     if (\Drupal::moduleHandler()->moduleExists($module)) {
       continue;
     }
     \Drupal::service('module_installer')->install([$module]);
   }
+}
+
+/**
+ * Ensure new .module file gets loaded.
+ */
+function jcc_tc2_all_immutable_config_update_8024() {
+  drupal_flush_all_caches();
+  \Drupal::service('kernel')->rebuildContainer();
+  // Load the module data which has been removed when the container was
+  // rebuilt.
+  $module_handler = \Drupal::moduleHandler();
+  $module_handler->loadAll();
+  $module_handler->invokeAll('rebuild');
 }
