@@ -1,0 +1,74 @@
+uuid: d4a344b0-b465-4821-9bca-16ffda3c8071
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_components
+    - node.type.news
+    - paragraphs.paragraphs_type.cards
+    - paragraphs.paragraphs_type.text_share
+  module:
+    - entity_reference_revisions
+_core:
+  default_config_hash: JTxrdILPW2_8If-5JxXtTVsEzVKBhRecvK-17yaWksQ
+id: node.news.field_components
+field_name: field_components
+entity_type: node
+bundle: news
+label: Components
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      text_share: text_share
+      cards: cards
+    target_bundles_drag_drop:
+      accordion:
+        weight: -29
+        enabled: false
+      accordion_item:
+        weight: -28
+        enabled: false
+      action_list:
+        weight: -27
+        enabled: false
+      action_list_item:
+        weight: -26
+        enabled: false
+      alert:
+        weight: -25
+        enabled: false
+      body:
+        weight: -24
+        enabled: false
+      card:
+        weight: -23
+        enabled: false
+      cards:
+        enabled: true
+        weight: -21
+      hero:
+        weight: -20
+        enabled: false
+      hero_banner:
+        weight: -19
+        enabled: false
+      hours:
+        weight: -18
+        enabled: false
+      icon_link:
+        weight: -17
+        enabled: false
+      text_share:
+        enabled: true
+        weight: -22
+      views_reference:
+        weight: -16
+        enabled: false
+field_type: entity_reference_revisions
