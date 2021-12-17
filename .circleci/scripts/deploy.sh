@@ -119,7 +119,7 @@ for name in "$@" ; do
 
   echo
   echo Importing Features for $PANTHEON_ENV
-  drush @${SITE_CODE}.${PANTHEON_ENV} fra -y
+  drush @${SITE_CODE}.${PANTHEON_ENV} fra --bundle=jcc_tc2 -y
 
   echo
   echo Clearing Cache for $PANTHEON_ENV

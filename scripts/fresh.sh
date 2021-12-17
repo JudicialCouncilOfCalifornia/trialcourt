@@ -108,7 +108,7 @@ if [ "$LANDO_SERVICE_NAME" = "appserver" ] && [ -f /app/data/.themes-built.fresh
   echo -e "\nRunning config import..."
   drush cim -y -l $HOST
   echo -e "\nRunning feature import..."
-  drush fra -y -l $HOST
+  drush fra --bundle=jcc_tc2 -y -l $HOST
   echo -e "\nClearing caches..."
   drush cr -l $HOST
   # Clean up the indicator files for the next run.
