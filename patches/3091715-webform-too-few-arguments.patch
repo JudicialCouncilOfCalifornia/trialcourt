@@ -1,0 +1,13 @@
+diff --git a/src/WebformThemeManager.php b/src/WebformThemeManager.php
+index 34c44d410..3215003bb 100644
+--- a/src/WebformThemeManager.php
++++ b/src/WebformThemeManager.php
+@@ -83,7 +83,7 @@ class WebformThemeManager implements WebformThemeManagerInterface {
+    *   The theme initialization.
+    */
+   public function __construct(RouteMatchInterface $route_match, ConfigFactoryInterface $config_factory, RendererInterface $renderer, ThemeManagerInterface $theme_manager, ThemeHandlerInterface $theme_handler, ThemeInitializationInterface $theme_initialization) {
+-    $this->routeMatch = $route_match;
++    $this->routeMatch = $route_match ?: \Drupal::routeMatch();
+     $this->configFactory = $config_factory;
+     $this->renderer = $renderer;
+     $this->themeManager = $theme_manager;
