@@ -8,6 +8,16 @@ Meta:
  - This would be necessary regardless of hosting platform, (not a because we're running multisite on pantheon issue, it's because we want to keep the fleet in sync with all updates)
  - There are some Drupal quirks with config diff sort.
 
+**UPDATE 2021-12-17**
+
+While the above is still true, we've refined the process to be more efficient. As we grew to more sites, the time it took to sync features and then export on every site before deployment caused deployments to take several hours.
+
+Now, rather than syncing config via feature import > config export, we rely on the Features to manage all it's own config and remove the redundancy of Drupal config management. We DO still use Drupal config management for anything not managed by the feature module jcc_tc2_all_immutable_config. The feature config is ignored by Drupal core and those exported config files are ignored in git.
+
+This is handle by a hook and a bash script to run instead of "fleet config-sync". You only need to work with the pilot site "Inyo" now. You do not need to install all sites to sync config.
+
+See below for more info.
+
 ---
 
 There is one feature module on this profile. JCC Components All Immutable Config
@@ -19,17 +29,17 @@ When config changes are made on the primary site (inyo) the steps to sync are:
   - `git checkout master`
   - `lando start`
   - `lando composer install`
-  - `scripts/fleet db-pull live` - (install all live databases to local)
-    - if you're encountering timeouts or rsync errors, use `scripts/fleet db-sync live` instead
-  - `scripts/fleet reset local -y` - (updb, cim, cr - should have no updates and nothing to import)
-  - `git checkout (new feature)` - The one we want to sync to fleet
-  - `lando reset -l inyo.lndo.site` - reset inyo for the feature branch where the initial work was done.
+  - `lando drush sql-sync @inyo.live @local.inyo` - sync the db from live to local.
+  - `lando reset -l inyo.lndo.site` - (updb, cim, cr - should have no updates and nothing to import)
+  - `git checkout (new feature)` - The one we want to sync to fleet.
+    - Alternatively, do this on a release branch after you've merged any features to be deployed. Sync config for the release and deploy the release branch.
+  - `lando reset -l inyo.lndo.site` - reset inyo for the feature or release branch.
   - Verify the feature installs and works as expected on local inyo before syncing config. If not, send it back with notes.
   - Does anything need an update hook? i.e. fields deleted, field types changed, db schema changes, new modules enabled?
-  - Yes: Write update hooks in `jcc_tc2_all_immutable_config.install` to do that work before config can import.
+    - Yes: Write update hooks in `jcc_tc2_all_immutable_config.install` to do that work before config can import.
   - Update jcc_tc2_all_immutable_config feature module to collect all the relevant config from our new feature `admin/config/development/features`.
     - Add any new config that should be added, and don't add any that should be unique to every site.
-    - Do NOT ignore config arbitrarily. Degradation of the system makes it harder and harder to manage over time. Every decision should be made in favor of maintaining integrity.
+    - Do NOT omit config arbitrarily. Degradation of the system makes it harder and harder to manage over time. Every decision should be made in favor of maintaining integrity.
     - the ideal type of config to be left out is one that is always different on every site.
     - Everything else should be Immutable and standard across the "fleet".
     - Omit (not a complete list):
@@ -46,22 +56,19 @@ When config changes are made on the primary site (inyo) the steps to sync are:
         - All
       - Key:
         - All
+    - Write the new feature config which will update `jcc_tc2_all_immutable_config/config/install/`.
+      - A hook in the Module adds any config in the above directory to the ignore list so it's fully handled by Features and not Drupal core.
   - Add any newly enabled modules to the module list in `jcc_components_profile.info.yml` so they're enabled for new sites.
-  - `scripts/fleet config-sync` this runs the following on ALL sites.
-    - Watch for errors and troubleshoot as needed.
-    - `drush cr` cuz drupal
-    - `drush updb` to run any update hooks needed to enable modules, delete
-    - `drush fra` feature import on all enabled feature modules in bundle jcc_tc2 on all sites. (all immutable config is the only one)
-    - `drush cex` export new config changes added by the feature import so each site config is up to date.
-  - `scripts/fleet reset local -y` reset the fleet again. It should show no updates, nothing to import.
-  - Watch for issues and troubleshoot as needed.
-  - Visually verify all the new config files.
+  - Watch for errors and troubleshoot as needed.
+    - Run `scripts/sync_config_ignore.sh` this runs the following:
+      - Add files from `jcc_tc2_all_immutable_config/config/install/` to `config/config-inyo/.gitignore` because Drupal still exports them, even though it ignores them on import.
+      - Copy Inyo's .gitignore to all other config directories that have a `core.extension.yml` that enables `jcc_tc2_all_immutable_config`. In other words, only the sites that use this universal config.
+  - Visually verify all the new config files in `jcc_tc2_allimmutable_config/config/install` match what you expect from the config changes in the feature or release branch.
   - I do this by doing git add on the profile which shows me which config I'm looking for.
-  - Then scanning through the long list of files for that "pattern" of files.
   - It's probably a good idea to write tests to test the new feature as well as a small suite of tests that run on every deploy to watch key pages/user flows for breakage. @see [Automated Testing](./automated-testing.md)
   - If it looks good, commit and push to github and PR to `develop`.
   - Make sure it deploys right to develop and QA test some other sites to make sure things work the way you expect.
-  - If it looks good on `develop`, PR/merge the _**FEATURE**_ branch to `stage`
+  - If it looks good on `develop`, PR/merge the _**FEATURE or RELEASE**_ branch to `stage`
   - update the ticket with notes for how to test so other stakeholders can review and approve for production.
   - If it's approved for production, plan your deployment to production.
     - hotfix style: the feature can be pr/merged to master directly on it's own
@@ -72,9 +79,7 @@ When config changes are made on the primary site (inyo) the steps to sync are:
 
 Sometimes features:sync doesn't effectively update all config across all projects.
 
-Sometimes config is the same but the line order is different between feature and config.  This will result in feature always indicating "changed", but never actually importing the difference. This should be fixed manually. Edit the affected config files for the site in question, to match the feature's version of the same file.  This takes some time and is tedious, but we have to have clean config for syncing to be clear and effective, so we know when it's save to deploy code. Discrepancies like this make this difficult, so clean as we go.
-
-Run `scripts/fleet config-sync` until all the fleet sites show no feature imports. If multiple runs of feature sync keep showing the same feature imports on the same sites, manual intervention is required.
+Sometimes config is the same but the line order is different between feature and config.  This will result in feature always indicating "changed", but never actually importing the difference. This should be fixed manually. Edit the affected config files for the site in question, to match the feature's version of the same file.  This takes some time and is tedious, but we have to have clean config for syncing to be clear and effective, so we know when it's safe to deploy code. Discrepancies like this make this difficult, so clean as we go.
 
 In more mysterious cases the only course may be to
   - identify the faulty config from the config-sync ,
@@ -89,11 +94,11 @@ In more mysterious cases the only course may be to
 ## Config Split, Ignore, and Features
 
 Questions to ask:
-  - Is this config/module different for every site?
+  - Is this config or module different for every site?
     - (Do NOT add to jcc_components_all_immutable_config feature.)
-  - Is this config/module specifically for development?
+  - Is this config or module specifically for development?
     - (Add to develop config split.)
   - Is this config something that should not be stored in the repo? i.e. API Keys
-    - (Add this to config ignore)
+    - (Add this to config ignore as well as `config/.gitignore`)
   - Is this config that we treat like content that should not be managed as config? i.e. webforms
-    - (Add this to config ignore)
+    - (Add this to config ignore as well as `config/.gitignore`)
