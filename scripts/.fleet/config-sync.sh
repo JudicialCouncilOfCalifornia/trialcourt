@@ -2,7 +2,7 @@
 
 show_help() {
   name="config-sync"
-  description="Deploys featurized config to all sites and exports their new config.\n\t\t-b\tjcc_tc (legacy) or jcc_tc2 (default)\n\t\t-e\tThe environment (${R}EXPERIMENTAL and DANGEROUS!${RE} Do not use on live.)\n\t\t-f\tThe target feature to import config\n\t\t-s\tThe target site to import config\n\t\t${G}More Info:${RE} https://github.com/JudicialCouncilOfCalifornia/trialcourt/blob/master/FEATURES.md"
+  description="${RB}[DEPRECATED]${RE}${R} Config management has changed. See ${B}docs/feature-config-management.md${RE}\n\n\tDeploys featurized config to all sites and exports their new config.\n\t\t-b\tjcc_tc (legacy) or jcc_tc2 (default)\n\t\t-e\tThe environment (${R}EXPERIMENTAL and DANGEROUS!${RE} Do not use on live.)\n\t\t-f\tThe target feature to import config\n\t\t-s\tThe target site to import config\n\t\t${G}More Info:${RE} https://github.com/JudicialCouncilOfCalifornia/trialcourt/blob/master/FEATURES.md"
   usage="scripts/fleet config-sync [-b -e -f -s]"
   # Use this exact template in all show_help functions for consistentency.
   . ${BASEDIR}/scripts/.fleet/templates/show_help.sh
@@ -85,5 +85,11 @@ done
 shift $((OPTIND -1))
 
 if [[ "$help" != "true" ]] ; then
-  do_command
+  echo
+  read -p "*** Are you sure??? *** This function is DEPRECATED. See docs/feature-config-management.md  [y|N]  " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    do_command
+  fi
 fi
