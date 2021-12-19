@@ -58,6 +58,10 @@ tooling:
     description: "dbget [drush-alias]\tDownload the database for alias. i.e. lando dbget @slo.live"
     service: appserver
     cmd: scripts/dbget.sh
+  config-ignore:
+    description: "Update the config ignore across all sites. Run after Feature (jcc_tc2_all_immutable_config) is updated."
+    service: appserver
+    cmd: scripts/sync_config_ignore.sh
   feature:docs:
     description: "Show documentation for managing features on this project. FEATURES.md"
     service: appserver
