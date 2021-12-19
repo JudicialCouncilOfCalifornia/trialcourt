@@ -93,7 +93,7 @@ This file is git ignored as it may vary from site to site, or based on what test
 
 - Export config
   - `lando drush @local.[site] cex -y`
-  - `scripts/sync_config_ignore.sh`  Make sure this is run before you commit exported config. It will ignore the files that are managed by jcc_tc2_all_immutable_config feature module.
+  - `lando config-ignore` or `scripts/sync_config_ignore.sh`  Make sure this is run before you commit exported config. It will ignore the files that are managed by jcc_tc2_all_immutable_config feature module.
 
 - Export db from local
   - `lando drush @local.[site] sql-dump > data/[site]-install.sql`

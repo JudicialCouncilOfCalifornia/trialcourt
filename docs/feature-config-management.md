@@ -14,7 +14,7 @@ While the above is still true, we've refined the process to be more efficient. A
 
 Now, rather than syncing config via feature import > config export, we rely on the Features to manage all it's own config and remove the redundancy of Drupal config management. We DO still use Drupal config management for anything not managed by the feature module jcc_tc2_all_immutable_config. The feature config is ignored by Drupal core and those exported config files are ignored in git.
 
-This is handle by a hook and a bash script to run instead of "fleet config-sync". You only need to work with the pilot site "Inyo" now. You do not need to install all sites to sync config.
+This is handled by a hook and a bash script to run instead of "fleet config-sync". You only need to work with the pilot site "Inyo" now. You do not need to install all sites to sync config.
 
 See below for more info.
 
@@ -60,9 +60,10 @@ When config changes are made on the primary site (inyo) the steps to sync are:
       - A hook in the Module adds any config in the above directory to the ignore list so it's fully handled by Features and not Drupal core.
   - Add any newly enabled modules to the module list in `jcc_components_profile.info.yml` so they're enabled for new sites.
   - Watch for errors and troubleshoot as needed.
-    - Run `scripts/sync_config_ignore.sh` this runs the following:
-      - Add files from `jcc_tc2_all_immutable_config/config/install/` to `config/config-inyo/.gitignore` because Drupal still exports them, even though it ignores them on import.
-      - Copy Inyo's .gitignore to all other config directories that have a `core.extension.yml` that enables `jcc_tc2_all_immutable_config`. In other words, only the sites that use this universal config.
+    - Run `lando config-ignore` or `scripts/sync_config_ignore.sh`. This runs the following:
+      - Add files from `jcc_tc2_all_immutable_config/config/install/` to `config/config-default/.gitignore` because Drupal still exports them, even though it ignores them on import.
+      - Copy Default's .gitignore to all other config directories that have a `core.extension.yml` that enables `jcc_tc2_all_immutable_config`. In other words, only the sites that use this universal config.
+      - Remove .gitignore created in config-inyo/ to provide a normal developer experience, because Inyo is the prototype site.
   - Visually verify all the new config files in `jcc_tc2_allimmutable_config/config/install` match what you expect from the config changes in the feature or release branch.
   - I do this by doing git add on the profile which shows me which config I'm looking for.
   - It's probably a good idea to write tests to test the new feature as well as a small suite of tests that run on every deploy to watch key pages/user flows for breakage. @see [Automated Testing](./automated-testing.md)

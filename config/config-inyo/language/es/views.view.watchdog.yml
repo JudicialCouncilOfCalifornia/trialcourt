@@ -1,0 +1,46 @@
+label: Guardián
+description: 'Mensajes recientes del registro'
+display:
+  default:
+    display_title: Máster
+    display_options:
+      exposed_form:
+        options:
+          submit_button: Filtro
+          reset_button_label: Restablecer
+          exposed_sorts_label: 'Ordenar por'
+      pager:
+        options:
+          expose:
+            items_per_page_label: 'Elementos por página'
+            items_per_page_options_all_label: '- Todo -'
+            offset_label: Desplazamiento
+      fields:
+        nothing:
+          admin_label: Icono
+        severity:
+          label: Gravedad
+        type:
+          label: Tipo
+        timestamp:
+          label: Fecha
+        message:
+          label: Mensaje
+        name:
+          label: Usuario
+        link:
+          label: Operaciones
+      filters:
+        type:
+          expose:
+            label: Tipo
+        severity:
+          expose:
+            label: Gravedad
+      title: 'Mensajes recientes del registro'
+      empty:
+        area:
+          admin_label: 'No hay mensajes disponibles.'
+          content: 'No hay mensajes disponibles.'
+  page:
+    display_title: Página

@@ -13,16 +13,16 @@ files=$(ls ${BASEDIR}/web/profiles/jcc_components_profile/modules/custom/jcc_tc2
 config_dirs=$(ls -d ${BASEDIR}/config/*/)
 
 # Update inyo config as source of truth for other conforming sites.
-echo -e "\n${B}Updating Inyo config .gitignore.${RE}\n"
+echo -e "\n${B}Updating Default config .gitignore.${RE}\n"
 
 for file in $files
 do
-  config_exists=$(grep -xF $file ${BASEDIR}/config/config-inyo/.gitignore)
-  negated_config_exists=$(grep -xF !${file} ${BASEDIR}/config/config-inyo/.gitignore)
+  config_exists=$(grep -xF $file ${BASEDIR}/config/config-default/.gitignore)
+  negated_config_exists=$(grep -xF !${file} ${BASEDIR}/config/config-default/.gitignore)
 
   if [ ! $config_exists ] && [ ! $negated_config_exists ];then
     echo -e "${Y}Ignoring ${file} ${RE}"
-    echo $file >> ${BASEDIR}/config/config-inyo/.gitignore
+    echo $file >> ${BASEDIR}/config/config-default/.gitignore
   fi
 done
 
@@ -34,9 +34,9 @@ do
   if [ -f "${extensions}" ]; then
     if [[ $(grep jcc_tc2_all_immutable_config $extensions) ]]; then
       echo -e "${GB}Updating ${dir}.gitignore ${RE}"
-      # Copy the .gitignore from inyo.
-      if [[ "${BASEDIR}/config/config-inyo/" != "$dir" ]]; then
-        cp -f ${BASEDIR}/config/config-inyo/.gitignore $dir
+      # Copy the .gitignore from default.
+      if [[ "${BASEDIR}/config/config-default/" != "$dir" ]]; then
+        cp -f ${BASEDIR}/config/config-default/.gitignore $dir
       fi
     else
       echo -e "${RB}$dir does not use immutable ${RE}"
@@ -45,3 +45,9 @@ do
     echo -e "${P}$dir is not a valid directory. ${RE}"
   fi
 done
+
+# We want devs to be able to use Inyo for development without the complexity
+# of updating the feature. Leads, or whoever does the deployment will be
+# required to update the feature module from the config in Inyo, and run this
+# script. Therefore, we want to keep all the config for Inyo.
+rm -f ${BASEDIR}/config/config-inyo/.gitignore
