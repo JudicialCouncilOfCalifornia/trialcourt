@@ -1,0 +1,65 @@
+uuid: d528ea66-b0dd-47dc-b8cb-601c570276ff
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.cards.field_columns
+    - field.field.paragraph.cards.field_components
+    - field.field.paragraph.cards.field_heading
+    - field.field.paragraph.cards.field_lead
+    - field.field.paragraph.cards.field_link
+    - field.field.paragraph.cards.field_sub_variant
+    - field.field.paragraph.cards.field_variant
+    - paragraphs.paragraphs_type.cards
+  module:
+    - entity_reference_revisions
+    - link
+    - text
+_core:
+  default_config_hash: 13uAUn8zX8SErXWez8IjfEM93GnwwcnzUqts2ZJXIUg
+id: paragraph.cards.default
+targetEntityType: paragraph
+bundle: cards
+mode: default
+content:
+  field_components:
+    weight: 2
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    type: entity_reference_revisions_entity_view
+    region: content
+  field_heading:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_lead:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_link:
+    weight: 3
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+hidden:
+  field_columns: true
+  field_sub_variant: true
+  field_variant: true
+  search_api_excerpt: true
