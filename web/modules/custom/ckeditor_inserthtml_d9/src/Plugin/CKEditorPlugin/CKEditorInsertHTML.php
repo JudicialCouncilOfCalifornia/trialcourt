@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\ckeditor_inserthtml\Plugin\CKEditorPlugin;
+namespace Drupal\ckeditor_inserthtml_d9\Plugin\CKEditorPlugin;
 
 use Drupal\ckeditor\CKEditorPluginBase;
 use Drupal\editor\Entity\Editor;
