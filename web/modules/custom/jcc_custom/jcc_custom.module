@@ -111,3 +111,19 @@ function jcc_custom_views_query_alter(ViewExecutable $view) {
       break;
   }
 }
+
+/**
+ * Implements hook_entity_type_alter().
+ *
+ * Fixes bug: TCI-731, where workflow conflicts with some paragraphs config.
+ *
+ * @see https://www.drupal.org/project/drupal/issues/2955321
+ * @see https://www.drupal.org/project/entity_reference_revisions/issues/3150084
+ */
+function jcc_custom_entity_type_alter(array &$entity_types) {
+  foreach ($entity_types as $entity_type) {
+    $constraints = $entity_type->getConstraints();
+    unset($constraints['EntityUntranslatableFields']);
+    $entity_type->setConstraints($constraints);
+  }
+}
