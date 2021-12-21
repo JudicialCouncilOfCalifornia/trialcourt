@@ -12,7 +12,11 @@
  * - string classes: The classes of the captioned HTML tag.
  */
 #}
-<figure role="group"{%- if classes %} class="{{ classes }}"{%- endif %}>
-  {{ node }}
-  <figcaption>{{ caption }}</figcaption>
-</figure>
+
+{% include '@molecules/media/media.twig' with {
+  media: {
+    entity: node,
+    caption: caption,
+    classes_other: classes,
+  }
+} %}
