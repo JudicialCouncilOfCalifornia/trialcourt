@@ -81,7 +81,7 @@
 
 {{ attach_library('classy/node') }}
 
-<article{{ attributes.addClass(classes)|without('role') }} aria-label="News content">
+<article{{ attributes.addClass(classes)|without('role') }} aria-label="Multimedia album content">
   {{ title_prefix }}
   {{ title_suffix }}
 
@@ -90,136 +90,84 @@
       {% set title %}
         <a href="{{ url }}" rel="bookmark">{{ label }}</a>
       {% endset %}
-    {% elseif label and page %}
-      {% set title %}
-        {{ label }}
-      {% endset %}
     {% endif %}
 
-    {% set news_type %}
-      {% if content.field_news_type[0] %}
-        {{ content.field_news_type.0 }}
-      {% else %}
-        News
-      {% endif %}
-    {% endset %}
+    {% if content.field_multimedia_type[0] %}
+      {% set multimedia_type = content.field_multimedia_type.0 %}
+    {% endif %}
 
-    {% set attachments = content.field_attachments[0] %}
-    {% set images = content.field_images %}
-
-    {# If body is empty set url attachement as button in the body area#}
-    {% if (content.body.0 == null) and (content.field_attachments[0]) %}
-      {# Display first document as primary download #}
-      {% set primary_doc = content.field_attachments[0]['#url'] %}
+    {% if content.body['#object'].body.summary or content.body %}
+      {% set summary = content.body['#object'].body.summary %}
       {% set body %}
-        <div>
-          {% include "@atoms/buttons/link-button.twig" with {
-              link_button: {
-                text: 'Download News',
-                url: primary_doc
-              }
-            } only
-          %}
-        </div>
-        {# Display other documents as secondary downloads #}
-        {% set other_docs = [] %}
-        {% for other_doc in content.field_attachments %}
-          {% if other_doc['#title'] %}
-            {% set doc_title = other_doc['#title'] %}
-            {% set doc_url = other_doc['#url'] %}
-            {% set other_docs = other_docs|merge([{
-              url_title: doc_title,
-              url: doc_url
-            }]) %}
+        <div class="body">
+          {% if summary %}
+            {{ summary }}
+          {% else %}
+            {{ content.body.0 }}
           {% endif %}
-        {% endfor %}
-        {% set other_docs = other_docs|slice(1) %} {# Skip the primary document #}
-        {% if other_docs|length > 0 %}
-          {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
-            link_list: {
-              list_icons: true,
-              header: 'Other Downloads',
-              items: other_docs,
-            }
-          } %}
-        {% endif %}
-      {% endset %}
-    {% else %}
-      {% set news_lead %}
-        {% if content.body['#object'].body.summary %}
-          <div class="summary">
-            {{ content.body['#object'].body.summary }}
-          </div>
-        {% endif %}
-
-        {% if content.field_contact[0] %}
-          <div class="contacts">By
-          {% set comma = "," %}
-          {% for i in range(1, content.field_contact['#items']|length) %}
-            {% set contact_name = content.field_contact[loop.index0]['#options'].entity.title.value %}
-            {% set contact_email = content.field_contact[loop.index0]['#options'].entity.field_email.value %}
-            {% if contact_email %}
-              <a href="mailto:{{ contact_email }}">{{- contact_name -}}</a>{% if loop.revindex0 > 0 %}{{- comma }} {% endif %}
-            {% else %}
-              {{- contact_name -}}{% if loop.revindex0 > 0 %}{{- comma }} {% endif %}
-            {% endif %}
-          {% endfor %}
-          </div>
-        {% endif %}
-
-        <div class="publish_date">
-          {{ node.created.value|date(format="M j, Y") }}
         </div>
-
-        {% if share_buttons_available %}
-        <div class="jcc-social-share">
-          {{ drupal_block("better_social_sharing_buttons_block") }}
-        </div>
-        {% endif %}
       {% endset %}
-
-      {% set body %}
-        {{ content.body.0 }}
-      {% endset %}
-    {%  endif %}
-
-    {# BEGIN Set hero image for Feature typed news #}
-    {% set hero_background = null %}
-    {% set hero_parallax = null %}
-    {% set hero_backgroud_img = null %}
-    {% if node.type.entity.label|default == 'News' and content.field_news_type[0]['#title'] == 'Feature' %}
-      {% set hero_background = 'has-background-image' %}
-      {% set hero_parallax = true %}
-      {% set hero_backgroud_img = hero_image %}
     {% endif %}
-    {# END #}
+
     {% include '@jcc_base/_includes/section-hero.html.twig' with {
-      background_variant: hero_background,
-      background_parallax: hero_parallax,
-      img: hero_backgroud_img,
-      brow: news_type,
-      title: title,
-      lead: news_lead,
-      body: null,
+      brow: multimedia_type,
+      title: label,
+      body: body,
       breadcrumbs: 'disabled'
     } %}
 
-    {% include '@jcc_newsroom/_includes/section-body.html.twig'with {
-      no_title_decoration: true,
-      related: null,
-      attachments: null,
-      related_links: null,
-      subject_matter: null,
-      tags: null,
-      topics: null,
-    } %}
+    {% if content.field_videos[0] or content.field_images[0] %}
+      <div class="grid-container padding-0 lightbox">
+        {% if content.field_videos[0] %}
+          <div class="grid-row lightbox__header">
+            <h2>Videos</h2>
+          </div>
+          <div class="grid-row flex-row">
+            {# field/field--field-videos.html.twig #}
+            {{ content.field_videos }}
+          </div>
+        {% endif %}
 
-    {% if content.field_related_content[0] %}
-      {% include '@jcc_base/_includes/relatedcontent.html.twig'with {
-        related_content: {
-          items: content.field_related_content,
-        }
-      } %}
+        {% if content.field_images[0] %}
+          <div class="grid-row lightbox__header">
+            <h2>Images</h2>
+            <p aria-hidden="true">Click on an image below to view in full size</p>
+          </div>
+          <div class="grid-row flex-row">
+            {% for image in content.field_images['#items'] %}
+              {% if image.entity and image.entity.mid.value != null %}
+                {% set media_id = image.entity.mid.value %} {# not the file id #}
+                {% set image_url = file_url(image.entity.field_media_image.entity.uri.value) %}
+                {% set image_title = image.entity.name.value %}
+                {% set image_alt = image.entity.field_media_image.alt %}
+                {% set media_title = image_title %}
+                {% set media_caption = '' %}
+                {% if image.entity.field_media_caption.value %}
+                  {% set media_caption = image.entity.field_media_caption.value|striptags %}
+                {% endif %}
+
+                {% set media_image %}
+                  <div class="contextual-region">
+                    {{ contextual_links('media:media=' ~ media_id) }}
+                    <a href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ media_caption }}" aria-label="Click to view larger image">
+                      <img src="{{ image_url }}" alt="{{ image_alt }}">
+                    </a>
+                  </div>
+                {% endset %}
+              {% endif %}
+              <div class="grid-col-12 tablet:grid-col-3 height-full lightbox__card image">
+                {% include '@molecules/blocks/card/card.twig' with {
+                  card: {
+                    title: media_title,
+                    excerpt_img: media_image,
+                    excerpt: media_caption,
+                  }
+                } %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
     {% endif %}
 
     {% set related_links = content.field_links[0] %}
@@ -227,8 +175,6 @@
     {% set tags = content.field_tags[0] %}
     {% set topics = content.field_topics[0] %}
 
-    {% include '@jcc_base/_includes/section-secondary.html.twig'with {
-      no_title_decoration: true
-    } %}
+    {% include '@jcc_base/_includes/section-secondary.html.twig' %}
   {% endblock %}
 </article>

@@ -81,7 +81,7 @@
 
 {{ attach_library('classy/node') }}
 
-<article{{ attributes.addClass(classes)|without('role') }} aria-label="News content">
+<article{{ attributes.addClass(classes)|without('role') }} aria-label="Page content">
   {{ title_prefix }}
   {{ title_suffix }}
 
@@ -96,139 +96,40 @@
       {% endset %}
     {% endif %}
 
-    {% set news_type %}
-      {% if content.field_news_type[0] %}
-        {{ content.field_news_type.0 }}
-      {% else %}
-        News
+    {% set body %}
+      {% if display_submitted %}
+        <div{{ author_attributes.addClass('node__submitted') }}>
+          <div class="author">By {{ author_name }}</div>
+          <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
+          {{ metadata }}
+        </div>
       {% endif %}
+
+      <div class="body">
+        {{ content.body.0 }}
+      </div>
+
+      {% if faq_items['#rows'][0] %}
+        <h4>{{ faq_items['#view'].getTitle()}}</h4>
+        {{ faq_items }}
+      {% endif %}
+
     {% endset %}
 
-    {% set attachments = content.field_attachments[0] %}
-    {% set images = content.field_images %}
-
-    {# If body is empty set url attachement as button in the body area#}
-    {% if (content.body.0 == null) and (content.field_attachments[0]) %}
-      {# Display first document as primary download #}
-      {% set primary_doc = content.field_attachments[0]['#url'] %}
-      {% set body %}
-        <div>
-          {% include "@atoms/buttons/link-button.twig" with {
-              link_button: {
-                text: 'Download News',
-                url: primary_doc
-              }
-            } only
-          %}
-        </div>
-        {# Display other documents as secondary downloads #}
-        {% set other_docs = [] %}
-        {% for other_doc in content.field_attachments %}
-          {% if other_doc['#title'] %}
-            {% set doc_title = other_doc['#title'] %}
-            {% set doc_url = other_doc['#url'] %}
-            {% set other_docs = other_docs|merge([{
-              url_title: doc_title,
-              url: doc_url
-            }]) %}
-          {% endif %}
-        {% endfor %}
-        {% set other_docs = other_docs|slice(1) %} {# Skip the primary document #}
-        {% if other_docs|length > 0 %}
-          {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
-            link_list: {
-              list_icons: true,
-              header: 'Other Downloads',
-              items: other_docs,
-            }
-          } %}
-        {% endif %}
-      {% endset %}
-    {% else %}
-      {% set news_lead %}
-        {% if content.body['#object'].body.summary %}
-          <div class="summary">
-            {{ content.body['#object'].body.summary }}
-          </div>
-        {% endif %}
-
-        {% if content.field_contact[0] %}
-          <div class="contacts">By
-          {% set comma = "," %}
-          {% for i in range(1, content.field_contact['#items']|length) %}
-            {% set contact_name = content.field_contact[loop.index0]['#options'].entity.title.value %}
-            {% set contact_email = content.field_contact[loop.index0]['#options'].entity.field_email.value %}
-            {% if contact_email %}
-              <a href="mailto:{{ contact_email }}">{{- contact_name -}}</a>{% if loop.revindex0 > 0 %}{{- comma }} {% endif %}
-            {% else %}
-              {{- contact_name -}}{% if loop.revindex0 > 0 %}{{- comma }} {% endif %}
-            {% endif %}
-          {% endfor %}
-          </div>
-        {% endif %}
-
-        <div class="publish_date">
-          {{ node.created.value|date(format="M j, Y") }}
-        </div>
-
-        {% if share_buttons_available %}
-        <div class="jcc-social-share">
-          {{ drupal_block("better_social_sharing_buttons_block") }}
-        </div>
-        {% endif %}
-      {% endset %}
-
-      {% set body %}
-        {{ content.body.0 }}
-      {% endset %}
-    {%  endif %}
-
-    {# BEGIN Set hero image for Feature typed news #}
-    {% set hero_background = null %}
-    {% set hero_parallax = null %}
-    {% set hero_backgroud_img = null %}
-    {% if node.type.entity.label|default == 'News' and content.field_news_type[0]['#title'] == 'Feature' %}
-      {% set hero_background = 'has-background-image' %}
-      {% set hero_parallax = true %}
-      {% set hero_backgroud_img = hero_image %}
-    {% endif %}
-    {# END #}
     {% include '@jcc_base/_includes/section-hero.html.twig' with {
-      background_variant: hero_background,
-      background_parallax: hero_parallax,
-      img: hero_backgroud_img,
-      brow: news_type,
+      background_variant: "has-background-color--none",
       title: title,
-      lead: news_lead,
-      body: null,
+      body: body,
       breadcrumbs: 'disabled'
     } %}
 
-    {% include '@jcc_newsroom/_includes/section-body.html.twig'with {
-      no_title_decoration: true,
-      related: null,
-      attachments: null,
-      related_links: null,
-      subject_matter: null,
-      tags: null,
-      topics: null,
-    } %}
-
-    {% if content.field_related_content[0] %}
-      {% include '@jcc_base/_includes/relatedcontent.html.twig'with {
-        related_content: {
-          items: content.field_related_content,
-        }
-      } %}
-    {% endif %}
-
+    {% set attachments = content.field_attachments[0] %}
     {% set related_links = content.field_links[0] %}
     {% set subject_matter = content.field_subject_matter[0] %}
     {% set tags = content.field_tags[0] %}
     {% set topics = content.field_topics[0] %}
 
-    {% include '@jcc_base/_includes/section-secondary.html.twig'with {
-      no_title_decoration: true
-    } %}
+    {% include '@jcc_base/_includes/section-secondary.html.twig' %}
+
   {% endblock %}
 </article>
