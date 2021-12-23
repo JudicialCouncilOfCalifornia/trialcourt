@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for CKEditor InsertHTML.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function ckeditor_inserthtml_requirements($phase) {
+  $requirements = [];
+
+  if ($phase == 'install' || $phase == 'runtime') {
+    $path = '/libraries/ckeditor/plugins/inserthtml4x/';
+    $plugin_detected = file_exists(DRUPAL_ROOT . $path . 'plugin.js');
+
+    if ($plugin_detected) {
+      $requirements['inserthtml4x'] = [
+        'title' => t('CKEditor InsertHTML'),
+        'value' => t('Plugin detected'),
+        'severity' => REQUIREMENT_OK,
+      ];
+    }
+    else {
+      $requirements['inserthtml4x'] = [
+        'title' => t('CKEditor InsertHTML'),
+        'value' => t('Plugin not detected'),
+        'severity' => REQUIREMENT_ERROR,
+        'description' => t('The CKEditor plugin <b>inserthtml4x</b> is required.
+          Download <a href=":url">here</a> and copy to <code>:path</code>.', [
+            ':url' => 'https://ckeditor.com/cke4/addon/inserthtml4x',
+            ':path' => $path,
+          ]),
+      ];
+    }
+  }
+
+  return $requirements;
+}
