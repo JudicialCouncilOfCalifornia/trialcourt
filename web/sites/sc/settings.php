@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-sc';
+$settings['config_sync_directory'] = '../config/config-sc';
 $config['config_split.config_split.local']['folder'] = '../config/config-sc-local';
 $settings['file_public_path']  = 'sites/default/files/sc/default';
 

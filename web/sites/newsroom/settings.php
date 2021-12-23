@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-newsroom';
+$settings['config_sync_directory'] = '../config/config-newsroom';
 $config['config_split.config_split.local']['folder'] = '../config/config-newsroom-local';
 $settings['file_public_path']  = 'sites/default/files/newsroom';
 
