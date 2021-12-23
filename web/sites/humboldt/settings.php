@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-humboldt';
+$settings['config_sync_directory'] = '../config/config-humboldt';
 $config['config_split.config_split.local']['folder'] = '../config/config-humboldt-local';
 $settings['file_public_path']  = 'sites/default/files/humboldt/default';
 
