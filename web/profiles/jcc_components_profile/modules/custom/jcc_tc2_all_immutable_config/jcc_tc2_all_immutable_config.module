@@ -12,12 +12,16 @@ function jcc_tc2_all_immutable_config_config_ignore_settings_alter(array &$setti
   // Ignore any config that exists in this module's config/install.
   $module_handler = \Drupal::service('module_handler');
   $module_path = $module_handler->getModule('jcc_tc2_all_immutable_config')->getPath();
-  $config = scandir("${module_path}/config/install");
+  $paths[] = "${module_path}/config/install";
+  $paths[] = "${module_path}/config/optional";
 
-  foreach ($config as $item) {
-    $name = str_replace('.yml', '', $item);
-    if (strpos($name, '.') !== 0 && !in_array($name, $settings)) {
-      $settings[] = $name;
+  foreach ($paths as $path) {
+    $config = scandir($path);
+    foreach ($config as $item) {
+      $name = str_replace('.yml', '', $item);
+      if (strpos($name, '.') !== 0 && !in_array($name, $settings)) {
+        $settings[] = $name;
+      }
     }
   }
 }
