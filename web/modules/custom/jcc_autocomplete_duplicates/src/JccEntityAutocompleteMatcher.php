@@ -29,13 +29,8 @@ class JccEntityAutocompleteMatcher extends \Drupal\Core\Entity\EntityAutocomplet
       // Loop through the entities and convert them into autocomplete output.
       foreach ($entity_labels as $values) {
         foreach ($values as $entity_id => $label) {
-          $news_type = 0;
           $entity = \Drupal::entityTypeManager()->getStorage($target_type)->load($entity_id);
           $entity = \Drupal::entityManager()->getTranslationFromContext($entity);
-
-          if ($entity->getEntityType()->id() == 'node') {
-            $news_type = $entity->get('field_news_type')->target_id;;
-          }
 
           $key = "{$label} ({$entity_id})";
 
@@ -45,15 +40,20 @@ class JccEntityAutocompleteMatcher extends \Drupal\Core\Entity\EntityAutocomplet
           // Names containing commas or quotes must be wrapped in quotes.
           $key = Tags::encode($key);
 
-          // If article is newslink
-          if ($news_type == 134){
-            $label = '(NEWSLINK) ' . $label;
+          // If node is newslink type, prefix title with type.
+          if ($entity->getEntityType()->id() == 'node' && isset($entity->field_news_type)) {
+            $news_type = $entity->get('field_news_type')->target_id;
+
+            // If article is newslink
+            if ($news_type == 134) {
+              $label = '(NEWSLINK) ' . $label;
+            }
           }
+
           $matches[] = array(
             'value' => $key,
             'label' => $label,
           );
-
         }
       }
     }
