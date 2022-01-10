@@ -4,20 +4,24 @@ namespace Drupal\jcc_autocomplete_duplicates;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Tags;
+use Drupal\Core\Entity\EntityAutocompleteMatcher;
 
-class JccEntityAutocompleteMatcher extends \Drupal\Core\Entity\EntityAutocompleteMatcher {
+/**
+ * Autocomplete spotlight search customizations.
+ */
+class JccEntityAutocompleteMatcher extends EntityAutocompleteMatcher {
 
   /**
    * Gets matched labels based on a given search string.
    */
   public function getMatches($target_type, $selection_handler, $selection_settings, $string = '') {
-    $matches = array();
+    $matches = [];
 
-    $options = array(
+    $options = [
       'target_type' => $target_type,
       'handler' => $selection_handler,
       'handler_settings' => $selection_settings,
-    );
+    ];
 
     $handler = $this->selectionManager->getInstance($options);
 
@@ -40,24 +44,24 @@ class JccEntityAutocompleteMatcher extends \Drupal\Core\Entity\EntityAutocomplet
           // Names containing commas or quotes must be wrapped in quotes.
           $key = Tags::encode($key);
 
-          // If node is newslink type, prefix title with type.
+          // If node is tagged newslink, prefix title with type.
           if ($entity->getEntityType()->id() == 'node' && isset($entity->field_news_type)) {
             $news_type = $entity->get('field_news_type')->target_id;
 
-            // If article is newslink
             if ($news_type == 134) {
               $label = '(NEWSLINK) ' . $label;
             }
           }
 
-          $matches[] = array(
+          $matches[] = [
             'value' => $key,
             'label' => $label,
-          );
+          ];
         }
       }
     }
 
     return $matches;
   }
+
 }
