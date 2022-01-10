@@ -310,7 +310,6 @@
         "components/highlightjs": "9.7.*",
         "d3/d3": "3.5.*",
         "drupal/coder": "^8.3",
-        "drupal/console": "^1.9",
         "drupal/devel": "^4.0.0",
         "drupal/masquerade": "^2.0@beta",
         "drupal/stage_file_proxy": "^1.0@RC",
@@ -323,7 +322,15 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/installers": true,
+            "cweagans/composer-patches": true,
+            "drupal/core-composer-scaffold": true,
+            "oomphinc/composer-installers-extender": true,
+            "zaporylie/composer-drupal-optimizations": true,
+            "drupal/console-extend-plugin": true
+        }
     },
     "autoload": {
         "classmap": [
