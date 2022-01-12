@@ -72,6 +72,7 @@
 #}
 {% set classes = [
   'node',
+  'text-word-wrap-break',
   node.isPromoted() ? 'node--promoted',
   node.isSticky() ? 'node--sticky',
   not node.isPublished() ? 'node--unpublished',
@@ -81,127 +82,41 @@
 
 {{ attach_library('classy/node') }}
 
-<article{{ attributes.addClass(classes)|without('role') }} aria-label="Document details">
+<article{{ attributes.addClass(classes)|without('role') }} aria-label="Events search listing">
   {{ title_prefix }}
   {{ title_suffix }}
+
+  {% set start_date = node.field_date_range.value|date(format="F j, Y") %}
+  {% set city = content.field_location.0["#locality"] %}
+  {% set state = content.field_location.0["#administrative_area"]["code"] %}
+
+  {% set brow_info %}
+    {{ node.getType }} - {{ start_date }}
+  {% endset %}
 
   {% block content %}
     {% if label and not page %}
       {% set title %}
-        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+        <span class="teaser"><a href="{{ url }}" rel="bookmark">{{ label }}</a></span>
       {% endset %}
     {% elseif label and page %}
       {% set title %}
-        {{ label }}
+        <span class="teaser">{{ label }}</span>
       {% endset %}
     {% endif %}
 
-    {% set document_type %}
-      {% if content.field_document_type[0] %}
-        {{ content.field_document_type.0 }}
-      {% else %}
-        Document
-      {% endif %}
-    {% endset %}
-
-    {% set body %}
-      {# Default author history if needed later ... needs to be enabled for node in Drupal
-      {% if display_submitted %}
-        <div{{ author_attributes.addClass('node__submitted') }}>
-          <div class="author">By {{ author_name }}</div>
-          <div class="publish_date">{{ post.published_at|date(format="F j, Y") }}</div>
-          {{ metadata }}
-        </div>
-      {% endif %}
-      #}
-
-      <div class="body">
-        {{ content.body.0 }}
-      </div>
-
-      {% if content.field_attachments[0] or content.field_remote_attachment[0] %}
-        {# Display first document as primary download #}
-        {% set primary_doc = content.field_remote_attachment[0]['#url']|default(content.field_attachments[0]['#url']) %}
-        <div class="margin-bottom-3">
-          {% include "@atoms/buttons/link-button.twig" with {
-            link_button: {
-              text: 'View document',
-              url: primary_doc
-            }
-          } only %}
-        </div>
-
-        {# Display other documents as secondary downloads #}
-        {% set other_docs = [] %}
-        {% for other_doc in content.field_attachments %}
-          {% if other_doc['#title'] %}
-            {% set doc_title = other_doc['#title'] %}
-            {% set doc_url = other_doc['#url'] %}
-            {% set other_docs = other_docs|merge([{
-              url_title: doc_title,
-              url: doc_url
-            }]) %}
-          {% endif %}
-        {% endfor %}
-
-        {% if content.field_remote_attachment[0] is empty %}
-          {% set other_docs = other_docs|slice(1) %} {# Skip the primary document #}
-        {% endif %}
-        {% if other_docs|length > 0 %}
-          {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
-            link_list: {
-              list_icons: true,
-              header: 'Related Downloads',
-              items: other_docs,
-            }
-          } %}
-        {% endif %}
-      {% endif %}
-    {% endset %}
-
-    {% include '@jcc_base/_includes/section-hero.html.twig' with {
-      brow: document_type,
-      title: title,
-      body: body
+    {% include '@organisms/sections/text-section/text-section.twig' with {
+      text_section: {
+        column_variant: 'has-two-columns-threequarter',
+        headergroup: {
+          tag: 'h2',
+          title: title,
+          brow: brow_info,
+        },
+        column_content_left: content.body,
+        column_content_right: content.field_location,
+      }
     } %}
 
-    {% if content.field_help_links[0] %}
-      {% set help_links = [] %}
-      {% for link in node.field_help_links %}
-        {% set help_links = help_links|merge([{
-          brow: link.options.attributes.name,
-          title: link.title,
-          url: link.url
-        }]) %}
-      {% endfor %}
-
-      {% include '@organisms/sections/switchboard/switchboard.twig' with {
-        switchboard: {
-          background_variant: 'has-background-color--dark--primary',
-          headergroup: {
-            title: 'Guides'
-          },
-          items: {
-            primary: help_links
-          }
-        }
-      } %}
-    {% endif %}
-
-    {% set related_links = [] %}
-    {% for link in node.field_links %}
-      {% if not primary_doc.toString is same as(link.url.toString) %}
-        {% set related_links = related_links|merge([link]) %}
-      {% endif %}
-    {% endfor %}
-
-    {% set subject_matter = content.field_subject_matter[0] %}
-    {% set tags = content.field_tags[0] %}
-    {% set topics = content.field_topics[0] %}
-
-    {% include '@jcc_deprep/_includes/section-secondary.html.twig'with {
-      no_title_decoration: true,
-      related_links: related_links
-    } %}
   {% endblock %}
 </article>
