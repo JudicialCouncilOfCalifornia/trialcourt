@@ -343,6 +343,10 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
         $icon['set'] = "line-white";
         $icon['name'] = str_replace("icon-line-white-", "", $card->field_icon->value);
       }
+      elseif (str_contains($card->field_icon->value, "icon-experimental-")) {
+        $icon['set'] = "experimental";
+        $icon['name'] = str_replace("icon-experimental-", "", $card->field_icon->value);
+      }
     }
 
     if ($card->field_entire_card_clickable && $card->field_entire_card_clickable->value) {
