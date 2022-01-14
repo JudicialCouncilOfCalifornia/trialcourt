@@ -4,7 +4,7 @@
 ## Spin up a pantheon instance and add deployment tooling
 
   - `scripts/pantheon_new.sh [site] "[Label]"`
-    - i.e. `scripts/pantheon_new.sh kings "Judicial Council | Kings"
+    - i.e. `scripts/pantheon_new.sh kings "Judicial Council | Kings"`
       - Keeping the Label consistently formatted helps to easily identify the site on Pantheon.
       - The Convention I've used is "Judicial Council | [site]" But capitalize the site.
     - **make sure [site] will pattern match to the identifying portion of the live url.**
