@@ -10,6 +10,7 @@ BASEDIR=$(dirname $(dirname $(realpath $0)))
 . ${BASEDIR}/scripts/colors.sh
 
 files=$(ls ${BASEDIR}/web/profiles/jcc_components_profile/modules/custom/jcc_tc2_all_immutable_config/config/install)
+files+=" $(ls ${BASEDIR}/web/profiles/jcc_components_profile/modules/custom/jcc_tc2_all_immutable_config/config/optional)"
 config_dirs=$(ls -d ${BASEDIR}/config/*/)
 
 # Update inyo config as source of truth for other conforming sites.
