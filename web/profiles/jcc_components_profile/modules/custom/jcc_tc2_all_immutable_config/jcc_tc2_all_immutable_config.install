@@ -382,3 +382,17 @@ function jcc_tc2_all_immutable_config_update_8024() {
   $module_handler->loadAll();
   $module_handler->invokeAll('rebuild');
 }
+
+/**
+ * TCI-572: Mimemail module.
+ */
+function jcc_tc2_all_immutable_config_update_8025() {
+  $modules = ['rest', 'serialization', 'webform_views'];
+
+  foreach ($modules as $module) {
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      continue;
+    }
+    \Drupal::service('module_installer')->install([$module]);
+  }
+}
