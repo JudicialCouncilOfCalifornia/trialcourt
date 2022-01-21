@@ -83,6 +83,15 @@ class MediaReplaceFileLink {
       $link = Link::fromTextAndUrl($text, $url);
       $link = $link->toString();
     }
+    else {
+      // Add forward slash to relative path if needed.
+      if (stripos($path, 'http') === FALSE) {
+        if (strpos($path, '/') !== 0) {
+          $new_path = "/$path";
+          $link = str_replace($path, $new_path, $link);
+        }
+      }
+    }
 
     return $link;
   }
