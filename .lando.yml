@@ -15,7 +15,7 @@ config:
 
   database: mariadb
 
-  composer_version: '1.10.15'
+  composer_version: '2'
 
   # Optionally activate xdebug
   #
@@ -112,8 +112,8 @@ tooling:
     description: "lando reset -l [alias]\tRuns updb, cr, cim, uli \n Reset your local after a build or db install."
     cmd:
       - drush updb -y
-      - drush cim -y
       - drush fra --bundle=jcc_tc2 -y
+      - drush cim -y
       - drush cr
   tb:
     service: node-cli
