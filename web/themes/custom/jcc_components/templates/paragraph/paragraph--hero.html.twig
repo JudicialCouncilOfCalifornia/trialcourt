@@ -41,11 +41,13 @@
 
 {% set parent_type = paragraph.getParentEntity().getType() %}
 {% set variant = paragraph.field_variant.value|json_decode %}
+{# Force layout to full width if "aside" fields are empty. #}
+{% set no_aside = content.field_subheading.0 is empty and content.field_aside.0 is empty and content.field_link.0 is empty %}
 {% set background = parent_type == 'landing_page' ? 'alt' : 'default' %}
 
 {% include "@molecules/hero/hero.twig" with {
   hero: {
-    layout: variant.hero,
+    layout: no_aside ? 'full-main' : variant.hero,
     background: background,
     main: {
       title: content.field_heading.0|render,
