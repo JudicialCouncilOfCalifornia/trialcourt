@@ -443,3 +443,38 @@ function jcc_tc2_all_immutable_config_update_8026() {
     \Drupal::messenger()->addStatus(t('Alameda only, no changes.'));
   }
 }
+
+/**
+ * TCI-783: fix field fromat from previous update hook.
+ */
+function jcc_tc2_all_immutable_config_update_8027() {
+
+  $count = 0;
+  $updated = 0;
+
+  $pids = \Drupal::entityQuery('paragraph')
+    ->condition('type', 'body')
+    ->execute();
+  $paragraphs = Paragraph::loadMultiple($pids);
+  $num = count($paragraphs);
+
+  foreach ($paragraphs as $paragraph) {
+
+    if (!$paragraph->field_text->isEmpty()) {
+
+      if ($paragraph->field_text->first()->format != 'body') {
+        $updated++;
+        $paragraph->field_text->format = 'body';
+        $paragraph->save();
+      }
+
+      $count++;
+    }
+  }
+
+  \Drupal::messenger()->addStatus(
+    t("%count of %num checked. %updated updated.",
+      ['%count' => $count, '%num' => $num, '%updated' => $updated]
+    )
+  );
+}
