@@ -38,7 +38,6 @@ mkdir data/logs/${name}/aggregate-logs
 
 for d in $(ls -d data/logs/${name}/app*/nginx); do
     for f in $(ls -f "$d"); do
-    echo "$d/$f"
     if [[ $f == "nginx-access.log" ]]; then
         cat "$d/$f" >> data/logs/${name}/aggregate-logs/nginx-access.log
         cat "" >> data/logs/${name}/aggregate-logs/nginx-access.log
@@ -67,5 +66,5 @@ fi
 
 if [ $CLEANUP_AGGREGATE_DIR == true ]; then
 echo 'CLEANUP_AGGREGATE_DIR set to $CLEANUP_AGGREGATE_DIR. Cleaning up the aggregate-logs directory'
-find ./data/logs/${name}/aggregate-logs/ -name 'nginx-access*' -print -exec rm {} \;
+find ./data/logs/${name}/aggregate-logs/ -name 'nginx-access*' -exec rm {} \;
 fi
