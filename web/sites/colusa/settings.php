@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-colusa';
+$settings['config_sync_directory'] = '../config/config-colusa';
 $config['config_split.config_split.local']['folder'] = '../config/config-colusa-local';
 $settings['file_public_path']  = 'sites/default/files/colusa/default';
 

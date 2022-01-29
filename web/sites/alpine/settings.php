@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-alpine';
+$settings['config_sync_directory'] = '../config/config-alpine';
 $config['config_split.config_split.local']['folder'] = '../config/config-alpine-local';
 $settings['file_public_path']  = 'sites/default/files/alpine/default';
 

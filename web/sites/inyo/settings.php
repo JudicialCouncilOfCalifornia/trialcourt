@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-inyo';
+$settings['config_sync_directory'] = '../config/config-inyo';
 $config['config_split.config_split.local']['folder'] = '../config/config-inyo-local';
 $settings['file_public_path']  = 'sites/default/files/inyo/default';
 

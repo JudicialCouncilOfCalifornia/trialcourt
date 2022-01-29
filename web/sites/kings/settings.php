@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-kings';
+$settings['config_sync_directory'] = '../config/config-kings';
 $config['config_split.config_split.local']['folder'] = '../config/config-kings-local';
 $settings['file_public_path']  = 'sites/default/files/kings/default';
 
