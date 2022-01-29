@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-sierra';
+$settings['config_sync_directory'] = '../config/config-sierra';
 $config['config_split.config_split.local']['folder'] = '../config/config-sierra-local';
 $settings['file_public_path']  = 'sites/default/files/sierra/default';
 

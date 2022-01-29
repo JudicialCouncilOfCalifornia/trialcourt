@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-elcondado';
+$settings['config_sync_directory'] = '../config/config-elcondado';
 $config['config_split.config_split.local']['folder'] = '../config/config-elcondado-local';
 $settings['file_public_path']  = 'sites/default/files/elcondado/default';
 

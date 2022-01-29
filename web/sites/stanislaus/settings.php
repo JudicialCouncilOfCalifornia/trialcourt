@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-stanislaus';
+$settings['config_sync_directory'] = '../config/config-stanislaus';
 $config['config_split.config_split.local']['folder'] = '../config/config-stanislaus-local';
 $settings['file_public_path']  = 'sites/default/files/stanislaus/default';
 

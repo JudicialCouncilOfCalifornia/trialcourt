@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-napa';
+$settings['config_sync_directory'] = '../config/config-napa';
 $config['config_split.config_split.local']['folder'] = '../config/config-napa-local';
 $settings['file_public_path']  = 'sites/default/files/napa/default';
 

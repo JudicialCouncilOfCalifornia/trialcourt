@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-webservices';
+$settings['config_sync_directory'] = '../config/config-webservices';
 $config['config_split.config_split.local']['folder'] = '../config/config-webservices-local';
 $settings['file_public_path']  = 'sites/default/files/webservices/default';
 

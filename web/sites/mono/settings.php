@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-mono';
+$settings['config_sync_directory'] = '../config/config-mono';
 $config['config_split.config_split.local']['folder'] = '../config/config-mono-local';
 $settings['file_public_path']  = 'sites/default/files/mono/default';
 
