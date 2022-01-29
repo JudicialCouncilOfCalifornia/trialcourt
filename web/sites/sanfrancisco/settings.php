@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-sanfrancisco';
+$settings['config_sync_directory'] = '../config/config-sanfrancisco';
 $config['config_split.config_split.local']['folder'] = '../config/config-sanfrancisco-local';
 $settings['file_public_path']  = 'sites/default/files/sanfrancisco/default';
 

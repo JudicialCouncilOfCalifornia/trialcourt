@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-lake';
+$settings['config_sync_directory'] = '../config/config-lake';
 $config['config_split.config_split.local']['folder'] = '../config/config-lake-local';
 $settings['file_public_path']  = 'sites/default/files/lake/default';
 

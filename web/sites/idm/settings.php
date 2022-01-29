@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-idm';
+$settings['config_sync_directory'] = '../config/config-idm';
 $config['config_split.config_split.local']['folder'] = '../config/config-idm-local';
 $settings['file_public_path']  = 'sites/default/files/idm/default';
 
