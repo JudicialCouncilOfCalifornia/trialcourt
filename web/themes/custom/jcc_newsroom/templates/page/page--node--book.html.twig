@@ -89,13 +89,13 @@
       </div>
 
     </div>
-    {% if node.field_related_content.value[0] %}
+    {% if node.field_related_news.value[0] %}
       <div class="grid-row grid-gap">
         <div class="desktop:grid-col-12">
           {% include '@jcc_base/_includes/relatedcontent.html.twig'with {
             related_content: {
-              items: node.field_related_content|view('full'),
-              headergroup_title: node.field_related_content.fielddefinition.label
+              items: node.field_related_news|view('full'),
+              headergroup_title: node.field_related_news.fielddefinition.label
             }
           } %}
         </div>
