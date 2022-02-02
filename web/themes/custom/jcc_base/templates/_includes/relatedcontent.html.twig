@@ -27,12 +27,18 @@
   {% endif %}
 {% endfor %}
 
+{% if related_content.headergroup_title %}
+  {% set headergroup_title = related_content.headergroup_title %}
+{% else %}
+  {% set headergroup_title = content.field_related_content['#title'] %}
+{% endif %}
+
 {% include '@organisms/sections/switchboard/switchboard.twig' with {
   switchboard: {
     layout_variant: 'default jcc-switchboard--related-content',
     background_variant: 'has-background-color--dark--primary',
     headergroup: {
-      title: content.field_related_content['#title'],
+      title: headergroup_title,
     },
     items: {
       primary: related_news
