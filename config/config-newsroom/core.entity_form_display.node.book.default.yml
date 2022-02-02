@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.book.field_links
     - field.field.node.book.field_metatag
     - field.field.node.book.field_related_content
+    - field.field.node.book.field_related_news
     - field.field.node.book.field_sorting_weight
     - field.field.node.book.field_subject_matter
     - field.field.node.book.field_tagline
@@ -49,10 +50,11 @@ third_party_settings:
       label: 'Main Content'
     group_secondary_content:
       children:
+        - field_related_news
         - field_links
         - field_related_content
       parent_name: group_book_content
-      weight: 24
+      weight: 23
       format_type: tab
       region: content
       format_settings:
@@ -195,7 +197,7 @@ content:
     type: entity_browser_entity_reference
     region: content
   field_links:
-    weight: 5
+    weight: 25
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -219,7 +221,17 @@ content:
     type: metatag_firehose
     region: content
   field_related_content:
-    weight: 6
+    weight: 26
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_related_news:
+    weight: 24
     settings:
       match_operator: CONTAINS
       match_limit: 10
@@ -284,7 +296,7 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
@@ -349,7 +361,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 4
     region: content
     settings:
       match_operator: CONTAINS
