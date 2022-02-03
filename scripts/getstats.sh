@@ -22,14 +22,14 @@ fi
 
 if [ -z "$2" ]
   then
-    echo -e "FREQUENT VISITOR IPs"
+    echo -e "\nFREQUENT VISITOR IPs"
     cat data/logs/${name}/aggregate-logs/combined.logs | awk -F '\"' '{ print $8 }' | awk -F ',' '{print $1}' | sort | uniq -c | sort -frn | head -n 25
     echo -e "\nFREQUENT VISITED URLs"
     cat data/logs/${name}/aggregate-logs/combined.logs | awk -F '\"' '{print $2}' | sort | uniq -c | sort -nr | head
     echo -e "\nFREQUENT USER AGENTS"
     cat data/logs/${name}/aggregate-logs/combined.logs | awk -F '\"' '{print $6}' | sort | uniq -c | sort -nr | head
 else
-    echo -e "FREQUENT VISITOR IPs"
+    echo -e "\nFREQUENT VISITOR IPs"
     tail -n $2 data/logs/${name}/aggregate-logs/combined.logs | awk -F '\"' '{ print $8 }' | awk -F ',' '{print $1}' | sort | uniq -c | sort -frn | head -n 25
     echo -e "\nFREQUENT VISITED URLs"
     tail -n $2  data/logs/${name}/aggregate-logs/combined.logs | awk -F '\"' '{print $2}' | sort | uniq -c | sort -nr | head
