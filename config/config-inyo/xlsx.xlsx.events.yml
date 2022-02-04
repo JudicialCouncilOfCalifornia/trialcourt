@@ -1,0 +1,51 @@
+uuid: 742ea9b1-a675-4227-81ca-bb41d1dab7d7
+langcode: en
+status: true
+dependencies: {  }
+id: events
+label: Events
+mapping:
+  source: csv_file_path
+  source_name: events-import.csv
+  cron: true
+  cron_frequency: 3600
+  csv:
+    delimiter: ','
+    enclosure: '"'
+    escape: \
+    encoding: UTF-8
+  file_path: /Users/minnur/Web/chapterthree/trialcourt/web/sites/default/files/slo2/default/events-import.csv
+  export:
+    - csv
+  export_only: false
+  entity_mapping:
+    -
+      worksheet:
+        index: 0
+        name: Worksheet
+      entity:
+        xlsx_data_plugin: node
+        type: node
+        bundle: importer
+  field_mapping:
+    -
+      title:
+        column: A
+        cell_plugin: as_is
+      field_importer_date:
+        column: B
+        cell_plugin: str_to_datetime
+      field_importer_department:
+        column: C
+        cell_plugin: as_is
+      field_importer_location:
+        column: D
+        cell_plugin: as_is
+  sheet_columns:
+    Worksheet:
+      A: LAST_NAME__FIRST_NAME
+      B: DATETIME
+      C: DEPARTMENT
+      D: LOCATION
+      E: ADDED_BY
+      F: DATE_ADDED
