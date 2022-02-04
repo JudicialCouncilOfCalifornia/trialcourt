@@ -5,10 +5,12 @@
  * Contains jcc_custom.module.
  */
 
+use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\editor\Entity\Editor;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
 
 /**
  * Implements hook_page_attachments().
@@ -99,9 +101,33 @@ function jcc_custom_sendgrid_integration_categories_alter($message, $categories)
 }
 
 /**
+ * Implements hook_views_data_alter().
+ */
+function jcc_custom_views_data_alter(array &$data) {
+  $data['node_field_data']['jcc_custom_date_filter'] = [
+    'title' => t('Date filter'),
+    'filter' => [
+      'title' => t('Date filter'),
+      'help' => t('Custom date filter.'),
+      'field' => 'nid',
+      'id' => 'jcc_custom_date_filter',
+    ],
+  ];
+  $data['node_field_data']['jcc_custom_glossary_filter'] = [
+    'title' => t('Glossary filter'),
+    'filter' => [
+      'title' => t('Glossary filter'),
+      'help' => t('Custom glossary filter.'),
+      'field' => 'nid',
+      'id' => 'jcc_custom_glossary_filter',
+    ],
+  ];
+}
+
+/**
  * Implements hook_views_query_alter().
  */
-function jcc_custom_views_query_alter(ViewExecutable $view) {
+function jcc_custom_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
   switch ($view->storage->id()) {
     case 'documents':
       // Override query max for sufficient cases to display from docs.
@@ -109,6 +135,26 @@ function jcc_custom_views_query_alter(ViewExecutable $view) {
         $view->getPager()->setItemsPerPage(20);
       }
       break;
+  }
+  if ($view->id() == 'imported_events' && $view->getDisplay()->display['id'] == 'events') {
+    $datetime = \Drupal::request()->query->get('dt');
+    if (!empty($datetime)) {
+
+      $UTC = new \DateTimeZone("UTC");
+      $newTZ = new \DateTimeZone("America/Los_Angeles");
+      $date = new \DateTime($datetime, $UTC);
+      $date->setTimezone( $newTZ );
+
+      $entity_ids = [];
+      $connection = Database::getConnection();
+      $results = $connection->query("SELECT entity_id FROM {node__field_importer_date} WHERE DATE(field_importer_date_value)= '" . $date->format('Y-m-d') . "'")->fetchAll();
+      foreach ($results as $row) {
+        $entity_ids[] = $row->entity_id;
+      }
+      if (!empty($entity_ids)) {
+        $query->addWhere(1, 'node_field_data.nid', $entity_ids, 'IN');
+      }
+    }
   }
 }
 
