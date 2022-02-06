@@ -99,6 +99,22 @@ function jcc_custom_sendgrid_integration_categories_alter($message, $categories)
 }
 
 /**
+ * Implements hook_views_data_alter().
+ */
+function jcc_custom_views_data_alter(array &$data) {
+  // This code is related to the CSV importer.
+  $data['node_field_data']['jcc_custom_date_filter'] = [
+    'title' => t('Date filter'),
+    'filter' => [
+      'title' => t('Date filter'),
+      'help' => t('Custom date filter.'),
+      'field' => 'nid',
+      'id' => 'jcc_custom_date_filter',
+    ],
+  ];
+}
+
+/**
  * Implements hook_views_query_alter().
  */
 function jcc_custom_views_query_alter(ViewExecutable $view) {
@@ -109,6 +125,27 @@ function jcc_custom_views_query_alter(ViewExecutable $view) {
         $view->getPager()->setItemsPerPage(20);
       }
       break;
+  }
+  // This code is related to the CSV importer.
+  if ($view->id() == 'imported_events' && $view->getDisplay()->display['id'] == 'events') {
+    $datetime = \Drupal::request()->query->get('dt');
+    if (!empty($datetime)) {
+
+      $UTC = new \DateTimeZone("UTC");
+      $newTZ = new \DateTimeZone("America/Los_Angeles");
+      $date = new \DateTime($datetime, $UTC);
+      $date->setTimezone( $newTZ );
+
+      $entity_ids = [];
+      $connection = Database::getConnection();
+      $results = $connection->query("SELECT entity_id FROM {node__field_importer_date} WHERE DATE(field_importer_date_value) = '" . $date->format('Y-m-d') . "'")->fetchAll();
+      foreach ($results as $row) {
+        $entity_ids[] = $row->entity_id;
+      }
+      if (!empty($entity_ids)) {
+        $query->addWhere(1, 'node_field_data.nid', $entity_ids, 'IN');
+      }
+    }
   }
 }
 

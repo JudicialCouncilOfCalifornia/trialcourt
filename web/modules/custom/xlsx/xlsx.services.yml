@@ -1,0 +1,45 @@
+services:
+  plugin.manager.xlsx_cell:
+    class: Drupal\xlsx\Plugin\XlsxCellManager
+    parent: default_plugin_manager
+
+  plugin.manager.xlsx_source:
+    class: Drupal\xlsx\Plugin\XlsxSourceManager
+    parent: default_plugin_manager
+
+  plugin.manager.xlsx_export:
+    class: Drupal\xlsx\Plugin\XlsxExportManager
+    parent: default_plugin_manager
+
+  plugin.manager.xlsx_data:
+    class: Drupal\xlsx\Plugin\XlsxDataManager
+    parent: default_plugin_manager
+
+  plugin.manager.xlsx_remote:
+    class: Drupal\xlsx\Plugin\XlsxRemoteManager
+    parent: default_plugin_manager
+
+  paramconverter.xlsx_source:
+    class: Drupal\xlsx\ParamConverter\XlsxSourceConverter
+    arguments: ['@plugin.manager.xlsx_source']
+    tags:
+      - { name: paramconverter }
+
+  paramconverter.xlsx:
+    class: Drupal\xlsx\ParamConverter\XlsxConverter
+    arguments: ['@entity_type.manager', '@entity.repository']
+    tags:
+      - { name: paramconverter }
+
+  event_subscriber.xlsx_entity:
+    class: Drupal\xlsx\EventSubscriber\XlsxEventsSubscriber
+    tags:
+      - { name: 'event_subscriber' }
+
+  xlsx.batch_ops:
+    class: Drupal\xlsx\XlsxBatchOps
+    arguments: []
+
+  xlsx.cron_imports:
+    class: Drupal\xlsx\CronImports
+    arguments: ['@plugin.manager.xlsx_source', '@queue']

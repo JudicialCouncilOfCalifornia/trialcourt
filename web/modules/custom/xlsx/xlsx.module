@@ -1,0 +1,67 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\xlsx\Event\XlsxEventType;
+use Drupal\xlsx\Event\XlsxEntityEvent;
+use Drupal\xlsx\Form\LicenseForm;
+use Drupal\xlsx\Entity\XlsxEntityMapping;
+
+/**
+ * Implements hook_entity_update().
+ */
+function xlsx_entity_update(EntityInterface $entity) {
+  $event_type = XlsxEventType::UPDATE_ENTITY;
+  $dispatcher = \Drupal::service('event_dispatcher')
+    ->dispatch($event_type, new XlsxEntityEvent($event_type, $entity));
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function xlsx_entity_delete(EntityInterface $entity) {
+  $event_type = XlsxEventType::DELETE_ENTITY;
+  $dispatcher = \Drupal::service('event_dispatcher')
+    ->dispatch($event_type, new XlsxEntityEvent($event_type, $entity));
+  $mapItems = XlsxEntityMapping::loadByProperties([
+    'entity_type' => $entity->getEntityTypeId() . '::' . $entity->bundle(),
+    'entity_id' => $entity->id(),
+  ]);
+  if ($mapItems) {
+    foreach ($mapItems as $item) {
+      $item->delete();
+    }
+  }
+}
+
+/**
+ * Implements hook_cron().
+ */
+function xlsx_cron() {
+  \Drupal::service('xlsx.cron_imports')->processQueue();
+}
+
+/**
+ * Callback for hook_cronapi().
+ */
+function xlsx_cronapi_callback($xlsx_id) {
+  
+}
+
+/**
+ * Implements hook_update_premium().
+ */
+function xlsx_update_premium() {
+  $config = \Drupal::config(LicenseForm::CONFIG_NAME);
+  return [
+    [
+      'name' => 'xlsx',
+      'category' => 'modules',
+      'project_url' => 'https://downloads.minnur.com/drupal/xlsx',
+      'update_server' => 'https://downloads.minnur.com/update/drupal/xlsx',
+      'parameters' => [
+        'e' => $config->get('license_email'),
+        'l' => $config->get('license_number'),
+      ],
+    ],
+  ];
+}
