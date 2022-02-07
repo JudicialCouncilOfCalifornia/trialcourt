@@ -1,0 +1,157 @@
+xlsx.mapping:
+  path: '/admin/structure/xlsx'
+  defaults:
+    _entity_list: 'xlsx'
+    _title: 'Spreadsheets'
+  requirements:
+    _permission: 'administer xlsx mapping'
+
+xlsx.import.list:
+  path: '/admin/content/xlsx/import'
+  defaults:
+    _controller: '\Drupal\xlsx\Controller\XlsxController::imports'
+    _title: 'Imports'
+  requirements:
+    _permission: 'import xlsx'
+
+xlsx.export.list:
+  path: '/admin/content/xlsx/export'
+  defaults:
+    _controller: '\Drupal\xlsx\Controller\XlsxController::exports'
+    _title: 'Exports'
+  requirements:
+    _permission: 'export xlsx'
+
+entity.xlsx.import:
+  path: '/admin/content/xlsx/import/{xlsx}'
+  defaults:
+    _title_callback: '\Drupal\xlsx\Form\ImportXlsxForm::getTitle'
+    _form: '\Drupal\xlsx\Form\ImportXlsxForm'
+  options:
+    parameters:
+      xlsx:
+        type: entity:xlsx
+        converter: paramconverter.xlsx
+  requirements:
+    _permission: 'import xlsx'
+
+entity.xlsx.export:
+  path: '/admin/content/xlsx/export/{xlsx}'
+  defaults:
+    _title_callback: '\Drupal\xlsx\Form\ExportXlsxForm::getTitle'
+    _form: '\Drupal\xlsx\Form\ExportXlsxForm'
+  options:
+    parameters:
+      xlsx:
+        type: entity:xlsx
+        converter: paramconverter.xlsx
+  requirements:
+    _permission: 'export xlsx'
+
+entity.xlsx.new:
+  path: '/admin/structure/xlsx/new'
+  defaults:
+    _title: 'New Mapping'
+    _form: '\Drupal\xlsx\Form\Mapping\NewForm'
+  requirements:
+    _permission: 'add xlsx mapping'
+
+entity.xlsx.purge:
+  path: '/admin/structure/xlsx/{xlsx}/purge'
+  defaults:
+    _title: 'New Mapping'
+    _form: '\Drupal\xlsx\Form\Mapping\PurgeForm'
+  options:
+    parameters:
+      xlsx:
+        type: entity:xlsx
+        converter: paramconverter.xlsx
+  requirements:
+    _permission: 'add xlsx mapping'
+
+entity.xlsx.edit:
+  path: '/admin/structure/xlsx/{xlsx}/edit'
+  defaults:
+    _title: 'New Mapping'
+    _form: '\Drupal\xlsx\Form\Mapping\EditForm'
+  options:
+    parameters:
+      xlsx:
+        type: entity:xlsx
+        converter: paramconverter.xlsx
+  requirements:
+    _permission: 'add xlsx mapping'
+
+entity.xlsx.delete:
+  path: '/admin/structure/xlsx/{xlsx}/delete'
+  defaults:
+    _title: 'New Mapping'
+    _form: '\Drupal\xlsx\Form\Mapping\DeleteForm'
+  options:
+    parameters:
+      xlsx:
+        type: entity:xlsx
+        converter: paramconverter.xlsx
+  requirements:
+    _permission: 'add xlsx mapping'
+
+xlsx.new.source:
+  path: '/admin/structure/xlsx/new/{xlsx_source}'
+  defaults:
+    _title: 'New Spreadsheet'
+    _form: '\Drupal\xlsx\Form\Mapping\SourceForm'
+  options:
+    parameters:
+      xlsx_source:
+        type: xlsx_source
+        converter: paramconverter.xlsx_source
+  requirements:
+    _permission: 'add xlsx mapping'
+
+xlsx.new.entity_map:
+  path: '/admin/structure/xlsx/new/{xlsx_source}/entity'
+  defaults:
+    _title: 'Entity Mapping'
+    _form: '\Drupal\xlsx\Form\Mapping\EntityForm'
+  options:
+    parameters:
+      xlsx_source:
+        type: xlsx_source
+        converter: paramconverter.xlsx_source
+  requirements:
+    _permission: 'add xlsx mapping'
+
+xlsx.new.field_map:
+  path: '/admin/structure/xlsx/new/{xlsx_source}/entity/fields'
+  defaults:
+    _title: 'Field Mapping'
+    _form: '\Drupal\xlsx\Form\Mapping\FieldsForm'
+  options:
+    parameters:
+      xlsx_source:
+        type: xlsx_source
+        converter: paramconverter.xlsx_source
+  requirements:
+    _permission: 'add xlsx mapping'
+
+xlsx.new.review:
+  path: '/admin/structure/xlsx/new/{xlsx_source}/entity/fields/review'
+  defaults:
+    _title: 'Review Mapping'
+    _form: '\Drupal\xlsx\Form\Mapping\ReviewForm'
+  options:
+    parameters:
+      xlsx_source:
+        type: xlsx_source
+        converter: paramconverter.xlsx_source
+  requirements:
+    _permission: 'add xlsx mapping'
+
+xlsx.license:
+  path: '/admin/structure/xlsx/liense'
+  defaults:
+    _title: 'Spreadsheets License'
+    _form: '\Drupal\xlsx\Form\LicenseForm'
+  requirements:
+    _permission: 'administer site configuration'
+

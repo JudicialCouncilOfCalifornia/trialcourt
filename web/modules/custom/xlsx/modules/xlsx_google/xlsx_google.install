@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * Implements hook_requirements().
+ */
+function xlsx_google_requirements($phase) {
+  $requirements = [];
+  switch ($phase) {
+    case 'install':
+    case 'runtime':
+      if (!class_exists('\Google_Service_Sheets')) {
+        $requirements[] = [
+          'title' => t('Spreadsheets (Google Drive/Sheets)'),
+          'value' => '1.0',
+          'description' => t('google/apiclient class is missing. Please install it via composer require google/apiclient:"^2.0".'),
+          'severity' => REQUIREMENT_ERROR,
+        ];
+      }
+      break;
+  }
+  return $requirements;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function xlsx_google_uninstall() {
+  // Cleanup state variables.
+  \Drupal::state()->delete('xlsx_service_config_file_id');
+}
