@@ -5,10 +5,12 @@
  * Contains jcc_custom.module.
  */
 
+use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\editor\Entity\Editor;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
 
 /**
  * Implements hook_page_attachments().
@@ -117,7 +119,7 @@ function jcc_custom_views_data_alter(array &$data) {
 /**
  * Implements hook_views_query_alter().
  */
-function jcc_custom_views_query_alter(ViewExecutable $view) {
+function jcc_custom_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
   switch ($view->storage->id()) {
     case 'documents':
       // Override query max for sufficient cases to display from docs.
