@@ -5,13 +5,17 @@ dependencies:
   config:
     - core.entity_form_mode.media.media_library
     - field.field.media.remote_video.field_height
+    - field.field.media.remote_video.field_matters_served
     - field.field.media.remote_video.field_media_image
     - field.field.media.remote_video.field_media_oembed_video
     - field.field.media.remote_video.field_provider
+    - field.field.media.remote_video.field_tags
     - field.field.media.remote_video.field_width
     - image.style.thumbnail
     - media.type.remote_video
   module:
+    - autocomplete_deluxe
+    - cshs
     - svg_image
 _core:
   default_config_hash: c5JTvDDB_hQVRmFxRPvcNtYpH4AmEX7hraATuBpTlCM
@@ -20,9 +24,22 @@ targetEntityType: media
 bundle: remote_video
 mode: media_library
 content:
+  field_matters_served:
+    type: cshs
+    weight: 3
+    region: content
+    settings:
+      parent: ''
+      level_labels: ''
+      force_deepest: false
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
   field_media_image:
     type: image_image
-    weight: 3
+    weight: 2
     region: content
     settings:
       progress_indicator: throbber
@@ -35,6 +52,23 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_tags:
+    type: autocomplete_deluxe
+    weight: 4
+    region: content
+    settings:
+      limit: '10'
+      min_length: '0'
+      delimiter: ''
+      not_found_message_allow: '1'
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: '1'
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
     third_party_settings: {  }
   name:
     type: string_textfield
