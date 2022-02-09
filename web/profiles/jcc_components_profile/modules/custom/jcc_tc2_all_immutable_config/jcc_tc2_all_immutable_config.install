@@ -485,6 +485,29 @@ function jcc_tc2_all_immutable_config_update_8028() {
 }
 
 /**
+ * TCI-770: Mega Media Makeover Mod.
+ */
+function jcc_tc2_all_immutable_config_update_8029() {
+  $modules = [
+    'cshs',
+    'file_delete',
+    'file_replace',
+    'filefield_paths',
+    'media_entity_download',
+    'media_entity_file_replace',
+    'media_file_delete',
+    'media_file_delete_entity_usage',
+  ];
+
+  foreach ($modules as $module) {
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      continue;
+    }
+    \Drupal::service('module_installer')->install([$module]);
+  }
+}
+
+/**
  * TCI-774: Update body paragraph field_text relative links missing lead slash.
  */
 function jcc_tc2_all_immutable_config_update_8030() {
