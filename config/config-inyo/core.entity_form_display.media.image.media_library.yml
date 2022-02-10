@@ -4,10 +4,14 @@ status: true
 dependencies:
   config:
     - core.entity_form_mode.media.media_library
+    - field.field.media.image.field_matters_served
     - field.field.media.image.field_media_image
+    - field.field.media.image.field_tags
     - image.style.thumbnail
     - media.type.image
   module:
+    - autocomplete_deluxe
+    - cshs
     - svg_image
 _core:
   default_config_hash: F2hqGLVaQe6qnys_R_KLBZ7of-oMkrUl7-TJZcIZ9Jw
@@ -16,6 +20,19 @@ targetEntityType: media
 bundle: image
 mode: media_library
 content:
+  field_matters_served:
+    type: cshs
+    weight: 2
+    region: content
+    settings:
+      parent: ''
+      level_labels: ''
+      force_deepest: false
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
   field_media_image:
     weight: 1
     settings:
@@ -24,9 +41,26 @@ content:
     third_party_settings: {  }
     type: image_image
     region: content
+  field_tags:
+    type: autocomplete_deluxe
+    weight: 3
+    region: content
+    settings:
+      match_operator: CONTAINS
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+    third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 2
+    weight: 4
     region: content
     settings:
       include_locked: true
@@ -40,12 +74,13 @@ content:
     third_party_settings: {  }
     region: content
   translation:
-    weight: 3
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
   created: true
   path: true
+  replace_file: true
   status: true
   uid: true

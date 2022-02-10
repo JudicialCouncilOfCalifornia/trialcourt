@@ -4,10 +4,12 @@ status: true
 dependencies:
   config:
     - field.field.media.file.field_document_type
+    - field.field.media.file.field_matters_served
     - field.field.media.file.field_media_file
+    - field.field.media.file.field_tags
     - media.type.file
   module:
-    - file
+    - media_entity_download
 _core:
   default_config_hash: qiGoKntm8gNaji-ODQprmunMgivWngS-7djp7fNJE0c
 id: media.file.default
@@ -15,32 +17,26 @@ targetEntityType: media
 bundle: file
 mode: default
 content:
-  field_document_type:
-    weight: 2
-    label: hidden
-    settings:
-      link: false
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
   field_media_file:
     label: visually_hidden
-    weight: 1
-    settings: {  }
-    third_party_settings: {  }
-    type: file_url_plain
-    region: content
-  name:
-    type: string
     weight: 0
-    region: content
-    label: hidden
     settings:
-      link_to_entity: true
+      trim_length: 80
+      disposition: inline
+      url_only: false
+      url_plain: false
+      rel: '0'
+      target: '0'
     third_party_settings: {  }
+    type: media_entity_download_download_link
+    region: content
 hidden:
   created: true
+  field_document_type: true
+  field_matters_served: true
+  field_tags: true
   langcode: true
+  name: true
   search_api_excerpt: true
   thumbnail: true
   uid: true
