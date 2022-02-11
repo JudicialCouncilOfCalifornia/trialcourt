@@ -21,6 +21,7 @@ function jcc_custom_page_attachments(array &$attachments) {
   $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
   if (!$is_admin) {
     $attachments['#attached']['library'][] = 'jcc_custom/filelink';
+    $attachments['#attached']['library'][] = 'jcc_custom/forms';
     $attachments['#attached']['library'][] = 'jcc_custom/tableadapt';
     $attachments['#attached']['library'][] = 'jcc_custom/feedbacksurvey';
   }
@@ -133,10 +134,10 @@ function jcc_custom_views_query_alter(ViewExecutable $view, QueryPluginBase $que
     $datetime = \Drupal::request()->query->get('dt');
     if (!empty($datetime)) {
 
-      $UTC = new \DateTimeZone("UTC");
+      $utc = new \DateTimeZone("UTC");
       $newTZ = new \DateTimeZone("America/Los_Angeles");
-      $date = new \DateTime($datetime, $UTC);
-      $date->setTimezone( $newTZ );
+      $date = new \DateTime($datetime, $utc);
+      $date->setTimezone($newTZ);
 
       $entity_ids = [];
       $connection = Database::getConnection();
@@ -165,4 +166,13 @@ function jcc_custom_entity_type_alter(array &$entity_types) {
     unset($constraints['EntityUntranslatableFields']);
     $entity_type->setConstraints($constraints);
   }
+}
+
+/**
+ * Implements hook_js_settings_alter().
+ *
+ * @inheritdoc
+ */
+function jcc_custom_js_settings_alter(array &$settings, $assets) {
+  $settings['user']['authenticated'] = \Drupal::currentUser()->isAuthenticated();
 }

@@ -18,7 +18,6 @@ class DateFilter extends StringFilter {
    * {@inheritdoc}
    */
   public function query() {
-    // 
   }
 
   /**
@@ -37,11 +36,11 @@ class DateFilter extends StringFilter {
         $active_date = '<div class="current-active-date">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</div>';
         $active = 'active';
       }
-      $dates[] = '<a href="?dt=' . $row->field_importer_date_value . '" class="' . $active .  '">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</a>';
+      $dates[] = '<li><a href="?dt=' . $row->field_importer_date_value . '" class="' . $active . '">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</a></li>';
     }
     $form['value'] = [
       '#type' => 'item',
-      '#markup' => Markup::create('<div class="datetime-links">' . implode(' ', $dates) . $active_date . '</div>'),
+      '#markup' => Markup::create('<ul class="usa-list usa-list--unstyled">' . implode(' ', $dates) . $active_date . '</ul>'),
     ];
   }
 
@@ -49,10 +48,10 @@ class DateFilter extends StringFilter {
    * Get correctly formatted date (correction with the timezone).
    */
   protected function dateTimeWithTimezone($db_date, $format = 'l, M d, Y') {
-    $UTC = new \DateTimeZone("UTC");
+    $utc = new \DateTimeZone("UTC");
     $newTZ = new \DateTimeZone("America/Los_Angeles");
-    $date = new \DateTime($db_date, $UTC);
-    $date->setTimezone( $newTZ );
+    $date = new \DateTime($db_date, $utc);
+    $date->setTimezone($newTZ);
     return $date->format($format);
   }
 
