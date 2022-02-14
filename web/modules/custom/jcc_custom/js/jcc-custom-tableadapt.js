@@ -9,7 +9,8 @@
 
   Drupal.behaviors.jccTableAdapt = {
     attach: function (context, settings) {
-      $('.jcc-section table', context).each( function() {
+      var $formTable = $('.jcc-form', context).siblings('table');
+      $('.jcc-section table', context).add($formTable).each( function() {
         let $currentTable = $(this);
         let $headers = $currentTable.find('thead th');
 
