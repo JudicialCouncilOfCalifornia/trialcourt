@@ -478,3 +478,18 @@ function jcc_tc2_all_immutable_config_update_8027() {
     )
   );
 }
+
+/**
+ * TCI-572: Protected pages module.
+ */
+function jcc_tc2_all_immutable_config_update_8028() {
+  $modules = ['protected_pages'];
+
+  foreach ($modules as $module) {
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      continue;
+    }
+    \Drupal::service('module_installer')->install([$module]);
+  }
+}
+
