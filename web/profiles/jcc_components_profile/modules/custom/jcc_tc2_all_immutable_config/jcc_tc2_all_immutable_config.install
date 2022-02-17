@@ -480,10 +480,19 @@ function jcc_tc2_all_immutable_config_update_8027() {
 }
 
 /**
- * TCI-572: Protected pages module.
+ * TCI-770.
  */
 function jcc_tc2_all_immutable_config_update_8028() {
-  $modules = ['protected_pages'];
+  $modules = [
+    'cshs',
+    'file_delete',
+    'file_replace',
+    'filefield_paths',
+    'media_entity_download',
+    'media_entity_file_replace',
+    'media_file_delete',
+    'media_file_delete_entity_usage',
+  ];
 
   foreach ($modules as $module) {
     if (\Drupal::moduleHandler()->moduleExists($module)) {
@@ -493,3 +502,16 @@ function jcc_tc2_all_immutable_config_update_8028() {
   }
 }
 
+/**
+ * TCI-572: Protected pages module.
+ */
+function jcc_tc2_all_immutable_config_update_8029() {
+  $modules = ['protected_pages'];
+
+  foreach ($modules as $module) {
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      continue;
+    }
+    \Drupal::service('module_installer')->install([$module]);
+  }
+}
