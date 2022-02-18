@@ -12,6 +12,8 @@ use Drupal\Core\Url;
  * Implements hook_preprocess_HOOK().
  */
 function jcc_components_preprocess_page(&$variables) {
+  $site_config = \Drupal::config('system.site');
+
   $variables['logo'] = theme_get_setting('logo', 'jcc_components');
   $variables['header_footer_variant'] = theme_get_setting('header_footer_variant', 'jcc_components');
 
@@ -19,6 +21,8 @@ function jcc_components_preprocess_page(&$variables) {
     'first' => theme_get_setting('site_name_first', 'jcc_components'),
     'second' => theme_get_setting('site_name_second', 'jcc_components'),
   ];
+
+  $variables['site_slogan'] = $site_config->get('slogan');
 
   $variables['main_links'] = jcc_components_get_menu_array('main');
   $variables['footer_links'] = jcc_components_get_menu_array('footer');
