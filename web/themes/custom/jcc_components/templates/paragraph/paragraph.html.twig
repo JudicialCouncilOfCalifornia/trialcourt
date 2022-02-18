@@ -39,10 +39,20 @@
  */
 #}
 
+{% set custom_class = ['usa-paragraph-default'] %}
+
 {% block paragraph %}
   {% block content %}
-    <div class='paragraph'>
-      {{ content }}
-    </div>
-  {% endblock %}
+    {% include "@molecules/section/section.twig" with {
+      section: {
+        classes: custom_class,
+        heading: {
+          title: paragraph.field_heading.value ? paragraph.field_heading.value,
+          lead: paragraph.field_lead.value ? content.field_lead,
+        },
+        content: content|without('field_heading', 'field_lead'),
+        }
+      } 
+    %}
+  {% endblock content %}
 {% endblock paragraph %}
