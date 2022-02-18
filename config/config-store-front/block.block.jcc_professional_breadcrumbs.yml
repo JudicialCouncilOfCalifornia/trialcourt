@@ -1,0 +1,31 @@
+uuid: 9358f945-1099-480c-8a1a-7f5ae61bd65f
+langcode: en
+status: true
+dependencies:
+  module:
+    - ctools
+    - system
+  theme:
+    - jcc_professional
+_core:
+  default_config_hash: sOJ3JqaXeoqCnH0X5QxiOLupb5py48fRs8pOCoMpouw
+id: jcc_professional_breadcrumbs
+theme: jcc_professional
+region: navigation
+weight: -1
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Breadcrumbs
+  provider: system
+  label_display: '0'
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      alert: alert
+      landing_page: landing_page
+    negate: true
+    context_mapping:
+      node: '@node.node_route_context:node'
