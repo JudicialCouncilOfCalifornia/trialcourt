@@ -1,0 +1,177 @@
+uuid: 57b99476-a20e-4f39-9d88-bc7a9d599e8a
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: _-u1a7hZcl4JVU36hLP1013Bw9kF7rx-QTAVq5zZ1Ss
+id: text_fa_7_0_0
+label: 'Persian Text Field'
+minimum_solr_version: 7.0.0
+custom_code: null
+field_type_language_code: fa
+domains: {  }
+field_type:
+  name: text_fa
+  class: solr.TextField
+  positionIncrementGap: 100
+  analyzers:
+    -
+      type: index
+      tokenizer:
+        class: solr.WhitespaceTokenizerFactory
+      filters:
+        -
+          class: solr.LowerCaseFilterFactory
+        -
+          class: solr.StopFilterFactory
+          ignoreCase: true
+          words: stopwords_fa.txt
+        -
+          class: solr.PersianNormalizationFilterFactory
+        -
+          class: solr.SnowballPorterFilterFactory
+    -
+      type: query
+      tokenizer:
+        class: solr.WhitespaceTokenizerFactory
+      filters:
+        -
+          class: solr.LowerCaseFilterFactory
+        -
+          class: solr.StopFilterFactory
+          ignoreCase: true
+          words: stopwords_fa.txt
+        -
+          class: solr.SynonymGraphFilterFactory
+          synonyms: synonyms_fa.txt
+          expand: true
+          ignoreCase: true
+        -
+          class: solr.PersianNormalizationFilterFactory
+        -
+          class: solr.SnowballPorterFilterFactory
+unstemmed_field_type:
+  name: text_unstemmed_fa
+  class: solr.TextField
+  positionIncrementGap: 100
+  analyzers:
+    -
+      type: index
+      tokenizer:
+        class: solr.WhitespaceTokenizerFactory
+      filters:
+        -
+          class: solr.LowerCaseFilterFactory
+        -
+          class: solr.StopFilterFactory
+          ignoreCase: true
+          words: stopwords_fa.txt
+        -
+          class: solr.PersianNormalizationFilterFactory
+    -
+      type: query
+      tokenizer:
+        class: solr.WhitespaceTokenizerFactory
+      filters:
+        -
+          class: solr.LowerCaseFilterFactory
+        -
+          class: solr.StopFilterFactory
+          ignoreCase: true
+          words: stopwords_fa.txt
+        -
+          class: solr.SynonymGraphFilterFactory
+          synonyms: synonyms_fa.txt
+          expand: true
+          ignoreCase: true
+        -
+          class: solr.PersianNormalizationFilterFactory
+spellcheck_field_type: null
+collated_field_type:
+  name: collated_fa
+  class: solr.ICUCollationField
+  locale: fa
+  strength: primary
+  caseLevel: false
+solr_configs:
+  searchComponents:
+    -
+      name: spellcheck
+      class: solr.SpellCheckComponent
+      lst:
+        -
+          name: spellchecker
+          str:
+            -
+              name: name
+              VALUE: fa
+            -
+              name: field
+              VALUE: spellcheck_fa
+            -
+              name: classname
+              VALUE: solr.DirectSolrSpellChecker
+            -
+              name: distanceMeasure
+              VALUE: internal
+            -
+              name: accuracy
+              VALUE: '0.5'
+            -
+              name: maxEdits
+              VALUE: '2'
+            -
+              name: minPrefix
+              VALUE: '1'
+            -
+              name: maxInspections
+              VALUE: '5'
+            -
+              name: minQueryLength
+              VALUE: '4'
+            -
+              name: maxQueryFrequency
+              VALUE: '0.01'
+            -
+              name: thresholdTokenFrequency
+              VALUE: '.01'
+            -
+              name: onlyMorePopular
+              VALUE: 'true'
+    -
+      name: suggest
+      class: solr.SuggestComponent
+      lst:
+        -
+          name: suggester
+          str:
+            -
+              name: name
+              VALUE: fa
+            -
+              name: lookupImpl
+              VALUE: AnalyzingInfixLookupFactory
+            -
+              name: dictionaryImpl
+              VALUE: DocumentDictionaryFactory
+            -
+              name: field
+              VALUE: twm_suggest
+            -
+              name: suggestAnalyzerFieldType
+              VALUE: text_fa
+            -
+              name: contextField
+              VALUE: sm_context_tags
+            -
+              name: buildOnCommit
+              VALUE: 'true'
+            -
+              name: buildOnStartup
+              VALUE: 'false'
+text_files:
+  stopwords: "انان\nنداشته\nسراسر\nخياه\nايشان\nوي\nتاكنون\nبيشتري\nدوم\nپس\nناشي\nوگو\nيا\nداشتند\nسپس\nهنگام\nهرگز\nپنج\nنشان\nامسال\nديگر\nگروهي\nشدند\nچطور\nده\nو\nدو\nنخستين\nولي\nچرا\nچه\nوسط\nه\nكدام\nقابل\nيك\nرفت\nهفت\nهمچنين\nدر\nهزار\nبله\nبلي\nشايد\nاما\nشناسي\nگرفته\nدهد\nداشته\nدانست\nداشتن\nخواهيم\nميليارد\nوقتيكه\nامد\nخواهد\nجز\nاورده\nشده\nبلكه\nخدمات\nشدن\nبرخي\nنبود\nبسياري\nجلوگيري\nحق\nكردند\nنوعي\nبعري\nنكرده\nنظير\nنبايد\nبوده\nبودن\nداد\nاورد\nهست\nجايي\nشود\nدنبال\nداده\nبايد\nسابق\nهيچ\nهمان\nانجا\nكمتر\nكجاست\nگردد\nكسي\nتر\nمردم\nتان\nدادن\nبودند\nسري\nجدا\nندارند\nمگر\nيكديگر\nدارد\nدهند\nبنابراين\nهنگامي\nسمت\nجا\nانچه\nخود\nدادند\nزياد\nدارند\nاثر\nبدون\nبهترين\nبيشتر\nالبته\nبه\nبراساس\nبيرون\nكرد\nبعضي\nگرفت\nتوي\nاي\nميليون\nاو\nجريان\nتول\nبر\nمانند\nبرابر\nباشيم\nمدتي\nگويند\nاكنون\nتا\nتنها\nجديد\nچند\nبي\nنشده\nكردن\nكردم\nگويد\nكرده\nكنيم\nنمي\nنزد\nروي\nقصد\nفقط\nبالاي\nديگران\nاين\nديروز\nتوسط\nسوم\nايم\nدانند\nسوي\nاستفاده\nشما\nكنار\nداريم\nساخته\nطور\nامده\nرفته\nنخست\nبيست\nنزديك\nطي\nكنيد\nاز\nانها\nتمامي\nداشت\nيكي\nطريق\nاش\nچيست\nروب\nنمايد\nگفت\nچندين\nچيزي\nتواند\nام\nايا\nبا\nان\nايد\nترين\nاينكه\nديگري\nراه\nهايي\nبروز\nهمچنان\nپاعين\nكس\nحدود\nمختلف\nمقابل\nچيز\nگيرد\nندارد\nضد\nهمچون\nسازي\nشان\nمورد\nباره\nمرسي\nخويش\nبرخوردار\nچون\nخارج\nشش\nهنوز\nتحت\nضمن\nهستيم\nگفته\nفكر\nبسيار\nپيش\nبراي\nروزهاي\nانكه\nنخواهد\nبالا\nكل\nوقتي\nكي\nچنين\nكه\nگيري\nنيست\nاست\nكجا\nكند\nنيز\nيابد\nبندي\nحتي\nتوانند\nعقب\nخواست\nكنند\nبين\nتمام\nهمه\nما\nباشند\nمثل\nشد\nاري\nباشد\nاره\nطبق\nبعد\nاگر\nصورت\nغير\nجاي\nبيش\nريزي\nاند\nزيرا\nچگونه\nبار\nلطفا\nمي\nدرباره\nمن\nديده\nهمين\nگذاري\nبرداري\nعلت\nگذاشته\nهم\nفوق\nنه\nها\nشوند\nاباد\nهمواره\nهر\nاول\nخواهند\nچهار\nنام\nامروز\nمان\nهاي\nقبل\nكنم\nسعي\nتازه\nرا\nهستند\nزير\nجلوي\nعنوان\nبود\n"
+  synonyms: "drupal, durpal\n"
+  nouns: "\n"
+  protwords: "\n"
+  accents: ''
