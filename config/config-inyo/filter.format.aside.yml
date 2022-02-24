@@ -3,7 +3,10 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.media.full
+    - core.entity_view_mode.media.container_100_percent
+    - core.entity_view_mode.media.container_25_percent
+    - core.entity_view_mode.media.container_50_percent
+    - core.entity_view_mode.media.container_75_percent
   module:
     - entity_embed
     - glossify_taxonomy
@@ -69,7 +72,11 @@ filters:
       allowed_media_types:
         snippet: snippet
       allowed_view_modes:
-        full: full
+        default: default
+        container_100_percent: container_100_percent
+        container_25_percent: container_25_percent
+        container_50_percent: container_50_percent
+        container_75_percent: container_75_percent
   entity_embed:
     id: entity_embed
     provider: entity_embed
