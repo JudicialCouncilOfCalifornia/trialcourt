@@ -3,6 +3,10 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.media.container_100_percent
+    - core.entity_view_mode.media.container_25_percent
+    - core.entity_view_mode.media.container_50_percent
+    - core.entity_view_mode.media.container_75_percent
     - core.entity_view_mode.media.full
   module:
     - entity_embed
@@ -10,7 +14,7 @@ dependencies:
     - linkit
     - media
 _core:
-  default_config_hash: ra-dXEDviPkMiitrc4I3RuEGDEeqBGSk_PEqPQSGtXk
+  default_config_hash: 0u2n-RDM0dl_5THyISYrvU0lPuYCtRSPI_kqfHamwpM
 name: Body
 format: body
 weight: -9
@@ -29,12 +33,6 @@ filters:
     provider: entity_embed
     status: true
     weight: 100
-    settings: {  }
-  filter_align:
-    id: filter_align
-    provider: filter
-    status: true
-    weight: 0
     settings: {  }
   filter_autop:
     id: filter_autop
@@ -92,4 +90,8 @@ filters:
         remote_video: remote_video
         snippet: snippet
       allowed_view_modes:
+        container_100_percent: container_100_percent
+        container_25_percent: container_25_percent
+        container_50_percent: container_50_percent
+        container_75_percent: container_75_percent
         full: full
