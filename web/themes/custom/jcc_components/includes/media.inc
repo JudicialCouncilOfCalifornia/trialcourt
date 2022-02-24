@@ -14,7 +14,7 @@ function jcc_components_preprocess_media(&$variables) {
   $media = $variables['media'];
 
   // The following code replaces image alignment feature for WYSIWYG content.
-  // Image alignment is determined by the view mode rather that editor choice.
+  // Image alignment is determined by the view mode rather than editor choice.
   // If rolled back, re-enable data-align config in the text editor:
   // @see /admin/config/content/formats/manage/aside?destination=/admin/config/content/formats
   // @see /admin/config/content/formats/manage/body?destination=/admin/config/content/formats
