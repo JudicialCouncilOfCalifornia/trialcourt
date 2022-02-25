@@ -54,8 +54,11 @@ process:
     plugin: default_value
     default_value: 1
   body/value:
-    plugin: media_replace_file_link
-    source: body
+    -
+      plugin: media_replace_file_link
+      source: body
+    -
+      plugin: prefix_relative_links
   body/format:
     plugin: default_value
     default_value: full_html
