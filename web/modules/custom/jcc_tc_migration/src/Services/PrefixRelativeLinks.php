@@ -25,8 +25,6 @@ class PrefixRelativeLinks {
     foreach ($dom->getElementsByTagName('a') as $item) {
       // The original link string that will be replaced.
       $original = $dom->saveHTML($item);
-      // The original link text for reconstructing link.
-      $text = $item->nodeValue;
       // The url for the link to determine file name.
       $href = $item->getAttribute('href');
       $path = parse_url($href, PHP_URL_PATH);
