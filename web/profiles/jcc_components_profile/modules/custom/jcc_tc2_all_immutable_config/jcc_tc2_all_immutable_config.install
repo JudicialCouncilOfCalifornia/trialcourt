@@ -493,3 +493,48 @@ function jcc_tc2_all_immutable_config_update_8028() {
   }
 }
 
+/**
+ * TCI-774: Update body paragraph field_text relative links missing lead slash.
+ */
+function jcc_tc2_all_immutable_config_update_8030() {
+
+  $site_name = \Drupal::config('system.site')->get('name');
+
+  if ($site_name == 'Superior Court of California | County of Alameda') {
+    $count = 0;
+    $updated = 0;
+
+    $service = \Drupal::service('jcc_tc_migration.prefix_relative_links');
+    $pids = \Drupal::entityQuery('paragraph')
+      ->condition('type', 'body')
+      ->execute();
+    $paragraphs = Paragraph::loadMultiple($pids);
+    $num = count($paragraphs);
+
+    foreach ($paragraphs as $paragraph) {
+
+      if (!$paragraph->field_text->isEmpty()) {
+        $old_text = $paragraph->field_text->first()->getValue()['value'];
+        $new_text = $service->replace($old_text);
+
+        if (strcmp($old_text, $new_text) !== 0) {
+          $updated++;
+        }
+
+        $paragraph->field_text->value = $new_text;
+        $paragraph->field_text->format = 'snippet';
+        $paragraph->save();
+        $count++;
+      }
+    }
+
+    \Drupal::messenger()->addStatus(
+      t("%count of %num checked. %updated updated.",
+        ['%count' => $count, '%num' => $num, '%updated' => $updated]
+      )
+    );
+  }
+  else {
+    \Drupal::messenger()->addStatus(t('Alameda only, no changes.'));
+  }
+}
