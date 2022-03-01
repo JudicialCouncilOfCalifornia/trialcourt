@@ -538,3 +538,10 @@ function jcc_tc2_all_immutable_config_update_8030() {
     \Drupal::messenger()->addStatus(t('Alameda only, no changes.'));
   }
 }
+
+/**
+ * TCI-832: Re-run 8027 because 8030 caused the same problem as 8026.
+ */
+function jcc_tc2_all_immutable_config_update_8031() {
+  jcc_tc2_all_immutable_config_update_8027();
+}
