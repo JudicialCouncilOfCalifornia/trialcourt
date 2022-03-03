@@ -522,7 +522,7 @@ function jcc_tc2_all_immutable_config_update_8030() {
         }
 
         $paragraph->field_text->value = $new_text;
-        $paragraph->field_text->format = 'snippet';
+        $paragraph->field_text->format = 'body';
         $paragraph->save();
         $count++;
       }
@@ -544,4 +544,80 @@ function jcc_tc2_all_immutable_config_update_8030() {
  */
 function jcc_tc2_all_immutable_config_update_8031() {
   jcc_tc2_all_immutable_config_update_8027();
+}
+
+/**
+ * Fix relative links on paragraphs for field_text.
+ */
+function jcc_tc2_all_immutable_config_update_8032() {
+  jcc_tc2_all_immutable_config_prefix_paragraph_fields('field_text');
+}
+
+/**
+ * Fix relative links on paragraphs for field_lead.
+ */
+function jcc_tc2_all_immutable_config_update_8033() {
+  jcc_tc2_all_immutable_config_prefix_paragraph_fields('field_lead');
+}
+
+/**
+ * Fix relative links on paragraphs for field_aside.
+ */
+function jcc_tc2_all_immutable_config_update_8034() {
+  jcc_tc2_all_immutable_config_prefix_paragraph_fields('field_aside');
+}
+
+/**
+ * TCI-774: Update body paragraph field_text relative links missing lead slash.
+ */
+function jcc_tc2_all_immutable_config_prefix_paragraph_fields($field_name) {
+
+  $site_name = \Drupal::config('system.site')->get('name');
+
+  if ($site_name == 'Superior Court of California | County of Alameda') {
+    $count = 0;
+    $updated = 0;
+    $service = \Drupal::service('jcc_tc_migration.prefix_relative_links');
+    $paragraph_types = [
+      'accordion_item',
+      'card',
+      'step',
+      'text_share',
+      'body',
+      'alert',
+      'action_list_item',
+    ];
+
+    $pids = \Drupal::entityQuery('paragraph')
+      ->condition('type', $paragraph_types, 'IN')
+      ->execute();
+    $paragraphs = Paragraph::loadMultiple($pids);
+    $num = count($paragraphs);
+
+    foreach ($paragraphs as $paragraph) {
+
+      if (!empty($paragraph->field_name) && !$paragraph->$field_name->isEmpty()) {
+        $old_text = $paragraph->$field_name->first()->getValue()['value'];
+        $new_text = $service->replace($old_text);
+
+        if (strcmp($old_text, $new_text) !== 0) {
+          $updated++;
+        }
+
+        $paragraph->$field_name->value = $new_text;
+        $paragraph->$field_name->format = 'body';
+        $paragraph->save();
+        $count++;
+      }
+    }
+
+    \Drupal::messenger()->addStatus(
+      t("%count of %num checked. %updated updated.",
+        ['%count' => $count, '%num' => $num, '%updated' => $updated]
+      )
+    );
+  }
+  else {
+    \Drupal::messenger()->addStatus(t('Alameda only, no changes.'));
+  }
 }
