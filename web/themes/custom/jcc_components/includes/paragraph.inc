@@ -353,6 +353,14 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       $is_clickable = TRUE;
     }
 
+    // Overwriting icon color based on context.
+    if (!empty($media) && $icon['set'] == 'line-dark') {
+      $icon['set'] = 'line-white';
+    }
+    elseif (empty($media) && $icon['set'] == 'line-white') {
+      $icon['set'] = 'line-dark';
+    }
+
     $set[] = [
       'is_clickable' => $is_clickable,
       'style' => $sub_variants['card'],

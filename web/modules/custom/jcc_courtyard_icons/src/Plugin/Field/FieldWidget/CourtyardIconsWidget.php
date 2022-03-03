@@ -71,6 +71,7 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
       // Do not allow chosen module to control the field.
       '#chosen' => FALSE,
       '#default_value' => $items[$delta]->value,
+
     ] + $element;
 
     return $element;
@@ -130,16 +131,18 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
     $current = '';
     foreach ($this->getIconList() as $name) {
       foreach ($this->sets as $set) {
-        if (strpos($name, "icon-$set-") !== FALSE) {
-          if ($current != $set) {
-            $buttons[$set][] = "<h5>" . (string) $set . "</h5>";
-            $current = $set;
-          }
-          $buttons[$set][] = "<button class='jcc-courtyard-icons__button' data-icon-name='$name'>
+        if($set !== 'line-white'){
+          if (strpos($name, "icon-$set-") !== FALSE) {
+            if ($current != $set) {
+              $buttons[$set][] = "<h5>" . (string) $set . "</h5>";
+              $current = $set;
+            }
+            $buttons[$set][] = "<button class='jcc-courtyard-icons__button' data-icon-name='$name'>
             <svg role='img' aria-label='$name'>
               <use xlink:href='/$this->iconsPath#$name'></use>
             </svg>
           </button>";
+          }
         }
       }
     }
@@ -174,18 +177,23 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
     $options[0] = " - none - ";
     foreach ($list as $name) {
       foreach ($this->sets as $set) {
-        if (strpos($name, "icon-$set-") !== FALSE) {
-          $options[$set][$name] = $name;
-          $grouped[$name] = $name;
+          if (strpos($name, "icon-$set-") !== FALSE) {
+            $options[$set][$name] = $name;
+            $grouped[$name] = $name;
+            if ($set == 'line-white') {
+              // Add hidden attribute
+            }
+          }
         }
       }
-    }
 
     $others = array_diff($list, $grouped);
     $other_label = $this->t('Other');
 
     foreach ($others as $other) {
-      $options[(string) $other_label][$other] = $other;
+      if (strpos($other, 'line-white') == FALSE) {
+        $options[(string)$other_label][$other] = $other;
+      }
     }
 
     return $options;
