@@ -36,7 +36,10 @@ class DateFilter extends StringFilter {
         $active_date = '<div class="current-active-date">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</div>';
         $active = 'active';
       }
-      $dates[] = '<li><a href="?dt=' . $row->field_importer_date_value . '" class="' . $active . '">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</a></li>';
+      $date_html = '<li><a href="?dt=' . $row->field_importer_date_value . '" class="' . $active . '">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</a></li>';
+      if (!in_array($dates, $date_html)) {
+        $dates[] = $date_html;
+      }
     }
     $form['value'] = [
       '#type' => 'item',
