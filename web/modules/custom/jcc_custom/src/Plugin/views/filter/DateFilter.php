@@ -29,6 +29,7 @@ class DateFilter extends StringFilter {
     $results = $connection->query("SELECT n.entity_id, n.field_importer_date_value FROM {node__field_importer_date} n
       WHERE YEARWEEK(n.field_importer_date_value) = YEARWEEK(NOW()) AND n.field_importer_date_value >= CURDATE()")->fetchAll();
     $dates = [];
+    $dates_idx = [];
     $active_date = '';
     foreach ($results as $row) {
       $active = '';
@@ -36,9 +37,9 @@ class DateFilter extends StringFilter {
         $active_date = '<div class="current-active-date">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</div>';
         $active = 'active';
       }
-      $date_html = '<li><a href="?dt=' . $row->field_importer_date_value . '" class="' . $active . '">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</a></li>';
-      if (!in_array($dates, $date_html)) {
-        $dates[] = $date_html;
+      if (!in_array($row->field_importer_date_value, $dates_idx)) {
+        $dates_idx[] = $row->field_importer_date_value;
+        $dates[] = '<li><a href="?dt=' . $row->field_importer_date_value . '" class="' . $active . '">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</a></li>';
       }
     }
     $form['value'] = [
