@@ -14,7 +14,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  *   handlers = {
  *     "list_builder" = "Drupal\xlsx\Controller\XlsxListBuilder",
  *   },
- *   admin_permission = "administer xlsx maping",
+ *   admin_permission = "administer xlsx mapping",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",

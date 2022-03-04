@@ -20,7 +20,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *   base_table = "xlsx_entity_mapping",
  *   data_table = "xlsx_entity_mapping_field_data",
  *   translatable = FALSE,
- *   admin_permission = "administer xlsx maping",
+ *   admin_permission = "administer xlsx mapping",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "entity_type",
