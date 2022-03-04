@@ -596,7 +596,7 @@ function jcc_tc2_all_immutable_config_prefix_paragraph_fields($field_name) {
 
     foreach ($paragraphs as $paragraph) {
 
-      if (!empty($paragraph->field_name) && !$paragraph->$field_name->isEmpty()) {
+      if (!empty($paragraph->$field_name) && !$paragraph->$field_name->isEmpty()) {
         $old_text = $paragraph->$field_name->first()->getValue()['value'];
         $new_text = $service->replace($old_text);
 
