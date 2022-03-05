@@ -1,23 +1,23 @@
-uuid: 2f71a0a1-f8dc-4983-b36d-babc0614dcf0
+uuid: b87f6b5e-d2a2-498c-8ec6-0b9c56cc8efe
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.media.field_matters_served
-    - media.type.boxcast_stream
-    - taxonomy.vocabulary.matters_served
+    - field.storage.media.field_category
+    - media.type.image
+    - taxonomy.vocabulary.media_image_category
   module:
     - tmgmt_content
 third_party_settings:
   tmgmt_content:
     excluded: false
-id: media.boxcast_stream.field_matters_served
-field_name: field_matters_served
+id: media.image.field_category
+field_name: field_category
 entity_type: media
-bundle: boxcast_stream
-label: 'Matters served'
+bundle: image
+label: Category
 description: ''
-required: false
+required: true
 translatable: true
 default_value: {  }
 default_value_callback: ''
@@ -25,7 +25,7 @@ settings:
   handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      matters_served: matters_served
+      media_image_category: media_image_category
     sort:
       field: name
       direction: asc
