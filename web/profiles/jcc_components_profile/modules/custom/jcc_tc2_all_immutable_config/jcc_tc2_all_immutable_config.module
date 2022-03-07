@@ -25,3 +25,96 @@ function jcc_tc2_all_immutable_config_config_ignore_settings_alter(array &$setti
     }
   }
 }
+
+/**
+ * Fix the text format for given field and format.
+ *
+ * @param string $field
+ *   The machine name of the field to update.
+ * @param string $format
+ *   The machine name of the format to set.
+ * @param string $entity_type
+ *   The entity type to query for update.
+ */
+function jcc_tc2_all_immutable_config_format_fix($field, $format, $entity_type = 'paragraph') {
+  $count = 0;
+  $updated = 0;
+
+  $ids = \Drupal::entityQuery($entity_type)
+    ->exists($field)
+    ->execute();
+
+  $entities = \Drupal::entityTypeManager()->getStorage($entity_type)->loadMultiple($ids);
+
+  $num = count($entities);
+
+  foreach ($entities as $entity) {
+
+    if (!empty($entity->$field) && !$entity->$field->isEmpty()) {
+
+      if ($entity->$field->first()->format != $format) {
+        $updated++;
+        $entity->$field->format = $format;
+        $entity->save();
+      }
+
+      $count++;
+    }
+  }
+
+  \Drupal::messenger()->addStatus(
+    t("%count of %num checked. %updated updated.",
+      ['%count' => $count, '%num' => $num, '%updated' => $updated]
+    )
+  );
+}
+
+/**
+ * Fix relative links missing leading slash in field content.
+ *
+ * @param string $field
+ *   The machine name of the field to check.
+ * @param string $format
+ *   The format to save the field with.
+ * @param string $entity_type
+ *   The entity type to query.
+ */
+function jcc_tc2_all_immutable_config_fix_relative_links($field, $format, $entity_type = 'paragraph') {
+
+  $count = 0;
+  $updated = 0;
+  $service = \Drupal::service('jcc_tc_migration.prefix_relative_links');
+
+  $ids = \Drupal::entityQuery($entity_type)
+    ->exists($field)
+    ->execute();
+
+  $entities = \Drupal::entityTypeManager()
+    ->getStorage($entity_type)
+    ->loadMultiple($ids);
+
+  $num = count($entities);
+
+  foreach ($entities as $entity) {
+
+    if (!empty($entity->$field) && !$entity->$field->isEmpty()) {
+      $old_text = $entity->$field->first()->getValue()['value'];
+      $new_text = $service->replace($old_text);
+
+      if (strcmp($old_text, $new_text) !== 0) {
+        $updated++;
+      }
+
+      $entity->$field->value = $new_text;
+      $entity->$field->format = $format;
+      $entity->save();
+      $count++;
+    }
+  }
+
+  \Drupal::messenger()->addStatus(
+    t("%count of %num checked. %updated updated.",
+      ['%count' => $count, '%num' => $num, '%updated' => $updated]
+    )
+  );
+}
