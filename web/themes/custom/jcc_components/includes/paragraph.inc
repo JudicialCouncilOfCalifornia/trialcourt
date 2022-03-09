@@ -343,9 +343,13 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
         $icon['set'] = "line-white";
         $icon['name'] = str_replace("icon-line-white-", "", $card->field_icon->value);
       }
-      elseif (str_contains($card->field_icon->value, "icon-experimental-")) {
-        $icon['set'] = "experimental";
-        $icon['name'] = str_replace("icon-experimental-", "", $card->field_icon->value);
+      elseif (str_contains($card->field_icon->value, "icon-experimental-dark-")) {
+        $icon['set'] = "experimental-dark";
+        $icon['name'] = str_replace("icon-experimental-dark-", "", $card->field_icon->value);
+      }
+      elseif (str_contains($card->field_icon->value, "icon-experimental-white-")) {
+        $icon['set'] = "experimental-white";
+        $icon['name'] = str_replace("icon-experimental-white-", "", $card->field_icon->value);
       }
     }
 
@@ -359,6 +363,12 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
     }
     elseif (empty($media) && $icon['set'] == 'line-white') {
       $icon['set'] = 'line-dark';
+    }
+    if (!empty($media) && $icon['set'] == 'experimental-dark') {
+      $icon['set'] = 'experimental-white';
+    }
+    elseif (empty($media) && $icon['set'] == 'experimental-white') {
+      $icon['set'] = 'experimental-dark';
     }
 
     $set[] = [

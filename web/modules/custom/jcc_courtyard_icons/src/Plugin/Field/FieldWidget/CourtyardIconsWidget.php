@@ -131,7 +131,7 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
     $current = '';
     foreach ($this->getIconList() as $name) {
       foreach ($this->sets as $set) {
-        if($set !== 'line-white'){
+        if(!($set == 'line-white' || $set == 'experimental-white')){
           if (strpos($name, "icon-$set-") !== FALSE) {
             if ($current != $set) {
               $buttons[$set][] = "<h5>" . (string) $set . "</h5>";
@@ -180,9 +180,6 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
           if (strpos($name, "icon-$set-") !== FALSE) {
             $options[$set][$name] = $name;
             $grouped[$name] = $name;
-            if ($set == 'line-white') {
-              // Add hidden attribute
-            }
           }
         }
       }
@@ -191,9 +188,7 @@ class CourtyardIconsWidget extends WidgetBase implements ContainerFactoryPluginI
     $other_label = $this->t('Other');
 
     foreach ($others as $other) {
-      if (strpos($other, 'line-white') == FALSE) {
-        $options[(string)$other_label][$other] = $other;
-      }
+      $options[(string)$other_label][$other] = $other;
     }
 
     return $options;
