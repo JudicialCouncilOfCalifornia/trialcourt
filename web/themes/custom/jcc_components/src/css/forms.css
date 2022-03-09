@@ -24,3 +24,69 @@ form label.form-required{
   display: inline-block;
   margin-right: 0.5em;
 }
+
+/* BEGIN login adjustments */
+.openid-connect-login-form,
+.user-login-form {
+  margin: 0 5% 0 5%;
+}
+
+.openid-connect-login-form {
+  max-width: unset;
+  margin-top: 2rem;
+}
+
+.user-login-form {
+  margin-bottom: 3rem;
+}
+
+.jcc-login__drupal-notation {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  margin: 2rem 0 1rem;
+  color: #919191;
+  text-align: center;
+}
+
+.jcc-login__drupal-notation:before,
+.jcc-login__drupal-notation:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  height: 1px;
+  width: 20%;
+  background: #919191;
+}
+
+.jcc-login__drupal-notation:before {
+  right: 82%;
+  margin-right: 0.5rem;
+}
+
+.jcc-login__drupal-notation:after {
+  left: 82%;
+  margin-left: 0.5rem;
+}
+
+@media screen and (min-width: 480px) {
+  .jcc-login__drupal-notation {
+    text-align: inherit;
+  }
+
+  .jcc-login__drupal-notation:before {
+    content: unset;
+  }
+
+  .jcc-login__drupal-notation:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: unset;
+    height: 1px;
+    width: 80%;
+    background: #919191;
+  }
+
+}
+/* END */
