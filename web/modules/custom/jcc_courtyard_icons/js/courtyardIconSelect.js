@@ -62,8 +62,8 @@
         }
 
         //Disabling the white-label selection visually
-        document.querySelector('.field--type-courtyard-icons .form-element--type-select [label="line-white"]').setAttribute('hidden', 'hidden');;
-
+        document.querySelector('.field--type-courtyard-icons .form-element--type-select [label="line-white"]').setAttribute('hidden', 'hidden');
+        document.querySelector('.field--type-courtyard-icons .form-element--type-select [label="experimental-white"]').setAttribute('hidden', 'hidden');
         // Add the click event listener if it doesn't have one already.
         if (!listener) {
           button.classList.add('js-jcc-courtyard-icons__button');
