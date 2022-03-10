@@ -33,10 +33,12 @@ function jcc_tc2_all_immutable_config_config_ignore_settings_alter(array &$setti
  *   The machine name of the field to update.
  * @param string $format
  *   The machine name of the format to set.
+ * @param string $bundle
+ *   The bundle to update. If NULL all will be udpated.
  * @param string $entity_type
  *   The entity type to query for update.
  */
-function jcc_tc2_all_immutable_config_format_fix($field, $format, $entity_type = 'paragraph') {
+function jcc_tc2_all_immutable_config_format_fix($field, $format, $bundle = NULL, $entity_type = 'paragraph') {
   $count = 0;
   $updated = 0;
 
@@ -51,6 +53,9 @@ function jcc_tc2_all_immutable_config_format_fix($field, $format, $entity_type =
   foreach ($entities as $entity) {
 
     if (!empty($entity->$field) && !$entity->$field->isEmpty()) {
+      if ($bundle && $entity->bundle() != $bundle) {
+        continue;
+      }
 
       if ($entity->$field->first()->format != $format) {
         $updated++;
