@@ -106,8 +106,10 @@ function jcc_components_paragraph_hero_banner(array &$variables, ParagraphInterf
   $components = $paragraph->field_components->referencedEntities();
   foreach ($components as $component) {
     if (!empty($component->field_icon)) {
+      $card_icon = !empty($component->field_icon->view('default')[0]) ? $component->field_icon->view('default')[0] : NULL;
+      $card_icon = str_replace("-dark", "-white", $card_icon);
       $variables['content']['icon_links'][] = [
-        'icon' => !empty($component->field_icon->view('default')[0]) ? $component->field_icon->view('default')[0] : NULL,
+        'icon' => $card_icon,
         'link' => !empty($component->field_link->view('default')[0]) ? $component->field_link->view('default')[0] : NULL,
       ];
     }
