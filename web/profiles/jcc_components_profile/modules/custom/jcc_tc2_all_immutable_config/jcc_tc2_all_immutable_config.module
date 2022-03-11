@@ -13,7 +13,6 @@ function jcc_tc2_all_immutable_config_config_ignore_settings_alter(array &$setti
   $module_handler = \Drupal::service('module_handler');
   $module_path = $module_handler->getModule('jcc_tc2_all_immutable_config')->getPath();
   $paths[] = "${module_path}/config/install";
-  $paths[] = "${module_path}/config/optional";
 
   foreach ($paths as $path) {
     $config = scandir($path);
