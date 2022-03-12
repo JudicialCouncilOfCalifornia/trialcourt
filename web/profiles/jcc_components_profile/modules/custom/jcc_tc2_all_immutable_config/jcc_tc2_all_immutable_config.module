@@ -78,12 +78,10 @@ function jcc_tc2_all_immutable_config_format_fix($field, $format, $bundle = NULL
  *
  * @param string $field
  *   The machine name of the field to check.
- * @param string $format
- *   The format to save the field with.
  * @param string $entity_type
  *   The entity type to query.
  */
-function jcc_tc2_all_immutable_config_fix_relative_links($field, $format, $entity_type = 'paragraph') {
+function jcc_tc2_all_immutable_config_fix_relative_links($field, $entity_type = 'paragraph') {
 
   $count = 0;
   $updated = 0;
@@ -110,7 +108,6 @@ function jcc_tc2_all_immutable_config_fix_relative_links($field, $format, $entit
       }
 
       $entity->$field->value = $new_text;
-      $entity->$field->format = $format;
       $entity->save();
       $count++;
     }
@@ -121,4 +118,85 @@ function jcc_tc2_all_immutable_config_fix_relative_links($field, $format, $entit
       ['%count' => $count, '%num' => $num, '%updated' => $updated]
     )
   );
+}
+
+/**
+ * Fix mailto links that received a leading slash from the previous link fix :\.
+ *
+ * @param string $field
+ *   The machine name of the field to check.
+ * @param string $entity_type
+ *   The entity type to query.
+ */
+function jcc_tc2_all_immutable_config_fix_mailto_links($field, $entity_type = 'paragraph') {
+
+  $count = 0;
+  $updated = 0;
+
+  $ids = \Drupal::entityQuery($entity_type)
+    ->exists($field)
+    ->execute();
+
+  $entities = \Drupal::entityTypeManager()
+    ->getStorage($entity_type)
+    ->loadMultiple($ids);
+
+  $num = count($entities);
+
+  foreach ($entities as $entity) {
+
+    if (!empty($entity->$field) && !$entity->$field->isEmpty()) {
+      $old_text = $entity->$field->first()->getValue()['value'];
+      $new_text = jcc_tc2_all_immutable_config_replace_mailto($old_text);
+
+      if (strcmp($old_text, $new_text) !== 0) {
+        $updated++;
+      }
+
+      $entity->$field->value = $new_text;
+      $entity->save();
+      $count++;
+    }
+  }
+
+  \Drupal::messenger()->addStatus(
+    t("%count of %num checked. %updated updated.",
+      ['%count' => $count, '%num' => $num, '%updated' => $updated]
+    )
+  );
+}
+
+/**
+ * Search content for mailto links and remove leading slash as necessary.
+ *
+ * @param string $content
+ *   The content to search.
+ *
+ * @return string
+ *   The content with any necessary modifications.
+ */
+function jcc_tc2_all_immutable_config_replace_mailto($content) {
+  $dom = new \DomDocument();
+  $dom->loadHTML($content);
+
+  foreach ($dom->getElementsByTagName('a') as $item) {
+    // The original link string that will be replaced.
+    $original = $dom->saveHTML($item);
+    // The url for the link to determine file name.
+    $href = $item->getAttribute('href');
+    $scheme = parse_url($href, PHP_URL_SCHEME);
+    // Add leading slash to original link if needed.
+    if ($scheme == 'mailto') {
+      $path = parse_url($href, PHP_URL_PATH);
+      if (strpos($path, '/') === 0) {
+        $new_path = ltrim($path, '/');
+        // Create full replacement link.
+        $replace = str_replace($path, $new_path, $original);
+        // Replace the original link string in the full markup in $content.
+        $content = str_replace($original, $replace, $content);
+      }
+    }
+  }
+
+  return $content;
 }

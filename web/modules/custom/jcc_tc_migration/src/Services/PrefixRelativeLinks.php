@@ -23,19 +23,16 @@ class PrefixRelativeLinks {
     $dom->loadHTML($value);
 
     foreach ($dom->getElementsByTagName('a') as $item) {
-      // The original link string that will be replaced.
-      $original = $dom->saveHTML($item);
       // The url for the link to determine file name.
       $href = $item->getAttribute('href');
-      $path = parse_url($href, PHP_URL_PATH);
+      $scheme = parse_url($href, PHP_URL_SCHEME);
       // Add leading slash to original link if needed.
-      if (stripos($path, 'http') !== 0) {
+      if (!$scheme) {
+        $path = parse_url($href, PHP_URL_PATH);
         if (strpos($path, '/') !== 0) {
           $new_path = "/$path";
-          // Create full replacement link.
-          $replace = str_replace($path, $new_path, $original);
-          // Replace the original link string in the full markup in $value.
-          $value = str_replace($original, $replace, $value);
+          // Replace the original href string in the full markup in $value.
+          $value = str_replace($path, $new_path, $value);
         }
       }
     }
