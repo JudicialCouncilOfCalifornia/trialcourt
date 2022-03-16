@@ -35,7 +35,7 @@ class DateFilter extends StringFilter {
       $active = '';
       $formatted_date = $this->dateTimeWithTimezone($row->field_importer_date_value);
       if (!empty($datetime) && $datetime == $row->field_importer_date_value) {
-        $active_date = '<div class="current-active-date">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</div>';
+        $active_date = '<br/><div class="current-active-date">Viewing date: <strong>' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</strong></div>';
         $active = 'active';
       }
       if (!in_array($formatted_date, $dates_idx)) {
