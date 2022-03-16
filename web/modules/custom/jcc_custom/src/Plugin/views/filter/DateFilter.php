@@ -33,13 +33,14 @@ class DateFilter extends StringFilter {
     $active_date = '';
     foreach ($results as $row) {
       $active = '';
+      $formatted_date = $this->dateTimeWithTimezone($row->field_importer_date_value);
       if (!empty($datetime) && $datetime == $row->field_importer_date_value) {
         $active_date = '<div class="current-active-date">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</div>';
         $active = 'active';
       }
-      if (!in_array($row->field_importer_date_value, $dates_idx)) {
-        $dates_idx[] = $row->field_importer_date_value;
-        $dates[] = '<li><a href="?dt=' . $row->field_importer_date_value . '" class="' . $active . '">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</a></li>';
+      if (!in_array($formatted_date, $dates_idx)) {
+        $dates_idx[] = $formatted_date;
+        $dates[] = '<li><a href="?dt=' . $row->field_importer_date_value . '" class="' . $active . '">' . $formatted_date . '</a></li>';
       }
     }
     $form['value'] = [
