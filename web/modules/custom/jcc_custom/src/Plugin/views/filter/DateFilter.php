@@ -26,8 +26,7 @@ class DateFilter extends StringFilter {
   protected function valueForm(&$form, FormStateInterface $form_state) {
     $datetime = \Drupal::request()->query->get('dt');
     $connection = Database::getConnection();
-    $results = $connection->query("SELECT n.entity_id, n.field_importer_date_value FROM {node__field_importer_date} n
-      WHERE YEARWEEK(n.field_importer_date_value) = YEARWEEK(NOW()) AND n.field_importer_date_value >= CURDATE()")->fetchAll();
+    $results = $connection->query("SELECT DISTINCT n.field_importer_date_value FROM {node__field_importer_date} n")->fetchAll();
     $dates = [];
     $dates_idx = [];
     $active_date = '';
