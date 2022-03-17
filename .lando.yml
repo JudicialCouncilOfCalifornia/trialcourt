@@ -31,9 +31,11 @@ proxy:
 services:
   appserver:
     webroot: web
-    xdebug: debug
+    # Uncomment below and lando rebuild to enable xdebug.
+    # The old xon/xoff commands no longer work with recent lando versions.
+    # xdebug: true
     config:
-      php: .vscode/php.ini
+      php: xdebug.php.ini
   # Theme.
   node-cli:
     type: compose
@@ -144,18 +146,6 @@ tooling:
     description: "Theme: Sub - `ts [Theme Name]` Create subtheme from JCC Base"
     cmd:
       - drush --include=/app/web/themes/custom/jcc_base jcc_base:create
-  # Docker is extra slow with xdebug enabled. Turn it on and off as needed without rebuilding.
-  # xdebug: https://github.com/lando/lando/issues/1668#issuecomment-507191275
-  xon:
-    service: appserver
-    description: Enable xdebug for apache.
-    cmd: "docker-php-ext-enable xdebug && /etc/init.d/apache2 reload"
-    user: root
-  xoff:
-    service: appserver
-    description: Disable xdebug for apache.
-    cmd: "rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && /etc/init.d/apache2 reload"
-    user: root
 
 env_file:
   - .env
