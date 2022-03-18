@@ -12,8 +12,10 @@ dependencies:
     - field.field.node.location.field_phone
     - field.field.node.location.field_weight
     - node.type.location
+    - workflows.workflow.editorial
   module:
     - address
+    - content_moderation
     - geolocation
     - paragraphs
     - path
@@ -22,6 +24,8 @@ dependencies:
     - telephone
     - text
     - weight
+_core:
+  default_config_hash: NNb6pOBcZkfDDKQ7FVTq_l-9yZqU-Dttl63e_fvQ67w
 id: node.location.default
 targetEntityType: node
 bundle: location
@@ -91,7 +95,7 @@ content:
     type: telephone_default
     region: content
   field_weight:
-    weight: 26
+    weight: 21
     settings: {  }
     third_party_settings: {  }
     type: weight_selector
@@ -103,9 +107,15 @@ content:
     settings:
       include_locked: true
     third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 22
+    settings: {  }
+    region: content
+    third_party_settings: {  }
   path:
     type: path
-    weight: 13
+    weight: 16
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -118,13 +128,13 @@ content:
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 16
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 14
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -173,7 +183,7 @@ content:
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 12
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
