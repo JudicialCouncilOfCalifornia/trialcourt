@@ -106,8 +106,10 @@ function jcc_components_paragraph_hero_banner(array &$variables, ParagraphInterf
   $components = $paragraph->field_components->referencedEntities();
   foreach ($components as $component) {
     if (!empty($component->field_icon)) {
+      $card_icon = !empty($component->field_icon->view('default')[0]) ? $component->field_icon->view('default')[0] : NULL;
+      $card_icon = str_replace("-dark", "-white", $card_icon);
       $variables['content']['icon_links'][] = [
-        'icon' => !empty($component->field_icon->view('default')[0]) ? $component->field_icon->view('default')[0] : NULL,
+        'icon' => $card_icon,
         'link' => !empty($component->field_link->view('default')[0]) ? $component->field_link->view('default')[0] : NULL,
       ];
     }
@@ -343,14 +345,32 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
         $icon['set'] = "line-white";
         $icon['name'] = str_replace("icon-line-white-", "", $card->field_icon->value);
       }
-      elseif (str_contains($card->field_icon->value, "icon-experimental-")) {
-        $icon['set'] = "experimental";
-        $icon['name'] = str_replace("icon-experimental-", "", $card->field_icon->value);
+      elseif (str_contains($card->field_icon->value, "icon-experimental-dark-")) {
+        $icon['set'] = "experimental-dark";
+        $icon['name'] = str_replace("icon-experimental-dark-", "", $card->field_icon->value);
+      }
+      elseif (str_contains($card->field_icon->value, "icon-experimental-white-")) {
+        $icon['set'] = "experimental-white";
+        $icon['name'] = str_replace("icon-experimental-white-", "", $card->field_icon->value);
       }
     }
 
     if ($card->field_entire_card_clickable && $card->field_entire_card_clickable->value) {
       $is_clickable = TRUE;
+    }
+
+    // Overwriting icon color based on context.
+    if (!empty($media) && $icon['set'] == 'line-dark') {
+      $icon['set'] = 'line-white';
+    }
+    elseif (empty($media) && $icon['set'] == 'line-white') {
+      $icon['set'] = 'line-dark';
+    }
+    if (!empty($media) && $icon['set'] == 'experimental-dark') {
+      $icon['set'] = 'experimental-white';
+    }
+    elseif (empty($media) && $icon['set'] == 'experimental-white') {
+      $icon['set'] = 'experimental-dark';
     }
 
     $set[] = [
