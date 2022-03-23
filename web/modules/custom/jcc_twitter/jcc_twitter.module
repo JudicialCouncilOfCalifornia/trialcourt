@@ -46,8 +46,11 @@ function jcc_twitter_form_node_form_alter(&$form, FormStateInterface $form_state
   $twitter_names = [];
   $twitter_accounts = _jcc_twitter_get_social_post_accounts();
   foreach ($twitter_accounts as $twitter_account) {
-    $t_name = $twitter_account->get('screen_name')->first()->getValue()['value'];
-    $twitter_names[$t_name] = '@' . $t_name;
+    $t_name = $twitter_account->get('name')->first()->getValue()['value'];
+    $t_id = $twitter_account->get('provider_user_id')->first()->getValue()['value'];
+    $twitter_names[$t_id] =
+      t('<a href="https://twitter.com/i/user/:twitterid" target="new">:name</a>',
+        [':name' => $t_name, ':twitterid' => $t_id]);
   }
 
   $form['group_social']['twitter_fieldset'] = [
@@ -143,7 +146,7 @@ function jcc_twitter_form_submit(array &$form, FormStateInterface $form_state) {
  *   Returns all twitter accounts.
  */
 function _jcc_twitter_get_social_post_accounts() {
-  return \Drupal::entityTypeManager()->getStorage('social_post_twitter_user')->loadMultiple();
+  return \Drupal::entityTypeManager()->getStorage('social_post')->loadMultiple();
 }
 
 /**
@@ -176,18 +179,6 @@ function _jcc_twitter_post(EntityInterface $entity) {
         return;
       }
 
-      /* @var \Drupal\social_post_twitter\Plugin\Network\TwitterPostInterface $twitterPost */
-      // Gets instance of Social Post Twitter.
-      $twitterPost = \Drupal::service('plugin.network.manager')->createInstance('social_post_twitter');
-      // Gets the Twitter entity storage.
-      $twitterEntity = \Drupal::entityTypeManager()->getStorage('social_post_twitter_user');
-
-      /* @var \Drupal\social_post_twitter\Entity\TwitterUserInterface[] $accounts */
-      // Gets the Twitter accounts associated with the current user.
-      $accounts = $twitterEntity->loadByProperties([
-        'screen_name' => $twitter['accounts'],
-      ]);
-
       $tweet = [
         'status' => str_replace(
           [
@@ -201,18 +192,25 @@ function _jcc_twitter_post(EntityInterface $entity) {
           $twitter['message']),
       ];
 
-      /*
-       * Media files can be attached to the tweet.
-       * $img_paths = [
-       *   '/path/to/image.jpg',
-       * ];
-       *
-       * $tweet['media_paths'] => $img_paths;
-       */
+      /** @var Abraham\TwitterOAuth\TwitterOAuth $client */
+      $client = \Drupal::service('plugin.network.manager')->createInstance('social_post_twitter')->getSdk();
 
-      // Loop through each Twitter accounts.
-      foreach ($accounts as $account) {
-        $twitterPost->doPost($account->getAccessToken(), $account->getAccessTokenSecret(), $tweet);
+      /** @var Drupal\social_post_twitter\TwitterPostManager $post_manager */
+      $post_manager = \Drupal::service('twitter_post.manager');
+
+      $social_post = \Drupal::entityTypeManager()->getStorage('social_post');
+      foreach ($twitter['accounts'] as $t_id) {
+        \Drupal::logger('twitter')->notice($t_id);
+        $account = $social_post->loadByProperties([
+          'provider_user_id' => $t_id,
+        ]);
+        $account = array_pop($account);
+        // Set OAuth token for the account.
+        $token = json_decode($account->getToken());
+        $client->setOauthToken($token->oauth_token, $token->oauth_token_secret);
+
+        // Make a post to Twitter with the account!
+        $post_manager->setClient($client)->doPost($tweet);
       }
 
       $tempstore->delete($entity->id());
