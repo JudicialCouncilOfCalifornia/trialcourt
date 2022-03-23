@@ -76,20 +76,19 @@ class MediaReplaceFileLink {
         'data-entity-substitution' => 'media',
         'data-entity-type' => 'media',
         'data-entity-uuid' => $media->uuid(),
+        'media_library' => 'Media Library',
         'target' => '_blank',
       ];
-      $url = Url::fromUri('base:media/' . $media->id());
+      $url = Url::fromUri('internal:/media/' . $media->id());
       $url->setOptions($options);
       $link = Link::fromTextAndUrl($text, $url);
       $link = $link->toString();
     }
     else {
       // Add forward slash to relative path if needed.
-      if (stripos($path, 'http') === FALSE) {
-        if (strpos($path, '/') !== 0) {
-          $new_path = "/$path";
-          $link = str_replace($path, $new_path, $link);
-        }
+      if (strpos($path, '/') !== 0) {
+        $new_path = "/$path";
+        $link = str_replace($path, $new_path, $link);
       }
     }
 
@@ -122,7 +121,7 @@ class MediaReplaceFileLink {
       }
     }
 
-    return $media ? $media : NULL;
+    return !empty($media) ? $media : NULL;
   }
 
 }

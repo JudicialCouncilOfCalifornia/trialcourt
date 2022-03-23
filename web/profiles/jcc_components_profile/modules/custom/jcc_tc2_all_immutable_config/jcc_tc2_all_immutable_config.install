@@ -621,3 +621,24 @@ function jcc_tc2_all_immutable_config_prefix_paragraph_fields($field_name) {
     \Drupal::messenger()->addStatus(t('Alameda only, no changes.'));
   }
 }
+
+/**
+ * TCI-585: Convert all file links to media links in field_text.
+ */
+function jcc_tc2_all_immutable_config_update_8035() {
+  jcc_tc2_all_immutable_config_file_to_media_links('field_text');
+}
+
+/**
+ * TCI-585: Convert all file links to media links in field_lead.
+ */
+function jcc_tc2_all_immutable_config_update_8036() {
+  jcc_tc2_all_immutable_config_file_to_media_links('field_lead');
+}
+
+/**
+ * TCI-585: Convert all file links to media links in field_aside.
+ */
+function jcc_tc2_all_immutable_config_update_8037() {
+  jcc_tc2_all_immutable_config_file_to_media_links('field_aside');
+}
