@@ -3,7 +3,6 @@
 namespace Drupal\jcc_tc_migration\Services;
 
 use Drupal\Core\Url;
-use Drupal\Core\Link;
 
 /**
  * Class MediaReplaceFileLink.
@@ -47,8 +46,14 @@ class MediaReplaceFileLink {
       $file_types = explode(', ', 'pdf, zip, doc, docx, xls, xlsx, ppt, pptx');
 
       if (in_array($extension, $file_types)) {
-        $replace = $this->mediaLink($path, $text, $original);
-        $value = str_replace($original, $replace, $value);
+        $url = $this->mediaLink($path, $text, $original);
+        if ($url) {
+          foreach ($url->getOptions()['attributes'] as $attribute => $attr_value) {
+            $item->setAttribute($attribute, $attr_value);
+            $item->setAttribute('href', $url->toString());
+          }
+          $value = $dom->saveHtml();
+        }
       }
     }
 
@@ -81,18 +86,11 @@ class MediaReplaceFileLink {
       ];
       $url = Url::fromUri('internal:/media/' . $media->id());
       $url->setOptions($options);
-      $link = Link::fromTextAndUrl($text, $url);
-      $link = $link->toString();
-    }
-    else {
-      // Add forward slash to relative path if needed.
-      if (strpos($path, '/') !== 0) {
-        $new_path = "/$path";
-        $link = str_replace($path, $new_path, $link);
-      }
+
+      return $url;
     }
 
-    return $link;
+    return FALSE;
   }
 
   /**
@@ -105,20 +103,21 @@ class MediaReplaceFileLink {
    *   The media object or null.
    */
   public function getMedia($path) {
-    $file = $this->entityTypeManager
+    $usage = [];
+    $files = $this->entityTypeManager
       ->getStorage('file')
       ->loadByProperties(['filename' => pathinfo($path, PATHINFO_BASENAME)]);
 
-    // We only return the first media item that references this file.
-    // The should only be one anyway.
-    if (!empty($file)) {
-      $file = array_shift($file);
-      $usage = $this->fileUsage->listUsage($file);
+    foreach ($files as $file) {
+      $usage += $this->fileUsage->listUsage($file);
+    }
 
-      if (!empty($usage['file']['media'])) {
-        $media_id = array_shift(array_keys($usage['file']['media']));
-        $media = $this->entityTypeManager->getStorage('media')->load($media_id);
-      }
+    if (!empty($usage['file']['media'])) {
+      $ids = array_keys($usage['file']['media']);
+      // No way to know which specific media id to use so use first.
+      // It will have the required file reference in any case.
+      $media_id = array_shift($ids);
+      $media = $this->entityTypeManager->getStorage('media')->load($media_id);
     }
 
     return !empty($media) ? $media : NULL;
