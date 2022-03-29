@@ -26,20 +26,21 @@ class DateFilter extends StringFilter {
   protected function valueForm(&$form, FormStateInterface $form_state) {
     $datetime = \Drupal::request()->query->get('dt');
     $connection = Database::getConnection();
-    $results = $connection->query("SELECT n.entity_id, n.field_importer_date_value FROM {node__field_importer_date} n
-      WHERE YEARWEEK(n.field_importer_date_value) = YEARWEEK(NOW()) AND n.field_importer_date_value >= CURDATE()")->fetchAll();
+    $results = $connection->query("SELECT DISTINCT n.field_importer_date_value FROM {node__field_importer_date} n
+      WHERE n.field_importer_date_value >= CURDATE()")->fetchAll();
     $dates = [];
     $dates_idx = [];
     $active_date = '';
     foreach ($results as $row) {
       $active = '';
+      $formatted_date = $this->dateTimeWithTimezone($row->field_importer_date_value);
       if (!empty($datetime) && $datetime == $row->field_importer_date_value) {
-        $active_date = '<div class="current-active-date">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</div>';
+        $active_date = '<br/><div class="current-active-date">Viewing date: <strong>' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</strong></div>';
         $active = 'active';
       }
-      if (!in_array($row->field_importer_date_value, $dates_idx)) {
-        $dates_idx[] = $row->field_importer_date_value;
-        $dates[] = '<li><a href="?dt=' . $row->field_importer_date_value . '" class="' . $active . '">' . $this->dateTimeWithTimezone($row->field_importer_date_value) . '</a></li>';
+      if (!in_array($formatted_date, $dates_idx)) {
+        $dates_idx[] = $formatted_date;
+        $dates[] = '<li><a href="?dt=' . $row->field_importer_date_value . '" class="' . $active . '">' . $formatted_date . '</a></li>';
       }
     }
     $form['value'] = [

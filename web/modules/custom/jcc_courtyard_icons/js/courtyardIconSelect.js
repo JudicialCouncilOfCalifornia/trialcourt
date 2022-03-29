@@ -25,10 +25,15 @@
           selected.classList.remove('selected');
         }
 
-        this.classList.add('selected');
-
         // Get the current icon field value and update with clicked value.
         field.value = this.getAttribute('data-icon-name');
+
+        if (field.value.startsWith('icon-line-white')){
+          var new_icon_name = 'icon-line-dark' + field.value.replace('icon-line-white','');
+          document.querySelectorAll("[data-icon-name='" + new_icon_name + "']")[0].classList.add('selected');
+        } else {
+          this.classList.add('selected');
+        }
       }
 
       // Prepare all icon buttons.
@@ -46,9 +51,19 @@
         const buttonValue = button.getAttribute('data-icon-name');
 
         if (selectedValue === buttonValue) {
-          button.classList.add('selected');
+          if (selectedValue.startsWith('icon-line-white')){
+            var new_icon_name = 'icon-line-dark' + selectedValue.replace('icon-line-white','');
+            // var dark_button = button.closest('.field--type-courtyard-icons').querySelector('[data-icon-name="' + new_icon_name + '"]');
+            var dark_button = document.querySelector('[data-icon-name="icon-dark-line-circle-information"]');
+            dark_button.classList.add('selected');
+          } else {
+            button.classList.add('selected');
+          }
         }
 
+        //Disabling the white-label selection visually
+        document.querySelector('.field--type-courtyard-icons .form-element--type-select [label="line-white"]').setAttribute('hidden', 'hidden');
+        document.querySelector('.field--type-courtyard-icons .form-element--type-select [label="experimental-white"]').setAttribute('hidden', 'hidden');
         // Add the click event listener if it doesn't have one already.
         if (!listener) {
           button.classList.add('js-jcc-courtyard-icons__button');

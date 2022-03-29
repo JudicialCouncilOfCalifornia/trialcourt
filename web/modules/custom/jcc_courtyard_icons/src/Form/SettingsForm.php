@@ -37,7 +37,7 @@ class SettingsForm extends ConfigFormBase {
 
     $form['icon_sets'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('Icon set prefixes for grouping icons. i.e. fa, line-white, line-dark, experimental'),
+      '#title' => $this->t('Icon set prefixes for grouping icons. i.e. fa, line, experimental'),
       '#description' => $this->t('One prefix per line. Expects SVG Sprite icon names in this format: icon-[set]-[name]  i.e. icon-line-white-circle-information'),
       '#default_value' => $this->config('jcc_courtyard_icons.settings')->get('icon_sets'),
     ];
