@@ -10,6 +10,8 @@
   Drupal.behaviors.jccTableAdapt = {
     attach: function (context, settings) {
       var $formTable = $('.jcc-form', context).siblings('table');
+      var $formViewId = $('.jcc-form', context).attr('id');
+
       $('.jcc-section table', context).add($formTable).each( function() {
         let $currentTable = $(this);
         let $headers = $currentTable.find('thead th');
@@ -21,10 +23,12 @@
           let $tableHeader = $(this);
           let $headerMarkup = $tableHeader.text();
 
-          $tableHeader.attr('data-sortable', '');
-          $tableHeader.attr('scope', 'col');
-          $tableHeader.attr('role', 'columheader');
-          $tableHeader.html($headerMarkup);
+          if ($formViewId != 'views-exposed-form-imported-events-events') {
+            $tableHeader.attr('data-sortable', '');
+            $tableHeader.attr('scope', 'col');
+            $tableHeader.attr('role', 'columheader');
+            $tableHeader.html($headerMarkup);
+          }
         });
       });
     }
