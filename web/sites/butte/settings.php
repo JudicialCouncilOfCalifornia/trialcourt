@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-butte';
+$settings['config_sync_directory'] = '../config/config-butte';
 $config['config_split.config_split.local']['folder'] = '../config/config-butte-local';
 $settings['file_public_path']  = 'sites/default/files/butte/default';
 

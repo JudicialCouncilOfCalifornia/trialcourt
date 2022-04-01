@@ -10,6 +10,10 @@
         }
     ],
     "repositories": {
+        "lenient": {
+            "type": "composer",
+            "url": "https://packages.drupal.org/lenient"
+        },
         "drupal": {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
@@ -126,7 +130,7 @@
                 }
             }
         },
-        "inserthtml4x": {
+        "ckeditor/inserthtml4x": {
             "type": "package",
             "package": {
                 "name": "ckeditor/inserthtml4x",
@@ -148,8 +152,8 @@
         "ckeditor-plugin/balloonpanel": "^4.14",
         "ckeditor-plugin/templates": "^4.13",
         "ckeditor/inserthtml4x": "^2.0",
-        "composer/installers": "^1.2",
-        "cweagans/composer-patches": "^1.6.5",
+        "composer/installers": "^1.9",
+        "cweagans/composer-patches": "^1.7",
         "drupal/access_unpublished": "^1.0",
         "drupal/address": "^1.7",
         "drupal/adminimal_admin_toolbar": "^1.9",
@@ -159,14 +163,13 @@
         "drupal/autoban": "^1.7",
         "drupal/autocomplete_deluxe": "^2.0.0",
         "drupal/autosave_form": "^1.0",
-        "drupal/better_exposed_filters": "^4.0",
-        "drupal/better_social_sharing_buttons": "^2.0",
+        "drupal/better_exposed_filters": "^5.0",
+        "drupal/better_social_sharing_buttons": "^3.0",
         "drupal/block_field": "^1.0@alpha",
         "drupal/captcha": "^1.2",
         "drupal/chosen": "^2.8",
         "drupal/ckeditor_a11ychecker": "1.x-dev#a2099d09",
         "drupal/ckeditor_balloonpanel": "1.x-dev#8070eaaa",
-        "drupal/ckeditor_inserthtml": "^1.0",
         "drupal/ckeditor_templates": "^1.1",
         "drupal/ckeditor_templates_ui": "^1.2",
         "drupal/colorbox": "^1.6",
@@ -195,17 +198,17 @@
         "drupal/features": "^3.11",
         "drupal/feeds": "^3.0",
         "drupal/feeds_ex": "^1.0",
-        "drupal/feeds_ical": "^1.1",
+        "drupal/feeds_ical": "^2.0",
         "drupal/feeds_tamper": "^2.0",
         "drupal/field_group": "^3.0-rc1",
         "drupal/focal_point": "^1.0",
-        "drupal/formblock": "^1.0",
+        "drupal/formblock": "^2.0.0-beta2",
         "drupal/fullcalendar_view": "^5.0.0",
         "drupal/ga_login": "^1.0@alpha",
         "drupal/geocoder": "^3.0",
         "drupal/geolocation": "^3.1.0",
         "drupal/gin": "^3.0@alpha",
-        "drupal/glossify": "^1.0@beta",
+        "drupal/glossify": "^2.0",
         "drupal/google_tag": "^1.2",
         "drupal/hierarchical_term_formatter": "^1.1",
         "drupal/honeypot": "^2.0",
@@ -214,7 +217,7 @@
         "drupal/imagemagick": "^3.1",
         "drupal/inline_entity_form": "^1.0@RC",
         "drupal/insert_view_adv": "^1.0@beta",
-        "drupal/json_feed": "^1.2",
+        "drupal/json_feed": "1.2",
         "drupal/key": "^1.12",
         "drupal/layout_paragraphs": "^1.0@beta",
         "drupal/libraries": "^3.0@beta",
@@ -231,14 +234,14 @@
         "drupal/menu_item_extras": "^2.10",
         "drupal/metatag": "^1.8",
         "drupal/migrate_file": "^2.0.0",
-        "drupal/migrate_google_sheets": "^1.0",
+        "drupal/migrate_google_sheets": "^2.0",
         "drupal/migrate_plus": "^5.1",
         "drupal/migrate_process_inline_images": "1.x-dev",
         "drupal/migrate_source_csv": "^3.2",
         "drupal/migrate_tools": "^4.5",
         "drupal/mimemail": "^1.0@alpha",
         "drupal/moderated_content_bulk_publish": "^2.0",
-        "drupal/module_filter": "^3.1",
+        "drupal/module_filter": "^3.2",
         "drupal/office_hours": "^1.2",
         "drupal/openid_connect": "^1.0@beta",
         "drupal/openid_connect_windows_aad": "^1.1",
@@ -266,7 +269,7 @@
         "drupal/search_api_sorts": "^1.0",
         "drupal/sendgrid_integration": "1.x-dev",
         "drupal/siteimprove": "^1.5",
-        "drupal/sitemap": "^1.5",
+        "drupal/sitemap": "^2.0.0-beta2",
         "drupal/smart_date": "3.4.x-dev@dev",
         "drupal/smart_trim": "^1.1",
         "drupal/smtp": "^1.0",
@@ -286,9 +289,9 @@
         "drupal/views_bulk_edit": "^2.5",
         "drupal/views_bulk_operations": "^3.9",
         "drupal/views_contextual_filters_or": "^1.1",
-        "drupal/views_daterange_filters": "1.x-dev",
+        "drupal/views_daterange_filters": "^1.0.0-alpha1",
         "drupal/views_entity_form_field": "^1.0@beta",
-        "drupal/views_taxonomy_term_name_depth": "^6.0",
+        "drupal/views_taxonomy_term_name_depth": "^7.0.0",
         "drupal/viewsreference": "^1.7",
         "drupal/webform": "^6.0",
         "drupal/webform_myemma": "1.0",
@@ -407,7 +410,7 @@
                 "Adds JSONP support to feeds": "patches/json_feed_jsonp_support.patch"
             },
             "drupal/regex_redirect": {
-                "Patched module for proper string comparison" : "patches/3172316-captured-value-not.patch"
+                "Patched module for proper string comparison": "patches/3172316-captured-value-not.patch"
             },
             "drupal/migrate_plus": {
                 "Convert SimpleXMLElement to array": "https://www.drupal.org/files/issues/2020-04-27/migrate_tools-xml-class-too-3076534-14_0.patch"

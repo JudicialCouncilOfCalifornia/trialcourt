@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-store-front';
+$settings['config_sync_directory'] = '../config/config-store-front';
 $config['config_split.config_split.local']['folder'] = '../config/config-store-front-local';
 $settings['file_public_path']  = 'sites/default/files/store-front/default';
 

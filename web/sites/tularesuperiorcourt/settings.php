@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-tularesuperiorcourt';
+$settings['config_sync_directory'] = '../config/config-tularesuperiorcourt';
 $config['config_split.config_split.local']['folder'] = '../config/config-tularesuperiorcourt-local';
 $settings['file_public_path']  = 'sites/default/files/tularesuperiorcourt/default';
 

@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$config_directories['sync'] = '../config/config-slo2';
+$settings['config_sync_directory'] = '../config/config-slo2';
 $config['config_split.config_split.local']['folder'] = '../config/config-slo2-local';
 $settings['file_public_path']  = 'sites/default/files/slo2/default';
 
