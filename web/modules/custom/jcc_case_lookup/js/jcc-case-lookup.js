@@ -30,59 +30,59 @@
           let typedQuery = $('input[type="search"]').val();
           let detectedCases = detectCases(typedQuery);
 
-          // Display docket search option only if case number entered (e.g. S######).
+          // Display case search option only if case number entered (e.g. S######).
           if (detectedCases) {
-            if ($('#docket-search-field-modal').length == 0) {
-              // Docket search contextual modal.
-              let docketSearch = '<div id="docket-search-field-modal" class="docket-search-field-modal"></div>';
-              $('.usa-search').append(docketSearch);
+            if ($('#case-search-field-modal').length == 0) {
+              // Case search contextual modal.
+              let caseSearch = '<div id="case-search-field-modal" class="case-search-field-modal"></div>';
+              $('.usa-search').append(caseSearch);
 
-              // Modal docket search form submission event handler.
-              $(document).on('click', '.lookupDocket--modal', function () {
-                docketQuery(this);
+              // Modal case search form submission event handler.
+              $(document).on('click', '.lookup-case--modal', function () {
+                caseQuery(this);
               });
             }
             // Insert/Update modal content.
-            $('#docket-search-field-modal').html(docketSearchTriggers(detectedCases, 'modal'));
+            $('#case-search-field-modal').html(caseSearchTriggers(detectedCases, 'modal'));
           } else {
-            $('#docket-search-field-modal').remove();
+            $('#case-search-field-modal').remove();
           }
         });
 
         // If click or touch outside of modal...
         $(document).click(function(event) {
-          if(!$(event.target).closest('#docket-search-field-modal').length &&
+          if(!$(event.target).closest('#case-search-field-modal').length &&
             !$(event.target).closest('input[type="search"]').length &&
-            $('#docket-search-field-modal').is(':visible')) {
-            $('#docket-search-field-modal').remove();
+            $('#case-search-field-modal').is(':visible')) {
+            $('#case-search-field-modal').remove();
           }
         });
         // END.
 
         // BEGIN Search results page integration.
-        if ($('.search').length > 0 && $('.jcc-docket-search').length == 0) {
+        if ($('.search').length > 0 && $('.jcc-case-search').length == 0) {
           const queryString = window.location.search;
           const urlParams = new URLSearchParams(queryString);
           const submittedQuery = urlParams.get('search');
           const searchString = detectCases(submittedQuery);
-          const docketSearchBlock = '<div class="search__message--item jcc-docket-search">' +
+          const caseSearchBlock = '<div class="search__message--item jcc-case-search">' +
             '<p>' +
-            'Looking for opinions or case information from previous terms? We recommend starting with the <a href="https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=0&search=number">Docket Search</a> ' +
+            'Looking for opinions or case information from previous terms? We recommend starting with the <a href="https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=0&search=number">Case Search</a> ' +
             'located on the California Courts website where you can search by case number, case name, or names of the parties associated with the case.' +
             '</p>' +
             '</div>';
 
-          $('.search__form').append(docketSearchBlock);
+          $('.search__form').append(caseSearchBlock);
 
           if (searchString) {
             const searchResultsIntegration = '<p>' +
-                docketSearchTriggers(searchString, 'page') +
+                caseSearchTriggers(searchString, 'page') +
               '</p>';
-            $('.jcc-docket-search').prepend(searchResultsIntegration);
+            $('.jcc-case-search').prepend(searchResultsIntegration);
 
-            // Page results docket search form submission event handler.
-            $(document).on('click', '.lookupDocket--page', function () {
-              docketQuery(this);
+            // Page results case search form submission event handler.
+            $(document).on('click', '.lookup-case--page', function () {
+              caseQuery(this);
             });
           }
         }
@@ -95,12 +95,12 @@
           return query;
         }
 
-        // Docket search triggers.
-        function docketSearchTriggers(caseNumbers, type) {
+        // Case search triggers.
+        function caseSearchTriggers(caseNumbers, type) {
           let cases = new Array();
           jQuery.each(caseNumbers, function(index, item) {
             item = item.toUpperCase();
-            let link = '<a class="lookupDocket--' + type + '" href="javascript:void(0);" data-case="' + item + '" aria-label="Look up case ' + item + ' from the California Courts website in a new browser window.">' + item + '</a>';
+            let link = '<a class="lookup-case--' + type + '" href="javascript:void(0);" data-case="' + item + '" aria-label="Look up case ' + item + ' from the California Courts website in a new browser window.">' + item + '</a>';
             var isLastElement = index == caseNumbers.length -1;
             if (cases.length > 0 && isLastElement) {
               link = 'and ' + link;
@@ -119,10 +119,10 @@
         }
 
         // Set case number in form and submit redirected query.
-        function docketQuery(trigger) {
+        function caseQuery(trigger) {
           let query = $(trigger).attr('data-case');
           if (query) {
-            // Set district for docket search URL.
+            // Set district for case search URL.
             const districtLetter = query[0].charAt(0);
             let district;
             switch(districtLetter) {
