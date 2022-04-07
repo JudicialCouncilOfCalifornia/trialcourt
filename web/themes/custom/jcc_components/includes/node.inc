@@ -308,9 +308,10 @@ function jcc_get_menu_items($menu_name, $min_depth, $max_depth) {
  * Date timezone adjustment.
  */
 function jcc_timezone_adjust($date) {
-  $formatted = \Drupal::service('date.formatter')->format(
-    $date->getTimestamp(), 'custom', 'Y-m-d H:i:s P'
-  );
-
-  return $formatted;
+  if (!empty($date)) {
+    $formatted = \Drupal::service('date.formatter')->format(
+      $date->getTimestamp(), 'custom', 'Y-m-d H:i:s P'
+    );
+    return $formatted;
+  }
 }
