@@ -360,17 +360,19 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
     }
 
     // Overwriting icon color based on context.
-    if (!empty($media) && $icon['set'] == 'line-dark') {
-      $icon['set'] = 'line-white';
-    }
-    elseif (empty($media) && $icon['set'] == 'line-white') {
-      $icon['set'] = 'line-dark';
-    }
-    if (!empty($media) && $icon['set'] == 'experimental-dark') {
-      $icon['set'] = 'experimental-white';
-    }
-    elseif (empty($media) && $icon['set'] == 'experimental-white') {
-      $icon['set'] = 'experimental-dark';
+    if (!empty($icon['set'])) {
+      if (!empty($media) && $icon['set'] == 'line-dark') {
+        $icon['set'] = 'line-white';
+      }
+      elseif (empty($media) && $icon['set'] == 'line-white') {
+        $icon['set'] = 'line-dark';
+      }
+      if (!empty($media) && $icon['set'] == 'experimental-dark') {
+        $icon['set'] = 'experimental-white';
+      }
+      elseif (empty($media) && $icon['set'] == 'experimental-white') {
+        $icon['set'] = 'experimental-dark';
+      }
     }
 
     $set[] = [
