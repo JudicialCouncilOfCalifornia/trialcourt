@@ -61,6 +61,36 @@ function jcc_components_preprocess_views_view__news__sticky_list(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for news listing.
+ */
+function jcc_components_preprocess_views_view__news__news_list(&$variables) {
+  // Translation via TMGMT breaks dates where translators entered invlid date
+  // values in date fields. If date is invalid clear it before template renders.
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $node = $row['#node'];
+    if (!jcc_components_validate_date($node->field_date->value)) {
+      $node->field_date->value = '';
+    }
+  }
+}
+
+/**
+ * Helpfer function to validate a date string.
+ *
+ * @param string $date
+ *   The string to validate.
+ * @param string $format
+ *   The optional date format to test.
+ *
+ * @return bool
+ *   TRUE if the string is a valid date format, else FALSE.
+ */
+function jcc_components_validate_date($date, $format = 'Y-m-d') {
+  $d = DateTime::createFromFormat($format, $date);
+  return $d && $d->format($format) === $date;
+}
+
+/**
  * Implements hook_preprocess_HOOK() for events full listing.
  */
 function jcc_components_preprocess_views_view__events__events_list(&$variables) {
