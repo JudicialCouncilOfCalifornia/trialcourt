@@ -66,7 +66,7 @@ function jcc_components_preprocess_views_view__news__sticky_list(&$variables) {
 function jcc_components_preprocess_views_view__news__news_list(&$variables) {
   // Translation via TMGMT breaks dates where translators entered invlid date
   // values in date fields. If date is invalid clear it before template renders.
-  foreach ($variables['rows'][0]['#rows'] as $i => $row) {
+  foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
     if (!jcc_components_validate_date($node->field_date->value)) {
       $node->field_date->value = '';
