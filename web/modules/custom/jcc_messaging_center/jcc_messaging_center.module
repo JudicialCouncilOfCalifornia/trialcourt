@@ -23,6 +23,7 @@ use SendGrid\Client as SClient;
 function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
 
   $content_types_conf = \Drupal::config('jcc_messaging_center.settings');
+
   $cts = [];
   if ($content_types_conf->get('messaging_content_types') != NULL){
     $cts = array_filter($content_types_conf->get('messaging_content_types'));
@@ -118,6 +119,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
 
     if ($rows != 0) {
       $view_result = $view->result;
+      dsm($view_result);
       foreach ($view_result as $key => $row) {
         if (!array_search($view->field['mail']->getValue($row), $email_to_sendgrid)) {
           $email_to_sendgrid[] = $view->field['mail']->getValue($row);
@@ -133,6 +135,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
         }
       }
     }
+    dsm($email_to_sendgrid);
 
     // SENDING EMAIL TO SENDGRID
     // Building query for sendgrid.
