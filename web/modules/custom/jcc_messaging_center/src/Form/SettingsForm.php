@@ -6,7 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Settings Form for MyEmma webform field.
+ * Settings Form for Messaging center.
  */
 class SettingsForm extends ConfigFormBase {
 
@@ -14,7 +14,7 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'weform_myemma_settings';
+    return 'jcc_messaging_center_settings';
   }
 
   /**
@@ -22,7 +22,7 @@ class SettingsForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'jcc_subscriptions.settings',
+      'jcc_messaging_center.settings',
     ];
   }
 
@@ -30,28 +30,25 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('jcc_subscriptions.settings');
+    $config = $this->config('jcc_messaging_center.settings');
+
+    $types = \Drupal::entityTypeManager()
+      ->getStorage('node_type')
+      ->loadMultiple();
+
+    $types_options = [];
+    foreach ($types as $node_type) {
+      $types_options[$node_type->id()] = $node_type->label();
+    }
 
     $form_state->setCached(FALSE);
 
-    $form['newslink_digest_group'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Newslink Digest Group'),
-      '#default_value' => $config->get('newslink_digest_group'),
-    ];
-
-    $form['newslink_digest_time'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Digest Sent Time'),
-      '#default_value' => $config->get('newslink_digest_time') ?? '17:00',
-    ];
-
-    $form['newslink_digest_debug'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Debug NewsLink Digest'),
-      '#description' => $this->t('Digest will be mailed every cron run.'),
-      '#default_value' => $config->get('newslink_digest_debug'),
-    ];
+    $form['messaging_content_types'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Content types available for email notification'),
+      '#options' => $types_options,
+      '#default_value' => $config->get('messaging_content_types'),
+    );
 
     return parent::buildForm($form, $form_state);
   }
@@ -61,11 +58,9 @@ class SettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     /* @var $config \Drupal\Core\Config\Config */
-    $config = $this->configFactory->getEditable('jcc_subscriptions.settings');
+    $config = $this->configFactory->getEditable('jcc_messaging_center.settings');
 
-    $config->set('newslink_digest_group', $form_state->getValue('newslink_digest_group'))->save();
-    $config->set('newslink_digest_time', $form_state->getValue('newslink_digest_time'))->save();
-    $config->set('newslink_digest_debug', $form_state->getValue('newslink_digest_debug'))->save();
+    $config->set('messaging_content_types', $form_state->getValue('messaging_content_types'))->save();
 
     parent::submitForm($form, $form_state);
   }

@@ -21,27 +21,50 @@ use SendGrid\Client as SClient;
  * Implements hook_form_alter().
  */
 function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
+
+  $content_types_conf = \Drupal::config('jcc_messaging_center.settings');
+  $cts = array_filter($content_types_conf->get('messaging_content_types'));
+
+  $forms_enabled_on = ['taxonomy_term_user_groups_form'];
+  foreach ($cts as $ct) {
+    $forms_enabled_on[] = 'node_' . $ct . '_form';
+    $forms_enabled_on[] = 'node_' . $ct . '_edit_form';
+  }
+
   if (in_array($form['#form_id'],
-    [
-      'node_messaging_news_item_form',
-      'node_messaging_news_item_edit_form',
-      'taxonomy_term_user_groups_form',
-  // 'user_form',
-    ]
+    $forms_enabled_on
   )) {
-    if ($form['#form_id'] == 'user_form') {
-      // kint('user_form');.
+    $user_groups = [];
+    $vid = 'user_groups';
+    $terms =\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
+    foreach ($terms as $term) {
+      $user_groups[$term->tid] = $term->name;
+//      $user_groups[] = $term->name;
     }
-    elseif ($form['#form_id'] == 'node_messaging_news_item_edit_form' ||
-      $form['#form_id'] == 'node_messaging_news_item_form') {
-      $form['group_messaging_options']['field_send_email'] = [
+
+    if (!($form['#form_id'] == 'taxonomy_term_user_groups_form')) {
+      $form['messaging'] = array(
+        '#type' => 'details',
+        '#title' => 'Messaging options',
+        '#group' => 'advanced',
+      );
+      $form['options']['field_send_email'] = [
         '#type' => 'checkbox',
         '#title' => t('Send an email when saving this news item.'),
         '#default_value' => FALSE,
         '#weight' => 50,
+        "#group" => "messaging",
+      ];
+
+      $form['messaging']['groups_to_notify'] = [
+        '#type' => 'checkboxes',
+        '#options' => $user_groups,
+        '#title' => 'Send to: ',
+        "#group" => "messaging",
+        '#weight' => 60,
       ];
     }
-    elseif ($form['#form_id'] == 'taxonomy_term_user_groups_form') {
+    else {
       $form['field_author']['widget'][0]['target_id']['#default_value'] = User::load(\Drupal::currentUser()->id());
     }
     foreach (array_keys($form['actions']) as $action) {
@@ -59,18 +82,27 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
  * Alters for submission - sends query.
  */
 function jcc_messaging_center_form_submit($form, FormStateInterface $form_state) {
-  if (in_array($form['#form_id'], ['node_messaging_news_item_edit_form', 'node_messaging_news_item_form'])
+  $content_types_conf = \Drupal::config('jcc_messaging_center.settings');
+  $cts = array_filter($content_types_conf->get('messaging_content_types'));
+
+  $forms_enabled_on = [];
+  foreach ($cts as $ct) {
+    $forms_enabled_on[] = 'node_' . $ct . '_form';
+    $forms_enabled_on[] = 'node_' . $ct . '_edit_form';
+  }
+  if (in_array($form['#form_id'], $forms_enabled_on)
     && $form_state->cleanValues()->getValues()['field_send_email'] == 1) {
+
     global $base_url;
     // Gathering emails to send emails to.
     $email_to_sendgrid = [];
     $email_access_keys = [];
-    $form_group_values = $form_state->cleanValues()->getValues()['field_mailing_group'];
+    $form_group_values = array_filter($form_state->cleanValues()->getValues()['groups_to_notify']);
 
     $groups_array = [];
     if ($form_group_values) {
       foreach ($form_group_values as $data) {
-        $groups_array[] = $data['target_id'];
+        $groups_array[] = $data;
       }
     }
     $view = Views::getView('users_by_group');
@@ -84,6 +116,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
 
     if ($rows != 0) {
       $view_result = $view->result;
+      dsm($view_result);
       foreach ($view_result as $key => $row) {
         if (!array_search($view->field['mail']->getValue($row), $email_to_sendgrid)) {
           $email_to_sendgrid[] = $view->field['mail']->getValue($row);
@@ -99,6 +132,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
         }
       }
     }
+    dsm($email_to_sendgrid);
 
     // SENDING EMAIL TO SENDGRID
     // Building query for sendgrid.
@@ -250,11 +284,4 @@ function jcc_messaging_center_tokens($type, $tokens, array $data, array $options
     }
   }
   return $replacements;
-}
-
-/**
- * Implements hook_entity_type_build().
- */
-function jcc_messaging_center_entity_type_build(array &$entity_types) {
-  $entity_types['user']->setFormClass('group_edit', 'Drupal\jcc_messaging_center\Form\ManageMessagingCenter');
 }
