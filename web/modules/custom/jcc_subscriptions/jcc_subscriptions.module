@@ -11,6 +11,7 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\views\Views;
 
 use JudicialCouncil\Emma\JccClient;
 use SendGrid\Client as SClient;
@@ -362,4 +363,21 @@ function jcc_subscriptions_tokens($type, $tokens, array $data, array $options, B
 function jcc_subscriptions_cron() {
   $digest_cron_task = \Drupal::service('jcc_subscriptions.digestcron');
   $digest_cron_task->cron();
+
+  // Old newslinks item Purge (Batch of 100 nodes)
+  $view = Views::getView('newslinks_expiration');
+  $view->setDisplay('default');
+  $view->execute();
+  $view_result = $view->result;
+
+  if (!empty($view_result)) {
+    $storage_handler = \Drupal::entityTypeManager()->getStorage("node");
+    $nodes_to_delete = [];
+    foreach ($view->result as $row) {
+      $nodes_to_delete[] = $row->nid;
+    }
+    \Drupal::logger('sendgrid_message')->notice('Purged newslinks with nids: ' . implode(', ', $nodes_to_delete));
+    $entities = $storage_handler->loadMultiple($nodes_to_delete);
+    $storage_handler->delete($entities);
+  }
 }
