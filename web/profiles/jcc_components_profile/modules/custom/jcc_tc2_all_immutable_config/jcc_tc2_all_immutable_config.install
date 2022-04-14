@@ -621,3 +621,89 @@ function jcc_tc2_all_immutable_config_prefix_paragraph_fields($field_name) {
     \Drupal::messenger()->addStatus(t('Alameda only, no changes.'));
   }
 }
+
+/** TCI-768: Preinstall filefield_paths and import feature config for batch process. */
+function jcc_tc2_all_immutable_config_update_8035() {
+  $modules = ['filefield_paths'];
+
+  foreach ($modules as $module) {
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      continue;
+    }
+    \Drupal::service('module_installer')->install([$module]);
+  }
+
+  // Make sure config is imported first.
+  \Drupal::service('features.manager')->import(['jcc_tc2_all_immutable_config']);
+}
+
+/** TCI-768: move Media: Files to private directory. */
+function jcc_tc2_all_immutable_config_update_8036(&$sandbox) {
+  $bundle_fields = \Drupal::getContainer()->get('entity_field.manager')->getFieldDefinitions('media', 'file');
+  $field_config = $bundle_fields['field_media_file'];
+  /** @var Drupal\Core\Entity\ContentEntityStorageBase $entity_storage */
+  $entity_storage = \Drupal::entityTypeManager()
+    ->getStorage($field_config->getTargetEntityTypeId());
+
+  if (!isset($sandbox['total'])) {
+    $query = \Drupal::entityQuery('media');
+    $result = $query->condition('bundle', 'file')
+      ->condition("field_media_file.target_id", '', '<>')
+      ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
+      ->execute();
+
+    $sandbox['total'] = count($result);
+    $sandbox['current'] = 0;
+
+    if (empty($sandbox['total'])) {
+      $sandbox['#finished'] = 1;
+      return;
+    }
+  }
+
+  $batch_size = 25;
+
+  $query = \Drupal::entityQuery('media');
+  $result = $query->condition('bundle', 'file')
+    ->condition("field_media_file.target_id", '', '<>')
+    ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
+    ->range($sandbox['current'], $batch_size)
+    ->execute();
+
+  if (empty($result)) {
+    $sandbox['#finished'] = 1;
+    return;
+  }
+
+  foreach ($result as $oid) {
+    // For each oid, load the object, update the files and save it.
+    $entity = $entity_storage->load($oid);
+
+    // Enable active updating if it isn't already enabled.
+    $active_updating = $field_config->getThirdPartySetting('filefield_paths', 'active_updating');
+    if (!$active_updating) {
+      $field_config->setThirdPartySetting('filefield_paths', 'active_updating', TRUE);
+      $field_config->save();
+    }
+
+    $entity->original = $entity;
+    filefield_paths_entity_update($entity);
+
+    // Restore active updating to it's previous state if necessary.
+    if (!$active_updating) {
+      $field_config->setThirdPartySetting('filefield_paths', 'active_updating', $active_updating);
+      $field_config->save();
+    }
+    $sandbox['current']++;
+  }
+
+  \Drupal::messenger()
+    ->addMessage($sandbox['current'] . ' files processed.');
+
+  if ($sandbox['current'] >= $sandbox['total']) {
+    $sandbox['#finished'] = 1;
+  }
+  else {
+    $sandbox['#finished'] = ($sandbox['current'] / $sandbox['total']);
+  }
+}

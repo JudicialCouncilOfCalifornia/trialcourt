@@ -7,12 +7,30 @@ dependencies:
     - media.type.file
   module:
     - file
+    - filefield_paths
     - tmgmt_content
 third_party_settings:
+  filefield_paths:
+    enabled: true
+    file_path:
+      value: '[file:path]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    redirect: false
+    retroactive_update: false
+    active_updating: true
+    file_name:
+      value: '[file:ffp-name-only-original].[file:ffp-extension-original]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
   tmgmt_content:
     excluded: false
 _core:
-  default_config_hash: DJ6070hEVlhUYnPgmmRCoLLU-_7KxSa98s3lAnl8mgo
+  default_config_hash: PpjdVkl6dtSTn1xWkstVAieY3Ty0I2r7UkJkRTJyE_E
 id: media.file.field_media_file
 field_name: field_media_file
 entity_type: media

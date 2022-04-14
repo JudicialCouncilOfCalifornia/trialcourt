@@ -1,0 +1,19 @@
+diff --git a/filefield_paths.module b/filefield_paths.module
+index dd207c5..50f991b 100644
+--- a/filefield_paths.module
++++ b/filefield_paths.module
+@@ -424,6 +424,14 @@ function filefield_paths_process_string($value, $data, array $settings = []) {
+     $value = \Drupal::service('token')
+       ->replace($value, $data, ['clear' => TRUE]);
+   }
++  $scheme = parse_url($value, PHP_URL_SCHEME);
++  $file_name = parse_url($value, PHP_URL_PATH);
++  $replacements = [
++    "$scheme://",
++    $file_name
++  ];
++  $value = str_replace($replacements, '', $value);
++  $value = trim($value, '/');
+   $paths = explode('/', $value);
+ 
+   foreach ($paths as $i => &$path) {

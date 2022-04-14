@@ -37,7 +37,7 @@ if (!defined("PANTHEON_VERSION")) {
 $pantheon_services_file = __DIR__ . '/services.pantheon.preproduction.yml';
 if (
   isset($_ENV['PANTHEON_ENVIRONMENT']) &&
-  ( ($_ENV['PANTHEON_ENVIRONMENT'] == 'live') || ($_ENV['PANTHEON_ENVIRONMENT'] == 'test') )
+  (($_ENV['PANTHEON_ENVIRONMENT'] == 'live') || ($_ENV['PANTHEON_ENVIRONMENT'] == 'test'))
 ) {
   $pantheon_services_file = __DIR__ . '/services.pantheon.production.yml';
 }
@@ -52,7 +52,7 @@ if (file_exists($pantheon_services_file)) {
  * environment, but may be exposed if you migrate your site to
  * another environment.
  */
-$settings['file_private_path'] = 'sites/default/files/programs/default/private';
+$settings['file_private_path'] = 'sites/default/files/private/programs';
 
 // Check to see if we are serving an installer page.
 $is_installer_url = (strpos($_SERVER['SCRIPT_NAME'], '/core/install.php') === 0);
@@ -68,17 +68,16 @@ $is_installer_url = (strpos($_SERVER['SCRIPT_NAME'], '/core/install.php') === 0)
  * migrate your site to another environment on the public internet,
  * you should relocate these locations. See "After Installation"
  * at https://www.drupal.org/node/2431247
- *
  */
 if ($is_installer_url) {
-  $config_directories = array(
+  $config_directories = [
     CONFIG_SYNC_DIRECTORY => 'sites/default/files/programs',
-  );
+  ];
 }
 else {
-  $config_directories = array(
+  $config_directories = [
     CONFIG_SYNC_DIRECTORY => '../config/config-programs',
-  );
+  ];
 }
 
 /**
@@ -87,7 +86,6 @@ else {
  * Issue: https://github.com/pantheon-systems/drops-8/issues/3
  *
  * c.f. https://github.com/pantheon-systems/drops-8/pull/53
- *
  */
 if (
   isset($_ENV['PANTHEON_ENVIRONMENT']) &&
@@ -106,14 +104,13 @@ if (
  * directly from Pantheon to Drupal.
  *
  * Issue: https://github.com/pantheon-systems/drops-8/issues/8
- *
  */
 if (isset($_SERVER['PRESSFLOW_SETTINGS'])) {
   $pressflow_settings = json_decode($_SERVER['PRESSFLOW_SETTINGS'], TRUE);
   foreach ($pressflow_settings as $key => $value) {
     // One level of depth should be enough for $conf and $database.
     if ($key == 'conf') {
-      foreach($value as $conf_key => $conf_value) {
+      foreach ($value as $conf_key => $conf_value) {
         $conf[$conf_key] = $conf_value;
       }
     }
@@ -122,7 +119,7 @@ if (isset($_SERVER['PRESSFLOW_SETTINGS'])) {
       // additional databases. Also, allows fun things with 'prefix' if they
       // want to try multisite.
       if (!isset($databases) || !is_array($databases)) {
-        $databases = array();
+        $databases = [];
       }
       $databases = array_replace_recursive($databases, $value);
     }
@@ -133,23 +130,21 @@ if (isset($_SERVER['PRESSFLOW_SETTINGS'])) {
 }
 
 /**
- * Handle Hash Salt Value from Drupal
+ * Handle Hash Salt Value from Drupal.
  *
  * Issue: https://github.com/pantheon-systems/drops-8/issues/10
- *
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
   $settings['hash_salt'] = $_ENV['DRUPAL_HASH_SALT'];
 }
 
 /**
- * Define appropriate location for tmp directory
+ * Define appropriate location for tmp directory.
  *
  * Issue: https://github.com/pantheon-systems/drops-8/issues/114
- *
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-  $config['system.file']['path']['temporary'] = $_SERVER['HOME'] .'/tmp';
+  $config['system.file']['path']['temporary'] = $_SERVER['HOME'] . '/tmp';
 }
 
 /**
