@@ -3,7 +3,6 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\xlsx\Event\XlsxEventType;
 use Drupal\xlsx\Event\XlsxEntityEvent;
-use Drupal\xlsx\Form\LicenseForm;
 use Drupal\xlsx\Entity\XlsxEntityMapping;
 
 /**
@@ -45,23 +44,4 @@ function xlsx_cron() {
  */
 function xlsx_cronapi_callback($xlsx_id) {
   
-}
-
-/**
- * Implements hook_update_premium().
- */
-function xlsx_update_premium() {
-  $config = \Drupal::config(LicenseForm::CONFIG_NAME);
-  return [
-    [
-      'name' => 'xlsx',
-      'category' => 'modules',
-      'project_url' => 'https://downloads.minnur.com/drupal/xlsx',
-      'update_server' => 'https://downloads.minnur.com/update/drupal/xlsx',
-      'parameters' => [
-        'e' => $config->get('license_email'),
-        'l' => $config->get('license_number'),
-      ],
-    ],
-  ];
 }
