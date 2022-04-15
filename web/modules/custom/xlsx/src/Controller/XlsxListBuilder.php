@@ -12,7 +12,6 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\xlsx\Plugin\XlsxSourceManager;
 use Drupal\xlsx\Plugin\XlsxExportManager;
-use Drupal\xlsx\Form\LicenseForm;
 
 
 /**
@@ -152,29 +151,7 @@ class XlsxListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function render() {
-    $config = \Drupal::config(LicenseForm::CONFIG_NAME);
     $build = parent::render();
-    if (empty($config->get('license_email')) || empty($config->get('license_number'))) {
-      $build['license_info'] = [
-        '#type' => 'inline_template',
-        '#template' => '<div class="xlsx-msg require-license"><strong>Please <a href="{{ link }}" class="use-ajax"  data-dialog-type="modal" data-dialog-options="{&quot;width&quot;:&quot;525&quot;}" data-drupal-link-system-path="{{ link|trim(\'/\', \'left\') }}">provide license information</a> in order to be able to get module updates.</strong></div>',
-        '#context' => [
-          'link' => Url::fromRoute('xlsx.license')->toString(),
-        ],
-        '#weight' => -200,
-        '#attached' => [
-          'library' => ['xlsx/xlsx.admin']
-        ],
-      ];
-      $build['contact_developer'] = [
-        '#type' => 'inline_template',
-        '#template' => '<div class="xlsx-info-msg">If you have questions or you would like customizations please <a href="https://downloads.minnur.com/contact-developer" target="_blank">contact developer</a>.</div>',
-        '#weight' => 100,
-        '#attached' => [
-          'library' => ['xlsx/xlsx.admin']
-        ],
-      ];
-    }
     return $build;
   }
 
