@@ -1,0 +1,34 @@
+{#
+/**
+* @file
+* Default theme implementation to display a block.
+*
+* @see template_preprocess_block()
+*
+* @ingroup themeable
+*/
+#}
+
+{% set case_lookup %}
+  {% if case_lookup_system == 'accms' %}
+    <div id="query-case-number" class="usa-prose">
+      <input type="text" class="usa-input query-case-number__input" />
+      <a class="jcc-button--primary query-case-number__submit">Search Case Number</a>
+      <div class="jcc-list case-search__listing">
+        <p>Looks like you are trying to look up multiple cases? Use the following links below to lookup the valid case numbers individually.</p>
+        <ul class="jcc-list__list query-case-number__results"></ul>
+      </div>
+    </div>
+  {% endif %}
+{% endset %}
+
+{% if case_lookup %}
+  {% include "@molecules/section/section.twig" with {
+    section: {
+      heading: {
+        width: "partial",
+      },
+      content: case_lookup,
+    }
+  } %}
+{% endif %}
