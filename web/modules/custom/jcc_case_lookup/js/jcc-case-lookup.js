@@ -67,8 +67,8 @@
           const searchString = detectCases(submittedQuery);
           const caseSearchBlock = '<div class="search__message--item jcc-case-search">' +
             '<p>' +
-            'Looking for opinions or case information from previous terms? We recommend starting with the <a href="https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=0&search=number">Case Search</a> ' +
-            'located on the California Courts website where you can search by case number, case name, or names of the parties associated with the case.' +
+            'Looking for opinions or case information from previous terms? We recommend starting with the <a href="https://appellatecases.courtinfo.ca.gov">Appellate Courts docket search</a>, ' +
+            'where you can search by case number, case name, or names of the parties associated with the case.' +
             '</p>' +
             '</div>';
 
@@ -153,7 +153,7 @@
               } else {
                 cases = cases.join(', ');
               }
-              triggerBlock = 'Look up ' + cases + ' from the California Courts website?';
+              triggerBlock = 'Look up ' + cases + ' from the Appellate Courts docket search website?';
           }
 
           return triggerBlock;
