@@ -15,7 +15,7 @@
       $(document).ready(function() {
         // BEGIN Load hidden ACCMS lookup form onto page if global search field exists.
         if ($('.usa-search input').length && $('#searchFormNumber').length == 0) {
-          const searchForm = '<form class="sr-only" aria-hidden="true" name="searchFormNumber" id="searchFormNumber" method="post" target="_blank" action="https://appellatecases.courtinfo.ca.gov/">' +
+          const searchForm = '<form class="sr-only" aria-hidden="true" name="searchFormNumber" id="searchFormNumber" method="post" action="https://appellatecases.courtinfo.ca.gov/">' +
             '<input type="text" name="query_caseNumber" id="query_caseNumber" />' +
             '<input type="checkbox" name="bot_check_1" id="bot_check_1" value="Y" checked>' +
             '<input type="checkbox" name="bot_check_6" id="bot_check_6" value="Y">' +
