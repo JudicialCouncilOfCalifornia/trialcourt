@@ -11,3 +11,17 @@
 function jcc_case_lookup_page_attachments(array &$attachments) {
   $attachments['#attached']['library'][] = 'jcc_case_lookup/jcc_case_lookup';
 }
+
+/**
+ * Implements hook_theme().
+ */
+function jcc_case_lookup_theme() {
+  return [
+    'jcc_case_lookup' => [
+      'variables' => [
+        'case_lookup_system' => NULL,
+      ],
+      'render element' => 'children',
+    ],
+  ];
+}
