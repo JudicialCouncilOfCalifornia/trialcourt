@@ -94,8 +94,22 @@
         if ($('#query-case-number').length > 0) {
           const inputField = '#query-case-number__input';
           const ariaSubmitMessages = 'aria-describedby';
+          const caseListing = '#case-search__listing';
 
-          $('#query-case-number__submit').on('click', function () {
+          // Submit button handler.
+          $('#query-case-number__submit').on('click keypress', function (e) {
+            blockViewSubmit(e);
+          });
+
+          // Submit from input field using ENTER key.
+          $('#query-case-number__input').on('keypress', function (e) {
+            if (e.keyCode == 13) {
+              blockViewSubmit(e);
+            }
+          });
+
+          // Submit function.
+          function blockViewSubmit(event) {
             let typedQuery = $('.query-case-number__input').val();
             let submittedCases = detectCases(typedQuery);
 
@@ -105,7 +119,7 @@
               $(inputField).removeAttr(ariaSubmitMessages)
 
               if (submittedCases.length == 1) {
-                $('.case-search__listing').hide();
+                $(caseListing).hide();
                 // Display helper when multiple case numbers.
                 let casePrefix = submittedCases[0].charAt(0);
                 let district = getDistrictCode(casePrefix);
@@ -113,28 +127,32 @@
                 $('#query_caseNumber').val(submittedCases);
                 $('form[name="searchFormNumber"]').submit();
               } else {
-                $('.case-search__listing').show();
+                $(caseListing).show();
                 // Insert/Update listing.
                 let listing = caseSearchTriggers(submittedCases, 'list');
                 $('.query-case-number__results').html(listing);
-                $(inputField).attr(ariaSubmitMessages, 'case-search__listing');
-                $(inputField).focus();
+                // If submitted by ENTER key, set focus on listing block.
+                if (event.keyCode == 13) {
+                  $(caseListing).focus();
+                }
                 // Listing case search form submission event handler.
                 $(document).on('click', '.lookup-case--list', function () {
                   caseQuery(this);
                 });
               }
             } else {
+              // Exception handling.
+              $(caseListing).hide();
               $('#query-case-number .usa-alert__wrapper--error').show();
               $('#query-case-number .usa-alert__heading').html('No valid case number submitted.');
               $(inputField).attr(ariaSubmitMessages, 'query-case-number__error');
               $(inputField).focus();
             }
-          });
+          }
         }
         // END.
 
-        // Detect and extract first case number from query string (e.g. S170280).
+        // Detect and extract valid case numbers from query string (e.g. S170280).
         function detectCases(query) {
           query = query.match(/[A-Za-z][0-9]{6}/g);
 
@@ -148,7 +166,7 @@
 
           jQuery.each(caseNumbers, function(index, item) {
             item = item.toUpperCase();
-            let link = '<a class="lookup-case--' + type + '" href="javascript:void(0);" data-case="' + item + '" aria-label="Look up case ' + item + ' from the California Courts website in a new browser window.">' + item + '</a>';
+            let link = '<button class="jcc-button--unstyled lookup-case__trigger lookup-case--' + type + '" href="javascript:void(0);" data-case="' + item + '" aria-label="Look up case ' + item + ' from the California Courts website in a new browser window.">' + item + '</button>';
             let isLastElement = index == caseNumbers.length -1;
             if (type == 'list') {
               link = '<li class="jcc-list__item">' + link + '</li>'
