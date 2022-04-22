@@ -9,26 +9,19 @@
 */
 #}
 
-{% set case_lookup %}
-  {% if case_lookup_system == 'accms' %}
-    <div id="query-case-number" class="usa-prose">
-      <input type="text" class="usa-input query-case-number__input" />
-      <a class="jcc-button--primary query-case-number__submit">Search Case Number</a>
-      <div class="jcc-list case-search__listing">
-        <p>Looks like you are trying to look up multiple cases? Use the following links below to lookup the valid case numbers individually.</p>
-        <ul class="jcc-list__list query-case-number__results"></ul>
+{% if case_lookup_system == 'accms' %}
+  <div id="query-case-number" class="usa-prose">
+    <div class="usa-alert__wrapper usa-alert__wrapper--error">
+      <div class="usa-alert usa-alert--error usa-alert--slim usa-alert--full">
+        <div id="query-case-number__error" class="usa-alert__body"><h3 class="usa-alert__heading"></h3><div class="usa-alert__text usa-prose"></div></div>
       </div>
     </div>
-  {% endif %}
-{% endset %}
-
-{% if case_lookup %}
-  {% include "@molecules/section/section.twig" with {
-    section: {
-      heading: {
-        width: "partial",
-      },
-      content: case_lookup,
-    }
-  } %}
+    <label>Enter a seven character case number to lookup (e.g. S123456).</label>
+    <input type="text" id="query-case-number__input" class="usa-input query-case-number__input" />
+    <a id="query-case-number__submit" class="jcc-button--primary query-case-number__submit">Search Case Number</a>
+    <div id="case-search__listing" class="jcc-list case-search__listing">
+      <p>Looks like you are trying to look up multiple cases? Use the following links below to lookup the valid case numbers individually.</p>
+      <ul class="jcc-list__list query-case-number__results"></ul>
+    </div>
+  </div>
 {% endif %}

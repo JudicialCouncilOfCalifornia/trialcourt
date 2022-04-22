@@ -26,15 +26,17 @@
         // END.
 
         // BEGIN Global search field integration.
+        const modal = '#case-search-field-modal';
+
         $('.usa-search input').on('keyup', function() {
           let typedQuery = $('input[type="search"]').val();
           let detectedCases = detectCases(typedQuery);
 
           // Display case search option only if case number entered.
           if (detectedCases) {
-            if ($('#case-search-field-modal').length == 0) {
-              // Case search contextual modal.
-              let caseSearch = '<div id="case-search-field-modal" class="case-search-field-modal"></div>';
+            if ($(modal).length == 0) {
+              // Case search contextual modal, screen readers will rely on results page.
+              let caseSearch = '<div id="case-search-field-modal" class="case-search-field-modal" aria-hidden="true"></div>';
               $('.usa-search').append(caseSearch);
 
               // Modal form submission event handler.
@@ -43,18 +45,18 @@
               });
             }
             // Insert/Update modal content.
-            $('#case-search-field-modal').html(caseSearchTriggers(detectedCases, 'modal'));
+            $(modal).html(caseSearchTriggers(detectedCases, 'modal'));
           } else {
-            $('#case-search-field-modal').remove();
+            $(modal).remove();
           }
         });
 
-        // If click or touch outside of modal...
+        // If click or touch outside of modal.
         $(document).click(function(event) {
-          if(!$(event.target).closest('#case-search-field-modal').length &&
+          if(!$(event.target).closest(modal).length &&
             !$(event.target).closest('input[type="search"]').length &&
-            $('#case-search-field-modal').is(':visible')) {
-            $('#case-search-field-modal').remove();
+            $(modal).is(':visible')) {
+            $(modal).remove();
           }
         });
         // END.
@@ -90,28 +92,43 @@
 
         // BEGIN Custom block view form submit handler.
         if ($('#query-case-number').length > 0) {
-          $('.query-case-number__submit').on('click', function () {
+          const inputField = '#query-case-number__input';
+          const ariaSubmitMessages = 'aria-describedby';
+
+          $('#query-case-number__submit').on('click', function () {
             let typedQuery = $('.query-case-number__input').val();
             let submittedCases = detectCases(typedQuery);
 
             // Display helper only if multiple case numbers else submit lookup.
-            if (submittedCases && submittedCases.length > 1) {
-              $('.case-search__listing').show();
-              // Insert/Update listing.
-              let listing = caseSearchTriggers(submittedCases, 'list');
-              $('.query-case-number__results').html(listing);
-              // Listing case search form submission event handler.
-              $(document).on('click', '.lookup-case--list', function () {
-                caseQuery(this);
-              });
-            } else {
-              $('.case-search__listing').hide();
+            if (submittedCases != null) {
+              $('#query-case-number .usa-alert__wrapper--error').hide();
+              $(inputField).removeAttr(ariaSubmitMessages)
 
-              const casePrefix = submittedCases[0].charAt(0);
-              let district = getDistrictCode(casePrefix);
-              $('#searchFormNumber').attr('action', 'https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=' + district + '&search=number');
-              $('#query_caseNumber').val(submittedCases);
-              $('form[name="searchFormNumber"]').submit();
+              if (submittedCases.length == 1) {
+                $('.case-search__listing').hide();
+                // Display helper when multiple case numbers.
+                let casePrefix = submittedCases[0].charAt(0);
+                let district = getDistrictCode(casePrefix);
+                $('#searchFormNumber').attr('action', 'https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=' + district + '&search=number');
+                $('#query_caseNumber').val(submittedCases);
+                $('form[name="searchFormNumber"]').submit();
+              } else {
+                $('.case-search__listing').show();
+                // Insert/Update listing.
+                let listing = caseSearchTriggers(submittedCases, 'list');
+                $('.query-case-number__results').html(listing);
+                $(inputField).attr(ariaSubmitMessages, 'case-search__listing');
+                $(inputField).focus();
+                // Listing case search form submission event handler.
+                $(document).on('click', '.lookup-case--list', function () {
+                  caseQuery(this);
+                });
+              }
+            } else {
+              $('#query-case-number .usa-alert__wrapper--error').show();
+              $('#query-case-number .usa-alert__heading').html('No valid case number submitted.');
+              $(inputField).attr(ariaSubmitMessages, 'query-case-number__error');
+              $(inputField).focus();
             }
           });
         }
@@ -204,7 +221,7 @@
               districtCode = 6;
               break;
             default:
-              districtCode = 0
+              districtCode = -1;
           }
 
           return districtCode;
