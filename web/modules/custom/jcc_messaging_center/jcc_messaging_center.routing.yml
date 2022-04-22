@@ -1,3 +1,4 @@
+# -- ACTIONS
 jcc_messaging_center.content:
   path: '/messaging-center/{member_email}/delete-all/{access_key}'
   defaults:
@@ -28,6 +29,15 @@ jcc_messaging_center.group_edit:
   options:
     no_cache: 'TRUE'
 
+jcc_messaging_center.views_ajax:
+  path: '/messenger/ajax/groups/users/{group}'
+  defaults:
+    _controller: '\Drupal\jcc_messaging_center\Controller\JccMessagingCenterAjaxController::ajaxView'
+  requirements:
+    _permission: 'access content'
+
+# -- END OF ACTIONS
+
 jcc_messaging_center.settings:
   path: '/admin/config/services/messaging-center'
   defaults:
@@ -36,26 +46,12 @@ jcc_messaging_center.settings:
   requirements:
     _permission: 'administer Messaging center'
 
-jcc_messaging_center.overall_dashboard:
-  path: '/messenger/subscriptions'
-  requirements:
-    _permission: 'administer Messaging center'
-  options:
-    no_cache: 'TRUE'
-
 jcc_messaging_center.groups_dashboard:
-  path: '/messenger/group-overview'
+  path: 'admin/messenger/group-overview'
   requirements:
     _permission: 'administer Messaging center'
   options:
     no_cache: 'TRUE'
-
-jcc_messaging_center.views_ajax:
-  path: '/messenger/ajax/groups/users/{group}'
-  defaults:
-    _controller: '\Drupal\jcc_messaging_center\Controller\JccMessagingCenterAjaxController::ajaxView'
-  requirements:
-    _permission: 'access content'
 
 jcc_messaging_center.messages:
   path: '/messenger/messages'
