@@ -22,7 +22,10 @@ use SendGrid\Client as SClient;
 function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
 
   $content_types_conf = \Drupal::config('jcc_messaging_center.settings');
-  $cts = array_filter($content_types_conf->get('messaging_content_types'));
+  $cts = [];
+  if ($content_types_conf->get('messaging_content_types') != NULL){
+    $cts = array_filter($content_types_conf->get('messaging_content_types'));
+  }
 
   $forms_enabled_on = ['taxonomy_term_user_groups_form'];
   foreach ($cts as $ct) {
