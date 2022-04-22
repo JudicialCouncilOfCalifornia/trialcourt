@@ -36,6 +36,11 @@ class SettingsForm extends ConfigFormBase {
       ->getStorage('node_type')
       ->loadMultiple();
 
+    $default_value = [];
+    if($config->get('messaging_content_types') != NULL){
+      $default_value = $config->get('messaging_content_types');
+    }
+
     $types_options = [];
     foreach ($types as $node_type) {
       $types_options[$node_type->id()] = $node_type->label();
@@ -47,7 +52,7 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'checkboxes',
       '#title' => t('Content types available for email notification'),
       '#options' => $types_options,
-      '#default_value' => $config->get('messaging_content_types'),
+      '#default_value' => $default_value,
     );
 
     return parent::buildForm($form, $form_state);

@@ -40,7 +40,6 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id)
       $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
       foreach ($terms as $term) {
         $user_groups[$term->tid] = $term->name;
-  //      $user_groups[] = $term->name;
       }
 
       if (!($form['#form_id'] == 'taxonomy_term_user_groups_form')) {
