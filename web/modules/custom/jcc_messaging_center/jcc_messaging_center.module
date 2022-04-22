@@ -44,19 +44,19 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
         $user_groups[$term->tid] = $term->name;
       }
 
-    if (!($form['#form_id'] == 'taxonomy_term_user_groups_form')) {
-      $form['messaging'] = array(
-        '#type' => 'details',
-        '#title' => 'Messaging options',
-        '#group' => 'advanced',
-      );
-      $form['options']['field_send_email'] = [
-        '#type' => 'checkbox',
-        '#title' => t('Send an email when saving this news item.'),
-        '#default_value' => FALSE,
-        '#weight' => 50,
-        "#group" => "messaging",
-      ];
+      if (!($form['#form_id'] == 'taxonomy_term_user_groups_form')) {
+        $form['messaging'] = array(
+          '#type' => 'details',
+          '#title' => 'Messaging options',
+          '#group' => 'advanced',
+        );
+        $form['options']['field_send_email'] = [
+          '#type' => 'checkbox',
+          '#title' => t('Send an email when saving this item.'),
+          '#default_value' => FALSE,
+          '#weight' => 50,
+          "#group" => "messaging",
+        ];
 
       $form['messaging']['groups_to_notify'] = [
         '#type' => 'checkboxes',
@@ -118,7 +118,6 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
 
     if ($rows != 0) {
       $view_result = $view->result;
-      dsm($view_result);
       foreach ($view_result as $key => $row) {
         if (!array_search($view->field['mail']->getValue($row), $email_to_sendgrid)) {
           $email_to_sendgrid[] = $view->field['mail']->getValue($row);
@@ -134,7 +133,6 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
         }
       }
     }
-    dsm($email_to_sendgrid);
 
     // SENDING EMAIL TO SENDGRID
     // Building query for sendgrid.
@@ -147,20 +145,11 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     $date = new DrupalDateTime($news_post_date_unformated, DateTimeItemInterface::STORAGE_TIMEZONE);
     $news_post_date = $date->format('F j, Y');
 
-    // Additional news.
-    $formatted_additional_items = '';
-    $news_additional = $form_state->cleanValues()->getValues()['field_additional_item'];
-    if ($news_additional) {
-      foreach ($news_additional as $additional_item) {
-        $formatted_additional_items .= '<div class="additional_item"><h2><a href="' . $additional_item['inline_entity_form']['field_url'][0]['value'] . '">' . $additional_item['inline_entity_form']['field_title'][0]['value'] . '</a></h2><div>' . $additional_item['inline_entity_form']['field_description'][0]['value'] . '</div><div><p><a href="' . $additional_item['inline_entity_form']['field_url'][0]['value'] . '">Read more ></a></p></div></div><br/>';
-      }
-    }
-
     // Getting from email.
-    if (!empty(\Drupal::service('key.repository')->getKey('sendgrid_webservices'))) {
+    if (!empty(\Drupal::service('key.repository')->getKey('sendgrid'))) {
       $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
       $to = $sendgrid_conf['from_name'];
-      $sendgrid_api_key = \Drupal::service('key.repository')->getKey('sendgrid_webservices')->getKeyValue();
+      $sendgrid_api_key = \Drupal::service('key.repository')->getKey('sendgrid')->getKeyValue();
 
       $body = str_replace(
         [
@@ -169,7 +158,6 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
           '%news_title%',
           '%news_summary%',
           '%base_url%',
-          '%additional_items%',
         ],
         [
           $news_post_date,
@@ -177,7 +165,6 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
           $news_title[0]['value'],
           $news_summary[0]['summary'] ?: strip_tags(substr($news_summary[0]['value'], 0, 300)),
           $base_url,
-          $formatted_additional_items,
         ],
         '
           <div>%news_post_date%</div>
@@ -185,7 +172,6 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
           <p>%news_summary%</p>
           <p><a href="%news_url%">Read more ></a></p>
           <br/>
-          <div>%additional_items%</div>
           <br/>
           <p><a href="%base_url%/messaging-center/%member_email%/manage/%email_key%">manage your preferences</a><br>
           or <a href="%base_url%/messaging-center/%member_email%/delete-all/%email_key%">opt out</a> from all communications.</p>
