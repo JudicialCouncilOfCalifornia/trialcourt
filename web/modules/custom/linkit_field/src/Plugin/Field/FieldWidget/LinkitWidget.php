@@ -73,6 +73,7 @@ class LinkitWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+
     $item = $items[$delta];
     $uri = $item->uri;
     $uri_scheme = parse_url($uri, PHP_URL_SCHEME);
@@ -98,13 +99,19 @@ class LinkitWidget extends WidgetBase {
 
     if ($default_allowed && $uri_scheme == 'entity') {
       $entity = LinkitHelper::getEntityFromUri($uri);
+      $label = $entity->label();
+      $id = $entity->id();
+      // Set a default value more like an entity reference field, if possible.
+      $default_value = "$label ($id)";
     }
+
+    $default_value = !empty($default_value) ? $default_value : $uri_as_url;
 
     $element['uri'] = [
       '#type' => 'linkit',
       '#title' => $this->t('URL'),
       '#placeholder' => $this->getSetting('placeholder_url'),
-      '#default_value' => $default_allowed ? $uri_as_url : NULL,
+      '#default_value' => $default_allowed ? $default_value : NULL,
       '#maxlength' => 2048,
       '#required' => $element['#required'],
       '#description' => $this->t('Start typing to find content or paste a URL and click on the suggestion below.'),
