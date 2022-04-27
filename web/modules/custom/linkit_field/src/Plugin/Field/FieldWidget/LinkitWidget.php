@@ -99,10 +99,9 @@ class LinkitWidget extends WidgetBase {
 
     if ($default_allowed && $uri_scheme == 'entity') {
       $entity = LinkitHelper::getEntityFromUri($uri);
-      $label = $entity->label();
-      $id = $entity->id();
-      // Set a default value more like an entity reference field, if possible.
-      $default_value = "$label ($id)";
+      // Set a default value like the standard linkit widget /node/123.
+      $path = explode(':', $uri);
+      $default_value = "/" . $path[1];
     }
 
     $default_value = !empty($default_value) ? $default_value : $uri_as_url;
