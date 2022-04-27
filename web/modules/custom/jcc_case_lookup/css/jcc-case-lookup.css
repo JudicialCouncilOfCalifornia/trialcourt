@@ -41,12 +41,40 @@
   text-decoration: underline;
 }
 
+#query-case-number {
+  max-width: 88ex;
+}
+
+/* BEGIN Adjust error message if Pro theme */
+#query-case-number .usa-alert__wrapper--error {
+  display: none;
+}
+
+#query-case-number .usa-alert--error {
+  background-color: #f4e3db;
+  border-color: #d54309;
+}
+
+#query-case-number .usa-alert__heading {
+  float: none;
+  font-weight: bold;
+}
+/* END */
+
 .query-case-number__input {
   display: inline-block !important;
+  margin-bottom: 0.5rem;
 }
-@media only screen and (max-width: 480px) {
-  .query-case-number__input {
-    margin-bottom: 0.5rem;
-  }
+
+.lookup-case__trigger {
+  display: inline !important;
+  position: relative !important;
+  top: unset !important;
+  right: unset !important;
+  width: auto !important;
+}
+
+.lookup-case_trigger:hover, .lookup-case_trigger:focus {
+  background-color: transparent !important;
 }
 

@@ -26,15 +26,17 @@
         // END.
 
         // BEGIN Global search field integration.
+        const modal = '#case-search-field-modal';
+
         $('.usa-search input').on('keyup', function() {
           let typedQuery = $('input[type="search"]').val();
           let detectedCases = detectCases(typedQuery);
 
           // Display case search option only if case number entered.
           if (detectedCases) {
-            if ($('#case-search-field-modal').length == 0) {
-              // Case search contextual modal.
-              let caseSearch = '<div id="case-search-field-modal" class="case-search-field-modal"></div>';
+            if ($(modal).length == 0) {
+              // Case search contextual modal, screen readers will rely on results page.
+              let caseSearch = '<div id="case-search-field-modal" class="case-search-field-modal" aria-hidden="true"></div>';
               $('.usa-search').append(caseSearch);
 
               // Modal form submission event handler.
@@ -43,18 +45,18 @@
               });
             }
             // Insert/Update modal content.
-            $('#case-search-field-modal').html(caseSearchTriggers(detectedCases, 'modal'));
+            $(modal).html(caseSearchTriggers(detectedCases, 'modal'));
           } else {
-            $('#case-search-field-modal').remove();
+            $(modal).remove();
           }
         });
 
-        // If click or touch outside of modal...
+        // If click or touch outside of modal.
         $(document).click(function(event) {
-          if(!$(event.target).closest('#case-search-field-modal').length &&
+          if(!$(event.target).closest(modal).length &&
             !$(event.target).closest('input[type="search"]').length &&
-            $('#case-search-field-modal').is(':visible')) {
-            $('#case-search-field-modal').remove();
+            $(modal).is(':visible')) {
+            $(modal).remove();
           }
         });
         // END.
@@ -90,34 +92,67 @@
 
         // BEGIN Custom block view form submit handler.
         if ($('#query-case-number').length > 0) {
-          $('.query-case-number__submit').on('click', function () {
+          const inputField = '#query-case-number__input';
+          const ariaSubmitMessages = 'aria-describedby';
+          const caseListing = '#case-search__listing';
+
+          // Submit button handler.
+          $('#query-case-number__submit').on('click keypress', function (e) {
+            blockViewSubmit(e);
+          });
+
+          // Submit from input field using ENTER key.
+          $('#query-case-number__input').on('keypress', function (e) {
+            if (e.keyCode == 13) {
+              blockViewSubmit(e);
+            }
+          });
+
+          // Submit function.
+          function blockViewSubmit(event) {
             let typedQuery = $('.query-case-number__input').val();
             let submittedCases = detectCases(typedQuery);
 
             // Display helper only if multiple case numbers else submit lookup.
-            if (submittedCases && submittedCases.length > 1) {
-              $('.case-search__listing').show();
-              // Insert/Update listing.
-              let listing = caseSearchTriggers(submittedCases, 'list');
-              $('.query-case-number__results').html(listing);
-              // Listing case search form submission event handler.
-              $(document).on('click', '.lookup-case--list', function () {
-                caseQuery(this);
-              });
-            } else {
-              $('.case-search__listing').hide();
+            if (submittedCases != null) {
+              $('#query-case-number .usa-alert__wrapper--error').hide();
+              $(inputField).removeAttr(ariaSubmitMessages)
 
-              const casePrefix = submittedCases[0].charAt(0);
-              let district = getDistrictCode(casePrefix);
-              $('#searchFormNumber').attr('action', 'https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=' + district + '&search=number');
-              $('#query_caseNumber').val(submittedCases);
-              $('form[name="searchFormNumber"]').submit();
+              if (submittedCases.length == 1) {
+                $(caseListing).hide();
+                // Display helper when multiple case numbers.
+                let casePrefix = submittedCases[0].charAt(0);
+                let district = getDistrictCode(casePrefix);
+                $('#searchFormNumber').attr('action', 'https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=' + district + '&search=number');
+                $('#query_caseNumber').val(submittedCases);
+                $('form[name="searchFormNumber"]').submit();
+              } else {
+                $(caseListing).show();
+                // Insert/Update listing.
+                let listing = caseSearchTriggers(submittedCases, 'list');
+                $('.query-case-number__results').html(listing);
+                // If submitted by ENTER key, set focus on listing block.
+                if (event.keyCode == 13) {
+                  $(caseListing).focus();
+                }
+                // Listing case search form submission event handler.
+                $(document).on('click', '.lookup-case--list', function () {
+                  caseQuery(this);
+                });
+              }
+            } else {
+              // Exception handling.
+              $(caseListing).hide();
+              $('#query-case-number .usa-alert__wrapper--error').show();
+              $('#query-case-number .usa-alert__heading').html('No valid case number submitted.');
+              $(inputField).attr(ariaSubmitMessages, 'query-case-number__error');
+              $(inputField).focus();
             }
-          });
+          }
         }
         // END.
 
-        // Detect and extract first case number from query string (e.g. S170280).
+        // Detect and extract valid case numbers from query string (e.g. S170280).
         function detectCases(query) {
           query = query.match(/[A-Za-z][0-9]{6}/g);
 
@@ -131,7 +166,7 @@
 
           jQuery.each(caseNumbers, function(index, item) {
             item = item.toUpperCase();
-            let link = '<a class="lookup-case--' + type + '" href="javascript:void(0);" data-case="' + item + '" aria-label="Look up case ' + item + ' from the California Courts website in a new browser window.">' + item + '</a>';
+            let link = '<button class="jcc-button--unstyled lookup-case__trigger lookup-case--' + type + '" href="javascript:void(0);" data-case="' + item + '" aria-label="Look up case ' + item + ' from the California Courts website in a new browser window.">' + item + '</button>';
             let isLastElement = index == caseNumbers.length -1;
             if (type == 'list') {
               link = '<li class="jcc-list__item">' + link + '</li>'
@@ -204,7 +239,7 @@
               districtCode = 6;
               break;
             default:
-              districtCode = 0
+              districtCode = -1;
           }
 
           return districtCode;
