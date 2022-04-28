@@ -1,6 +1,6 @@
 <?php
 
-use Drupal\views\Views;
+//use Drupal\views\Views;
 
 /**
  * @file
@@ -110,19 +110,19 @@ function jcc_newslinks_cron() {
   \Drupal::logger('jcc_newslinks')->notice($purgeMessage);
 
   // Old newslinks item Purge (Batch of 100 nodes)
-  $view = Views::getView('newslinks_expiration');
-  $view->setDisplay('default');
-  $view->execute();
-  $view_result = $view->result;
-
-  if (!empty($view_result)) {
-    $storage_handler = \Drupal::entityTypeManager()->getStorage("node");
-    $nodes_to_delete = [];
-    foreach ($view->result as $row) {
-      $nodes_to_delete[] = $row->nid;
-    }
-    \Drupal::logger('jcc_newslinks')->notice('Purged newslinks with nids: ' . implode(', ', $nodes_to_delete));
-    $entities = $storage_handler->loadMultiple($nodes_to_delete);
-    $storage_handler->delete($entities);
-  }
+//  $view = Views::getView('newslinks_expiration');
+//  $view->setDisplay('default');
+//  $view->execute();
+//  $view_result = $view->result;
+//
+//  if (!empty($view_result)) {
+//    $storage_handler = \Drupal::entityTypeManager()->getStorage("node");
+//    $nodes_to_delete = [];
+//    foreach ($view->result as $row) {
+//      $nodes_to_delete[] = $row->nid;
+//    }
+//    \Drupal::logger('jcc_newslinks')->notice('Purged newslinks with nids: ' . implode(', ', $nodes_to_delete));
+//    $entities = $storage_handler->loadMultiple($nodes_to_delete);
+//    $storage_handler->delete($entities);
+//  }
 }
