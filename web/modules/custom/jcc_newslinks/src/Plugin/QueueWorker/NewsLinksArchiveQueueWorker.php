@@ -25,7 +25,10 @@ class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
   public function processItem($item) {
     // Load the node.
     $node = Node::load($item->nid);
-    $moderationState = $node->get('moderation_state')->value;
+    $moderationState = '';
+    if ($node){
+      $moderationState = $node->get('moderation_state')->value;
+    }
 
     switch ($moderationState) {
       case 'draft':
@@ -98,7 +101,7 @@ class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
         break;
 
       default:
-        \Drupal::logger('jcc_newslinks')->notice('Nothing to archive: "' . $node->get('title')->value . '"');
+        \Drupal::logger('jcc_newslinks')->notice('Nothing to archive.');
     }
   }
 
