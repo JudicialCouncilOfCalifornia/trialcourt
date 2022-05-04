@@ -36,8 +36,8 @@
           if (detectedCases) {
             if ($(modal).length == 0) {
               // Case search contextual modal, screen readers will rely on results page.
-              let caseSearch = '<div id="case-search-field-modal" class="case-search-field-modal" aria-hidden="true"></div>';
-              $('.usa-search').append(caseSearch);
+              let caseSearch = '<div id="case-search-field-modal" class="usa-prose case-search-field-modal" aria-hidden="true"></div>';
+              $('.jcc-header__search').append(caseSearch);
 
               // Modal form submission event handler.
               $(document).on('click', '.lookup-case--modal', function () {
@@ -166,7 +166,7 @@
 
           jQuery.each(caseNumbers, function(index, item) {
             item = item.toUpperCase();
-            let link = '<button class="jcc-button--unstyled lookup-case__trigger lookup-case--' + type + '" href="javascript:void(0);" data-case="' + item + '" aria-label="Look up case ' + item + ' from the California Courts website in a new browser window.">' + item + '</button>';
+            let link = '<button class="jcc-button--unstyled lookup-case__trigger lookup-case--' + type + '" data-case="' + item + '" aria-label="Look up case ' + item + ' from the California Courts website in a new browser window.">' + item + '</button>';
             let isLastElement = index == caseNumbers.length -1;
             if (type == 'list') {
               link = '<li class="jcc-list__item">' + link + '</li>'
