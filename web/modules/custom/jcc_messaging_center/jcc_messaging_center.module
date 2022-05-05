@@ -34,16 +34,15 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
     $forms_enabled_on[] = 'node_' . $ct . '_edit_form';
   }
 
-  if (in_array($form['#form_id'],
-    $forms_enabled_on
-  )) {
-    $user_groups = [];
-    $vid = 'user_groups';
-    $terms =\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
-    foreach ($terms as $term) {
-      $user_groups[$term->tid] = $term->name;
-//      $user_groups[] = $term->name;
-    }
+    if (in_array($form['#form_id'],
+      $forms_enabled_on
+    )) {
+      $user_groups = [];
+      $vid = 'user_groups';
+      $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
+      foreach ($terms as $term) {
+        $user_groups[$term->tid] = $term->name;
+      }
 
     if (!($form['#form_id'] == 'taxonomy_term_user_groups_form')) {
       $form['messaging'] = array(
