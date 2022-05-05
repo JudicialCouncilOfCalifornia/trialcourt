@@ -68,14 +68,49 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
     else {
       $form['field_author']['widget'][0]['target_id']['#default_value'] = User::load(\Drupal::currentUser()->id());
     }
-    foreach (array_keys($form['actions']) as $action) {
-      if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
-        $form['actions'][$action]['#submit'][] = 'jcc_messaging_center_form_submit';
+
+    if (in_array($form['#form_id'],
+      $forms_enabled_on
+    )) {
+      $user_groups = [];
+      $vid = 'user_groups';
+      $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
+      foreach ($terms as $term) {
+        $user_groups[$term->tid] = $term->name;
       }
+
+      if (!($form['#form_id'] == 'taxonomy_term_user_groups_form')) {
+        $form['messaging'] = array(
+          '#type' => 'details',
+          '#title' => 'Messaging options',
+          '#group' => 'advanced',
+        );
+        $form['options']['field_send_email'] = [
+          '#type' => 'checkbox',
+          '#title' => t('Send an email when saving this item.'),
+          '#default_value' => FALSE,
+          '#weight' => 50,
+          "#group" => "messaging",
+        ];
+
+        $form['messaging']['groups_to_notify'] = [
+          '#type' => 'checkboxes',
+          '#options' => $user_groups,
+          '#title' => 'Send to: ',
+          "#group" => "messaging",
+          '#weight' => 60,
+        ];
+      } else {
+        $form['field_author']['widget'][0]['target_id']['#default_value'] = User::load(\Drupal::currentUser()->id());
+      }
+      foreach (array_keys($form['actions']) as $action) {
+        if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+          $form['actions'][$action]['#submit'][] = 'jcc_messaging_center_form_submit';
+        }
+      }
+    } elseif ($form['#form_id'] == 'user_register_form') {
+      $form['actions']['submit']['#value'] = t('Subscribe');
     }
-  }
-  elseif ($form['#form_id'] == 'user_register_form') {
-    $form['actions']['submit']['#value'] = t('Subscribe');
   }
 }
 
