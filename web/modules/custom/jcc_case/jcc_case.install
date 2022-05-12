@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * Updates for profile.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function jcc_case_install() {
+  // Add fields to document content type.
+  $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('node.document.default');
+  $form_display->setComponent('field_document_type', ['weight' => 0])->save();
+  $form_display->setComponent('field_case', ['weight' => 0])->save();
+  $form_display->setComponent('field_revision_type', ['weight' => 0])->save();
+  $form_display->setComponent('field_date', ['weight' => 1])->save();
+  $form_display->setComponent('field_author', ['weight' => 1])->save();
+  $form_display->setComponent('field_toggle', ['weight' => 1])->save();
+  $form_display->setComponent('field_related_cases', ['weight' => 1])->save();
+}
