@@ -485,29 +485,6 @@ function jcc_tc2_all_immutable_config_update_8028() {
 }
 
 /**
- * TCI-770: Mega Media Makeover Mod.
- */
-function jcc_tc2_all_immutable_config_update_8029() {
-  $modules = [
-    'cshs',
-    'file_delete',
-    'file_replace',
-    'filefield_paths',
-    'media_entity_download',
-    'media_entity_file_replace',
-    'media_file_delete',
-    'media_file_delete_entity_usage',
-  ];
-
-  foreach ($modules as $module) {
-    if (\Drupal::moduleHandler()->moduleExists($module)) {
-      continue;
-    }
-    \Drupal::service('module_installer')->install([$module]);
-  }
-}
-
-/**
  * TCI-774: Update body paragraph field_text relative links missing lead slash.
  */
 function jcc_tc2_all_immutable_config_update_8030() {
@@ -637,14 +614,32 @@ function jcc_tc2_all_immutable_config_prefix_paragraph_fields($field_name) {
 }
 
 /**
- * TCI-770: Mega Media Makeover Mod  RERUN.
+ * TCI-770: Mega Media Makeover Mod.
  */
-function jcc_tc2_all_imutable_config_update_3039() {
-  jcc_tc2_all_immutable_config_update_8029();
+function jcc_tc2_all_immutable_config_update_8040() {
+  $modules = [
+    'cshs',
+    'file_delete',
+    'file_replace',
+    'filefield_paths',
+    'media_entity_download',
+    'media_entity_file_replace',
+    'media_file_delete',
+    'media_file_delete_entity_usage',
+  ];
+
+  foreach ($modules as $module) {
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      continue;
+    }
+    \Drupal::service('module_installer')->install([$module]);
+  }
 }
 
-/** TCI-768: Preinstall filefield_paths and import feature config for batch process. */
-function jcc_tc2_all_immutable_config_update_8040() {
+/**
+ * TCI-768: Preinstall filefield_paths and import feature config for batch.
+ */
+function jcc_tc2_all_immutable_config_update_8041() {
   $modules = ['filefield_paths'];
 
   foreach ($modules as $module) {
@@ -658,8 +653,10 @@ function jcc_tc2_all_immutable_config_update_8040() {
   \Drupal::service('features.manager')->import(['jcc_tc2_all_immutable_config']);
 }
 
-/** TCI-768: move Media: Files to private directory. */
-function jcc_tc2_all_immutable_config_update_8041(&$sandbox) {
+/**
+ * TCI-768: move Media: Files to private directory.
+ */
+function jcc_tc2_all_immutable_config_update_8042(&$sandbox) {
   $bundle_fields = \Drupal::getContainer()->get('entity_field.manager')->getFieldDefinitions('media', 'file');
   $field_config = $bundle_fields['field_media_file'];
   /** @var Drupal\Core\Entity\ContentEntityStorageBase $entity_storage */
