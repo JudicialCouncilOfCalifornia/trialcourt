@@ -2,20 +2,65 @@
 
 /**
  * @file
- * Updates for profile.
+ * Updates for case information.
  */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Implements hook_install().
  */
 function jcc_case_install() {
+  // Add document types.
+  $vocab_doc = 'document_type';
+  $items_doc = [
+    'Opinions (Published)',
+    'Opinions (Unpublished)',
+  ];
+  foreach ($items_doc as $item) {
+    $term = Term::create([
+      'parent' => [],
+      'name' => $item,
+      'vid' => $vocab_doc,
+    ]);
+    $term->save();
+  }
+
+  // Add revision types.
+  $vocab_revision = 'revision_type';
+  $items_revision = [
+    'A',
+    'B',
+    'M',
+    'N',
+  ];
+  foreach ($items_revision as $item) {
+    $term = Term::create([
+      'parent' => [],
+      'name' => $item,
+      'vid' => $vocab_revision,
+    ]);
+    $term->save();
+  }
+
+  // Configure fields where not set by config file.
+  // $form_setting = \Drupal::entityTypeManager()->getStorage('field_config')->load('node.document.field_case');
+  $case_setting = FieldConfig::loadByName('node', 'document', 'field_case');
+  $handler_settings = $case_setting->getSetting('handler_settings');
+  $handler_settings['auto_create'] = 1;
+  $case_setting->setSetting('handler_settings', $handler_settings)->save();
+
   // Add fields to document content type.
   $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('node.document.default');
-  $form_display->setComponent('field_document_type', ['weight' => 0])->save();
-  $form_display->setComponent('field_case', ['weight' => 0])->save();
-  $form_display->setComponent('field_revision_type', ['weight' => 0])->save();
+  $form_display->setComponent('field_document_type', ['weight' => -3])->save();
+  $form_display->setComponent('field_case', ['weight' => -2])->save();
+  $form_display->setComponent('field_revision_type', ['weight' => -1])->save();
   $form_display->setComponent('field_date', ['weight' => 1])->save();
   $form_display->setComponent('field_author', ['weight' => 1])->save();
   $form_display->setComponent('field_toggle', ['weight' => 1])->save();
-  $form_display->setComponent('field_related_cases', ['weight' => 1])->save();
+  $form_display->setComponent('field_related_cases', ['weight' => 2])->save();
+  // Adjust existing fields.
+  $form_display->setComponent('title', ['weight' => -4])->save();
+  $form_display->setComponent('langcode', ['weight' => 3])->save();
 }
