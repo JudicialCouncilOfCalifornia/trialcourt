@@ -20,7 +20,7 @@ function _jcc_components_can_edit_entity($entity, $cta) {
     $url = Url::fromRoute('entity.' . $entity->getEntityTypeId() . '.edit_form', [$entity->getEntityTypeId() => $entity->id()]);
     $edit = Link::fromTextAndUrl($cta, $url);
     $edit = $edit->toRenderable();
-    $edit['#attributes'] = ['aria-label' => ['Edit document ' . $entity->title->value]];
+    $edit['#attributes'] = ['aria-label' => ['Edit file for ' . $entity->getName()]];
   }
 
   return render($edit);
