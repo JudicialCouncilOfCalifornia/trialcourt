@@ -262,13 +262,17 @@ function jcc_components_node_event(array &$variables, NodeInterface $node) {
  *   The node.
  */
 function jcc_components_node_document(array &$variables, NodeInterface $node) {
-  $media = Media::load($node->field_media->target_id);
+  // Contextual edit media file option.
+  if (isset($node->field_media->target_id)) {
+    $media = Media::load($node->field_media->target_id);
+    $variables['edit_option'] = _jcc_components_can_edit_entity($media, t('Edit'));
+  }
 
   // Ensure date range field timezone.
-  $variables['startDate'] = jcc_timezone_adjust($node->field_date_range->start_date);
-  $variables['endDate'] = jcc_timezone_adjust($node->field_date_range->end_date);
-  // Contextual edit media file option.
-  $variables['edit_option'] = _jcc_components_can_edit_entity($media, t('Edit'));
+  if (isset($node->field_date_range->start_date)) {
+    $variables['startDate'] = jcc_timezone_adjust($node->field_date_range->start_date);
+    $variables['endDate'] = jcc_timezone_adjust($node->field_date_range->end_date);
+  }
 }
 
 /**
