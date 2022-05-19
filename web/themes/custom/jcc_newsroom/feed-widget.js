@@ -43,11 +43,15 @@ function jsonCallback(jsonData, index){
         imageDomain = "https://develop-jcc-newsroom.pantheonsite.io";
       }
     }
-    var imageUrl = imageDomain + image.match(/src="([^"]*)/)[1];
-    var imageAlt = image.match(/alt="([^"]*)/)[1];
+
     var divImage = document.createElement("div");
     divImage.className = "jcc-element-image usa-card__media";
-    divImage.innerHTML = '<a href="' + data[i].url + '"><span><img src="' + imageUrl + '" alt="' + imageAlt + '"></span></a>';
+    var imageSrc = image.match(/src="([^"]*)/);
+    if (imageSrc) {
+      var imageUrl = imageDomain + imageSrc[1];
+      var imageAlt = image.match(/alt="([^"]*)/)[1];
+      divImage.innerHTML = '<a href="' + data[i].url + '"><span><img src="' + imageUrl + '" alt="' + imageAlt + '"></span></a>';
+    }
 
     // Card container ... collect text block & image into single container
     var divContainer = document.createElement("div");
