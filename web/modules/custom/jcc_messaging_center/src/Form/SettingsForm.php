@@ -40,6 +40,7 @@ class SettingsForm extends ConfigFormBase {
     if($config->get('messaging_content_types') != NULL){
       $default_value = $config->get('messaging_content_types');
     }
+    $default_value['custom_email'] = 'custom_email';
 
     $types_options = [];
     foreach ($types as $node_type) {
@@ -48,11 +49,27 @@ class SettingsForm extends ConfigFormBase {
 
     $form_state->setCached(FALSE);
 
+    $form['text_header'] = array
+    (
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+      '#markup' => t('The messaging feature lets you send email notifications to specific mailing groups when an entity on the site is edited/created. <br>Pick which content type should have the option available. <br>If selected, the editing page of each node from this content type will have a "Messaging options" tab appear.'),
+    );
+
     $form['messaging_content_types'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Content types available for email notification'),
       '#options' => $types_options,
       '#default_value' => $default_value,
+    );
+
+    //http://supremecourt.lndo.site/admin/people/permissions
+    $form['messaging_helper'] = array
+    (
+      '#markup' => t('<strong>Useful links :</strong><ul>
+        <li><a href="/admin/structure/taxonomy/manage/user_groups/overview">Manage mailing groups (Taxonomy)</a></li>
+        <li><a href="/admin/messenger/group-overview">Users and groups dashboard</a></li>
+        </ul>'),
     );
 
     return parent::buildForm($form, $form_state);
