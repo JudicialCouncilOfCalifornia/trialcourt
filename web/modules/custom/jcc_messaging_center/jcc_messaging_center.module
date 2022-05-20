@@ -171,8 +171,8 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
 
     // SENDING EMAIL TO SENDGRID
     // Building query for sendgrid.
-    $news_title = $form_state->cleanValues()->getValues()['title'];
-    $news_summary = $form_state->cleanValues()->getValues()['body'];
+    $email_title = $form_state->cleanValues()->getValues()['title'];
+    $email_summary = $form_state->cleanValues()->getValues()['body'];
 
     $build_info = $form_state->getBuildInfo();
     if($build_info['form_id'] == 'node_custom_email_edit_form' || $build_info['form_id'] == 'node_custom_email_form'){
@@ -181,10 +181,10 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     }else {
       $read_more_url = $form_state->cleanValues()->getValues()['field_external_url'][0]['value'];
     }
-    $news_post_date_unformatted = $form_state->cleanValues()->getValues()['field_date'][0]['value'];
+    $email_post_date_unformatted = $form_state->cleanValues()->getValues()['field_date'][0]['value'];
     // Date formatting.
-    $date = new DrupalDateTime($news_post_date_unformatted, DATETIME_STORAGE_TIMEZONE);
-    $news_post_date = $date->format('F j, Y');
+    $date = new DrupalDateTime($email_post_date_unformatted, DATETIME_STORAGE_TIMEZONE);
+    $email_post_date = $date->format('F j, Y');
 
     // Getting from email.
     if (!empty(\Drupal::service('key.repository')->getKey('sendgrid'))) {
@@ -194,23 +194,23 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
 
       $body = str_replace(
         [
-          '%news_post_date%',
+          '%email_post_date%',
           '%read_more_url%',
-          '%news_title%',
-          '%news_summary%',
+          '%email_title%',
+          '%email_summary%',
           '%base_url%',
         ],
         [
-          $news_post_date,
+          $email_post_date,
           $read_more_url,
-          $news_title[0]['value'],
-          $news_summary[0]['summary'] ?: strip_tags(substr($news_summary[0]['value'], 0, 300)),
+          $email_title[0]['value'],
+          $email_summary[0]['summary'] ?: strip_tags(substr($email_summary[0]['value'], 0, 300)),
           $base_url,
         ],
         '
-          <div>%news_post_date%</div>
-          <h2><a href="%base_url%/%read_more_url%">%news_title%</a></h2>
-          <p>%news_summary%</p>
+          <div>%email_post_date%</div>
+          <h2>%email_title%</h2>
+          <p>%email_summary%</p>
           <p><a href="%base_url%/%read_more_url%">Read more ></a></p>
           <br/>
           <br/>
@@ -226,8 +226,8 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
       $email->setSmtpapiTos($email_to_sendgrid)
         ->setFrom($to)
         ->setFromName(\Drupal::config('system.site')->get('name'))
-        ->setSubject($news_title[0]['value'])
-        ->setText($news_title[0]['value'])
+        ->setSubject($email_title[0]['value'])
+        ->setText($email_title[0]['value'])
         ->setHtml($body)
         ->addSubstitution('%member_email%', $email_to_sendgrid)
         ->addSubstitution('%email_key%', $email_access_keys)
@@ -235,8 +235,8 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
         ->addHeader('X-Transport', 'web')
         ->setCategories(
           [
-            'News Alert',
-            'News Alert - ' . $news_title[0]['value'],
+            'Email Alert',
+            'Email Alert - ' . $email_title[0]['value'],
           ]
         );
 
@@ -270,7 +270,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
  */
 function jcc_messaging_center_user_insert(EntityInterface $entity) {
   $tempstore = \Drupal::service('tempstore.shared');
-  $store = $tempstore->get('jcc_subscriptions');
+  $store = $tempstore->get('jcc_messaging_center');
   $store->set('member_email_' . $entity->get('mail')->value, user_password());
 }
 
