@@ -22,10 +22,11 @@ jcc_messaging_center.delete:
 jcc_messaging_center.group_edit:
   path: '/messaging-center/{member_email}/manage/{access_key}'
   defaults:
-    _entity_form: 'user.group_edit'
+#    _entity_form: 'user.edit'
+    _form: '\Drupal\jcc_subscriptions\Form\MCManageSubs'
     _title: 'Manage Messaging center'
   requirements:
-    _custom_access: '\Drupal\jcc_messaging_center\Form\ManageMessagingCenter::access'
+    _custom_access: '\Drupal\jcc_messaging_center\Form\MCManageSubs::access'
   options:
     no_cache: 'TRUE'
 

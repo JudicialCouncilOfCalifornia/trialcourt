@@ -43,7 +43,7 @@ class MCConfirmDeleteAllSubs extends ControllerBase {
    */
   public function delete(string $member_email = '', string $access_key = '') {
     $user = user_load_by_mail($member_email);
-    $user->set('field_mailing_group', []);
+    $user->set('field_group', []);
     $user->save();
 
     $build = [
