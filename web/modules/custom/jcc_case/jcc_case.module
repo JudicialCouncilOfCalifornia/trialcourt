@@ -1,0 +1,144 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_case.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Element\ManagedFile;
+use Drupal\jcc_case\Ajax\ManagedFileUploadCompleteEventCommand;
+
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_case_form_alter(&$form, &$form_state, $form_id) {
+  if (isset($form_state->getCompleteForm()['#form_id']) && $form_state->getCompleteForm()['#form_id'] == 'jcc_opinions_importer_form') {
+    // Node creation and editing only customizations.
+    if ((isset($form['#theme']['1']) && $form['#theme']['1'] == 'node_form')) {
+      // Suppress format options from certain fields.
+      if (isset($form['field_tagline'])) {
+        $form['field_tagline']['widget']['#after_build'][] = '_allowed_formats_remove_option';
+      }
+      if (isset($form['field_feed_source'])) {
+        $form['field_feed_source']['widget']['#after_build'][] = '_allowed_formats_remove_option';
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function jcc_case_element_info_alter(array &$info) {
+  $info['managed_file']['#process'][] = 'jcc_case_managed_file_process';
+}
+
+/**
+ * Custom ajax callback for managed files.
+ *
+ * Overrides \Drupal\file\Element\ManagedFile::uploadAjaxCallback()
+ *
+ * @see \Drupal\file\Element\ManagedFile::uploadAjaxCallback
+ */
+function jcc_case_managed_file_ajax_callback(array &$form, FormStateInterface $form_state) {
+  // Retrieve the original response.
+  $response = ManagedFile::uploadAjaxCallback($form, $form_state, \Drupal::request());
+
+  if ($form_state->getCompleteForm()['#form_id'] == 'jcc_opinions_importer_form') {
+    $response->addCommand(new ManagedFileUploadCompleteEventCommand());
+  }
+  return $response;
+}
+
+/**
+ * Custom process callback added to managed_file elements.
+ */
+function jcc_case_managed_file_process(array &$element, FormStateInterface $form_state) {
+  if ($form_state->getCompleteForm()['#form_id'] == 'jcc_opinions_importer_form') {
+    $element['upload_button']['#ajax']['callback'] = 'jcc_case_managed_file_ajax_callback';
+
+    if (!empty($element['fids']['#value'])) {
+      foreach ($element['fids']['#value'] as $document_id) {
+
+        $element['documents'][$document_id] = [
+          '#type' => 'fieldset',
+          '#collapsible' => FALSE,
+        ];
+
+        $element['documents'][$document_id]['doc_id'] = [
+          '#type' => 'hidden',
+          '#value' => $document_id,
+        ];
+        $element['documents'][$document_id]['file'] = $element['file_' . $document_id];
+        unset($element['file_' . $document_id]);
+
+        $tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('document_type');
+        $terms = [];
+        foreach ($tree as $item) {
+          $terms[$item->tid] = $item->name;
+        }
+        $element['documents'][$document_id]['document_type'] = [
+          '#type' => 'select',
+          '#title' => t('Publishing Type*'),
+          '#options' => $terms,
+        ];
+
+        $element['documents'][$document_id]['case_number'] = [
+          '#type' => 'textfield',
+          '#title' => t('Case Number*'),
+        ];
+
+        $element['documents'][$document_id]['case_name'] = [
+          '#type' => 'textfield',
+          '#title' => t('Case Name*'),
+        ];
+
+        $element['documents'][$document_id]['post_date'] = [
+          '#title' => t('Post date'),
+          '#type' => 'date',
+          '#attributes' => [
+            'type' => 'date',
+            'min' => '-12 months',
+            'max' => '+12 months',
+          ],
+          '#default_value' => date('Y-m-d'),
+          '#date_date_format' => 'Y/m/d',
+        ];
+
+        $element['documents'][$document_id]['review_granted'] = [
+          '#type' => 'checkbox',
+          '#title' => t('Review Granted?'),
+        ];
+
+        $element['documents'][$document_id]['related_cases'] = [
+          '#title' => t('Related Cases'),
+          '#type' => 'entity_autocomplete',
+          '#target_type' => 'taxonomy_term',
+          '#selection_settings' => [
+            'target_bundles' => ['case'],
+          ],
+          '#tags' => TRUE,
+          '#description' => t('Optionally lookup and link related cases if available. Separate each case with a comma.'),
+        ];
+      }
+    }
+    else {
+      $element['documents'] = [];
+    }
+  }
+
+  return $element;
+}
+
+/**
+ * Get taxonomy term by name from specified vocabulary.
+ */
+function __jcc_get_taxonomy_by_name($name, $vid) {
+  $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
+    'name' => $name,
+    'vid' => $vid,
+  ]);
+
+  return reset($terms);
+}
