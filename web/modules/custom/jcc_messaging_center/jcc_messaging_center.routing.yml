@@ -23,7 +23,7 @@ jcc_messaging_center.group_edit:
   path: '/messaging-center/{member_email}/manage/{access_key}'
   defaults:
 #    _entity_form: 'user.edit'
-    _form: '\Drupal\jcc_subscriptions\Form\MCManageSubs'
+    _form: '\Drupal\jcc_messaging_center\Form\MCManageSubs'
     _title: 'Manage Messaging center'
   requirements:
     _custom_access: '\Drupal\jcc_messaging_center\Form\MCManageSubs::access'
@@ -43,9 +43,9 @@ jcc_messaging_center.settings:
   path: '/admin/config/services/messaging-center'
   defaults:
     _form: '\Drupal\jcc_messaging_center\Form\SettingsForm'
-    _title: 'JCC Subscription Settings'
+    _title: 'Messaging center settings'
   requirements:
-    _permission: 'administer Messaging center'
+    _permission: 'Manage Messaging center'
 
 jcc_messaging_center.groups_dashboard:
   path: 'admin/messenger/group-overview'

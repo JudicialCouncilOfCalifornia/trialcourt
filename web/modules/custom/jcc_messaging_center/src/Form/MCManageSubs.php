@@ -5,7 +5,6 @@ namespace Drupal\jcc_messaging_center\Form;
 use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use MarkRoland\Emma\Client;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -52,44 +51,36 @@ class MCManageSubs extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, string $member_email = '') {
 
-//    $emma_config = self::config('webform_myemma.settings');
-//    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
-//    $user = $emma->get_member_detail_by_email($member_email);
-//
-//    // Getting groups from myemma / only keeping ones with naming convention.
-//    $myemma_groups = $emma->list_groups();
-//    $form_groups = [];
-//    foreach ($myemma_groups as $group) {
-//      if (strpos($group->group_name, 'Newsroom mailing') !== FALSE
-//        && stripos($group->group_name, 'internal-only') == FALSE) {
-//        $form_groups[$group->member_group_id] =
-//          str_replace('Newsroom mailing ', '', $group->group_name);
-//      }
-//    }
+    $vid = 'user_groups';
+    $user_groups_raw = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
 
-    // Creating list of groups form myEmma.
-//    $form['myemma_groups'] = [
-//      '#type' => 'checkboxes',
-//      '#options' => $form_groups,
-//      '#title' => $this->t('Manage subscriptions:'),
-//    ];
+    $user_groups = [];
+    foreach ($user_groups_raw as $group) {
+      $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($group->tid);
+      $user_groups[$group->tid] = $term->label();
+    }
+
+    // Creating list of user groups.
+    $form['user_groups'] = [
+      '#type' => 'checkboxes',
+      '#options' => $user_groups,
+      '#title' => $this->t('Manage subscriptions for ' . $member_email . ' :'),
+    ];
 
     // Populating default values.
-//    if (!isset($user->error)) {
-//      // pre-populate active categories.
-//      $emma_user_id = $user->member_id;
-//      $user_groups_object = $emma->list_member_groups($emma_user_id);
-//      $user_groups = [];
-//      foreach ($user_groups_object as $group_objects) {
-//        array_push($user_groups, $group_objects->member_group_id);
-//      }
-//      $form['myemma_groups']['#default_value'] = $user_groups;
-//    }
-//
-//    $form['email'] = [
-//      '#type' => 'value',
-//      '#value' => $member_email,
-//    ];
+    $user_object = user_load_by_mail($member_email);
+    $active_groups = [];
+    if($user_object->get('field_group')->getValue()){
+      foreach ($user_object->get('field_group')->getValue() as $active_group) {
+        array_push($active_groups, $active_group['target_id']);
+      }
+      $form['user_groups']['#default_value'] = $active_groups;
+    };
+
+    $form['user_email'] = [
+      '#type' => 'hidden',
+      '#value' => $member_email,
+    ];
 
     $form['actions']['#type'] = 'actions';
     $form['actions']['submit'] = [
@@ -97,36 +88,22 @@ class MCManageSubs extends FormBase {
       '#value' => $this->t('Save'),
       '#button_type' => 'primary',
     ];
+
     return $form;
+
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-//    $member_email = $form['email']['#value'];
-//    $emma_config = self::config('webform_myemma.settings');
-//    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
-//
-//    $user_req = $emma->get_member_detail_by_email($member_email);
-//    $user_emma_id = $user_req->member_id;
-//    // Create / Update user.
-//    $fields = [
-//      'first_name' => $member_email,
-//    ];
-//    $groups = [];
-//    $groups_to_remove = [];
-//    foreach ($form_state->cleanValues()->getValues()['myemma_groups'] as $key => $val) {
-//      if ($val !== 0) {
-//        $groups[] = $val;
-//      }
-//      else {
-//        $groups_to_remove[] = $key;
-//      }
-//    }
-//    $emma->import_single_member($member_email, $fields, $groups);
-//    // Need an extra call to account for groups to remove.
-//    $emma->remove_member_from_groups($user_emma_id, $groups_to_remove);
+    $user_email = $form_state->cleanValues()->getValues()['user_email'];
+    $user_groups = $form_state->cleanValues()->getValues()['user_groups'];
+    $user = user_load_by_mail($user_email);
+
+    $user->set('field_group', $user_groups);
+    $user->save();
+
   }
 
   /**
