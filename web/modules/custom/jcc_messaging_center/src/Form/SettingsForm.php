@@ -63,7 +63,6 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $default_value,
     );
 
-    //http://supremecourt.lndo.site/admin/people/permissions
     $form['messaging_helper'] = array
     (
       '#markup' => t('<strong>Useful links :</strong><ul>
