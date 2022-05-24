@@ -27,6 +27,29 @@ function jcc_case_install() {
     $term->save();
   }
 
+  // Add districts.
+  $vocab_district = 'district';
+  $items_district = [
+    'Supreme Court',
+    '1st Appellate',
+    '2nd Appellate',
+    '3rd Appellate',
+    '4th Appellate, Division One',
+    '4th Appellate, Division Two',
+    '4th Appellate, Division Three',
+    '5th Appellate',
+    '6th Appellate',
+    'Appellate Division',
+  ];
+  foreach ($items_district as $item) {
+    $term = Term::create([
+      'parent' => [],
+      'name' => $item,
+      'vid' => $vocab_district,
+    ]);
+    $term->save();
+  }
+
   // Add revision types.
   $vocab_revision = 'revision_type';
   $items_revision = [
@@ -55,10 +78,14 @@ function jcc_case_install() {
   $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('node.document.default');
   $form_display->setComponent('field_media', [
     'type' => 'media_library_widget',
-    'weight' => -3,
+    'weight' => -4,
   ])->save();
   $form_display->setComponent('field_document_type', [
     'type' => 'autocomplete_deluxe',
+    'weight' => -3,
+  ])->save();
+  $form_display->setComponent('field_district', [
+    'type' => 'options_select',
     'weight' => -2,
   ])->save();
   $form_display->setComponent('field_case', [
@@ -70,12 +97,13 @@ function jcc_case_install() {
     'weight' => 0,
   ])->save();
   $form_display->setComponent('field_date', ['weight' => 1])->save();
-  $form_display->setComponent('field_toggle', ['weight' => 1])->save();
+  $form_display->setComponent('field_toggle', ['weight' => 2])->save();
   $form_display->setComponent('field_related_cases', [
     'type' => 'autocomplete_deluxe',
-    'weight' => 2,
+    'weight' => 3,
   ])->save();
   // Adjust existing fields.
-  $form_display->setComponent('title', ['weight' => -4])->save();
-  $form_display->setComponent('langcode', ['weight' => 3])->save();
+  $form_display->setComponent('title', ['weight' => -5])->save();
+  $form_display->setComponent('langcode', ['weight' => 4])->save();
+  $form_display->setComponent('uid', ['weight' => 4])->save();
 }

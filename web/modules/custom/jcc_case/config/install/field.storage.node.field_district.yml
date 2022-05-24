@@ -2,15 +2,16 @@ langcode: en
 status: true
 dependencies:
   module:
-    - datetime
+    - jcc_case
     - node
-id: node.field_date
-field_name: field_date
+    - taxonomy
+id: node.field_district
+field_name: field_district
 entity_type: node
-type: datetime
+type: entity_reference
 settings:
-  datetime_type: date
-module: datetime
+  target_type: taxonomy_term
+module: core
 locked: false
 cardinality: 1
 translatable: true

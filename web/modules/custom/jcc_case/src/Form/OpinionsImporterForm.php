@@ -102,6 +102,7 @@ class OpinionsImporterForm extends FormBase {
               'title' => $document['case_name'],
             ],
             'field_document_type' => $document['document_type'],
+            'field_district' => $document['district'],
             'field_case' => __jcc_get_taxonomy_by_name($document['case_number'], 'case'),
             'field_date' => $document['post_date'],
             'field_toggle' => $document['review_granted'],

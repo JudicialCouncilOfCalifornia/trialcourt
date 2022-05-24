@@ -66,6 +66,7 @@ function jcc_case_managed_file_process(array &$element, FormStateInterface $form
           '#collapsible' => FALSE,
         ];
 
+        // File.
         $element['documents'][$document_id]['doc_id'] = [
           '#type' => 'hidden',
           '#value' => $document_id,
@@ -73,29 +74,45 @@ function jcc_case_managed_file_process(array &$element, FormStateInterface $form
         $element['documents'][$document_id]['file'] = $element['file_' . $document_id];
         unset($element['file_' . $document_id]);
 
-        $tree = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('document_type');
-        $terms = [];
-        foreach ($tree as $item) {
-          $terms[$item->tid] = $item->name;
+        // Document type.
+        $tree_doctype = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('document_type');
+        $terms_doctype = [];
+        foreach ($tree_doctype as $item) {
+          $terms_doctype[$item->tid] = $item->name;
         }
         $element['documents'][$document_id]['document_type'] = [
           '#type' => 'select',
           '#title' => t('Publishing Type*'),
-          '#options' => $terms,
+          '#options' => $terms_doctype,
         ];
 
+        // District.
+        $tree_district = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('district');
+        $terms_district = [];
+        foreach ($tree_district as $item) {
+          $terms_district[$item->tid] = $item->name;
+        }
+        $element['documents'][$document_id]['district'] = [
+          '#type' => 'select',
+          '#title' => t('District*'),
+          '#options' => $terms_district,
+        ];
+
+        // Case number.
         $element['documents'][$document_id]['case_number'] = [
           '#type' => 'textfield',
           '#title' => t('Case Number*'),
         ];
 
+        // Case name.
         $element['documents'][$document_id]['case_name'] = [
           '#type' => 'textfield',
           '#title' => t('Case Name*'),
         ];
 
+        // Post date.
         $element['documents'][$document_id]['post_date'] = [
-          '#title' => t('Post date'),
+          '#title' => t('Post date*'),
           '#type' => 'date',
           '#attributes' => [
             'type' => 'date',
@@ -106,11 +123,14 @@ function jcc_case_managed_file_process(array &$element, FormStateInterface $form
           '#date_date_format' => 'Y/m/d',
         ];
 
+        // Review granted flag.
         $element['documents'][$document_id]['review_granted'] = [
           '#type' => 'checkbox',
           '#title' => t('Review Granted?'),
+          '#attributes' => ['class' => ['jcc-case-form__field']],
         ];
 
+        // Related cases tags.
         $element['documents'][$document_id]['related_cases'] = [
           '#title' => t('Related Cases'),
           '#type' => 'entity_autocomplete',
