@@ -6,11 +6,6 @@
     {{ node.field_verbose_title.value }}
   {% endif %}
 
-  {% if node.field_date.value %}
-    <h2>{{ content.field_date['#title'] }}</h2>
-    {{ node.field_date.value|date('l F j, Y') }}
-  {% endif %}
-
   {% if content.field_date_range %}
     {% if node.field_case.0.entity.name %}
       <h2>{{ content.field_case['#title'] }}</h2>

@@ -1,20 +1,23 @@
+uuid: 462ef033-56b9-45b9-94ca-6b5f24ae3c1e
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - node.type.document
+    - taxonomy.vocabulary.district
     - taxonomy.vocabulary.document_type
   content:
-    - 'taxonomy_term:document_type:997a7ffe-f1df-4b31-aa35-447a029e35a0'
-    - 'taxonomy_term:document_type:be7ed98d-e277-4343-826a-1bc1ba62d642'
+    - 'taxonomy_term:document_type:77f31f3d-74ff-42fa-8ef1-56c73b4bfb0c'
+    - 'taxonomy_term:document_type:c2d5c160-dd57-4b3c-b9a2-86b047fb1ffd'
   module:
     - better_exposed_filters
+    - datetime
     - node
-    - rest
-    - serialization
     - taxonomy
     - user
+_core:
+  default_config_hash: rAI55t2sAdSSCBHPEUOFLBCrwz64xb3X4xf8f2fsm7g
 id: opinions
 label: Opinions
 module: views
@@ -58,16 +61,16 @@ display:
           text_input_required_format: snippet
           bef:
             general:
-              autosubmit: true
+              autosubmit: false
               autosubmit_exclude_textfield: false
               autosubmit_textfield_delay: 500
               autosubmit_hide: false
-              input_required: true
+              input_required: false
               allow_secondary: false
               secondary_label: 'Advanced options'
               secondary_open: false
             filter:
-              field_document_type_target_id:
+              field_district_target_id:
                 plugin_id: default
                 advanced:
                   sort_options: false
@@ -84,12 +87,17 @@ display:
                   collapsible: false
                   is_secondary: false
       pager:
-        type: mini
+        type: full
         options:
           items_per_page: 50
           offset: 0
           id: 0
           total_pages: null
+          tags:
+            previous: ‹‹
+            next: ››
+            first: '« First'
+            last: 'Last »'
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -98,9 +106,7 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
-          tags:
-            previous: ‹‹
-            next: ››
+          quantity: 9
       style:
         type: default
       row:
@@ -231,9 +237,8 @@ display:
           operator: or
           value:
             1: 1
-            2: 2
           group: 1
-          exposed: true
+          exposed: false
           expose:
             operator_id: field_document_type_target_id_op
             label: 'Publication Type'
@@ -278,6 +283,103 @@ display:
           hierarchy: false
           error_message: true
           plugin_id: taxonomy_index_tid
+        field_date_value:
+          id: field_date_value
+          table: node__field_date
+          field: field_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '<='
+          value:
+            min: ''
+            max: ''
+            value: '120 days'
+            type: offset
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: datetime
+        field_district_target_id:
+          id: field_district_target_id
+          table: node__field_district
+          field: field_district_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_district_target_id_op
+            label: District
+            description: ''
+            use_operator: false
+            operator: field_district_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_district_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: district
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
         field_toggle_value:
           id: field_toggle_value
           table: node__field_toggle
@@ -286,19 +388,19 @@ display:
           group_type: group
           admin_label: ''
           operator: '='
-          value: '0'
+          value: All
           group: 1
           exposed: true
           expose:
             operator_id: ''
-            label: 'Review Granted?'
+            label: 'Review Granted Only?'
             description: ''
             use_operator: false
             operator: field_toggle_value_op
             operator_limit_selection: false
             operator_list: {  }
             identifier: field_toggle_value
-            required: true
+            required: false
             remember: false
             multiple: false
             remember_roles:
@@ -324,21 +426,19 @@ display:
             group_items: {  }
           plugin_id: boolean
       sorts:
-        created:
-          id: created
-          table: node_field_data
-          field: created
-          order: DESC
-          entity_type: node
-          entity_field: created
-          plugin_id: date
+        field_date_value:
+          id: field_date_value
+          table: node__field_date
+          field: field_date_value
           relationship: none
           group_type: group
           admin_label: ''
+          order: DESC
           exposed: false
           expose:
             label: ''
           granularity: second
+          plugin_id: datetime
       title: Opinions
       header: {  }
       footer: {  }
@@ -360,11 +460,285 @@ display:
   page_1:
     display_plugin: page
     id: page_1
-    display_title: Page
+    display_title: Unpublished
     position: 1
     display_options:
       display_extenders: {  }
-      path: opinions
+      path: opinions/unpublished
+      display_description: ''
+      filters:
+        status:
+          value: '1'
+          table: node_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: node
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: in
+          value:
+            document: document
+          group: 1
+          exposed: false
+          expose:
+            operator_id: type_op
+            label: 'Content type'
+            description: ''
+            use_operator: false
+            operator: type_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: type
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+            reduce: true
+          is_grouped: false
+          group_info:
+            label: 'Content type'
+            description: null
+            identifier: type
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1: {  }
+              2: {  }
+              3: {  }
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+        field_document_type_target_id:
+          id: field_document_type_target_id
+          table: node__field_document_type
+          field: field_document_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value:
+            2: 2
+          group: 1
+          exposed: false
+          expose:
+            operator_id: field_document_type_target_id_op
+            label: 'Publication Type'
+            description: ''
+            use_operator: false
+            operator: field_document_type_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_document_type_target_id
+            required: true
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: 'Document Type (field_document_type)'
+            description: null
+            identifier: field_document_type_target_id
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1: {  }
+              2: {  }
+              3: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: document_type
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_date_value:
+          id: field_date_value
+          table: node__field_date
+          field: field_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '<='
+          value:
+            min: ''
+            max: ''
+            value: '120 days'
+            type: offset
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: datetime
+        field_district_target_id:
+          id: field_district_target_id
+          table: node__field_district
+          field: field_district_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_district_target_id_op
+            label: District
+            description: ''
+            use_operator: false
+            operator: field_district_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_district_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: district
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_toggle_value:
+          id: field_toggle_value
+          table: node__field_toggle
+          field: field_toggle_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: All
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'Review Granted Only?'
+            description: ''
+            use_operator: false
+            operator: field_toggle_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_toggle_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: boolean
+      defaults:
+        filters: false
+        filter_groups: false
+        title: false
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      title: 'Unpublished Opinions'
     cache_metadata:
       max-age: -1
       contexts:
@@ -376,34 +750,25 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-  rest_export_1:
-    display_plugin: rest_export
-    id: rest_export_1
-    display_title: 'REST export'
-    position: 2
+  published:
+    display_plugin: page
+    id: published
+    display_title: Published
+    position: 1
     display_options:
       display_extenders: {  }
-      path: /lookup/opinions
-      style:
-        type: serializer
+      path: opinions/published
+      display_description: ''
+      title: 'Published Opinions'
       defaults:
-        style: false
-        row: false
-      row:
-        type: data_entity
-        options: {  }
-      pager:
-        type: some
-        options:
-          items_per_page: 10
-          offset: 0
+        title: false
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - request_format
         - url
+        - url.query_args
         - user
         - 'user.node_grants:view'
         - user.permissions

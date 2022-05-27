@@ -1,0 +1,54 @@
+{{ attach_library('jcc_case/case_styling') }}
+
+{% set opinions = [] %}
+{% for k, item in items if k|first != "#" %}
+  {% set title %}
+    {{ item.case }}{{ item.revision_type ? item.revision_type : '' }}: {{ item.title }}
+  {% endset %}
+
+  {% set body %}
+    {% if item.file %}
+      <div class="jcc-opinions__files">
+        {% set file_type = (item.file.type == 'application/pdf' ? 'PDF' : 'DOC') %}
+        <a class="jcc-button--primary" href="{{ file_url(item.file.uri) }}" aria-label="Download {{ file_type }} for {{ item.case }}">{{ file_type }}</a>
+      </div>
+    {% endif %}
+    {% if item.case_details %}
+      <div class="jcc-opinions__details">
+        <a href="{{ item.case_details }}" aria-label="Look up {{ item.case }} from the Appellate Courts docket search website?">Case Details</a>
+      </div>
+    {% endif %}
+    {% if item.related_cases %}
+      <div class="jcc-opinions__related">
+        Related:
+        {% for related_case in item.related_cases %}
+          {% set related_case_url = path('entity.taxonomy_term.canonical', {'taxonomy_term': related_case.tid.value}) %}
+          <a href="{{ related_case_url }}" aria_label="View opinion for case {{ related_case.name.value }}">{{ related_case.name.value }}</a>{% if not loop.last %}, {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% if item.review_granted %}
+      <div class="jcc-metadata">Review Granted</div>
+    {% endif %}
+  {% endset %}
+
+  {% set opinions = opinions|merge([{
+    brow: item.post_date|date('F d, Y'),
+    title: title,
+    body: body,
+    link: {
+      url: item.url,
+    }
+  }]) %}
+{% endfor %}
+
+<div class="jcc-opinions">
+  {% include "@templates/content-stream/content-stream-filtering.twig" with {
+    content_stream_filtering: {
+      title: view.title,
+      items: opinions,
+      form: exposed,
+      pager: pager,
+    }
+  } %}
+</div>

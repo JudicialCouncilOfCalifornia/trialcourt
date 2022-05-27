@@ -101,15 +101,46 @@
         <h2>{{ content.body['#title'] }}</h2>
         {{ content.body }}
       {% endif %}
-
       <h2>{{ content.field_media['#title'] }}</h2>
       {% if node.field_media.entity.field_media_file %}
-        {{ node.field_media.entity.name.value }}
-        {% if edit_option %}<span class="jcc-metadata jcc-pro-contextual-edit">({{ edit_option }})</span>{% endif %}
-        <br>
-        <a aria-label="Download or view {{ node.field_media.entity.name.value }}" href="{{ file_url(node.field_media.entity.field_media_file.entity.fileuri) }}">{{ node.field_media.entity.field_media_file.entity.filename.value }}</a>
+        {% if logged_in %}<a aria-label="Edit {{ node.field_media.entity.name.value }}" href="{{ file_url(node.field_media.entity.field_media_file.entity.fileuri) }}">{% endif %}
+          {{ node.field_media.entity.field_media_file.entity.filename.value }}
+        {% if logged_in %}</a>{% endif %}
       {% else %}
         (No file attached)
+      {% endif %}
+
+      {% if node.field_case %}
+        <h2>{{ content.field_case['#title'] }}</h2>
+        {{ node.field_case.entity.name.value }}
+      {% endif %}
+
+      {% if node.field_revision_type %}
+        <h2>{{ content.field_revision_type['#title'] }}</h2>
+        {{ node.field_revision_type.entity.name.value }}
+      {% endif %}
+
+      {% if node.field_district %}
+        <h2>{{ content.field_district['#title'] }}</h2>
+        {{ node.field_district.entity.name.value }}
+      {% endif %}
+
+      {% if node.field_date %}
+        <h2>{{ content.field_date['#title'] }}</h2>
+        {{ node.field_date.value|date('l F j, Y') }}
+      {% endif %}
+
+      {% if node.field_toggle %}
+        <h2>{{ content.field_toggle['#title'] }}</h2>
+        {{ content.field_toggle.0['#markup'] }}
+      {% endif %}
+
+      {% if node.field_related_cases %}
+        <h2>{{ content.field_related_cases['#title'] }}</h2>
+        {% for case in node.field_related_cases %}
+          {% set related_case_url = path('entity.taxonomy_term.canonical', {'taxonomy_term': case.entity.tid.value}) %}
+          <a href="{{ related_case_url }}">{{ case.entity.name.value }}</a>{% if not loop.last %}, {% endif %}
+        {% endfor %}
       {% endif %}
 
       {% block custom %}{% endblock %}

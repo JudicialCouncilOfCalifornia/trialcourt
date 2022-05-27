@@ -68,13 +68,12 @@ function jcc_case_install() {
   }
 
   // Configure fields where not set by config file.
-  // $form_setting = \Drupal::entityTypeManager()->getStorage('field_config')->load('node.document.field_case');
   $case_setting = FieldConfig::loadByName('node', 'document', 'field_case');
   $handler_settings = $case_setting->getSetting('handler_settings');
   $handler_settings['auto_create'] = 1;
   $case_setting->setSetting('handler_settings', $handler_settings)->save();
 
-  // Add fields to document content type.
+  // Enable fields in document node form display.
   $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('node.document.default');
   $form_display->setComponent('field_media', [
     'type' => 'media_library_widget',
@@ -106,4 +105,14 @@ function jcc_case_install() {
   $form_display->setComponent('title', ['weight' => -5])->save();
   $form_display->setComponent('langcode', ['weight' => 4])->save();
   $form_display->setComponent('uid', ['weight' => 4])->save();
+
+  // Enable fields in document node view display.
+  $display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load('node.document.default');
+  $display->setComponent('field_document_type', ['weight' => 1])->save();
+  $display->setComponent('field_district', ['weight' => 2])->save();
+  $display->setComponent('field_case', ['weight' => 3])->save();
+  $display->setComponent('field_revision_type', ['weight' => 4])->save();
+  $display->setComponent('field_date', ['weight' => 5])->save();
+  $display->setComponent('field_toggle', ['weight' => 6])->save();
+  $display->setComponent('field_related_cases', ['weight' => 7])->save();
 }

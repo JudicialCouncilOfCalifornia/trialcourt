@@ -6,7 +6,11 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\file\Element\ManagedFile;
+use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
+use Drupal\taxonomy\Entity\Term;
 use Drupal\jcc_case\Ajax\ManagedFileUploadCompleteEventCommand;
 
 /**
@@ -152,6 +156,60 @@ function jcc_case_managed_file_process(array &$element, FormStateInterface $form
 }
 
 /**
+ * Implements module theme.
+ */
+function jcc_case_theme() {
+  return [
+    'views_view__opinions' => [
+      'template' => 'views-view--opinions',
+      'base hook' => 'view',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for opinions posting.
+ */
+function jcc_case_preprocess_views_view__opinions(&$variables) {
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $opinions = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $row = $row['#node'];
+    $media = Media::load($row->field_media->target_id);
+    $media_file = File::load($media->field_media_file->target_id);
+    $file = [
+      'uri' => $media_file->getFileUri(),
+      'type' => \Drupal::service('file.mime_type.guesser')->guess($media_file->getFileUri()),
+    ];
+    $district = Term::load($row->field_district->target_id)->get('name')->value;
+    $case = Term::load($row->field_case->target_id)->get('name')->value;
+    $related_cases = [];
+    foreach ($row->field_related_cases as $item) {
+      $related_case = Term::load($item->target_id);
+      array_push($related_cases, $related_case);
+    }
+
+    $opinion = [
+      'district' => $district,
+      'case' => $case,
+      'title' => $row->title->value,
+      'url' => Url::fromRoute('entity.node.canonical', ['node' => $row->id()], ['absolute' => FALSE])->toString(),
+      'review_granted' => $row->field_toggle->value,
+      'post_date' => $row->field_date->value,
+      'case_details' => __jcc_get_caselookup_url($district, $case),
+      'file' => $file,
+      'related_cases' => $related_cases,
+    ];
+    array_push($opinions, $opinion);
+  }
+
+  $variables['items'] = $opinions;
+}
+
+/**
  * Get taxonomy term by name from specified vocabulary.
  */
 function __jcc_get_taxonomy_by_name($name, $vid) {
@@ -161,4 +219,60 @@ function __jcc_get_taxonomy_by_name($name, $vid) {
   ]);
 
   return reset($terms);
+}
+
+/**
+ * Case lookup link creator.
+ */
+function __jcc_get_caselookup_url($dist_name, $case_number) {
+  return 'https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=' .
+         __jcc_get_dist_id($dist_name) . '&search=number&useSession=0&query_caseNumber=' . $case_number;
+}
+
+/**
+ * Get district code for case lookup.
+ */
+function __jcc_get_dist_id($name) {
+  switch ($name) {
+    case 'Supreme Court':
+      $did = 0;
+      break;
+
+    case '1st Appellate':
+      $did = 1;
+      break;
+
+    case '2nd Appellate':
+      $did = 2;
+      break;
+
+    case '3rd Appellate':
+      $did = 3;
+      break;
+
+    case '4th Appellate, Division One':
+      $did = 41;
+      break;
+
+    case '4th Appellate, Division Two':
+      $did = 42;
+      break;
+
+    case '4th Appellate, Division Three':
+      $did = 43;
+      break;
+
+    case '5th Appellate':
+      $did = 5;
+      break;
+
+    case '6th Appellate':
+      $did = 6;
+      break;
+
+    default:
+      $did = -1;
+  }
+
+  return $did;
 }
