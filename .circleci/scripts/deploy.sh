@@ -114,12 +114,12 @@ for name in "$@" ; do
   drush @${SITE_CODE}.${PANTHEON_ENV} updb -y
 
   echo
-  echo Importing Features for $PANTHEON_ENV
-  drush @${SITE_CODE}.${PANTHEON_ENV} fra --bundle=jcc_tc2 -y
-
-  echo
   echo Importing Config for $PANTHEON_ENV
   drush @${SITE_CODE}.${PANTHEON_ENV} cim -y
+
+  echo
+  echo Importing Features for $PANTHEON_ENV
+  drush @${SITE_CODE}.${PANTHEON_ENV} fra --bundle=jcc_tc2 -y
 
   echo
   echo Clearing Cache for $PANTHEON_ENV
