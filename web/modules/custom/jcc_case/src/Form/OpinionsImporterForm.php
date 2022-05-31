@@ -70,7 +70,7 @@ class OpinionsImporterForm extends FormBase {
             ],
             'field_document_type' => $document['document_type'],
           ]);
-          $media->setName($document['case_name'] . ' - ' . $document['case_name'])->setPublished(TRUE)->save();
+          $media->setName('Opinion: ' . $document['case_number'] . ' - ' . $document['case_name'])->setPublished(TRUE)->save();
 
           // Create new case term.
           $new_case = Term::create([
@@ -81,9 +81,9 @@ class OpinionsImporterForm extends FormBase {
           $new_case->save();
 
           // Related cases.
-          $related_cases = [];
           $tags = explode(', ', $document['related_cases']);
           if (count($tags) > 0) {
+            $related_cases = [];
             foreach ($tags as $tag) {
               $tag = substr($tag, 0, 8);
               $term = __jcc_get_taxonomy_by_name($tag, 'case');
@@ -98,8 +98,8 @@ class OpinionsImporterForm extends FormBase {
             'title' => $document['case_name'],
             'field_media' => [
               'target_id' => $media->id(),
-              'alt' => $document['case_name'],
-              'title' => $document['case_name'],
+              'alt' => $document['case_number'] . ': ' . $document['case_name'],
+              'title' => $document['case_number'] . ': ' . $document['case_name'],
             ],
             'field_document_type' => $document['document_type'],
             'field_district' => $document['district'],

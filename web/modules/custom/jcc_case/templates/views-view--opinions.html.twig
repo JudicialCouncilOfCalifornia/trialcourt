@@ -6,6 +6,10 @@
     {{ item.case }}{{ item.revision_type ? item.revision_type : '' }}: {{ item.title }}
   {% endset %}
 
+  {% if logged_in %}
+    {% set url = item.url %}
+  {% endif %}
+
   {% set body %}
     {% if item.file %}
       <div class="jcc-opinions__files">
@@ -27,9 +31,7 @@
         {% endfor %}
       </div>
     {% endif %}
-    {% if item.review_granted %}
-      <div class="jcc-metadata">Review Granted</div>
-    {% endif %}
+    <div class="jcc-metadata">{{ item.district }}{% if item.review_granted %} (Review Granted){% endif %}</div>
   {% endset %}
 
   {% set opinions = opinions|merge([{
@@ -37,7 +39,7 @@
     title: title,
     body: body,
     link: {
-      url: item.url,
+      url: url,
     }
   }]) %}
 {% endfor %}

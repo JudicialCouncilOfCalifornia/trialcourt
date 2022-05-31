@@ -186,6 +186,11 @@ function jcc_case_preprocess_views_view__opinions(&$variables) {
     ];
     $district = Term::load($row->field_district->target_id)->get('name')->value;
     $case = Term::load($row->field_case->target_id)->get('name')->value;
+    $revision_type = NULL;
+    if ($row->field_revision_type->target_id) {
+      $revision_type = Term::load($row->field_revision_type->target_id)->get('name')->value;
+    }
+
     $related_cases = [];
     foreach ($row->field_related_cases as $item) {
       $related_case = Term::load($item->target_id);
@@ -195,6 +200,7 @@ function jcc_case_preprocess_views_view__opinions(&$variables) {
     $opinion = [
       'district' => $district,
       'case' => $case,
+      'revision_type' => $revision_type,
       'title' => $row->title->value,
       'url' => Url::fromRoute('entity.node.canonical', ['node' => $row->id()], ['absolute' => FALSE])->toString(),
       'review_granted' => $row->field_toggle->value,
