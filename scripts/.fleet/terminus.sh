@@ -31,6 +31,7 @@ case $1 in
     if [[ -z "$env" ]] || [[ -z "$command" ]] ; then
       echo -e "\n${R}You must enter a valid [environment] and [command].${RE}"
       show_help
+      exit 1
     fi
     do_command $@
     ;;
