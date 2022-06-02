@@ -11,13 +11,26 @@ weight: 0
 container_id: GTM-MNTXJ7J
 data_layer: dataLayer
 include_classes: false
-whitelist_classes: "google\nnonGooglePixels\nnonGoogleScripts\nnonGoogleIframes"
-blacklist_classes: "customScripts\ncustomPixels"
+whitelist_classes: |-
+  google
+  nonGooglePixels
+  nonGoogleScripts
+  nonGoogleIframes
+blacklist_classes: |-
+  customScripts
+  customPixels
 include_environment: false
 environment_id: ''
 environment_token: ''
 path_toggle: 'exclude listed'
-path_list: "/admin*\n/batch*\n/node/add*\n/node/*/edit\n/node/*/delete\n/user/*/edit*\n/user/*/cancel*"
+path_list: |-
+  /admin*
+  /batch*
+  /node/add*
+  /node/*/edit
+  /node/*/delete
+  /user/*/edit*
+  /user/*/cancel*
 role_toggle: 'exclude listed'
 role_list: {  }
 status_toggle: 'exclude listed'
@@ -25,18 +38,18 @@ status_list: ''
 conditions:
   'entity_bundle:node':
     id: 'entity_bundle:node'
-    bundles: {  }
     negate: false
     context_mapping:
       node: '@node.node_route_context:node'
+    bundles: {  }
   'entity_bundle:webform_submission':
     id: 'entity_bundle:webform_submission'
-    bundles: {  }
     negate: false
     context_mapping:
       webform_submission: '@webform.webform_submission_route_context:webform_submission'
+    bundles: {  }
   webform:
     id: webform
-    webforms: {  }
     negate: false
     context_mapping: {  }
+    webforms: {  }
