@@ -28,6 +28,17 @@ function jcc_tc2_all_immutable_config_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function jcc_tc2_all_immutable_config_update_dependencies() {
+  $dependencies['search_api'][8107] = [
+    'jcc_tc2_all_immutable_config' => 8035,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Remove field_media from news content type.
  */
 function jcc_tc2_all_immutable_config_update_8001() {
@@ -611,4 +622,22 @@ function jcc_tc2_all_immutable_config_prefix_paragraph_fields($field_name) {
   else {
     \Drupal::messenger()->addStatus(t('Alameda only, no changes.'));
   }
+}
+
+/**
+ * Remove duplicate tasks from search_api_tasks table.
+ *
+ * See jcc_tc2_all_immutable_config_update_dependencies().
+ */
+function jcc_tc2_all_immutable_config_update_8035() {
+  $database = \Drupal::database();
+  $count = $database->query('
+    DELETE t1 FROM search_api_task t1
+    INNER JOIN search_api_task t2
+    WHERE
+      t1.id < t2.id AND
+      t1.data = t2.data;
+  ')
+    ->execute();
+  \Drupal::messenger()->addStatus(t('Removed :count duplicate search api task(s)', [':count' => $count]));
 }
