@@ -12,20 +12,18 @@ third_party_settings:
   geocoder_field:
     method: geocode
     weight: 0
+    field: field_address
     skip_not_empty_value: false
     disabled: false
     hidden: true
     providers:
       - bingmaps
     dumper: geolocation_geocoder_v3
+    delta_handling: default
     failure:
       handling: preserve
       status_message: true
       log: true
-    field: field_address
-    delta_handling: default
-_core:
-  default_config_hash: mpKGBN8OICGmJVBvcc-A1KUkDIQuYykLN2xL5G7bL1I
 id: node.location.field_geolocation
 field_name: field_geolocation
 entity_type: node

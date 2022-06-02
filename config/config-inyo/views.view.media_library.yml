@@ -18,6 +18,11 @@ dependencies:
     - svg_image
     - taxonomy
     - user
+  enforced:
+    module:
+      - media_library
+_core:
+  default_config_hash: hLG1O8RxhHCKFohZ17BzvxllbGLhthB9u3tsnipe7hQ
 id: media_library
 label: 'Media library'
 module: views
@@ -666,6 +671,7 @@ display:
           exposed: true
           expose:
             label: 'Newest first'
+            field_identifier: created
           granularity: second
           entity_type: media
           entity_field: created
@@ -681,6 +687,7 @@ display:
           exposed: true
           expose:
             label: 'Name (A-Z)'
+            field_identifier: name
           entity_type: media
           entity_field: name
           plugin_id: standard
@@ -695,6 +702,7 @@ display:
           exposed: true
           expose:
             label: 'Name (Z-A)'
+            field_identifier: name_1
           entity_type: media
           entity_field: name
           plugin_id: standard
