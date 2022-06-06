@@ -170,7 +170,7 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
         'title' => $title,
         'url' => $file ? $file->createFileUrl() : NULL,
         'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
-        'file_weight' => $file_weight ? $file_weight[0] : "0",
+        'file_weight' => $file_weight ? $file_weight[0] : 0,
         // Contextual edit document option.
         'edit_option' => _jcc_components_can_edit_entity($row, t('Edit')),
       ];
