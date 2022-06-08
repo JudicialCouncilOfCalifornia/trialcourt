@@ -70,11 +70,13 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       break;
 
     case 'node_document_form':
-      $startDate = $form['field_date_range']['widget'][0]['value']['#default_value'];
-      if ($startDate && $startDate instanceof DrupalDateTime) {
-        $startDate->setTime(0, 0, 0);
-        $form['field_date_range']['widget'][0]['value']['#default_value'] = $startDate;
-        $form['field_date_range']['widget'][0]['end_value']['#default_value'] = $startDate;
+      if (isset($form['field_date_range'])) {
+        $startDate = $form['field_date_range']['widget'][0]['value']['#default_value'];
+        if ($startDate && $startDate instanceof DrupalDateTime) {
+          $startDate->setTime(0, 0, 0);
+          $form['field_date_range']['widget'][0]['value']['#default_value'] = $startDate;
+          $form['field_date_range']['widget'][0]['end_value']['#default_value'] = $startDate;
+        }
       }
       break;
   }
