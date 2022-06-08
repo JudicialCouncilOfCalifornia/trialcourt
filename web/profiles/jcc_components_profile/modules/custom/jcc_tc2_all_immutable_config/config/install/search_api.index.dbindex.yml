@@ -60,7 +60,7 @@ third_party_settings:
       collection: ''
       timezone: ''
 _core:
-  default_config_hash: i4WP-g8cI8Ln8bvWUs-Rq1xDkKomK3XiSVRgh-uvQAg
+  default_config_hash: w8KjG_BTv-adDdX8h6fWfwQaS85xWsgXq3kre7R8TwQ
 id: dbindex
 name: 'DB Index'
 description: ''
@@ -260,12 +260,32 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
+  stemmer:
+    all_fields: true
+    fields:
+      - field_aside
+      - field_brow
+      - field_brow_1
+      - field_heading
+      - field_heading_1
+      - field_subheading
+      - name
+      - processed
+      - processed_1
+      - processed_6
+      - processed_7
+      - rendered_item
+      - summary_processed
+      - title
+    exceptions:
+      mexican: mexic
+      texan: texa
+    weights:
+      preprocess_index: -42
+      preprocess_query: 0
+  rendered_item: {  }
   add_url: {  }
   aggregated_field: {  }
-  content_access:
-    weights:
-      preprocess_query: -30
-  entity_status: {  }
   entity_type: {  }
   highlight:
     highlight: always
@@ -279,6 +299,61 @@ processor_settings:
     weights:
       postprocess_query: 0
     excerpt_always: false
+  entity_status: {  }
+  tokenizer:
+    all_fields: false
+    fields:
+      - rendered_item
+    ignored: ._-
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
+    weights:
+      preprocess_index: -44
+      preprocess_query: -6
+  ignorecase:
+    all_fields: true
+    fields:
+      - field_aside
+      - field_brow
+      - field_brow_1
+      - field_heading
+      - field_heading_1
+      - field_subheading
+      - name
+      - processed
+      - processed_1
+      - processed_6
+      - processed_7
+      - rendered_item
+      - summary_processed
+      - title
+    weights:
+      preprocess_index: -20
+      preprocess_query: -20
+  transliteration:
+    all_fields: false
+    fields:
+      - rendered_item
+      - title
+    weights:
+      preprocess_index: -49
+      preprocess_query: -20
+  type_boost:
+    boosts:
+      'entity:node':
+        datasource_boost: !!float 1
+        bundle_boosts:
+          document: !!float 2
+          landing_page: !!float 2
+          news: !!float 3
+          subpage: !!float 2
+    weights:
+      preprocess_index: -50
+  language_with_fallback: {  }
+  content_access:
+    weights:
+      preprocess_query: -30
   html_filter:
     all_fields: true
     fields:
@@ -307,81 +382,6 @@ processor_settings:
     weights:
       preprocess_index: -15
       preprocess_query: -15
-  ignorecase:
-    all_fields: true
-    fields:
-      - field_aside
-      - field_brow
-      - field_brow_1
-      - field_heading
-      - field_heading_1
-      - field_subheading
-      - name
-      - processed
-      - processed_1
-      - processed_6
-      - processed_7
-      - rendered_item
-      - summary_processed
-      - title
-    weights:
-      preprocess_index: -20
-      preprocess_query: -20
-  language_with_fallback: {  }
-  rendered_item: {  }
-  stemmer:
-    all_fields: true
-    fields:
-      - field_aside
-      - field_brow
-      - field_brow_1
-      - field_heading
-      - field_heading_1
-      - field_subheading
-      - name
-      - processed
-      - processed_1
-      - processed_6
-      - processed_7
-      - rendered_item
-      - summary_processed
-      - title
-    exceptions:
-      mexican: mexic
-      texan: texa
-    weights:
-      preprocess_index: -42
-      preprocess_query: 0
-  tokenizer:
-    all_fields: false
-    fields:
-      - rendered_item
-    ignored: ._-
-    spaces: ''
-    overlap_cjk: 1
-    minimum_word_size: '3'
-    weights:
-      preprocess_index: -44
-      preprocess_query: -6
-  transliteration:
-    all_fields: false
-    fields:
-      - rendered_item
-      - title
-    weights:
-      preprocess_index: -49
-      preprocess_query: -20
-  type_boost:
-    boosts:
-      'entity:node':
-        datasource_boost: !!float 1
-        bundle_boosts:
-          document: !!float 2
-          landing_page: !!float 2
-          news: !!float 3
-          subpage: !!float 2
-    weights:
-      preprocess_index: -50
   file_attachments:
     excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
     number_indexed: 0
@@ -389,9 +389,6 @@ processor_settings:
     max_filesize: '0'
     excluded_private: 1
     excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
-  solr_date_range:
-    weights:
-      preprocess_index: 0
   double_quote_workaround:
     all_fields: false
     fields:
@@ -402,6 +399,9 @@ processor_settings:
       postprocess_query: 0
       preprocess_index: -47
       preprocess_query: -15
+  solr_date_range:
+    weights:
+      preprocess_index: 0
 tracker_settings:
   default:
     indexing_order: fifo
