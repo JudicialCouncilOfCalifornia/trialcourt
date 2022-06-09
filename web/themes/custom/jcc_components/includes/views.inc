@@ -6,8 +6,6 @@
  */
 
 use Drupal\Core\Url;
-use Drupal\node\NodeInterface;
-use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\media\Entity\Media;
 use Drupal\file\Entity\File;
 use Drupal\taxonomy\Entity\Term;
@@ -122,19 +120,9 @@ function jcc_components_preprocess_views_view__events__events_list(&$variables) 
 /**
  * Implements hook_preprocess_HOOK() for oral arguments case documents listing.
  */
-function jcc_components_preprocess_views_view__oral_arguments__default(&$variables) {
+function jcc_components_preprocess_views_view__oral_arguments__block_1(&$variables) {
   if (empty($variables['rows'][0]['#rows'])) {
     return;
-  }
-
-  $node = \Drupal::routeMatch()->getParameter('node');
-  if ($node instanceof NodeInterface) {
-    foreach ($node->field_components as $component) {
-      $para = Paragraph::load($component->target_id);
-      if (isset($para->field_content_stream)) {
-        $start_date = $para->field_filter_by_date->start_date->format('Ymd');
-      }
-    }
   }
 
   $docs = [];
@@ -144,38 +132,35 @@ function jcc_components_preprocess_views_view__oral_arguments__default(&$variabl
     if ($row->field_verbose_title->value) {
       $title = $row->field_verbose_title->value;
     }
-    $hearing_start_date = $row->field_date_range->start_date->format('Ymd');
 
-    if (isset($start_date) && isset($hearing_start_date) && $hearing_start_date == $start_date) {
-      $media = Media::load($row->field_media->target_id);
-      if (isset($media) && $media->field_media_file->target_id) {
-        $file = File::load($media->field_media_file->target_id);
-        $filename = $file->get('filename')->value;
-        // File order weight through file naming convention.
-        $file_weight = explode('-', $filename);
-      }
-      else {
-        $file = NULL;
-        $filename = NULL;
-        $file_weight = "0";
-      }
-      $case = Term::load($row->field_case->target_id);
-
-      $doc = [
-        'case' => [
-          'name' => $case && $case->get('name')->value ? $case->get('name')->value : 'NO CASE ASSIGNED',
-          'description' => $case && $case->get('description')->value ? $case->get('description')->value : NULL,
-          'weight' => $case && $case->get('field_weight')->value ? $case->get('field_weight')->value : 0,
-        ],
-        'title' => $title,
-        'url' => $file ? $file->createFileUrl() : NULL,
-        'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
-        'file_weight' => $file_weight ? $file_weight[0] : "0",
-        // Contextual edit document option.
-        'edit_option' => _jcc_components_can_edit_entity($row, t('Edit')),
-      ];
-      array_push($docs, $doc);
+    $media = Media::load($row->field_media->target_id);
+    if (isset($media) && $media->field_media_file->target_id) {
+      $file = File::load($media->field_media_file->target_id);
+      $filename = $file->get('filename')->value;
+      // File order weight through file naming convention.
+      $file_weight = explode('-', $filename);
     }
+    else {
+      $file = NULL;
+      $filename = NULL;
+      $file_weight = "0";
+    }
+    $case = Term::load($row->field_case->target_id);
+
+    $doc = [
+      'case' => [
+        'name' => $case && $case->get('name')->value ? $case->get('name')->value : 'NO CASE ASSIGNED',
+        'description' => $case && $case->get('description')->value ? $case->get('description')->value : NULL,
+        'weight' => $case && $case->get('field_weight')->value ? $case->get('field_weight')->value : 0,
+      ],
+      'title' => $title,
+      'url' => $file ? $file->createFileUrl() : NULL,
+      'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
+      'file_weight' => $file_weight ? $file_weight[0] : 0,
+      // Contextual edit document option.
+      'edit_option' => _jcc_components_can_edit_entity($row, t('Edit')),
+    ];
+    array_push($docs, $doc);
   }
 
   // Sort documents by weight.
