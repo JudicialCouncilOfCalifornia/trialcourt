@@ -2,8 +2,13 @@
 
 {% block taxonomy_description %}
   {% if rows.0['#rows'].0['#node'].field_document_type.0.entity.name.value == 'Oral Argument' and rows.0['#rows'].0['#node'].field_date_range.value %}
-    {% set end_date = rows.0['#rows'].0['#node'].field_date_range.end_value ? ' to ' ~ rows.0['#rows'].0['#node'].field_date_range.end_value|date('F d, Y')  : '' %}
-    <p>Hearing Date: {{ rows.0['#rows'].0['#node'].field_date_range.value|date('F d, Y') ~ end_date }}</p>
+    {% if rows.0['#rows'].0['#node'].field_date_range.value %}
+      {% set end_date = rows.0['#rows'].0['#node'].field_date_range.end_value ? ' to ' ~ rows.0['#rows'].0['#node'].field_date_range.end_value|date('F d, Y')  : '' %}
+      <p>Hearing Date: {{ rows.0['#rows'].0['#node'].field_date_range.value|date('F d, Y') ~ end_date }}</p>
+    {% endif %}
+    {% if header['entity_taxonomy_term']['#taxonomy_term'].description.value %}
+      {{ header['entity_taxonomy_term']['#taxonomy_term'].description.value|raw }}
+    {% endif %}
   {% endif %}
 {% endblock %}
 
