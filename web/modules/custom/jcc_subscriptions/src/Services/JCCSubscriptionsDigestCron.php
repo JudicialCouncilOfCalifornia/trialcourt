@@ -46,6 +46,18 @@ class JCCSubscriptionsDigestCron {
         \Drupal::logger('jcc_subscriptions')->notice('No new newslink item are queued for email today.');
       }
     }
+
+    //Test if cron should run a follow up (in case initial digest failed)
+    $end_of_checks_temp = strtotime($jcc_config->get('newslink_digest_time')) + 60*60; // Adding 1hour to check for that failed queueworder
+    $end_of_checks = date('H:i', $end_of_checks_temp);
+
+    if ($this->shouldRun($now, $end_of_checks)) {
+      $subscriptionQueue = \Drupal::queue('send_subscriptions_queue');
+      if ($subscriptionQueue->numberOfItems() != 0) {
+        $subscriptionQueue->claimItem(9000); // will try to execute this task for 15mins
+        \Drupal::logger('jcc_subscriptions')->notice('Subscriptions --- Tried to execute existing Digest queue worker');
+      }
+    }
   }
 
   /**

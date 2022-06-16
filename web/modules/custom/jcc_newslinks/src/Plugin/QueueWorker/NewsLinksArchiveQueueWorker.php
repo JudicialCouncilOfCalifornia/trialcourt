@@ -59,7 +59,12 @@ class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
             $media = Media::load($mid);
             $fid = $media->field_media_image->target_id;
             $file = File::load($fid);
-            $fileName = $file->label();
+            if ($file){
+              $fileName = $file->label();
+            } else {
+              $fileName = '';
+            }
+
 
             // Step 1: Removing media image from node.
             unset($node->field_images[$key]);
@@ -80,13 +85,15 @@ class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
               \Drupal::logger('jcc_newslinks')->notice($deleteMsg);
 
               // Mark the associated image file for auto deletion.
-              $fileUsage = \Drupal::service('file.usage');
-              $usage = $fileUsage->listUsage($file);
-              if (empty($usage)) {
-                $file->setTemporary();
-                $file->save();
-                $deleteMsg = 'File marked temporary for deletion: ' . $fileName;
-                \Drupal::logger('jcc_newslinks')->notice($deleteMsg);
+              if ($file) {
+                $fileUsage = \Drupal::service('file.usage');
+                $usage = $fileUsage->listUsage($file);
+                if (empty($usage)) {
+                  $file->setTemporary();
+                  $file->save();
+                  $deleteMsg = 'File marked temporary for deletion: ' . $fileName;
+                  \Drupal::logger('jcc_newslinks')->notice($deleteMsg);
+                }
               }
             }
             else {
