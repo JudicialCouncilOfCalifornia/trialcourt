@@ -195,7 +195,7 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
     // Getting news item path alias.
     $news_internal_path = '/node/' . (int) $news_nid;
     $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
-    $news_path_alias = $base_url . \Drupal::service('path.alias_manager')->getAliasByPath($news_internal_path, $langcode);
+    $news_path_alias = $base_url . \Drupal::service('path_alias.manager')->getAliasByPath($news_internal_path, $langcode);
 
     // Getting from email.
     if (!empty(\Drupal::service('key.repository')->getKey('newsroom_sendgrid'))) {
