@@ -28,6 +28,9 @@ class JCCSubscriptionsDigestCron {
       $this->queueTasks();
     }
 
+    //      $subscriptionQueue = \Drupal::queue('send_subscriptions_queue');
+    //      if ($subscriptionQueue->numberOfItems() == 0) {
+
     if ($this->shouldRun($now, $jcc_config->get('newslink_digest_time'))) {
       // Checks if there is any news item to send.
       $view = Views::getView('news_digest');
@@ -44,6 +47,13 @@ class JCCSubscriptionsDigestCron {
       else {
         $this->state->set('jcc_subscriptions.last_cron', $now);
         \Drupal::logger('jcc_subscriptions')->notice('No new newslink item are queued for email today.');
+      }
+    }
+    if ($this->shouldRunChecks($now, $jcc_config->get('newslink_digest_time'))) {
+      $subscriptionQueue = \Drupal::queue('send_subscriptions_queue');
+      if ($subscriptionQueue->numberOfItems() != 0) {
+        $subscriptionQueue->claimItem(9000); // will try to execute this task for 15mins
+        \Drupal::logger('jcc_subscriptions')->notice('Subscriptions --- Tried to execute existing Digest queue worker');
       }
     }
   }
@@ -74,6 +84,35 @@ class JCCSubscriptionsDigestCron {
     return ($next->getTimestamp() <= $now) && (time() >= strtotime($scheduled));
   }
 
+  /**
+   * Test if cron should run a follow up (in case initial digest failed)
+   */
+  public function shouldRunChecks($now, $scheduled = '17:00')
+  {
+    if (!isset($_ENV['PANTHEON_ENVIRONMENT']) || $_ENV['PANTHEON_ENVIRONMENT'] != 'live') {
+      return FALSE;
+    }
+    $end_of_checks_temp = strtotime($scheduled) + 60*60; // Adding 1hour to check for that failed queueworder
+    $end_of_checks = date('H:i', $end_of_checks_temp);
+
+    $timezone = new \DateTimeZone('America/Los_Angeles');
+
+    $timestamp_last = $this->state->get('jcc_subscriptions.last_cron') ?? 0;
+    $last = \DateTime::createFromFormat('U', $timestamp_last)
+      ->setTimezone($timezone);
+    $next = clone $last;
+
+    $next->setTime(...explode(':', $end_of_checks));
+
+    if (($next->getTimestamp() <= $last->getTimestamp())) {
+      $next->modify('+1 day');
+    }
+
+    $cron_timing_log_message = 'Subscriptions --- Last JCC_subs cron: ' . date('m/d/Y H:i:s', $last->getTimestamp()) . ' --- Next:  ' . date('m/d/Y H:i:s', $next->getTimestamp());
+    \Drupal::logger('jcc_subscriptions')->notice($cron_timing_log_message);
+
+    return ($next->getTimestamp() <= $now) && (time() >= strtotime($end_of_checks));
+  }
   /**
    * Add task to the queue.
    */
