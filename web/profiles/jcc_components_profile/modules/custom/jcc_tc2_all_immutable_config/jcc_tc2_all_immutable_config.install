@@ -697,6 +697,73 @@ function jcc_tc2_all_immutable_config_update_8042(&$sandbox) {
     // For each oid, load the object, update the files and save it.
     $entity = $entity_storage->load($oid);
 
+    // Remove file extensions from name before moving.
+    $file = $entity->get('field_media_file')->entity;
+    $extension = '.' . pathinfo($file->getFilename(), PATHINFO_EXTENSION);
+    $label = $entity->label();
+    $label = str_replace($extension, '', $label);
+    $entity->setName($label);
+    $entity->save();
+
+    $sandbox['current']++;
+  }
+
+  \Drupal::messenger()
+    ->addMessage($sandbox['current'] . ' Media processed.');
+
+  if ($sandbox['current'] >= $sandbox['total']) {
+    $sandbox['#finished'] = 1;
+  }
+  else {
+    $sandbox['#finished'] = ($sandbox['current'] / $sandbox['total']);
+  }
+}
+
+
+/**
+ * TCI-768: move Media: Files to private directory.
+ */
+function jcc_tc2_all_immutable_config_update_8043(&$sandbox) {
+  $bundle_fields = \Drupal::getContainer()->get('entity_field.manager')->getFieldDefinitions('media', 'file');
+  $field_config = $bundle_fields['field_media_file'];
+  /** @var Drupal\Core\Entity\ContentEntityStorageBase $entity_storage */
+  $entity_storage = \Drupal::entityTypeManager()
+    ->getStorage($field_config->getTargetEntityTypeId());
+
+  if (!isset($sandbox['total'])) {
+    $query = \Drupal::entityQuery('media');
+    $result = $query->condition('bundle', 'file')
+      ->condition("field_media_file.target_id", '', '<>')
+      ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
+      ->execute();
+
+    $sandbox['total'] = count($result);
+    $sandbox['current'] = 0;
+
+    if (empty($sandbox['total'])) {
+      $sandbox['#finished'] = 1;
+      return;
+    }
+  }
+
+  $batch_size = 25;
+
+  $query = \Drupal::entityQuery('media');
+  $result = $query->condition('bundle', 'file')
+    ->condition("field_media_file.target_id", '', '<>')
+    ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
+    ->range($sandbox['current'], $batch_size)
+    ->execute();
+
+  if (empty($result)) {
+    $sandbox['#finished'] = 1;
+    return;
+  }
+
+  foreach ($result as $oid) {
+    // For each oid, load the object, update the files and save it.
+    $entity = $entity_storage->load($oid);
+
     // Enable active updating if it isn't already enabled.
     $active_updating = $field_config->getThirdPartySetting('filefield_paths', 'active_updating');
     if (!$active_updating) {
