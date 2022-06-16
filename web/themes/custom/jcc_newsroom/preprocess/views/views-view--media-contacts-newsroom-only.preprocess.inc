@@ -18,7 +18,7 @@ function jcc_newsroom_preprocess_views_view__media_contacts_newsroom_only(&$vari
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $personRecord = $row['#row'];
     $person_id = $personRecord->nid;
-    $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $personRecord->_entity->nid->value);
+    $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $personRecord->_entity->nid->value);
     $first_name = $personRecord->_entity->field_first_name->value;
     $last_name = $personRecord->_entity->field_last_name->value;
     if ($personRecord->_entity->field_person_type[0]) {

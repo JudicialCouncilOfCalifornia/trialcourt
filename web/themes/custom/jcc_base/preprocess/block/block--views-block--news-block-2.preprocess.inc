@@ -19,7 +19,7 @@ function jcc_base_preprocess_block__views_block__news_block_2(&$variables) {
     foreach ($rows as $row) {
       $title = $row->_entity->title->value;
       $excerpt = $row->_entity->field_tagline->value;
-      $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
+      $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
 
       // Placeholder if no image available.
       $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><div class="placeholder-photo"><span class="fas fa-camera" aria-label="Camera icon indicating no image provided"></span></div></a>');

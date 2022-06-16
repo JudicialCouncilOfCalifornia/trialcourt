@@ -37,7 +37,7 @@ function jcc_base_preprocess_block__views_block__news_block_3(&$variables) {
         ['field_topics', 'field_tags', 'field_division', 'field_subject_matter']);
 
       $excerpt = Markup::create('<div class="publish_date">' . $date . '</div>' . $body . '<div class="jcc-tags">' . $categories . '</div>');
-      $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
+      $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
 
       $img_elem = '';
       $first_image = _jcc_get_first_image($row->_entity);
