@@ -27,7 +27,7 @@ function jcc_base_preprocess_block__views_block__news_block_1(&$variables) {
         $excerpt = $row->_entity->field_attachments->entity->getName();
       }
     }
-    $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
+    $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
 
     $moduleHandler = Drupal::service('module_handler');
     $user = Drupal::currentUser();

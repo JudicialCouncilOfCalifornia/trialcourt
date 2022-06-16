@@ -44,7 +44,7 @@ function jcc_professional_preprocess_page(&$variables) {
   $current_path = \Drupal::service('path.current')->getPath();
   $current_path_alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
   preg_match('/^\/[^\/]*/', $current_path_alias, $parent_path);
-  $parent_node_path = \Drupal::service('path.alias_manager')->getPathByAlias($parent_path[0]);
+  $parent_node_path = \Drupal::service('path_alias.manager')->getPathByAlias($parent_path[0]);
   if (preg_match('/node\/(\d+)/', $parent_node_path, $node_path) && ($parent_node_path != $current_path)) {
     $parent_masthead_color = Node::load($node_path[1])->field_masthead_color->getString();
     // Never allow mega masthead for subpages.
