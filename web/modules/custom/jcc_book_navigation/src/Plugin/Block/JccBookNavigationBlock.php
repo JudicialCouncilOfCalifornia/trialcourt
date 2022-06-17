@@ -3,6 +3,7 @@
 namespace Drupal\jcc_book_navigation\Plugin\Block;
 
 use Drupal\book\Plugin\Block\BookNavigationBlock;
+use Drupal\node\NodeInterface;
 
 /**
  * Provides a 'JccBookNavigationBlock' block.
@@ -79,9 +80,12 @@ class JccBookNavigationBlock extends BookNavigationBlock {
       $this->configuration[$key] = $values[$key];
     }
 
-    $this->configuration['icon_library'] = $form_state->getValue(['book_block_icons', 'book_block_icon_library']);
-    $this->configuration['nav_icon_expand'] = $form_state->getValue(['book_block_icons', 'book_block_child_expand']);
-    $this->configuration['nav_icon_collapse'] = $form_state->getValue(['book_block_icons', 'book_block_child_collapse']);
+    $this->configuration['icon_library'] =
+      $form_state->getValue(['book_block_icons', 'book_block_icon_library']);
+    $this->configuration['nav_icon_expand'] =
+      $form_state->getValue(['book_block_icons', 'book_block_child_expand']);
+    $this->configuration['nav_icon_collapse'] =
+      $form_state->getValue(['book_block_icons', 'book_block_child_collapse']);
   }
 
   /**
@@ -89,10 +93,11 @@ class JccBookNavigationBlock extends BookNavigationBlock {
    */
   public function build() {
     $current_bid = 0;
-    if ($node = $this->requestStack->getCurrentRequest()->get('node')) {
-      $current_bid = empty($node->book['bid']) ? 0 : $node->book['bid'];
-    }
 
+    $node = $this->routeMatch->getParameter('node');
+    if ($node instanceof NodeInterface && !empty($node->book['bid'])) {
+      $current_bid = $node->book['bid'];
+    }
     if ($this->configuration['block_mode'] == 'all pages') {
       return parent::build();
     }
@@ -100,8 +105,9 @@ class JccBookNavigationBlock extends BookNavigationBlock {
       // Only display this block when the user is browsing a book and do
       // not show unpublished books.
       $nid = \Drupal::entityQuery('node')
+        ->accessCheck(TRUE)
         ->condition('nid', $node->book['bid'], '=')
-        ->condition('status', NODE_PUBLISHED)
+        ->condition('status', NodeInterface::PUBLISHED)
         ->execute();
       // Only show the block if the user has view access for the top-level node.
       if ($nid) {
