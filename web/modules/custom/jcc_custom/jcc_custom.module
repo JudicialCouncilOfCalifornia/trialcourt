@@ -79,6 +79,15 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
         }
       }
       break;
+
+    case 'media_library_add_form_upload':
+      if (!empty($form['media'][0]['fields']['name']['widget'][0]['value']['#default_value'])) {
+        $name = $form['media'][0]['fields']['name']['widget'][0]['value']['#default_value'];
+        $extension = '.' . pathinfo($name, PATHINFO_EXTENSION);
+        $form['media'][0]['fields']['name']['widget'][0]['value']['#default_value'] = str_replace($extension, '', $name);
+      }
+      break;
+
   }
 }
 
