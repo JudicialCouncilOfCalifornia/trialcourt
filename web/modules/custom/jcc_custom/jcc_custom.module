@@ -7,10 +7,11 @@
 
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_page_attachments().
@@ -186,4 +187,43 @@ function jcc_custom_entity_type_alter(array &$entity_types) {
  */
 function jcc_custom_js_settings_alter(array &$settings, $assets) {
   $settings['user']['authenticated'] = \Drupal::currentUser()->isAuthenticated();
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function jcc_custom_element_info_alter(array &$info) {
+  // Add a custom #process hook to the managed_file element:
+  $info['managed_file']['#process'][] = 'jcc_custom_managed_file_process';
+  // Add the custom command to managed_file elements, so that it is
+  // available when called:
+  $info['managed_file']['#attached']['library'][] = 'jcc_custom/command.managed_file_upload_complete_event_command';
+}
+
+/**
+ * Custom ajax callback for managed files.
+ *
+ * Overrides \Drupal\file\Element\ManagedFile::uploadAjaxCallback()
+ *
+ * @see \Drupal\file\Element\ManagedFile::uploadAjaxCallback
+ */
+function jcc_custom_managed_file_ajax_callback(array &$form, FormStateInterface $form_state) {
+  // Retrieve the original response.
+  $response = \Drupal\file\Element\ManagedFile::uploadAjaxCallback($form, $form_state, \Drupal::request());
+
+  // Add our own command to the end, so our command is run last:
+  $response->addCommand(new \Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand());
+
+  return $response;
+}
+
+/**
+ * Custom process callback added to managed_file elements.
+ *
+ * Replaces the original #ajax callback with a custom one.
+ */
+function jcc_custom_managed_file_process(array &$element, FormStateInterface $form_state) {
+  $element['upload_button']['#ajax']['callback'] = 'jcc_custom_managed_file_ajax_callback';
+
+  return $element;
 }
