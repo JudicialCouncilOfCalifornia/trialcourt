@@ -98,10 +98,14 @@ class XlsxListBuilder extends ConfigEntityListBuilder {
       ['xlsx' => $entity->id()],
       ['attributes' => $ajax_attributes]
     );
+
+    $options = [3600, 10800, 21600, 43200, 86400, 604800];
+    $cron_frequency = [0 => $this->t('On each cron run')] + array_map([\Drupal::service('date.formatter'), 'formatInterval'], array_combine($options, $options));
+    
     $row['source'] = $plugin->getName();
     $row['export'] = join(', ', $export_plugins);
     $row['export_only'] = !empty($mapping['export_only']) ? $this->t('Yes') : $this->t('No');
-    $row['cron'] = $plugin->isCron() ? $this->t('Yes') : $this->t('No');
+    $row['cron'] = $plugin->isCron() ? $cron_frequency[$mapping['cron_frequency']] : $this->t('No');
     $row['last_import'] = $entity->getLastImport();
     $row['last_export'] = $entity->getLastExport();
     return $row + parent::buildRow($entity);
