@@ -1,22 +1,17 @@
-uuid: cb03675f-138a-4748-9553-437e9e7be5d9
+uuid: 5120c1e1-755c-4bb0-b16a-6ff4d96bba0a
 langcode: en
 status: true
 dependencies:
-  config:
-    - field.storage.node.field_date
-    - node.type.news
   module:
-    - datetime
     - node
+    - nodeaccess
     - user
-_core:
-  default_config_hash: tpgRz8Ij8ekXyVyLFI0sB3L_7D6A7bcKHlO2SDSpROQ
-id: news_admin
-label: 'News admin'
+id: nodeaccess
+label: Nodeaccess
 module: views
 description: ''
 tag: ''
-base_table: node_field_data
+base_table: nodeaccess
 base_field: nid
 display:
   default:
@@ -28,15 +23,15 @@ display:
       access:
         type: perm
         options:
-          perm: 'access content overview'
+          perm: 'grant node permissions'
       cache:
-        type: none
+        type: tag
         options: {  }
       query:
         type: views_query
         options:
           disable_sql_rewrite: false
-          distinct: false
+          distinct: true
           replica: false
           query_comment: ''
           query_tags: {  }
@@ -44,24 +39,19 @@ display:
         type: basic
         options:
           submit_button: Apply
-          reset_button: true
+          reset_button: false
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
+          expose_sort_order: false
           sort_asc_label: Asc
           sort_desc_label: Desc
       pager:
-        type: full
+        type: mini
         options:
           items_per_page: 50
           offset: 0
           id: 0
           total_pages: null
-          tags:
-            previous: ‹‹
-            next: ››
-            first: '« First'
-            last: 'Last »'
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -70,7 +60,9 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
-          quantity: 9
+          tags:
+            previous: ‹‹
+            next: ››
       style:
         type: table
         options:
@@ -83,18 +75,13 @@ display:
           summary: ''
           description: ''
           columns:
-            node_bulk_form: node_bulk_form
             title: title
-            field_date: field_date
-            status: status
-            sticky: sticky
-            operations: operations
+            name: name
+            realm: realm
+            grant_view: grant_view
+            grant_update: grant_update
+            grant_delete: grant_delete
           info:
-            node_bulk_form:
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
             title:
               sortable: true
               default_sort_order: asc
@@ -102,119 +89,82 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-            field_date:
+            name:
               sortable: true
-              default_sort_order: desc
+              default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
-            status:
-              sortable: true
-              default_sort_order: desc
+            realm:
+              sortable: false
+              default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
-            sticky:
-              sortable: true
-              default_sort_order: desc
+            grant_view:
+              sortable: false
+              default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
-            operations:
+            grant_update:
+              sortable: false
+              default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
-          default: field_date
+            grant_delete:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          default: '-1'
           empty_table: false
       row:
         type: fields
       fields:
-        node_bulk_form:
-          id: node_bulk_form
-          table: node
-          field: node_bulk_form
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          action_title: Action
-          include_exclude: include
-          selected_actions:
-            - node_make_sticky_action
-            - node_make_unsticky_action
-            - node_publish_action
-            - node_unpublish_action
-          entity_type: node
-          plugin_id: node_bulk_form
         title:
           id: title
           table: node_field_data
           field: title
-          entity_type: node
-          entity_field: title
-          alter:
-            alter_text: false
-            make_link: false
-            absolute: false
-            trim: false
-            word_boundary: false
-            ellipsis: false
-            strip_tags: false
-            html: false
-          hide_empty: false
-          empty_zero: false
-          settings:
-            link_to_entity: true
-          plugin_id: field
-          relationship: none
+          relationship: nid
           group_type: group
           admin_label: ''
           label: Title
           exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
           element_type: ''
           element_class: ''
           element_label_type: ''
@@ -224,9 +174,13 @@ display:
           element_wrapper_class: ''
           element_default_classes: true
           empty: ''
+          hide_empty: false
+          empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
           type: string
+          settings:
+            link_to_entity: true
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -237,14 +191,17 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_date:
-          id: field_date
-          table: node__field_date
-          field: field_date
-          relationship: none
+          entity_type: node
+          entity_field: title
+          plugin_id: field
+        name:
+          id: name
+          table: users_field_data
+          field: name
+          relationship: gid
           group_type: group
           admin_label: ''
-          label: Date
+          label: Name
           exclude: false
           alter:
             alter_text: false
@@ -286,10 +243,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: datetime_default
+          type: user_name
           settings:
-            timezone_override: ''
-            format_type: m_d_y
+            link_to_entity: true
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -300,15 +256,17 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+          entity_type: user
+          entity_field: name
           plugin_id: field
-        status:
-          id: status
-          table: node_field_data
-          field: status
+        realm:
+          id: realm
+          table: nodeaccess
+          field: realm
           relationship: none
           group_type: group
           admin_label: ''
-          label: Status
+          label: Realm
           exclude: false
           alter:
             alter_text: false
@@ -349,33 +307,15 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          click_sort_column: value
-          type: boolean
-          settings:
-            format: custom
-            format_custom_true: Published
-            format_custom_false: Unpublished
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          entity_type: node
-          entity_field: status
-          plugin_id: field
-        sticky:
-          id: sticky
-          table: node_field_data
-          field: sticky
+          plugin_id: standard
+        grant_view:
+          id: grant_view
+          table: nodeaccess
+          field: grant_view
           relationship: none
           group_type: group
           admin_label: ''
-          label: Sticky
+          label: 'Grant View'
           exclude: false
           alter:
             alter_text: false
@@ -416,33 +356,23 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          click_sort_column: value
-          type: boolean
-          settings:
-            format: on-off
-            format_custom_true: ''
-            format_custom_false: ''
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          entity_type: node
-          entity_field: sticky
-          plugin_id: field
-        operations:
-          id: operations
-          table: node
-          field: operations
+          set_precision: false
+          precision: 0
+          decimal: .
+          separator: ''
+          format_plural: false
+          format_plural_string: !!binary MQNAY291bnQ=
+          prefix: ''
+          suffix: ''
+          plugin_id: numeric
+        grant_update:
+          id: grant_update
+          table: nodeaccess
+          field: grant_update
           relationship: none
           group_type: group
           admin_label: ''
-          label: ''
+          label: 'Grant Update'
           exclude: false
           alter:
             alter_text: false
@@ -475,7 +405,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: false
+          element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -483,55 +413,261 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          destination: false
-          entity_type: node
-          plugin_id: entity_operations
+          set_precision: false
+          precision: 0
+          decimal: .
+          separator: ''
+          format_plural: false
+          format_plural_string: !!binary MQNAY291bnQ=
+          prefix: ''
+          suffix: ''
+          plugin_id: numeric
+        grant_delete:
+          id: grant_delete
+          table: nodeaccess
+          field: grant_delete
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Grant Delete'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          set_precision: false
+          precision: 0
+          decimal: .
+          separator: ''
+          format_plural: false
+          format_plural_string: !!binary MQNAY291bnQ=
+          prefix: ''
+          suffix: ''
+          plugin_id: numeric
       filters:
-        type:
-          id: type
+        langcode:
+          id: langcode
           table: node_field_data
-          field: type
-          value:
-            news: news
-          entity_type: node
-          entity_field: type
-          plugin_id: bundle
-          expose:
-            operator_limit_selection: false
-            operator_list: {  }
-      sorts:
-        created:
-          id: created
-          table: node_field_data
-          field: created
-          order: DESC
-          entity_type: node
-          entity_field: created
-          plugin_id: date
-          relationship: none
+          field: langcode
+          relationship: nid
           group_type: group
           admin_label: ''
+          operator: in
+          value:
+            '***LANGUAGE_language_interface***': '***LANGUAGE_language_interface***'
+          group: 1
           exposed: false
           expose:
+            operator_id: ''
             label: ''
-          granularity: second
-      title: News
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: langcode
+          plugin_id: language
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: nid
+          group_type: group
+          admin_label: ''
+          operator: word
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: title_op
+            label: Title
+            description: ''
+            use_operator: false
+            operator: title_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: title
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: title
+          plugin_id: string
+        name:
+          id: name
+          table: users_field_data
+          field: name
+          relationship: gid
+          group_type: group
+          admin_label: ''
+          operator: word
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: name_op
+            label: Name
+            description: ''
+            use_operator: false
+            operator: name_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: name
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: user
+          entity_field: name
+          plugin_id: string
+      sorts: {  }
+      title: Nodeaccess
       header: {  }
       footer: {  }
-      empty: {  }
-      relationships: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: 'There are no grants sent for any content.'
+            format: snippet
+          plugin_id: text
+      relationships:
+        gid:
+          id: gid
+          table: nodeaccess
+          field: gid
+          relationship: none
+          group_type: group
+          admin_label: User
+          required: true
+          plugin_id: standard
+        nid:
+          id: nid
+          table: nodeaccess
+          field: nid
+          relationship: none
+          group_type: group
+          admin_label: Node
+          required: true
+          plugin_id: standard
       arguments: {  }
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
-        - 'user.node_grants:view'
         - user.permissions
-      tags:
-        - 'config:field.storage.node.field_date'
+      tags: {  }
   page_1:
     display_plugin: page
     id: page_1
@@ -539,28 +675,22 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: admin/content/news
+      path: admin/content/grants
       menu:
         type: tab
-        title: News
-        description: ''
-        expanded: true
-        parent: ''
+        title: Grants
+        description: 'Node Access Grants list.'
+        expanded: false
+        parent: system.admin_content
         weight: 0
-        context: '1'
+        context: '0'
         menu_name: admin
-      tab_options:
-        type: normal
-        title: News
-        description: 'Administer news'
-        weight: 0
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
-        - 'user.node_grants:view'
         - user.permissions
-      tags:
-        - 'config:field.storage.node.field_date'
+      tags: {  }
