@@ -4,11 +4,15 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.media.media_library
+    - field.field.media.snippet.field_matters_served
     - field.field.media.snippet.field_media_text
+    - field.field.media.snippet.field_tags
     - image.style.medium
     - media.type.snippet
   module:
     - svg_image
+_core:
+  default_config_hash: smLONSNTFDfpKaC_zb_iLxvdtA7Vd0Hsh8pJ4ESB2Vk
 id: media.snippet.media_library
 targetEntityType: media
 bundle: snippet
@@ -29,7 +33,9 @@ content:
     region: content
 hidden:
   created: true
+  field_matters_served: true
   field_media_text: true
+  field_tags: true
   langcode: true
   name: true
   search_api_excerpt: true
