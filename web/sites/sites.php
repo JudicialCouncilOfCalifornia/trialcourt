@@ -85,6 +85,8 @@ $sites['nevada.courts.ca.gov'] = 'nccourt';
 // = 'supremecourt'
 $sites['www.supreme.courts.ca.gov'] = 'supremecourt';
 $sites['supreme.courts.ca.gov'] = 'supremecourt';
+// = 'stanislaus'
+$sites['www.stanct.org'] = 'stanislaus';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
