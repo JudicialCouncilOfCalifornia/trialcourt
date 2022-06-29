@@ -4,27 +4,29 @@ status: true
 dependencies:
   config:
     - field.field.media.remote_video.field_height
+    - field.field.media.remote_video.field_matters_served
     - field.field.media.remote_video.field_media_image
     - field.field.media.remote_video.field_media_oembed_video
     - field.field.media.remote_video.field_provider
+    - field.field.media.remote_video.field_tags
     - field.field.media.remote_video.field_width
     - image.style.thumbnail
     - media.type.remote_video
   module:
+    - autocomplete_deluxe
+    - cshs
     - field_group
     - media
-    - path
     - svg_image
 third_party_settings:
   field_group:
     group_advanced:
       children:
-        - field_help_text
         - field_provider
         - field_width
         - field_height
       parent_name: ''
-      weight: 4
+      weight: 5
       format_type: details
       region: content
       format_settings:
@@ -35,18 +37,12 @@ third_party_settings:
         required_fields: false
       label: Advanced
 _core:
-  default_config_hash: iTt0Hrwes-HM2q0gDt04DbhzJgGY7SjGyjea5jiBTqk
+  default_config_hash: yd_k7B3m-wZdyGD3LPJh16hFGvFQJFRHmXQb7MUeOwE
 id: media.remote_video.default
 targetEntityType: media
 bundle: remote_video
 mode: default
 content:
-  created:
-    type: datetime_timestamp
-    weight: 7
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   field_height:
     weight: 17
     settings:
@@ -54,8 +50,21 @@ content:
     third_party_settings: {  }
     type: number
     region: content
-  field_media_image:
+  field_matters_served:
     weight: 3
+    settings:
+      parent: ''
+      level_labels: ''
+      force_deepest: false
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
+    type: cshs
+    region: content
+  field_media_image:
+    weight: 2
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
@@ -78,6 +87,23 @@ content:
     third_party_settings: {  }
     type: string_textfield
     region: content
+  field_tags:
+    weight: 4
+    settings:
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+    third_party_settings: {  }
+    type: autocomplete_deluxe
+    region: content
   field_width:
     weight: 16
     settings:
@@ -87,7 +113,7 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 5
+    weight: 6
     region: content
     settings:
       include_locked: true
@@ -100,27 +126,14 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  path:
-    type: path
-    weight: 8
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   status:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 9
+    weight: 7
     region: content
     third_party_settings: {  }
-  uid:
-    type: entity_reference_autocomplete
-    weight: 6
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-      match_limit: 10
-    region: content
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  created: true
+  path: true
+  uid: true
