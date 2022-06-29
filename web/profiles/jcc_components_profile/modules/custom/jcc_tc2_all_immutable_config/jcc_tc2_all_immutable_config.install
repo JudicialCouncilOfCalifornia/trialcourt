@@ -8,6 +8,7 @@
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\redirect\Entity\Redirect;
 
 /**
  * Implements hook_install().
@@ -719,7 +720,6 @@ function jcc_tc2_all_immutable_config_update_8042(&$sandbox) {
   }
 }
 
-
 /**
  * TCI-768: move Media: Files to private directory.
  */
@@ -790,5 +790,35 @@ function jcc_tc2_all_immutable_config_update_8043(&$sandbox) {
   }
   else {
     $sandbox['#finished'] = ($sandbox['current'] / $sandbox['total']);
+  }
+}
+
+/**
+ * TCI-925: Clean up redirects after media update caused 404s.
+ */
+function jcc_tc2_all_immutable_config_update_8044() {
+  $database = \Drupal::database();
+  $query = $database->select('file_managed', 'fm')
+    ->fields('fm', ['uri'])
+    ->condition('uri', "private://%", 'LIKE')
+    ->execute();
+
+  foreach ($query->fetchCol() as $uri) {
+    $file_uris[] = str_replace("private://", "system/files/", $uri);
+  }
+
+  $query = $database->select('redirect', 'r')
+    ->fields('r', ['rid', 'redirect_source__path'])
+    ->condition('redirect_source__path', "system/files%", 'LIKE')
+    ->execute();
+
+  $redirects = $query->fetchAllAssoc('redirect_source__path');
+
+  foreach ($redirects as $key => $redirect) {
+    if (in_array($key, $file_uris)) {
+      $remove_rids[] = $redirect->rid;
+      $redirect = Redirect::load($redirect->rid);
+      $redirect->delete();
+    }
   }
 }
