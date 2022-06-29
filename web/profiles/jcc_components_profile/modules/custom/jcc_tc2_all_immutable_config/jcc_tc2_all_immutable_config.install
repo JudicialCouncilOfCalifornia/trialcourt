@@ -819,6 +819,9 @@ function jcc_tc2_all_immutable_config_update_8044() {
       $remove_rids[] = $redirect->rid;
       $redirect = Redirect::load($redirect->rid);
       $redirect->delete();
+
+      \Drupal::messenger()
+        ->addMessage("Redirect deleted from: " . $key);
     }
   }
 }
