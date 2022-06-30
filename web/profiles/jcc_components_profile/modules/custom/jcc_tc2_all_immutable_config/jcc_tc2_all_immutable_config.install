@@ -798,30 +798,45 @@ function jcc_tc2_all_immutable_config_update_8043(&$sandbox) {
  */
 function jcc_tc2_all_immutable_config_update_8044() {
   $database = \Drupal::database();
-  $query = $database->select('file_managed', 'fm')
-    ->fields('fm', ['uri'])
-    ->condition('uri', "private://%", 'LIKE')
-    ->execute();
-
-  foreach ($query->fetchCol() as $uri) {
-    $file_uris[] = str_replace("private://", "system/files/", $uri);
-  }
+  $chains = [];
 
   $query = $database->select('redirect', 'r')
-    ->fields('r', ['rid', 'redirect_source__path'])
-    ->condition('redirect_source__path', "system/files%", 'LIKE')
+    ->fields('r', ['rid', 'redirect_source__path', 'redirect_redirect__uri'])
     ->execute();
 
-  $redirects = $query->fetchAllAssoc('redirect_source__path');
+  $targets = $query->fetchAllAssoc('rid');
 
-  foreach ($redirects as $key => $redirect) {
-    if (in_array($key, $file_uris)) {
-      $remove_rids[] = $redirect->rid;
-      $redirect = Redirect::load($redirect->rid);
-      $redirect->delete();
+  foreach ($targets as $target_rid => $target) {
+    $query = $database->select('redirect', 'r')
+      ->fields('r', ['rid', 'redirect_source__path', 'redirect_redirect__uri'])
+      ->condition('redirect_redirect__uri', "internal:/" . $target->redirect_source__path, 'LIKE')
+      ->execute();
 
-      \Drupal::messenger()
-        ->addMessage("Redirect deleted from: " . $key);
+    $matches = $query->fetchAllAssoc('rid');
+
+    if (!empty($matches)) {
+      $chains[$target_rid] = [
+        'target' => $target,
+        'sources' => $matches,
+      ];
     }
   }
+
+  $count = 0;
+  foreach ($chains as $target_rid => $chain) {
+    foreach ($chain['sources'] as $source_id => $source) {
+      $source_path = $source->redirect_source__path;
+      $target_uri = str_replace("internal:", "", $chain['target']->redirect_redirect__uri);
+
+      $is_private = strpos($source_path, 'system/files');
+      if ("/$source_path" != $target_uri && $is_private === FALSE) {
+        \Drupal::messenger()->addMessage($source->redirect_source__path . " --> " . $target_uri);
+        $redirect = Redirect::load($source_id);
+        $redirect->setRedirect($target_uri);
+        $redirect->save();
+        $count++;
+      }
+    }
+  }
+  \Drupal::messenger()->addMessage($count . ", redirects updated.");
 }
