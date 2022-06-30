@@ -798,6 +798,39 @@ function jcc_tc2_all_immutable_config_update_8043(&$sandbox) {
  */
 function jcc_tc2_all_immutable_config_update_8044() {
   $database = \Drupal::database();
+  $query = $database->select('file_managed', 'fm')
+    ->fields('fm', ['uri'])
+    ->condition('uri', "private://%", 'LIKE')
+    ->execute();
+
+  foreach ($query->fetchCol() as $uri) {
+    $file_uris[] = str_replace("private://", "system/files/", $uri);
+  }
+
+  $query = $database->select('redirect', 'r')
+    ->fields('r', ['rid', 'redirect_source__path'])
+    ->condition('redirect_source__path', "system/files%", 'LIKE')
+    ->execute();
+
+  $redirects = $query->fetchAllAssoc('redirect_source__path');
+
+  foreach ($redirects as $key => $redirect) {
+    if (in_array($key, $file_uris)) {
+      $remove_rids[] = $redirect->rid;
+      $redirect = Redirect::load($redirect->rid);
+      $redirect->delete();
+
+      \Drupal::messenger()
+        ->addMessage("Redirect deleted from: " . $key);
+    }
+  }
+}
+
+/**
+ * TCI-925: Clean up redirects after media update caused 404s.
+ */
+function jcc_tc2_all_immutable_config_update_8045() {
+  $database = \Drupal::database();
   $chains = [];
 
   $query = $database->select('redirect', 'r')
@@ -838,37 +871,4 @@ function jcc_tc2_all_immutable_config_update_8044() {
     }
   }
   \Drupal::messenger()->addMessage($count . ", redirects updated.");
-}
-
-/**
- * TCI-925: Clean up redirects after media update caused 404s.
- */
-function jcc_tc2_all_immutable_config_update_8045() {
-  $database = \Drupal::database();
-  $query = $database->select('file_managed', 'fm')
-    ->fields('fm', ['uri'])
-    ->condition('uri', "private://%", 'LIKE')
-    ->execute();
-
-  foreach ($query->fetchCol() as $uri) {
-    $file_uris[] = str_replace("private://", "system/files/", $uri);
-  }
-
-  $query = $database->select('redirect', 'r')
-    ->fields('r', ['rid', 'redirect_source__path'])
-    ->condition('redirect_source__path', "system/files%", 'LIKE')
-    ->execute();
-
-  $redirects = $query->fetchAllAssoc('redirect_source__path');
-
-  foreach ($redirects as $key => $redirect) {
-    if (in_array($key, $file_uris)) {
-      $remove_rids[] = $redirect->rid;
-      $redirect = Redirect::load($redirect->rid);
-      $redirect->delete();
-
-      \Drupal::messenger()
-        ->addMessage("Redirect deleted from: " . $key);
-    }
-  }
 }
