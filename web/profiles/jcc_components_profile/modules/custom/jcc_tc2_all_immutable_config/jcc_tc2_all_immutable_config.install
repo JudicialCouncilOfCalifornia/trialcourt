@@ -872,3 +872,11 @@ function jcc_tc2_all_immutable_config_update_8045() {
   }
   \Drupal::messenger()->addMessage($count . ", redirects updated.");
 }
+
+/**
+ * TCI-925: one more pass seems to do it.
+ */
+function jcc_tc2_all_immutable_config_update_8046() {
+  jcc_tc2_all_immutable_config_update_8044();
+  jcc_tc2_all_immutable_config_update_8045();
+}
