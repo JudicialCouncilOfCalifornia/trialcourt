@@ -828,8 +828,7 @@ function jcc_tc2_all_immutable_config_update_8044() {
       $source_path = $source->redirect_source__path;
       $target_uri = str_replace("internal:", "", $chain['target']->redirect_redirect__uri);
 
-      $is_private = strpos($source_path, 'system/files');
-      if ("/$source_path" != $target_uri && $is_private === FALSE) {
+      if ("/$source_path" != $target_uri) {
         \Drupal::messenger()->addMessage($source->redirect_source__path . " --> " . $target_uri);
         $redirect = Redirect::load($source_id);
         $redirect->setRedirect($target_uri);
