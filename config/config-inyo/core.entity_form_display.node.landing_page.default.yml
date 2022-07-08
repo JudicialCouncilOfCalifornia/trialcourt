@@ -28,6 +28,7 @@ content:
   field_components:
     type: entity_reference_paragraphs
     weight: 1
+    region: content
     settings:
       title: Component
       title_plural: Components
@@ -36,7 +37,6 @@ content:
       form_display_mode: default
       default_paragraph_type: hero
     third_party_settings: {  }
-    region: content
   langcode:
     type: language_select
     weight: 2
@@ -47,8 +47,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 16
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -58,10 +58,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 5
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
@@ -82,17 +82,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 15
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 6
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -110,12 +110,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default

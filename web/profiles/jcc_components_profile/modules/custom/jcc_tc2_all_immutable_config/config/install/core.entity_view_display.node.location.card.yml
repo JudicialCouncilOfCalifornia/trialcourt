@@ -18,39 +18,39 @@ dependencies:
     - telephone
     - user
 _core:
-  default_config_hash: Lr-KfOxbhsafxkGrAEtwoq7n1K-_GkppG0Z7lpYZKVc
+  default_config_hash: WQUsHq6t_sZI6N1hfYEtgFywCeg31ZE3G8kNT47ntRE
 id: node.location.card
 targetEntityType: node
 bundle: location
 mode: card
 content:
   content_moderation_control:
-    weight: -20
     settings: {  }
     third_party_settings: {  }
+    weight: -20
     region: content
   field_address:
-    weight: 1
+    type: address_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: address_default
+    weight: 1
     region: content
   field_location_type:
-    weight: 0
+    type: entity_reference_label
     label: hidden
     settings:
       link: false
     third_party_settings: {  }
-    type: entity_reference_label
+    weight: 0
     region: content
   field_phone:
-    weight: 2
+    type: telephone_link
     label: hidden
     settings:
       title: ''
     third_party_settings: {  }
-    type: telephone_link
+    weight: 2
     region: content
 hidden:
   body: true

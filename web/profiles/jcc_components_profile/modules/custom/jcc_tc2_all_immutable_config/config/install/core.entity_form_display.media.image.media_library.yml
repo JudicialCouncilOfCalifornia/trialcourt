@@ -15,7 +15,7 @@ dependencies:
     - cshs
     - svg_image
 _core:
-  default_config_hash: fjMxIWkptpCfvweafuBT10xAahzdn9FwNMbZ6_BoVxk
+  default_config_hash: B_kP9eOUDqbR0nHbbkIAWLJGATm497RBMvPKpneBCnI
 id: media.image.media_library
 targetEntityType: media
 bundle: image
@@ -26,41 +26,44 @@ content:
     weight: 2
     region: content
     settings:
+      force_deepest: false
       parent: ''
       level_labels: ''
-      force_deepest: false
+      none_label: '- Please select -'
       save_lineage: false
       hierarchy_depth: 0
       required_depth: 0
-      none_label: '- Please select -'
     third_party_settings: {  }
   field_matters_served:
     type: cshs
     weight: 3
     region: content
     settings:
+      force_deepest: false
       parent: ''
       level_labels: ''
-      force_deepest: false
+      none_label: '- Please select -'
       save_lineage: false
       hierarchy_depth: 0
       required_depth: 0
-      none_label: '- Please select -'
     third_party_settings: {  }
   field_media_image:
+    type: image_image
     weight: 1
+    region: content
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
-    type: image_image
-    region: content
   field_tags:
     type: autocomplete_deluxe
     weight: 4
     region: content
     settings:
       match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
       limit: 10
       min_length: 0
       delimiter: ''
@@ -68,9 +71,6 @@ content:
       not_found_message: 'The term ''@term'' will be added'
       new_terms: true
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
     third_party_settings: {  }
   langcode:
     type: language_select
@@ -81,12 +81,12 @@ content:
     third_party_settings: {  }
   name:
     type: string_textfield
+    weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
-    weight: 0
     third_party_settings: {  }
-    region: content
   translation:
     weight: 6
     region: content

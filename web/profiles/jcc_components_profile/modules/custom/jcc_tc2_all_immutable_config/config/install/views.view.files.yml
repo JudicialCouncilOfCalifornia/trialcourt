@@ -7,7 +7,7 @@ dependencies:
     - file_replace
     - user
 _core:
-  default_config_hash: dFdlRYJXHVOc089NmsVqOvFJmXbOA7YZQedIXxu1DlM
+  default_config_hash: GNyFp1LX5AWDsg2WLe8qA36F0l1YkZaktYTt1ci7DxI
 id: files
 label: Files
 module: file
@@ -17,9 +17,9 @@ base_table: file_managed
 base_field: fid
 display:
   default:
-    display_plugin: default
     id: default
     display_title: Master
+    display_plugin: default
     position: 0
     display_options:
       access:
@@ -167,22 +167,23 @@ display:
           id: fid
           table: file_managed
           field: fid
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: file
+          entity_field: fid
+          plugin_id: field
+          label: Fid
+          exclude: true
           alter:
             alter_text: false
             make_link: false
             absolute: false
-            trim: false
             word_boundary: false
             ellipsis: false
             strip_tags: false
+            trim: false
             html: false
-          hide_empty: false
-          empty_zero: false
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: Fid
-          exclude: true
           element_type: ''
           element_class: ''
           element_label_type: ''
@@ -192,10 +193,9 @@ display:
           element_wrapper_class: ''
           element_default_classes: true
           empty: ''
+          hide_empty: false
+          empty_zero: false
           hide_alter_empty: true
-          plugin_id: field
-          entity_type: file
-          entity_field: fid
         filename:
           id: filename
           table: file_managed
@@ -203,6 +203,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: file
+          entity_field: filename
+          plugin_id: field
           label: Name
           exclude: false
           alter:
@@ -256,9 +259,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
-          entity_type: file
-          entity_field: filename
         filemime:
           id: filemime
           table: file_managed
@@ -266,6 +266,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: file
+          entity_field: filemime
+          plugin_id: field
           label: 'MIME type'
           exclude: false
           alter:
@@ -308,9 +311,6 @@ display:
           empty_zero: false
           hide_alter_empty: true
           type: file_filemime
-          plugin_id: field
-          entity_type: file
-          entity_field: filemime
         filesize:
           id: filesize
           table: file_managed
@@ -318,6 +318,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: file
+          entity_field: filesize
+          plugin_id: field
           label: Size
           exclude: false
           alter:
@@ -360,9 +363,6 @@ display:
           empty_zero: false
           hide_alter_empty: true
           type: file_size
-          plugin_id: field
-          entity_type: file
-          entity_field: filesize
         status:
           id: status
           table: file_managed
@@ -370,6 +370,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: file
+          entity_field: status
+          plugin_id: field
           label: Status
           exclude: false
           alter:
@@ -416,9 +419,6 @@ display:
             format: custom
             format_custom_false: Temporary
             format_custom_true: Permanent
-          plugin_id: field
-          entity_type: file
-          entity_field: status
         created:
           id: created
           table: file_managed
@@ -426,6 +426,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: file
+          entity_field: created
+          plugin_id: field
           label: 'Upload date'
           exclude: false
           alter:
@@ -472,9 +475,6 @@ display:
             date_format: medium
             custom_date_format: ''
             timezone: ''
-          plugin_id: field
-          entity_type: file
-          entity_field: created
         changed:
           id: changed
           table: file_managed
@@ -482,6 +482,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: file
+          entity_field: changed
+          plugin_id: field
           label: 'Changed date'
           exclude: false
           alter:
@@ -528,9 +531,6 @@ display:
             date_format: medium
             custom_date_format: ''
             timezone: ''
-          plugin_id: field
-          entity_type: file
-          entity_field: changed
         count:
           id: count
           table: file_usage
@@ -538,6 +538,7 @@ display:
           relationship: fid
           group_type: sum
           admin_label: ''
+          plugin_id: numeric
           label: 'Used in'
           exclude: false
           alter:
@@ -587,7 +588,6 @@ display:
           format_plural_string: !!binary MSBwbGFjZQNAY291bnQgcGxhY2Vz
           prefix: ''
           suffix: ''
-          plugin_id: numeric
         file_replace_link:
           id: file_replace_link
           table: file_managed
@@ -702,6 +702,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: file
+          entity_field: filename
+          plugin_id: string
           operator: word
           value: ''
           group: 1
@@ -712,6 +715,8 @@ display:
             description: ''
             use_operator: false
             operator: filename_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: filename
             required: false
             remember: false
@@ -720,8 +725,6 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -734,9 +737,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
-          entity_type: file
-          entity_field: filename
         filemime:
           id: filemime
           table: file_managed
@@ -744,6 +744,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: file
+          entity_field: filemime
+          plugin_id: string
           operator: word
           value: ''
           group: 1
@@ -754,6 +757,8 @@ display:
             description: ''
             use_operator: false
             operator: filemime_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: filemime
             required: false
             remember: false
@@ -762,8 +767,6 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -776,9 +779,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
-          entity_type: file
-          entity_field: filemime
         status:
           id: status
           table: file_managed
@@ -786,6 +786,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: file
+          entity_field: status
+          plugin_id: file_status
           operator: in
           value: {  }
           group: 1
@@ -796,6 +799,8 @@ display:
             description: ''
             use_operator: false
             operator: status_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: status
             required: false
             remember: false
@@ -805,8 +810,6 @@ display:
               anonymous: '0'
               administrator: '0'
             reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -819,21 +822,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: file_status
-          entity_type: file
-          entity_field: status
-      sorts: {  }
-      title: Files
-      header: {  }
-      footer: {  }
-      empty:
-        area_text_custom:
-          id: area_text_custom
-          table: views
-          field: area_text_custom
-          empty: true
-          content: 'No files available.'
-          plugin_id: text_custom
       relationships:
         fid:
           id: fid
@@ -843,34 +831,26 @@ display:
           group_type: group
           admin_label: 'File usage'
           required: true
-      arguments: {  }
       group_by: true
       show_admin_links: true
+      header: {  }
+      footer: {  }
       display_extenders: {  }
     cache_metadata:
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
         - user.permissions
-      max-age: -1
       tags: {  }
   page_1:
-    display_plugin: page
     id: page_1
     display_title: 'Files overview'
+    display_plugin: page
     position: 1
     display_options:
-      path: admin/content/files
-      menu:
-        type: tab
-        title: Files
-        description: ''
-        menu_name: admin
-        weight: 0
-        context: ''
-      display_description: ''
       defaults:
         pager: true
         relationships: false
@@ -883,59 +863,32 @@ display:
           group_type: group
           admin_label: 'File usage'
           required: false
+      display_description: ''
       display_extenders: {  }
+      path: admin/content/files
+      menu:
+        type: tab
+        title: Files
+        description: ''
+        weight: 0
+        menu_name: admin
+        context: ''
     cache_metadata:
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
         - user.permissions
-      max-age: -1
       tags: {  }
   page_2:
-    display_plugin: page
     id: page_2
     display_title: 'File usage'
+    display_plugin: page
     position: 2
     display_options:
-      display_description: ''
-      path: admin/content/files/usage/%
-      empty: {  }
-      defaults:
-        empty: false
-        pager: false
-        filters: false
-        filter_groups: false
-        fields: false
-        group_by: false
-        title: false
-        arguments: false
-        style: false
-        row: false
-        relationships: false
-      pager:
-        type: mini
-        options:
-          items_per_page: 10
-          offset: 0
-          id: 0
-          total_pages: 0
-          tags:
-            previous: '‹ Previous'
-            next: 'Next ›'
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
-      filters: {  }
-      filter_groups:
-        operator: AND
-        groups: {  }
+      title: 'File usage'
       fields:
         entity_label:
           id: entity_label
@@ -944,6 +897,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: entity_label
           label: Entity
           exclude: false
           alter:
@@ -986,7 +940,6 @@ display:
           empty_zero: false
           hide_alter_empty: true
           link_to_entity: true
-          plugin_id: entity_label
         type:
           id: type
           table: file_usage
@@ -994,6 +947,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: standard
           label: 'Entity type'
           exclude: false
           alter:
@@ -1035,7 +989,6 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          plugin_id: standard
         module:
           id: module
           table: file_usage
@@ -1043,6 +996,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: standard
           label: 'Registering module'
           exclude: false
           alter:
@@ -1084,7 +1038,6 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          plugin_id: standard
         count:
           id: count
           table: file_usage
@@ -1092,6 +1045,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: numeric
           label: 'Use count'
           exclude: false
           alter:
@@ -1141,9 +1095,25 @@ display:
           format_plural_string: !!binary MQNAY291bnQ=
           prefix: ''
           suffix: ''
-          plugin_id: numeric
-      group_by: false
-      title: 'File usage'
+      pager:
+        type: mini
+        options:
+          offset: 0
+          items_per_page: 10
+          total_pages: 0
+          id: 0
+          tags:
+            next: 'Next ›'
+            previous: '‹ Previous'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+      empty: {  }
       arguments:
         fid:
           id: fid
@@ -1152,6 +1122,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: file
+          entity_field: fid
+          plugin_id: file_fid
           default_action: 'not found'
           exception:
             value: all
@@ -1166,8 +1139,8 @@ display:
           summary_options:
             base_path: ''
             count: true
-            items_per_page: 25
             override: false
+            items_per_page: 25
           summary:
             sort_order: asc
             number_of_records: 0
@@ -1179,25 +1152,22 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
-          plugin_id: file_fid
-          entity_type: file
-          entity_field: fid
+      filters: {  }
+      filter_groups:
+        operator: AND
+        groups: {  }
       style:
         type: table
         options:
           grouping: {  }
           row_class: ''
           default_row_class: true
-          override: true
-          sticky: false
-          caption: ''
-          summary: ''
-          description: ''
           columns:
             entity_label: entity_label
             type: type
             module: module
             count: count
+          default: entity_label
           info:
             entity_label:
               sortable: true
@@ -1227,11 +1197,27 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-          default: entity_label
+          override: true
+          sticky: false
+          summary: ''
           empty_table: true
+          caption: ''
+          description: ''
       row:
         type: fields
         options: {  }
+      defaults:
+        empty: false
+        title: false
+        pager: false
+        group_by: false
+        style: false
+        row: false
+        relationships: false
+        fields: false
+        arguments: false
+        filters: false
+        filter_groups: false
       relationships:
         fid:
           id: fid
@@ -1241,12 +1227,15 @@ display:
           group_type: group
           admin_label: 'File usage'
           required: true
+      group_by: false
+      display_description: ''
       display_extenders: {  }
+      path: admin/content/files/usage/%
     cache_metadata:
+      max-age: -1
       contexts:
         - 'languages:language_interface'
         - url
         - url.query_args
         - user.permissions
-      max-age: -1
       tags: {  }

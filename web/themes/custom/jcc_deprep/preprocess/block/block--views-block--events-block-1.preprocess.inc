@@ -20,7 +20,7 @@ function jcc_deprep_preprocess_block__views_block__events_block_1(&$variables) {
     if ($row->_entity->body->value != NULL) {
       $excerpt = substr(strip_tags($row->_entity->body->value), 0, 600);
     }
-    $url = Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
+    $url = Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
     $startDate = $row->_entity->field_date_range->value;
     $imgSrc = isset($row->_entity->field_images->entity->field_media_image->entity->uri->value) ? file_create_url($row->_entity->field_images->entity->field_media_image->entity->uri->value) : NULL;
     $imgAlt = isset($row->_entity->field_images->entity->field_media_image->alt) ? $row->_entity->field_images->entity->field_media_image->alt : "";

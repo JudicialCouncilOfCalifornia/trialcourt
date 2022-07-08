@@ -9,9 +9,11 @@
  * Implements template_preprocess_pager() for pager.html.twig.
  */
 function jcc_base_preprocess_pager(&$variables) {
-  // @see globals.api.php
-  global $pager_total;
+
+  /** @var \Drupal\Core\Pager\PagerManagerInterface $pager_manager */
+  $pager_manager = \Drupal::service('pager.manager');
   $element = $variables['pager']['#element'];
-  // Get the max page number for the current pager.
-  $variables['total_pages'] = $pager_total[$element];
+  $pager = $pager_manager->getPager($element);
+
+  $variables['total_pages'] = $pager->getTotalPages();
 }

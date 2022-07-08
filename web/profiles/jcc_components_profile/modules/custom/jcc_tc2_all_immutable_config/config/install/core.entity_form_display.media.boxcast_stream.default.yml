@@ -12,35 +12,40 @@ dependencies:
     - cshs
     - media_boxcast
 _core:
-  default_config_hash: 0JwfNLB9fuw7nD77rxdt--zCdR6vVS4UjFSuIrtd0po
+  default_config_hash: XHT9djfZGmfLG5ZcK8b9g3yrtM6sY0H17eLNoaf1umc
 id: media.boxcast_stream.default
 targetEntityType: media
 bundle: boxcast_stream
 mode: default
 content:
   field_matters_served:
+    type: cshs
     weight: 2
+    region: content
     settings:
+      force_deepest: false
       parent: ''
       level_labels: ''
-      force_deepest: false
+      none_label: '- Please select -'
       save_lineage: false
       hierarchy_depth: 0
       required_depth: 0
-      none_label: '- Please select -'
     third_party_settings: {  }
-    type: cshs
-    region: content
   field_media_boxcast_stream:
+    type: boxcast_content_widget
     weight: 1
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: boxcast_content_widget
-    region: content
   field_tags:
+    type: autocomplete_deluxe
     weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
       limit: 10
       min_length: 0
       delimiter: ''
@@ -48,12 +53,7 @@ content:
       not_found_message: 'The term ''@term'' will be added'
       new_terms: true
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   langcode:
     type: language_select
     weight: 4
@@ -71,10 +71,10 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 5
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
 hidden:
   created: true

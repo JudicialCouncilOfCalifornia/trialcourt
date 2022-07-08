@@ -13,41 +13,41 @@ dependencies:
   module:
     - media_entity_download
 _core:
-  default_config_hash: _JkE3kkVRpK7Y3k13-2-X0eBtpVyUfW9_vBJgvA81Ro
+  default_config_hash: eAInDXjauHS5vnfcEnsRt--Lp8HaXBc_bZD7CaJK4pM
 id: media.file.list
 targetEntityType: media
 bundle: file
 mode: list
 content:
   field_document_type:
-    weight: 2
+    type: entity_reference_label
     label: hidden
     settings:
       link: false
     third_party_settings: {  }
-    type: entity_reference_label
+    weight: 2
     region: content
   field_media_file:
+    type: media_entity_download_download_link
     label: visually_hidden
-    weight: 1
     settings:
       trim_length: 80
-      disposition: inline
       url_only: false
       url_plain: false
       rel: '0'
       target: '0'
+      disposition: inline
     third_party_settings: {  }
-    type: media_entity_download_download_link
+    weight: 1
     region: content
   name:
     type: string
-    weight: 0
-    region: content
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 0
+    region: content
 hidden:
   created: true
   field_category: true
