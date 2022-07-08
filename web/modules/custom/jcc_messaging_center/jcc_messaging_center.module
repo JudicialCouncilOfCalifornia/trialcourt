@@ -12,6 +12,7 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 use Drupal\views\Views;
 use SendGrid\Client as SClient;
@@ -107,7 +108,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     $news_post_date_unformated = $form_state->cleanValues()->getValues()['field_date'][0]['value'];
     // $news_image = $form_state->cleanValues()->getValues()['field_images'];
     // Date formatting.
-    $date = new DrupalDateTime($news_post_date_unformated, DATETIME_STORAGE_TIMEZONE);
+    $date = new DrupalDateTime($news_post_date_unformated, DateTimeItemInterface::STORAGE_TIMEZONE);
     $news_post_date = $date->format('F j, Y');
 
     // Additional news.
@@ -184,11 +185,11 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
         $sendGridResponse = $sendgrid->send($email);
 
         if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
-          drupal_set_message(t('Email successfully sent'));
+          \Drupal::messenger()->addMessage(t('Email successfully sent'));
         }
         else {
           // Show error.
-          drupal_set_message(t('Email was not sent'));
+          \Drupal::messenger()->addMessage(t('Email was not sent'));
         }
       }
       catch (Exception $e) {
