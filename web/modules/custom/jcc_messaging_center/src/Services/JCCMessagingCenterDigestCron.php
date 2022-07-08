@@ -272,11 +272,11 @@ class JCCMessagingCenterDigestCron {
         $sendGridResponse = $sendgrid->send($email);
 
         if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
-          drupal_set_message($this->t('Email successfully sent'));
+          \Drupal::messenger()->addMessage($this->t('Email successfully sent'));
         }
         else {
           // Show error.
-          drupal_set_message($this->t('Email was not sent'));
+          \Drupal::messenger()->addMessage($this->t('Email was not sent'));
         }
       }
       catch (Exception $e) {
