@@ -19,37 +19,40 @@ function jcc_base_preprocess_block__views_block__events_block_2(&$variables) {
     $rows = $variables['elements']['content']['#view']->result;
 
     foreach ($rows as $row) {
-      $event_type = Term::load($row->_entity->field_event_type->target_id)->get('name')->value;
-      $title = $row->_entity->title->value;
       $date = new DrupalDateTime($row->_entity->field_date_range->value, 'UTC');
-      $excerpt = $date->format('M j, Y');
-      $url = Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
+      // Display upcoming events.
+      if ($date->getTimestamp() >= \Drupal::time()->getCurrentTime()) {
+        $event_type = Term::load($row->_entity->field_event_type->target_id)->get('name')->value;
+        $title = $row->_entity->title->value;
+        $excerpt = $date->format('M j, Y');
+        $url = Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
 
-      $moduleHandler = Drupal::service('module_handler');
-      $user = Drupal::currentUser();
-      $placeholder = FALSE;
-      if ($moduleHandler->moduleExists('contextual') && $user->hasPermission('access contextual links')) {
-        $contextual_links = [
-          'node' => [
-            'route_parameters' => [
-              'node' => $row->_entity->id(),
+        $moduleHandler = Drupal::service('module_handler');
+        $user = Drupal::currentUser();
+        $placeholder = FALSE;
+        if ($moduleHandler->moduleExists('contextual') && $user->hasPermission('access contextual links')) {
+          $contextual_links = [
+            'node' => [
+              'route_parameters' => [
+                'node' => $row->_entity->id(),
+              ],
             ],
-          ],
-        ];
-        $placeholder = [
-          '#type' => 'contextual_links_placeholder',
-          '#id' => _contextual_links_to_id($contextual_links),
-        ];
-      }
+          ];
+          $placeholder = [
+            '#type' => 'contextual_links_placeholder',
+            '#id' => _contextual_links_to_id($contextual_links),
+          ];
+        }
 
-      $featured_events_card = [
-        'brow' => $event_type,
-        'title' => $title,
-        'excerpt' => $excerpt,
-        'url' => $url,
-        'contextual_links' => $placeholder,
-      ];
-      array_push($cards, $featured_events_card);
+        $featured_events_card = [
+          'brow' => $event_type,
+          'title' => $title,
+          'excerpt' => $excerpt,
+          'url' => $url,
+          'contextual_links' => $placeholder,
+        ];
+        array_push($cards, $featured_events_card);
+      }
     }
   }
 
