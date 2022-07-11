@@ -6,6 +6,7 @@ use Drupal\media\entity\Media;
 use Drupal\feeds\Event\FeedsEvents;
 use Drupal\feeds\Event\ParseEvent;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\File\FileRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -26,7 +27,7 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
   /**
    * Constructor.
    */
-  public function __construct(RequestStack $request_stack, FileSystemInterface $file_repository) {
+  public function __construct(RequestStack $request_stack, FileRepository $file_repository) {
     $this->request = $request_stack->getCurrentRequest();
     $this->fileRepository = $file_repository;
   }
