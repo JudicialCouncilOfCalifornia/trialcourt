@@ -53,7 +53,6 @@ if (file_exists($pantheon_services_file)) {
  * another environment.
  */
 $settings['file_private_path'] = 'sites/default/files/newsroom/private';
-$config['system.file']['path']['temporary'] = 'sites/default/files/newsroom/private/tmp';
 
 // Check to see if we are serving an installer page.
 $is_installer_url = (strpos($_SERVER['SCRIPT_NAME'], '/core/install.php') === 0);
@@ -145,7 +144,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * Issue: https://github.com/pantheon-systems/drops-8/issues/114
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-  $config['system.file']['path']['temporary'] = $_SERVER['HOME'] . '/tmp';
+  $config['system.file']['path']['temporary'] = 'sites/default/files/newsroom/private/tmp';
 }
 
 /**
