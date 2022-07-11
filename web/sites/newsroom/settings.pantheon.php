@@ -53,6 +53,7 @@ if (file_exists($pantheon_services_file)) {
  * another environment.
  */
 $settings['file_private_path'] = 'sites/default/files/newsroom/private';
+$config['system.file']['path']['temporary'] = 'sites/default/files/newsroom/private/tmp';
 
 // Check to see if we are serving an installer page.
 $is_installer_url = (strpos($_SERVER['SCRIPT_NAME'], '/core/install.php') === 0);
