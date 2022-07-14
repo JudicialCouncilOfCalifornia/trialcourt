@@ -6,7 +6,6 @@ dependencies:
     - image.style.thumbnail
   module:
     - media
-    - media_directories
     - svg_image
     - user
 _core:
@@ -619,38 +618,6 @@ display:
           entity_type: media
           plugin_id: entity_operations
       filters:
-        directory:
-          id: directory
-          table: media_field_data
-          field: directory
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: or
-          value: {  }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: directory_op
-            label: Directory
-            description: ''
-            use_operator: false
-            operator: directory_op
-            identifier: directory
-            required: false
-            remember: false
-            multiple: false
-            remember_roles: {  }
-            reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info: {  }
-          reduce_duplicates: false
-          error_message: true
-          entity_type: media
-          entity_field: directory
-          plugin_id: media_directory
         name:
           id: name
           table: media_field_data

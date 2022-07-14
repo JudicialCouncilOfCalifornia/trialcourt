@@ -6,11 +6,8 @@ dependencies:
     - core.entity_view_mode.media.media_library
   module:
     - editor
-    - entity_embed
     - glossify_taxonomy
-    - insert_view_adv
     - jcc_ckeditor
-    - linkit
     - media
     - video_embed_wysiwyg
 _core:
@@ -23,31 +20,31 @@ filters:
     id: filter_align
     provider: filter
     status: true
-    weight: -45
+    weight: 8
     settings: {  }
   filter_caption:
     id: filter_caption
     provider: filter
     status: true
-    weight: -44
+    weight: 9
     settings: {  }
   filter_htmlcorrector:
     id: filter_htmlcorrector
     provider: filter
     status: true
-    weight: -43
+    weight: 10
     settings: {  }
   editor_file_reference:
     id: editor_file_reference
     provider: editor
     status: true
-    weight: -42
+    weight: 11
     settings: {  }
   filter_html:
     id: filter_html
     provider: filter
     status: false
-    weight: -39
+    weight: -10
     settings:
       allowed_html: '<a href hreflang> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <s> <sup> <sub> <img src alt data-entity-type data-entity-uuid data-align data-caption> <table> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <hr> <p> <h1> <pre>'
       filter_html_help: true
@@ -56,7 +53,7 @@ filters:
     id: media_embed
     provider: media
     status: true
-    weight: -40
+    weight: 100
     settings:
       default_view_mode: default
       allowed_media_types:
@@ -69,7 +66,7 @@ filters:
     id: glossify_taxonomy
     provider: glossify_taxonomy
     status: true
-    weight: -50
+    weight: -10
     settings:
       glossify_taxonomy_case_sensitivity: '0'
       glossify_taxonomy_first_only: '1'
@@ -80,186 +77,11 @@ filters:
     id: filter_token_links
     provider: jcc_ckeditor
     status: true
-    weight: -48
+    weight: 0
     settings: {  }
   video_embed_wysiwyg:
     id: video_embed_wysiwyg
     provider: video_embed_wysiwyg
     status: true
-    weight: -47
+    weight: 0
     settings: {  }
-  insert_view_adv:
-    id: insert_view_adv
-    provider: insert_view_adv
-    status: true
-    weight: -49
-    settings:
-      allowed_views:
-        documents_by_category=block_1: documents_by_category=block_1
-        documents_by_category=block_2: documents_by_category=block_2
-        documents_by_category=block_3: documents_by_category=block_3
-        staff_contacts=block_1: staff_contacts=block_1
-        staff_contacts=block_2: staff_contacts=block_2
-        announcements=default: '0'
-        announcements=block_1: '0'
-        announcements=block_2: '0'
-        announcements=page_1: '0'
-        block_content=default: '0'
-        block_content=page_1: '0'
-        book_related_content=default: '0'
-        book_related_content=block_1: '0'
-        comment=default: '0'
-        comment=page_published: '0'
-        comment=page_unapproved: '0'
-        comments_recent=default: '0'
-        comments_recent=block_1: '0'
-        content=default: '0'
-        content=page_1: '0'
-        content_recent=default: '0'
-        content_recent=block_1: '0'
-        documents=default: '0'
-        documents=page_1: '0'
-        documents_by_category=default: '0'
-        events=default: '0'
-        events=block_1: '0'
-        events=filterable_block_1: '0'
-        events=page_1: '0'
-        events=page_2: '0'
-        event_type_legend=default: '0'
-        faq=default: '0'
-        faq=block: '0'
-        faq=block_1: '0'
-        featured_content_dashboards=default: '0'
-        featured_content_dashboards=attachment_1: '0'
-        featured_content_dashboards=page_1: '0'
-        featured_content_dashboards=page_2: '0'
-        featured_content_dashboards=page_3: '0'
-        featured_content_dashboards=page_4: '0'
-        feeds_feed=default: '0'
-        feeds_feed=page_1: '0'
-        files=default: '0'
-        files=page_1: '0'
-        files=page_2: '0'
-        frontpage=default: '0'
-        frontpage=feed_1: '0'
-        frontpage=page_1: '0'
-        glossary_terms=default: '0'
-        glossary_terms=attachment_1: '0'
-        glossary_terms=page_1: '0'
-        jcc_migrate_source_log=default: '0'
-        jcc_migrate_source_log=page: '0'
-        location=default: '0'
-        location=block: '0'
-        location=filterable_block_1: '0'
-        locations_index=default: '0'
-        locations_index=attachment_1: '0'
-        locations_index=page_1: '0'
-        locked_content=default: '0'
-        locked_content=page_1: '0'
-        main_navigation_submenu=default: '0'
-        main_navigation_submenu=block_1: '0'
-        media=default: '0'
-        media=media_page_list: '0'
-        media_bulk_edit=default: '0'
-        media_bulk_edit=page_1: '0'
-        media_directories_base=default: '0'
-        media_directories_base=media_browser: '0'
-        media_library=default: '0'
-        media_library=page: '0'
-        media_library=widget: '0'
-        media_library=widget_table: '0'
-        moderated_content=default: '0'
-        moderated_content=moderated_content: '0'
-        multimedia=default: '0'
-        multimedia=block_1: '0'
-        multimedia=block_2: '0'
-        multimedia=page_1: '0'
-        news=default: '0'
-        news=block_1: '0'
-        news=block_2: '0'
-        news=block_3: '0'
-        news=block_4: '0'
-        news=filterable_block_1: '0'
-        news=page_1: '0'
-        news=page_2: '0'
-        news_dashboard=default: '0'
-        news_dashboard=page_1: '0'
-        news_dashboard=page_2: '0'
-        news_dashboard=page_3: '0'
-        news_digest=default: '0'
-        news_digest=page_1: '0'
-        news_digest=page_2: '0'
-        news_main_categories=default: '0'
-        news_main_categories=block_1: '0'
-        news_main_categories=block_2: '0'
-        news_main_categories=block_3: '0'
-        news_main_categories=block_4: '0'
-        news_main_categories=block_5: '0'
-        news_newsroom_only_=default: '0'
-        news_newsroom_only_=page_1: '0'
-        news_newsroom_only_=page_2: '0'
-        news_newsroom_only_=page_3: '0'
-        redirect=default: '0'
-        redirect=page_1: '0'
-        scheduler_scheduled_content=default: '0'
-        scheduler_scheduled_content=overview: '0'
-        scheduler_scheduled_content=user_page: '0'
-        search=default: '0'
-        search=page_1: '0'
-        staff_contacts=default: '0'
-        taxonomy_term=default: '0'
-        taxonomy_term=feed_1: '0'
-        taxonomy_term=page_1: '0'
-        user_admin_people=default: '0'
-        user_admin_people=page_1: '0'
-        watchdog=default: '0'
-        watchdog=page: '0'
-        webform_submissions=default: '0'
-        webform_submissions=embed_administer: '0'
-        webform_submissions=embed_default: '0'
-        webform_submissions=embed_manage: '0'
-        webform_submissions=embed_review: '0'
-        who_s_new=default: '0'
-        who_s_new=block_1: '0'
-        who_s_online=default: '0'
-        who_s_online=who_s_online_block: '0'
-      render_as_empty: 0
-      hide_argument_input: false
-  entity_embed:
-    id: entity_embed
-    provider: entity_embed
-    status: true
-    weight: -41
-    settings: {  }
-  filter_autop:
-    id: filter_autop
-    provider: filter
-    status: false
-    weight: -37
-    settings: {  }
-  filter_html_image_secure:
-    id: filter_html_image_secure
-    provider: filter
-    status: false
-    weight: -35
-    settings: {  }
-  filter_html_escape:
-    id: filter_html_escape
-    provider: filter
-    status: false
-    weight: -38
-    settings: {  }
-  filter_url:
-    id: filter_url
-    provider: filter
-    status: false
-    weight: -36
-    settings:
-      filter_url_length: 72
-  linkit:
-    id: linkit
-    provider: linkit
-    status: true
-    weight: -46
-    settings:
-      title: true

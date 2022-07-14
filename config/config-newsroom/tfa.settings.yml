@@ -1,28 +1,23 @@
-enabled: 0
+enabled: 1
 required_roles:
   authenticated: authenticated
   administrator: administrator
-  editor: '0'
-  subscriber: '0'
-  author: '0'
 send_plugins: {  }
 login_plugins: {  }
-default_validation_plugin: ga_login_totp
+default_validation_plugin: tfa_totp
 validation_plugin_settings:
-  ga_login_totp:
-    time_skew: 2
+  tfa_totp:
+    time_skew: 30
     site_name_prefix: 1
     name_prefix: TFA
     issuer: Drupal
-  ga_login_hotp:
+  tfa_hotp:
     counter_window: 10
-    site_name_prefix: 1
+    site_name_prefix: 0
     name_prefix: TFA
     issuer: Drupal
-  tfa_recovery_code:
-    recovery_codes_amount: 10
 allowed_validation_plugins:
-  ga_login_totp: ga_login_totp
+  tfa_totp: tfa_totp
 fallback_plugins:
   tfa_totp:
     tfa_recovery_code:

@@ -35,7 +35,7 @@ name: Solr
 description: 'Solr Server in Azure'
 backend: search_api_solr
 backend_config:
-  connector: basic_auth
+  connector: standard
   connector_config:
     scheme: https
     host: jcc-trialcourt-solr.azurewebsites.net
@@ -47,8 +47,6 @@ backend_config:
     optimize_timeout: 10
     finalize_timeout: 30
     commit_within: 1000
-    username: ''
-    password: ''
     solr_version: '8'
     http_method: AUTO
     jmx: false

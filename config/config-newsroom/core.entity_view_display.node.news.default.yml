@@ -13,12 +13,10 @@ dependencies:
     - field.field.node.news.field_feed_origin
     - field.field.node.news.field_feed_source
     - field.field.node.news.field_feed_uid
-    - field.field.node.news.field_has_been_sent
     - field.field.node.news.field_images
     - field.field.node.news.field_links
     - field.field.node.news.field_metatag
     - field.field.node.news.field_news_type
-    - field.field.node.news.field_promotion_image
     - field.field.node.news.field_related_content
     - field.field.node.news.field_sorting_weight
     - field.field.node.news.field_subject_matter
@@ -44,24 +42,24 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 2
+    weight: 1
     settings: {  }
     third_party_settings: {  }
     region: content
   content_moderation_control:
-    weight: 0
+    weight: -20
     region: content
     settings: {  }
     third_party_settings: {  }
   field_attachments:
     type: media_file_url
-    weight: 4
+    weight: 3
     label: above
     settings: {  }
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 11
+    weight: 10
     label: hidden
     settings:
       link: true
@@ -70,24 +68,14 @@ content:
     region: content
   field_division:
     type: entity_reference_facet_link
-    weight: 6
+    weight: 5
     region: content
     label: above
     settings:
       facet: division
     third_party_settings: {  }
-  field_has_been_sent:
-    weight: 15
-    label: above
-    settings:
-      format: default
-      format_custom_false: ''
-      format_custom_true: ''
-    third_party_settings: {  }
-    type: boolean
-    region: content
   field_images:
-    weight: 10
+    weight: 9
     label: above
     settings:
       link: true
@@ -95,7 +83,7 @@ content:
     type: entity_reference_label
     region: content
   field_links:
-    weight: 5
+    weight: 4
     label: above
     settings:
       trim_length: 80
@@ -108,30 +96,21 @@ content:
     region: content
   field_metatag:
     type: metatag_empty_formatter
-    weight: 3
+    weight: 2
     region: content
     label: above
     settings: {  }
     third_party_settings: {  }
   field_news_type:
     type: entity_reference_facet_link
-    weight: 1
+    weight: 0
     region: content
     label: hidden
     settings:
       facet: news_type
     third_party_settings: {  }
-  field_promotion_image:
-    type: entity_reference_entity_view
-    weight: 16
-    label: above
-    settings:
-      view_mode: default
-      link: false
-    third_party_settings: {  }
-    region: content
   field_related_content:
-    weight: 12
+    weight: 11
     label: above
     settings:
       link: true
@@ -139,7 +118,7 @@ content:
     type: entity_reference_label
     region: content
   field_sorting_weight:
-    weight: 13
+    weight: 12
     label: above
     settings: {  }
     third_party_settings: {  }
@@ -147,14 +126,14 @@ content:
     region: content
   field_subject_matter:
     type: entity_reference_facet_link
-    weight: 7
+    weight: 6
     region: content
     label: above
     settings:
       facet: subject_matter
     third_party_settings: {  }
   field_tagline:
-    weight: 14
+    weight: 13
     label: hidden
     settings: {  }
     third_party_settings: {  }
@@ -162,14 +141,14 @@ content:
     region: content
   field_tags:
     type: entity_reference_facet_link
-    weight: 8
+    weight: 7
     region: content
     label: above
     settings:
       facet: tags
     third_party_settings: {  }
   field_topics:
-    weight: 9
+    weight: 8
     label: above
     settings:
       facet: topics

@@ -19,7 +19,6 @@ dependencies:
     - user.role.administrator
     - user.role.author
     - user.role.editor
-    - workflows.workflow.editorial_workflow
   content:
     - 'taxonomy_term:news_type:82782258-ef1f-4171-8fe8-7ee8e82859b5'
     - 'taxonomy_term:news_type:cc84a765-bfb4-4de9-9eb7-b9bcfa05cd64'
@@ -64,7 +63,7 @@ display:
         type: views_query
         options:
           disable_sql_rewrite: false
-          distinct: false
+          distinct: true
           replica: false
           query_comment: ''
           query_tags: {  }
@@ -94,6 +93,7 @@ display:
               status:
                 plugin_id: bef
                 advanced:
+                  sort_options: false
                   rewrite:
                     filter_rewrite_values: ''
                   collapsible: false
@@ -101,31 +101,16 @@ display:
                 select_all_none: false
                 select_all_none_nested: false
                 display_inline: 1
-              moderation_state:
-                plugin_id: default
-                advanced:
-                  rewrite:
-                    filter_rewrite_values: ''
-                  collapsible: false
-                  is_secondary: false
               field_feed_imported_on_value:
                 plugin_id: bef_datepicker
                 advanced:
+                  placeholder_text: ''
                   collapsible: false
                   is_secondary: false
               field_feed_imported_on_value_1:
                 plugin_id: bef_datepicker
                 advanced:
-                  collapsible: false
-                  is_secondary: false
-              created:
-                plugin_id: bef_datepicker
-                advanced:
-                  collapsible: false
-                  is_secondary: false
-              created_1:
-                plugin_id: bef_datepicker
-                advanced:
+                  placeholder_text: ''
                   collapsible: false
                   is_secondary: false
       pager:
@@ -161,35 +146,13 @@ display:
           summary: ''
           description: ''
           columns:
-            field_feed_source: field_feed_source
-            field_links: field_links
             node_bulk_form: node_bulk_form
             created: created
-            changed: changed
-            moderation_state: moderation_state
-            sticky: sticky
-            promote: promote
-            status: status
             body: body
-            field_links_1: field_links_1
             title: title
             field_images: field_images
             edit_node: edit_node
-            nid: nid
-            field_feed_origin: field_feed_origin
           info:
-            field_feed_source:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            field_links:
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
             node_bulk_form:
               align: ''
               separator: ''
@@ -202,49 +165,9 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-            changed:
-              sortable: true
-              default_sort_order: desc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            moderation_state:
-              sortable: true
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            sticky:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            promote:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            status:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
             body:
               sortable: false
               default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            field_links_1:
               align: ''
               separator: ''
               empty_column: false
@@ -268,21 +191,7 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-            nid:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            field_feed_origin:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-          default: created
+          default: '-1'
           empty_table: false
       row:
         type: fields
@@ -1287,10 +1196,7 @@ display:
           group_type: group
           admin_label: ''
           operator: in
-          value:
-            editorial_workflow-draft: editorial_workflow-draft
-            editorial_workflow-ready_for_review: editorial_workflow-ready_for_review
-            editorial_workflow-published: editorial_workflow-published
+          value: {  }
           group: 1
           exposed: true
           expose:
@@ -1309,10 +1215,9 @@ display:
               authenticated: authenticated
               anonymous: '0'
               editor: '0'
-              subscriber: '0'
               author: '0'
               administrator: '0'
-            reduce: true
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -1373,10 +1278,10 @@ display:
           hierarchy: false
           error_message: true
           plugin_id: taxonomy_index_tid
-        created:
-          id: created
-          table: node_field_data
-          field: created
+        field_feed_imported_on_value:
+          id: field_feed_imported_on_value
+          table: node__field_feed_imported_on
+          field: field_feed_imported_on_value
           relationship: none
           group_type: group
           admin_label: ''
@@ -1389,14 +1294,14 @@ display:
           group: 1
           exposed: true
           expose:
-            operator_id: created_op
+            operator_id: field_feed_imported_on_value_op
             label: 'Start date'
             description: ''
             use_operator: false
-            operator: created_op
+            operator: field_feed_imported_on_value_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: created
+            identifier: field_feed_imported_on_value
             required: false
             remember: false
             multiple: false
@@ -1404,7 +1309,6 @@ display:
               authenticated: authenticated
               anonymous: '0'
               editor: '0'
-              subscriber: '0'
               author: '0'
               administrator: '0'
             placeholder: ''
@@ -1422,17 +1326,15 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: node
-          entity_field: created
-          plugin_id: date
-        created_1:
-          id: created_1
-          table: node_field_data
-          field: created
+          plugin_id: datetime
+        field_feed_imported_on_value_1:
+          id: field_feed_imported_on_value_1
+          table: node__field_feed_imported_on
+          field: field_feed_imported_on_value
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '<='
+          operator: '<'
           value:
             min: ''
             max: ''
@@ -1441,14 +1343,14 @@ display:
           group: 1
           exposed: true
           expose:
-            operator_id: created_1_op
+            operator_id: field_feed_imported_on_value_1_op
             label: 'End date'
             description: ''
             use_operator: false
-            operator: created_1_op
+            operator: field_feed_imported_on_value_1_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: created_1
+            identifier: field_feed_imported_on_value_1
             required: false
             remember: false
             multiple: false
@@ -1456,7 +1358,6 @@ display:
               authenticated: authenticated
               anonymous: '0'
               editor: '0'
-              subscriber: '0'
               author: '0'
               administrator: '0'
             placeholder: ''
@@ -1474,101 +1375,30 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: node
-          entity_field: created
-          plugin_id: date
-        moderation_state_1:
-          id: moderation_state_1
-          table: node_field_data
-          field: moderation_state
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: 'not in'
-          value:
-            editorial_workflow-archived: editorial_workflow-archived
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: node
-          plugin_id: moderation_state_filter
-        moderation_state_3:
-          id: moderation_state_3
-          table: node_field_data
-          field: moderation_state
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: 'not in'
-          value:
-            editorial_workflow-archived: editorial_workflow-archived
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: node
-          plugin_id: moderation_state_filter
+          plugin_id: datetime
       defaults:
         filters: false
         filter_groups: false
         sorts: false
         fields: false
       filter_groups:
-        operator: OR
+        operator: AND
         groups:
           1: AND
-      sorts: {  }
+      sorts:
+        field_feed_imported_on_value:
+          id: field_feed_imported_on_value
+          table: node__field_feed_imported_on
+          field: field_feed_imported_on_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          granularity: second
+          plugin_id: datetime
       fields:
         field_feed_source:
           id: field_feed_source
@@ -1755,18 +1585,18 @@ display:
             - change_to_published
             - change_to_ready_for_review
             - node_break_lock_action
-            - node_promote_action
-            - node_unpromote_action
+            - node_make_sticky_action
+            - node_make_unsticky_action
           entity_type: node
           plugin_id: node_bulk_form
-        created:
-          id: created
-          table: node_field_data
-          field: created
+        field_feed_imported_on:
+          id: field_feed_imported_on
+          table: node__field_feed_imported_on
+          field: field_feed_imported_on
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Publication Date'
+          label: 'Date imported'
           exclude: false
           alter:
             alter_text: false
@@ -1808,11 +1638,10 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: timestamp
+          type: datetime_default
           settings:
-            date_format: custom
-            custom_date_format: 'F j, Y, g:ia'
-            timezone: ''
+            timezone_override: ''
+            format_type: html_date
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -1823,75 +1652,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: created
-          plugin_id: field
-        changed:
-          id: changed
-          table: node_field_data
-          field: changed
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'Last updated'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: timestamp
-          settings:
-            date_format: custom
-            custom_date_format: 'F j, Y, g:ia'
-            timezone: ''
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          entity_type: node
-          entity_field: changed
           plugin_id: field
         moderation_state:
           id: moderation_state
@@ -2022,73 +1782,6 @@ display:
           field_api_classes: false
           entity_type: node
           entity_field: sticky
-          plugin_id: field
-        promote:
-          id: promote
-          table: node_field_data
-          field: promote
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'Promoted to front page'
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: boolean
-          settings:
-            format: custom
-            format_custom_true: 'Promoted to Front Page'
-            format_custom_false: ''
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          entity_type: node
-          entity_field: promote
           plugin_id: field
         status:
           id: status
@@ -2297,7 +1990,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "<abbr>{{ status }}</abbr> &nbsp;&nbsp; <abbr>{{ sticky }}</abbr> &nbsp;&nbsp; <abbr>{{ promote }}</abbr>\r\n<br /><br />\r\n<div><code>{{ field_feed_source }} </code></div>\r\n<h3><a href=\"{{ field_links }}\" target=\"_blank\">{{ title }}</a></h3>\r\n<div>{{body}}</div>\r\n<br />\r\n{{ field_links_1 }}"
+            text: "<abbr>{{ status }}</abbr> &nbsp;&nbsp; <abbr>{{ sticky }}</abbr>\r\n<br /><br />\r\n<div><code>{{ field_feed_source }} </code></div>\r\n<h3><a href=\"{{ field_links }}\" target=\"_blank\">{{ title }}</a></h3>\r\n<div>{{body}}</div>\r\n<br />\r\n{{ field_links_1 }}"
             make_link: false
             path: ''
             absolute: false
@@ -2425,7 +2118,7 @@ display:
           exclude: true
           alter:
             alter_text: true
-            text: '<a class="nowrap button" href="{{ edit_node }}?destination=admin/content/news-link">FULL EDIT</a>'
+            text: '<a class="use-ajax button nowrap" data-dialog-type="modal" data-dialog-options="{&quot;width&quot;:1200}" href="{{ edit_node }}?destination=admin/content/news-link">FULL EDIT</a>'
             make_link: false
             path: ''
             absolute: false
@@ -2608,6 +2301,7 @@ display:
         - user.roles
       tags:
         - 'config:field.storage.node.body'
+        - 'config:field.storage.node.field_feed_imported_on'
         - 'config:field.storage.node.field_feed_origin'
         - 'config:field.storage.node.field_feed_source'
         - 'config:field.storage.node.field_images'
@@ -2740,8 +2434,8 @@ display:
           click_sort_column: value
           type: timestamp
           settings:
-            date_format: custom
-            custom_date_format: 'F j, Y, g:ia'
+            date_format: long
+            custom_date_format: ''
             timezone: ''
           group_column: value
           group_columns: {  }
@@ -3217,7 +2911,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '<a class="button button--primary" data-dialog-type="modal" data-dialog-options="{&quot;width&quot;:1200}" href="{{ edit_node }}?destination=admin/content/news-all">EDIT</a>'
+            text: '<a class="use-ajax button button--primary" data-dialog-type="modal" data-dialog-options="{&quot;width&quot;:1200}" href="{{ edit_node }}?destination=admin/content/news-link">EDIT</a>'
             make_link: false
             path: ''
             absolute: false
