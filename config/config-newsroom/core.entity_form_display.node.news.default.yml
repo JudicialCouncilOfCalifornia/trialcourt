@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_directories_modal
+    - entity_browser.browser.media_directories_editor_browser
     - field.field.node.news.body
     - field.field.node.news.feeds_item
     - field.field.node.news.field_attachments
@@ -278,21 +278,14 @@ content:
       sidebar: true
     third_party_settings: {  }
   field_news_type:
-    type: autocomplete_deluxe
+    type: entity_reference_autocomplete
     weight: 1
     region: content
     settings:
       match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      match_limit: 10
       size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: true
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: true
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+      placeholder: ''
     third_party_settings: {  }
   field_promotion_image:
     type: entity_browser_entity_reference

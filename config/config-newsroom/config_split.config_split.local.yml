@@ -7,19 +7,22 @@ _core:
 id: local
 label: Local
 description: 'Local '
+weight: 0
 folder: ../config/config-default-local
 module:
   devel: 0
   features_ui: 0
-  kint: 0
   stage_file_proxy: 0
 theme: {  }
 blacklist:
-  - openid_connect.settings.windows_aad
   - geocoder.geocoder_provider.bingmaps
+  - jcc_subscriptions.settings
   - key.key.newsroom_sendgrid
+  - openid_connect.settings.windows_aad
   - social_post_twitter.settings
-graylist: {  }
-graylist_dependents: true
-graylist_skip_equal: false
-weight: 0
+  - webform_myemma.settings
+graylist:
+  - key.key.solr_admin_password
+  - key.key.solr_admin_user
+graylist_dependents: false
+graylist_skip_equal: true

@@ -2,51 +2,47 @@ uuid: 0b254fee-2ad4-482d-88ee-3c32e5c94fd7
 langcode: en
 status: true
 dependencies:
-  module:
-    - search_api_solr
-    - node
-    - search_api
-    - search_api_attachments
-    - media
   config:
-    - field.storage.node.body
     - field.storage.node.field_alert_type
     - field.storage.node.field_attachments
+    - field.storage.node.body
+    - field.storage.node.field_contact
     - field.storage.node.field_department
     - field.storage.node.field_division
     - field.storage.node.field_document_type
     - field.storage.node.field_event_type
-    - field.storage.node.field_first_name
-    - field.storage.node.field_help_links
     - field.storage.node.field_images
-    - field.storage.node.field_last_name
-    - field.storage.node.field_links
+    - field.storage.node.field_help_links
     - field.storage.node.field_location_type
     - field.storage.node.field_news_type
-    - field.storage.node.field_person_type
     - field.storage.node.field_phone
+    - field.storage.node.field_links
     - field.storage.node.field_subject_matter
+    - field.storage.node.field_tagline
     - field.storage.node.field_tags
     - field.storage.node.field_topics
     - search_api.server.solr
+  module:
+    - search_api_solr
+    - node
+    - taxonomy
+    - search_api
+    - search_api_attachments
 third_party_settings:
   search_api_solr:
     finalize: false
     commit_before_finalize: false
     commit_after_finalize: false
-    multilingual:
-      limit_to_content_language: false
-      include_language_independent: true
     highlighter:
       maxAnalyzedChars: 51200
       fragmenter: gap
+      usePhraseHighlighter: true
+      highlightMultiTerm: true
+      preserveMulti: false
       regex:
         slop: 0.5
         pattern: blank
         maxAnalyzedChars: 10000
-      usePhraseHighlighter: true
-      highlightMultiTerm: true
-      preserveMulti: false
       highlight:
         mergeContiguous: false
         requireFieldMatch: false
@@ -67,6 +63,9 @@ third_party_settings:
       index_prefix: ''
       collection: ''
       timezone: America/Los_Angeles
+    multilingual:
+      limit_to_content_language: false
+      include_language_independent: true
 _core:
   default_config_hash: FWkO54aheX9OhfEOUmpmKI2P1lwiAxYrI5o5kKSO6A4
 id: index
@@ -139,14 +138,6 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_event_type
-  field_first_name:
-    label: 'First Name'
-    datasource_id: 'entity:node'
-    property_path: field_first_name
-    type: string
-    dependencies:
-      config:
-        - field.storage.node.field_first_name
   field_help_links:
     label: 'Links to Guides'
     datasource_id: 'entity:node'
@@ -163,14 +154,6 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_images
-  field_last_name:
-    label: 'Last Name'
-    datasource_id: 'entity:node'
-    property_path: field_last_name
-    type: string
-    dependencies:
-      config:
-        - field.storage.node.field_last_name
   field_links:
     label: 'Related Links'
     datasource_id: 'entity:node'
@@ -195,14 +178,6 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_news_type
-  field_person_type:
-    label: 'Person Type'
-    datasource_id: 'entity:node'
-    property_path: field_person_type
-    type: integer
-    dependencies:
-      config:
-        - field.storage.node.field_person_type
   field_phone:
     label: Phone
     datasource_id: 'entity:node'
@@ -219,6 +194,14 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_subject_matter
+  field_tagline:
+    label: Tagline
+    datasource_id: 'entity:node'
+    property_path: field_tagline
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_tagline
   field_tags:
     label: Tags
     datasource_id: 'entity:node'
@@ -235,6 +218,28 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_topics
+  name:
+    label: 'Tags » Taxonomy term » Name'
+    datasource_id: 'entity:node'
+    property_path: 'field_tags:entity:name'
+    type: text
+    boost: !!float 5
+    dependencies:
+      config:
+        - field.storage.node.field_tags
+      module:
+        - taxonomy
+  name_1:
+    label: 'Topics » Taxonomy term » Name'
+    datasource_id: 'entity:node'
+    property_path: 'field_topics:entity:name'
+    type: text
+    boost: !!float 5
+    dependencies:
+      config:
+        - field.storage.node.field_topics
+      module:
+        - taxonomy
   nid:
     label: ID
     datasource_id: 'entity:node'
@@ -256,7 +261,7 @@ field_settings:
     type: text
     configuration:
       roles:
-        anonymous: anonymous
+        - anonymous
       view_mode:
         'entity:media':
           image: ''
@@ -282,8 +287,6 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: status
     type: boolean
-    indexed_locked: true
-    type_locked: true
     dependencies:
       module:
         - node
@@ -292,6 +295,8 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: status
     type: boolean
+    indexed_locked: true
+    type_locked: true
     dependencies:
       module:
         - node
@@ -300,8 +305,19 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: title
     type: text
-    boost: !!float 3
+    boost: !!float 5
     dependencies:
+      module:
+        - node
+  title_1:
+    label: 'Contact Title'
+    datasource_id: 'entity:node'
+    property_path: 'field_contact:entity:title'
+    type: text
+    boost: !!float 2
+    dependencies:
+      config:
+        - field.storage.node.field_contact
       module:
         - node
   type:
@@ -323,18 +339,11 @@ field_settings:
       module:
         - node
 datasource_settings:
-  'entity:media':
-    bundles:
-      default: true
-      selected:
-        - file
-    languages:
-      default: true
-      selected: {  }
   'entity:node':
     bundles:
       default: true
-      selected: {  }
+      selected:
+        - person
     languages:
       default: true
       selected: {  }
@@ -345,14 +354,14 @@ processor_settings:
     weights:
       preprocess_query: -30
   double_quote_workaround:
-    all_fields: false
-    fields:
-      - rendered_item
-    replacement: '|9999999998|'
     weights:
       postprocess_query: 0
       preprocess_index: -15
       preprocess_query: -15
+    all_fields: false
+    fields:
+      - rendered_item
+    replacement: '|9999999998|'
   entity_status: {  }
   file_attachments:
     excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
@@ -362,6 +371,8 @@ processor_settings:
     excluded_private: 1
     excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
   hierarchy:
+    weights:
+      preprocess_index: -45
     fields:
       field_department: taxonomy_term-parent
       field_division: taxonomy_term-parent
@@ -373,20 +384,21 @@ processor_settings:
       field_subject_matter: taxonomy_term-parent
       field_tags: taxonomy_term-parent
       field_topics: taxonomy_term-parent
-    weights:
-      preprocess_index: -45
   highlight:
-    highlight: server
-    highlight_partial: true
+    weights:
+      postprocess_query: 0
+    prefix: '<strong>'
+    suffix: '</strong>'
     excerpt: true
     excerpt_length: 256
     exclude_fields:
       - rendered_item
-    prefix: '<strong>'
-    suffix: '</strong>'
-    weights:
-      postprocess_query: 0
+    highlight: server
+    highlight_partial: true
   html_filter:
+    weights:
+      preprocess_index: -15
+      preprocess_query: -15
     all_fields: false
     fields:
       - body
@@ -400,10 +412,10 @@ processor_settings:
       h2: 3
       h3: 2
       strong: 2
-    weights:
-      preprocess_index: -15
-      preprocess_query: -15
   ignore_character:
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
     all_fields: false
     fields:
       - body
@@ -418,9 +430,6 @@ processor_settings:
       - Pi
       - Po
       - Ps
-    weights:
-      preprocess_index: -10
-      preprocess_query: -10
   language_with_fallback: {  }
   rendered_item: {  }
   reverse_entity_references: {  }
@@ -428,17 +437,17 @@ processor_settings:
     weights:
       preprocess_index: 0
   type_boost:
+    weights:
+      preprocess_index: 0
     boosts:
       'entity:media':
         datasource_boost: !!float 1
       'entity:node':
         datasource_boost: !!float 1
-    weights:
-      preprocess_index: 0
 tracker_settings:
   default:
     indexing_order: fifo
 options:
-  index_directly: true
   cron_limit: 50
+  index_directly: true
 server: solr
