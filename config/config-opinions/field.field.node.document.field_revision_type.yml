@@ -1,0 +1,31 @@
+uuid: 8a5d1abf-6d9b-442e-915c-8337923694fb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_revision_type
+    - node.type.document
+    - taxonomy.vocabulary.revision_type
+_core:
+  default_config_hash: w6MxcWtaF1ELdol2oY9flFn_khv2F9CHELstGNzL3uM
+id: node.document.field_revision_type
+field_name: field_revision_type
+entity_type: node
+bundle: document
+label: 'Revision Type'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      revision_type: revision_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

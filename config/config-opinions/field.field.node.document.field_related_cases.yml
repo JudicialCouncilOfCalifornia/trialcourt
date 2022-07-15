@@ -1,0 +1,31 @@
+uuid: 2bf55d5c-0455-410c-9169-869d6f5227ef
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_cases
+    - node.type.document
+    - taxonomy.vocabulary.case
+_core:
+  default_config_hash: Q5TlnX0ThXY8Fg3rXvfCNdISGR2ieqQ1tBcf7Z5Uf18
+id: node.document.field_related_cases
+field_name: field_related_cases
+entity_type: node
+bundle: document
+label: 'Related Cases'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      case: case
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

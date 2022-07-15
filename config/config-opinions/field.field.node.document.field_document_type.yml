@@ -1,0 +1,36 @@
+uuid: 8951fec5-2515-4cf0-ab33-1c7532ecb1fa
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_document_type
+    - node.type.document
+    - taxonomy.vocabulary.document_type
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: GRR_TOeoXz_ayJbIxtfrAymYQkTxUzD5HOiPM9Mg82Y
+id: node.document.field_document_type
+field_name: field_document_type
+entity_type: node
+bundle: document
+label: 'Document Type'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      document_type: document_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
