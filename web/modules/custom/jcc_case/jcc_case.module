@@ -194,7 +194,9 @@ function jcc_case_preprocess_views_view__opinions(&$variables) {
     $related_cases = [];
     foreach ($row->field_related_cases as $item) {
       $related_case = Term::load($item->target_id);
-      array_push($related_cases, $related_case);
+      if ($related_case) {
+        array_push($related_cases, $related_case);
+      }
     }
 
     $opinion = [
