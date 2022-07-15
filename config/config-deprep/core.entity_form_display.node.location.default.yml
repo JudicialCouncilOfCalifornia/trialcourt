@@ -42,29 +42,29 @@ third_party_settings:
         - group_phone
         - group_hours
         - group_metadata
+      label: 'Location Content'
+      region: content
       parent_name: ''
       weight: 1
       format_type: tabs
-      region: content
       format_settings:
-        direction: vertical
-        id: ''
         classes: ''
-      label: 'Location Content'
+        id: ''
+        direction: vertical
     group_main_content:
       children:
         - body
+      label: About
+      region: content
       parent_name: group_location_content
       weight: 23
       format_type: tab
-      region: content
       format_settings:
-        description: ''
-        formatter: closed
-        required_fields: true
-        id: ''
         classes: ''
-      label: About
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
     group_metadata:
       children:
         - field_geolocation
@@ -72,76 +72,76 @@ third_party_settings:
         - field_tags
         - field_topics
         - field_subject_matter
+      label: Metadata
+      region: content
       parent_name: group_location_content
       weight: 27
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Metadata
     group_location_header:
       children:
         - title
+      label: 'Location Header'
+      region: content
       parent_name: ''
       weight: 0
       format_type: fieldset
-      region: content
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         description: ''
         required_fields: true
-      label: 'Location Header'
     group_address:
       children:
         - field_location_type
         - field_location
         - field_mailing_address
         - field_website
+      label: Address
+      region: content
       parent_name: group_location_content
       weight: 22
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Address
     group_hours:
       children:
         - field_office_hours
         - field_phone_hours
+      label: Hours
+      region: content
       parent_name: group_location_content
       weight: 25
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Hours
     group_phone:
       children:
         - field_phone
+      label: Phone
+      region: content
       parent_name: group_location_content
       weight: 24
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Phone
 _core:
   default_config_hash: TbhNYA-A9gkoaEqONoKnhDnUOnEKRfNDvn76PBTXndc
 id: node.location.default
@@ -152,13 +152,13 @@ content:
   body:
     type: text_textarea_with_summary
     weight: 6
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 4
@@ -166,22 +166,22 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_division:
+    type: autocomplete_deluxe
     weight: 22
+    region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: '1'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   field_geolocation:
     type: geolocation_latlng
     weight: 21
@@ -189,27 +189,27 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_location:
+    type: address_default
     weight: 6
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: address_default
-    region: content
   field_location_type:
     type: autocomplete_deluxe
     weight: 5
     region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: '1'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
   field_mailing_address:
     type: address_default
@@ -218,12 +218,12 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_metatag:
+    type: metatag_firehose
     weight: 17
+    region: content
     settings:
       sidebar: true
     third_party_settings: {  }
-    type: metatag_firehose
-    region: content
   field_office_hours:
     type: office_hours_default
     weight: 3
@@ -258,36 +258,36 @@ content:
     weight: 23
     region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: '1'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
   field_topics:
+    type: super_term_reference_autocomplete_widget
     weight: 24
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: '10'
       size: '60'
       placeholder: ''
     third_party_settings: {  }
-    type: super_term_reference_autocomplete_widget
-    region: content
   field_website:
+    type: link_default
     weight: 8
+    region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
     third_party_settings: {  }
-    type: link_default
-    region: content
   langcode:
     type: language_select
     weight: 2
@@ -298,8 +298,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 15
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -309,10 +309,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 6
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
@@ -328,17 +328,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 16
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 7
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -356,12 +356,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default

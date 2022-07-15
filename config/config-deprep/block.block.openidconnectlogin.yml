@@ -18,13 +18,13 @@ plugin: openid_connect_login
 settings:
   id: openid_connect_login
   label: 'OpenID Connect login'
-  provider: openid_connect
   label_display: '0'
+  provider: openid_connect
 visibility:
   user_role:
     id: user_role
-    roles:
-      anonymous: anonymous
     negate: false
     context_mapping:
       user: '@user.current_user_context:current_user'
+    roles:
+      anonymous: anonymous
