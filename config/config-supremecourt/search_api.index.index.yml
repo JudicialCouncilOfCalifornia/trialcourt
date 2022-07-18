@@ -2,12 +2,6 @@ uuid: 253be3a7-01dc-4b02-af42-9c9291166487
 langcode: en
 status: true
 dependencies:
-  module:
-    - search_api_solr
-    - media
-    - file
-    - node
-    - search_api
   config:
     - field.storage.node.body
     - field.storage.node.field_alert_type
@@ -15,24 +9,27 @@ dependencies:
     - field.storage.node.field_news_type
     - search_api.server.solr
     - core.entity_view_mode.node.full
+  module:
+    - search_api_solr
+    - media
+    - file
+    - node
+    - search_api
 third_party_settings:
   search_api_solr:
     finalize: false
     commit_before_finalize: false
     commit_after_finalize: false
-    multilingual:
-      limit_to_content_language: false
-      include_language_independent: true
     highlighter:
       maxAnalyzedChars: 51200
       fragmenter: gap
+      usePhraseHighlighter: true
+      highlightMultiTerm: true
+      preserveMulti: false
       regex:
         slop: 0.5
         pattern: blank
         maxAnalyzedChars: 10000
-      usePhraseHighlighter: true
-      highlightMultiTerm: true
-      preserveMulti: false
       highlight:
         mergeContiguous: false
         requireFieldMatch: false
@@ -53,6 +50,9 @@ third_party_settings:
       index_prefix: ''
       collection: ''
       timezone: ''
+    multilingual:
+      limit_to_content_language: false
+      include_language_independent: true
 _core:
   default_config_hash: QV4Lg_P1lO7kUehDM9MOwCrreMgoeXzNUxn29ConE9o
 id: index
@@ -134,7 +134,7 @@ field_settings:
     type: text
     configuration:
       roles:
-        anonymous: anonymous
+        - anonymous
       view_mode:
         'entity:file':
           file: ''
@@ -214,6 +214,6 @@ tracker_settings:
   default:
     indexing_order: fifo
 options:
-  index_directly: true
   cron_limit: 50
+  index_directly: true
 server: solr

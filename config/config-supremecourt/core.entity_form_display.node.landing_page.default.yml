@@ -30,6 +30,7 @@ content:
   field_components:
     type: entity_reference_paragraphs
     weight: 3
+    region: content
     settings:
       title: Component
       title_plural: Components
@@ -38,10 +39,10 @@ content:
       form_display_mode: default
       default_paragraph_type: hero
     third_party_settings: {  }
-    region: content
   field_components_aside:
     type: entity_reference_paragraphs
     weight: 4
+    region: content
     settings:
       title: 'Component Aside'
       title_plural: 'Components Aside'
@@ -50,20 +51,19 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
     third_party_settings: {  }
-    region: content
   field_masthead_color:
+    type: options_select
     weight: 1
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: options_select
-    region: content
   field_media:
+    type: media_library_widget
     weight: 2
+    region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
-    type: media_library_widget
-    region: content
   langcode:
     type: language_select
     weight: 5
@@ -79,10 +79,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 8
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
@@ -103,17 +103,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 18
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 9
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -131,12 +131,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 6
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
