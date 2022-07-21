@@ -20,65 +20,65 @@ third_party_settings:
     tampers:
       67276ac2-169a-484e-ae0c-1be5ae9d6ad3:
         allowed_tags: ''
+        uuid: 67276ac2-169a-484e-ae0c-1be5ae9d6ad3
         plugin: strip_tags
         source: title
         weight: 0
         label: 'Strip tags'
-        uuid: 67276ac2-169a-484e-ae0c-1be5ae9d6ad3
       ae7162b2-c83f-4f5b-985a-d3ae9d88bda3:
         allowed_tags: ''
+        uuid: ae7162b2-c83f-4f5b-985a-d3ae9d88bda3
         plugin: strip_tags
         source: link
         weight: 0
         label: 'Strip tags'
-        uuid: ae7162b2-c83f-4f5b-985a-d3ae9d88bda3
       a8a8c424-0537-4eb3-a0e6-c14dccf6cc29:
         find: '/.+?(?=\&url=)/'
         replace: ''
         limit: null
+        uuid: a8a8c424-0537-4eb3-a0e6-c14dccf6cc29
         plugin: find_replace_regex
         source: link
         weight: 1
         label: 'Find replace REGEX : strip bing redirection'
-        uuid: a8a8c424-0537-4eb3-a0e6-c14dccf6cc29
       d38ec836-9ae4-4843-990d-9b7b9d380090:
         find: '&url='
         replace: ''
         case_sensitive: false
+        word_boundaries: false
         whole: false
+        uuid: d38ec836-9ae4-4843-990d-9b7b9d380090
         plugin: find_replace
         source: link
         weight: 2
         label: 'Find replace'
-        word_boundaries: false
-        uuid: d38ec836-9ae4-4843-990d-9b7b9d380090
       efe37332-71c9-422e-978d-8f90ab591936:
         method: rawurldecode
+        uuid: efe37332-71c9-422e-978d-8f90ab591936
         plugin: url_decode
         source: link
         weight: 3
         label: 'URL Decode'
-        uuid: efe37332-71c9-422e-978d-8f90ab591936
       491f0f23-5d4b-4517-9feb-12b5e5076cf7:
         find: '/&/'
         replace: '?'
         limit: null
+        uuid: 491f0f23-5d4b-4517-9feb-12b5e5076cf7
         plugin: find_replace_regex
         source: link
         weight: 4
         label: 'Find replace REGEX : Replace first argument & with ?'
-        uuid: 491f0f23-5d4b-4517-9feb-12b5e5076cf7
       8295307b-4ec9-4f10-893a-e9f7e4e8db26:
         text: NewsLink
+        uuid: 8295307b-4ec9-4f10-893a-e9f7e4e8db26
         plugin: rewrite
         source: news_type
         weight: 0
         label: Rewrite
-        uuid: 8295307b-4ec9-4f10-893a-e9f7e4e8db26
 _core:
   default_config_hash: tRpg8rMvydJW3TA4AqfnKjZuq_h1IpE5yi0QcsKPTHw
-id: news_bing_feed
 label: 'News - Bing feed'
+id: news_bing_feed
 description: 'Imports news from Bing'
 help: ''
 import_period: 3600
@@ -91,8 +91,6 @@ fetcher_configuration:
   request_timeout: 30
 parser: xml
 parser_configuration:
-  context:
-    value: //item
   sources:
     title:
       label: title
@@ -115,66 +113,68 @@ parser_configuration:
     news_image:
       label: 'News:Image'
       value: 'News:Image'
-  use_tidy: false
-  display_errors: false
+  context:
+    value: //item
   source_encoding:
     - auto
+  display_errors: false
   debug_mode: false
   line_limit: 100
+  use_tidy: false
 processor: 'entity:node'
 processor_configuration:
+  values:
+    type: news
   langcode: en
   update_existing: 0
   update_non_existent: _keep
+  skip_hash_check: false
+  authorize: true
   expire: -1
   owner_feed_author: false
   owner_id: 0
-  authorize: true
-  skip_hash_check: false
-  values:
-    type: news
 custom_sources:
   title:
-    label: title
     value: title
+    label: title
     machine_name: title
   news_source:
-    label: 'News:Source'
     value: 'News:Source'
+    label: 'News:Source'
     machine_name: news_source
   description:
-    label: description
     value: description
+    label: description
     machine_name: description
   link:
-    label: link
     value: link
+    label: link
     machine_name: link
   pubdate:
-    label: pubDate
     value: pubDate
+    label: pubDate
     machine_name: pubdate
   news_type:
-    label: news_type
     value: news_type
+    label: news_type
     machine_name: news_type
   news_image:
-    label: 'News:Image'
     value: 'News:Image'
+    label: 'News:Image'
     machine_name: news_image
   custom_entity_id:
-    label: custom_entity_id
     value: custom_entity_id
+    label: custom_entity_id
     machine_name: custom_entity_id
 mappings:
   -
     target: title
     map:
       value: title
-    unique:
-      value: '1'
     settings:
       language: null
+    unique:
+      value: '1'
   -
     target: field_feed_source
     map:
@@ -216,9 +216,9 @@ mappings:
     target: field_feed_origin
     map:
       value: title
-    unique: {  }
     settings:
       language: null
+    unique: {  }
   -
     target: field_feed_imported_on
     map:

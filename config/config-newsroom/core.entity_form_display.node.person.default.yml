@@ -44,108 +44,108 @@ third_party_settings:
         - group_media
         - group_secondary_content
         - group_metadata
+      label: 'Person Content'
+      region: content
       parent_name: ''
       weight: 1
       format_type: tabs
-      region: content
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         direction: vertical
-      label: 'Person Content'
     group_main_content:
       children:
         - field_person_type
         - field_first_name
         - field_last_name
         - body
+      label: Details
+      region: content
       parent_name: group_person_content
       weight: 0
       format_type: tab
-      region: content
       format_settings:
-        description: ''
-        formatter: closed
-        required_fields: true
-        id: ''
         classes: ''
-      label: Details
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
     group_metadata:
       children:
         - field_division
         - field_tags
         - field_topics
         - field_subject_matter
+      label: Metadata
+      region: content
       parent_name: group_person_content
       weight: 4
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Metadata
     group_title_section:
       children:
         - title
         - field_active_contact
+      label: 'Person Header'
+      region: content
       parent_name: ''
       weight: 0
       format_type: fieldset
-      region: content
       format_settings:
+        classes: ''
+        id: ''
         description: ''
         required_fields: true
-        id: ''
-        classes: ''
-      label: 'Person Header'
     group_media:
       children:
         - field_images
+      label: Media
+      region: content
       parent_name: group_person_content
       weight: 2
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Media
     group_secondary_content:
       children:
         - field_links
+      label: 'Secondary Content'
+      region: content
       parent_name: group_person_content
       weight: 3
       format_type: tab
-      region: content
       format_settings:
-        description: "<p>Add links to other useful related content for reference or recommendations.</p>\r\n<p>To change the default file icon for the link display, enter the <strong>class</strong> of the available icon under  the link's <strong>Attributes</strong>. Refer to our pattern library for the icons that are available for use.</p>"
-        formatter: closed
-        required_fields: true
-        id: ''
         classes: ''
-      label: 'Secondary Content'
+        id: ''
+        formatter: closed
+        description: "<p>Add links to other useful related content for reference or recommendations.</p>\r\n<p>To change the default file icon for the link display, enter the <strong>class</strong> of the available icon under  the link's <strong>Attributes</strong>. Refer to our pattern library for the icons that are available for use.</p>"
+        required_fields: true
     group_contact:
       children:
         - field_email
         - field_phone
         - field_location
         - field_county
+      label: Contact
+      region: content
       parent_name: group_person_content
       weight: 1
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Contact
 _core:
   default_config_hash: DYuaH2yX9VskM6QfYSyHrulp7ZRnecE-I7Mgi91wZc8
 id: node.person.default
@@ -156,13 +156,13 @@ content:
   body:
     type: text_textarea_with_summary
     weight: 13
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 4
@@ -170,18 +170,20 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_active_contact:
+    type: boolean_checkbox
     weight: 1
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_county:
+    type: autocomplete_deluxe
     weight: 23
+    region: content
     settings:
       match_operator: CONTAINS
-      size: 60
       autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
       selection_handler: default
       limit: 10
       min_length: 0
@@ -191,66 +193,66 @@ content:
       new_terms: false
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   field_division:
     type: autocomplete_deluxe
     weight: 18
     region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: '1'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
   field_email:
-    weight: 20
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
     type: email_default
+    weight: 20
     region: content
+    settings:
+      placeholder: ''
+      size: 60
+    third_party_settings: {  }
   field_first_name:
+    type: string_textfield
     weight: 11
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_images:
+    type: entity_browser_entity_reference
     weight: 14
+    region: content
     settings:
       entity_browser: media_directories_modal
       field_widget_display: rendered_entity
-      field_widget_display_settings:
-        view_mode: media_library
       field_widget_edit: true
       field_widget_remove: true
-      open: true
-      selection_mode: selection_append
       field_widget_replace: false
+      open: true
+      field_widget_display_settings:
+        view_mode: media_library
+      selection_mode: selection_append
     third_party_settings: {  }
-    type: entity_browser_entity_reference
-    region: content
   field_last_name:
+    type: string_textfield
     weight: 12
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_links:
+    type: link_attributes
     weight: 26
+    region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -264,45 +266,43 @@ content:
         aria-label: false
         title: false
     third_party_settings: {  }
-    type: link_attributes
-    region: content
   field_location:
+    type: address_default
     weight: 22
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: address_default
-    region: content
   field_metatag:
+    type: metatag_firehose
     weight: 17
+    region: content
     settings:
       sidebar: true
     third_party_settings: {  }
-    type: metatag_firehose
-    region: content
   field_person_type:
+    type: autocomplete_deluxe
     weight: 9
+    region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: '1'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   field_phone:
+    type: telephone_default
     weight: 21
+    region: content
     settings:
       placeholder: 415-555-1212
     third_party_settings: {  }
-    type: telephone_default
-    region: content
   field_subject_matter:
     type: super_term_reference_autocomplete_widget
     weight: 22
@@ -318,28 +318,28 @@ content:
     weight: 19
     region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: '1'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
   field_topics:
+    type: super_term_reference_autocomplete_widget
     weight: 21
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: super_term_reference_autocomplete_widget
-    region: content
   langcode:
     type: language_select
     weight: 2
@@ -350,8 +350,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 15
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -361,10 +361,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 6
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
@@ -380,17 +380,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 16
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 7
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -408,12 +408,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
