@@ -177,7 +177,9 @@ jobs:
 
             - run:
                 name: Run CI specs.
-                command: .circleci/scripts/cypress-ci.sh << parameters.site >>
+                command: |
+                  set -e
+                  .circleci/scripts/cypress-ci.sh << parameters.site >>
                 no_output_timeout: 10m
                 working_directory: ''
 
