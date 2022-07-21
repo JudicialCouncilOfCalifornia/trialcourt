@@ -15,6 +15,7 @@ describe('Newsroom VRT', () => {
   sizes.forEach((size) => {
     pages.forEach((page) => {
       it(`${page} -- ${size}`, () => {
+        cy.viewport(size);
         cy.setResolution(size);
         cy.visit(page);
         cy.matchImageSnapshot({
