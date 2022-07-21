@@ -34,14 +34,14 @@ bundle: location
 mode: map_card
 content:
   field_location:
-    weight: 0
+    type: address_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: address_default
+    weight: 0
     region: content
   field_office_hours:
-    weight: 3
+    type: office_hours
     label: above
     settings:
       day_format: long
@@ -60,28 +60,28 @@ content:
         position: ''
         open_text: 'Currently open!'
         closed_text: 'Currently closed'
-      schema:
-        enabled: false
       timezone_field: ''
       office_hours_first_day: ''
+      schema:
+        enabled: false
     third_party_settings: {  }
-    type: office_hours
+    weight: 3
     region: content
   field_phone:
-    weight: 1
+    type: telephone_link
     label: hidden
     settings:
       title: ''
     third_party_settings: {  }
-    type: telephone_link
+    weight: 1
     region: content
   field_subject_matter:
-    weight: 2
+    type: entity_reference_facet_link
     label: above
     settings:
       facet: subject_matter
     third_party_settings: {  }
-    type: entity_reference_facet_link
+    weight: 2
     region: content
 hidden:
   body: true

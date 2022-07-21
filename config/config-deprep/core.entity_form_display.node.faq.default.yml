@@ -28,45 +28,45 @@ third_party_settings:
         - field_department
         - field_subject_matter
         - field_tags
+      label: Metadata
+      region: content
       parent_name: group_vertical_tabs
       weight: 24
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Metadata
     group_vertical_tabs:
       children:
         - group_content
         - group_metadata
+      label: 'Vertical Tabs'
+      region: content
       parent_name: ''
       weight: 0
       format_type: tabs
-      region: content
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         direction: vertical
-      label: 'Vertical Tabs'
     group_content:
       children:
         - title
         - body
+      label: Content
+      region: content
       parent_name: group_vertical_tabs
       weight: 23
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Content
 _core:
   default_config_hash: yf6hgtWOMdQ7LTVikMtFxkZ5v2_Z3j1U0bpmN_FWmgQ
 id: node.faq.default
@@ -77,13 +77,13 @@ content:
   body:
     type: text_textarea_with_summary
     weight: 2
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 9
@@ -91,11 +91,13 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_department:
+    type: autocomplete_deluxe
     weight: 5
+    region: content
     settings:
       match_operator: CONTAINS
-      size: 60
       autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
       selection_handler: default
       limit: 10
       min_length: 0
@@ -105,14 +107,14 @@ content:
       new_terms: false
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   field_division:
+    type: autocomplete_deluxe
     weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
-      size: 60
       autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
       selection_handler: default
       limit: 10
       min_length: 0
@@ -122,24 +124,24 @@ content:
       new_terms: false
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   field_subject_matter:
+    type: super_term_reference_autocomplete_widget
     weight: 6
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: super_term_reference_autocomplete_widget
-    region: content
   field_tags:
+    type: autocomplete_deluxe
     weight: 7
+    region: content
     settings:
       match_operator: CONTAINS
-      size: 60
       autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
       selection_handler: default
       limit: 10
       min_length: 0
@@ -149,18 +151,16 @@ content:
       new_terms: false
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   field_topics:
+    type: super_term_reference_autocomplete_widget
     weight: 4
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: super_term_reference_autocomplete_widget
-    region: content
   langcode:
     type: language_select
     weight: 1
@@ -171,8 +171,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 18
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -182,10 +182,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 10
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
@@ -201,17 +201,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 19
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 11
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -229,12 +229,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 7
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
