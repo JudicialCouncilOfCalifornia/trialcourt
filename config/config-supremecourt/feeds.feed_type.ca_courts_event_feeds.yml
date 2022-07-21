@@ -13,8 +13,8 @@ dependencies:
   module:
     - feeds_ex
     - node
-id: ca_courts_event_feeds
 label: 'CA Courts Event Feeds'
+id: ca_courts_event_feeds
 description: ''
 help: ''
 import_period: 3600
@@ -27,8 +27,6 @@ fetcher_configuration:
   request_timeout: 30
 parser: xml
 parser_configuration:
-  context:
-    value: //item
   sources:
     type:
       label: type
@@ -57,60 +55,62 @@ parser_configuration:
     enddate:
       label: endDate
       value: endDate
-  use_tidy: false
-  display_errors: false
+  context:
+    value: //item
   source_encoding:
     - auto
+  display_errors: false
   debug_mode: false
   line_limit: 100
+  use_tidy: false
 processor: 'entity:node'
 processor_configuration:
+  values:
+    type: event
   langcode: en
   update_existing: 2
   update_non_existent: _keep
+  skip_hash_check: false
+  authorize: true
   expire: -1
   owner_feed_author: false
   owner_id: 7
-  authorize: true
-  skip_hash_check: false
-  values:
-    type: event
 custom_sources:
   type:
-    label: type
     value: type
+    label: type
     machine_name: type
   title:
-    label: title
     value: title
+    label: title
     machine_name: title
   body:
-    label: body
     value: body
+    label: body
     machine_name: body
   teaser:
-    label: teaser
     value: teaser
+    label: teaser
     machine_name: teaser
   tagline:
-    label: tagline
     value: tagline
+    label: tagline
     machine_name: tagline
   image:
-    label: image
     value: image
+    label: image
     machine_name: image
   pubstatus:
-    label: pubStatus
     value: pubStatus
+    label: pubStatus
     machine_name: pubstatus
   startdate:
-    label: startDate
     value: startDate
+    label: startDate
     machine_name: startdate
   enddate:
-    label: endDate
     value: endDate
+    label: endDate
     machine_name: enddate
 mappings:
   -
@@ -125,10 +125,10 @@ mappings:
     target: title
     map:
       value: title
-    unique:
-      value: '1'
     settings:
       language: null
+    unique:
+      value: '1'
   -
     target: body
     map:
@@ -141,9 +141,9 @@ mappings:
     target: field_byline
     map:
       value: tagline
-    unique: {  }
     settings:
       language: null
+    unique: {  }
   -
     target: field_media
     map:

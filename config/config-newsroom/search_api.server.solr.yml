@@ -35,6 +35,12 @@ name: Solr
 description: 'Solr Server in Azure'
 backend: search_api_solr
 backend_config:
+  retrieve_data: false
+  highlight_data: false
+  site_hash: false
+  server_prefix: ''
+  domain: generic
+  environment: default
   connector: basic_auth
   connector_config:
     scheme: https
@@ -46,13 +52,14 @@ backend_config:
     index_timeout: 5
     optimize_timeout: 10
     finalize_timeout: 30
-    commit_within: 1000
-    username: ''
-    password: ''
     solr_version: '8'
     http_method: AUTO
+    commit_within: 1000
     jmx: false
     solr_install_dir: ''
+    username: ''
+    password: ''
+  optimize: false
   disabled_field_types: {  }
   disabled_caches: {  }
   disabled_request_handlers:
@@ -62,11 +69,4 @@ backend_config:
   disabled_request_dispatchers:
     - request_dispatcher_httpcaching_default_7_0_0
   rows: 10
-  retrieve_data: false
-  highlight_data: false
   skip_schema_check: false
-  server_prefix: ''
-  domain: generic
-  environment: default
-  optimize: false
-  site_hash: false

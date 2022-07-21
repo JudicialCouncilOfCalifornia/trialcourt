@@ -20,19 +20,19 @@ third_party_settings:
         find: /\n/
         replace: '<br />'
         limit: null
+        uuid: b1548a05-fa78-4e1b-82cb-f48d8536d841
         plugin: find_replace_regex
         source: description
         weight: 0
         label: 'Find replace REGEX'
-        uuid: b1548a05-fa78-4e1b-82cb-f48d8536d841
       86031265-68a7-49d2-a3e4-a94ad5031f42:
+        uuid: 86031265-68a7-49d2-a3e4-a94ad5031f42
         plugin: html_entity_decode
         source: summary
         weight: 0
         label: 'HTML entity decode'
-        uuid: 86031265-68a7-49d2-a3e4-a94ad5031f42
-id: ical_feed
 label: 'iCal Feed'
+id: ical_feed
 description: ''
 help: ''
 import_period: 3600
@@ -47,29 +47,29 @@ parser: feeds_ical
 parser_configuration: {  }
 processor: 'entity:node'
 processor_configuration:
+  values:
+    type: event
   langcode: en
   update_existing: 2
   update_non_existent: _keep
+  skip_hash_check: false
+  authorize: false
   expire: -1
   owner_feed_author: false
   owner_id: 0
-  authorize: false
-  skip_hash_check: false
-  values:
-    type: event
 custom_sources:
   rrule:
-    label: RRULE
     value: RRULE
+    label: RRULE
     machine_name: rrule
 mappings:
   -
     target: title
     map:
       value: summary
-    unique: {  }
     settings:
       language: null
+    unique: {  }
   -
     target: body
     map:
@@ -90,9 +90,9 @@ mappings:
     target: field_recurring_event
     map:
       value: rrule
-    unique: {  }
     settings:
       language: null
+    unique: {  }
   -
     target: field_event_moreinfo
     map:
@@ -105,6 +105,6 @@ mappings:
     map:
       url: ''
       guid: uid
+    settings: {  }
     unique:
       guid: '1'
-    settings: {  }

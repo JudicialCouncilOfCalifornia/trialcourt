@@ -210,7 +210,7 @@
         // Return district code for hidden form use by the submitted case prefix.
         function getDistrictCode(prefix) {
           let districtCode;
-          switch(prefix) {
+          switch(prefix.toUpperCase()) {
             case 'S':
               districtCode = 0;
               break;

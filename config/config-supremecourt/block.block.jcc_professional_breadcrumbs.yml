@@ -18,14 +18,14 @@ plugin: system_breadcrumb_block
 settings:
   id: system_breadcrumb_block
   label: Breadcrumbs
-  provider: system
   label_display: '0'
+  provider: system
 visibility:
   'entity_bundle:node':
     id: 'entity_bundle:node'
-    bundles:
-      alert: alert
-      landing_page: landing_page
     negate: true
     context_mapping:
       node: '@node.node_route_context:node'
+    bundles:
+      alert: alert
+      landing_page: landing_page
