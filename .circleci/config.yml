@@ -219,7 +219,7 @@ workflows:
       - deploy_legacy:
           matrix:
             parameters:
-              site: ["newsroom", "deprep", "webservices"]
+              site: ["newsroom", "deprep"]
           requires:
             - build_test
           filters:
@@ -232,9 +232,20 @@ workflows:
       - cypress:
           matrix:
             parameters:
-              site: ["newsroom", "inyo"]
+              site: ["inyo"]
           requires:
             - deploy
+          filters:
+            branches:
+              only:
+                - develop
+                - stage
+      - cypress:
+          matrix:
+            parameters:
+              site: ["newsroom"]
+          requires:
+            - deploy_legacy
           filters:
             branches:
               only:
