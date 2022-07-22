@@ -1,4 +1,5 @@
-#!/bin/bash -eo pipefail
+#!/bin/bash
+ set -o pipefail
 
 # This will do testing against the deployed branch, so it
 # should only be run on deployment branches, AFTER the deploy job.
