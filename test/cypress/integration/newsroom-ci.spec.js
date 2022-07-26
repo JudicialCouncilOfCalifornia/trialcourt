@@ -6,9 +6,6 @@ const common_pages = [
   '/for-media',
 ];
 
-const username = Cypress.env('username')
-const password = Cypress.env('password')
-
 describe('Newsroom Smoke Test', () => {
 
   describe('Check main pages', () => {
@@ -29,7 +26,10 @@ describe('Newsroom Smoke Test', () => {
   });
 
   describe('User Login and Administration', () => {
-    it("logins user", () => {
+    it("logs in user", () => {
+      const username = Cypress.env('username')
+      const password = Cypress.env('password')
+
       cy.visit('/user/login');
       cy.get('input[name="name"]').type(username, { force: true });
       cy.get('input[name="pass"]').type(password + '{enter}', { force: true });
