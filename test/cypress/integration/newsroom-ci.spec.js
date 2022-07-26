@@ -27,10 +27,10 @@ describe('Newsroom Smoke Test', () => {
 
   describe('User Login and Administration', () => {
     it("logs in user", () => {
-      cy.log(Cypress.env('username'))
+      cy.log(cy.env('username'))
       cy.visit('/user/login');
-      cy.get('input[name="name"]').type(Cypress.env('username'), { force: true });
-      cy.get('input[name="pass"]').type(Cypress.env('password') + '{enter}', { force: true });
+      cy.get('input[name="name"]').type(cy.env('username'));
+      cy.get('input[name="pass"]').type(cy.env('password') + '{enter}');
       cy.contains('Member for').should('exist');
     })
   });
