@@ -57,14 +57,14 @@ for name in "$@" ; do
   fi
 
   # Run Visual Regression Tests
-  echo -e "\nComparing snapshots to base for ${name}"
-  if [ -f $vrtSpec ] ; then
-    npx cypress run --spec ${vrtSpec} --config baseUrl=${baseUrl}
-  fi
-
-  if [ -d "test/cypress/snapshots/${name}-vrt.spec.js/__diff_output__" ] ; then
-    vrtFail=true
-  fi
+#  echo -e "\nComparing snapshots to base for ${name}"
+#  if [ -f $vrtSpec ] ; then
+#    npx cypress run --spec ${vrtSpec} --config baseUrl=${baseUrl}
+#  fi
+#
+#  if [ -d "test/cypress/snapshots/${name}-vrt.spec.js/__diff_output__" ] ; then
+#    vrtFail=true
+#  fi
 done
 
 # Merge Reports
