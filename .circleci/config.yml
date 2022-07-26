@@ -169,11 +169,11 @@ jobs:
                     - project
                     - .cache/Cypress
 
-            - run:
-                name: VRT set base images
-                command: .circleci/scripts/cypress-ci.sh -b << parameters.site >>
-                no_output_timeout: 10m
-                working_directory: ''
+#            - run:
+#                name: VRT set base images
+#                command: .circleci/scripts/cypress-ci.sh -b << parameters.site >>
+#                no_output_timeout: 10m
+#                working_directory: ''
 
             - run:
                 name: Run CI specs.
@@ -230,6 +230,7 @@ workflows:
                 - master
                 - /^epic-.*/
       - cypress:
+          context: keep-password-secret
           matrix:
             parameters:
               site: ["inyo"]
@@ -241,11 +242,12 @@ workflows:
                 - develop
                 - stage
       - cypress:
+          context: keep-password-secret
           matrix:
             parameters:
               site: ["newsroom"]
           requires:
-            - deploy_legacy
+            - deploy_legacy-newsroom
           filters:
             branches:
               only:
