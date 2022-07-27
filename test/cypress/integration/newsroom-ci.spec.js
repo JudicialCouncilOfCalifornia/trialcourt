@@ -10,7 +10,7 @@ describe('Newsroom Smoke Test', () => {
 
   describe('Check main pages', () => {
     common_pages.forEach((page) => {
-      it(`visits ${page} and check for copyright`, () => {
+      it(`visits ${page} and checks for copyright`, () => {
         cy.visit(page)
         cy.contains('© 2022');
       })
@@ -31,6 +31,11 @@ describe('Newsroom Smoke Test', () => {
       cy.get('input[name="name"]').type(Cypress.env('username'));
       cy.get('input[name="pass"]').type(Cypress.env('password') + '{enter}');
       cy.contains('Member for').should('exist');
+    })
+
+    it("logs out user", () => {
+      cy.visit('/user/logout');
+      cy.contains('Bueno, Ivan').should('not.exist');
     })
   });
 
