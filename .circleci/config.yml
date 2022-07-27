@@ -243,6 +243,17 @@ workflows:
       - cypress:
           matrix:
             parameters:
+              site: ["butte"]
+          requires:
+            - deploy-butte
+          filters:
+            branches:
+              only:
+                - develop
+                - stage
+      - cypress:
+          matrix:
+            parameters:
               site: ["newsroom"]
           requires:
             - deploy_legacy-newsroom
