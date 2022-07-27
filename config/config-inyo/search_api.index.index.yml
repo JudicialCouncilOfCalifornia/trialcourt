@@ -7,7 +7,7 @@ dependencies:
     - field.storage.node.field_alert_type
     - field.storage.node.field_byline
     - field.storage.node.field_news_type
-    - search_api.server.solr
+    - search_api.server.pantheon_solr8
     - core.entity_view_mode.node.full
   module:
     - search_api_solr
@@ -20,19 +20,17 @@ third_party_settings:
     finalize: false
     commit_before_finalize: false
     commit_after_finalize: false
-    multilingual:
-      limit_to_content_language: false
-      include_language_independent: true
+    debug_finalize: false
     highlighter:
       maxAnalyzedChars: 51200
       fragmenter: gap
+      usePhraseHighlighter: true
+      highlightMultiTerm: true
+      preserveMulti: false
       regex:
         slop: 0.5
         pattern: blank
         maxAnalyzedChars: 10000
-      usePhraseHighlighter: true
-      highlightMultiTerm: true
-      preserveMulti: false
       highlight:
         mergeContiguous: false
         requireFieldMatch: false
@@ -49,12 +47,18 @@ third_party_settings:
       maxntp: 2000
       boost: false
       interestingTerms: none
+    term_modifiers:
+      slop: 3
+      fuzzy: 1
     advanced:
       index_prefix: ''
       collection: ''
       timezone: ''
+    multilingual:
+      limit_to_content_language: false
+      include_language_independent: true
 _core:
-  default_config_hash: QV4Lg_P1lO7kUehDM9MOwCrreMgoeXzNUxn29ConE9o
+  default_config_hash: ivEjm3zj3tLJo1R2KeqaEHKP-9Iprx9Adp8tQLUML3k
 id: index
 name: Index
 description: ''
@@ -134,7 +138,7 @@ field_settings:
     type: text
     configuration:
       roles:
-        anonymous: anonymous
+        - anonymous
       view_mode:
         'entity:file':
           file: ''
@@ -215,7 +219,7 @@ tracker_settings:
   default:
     indexing_order: fifo
 options:
-  index_directly: true
   cron_limit: 50
+  index_directly: true
   track_changes_in_references: true
-server: solr
+server: pantheon_solr8
