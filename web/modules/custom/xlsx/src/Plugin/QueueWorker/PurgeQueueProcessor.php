@@ -18,7 +18,8 @@ class PurgeQueueProcessor extends QueueWorkerBase {
   /**
    * {@inheritdoc}
    */
-  public function processItem($ids, $storage) {
+  public function processItem($data) {
+    list($ids, $storage) = $data;
     $entities = $storage->loadMultiple($ids);
     if ($entities) {
       $first_entity = current($entities);
