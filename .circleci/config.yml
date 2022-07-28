@@ -232,20 +232,9 @@ workflows:
       - cypress:
           matrix:
             parameters:
-              site: ["inyo"]
+              site: ["colusa", "inyo", "slo2", "sc", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "kern", "tuolumne", "santabarbara"]
           requires:
-            - deploy-inyo
-          filters:
-            branches:
-              only:
-                - develop
-                - stage
-      - cypress:
-          matrix:
-            parameters:
-              site: ["butte"]
-          requires:
-            - deploy-butte
+            - deploy
           filters:
             branches:
               only:
