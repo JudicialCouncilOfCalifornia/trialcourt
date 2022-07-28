@@ -888,8 +888,8 @@ function jcc_tc2_all_immutable_config_update_8045() {
  * TCI-925: one more pass seems to do it.
  */
 function jcc_tc2_all_immutable_config_update_8046() {
-    jcc_tc2_all_immutable_config_update_8044();
-    jcc_tc2_all_immutable_config_update_8045();
+  jcc_tc2_all_immutable_config_update_8044();
+  jcc_tc2_all_immutable_config_update_8045();
 }
 
 /**
@@ -908,4 +908,13 @@ function jcc_tc2_all_immutable_config_update_8035() {
   ')
     ->execute();
   \Drupal::messenger()->addStatus(t('Removed :count duplicate search api task(s)', [':count' => $count]));
+}
+
+/**
+ * TCI-928: Node access rebuild.
+ */
+function jcc_tc2_all_immutable_config_update_9001() {
+  \Drupal::service('features.manager')->import(['jcc_tc2_all_immutable_config']);
+
+  node_access_rebuild(TRUE);
 }
