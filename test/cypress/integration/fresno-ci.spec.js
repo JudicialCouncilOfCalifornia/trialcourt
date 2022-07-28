@@ -9,6 +9,6 @@ const main_pages = [
   'general-information',
 ];
 
-describe('Butte Smoke Test', () => {
+describe('Smoke Test', () => {
   commonTests(main_pages, 'search', '0 results for');
 })
