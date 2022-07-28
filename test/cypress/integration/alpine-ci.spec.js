@@ -3,9 +3,8 @@ import { commonTests } from "../support/common";
 const main_pages = [
   '/',
   '/online-services',
-  '/forms-filing',
-  '/self-help-center',
-  '/divisions',
+  '/forms-filings',
+  '/self-help',
   'general-information',
 ];
 

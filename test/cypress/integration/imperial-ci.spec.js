@@ -4,7 +4,7 @@ const main_pages = [
   '/',
   '/online-services',
   '/forms-filing',
-  '/self-help-center',
+  '/self-help-services',
   '/divisions',
   'general-information',
 ];
