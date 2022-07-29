@@ -19,7 +19,7 @@ do_command() {
     echo -e "\n${B}Enabling ${RE}solr for ${alias}"
     terminus solr:enable $alias &
 
-    PIDS+="$!"
+    PIDS+=" $!"
     sitemap["$!"]="${site}"
     # Wait to not overwhelm Pantheon with too many commands at once.
     sleep 5
