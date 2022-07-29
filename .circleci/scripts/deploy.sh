@@ -80,7 +80,7 @@ for name in "$@" ; do
     echo
     echo "Tagging master branch for production (Live): $pantheon_prefix$pantheon_new"
 
-    # git tag -a $pantheon_prefix$pantheon_new -m "Tagging new pantheon live release."
+    git tag -a $pantheon_prefix$pantheon_new -m "Tagging new pantheon live release."
   fi
 
   # Disable strict host checking so we can run drush on all envs.
