@@ -169,11 +169,11 @@ jobs:
                     - project
                     - .cache/Cypress
 
-            - run:
-                name: VRT set base images
-                command: .circleci/scripts/cypress-ci.sh -b << parameters.site >>
-                no_output_timeout: 10m
-                working_directory: ''
+#            - run:
+#                name: VRT set base images
+#                command: .circleci/scripts/cypress-ci.sh -b << parameters.site >>
+#                no_output_timeout: 10m
+#                working_directory: ''
 
             - run:
                 name: Run CI specs.
@@ -219,7 +219,7 @@ workflows:
       - deploy_legacy:
           matrix:
             parameters:
-              site: ["newsroom", "deprep", "webservices"]
+              site: ["newsroom", "deprep"]
           requires:
             - build_test
           filters:
@@ -232,9 +232,20 @@ workflows:
       - cypress:
           matrix:
             parameters:
-              site: ["newsroom", "tc"]
+              site: ["colusa", "inyo", "slo2", "sc", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "kern", "tuolumne", "santabarbara"]
           requires:
             - deploy
+          filters:
+            branches:
+              only:
+                - develop
+                - stage
+      - cypress:
+          matrix:
+            parameters:
+              site: ["newsroom"]
+          requires:
+            - deploy_legacy-newsroom
           filters:
             branches:
               only:
