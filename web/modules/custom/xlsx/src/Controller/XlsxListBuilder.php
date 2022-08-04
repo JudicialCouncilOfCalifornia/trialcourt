@@ -105,7 +105,7 @@ class XlsxListBuilder extends ConfigEntityListBuilder {
     $row['source'] = $plugin->getName();
     $row['export'] = join(', ', $export_plugins);
     $row['export_only'] = !empty($mapping['export_only']) ? $this->t('Yes') : $this->t('No');
-    $row['cron'] = $plugin->isCron() ? $cron_frequency[$mapping['cron_frequency']] : $this->t('No');
+    $row['cron'] = ($plugin->isCron() && !empty($mapping['cron'])) ? $cron_frequency[$mapping['cron_frequency']] : $this->t('No');
     $row['last_import'] = $entity->getLastImport();
     $row['last_export'] = $entity->getLastExport();
     return $row + parent::buildRow($entity);
