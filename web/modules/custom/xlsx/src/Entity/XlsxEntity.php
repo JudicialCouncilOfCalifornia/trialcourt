@@ -137,6 +137,9 @@ class XlsxEntity extends ConfigEntityBase implements XlsxEntityInterface {
     $mapping = $this->getMapping();
     $inteval = (int) $mapping['cron_frequency'];
     $last_cron_run = \Drupal::state()->get('xlsx.last_cron_run');
+    if (empty($last_cron_run)) {
+      $last_cron_run = [];
+    }
     $current_time = \Drupal::time()->getCurrentTime();
     $last_cron_run[$this->id()] = $current_time + $interval;
     \Drupal::state()->set('xlsx.last_cron_run', $last_cron_run);
