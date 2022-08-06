@@ -60,6 +60,7 @@ class CronImports {
             foreach ($batch_items as $item) {
               $import_queue->createItem($item[1]);
             }
+            $xlsx->setLastCron();
             $xlsx->setLastImport();
           }
         }

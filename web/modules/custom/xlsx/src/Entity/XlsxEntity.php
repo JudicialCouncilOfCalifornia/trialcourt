@@ -116,21 +116,30 @@ class XlsxEntity extends ConfigEntityBase implements XlsxEntityInterface {
    */
   public function shouldExecuteOnCron() {
     $mapping = $this->getMapping();
-    if ($this->isCron()) {
-      $inteval = (int) $mapping['cron_frequency'];
-      if (empty($interval)) {
+    $interval = (int) $mapping['cron_frequency'];
+    if ($this->isCron() && !empty($interval)) {
+      $last_cron_run = \Drupal::state()->get('xlsx.last_cron_run');
+      $current_time = \Drupal::time()->getCurrentTime();
+      if (empty($last_cron_run[$this->id()]) || ($current_time > $last_cron_run[$this->id()])) {
         return TRUE;
       }
-      else {
-        $last_cron_run = \Drupal::state()->get('xlsx.last_cron_run');
-        $current_time = \Drupal::time()->getCurrentTime();
-        if (empty($last_cron_run[$this->id()]) || ($current_time >= $last_cron_run[$this->id()])) {
-          $last_cron_run[$this->id()] = $current_time + $interval;
-          \Drupal::state()->set('xlsx.last_cron_run', $last_cron_run);
-          return TRUE;
-        }
-      }
     }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setLastCron() {
+    $mapping = $this->getMapping();
+    $interval = (int) $mapping['cron_frequency'];
+    $last_cron_run = \Drupal::state()->get('xlsx.last_cron_run');
+    if (empty($last_cron_run)) {
+      $last_cron_run = [];
+    }
+    $current_time = \Drupal::time()->getCurrentTime();
+    $last_cron_run[$this->id()] = $current_time + $interval;
+    \Drupal::state()->set('xlsx.last_cron_run', $last_cron_run);
   }
 
   /**
