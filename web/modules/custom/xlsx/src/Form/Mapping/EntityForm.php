@@ -55,6 +55,7 @@ class EntityForm extends BaseForm {
         '#options' => $this->getEntityBundles(),
         '#default_value' => !empty($tmp_value[$index]['entity']['type']) ? 
            $tmp_value[$index]['entity']['xlsx_data_plugin'] . '::' . $tmp_value[$index]['entity']['type'] . '::' . $tmp_value[$index]['entity']['bundle'] : '',
+        '#disabled' => !empty($tmp_value[$index]['entity']['type']) ? TRUE : FALSE,
       ];
     }
     $form['actions']['submit']['#value'] = $this->t('Next');
