@@ -22,7 +22,7 @@ class XlsxBatchOps {
       $imported_ids = [];
       foreach ($entities as $entity) {
         $context['results'][] = $entity->id();
-        $imported_ids[] = $entity->id();
+        $imported_ids[] = $entity->get('entity_id')->value;
       }
       if (!empty($imported_ids)) {
         $context['message'] = t('Deleting previously imported records. About 100 records at a time.');
