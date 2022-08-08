@@ -13,7 +13,7 @@ dependencies:
     - node
     - user
 _core:
-  default_config_hash: mpDUAK0Z-F5swADaeBj28Igbp_B6JLPtBY-8TojHmPE
+  default_config_hash: Y7U2B7pDKBBJX-aWdhuIMRMhMEwda-l9TPVAdKVy_jA
 id: content
 label: Content
 module: node
@@ -30,22 +30,6 @@ display:
     display_options:
       title: Content
       fields:
-        node_bulk_form:
-          id: node_bulk_form
-          table: node
-          field: node_bulk_form
-          entity_type: node
-          plugin_id: node_bulk_form
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-          element_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
         title:
           id: title
           table: node_field_data
@@ -244,6 +228,73 @@ display:
           empty_zero: false
           hide_alter_empty: true
           destination: true
+        content_translation_outdated:
+          id: content_translation_outdated
+          table: node_field_data
+          field: content_translation_outdated
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Translation
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: boolean
+          settings:
+            format: custom
+            format_custom_true: Outdated
+            format_custom_false: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: node
+          entity_field: content_translation_outdated
+          plugin_id: field
       pager:
         type: full
         options:
@@ -269,14 +320,6 @@ display:
           perm: 'access content overview'
       cache:
         type: tag
-      empty:
-        area_text_custom:
-          id: area_text_custom
-          table: views
-          field: area_text_custom
-          plugin_id: text_custom
-          empty: true
-          content: 'No content available.'
       sorts: {  }
       arguments: {  }
       filters:
@@ -526,6 +569,62 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        content_translation_outdated:
+          id: content_translation_outdated
+          table: node_field_data
+          field: content_translation_outdated
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: All
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'Translation: Outdated'
+            description: ''
+            use_operator: false
+            operator: content_translation_outdated_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: content_translation_outdated
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: content_translation_outdated
+          plugin_id: boolean
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          empty: true
+          content: 'No content available.'
+          plugin_id: text_custom
       filter_groups:
         operator: AND
         groups:

@@ -14,55 +14,60 @@ dependencies:
     - cshs
     - file
 _core:
-  default_config_hash: WscnfcsBp4IDiw-g9-MmS6iCtq_0FWpa5FusZlfllQI
+  default_config_hash: oZBcmGhwprHSn6k9P2x4lrwdCt2BOGAvEv0JKaBncYs
 id: media.file.default
 targetEntityType: media
 bundle: file
 mode: default
 content:
   field_category:
+    type: cshs
     weight: 3
+    region: content
     settings:
+      force_deepest: false
       parent: ''
       level_labels: ''
-      force_deepest: false
+      none_label: '- Please select -'
       save_lineage: false
       hierarchy_depth: 0
       required_depth: 0
-      none_label: '- Please select -'
     third_party_settings: {  }
-    type: cshs
-    region: content
   field_document_type:
+    type: options_select
     weight: 6
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: options_select
-    region: content
   field_matters_served:
+    type: cshs
     weight: 4
+    region: content
     settings:
+      force_deepest: false
       parent: ''
       level_labels: ''
-      force_deepest: false
+      none_label: '- Please select -'
       save_lineage: false
       hierarchy_depth: 0
       required_depth: 0
-      none_label: '- Please select -'
     third_party_settings: {  }
-    type: cshs
-    region: content
   field_media_file:
+    type: file_generic
     weight: 1
+    region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
-    type: file_generic
-    region: content
   field_tags:
+    type: autocomplete_deluxe
     weight: 5
+    region: content
     settings:
       match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
       limit: 10
       min_length: 0
       delimiter: ''
@@ -70,12 +75,7 @@ content:
       not_found_message: 'The term ''@term'' will be added'
       new_terms: true
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   langcode:
     type: language_select
     weight: 7
