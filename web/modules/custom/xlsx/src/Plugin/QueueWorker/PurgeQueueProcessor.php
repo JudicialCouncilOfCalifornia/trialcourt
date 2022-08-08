@@ -18,15 +18,21 @@ class PurgeQueueProcessor extends QueueWorkerBase {
   /**
    * {@inheritdoc}
    */
-  public function processItem($entity) {
-    if ($entity) {
-      $imported_entity = \Drupal::entityTypeManager()
-        ->getStorage($entity->get('entity_type_id')->value, $entity->get('bundle')->value)
-        ->load($entity->get('entity_id')->value);
-      if ($imported_entity) {
-        $imported_entity->delete();
+  public function processItem($data) {
+    list($ids, $storage) = $data;
+    $entities = $storage->loadMultiple($ids);
+    if ($entities) {
+      $first_entity = current($entities);
+      $imported_storage = \Drupal::entityTypeManager()->getStorage($first_entity->get('entity_type_id')->value, $first_entity->get('bundle')->value);
+      $imported_ids = [];
+      foreach ($entities as $entity) {
+        $imported_ids[] = $entity->id();
       }
-      $entity->delete();
+      if (!empty($imported_ids)) {
+        $imported_entities = $imported_storage->loadMultiple($imported_ids);
+        $imported_storage->delete($imported_entities);
+      }
+      $storage->delete($entities);
     }
   }
 

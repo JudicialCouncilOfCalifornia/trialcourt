@@ -11,14 +11,16 @@ dependencies:
     - paragraphs
     - text
 _core:
-  default_config_hash: '-NkNXwsTxLB_47w5c8TdMGaaBwDId7DDsG87af59uyI'
+  default_config_hash: kupJhYds4BuQK2XZ8HUYT7QBS4Tgh6XTrS80vXh0Gbg
 id: paragraph.action_list.default
 targetEntityType: paragraph
 bundle: action_list
 mode: default
 content:
   field_components:
+    type: entity_reference_paragraphs
     weight: 2
+    region: content
     settings:
       title: Item
       title_plural: Items
@@ -27,29 +29,27 @@ content:
       form_display_mode: default
       default_paragraph_type: action_list_item
     third_party_settings: {  }
-    type: entity_reference_paragraphs
-    region: content
   field_heading:
+    type: string_textfield
     weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_lead:
+    type: text_textarea
     weight: 1
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
   translation:
     weight: 10
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
 hidden:
   created: true
   status: true

@@ -23,7 +23,7 @@ function jcc_newsroom_preprocess_views_view__feeds_directory__page_1(&$variables
     $term = $row['#row']->_entity;
     $term_name = $term->name->value;
     $tid = $term->tid->value;
-    $vid = Term::load($tid)->getVocabularyId();
+    $vid = Term::load($tid)->bundle();
     $feed_details = [
       'icon' => [
         'name' => 'rss2',

@@ -1,0 +1,32 @@
+uuid: bc1f0c0b-fda1-4b3d-b1ab-461d04582ffd
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.events
+  module:
+    - node
+    - views
+  theme:
+    - jcc_newsroom
+id: views_block__events_block_2
+theme: jcc_newsroom
+region: right_sidebar
+weight: -12
+provider: null
+plugin: 'views_block:events-block_2'
+settings:
+  id: 'views_block:events-block_2'
+  label: ''
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      landing_page: landing_page

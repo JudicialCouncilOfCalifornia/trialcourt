@@ -4,7 +4,9 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.media.media_library
+    - field.field.media.boxcast_stream.field_matters_served
     - field.field.media.boxcast_stream.field_media_boxcast_stream
+    - field.field.media.boxcast_stream.field_tags
     - image.style.medium
     - media.type.boxcast_stream
   module:
@@ -17,26 +19,28 @@ mode: media_library
 content:
   field_media_boxcast_stream:
     type: boxcast_content_formatter
-    weight: 0
-    region: content
     label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 0
+    region: content
   thumbnail:
     type: image
     label: hidden
     settings:
-      image_style: medium
       image_link: ''
+      image_style: medium
       svg_attributes:
         width: null
         height: null
       svg_render_as_image: true
-    weight: 1
     third_party_settings: {  }
+    weight: 1
     region: content
 hidden:
   created: true
+  field_matters_served: true
+  field_tags: true
   langcode: true
   name: true
   search_api_excerpt: true

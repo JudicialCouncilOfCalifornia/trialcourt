@@ -4,12 +4,16 @@ status: true
 dependencies:
   config:
     - core.entity_form_mode.media.media_library
-    - entity_browser.browser.media_entity_browser
+    - field.field.media.file.field_category
     - field.field.media.file.field_document_type
+    - field.field.media.file.field_matters_served
     - field.field.media.file.field_media_file
+    - field.field.media.file.field_tags
     - media.type.file
   module:
-    - entity_browser
+    - autocomplete_deluxe
+    - cshs
+    - file
 _core:
   default_config_hash: UQFtE2dDvvmN1cfDlQYO4T5iMTP25Qjn2U8Z29qvtKE
 id: media.file.media_library
@@ -17,29 +21,69 @@ targetEntityType: media
 bundle: file
 mode: media_library
 content:
-  field_document_type:
-    type: entity_reference_autocomplete
-    weight: 1
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_media_file:
-    type: entity_browser_file
+  field_category:
+    type: cshs
     weight: 2
     region: content
     settings:
+      parent: ''
+      level_labels: ''
+      force_deepest: false
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
+  field_document_type:
+    type: options_select
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_matters_served:
+    type: cshs
+    weight: 3
+    region: content
+    settings:
+      parent: ''
+      level_labels: ''
+      force_deepest: false
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
+  field_media_file:
+    type: file_generic
+    weight: 1
+    region: content
+    settings:
       entity_browser: media_entity_browser
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_edit: true
+      field_widget_remove: true
       field_widget_replace: false
       open: false
+      selection_mode: selection_append
       view_mode: default
       preview_image_style: thumbnail
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_tags:
+    type: autocomplete_deluxe
+    weight: 4
+    region: content
+    settings:
+      match_operator: CONTAINS
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
     third_party_settings: {  }
   name:
     type: string_textfield
@@ -58,5 +102,6 @@ hidden:
   created: true
   langcode: true
   path: true
+  replace_file: true
   status: true
   uid: true

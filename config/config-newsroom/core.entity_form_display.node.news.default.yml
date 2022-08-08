@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_directories_modal
+    - entity_browser.browser.media_directories_editor_browser
     - field.field.node.news.body
     - field.field.node.news.feeds_item
     - field.field.node.news.field_attachments
@@ -48,47 +48,47 @@ third_party_settings:
         - group_secondary_content
         - group_metadata
         - group_social
+      label: 'News Content'
+      region: content
       parent_name: ''
       weight: 1
       format_type: tabs
-      region: content
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         direction: vertical
-      label: 'News Content'
     group_main_content:
       children:
         - field_news_type
         - body
         - field_contact
+      label: Details
+      region: content
       parent_name: group_news_content
       weight: 20
       format_type: tab
-      region: content
       format_settings:
-        description: ''
-        formatter: open
-        required_fields: true
-        id: ''
         classes: ''
-      label: Details
+        id: ''
+        formatter: open
+        description: ''
+        required_fields: true
     group_secondary_content:
       children:
         - field_related_content
         - field_links
         - field_feed_source
+      label: 'Secondary Content'
+      region: content
       parent_name: group_news_content
       weight: 22
       format_type: tab
-      region: content
       format_settings:
-        description: "<p>Add links to other useful related content for reference or recommendations.</p>\r\n<p>To change the default file icon for the link display, enter the <strong>class</strong> of the available icon under  the link's <strong>Attributes</strong>. Refer to our pattern library for the icons that are available for use.</p>"
-        formatter: closed
-        required_fields: true
-        id: ''
         classes: ''
-      label: 'Secondary Content'
+        id: ''
+        formatter: closed
+        description: "<p>Add links to other useful related content for reference or recommendations.</p>\r\n<p>To change the default file icon for the link display, enter the <strong>class</strong> of the available icon under  the link's <strong>Attributes</strong>. Refer to our pattern library for the icons that are available for use.</p>"
+        required_fields: true
     group_metadata:
       children:
         - field_division
@@ -96,61 +96,61 @@ third_party_settings:
         - field_topics
         - field_subject_matter
         - field_sorting_weight
+      label: Metadata
+      region: content
       parent_name: group_news_content
       weight: 24
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Metadata
     group_news_header:
       children:
         - title
         - field_tagline
+      label: 'News Header'
+      region: content
       parent_name: ''
       weight: 0
       format_type: fieldset
-      region: content
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         description: ''
         required_fields: true
-      label: 'News Header'
     group_media:
       children:
         - field_images
         - field_promotion_image
         - field_attachments
+      label: Media
+      region: content
       parent_name: group_news_content
       weight: 21
       format_type: tab
-      region: content
       format_settings:
-        description: ''
-        formatter: closed
-        required_fields: true
-        id: ''
         classes: ''
-      label: Media
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
     group_social:
       children:
         - field_has_been_sent
+      label: Distribution
+      region: content
       parent_name: group_news_content
       weight: 25
       format_type: tab
-      region: content
       format_settings:
-        description: ''
-        formatter: closed
-        required_fields: true
-        id: ''
         classes: ''
-      label: Distribution
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
 _core:
   default_config_hash: mkzVmXWXMHZsPMgyFtGyIiHcVPLW89gDFzArk9jFTl8
 id: node.news.default
@@ -161,13 +161,13 @@ content:
   body:
     type: text_textarea_with_summary
     weight: 2
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 5
@@ -177,60 +177,60 @@ content:
   field_attachments:
     type: entity_browser_entity_reference
     weight: 5
+    region: content
     settings:
       entity_browser: media_directories_modal
       field_widget_display: rendered_entity
-      field_widget_display_settings:
-        view_mode: media_library
       field_widget_edit: true
       field_widget_remove: true
-      open: true
-      selection_mode: selection_append
       field_widget_replace: false
+      open: true
+      field_widget_display_settings:
+        view_mode: media_library
+      selection_mode: selection_append
     third_party_settings: {  }
-    region: content
   field_contact:
+    type: autocomplete_deluxe
     weight: 4
+    region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
-      new_terms: 0
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   field_division:
     type: autocomplete_deluxe
     weight: 3
     region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: '1'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
   field_feed_source:
+    type: text_textfield
     weight: 12
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: text_textfield
-    region: content
   field_has_been_sent:
     type: boolean_checkbox
     weight: 12
@@ -239,22 +239,24 @@ content:
       display_label: true
     third_party_settings: {  }
   field_images:
+    type: entity_browser_entity_reference
     weight: 3
     region: content
-    type: entity_browser_entity_reference
     settings:
       entity_browser: media_directories_modal
       field_widget_display: rendered_entity
-      field_widget_display_settings:
-        view_mode: media_library
       field_widget_edit: true
       field_widget_remove: true
-      open: true
-      selection_mode: selection_append
       field_widget_replace: false
+      open: true
+      field_widget_display_settings:
+        view_mode: media_library
+      selection_mode: selection_append
     third_party_settings: {  }
   field_links:
+    type: link_attributes
     weight: 11
+    region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -268,70 +270,61 @@ content:
         aria-label: false
         title: false
     third_party_settings: {  }
-    type: link_attributes
-    region: content
   field_metatag:
+    type: metatag_firehose
     weight: 12
+    region: content
     settings:
       sidebar: true
     third_party_settings: {  }
-    type: metatag_firehose
-    region: content
   field_news_type:
-    type: autocomplete_deluxe
+    type: entity_reference_autocomplete
     weight: 1
     region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: '1'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
       match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      match_limit: 10
       size: 60
-      selection_handler: default
+      placeholder: ''
     third_party_settings: {  }
   field_promotion_image:
     type: entity_browser_entity_reference
     weight: 4
+    region: content
     settings:
       entity_browser: media_directories_editor_browser
       field_widget_display: rendered_entity
-      field_widget_display_settings:
-        view_mode: media_library
       field_widget_edit: true
       field_widget_remove: true
-      selection_mode: selection_append
       field_widget_replace: false
       open: false
+      field_widget_display_settings:
+        view_mode: media_library
+      selection_mode: selection_append
     third_party_settings: {  }
-    region: content
   field_related_content:
+    type: autocomplete_deluxe
     weight: 10
+    region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message: 'The term ''@term'' will be added'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
-      not_found_message_allow: 0
-      new_terms: 0
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   field_sorting_weight:
+    type: weight_selector
     weight: 7
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: weight_selector
-    region: content
   field_subject_matter:
     type: super_term_reference_autocomplete_widget
     weight: 6
@@ -343,7 +336,9 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_tagline:
+    type: text_textfield
     weight: 27
+    region: content
     settings:
       size: 120
       placeholder: ''
@@ -351,35 +346,33 @@ content:
       maxlength:
         maxlength_js: 255
         maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
-    type: text_textfield
-    region: content
   field_tags:
     type: autocomplete_deluxe
     weight: 4
     region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: '1'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
   field_topics:
+    type: super_term_reference_autocomplete_widget
     weight: 5
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: super_term_reference_autocomplete_widget
-    region: content
   langcode:
     type: language_select
     weight: 2
@@ -390,8 +383,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 9
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -401,24 +394,24 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 6
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 10
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 7
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -436,12 +429,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 4
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
 hidden:
   feeds_item: true

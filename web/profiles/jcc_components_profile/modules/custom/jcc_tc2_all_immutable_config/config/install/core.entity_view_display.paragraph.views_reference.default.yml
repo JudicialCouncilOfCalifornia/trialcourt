@@ -11,28 +11,30 @@ dependencies:
   module:
     - text
     - viewsreference
+_core:
+  default_config_hash: vL8ggmz-vIfljG3qPqtTZHgmAr69l0R9iEqYWx4_t54
 id: paragraph.views_reference.default
 targetEntityType: paragraph
 bundle: views_reference
 mode: default
 content:
   field_heading:
-    weight: 0
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 0
     region: content
   field_lead:
-    weight: 1
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    weight: 1
     region: content
   field_views_reference:
-    weight: 2
+    type: viewsreference_formatter
     label: hidden
     settings:
       plugin_types:
@@ -42,7 +44,7 @@ content:
         attachment: 0
         feed: 0
     third_party_settings: {  }
-    type: viewsreference_formatter
+    weight: 2
     region: content
 hidden:
   field_variant: true

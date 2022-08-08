@@ -14,51 +14,58 @@ dependencies:
     - entity_reference_revisions
     - text
     - user
+_core:
+  default_config_hash: rU3ROu3iARc_92J_LZfwRHa5PclhfmoDZJu3pxXAA3Y
 id: node.news.default
 targetEntityType: node
 bundle: news
 mode: default
 content:
   body:
-    label: hidden
     type: text_default
-    weight: 1
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 1
+    region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
     region: content
   field_byline:
-    weight: 3
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 3
     region: content
   field_components:
-    weight: 4
+    type: entity_reference_revisions_entity_view
     label: hidden
     settings:
       view_mode: default
       link: ''
     third_party_settings: {  }
-    type: entity_reference_revisions_entity_view
+    weight: 4
     region: content
   field_date:
-    weight: 2
+    type: datetime_custom
     label: hidden
     settings:
       timezone_override: America/Los_Angeles
       date_format: 'M d, Y'
     third_party_settings: {  }
-    type: datetime_custom
+    weight: 2
     region: content
   field_news_type:
-    weight: 0
+    type: entity_reference_label
     label: hidden
     settings:
       link: false
     third_party_settings: {  }
-    type: entity_reference_label
+    weight: 0
     region: content
 hidden:
   langcode: true

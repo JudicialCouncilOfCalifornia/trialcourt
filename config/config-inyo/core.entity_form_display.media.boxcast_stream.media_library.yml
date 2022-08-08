@@ -4,29 +4,63 @@ status: true
 dependencies:
   config:
     - core.entity_form_mode.media.media_library
+    - field.field.media.boxcast_stream.field_matters_served
     - field.field.media.boxcast_stream.field_media_boxcast_stream
+    - field.field.media.boxcast_stream.field_tags
     - media.type.boxcast_stream
   module:
+    - autocomplete_deluxe
+    - cshs
     - media_boxcast
 id: media.boxcast_stream.media_library
 targetEntityType: media
 bundle: boxcast_stream
 mode: media_library
 content:
+  field_matters_served:
+    type: cshs
+    weight: 2
+    region: content
+    settings:
+      parent: ''
+      level_labels: ''
+      force_deepest: false
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
   field_media_boxcast_stream:
     type: boxcast_content_widget
     weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_tags:
+    type: autocomplete_deluxe
+    weight: 3
+    region: content
+    settings:
+      match_operator: CONTAINS
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+    third_party_settings: {  }
   name:
     type: string_textfield
+    weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
-    weight: 0
     third_party_settings: {  }
-    region: content
 hidden:
   created: true
   langcode: true

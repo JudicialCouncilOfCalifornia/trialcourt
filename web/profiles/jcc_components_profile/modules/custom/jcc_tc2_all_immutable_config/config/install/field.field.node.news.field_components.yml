@@ -6,9 +6,16 @@ dependencies:
     - field.storage.node.field_components
     - node.type.news
     - paragraphs.paragraphs_type.cards
+    - paragraphs.paragraphs_type.iframe
     - paragraphs.paragraphs_type.text_share
   module:
     - entity_reference_revisions
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: aSD-xO1iCtvPi7OMszNQbX4JmA2nK8gxAXdVMB3GwJA
 id: node.news.field_components
 field_name: field_components
 entity_type: node
@@ -22,51 +29,67 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       text_share: text_share
       cards: cards
+      iframe: iframe
+    negate: 0
     target_bundles_drag_drop:
       accordion:
-        weight: -29
+        weight: -39
         enabled: false
       accordion_item:
-        weight: -28
+        weight: -38
         enabled: false
       action_list:
-        weight: -27
+        weight: -37
         enabled: false
       action_list_item:
-        weight: -26
+        weight: -36
         enabled: false
       alert:
-        weight: -25
+        weight: -35
         enabled: false
       body:
-        weight: -24
+        weight: -34
         enabled: false
       card:
-        weight: -23
+        weight: -33
         enabled: false
       cards:
+        weight: -31
         enabled: true
-        weight: -21
+      content_stream:
+        weight: -24
+        enabled: false
       hero:
-        weight: -20
+        weight: -30
         enabled: false
       hero_banner:
-        weight: -19
+        weight: -29
         enabled: false
       hours:
-        weight: -18
+        weight: -28
         enabled: false
       icon_link:
-        weight: -17
+        weight: -27
+        enabled: false
+      iframe:
+        weight: -26
+        enabled: true
+      step:
+        weight: -23
+        enabled: false
+      steps:
+        weight: -22
         enabled: false
       text_share:
+        weight: -32
         enabled: true
-        weight: -22
       views_reference:
-        weight: -16
+        weight: -25
+        enabled: false
+      webform:
+        weight: -21
         enabled: false
 field_type: entity_reference_revisions

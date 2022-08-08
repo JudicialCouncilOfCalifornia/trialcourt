@@ -8,6 +8,7 @@
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\redirect\Entity\Redirect;
 
 /**
  * Implements hook_install().
@@ -25,6 +26,17 @@ function jcc_tc2_all_immutable_config_install() {
     $key = $storage->create($args);
     $key->save();
   }
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function jcc_tc2_all_immutable_config_update_dependencies() {
+  $dependencies['search_api'][8107] = [
+    'jcc_tc2_all_immutable_config' => 8035,
+  ];
+
+  return $dependencies;
 }
 
 /**
@@ -173,15 +185,6 @@ function jcc_tc2_all_immutable_config_update_8006() {
       }
     }
   }
-}
-
-/**
- * Install ckeditor_inserthtml.
- */
-function jcc_tc2_all_immutable_config_update_8007() {
-  $modules = ['ckeditor_inserthtml'];
-
-  \Drupal::service('module_installer')->install($modules);
 }
 
 /**
@@ -620,4 +623,289 @@ function jcc_tc2_all_immutable_config_prefix_paragraph_fields($field_name) {
   else {
     \Drupal::messenger()->addStatus(t('Alameda only, no changes.'));
   }
+}
+
+/**
+ * TCI-770: Mega Media Makeover Mod.
+ */
+function jcc_tc2_all_immutable_config_update_8040() {
+  $modules = [
+    'cshs',
+    'file_delete',
+    'file_replace',
+    'filefield_paths',
+    'media_entity_download',
+    'media_entity_file_replace',
+    'media_file_delete',
+    'media_file_delete_entity_usage',
+  ];
+
+  foreach ($modules as $module) {
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      continue;
+    }
+    \Drupal::service('module_installer')->install([$module]);
+  }
+}
+
+/**
+ * TCI-768: Preinstall filefield_paths and import feature config for batch.
+ */
+function jcc_tc2_all_immutable_config_update_8041() {
+  $modules = ['filefield_paths'];
+
+  foreach ($modules as $module) {
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+      continue;
+    }
+    \Drupal::service('module_installer')->install([$module]);
+  }
+
+  // Make sure config is imported first.
+  \Drupal::service('features.manager')->import(['jcc_tc2_all_immutable_config']);
+}
+
+/**
+ * TCI-768: move Media: Files to private directory.
+ */
+function jcc_tc2_all_immutable_config_update_8042(&$sandbox) {
+  $bundle_fields = \Drupal::getContainer()->get('entity_field.manager')->getFieldDefinitions('media', 'file');
+  $field_config = $bundle_fields['field_media_file'];
+  /** @var Drupal\Core\Entity\ContentEntityStorageBase $entity_storage */
+  $entity_storage = \Drupal::entityTypeManager()
+    ->getStorage($field_config->getTargetEntityTypeId());
+
+  if (!isset($sandbox['total'])) {
+    $query = \Drupal::entityQuery('media');
+    $result = $query->condition('bundle', 'file')
+      ->condition("field_media_file.target_id", '', '<>')
+      ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
+      ->execute();
+
+    $sandbox['total'] = count($result);
+    $sandbox['current'] = 0;
+
+    if (empty($sandbox['total'])) {
+      $sandbox['#finished'] = 1;
+      return;
+    }
+  }
+
+  $batch_size = 25;
+
+  $query = \Drupal::entityQuery('media');
+  $result = $query->condition('bundle', 'file')
+    ->condition("field_media_file.target_id", '', '<>')
+    ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
+    ->range($sandbox['current'], $batch_size)
+    ->execute();
+
+  if (empty($result)) {
+    $sandbox['#finished'] = 1;
+    return;
+  }
+
+  foreach ($result as $oid) {
+    // For each oid, load the object, update the files and save it.
+    $entity = $entity_storage->load($oid);
+
+    // Remove file extensions from name before moving.
+    $file = $entity->get('field_media_file')->entity;
+    $extension = '.' . pathinfo($file->getFilename(), PATHINFO_EXTENSION);
+    $label = $entity->label();
+    $label = str_replace($extension, '', $label);
+    $entity->setName($label);
+    $entity->save();
+
+    $sandbox['current']++;
+  }
+
+  \Drupal::messenger()
+    ->addMessage($sandbox['current'] . ' Media processed.');
+
+  if ($sandbox['current'] >= $sandbox['total']) {
+    $sandbox['#finished'] = 1;
+  }
+  else {
+    $sandbox['#finished'] = ($sandbox['current'] / $sandbox['total']);
+  }
+}
+
+/**
+ * TCI-768: move Media: Files to private directory.
+ */
+function jcc_tc2_all_immutable_config_update_8043(&$sandbox) {
+  $bundle_fields = \Drupal::getContainer()->get('entity_field.manager')->getFieldDefinitions('media', 'file');
+  $field_config = $bundle_fields['field_media_file'];
+  /** @var Drupal\Core\Entity\ContentEntityStorageBase $entity_storage */
+  $entity_storage = \Drupal::entityTypeManager()
+    ->getStorage($field_config->getTargetEntityTypeId());
+
+  if (!isset($sandbox['total'])) {
+    $query = \Drupal::entityQuery('media');
+    $result = $query->condition('bundle', 'file')
+      ->condition("field_media_file.target_id", '', '<>')
+      ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
+      ->execute();
+
+    $sandbox['total'] = count($result);
+    $sandbox['current'] = 0;
+
+    if (empty($sandbox['total'])) {
+      $sandbox['#finished'] = 1;
+      return;
+    }
+  }
+
+  $batch_size = 25;
+
+  $query = \Drupal::entityQuery('media');
+  $result = $query->condition('bundle', 'file')
+    ->condition("field_media_file.target_id", '', '<>')
+    ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
+    ->range($sandbox['current'], $batch_size)
+    ->execute();
+
+  if (empty($result)) {
+    $sandbox['#finished'] = 1;
+    return;
+  }
+
+  foreach ($result as $oid) {
+    // For each oid, load the object, update the files and save it.
+    $entity = $entity_storage->load($oid);
+
+    // Enable active updating if it isn't already enabled.
+    $active_updating = $field_config->getThirdPartySetting('filefield_paths', 'active_updating');
+    if (!$active_updating) {
+      $field_config->setThirdPartySetting('filefield_paths', 'active_updating', TRUE);
+      $field_config->save();
+    }
+
+    $entity->original = $entity;
+    filefield_paths_entity_update($entity);
+
+    // Restore active updating to it's previous state if necessary.
+    if (!$active_updating) {
+      $field_config->setThirdPartySetting('filefield_paths', 'active_updating', $active_updating);
+      $field_config->save();
+    }
+    $sandbox['current']++;
+  }
+
+  \Drupal::messenger()
+    ->addMessage($sandbox['current'] . ' files processed.');
+
+  if ($sandbox['current'] >= $sandbox['total']) {
+    $sandbox['#finished'] = 1;
+  }
+  else {
+    $sandbox['#finished'] = ($sandbox['current'] / $sandbox['total']);
+  }
+}
+
+/**
+ * TCI-925: Clean up redirects after media update caused 404s.
+ */
+function jcc_tc2_all_immutable_config_update_8044() {
+  $database = \Drupal::database();
+  $query = $database->select('file_managed', 'fm')
+    ->fields('fm', ['uri'])
+    ->condition('uri', "private://%", 'LIKE')
+    ->execute();
+
+  foreach ($query->fetchCol() as $uri) {
+    $file_uris[] = str_replace("private://", "system/files/", $uri);
+  }
+
+  $query = $database->select('redirect', 'r')
+    ->fields('r', ['rid', 'redirect_source__path'])
+    ->condition('redirect_source__path', "system/files%", 'LIKE')
+    ->execute();
+
+  $redirects = $query->fetchAllAssoc('redirect_source__path');
+
+  foreach ($redirects as $key => $redirect) {
+    if (in_array($key, $file_uris)) {
+      $remove_rids[] = $redirect->rid;
+      $redirect = Redirect::load($redirect->rid);
+      $redirect->delete();
+
+      \Drupal::messenger()
+        ->addMessage("Redirect deleted from: " . $key);
+    }
+  }
+}
+
+/**
+ * TCI-925: Clean up redirects after media update caused 404s.
+ */
+function jcc_tc2_all_immutable_config_update_8045() {
+  $database = \Drupal::database();
+  $chains = [];
+
+  $query = $database->select('redirect', 'r')
+    ->fields('r', ['rid', 'redirect_source__path', 'redirect_redirect__uri'])
+    ->execute();
+
+  $targets = $query->fetchAllAssoc('rid');
+
+  foreach ($targets as $target_rid => $target) {
+    $query = $database->select('redirect', 'r')
+      ->fields('r', ['rid', 'redirect_source__path', 'redirect_redirect__uri'])
+      ->condition('redirect_redirect__uri', "internal:/" . $target->redirect_source__path, 'LIKE')
+      ->execute();
+
+    $matches = $query->fetchAllAssoc('rid');
+
+    if (!empty($matches)) {
+      $chains[$target_rid] = [
+        'target' => $target,
+        'sources' => $matches,
+      ];
+    }
+  }
+
+  $count = 0;
+  foreach ($chains as $target_rid => $chain) {
+    foreach ($chain['sources'] as $source_id => $source) {
+      $source_path = $source->redirect_source__path;
+      $target_uri = str_replace("internal:", "", $chain['target']->redirect_redirect__uri);
+
+      if ("/$source_path" != $target_uri) {
+        \Drupal::messenger()->addMessage($source->redirect_source__path . " --> " . $target_uri);
+        $redirect = Redirect::load($source_id);
+        $redirect->setRedirect($target_uri);
+        $redirect->save();
+        $count++;
+      }
+    }
+  }
+  \Drupal::messenger()->addMessage($count . ", redirects updated.");
+}
+
+/**
+ * TCI-925: one more pass seems to do it.
+ */
+function jcc_tc2_all_immutable_config_update_8046() {
+    jcc_tc2_all_immutable_config_update_8044();
+    jcc_tc2_all_immutable_config_update_8045();
+}
+
+/**
+ * Remove duplicate tasks from search_api_tasks table.
+ *
+ * See jcc_tc2_all_immutable_config_update_dependencies().
+ */
+function jcc_tc2_all_immutable_config_update_8035() {
+  $database = \Drupal::database();
+  $count = $database->query('
+    DELETE t1 FROM search_api_task t1
+    INNER JOIN search_api_task t2
+    WHERE
+      t1.id < t2.id AND
+      t1.data = t2.data;
+  ')
+    ->execute();
+  \Drupal::messenger()->addStatus(t('Removed :count duplicate search api task(s)', [':count' => $count]));
 }

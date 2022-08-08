@@ -13,6 +13,9 @@ use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Entity\EntityInterface;
+
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
+
 use Drupal\views\Views;
 use SendGrid\Client as SClient;
 
@@ -254,11 +257,11 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
         $sendGridResponse = $sendgrid->send($email);
 
         if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
-          drupal_set_message(t('Email successfully sent'));
+          \Drupal::messenger()->addMessage(t('Email successfully sent'));
         }
         else {
           // Show error.
-          drupal_set_message(t('Email was not sent'));
+          \Drupal::messenger()->addMessage(t('Email was not sent'));
         }
       }
       catch (Exception $e) {

@@ -10,26 +10,33 @@ dependencies:
     - entity_reference_revisions
     - text
     - user
+_core:
+  default_config_hash: WZMd3pC1D13D98geiWCs84csO2FjIclZXlYK8eldAZo
 id: node.subpage.default
 targetEntityType: node
 bundle: subpage
 mode: default
 content:
   body:
-    weight: 1
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    weight: 1
+    region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
     region: content
   field_components:
-    weight: 0
+    type: entity_reference_revisions_entity_view
     label: hidden
     settings:
       view_mode: default
       link: ''
     third_party_settings: {  }
-    type: entity_reference_revisions_entity_view
+    weight: 0
     region: content
 hidden:
   langcode: true

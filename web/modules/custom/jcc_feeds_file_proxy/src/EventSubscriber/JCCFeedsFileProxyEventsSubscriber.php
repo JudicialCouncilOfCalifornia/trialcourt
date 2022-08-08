@@ -5,6 +5,8 @@ namespace Drupal\jcc_feeds_file_proxy\EventSubscriber;
 use Drupal\media\entity\Media;
 use Drupal\feeds\Event\FeedsEvents;
 use Drupal\feeds\Event\ParseEvent;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\File\FileRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,8 +27,9 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
   /**
    * Constructor.
    */
-  public function __construct(RequestStack $request_stack) {
+  public function __construct(RequestStack $request_stack, FileRepository $file_repository) {
     $this->request = $request_stack->getCurrentRequest();
+    $this->fileRepository = $file_repository;
   }
 
   /**
@@ -34,7 +37,8 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('request_stack')
+      $container->get('request_stack'),
+      $container->get('file.repository')
     );
   }
 
@@ -94,7 +98,8 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
 
     $filename = "public://newslink/" . $img_id . ".png";
     if (!file_exists($filename)) {
-      $file = file_save_data($file_data, $filename, FILE_EXISTS_REPLACE);
+      $file = $this->fileRepository->writeData($file_data, $filename, FileSystemInterface::EXISTS_REPLACE);
+
       $media = Media::create([
         'bundle' => 'image',
         'uid' => '1',

@@ -10,13 +10,17 @@ dependencies:
   module:
     - paragraphs
     - text
+_core:
+  default_config_hash: 9d0_U5UixmN6KeVlC5n8eua6vAULw5qVgDg4Oy5aB30
 id: paragraph.steps.default
 targetEntityType: paragraph
 bundle: steps
 mode: default
 content:
   field_components:
+    type: entity_reference_paragraphs
     weight: 2
+    region: content
     settings:
       title: Step
       title_plural: Steps
@@ -25,24 +29,22 @@ content:
       form_display_mode: default
       default_paragraph_type: step
     third_party_settings: {  }
-    type: entity_reference_paragraphs
-    region: content
   field_heading:
+    type: string_textfield
     weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_lead:
+    type: text_textarea
     weight: 1
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
 hidden:
   created: true
   status: true

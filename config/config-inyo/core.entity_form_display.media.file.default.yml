@@ -3,12 +3,16 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.media.file.field_category
     - field.field.media.file.field_document_type
+    - field.field.media.file.field_matters_served
     - field.field.media.file.field_media_file
+    - field.field.media.file.field_tags
     - media.type.file
   module:
+    - autocomplete_deluxe
+    - cshs
     - file
-    - path
 _core:
   default_config_hash: WscnfcsBp4IDiw-g9-MmS6iCtq_0FWpa5FusZlfllQI
 id: media.file.default
@@ -16,28 +20,65 @@ targetEntityType: media
 bundle: file
 mode: default
 content:
-  created:
-    type: datetime_timestamp
-    weight: 5
-    region: content
-    settings: {  }
+  field_category:
+    weight: 3
+    settings:
+      parent: ''
+      level_labels: ''
+      force_deepest: false
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
     third_party_settings: {  }
+    type: cshs
+    region: content
   field_document_type:
-    weight: 1
+    weight: 6
     settings: {  }
     third_party_settings: {  }
     type: options_select
     region: content
+  field_matters_served:
+    weight: 4
+    settings:
+      parent: ''
+      level_labels: ''
+      force_deepest: false
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
+    type: cshs
+    region: content
   field_media_file:
-    weight: 2
+    weight: 1
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
     region: content
+  field_tags:
+    weight: 5
+    settings:
+      match_operator: CONTAINS
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+    third_party_settings: {  }
+    type: autocomplete_deluxe
+    region: content
   langcode:
     type: language_select
-    weight: 3
+    weight: 7
     region: content
     settings:
       include_locked: true
@@ -50,32 +91,24 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  path:
-    type: path
-    weight: 7
+  replace_file:
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 8
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   translation:
     weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
-  uid:
-    type: entity_reference_autocomplete
-    weight: 4
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-      match_limit: 10
-    region: content
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  created: true
+  path: true
+  uid: true

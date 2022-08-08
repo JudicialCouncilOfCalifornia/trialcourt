@@ -2,13 +2,6 @@ uuid: 0419ecbb-8d0c-4275-ba7f-bfa454229758
 langcode: en
 status: true
 dependencies:
-  module:
-    - search_api_solr
-    - paragraphs
-    - media
-    - node
-    - search_api
-    - search_api_attachments
   config:
     - field.storage.node.field_components
     - field.storage.paragraph.field_aside
@@ -21,24 +14,28 @@ dependencies:
     - field.storage.paragraph.field_lead
     - field.storage.paragraph.field_text
     - search_api.server.database
+  module:
+    - search_api_solr
+    - paragraphs
+    - media
+    - node
+    - search_api
+    - search_api_attachments
 third_party_settings:
   search_api_solr:
     finalize: false
     commit_before_finalize: false
     commit_after_finalize: false
-    multilingual:
-      limit_to_content_language: false
-      include_language_independent: true
     highlighter:
       maxAnalyzedChars: 51200
       fragmenter: gap
+      usePhraseHighlighter: true
+      highlightMultiTerm: true
+      preserveMulti: false
       regex:
         slop: 0.5
         pattern: blank
         maxAnalyzedChars: 10000
-      usePhraseHighlighter: true
-      highlightMultiTerm: true
-      preserveMulti: false
       highlight:
         mergeContiguous: false
         requireFieldMatch: false
@@ -59,6 +56,9 @@ third_party_settings:
       index_prefix: ''
       collection: ''
       timezone: ''
+    multilingual:
+      limit_to_content_language: false
+      include_language_independent: true
 _core:
   default_config_hash: i4WP-g8cI8Ln8bvWUs-Rq1xDkKomK3XiSVRgh-uvQAg
 id: dbindex
@@ -202,7 +202,7 @@ field_settings:
     type: text
     configuration:
       roles:
-        anonymous: anonymous
+        - anonymous
       view_mode:
         'entity:node':
           alert: default
@@ -266,15 +266,15 @@ processor_settings:
     weights:
       preprocess_query: -30
   double_quote_workaround:
+    weights:
+      postprocess_query: 0
+      preprocess_index: -47
+      preprocess_query: -15
     all_fields: false
     fields:
       - rendered_item
       - title
     replacement: '|9999999998|'
-    weights:
-      postprocess_query: 0
-      preprocess_index: -47
-      preprocess_query: -15
   entity_status: {  }
   file_attachments:
     excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
@@ -284,17 +284,20 @@ processor_settings:
     excluded_private: 1
     excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
   highlight:
-    highlight: always
-    highlight_partial: true
+    weights:
+      postprocess_query: 0
+    prefix: '<strong>'
+    suffix: '</strong>'
     excerpt: true
     excerpt_length: 256
     exclude_fields:
       - rendered_item
-    prefix: '<strong>'
-    suffix: '</strong>'
-    weights:
-      postprocess_query: 0
+    highlight: always
+    highlight_partial: true
   html_filter:
+    weights:
+      preprocess_index: -15
+      preprocess_query: -15
     all_fields: true
     fields:
       - field_aside
@@ -319,10 +322,10 @@ processor_settings:
       h2: 3
       h3: 2
       strong: 2
-    weights:
-      preprocess_index: -15
-      preprocess_query: -15
   ignorecase:
+    weights:
+      preprocess_index: -20
+      preprocess_query: -20
     all_fields: true
     fields:
       - field_aside
@@ -339,15 +342,15 @@ processor_settings:
       - rendered_item
       - summary_processed
       - title
-    weights:
-      preprocess_index: -20
-      preprocess_query: -20
   language_with_fallback: {  }
   rendered_item: {  }
   solr_date_range:
     weights:
       preprocess_index: 0
   stemmer:
+    weights:
+      preprocess_index: -42
+      preprocess_query: 0
     all_fields: true
     fields:
       - field_aside
@@ -367,29 +370,28 @@ processor_settings:
     exceptions:
       mexican: mexic
       texan: texa
-    weights:
-      preprocess_index: -42
-      preprocess_query: 0
   tokenizer:
-    all_fields: false
-    fields:
-      - rendered_item
-    ignored: ._-
-    spaces: ''
-    overlap_cjk: 1
-    minimum_word_size: '3'
     weights:
       preprocess_index: -44
       preprocess_query: -6
+    all_fields: false
+    fields:
+      - rendered_item
+    spaces: ''
+    ignored: ._-
+    overlap_cjk: 1
+    minimum_word_size: '3'
   transliteration:
+    weights:
+      preprocess_index: -49
+      preprocess_query: -20
     all_fields: false
     fields:
       - rendered_item
       - title
-    weights:
-      preprocess_index: -49
-      preprocess_query: -20
   type_boost:
+    weights:
+      preprocess_index: -50
     boosts:
       'entity:node':
         datasource_boost: !!float 1
@@ -398,12 +400,10 @@ processor_settings:
           landing_page: !!float 2
           news: !!float 3
           subpage: !!float 2
-    weights:
-      preprocess_index: -50
 tracker_settings:
   default:
     indexing_order: fifo
 options:
-  index_directly: true
   cron_limit: 50
+  index_directly: true
 server: database

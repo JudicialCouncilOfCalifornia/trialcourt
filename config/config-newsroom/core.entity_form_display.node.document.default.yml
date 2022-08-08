@@ -37,15 +37,15 @@ third_party_settings:
         - group_main_content
         - group_secondary_content
         - group_metadata
+      label: 'Document Content'
+      region: content
       parent_name: ''
       weight: 1
       format_type: tabs
-      region: content
       format_settings:
-        direction: vertical
-        id: ''
         classes: ''
-      label: 'Document Content'
+        id: ''
+        direction: vertical
     group_main_content:
       children:
         - field_document_type
@@ -53,105 +53,105 @@ third_party_settings:
         - group_media
         - group_guides
         - group_adjust_upload_date
+      label: Details
+      region: content
       parent_name: group_document_type_content
       weight: 21
       format_type: tab
-      region: content
       format_settings:
-        description: ''
-        formatter: closed
-        required_fields: true
-        id: ''
         classes: ''
-      label: Details
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
     group_secondary_content:
       children:
         - field_links
+      label: 'Secondary Content'
+      region: content
       parent_name: group_document_type_content
       weight: 22
       format_type: tab
-      region: content
       format_settings:
-        description: "<p>Add links to other useful related content for reference or recommendations.</p>\r\n<p>To change the default file icon for the link display, enter the <strong>class</strong> of the available icon under  the link's <strong>Attributes</strong>. Refer to our pattern library for the icons that are available for use.</p>"
-        formatter: closed
-        required_fields: true
-        id: ''
         classes: ''
-      label: 'Secondary Content'
+        id: ''
+        formatter: closed
+        description: "<p>Add links to other useful related content for reference or recommendations.</p>\r\n<p>To change the default file icon for the link display, enter the <strong>class</strong> of the available icon under  the link's <strong>Attributes</strong>. Refer to our pattern library for the icons that are available for use.</p>"
+        required_fields: true
     group_metadata:
       children:
         - field_division
         - field_tags
         - field_topics
         - field_subject_matter
+      label: Metadata
+      region: content
       parent_name: group_document_type_content
       weight: 24
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Metadata
     group_content_header:
       children:
         - title
+      label: 'Document Header'
+      region: content
       parent_name: ''
       weight: 0
       format_type: fieldset
-      region: content
       format_settings:
+        classes: ''
+        id: ''
         description: ''
         required_fields: true
-        id: ''
-        classes: ''
-      label: 'Document Header'
     group_media:
       children:
         - field_attachments
+      label: Documents
+      region: content
       parent_name: group_main_content
       weight: 3
       format_type: details
-      region: content
       format_settings:
-        description: 'Upload the document that you want to make available as the primary download button. If more than one document is being offered, the first document is primary and you can sort the document order manually by dragging the tile positions.'
-        open: true
-        required_fields: true
-        id: ''
         classes: ''
-      label: Documents
+        id: ''
+        open: true
+        description: 'Upload the document that you want to make available as the primary download button. If more than one document is being offered, the first document is primary and you can sort the document order manually by dragging the tile positions.'
+        required_fields: true
     group_adjust_upload_date:
       children:
         - field_upload_date_label
         - field_upload_date
+      label: 'Upload Date'
+      region: content
       parent_name: group_main_content
       weight: 5
       format_type: details
-      region: content
       format_settings:
-        description: 'By default, the last publication date will be displayed unless specified differently here '
-        formatter: closed
-        required_fields: true
-        id: ''
         classes: ''
+        id: ''
         open: false
-      label: 'Upload Date'
+        description: 'By default, the last publication date will be displayed unless specified differently here '
+        required_fields: true
+        formatter: closed
     group_guides:
       children:
         - field_help_links
+      label: Guides
+      region: content
       parent_name: group_main_content
       weight: 4
       format_type: details
-      region: content
       format_settings:
+        classes: ''
+        id: ''
+        open: false
         description: "<p>Optionally link this page to content that can assist the audience with this document. Unlike Related Links, these links will be highlighted clearly as recommended guides or instructions.</p>\r\n\r\n<p><strong>Descriptive Brow</strong><br>Adding a <strong>name</strong> attribute will display a descriptive brow above the link for the tile presentation. Expand the <strong>Attributes</strong> panel to edit the <strong>name</strong> for a link.</p>"
         required_fields: true
-        id: ''
-        classes: ''
-        open: false
-      label: Guides
 _core:
   default_config_hash: Z295AlgOu8OdXFqOpqb5pgZ2GLpSJQlCOV7TBbOl4YQ
 id: node.document.default
@@ -162,13 +162,13 @@ content:
   body:
     type: text_textarea_with_summary
     weight: 2
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 4
@@ -176,56 +176,58 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_attachments:
+    type: entity_browser_entity_reference
     weight: 3
+    region: content
     settings:
       entity_browser: media_directories_modal
       field_widget_display: rendered_entity
-      field_widget_display_settings:
-        view_mode: media_library
       field_widget_edit: true
       field_widget_remove: true
-      open: true
-      selection_mode: selection_append
       field_widget_replace: false
+      open: true
+      field_widget_display_settings:
+        view_mode: media_library
+      selection_mode: selection_append
     third_party_settings: {  }
-    type: entity_browser_entity_reference
-    region: content
   field_division:
+    type: autocomplete_deluxe
     weight: 6
+    region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: '1'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   field_document_type:
+    type: autocomplete_deluxe
     weight: 1
+    region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: '1'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   field_help_links:
+    type: link_attributes
     weight: 5
+    region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -237,10 +239,10 @@ content:
         class: true
         accesskey: false
     third_party_settings: {  }
-    type: link_attributes
-    region: content
   field_links:
+    type: link_attributes
     weight: 6
+    region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -254,64 +256,62 @@ content:
         aria-label: false
         title: false
     third_party_settings: {  }
-    type: link_attributes
-    region: content
   field_metatag:
+    type: metatag_firehose
     weight: 17
+    region: content
     settings:
       sidebar: true
     third_party_settings: {  }
-    type: metatag_firehose
-    region: content
   field_subject_matter:
+    type: super_term_reference_autocomplete_widget
     weight: 9
+    region: content
     settings:
       match_operator: CONTAINS
       size: 60
       match_limit: 10
       placeholder: ''
     third_party_settings: {  }
-    type: super_term_reference_autocomplete_widget
-    region: content
   field_tags:
+    type: autocomplete_deluxe
     weight: 7
+    region: content
     settings:
-      limit: '10'
-      min_length: '0'
-      delimiter: ''
-      not_found_message_allow: '1'
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: '1'
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
       match_operator: CONTAINS
       autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
       selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   field_topics:
+    type: super_term_reference_autocomplete_widget
     weight: 8
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: super_term_reference_autocomplete_widget
-    region: content
   field_upload_date:
-    weight: 4
-    settings: {  }
-    third_party_settings: {  }
     type: datetime_default
+    weight: 4
     region: content
-  field_upload_date_label:
-    weight: 2
     settings: {  }
     third_party_settings: {  }
+  field_upload_date_label:
     type: options_select
+    weight: 2
     region: content
+    settings: {  }
+    third_party_settings: {  }
   langcode:
     type: language_select
     weight: 2
@@ -322,8 +322,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 15
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -333,10 +333,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 5
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
@@ -352,17 +352,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 16
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 6
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -380,12 +380,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default

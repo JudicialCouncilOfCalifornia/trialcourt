@@ -19,12 +19,18 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_media_video_embed_field:
-    weight: 0
+  directory:
+    type: options_select
+    weight: 2
+    region: content
     settings: {  }
     third_party_settings: {  }
+  field_media_video_embed_field:
     type: video_embed_field_textfield
+    weight: 0
     region: content
+    settings: {  }
+    third_party_settings: {  }
   langcode:
     type: language_select
     weight: 2
@@ -48,19 +54,19 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 100
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
     weight: 5
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
 hidden: {  }

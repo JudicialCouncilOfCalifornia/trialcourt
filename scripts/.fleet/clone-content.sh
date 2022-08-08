@@ -9,12 +9,28 @@ show_help() {
 }
 
 do_command() {
+  PIDS=""
+  declare -a sitemap
+
   for site in $sites
     do
       site="jcc-${site}.${source}"
       echo -e "\n${B}Cloning content from ${site} to ${target}${RE} $@"
-      terminus env:clone-content ${site} ${target} $@
+      terminus env:clone-content ${site} ${target} $@ &
+
+      PIDS+=" $!"
+      sitemap["$!"]="${site}"
+
+      sleep 3
     done
+
+  for p in $PIDS; do
+    if wait $p; then
+      echo "${sitemap["$p"]} succeeded"
+    else
+      echo "${sitemap["$p"]} failed"
+    fi
+  done
 }
 
 case $1 in

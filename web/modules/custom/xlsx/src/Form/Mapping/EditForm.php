@@ -38,6 +38,24 @@ class EditForm extends BaseForm {
       '#title' => $this->t('Source'),
       '#markup' => $plugin->getName(),
     ];
+    if ($plugin->isCron()) {
+      $form['cron'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Run this import on cron (Automatic imports)'),
+        '#default_value' => $this->store->get('cron'),
+      ];
+      $options = [3600, 10800, 21600, 43200, 86400, 604800];
+      $form['cron_frequency'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Frequency'),
+        '#options' => [0 => $this->t('On each cron run')] + array_map([\Drupal::service('date.formatter'), 'formatInterval'], array_combine($options, $options)),
+        '#description' => $this->t('How often perform automatic imports (this process adds items to the Drupal Queue API). This configuration option also depends on how Cron is configured in the system.'),
+        '#states' => [
+          'visible' => [':input[name="cron"]' => ['checked' => TRUE]]
+        ],
+        '#default_value' => $this->store->get('cron_frequency'),
+      ];
+    }
     $form['export_only'] = [
       '#title' => $this->t('Make this mapping export only'),
       '#description' => $this->t('When checked the mapping will be used only for data export.'),
@@ -64,6 +82,8 @@ class EditForm extends BaseForm {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->store->set('name', $form_state->getValue('name'));
+    $this->store->set('cron', $form_state->getValue('cron'));
+    $this->store->set('cron_frequency', $form_state->getValue('cron_frequency'));
     $this->store->set('export_only', $form_state->getValue('export_only'));
     $form_state->setRedirect('xlsx.new.entity_map', [
       'xlsx_source' => $this->pluginToUrlParam($this->store->get('source'))

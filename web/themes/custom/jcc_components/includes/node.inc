@@ -153,12 +153,13 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
               'url' => $content->link->getUrlObject(),
             ];
           }
-
-          $variables['tertiary_menu']['items'][] = [
-            'title' => $sub_content->link->getTitle(),
-            'url' => $sub_content->link->getUrlObject(),
-            'in_active_trail' => $sub_content->inActiveTrail,
-          ];
+          if (get_class($sub_content->link) != 'Drupal\Core\Menu\InaccessibleMenuLink') {
+            $variables['tertiary_menu']['items'][] = [
+              'title' => $sub_content->link->getTitle(),
+              'url' => $sub_content->link->getUrlObject(),
+              'in_active_trail' => $sub_content->inActiveTrail,
+            ];
+          }
         }
       }
     }
@@ -262,13 +263,17 @@ function jcc_components_node_event(array &$variables, NodeInterface $node) {
  *   The node.
  */
 function jcc_components_node_document(array &$variables, NodeInterface $node) {
-  $media = Media::load($node->field_media->target_id);
+  // Contextual edit media file option.
+  if (isset($node->field_media->target_id)) {
+    $media = Media::load($node->field_media->target_id);
+    $variables['edit_option'] = _jcc_components_can_edit_entity($media, t('Edit'));
+  }
 
   // Ensure date range field timezone.
-  $variables['startDate'] = jcc_timezone_adjust($node->field_date_range->start_date);
-  $variables['endDate'] = jcc_timezone_adjust($node->field_date_range->end_date);
-  // Contextual edit media file option.
-  $variables['edit_option'] = _jcc_components_can_edit_entity($media, t('Edit'));
+  if (isset($node->field_date_range->start_date)) {
+    $variables['startDate'] = jcc_timezone_adjust($node->field_date_range->start_date);
+    $variables['endDate'] = jcc_timezone_adjust($node->field_date_range->end_date);
+  }
 }
 
 /**
@@ -308,9 +313,10 @@ function jcc_get_menu_items($menu_name, $min_depth, $max_depth) {
  * Date timezone adjustment.
  */
 function jcc_timezone_adjust($date) {
-  $formatted = \Drupal::service('date.formatter')->format(
-    $date->getTimestamp(), 'custom', 'Y-m-d H:i:s P'
-  );
-
-  return $formatted;
+  if (!empty($date)) {
+    $formatted = \Drupal::service('date.formatter')->format(
+      $date->getTimestamp(), 'custom', 'Y-m-d H:i:s P'
+    );
+    return $formatted;
+  }
 }

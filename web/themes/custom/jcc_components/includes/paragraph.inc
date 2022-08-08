@@ -231,7 +231,6 @@ function jcc_components_paragraph_content_stream(array &$variables, ParagraphInt
     // If News + Sticky listing, filter by taxonomy option.
     if ($paragraph->field_content_stream->plugin_id == 'views_block:news-sticky_list') {
       $view = Views::getView('news');
-      $view->storage->invalidateCaches();
       $stream = $view->buildRenderable('sticky_list', [$taxonomy]);
       $variables['filtered_content'] = $stream;
     }
@@ -241,8 +240,7 @@ function jcc_components_paragraph_content_stream(array &$variables, ParagraphInt
     // If Oral Arguments case documents listing, filter by date range.
     if ($paragraph->field_content_stream->plugin_id == 'views_block:oral_arguments-block_1') {
       $view = Views::getView('oral_arguments');
-      $view->storage->invalidateCaches();
-      $stream = $view->buildRenderable('default', [$date_start, $date_end]);
+      $stream = $view->buildRenderable('block_1', [$date_start, $date_end]);
       $variables['filtered_content'] = $stream;
     }
   }
@@ -300,7 +298,6 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
 
     if ($card->field_display_document_list && $card->get('field_display_document_list')->target_id) {
       $view = Views::getView('documents');
-      $view->storage->invalidateCaches();
       $extra = $view->buildRenderable('default', [$card->get('field_display_document_list')->target_id]);
     }
 

@@ -13,7 +13,7 @@ dependencies:
     - node
     - user
 _core:
-  default_config_hash: d7iVc88axyN9SefoLoTSfysERvLp5ruynT6GQHouvCU
+  default_config_hash: q0OSYp3r6PBBcLh2PK3am6z2D6S5hae1RDPqQiGouaY
 id: imported_events
 label: Events
 module: views
@@ -60,19 +60,19 @@ display:
           offset: 0
           id: 0
           total_pages: null
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
           tags:
             previous: '‹ Previous'
             next: 'Next ›'
             first: '« First'
             last: 'Last »'
+          expose:
+            items_per_page: true
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '10, 20, 50'
+            items_per_page_options_all: true
+            items_per_page_options_all_label: 'Show all'
+            offset: false
+            offset_label: Offset
           quantity: 9
       style:
         type: table
@@ -92,34 +92,34 @@ display:
             field_importer_location: field_importer_location
           info:
             title:
-              sortable: false
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
             field_importer_date:
-              sortable: false
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
             field_importer_department:
-              sortable: false
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
             field_importer_location:
-              sortable: false
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
-          default: '-1'
+          default: field_importer_date
           empty_table: true
       row:
         type: fields
@@ -240,8 +240,8 @@ display:
           click_sort_column: value
           type: datetime_custom
           settings:
-            timezone_override: ''
-            date_format: 'H:ia'
+            timezone_override: UTC
+            date_format: 'm/d/Y H:ia'
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -502,6 +502,51 @@ display:
             field_importer_department: field_importer_department
             field_importer_location: field_importer_location
           plugin_id: combine
+        field_importer_date_value:
+          id: field_importer_date_value
+          table: node__field_importer_date
+          field: field_importer_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '>='
+          value:
+            min: ''
+            max: ''
+            value: today
+            type: offset
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: datetime
       sorts:
         title:
           id: title
@@ -514,6 +559,7 @@ display:
           exposed: false
           expose:
             label: ''
+            field_identifier: title
           entity_type: node
           entity_field: title
           plugin_id: standard

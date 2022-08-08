@@ -9,29 +9,29 @@ dependencies:
   module:
     - office_hours
 _core:
-  default_config_hash: fV1B7TRnVAIwUfEqInwnukHLlqY1293tDIksC3uc3eI
+  default_config_hash: ADeguje9rn5BFX3iaUxeRRwvew5D3FTLJ7BDWJl91NE
 id: paragraph.hours.default
 targetEntityType: paragraph
 bundle: hours
 mode: default
 content:
   field_heading:
-    weight: 0
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 0
     region: content
   field_hours:
-    weight: 1
+    type: office_hours
     label: hidden
     settings:
-      show_closed: open
-      office_hours_first_day: ''
       day_format: long
       time_format: g
+      compress: false
       grouped: true
+      show_closed: open
       closed_format: Closed
       separator:
         days: '<br />'
@@ -43,12 +43,12 @@ content:
         position: ''
         open_text: 'Currently open!'
         closed_text: 'Currently closed'
+      timezone_field: ''
+      office_hours_first_day: ''
       schema:
         enabled: true
-      compress: false
-      timezone_field: ''
     third_party_settings: {  }
-    type: office_hours
+    weight: 1
     region: content
 hidden:
   search_api_excerpt: true

@@ -3,31 +3,60 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.media.boxcast_stream.field_matters_served
     - field.field.media.boxcast_stream.field_media_boxcast_stream
+    - field.field.media.boxcast_stream.field_tags
     - media.type.boxcast_stream
   module:
+    - autocomplete_deluxe
+    - cshs
     - media_boxcast
-    - path
+_core:
+  default_config_hash: XHT9djfZGmfLG5ZcK8b9g3yrtM6sY0H17eLNoaf1umc
 id: media.boxcast_stream.default
 targetEntityType: media
 bundle: boxcast_stream
 mode: default
 content:
-  created:
-    type: datetime_timestamp
-    weight: 5
+  field_matters_served:
+    type: cshs
+    weight: 2
     region: content
-    settings: {  }
+    settings:
+      force_deepest: false
+      parent: ''
+      level_labels: ''
+      none_label: '- Please select -'
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
     third_party_settings: {  }
   field_media_boxcast_stream:
+    type: boxcast_content_widget
     weight: 1
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: boxcast_content_widget
+  field_tags:
+    type: autocomplete_deluxe
+    weight: 3
     region: content
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 3
+    weight: 4
     region: content
     settings:
       include_locked: true
@@ -40,27 +69,14 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  path:
-    type: path
-    weight: 6
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   status:
     type: boolean_checkbox
+    weight: 5
+    region: content
     settings:
       display_label: true
-    weight: 7
-    region: content
     third_party_settings: {  }
-  uid:
-    type: entity_reference_autocomplete
-    weight: 4
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-      match_limit: 10
-    region: content
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  created: true
+  path: true
+  uid: true

@@ -400,7 +400,7 @@ abstract class BaseForm extends FormBase {
   protected function loadEntitiesByMapping($mapping_id) {
     $result = \Drupal::entityQuery('xlsx_data')->condition('mapping_id', $mapping_id)->execute();
     if ($ids = array_values($result)) {
-      return \Drupal::entityTypeManager()->getStorage('xlsx_data')->loadMultiple($ids);
+      return $ids;
     }
   }
 

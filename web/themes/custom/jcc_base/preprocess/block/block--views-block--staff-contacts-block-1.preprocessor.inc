@@ -19,7 +19,7 @@ function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variab
 
     foreach ($rows as $row) {
       $person_id = $row->nid;
-      $url = \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
+      $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
       $first_name = $row->_entity->field_first_name->value;
       $last_name = $row->_entity->field_last_name->value;
       if ($row->_entity->field_person_type[0]) {

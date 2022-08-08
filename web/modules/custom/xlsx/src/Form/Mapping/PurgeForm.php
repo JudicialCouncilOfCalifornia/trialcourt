@@ -34,9 +34,10 @@ class PurgeForm extends ConfirmFormBase {
       'finished' => '\Drupal\xlsx\XlsxBatchOps::completePurgeCallback',
       'operations' => [],
     ];
-    if ($entities = $this->loadEntitiesByMapping($this->xlsx->id())) {
-      foreach ($entities as $entity) {
-        $batch['operations'][] = ['\Drupal\xlsx\XlsxBatchOps::purge', [$entity]];
+    if ($entity_ids = $this->loadEntitiesByMapping($this->xlsx->id())) {
+      $storage = \Drupal::entityTypeManager()->getStorage('xlsx_data');
+      foreach (array_chunk($entity_ids, 100) as $ids) {
+        $batch['operations'][] = ['\Drupal\xlsx\XlsxBatchOps::purge', [$ids, $storage]];
       }
     }
     batch_set($batch);
@@ -72,7 +73,7 @@ class PurgeForm extends ConfirmFormBase {
   protected function loadEntitiesByMapping($mapping_id) {
     $result = \Drupal::entityQuery('xlsx_data')->condition('mapping_id', $mapping_id)->execute();
     if ($ids = array_values($result)) {
-      return \Drupal::entityTypeManager()->getStorage('xlsx_data')->loadMultiple($ids);
+      return $ids;
     }
   }
 

@@ -22,7 +22,7 @@ foreach ($dirs as $dir) {
 // Custom domains for any that do not match above.
 // The patterns to match in the domain are as follows.
 // slo. - Starts with directory name and ends in .
-// -slo. - - followed by directroy name and ends in .
+// -slo. - - followed by directory name and ends in .
 // .slo. - . followed by directory name and ends in .
 // If the custom domain does not contain one of these patterns,
 // add it manually below.
@@ -34,9 +34,9 @@ $sites['develop.jcart.courts.ca.gov'] = 'deprep';
 $sites['stage.jcart.courts.ca.gov'] = 'deprep';
 $sites['jcart.courts.ca.gov'] = 'deprep';
 // = 'madera';
-//$sites['develop.madera.courts.ca.gov'] = 'md';
-//$sites['stage.madera.courts.ca.gov'] = 'md';
-//$sites['www.madera.courts.ca.gov'] = 'md';
+// $sites['develop.madera.courts.ca.gov'] = 'md';
+// $sites['stage.madera.courts.ca.gov'] = 'md';
+// $sites['www.madera.courts.ca.gov'] = 'md';
 // = 'santacruz';
 $sites['develop.santacruz.courts.ca.gov'] = 'sc';
 $sites['stage.santacruz.courts.ca.gov'] = 'sc';
@@ -68,8 +68,8 @@ $sites['glenncourt.ca.gov'] = 'glenn';
 $sites['www.yubacourts.org'] = 'yuba';
 $sites['yubacourts.org'] = 'yuba';
 // = 'sanfrancisco';
-$sites['www.sfsuperiorcourt.org'] = 'sanfrancisco';
-$sites['sfsuperiorcourt.org'] = 'sanfrancisco';
+$sites['www.sfsuperiorcourt.org'] = 'sf';
+$sites['sfsuperiorcourt.org'] = 'sf';
 // = 'sutter';
 $sites['www.suttercourts.com'] = 'sutter';
 $sites['suttercourts.com'] = 'sutter';
@@ -82,6 +82,11 @@ $sites['buttecourt.ca.gov'] = 'butte';
 // = 'nccourt';
 $sites['www.nevada.courts.ca.gov'] = 'nccourt';
 $sites['nevada.courts.ca.gov'] = 'nccourt';
+// = 'supremecourt'
+$sites['www.supreme.courts.ca.gov'] = 'supremecourt';
+$sites['supreme.courts.ca.gov'] = 'supremecourt';
+// = 'stanislaus'
+$sites['www.stanct.org'] = 'stanislaus';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in

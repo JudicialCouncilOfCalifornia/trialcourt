@@ -5,16 +5,18 @@ dependencies:
   config:
     - core.entity_view_mode.media.media_library
     - field.field.media.remote_video.field_height
+    - field.field.media.remote_video.field_matters_served
     - field.field.media.remote_video.field_media_image
     - field.field.media.remote_video.field_media_oembed_video
     - field.field.media.remote_video.field_provider
+    - field.field.media.remote_video.field_tags
     - field.field.media.remote_video.field_width
     - image.style.medium
     - media.type.remote_video
   module:
     - svg_image
 _core:
-  default_config_hash: naBslvflW-J_gbMmqGADfx-TPnylQtb2iFL6jRi5bFQ
+  default_config_hash: 27sP_0h5_7W27Rfr1Vj7pOCDdUGRyQl-rFqsuY1-jyY
 id: media.remote_video.media_library
 targetEntityType: media
 bundle: remote_video
@@ -24,21 +26,25 @@ content:
     type: image
     label: hidden
     settings:
-      image_style: medium
       image_link: ''
+      image_style: medium
       svg_attributes:
         width: null
         height: null
       svg_render_as_image: true
-    weight: 0
+      image_loading:
+        attribute: lazy
     third_party_settings: {  }
+    weight: 0
     region: content
 hidden:
   created: true
   field_height: true
+  field_matters_served: true
   field_media_image: true
   field_media_oembed_video: true
   field_provider: true
+  field_tags: true
   field_width: true
   langcode: true
   name: true

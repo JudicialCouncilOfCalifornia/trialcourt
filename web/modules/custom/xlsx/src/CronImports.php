@@ -50,9 +50,10 @@ class CronImports {
 
             $purge_queue = $this->queue->get('xlsx_purge_queue_processor');
             // Purge data
-            if ($entities = $this->loadEntitiesByMapping($xlsx->id())) {
-              foreach ($entities as $entity) {
-                $purge_queue->createItem($entity);
+            if ($entity_ids = $this->loadEntitiesByMapping($xlsx->id())) {
+              $storage = \Drupal::entityTypeManager()->getStorage('xlsx_data');
+              foreach (array_chunk($entity_ids, 100) as $ids) {
+                $purge_queue->createItem([$ids, $storage]);
               }
             }
             $import_queue = $this->queue->get('xlsx_import_queue_processor');
@@ -72,7 +73,7 @@ class CronImports {
   protected function loadEntitiesByMapping($mapping_id) {
     $result = \Drupal::entityQuery('xlsx_data')->condition('mapping_id', $mapping_id)->execute();
     if ($ids = array_values($result)) {
-      return \Drupal::entityTypeManager()->getStorage('xlsx_data')->loadMultiple($ids);
+      return $ids;
     }
   }
 

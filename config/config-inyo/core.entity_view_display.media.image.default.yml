@@ -3,7 +3,10 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.media.image.field_category
+    - field.field.media.image.field_matters_served
     - field.field.media.image.field_media_image
+    - field.field.media.image.field_tags
     - image.style.large
     - media.type.image
   module:
@@ -16,20 +19,23 @@ bundle: image
 mode: default
 content:
   field_media_image:
+    type: image
     label: visually_hidden
-    weight: 0
     settings:
+      image_link: ''
+      image_style: large
       svg_attributes:
         width: null
         height: null
       svg_render_as_image: true
-      image_style: large
-      image_link: ''
     third_party_settings: {  }
-    type: image
+    weight: 0
     region: content
 hidden:
   created: true
+  field_category: true
+  field_matters_served: true
+  field_tags: true
   langcode: true
   name: true
   search_api_excerpt: true

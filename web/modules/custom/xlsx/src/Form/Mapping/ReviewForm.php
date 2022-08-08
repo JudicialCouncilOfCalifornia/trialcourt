@@ -43,6 +43,22 @@ class ReviewForm extends BaseForm {
       '#title' => $this->t('Source Data'),
       '#markup' => $this->store->get('source_name'),
     ];
+    if ($plugin->isCron()) {
+      $form['cron'] = [
+        '#type' => 'item',
+        '#title' => $this->t('Run this import on cron (Automatic imports)'),
+        '#markup' => !empty($this->store->get('cron')) ? $this->t('Yes') : $this->t('No'),
+      ];
+      if (!empty($this->store->get('cron'))) {
+        $options = [3600, 10800, 21600, 43200, 86400, 604800];
+        $cron_frequency = [0 => $this->t('On each cron run')] + array_map([\Drupal::service('date.formatter'), 'formatInterval'], array_combine($options, $options));
+        $form['cron_frequency'] = [
+          '#type' => 'item',
+          '#title' => $this->t('Frequency'),
+          '#markup' => $cron_frequency[$this->store->get('cron_frequency')],
+        ];
+      }
+    }
     $form['export_only'] = [
       '#type' => 'item',
       '#title' => $this->t('Export Only'),

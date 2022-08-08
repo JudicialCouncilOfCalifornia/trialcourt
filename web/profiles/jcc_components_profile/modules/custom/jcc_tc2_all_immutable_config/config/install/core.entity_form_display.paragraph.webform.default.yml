@@ -10,35 +10,37 @@ dependencies:
   module:
     - text
     - webform
+_core:
+  default_config_hash: 01rvAvza1Ay9mPD9lNVKVYDda3ocUFmJdDzHHm9YSc4
 id: paragraph.webform.default
 targetEntityType: paragraph
 bundle: webform
 mode: default
 content:
   field_heading:
+    type: string_textfield
     weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_lead:
+    type: text_textarea
     weight: 1
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
   field_webform:
+    type: webform_entity_reference_select
     weight: 2
+    region: content
     settings:
       default_data: true
       webforms: {  }
     third_party_settings: {  }
-    type: webform_entity_reference_select
-    region: content
 hidden:
   created: true
   status: true

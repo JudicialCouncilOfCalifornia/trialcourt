@@ -14,20 +14,22 @@ class XlsxBatchOps {
   /**
    * Purge previously imported data.
    */
-  public static function purge($entity, &$context) {
-    if ($entity) {
-      $context['results'][] = $entity->id();
-      $imported_entity = \Drupal::entityTypeManager()
-        ->getStorage($entity->get('entity_type_id')->value, $entity->get('bundle')->value)
-        ->load($entity->get('entity_id')->value);
-      if ($imported_entity) {
-        $context['message'] = t('Deleting %label ...', ['%label' => $imported_entity->label()]);
-        $imported_entity->delete();
+  public static function purge($ids, $storage, &$context) {
+    $entities = $storage->loadMultiple($ids);
+    if ($entities) {
+      $first_entity = current($entities);
+      $imported_storage = \Drupal::entityTypeManager()->getStorage($first_entity->get('entity_type_id')->value, $first_entity->get('bundle')->value);
+      $imported_ids = [];
+      foreach ($entities as $entity) {
+        $context['results'][] = $entity->id();
+        $imported_ids[] = $entity->id();
       }
-      else {
-        $context['message'] = t('Deleting %id ...', ['%id' => $entity->id()]);
+      if (!empty($imported_ids)) {
+        $context['message'] = t('Deleting previously imported records. About 100 records at a time.');
+        $imported_entities = $imported_storage->loadMultiple($imported_ids);
+        $imported_storage->delete($imported_entities);
       }
-      $entity->delete();
+      $storage->delete($entities);
     }
   }
 
@@ -119,7 +121,7 @@ class XlsxBatchOps {
    * BatchAPI complete callback for data import.
    */
   public static function completeImportCallback($success, $results, $operations) {
-    self::complete('1 row imported.', '@count rows imported.', $success, $results);
+    self::complete('1 row processed.', '@count rows processed.', $success, $results);
   }
 
   /**
