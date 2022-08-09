@@ -80,11 +80,11 @@ class XlsxController extends ControllerBase implements ContainerInjectionInterfa
     }
     return [
       '#type' => 'inline_template',
-      '#template' => "{% if items %}<ul class=\"admin-list\">
+      '#template' => "{% if items %}<dl class=\"admin-list\">
         {% for item in items %}
-          <li class=\"clearfix\"><a href=\"{{ item.link }}\"><span class=\"label\">{{ item.title }}</span><div class=\"description\">{{ item.source }}</div></a></li>
+          <div class=\"admin-item\"><dt class=\"admin-item__title\"><a href=\"{{ item.link }}\" class=\"admin-item__link\">{{ item.title }}</a></dt><dd class=\"admin-item__description\">{{ item.source }}</dd></div>
         {% endfor %}
-      </ul>{% else %}<p>{{'No data mapping found. Please <a href=\"@link\">create new mapping</a>.'|t({ '@link': path('entity.xlsx.new') })}}</p>{% endif %}",
+      </div>{% else %}<p>{{'No data mapping found. Please <a href=\"@link\">create new mapping</a>.'|t({ '@link': path('entity.xlsx.new') })}}</p>{% endif %}",
       '#context' => [
         'items' => $items,
       ],

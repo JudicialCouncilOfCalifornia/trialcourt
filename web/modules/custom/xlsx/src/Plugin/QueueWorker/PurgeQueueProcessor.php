@@ -19,7 +19,8 @@ class PurgeQueueProcessor extends QueueWorkerBase {
    * {@inheritdoc}
    */
   public function processItem($data) {
-    list($ids, $storage) = $data;
+    list($ids) = $data;
+    $storage = \Drupal::entityTypeManager()->getStorage('xlsx_data');
     $entities = $storage->loadMultiple($ids);
     if ($entities) {
       $first_entity = current($entities);

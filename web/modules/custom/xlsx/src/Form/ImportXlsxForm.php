@@ -69,9 +69,8 @@ class ImportXlsxForm extends BaseForm {
       ];
       // Purge data
       if ($entity_ids = $this->loadEntitiesByMapping($storage['xlsx']->id())) {
-        $entity_storage = \Drupal::entityTypeManager()->getStorage('xlsx_data');
         foreach (array_chunk($entity_ids, 100) as $ids) {
-          $batch['operations'][] = ['\Drupal\xlsx\XlsxBatchOps::purge', [$ids, $entity_storage]];
+          $batch['operations'][] = ['\Drupal\xlsx\XlsxBatchOps::purge', [$ids]];
         }
       }
 

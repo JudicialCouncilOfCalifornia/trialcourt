@@ -14,7 +14,8 @@ class XlsxBatchOps {
   /**
    * Purge previously imported data.
    */
-  public static function purge($ids, $storage, &$context) {
+  public static function purge($ids, &$context) {
+    $storage = \Drupal::entityTypeManager()->getStorage('xlsx_data');
     $entities = $storage->loadMultiple($ids);
     if ($entities) {
       $first_entity = current($entities);
@@ -22,7 +23,7 @@ class XlsxBatchOps {
       $imported_ids = [];
       foreach ($entities as $entity) {
         $context['results'][] = $entity->id();
-        $imported_ids[] = $entity->id();
+        $imported_ids[] = $entity->get('entity_id')->value;
       }
       if (!empty($imported_ids)) {
         $context['message'] = t('Deleting previously imported records. About 100 records at a time.');
