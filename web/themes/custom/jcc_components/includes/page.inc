@@ -22,6 +22,8 @@ function jcc_components_preprocess_page(&$variables) {
 
   $variables['main_links'] = jcc_components_get_menu_array('main');
   $variables['footer_links'] = jcc_components_get_menu_array('footer');
+
+  $variables['messaging_display_footer_form'] = \Drupal::config('jcc_messaging_center.settings')->get('messaging_display_footer_form');
   $variables['social_links'] = jcc_components_social_links();
 
   $variables['hat'] = [

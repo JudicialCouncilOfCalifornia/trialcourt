@@ -1,35 +1,32 @@
-uuid: 6f9394b7-feae-4ed1-94c5-479520e28c5f
+uuid: 743d5f3c-0b08-4fc0-bd49-af5daa9067fa
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_form_mode.user.register
     - field.field.user.user.field_group
     - field.field.user.user.field_last_password_reset
     - field.field.user.user.field_password_expiration
   module:
     - user
 _core:
-  default_config_hash: oxotlF0ZWPM_TbO27ZoKAKx84zMCNEnlIyieoNs34nw
-id: user.user.default
+  default_config_hash: G1t6SULG27y_9W70ghXNXUh_5H-j9iUX9bcPr3A-Qlo
+id: user.user.register
 targetEntityType: user
 bundle: user
-mode: default
+mode: register
 content:
-  field_group:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 6
+  account:
+    weight: 0
     region: content
-  member_for:
     settings: {  }
     third_party_settings: {  }
-    weight: 5
-    region: content
 hidden:
+  contact: true
+  field_group: true
   field_last_password_reset: true
   field_password_expiration: true
   langcode: true
-  search_api_excerpt: true
+  language: true
+  path: true
+  timezone: true

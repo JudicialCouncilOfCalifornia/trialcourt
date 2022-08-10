@@ -111,9 +111,11 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
           $form['actions'][$action]['#submit'][] = 'jcc_messaging_center_form_submit';
         }
       }
-    } elseif ($form['#form_id'] == 'user_register_form') {
-      $form['actions']['submit']['#value'] = t('Subscribe');
     }
+  }
+
+  if ($form['#form_id'] == 'user_register_form') {
+    $form['actions']['submit']['#value'] = t('Sign up');
   }
 }
 
