@@ -42,6 +42,11 @@ class SettingsForm extends ConfigFormBase {
     }
     $default_value['custom_email'] = 'custom_email';
 
+    $footer_form_value = FALSE;
+    if($config->get('messaging_display_footer_form') != NULL){
+      $footer_form_value = $config->get('messaging_display_footer_form');
+    }
+
     $types_options = [];
     foreach ($types as $node_type) {
       $types_options[$node_type->id()] = $node_type->label();
@@ -63,6 +68,12 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $default_value,
     );
 
+    $form['messaging_display_footer_form'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Display user subscription form in footer'),
+      "#default_value" => $footer_form_value,
+    );
+
     $form['messaging_helper'] = array
     (
       '#markup' => t('<strong>Useful links :</strong><ul>
@@ -82,6 +93,7 @@ class SettingsForm extends ConfigFormBase {
     $config = $this->configFactory->getEditable('jcc_messaging_center.settings');
 
     $config->set('messaging_content_types', $form_state->getValue('messaging_content_types'))->save();
+    $config->set('messaging_display_footer_form', $form_state->getValue('messaging_display_footer_form'))->save();
 
     parent::submitForm($form, $form_state);
   }
