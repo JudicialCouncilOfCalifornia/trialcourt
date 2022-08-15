@@ -10,7 +10,7 @@
   {% set subscriptions %}
     <div class="subscriptions">
       {% if not logged_in %}
-        {{ drupal_block('formblock_user_register') }}
+        {{ formblock_user_register }}
       {% else %}
         <div><a class="usa-button usa-button--primary" href="/subscriptions/{{ user.email }}/manage/access">Manage subscriptions</a></div>
       {% endif %}
