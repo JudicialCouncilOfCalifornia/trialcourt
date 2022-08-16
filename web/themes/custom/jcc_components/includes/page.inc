@@ -71,6 +71,9 @@ function jcc_components_preprocess_page(&$variables) {
       $variables['google_translate'] = $google_translate->build();
     }
   }
+
+  // Display content only when embed param is 1.  Hide header and footer.
+  $variables['embed'] = \Drupal::request()->query->get('embed') == 1 ? TRUE : FALSE;
 }
 
 /**
