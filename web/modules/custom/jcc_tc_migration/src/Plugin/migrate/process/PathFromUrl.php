@@ -18,6 +18,7 @@ use Drupal\migrate\Row;
  *   bar:
  *     plugin: path_from_url
  *     source: url
+ *     remove_extension: FALSE
  * @endcode
  *
  * @MigrateProcessPlugin(
@@ -36,6 +37,11 @@ class PathFromUrl extends ProcessPluginBase {
     // Remove trailing slash.
     // @see https://www.drupal.org/project/redirect/issues/2932615
     $path = rtrim($path, '/');
+
+    $remove_extension = !empty($this->configuration['remove_extension']) ? $this->configuration['remove_extension'] : FALSE;
+    if ($remove_extension) {
+      $path = substr($path, 0 , (strrpos($path, ".")));
+    }
 
     return $path;
   }

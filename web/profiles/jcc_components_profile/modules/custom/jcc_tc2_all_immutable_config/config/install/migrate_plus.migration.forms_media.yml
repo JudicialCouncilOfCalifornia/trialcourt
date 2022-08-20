@@ -41,6 +41,7 @@ process:
     -
       plugin: path_from_url
       source: url
+      remove_extension: TRUE
     -
       plugin: callback
       callable: basename
@@ -51,11 +52,7 @@ process:
       plugin: skip_on_empty
       method: process
       message: 'Cannot import empty filename.'
-  name:
-    plugin: null_coalesce
-    source:
-      - '@pseudo_encoded_title'
-      - '@pseudo_destination_filename'
+  name: '@pseudo_destination_filename'
   field_media_file/target_id:
     -
       plugin: migration_lookup

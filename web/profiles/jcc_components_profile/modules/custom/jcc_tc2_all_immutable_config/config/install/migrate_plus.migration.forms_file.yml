@@ -46,6 +46,13 @@ process:
       plugin: callback
       callable: urldecode
     -
+      plugin: str_replace
+      search: ' '
+      replace: '-'
+    -
+      plugin: callback
+      callable: strtolower
+    -
       plugin: skip_on_empty
       method: process
       message: 'Cannot import empty image filename.'
