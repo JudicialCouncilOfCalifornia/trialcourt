@@ -5,10 +5,11 @@
  * Preprocess and functions for media.
  */
 
-use Drupal\paragraphs\ParagraphInterface;
-use Drupal\media\Entity\Media;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\media\Entity\Media;
+use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
 use Drupal\views\Views;
 
@@ -49,6 +50,9 @@ function jcc_components_theme_suggestions_paragraph_alter(&$suggestions, $variab
  *   The paragraph.
  */
 function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $paragraph) {
+  $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+  $paragraph = \Drupal::service('entity.repository')->getTranslationFromContext($paragraph, $langcode);
+
   $sub_variants = !empty($paragraph->field_sub_variant) ? json_decode($paragraph->field_sub_variant->first()->value, TRUE) : ['card' => 'cta'];
   // Prep the cards due to special handling of linkit links.
   $cards = $paragraph->field_components->referencedEntities();
@@ -72,9 +76,12 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
  */
 function jcc_components_paragraph_action_list(array &$variables, ParagraphInterface $paragraph) {
   // Prep the action list items due to special handling of linkit links.
+  $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $items = $paragraph->field_components->referencedEntities();
 
   foreach ($items as $item) {
+    $item = \Drupal::service('entity.repository')->getTranslationFromContext($item, $langcode);
+
     $title = !empty($item->field_heading) ? $item->field_heading->first()->value : '';
 
     if (!empty($item->field_link)) {
@@ -103,8 +110,12 @@ function jcc_components_paragraph_action_list(array &$variables, ParagraphInterf
  */
 function jcc_components_paragraph_hero_banner(array &$variables, ParagraphInterface $paragraph) {
   // Set up values for icon_links to pass to the pattern library template.
+  $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $components = $paragraph->field_components->referencedEntities();
+
   foreach ($components as $component) {
+    $component = \Drupal::service('entity.repository')->getTranslationFromContext($component, $langcode);
+
     if (!empty($component->field_icon)) {
       $card_icon = !empty($component->field_icon->view('default')[0]) ? $component->field_icon->view('default')[0] : NULL;
       $card_icon = str_replace("-dark", "-white", $card_icon);
@@ -275,8 +286,11 @@ function _jcc_components_get_url_type($url) {
  */
 function _jcc_components_generate_cards($cards, $sub_variants) {
   $set = [];
+  $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
 
   foreach ($cards as $card) {
+    $card = \Drupal::service('entity.repository')->getTranslationFromContext($card, $langcode);
+
     $extra = NULL;
     $icon = [];
     $media = [];
