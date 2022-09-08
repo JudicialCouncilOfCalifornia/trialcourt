@@ -36,9 +36,9 @@
   {% if row['#node'] %}
     {% set body %}
       {# If imported news summary #}
-      {% if row['#node'].body.summary is not empty %}
+      {% if row['#node'].body.summary %}
         {{ row['#node'].body.summary }}
-      {% else %}
+      {% elseif row['#node'].field_summary %}
         {{ row['#node'].field_summary.value|raw }}
       {% endif %}
       {% if row['#node'].field_news_type.0.entity.name %}
