@@ -39,10 +39,19 @@
  */
 #}
 
-{% include "@organisms/iframe/iframe.twig" with {
-  iframe: {
-    url: content.field_link.0['#url']|render,
-    style: content.field_aspect_ratio['#items'].getString(),
-    classes: []
+{% set iframe %}
+  {% include "@organisms/iframe/iframe.twig" with {
+    iframe: {
+      url: content.field_link.0['#url']|render,
+      style: content.field_aspect_ratio['#items'].getString(),
+      classes: []
+    }
+  } %}
+{% endset %}
+
+{% include "@molecules/section/section.twig" with {
+  section: {
+    spacing: "none",
+    content: iframe,
   }
 } %}

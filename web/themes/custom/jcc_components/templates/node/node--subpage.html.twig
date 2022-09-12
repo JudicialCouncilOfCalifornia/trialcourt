@@ -100,38 +100,48 @@
 {% endset %}
 
 <article{{ attributes }}>
-  {# Display breadcrumb #}
-  {{ breadcrumb }}
+
+  {% if not embed %}
+    {# Display breadcrumb #}
+    {{ breadcrumb }}
+  {% endif %}
 
   {% set has_components = FALSE %}
   {% for k, component in content.field_components if k|first != "#" %}
     {% set has_components = TRUE %}
     {# Inject tertiary menu before content if hero is not first. #}
-    {% if (k == 0 and component['#paragraph'].type.0.target_id != 'hero') %}
+    {% if (not embed and k == 0 and component['#paragraph'].type.0.target_id != 'hero') %}
       {{ tertiary_nav }}
     {% endif %}
+
+    {% if (not embed and component['#paragraph'].type.0.target_id == 'hero') or component['#paragraph'].type.0.target_id != 'hero' %}
     {{ component }}
+    {% endif %}
+
     {# Inject tertiary menu after the first hero if it exists. #}
-    {% if (k == 0 and component['#paragraph'].type.0.target_id == 'hero') %}
+    {% if (not embed and k == 0 and component['#paragraph'].type.0.target_id == 'hero') %}
       {{ tertiary_nav }}
     {% endif %}
   {% endfor %}
 
   {% if not has_components %}
 
-    {% include "@molecules/hero/hero.twig" with {
-      hero: {
-        layout: 'full-main',
-        background: 'default',
-        main: {
-          title: label,
-          lead: '',
-          brow: ''
-        },
-        aside: {},
-        classes: []
-      }
-    } %}
+    {% if not embed %}
+      {% include "@molecules/hero/hero.twig" with {
+        hero: {
+          layout: 'full-main',
+          background: 'default',
+          main: {
+            title: label,
+            lead: '',
+            brow: ''
+          },
+          aside: {},
+          classes: []
+        }
+      } %}
+    {% endif %}
+
     {% include '@molecules/section/section.twig' with {
       section: {
         background: 'default',

@@ -54,21 +54,23 @@
 {% endif %}
 
 <div{{ attributes.addClass(classes) }}>
-  {% include directory ~ "/templates/page/page-header.twig" %}
+  {% if not embed %}
+    {% include directory ~ "/templates/page/page-header.twig" %}
 
-  {%  if page.messaging|render %}
-    {{ page.messaging }}
-  {% endif %}
+    {%  if page.messaging|render %}
+      {{ page.messaging }}
+    {% endif %}
 
-  {% if page.tabs|render %}
-    <div class="page__tabs">
-      {{ page.tabs }}
+    {% if page.tabs|render %}
+      <div class="page__tabs">
+        {{ page.tabs }}
+      </div>
+    {% endif %}
+
+    <div class="page__title">
+      {{ page.title }}
     </div>
-  {% endif %}
-
-  <div class="page__title">
-    {{ page.title }}
-  </div>
+  {%  endif %}
 
   <main id="main-content"> {# link is in html.html.twig #}
     <div class="page__content">
@@ -76,13 +78,15 @@
     </div>
   </main>
 
-  {% if page.secondary_footer %}
-    {{ page.secondary_footer }}
-  {% endif %}
+  {% if not embed %}
+    {% if page.secondary_footer %}
+      {{ page.secondary_footer }}
+    {% endif %}
 
-  {% if page.drawer %}
-    {{ page.drawer }}
-  {% endif %}
+    {% if page.drawer %}
+      {{ page.drawer }}
+    {% endif %}
 
-  {% include directory ~ "/templates/page/page-footer.twig" %}
+    {% include directory ~ "/templates/page/page-footer.twig" %}
+  {% endif %}
 </div>

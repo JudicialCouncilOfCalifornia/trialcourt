@@ -19,6 +19,9 @@ function jcc_components_preprocess_node(&$variables) {
   if (function_exists($function)) {
     $function($variables, $node);
   }
+
+  // Display content only when embed param is 1.  Hide header and footer.
+  $variables['embed'] = \Drupal::request()->query->get('embed') == 1 ? TRUE : FALSE;
 }
 
 /**
