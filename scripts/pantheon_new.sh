@@ -98,6 +98,10 @@ echo -e "\n${P}Creating multidev environments develop and stage for ${RE}jcc-${n
 terminus multidev:create jcc-${name}.live develop
 terminus multidev:create jcc-${name}.live stage
 
+# Enable cacheserver
+echo -e "\n${P}Enabling redis for ${RE}jcc-${name}"
+terminus redis:enable jcc-${name}
+
 # Complete message and next steps.
 echo -e "\n${G}*** COMPLETE ***${RE}"
 echo -e "\n\t-If everything was successful, you should have a new project set up on Pantheon with multidev environments ${P}develop ${RE}and ${P}stage${RE} for testing."
