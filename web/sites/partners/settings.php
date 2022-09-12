@@ -106,9 +106,9 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$settings['config_sync_directory'] = '../config/config-programs';
-$config['config_split.config_split.local']['folder'] = '../config/config-programs-local';
-$settings['file_public_path']  = 'sites/default/files/programs/default';
+$settings['config_sync_directory'] = '../config/config-partners';
+$config['config_split.config_split.local']['folder'] = '../config/config-partners-local';
+$settings['file_public_path']  = 'sites/default/files/partners/default';
 
 // Require HTTPS across all Pantheon environments.
 if (isset($_SERVER['PANTHEON_ENVIRONMENT']) && ($_SERVER['HTTPS'] === 'OFF') && (php_sapi_name() != "cli")) {
@@ -160,13 +160,13 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
 
 
   if (in_array($_ENV['PANTHEON_ENVIRONMENT'], array('live', 'dev'))) {
-    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-programs-live';
+    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-partners-live';
   }
   else if ($_ENV['PANTHEON_ENVIRONMENT'] == 'stage') {
-    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-programs-stage';
+    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-partners-stage';
   }
   else {
-    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-programs-develop';
+    $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-partners-develop';
   }
 }
 
@@ -174,7 +174,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
 else {
   $config['config_split.config_split.local']['status'] = TRUE;
   $config['config_split.config_split.stage']['status'] = TRUE;
-  $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-programs-sandbox-1';
+  $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-partners-sandbox-1';
 }
 
 /**

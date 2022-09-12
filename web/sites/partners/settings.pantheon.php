@@ -52,7 +52,7 @@ if (file_exists($pantheon_services_file)) {
  * environment, but may be exposed if you migrate your site to
  * another environment.
  */
-$settings['file_private_path'] = 'sites/default/files/private/programs';
+$settings['file_private_path'] = 'sites/default/files/private/partners';
 
 // Check to see if we are serving an installer page.
 $is_installer_url = (strpos($_SERVER['SCRIPT_NAME'], '/core/install.php') === 0);
@@ -71,12 +71,12 @@ $is_installer_url = (strpos($_SERVER['SCRIPT_NAME'], '/core/install.php') === 0)
  */
 if ($is_installer_url) {
   $config_directories = [
-    CONFIG_SYNC_DIRECTORY => 'sites/default/files/programs',
+    CONFIG_SYNC_DIRECTORY => 'sites/default/files',
   ];
 }
 else {
   $config_directories = [
-    CONFIG_SYNC_DIRECTORY => '../config/config-programs',
+    CONFIG_SYNC_DIRECTORY => '../config/config-partners',
   ];
 }
 
