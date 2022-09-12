@@ -46,32 +46,6 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
         $user_groups[$term->tid] = $term->name;
       }
 
-      if (!($form['#form_id'] == 'taxonomy_term_user_groups_form')) {
-        $form['messaging'] = array(
-          '#type' => 'details',
-          '#title' => 'Messaging options',
-          '#group' => 'advanced',
-        );
-        $form['options']['field_send_email'] = [
-          '#type' => 'checkbox',
-          '#title' => t('Send an email when saving this item.'),
-          '#default_value' => FALSE,
-          '#weight' => 50,
-          "#group" => "messaging",
-        ];
-
-      $form['messaging']['groups_to_notify'] = [
-        '#type' => 'checkboxes',
-        '#options' => $user_groups,
-        '#title' => 'Send to: ',
-        "#group" => "messaging",
-        '#weight' => 60,
-      ];
-    }
-    else {
-      $form['field_author']['widget'][0]['target_id']['#default_value'] = User::load(\Drupal::currentUser()->id());
-    }
-
     if (in_array($form['#form_id'],
       $forms_enabled_on
     )) {
@@ -102,6 +76,26 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
           '#title' => 'Send to: ',
           "#group" => "messaging",
           '#weight' => 60,
+        ];
+
+        $form['subscription'] = array(
+          '#type' => 'details',
+          '#title' => 'Subscription form',
+          '#group' => 'advanced',
+        );
+        $form['subscription']['field_display_form'] = [
+          '#type' => 'checkbox',
+          '#title' => t('Display subscription form on this page'),
+          '#default_value' => FALSE,
+          '#weight' => 70,
+          "#group" => "subscription",
+        ];
+        $form['subscription']['field_form_pre_selected'] = [
+          '#type' => 'checkboxes',
+          '#options' => $user_groups,
+          '#title' => 'Selected subscription groups',
+          "#group" => "subscription",
+          '#weight' => 80,
         ];
       } else {
         $form['field_author']['widget'][0]['target_id']['#default_value'] = User::load(\Drupal::currentUser()->id());
