@@ -35,7 +35,7 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
     $forms_enabled_on[] = 'node_' . $ct . '_form';
     $forms_enabled_on[] = 'node_' . $ct . '_edit_form';
   }
-
+    // Option to send message on node_save
     if (in_array($form['#form_id'],
       $forms_enabled_on
     )) {
@@ -59,7 +59,7 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
           '#weight' => 50,
           "#group" => "messaging",
         ];
-        
+
       $form['messaging']['groups_to_notify'] = [
         '#type' => 'checkboxes',
         '#options' => $user_groups,
@@ -145,7 +145,6 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     if($build_info['form_id'] == 'node_custom_email_edit_form' || $build_info['form_id'] == 'node_custom_email_form'){
       $read_more_uri = $form_state->cleanValues()->getValues()['field_messenger_link'][0]['uri'];
       $read_more_url = Url::fromUri($read_more_uri)->toString();
-      dsm('1 : ' . $read_more_url);
       if (!str_starts_with($read_more_url, 'http')){
         $read_more_url = $base_url . $read_more_url;
       }
@@ -291,4 +290,28 @@ function jcc_messaging_center_tokens($type, $tokens, array $data, array $options
  */
 function jcc_messaging_center_preprocess_page(&$variables) {
   $variables['#attached']['library'][] = 'jcc_messaging_center/jcc_messaging_center';
+}
+
+function jcc_messaging_center_mail_alter(&$message) {
+  if ($message['id'] == 'user_register_no_approval_required') {
+    global $base_url;
+    $member_email = $message['to'];
+
+    $tempstore = \Drupal::service('tempstore.shared');
+    $store = $tempstore->get('jcc_messaging_center');
+
+    $email_key = user_password();
+    array_push($email_access_keys, $email_key);
+    $store->set('member_email_' . $member_email, $email_key);
+
+    $id_key = user_password();
+    $store->set('member_id_' . $member_email, $id_key);
+
+
+    $message_body = '<p>Thank you for subscribing. <br>You can now :</p><br>
+            <p><a href="' . $base_url . '/messaging-center/' . $member_email .'/manage/'. $email_key .'">Manage your preferences</a><br>
+          or <a href=' . $base_url . '/messaging-center/' . $member_email .'/delete-all/'. $email_key .'">Opt out</a> from all communications.</p>';
+
+    $message['body'][0] = t($message_body);
+  }
 }

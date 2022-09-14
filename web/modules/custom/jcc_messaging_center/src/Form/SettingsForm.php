@@ -58,29 +58,91 @@ class SettingsForm extends ConfigFormBase {
     (
       '#prefix' => '<p>',
       '#suffix' => '</p>',
-      '#markup' => t('The messaging feature lets you send email notifications to specific mailing groups when an entity on the site is edited/created. <br>Pick which content type should have the option available. <br>If selected, the editing page of each node from this content type will have a "Messaging options" tab appear.'),
+      '#markup' => t('The messaging feature lets you send email notifications to specific mailing groups when an entity on the site is edited/created.<br>'),
     );
 
-    $form['messaging_content_types'] = array(
+    $form['messaging'] = array(
+      '#type' => 'details',
+      '#title' => 'Messaging settings',
+      '#group' => 'advanced',
+    );
+
+    $form['messaging']['text_header'] = array
+    (
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+      '#markup' => t('<br>The ability to send out email notifications to groups is enabled per content type.<br>
+        You can also create a custom email, where you can use the wysiwyg to integrate custom links and content. This custom email content type is only used to send email and will not appear on the site.<br>'),
+    );
+
+    $form['messaging']['messaging_content_types'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Content types available for email notification'),
       '#options' => $types_options,
       '#default_value' => $default_value,
     );
 
-    $form['messaging_display_footer_form'] = array(
+    $form['messaging']['text_form_header'] = array
+    (
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+      '#markup' => t('<div class="claro-details__description">Pick which content type should have the option available. 
+        <br>If selected, the editing page of each node from this content type will have a "Messaging options" tab appear, as show on the screenshot below:</div><br>
+        <img src="/modules/custom/jcc_messaging_center/images/info-messaging.png" alt="help messaging" width="200px"/>'),
+    );
+
+    $form['subscription'] = array(
+      '#type' => 'details',
+      '#title' => 'Subscription settings',
+      '#group' => 'advanced',
+    );
+
+    $form['subscription']['messaging_way1'] = array
+    (
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+      '#markup' => t('<br>There are two ways to subscribe to content for end users.<br><br>
+        <h2>Global subscription</h2>First, through the footer global subscription form.<br>
+        The user will recieve an email with a link to manage his subscriptions or cancel them.<br><br>
+        <img src="/modules/custom/jcc_messaging_center/images/info-footer.png" alt="help footer" width="300px"/>
+      '),
+    );
+
+    $form['subscription']['messaging_display_footer_form'] = array(
       '#type' => 'checkbox',
       '#title' => t('Display user subscription form in footer'),
       "#default_value" => $footer_form_value,
     );
 
-    $form['messaging_helper'] = array
+
+    $form['subscription']['messaging_way2'] = array
     (
-      '#markup' => t('<strong>Useful links :</strong><ul>
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+      '#markup' => t('<br><br><h2>Specific subscription</h2>The other way to sign up for an end user is through the "specific form" you can enable on selected pages.<br>
+        When editing a page you can select which category that form will be assigned by default when the user submits it.<br><br>
+        <img src="/modules/custom/jcc_messaging_center/images/info-subscription.png" alt="help footer" width="300px"/>
+        <br><div class="claro-details__description">(This feature is only enabled for subpages by default - to make it available for other content types please ask your developer to set them up correctly.)</div><br>
+      '),
+    );
+
+    $form['users'] = array(
+      '#type' => 'details',
+      '#title' => 'Users settings',
+      '#group' => 'advanced',
+    );
+
+    $form['users']['messaging_helper'] = array
+    (
+      '#markup' => t('<br>Every user that signs in for email notification is technically a drupal user with no other right but updating his/her subscription options.<br>
+        You can manage and view all users / groups with links below : <br><br>
         <li><a href="/admin/structure/taxonomy/manage/user_groups/overview">Manage mailing groups (Taxonomy)</a></li>
         <li><a href="/admin/messenger/group-overview">Users and groups dashboard</a></li>
-        </ul>'),
+        </ul><br>
+        <div class="claro-details__description">After you add one or more categories, don\'t forget to <a href="admin/config/people/accounts/fields/user.user.field_group">add it to the default set when new users are created.</a></div>'),
     );
+
+
 
     return parent::buildForm($form, $form_state);
   }
@@ -97,5 +159,4 @@ class SettingsForm extends ConfigFormBase {
 
     parent::submitForm($form, $form_state);
   }
-
 }

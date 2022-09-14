@@ -7,13 +7,32 @@ dependencies:
     - field.field.node.landing_page.field_components_aside
     - field.field.node.landing_page.field_masthead_color
     - field.field.node.landing_page.field_media
+    - field.field.node.landing_page.field_pre_selected_notification_
     - node.type.landing_page
   module:
+    - field_group
     - media_library
     - paragraphs
     - path
     - scheduler
     - scheduler_content_moderation_integration
+third_party_settings:
+  field_group:
+    group_subscription_options:
+      children:
+        - field_pre_selected_notification_
+      label: 'Subscription options'
+      region: content
+      parent_name: ''
+      weight: 6
+      format_type: details_sidebar
+      format_settings:
+        classes: ''
+        id: ''
+        open: false
+        description: 'If one or more option is selected, this page will display a subscription form with these categories pre-selected for the new subscriber.'
+        required_fields: true
+        weight: 0
 _core:
   default_config_hash: bLjm3i-w7GkJy68Nut-kPC23iNMauCMjNrtf5rPipJk
 id: node.landing_page.default
@@ -23,7 +42,7 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 7
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -64,6 +83,12 @@ content:
     settings:
       media_types: {  }
     third_party_settings: {  }
+  field_pre_selected_notification_:
+    type: options_buttons
+    weight: 20
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   langcode:
     type: language_select
     weight: 5
@@ -73,44 +98,44 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 11
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 8
+    weight: 9
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 12
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 15
+    weight: 16
     region: content
     settings: {  }
     third_party_settings: {  }
   scheduler_settings:
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 18
+    weight: 19
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 9
+    weight: 10
     region: content
     settings:
       display_label: true
@@ -124,13 +149,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 13
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 6
+    weight: 7
     region: content
     settings:
       match_operator: CONTAINS
@@ -140,18 +165,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 14
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 16
+    weight: 17
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 17
+    weight: 18
     region: content
     settings: {  }
     third_party_settings: {  }
