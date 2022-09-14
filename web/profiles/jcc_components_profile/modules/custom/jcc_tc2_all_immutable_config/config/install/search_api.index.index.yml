@@ -14,6 +14,7 @@ dependencies:
     - file
     - node
     - search_api
+    - search_api_exclude
 third_party_settings:
   search_api_solr:
     finalize: false
@@ -210,8 +211,11 @@ processor_settings:
   aggregated_field: {  }
   entity_type: {  }
   language_with_fallback: {  }
+  node_exclude: {  }
   rendered_item: {  }
-  solr_date_range: {  }
+  solr_date_range:
+    weights:
+      preprocess_index: 0
 tracker_settings:
   default:
     indexing_order: fifo
