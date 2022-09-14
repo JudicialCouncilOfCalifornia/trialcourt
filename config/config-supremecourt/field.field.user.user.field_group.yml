@@ -5,6 +5,10 @@ dependencies:
   config:
     - field.storage.user.field_group
     - taxonomy.vocabulary.user_groups
+  content:
+    - 'taxonomy_term:user_groups:1a69a91c-3aef-4155-9fec-bcdf21e2244e'
+    - 'taxonomy_term:user_groups:7e92dad0-59d2-472b-95e0-e97c1d33c1d9'
+    - 'taxonomy_term:user_groups:b41daad3-b14b-4a16-b35c-5d13f87a1707'
   module:
     - tmgmt_content
     - user
@@ -21,7 +25,13 @@ label: Group
 description: ''
 required: false
 translatable: false
-default_value: {  }
+default_value:
+  -
+    target_uuid: 1a69a91c-3aef-4155-9fec-bcdf21e2244e
+  -
+    target_uuid: b41daad3-b14b-4a16-b35c-5d13f87a1707
+  -
+    target_uuid: 7e92dad0-59d2-472b-95e0-e97c1d33c1d9
 default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'
