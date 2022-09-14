@@ -1,0 +1,19 @@
+{% extends 'themes/custom/jcc_components/templates/views/views-view--news--sticky-list.html.twig' %}
+
+{% block stream %}
+  {% include "@templates/content-stream/content-stream.twig" with {
+    content_stream: {
+      media_placeholder: {
+        src: "/libraries/courtyard-artifact/2.x/public/brand/logo-supremecourt.svg",
+        alt: "Supreme Court logo",
+        bgcolor: "blue",
+      },
+      items: items,
+      link: {
+        text: more_title,
+        url: more_url,
+        align: 'left',
+      },
+    }
+  } %}
+{% endblock %}

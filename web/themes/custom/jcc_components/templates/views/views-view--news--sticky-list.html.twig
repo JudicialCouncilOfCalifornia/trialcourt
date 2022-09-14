@@ -35,7 +35,12 @@
 {% for k, row in rows.0['#rows'] if k|first != "#" %}
   {% if row['#node'] %}
     {% set body %}
-      {{ row['#node'].body.summary }}
+      {# If imported news summary #}
+      {% if row['#node'].body.summary %}
+        {{ row['#node'].body.summary }}
+      {% elseif row['#node'].field_summary %}
+        {{ row['#node'].field_summary.value|raw }}
+      {% endif %}
       {% if row['#node'].field_news_type.0.entity.name %}
         <div class="jcc-metadata">{{ row['#node'].field_news_type.0.entity.name.value }}</div>
       {% endif %}
@@ -64,19 +69,16 @@
   {% set more_title = more_custom_title %}
 {% endif %}
 
-
-{% include "@templates/content-stream/content-stream.twig" with {
-  content_stream: {
-    media_placeholder: {
-      src: "/libraries/courtyard-artifact/2.x/public/brand/logo-supremecourt.svg",
-      alt: "Supreme Court logo",
-      bgcolor: "blue",
-    },
-    items: items,
-    link: {
-      text: more_title,
-      url: more_url,
-      align: 'left',
-    },
-  }
-} %}
+{% block stream %}
+  {% include "@templates/content-stream/content-stream.twig" with {
+    content_stream: {
+      media_placeholder: media_placeholder,
+      items: items,
+      link: {
+        text: more_title,
+        url: more_url,
+        align: 'left',
+      },
+    }
+  } %}
+{% endblock %}
