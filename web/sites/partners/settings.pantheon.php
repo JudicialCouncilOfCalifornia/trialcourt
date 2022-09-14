@@ -52,7 +52,7 @@ if (file_exists($pantheon_services_file)) {
  * environment, but may be exposed if you migrate your site to
  * another environment.
  */
-$settings['file_private_path'] = 'sites/default/files/private/programs';
+$settings['file_private_path'] = 'sites/default/files/private/partners';
 
 // Check to see if we are serving an installer page.
 $is_installer_url = (strpos($_SERVER['SCRIPT_NAME'], '/core/install.php') === 0);
@@ -71,12 +71,12 @@ $is_installer_url = (strpos($_SERVER['SCRIPT_NAME'], '/core/install.php') === 0)
  */
 if ($is_installer_url) {
   $config_directories = [
-    CONFIG_SYNC_DIRECTORY => 'sites/default/files/programs',
+    CONFIG_SYNC_DIRECTORY => 'sites/default/files',
   ];
 }
 else {
   $config_directories = [
-    CONFIG_SYNC_DIRECTORY => '../config/config-programs',
+    CONFIG_SYNC_DIRECTORY => '../config/config-partners',
   ];
 }
 
@@ -197,4 +197,27 @@ if (empty($settings['file_scan_ignore_directories'])) {
     'node_modules',
     'bower_components',
   ];
+}
+
+/**
+ * Configure redis.
+ */
+if (defined('PANTHEON_ENVIRONMENT') && $_ENV['PANTHEON_ENVIRONMENT'] == 'non-existent') {
+  // Include the Redis services.yml file. Adjust the path if you installed to a contrib or other subdirectory.
+  $settings['container_yamls'][] = 'modules/redis/example.services.yml';
+
+  //phpredis is built into the Pantheon application container.
+  $settings['redis.connection']['interface'] = 'PhpRedis';
+  // These are dynamic variables handled by Pantheon.
+  $settings['redis.connection']['host']      = $_ENV['CACHE_HOST'];
+  $settings['redis.connection']['port']      = $_ENV['CACHE_PORT'];
+  $settings['redis.connection']['password']  = $_ENV['CACHE_PASSWORD'];
+
+  $settings['redis_compress_length'] = 100;
+  $settings['redis_compress_level'] = 1;
+
+  $settings['cache']['default'] = 'cache.backend.redis'; // Use Redis as the default cache.
+  $settings['cache_prefix']['default'] = 'pantheon-redis';
+
+  $settings['cache']['bins']['form'] = 'cache.backend.database'; // Use the database for forms
 }
