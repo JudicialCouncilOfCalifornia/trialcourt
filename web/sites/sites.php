@@ -87,6 +87,9 @@ $sites['www.supreme.courts.ca.gov'] = 'supremecourt';
 $sites['supreme.courts.ca.gov'] = 'supremecourt';
 // = 'stanislaus'
 $sites['www.stanct.org'] = 'stanislaus';
+// = 'oc';
+$sites['www.orange.courts.ca.gov'] = 'oc';
+$sites['orange.courts.ca.gov'] = 'oc';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
