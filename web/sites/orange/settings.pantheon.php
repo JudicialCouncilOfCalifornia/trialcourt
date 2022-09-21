@@ -202,7 +202,7 @@ if (empty($settings['file_scan_ignore_directories'])) {
 /**
  * Configure redis.
  */
-if (defined('PANTHEON_ENVIRONMENT')) {
+if (defined('PANTHEON_ENVIRONMENT') && $_ENV['PANTHEON_ENVIRONMENT'] == 'none') {
   // Include the Redis services.yml file. Adjust the path if you installed to a contrib or other subdirectory.
   $settings['container_yamls'][] = 'modules/redis/example.services.yml';
 
