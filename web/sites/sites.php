@@ -90,6 +90,9 @@ $sites['www.stanct.org'] = 'stanislaus';
 // = 'oc';
 $sites['www.orange.courts.ca.gov'] = 'oc';
 $sites['orange.courts.ca.gov'] = 'oc';
+// = 'amdr';
+$sites['www.amador.courts.ca.gov'] = 'amdr';
+$sites['amador.courts.ca.gov'] = 'amdr';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
