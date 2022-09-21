@@ -165,7 +165,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     if ($form_state->getValue('field_date')){
       $email_post_date_unformatted = $form_state->cleanValues()->getValues()['field_date'][0]['value'];
       // Date formatting.
-      $date = new DrupalDateTime($email_post_date_unformatted, DATETIME_STORAGE_TIMEZONE);
+      $date = new DrupalDateTime($email_post_date_unformatted, STORAGE_TIMEZONE);
       $email_post_date = $date->format('F j, Y');
     }
 
