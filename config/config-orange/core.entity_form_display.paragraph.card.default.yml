@@ -1,0 +1,59 @@
+uuid: 3234162d-8ad6-4505-903d-89581fbcadd4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.card.field_brow
+    - field.field.paragraph.card.field_heading
+    - field.field.paragraph.card.field_link
+    - field.field.paragraph.card.field_text
+    - paragraphs.paragraphs_type.card
+  module:
+    - linkit_field
+    - text
+_core:
+  default_config_hash: nwNexQd0QdzRgIDnlO9f502AgbSpg7dtA-WacmjHD5E
+id: paragraph.card.default
+targetEntityType: paragraph
+bundle: card
+mode: default
+content:
+  field_brow:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_heading:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_link:
+    type: linkit_field_linkit
+    weight: 3
+    region: content
+    settings:
+      linkit_profile: default
+    third_party_settings: {  }
+  field_text:
+    type: text_textarea
+    weight: 2
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  translation:
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

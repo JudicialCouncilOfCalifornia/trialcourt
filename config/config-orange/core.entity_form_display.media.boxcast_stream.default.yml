@@ -1,0 +1,82 @@
+uuid: f59ad0f9-165f-492c-9f0a-e8e95b156ad2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.media.boxcast_stream.field_matters_served
+    - field.field.media.boxcast_stream.field_media_boxcast_stream
+    - field.field.media.boxcast_stream.field_tags
+    - media.type.boxcast_stream
+  module:
+    - autocomplete_deluxe
+    - cshs
+    - media_boxcast
+_core:
+  default_config_hash: qT4Cnh-vQ6QrXzEl0t0EIlQv8XRsm8A74i4aJtt9EBc
+id: media.boxcast_stream.default
+targetEntityType: media
+bundle: boxcast_stream
+mode: default
+content:
+  field_matters_served:
+    type: cshs
+    weight: 2
+    region: content
+    settings:
+      force_deepest: false
+      parent: ''
+      level_labels: ''
+      none_label: '- Please select -'
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
+    third_party_settings: {  }
+  field_media_boxcast_stream:
+    type: boxcast_content_widget
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_tags:
+    type: autocomplete_deluxe
+    weight: 3
+    region: content
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 4
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 5
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden:
+  created: true
+  path: true
+  uid: true

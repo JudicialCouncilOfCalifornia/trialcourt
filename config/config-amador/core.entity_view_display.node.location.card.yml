@@ -1,0 +1,63 @@
+uuid: c01f31f3-f9aa-47b5-8c0c-ca586457769d
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.card
+    - field.field.node.location.body
+    - field.field.node.location.field_address
+    - field.field.node.location.field_components
+    - field.field.node.location.field_geolocation
+    - field.field.node.location.field_location_type
+    - field.field.node.location.field_matters_served
+    - field.field.node.location.field_phone
+    - field.field.node.location.field_weight
+    - node.type.location
+  module:
+    - address
+    - telephone
+    - user
+_core:
+  default_config_hash: 3Xrq8hB74ycdcgc56Hp1HuTgxWtEuzrUPISJ-5I7J8A
+id: node.location.card
+targetEntityType: node
+bundle: location
+mode: card
+content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
+  field_address:
+    type: address_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_location_type:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_phone:
+    type: telephone_link
+    label: hidden
+    settings:
+      title: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden:
+  body: true
+  field_components: true
+  field_geolocation: true
+  field_matters_served: true
+  field_weight: true
+  langcode: true
+  links: true
+  search_api_excerpt: true

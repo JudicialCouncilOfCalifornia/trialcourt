@@ -1,0 +1,95 @@
+uuid: 04b4953c-6c69-407a-a418-0066433483ce
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_components
+    - node.type.news
+    - paragraphs.paragraphs_type.cards
+    - paragraphs.paragraphs_type.iframe
+    - paragraphs.paragraphs_type.text_share
+  module:
+    - entity_reference_revisions
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: lhVaqhGTQZyWF2N1kQcaqFfByXteJt4CngOWRlp_P-A
+id: node.news.field_components
+field_name: field_components
+entity_type: node
+bundle: news
+label: Components
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      text_share: text_share
+      cards: cards
+      iframe: iframe
+    negate: 0
+    target_bundles_drag_drop:
+      accordion:
+        weight: -39
+        enabled: false
+      accordion_item:
+        weight: -38
+        enabled: false
+      action_list:
+        weight: -37
+        enabled: false
+      action_list_item:
+        weight: -36
+        enabled: false
+      alert:
+        weight: -35
+        enabled: false
+      body:
+        weight: -34
+        enabled: false
+      card:
+        weight: -33
+        enabled: false
+      cards:
+        weight: -31
+        enabled: true
+      content_stream:
+        weight: -24
+        enabled: false
+      hero:
+        weight: -30
+        enabled: false
+      hero_banner:
+        weight: -29
+        enabled: false
+      hours:
+        weight: -28
+        enabled: false
+      icon_link:
+        weight: -27
+        enabled: false
+      iframe:
+        weight: -26
+        enabled: true
+      step:
+        weight: -23
+        enabled: false
+      steps:
+        weight: -22
+        enabled: false
+      text_share:
+        weight: -32
+        enabled: true
+      views_reference:
+        weight: -25
+        enabled: false
+      webform:
+        weight: -21
+        enabled: false
+field_type: entity_reference_revisions

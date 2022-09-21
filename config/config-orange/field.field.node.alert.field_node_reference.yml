@@ -1,0 +1,32 @@
+uuid: fe6a6ce9-d732-452f-a7e6-5d1066453dcc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_node_reference
+    - node.type.alert
+    - node.type.landing_page
+    - node.type.subpage
+_core:
+  default_config_hash: 5oivYZC5Emj7a7WrLEzF-ZFXUzqx0H64N921KHYF1K0
+id: node.alert.field_node_reference
+field_name: field_node_reference
+entity_type: node
+bundle: alert
+label: 'Specific Pages'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      landing_page: landing_page
+      subpage: subpage
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

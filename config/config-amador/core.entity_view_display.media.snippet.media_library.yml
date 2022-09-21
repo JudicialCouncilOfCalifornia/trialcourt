@@ -1,0 +1,44 @@
+uuid: 79e4e1e3-ad54-438c-94e2-6105818a5695
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.media_library
+    - field.field.media.snippet.field_matters_served
+    - field.field.media.snippet.field_media_text
+    - field.field.media.snippet.field_tags
+    - image.style.medium
+    - media.type.snippet
+  module:
+    - svg_image
+_core:
+  default_config_hash: q4-BOFeRi6UsXB7FKE9STZ9d8kji9zGog4Exh0qjdVs
+id: media.snippet.media_library
+targetEntityType: media
+bundle: snippet
+mode: media_library
+content:
+  thumbnail:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: medium
+      svg_attributes:
+        width: null
+        height: null
+      svg_render_as_image: true
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  field_matters_served: true
+  field_media_text: true
+  field_tags: true
+  langcode: true
+  name: true
+  search_api_excerpt: true
+  uid: true

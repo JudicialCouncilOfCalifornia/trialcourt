@@ -1,0 +1,68 @@
+uuid: 4e671232-0512-4fac-aef7-f23c16c8db8c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_image
+    - media.type.image
+  module:
+    - content_translation
+    - filefield_paths
+    - image
+    - tmgmt_content
+third_party_settings:
+  filefield_paths:
+    enabled: true
+    file_path:
+      value: 'images/[media:field_category:entity:parents:join-path]/[media:field_category:entity:name]'
+      options:
+        slashes: true
+        pathauto: true
+        transliterate: true
+    file_name:
+      value: '[media:name:value].[file:ffp-extension-original]'
+      options:
+        slashes: true
+        pathauto: true
+        transliterate: true
+    redirect: true
+    retroactive_update: false
+    active_updating: true
+  content_translation:
+    translation_sync:
+      alt: alt
+      title: title
+      file: '0'
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: M2g2nxbwyEqvdLnPGWj_n1zgVQR65D7NiA5yblZLlCA
+id: media.image.field_media_image
+field_name: field_media_image
+entity_type: media
+bundle: image
+label: Image
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'png jpg jpeg'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  alt_field: true
+  alt_field_required: true
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: ''
+    alt: ''
+    title: ''
+    width: null
+    height: null
+field_type: image
