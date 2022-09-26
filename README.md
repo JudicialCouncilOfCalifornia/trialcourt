@@ -20,7 +20,7 @@ Add your author information for historical reference and professional context, a
 
  - Working Repo: [Github][repo]
  - Hosting: [Pantheon][host]
- - CI/CD: [CircleCI][ci] - [![CircleCI](https://circleci.com/gh/JudicialCouncilOfCalifornia/trialcourt/tree/master.svg?style=svg)](https://circleci.com/gh/JudicialCouncilOfCalifornia/trialcourt/tree/master)
+ - CI/CD: [CircleCI][ci] - [![CircleCI](https://dl.circleci.com/status-badge/img/gh/JudicialCouncilOfCalifornia/trialcourt/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/JudicialCouncilOfCalifornia/trialcourt/tree/master)
  - Backend: [Drupal 8][backend]
  - Frontend: [Drupal 8 Theme - JCC Components][frontend].
 
