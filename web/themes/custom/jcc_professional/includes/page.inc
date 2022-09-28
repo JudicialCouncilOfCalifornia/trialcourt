@@ -72,9 +72,6 @@ function jcc_professional_preprocess_page(&$variables) {
                 $variables['group_target_id'] = $variables['group_target_id'] . '-' . $group->id();
               }
             }
-            $variables['jcc_messaging_center_enabled'] = '1';
-            $variables['jcc_messaging_center_categories'] = t('Subscribe to receive updates about @group', array('@group' => $group_labels));
-            $variables['#attached']['library'][] = 'jcc_messaging_center/jcc_messaging_center';
           }
         }
       }
