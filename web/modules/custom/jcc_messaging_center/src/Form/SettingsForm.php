@@ -101,10 +101,9 @@ class SettingsForm extends ConfigFormBase {
     (
       '#prefix' => '<p>',
       '#suffix' => '</p>',
-      '#markup' => t('<br>There are two ways to subscribe to content for end users.<br><br>
-        <h2>Global subscription</h2>First, through the footer global subscription form.<br>
-        The user will recieve an email with a link to manage his subscriptions or cancel them.<br><br>
-        <img src="/modules/custom/jcc_messaging_center/images/info-footer.png" alt="help footer" width="300px"/>
+      '#markup' => t('
+        <h2>Subscription</h2>Visitors can access the subscription page through a link in the footer.<br>
+        Newly created users will recieve an email with a link to manage their subscriptions or cancel them.<br><br>
       '),
     );
 
@@ -119,8 +118,8 @@ class SettingsForm extends ConfigFormBase {
     (
       '#prefix' => '<p>',
       '#suffix' => '</p>',
-      '#markup' => t('<br><br><h2>Specific subscription</h2>The other way to sign up for an end user is through the "specific form" you can enable on selected pages.<br>
-        When editing a page you can select which category that form will be assigned by default when the user submits it.<br><br>
+      '#markup' => t('<hr>It is possible to make a page relevant to a specific subscription category.<br>
+        The footer form will then be redirecting the visitor to a pre-selected subscription page. You can decide on which content type this feature is enabled.<br><br>
         <img src="/modules/custom/jcc_messaging_center/images/info-subscription.png" alt="help footer" width="300px"/>
         <br><div class="claro-details__description">(This feature is only enabled for subpages by default - to make it available for other content types please ask your developer to set them up correctly.)</div><br>
       '),
