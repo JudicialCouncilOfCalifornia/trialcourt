@@ -24,6 +24,22 @@ function jcc_components_preprocess_page(&$variables) {
   $variables['footer_links'] = jcc_components_get_menu_array('footer');
 
   $variables['messaging_display_footer_form'] = \Drupal::config('jcc_messaging_center.settings')->get('messaging_display_footer_form');
+  $variables['messaging_center_preselected_groups'] = '';
+  if($variables['messaging_display_footer_form'] == 1){
+    $node = \Drupal::routeMatch()->getParameter('node');
+    if ($node instanceof \Drupal\node\NodeInterface) {
+      if($node->hasField('field_pre_selected_notification_')){
+        $preselected_values = $node->get('field_pre_selected_notification_')->getValue();
+        foreach ($preselected_values as $key => $preselected_value) {
+          if ($key == 0) {
+            $variables['messaging_center_preselected_groups'] .= '?preselected=' . $preselected_value['target_id'];
+          } else {
+            $variables['messaging_center_preselected_groups'] .= ',' . $preselected_value['target_id'];
+          }
+        }
+      }
+    }
+  }
 
   $variables['social_links'] = jcc_components_social_links();
 
