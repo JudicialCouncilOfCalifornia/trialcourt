@@ -308,6 +308,7 @@ function jcc_messaging_center_preprocess_page(&$variables) {
 function jcc_messaging_center_mail_alter(&$message) {
   if ($message['id'] == 'user_register_no_approval_required') {
     global $base_url;
+    $email_access_keys = [];
     $member_email = $message['to'];
 
     $tempstore = \Drupal::service('tempstore.shared');
