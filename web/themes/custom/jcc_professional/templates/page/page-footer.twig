@@ -10,7 +10,7 @@
   {% set subscriptions %}
     <div class="subscriptions">
       {% if not logged_in %}
-        <div><a class="usa-button usa-button--primary" href="/user/register">Subscribe</a></div>
+        <div><a class="usa-button usa-button--primary" href="/user/register{{ messaging_center_preselected_groups }}">Subscribe</a></div>
       {% else %}
         <div><a class="usa-button usa-button--primary" href="/user/{{ user.id }}/edit">Manage subscriptions</a></div>
       {% endif %}
@@ -21,27 +21,6 @@
     text: subscribe_text,
     block: subscriptions,
   }]) %}
-{% endif %}
-
-{% if not(logged_in) and jcc_messaging_center_enabled %}
-  <div class="jcc-section--container">
-    <div class="jcc-section__inner">
-      <div class="jcc-messaging-center-section-form" data-group-values="{{ group_target_id }}">
-        {% include '@molecules/card/card.twig' with {
-          card: {
-            style: "media-full-overlay",
-            title: jcc_messaging_center_categories,
-            body: subscriptions,
-            bgcolor: "blue",
-            media:{
-              src: "https://newsroom.courts.ca.gov/sites/default/files/newsroom/2020-08/supreme%20court%20mural%20%28SF%29.jpg",
-              alt: "green"
-            }
-          }
-        } %}
-      </div>
-    </div>
-  </div>
 {% endif %}
 
 {% include '@organisms/global/footer.twig' with {
