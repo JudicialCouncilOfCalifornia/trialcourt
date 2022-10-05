@@ -269,7 +269,8 @@ function jcc_components_node_document(array &$variables, NodeInterface $node) {
   // Contextual edit media file option.
   if (isset($node->field_media->target_id)) {
     $media = Media::load($node->field_media->target_id);
-    $variables['edit_option'] = _jcc_components_can_edit_entity($media, t('Edit'));
+
+    $variables['edit_option'] = empty($media) ? NULL : _jcc_components_can_edit_entity($media, t('Edit'));
   }
 
   // Ensure date range field timezone.
