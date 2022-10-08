@@ -64,6 +64,13 @@ function jcc_components_paragraph_cards(array &$variables, ParagraphInterface $p
     $cards2 = $paragraph->field_components2->referencedEntities();
     $variables['cards2'] = _jcc_components_generate_cards($cards2, $sub_variants);
   }
+
+  $field_variant = !empty($paragraph->field_variant) ? $paragraph->field_variant->value : FALSE;
+  $shuffle = strpos($field_variant, 'shuffle');
+
+  if ($shuffle !== FALSE) {
+    $variables['#attached']['library'][] = 'jcc_components/shuffle';
+  }
 }
 
 /**
