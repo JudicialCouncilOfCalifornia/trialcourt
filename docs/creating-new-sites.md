@@ -45,7 +45,7 @@ After this runs it will give you instructions to set up the new Drupal instance 
 Install only the following themes
 - JCC Components (set as default theme)
 - Gin (administration theme)
-- Claro (???)
+- Claro (Gin dependency/base)
 
 Configure theme at `/admin/appearance/settings/jcc_components`:
 - Add the logo.svg to /web/sites/[site]/logo.svg

@@ -26,12 +26,12 @@
  */
 #}
 
-{% if events_cards %}
-  {% include '@organisms/sections/cards-with-button/cards-with-button.twig' with {
-    cards_with_button: events_links
-  } %}
+{% include '@organisms/sections/cards-with-button/cards-with-button.twig' with {
+  cards_with_button: events_links
+} %}
 
-  <div class="jcc-events-cards">
+<div class="jcc-events-cards">
+  {% if events_cards %}
     {% for card in events_cards %}
       {% include '@molecules/blocks/card/card.twig' with {
         card: {
@@ -42,14 +42,16 @@
         }
       } %}
     {% endfor %}
+  {% else %}
+    <p class="margin-bottom-3">No upcoming events scheduled.</p>
+  {% endif %}
 
-    <div class="text-align-center">
-      {% if button %}
-        {% include "@atoms/buttons/link-button.twig" with {
-          link_button: button
-        } only %}
-      {% endif %}
-    </div>
+  <div class="text-align-center">
+    {% if button %}
+      {% include "@atoms/buttons/link-button.twig" with {
+        link_button: button
+      } only %}
+    {% endif %}
   </div>
-{% endif %}
+</div>
 
