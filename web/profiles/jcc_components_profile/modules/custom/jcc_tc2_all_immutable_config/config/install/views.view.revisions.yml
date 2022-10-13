@@ -1,6 +1,11 @@
 langcode: en
 status: true
 dependencies:
+  config:
+    - user.role.contributor
+    - user.role.editor
+    - user.role.manager
+    - user.role.translator
   module:
     - better_exposed_filters
     - node
@@ -382,9 +387,13 @@ display:
                   collapsible: false
                   is_secondary: false
       access:
-        type: perm
+        type: role
         options:
-          perm: 'view all revisions'
+          role:
+            editor: editor
+            manager: manager
+            contributor: contributor
+            translator: translator
       cache:
         type: tag
         options: {  }
@@ -577,7 +586,7 @@ display:
         - url
         - url.query_args
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags: {  }
   page_1:
     id: page_1
@@ -604,5 +613,5 @@ display:
         - url
         - url.query_args
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags: {  }
