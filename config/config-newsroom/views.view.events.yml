@@ -509,6 +509,9 @@ display:
     position: 5
     display_options:
       title: 'Upcoming Events'
+      cache:
+        type: tag
+        options: {  }
       filters:
         status:
           id: status
@@ -535,18 +538,20 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: {  }
-        promote:
-          id: promote
-          table: node_field_data
-          field: promote
+        field_date_range_value:
+          id: field_date_range_value
+          table: node__field_date_range
+          field: field_date_range_value
           relationship: none
           group_type: group
           admin_label: ''
-          entity_type: node
-          entity_field: promote
-          plugin_id: boolean
-          operator: '='
-          value: '1'
+          plugin_id: views_daterange_filters_daterange
+          operator: '>='
+          value:
+            min: ''
+            max: ''
+            value: today
+            type: offset
           group: 1
           exposed: false
           expose:
@@ -563,6 +568,9 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -580,6 +588,7 @@ display:
         groups:
           1: AND
       defaults:
+        cache: false
         title: false
         use_more: false
         use_more_always: false

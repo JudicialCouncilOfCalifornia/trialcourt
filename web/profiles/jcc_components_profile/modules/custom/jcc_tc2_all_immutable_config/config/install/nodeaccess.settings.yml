@@ -1,5 +1,5 @@
 grants:
-  view: 0
+  view: 1
   edit: 1
   delete: 0
 priority: 0
@@ -116,10 +116,6 @@ importer:
     grant_update: 0
     grant_delete: 0
 landing_page:
-  contributor:
-    grant_update: '1'
-    grant_view: 0
-    grant_delete: 0
   anonymous:
     grant_view: '1'
     grant_update: 0
@@ -141,6 +137,10 @@ landing_page:
     grant_update: 0
     grant_delete: 0
   manager:
+    grant_view: 0
+    grant_update: 0
+    grant_delete: 0
+  contributor:
     grant_view: 0
     grant_update: 0
     grant_delete: 0
@@ -227,10 +227,6 @@ news:
     grant_update: 0
     grant_delete: 0
 subpage:
-  contributor:
-    grant_update: '1'
-    grant_view: 0
-    grant_delete: 0
   anonymous:
     grant_view: '1'
     grant_update: 0
@@ -252,6 +248,10 @@ subpage:
     grant_update: 0
     grant_delete: 0
   manager:
+    grant_view: 0
+    grant_update: 0
+    grant_delete: 0
+  contributor:
     grant_view: 0
     grant_update: 0
     grant_delete: 0
@@ -295,15 +295,15 @@ role_alias:
     name: Administrator
     allow: 0
   anonymous:
+    allow: '1'
     alias: 'Anonymous user'
     weight: '0'
     name: 'Anonymous user'
-    allow: 0
   authenticated:
+    allow: '1'
     alias: 'Authenticated user'
     weight: '0'
     name: 'Authenticated user'
-    allow: 0
   contributor:
     alias: Contributor
     weight: '0'

@@ -15,6 +15,7 @@ dependencies:
     - file
     - node
     - search_api
+    - search_api_exclude
 third_party_settings:
   search_api_solr:
     finalize: false
@@ -57,8 +58,6 @@ third_party_settings:
     multilingual:
       limit_to_content_language: false
       include_language_independent: true
-_core:
-  default_config_hash: 3DxTlyLXy3yEPuYe69eP4eFvzVbS6C996K4koyXxOCA
 id: index
 name: Index
 description: ''
@@ -210,11 +209,20 @@ datasource_settings:
       selected: {  }
 processor_settings:
   entity_type: {  }
+<<<<<<< HEAD
   rendered_item: {  }
   add_url: {  }
   language_with_fallback: {  }
   aggregated_field: {  }
   solr_date_range: {  }
+=======
+  language_with_fallback: {  }
+  node_exclude: {  }
+  rendered_item: {  }
+  solr_date_range:
+    weights:
+      preprocess_index: 0
+>>>>>>> master
 tracker_settings:
   default:
     indexing_order: fifo

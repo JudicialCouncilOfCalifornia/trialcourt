@@ -20,7 +20,18 @@ After this runs it will give you instructions to set up the new Drupal instance 
   - `lando multisite [name]`
     - make sure `[name]` will pattern match to the identifying portion of the live url. It should be the same as `[site]` from the `pantheon_new.sh` command above.
       - i.e. www.kings.courts.ca.gov => `kings`
+    - Confirm `web/sites/[site]` setup (extra files and directory seems okay to keep or delete)
+      - .gitignore
+      - services.local.yml
+      - settings.azure.php
+      - settings.pantheon.php
+      - settings.php
     - Do initial configurations and export (@see Initial configurations)
+    - For most sites, build Hat menu at `/admin/structure/menu/manage/hat`:
+      - Supreme Court ... https://supreme.courts.ca.gov
+      - Courts of Appeal ... https://www.courts.ca.gov/courtsofappeal.htm
+      - Superior Courts ... https://www.courts.ca.gov/superiorcourts.htm
+      - Judicial Council ... https://www.courts.ca.gov/policyadmin-jc.htm
     - Dump the database to import at Pantheon
 
 ## Initial configurations
@@ -31,18 +42,27 @@ After this runs it will give you instructions to set up the new Drupal instance 
 
 ### Theme Settings
 
+Install only the following themes
+- JCC Components (set as default theme)
+- Gin (administration theme)
+- Claro (Gin dependency/base)
+
 Configure theme at `/admin/appearance/settings/jcc_components`:
 - Add the logo.svg to /web/sites/[site]/logo.svg
-- Set the theme setting to not use default.
 - Set the path to sites/[site]/logo.svg
 - Set the various other theme settings. When in doubt, use the placeholders.
 
+If admin console UI seems broken, confirm/configure administration theme at `/admin/appearance`:
+- Set the Administration theme setting to not use default (currently Gin).
+- Use administration theme when editing or creating content
+- If admin console toolbar is black, uninstall Adminimal Admin Toolbar (adminimal_admin_toolbar) at `/admin/modules/uninstall`
+
 ### Create node 1 to use as front page:
 
-- Create Landing Page
-  * Title: Home
-  * Heading: Do Not Delete
-  * Lead: Do not delete this node, it is configured as the home page.  Edit this node to update the homepage.
+Create Landing Page
+- Title: Home
+- Heading: Do Not Delete
+- Lead: Do not delete this node, it is configured as the home page.  Edit this node to update the homepage.
 
 ### Configure site and modules
 
@@ -63,6 +83,8 @@ Configure theme at `/admin/appearance/settings/jcc_components`:
 - Configure GoogleRecaptcha:
   * `/admin/config/people/captcha/recaptcha`
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
+- Configure OpenID with Azure Active Directory
+  - See OneNote documentation
 
 ### Create users
 

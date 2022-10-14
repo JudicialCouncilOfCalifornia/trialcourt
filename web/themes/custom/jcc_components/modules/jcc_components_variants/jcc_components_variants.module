@@ -32,7 +32,7 @@ function jcc_components_variants_field_widget_entity_reference_paragraphs_form_a
   // card variant.
   if (!empty($element['subform']['field_components']) && !empty($element['subform']['field_sub_variant'])) {
     // Set up variants for each component allowed on the components field.
-    $components = Element::children($element['subform']['field_components']['widget']['add_more']);
+    $components = !empty($element['subform']['field_components']['widget']['add_more']) ? Element::children($element['subform']['field_components']['widget']['add_more']) : [];
     $prefix = '';
 
     foreach ($components as $component) {

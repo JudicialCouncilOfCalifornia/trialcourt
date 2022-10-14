@@ -106,7 +106,7 @@ function jcc_components_preprocess_views_view__events__events_list(&$variables) 
     $event = [
       'title' => $row->title->value,
       'url' => Url::fromRoute('entity.node.canonical', ['node' => $nid], ['absolute' => FALSE])->toString(),
-      'type' => Term::load($row->field_event_type->target_id)->get('name')->value,
+      'type' => $row->field_event_type->target_id ? Term::load($row->field_event_type->target_id)->get('name')->value : '',
       'start_date' => $startDate,
       'end_date' => $endDate,
       'summary' => $row->body->view('teaser'),
