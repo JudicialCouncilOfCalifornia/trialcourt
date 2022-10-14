@@ -15,6 +15,8 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_page_attachments().
@@ -149,6 +151,38 @@ function jcc_custom_views_data_alter(array &$data) {
     ],
   ];
 }
+function jcc_custom_views_pre_render(ViewExecutable $view){
+  switch ($view->storage->id()) {
+    case 'tentative_rulings':
+      $view->element['#attached']['library'][] = 'jcc_custom/jcc_custom_tentativerulings_theme';
+      if(($view->current_display == 'tentative_rulings') && ($view->total_rows != 0)){
+        unset($view->attachment_before[1]);
+      }
+      if ($view->current_display == 'attachment_1' || $view->current_display == 'attachment_2'){
+        $view->element['custom_items'] = [];
+        foreach ($view->result as $key => $row) {
+          $view->element['custom_items'][$key]['style'] = "borderless";
+          if ($view->field['field_judge']){
+            $view->element['custom_items'][$key]['title'] = $view->field['field_judge']->advancedRender($row)->__toString();
+          } elseif($view->field['title']) {
+            $view->element['custom_items'][$key]['title'] = $view->field['title']->advancedRender($row)->__toString();
+          }
+          $body_content = "";
+          if ($view->field['field_department']->advancedRender($row) != "") {
+            $body_content = $view->field['field_department']->advancedRender($row)->__toString() . '<br>';
+          }
+          $body_content .=  $view->field['field_address']->advancedRender($row)->__toString();
+          $view->element['custom_items'][$key]['body'] = Markup::create($body_content);
+          if ($view->field['field_custom_link']->advancedRender($row) != "") {
+            $link_uri = $view->field['field_custom_link']->advancedRender($row)->__toString();
+            $view->element['custom_items'][$key]['link']['url'] = Url::fromUri($link_uri);
+            $view->element['custom_items'][$key]['link']['text'] = 'Read more';
+          }
+        }
+      }
+    break;
+  }
+}
 
 /**
  * Implements hook_views_query_alter().
@@ -257,6 +291,7 @@ function jcc_custom_form_views_exposed_form_alter(&$form, FormStateInterface $fo
   if (
     $form['#id'] == 'views-exposed-form-tentative-rulings-tentative-rulings'
     || $form['#id'] == 'views-exposed-form-tentative-rulings-judge-attachment'
+    || $form['#id'] == 'views-exposed-form-tentative-rulings-block-1'
   ) {
     $nids = \Drupal::entityQuery('node')
       ->condition('status', 1)
@@ -289,7 +324,51 @@ function jcc_custom_form_views_exposed_form_alter(&$form, FormStateInterface $fo
  */
 function jcc_custom_tentative_rulings_search_validate(array &$form, FormStateInterface $form_state) {
   $values = $form_state->getValues();
-  if (empty($values['case_number']) && empty($values['field_judge_target_id'])) {
+  if (empty($values['case_number']) && empty($values['field_judge_target_id']) && ($form['#id'] != 'views-exposed-form-tentative-rulings-block-1')) {
     $form_state->setErrorByName('field_judge_target_id', t('Enter a case number or select a Judicial Officer.'));
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function jcc_custom_preprocess_node(&$variables) {
+  $node = $variables['node'];
+  if ($node->getType() == 'tentative_ruling') {
+    $variables['judges_card'] = [];
+    foreach ($node->field_judge as $judge_key => $judge_entity){
+      $judge = $judge_entity->entity;
+      $variables['judges_card'][$judge_key]['body'] = '';
+      $variables['judges_card'][$judge_key]['style'] = 'borderless';
+
+      //rendering judge name field
+      $variables['judges_card'][$judge_key]['title'] = $judge->getTitle();
+
+      //rendering judge department field
+      if ($judge->field_department){
+        $judge_department = '';
+        foreach($judge->field_department as $key => $department_term){
+          $department_term_value = $department_term->get('entity')->getTarget()->getValue()->label();
+          if($key == 0){
+            $judge_department = $department_term_value;
+          } else {
+            $judge_department .= ', ' . $department_term_value;
+          }
+        }
+        $variables['judges_card'][$judge_key]['body'] .= $judge_department . '<br />';
+      }
+
+      //rendering judge address field
+      $judge_address = $judge->field_address;
+      $judge_address_html = $judge_address->first()->address_line1 . ' ' . $judge_address->first()->address_line2;
+      $judge_address_html .= '<br/>' . $judge_address->first()->locality . ', ' . $judge_address->first()->administrative_area . ' ' . $judge_address->first()->postal_code;
+      $judge_address_html .= '<br/>' . $judge_address->first()->country_code;
+      $variables['judges_card'][$judge_key]['body'] = Markup::create($judge_address_html);
+
+      //rendering judge custom_link field
+      if($judge->field_custom_link){
+        $variables['judges_card'][$judge_key]['link']['url'] = $judge->field_custom_link->first()->getUrl()->toString();
+      }
+    }
   }
 }
