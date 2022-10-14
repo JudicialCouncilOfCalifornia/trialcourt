@@ -1,4 +1,4 @@
-uuid: 481b7a73-c37b-4be4-9d80-d1d40a6d141f
+uuid: febcde92-eea2-4516-90ce-13a9ae2ed5c2
 langcode: en
 status: true
 dependencies:
@@ -18,6 +18,8 @@ dependencies:
     - scheduler
     - scheduler_content_moderation_integration
     - text
+_core:
+  default_config_hash: JZg7GXQtan9pIBY3tprDhRmrmPL_q5xYJHFkPQXiHKg
 id: node.tentative_ruling.default
 targetEntityType: node
 bundle: tentative_ruling
@@ -48,14 +50,10 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_case_type:
-    type: entity_reference_autocomplete
-    weight: 16
+    type: options_select
+    weight: 15
     region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
   field_date_time:
     type: datetime_default
@@ -64,18 +62,14 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_department:
-    type: entity_reference_autocomplete
-    weight: 17
+    type: options_select
+    weight: 16
     region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
   field_judge:
     type: entity_reference_autocomplete
-    weight: 15
+    weight: 17
     region: content
     settings:
       match_operator: CONTAINS

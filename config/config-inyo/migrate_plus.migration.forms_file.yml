@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: 3gWSk_13Bd_synzk04KeTDYuHxmM_NU6djPStEQZr3U
+  default_config_hash: Vj2GLNTZk3O8aWTroX_t2YcK0By1whGXApkqvX9ZSuE
 id: forms_file
 class: null
 field_plugin_method: null
@@ -48,6 +48,13 @@ process:
     -
       plugin: callback
       callable: urldecode
+    -
+      plugin: str_replace
+      search: ' '
+      replace: '-'
+    -
+      plugin: callback
+      callable: strtolower
     -
       plugin: skip_on_empty
       method: process
