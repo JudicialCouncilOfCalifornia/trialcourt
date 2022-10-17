@@ -12,6 +12,8 @@ dependencies:
     - node.type.event
     - taxonomy.vocabulary.event_type
     - views.view.event_type_legend
+  content:
+    - 'taxonomy_term:event_type:0f6afbdd-8e74-4605-8cd2-55ec8c5b55ea'
   module:
     - better_exposed_filters
     - datetime
@@ -535,9 +537,56 @@ display:
           plugin_id: bundle
           value:
             event: event
+          group: 1
           expose:
             operator_limit_selection: false
             operator_list: {  }
+        field_event_type_target_id:
+          id: field_event_type_target_id
+          table: node__field_event_type
+          field: field_event_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: not
+          value:
+            132: 132
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: event_type
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
         field_date_range_value:
           id: field_date_range_value
           table: node__field_date_range
@@ -609,6 +658,7 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
