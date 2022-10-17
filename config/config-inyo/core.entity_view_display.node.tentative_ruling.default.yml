@@ -1,0 +1,87 @@
+uuid: 984b71aa-6ae9-484a-8edb-ab9f772a313b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.tentative_ruling.body
+    - field.field.node.tentative_ruling.field_caption
+    - field.field.node.tentative_ruling.field_case_type
+    - field.field.node.tentative_ruling.field_custom_link
+    - field.field.node.tentative_ruling.field_date_time
+    - field.field.node.tentative_ruling.field_department
+    - field.field.node.tentative_ruling.field_judge
+    - field.field.node.tentative_ruling.field_short_text
+    - node.type.tentative_ruling
+  module:
+    - datetime
+    - text
+    - user
+_core:
+  default_config_hash: nMMx-rKzYZPCGFBqdpxBHp68LRGZGRNeQbrqP7STIMM
+id: node.tentative_ruling.default
+targetEntityType: node
+bundle: tentative_ruling
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  field_caption:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_case_type:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_date_time:
+    type: datetime_default
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_department:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_judge:
+    type: entity_reference_entity_id
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 108
+    region: content
+  field_short_text:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_custom_link: true
+  langcode: true
+  search_api_excerpt: true
