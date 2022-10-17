@@ -154,3 +154,32 @@ function jcc_tentative_rulings_preprocess_node(&$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_theme().
+ */
+function jcc_tentative_rulings_theme($existing, $type, $theme, $path) {
+  return [
+    'views_view__tentative_rulings__attachment_1' => [
+      'base hook' => 'view',
+      'render element' => 'elements',
+    ],
+      'views_view__tentative_rulings__attachment_2' => [
+        'base hook' => 'view',
+        'render element' => 'elements',
+    ],
+      'views_view__tentative_rulings__block_1' => [
+        'base hook' => 'view',
+        'render element' => 'elements',
+    ],
+      'views_view__tentative_rulings__tentative_rulings' => [
+        'render element' => 'elements',
+        'base hook' => 'views table'
+    ],
+      'node__tentative_ruling' => [
+        'variables' => [],
+        'base hook' => 'node',
+        'render element' => 'elements',
+    ]
+  ];
+}
