@@ -40,24 +40,25 @@ function jcc_tentative_rulings_views_pre_render(ViewExecutable $view){
         unset($view->attachment_before[1]);
       }
       if ($view->current_display == 'attachment_1' || $view->current_display == 'attachment_2'){
-        $view->element['custom_items'] = [];
+        $view->element['#custom_items'] = [];
         foreach ($view->result as $key => $row) {
-          $view->element['custom_items'][$key]['style'] = "borderless";
-          if ($view->field['field_judge']){
-            $view->element['custom_items'][$key]['title'] = $view->field['field_judge']->advancedRender($row)->__toString();
+          $view->element['#custom_items'][$key]['style'] = "borderless";
+          $view_entity = $row->_entity;
+          if ($view_entity->hasField('field_judge')){
+            $view->element['#custom_items'][$key]['title'] = $view->field['field_judge']->advancedRender($row)->__toString();
           } elseif($view->field['title']) {
-            $view->element['custom_items'][$key]['title'] = $view->field['title']->advancedRender($row)->__toString();
+            $view->element['#custom_items'][$key]['title'] = $view->field['title']->advancedRender($row)->__toString();
           }
           $body_content = "";
           if ($view->field['field_department']->advancedRender($row) != "") {
             $body_content = $view->field['field_department']->advancedRender($row)->__toString() . '<br>';
           }
           $body_content .=  $view->field['field_address']->advancedRender($row)->__toString();
-          $view->element['custom_items'][$key]['body'] = Markup::create($body_content);
+          $view->element['#custom_items'][$key]['body'] = Markup::create($body_content);
           if ($view->field['field_custom_link']->advancedRender($row) != "") {
             $link_uri = $view->field['field_custom_link']->advancedRender($row)->__toString();
-            $view->element['custom_items'][$key]['link']['url'] = Url::fromUri($link_uri);
-            $view->element['custom_items'][$key]['link']['text'] = 'Read more';
+            $view->element['#custom_items'][$key]['link']['url'] = Url::fromUri($link_uri);
+            $view->element['#custom_items'][$key]['link']['text'] = 'Read more';
           }
         }
       }
@@ -87,7 +88,7 @@ function jcc_tentative_rulings_form_views_exposed_form_alter(&$form, FormStateIn
     }
 
     $form['field_judge_target_id']['#type'] = 'select';
-    $form['field_judge_target_id']['#options'] = ['' => ''] + $options;
+    $form['field_judge_target_id']['#options'] = ['' => 'Select'] + $options;
     $form['field_judge_target_id']['#multiple'] = FALSE;
     $form['field_judge_target_id']['#size'] = 1;
 
@@ -121,7 +122,6 @@ function jcc_tentative_rulings_preprocess_node(&$variables) {
     foreach ($node->field_judge as $judge_key => $judge_entity){
       $judge = $judge_entity->entity;
       $variables['judges_card'][$judge_key]['body'] = '';
-      $variables['judges_card'][$judge_key]['style'] = 'borderless';
 
       //rendering judge name field
       $variables['judges_card'][$judge_key]['title'] = $judge->getTitle();
@@ -174,7 +174,7 @@ function jcc_tentative_rulings_theme($existing, $type, $theme, $path) {
     ],
       'views_view__tentative_rulings__tentative_rulings' => [
         'render element' => 'elements',
-        'base hook' => 'views table'
+        'base hook' => 'views'
     ],
       'node__tentative_ruling' => [
         'variables' => [],

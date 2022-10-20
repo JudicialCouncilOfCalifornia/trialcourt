@@ -95,43 +95,67 @@
       {% set body %}
         {% if content.field_caption %}
           <div class="jcc-tentative-ruling-details">
-            <span><strong>Case name :</strong> {{ content.field_caption|render|striptags }}</span>
+            <h3>Case name</h3>
+            <p>{{ content.field_caption|render|striptags }}</p>
+            <p>&nbsp;</p>
           </div>
         {% endif %}
         {% if content.field_case_type %}
           <div class="jcc-tentative-ruling-details">
-            <span><strong>Probate :</strong> {{ content.field_case_type|render|striptags }}</span>
+            <h3>Probate</h3>
+            <p>{{ content.field_case_type|render|striptags }}</p>
+            <p>&nbsp;</p>
           </div>
         {% endif %}
         {% if content.field_date_time %}
           <div class="jcc-tentative-ruling-details">
-            <span><strong>Hearing Date / Time :</strong> {{ content.field_date_time|render|striptags }}</span>
+            <h3>Hearing Date / Time</h3>
+            <p>{{ content.field_date_time|render|striptags }}</p>
+            <p>&nbsp;</p>
           </div>
         {% endif %}
         {% if content.field_short_text %}
           <div class="jcc-tentative-ruling-details">
-            <span><strong>Nature of Proceedings :</strong> {{ content.field_short_text|render|striptags }}</span>
+            <h3>Nature of Proceedings</h3>
+            <p>{{ content.field_short_text|render|striptags }}</p>
+            <p>&nbsp;</p>
           </div>
         {% endif %}
-
-        {{ content.body }}
-
-        {% if content.field_judge %}
-          {% include "@organisms/cards/cards.twig" with {
-            cards: {
-              num_cols: '3',
-              items: judges_card,
-            }
-          } %}
-        {% endif %}
+        <div class="tentative-ruling-content">
+          <h3>Tentative ruling</h3>
+          <p>{{ content.body }}</p>
+          <p>&nbsp;</p>
+        </div>
       {% endset %}
 
-      {% include '@molecules/section/section.twig' with {
-        section: {
-          background: 'default',
-          container: 'container',
-          content: body
-        }
-      } %}
+    {% if content.field_judge %}
+      {% set judges_list %}
+        {% for judge in judges_card %}
+          <div>
+            {% if judge.link %}
+              <h4><a href="{{ judge.link.url }}">{{ judge.title }}</a></h4>
+            {% else %}
+              <h4>{{ judge.title }}</h4>
+            {% endif %}
+            <div>{{ judge.body }}</div>
+            <p>&nbsp;</p>
+          </div>
+        {% endfor %}
+      {% endset %}
+    {% endif %}
+
+    {% include "@molecules/body/body.twig" with {
+      body: {
+        main: {
+          text: body
+        },
+        aside: {
+          title: 'Judges',
+          text: judges_list,
+        },
+        classes: []
+      }
+    } %}
+
   {% endblock %}
 </article>
