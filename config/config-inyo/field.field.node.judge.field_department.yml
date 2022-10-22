@@ -5,6 +5,12 @@ dependencies:
   config:
     - field.storage.node.field_department
     - node.type.judge
+    - taxonomy.vocabulary.department
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
 _core:
   default_config_hash: I6y19VQHO8RNvN3GLOufVdrMhb_hZQbk5D_LP0Wgbic
 id: node.judge.field_department
@@ -19,5 +25,12 @@ default_value: {  }
 default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'
-  handler_settings: {  }
+  handler_settings:
+    target_bundles:
+      department: department
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
 field_type: entity_reference

@@ -1,1 +1,0 @@
-In order to be able to enable tentative rulings as a page element's paragraph, you will need to edit the site's configuration to allow for that paragraph to referenced the "Tentative ulings" view at /admin/structure/paragraphs_type/views_reference/fields/paragraph.views_reference.field_views_reference
