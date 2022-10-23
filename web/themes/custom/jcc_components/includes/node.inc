@@ -56,7 +56,6 @@ function jcc_components_preprocess_node(&$variables) {
 
       //rendering judge custom_link field
       if($judge->field_custom_link->first()){
-        dsm($judge->field_custom_link);
         $variables['judges_card'][$judge_key]['link']['url'] = $judge->field_custom_link->first()->getUrl()->toString();
       }
     }
