@@ -918,3 +918,68 @@ function jcc_tc2_all_immutable_config_update_9001() {
 
   node_access_rebuild(TRUE);
 }
+
+/**
+ * TCI-981: Fix redirect loop when updating webform config.
+ */
+function jcc_tc2_all_immutable_config_update_9002() {
+  $database = \Drupal::database();
+  $webform_storage = \Drupal::entityTypeManager()->getStorage('webform');
+  $redirect_storage = \Drupal::entityTypeManager()->getStorage('redirect');
+
+  // Get form path aliases that are missing the leading /.
+  $query = $database->select('path_alias', 'pa')
+    ->fields('pa', ['path'])
+    ->condition('alias', 'form/%', 'LIKE')
+    ->execute();
+
+  while ($row = $query->fetchAssoc()) {
+    $replace = [
+      '/webform/',
+      '/confirmation',
+      '/submissions',
+      '/drafts',
+    ];
+
+    $id = str_replace($replace, '', $row['path']);
+    $webform_ids[$id] = $id;
+    $uri = "internal:" . $row['path'];
+
+    // Delete the existing redirects for the bad webform path.
+    $redirect_ids = \Drupal::entityQuery('redirect')
+      ->condition('redirect_redirect__uri', $uri)
+      ->execute();
+
+    $redirects = $redirect_storage->loadMultiple($redirect_ids);
+
+    foreach ($redirects as $redirect) {
+      $redirect->delete();
+    }
+  }
+
+  // Add the leading / to the path alias.
+  $query = $database->update('path_alias')
+    ->condition('alias', 'form%', 'LIKE')
+    ->expression('alias', 'CONCAT(:slash, alias)', [':slash' => '/'])
+    ->execute();
+
+  if (empty($webform_ids)) {
+    \Drupal::messenger()->addStatus(
+      t("No webforms to update.")
+    );
+    return;
+  }
+
+  // Re-save affected webforms to regenerate alias and redirects.
+  $webforms = $webform_storage->loadMultiple($webform_ids);
+
+  foreach ($webforms as $webform) {
+    \Drupal::messenger()->addStatus(
+      t("Updating alias and redirects for webform: %label",
+        ['%label' => $webform->label()]
+      )
+    );
+
+    $webform->save();
+  }
+}
