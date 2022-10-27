@@ -142,8 +142,12 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     $email_summary = $form_state->cleanValues()->getValues()['body'];
     $read_more_url = '';
 
-    if ( $form_state->getValue('field_messenger_link')){
-      $read_more_url = $form_state->cleanValues()->getValues()['field_messenger_link'][0]['value'];
+    if ($form_state->getValue('field_messenger_link')){
+      $read_more_uri = $form_state->cleanValues()->getValues()['field_messenger_link'][0]['uri'];
+      $read_more_url = Url::fromUri($read_more_uri)->toString();
+      if (!str_starts_with($read_more_url, 'http')){
+        $read_more_url = $base_url . $read_more_url;
+      }
     } else if ( $form_state->getValue('field_external_url')) {
       $read_more_uri = $form_state->cleanValues()->getValues()['field_external_url'][0]['uri'];
       $read_more_url = Url::fromUri($read_more_uri)->toString();
