@@ -54,6 +54,30 @@ function jcc_custom_ckeditor_css_alter(array &$css, Editor $editor) {
 }
 
 /**
+ * Implements hook_settings_alter().
+ *
+ * Programmatically alter ckeditor as needed.
+ * https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html.
+ */
+function jcc_custom_editor_js_settings_alter(&$settings) {
+  // When no secure image filter, limit Source editing.
+  // Temporary for *.courts.ca.gov images.
+  // Consider later: www.drupal.org/project/drupal/issues/2257291.
+  $roles = \Drupal::currentUser()->getRoles();
+  if (!array_intersect(['administrator', 'manager'], $roles)) {
+    foreach ($settings['editor']['formats'] as $name => $value) {
+      $editor = Editor::load($name);
+      if (is_object($editor)) {
+        $restrict_images = $editor->getFilterFormat()->filters('filter_html_image_secure')->status;
+        if (!$restrict_images) {
+          $settings['editor']['formats'][$name]['editorSettings']['removeButtons'] = 'Source';
+        }
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_form_alter().
  */
 function jcc_custom_form_alter(&$form, $form_state, $form_id) {
