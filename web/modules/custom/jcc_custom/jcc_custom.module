@@ -7,6 +7,7 @@
 
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\file\Element\ManagedFile;
@@ -49,6 +50,30 @@ function jcc_custom_ckeditor_css_alter(array &$css, Editor $editor) {
 
     if (in_array($editor->getFilterFormat()->id(), $known_formats)) {
       $css[] = drupal_get_path('core', NULL) . "/../libraries/courtyard-artifact/2.x/public/css/${scheme}.css";
+    }
+  }
+}
+
+/**
+ * Implements hook_settings_alter().
+ *
+ * Programmatically alter ckeditor as needed.
+ * https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html.
+ */
+function jcc_custom_editor_js_settings_alter(&$settings) {
+  // When no secure image filter, limit Source editing.
+  // Temporary for *.courts.ca.gov images.
+  // Consider later: www.drupal.org/project/drupal/issues/2257291.
+  $roles = \Drupal::currentUser()->getRoles();
+  if (!array_intersect(['administrator', 'manager'], $roles)) {
+    foreach ($settings['editor']['formats'] as $name => $value) {
+      $editor = Editor::load($name);
+      if (is_object($editor)) {
+        $restrict_images = $editor->getFilterFormat()->filters('filter_html_image_secure')->status;
+        if (!$restrict_images) {
+          $settings['editor']['formats'][$name]['editorSettings']['removeButtons'] = 'Source';
+        }
+      }
     }
   }
 }
@@ -99,6 +124,11 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
 
       break;
 
+    case 'filter_format_edit_form':
+      // See jcc_custom_editor_js_settings_alter why custom description.
+      $form['filters']['status']['filter_html_image_secure']['#description'] = FieldFilteredMarkup::create(t('Disallows usage of &lt;img&gt; tag sources that are not hosted on this site by replacing them with a placeholder image. Disabling this setting will restrict Source editing to allowed roles.'));
+
+      break;
   }
 }
 
