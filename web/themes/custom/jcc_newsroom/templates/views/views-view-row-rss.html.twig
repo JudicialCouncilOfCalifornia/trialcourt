@@ -18,13 +18,5 @@
 <item>
   <title>{{ title }}</title>
   <link>{{ link }}</link>
-  <description>{{ description }}</description>
-  {% for item in item_elements -%}
-  <{{ item.key }}{{ item.attributes -}}
-  {% if item.value -%}
-  >{{ item.value }}</{{ item.key }}>
-  {% else -%}
-    {{ ' />' }}
-    {% endif %}
-  {%- endfor %}
+  <description>{{ description|striptags }}</description>
 </item>
