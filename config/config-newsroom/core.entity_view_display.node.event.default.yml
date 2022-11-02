@@ -29,7 +29,6 @@ dependencies:
     - link
     - text
     - user
-    - weight
 _core:
   default_config_hash: ovUR_tRm9CSFh9BLgiTpTe8YDLbWxGW1umPHoL16yLY
 id: node.event.default
@@ -88,7 +87,6 @@ content:
     settings:
       set_marker: true
       common_map: true
-      show_delta_label: false
       use_overridden_map_settings: false
       title: '[node:title]'
       info_text:
@@ -625,9 +623,11 @@ content:
     weight: 14
     region: content
   field_sorting_weight:
-    type: default_weight
+    type: number_integer
     label: above
-    settings: {  }
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
     third_party_settings: {  }
     weight: 16
     region: content
