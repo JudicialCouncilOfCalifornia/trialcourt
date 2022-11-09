@@ -5,11 +5,14 @@ dependencies:
   config:
     - field.field.node.subpage.body
     - field.field.node.subpage.field_components
+    - field.field.node.subpage.field_pre_selected_notification_
     - node.type.subpage
   module:
     - entity_reference_revisions
     - text
     - user
+_core:
+  default_config_hash: mIs286kxNY5GRHEV5shGpqvCqWzDBNh3b5Z6oJDUC_I
 id: node.subpage.default
 targetEntityType: node
 bundle: subpage
@@ -22,6 +25,11 @@ content:
     third_party_settings: {  }
     weight: 1
     region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   field_components:
     type: entity_reference_revisions_entity_view
     label: hidden
@@ -30,6 +38,14 @@ content:
       link: ''
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_pre_selected_notification_:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 2
     region: content
 hidden:
   langcode: true

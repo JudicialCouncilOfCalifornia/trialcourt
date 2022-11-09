@@ -1,0 +1,46 @@
+uuid: b26b96c6-2bb9-4617-8ee8-cf418a4a08ab
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.custom_email.body
+    - field.field.node.custom_email.field_messenger_link
+    - node.type.custom_email
+  module:
+    - link
+    - text
+    - user
+_core:
+  default_config_hash: 4LnbogTYabqN701ydHHfKxjLfpXdL3imdbaPoeSFe8E
+id: node.custom_email.default
+targetEntityType: node
+bundle: custom_email
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_messenger_link:
+    weight: 103
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  langcode: true
+  search_api_excerpt: true

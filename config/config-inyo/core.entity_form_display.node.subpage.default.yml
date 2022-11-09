@@ -5,17 +5,36 @@ dependencies:
   config:
     - field.field.node.subpage.body
     - field.field.node.subpage.field_components
+    - field.field.node.subpage.field_pre_selected_notification_
     - node.type.subpage
     - workflows.workflow.editorial
   module:
     - content_moderation
+    - field_group
     - paragraphs
     - path
     - scheduler
     - scheduler_content_moderation_integration
     - text
+third_party_settings:
+  field_group:
+    group_subscription_options:
+      children:
+        - field_pre_selected_notification_
+      label: 'Subscription options'
+      region: content
+      parent_name: ''
+      weight: 7
+      format_type: details_sidebar
+      format_settings:
+        classes: ''
+        id: sidebar-subscription-options
+        open: false
+        description: ''
+        required_fields: true
+        weight: 0
 _core:
-  default_config_hash: ZJ5UkQf15wYBQ3lNbq1OSAH7l0ApfOMcJBhVZOxn3FY
+  default_config_hash: PYc5VRiOGYpIIbXV61jp28h1Lh5atumA5mDKbNAUhzs
 id: node.subpage.default
 targetEntityType: node
 bundle: subpage
@@ -23,7 +42,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 16
+    weight: 18
     region: content
     settings:
       rows: 9
@@ -49,6 +68,12 @@ content:
       form_display_mode: default
       default_paragraph_type: hero
     third_party_settings: {  }
+  field_pre_selected_notification_:
+    type: options_buttons
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   langcode:
     type: language_select
     weight: 2
@@ -58,13 +83,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 17
+    weight: 19
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -77,24 +102,24 @@ content:
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 10
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 9
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   scheduler_settings:
-    weight: 7
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 15
+    weight: 17
     region: content
     settings:
       display_label: true
@@ -115,7 +140,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 13
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -131,18 +156,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 12
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 11
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 14
+    weight: 16
     region: content
     settings: {  }
     third_party_settings: {  }

@@ -35,6 +35,11 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
     $forms_enabled_on[] = 'node_' . $ct . '_form';
     $forms_enabled_on[] = 'node_' . $ct . '_edit_form';
   }
+  //Hides footer prelection option if footer is disabled
+  if(!$content_types_conf->get('messaging_display_footer_form')) {
+    unset($form['#fieldgroups']);
+  }
+
     // Option to send message on node_save
     if (in_array($form['#form_id'],
       $forms_enabled_on
@@ -157,11 +162,11 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     } else {
       $read_more_url = $base_url . $form_state->getValue('path')[0]['alias'];
     }
-    
+
     $email_post_date_unformatted = $form_state->cleanValues()->getValues()['field_date'][0]['value'];
     // Date formatting.
-    $date = new DrupalDateTime($news_post_date_unformated, DateTimeItemInterface::STORAGE_TIMEZONE);
-    $news_post_date = $date->format('F j, Y');
+    $date = new DrupalDateTime($email_post_date_unformatted, DateTimeItemInterface::STORAGE_TIMEZONE);
+    $email_post_date = $date->format('F j, Y');
 
     // Getting from email.
     if (!empty(\Drupal::service('key.repository')->getKey('sendgrid'))) {

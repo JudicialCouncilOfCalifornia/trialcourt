@@ -14,52 +14,57 @@ dependencies:
     - cshs
     - focal_point
 _core:
-  default_config_hash: 8yvTZ2HDzvXRL5D5pU-Tz2JTjTslKpzY3cvFImgarFE
+  default_config_hash: jNIYx3LaiXtiitkOMfly_rvbxz3E9Zb0fi_kfSbENQQ
 id: media.image.default
 targetEntityType: media
 bundle: image
 mode: default
 content:
   field_category:
+    type: cshs
     weight: 3
+    region: content
     settings:
+      force_deepest: false
       parent: ''
       level_labels: ''
-      force_deepest: false
+      none_label: '- Please select -'
       save_lineage: false
       hierarchy_depth: 0
       required_depth: 0
-      none_label: '- Please select -'
     third_party_settings: {  }
-    type: cshs
-    region: content
   field_matters_served:
+    type: cshs
     weight: 4
+    region: content
     settings:
+      force_deepest: false
       parent: null
-      hierarchy_depth: '0'
-      required_depth: '0'
       level_labels: ''
       none_label: '- Please select -'
-      force_deepest: false
+      hierarchy_depth: '0'
+      required_depth: '0'
       save_lineage: false
     third_party_settings: {  }
-    type: cshs
-    region: content
   field_media_image:
-    weight: 0
+    type: image_focal_point
+    weight: 1
+    region: content
     settings:
+      progress_indicator: throbber
       preview_image_style: medium
       preview_link: true
       offsets: '50,50'
-      progress_indicator: throbber
     third_party_settings: {  }
-    type: image_focal_point
-    region: content
   field_tags:
+    type: autocomplete_deluxe
     weight: 5
+    region: content
     settings:
       match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
       limit: 10
       min_length: 0
       delimiter: ''
@@ -67,12 +72,7 @@ content:
       not_found_message: 'The term ''@term'' will be added'
       new_terms: true
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
     third_party_settings: {  }
-    type: autocomplete_deluxe
-    region: content
   langcode:
     type: language_select
     weight: 6
@@ -95,13 +95,13 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 8
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }

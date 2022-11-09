@@ -4,15 +4,23 @@ status: true
 dependencies:
   config:
     - field.field.node.landing_page.field_components
+    - field.field.node.landing_page.field_pre_selected_notification_
     - node.type.landing_page
   module:
     - entity_reference_revisions
     - user
+_core:
+  default_config_hash: c3yaKSVs9SwrPkFd5k7Cz-KFxPNyi7JdiTKpRFrn0x4
 id: node.landing_page.default
 targetEntityType: node
 bundle: landing_page
 mode: default
 content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   field_components:
     type: entity_reference_revisions_entity_view
     label: hidden
@@ -21,6 +29,14 @@ content:
       link: ''
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_pre_selected_notification_:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
     region: content
 hidden:
   langcode: true
