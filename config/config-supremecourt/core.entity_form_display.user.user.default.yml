@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.user.user.field_group
     - field.field.user.user.field_last_password_reset
     - field.field.user.user.field_password_expiration
   module:
@@ -11,25 +10,19 @@ dependencies:
     - path
     - user
 _core:
-  default_config_hash: G1t6SULG27y_9W70ghXNXUh_5H-j9iUX9bcPr3A-Qlo
+  default_config_hash: hgZDL-rvLhjzRp4U9AoiD-yZbIH4MkUBxloBgEpxrG4
 id: user.user.default
 targetEntityType: user
 bundle: user
 mode: default
 content:
   account:
-    weight: 0
+    weight: -10
     region: content
     settings: {  }
     third_party_settings: {  }
   contact:
-    weight: 6
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_group:
-    type: options_buttons
-    weight: 1
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -47,18 +40,18 @@ content:
       display_label: true
     third_party_settings: {  }
   language:
-    weight: 7
+    weight: 0
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 2
+    weight: 30
     region: content
     settings: {  }
     third_party_settings: {  }
   timezone:
-    weight: 5
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
