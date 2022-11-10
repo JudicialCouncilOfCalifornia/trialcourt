@@ -70,8 +70,8 @@ class MCManageSubs extends FormBase {
     // Populating default values.
     $user_object = user_load_by_mail($member_email);
     $active_groups = [];
-    if($user_object->get('field_group')->getValue()){
-      foreach ($user_object->get('field_group')->getValue() as $active_group) {
+    if($user_object->get('field_jcc_messaging_center_group')->getValue()){
+      foreach ($user_object->get('field_jcc_messaging_center_group')->getValue() as $active_group) {
         array_push($active_groups, $active_group['target_id']);
       }
       $form['user_groups']['#default_value'] = $active_groups;
@@ -101,7 +101,7 @@ class MCManageSubs extends FormBase {
     $user_groups = $form_state->cleanValues()->getValues()['user_groups'];
     $user = user_load_by_mail($user_email);
 
-    $user->set('field_group', $user_groups);
+    $user->set('field_jcc_messaging_center_group', $user_groups);
     $user->save();
 
   }

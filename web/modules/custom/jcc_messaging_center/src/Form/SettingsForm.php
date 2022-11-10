@@ -138,7 +138,7 @@ class SettingsForm extends ConfigFormBase {
         <li><a href="/admin/structure/taxonomy/manage/user_groups/overview">Manage mailing groups (Taxonomy)</a></li>
         <li><a href="/admin/messenger/group-overview">Users and groups dashboard</a></li>
         </ul><br>
-        <div class="claro-details__description">After you add one or more categories, don\'t forget to <a href="/admin/config/people/accounts/fields/user.user.field_group">add it to the default set when new users are created.</a></div>'),
+        <div class="claro-details__description">After you add one or more categories, don\'t forget to <a href="/admin/config/people/accounts/fields/user.user.field_jcc_messaging_center_group">add it to the default set when new users are created.</a></div>'),
     );
 
 
