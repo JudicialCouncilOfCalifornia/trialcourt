@@ -54,7 +54,7 @@ function _jcc_get_first_image($node, $style = 'max_325x325') {
     if ($node_image) {
       $uri = $node_image->first()->entity->getFileUri();
       $style = \Drupal::entityTypeManager()->getStorage('image_style')->load($style);
-      $image_url = $style->buildUrl($uri);
+      $image_url = \Drupal::service('file_url_generator')->transformRelative($style->buildUrl($uri));
 
       $image_alt = $node_image->first()->alt;
 
