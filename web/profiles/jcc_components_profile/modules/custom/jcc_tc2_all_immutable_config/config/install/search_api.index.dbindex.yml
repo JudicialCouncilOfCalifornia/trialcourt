@@ -59,8 +59,6 @@ third_party_settings:
     multilingual:
       limit_to_content_language: false
       include_language_independent: true
-_core:
-  default_config_hash: mvHTyjLyKzHlCiVfOAPycqpHJKoqTxL0prWcfufCTlI
 id: dbindex
 name: 'DB Index'
 description: ''
@@ -260,30 +258,16 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  add_url: {  }
-  aggregated_field: {  }
-  content_access:
+  transliteration:
     weights:
-      preprocess_query: -30
-  double_quote_workaround:
-    weights:
-      postprocess_query: 0
       preprocess_index: -47
       preprocess_query: -15
     all_fields: false
     fields:
       - rendered_item
       - title
-    replacement: '|9999999998|'
-  entity_status: {  }
   entity_type: {  }
-  file_attachments:
-    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
-    number_indexed: 0
-    number_first_bytes: '1 MB'
-    max_filesize: '0'
-    excluded_private: 1
-    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
+  add_url: {  }
   highlight:
     weights:
       postprocess_query: 0
@@ -296,6 +280,30 @@ processor_settings:
       - rendered_item
     highlight: always
     highlight_partial: true
+  stemmer:
+    weights:
+      preprocess_index: -42
+      preprocess_query: 0
+    all_fields: true
+    fields:
+      - field_aside
+      - field_brow
+      - field_brow_1
+      - field_heading
+      - field_heading_1
+      - field_subheading
+      - name
+      - processed
+      - processed_1
+      - processed_6
+      - processed_7
+      - rendered_item
+      - summary_processed
+      - title
+    exceptions:
+      mexican: mexic
+      texan: texa
+  aggregated_field: {  }
   html_filter:
     weights:
       preprocess_index: -15
@@ -345,34 +353,11 @@ processor_settings:
       - summary_processed
       - title
   language_with_fallback: {  }
-  node_exclude: {  }
+  content_access:
+    weights:
+      preprocess_query: -30
   rendered_item: {  }
-  solr_date_range:
-    weights:
-      preprocess_index: 0
-  stemmer:
-    weights:
-      preprocess_index: -42
-      preprocess_query: 0
-    all_fields: true
-    fields:
-      - field_aside
-      - field_brow
-      - field_brow_1
-      - field_heading
-      - field_heading_1
-      - field_subheading
-      - name
-      - processed
-      - processed_1
-      - processed_6
-      - processed_7
-      - rendered_item
-      - summary_processed
-      - title
-    exceptions:
-      mexican: mexic
-      texan: texa
+  entity_status: {  }
   tokenizer:
     weights:
       preprocess_index: -44
@@ -384,14 +369,6 @@ processor_settings:
     ignored: ._-
     overlap_cjk: 1
     minimum_word_size: '3'
-  transliteration:
-    weights:
-      preprocess_index: -47
-      preprocess_query: -15
-    all_fields: false
-    fields:
-      - rendered_item
-      - title
   type_boost:
     weights:
       preprocess_index: -50
@@ -403,6 +380,27 @@ processor_settings:
           landing_page: !!float 2
           news: !!float 3
           subpage: !!float 2
+  file_attachments:
+    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
+    number_indexed: 0
+    number_first_bytes: '1 MB'
+    max_filesize: '0'
+    excluded_private: 1
+    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
+  node_exclude: {  }
+  solr_date_range:
+    weights:
+      preprocess_index: 0
+  double_quote_workaround:
+    weights:
+      postprocess_query: 0
+      preprocess_index: -47
+      preprocess_query: -15
+    all_fields: false
+    fields:
+      - rendered_item
+      - title
+    replacement: '|9999999998|'
 tracker_settings:
   default:
     indexing_order: fifo
