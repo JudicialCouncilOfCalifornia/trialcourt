@@ -275,3 +275,17 @@ function jcc_custom_managed_file_process(array &$element, FormStateInterface $fo
 
   return $element;
 }
+
+/**
+ * Implements hook_entity_delete().
+ *
+ * This is a temporary debugging function to try to track what is deleting
+ * some nodes. If it's firing an entity delete this should log it.
+ *
+ * @todo Remove this when done debugging.
+ */
+function jcc_custom_entity_delete($entity) {
+  \Drupal::logger('TCI-986')->info($entity->bundle() . ' - ' . $entity->label());
+  $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 20);
+  \Drupal::logger('TCI-986')->info("<pre>" . print_r($backtrace, TRUE) . "</pre>");
+}
