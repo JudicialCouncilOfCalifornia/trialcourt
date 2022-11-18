@@ -3,7 +3,7 @@
   {% set lists %}
     {% set links = [] %}
     {% for summary in item %}
-      {% set description = 'View or download case summaries for the week of ' ~ meeting.filing_date %}
+      {% set description = 'View or download case summaries for the week of ' ~ summary.filing_date %}
       {% set link = {
         url_title: summary.filing_date,
         url: summary.url,
