@@ -242,8 +242,8 @@ function jcc_components_paragraph_text_share(array &$variables, ParagraphInterfa
  */
 function jcc_components_paragraph_content_stream(array &$variables, ParagraphInterface $paragraph) {
   $taxonomy = $paragraph->field_taxonomy ? $paragraph->field_taxonomy->target_id : NULL;
-  $date_start = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Ymd') : NULL;
-  $date_end = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Ymd') : NULL;
+  $date_start = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Y-m-d\T00:00:00') : NULL;
+  $date_end = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Y-m-d\T24:00:00') : NULL;
 
   if ($taxonomy) {
     // If News + Sticky listing, filter by taxonomy option.
