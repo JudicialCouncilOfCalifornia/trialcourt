@@ -53,7 +53,8 @@ function jcc_newsroom_preprocess_views_view_row_rss(&$variables) {
       if ($node->hasField('field_tagline')) {
         $variables['tagline'] = $node->get('field_tagline')->value;
       }
-
+      // Publishing date for news article.
+      $variables['pubDate'] = date('F j, Y', $node->created->value);
       // Date range when applicable such an event.
       if (isset($node->field_date_range) && !empty($node->get('field_date_range'))) {
         $variables['startDate'] = $node->get('field_date_range')->value;
