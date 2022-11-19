@@ -173,11 +173,19 @@ function jcc_custom_views_data_alter(array &$data) {
  * Implements hook_views_query_alter().
  */
 function jcc_custom_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  switch ($view->storage->id()) {
+  switch ($view->id()) {
     case 'documents':
       // Override query max for sufficient cases to display from docs.
       if (Term::load($view->args[0])->get('name')->value == 'Oral Argument') {
         $view->getPager()->setItemsPerPage(20);
+      }
+      break;
+
+    case 'oral_arguments':
+      if ($view->getDisplay()->display['id'] == 'block_1' && $view->args) {
+        // Custom date range contextual filter.
+        $query->addWhere(0, 'node__field_date_range.field_date_range_value', $view->args[0], '>=');
+        $query->addWhere(0, 'node__field_date_range.field_date_range_end_value', $view->args[1], '<');
       }
       break;
   }

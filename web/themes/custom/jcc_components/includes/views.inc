@@ -100,8 +100,8 @@ function jcc_components_preprocess_views_view__events__events_list(&$variables) 
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $row = $row['#node'];
     $nid = $row->id();
-    $startDate = jcc_timezone_adjust($row->field_date_range->start_date);
-    $endDate = jcc_timezone_adjust($row->field_date_range->end_date);
+    $startDate = $row->field_date_range->start_date;
+    $endDate = $row->field_date_range->end_date;
 
     $event = [
       'title' => $row->title->value,
@@ -230,9 +230,10 @@ function jcc_components_preprocess_views_view__case_information__block_1(&$varia
     if ($years_past < 3) {
       $media = Media::load($row->field_media->target_id);
       $file = File::load($media->field_media_file->target_id);
+      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
       $page = [
         'year' => $doc_year,
-        'url' => file_create_url($file->uri->value),
+        'url' => \Drupal::service('file_url_generator')->transformRelative($file_url),
         'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
       ];
       array_push($pages, $page);
@@ -266,9 +267,10 @@ function jcc_components_preprocess_views_view__case_information__block_2(&$varia
     if ($years_past < 3) {
       $media = Media::load($row->field_media->target_id);
       $file = File::load($media->field_media_file->target_id);
+      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
       $page = [
         'year' => $doc_year,
-        'url' => file_create_url($file->uri->value),
+        'url' => \Drupal::service('file_url_generator')->transformRelative($file_url),
         'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
       ];
       array_push($pages, $page);
@@ -302,9 +304,10 @@ function jcc_components_preprocess_views_view__case_information__block_3(&$varia
     if ($years_past < 3) {
       $media = Media::load($row->field_media->target_id);
       $file = File::load($media->field_media_file->target_id);
+      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
       $page = [
         'year' => $doc_year,
-        'url' => file_create_url($file->uri->value),
+        'url' => \Drupal::service('file_url_generator')->transformRelative($file_url),
         'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
       ];
       array_push($pages, $page);
@@ -334,6 +337,7 @@ function jcc_components_preprocess_views_view__case_information__block_4(&$varia
     $row = $row['#node'];
     $media = Media::load($row->field_media->target_id);
     $file = File::load($media->field_media_file->target_id);
+    $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
     // BEGIN - Create amended identifier from filename.
     $file_name = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file->filename->value);
     $file_amended = NULL;
@@ -345,8 +349,8 @@ function jcc_components_preprocess_views_view__case_information__block_4(&$varia
     $result = [
       'title' => $row->title->value,
       'amended_code' => $file_amended,
-      'url' => file_create_url($file->uri->value),
-      'hearing_date' => jcc_timezone_adjust($row->field_date_range->start_date),
+      'url' => \Drupal::service('file_url_generator')->transformRelative($file_url),
+      'hearing_date' => $row->field_date_range->start_date,
       'publish_date' => $row->field_date->date ? $row->field_date->date->format('m/d/Y') : 'Undefined',
       'notes' => $notes,
       'edit_option' => _jcc_components_can_edit_entity($row, t('Edit')),
