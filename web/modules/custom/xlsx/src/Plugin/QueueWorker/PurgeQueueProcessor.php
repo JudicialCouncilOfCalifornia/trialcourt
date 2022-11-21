@@ -27,7 +27,7 @@ class PurgeQueueProcessor extends QueueWorkerBase {
       $imported_storage = \Drupal::entityTypeManager()->getStorage($first_entity->get('entity_type_id')->value, $first_entity->get('bundle')->value);
       $imported_ids = [];
       foreach ($entities as $entity) {
-        $imported_ids[] = $entity->id();
+        $imported_ids[] = $entity->get('entity_id')->value;
       }
       if (!empty($imported_ids)) {
         $imported_entities = $imported_storage->loadMultiple($imported_ids);
