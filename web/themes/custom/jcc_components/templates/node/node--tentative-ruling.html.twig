@@ -85,7 +85,7 @@
           layout: 'full-main',
           background: 'default',
           main: {
-            title: label,
+            title: content.field_caption,
           },
           aside: {},
           classes: []
@@ -95,14 +95,14 @@
       {% set body %}
         {% if content.field_caption %}
           <div class="jcc-tentative-ruling-details">
-            <h3>Case name</h3>
-            <p>{{ content.field_caption|render|striptags }}</p>
+            <h3>Case Number</h3>
+            <p>{{ label }}</p>
             <p>&nbsp;</p>
           </div>
         {% endif %}
         {% if content.field_case_type %}
           <div class="jcc-tentative-ruling-details">
-            <h3>Probate</h3>
+            <h3>Case type</h3>
             <p>{{ content.field_case_type|render|striptags }}</p>
             <p>&nbsp;</p>
           </div>
@@ -137,6 +137,7 @@
             {% else %}
               <h4>{{ judge.title }}</h4>
             {% endif %}
+            <div>{{ judge.department }}</div>
             <div>{{ judge.body }}</div>
             <p>&nbsp;</p>
           </div>

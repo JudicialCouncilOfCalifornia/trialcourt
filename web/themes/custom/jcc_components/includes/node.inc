@@ -44,7 +44,7 @@ function jcc_components_preprocess_node(&$variables) {
             $judge_department .= ', ' . $department_term_value;
           }
         }
-        $variables['judges_card'][$judge_key]['body'] .= $judge_department . '<br />';
+        $variables['judges_card'][$judge_key]['department'] = $judge_department;
       }
 
       //rendering judge address field
