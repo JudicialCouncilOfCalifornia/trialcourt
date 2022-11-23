@@ -16,7 +16,8 @@ function jcc_base_preprocess_paragraph(&$variables) {
   if (isset($variables['content']['field_paragraph_background_image'][0]) && isset($variables['content']['field_paragraph_background_image'][0]['#media'])) {
     $image_style = ImageStyle::load('max_2600x2600');
     if ($image_style) {
-      $variables['background_image_url'] = $image_style->buildUrl($variables['content']['field_paragraph_background_image'][0]['#media']->field_media_image->entity->getFileUri());
+      $image_url = $image_style->buildUrl($variables['content']['field_paragraph_background_image'][0]['#media']->field_media_image->entity->getFileUri());
+      $variables['background_image_url'] = _jcc_components_remove_image_protocol($image_url);
     }
   }
 
