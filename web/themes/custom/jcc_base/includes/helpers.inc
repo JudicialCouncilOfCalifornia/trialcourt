@@ -46,7 +46,6 @@ function _jcc_list_faceted_terms($node, $vocabularies) {
  * Implements helper function,.
  */
 function _jcc_get_first_image($node, $style = 'max_325x325') {
-  $image_url = $image_alt = "";
   $node_images = $node->get('field_images')->first();
   if (!empty($node_images->entity) && $node_images->entity->hasField('field_media_image')) {
     $node_image = $node_images->entity->get('field_media_image');
@@ -54,8 +53,7 @@ function _jcc_get_first_image($node, $style = 'max_325x325') {
     if ($node_image) {
       $uri = $node_image->first()->entity->getFileUri();
       $style = \Drupal::entityTypeManager()->getStorage('image_style')->load($style);
-      $image_url = \Drupal::service('file_url_generator')->transformRelative($style->buildUrl($uri));
-
+      $image_url = _jcc_components_remove_image_protocol($style->buildUrl($uri));
       $image_alt = $node_image->first()->alt;
 
       return [
@@ -66,4 +64,17 @@ function _jcc_get_first_image($node, $style = 'max_325x325') {
   }
 
   return FALSE;
+}
+
+/**
+ * Helper function to remove protocol from image paths.
+ *
+ * @param string $image
+ *   The Drupal image url.
+ *
+ * @return string
+ *   Converted url with no http or https.
+ */
+function _jcc_components_remove_image_protocol($image) {
+  return preg_replace('(^https?:||^http?:)', '', $image);
 }
