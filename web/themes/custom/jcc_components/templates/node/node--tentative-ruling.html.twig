@@ -95,34 +95,34 @@
       {% set body %}
         {% if content.field_caption %}
           <div class="jcc-tentative-ruling-details">
-            <h3>Case Number</h3>
+            <h3>{{ 'Case Number'|t }}</h3>
             <p>{{ label }}</p>
             <p>&nbsp;</p>
           </div>
         {% endif %}
         {% if content.field_case_type %}
           <div class="jcc-tentative-ruling-details">
-            <h3>Case type</h3>
-            <p>{{ content.field_case_type|render|striptags }}</p>
+            <h3>{{ 'Case Type'|t }}</h3>
+            <p>{{ content.field_case_type|render }}</p>
             <p>&nbsp;</p>
           </div>
         {% endif %}
         {% if content.field_date_time %}
           <div class="jcc-tentative-ruling-details">
-            <h3>Hearing Date / Time</h3>
+            <h3>{{ 'Hearing Date / Time'|t }}</h3>
             <p>{{ content.field_date_time|render|striptags }}</p>
             <p>&nbsp;</p>
           </div>
         {% endif %}
         {% if content.field_short_text %}
           <div class="jcc-tentative-ruling-details">
-            <h3>Nature of Proceedings</h3>
+            <h3>{{ 'Nature of Proceedings'|t }}</h3>
             <p>{{ content.field_short_text|render|striptags }}</p>
             <p>&nbsp;</p>
           </div>
         {% endif %}
         <div class="tentative-ruling-content">
-          <h3>Tentative ruling</h3>
+          <h3>{{  'Tentative Ruling'|t }}</h3>
           <p>{{ content.body }}</p>
           <p>&nbsp;</p>
         </div>
