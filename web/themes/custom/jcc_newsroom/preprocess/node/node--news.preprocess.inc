@@ -7,6 +7,7 @@
 
 use Drupal\media\Entity\Media;
 use Drupal\file\Entity\File;
+use Drupal\Core\Url;
 
 /**
  * @file
@@ -38,8 +39,9 @@ function jcc_newsroom_preprocess_node__news(&$variables, $hook) {
           ->load('crop_16x9');
         $destination_uri = $style->buildUri($file->uri->value);
         $style->createDerivative($file_uri, $destination_uri);
+        $file_url = Url::fromUri(file_create_url($file_uri));
         $variables['hero_image'] = [
-          'src' => _jcc_components_remove_image_protocol($file_uri),
+          'src' => $file_url,
           'alt' => $media->field_media_image->alt,
           'renderer' => 'patternlab',
         ];
