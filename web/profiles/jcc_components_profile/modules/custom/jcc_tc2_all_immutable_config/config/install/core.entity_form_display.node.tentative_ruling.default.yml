@@ -8,7 +8,6 @@ dependencies:
     - field.field.node.tentative_ruling.field_case_type
     - field.field.node.tentative_ruling.field_custom_link
     - field.field.node.tentative_ruling.field_date_time
-    - field.field.node.tentative_ruling.field_department
     - field.field.node.tentative_ruling.field_judge
     - field.field.node.tentative_ruling.field_short_text
     - node.type.tentative_ruling
@@ -20,7 +19,7 @@ dependencies:
     - scheduler_content_moderation_integration
     - text
 _core:
-  default_config_hash: xz41Xa8ZwQP_WMM1EhaOpDWKUCFmxqpIhMWujBT7EUc
+  default_config_hash: _-lKlBXcmjrqQeQlKvVSzlBpzlFAXthjMhI-zcoFD68
 id: node.tentative_ruling.default
 targetEntityType: node
 bundle: tentative_ruling
@@ -28,7 +27,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 21
+    weight: 19
     region: content
     settings:
       rows: 9
@@ -38,13 +37,13 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
   field_caption:
     type: text_textfield
-    weight: 16
+    weight: 14
     region: content
     settings:
       size: 60
@@ -52,25 +51,19 @@ content:
     third_party_settings: {  }
   field_case_type:
     type: options_select
-    weight: 18
+    weight: 16
     region: content
     settings: {  }
     third_party_settings: {  }
   field_date_time:
     type: datetime_default
-    weight: 19
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_department:
-    type: options_select
-    weight: 15
+    weight: 17
     region: content
     settings: {  }
     third_party_settings: {  }
   field_judge:
     type: entity_reference_autocomplete
-    weight: 17
+    weight: 15
     region: content
     settings:
       match_operator: CONTAINS
@@ -80,60 +73,53 @@ content:
     third_party_settings: {  }
   field_short_text:
     type: text_textfield
-    weight: 20
+    weight: 18
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  langcode:
-    type: language_select
-    weight: 1
-    region: content
-    settings:
-      include_locked: true
-    third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 13
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 11
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 5
+    weight: 4
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 10
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 9
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 14
+    weight: 13
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 6
+    weight: 5
     region: content
     settings:
       display_label: true
@@ -147,13 +133,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 3
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 2
+    weight: 1
     region: content
     settings:
       match_operator: CONTAINS
@@ -163,20 +149,21 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 7
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 8
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
   url_redirects:
-    weight: 12
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
   field_custom_link: true
+  langcode: true
