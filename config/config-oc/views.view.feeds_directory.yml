@@ -3,7 +3,21 @@ langcode: en
 status: true
 dependencies:
   config:
+    - taxonomy.vocabulary.department
+    - taxonomy.vocabulary.division
+    - taxonomy.vocabulary.document_type
+    - taxonomy.vocabulary.event_type
+    - taxonomy.vocabulary.glossary
+    - taxonomy.vocabulary.location_type
+    - taxonomy.vocabulary.matters_served
+    - taxonomy.vocabulary.media_file_category
+    - taxonomy.vocabulary.media_image_category
+    - taxonomy.vocabulary.media_tags
+    - taxonomy.vocabulary.multimedia_type
     - taxonomy.vocabulary.news_type
+    - taxonomy.vocabulary.person_type
+    - taxonomy.vocabulary.subject_matter
+    - taxonomy.vocabulary.topics
   module:
     - taxonomy
     - user
@@ -21,74 +35,8 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: ''
+      title: 'RSS Feeds'
       fields:
-        tid:
-          id: tid
-          table: taxonomy_term_field_data
-          field: tid
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: taxonomy_term
-          entity_field: tid
-          plugin_id: field
-          label: ''
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: number_integer
-          settings:
-            thousand_separator: ''
-            prefix_suffix: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
         name:
           id: name
           table: taxonomy_term_field_data
@@ -105,12 +53,12 @@ display:
             alter_text: false
             text: ''
             make_link: true
-            path: '/cats/{{tid}}'
+            path: '/cats/{{ name }}'
             absolute: false
             external: false
-            replace_spaces: false
+            replace_spaces: true
             path_case: none
-            trim_whitespace: false
+            trim_whitespace: true
             alt: ''
             rel: ''
             link_class: ''
@@ -220,6 +168,72 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+        tid:
+          id: tid
+          table: taxonomy_term_field_data
+          field: tid
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: tid
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: true
+            path: '/cats/{{tid}}'
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_integer
+          settings:
+            thousand_separator: ''
+            prefix_suffix: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
       pager:
         type: none
         options:
@@ -272,7 +286,21 @@ display:
           plugin_id: bundle
           operator: in
           value:
+            department: department
+            division: division
+            document_type: document_type
+            event_type: event_type
+            glossary: glossary
+            location_type: location_type
+            matters_served: matters_served
+            media_file_category: media_file_category
+            media_image_category: media_image_category
+            media_tags: media_tags
+            multimedia_type: multimedia_type
             news_type: news_type
+            person_type: person_type
+            subject_matter: subject_matter
+            topics: topics
           group: 1
           exposed: false
           expose:
@@ -308,7 +336,9 @@ display:
         type: fields
         options:
           default_field_elements: true
-          inline: {  }
+          inline:
+            name: name
+            vid: vid
           separator: ''
           hide_empty: false
       query:
