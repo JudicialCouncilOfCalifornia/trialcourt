@@ -983,3 +983,73 @@ function jcc_tc2_all_immutable_config_update_9002() {
     $webform->save();
   }
 }
+
+/**
+ * Strips duplicate extensions from the redirect url. i.e. pdf.pdf -> .pdf.
+ *
+ * @param string $ext
+ *   The extension to fix.
+ * @param string $column
+ *   The column in the redirect table to perform the fix on.
+ */
+function jcc_tc2_all_immutable_config_redirect_extension_strip($ext = 'pdf', $column = 'redirect_redirect__uri', $pass = 1) {
+  $database = \Drupal::database();
+  $replace = "$ext.$ext";
+
+  $query = $database->select('redirect', 'r')
+    ->fields('r', ['rid', 'redirect_source__path', 'redirect_redirect__uri'])
+    ->condition($column, '%' . $replace, 'LIKE')
+    ->execute();
+
+  $rows = $query->fetchAllAssoc('rid');
+
+  $count = 0;
+  foreach ($rows as $rid => $row) {
+    $redirect = Redirect::load($rid);
+
+    $change = str_replace($replace, ".$ext", $row->$column);
+    $change = str_replace('internal:/', "", $change);
+
+    switch ($column) {
+      case 'redirect_source__path':
+        $redirect->setSource($change);
+        $redirect->save();
+        $count++;
+        break;
+
+      case 'redirect_redirect__uri':
+        $redirect->setRedirect($change);
+        $redirect->save();
+        $count++;
+        break;
+    }
+  }
+
+  \Drupal::messenger()->addMessage("$ext: $count" . ", redirects updated in pass " . $pass);
+
+  $query = $database->select('redirect', 'r')
+    ->fields('r', ['rid', 'redirect_source__path', 'redirect_redirect__uri'])
+    ->condition($column, '%' . $replace, 'LIKE')
+    ->execute();
+
+  if (count($query->fetchAllAssoc('rid'))) {
+    $pass++;
+    jcc_tc2_all_immutable_config_redirect_extension_strip($ext, $column, $pass);
+  }
+}
+
+/**
+ * TCI-1010: Strip additional extensions from redirect paths.
+ */
+function jcc_tc2_all_immutable_config_update_9004() {
+  $site_name = \Drupal::config('system.site')->get('name');
+
+  if ($site_name == 'Superior Court of California | County of Sonoma') {
+    // Strips duplicate extension from the redirect_redirect__uri (default).
+    jcc_tc2_all_immutable_config_redirect_extension_strip('pdf');
+    jcc_tc2_all_immutable_config_redirect_extension_strip('doc');
+    jcc_tc2_all_immutable_config_redirect_extension_strip('png');
+    jcc_tc2_all_immutable_config_redirect_extension_strip('jpg');
+    jcc_tc2_all_immutable_config_redirect_extension_strip('jpeg');
+  }
+}
