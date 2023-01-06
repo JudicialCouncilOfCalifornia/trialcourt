@@ -98,8 +98,8 @@
 
             {% set feed_list %}
 
-              {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
-                link_list: {
+              {% include '@molecules/list/list.twig' with {
+                list: {
                   columns: column_size,
                   files_list: true,
                   items: feed_links,
@@ -132,9 +132,9 @@
           }
         } %}
 
-      {% include '@organisms/text-section/text-section.twig' with {
-          text_section: {
-            column_content_left: body,
+      {% include '@molecules/section/section.twig' with {
+          section: {
+            content: body,
           }
         }%}
       </div>
