@@ -36,9 +36,7 @@ function jcc_components_preprocess_views_view__feeds_directory__page_1(&$variabl
         break;
 
       default:
-        //if ($term_name === 'Feature' or $term_name === 'News Release') {
-          array_push($feeds_types, $feed_details);
-        //}
+        array_push($feeds_types, $feed_details);
     }
   }
 
