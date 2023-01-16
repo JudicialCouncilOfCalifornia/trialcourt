@@ -31,14 +31,14 @@ function jcc_components_preprocess_views_view__feeds_directory__page_1(&$variabl
     ];
 
     switch ($vid) {
-      case 'topics':
+      case 'news_type':
         array_push($feeds_topics, $feed_details);
         break;
 
       default:
-        if ($term_name === 'Feature' or $term_name === 'News Release') {
+        //if ($term_name === 'Feature' or $term_name === 'News Release') {
           array_push($feeds_types, $feed_details);
-        }
+        //}
     }
   }
 
