@@ -41,13 +41,14 @@ function jcc_components_preprocess_views_view__feeds_directory__page_1(&$variabl
   }
 
   $feeds_types = $feeds_topics;
-  $feeds_topic = [];
   foreach ($feeds_types as $key => $type) {
     if ($type['name'] != 'News Release') {
-      $feeds_topic[] = $type;
       unset($feeds_types[$key]);
     }
   }
+  $feeds_types = array_values($feeds_types);
+  $feeds_types[0]['name'] = 'News & Events';
+  $feeds_types[0]['url'] = '/news-events';
   $feeds = [
     [
       'feed_type' => 'popular',
@@ -55,7 +56,7 @@ function jcc_components_preprocess_views_view__feeds_directory__page_1(&$variabl
     ],
     [
       'feed_type' => 'topics',
-      'feed_items' => $feeds_topic,
+      'feed_items' => $feeds_topics,
     ],
   ];
 
