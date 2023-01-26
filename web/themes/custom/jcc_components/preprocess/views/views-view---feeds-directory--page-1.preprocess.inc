@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Preprocessors for views.
@@ -30,17 +31,24 @@ function jcc_components_preprocess_views_view__feeds_directory__page_1(&$variabl
     ];
 
     switch ($vid) {
-      case 'topics':
+      case 'news_type':
         array_push($feeds_topics, $feed_details);
         break;
 
       default:
-        if ($term_name === 'Feature' or $term_name === 'News Release') {
-          array_push($feeds_types, $feed_details);
-        }
+        array_push($feeds_types, $feed_details);
     }
   }
 
+  $feeds_types = $feeds_topics;
+  foreach ($feeds_types as $key => $type) {
+    if ($type['name'] != 'News Release') {
+      unset($feeds_types[$key]);
+    }
+  }
+  $feeds_types = array_values($feeds_types);
+  $feeds_types[0]['name'] = 'News & Events';
+  $feeds_types[0]['url'] = '/news-events';
   $feeds = [
     [
       'feed_type' => 'popular',
