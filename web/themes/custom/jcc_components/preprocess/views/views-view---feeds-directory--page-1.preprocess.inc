@@ -51,11 +51,11 @@ function jcc_components_preprocess_views_view__feeds_directory__page_1(&$variabl
   $feeds_types[0]['url'] = '/news-events';
   $feeds = [
     [
-      'feed_type' => 'popular',
+      'feed_type' => 'News Feed',
       'feed_items' => $feeds_types,
     ],
     [
-      'feed_type' => 'topics',
+      'feed_type' => 'Categories',
       'feed_items' => $feeds_topics,
     ],
   ];
