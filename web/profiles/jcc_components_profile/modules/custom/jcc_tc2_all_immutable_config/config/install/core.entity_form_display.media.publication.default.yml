@@ -7,8 +7,18 @@ dependencies:
     - field.field.media.publication.field_division
     - field.field.media.publication.field_document_type
     - field.field.media.publication.field_media_file
+    - field.field.media.publication.field_media_file_arabic
+    - field.field.media.publication.field_media_file_cambodian
+    - field.field.media.publication.field_media_file_chinese
+    - field.field.media.publication.field_media_file_chinese_simple
+    - field.field.media.publication.field_media_file_farsi
+    - field.field.media.publication.field_media_file_hmong
+    - field.field.media.publication.field_media_file_korean
     - field.field.media.publication.field_media_file_multiple
+    - field.field.media.publication.field_media_file_punjabi
+    - field.field.media.publication.field_media_file_russian
     - field.field.media.publication.field_media_file_spanish
+    - field.field.media.publication.field_media_file_tagalog
     - field.field.media.publication.field_media_file_vietnamese
     - field.field.media.publication.field_media_text
     - field.field.media.publication.field_topic
@@ -16,9 +26,55 @@ dependencies:
   module:
     - autocomplete_deluxe
     - datetime
+    - field_group
     - file
     - path
     - text
+third_party_settings:
+  field_group:
+    group_translated_files:
+      children:
+        - field_media_file_arabic
+        - field_media_file_cambodian
+        - field_media_file_chinese_simple
+        - field_media_file_chinese
+        - field_media_file_farsi
+        - field_media_file_hmong
+        - field_media_file_korean
+        - field_media_file_punjabi
+        - field_media_file_russian
+        - field_media_file_spanish
+        - field_media_file_tagalog
+        - field_media_file_vietnamese
+      label: 'Translated Files'
+      region: content
+      parent_name: ''
+      weight: 9
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        id: ''
+        description: ''
+        required_fields: true
+        effect: none
+        formatter: closed
+    group_tags:
+      children:
+        - field_division
+        - field_topic
+        - field_case_type
+      label: Tags
+      region: content
+      parent_name: ''
+      weight: 8
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        id: ''
+        description: ''
+        required_fields: true
+_core:
+  default_config_hash: 1eBF8M-jLQ4CAvlyYPP53-9rHuOuG6w5drDsm_WrB1E
 id: media.publication.default
 targetEntityType: media
 bundle: publication
@@ -87,6 +143,55 @@ content:
       new_terms: false
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
+  field_media_file_arabic:
+    type: file_generic
+    weight: 16
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_cambodian:
+    type: file_generic
+    weight: 17
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_chinese:
+    type: file_generic
+    weight: 20
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_chinese_simple:
+    type: file_generic
+    weight: 18
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_farsi:
+    type: file_generic
+    weight: 21
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_hmong:
+    type: file_generic
+    weight: 22
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_korean:
+    type: file_generic
+    weight: 23
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
   field_media_file_multiple:
     type: file_generic
     weight: 7
@@ -94,16 +199,37 @@ content:
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
+  field_media_file_punjabi:
+    type: file_generic
+    weight: 24
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_russian:
+    type: file_generic
+    weight: 25
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
   field_media_file_spanish:
     type: file_generic
-    weight: 8
+    weight: 26
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_tagalog:
+    type: file_generic
+    weight: 27
     region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
   field_media_file_vietnamese:
     type: file_generic
-    weight: 9
+    weight: 28
     region: content
     settings:
       progress_indicator: throbber
