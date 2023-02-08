@@ -17,7 +17,7 @@ class FormFieldsForm extends FormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'dn_student_form';
+    return 'formfields-form';
   }
 
   /**
