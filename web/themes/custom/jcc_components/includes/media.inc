@@ -87,7 +87,7 @@ function jcc_components_preprocess_media__publication(&$variables) {
       }
       else {
         foreach ($lang_label_sets as $label) {
-          if ($lang_variant[0] == $label->label_default) {
+          if (($lang_variant[0] == $label->label_default) && $field->target_id) {
             $file = File::load($field->target_id);
             $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
             $languages[] = [
