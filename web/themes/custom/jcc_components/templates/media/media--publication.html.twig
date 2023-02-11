@@ -1,0 +1,59 @@
+{#
+/**
+ * @file
+ * Theme override to display a media item.
+ *
+ * Available variables:
+ * - name: Name of the media.
+ * - content: Media content.
+ * - publication: Preprocessed Media content.
+ *
+ * @see template_preprocess_media()
+ *
+ * @ingroup themeable
+ */
+#}
+<article class="usa-prose" aria-label="publication media embed">
+  <h1>{{ name }}</h1>
+  <div>
+    {% if publication.published %}
+      <p><strong>Date:</strong> {{ publication.published }}</p>
+    {% endif %}
+    {% if publication.division %}
+      <p><strong>Office/Division:</strong> {{ publication.division }}</p>
+    {% endif %}
+    {% if publication.topic %}
+      <p><strong>Topic:</strong> {{ publication.topic }}</p>
+    {% endif %}
+    {% if publication.case_type %}
+      <p><strong>Case Type:</strong> {{ publication.case_type }}</p>
+    {% endif %}
+  </div>
+  <div>
+    {% if publication.body %}{{ publication.body }}{% endif %}
+    {% if publication.documents or publication.type %}
+      <p>
+        <strong>
+          {{ publication.primary_file_type }}
+          {% if publication.documents and publication.type %} •{% endif %}
+          {{ publication.type }}
+        </strong>
+      </p>
+    {% endif %}
+    {% if publication.documents %}
+      <p>
+        {% for document in publication.documents %}
+          <a href="{{ document.url }}">Download {{ document.file_type }}</a>
+        {% endfor %}
+      </p>
+    {% endif %}
+    {% if publication.languages %}
+      <p>
+        {% for language in publication.languages %}
+          <a href="{{ language.url }}">{{ language.label }}</a>
+          {% if loop.last == false %} | {% endif%}
+        {% endfor %}
+      </p>
+    {% endif %}
+  </div>
+</article>
