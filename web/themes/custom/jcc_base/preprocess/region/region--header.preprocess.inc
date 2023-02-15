@@ -98,6 +98,7 @@ function jcc_base_preprocess_region__header(&$variables) {
     'primary_nav' => $primary_nav,
     'title' => $site_name,
     'logo' => $logo,
+    'home_url' => '/',
     'menu_icon' => [
       'name' => 'menu',
       'title' => "Main navigation",
