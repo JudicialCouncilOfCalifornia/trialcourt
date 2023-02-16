@@ -27,12 +27,6 @@ After this runs it will give you instructions to set up the new Drupal instance 
       - settings.pantheon.php
       - settings.php
     - Do initial configurations and export (@see Initial configurations)
-    - For most sites, build Hat menu at `/admin/structure/menu/manage/hat`:
-      - Supreme Court ... https://supreme.courts.ca.gov
-      - Courts of Appeal ... https://www.courts.ca.gov/courtsofappeal.htm
-      - Superior Courts ... https://www.courts.ca.gov/superiorcourts.htm
-      - Judicial Council ... https://www.courts.ca.gov/policyadmin-jc.htm
-    - Dump the database to import at Pantheon
 
 ## Initial configurations
 
@@ -50,7 +44,8 @@ Install only the following themes
 Configure theme at `/admin/appearance/settings/jcc_components`:
 - Add the logo.svg to /web/sites/[site]/logo.svg
 - Set the path to sites/[site]/logo.svg
-- Set the various other theme settings. When in doubt, use the placeholders.
+- Set the various other theme settings. When in doubt, use the placeholders but not the `Base` scheme.
+- Disable Google Translator if not in use
 
 If admin console UI seems broken, confirm/configure administration theme at `/admin/appearance`:
 - Set the Administration theme setting to not use default (currently Gin).
@@ -66,24 +61,35 @@ Create Landing Page
 
 ### Configure site and modules
 
-- At `/admin/config/system/site-information`:
+- Configure basic site information
+  * `/admin/config/system/site-information`:
   * Site Name: `Superior Court of California | County of ...`
   * Site email: `no-reply@courtinfo.ca.gov`
   * Front page: `/node/1`  (or your home page if not node/1)
-- Configure Bing Maps API Key (default for webservices):
+- Configure Hat & Shoe
+  * Hat
+    * `/admin/structure/menu/manage/hat`:
+    * Supreme Court ... https://supreme.courts.ca.gov
+    * Courts of Appeal ... https://www.courts.ca.gov/courtsofappeal.htm
+    * Superior Courts ... https://www.courts.ca.gov/superiorcourts.htm
+    * Judicial Council ... https://www.courts.ca.gov/policyadmin-jc.htm
+  * Shoe
+    * `/admin/structure/menu/manage/shoe`:
+    * Privacy ... https://www.courts.ca.gov/11530.htm?rdeLocaleAttr=en
+    * Terms of Use ... https://www.courts.ca.gov/11529.htm?rdeLocaleAttr=en
+- Configure Bing Maps API Key:
   * `/admin/config/system/geocoder/geocoder-provider`
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
 - Configure SendGrid:
   * `/admin/config/system/keys/manage/sendgrid`
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
   * Note: site's email address needs to be `no-reply@courtinfo.ca.gov` for SendGrid to work.
-- Setup defaults for Google Tag module:
-  (Doesn't this happen on install?)
+- Setup defaults for Google Tag module: (if available else later done)
   * `lando drush @local.[site] cim --partial --source=/app/web/modules/contrib/google_tag/config/install/`
 - Configure GoogleRecaptcha:
   * `/admin/config/people/captcha/recaptcha`
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
-- Configure OpenID with Azure Active Directory
+- Configure OpenID with Azure Active Directory (optional)
   - See OneNote documentation
 
 ### Create users
