@@ -9,6 +9,9 @@
 
   Drupal.behaviors.jccForms = {
     attach: function (context, settings) {
+      if (window.location.pathname == '/rss') {
+        jQuery('.jcc-hero__main-title').text('RSS Feeds');
+      }
       var $form = $('.usa-form', context);
 
       // Early return if there is no form.
