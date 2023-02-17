@@ -14,10 +14,13 @@ dependencies:
     - media.type.remote_video
     - node.type.alert
     - node.type.document
+    - node.type.judge
     - node.type.landing_page
     - node.type.location
     - node.type.news
     - node.type.subpage
+    - node.type.tentative_ruling
+    - taxonomy.vocabulary.case_type
     - taxonomy.vocabulary.department
     - taxonomy.vocabulary.division
     - taxonomy.vocabulary.document_type
@@ -25,6 +28,8 @@ dependencies:
     - taxonomy.vocabulary.glossary
     - taxonomy.vocabulary.location_type
     - taxonomy.vocabulary.matters_served
+    - taxonomy.vocabulary.media_file_category
+    - taxonomy.vocabulary.media_image_category
     - taxonomy.vocabulary.multimedia_type
     - taxonomy.vocabulary.news_type
     - taxonomy.vocabulary.person_type
@@ -48,6 +53,8 @@ dependencies:
     - menu_admin_per_menu
     - moderated_content_bulk_publish
     - node
+    - nodeaccess
+    - openid_connect
     - paragraphs
     - path
     - protected_pages
@@ -63,14 +70,13 @@ dependencies:
     - webform_translation_permissions
     - xlsx
 _core:
-  default_config_hash: G-ihE9bbDyCN4hN0QPS2uIVHgJSejwcN5mt4MWHp930
+  default_config_hash: mXDP_ubdCsgYwicK3mxdg8_WuZ-RtxaNP57gxq9wvjM
 id: manager
 label: Manager
-weight: -3
+weight: -7
 is_admin: null
 permissions:
   - 'access administration pages'
-  - 'access any webform configuration'
   - 'access content overview'
   - 'access contextual links'
   - 'access entity usage statistics'
@@ -79,41 +85,29 @@ permissions:
   - 'access media overview'
   - 'access media_entity_browser entity browser pages'
   - 'access media_entity_browser_modal entity browser pages'
-  - 'access own webform configuration'
   - 'access protected page password screen'
   - 'access taxonomy overview'
   - 'access toolbar'
   - 'access user profiles'
-  - 'access webform help'
   - 'access webform overview'
-  - 'access webform submission user'
   - 'add xlsx mapping'
-  - 'administer account menu items'
-  - 'administer admin menu items'
-  - 'administer featured-links menu items'
   - 'administer footer menu items'
   - 'administer google tag manager'
   - 'administer hat menu items'
   - 'administer main menu items'
-  - 'administer menu'
   - 'administer nodes'
   - 'administer protected pages configuration'
   - 'administer redirects'
-  - 'administer secondary-footer menu items'
   - 'administer shoe menu items'
-  - 'administer taxonomy'
   - 'administer themes'
-  - 'administer tools menu items'
   - 'administer users'
   - 'administer webform element access'
   - 'administer xlsx mapping'
-  - 'administer xmlsitemap'
   - 'assign author role'
   - 'assign contributor role'
   - 'assign editor role'
   - 'assign legal_files role'
   - 'assign manager role'
-  - 'assign translator role'
   - 'bypass pages password protection'
   - 'change own username'
   - 'create alert content'
@@ -122,12 +116,15 @@ permissions:
   - 'create document content'
   - 'create file media'
   - 'create image media'
+  - 'create judge content'
   - 'create landing_page content'
   - 'create location content'
   - 'create media'
   - 'create news content'
   - 'create remote_video media'
   - 'create subpage content'
+  - 'create tentative_ruling content'
+  - 'create terms in case_type'
   - 'create terms in department'
   - 'create terms in division'
   - 'create terms in document_type'
@@ -135,6 +132,8 @@ permissions:
   - 'create terms in glossary'
   - 'create terms in location_type'
   - 'create terms in matters_served'
+  - 'create terms in media_file_category'
+  - 'create terms in media_image_category'
   - 'create terms in multimedia_type'
   - 'create terms in news_type'
   - 'create terms in person_type'
@@ -150,15 +149,18 @@ permissions:
   - 'delete any document content'
   - 'delete any file media'
   - 'delete any image media'
+  - 'delete any judge content'
   - 'delete any landing_page content'
   - 'delete any location content'
   - 'delete any media'
   - 'delete any news content'
   - 'delete any remote_video media'
   - 'delete any subpage content'
+  - 'delete any tentative_ruling content'
   - 'delete any webform'
   - 'delete content translations'
   - 'delete document revisions'
+  - 'delete judge revisions'
   - 'delete landing_page revisions'
   - 'delete location revisions'
   - 'delete media'
@@ -169,14 +171,18 @@ permissions:
   - 'delete own document content'
   - 'delete own file media'
   - 'delete own image media'
+  - 'delete own judge content'
   - 'delete own landing_page content'
   - 'delete own location content'
   - 'delete own news content'
   - 'delete own remote_video media'
   - 'delete own subpage content'
+  - 'delete own tentative_ruling content'
   - 'delete own webform'
   - 'delete own webform submission'
   - 'delete subpage revisions'
+  - 'delete tentative_ruling revisions'
+  - 'delete terms in case_type'
   - 'delete terms in department'
   - 'delete terms in division'
   - 'delete terms in document_type'
@@ -184,6 +190,8 @@ permissions:
   - 'delete terms in glossary'
   - 'delete terms in location_type'
   - 'delete terms in matters_served'
+  - 'delete terms in media_file_category'
+  - 'delete terms in media_image_category'
   - 'delete terms in multimedia_type'
   - 'delete terms in news_type'
   - 'delete terms in person_type'
@@ -196,11 +204,13 @@ permissions:
   - 'edit any document content'
   - 'edit any file media'
   - 'edit any image media'
+  - 'edit any judge content'
   - 'edit any landing_page content'
   - 'edit any location content'
   - 'edit any news content'
   - 'edit any remote_video media'
   - 'edit any subpage content'
+  - 'edit any tentative_ruling content'
   - 'edit any webform'
   - 'edit any webform submission'
   - 'edit own alert content'
@@ -208,13 +218,16 @@ permissions:
   - 'edit own document content'
   - 'edit own file media'
   - 'edit own image media'
+  - 'edit own judge content'
   - 'edit own landing_page content'
   - 'edit own location content'
   - 'edit own news content'
   - 'edit own remote_video media'
   - 'edit own subpage content'
+  - 'edit own tentative_ruling content'
   - 'edit own webform'
   - 'edit own webform submission'
+  - 'edit terms in case_type'
   - 'edit terms in department'
   - 'edit terms in division'
   - 'edit terms in document_type'
@@ -222,6 +235,8 @@ permissions:
   - 'edit terms in glossary'
   - 'edit terms in location_type'
   - 'edit terms in matters_served'
+  - 'edit terms in media_file_category'
+  - 'edit terms in media_image_category'
   - 'edit terms in multimedia_type'
   - 'edit terms in news_type'
   - 'edit terms in person_type'
@@ -230,23 +245,27 @@ permissions:
   - 'edit terms in topics'
   - 'edit xlsx mapping'
   - 'export xlsx'
+  - 'grant node permissions'
   - 'import xlsx'
   - 'moderated content bulk publish'
   - 'moderated content bulk unpublish'
+  - 'openid connect set own password'
   - 'perform batch updates entity usage'
   - 'rebuild cache access'
   - 'revert alert revisions'
   - 'revert all revisions'
   - 'revert document revisions'
+  - 'revert judge revisions'
   - 'revert landing_page revisions'
   - 'revert location revisions'
   - 'revert news revisions'
   - 'revert subpage revisions'
+  - 'revert tentative_ruling revisions'
   - 'schedule publishing of nodes'
   - 'skip CAPTCHA'
   - 'translate alert node'
   - 'translate any webform'
-  - 'translate configuration'
+  - 'translate case_type taxonomy_term'
   - 'translate department taxonomy_term'
   - 'translate division taxonomy_term'
   - 'translate document node'
@@ -254,22 +273,20 @@ permissions:
   - 'translate event_type taxonomy_term'
   - 'translate glossary taxonomy_term'
   - 'translate image media'
-  - 'translate interface'
   - 'translate landing_page node'
   - 'translate location node'
   - 'translate location_type taxonomy_term'
   - 'translate matters_served taxonomy_term'
-  - 'translate menu_link_content'
   - 'translate multimedia_type taxonomy_term'
   - 'translate news node'
   - 'translate news_type taxonomy_term'
   - 'translate own webform'
   - 'translate paragraph'
   - 'translate person_type taxonomy_term'
-  - 'translate snippet media'
   - 'translate subject_matter taxonomy_term'
   - 'translate subpage node'
   - 'translate tags taxonomy_term'
+  - 'translate tentative_ruling node'
   - 'translate topics taxonomy_term'
   - 'update any media'
   - 'update content translations'
@@ -291,6 +308,7 @@ permissions:
   - 'view any unpublished content'
   - 'view any webform submission'
   - 'view document revisions'
+  - 'view judge revisions'
   - 'view landing_page revisions'
   - 'view latest version'
   - 'view location revisions'
@@ -300,5 +318,6 @@ permissions:
   - 'view own webform submission'
   - 'view scheduled content'
   - 'view subpage revisions'
+  - 'view tentative_ruling revisions'
   - 'view the administration theme'
   - 'view unpublished paragraphs'

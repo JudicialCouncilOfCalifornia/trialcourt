@@ -1,15 +1,64 @@
 uuid: 8a9c655a-2f1f-4044-97fb-dc7f49d29851
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  config:
+    - filter.format.aside
+    - filter.format.body
+    - filter.format.minimal
+    - filter.format.restricted_html
+    - media.type.boxcast_stream
+    - media.type.file
+    - media.type.image
+    - media.type.remote_video
+    - node.type.alert
+    - node.type.document
+    - node.type.judge
+    - node.type.landing_page
+    - node.type.location
+    - node.type.news
+    - node.type.subpage
+    - node.type.tentative_ruling
+    - taxonomy.vocabulary.case_type
+    - taxonomy.vocabulary.department
+    - taxonomy.vocabulary.division
+    - taxonomy.vocabulary.document_type
+    - taxonomy.vocabulary.event_type
+    - taxonomy.vocabulary.glossary
+    - taxonomy.vocabulary.location_type
+    - taxonomy.vocabulary.matters_served
+    - taxonomy.vocabulary.multimedia_type
+    - taxonomy.vocabulary.news_type
+    - taxonomy.vocabulary.person_type
+    - taxonomy.vocabulary.subject_matter
+    - taxonomy.vocabulary.tags
+    - taxonomy.vocabulary.topics
+    - workflows.workflow.editorial
+  module:
+    - captcha
+    - content_moderation
+    - contextual
+    - entity_browser
+    - environment_indicator
+    - filter
+    - media
+    - node
+    - paragraphs
+    - path
+    - rebuild_cache_access
+    - scheduler
+    - system
+    - taxonomy
+    - toolbar
 _core:
-  default_config_hash: CNIjst0gA4n_hMjrAPfKG-4P4qxEDvXe-YckmUQ3Zok
+  default_config_hash: iN_I3I3kkj-qA-mWFW5YEOc3rFWyKj9SEdRKp_Kl4UU
 id: contributor
 label: Contributor
 weight: -6
 is_admin: null
 permissions:
   - 'access administration pages'
+  - 'access content'
   - 'access content overview'
   - 'access contextual links'
   - 'access environment indicator'
@@ -20,17 +69,12 @@ permissions:
   - 'access toolbar'
   - 'access user profiles'
   - 'change own username'
-  - 'create alert content'
   - 'create boxcast_stream media'
-  - 'create document content'
   - 'create file media'
   - 'create image media'
-  - 'create landing_page content'
-  - 'create location content'
   - 'create media'
-  - 'create news content'
   - 'create remote_video media'
-  - 'create subpage content'
+  - 'create terms in case_type'
   - 'create terms in department'
   - 'create terms in division'
   - 'create terms in document_type'
@@ -55,26 +99,14 @@ permissions:
   - 'delete own file media'
   - 'delete own image media'
   - 'delete own remote_video media'
-  - 'edit any alert content'
   - 'edit any boxcast_stream media'
-  - 'edit any document content'
   - 'edit any file media'
   - 'edit any image media'
-  - 'edit any landing_page content'
-  - 'edit any location content'
-  - 'edit any news content'
   - 'edit any remote_video media'
-  - 'edit any subpage content'
-  - 'edit own alert content'
   - 'edit own boxcast_stream media'
-  - 'edit own document content'
   - 'edit own file media'
   - 'edit own image media'
-  - 'edit own landing_page content'
-  - 'edit own location content'
-  - 'edit own news content'
   - 'edit own remote_video media'
-  - 'edit own subpage content'
   - 'edit terms in department'
   - 'edit terms in division'
   - 'edit terms in document_type'
@@ -95,6 +127,7 @@ permissions:
   - 'revert location revisions'
   - 'revert news revisions'
   - 'revert subpage revisions'
+  - 'revert tentative_ruling revisions'
   - 'schedule publishing of nodes'
   - 'skip CAPTCHA'
   - 'update any media'
@@ -111,6 +144,7 @@ permissions:
   - 'view all media revisions'
   - 'view any unpublished content'
   - 'view document revisions'
+  - 'view judge revisions'
   - 'view landing_page revisions'
   - 'view latest version'
   - 'view location revisions'
@@ -119,5 +153,6 @@ permissions:
   - 'view own unpublished media'
   - 'view scheduled content'
   - 'view subpage revisions'
+  - 'view tentative_ruling revisions'
   - 'view the administration theme'
   - 'view unpublished paragraphs'

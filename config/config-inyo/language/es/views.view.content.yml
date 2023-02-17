@@ -2,19 +2,9 @@ label: Contenido
 description: 'Encontrar y administrar contenido.'
 display:
   default:
+    display_title: Máster
     display_options:
-      exposed_form:
-        options:
-          submit_button: Filtro
-          reset_button_label: Restablecer
-          exposed_sorts_label: 'Ordenar por'
-      pager:
-        options:
-          tags:
-            previous: '‹ Anterior'
-            next: 'Siguiente >'
-            first: '« Primero'
-            last: 'Último »'
+      title: Contenido
       fields:
         title:
           label: Título
@@ -25,12 +15,26 @@ display:
         status:
           label: Estado
           settings:
-            format_custom_true: Publicado
             format_custom_false: 'Sin publicar'
+            format_custom_true: Publicado
         changed:
           label: Actualizado
         operations:
           label: Operaciones
+        content_translation_outdated:
+          label: Traducción
+      pager:
+        options:
+          tags:
+            next: 'Siguiente >'
+            previous: '‹ Anterior'
+            first: '« Primero'
+            last: 'Último »'
+      exposed_form:
+        options:
+          submit_button: Filtro
+          reset_button_label: Restablecer
+          exposed_sorts_label: 'Ordenar por'
       filters:
         title:
           expose:
@@ -51,16 +55,14 @@ display:
         langcode:
           expose:
             label: Idioma
-      title: Contenido
       empty:
         area_text_custom:
           content: 'No hay contenido disponible.'
-    display_title: Máster
   page_1:
+    display_title: Página
     display_options:
       menu:
         title: Contenido
       tab_options:
         title: Contenido
         description: 'Encuentre y gestione el contenido'
-    display_title: Página

@@ -4,17 +4,7 @@ display:
   default:
     display_title: Máster
     display_options:
-      exposed_form:
-        options:
-          submit_button: Filtro
-          reset_button_label: Restablecer
-          exposed_sorts_label: 'Ordenar por'
-      pager:
-        options:
-          expose:
-            items_per_page_label: 'Elementos por página'
-            items_per_page_options_all_label: '- Todo -'
-            offset_label: Desplazamiento
+      title: 'Mensajes recientes del registro'
       fields:
         nothing:
           admin_label: Icono
@@ -30,6 +20,21 @@ display:
           label: Usuario
         link:
           label: Operaciones
+      pager:
+        options:
+          expose:
+            items_per_page_label: 'Elementos por página'
+            items_per_page_options_all_label: '- Todo -'
+            offset_label: Desplazamiento
+      exposed_form:
+        options:
+          submit_button: Filtro
+          reset_button_label: Restablecer
+          exposed_sorts_label: 'Ordenar por'
+      empty:
+        area:
+          admin_label: 'No hay mensajes disponibles.'
+          content: 'No hay mensajes disponibles.'
       filters:
         type:
           expose:
@@ -37,10 +42,5 @@ display:
         severity:
           expose:
             label: Gravedad
-      title: 'Mensajes recientes del registro'
-      empty:
-        area:
-          admin_label: 'No hay mensajes disponibles.'
-          content: 'No hay mensajes disponibles.'
   page:
     display_title: Página
