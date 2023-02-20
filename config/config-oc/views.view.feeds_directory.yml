@@ -37,10 +37,10 @@ display:
     display_options:
       title: 'RSS Feeds'
       fields:
-        tid:
-          id: tid
+        name:
+          id: name
           table: taxonomy_term_field_data
-          field: tid
+          field: name
           relationship: none
           group_type: group
           admin_label: ''
@@ -49,6 +49,10 @@ display:
           plugin_id: field
           label: ''
           exclude: true
+          entity_field: name
+          plugin_id: term_name
+          label: ''
+          exclude: false
           alter:
             alter_text: false
             text: ''
@@ -59,6 +63,12 @@ display:
             replace_spaces: false
             path_case: none
             trim_whitespace: false
+            path: '/cats/{{ name }}'
+            absolute: false
+            external: false
+            replace_spaces: true
+            path_case: none
+            trim_whitespace: true
             alt: ''
             rel: ''
             link_class: ''
@@ -69,6 +79,8 @@ display:
             max_length: 0
             word_boundary: true
             ellipsis: true
+            word_boundary: false
+            ellipsis: false
             more_link: false
             more_link_text: ''
             more_link_path: ''
@@ -93,6 +105,9 @@ display:
           settings:
             thousand_separator: ''
             prefix_suffix: true
+          type: string
+          settings:
+            link_to_entity: false
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -103,6 +118,7 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+          convert_spaces: false
         vid:
           id: vid
           table: taxonomy_term_field_data
@@ -172,12 +188,18 @@ display:
           id: name
           table: taxonomy_term_field_data
           field: name
+        tid:
+          id: tid
+          table: taxonomy_term_field_data
+          field: tid
           relationship: none
           group_type: group
           admin_label: ''
           entity_type: taxonomy_term
           entity_field: name
           plugin_id: term_name
+          entity_field: tid
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -190,6 +212,12 @@ display:
             replace_spaces: true
             path_case: none
             trim_whitespace: true
+            path: '/cats/{{tid}}'
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
             alt: ''
             rel: ''
             link_class: ''
@@ -200,6 +228,8 @@ display:
             max_length: 0
             word_boundary: false
             ellipsis: false
+            word_boundary: true
+            ellipsis: true
             more_link: false
             more_link_text: ''
             more_link_path: ''
@@ -223,6 +253,10 @@ display:
           type: string
           settings:
             link_to_entity: false
+          type: number_integer
+          settings:
+            thousand_separator: ''
+            prefix_suffix: true
           group_column: value
           group_columns: {  }
           group_rows: true
