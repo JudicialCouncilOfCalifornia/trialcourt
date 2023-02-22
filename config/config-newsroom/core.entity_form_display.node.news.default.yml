@@ -347,21 +347,10 @@ content:
         maxlength_js: 255
         maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
   field_tags:
-    type: autocomplete_deluxe
+    type: options_select
     weight: 4
     region: content
-    settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: true
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: true
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    settings: { }
     third_party_settings: {  }
   field_topics:
     type: super_term_reference_autocomplete_widget
