@@ -2,6 +2,8 @@ uuid: 92db91c8-6d39-4e55-ab85-52d08474ad60
 langcode: en
 status: true
 dependencies: {  }
+_core:
+  default_config_hash: 79LtO7H-VRfwENRd7_T9UFWdnEV_I7n9lL3dw1AB44w
 id: forms_media
 class: null
 field_plugin_method: null
@@ -42,6 +44,7 @@ process:
     -
       plugin: path_from_url
       source: url
+      remove_extension: true
     -
       plugin: callback
       callable: basename
@@ -52,11 +55,7 @@ process:
       plugin: skip_on_empty
       method: process
       message: 'Cannot import empty filename.'
-  name:
-    plugin: null_coalesce
-    source:
-      - '@pseudo_encoded_title'
-      - '@pseudo_destination_filename'
+  name: '@pseudo_destination_filename'
   field_media_file/target_id:
     -
       plugin: migration_lookup
