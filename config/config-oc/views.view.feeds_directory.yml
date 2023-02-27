@@ -45,10 +45,6 @@ display:
           group_type: group
           admin_label: ''
           entity_type: taxonomy_term
-          entity_field: tid
-          plugin_id: field
-          label: ''
-          exclude: true
           entity_field: name
           plugin_id: term_name
           label: ''
@@ -57,12 +53,6 @@ display:
             alter_text: false
             text: ''
             make_link: true
-            path: '/cats/{{tid}}'
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
             path: '/cats/{{ name }}'
             absolute: false
             external: false
@@ -77,8 +67,6 @@ display:
             target: ''
             nl2br: false
             max_length: 0
-            word_boundary: true
-            ellipsis: true
             word_boundary: false
             ellipsis: false
             more_link: false
@@ -101,10 +89,6 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: number_integer
-          settings:
-            thousand_separator: ''
-            prefix_suffix: true
           type: string
           settings:
             link_to_entity: false
@@ -184,10 +168,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        name:
-          id: name
-          table: taxonomy_term_field_data
-          field: name
         tid:
           id: tid
           table: taxonomy_term_field_data
@@ -196,8 +176,6 @@ display:
           group_type: group
           admin_label: ''
           entity_type: taxonomy_term
-          entity_field: name
-          plugin_id: term_name
           entity_field: tid
           plugin_id: field
           label: ''
@@ -206,12 +184,6 @@ display:
             alter_text: false
             text: ''
             make_link: true
-            path: '/cats/{{ tid }}'
-            absolute: false
-            external: false
-            replace_spaces: true
-            path_case: none
-            trim_whitespace: true
             path: '/cats/{{tid}}'
             absolute: false
             external: false
@@ -226,8 +198,6 @@ display:
             target: ''
             nl2br: false
             max_length: 0
-            word_boundary: false
-            ellipsis: false
             word_boundary: true
             ellipsis: true
             more_link: false
@@ -250,9 +220,6 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: false
           type: number_integer
           settings:
             thousand_separator: ''

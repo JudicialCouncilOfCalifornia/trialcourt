@@ -4,10 +4,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - node.type.news
-  module:
-    - node
-    - taxonomy
     - field.storage.node.body
     - field.storage.node.field_components
     - field.storage.node.field_date
@@ -161,44 +157,6 @@ display:
             title_enable: false
             title: All
           title_enable: true
-          title: 'Category : {{ arguments.term_node_taxonomy_name_depth }} '
-          default_argument_type: fixed
-          default_argument_options:
-            argument: ''
-          default_argument_skip_url: false
-          summary_options:
-            base_path: ''
-            count: true
-            override: false
-            items_per_page: 25
-          summary:
-            sort_order: asc
-            number_of_records: 0
-            format: default_summary
-          specify_validation: false
-          validate:
-            type: none
-            fail: 'not found'
-          validate_options: {  }
-          break_phrase: false
-          depth: 0
-          use_taxonomy_term_path: false
-        term_node_tid_depth_1:
-          id: term_node_tid_depth_1
-          table: node_field_data
-          field: term_node_tid_depth
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: node
-          plugin_id: taxonomy_index_tid_depth
-          default_action: ignore
-          exception:
-            value: all
-            title_enable: false
-            title: All
-          title_enable: false
-          title: ''
           title: 'Category : {{ arguments.term_node_tid_depth }} '
           default_argument_type: fixed
           default_argument_options:
@@ -858,17 +816,6 @@ display:
         operator: AND
         groups:
           1: AND
-      row:
-        type: node_rss
-        options:
-          relationship: none
-          view_mode: default
-      defaults:
-        relationships: false
-        arguments: true
-        filters: false
-        filter_groups: false
-      relationships: {  }
       style:
         type: rss
         options:
