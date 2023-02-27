@@ -12,7 +12,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\file\Element\ManagedFile;
 use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
-use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
@@ -128,14 +127,6 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
     case 'filter_format_edit_form':
       // See jcc_custom_editor_js_settings_alter why custom description.
       $form['filters']['status']['filter_html_image_secure']['#description'] = FieldFilteredMarkup::create(t('Disallows usage of &lt;img&gt; tag sources that are not hosted on this site by replacing them with a placeholder image. Disabling this setting will restrict Source editing to allowed roles.'));
-
-      break;
-
-    case 'media_publication_add_form':
-      $form['group_translated_files'] = [
-        '#type' => 'details',
-        '#collapsed'  => TRUE,
-      ];
 
       break;
   }
