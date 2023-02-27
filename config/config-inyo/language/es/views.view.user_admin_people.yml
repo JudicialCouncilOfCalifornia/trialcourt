@@ -4,22 +4,7 @@ display:
   default:
     display_title: Máster
     display_options:
-      exposed_form:
-        options:
-          submit_button: Filtro
-          reset_button_label: Restablecer
-          exposed_sorts_label: 'Ordenar por'
-      pager:
-        options:
-          tags:
-            previous: '‹ Anterior'
-            next: 'Siguiente >'
-            first: '« Primero'
-            last: 'Último »'
-          expose:
-            items_per_page_label: 'Elementos por página'
-            items_per_page_options_all_label: '- Todo -'
-            offset_label: Desplazamiento
+      title: Usuarios
       fields:
         user_bulk_form:
           label: 'Actualización masiva'
@@ -28,14 +13,30 @@ display:
         status:
           label: Estado
           settings:
-            format_custom_true: Activo
             format_custom_false: Bloqueado
+            format_custom_true: Activo
         created:
           label: 'Miembro desde hace'
         access:
           label: 'Último acceso'
         operations:
           label: Operaciones
+      pager:
+        options:
+          tags:
+            next: 'Siguiente >'
+            previous: '‹ Anterior'
+            first: '« Primero'
+            last: 'Último »'
+          expose:
+            items_per_page_label: 'Elementos por página'
+            items_per_page_options_all_label: '- Todo -'
+            offset_label: Desplazamiento
+      exposed_form:
+        options:
+          submit_button: Filtro
+          reset_button_label: Restablecer
+          exposed_sorts_label: 'Ordenar por'
       filters:
         combine:
           expose:
@@ -54,7 +55,6 @@ display:
         permission:
           expose:
             label: Permiso
-      title: Usuarios
       use_more_text: más
   page_1:
     display_title: Página
