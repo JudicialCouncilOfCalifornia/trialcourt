@@ -1,3 +1,4 @@
+uuid: 3cdc7e0f-a6fa-4e0a-800b-ca066363c1d8
 langcode: en
 status: true
 dependencies:
@@ -6,7 +7,11 @@ dependencies:
     - filter.format.body
     - filter.format.minimal
     - filter.format.restricted_html
+    - media.type.file
+    - node.type.judge
     - node.type.tentative_ruling
+    - taxonomy.vocabulary.case_type
+    - taxonomy.vocabulary.department
     - workflows.workflow.editorial
   module:
     - captcha
@@ -17,6 +22,7 @@ dependencies:
     - entity_usage
     - environment_indicator
     - filter
+    - media
     - node
     - openid_connect
     - paragraphs
@@ -25,7 +31,10 @@ dependencies:
     - rebuild_cache_access
     - redirect
     - system
+    - taxonomy
     - toolbar
+_core:
+  default_config_hash: EtnI9r746v7v1khNn0PwSIcy6_gZ8Fatwy_Ezav6TWw
 id: tentative_rulings_editor
 label: 'Tentative rulings editor'
 weight: -2
@@ -36,6 +45,7 @@ permissions:
   - 'access contextual links'
   - 'access entity usage statistics'
   - 'access environment indicator'
+  - 'access media overview'
   - 'access media_entity_browser entity browser pages'
   - 'access media_entity_browser_modal entity browser pages'
   - 'access toolbar'
@@ -45,20 +55,40 @@ permissions:
   - 'bypass pages password protection'
   - 'change own username'
   - 'create content translations'
+  - 'create file media'
+  - 'create judge content'
+  - 'create media'
   - 'create tentative_ruling content'
+  - 'create terms in case_type'
   - 'create url aliases'
+  - 'delete any file media'
+  - 'delete any judge content'
   - 'delete any tentative_ruling content'
   - 'delete content translations'
+  - 'delete judge revisions'
+  - 'delete media'
+  - 'delete own file media'
+  - 'delete own judge content'
   - 'delete own tentative_ruling content'
   - 'delete tentative_ruling revisions'
+  - 'delete terms in case_type'
+  - 'delete terms in department'
+  - 'edit any file media'
+  - 'edit any judge content'
   - 'edit any tentative_ruling content'
+  - 'edit own judge content'
   - 'edit own tentative_ruling content'
+  - 'edit terms in case_type'
+  - 'edit terms in department'
   - 'openid connect set own password'
   - 'rebuild cache access'
+  - 'revert judge revisions'
   - 'revert tentative_ruling revisions'
   - 'skip CAPTCHA'
   - 'translate tentative_ruling node'
+  - 'update any media'
   - 'update content translations'
+  - 'update media'
   - 'use editorial transition archive'
   - 'use editorial transition archived_draft'
   - 'use editorial transition archived_published'
@@ -69,8 +99,10 @@ permissions:
   - 'use text format minimal'
   - 'use text format restricted_html'
   - 'view any unpublished content'
+  - 'view judge revisions'
   - 'view latest version'
   - 'view own unpublished content'
+  - 'view own unpublished media'
   - 'view tentative_ruling revisions'
   - 'view the administration theme'
   - 'view unpublished paragraphs'
