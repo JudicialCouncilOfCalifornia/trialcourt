@@ -1,0 +1,33 @@
+{% extends 'themes/custom/jcc_newsroom/templates/views/views-view-row-rss.html.twig' %}
+
+{% block extensions %}
+  <contentType>{{ content_type }}</contentType>
+  {% if type %}
+    <type>{{ type }}</type>
+  {% endif %}
+  {% if author %}
+    <author>{{ author.label }}</author>
+  {% endif %}
+  {% if pubDate %}
+    <pubDate>{{ pubDate }}</pubDate>
+  {% endif %}
+  {% if tagline %}
+    <tagline>{{ tagline }}</tagline>
+  {% endif %}
+  {% if body %}
+    <body>
+    {% if extended_details %}
+      <![CDATA[{{ body.0 }}{{ extended_details.0 }}]]>
+    {% else %}
+      <![CDATA[{{ body.0 }}]]>
+    {% endif %}
+    </body>
+  {% endif %}
+  {% if teaser %}
+    <teaser>{{ teaser.0 }}</teaser>
+  {% endif %}
+  {% if image %}
+    <image>{{ image }}</image>
+  {% endif %}
+  <pubStatus>{{ pubStatus }}</pubStatus>
+{% endblock %}
