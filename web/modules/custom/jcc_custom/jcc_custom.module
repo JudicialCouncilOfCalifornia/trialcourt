@@ -9,6 +9,7 @@ use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\file\Element\ManagedFile;
 use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
@@ -289,7 +290,8 @@ function jcc_custom_managed_file_process(array &$element, FormStateInterface $fo
 /**
  * Implements hook_preprocess_HOOK().
  */
-function jcc_custom_preprocess_views_view_row_rss(&$variables) {
+function jcc_custom_preprocess_views_view_row_rss(&$variables)
+{
   $view = $variables['view'];
   $view_id = $view->id();
   if ($view_id == 'news_types') {
@@ -316,4 +318,13 @@ function jcc_custom_preprocess_views_view_row_rss(&$variables) {
       }
     }
   }
+}
+
+/**
+ * Implements hook_query_TAG_alter() for entity reference selection handlers.
+ *
+ * Set 25 results instead of the 10 definied in EntityAutocompleteMatcher::getMatches()
+ */
+function jcc_custom_query_entity_reference_alter(AlterableInterface $query) {
+  $query->range(0, 25);
 }
