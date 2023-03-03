@@ -392,9 +392,9 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
       $variables['args_url'] = $latest_oa[0]->toUrl()->toString();
     }
   }
-  }
+}
 
-  /**
+/**
  * @file
  * Preprocessors for views.
  */
@@ -530,6 +530,3 @@ function jcc_components_preprocess_views_view__feeds_directory__page_1(&$variabl
 
   $variables['feeds'] = $feeds;
 }
-
-
-
