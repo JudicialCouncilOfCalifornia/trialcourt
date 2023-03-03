@@ -41,150 +41,149 @@
 
 {% block view %}
   <{{ tag }}{{ attributes.addClass(classes) }}>
-    {{ title_prefix }}
-    {{ title_suffix }}
+  {{ title_prefix }}
+  {{ title_suffix }}
 
-    {% block title %}
-      {% if title %}
-        {{ title }}
-      {% endif %}
-    {% endblock %}
+  {% block title %}
+    {% if title %}
+      {{ title }}
+    {% endif %}
+  {% endblock %}
 
-    {% block header %}
-      {% if header %}
-        <div class="view__header">
-          {{ header }}
-        </div>
-      {% endif %}
-    {% endblock %}
+  {% block header %}
+    {% if header %}
+      <div class="view__header">
+        {{ header }}
+      </div>
+    {% endif %}
+  {% endblock %}
 
-    {% block exposed %}
-      {% if exposed %}
-        <div class="view__filters">
-          {{ exposed }}
-        </div>
-      {% endif %}
-    {% endblock %}
+  {% block exposed %}
+    {% if exposed %}
+      <div class="view__filters">
+        {{ exposed }}
+      </div>
+    {% endif %}
+  {% endblock %}
 
-    {% block attachment_before %}
-      {% if attachment_before %}
-        <div class="view__attachment view__attachment--before">
-          {{ attachment_before }}
-        </div>
-      {% endif %}
-    {% endblock %}
+  {% block attachment_before %}
+    {% if attachment_before %}
+      <div class="view__attachment view__attachment--before">
+        {{ attachment_before }}
+      </div>
+    {% endif %}
+  {% endblock %}
 
-    {% block content %}
-      {% if rows %}
-        <div class="view__content">
-          {% set body %}
-            {% set accordion_items = [] %}
+  {% block content %}
+    {% if rows %}
+      <div class="view__content">
+        {% set body %}
+          {% set accordion_items = [] %}
 
-            {% for feed in feeds %}
-              {# BEGIN List component per feed type #}
-              {% set feed_links = [] %}
-              {% set column_size = 2 %}
-              {% if feed.feed_items|length > 20 %}
-                {% set column_size = 3 %}
-              {% endif %}
+          {% for feed in feeds %}
+            {# BEGIN List component per feed type #}
+            {% set feed_links = [] %}
+            {% set column_size = 2 %}
+            {% if feed.feed_items|length > 20 %}
+              {% set column_size = 3 %}
+            {% endif %}
 
-              {% for item in feed.feed_items %}
-                {% set feed_links = feed_links|merge([{
-                  icon: item.icon,
-                  url_title: item.name,
-                  url: item.url,
-                }]) %}
-              {% endfor %}
-
-              {% set feed_list %}
-
-                {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
-                  link_list: {
-                    columns: column_size,
-                    files_list: true,
-                    items: feed_links,
-                  }
-                } only %}
-              {% endset %}
-              {# END #}
-
-              {# Build accordion items from generated lists #}
-              {% set accordion_items = accordion_items|merge([{
-                title: feed.feed_type|capitalize,
-                body: feed_list,
+            {% for item in feed.feed_items %}
+              {% set feed_links = feed_links|merge([{
+                icon: item.icon,
+                url_title: item.name,
+                url: item.url,
               }]) %}
             {% endfor %}
 
-            {# Accordion component #}
-            {% include '@molecules/interactive/accordion/accordion.twig' with {
-              accordion: {
-                items: accordion_items,
-              }
-            } only %}
-          {% endset %}
+            {% set feed_list %}
 
-          {# BEGIN Feed directory layout #}
-          {% include '@molecules/blocks/hero/hero.twig' with {
-            hero: {
-              background_variant: 'has-background-color--dark',
-              title: view.getTitle(),
-              body: null
+              {% include '@molecules/list/list.twig' with {
+                list: {
+                  columns: column_size,
+                  files_list: true,
+                  items: feed_links,
+                }
+              } only %}
+            {% endset %}
+            {# END #}
+
+            {# Build accordion items from generated lists #}
+            {% set accordion_items = accordion_items|merge([{
+              title: feed.feed_type|capitalize,
+              body: feed_list,
+            }]) %}
+          {% endfor %}
+
+          {# Accordion component #}
+          {% include '@organisms/accordion/accordion.twig' with {
+            accordion: {
+              items: accordion_items,
             }
-          } %}
+          } only %}
+        {% endset %}
 
-          {% include '@organisms/sections/text-section/text-section.twig' with {
-            text_section: {
-              column_content_left: body,
-            }
-          }%}
-          {# END #}
-        </div>
-      {% endif %}
-    {% endblock %}
+        {# BEGIN Feed directory layout #}
+        {% include '@molecules/hero/hero.twig' with {
+          hero: {
+            background_variant: 'has-background-color--dark',
+            title: view.getTitle(),
+            body: null
+          }
+        } %}
 
-    {% block empty %}
-      {% if empty %}
-        <div class="view__content is-empty">
-          {{ empty }}
-        </div>
-      {% endif %}
-    {% endblock %}
+        {% include '@molecules/section/section.twig' with {
+          section: {
+            content: body,
+          }
+        }%}
+      </div>
+    {% endif %}
+  {% endblock %}
 
-    {% block pager %}
-      {% if pager %}
-        {{ pager }}
-      {% endif %}
-    {% endblock %}
+  {% block empty %}
+    {% if empty %}
+      <div class="view__content is-empty">
+        {{ empty }}
+      </div>
+    {% endif %}
+  {% endblock %}
 
-    {% block attachment_after %}
-      {% if attachment_after %}
-        <div class="view__attachment view__attachment--after">
-          {{ attachment_after }}
-        </div>
-      {% endif %}
-    {% endblock %}
+  {% block pager %}
+    {% if pager %}
+      {{ pager }}
+    {% endif %}
+  {% endblock %}
 
-    {% block more %}
-      {% if more %}
-        {{ more }}
-      {% endif %}
-    {% endblock %}
+  {% block attachment_after %}
+    {% if attachment_after %}
+      <div class="view__attachment view__attachment--after">
+        {{ attachment_after }}
+      </div>
+    {% endif %}
+  {% endblock %}
 
-    {% block footer %}
-      {% if footer %}
-        <div class="view-footer">
-          {{ footer }}
-        </div>
-      {% endif %}
-    {% endblock %}
+  {% block more %}
+    {% if more %}
+      {{ more }}
+    {% endif %}
+  {% endblock %}
 
-    {% block feed_icons %}
-      {% if feed_icons %}
-        <div class="feed-icons">
-          {{ feed_icons }}
-        </div>
-      {% endif %}
-    {% endblock %}
+  {% block footer %}
+    {% if footer %}
+      <div class="view-footer">
+        {{ footer }}
+      </div>
+    {% endif %}
+  {% endblock %}
+
+  {% block feed_icons %}
+    {% if feed_icons %}
+      <div class="feed-icons">
+        {{ feed_icons }}
+      </div>
+    {% endif %}
+  {% endblock %}
 
   </{{ tag }}>
 {% endblock %}
