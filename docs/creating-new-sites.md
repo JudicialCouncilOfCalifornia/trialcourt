@@ -48,7 +48,7 @@ Configure theme at `/admin/appearance/settings/jcc_components`:
 - Add the logo.svg to /web/sites/[site]/logo.svg
 - Set the path to sites/[site]/logo.svg
 - Set the various other theme settings. When in doubt, use the placeholders but not the `Base` scheme.
-- Disable Google Translator if not in use
+- Disable the translation menu if not in use
 
 If admin console UI seems broken, confirm/configure administration theme at `/admin/appearance`:
 - Set the Administration theme setting to not use default (currently Gin).
