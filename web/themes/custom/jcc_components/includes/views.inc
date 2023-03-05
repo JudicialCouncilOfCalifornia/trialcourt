@@ -496,6 +496,7 @@ function jcc_components_preprocess_views_view__feeds_directory__page_1(&$variabl
       ],
       'name' => $term_name,
       'url' => '/cats/' . $tid,
+      'type' => $vid,
     ];
 
     switch ($vid) {
