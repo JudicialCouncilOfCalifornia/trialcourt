@@ -1,4 +1,4 @@
-### Migration
+## Migration
 
 Run migrations on live where content creation will happen, pre-launch.
 
@@ -9,15 +9,22 @@ https://docs.google.com/spreadsheets/d/1zsZ-cEIZGWvmv0dXVTyL8Hh4Y9ld64Gcqy3TuxQA
   - Set sheet urls in `/admin/structure/migrate/jcc_migrate_source_ui`
     - https://sheets.googleapis.com/v4/spreadsheets/{{ sheet id }}/values/{{ tab_name }}?alt=json&key={{ apikey}}
       Note: get an API key for Google Sheets API v4 here: https://console.developers.google.com/apis/credentials (create an empty project for it).
-    - Set tab for the appropriate sheet name in the set for each migration
-      - node_subpage, node_subpage_path_redirect ("page" at time of writing)
-      - node_news ("news" at time of writing)
-      - forms_file, forms_file_path_redirect, forms_media ("forms" at time of writing)
-    - run migrations
-      - ... mim --tag=subpage
-      - ... mim node_news
-      - ... mim --tag=forms
-      - OR ... mim --all (ok at the time of writing)
+    - Set tab in the following order for the appropriate sheet name in the "tag" set for each migration.
+      - "forms"
+        - forms_file
+        - forms_file_path_redirect
+        - forms_media
+      - "page" (depends on "forms")
+        - node_subpage
+        - node_subpage_path_redirect
+      - "news"
+        - node_news (optional if available)
+    - Run migrations in the following order by tag name
+      - `lando drush @[site].[env] mim --tag=forms`
+      - `lando drush @[site].[env] mim --tag=subpage` (again, depends on forms)
+      - `lando drush @[site].[env] mim node_news` (if needed)
+      - OR `lando drush @[site].[env] mim --all` (ok at the time of writing)
+      - **NOTE:** Local environments use `@local.[site]` as the site selector.
 
 
 ---
@@ -30,6 +37,7 @@ It’s easiest to use the repo's drush aliases via lando, if you haven’t insta
 Use `lando drush sa` for a list of available aliases.
 
  - `lando drush @[site].[env] ms` - migration status will show you any migrations and their status.
+ - `lando drush @[site].[env] mim --tag=[tag]` - multiple migration imports categorized by tag.
  - `lando drush @[site].[env] mim [migration]` - migration import the specific migration.
 
  - Alternatively:
@@ -42,7 +50,13 @@ You should see import progress.
 
 ##### See: `drush | grep migrate` for more command info.
 
-### Drupal UI
+#### Other Migrate Commands:
+
+- `drush mr [migration]` - Roll Back a migration.
+- `drush mim --update [migration]` - Update an imported migration if data changes.
+- `drush mst [migration] && drush mrs [migration]` - First STOP and then RESET status of a stuck migration.
+
+### Drupal UI (Beta)
 
  - Navigate to “Structure > Migrations” https://stage-jcc-tc.pantheonsite.io/admin/structure/migrate
  - click things… er…
@@ -55,12 +69,6 @@ OR
 
  NOTE: This custom module stopped migrating at some point and I never had a chance to debug. You still need to use it to set the urls for the migrations listed above, but you can't execute a migration from here. Use one of the other two methods described.
 
-### Other Migrate Commands:
-
- - `drush mr [migration]` - Roll Back a migration.
- - `drush mim --update [migration]` - Update an imported migration if data changes.
- - `drush mst [migration] && drush mrs [migration]` - First STOP and then RESET status of a stuck migration.
-
 ## Forms File
 
 This migration is a dependency for many of the other migrations. It must import fully for the other migrations to import.
@@ -72,9 +80,9 @@ The initial scrape from JCC contains only "Local Forms" with titles and other da
   On the URL column:
 
   - search and replace `http://` -> `https://`
-  - search and replace `https://www.` -> `https://`
   - search and replace `https://` -> `https://www.`
     - The above ensures all urls start with `https://www.`
+    - Use search and replace `https://www.` -> `https://` if www is not accessible?
   - search and replace (regex) `\?.*` -> (empty) to remove queries from the urls.
 
 This should make all the urls in a standard format so you can search for duplicates.

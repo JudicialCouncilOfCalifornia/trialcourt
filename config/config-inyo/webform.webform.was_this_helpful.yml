@@ -3,7 +3,7 @@ langcode: en
 status: open
 dependencies: {  }
 _core:
-  default_config_hash: RkCR-kERpzEpd4KLMlMt9SuJYulwT_lOD7RdVxxRAVw
+  default_config_hash: mq9hCMztCV03dnoK2qJ6bc47id84sJoeK-62ds46BxM
 weight: 0
 open: null
 close: null
@@ -250,4 +250,48 @@ handlers:
       theme_name: ''
       parameters: {  }
       debug: false
+  remote_post:
+    id: remote_post
+    handler_id: remote_post
+    label: 'Remote post'
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: 0
+    settings:
+      method: POST
+      type: x-www-form-urlencoded
+      excluded_data:
+        sid: sid
+        uuid: uuid
+        token: token
+        completed: completed
+        changed: changed
+        in_draft: in_draft
+        uid: uid
+        langcode: langcode
+        webform_id: webform_id
+        locked: locked
+        sticky: sticky
+        notes: notes
+      custom_data: ''
+      custom_options: ''
+      file_data: true
+      cast: false
+      debug: false
+      completed_url: 'https://script.google.com/macros/s/AKfycbyBHGdwRbukQyMtV4wbwwuFufThvqpAxhE13j1xow8ddfrYHMz1Q2Z36y7A4fxxt8N3/exec'
+      completed_custom_data: ''
+      updated_url: ''
+      updated_custom_data: ''
+      deleted_url: ''
+      deleted_custom_data: ''
+      draft_created_url: ''
+      draft_created_custom_data: ''
+      draft_updated_url: ''
+      draft_updated_custom_data: ''
+      converted_url: ''
+      converted_custom_data: ''
+      message: ''
+      messages: {  }
+      error_url: ''
 variants: {  }

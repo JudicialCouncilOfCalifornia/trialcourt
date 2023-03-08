@@ -10,6 +10,8 @@ use Drupal\media\Entity\Media;
 use Drupal\file\Entity\File;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\node\Entity\Node;
+use Drupal\views\ViewExecutable;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -395,11 +397,6 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
 }
 
 /**
- * @file
- * Preprocessors for views.
- */
-
-/**
  * Implements hook_preprocess_HOOK().
  */
 function jcc_components_preprocess_views_view_row_rss(&$variables) {
@@ -531,3 +528,39 @@ function jcc_components_preprocess_views_view__feeds_directory__page_1(&$variabl
 
   $variables['feeds'] = $feeds;
 }
+=======
+ * Implements hook_views_pre_render().
+ */
+function jcc_components_views_pre_render(ViewExecutable $view){
+  switch ($view->storage->id()) {
+    case 'tentative_rulings':
+      if(($view->current_display == 'tentative_rulings') && ($view->total_rows != 0)){
+        unset($view->attachment_before[1]);
+      }
+      if ($view->current_display == 'attachment_1' || $view->current_display == 'attachment_2'){
+        $view->element['#custom_items'] = [];
+        foreach ($view->result as $key => $row) {
+          $view->element['#custom_items'][$key]['style'] = "borderless";
+          $view_entity = $row->_entity;
+          if ($view_entity->hasField('field_judge')){
+            $view->element['#custom_items'][$key]['title'] = $view->field['field_judge']->advancedRender($row)->__toString();
+          } elseif($view->field['title']) {
+            $view->element['#custom_items'][$key]['title'] = $view->field['title']->advancedRender($row)->__toString();
+          }
+          $body_content = "";
+          if ($view->field['field_department']->advancedRender($row) != "") {
+            $body_content = $view->field['field_department']->advancedRender($row)->__toString() . '<br>';
+          }
+          $body_content .=  $view->field['field_address']->advancedRender($row)->__toString();
+          $view->element['#custom_items'][$key]['body'] = Markup::create($body_content);
+          if ($view->field['field_custom_link']->advancedRender($row) != "") {
+            $link_uri = $view->field['field_custom_link']->advancedRender($row)->__toString();
+            $view->element['#custom_items'][$key]['link']['url'] = Url::fromUri($link_uri);
+            $view->element['#custom_items'][$key]['link']['text'] = 'Read more';
+          }
+        }
+      }
+      break;
+  }
+}
+

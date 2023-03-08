@@ -9,9 +9,11 @@ use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\file\Element\ManagedFile;
 use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
+use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
@@ -308,6 +310,32 @@ function jcc_custom_preprocess_views_view_row_rss(&$variables) {
       }
       if ($element['key'] == 'dc:creator') {
         $variables['category'] = $element['value'];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter() for entity reference selection handlers.
+ *
+ * Set 25 results instead of the 10 definied in EntityAutocompleteMatcher::getMatches()
+ * Fix for autocomplete not showing an exact match 
+ */
+function jcc_custom_query_entity_reference_alter(AlterableInterface $query) {
+  $query->range(0, 25);  
+  if (!$query->hasAllTags('entity_query', 'entity_query_node')) {
+    return;
+  }
+  $conditions = $query->conditions();
+  if (!empty($conditions)) {
+    // Since the query tags have already been checked, we assume the first condition is the one on the label of the entity.
+    if (!empty($conditions[0]['field'])) {
+      $query->addExpression('LENGTH(' . $conditions[0]['field'] . ')', 'title_length');
+      $query->orderBy('title_length');
+
+      // Add the title length to the group by if there is one, to prevent a mysql error.
+      if (!empty($query->getGroupBy())) {
+        $query->groupBy('title_length');
       }
     }
   }
