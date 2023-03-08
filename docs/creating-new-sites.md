@@ -94,6 +94,9 @@ Create Landing Page
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
 - Configure OpenID with Azure Active Directory (optional)
   - See OneNote documentation
+- Add language support as needed
+  - `/admin/config/regional/language`
+  - Add Spanish at minimum
 
 ### Create users
 
