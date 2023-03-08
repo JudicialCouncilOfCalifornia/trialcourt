@@ -3,12 +3,15 @@
 
 ## Spin up a pantheon instance and add deployment tooling
 
-  - `scripts/pantheon_new.sh [site] "[Label]"`
-    - i.e. `scripts/pantheon_new.sh kings "Judicial Council | Kings"`
-      - Keeping the Label consistently formatted helps to easily identify the site on Pantheon.
-      - The Convention I've used is "Judicial Council | [site]" But capitalize the site.
-    - **make sure [site] will pattern match to the identifying portion of the live url.**
-      - i.e. www.kings.courts.ca.gov => `kings`
+- `scripts/pantheon_new.sh [site] "[Label]"`
+  - i.e. `scripts/pantheon_new.sh kings "Judicial Council | Kings"`
+    - Keeping the Label consistently formatted helps to easily identify the site on Pantheon.
+    - The Convention I've used is "Judicial Council | [site]" But capitalize the site.
+  - **make sure [site] will pattern match to the identifying portion of the live url.**
+    - i.e. www.kings.courts.ca.gov => `kings`
+    - If the site name ends up different from the subdomain, add a mapping later to /web/sites/sites.php
+      - $sites['www.diffname.courts.ca.gov'] = 'site';
+      - $sites['diffname.courts.ca.gov'] = 'site';
 
 This script will create a new Pantheon instance, initialize the Live environment, create multidev environments develop and stage for parallel git workflow and update the tooling files in the repo, required for deploying and managing the new site.
 
@@ -17,22 +20,22 @@ After this runs it will give you instructions to set up the new Drupal instance 
 
 ## Build a New Drupal Instance Multisite
 
-  - `lando multisite [name]`
-    - make sure `[name]` will pattern match to the identifying portion of the live url. It should be the same as `[site]` from the `pantheon_new.sh` command above.
-      - i.e. www.kings.courts.ca.gov => `kings`
-    - Confirm `web/sites/[site]` setup (extra files and directory seems okay to keep or delete)
-      - .gitignore
-      - services.local.yml
-      - settings.azure.php
-      - settings.pantheon.php
-      - settings.php
-    - Do initial configurations and export (@see Initial configurations)
+- `lando multisite [name]`
+  - make sure `[name]` will pattern match to the identifying portion of the live url. It should be the same as `[site]` from the `pantheon_new.sh` command above.
+    - i.e. www.kings.courts.ca.gov => `kings`
+  - Confirm `web/sites/[site]` setup (extra files and directory seems okay to keep or delete)
+    - .gitignore
+    - services.local.yml
+    - settings.azure.php
+    - settings.pantheon.php
+    - settings.php
+  - Do initial configurations and export (@see Initial configurations)
 
 ## Initial configurations
 
-  The above is all you need to do to have a working site with all the tooling for deployment.  2 commands, commit the code, and push.
+The above is all you need to do to have a working site with all the tooling for deployment.  2 commands, commit the code, and push.
 
-  However, when tasked to spin up a new site, you can do some initial configuration.  (Some of this may be automated in the future.)
+However, when tasked to spin up a new site, you can do some initial configuration.  (Some of this may be automated in the future.)
 
 ### Theme Settings
 
@@ -45,7 +48,7 @@ Configure theme at `/admin/appearance/settings/jcc_components`:
 - Add the logo.svg to /web/sites/[site]/logo.svg
 - Set the path to sites/[site]/logo.svg
 - Set the various other theme settings. When in doubt, use the placeholders but not the `Base` scheme.
-- Disable Google Translator if not in use
+- Disable the translation menu if not in use
 
 If admin console UI seems broken, confirm/configure administration theme at `/admin/appearance`:
 - Set the Administration theme setting to not use default (currently Gin).
@@ -91,6 +94,9 @@ Create Landing Page
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
 - Configure OpenID with Azure Active Directory (optional)
   - See OneNote documentation
+- Add language support as needed
+  - `/admin/config/regional/language`
+  - Add Spanish at minimum
 
 ### Create users
 
