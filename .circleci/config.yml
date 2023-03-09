@@ -50,6 +50,7 @@ jobs:
                 command: |
                     conflicted="$( grep -rE --exclude-dir={vendor,node_modules} --include=\*.{module,inc,php,js,css,html,htm,profile,install,yml,md} "^[\<|\>|\=]{7}" || true)"
                     if [[ -n "$conflicted" ]] ; then
+                      echo $conflicted
                       exit 1
                     fi
 
