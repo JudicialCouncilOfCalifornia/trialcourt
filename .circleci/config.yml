@@ -47,7 +47,7 @@ jobs:
 
             - run:
                 name: search for any merge conflicts
-                command: if [ $(grep -lr --exclude-dir={vendor,node_modules} --include=\*.{module,inc,php,js,css,html,htm,profile,install,yml,md} '\<<<<<<<' .) ]; then exit 1; fi
+                command: if [ $(grep -lr --exclude-dir={vendor,node_modules} --include=\*.{module,inc,php,js,css,html,htm,profile,install,yml,md} '\<\<\<\<\<\<\<' .) ]; then exit 1; fi
 
             - restore_cache:
                 keys:
