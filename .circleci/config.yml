@@ -48,7 +48,7 @@ jobs:
             - run:
                 name: search for any merge conflicts
                 command: |
-                    grep -lr --exclude-dir={vendor,node_modules} --include=\*.{module,inc,php,js,css,html,htm,profile,install,yml,md} '\<\<\<\<\<\<\<' > /dev/null
+                    grep -lr --exclude-dir={vendor,node_modules} --include=\*.{module,inc,php,js,css,html,htm,profile,install,yml,md} '\<\<\<\<\<\<\<'
                     if [ $? -eq 0 ] ; then exit 1 ; fi
 
 
