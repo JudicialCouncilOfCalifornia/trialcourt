@@ -53,4 +53,4 @@ Add your author information for historical reference and professional context, a
      - [Pantheon Multisite Hackery!](./docs/MULTISITE.md#pantheon-multisite-hackery)
 
 testing conflict checker
-<<<<<<< HEAD
+=======
