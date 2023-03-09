@@ -48,9 +48,8 @@ jobs:
             - run:
                 name: search for any merge conflicts
                 command: |
-                    grep -lr --exclude-dir={vendor,node_modules} --include=\*.{module,inc,php,js,css,html,htm,profile,install,yml,md} '\<\<\<\<\<\<\<'
+                    grep -lrE --exclude-dir={vendor,node_modules} --include=\*.{module,inc,php,js,css,html,htm,profile,install,yml,md} "^[\<]{7}"
                     if [ $? -eq 0 ] ; then exit 1 ; fi
-
 
             - restore_cache:
                 keys:
