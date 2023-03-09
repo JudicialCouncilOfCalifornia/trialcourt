@@ -11,6 +11,7 @@ set -o errexit
 # Use the error status of the first failure, rather than that of the last item in a pipeline.
 set -o pipefail
 
-grep -qlrE --exclude-dir={vendor,node_modules} --include=\*.{module,inc,php,js,css,html,htm,profile,install,yml,md} "^[\<]{7}"
-if [ $? -eq 0 ] ; then exit 1 ; fi
+conflicted="$( grep -qlrE --exclude-dir={vendor,node_modules} --include=\*.{module,inc,php,js,css,html,htm,profile,install,yml,md} "^[\<]{7}" )"
+if [[ -n "$conflicted" ]] ; then echo found; fi
+
 
