@@ -52,5 +52,3 @@ Add your author information for historical reference and professional context, a
    - [Multisite Management](./docs/MULTISITE.md)
      - [Pantheon Multisite Hackery!](./docs/MULTISITE.md#pantheon-multisite-hackery)
 
-testing conflict checker
-<<<<<<< HEAD
