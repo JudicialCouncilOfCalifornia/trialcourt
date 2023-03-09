@@ -51,3 +51,6 @@ Add your author information for historical reference and professional context, a
  - **Other Documentation**
    - [Multisite Management](./docs/MULTISITE.md)
      - [Pantheon Multisite Hackery!](./docs/MULTISITE.md#pantheon-multisite-hackery)
+
+
+>>>>>>> ff6df3435231fdff78fwsd83e7dffa0732eft554
