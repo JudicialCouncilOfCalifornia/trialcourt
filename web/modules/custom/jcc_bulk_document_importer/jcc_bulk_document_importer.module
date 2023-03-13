@@ -8,6 +8,7 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Element\ManagedFile;
 use Drupal\jcc_bulk_document_importer\Ajax\ManagedFileUploadCompleteEventCommand;
+use Drupal\taxonomy\Entity\Term; 
 
 /**
  * Implements hook_form_alter().
@@ -93,6 +94,13 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
           '#type' => 'hidden',
           '#value' => $document_id,
         ];
+
+        $element['documents'][$document_id]['category'] = [
+          '#type' => 'select',
+          '#options' => getCategoryTypes(),          
+          '#title' => t('Category'),
+          '#required' => TRUE,
+        ];
         $element['documents'][$document_id]['file'] = $element['file_' . $document_id];
         unset($element['file_' . $document_id]);
       }
@@ -103,4 +111,18 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
   }
 
   return $element;
+}
+
+ function getCategoryTypes() { 
+  $media_categories = [];
+  $vocabulary_name = 'media_file_category';  
+  $tids = \Drupal::entityQuery('taxonomy_term')
+            ->condition('vid', $vocabulary_name)
+            ->sort('weight')
+            ->execute(); 
+  $terms = Term::loadMultiple($tids); 
+  foreach($terms as $term) {
+    $media_categories[$term->id()] = $term->getName();   
+  }  
+  return $media_categories;
 }

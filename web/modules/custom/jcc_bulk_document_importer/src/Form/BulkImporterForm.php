@@ -26,9 +26,9 @@ class BulkImporterForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {   
     // Defaulting document type to oral argument.
-    $default_doc_type = Term::load('5');
+    //$default_doc_type = Term::load('5');
     $form['#attached']['library'][] = 'jcc_bulk_document_importer/importer_styling';
 
     $form['document_upload'] = [
@@ -55,7 +55,7 @@ class BulkImporterForm extends FormBase {
       '#title' => $this->t('Document type'),
       '#type' => 'entity_autocomplete',
       '#target_type' => 'taxonomy_term',
-      '#default_value' => $default_doc_type,
+      //'#default_value' => $default_doc_type,
       '#selection_settings' => [
         'target_bundles' => ['document_type'],
       ],
@@ -100,7 +100,7 @@ class BulkImporterForm extends FormBase {
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Create documents'),
-    ];
+    ];    
     return $form;
   }
 
@@ -124,6 +124,7 @@ class BulkImporterForm extends FormBase {
               'target_id' => $file->id(),
             ],
             'field_document_type' => $form_state->getValue('document_type', 0),
+            'field_category' => $document['category'], 
           ]);
           $media->setName($document['custom_title'])->setPublished(TRUE)->save();
 
@@ -164,7 +165,7 @@ class BulkImporterForm extends FormBase {
               'end_value' => $form_state->getValue('document_daterange_end', 0) . 'T' . $time,
             ],
             'field_date' => $document['filing_date'],
-            'field_document_type' => $form_state->getValue('document_type', 0),
+            'field_document_type' => $form_state->getValue('document_type', 0),                        
             'field_case' => $form_state->getValue('document_case_bundle', 0),
             'body' => $form_state->getValue('body', 0),
             'status' => 1,
