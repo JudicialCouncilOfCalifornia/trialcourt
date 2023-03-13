@@ -66,9 +66,11 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
           '#collapsible' => FALSE,
         ];
 
+        $file = array_pop($element['#files']);
+        $fileName = pathinfo($file->getFilename(), PATHINFO_FILENAME);                
         $element['documents'][$document_id]['custom_title'] = [
           '#type' => 'textfield',
-          '#default_value' => 'file ' . $document_id,
+          '#default_value' => $fileName,
           '#title' => t('Title'),
         ];
 
@@ -98,8 +100,7 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
         $element['documents'][$document_id]['category'] = [
           '#type' => 'select',
           '#options' => getCategoryTypes(),          
-          '#title' => t('Category'),
-          '#required' => TRUE,
+          '#title' => t('Category'),         
         ];
         $element['documents'][$document_id]['file'] = $element['file_' . $document_id];
         unset($element['file_' . $document_id]);
