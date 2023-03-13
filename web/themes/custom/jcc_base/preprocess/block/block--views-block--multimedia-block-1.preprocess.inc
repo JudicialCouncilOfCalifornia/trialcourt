@@ -41,20 +41,22 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
       $video = $featured->_entity->field_videos->getValue();
       // Get  video entity by target id from media field.
       $video_entity = Media::load($video[0]["target_id"]);
-      // Video title.
-      $video_title = $video_entity->label();
-      // Video embed.
-      $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
-      $build = $view_builder->view($video_entity, 'default');
-      $video_elem = render($build);
+      if($video_entity != NULL){
+        // Video title.
+        $video_title = $video_entity->label();
+        // Video embed.
+        $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
+        $build = $view_builder->view($video_entity, 'default');
+        $video_elem = render($build);
 
-      $featured_video_card = [
-        'title' => $video_title,
-        'excerpt_vid' => $video_elem,
-        'contextual_links' => $placeholder,
-      ];
+        $featured_video_card = [
+          'title' => $video_title,
+          'excerpt_vid' => $video_elem,
+          'contextual_links' => $placeholder,
+        ];
 
-      array_push($cards, $featured_video_card);
+        array_push($cards, $featured_video_card);
+      }
     }
 
     if (!empty($featured->_entity->field_images)) {
@@ -71,7 +73,9 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
         $image_entity = Media::load($image["target_id"]);
         // Get image url, alt, and title.
         $image_src = ImageStyle::load('max_1300x1300')->buildUrl($image_entity->field_media_image->entity->uri->value);
+        $image_src = _jcc_components_remove_image_protocol($image_src);
         $image_thumb = ImageStyle::load('medium')->buildUrl($image_entity->field_media_image->entity->uri->value);
+        $image_thumb = _jcc_components_remove_image_protocol($image_thumb);
         $image_alt = $image_entity->field_media_image->alt;
         $image_caption = strip_tags($image_entity->field_media_caption->value);
         // Image element.

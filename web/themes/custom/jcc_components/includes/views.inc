@@ -10,6 +10,8 @@ use Drupal\media\Entity\Media;
 use Drupal\file\Entity\File;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\node\Entity\Node;
+use Drupal\views\ViewExecutable;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -100,8 +102,8 @@ function jcc_components_preprocess_views_view__events__events_list(&$variables) 
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $row = $row['#node'];
     $nid = $row->id();
-    $startDate = jcc_timezone_adjust($row->field_date_range->start_date);
-    $endDate = jcc_timezone_adjust($row->field_date_range->end_date);
+    $startDate = $row->field_date_range->start_date;
+    $endDate = $row->field_date_range->end_date;
 
     $event = [
       'title' => $row->title->value,
@@ -230,9 +232,10 @@ function jcc_components_preprocess_views_view__case_information__block_1(&$varia
     if ($years_past < 3) {
       $media = Media::load($row->field_media->target_id);
       $file = File::load($media->field_media_file->target_id);
+      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
       $page = [
         'year' => $doc_year,
-        'url' => file_create_url($file->uri->value),
+        'url' => \Drupal::service('file_url_generator')->transformRelative($file_url),
         'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
       ];
       array_push($pages, $page);
@@ -266,9 +269,10 @@ function jcc_components_preprocess_views_view__case_information__block_2(&$varia
     if ($years_past < 3) {
       $media = Media::load($row->field_media->target_id);
       $file = File::load($media->field_media_file->target_id);
+      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
       $page = [
         'year' => $doc_year,
-        'url' => file_create_url($file->uri->value),
+        'url' => \Drupal::service('file_url_generator')->transformRelative($file_url),
         'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
       ];
       array_push($pages, $page);
@@ -302,9 +306,10 @@ function jcc_components_preprocess_views_view__case_information__block_3(&$varia
     if ($years_past < 3) {
       $media = Media::load($row->field_media->target_id);
       $file = File::load($media->field_media_file->target_id);
+      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
       $page = [
         'year' => $doc_year,
-        'url' => file_create_url($file->uri->value),
+        'url' => \Drupal::service('file_url_generator')->transformRelative($file_url),
         'filing_date' => $row->field_date->date ? $row->field_date->date->format('F j, Y') : 'Undefined',
       ];
       array_push($pages, $page);
@@ -334,6 +339,7 @@ function jcc_components_preprocess_views_view__case_information__block_4(&$varia
     $row = $row['#node'];
     $media = Media::load($row->field_media->target_id);
     $file = File::load($media->field_media_file->target_id);
+    $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
     // BEGIN - Create amended identifier from filename.
     $file_name = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file->filename->value);
     $file_amended = NULL;
@@ -345,8 +351,8 @@ function jcc_components_preprocess_views_view__case_information__block_4(&$varia
     $result = [
       'title' => $row->title->value,
       'amended_code' => $file_amended,
-      'url' => file_create_url($file->uri->value),
-      'hearing_date' => jcc_timezone_adjust($row->field_date_range->start_date),
+      'url' => \Drupal::service('file_url_generator')->transformRelative($file_url),
+      'hearing_date' => $row->field_date_range->start_date,
       'publish_date' => $row->field_date->date ? $row->field_date->date->format('m/d/Y') : 'Undefined',
       'notes' => $notes,
       'edit_option' => _jcc_components_can_edit_entity($row, t('Edit')),
@@ -384,8 +390,44 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
 
     // Return published oral arguments if available.
     $latest_oa = array_slice($oral_args, 0, 1);
-    if ($latest_oa && str_contains($latest_oa[0]->label(), $hearing_date->format('F j')) && str_contains($latest_oa[0]->label(), strval(date('Y')))) {
+    if ($latest_oa && str_contains($latest_oa[0]->label(), $hearing_date->format('F j'))) {
       $variables['args_url'] = $latest_oa[0]->toUrl()->toString();
     }
+  }
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function jcc_components_views_pre_render(ViewExecutable $view){
+  switch ($view->storage->id()) {
+    case 'tentative_rulings':
+      if(($view->current_display == 'tentative_rulings') && ($view->total_rows != 0)){
+        unset($view->attachment_before[1]);
+      }
+      if ($view->current_display == 'attachment_1' || $view->current_display == 'attachment_2'){
+        $view->element['#custom_items'] = [];
+        foreach ($view->result as $key => $row) {
+          $view->element['#custom_items'][$key]['style'] = "borderless";
+          $view_entity = $row->_entity;
+          if ($view_entity->hasField('field_judge')){
+            $view->element['#custom_items'][$key]['title'] = $view->field['field_judge']->advancedRender($row)->__toString();
+          } elseif($view->field['title']) {
+            $view->element['#custom_items'][$key]['title'] = $view->field['title']->advancedRender($row)->__toString();
+          }
+          $body_content = "";
+          if ($view->field['field_department']->advancedRender($row) != "") {
+            $body_content = $view->field['field_department']->advancedRender($row)->__toString() . '<br>';
+          }
+          $body_content .=  $view->field['field_address']->advancedRender($row)->__toString();
+          $view->element['#custom_items'][$key]['body'] = Markup::create($body_content);
+          if ($view->field['field_custom_link']->advancedRender($row) != "") {
+            $link_uri = $view->field['field_custom_link']->advancedRender($row)->__toString();
+            $view->element['#custom_items'][$key]['link']['url'] = Url::fromUri($link_uri);
+            $view->element['#custom_items'][$key]['link']['text'] = 'Read more';
+          }
+        }
+      }
+      break;
   }
 }

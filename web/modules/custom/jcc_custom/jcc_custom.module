@@ -129,6 +129,14 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       $form['filters']['status']['filter_html_image_secure']['#description'] = FieldFilteredMarkup::create(t('Disallows usage of &lt;img&gt; tag sources that are not hosted on this site by replacing them with a placeholder image. Disabling this setting will restrict Source editing to allowed roles.'));
 
       break;
+
+    case 'media_publication_add_form':
+      $form['group_translated_files'] = [
+        '#type' => 'details',
+        '#collapsed'  => TRUE,
+      ];
+
+      break;
   }
 }
 
@@ -173,11 +181,19 @@ function jcc_custom_views_data_alter(array &$data) {
  * Implements hook_views_query_alter().
  */
 function jcc_custom_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  switch ($view->storage->id()) {
+  switch ($view->id()) {
     case 'documents':
       // Override query max for sufficient cases to display from docs.
       if (Term::load($view->args[0])->get('name')->value == 'Oral Argument') {
         $view->getPager()->setItemsPerPage(20);
+      }
+      break;
+
+    case 'oral_arguments':
+      if ($view->getDisplay()->display['id'] == 'block_1' && $view->args) {
+        // Custom date range contextual filter.
+        $query->addWhere(0, 'node__field_date_range.field_date_range_value', $view->args[0], '>=');
+        $query->addWhere(0, 'node__field_date_range.field_date_range_end_value', $view->args[1], '<');
       }
       break;
   }
@@ -266,4 +282,33 @@ function jcc_custom_managed_file_process(array &$element, FormStateInterface $fo
   $element['upload_button']['#ajax']['callback'] = 'jcc_custom_managed_file_ajax_callback';
 
   return $element;
+}
+
+function jcc_custom_preprocess_views_view_row_rss(&$variables) {
+  $view = $variables['view'];
+  $view_id = $view->id();
+  if ($view_id == 'news_types') {
+    // Extending RSS content.
+    $item = $variables['row'];
+    foreach ($item->elements as $element) {
+      if ($element['key'] == 'pubDate') {
+        $variables['pubDate'] = $element['value']->__toString();
+      }
+      if ($element['key'] == 'dc:creator') {
+        $variables['category'] = $element['value'];
+      }
+    }
+  }
+  if ($view_id == 'taxanomy_rss') {
+    // Extending RSS content.
+    $item = $variables['row'];
+    foreach ($item->elements as $element) {
+      if ($element['key'] == 'pubDate') {
+        $variables['pubDate'] = $element['value'];
+      }
+      if ($element['key'] == 'dc:creator') {
+        $variables['category'] = $element['value'];
+      }
+    }
+  }
 }

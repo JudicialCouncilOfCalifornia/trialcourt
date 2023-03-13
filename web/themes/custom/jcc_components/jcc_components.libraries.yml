@@ -7,9 +7,18 @@ courtyard-header:
     ../../../libraries/courtyard-artifact/2.x/public/js/uswds-init.min.js: { minified: true, preprocess: false }
 
 courtyard-footer:
+  css:
+    theme:
+      src/css/twitter-feed.css: {}
   js:
     ../../../libraries/courtyard-artifact/2.x/public/js/uswds.min.js: { minified: true, preprocess: false }
     ../../../libraries/courtyard-artifact/2.x/public/js/scripts.min.js: { minified: true, preprocess: false }
+    https://platform.twitter.com/widgets.js: { external: true, minified: true, preprocess: false, attributes: { defer: true } }
+
+print:
+  css:
+    base:
+      src/css/print.css: {}
 
 variables:
   css:
@@ -40,6 +49,11 @@ form-styling:
   css:
     theme:
       src/css/forms.css: {}
+
+tentative-rulings-styling:
+  css:
+    theme:
+      src/css/tentative-rulings.css: {}
 
 shuffle:
   js:

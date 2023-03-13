@@ -242,8 +242,6 @@ function jcc_components_paragraph_text_share(array &$variables, ParagraphInterfa
  */
 function jcc_components_paragraph_content_stream(array &$variables, ParagraphInterface $paragraph) {
   $taxonomy = $paragraph->field_taxonomy ? $paragraph->field_taxonomy->target_id : NULL;
-  $date_start = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Ymd') : NULL;
-  $date_end = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Ymd') : NULL;
 
   if ($taxonomy) {
     // If News + Sticky listing, filter by taxonomy option.
@@ -254,13 +252,13 @@ function jcc_components_paragraph_content_stream(array &$variables, ParagraphInt
     }
   }
 
-  if ($date_start && $date_end) {
-    // If Oral Arguments case documents listing, filter by date range.
-    if ($paragraph->field_content_stream->plugin_id == 'views_block:oral_arguments-block_1') {
-      $view = Views::getView('oral_arguments');
-      $stream = $view->buildRenderable('block_1', [$date_start, $date_end]);
-      $variables['filtered_content'] = $stream;
-    }
+  // If Oral Arguments case documents listing, filter by date range.
+  if ($paragraph->field_content_stream->plugin_id == 'views_block:oral_arguments-block_1') {
+    $date_start = $paragraph->field_filter_by_date->start_date ? $paragraph->field_filter_by_date->start_date->format('Y-m-d\T00:00:00') : NULL;
+    $date_end = $paragraph->field_filter_by_date->end_date ? $paragraph->field_filter_by_date->end_date->format('Y-m-d\T24:00:00') : NULL;
+    $view = Views::getView('oral_arguments');
+    $stream = $view->buildRenderable('block_1', [$date_start, $date_end]);
+    $variables['filtered_content'] = $stream;
   }
 }
 
@@ -327,9 +325,8 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       $fid = $img_media->field_media_image->target_id;
       $file = File::load($fid);
       $styled_image_url = ImageStyle::load('card_image_background')->buildUrl($file->getFileUri());
-
       $bgcolor = $card->field_overlay->value;
-      $media['src'] = $styled_image_url;
+      $media['src'] = _jcc_components_remove_image_protocol($styled_image_url);
       $media['alt'] = $title;
       if ($card->field_top_background->value) {
         if ($card->field_overlay->value) {

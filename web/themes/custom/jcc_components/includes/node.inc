@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\media\Entity\Media;
 use Drupal\node\NodeInterface;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -22,6 +23,43 @@ function jcc_components_preprocess_node(&$variables) {
 
   // Display content only when embed param is 1.  Hide header and footer.
   $variables['embed'] = \Drupal::request()->query->get('embed') == 1 ? TRUE : FALSE;
+
+  if ($node->getType() == 'tentative_ruling') {
+    $variables['judges_card'] = [];
+    foreach ($node->field_judge as $judge_key => $judge_entity){
+      $judge = $judge_entity->entity;
+      $variables['judges_card'][$judge_key]['body'] = '';
+
+      //rendering judge name field
+      $variables['judges_card'][$judge_key]['title'] = $judge->getTitle();
+
+      //rendering judge department field
+      if ($judge->field_department){
+        $judge_department = '';
+        foreach($judge->field_department as $key => $department_term){
+          $department_term_value = $department_term->get('entity')->getTarget()->getValue()->label();
+          if($key == 0){
+            $judge_department = $department_term_value;
+          } else {
+            $judge_department .= ', ' . $department_term_value;
+          }
+        }
+        $variables['judges_card'][$judge_key]['department'] = $judge_department;
+      }
+
+      //rendering judge address field
+      $judge_address = $judge->field_address;
+      $judge_address_html = $judge_address->first()->address_line1 . ' ' . $judge_address->first()->address_line2;
+      $judge_address_html .= '<br/>' . $judge_address->first()->locality . ', ' . $judge_address->first()->administrative_area . ' ' . $judge_address->first()->postal_code;
+      $judge_address_html .= '<br/>' . $judge_address->first()->country_code;
+      $variables['judges_card'][$judge_key]['body'] = Markup::create($judge_address_html);
+
+      //rendering judge custom_link field
+      if($judge->field_custom_link->first()){
+        $variables['judges_card'][$judge_key]['link']['url'] = $judge->field_custom_link->first()->getUrl()->toString();
+      }
+    }
+  }
 }
 
 /**
@@ -253,8 +291,8 @@ function jcc_components_node_event(array &$variables, NodeInterface $node) {
     ->toRenderable();
 
   // Ensure date range field timezone.
-  $variables['startDate'] = jcc_timezone_adjust($node->field_date_range->start_date);
-  $variables['endDate'] = jcc_timezone_adjust($node->field_date_range->end_date);
+  $variables['startDate'] = $node->field_date_range->start_date;
+  $variables['endDate'] = $node->field_date_range->end_date;
 }
 
 /**
@@ -275,8 +313,8 @@ function jcc_components_node_document(array &$variables, NodeInterface $node) {
 
   // Ensure date range field timezone.
   if (isset($node->field_date_range->start_date)) {
-    $variables['startDate'] = jcc_timezone_adjust($node->field_date_range->start_date);
-    $variables['endDate'] = jcc_timezone_adjust($node->field_date_range->end_date);
+    $variables['startDate'] = $node->field_date_range->start_date;
+    $variables['endDate'] = $node->field_date_range->end_date;
   }
 }
 
@@ -311,16 +349,4 @@ function jcc_get_menu_items($menu_name, $min_depth, $max_depth) {
   $tree = \Drupal::menuTree()->transform($tree, $manipulators);
 
   return $tree;
-}
-
-/**
- * Date timezone adjustment.
- */
-function jcc_timezone_adjust($date) {
-  if (!empty($date)) {
-    $formatted = \Drupal::service('date.formatter')->format(
-      $date->getTimestamp(), 'custom', 'Y-m-d H:i:s P'
-    );
-    return $formatted;
-  }
 }
