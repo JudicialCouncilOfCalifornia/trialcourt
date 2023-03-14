@@ -399,27 +399,28 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
 /**
  * Implements hook_views_pre_render().
  */
-function jcc_components_views_pre_render(ViewExecutable $view){
+function jcc_components_views_pre_render(ViewExecutable $view) {
   switch ($view->storage->id()) {
     case 'tentative_rulings':
-      if(($view->current_display == 'tentative_rulings') && ($view->total_rows != 0)){
+      if (($view->current_display == 'tentative_rulings') && ($view->total_rows != 0)) {
         unset($view->attachment_before[1]);
       }
-      if ($view->current_display == 'attachment_1' || $view->current_display == 'attachment_2'){
+      if ($view->current_display == 'attachment_1' || $view->current_display == 'attachment_2') {
         $view->element['#custom_items'] = [];
         foreach ($view->result as $key => $row) {
           $view->element['#custom_items'][$key]['style'] = "borderless";
           $view_entity = $row->_entity;
-          if ($view_entity->hasField('field_judge')){
+          if ($view_entity->hasField('field_judge')) {
             $view->element['#custom_items'][$key]['title'] = $view->field['field_judge']->advancedRender($row)->__toString();
-          } elseif($view->field['title']) {
+          }
+          elseif ($view->field['title']) {
             $view->element['#custom_items'][$key]['title'] = $view->field['title']->advancedRender($row)->__toString();
           }
           $body_content = "";
           if ($view->field['field_department']->advancedRender($row) != "") {
             $body_content = $view->field['field_department']->advancedRender($row)->__toString() . '<br>';
           }
-          $body_content .=  $view->field['field_address']->advancedRender($row)->__toString();
+          $body_content .= $view->field['field_address']->advancedRender($row)->__toString();
           $view->element['#custom_items'][$key]['body'] = Markup::create($body_content);
           if ($view->field['field_custom_link']->advancedRender($row) != "") {
             $link_uri = $view->field['field_custom_link']->advancedRender($row)->__toString();
@@ -432,7 +433,7 @@ function jcc_components_views_pre_render(ViewExecutable $view){
   }
 }
 
-  /**
+/**
  * Implements hook_preprocess_HOOK().
  */
 function jcc_components_preprocess_views_view__feeds_directory__page_1(&$variables) {
@@ -557,4 +558,3 @@ function jcc_components_preprocess_views_view_row_rss(&$variables) {
     }
   }
 }
-
