@@ -1,7 +1,8 @@
+uuid: c54dfbe1-d212-476e-871a-c550f97bf9be
 langcode: en
 status: true
 dependencies: {  }
-id: forms_publication
+id: forms_publications
 class: null
 field_plugin_method: null
 cck_plugin_method: null
@@ -22,16 +23,16 @@ source:
   fields:
     -
       name: id
-      selector: primary_file
+      selector: url
       label: 'Unique Identifier'
-    -
-      name: primary_file
-      selector: primary_file
-      label: 'Attachment file url'
     -
       name: title
       selector: title
       label: Title
+    -
+      name: url
+      selector: url
+      label: URL
     -
       name: date
       label: Date
@@ -42,53 +43,52 @@ source:
       selector: body
     -
       name: cambodian_file
-      label: Cambodian file
+      label: 'Cambodian file'
       selector: cambodian_file
     -
       name: arabic_file
-      label:  Arabic file
+      label: 'Arabic file'
       selector: arabic_file
     -
       name: chinese_simple_file
-      label:  Chinese simple file
+      label: 'Chinese simple file'
       selector: chinese_simple_file
     -
       name: chinese_traditional_file
-      label: Chinese traditional file
+      label: 'Chinese traditional file'
       selector: chinese_traditional_file
     -
       name: farsi_file
-      label:  Farsi file
+      label: 'Farsi file'
       selector: farsi_file
     -
       name: hmong_file
-      label:  Hmong file
+      label: 'Hmong file'
       selector: hmong_file
     -
       name: korean_file
-      label:  Korean file
+      label: 'Korean file'
       selector: korean_file
     -
       name: punjabi_file
-      label:  Punjabi file
+      label: 'Punjabi file'
       selector: punjabi_file
     -
       name: russian_file
-      label:  Russian file
+      label: 'Russian file'
       selector: russian_file
     -
       name: spanish_file
-      label:  Spanish file
+      label: 'Spanish file'
       selector: spanish_file
     -
       name: taglog_file
-      label:  Taglog file
+      label: 'Taglog file'
       selector: taglog_file
     -
       name: vietnamese_file
-      label:  Vietnamese file
+      label: 'Vietnamese file'
       selector: vietnamese_file
-
 process:
   pseudo_encoded_title:
     plugin: callback
@@ -105,16 +105,14 @@ process:
     -
       plugin: callback
       callable: urldecode
-#    -
-#      plugin: skip_on_empty
-#      method: process
-#      message: 'Cannot import empty filename.'
   name: '@pseudo_destination_filename'
   field_date:
-    - plugin: callback
+    -
+      plugin: callback
       callable: strtotime
       source: date
-    - plugin: format_date
+    -
+      plugin: format_date
       from_format: U
       to_format: Y-m-d
   field_media_text/value:
@@ -124,42 +122,25 @@ process:
   field_media_text/format:
     plugin: default_value
     default_value: body
-#  field_media_file_multiple/target_id:
-#    -
-#      plugin: migration_lookup
-#      migration: forms_file
-#      source: primary_file
   field_media_file_multiple:
-    - plugin: skip_on_empty
-      method: process
-    - plugin: sub_process
-      process:
-        target_id:
-          - plugin: migration_lookup
-            migration: forms_file
-            source: primary_file
-  field_media_image_1:
-    - plugin: skip_on_empty
-      method: process
-      source: images
-    - plugin: convert_images_to_array
-    - plugin: sub_process
-      process:
-        target_id:
-          - plugin: file_copy
-            source:
-              - source_path
-              - destination_path
-          - plugin: entity_generate
-            value_key: uri
-            entity_type: file
-        alt: alt
-        title: title
-  field_media_file_arabic/target_id:
+    -
+      plugin: explode
+      delimiter: ','
+      source: url
+    -
+      plugin: callback
+      callable: trim
     -
       plugin: migration_lookup
       migration: forms_file
+  field_media_file_arabic/target_id:
+    -
+      plugin: skip_on_empty
+      method: process
       source: arabic_file
+    -
+      plugin: migration_lookup
+      migration: forms_file
   field_media_file_cambodian/target_id:
     -
       plugin: migration_lookup
