@@ -40,7 +40,7 @@ function jcc_base_preprocess_views_view_unformatted__staff_contacts__block_2(&$v
     // Contact category/subject by tagging.
     $tag_count = count($row->field_tags);
     if ($tag_count == 1) {
-      $tag = $row->field_tags[0]->entity->label();
+      $tag = (isset($row->field_tags[0]->entity)) ? $row->field_tags[0]->entity->label() : '';
     }
     else {
       // Assigns one tag per duplicated person if person has multiple tags.
