@@ -1,0 +1,24 @@
+{{ attach_library("jcc_storybook/Hero") }}
+{{ attach_library("jcc_storybook/Card") }}
+{{ attach_library("jcc_storybook/Button") }}
+
+{% include "@molecules/Hero/Hero.twig" with {
+  variant: 'content-bg',
+  content_justify: 'left',
+  bg_tint: 'accent-warm-dark-xx',
+  background_image_url: 'https://source.unsplash.com/random/900×700/?building',
+  card_data: {
+    attributes: create_attribute(),
+    variant: "default",
+    first_component: true,
+    media: false,
+    heading: paragraph.field_heading.value,
+    text: content.field_lead,
+    button_data: {
+      attributes: create_attribute(),
+      variant: "primary",
+      label: paragraph.field_link.title,
+      href: paragraph.field_link.uri,
+    }
+  }
+} %}

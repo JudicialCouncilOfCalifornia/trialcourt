@@ -35,7 +35,9 @@ function jcc_custom_page_attachments(array &$attachments) {
  * Implements hook_ckeditor_css_alter().
  */
 function jcc_custom_ckeditor_css_alter(array &$css, Editor $editor) {
-  if ($scheme = theme_get_setting('scheme', 'jcc_components')) {
+  $theme_handler = \Drupal::service('theme_handler');
+
+  if ($scheme = theme_get_setting('scheme', $theme_handler->getDefault())) {
     if (!$editor->hasAssociatedFilterFormat()) {
       return;
     }
@@ -284,6 +286,9 @@ function jcc_custom_managed_file_process(array &$element, FormStateInterface $fo
   return $element;
 }
 
+/**
+ * Implements hook_preprocess_HOOK().
+ */
 function jcc_custom_preprocess_views_view_row_rss(&$variables) {
   $view = $variables['view'];
   $view_id = $view->id();
