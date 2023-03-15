@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Element\ManagedFile;
 use Drupal\jcc_bulk_document_importer\Ajax\ManagedFileUploadCompleteEventCommand;
 use Drupal\taxonomy\Entity\Term; 
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_form_alter().
@@ -65,14 +66,14 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
           '#type' => 'fieldset',
           '#collapsible' => FALSE,
         ];
-
-        $file = array_pop($element['#files']);
-        $fileName = pathinfo($file->getFilename(), PATHINFO_FILENAME);                
+                
+        $file = File::load($document_id);            
+        $fileName = pathinfo( $file->getFilename(), PATHINFO_FILENAME);                          
         $element['documents'][$document_id]['custom_title'] = [
           '#type' => 'textfield',
           '#default_value' => $fileName,
           '#title' => t('Title'),
-        ];
+        ];  
 
         $element['documents'][$document_id]['custom_verbose_title'] = [
           '#type' => 'textarea',
@@ -101,7 +102,7 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
           '#type' => 'select',
           '#options' => getCategoryTypes(),          
           '#title' => t('Category'),         
-        ];
+        ];       
         $element['documents'][$document_id]['file'] = $element['file_' . $document_id];
         unset($element['file_' . $document_id]);
       }
