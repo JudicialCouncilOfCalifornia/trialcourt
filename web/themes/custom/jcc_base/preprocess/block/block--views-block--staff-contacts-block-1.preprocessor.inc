@@ -38,7 +38,7 @@ function jcc_base_preprocess_block__views_block__staff_contacts_block_1(&$variab
       // Contact category/subject by tagging.
       $tag_count = count($row->_entity->field_tags);
       if ($tag_count == 1) {
-        $tag = $row->_entity->field_tags[0]->entity->label();
+        $tag = (isset($row->_entity->field_tags[0]->entity)) ? $row->_entity->field_tags[0]->entity->label() : '';
       }
       else {
         // Assigns one tag per duplicated person if person has multiple tags.
