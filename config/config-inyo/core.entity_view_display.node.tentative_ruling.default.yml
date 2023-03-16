@@ -1,4 +1,4 @@
-uuid: 984b71aa-6ae9-484a-8edb-ab9f772a313b
+uuid: 9cc0a4e6-e01e-4a7a-8935-b5ca3b14b01b
 langcode: en
 status: true
 dependencies:
@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.tentative_ruling.body
     - field.field.node.tentative_ruling.field_caption
     - field.field.node.tentative_ruling.field_case_type
+    - field.field.node.tentative_ruling.field_custom_link
     - field.field.node.tentative_ruling.field_date_time
     - field.field.node.tentative_ruling.field_department
     - field.field.node.tentative_ruling.field_judge
@@ -16,7 +17,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: xw9CECR2WHy4h21q3VyxtWdh9pLw2vIZsRQaV743wCw
+  default_config_hash: 8x60hUNr1XS4LSuKmB861s_nD_Y22y2r04ed64q7w20
 id: node.tentative_ruling.default
 targetEntityType: node
 bundle: tentative_ruling
@@ -40,7 +41,7 @@ content:
     type: entity_reference_label
     label: hidden
     settings:
-      link: true
+      link: false
     third_party_settings: {  }
     weight: 101
     region: content
@@ -52,14 +53,6 @@ content:
       format_type: medium
     third_party_settings: {  }
     weight: 105
-    region: content
-  field_department:
-    type: entity_reference_label
-    label: hidden
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 102
     region: content
   field_judge:
     type: entity_reference_entity_id
@@ -81,6 +74,10 @@ content:
     weight: 100
     region: content
 hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_custom_link: true
+  field_department: true
   langcode: true
   search_api_excerpt: true
