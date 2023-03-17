@@ -60,11 +60,23 @@ class MCManageSubs extends FormBase {
       $user_groups[$group->tid] = $term->label();
     }
 
+    $form['title_header'] = [
+      '#prefix' => '<h2>',
+      '#suffix' => '</h2>',
+      '#markup' => t('Notifications from the Supreme Court of California'),
+      '#weight' => -100,
+    ];
+    $form['text_header'] = [
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+      '#markup' => t('<br />The following sections of the Court’s website are updated frequently. <br />Select the items you’d like ' . $member_email . ' to be notified when content is posted.<br /><br />'),
+      '#weight' => -100,
+    ];
+
     // Creating list of user groups.
     $form['user_groups'] = [
       '#type' => 'checkboxes',
       '#options' => $user_groups,
-      '#title' => $this->t('Manage subscriptions for ' . $member_email . ' :'),
     ];
 
     // Populating default values.
