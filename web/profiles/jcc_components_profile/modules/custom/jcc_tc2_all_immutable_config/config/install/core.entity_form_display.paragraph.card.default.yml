@@ -2,12 +2,16 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.card.field_background
     - field.field.paragraph.card.field_brow
     - field.field.paragraph.card.field_heading
+    - field.field.paragraph.card.field_icon
     - field.field.paragraph.card.field_link
+    - field.field.paragraph.card.field_media
     - field.field.paragraph.card.field_text
     - paragraphs.paragraphs_type.card
   module:
+    - jcc_courtyard_icons
     - linkit_field
     - text
 id: paragraph.card.default
@@ -15,6 +19,12 @@ targetEntityType: paragraph
 bundle: card
 mode: default
 content:
+  field_background:
+    type: options_buttons
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_brow:
     type: string_textfield
     weight: 0
@@ -31,12 +41,28 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_icon:
+    type: courtyard_icons_widget
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_link:
     type: linkit_field_linkit
     weight: 3
     region: content
     settings:
       linkit_profile: default
+    third_party_settings: {  }
+  field_media:
+    type: entity_reference_autocomplete
+    weight: 4
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_text:
     type: text_textarea
@@ -47,7 +73,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }

@@ -5,6 +5,7 @@ dependencies:
     - field.field.paragraph.cards.field_columns
     - field.field.paragraph.cards.field_components
     - field.field.paragraph.cards.field_heading
+    - field.field.paragraph.cards.field_image_media
     - field.field.paragraph.cards.field_lead
     - field.field.paragraph.cards.field_link
     - field.field.paragraph.cards.field_sub_variant
@@ -45,6 +46,16 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_image_media:
+    type: entity_reference_autocomplete
+    weight: 7
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_lead:
     type: text_textarea
     weight: 2
@@ -78,7 +89,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 7
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
