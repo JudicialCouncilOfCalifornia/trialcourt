@@ -107,6 +107,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     global $base_url;
     // Gathering emails to send emails to.
     $email_to_sendgrid = [];
+    $email_to_sendgrid_list = '';
     $email_access_keys = [];
     $form_group_values = array_filter($form_state->cleanValues()->getValues()['groups_to_notify']);
 
@@ -130,6 +131,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
       foreach ($view_result as $key => $row) {
         if (!array_search($view->field['mail']->getValue($row), $email_to_sendgrid)) {
           $email_to_sendgrid[] = $view->field['mail']->getValue($row);
+          $email_to_sendgrid_list .= $view->field["mail"]->getValue($row) . ', ';
 
           // Opt out custom tokens.
           $email_key = user_password();
@@ -228,11 +230,8 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
           ]
         );
 
-      // Issue when simply calling $sendgrid->send($email);
-      // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
-      // Send an email using the template stored in SendGrid.
       try {
-        \Drupal::logger('sendgrid_message')->notice('firing send event');
+        \Drupal::logger('sendgrid_message')->notice('firing send event to ' . $email_to_sendgrid_list);
         $sendGridResponse = $sendgrid->send($email);
 
         if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
@@ -332,5 +331,15 @@ function jcc_messaging_center_mail_alter(&$message) {
           or <a href=' . $base_url . '/messaging-center/' . $member_email .'/delete-all/'. $email_key .'">Opt out</a> from all communications.</p>';
 
     $message['body'][0] = t($message_body);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ * UI cleanup if no group is defined
+ */
+function jcc_messaging_center_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (empty($form['field_jcc_messaging_center_group']['widget']['#options'])){
+    unset($form['field_jcc_messaging_center_group']);
   }
 }
