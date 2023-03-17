@@ -40,10 +40,12 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
     unset($form['#fieldgroups']);
   }
 
+  $has_messagiing_permissions = \Drupal::currentUser()->hasPermission('Manage Messaging center');
+
     // Option to send message on node_save
     if (in_array($form['#form_id'],
       $forms_enabled_on
-    )) {
+    ) && $has_messagiing_permissions) {
       $user_groups = [];
       $vid = 'user_groups';
       $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
