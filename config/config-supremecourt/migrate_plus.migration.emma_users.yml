@@ -1,3 +1,4 @@
+uuid: 0187d2e1-a3ff-4fe1-a2c1-6a7e436673a0
 langcode: en
 status: true
 dependencies: {  }
@@ -43,25 +44,8 @@ source:
 process:
   name: name
   mail: email
-#  pass: pw_hash
   status: status
-field_jcc_messaging_center_group:
-    -
-      plugin: skip_on_empty
-      source: group
-      method: process
-      message: 'No user group found.'
-    -
-      plugin: callback
-      callable: trim
-    -
-      plugin: entity_generate
-      bundle: user_groups
-      value_key: name
-      bundle_key: vid
-      entity_type: taxonomy_term
-      ignore_case: true
 destination:
-  plugin: entity:user
+  plugin: 'entity:user'
   md5_passwords: true
-
+migration_dependencies: null
