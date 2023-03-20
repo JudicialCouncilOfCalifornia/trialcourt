@@ -88,7 +88,7 @@ class BulkImporterForm extends FormBase {
       ],
       '#default_value' => date("Y-m-d"),
       '#date_date_format' => 'Y/m/d',
-    ];
+    ];   
 
     $form['body'] = [
       '#type' => 'text_format',
@@ -115,8 +115,9 @@ class BulkImporterForm extends FormBase {
         if (isset($document) && !empty($document)) {
           $file = File::load($document['doc_id']);
           $file->setPermanent();
-          $file->save();
-
+          $file->save();                 
+          
+          $flag = ($document['media']['only-media'] == 'only-media');
           $media = Media::create([
             'bundle' => 'file',
             'uid' => \Drupal::currentUser()->id(),
@@ -125,8 +126,8 @@ class BulkImporterForm extends FormBase {
             ],
             'field_document_type' => $form_state->getValue('document_type', 0),
             'field_category' => $document['category'], 
-          ]);
-          $media->setName($document['custom_title'])->setPublished(TRUE)->save();
+          ]);         
+          $media->setName($document['custom_title'])->setPublished(TRUE)->save();    
 
           // Hearing date 12:00a default time with GMT adjustment as needed.
           $gmt = date('P');
@@ -151,6 +152,7 @@ class BulkImporterForm extends FormBase {
 
           // Save node
           // Create node object with attached file.
+          if(!$flag) {
           $node = Node::create([
             'type' => 'document',
             'title' => $document['custom_title'],
@@ -169,9 +171,10 @@ class BulkImporterForm extends FormBase {
             'field_case' => $form_state->getValue('document_case_bundle', 0),
             'body' => $form_state->getValue('body', 0),
             'status' => 1,
-          ]);
+          ]);        
           $node->save();
         }
+      }      
       }
     }
   }

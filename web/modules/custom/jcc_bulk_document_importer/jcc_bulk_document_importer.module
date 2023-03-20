@@ -14,7 +14,7 @@ use Drupal\file\Entity\File;
 /**
  * Implements hook_form_alter().
  */
-function jcc_bulk_document_importer_form_alter(&$form, &$form_state, $form_id) {
+function jcc_bulk_document_importer_form_alter(&$form, &$form_state, $form_id) {  
   if (isset($form_state->getCompleteForm()['#form_id']) && $form_state->getCompleteForm()['#form_id'] == 'jcc_bulk_importer_form') {
     // Node creation and editing only customizations.
     if ((isset($form['#theme']['1']) && $form['#theme']['1'] == 'node_form')) {
@@ -101,8 +101,19 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
         $element['documents'][$document_id]['category'] = [
           '#type' => 'select',
           '#options' => getCategoryTypes(),          
-          '#title' => t('Category'),         
-        ];       
+          '#title' => t('Category'), 
+          '#default_value' => NULL,            
+          '#empty_option' => t('- Please Select -')    
+        ];   
+        
+        $element['documents'][$document_id]['media'] = [
+          '#type' => 'checkboxes',   
+          '#default_value' => 'only-media',       
+          '#options' => array(
+            'only-media'=>'Only Media',            
+          ),
+        ];
+
         $element['documents'][$document_id]['file'] = $element['file_' . $document_id];
         unset($element['file_' . $document_id]);
       }
