@@ -151,26 +151,29 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
 function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
   $theme = \Drupal::config('system.theme')->get('default');
 
-  // If elevated theme is in use.
+  // If elevated theme is not in use by all sites.
   if ($theme == 'jcc_elevated') {
-    // POSTPONED.
-    /*
     switch ($element['#paragraph_type']) {
-    case 'card':
-    // Get selected variant for field visibility management.
-    $entity = $context['items']->entity;
-    $parent = $entity->getParentEntity();
-    $sub_variant = $parent->get('field_sub_variant')->value;
-    $sub_variant = substr($sub_variant, strpos($sub_variant, ':'));
-    $sub_variant = preg_replace("/[^a-zA-Z0-9]+/", "", $sub_variant);
+      case 'cards':
+        unset($element['subform']['field_columns']);
 
-    break;
+        // POSTPONED.
+        // Get selected variant for field visibility management.
+        /*
+        $entity = $context['items']->entity;
+        $parent = $entity->getParentEntity();
+        $sub_variant = $parent->get('field_sub_variant')->value;
+        $sub_variant = substr($sub_variant, strpos($sub_variant, ':'));
+        $sub_variant = preg_replace("/[^a-zA-Z0-9]+/", "", $sub_variant);
+         */
+
+        break;
     }
-     */
   }
   else {
     switch ($element['#paragraph_type']) {
       case 'cards':
+        unset($element['subform']['field_width_minimum']);
         unset($element['subform']['field_image_media']);
 
         break;
@@ -178,7 +181,9 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
       case 'card':
         unset($element['subform']['field_media']);
         unset($element['subform']['field_background']);
-        unset($element['subform']['field_icon']);
+        if ($theme != 'jcc_professional') {
+          unset($element['subform']['field_icon']);
+        }
 
         break;
     }

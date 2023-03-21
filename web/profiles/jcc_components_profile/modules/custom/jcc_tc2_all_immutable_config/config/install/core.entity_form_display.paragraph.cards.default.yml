@@ -10,6 +10,7 @@ dependencies:
     - field.field.paragraph.cards.field_link
     - field.field.paragraph.cards.field_sub_variant
     - field.field.paragraph.cards.field_variant
+    - field.field.paragraph.cards.field_width_minimum
     - paragraphs.paragraphs_type.cards
   module:
     - link
@@ -28,7 +29,7 @@ content:
     third_party_settings: {  }
   field_components:
     type: entity_reference_paragraphs
-    weight: 5
+    weight: 6
     region: content
     settings:
       title: Card
@@ -48,7 +49,7 @@ content:
     third_party_settings: {  }
   field_image_media:
     type: entity_reference_autocomplete
-    weight: 7
+    weight: 8
     region: content
     settings:
       match_operator: CONTAINS
@@ -66,7 +67,7 @@ content:
     third_party_settings: {  }
   field_link:
     type: link_default
-    weight: 6
+    weight: 7
     region: content
     settings:
       placeholder_url: ''
@@ -88,8 +89,15 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_width_minimum:
+    type: number
+    weight: 5
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
   translation:
-    weight: 8
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
