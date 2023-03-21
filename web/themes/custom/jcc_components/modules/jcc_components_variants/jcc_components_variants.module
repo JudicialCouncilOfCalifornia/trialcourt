@@ -73,15 +73,6 @@ function jcc_components_variants_preview($type) {
   $files = preg_grep('/^([^.])/', scandir($dir));
   $variants = '';
   $options = [];
-  $theme = \Drupal::config('system.theme')->get('default');
-
-  // If elevated theme is in use.
-  if ($type == 'card' && $theme == 'jcc_elevated') {
-    $files = array_slice($files, 3);
-  }
-  else {
-    $files = array_slice($files, 0, 3);
-  }
 
   // Generate details and buttons for each variant image provided.
   foreach ($files as $file) {
