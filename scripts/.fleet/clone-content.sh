@@ -15,11 +15,16 @@ do_command() {
   for site in $sites
     do
       site="jcc-${site}.${source}"
-      echo -e "\n${B}Cloning content from ${site} to ${target}${RE} $@"
-      terminus env:clone-content ${site} ${target} $@ &
+      if [ ${site} == "jcc-stanislaus.${source}" ]
+      then
+        echo -e "\n${G}*** Skipping clone for ${site}${RE}"
+      else
+        echo -e "\n${B}Cloning content from ${site} to ${target}${RE} $@"
+        terminus env:clone-content ${site} ${target} $@ &
 
-      PIDS+=" $!"
-      sitemap["$!"]="${site}"
+        PIDS+=" $!"
+        sitemap["$!"]="${site}"
+      fi
 
       sleep 3
     done
