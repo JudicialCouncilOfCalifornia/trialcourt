@@ -22,6 +22,9 @@ function _jcc_list_faceted_terms($node, $vocabularies) {
     // Remove duplicate term if the same name exists in another vocab.
     if (isset($tag_render['#items']) && $tag_render['#items']) {
       foreach ($tag_render['#items'] as $key => $item) {
+        if ($item->get('entity') != null) {
+          continue;
+        }
         $name = strtolower($item->get('entity')
           ->getTarget()
           ->getValue()
