@@ -9,7 +9,7 @@ cck_plugin_method: null
 migration_tags:
   - user
   - emma
-migration_group: jcc2
+migration_group: supremecourt
 label: 'User: Import from Emma'
 source:
   plugin: url
@@ -46,13 +46,17 @@ process:
   mail: email
   status: status
   field_jcc_messaging_center_group:
-    plugin: entity_generate
-    source: ugroup
-    entity_type: taxonomy_term
-    bundle_key: vid
-    bundle: user_groups
-    value_key: name
-    ignore_case: true
+    -
+      plugin: explode
+      source: ugroup
+      delimiter: ','
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: user_groups
+      value_key: name
+      ignore_case: true
 destination:
   plugin: 'entity:user'
   md5_passwords: true
