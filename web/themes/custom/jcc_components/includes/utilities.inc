@@ -44,19 +44,6 @@ function _jcc_components_can_edit_entity(EntityInterface $entity, string $cta) {
 }
 
 /**
- * Helper function to remove protocol from image paths.
- *
- * @param string $image
- *   The Drupal image url.
- *
- * @return string
- *   Converted url with no http or https.
- */
-function _jcc_components_remove_image_protocol($image) {
-  return preg_replace('(^https?:||^http?:)', '', $image);
-}
-
-/**
  * Helper function to load language labels.
  *
  * @return string

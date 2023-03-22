@@ -326,7 +326,7 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       $file = File::load($fid);
       $styled_image_url = ImageStyle::load('card_image_background')->buildUrl($file->getFileUri());
       $bgcolor = $card->field_overlay->value;
-      $media['src'] = _jcc_components_remove_image_protocol($styled_image_url);
+      $media['src'] = $styled_image_url;
       $media['alt'] = $title;
       if ($card->field_top_background->value) {
         if ($card->field_overlay->value) {

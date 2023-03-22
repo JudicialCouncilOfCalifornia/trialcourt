@@ -53,7 +53,7 @@ function _jcc_get_first_image($node, $style = 'max_325x325') {
     if ($node_image) {
       $uri = $node_image->first()->entity->getFileUri();
       $style = \Drupal::entityTypeManager()->getStorage('image_style')->load($style);
-      $image_url = _jcc_components_remove_image_protocol($style->buildUrl($uri));
+      $image_url = $style->buildUrl($uri);
       $image_alt = $node_image->first()->alt;
 
       return [
@@ -64,17 +64,4 @@ function _jcc_get_first_image($node, $style = 'max_325x325') {
   }
 
   return FALSE;
-}
-
-/**
- * Helper function to remove protocol from image paths.
- *
- * @param string $image
- *   The Drupal image url.
- *
- * @return string
- *   Converted url with no http or https.
- */
-function _jcc_components_remove_image_protocol($image) {
-  return preg_replace('(^https?:||^http?:)', '', $image);
 }

@@ -41,7 +41,7 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
       $video = $featured->_entity->field_videos->getValue();
       // Get  video entity by target id from media field.
       $video_entity = Media::load($video[0]["target_id"]);
-      if($video_entity != NULL){
+      if ($video_entity != NULL) {
         // Video title.
         $video_title = $video_entity->label();
         // Video embed.
@@ -73,9 +73,7 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
         $image_entity = Media::load($image["target_id"]);
         // Get image url, alt, and title.
         $image_src = ImageStyle::load('max_1300x1300')->buildUrl($image_entity->field_media_image->entity->uri->value);
-        $image_src = _jcc_components_remove_image_protocol($image_src);
         $image_thumb = ImageStyle::load('medium')->buildUrl($image_entity->field_media_image->entity->uri->value);
-        $image_thumb = _jcc_components_remove_image_protocol($image_thumb);
         $image_alt = $image_entity->field_media_image->alt;
         $image_caption = strip_tags($image_entity->field_media_caption->value);
         // Image element.
