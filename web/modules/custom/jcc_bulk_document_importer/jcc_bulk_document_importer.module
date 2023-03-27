@@ -107,11 +107,13 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
         ];   
         
         $element['documents'][$document_id]['media'] = [
-          '#type' => 'checkboxes',   
-          '#default_value' => 'only-media',       
+          '#type' => 'checkboxes',              
           '#options' => array(
             'only-media'=>'Only Media',            
           ),
+          '#attributes'=>[
+            'checked' => true,
+          ]         
         ];
 
         $element['documents'][$document_id]['file'] = $element['file_' . $document_id];
