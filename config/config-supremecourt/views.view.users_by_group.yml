@@ -2,14 +2,6 @@ uuid: a9480077-cc76-4308-b3b2-fd2394364241
 langcode: en
 status: true
 dependencies:
-  config:
-    - user.role.administrator
-    - user.role.anonymous
-    - user.role.authenticated
-    - user.role.editor
-    - user.role.manager
-    - user.role.messaging_manager
-    - user.role.translator
   module:
     - user
 _core:
@@ -239,16 +231,8 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       access:
-        type: role
-        options:
-          role:
-            editor: editor
-            manager: manager
-            translator: translator
-            administrator: administrator
-            anonymous: anonymous
-            authenticated: authenticated
-            messaging_manager: messaging_manager
+        type: none
+        options: {  }
       cache:
         type: tag
         options: {  }
@@ -288,7 +272,7 @@ display:
             type: none
             fail: 'not found'
           validate_options: {  }
-          break_phrase: false
+          break_phrase: true
           not: false
       filters:
         status:
@@ -336,5 +320,4 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
-        - user.roles
       tags: {  }

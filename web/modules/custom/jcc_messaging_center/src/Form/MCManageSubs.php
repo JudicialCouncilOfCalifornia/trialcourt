@@ -115,6 +115,8 @@ class MCManageSubs extends FormBase {
 
     $user->set('field_jcc_messaging_center_group', $user_groups);
     $user->save();
+    
+    $this->messenger()->addStatus($this->t('Your preferences have been updated.'));
 
   }
 
