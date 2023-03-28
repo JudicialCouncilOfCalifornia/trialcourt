@@ -41,7 +41,7 @@
     {% set max = 4 %}
     {% set hearing = global.field_date_range %}
 
-    <h3 class="usa-card__heading">{{ hearing.end_value and hearing.end_value|date('Ymd') > hearing.value|date('Ymd') ? hearing.value|date('F j') ~ ' to ' ~ hearing.end_value|date('j, Y') : hearing.value|date('F j, Y') }} Cases to be argued</h3>
+    <h3 class="usa-card__heading">{{ hearing.end_value and hearing.end_value|date('Ymd') > hearing.value|date('Ymd') ? hearing.value|date('F j') ~ ' to ' ~ hearing.end_value|date('j, Y') : hearing.value|date('F j, Y') }} Cases to be Argued</h3>
 
     {% set unique = [] %}
     {% for row in rows[0]['#rows'] if unique|length < max %}
