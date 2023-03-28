@@ -10,7 +10,7 @@
   Drupal.behaviors.jccForms = {
     attach: function (context, settings) {
       if(jQuery(location).attr('pathname') == '/rss/news-events') {
-        jQuery('.jcc-hero__main-title').text('RSS Feeds');
+        //jQuery('.jcc-hero__main-title').text('RSS Feeds');
       }
       var $form = $('.usa-form', context);
 
