@@ -347,3 +347,51 @@ function jcc_custom_query_entity_reference_alter(AlterableInterface $query) {
     }
   }
 }
+
+/**
+* Implements hook_mail().
+*/
+function jcc_custom_mail($key, &$message, $params) {
+ $options = array(
+   'langcode' => $message['langcode'],
+ );
+
+ switch ($key) {
+   case 'server_down':
+     $message['from'] = 'shahnawaz.mohammed-t@jud.ca.gov';
+     $message['subject'] = t('Alert Server Down', [], $options);
+     $message['body'][] = $params['message'];
+     break;
+ }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function jcc_custom_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  switch ($route_name) {
+    case 'system.404':
+      // Page Not Found.
+      $error = 404;
+      break;
+  }
+  if (isset($error)) {
+    $mailManager = \Drupal::service('plugin.manager.mail');
+    $module = 'jcc_custom';
+    $key = 'server_down';
+    $to = 'cheryl.king@jud.ca.gov,shahnawaz.mohammed-t@jud.ca.gov';
+    $params['message'] = 'Internal Alert: Server is down or Page Not Found';
+    $params['node_title'] = 'Sever Down';
+    $langcode = \Drupal::currentUser()->getPreferredLangcode();
+    $send = true;
+
+    $result = $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);
+    if ($result['result'] !== true) {
+      drupal_set_message(t('There was a problem sending your message and it was not sent.'), 'error');
+    }
+    else {
+      drupal_set_message(t('Your message has been sent.'));
+    }
+  }
+}
