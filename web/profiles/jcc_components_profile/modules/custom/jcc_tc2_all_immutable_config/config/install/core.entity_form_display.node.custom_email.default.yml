@@ -3,15 +3,17 @@ status: true
 dependencies:
   config:
     - field.field.node.custom_email.body
+    - field.field.node.custom_email.field_email_footer
     - field.field.node.custom_email.field_messenger_link
     - node.type.custom_email
   module:
-    - content_moderation
     - link
     - path
     - scheduler
     - scheduler_content_moderation_integration
     - text
+_core:
+  default_config_hash: 4KaOnXyO7nOynHKNszLFbVK3HE8Ft5Pvbv1GHziadPg
 id: node.custom_email.default
 targetEntityType: node
 bundle: custom_email
@@ -32,6 +34,14 @@ content:
     weight: 10
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_email_footer:
+    type: text_textarea
+    weight: 124
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
     third_party_settings: {  }
   field_messenger_link:
     type: link_default

@@ -147,6 +147,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     $email_title = $form_state->cleanValues()->getValues()['title'];
     $email_summary = $form_state->cleanValues()->getValues()['body'];
     $read_more_url = '';
+    $email_footer = '';
 
     if ($form_state->getValue('field_messenger_link')) {
       $read_more_uri = $form_state->cleanValues()->getValues()['field_messenger_link'][0]['uri'];
@@ -164,6 +165,10 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     }
     else {
       $read_more_url = $base_url . $form_state->getValue('path')[0]['alias'];
+    }
+
+    if ($form_state->getValue('field_email_footer')) {
+      $email_footer = $form_state->cleanValues()->getValues()['field_email_footer'];
     }
 
     if ($form_state->getValue('field_date')) {
@@ -189,6 +194,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
           '%email_title%',
           '%email_summary%',
           '%base_url%',
+          '%email_footer%'
         ],
         [
           $email_post_date,
@@ -196,12 +202,14 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
           $email_title[0]['value'],
           $email_summary[0]['summary'] ?: strip_tags(substr($email_summary[0]['value'], 0, 300)),
           $base_url,
+          $email_footer
         ],
         '
           <div>%email_post_date%</div>
           <h2>%email_title%</h2>
           <p>%email_summary%</p>
           <p><a href="%read_more_url%">Read more ></a></p>
+          <p>%email_footer%</p>
           <br/>
           <br/>
           <p><a href="%base_url%/messaging-center/%member_email%/manage/%email_key%">manage your preferences</a><br>
