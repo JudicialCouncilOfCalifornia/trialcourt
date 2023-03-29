@@ -349,20 +349,18 @@ function jcc_custom_query_entity_reference_alter(AlterableInterface $query) {
 }
 
 /**
-* Implements hook_mail().
-*/
+ * Implements hook_mail().
+ */
 function jcc_custom_mail($key, &$message, $params) {
- $options = array(
-   'langcode' => $message['langcode'],
- );
+  $options = array['langcode' => $message['langcode']];
 
- switch ($key) {
-   case 'server_down':
-     $message['from'] = 'shahnawaz.mohammed-t@jud.ca.gov';
-     $message['subject'] = t('Alert Server Down', [], $options);
-     $message['body'][] = $params['message'];
-     break;
- }
+  switch ($key) {
+    case 'server_down':
+      $message['from'] = 'shahnawaz.mohammed-t@jud.ca.gov';
+      $message['subject'] = t('Alert Server Down', [], $options);
+      $message['body'][] = $params['message'];
+      break;
+  }
 }
 
 /**
@@ -384,10 +382,10 @@ function jcc_custom_theme_suggestions_page_alter(array &$suggestions, array $var
     $params['message'] = 'Internal Alert: Server is down or Page Not Found';
     $params['node_title'] = 'Sever Down';
     $langcode = \Drupal::currentUser()->getPreferredLangcode();
-    $send = true;
+    $send = TRUE;
 
     $result = $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);
-    if ($result['result'] !== true) {
+    if ($result['result'] !== TRUE) {
       drupal_set_message(t('There was a problem sending your message and it was not sent.'), 'error');
     }
     else {
