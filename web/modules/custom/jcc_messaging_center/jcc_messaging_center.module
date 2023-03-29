@@ -148,6 +148,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     $email_summary = $form_state->cleanValues()->getValues()['body'];
     $read_more_url = '';
     $email_footer = '';
+    $email_summary_formatted = '';
 
     if ($form_state->getValue('field_messenger_link')) {
       $read_more_uri = $form_state->cleanValues()->getValues()['field_messenger_link'][0]['uri'];
@@ -168,7 +169,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     }
 
     if ($form_state->getValue('field_email_footer')) {
-      $email_footer = $form_state->cleanValues()->getValues()['field_email_footer'];
+      $email_footer = $form_state->cleanValues()->getValues()['field_email_footer'][0]['value'];
     }
 
     if ($form_state->getValue('field_date')) {
@@ -179,6 +180,12 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     }
     else {
       $email_post_date = date('F j, Y');
+    }
+
+    if($form['#form_id'] == 'node_custom_email_edit_form' || $form['#form_id'] == 'node_custom_email_form'){
+      $email_summary_formatted = $email_summary[0]['value'];
+    } else {
+      $email_summary_formatted = $email_summary[0]['summary'] ?: strip_tags(substr($email_summary[0]['value'], 0, 300));
     }
 
     // Getting from email.
@@ -200,7 +207,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
           $email_post_date,
           $read_more_url,
           $email_title[0]['value'],
-          $email_summary[0]['summary'] ?: strip_tags(substr($email_summary[0]['value'], 0, 300)),
+          $email_summary_formatted,
           $base_url,
           $email_footer
         ],
