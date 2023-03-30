@@ -23,7 +23,6 @@ foreach ($dirs as $dir) {
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function jcc_newsroom_theme_suggestions_page_alter(array &$suggestions, array $variables) {
-  \Drupal::logger('Restore Canonical Urls')->info("coming");
   $route_name = \Drupal::routeMatch()->getRouteName();
   switch ($route_name) {
     case 'system.404':
@@ -32,11 +31,10 @@ function jcc_newsroom_theme_suggestions_page_alter(array &$suggestions, array $v
       break;
   }
   if (isset($error)) {
-     \Drupal::logger('Error page')->info("Error coming");
     $mailManager = \Drupal::service('plugin.manager.mail');
     $module = 'jcc_custom';
     $key = 'server_down';
-    $to = 'cheryl.king@jud.ca.gov,shahnawaz.mohammed-t@jud.ca.gov';
+    $to = 'shahnawaz.mohammed-t@jud.ca.gov';
     $params['message'] = 'Internal Alert: Server is down or Page Not Found';
     $params['node_title'] = 'Sever Down';
     $langcode = \Drupal::currentUser()->getPreferredLangcode();
@@ -44,10 +42,10 @@ function jcc_newsroom_theme_suggestions_page_alter(array &$suggestions, array $v
 
     $result = $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);
     if ($result['result'] !== TRUE) {
-      \Drupal::logger('Restore Canonical Urls')->info("There was a problem sending your message and it was not sent.");
+      \Drupal::logger('Internal Alert')->info("There was a problem sending your message and it was not sent.");
     }
     else {
-      \Drupal::logger('Restore Canonical Urls')->info("Message sent.");
+      \Drupal::logger('Internal Alert')->info("Internal Alert: Server is down or Page Not Found");
     }
   }
 }
