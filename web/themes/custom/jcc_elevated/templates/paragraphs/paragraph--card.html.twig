@@ -19,7 +19,7 @@
 {% endif %}
 
 {# Icon if in use for striped card #}
-{% if cards_sub_variant.card == 'striped' and paragraph.field_icon.value is not empty %}
+{% if cards_sub_variant.card == 'striped' and paragraph.field_icon.value %}
   {% set icon_data = {
     icon: paragraph.field_icon.value,
     color: false,
@@ -28,9 +28,13 @@
 
 {# Button link if in use #}
 {% if paragraph.field_link.get(0).getUrl() is not empty %}
+  {% set href = paragraph.field_link.get(0).getUrl() %}
+  {% if cards_sub_variant.card == 'striped' and paragraph.field_entire_card_clickable.value %}
+    {% set href = paragraph.field_link.get(0).getUrl().toString() %}
+  {% endif %}
   {% set button_data = {
     label: paragraph.field_link.title,
-    href: paragraph.field_entire_card_clickable.value ? paragraph.field_link.get(0).getUrl().toString() : paragraph.field_link.get(0).getUrl(),
+    href: href,
     variant: 'primary',
   } %}
 {% endif %}
@@ -40,7 +44,6 @@
   clickable_card: cards_sub_variant.card == 'striped' ? paragraph.field_entire_card_clickable.value : null,
   background: cards_sub_variant.card == 'striped' ? paragraph.field_background.value : null,
   media: media,
-  icon_data: icon_data,
   heading: content.field_heading,
   text: content.field_text,
   button_data: button_data,
