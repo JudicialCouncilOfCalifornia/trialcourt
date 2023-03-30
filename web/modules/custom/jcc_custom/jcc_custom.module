@@ -155,17 +155,23 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
   if ($theme == 'jcc_elevated') {
     switch ($element['#paragraph_type']) {
       case 'cards':
+        unset($element['subform']['field_variant']);
         unset($element['subform']['field_columns']);
 
-        // POSTPONED.
-        // Get selected variant for field visibility management.
-        /*
+        break;
+
+      case 'card':
+        // Get selected variant.
         $entity = $context['items']->entity;
         $parent = $entity->getParentEntity();
-        $sub_variant = $parent->get('field_sub_variant')->value;
-        $sub_variant = substr($sub_variant, strpos($sub_variant, ':'));
-        $sub_variant = preg_replace("/[^a-zA-Z0-9]+/", "", $sub_variant);
-         */
+        $cards_sub_variant = $parent->get('field_sub_variant')->value;
+        $cards_sub_variant = substr($cards_sub_variant, strpos($cards_sub_variant, ':'));
+        $cards_sub_variant = preg_replace("/[^a-zA-Z0-9]+/", "", $cards_sub_variant);
+
+        // Attach Card.css for background swatches.
+        if ($cards_sub_variant == 'striped' && isset($element['subform']['field_background'])) {
+          $element['#attached']['library'][] = 'jcc_elevated/storybook-card';
+        }
 
         break;
     }
@@ -183,6 +189,7 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         unset($element['subform']['field_background']);
         if ($theme != 'jcc_professional') {
           unset($element['subform']['field_icon']);
+          unset($element['subform']['field_entire_card_clickable']);
         }
 
         break;
@@ -413,12 +420,12 @@ function jcc_custom_query_entity_reference_alter(AlterableInterface $query) {
 function jcc_custom_background_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
   // Load overlay theme options into select field.
   $options = [];
-  $file = file_get_contents(\Drupal::service('extension.list.theme')->getPath('jcc_components') . '/jcc-background-options.json');
+  $file = file_get_contents(\Drupal::service('extension.list.theme')->getPath('jcc_elevated') . '/jcc-background-options.json');
   if ($file) {
     $overlays = json_decode($file);
     foreach ($overlays as $style) {
-      foreach ($style as $overlay) {
-        $options[] = $overlay;
+      foreach ($style as $key => $overlay) {
+        $options[] = [$key => $overlay];
       }
     }
   }

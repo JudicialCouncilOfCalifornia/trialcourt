@@ -1,0 +1,47 @@
+{{ attach_library("jcc_storybook/Card") }}
+{{ attach_library("jcc_storybook/Button") }}
+{{ attach_library("jcc_storybook/Icon") }}
+
+{# Only allow elevated card variants #}
+{% set variant = 'bordered-center' %}
+{% set paragraph_parent = paragraph.getParentEntity() %}
+{% if paragraph_parent %}
+  {% set cards_sub_variant = paragraph_parent.field_sub_variant.value|json_decode %}
+  {% if cards_sub_variant.card == 'striped' or cards_sub_variant == 'bordered-center' %}
+    {% set variant = cards_sub_variant.card %}
+  {% endif %}
+{% endif %}
+
+{#  Media if in use for bordered-center card #}
+{% set media = null %}
+{% if cards_sub_variant.card != 'striped' and paragraph.field_media.entity.uri.value %}
+  {% set media = paragraph.field_media.entity.uri.value %}
+{% endif %}
+
+{# Icon if in use for striped card #}
+{% if cards_sub_variant.card == 'striped' and paragraph.field_icon.value is not empty %}
+  {% set icon_data = {
+    icon: paragraph.field_icon.value,
+    color: false,
+  } %}
+{% endif %}
+
+{# Button link if in use #}
+{% if paragraph.field_link.get(0).getUrl() is not empty %}
+  {% set button_data = {
+    label: paragraph.field_link.title,
+    href: paragraph.field_entire_card_clickable.value ? paragraph.field_link.get(0).getUrl().toString() : paragraph.field_link.get(0).getUrl(),
+    variant: 'primary',
+  } %}
+{% endif %}
+
+{% include "@molecules/Card/Card.twig" with {
+  variant: variant,
+  clickable_card: cards_sub_variant.card == 'striped' ? paragraph.field_entire_card_clickable.value : null,
+  background: cards_sub_variant.card == 'striped' ? paragraph.field_background.value : null,
+  media: media,
+  icon_data: icon_data,
+  heading: content.field_heading,
+  text: content.field_text,
+  button_data: button_data,
+} %}

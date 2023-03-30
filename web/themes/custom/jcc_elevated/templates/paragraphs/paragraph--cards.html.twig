@@ -1,0 +1,37 @@
+{# Only allow elevated card variants #}
+{% set card_variant = 'bordered-center' %}
+{% set cards_sub_variant = paragraph.field_sub_variant.value|json_decode %}
+{% if cards_sub_variant.card == 'striped' or cards_sub_variant == 'bordered-center' %}
+  {% set card_variant = cards_sub_variant.card %}
+{% endif %}
+
+{% set cards = [] %}
+{% for key, child in content.field_components if key|first != '#' %}
+  {% set cards = cards|merge([child]) %}
+{% endfor %}
+
+{% if content.field_link.0 is not empty %}
+  {% set button_data = {
+    label: content.field_link.0['#title'],
+    href: content.field_link.0['#url'],
+    variant: "primary",
+  } %}
+{% endif %}
+
+{% include "@organisms/Section/Section.twig" with {
+  variant: 'default',
+  first_component: false,
+  sub_component_layout: 'grid',
+  measure: null,
+  gap: null,
+  grid_min_width: paragraph.field_minimum_width is not empty ? paragraph.field_minimum_width : 39,
+  sidebar_direction: null,
+  sidebar_width: null,
+  background_image_url: null,
+  brow_data: brow_data,
+  heading: content.field_heading,
+  text: content.field_lead,
+  button_data: button_data,
+  sub_component_data: cards,
+  attributes: attributes.addClass(card_variant.card),
+} %}
