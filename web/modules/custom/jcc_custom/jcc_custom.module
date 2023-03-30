@@ -169,7 +169,7 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         $cards_sub_variant = preg_replace("/[^a-zA-Z0-9]+/", "", $cards_sub_variant);
 
         // Attach Card.css for background swatches.
-        if ($cards_sub_variant == 'striped' && isset($element['subform']['field_background'])) {
+        if (isset($element['subform']['field_background'])) {
           $element['#attached']['library'][] = 'jcc_elevated/storybook-card';
         }
 
