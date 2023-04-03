@@ -89,6 +89,10 @@ source:
       name: vietnamese_file
       label: 'Vietnamese file'
       selector: vietnamese_file
+    -
+      name: east_armenian_file
+      label: 'East Armenian file'
+      selector: vietnamese_file
 process:
   pseudo_encoded_title:
     plugin: callback
@@ -97,15 +101,31 @@ process:
   pseudo_destination_filename:
     -
       plugin: path_from_url
-      source: primary_file
-      remove_extension: true
+      source: url
     -
       plugin: callback
       callable: basename
     -
       plugin: callback
       callable: urldecode
-  name: '@pseudo_destination_filename'
+    -
+      plugin: str_replace
+      search: ' '
+      replace: '-'
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'Cannot import empty image filename.'
+  name:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: '@pseudo_destination_filename'
   field_date:
     -
       plugin: callback
