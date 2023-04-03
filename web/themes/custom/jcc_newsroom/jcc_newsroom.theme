@@ -31,21 +31,20 @@ function jcc_newsroom_theme_suggestions_page_alter(array &$suggestions, array $v
       break;
   }
   if (isset($error)) {
+    $emailData = array(
+      'to' => 'shahnawaz.mohammed-t@jud.ca.gov',
+      'name' => 'Newsroom Alert'
+    );
+    $subject = t('Internal Alert: Server is down or Page Not Found');
     $mailManager = \Drupal::service('plugin.manager.mail');
     $module = 'jcc_custom';
-    $key = 'server_down';
-    $to = 'shahnawaz.mohammed-t@jud.ca.gov';
-    $params['message'] = 'Internal Alert: Server is down or Page Not Found';
-    $params['node_title'] = 'Sever Down';
-    $langcode = \Drupal::currentUser()->getPreferredLangcode();
+    $key = 'sitedown';
+    $to = $emailData['to'];
+    $params['message'] = $emailData;
+    $params['title'] = $subject;
+    $langcode = NULL;
     $send = TRUE;
 
     $result = $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);
-    if ($result['result'] !== TRUE) {
-      \Drupal::logger('Internal Alert')->info("There was a problem sending your message and it was not sent.");
-    }
-    else {
-      \Drupal::logger('Internal Alert')->info("Internal Alert: Server is down or Page Not Found");
-    }
   }
 }

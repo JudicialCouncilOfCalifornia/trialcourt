@@ -352,13 +352,31 @@ function jcc_custom_query_entity_reference_alter(AlterableInterface $query) {
  * Implements hook_mail().
  */
 function jcc_custom_mail($key, &$message, $params) {
-  $options = array('langcode' => $message['langcode']);
-
+  $options = array(
+    'langcode' => $message['langcode'],
+  );
   switch ($key) {
-    case 'server_down':
-      $message['from'] = 'no-reply@courtinfo.ca.gov';
-      $message['subject'] = t('Alert Server Down', array(), $options);
-      $message['body'][] = $params['message'];
+    case 'sitedown':
+      $message['from'] = \Drupal::config('system.site')->get('mail');
+      $message['subject'] = $params['title'];
+
+      $body_data = array(
+        '#theme' => 'sitedown_email',
+        '#emaildata' => $params['message']
+      );
+      $message['body'][] = \Drupal::service('renderer')->render($body_data);
       break;
   }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function jcc_custom_theme() {
+  return array(
+    'sitedown' => array(
+      'template' => 'sitedown-email',
+      'variables' => array('emaildata' => array()),
+    ),
+  );
 }
