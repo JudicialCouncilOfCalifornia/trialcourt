@@ -327,10 +327,10 @@ function jcc_custom_preprocess_views_view_row_rss(&$variables) {
  * Fix for autocomplete not showing an exact match.
  */
 function jcc_custom_query_entity_reference_alter(AlterableInterface $query) {
-  $query->range(0, 25);
   if (!$query->hasAllTags('entity_query', 'entity_query_node')) {
     return;
   }
+  $query->range(0, 25);
   $conditions = $query->conditions();
   if (!empty($conditions)) {
     // Since the query tags have already been checked, we assume the first
