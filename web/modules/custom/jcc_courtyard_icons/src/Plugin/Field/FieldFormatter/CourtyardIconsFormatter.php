@@ -57,10 +57,11 @@ class CourtyardIconsFormatter extends FormatterBase implements ContainerFactoryP
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
-    $name = '';
 
     foreach ($items as $delta => $item) {
       foreach ($item->toArray() as $name) {
+        $set_name = '';
+        $icon_name = '';
         foreach ($this->sets as $set) {
           if (strpos($name, "icon-$set-") !== FALSE) {
             $set_name = $set;

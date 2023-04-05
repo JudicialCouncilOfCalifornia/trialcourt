@@ -3,24 +3,12 @@ langcode: en
 status: true
 dependencies:
   config:
-    - taxonomy.vocabulary.department
-    - taxonomy.vocabulary.division
-    - taxonomy.vocabulary.document_type
-    - taxonomy.vocabulary.event_type
-    - taxonomy.vocabulary.glossary
-    - taxonomy.vocabulary.location_type
-    - taxonomy.vocabulary.matters_served
-    - taxonomy.vocabulary.media_file_category
-    - taxonomy.vocabulary.media_image_category
-    - taxonomy.vocabulary.media_tags
-    - taxonomy.vocabulary.multimedia_type
     - taxonomy.vocabulary.news_type
-    - taxonomy.vocabulary.person_type
-    - taxonomy.vocabulary.subject_matter
-    - taxonomy.vocabulary.topics
   module:
     - taxonomy
     - user
+_core:
+  default_config_hash: K6u0luJwdDmbDmeLB6O_0wOUnrIFp3fHN2kwCXOV6Lw
 id: feeds_directory
 label: 'Feeds Directory'
 module: views
@@ -287,21 +275,7 @@ display:
           plugin_id: bundle
           operator: in
           value:
-            department: department
-            division: division
-            document_type: document_type
-            event_type: event_type
-            glossary: glossary
-            location_type: location_type
-            matters_served: matters_served
-            media_file_category: media_file_category
-            media_image_category: media_image_category
-            media_tags: media_tags
-            multimedia_type: multimedia_type
             news_type: news_type
-            person_type: person_type
-            subject_matter: subject_matter
-            topics: topics
           group: 1
           exposed: false
           expose:
@@ -368,7 +342,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: rss
+      path: rss/news-events
     cache_metadata:
       max-age: -1
       contexts:
