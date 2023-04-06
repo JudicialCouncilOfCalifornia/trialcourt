@@ -39,8 +39,8 @@ However, when tasked to spin up a new site, you can do some initial configuratio
 
 ### Theme Settings
 
-Install only the following themes
-- JCC Components (set as default theme)
+Install and set only the following themes if not automated
+- JCC Components or JCC Storybook (set as default theme)
 - Gin (administration theme)
 - Claro (Gin dependency/base)
 

@@ -99,6 +99,11 @@
     attributes: create_attribute(),
   } %}
 
+  {% if page.tabs|render %}
+    <div class="page__tabs">
+      {{ page.tabs }}
+    </div>
+  {% endif %}
 
   {{ page.breadcrumb }}
 

@@ -1,0 +1,17 @@
+{#
+/**
+ * @file
+ * Template for a local task list-item/link.
+ *
+ * - nav-item is for styling.
+ * - .tabs__tab is used to determine height via JavaScript in respnonsive
+ *   implementation.
+ */
+#}
+{% set active = is_active ? 'is-active' : '' %}
+{% set current = is_active ? ' aria-current="page"' : '' %}
+<li{{ attributes.addClass('nav-tabs__item', 'tabs__tab', active) }}>
+  <a href="{{ link['#url'] }}" class="nav-tabs__link {{ active }}"{{ current }}>
+    {{- link['#title'] -}}
+  </a>
+</li>
