@@ -139,6 +139,7 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
   $terms = Term::loadMultiple($tids); 
   foreach ($terms as $term) {
     $media_categories[$term->id()] = $term->getName();   
-  }  
-  return sort($media_categories);
+  } 
+  array_multisort($media_categories, SORT_ASC);  
+  return $media_categories;
 }
