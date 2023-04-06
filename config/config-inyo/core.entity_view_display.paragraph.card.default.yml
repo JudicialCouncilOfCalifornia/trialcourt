@@ -1,23 +1,33 @@
-uuid: 71f520e1-94f5-4b60-a165-caddccee9afe
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.card.field_background
     - field.field.paragraph.card.field_brow
+    - field.field.paragraph.card.field_entire_card_clickable
     - field.field.paragraph.card.field_heading
+    - field.field.paragraph.card.field_icon
     - field.field.paragraph.card.field_link
+    - field.field.paragraph.card.field_media
     - field.field.paragraph.card.field_text
     - paragraphs.paragraphs_type.card
   module:
+    - jcc_courtyard_icons
     - linkit_field
+    - options
     - text
-_core:
-  default_config_hash: 0DnQ0HeL3FRl4MNj2zJJSyKsH7_OuzuMJp8P7uvpMMo
 id: paragraph.card.default
 targetEntityType: paragraph
 bundle: card
 mode: default
 content:
+  field_background:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: content
   field_brow:
     type: string
     label: hidden
@@ -26,13 +36,30 @@ content:
     third_party_settings: {  }
     weight: 4
     region: content
+  field_entire_card_clickable:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 3
+    region: content
   field_heading:
     type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 1
+    weight: 0
+    region: content
+  field_icon:
+    type: courtyard_icons_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
     region: content
   field_link:
     type: linkit_field_linkit
@@ -45,14 +72,25 @@ content:
       rel: 0
       target: 0
     third_party_settings: {  }
-    weight: 3
+    weight: 2
+    region: content
+  field_media:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 5
     region: content
   field_text:
     type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    weight: 2
+    weight: 1
     region: content
 hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   search_api_excerpt: true

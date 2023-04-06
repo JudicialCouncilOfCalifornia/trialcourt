@@ -158,10 +158,29 @@ class LinkitWidget extends WidgetBase {
     // non-empty. Omit the validation on the field edit form, since the field
     // settings cannot be saved otherwise.
     if (!$this->isDefaultValueWidget($form_state) && $this->getFieldSetting('title') == DRUPAL_REQUIRED) {
-      $element['#element_validate'][] = [
-        get_called_class(),
-        'validateTitleElement',
-      ];
+      $element['#element_validate'][] = [static::class, 'validateTitleElement'];
+      $element['#element_validate'][] = [static::class, 'validateTitleNoLink'];
+
+      if (!$element['title']['#required']) {
+        // Make title required on the front-end when URI filled-in.
+
+        $parents = $element['#field_parents'];
+        $parents[] = $this->fieldDefinition->getName();
+        $selector = $root = array_shift($parents);
+        if ($parents) {
+          $selector = $root . '[' . implode('][', $parents) . ']';
+        }
+
+        $element['title']['#states']['required'] = [
+          ':input[name="' . $selector . '[' . $delta . '][uri]"]' => ['filled' => TRUE],
+        ];
+      }
+    }
+
+    // Ensure that a URI is always entered when an optional title field is
+    // submitted.
+    if (!$this->isDefaultValueWidget($form_state) && $this->getFieldSetting('title') == DRUPAL_OPTIONAL) {
+      $element['#element_validate'][] = [static::class, 'validateTitleNoLink'];
     }
 
     // If cardinality is 1, ensure a proper label is output for the field.
@@ -180,6 +199,30 @@ class LinkitWidget extends WidgetBase {
     }
 
     return $element;
+  }
+
+  /**
+   * Form element validation handler for the 'title' element.
+   *
+   * Conditionally requires the link title if a URL value was filled in.
+   */
+  public static function validateTitleElement(&$element, FormStateInterface $form_state, $form) {
+    if ($element['uri']['#value'] !== '' && $element['title']['#value'] === '') {
+      // We expect the field name placeholder value to be wrapped in t() here,
+      // so it won't be escaped again as it's already marked safe.
+      $form_state->setError($element['title'], t('@title field is required if there is @uri input.', ['@title' => $element['title']['#title'], '@uri' => $element['uri']['#title']]));
+    }
+  }
+
+  /**
+   * Form element validation handler for the 'title' element.
+   *
+   * Requires the URL value if a link title was filled in.
+   */
+  public static function validateTitleNoLink(&$element, FormStateInterface $form_state, $form) {
+    if ($element['uri']['#value'] === '' && $element['title']['#value'] !== '') {
+      $form_state->setError($element['uri'], t('The @uri field is required when the @title field is specified.', ['@title' => $element['title']['#title'], '@uri' => $element['uri']['#title']]));
+    }
   }
 
   /**
