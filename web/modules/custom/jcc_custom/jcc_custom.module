@@ -7,9 +7,11 @@
 
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Entity\Editor;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Element\ManagedFile;
 use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
 use Drupal\taxonomy\Entity\Term;
@@ -35,7 +37,9 @@ function jcc_custom_page_attachments(array &$attachments) {
  * Implements hook_ckeditor_css_alter().
  */
 function jcc_custom_ckeditor_css_alter(array &$css, Editor $editor) {
-  if ($scheme = theme_get_setting('scheme', 'jcc_components')) {
+  $theme_handler = \Drupal::service('theme_handler');
+
+  if ($scheme = theme_get_setting('scheme', $theme_handler->getDefault())) {
     if (!$editor->hasAssociatedFilterFormat()) {
       return;
     }
@@ -137,6 +141,56 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       ];
 
       break;
+  }
+}
+
+/**
+ * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
+ */
+function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $theme = \Drupal::config('system.theme')->get('default');
+
+  // If elevated theme is not in use by all sites.
+  if ($theme == 'jcc_elevated') {
+    switch ($element['#paragraph_type']) {
+      case 'cards':
+        unset($element['subform']['field_variant']);
+        unset($element['subform']['field_columns']);
+
+        // Attach Card.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_elevated/storybook-card';
+
+        break;
+
+      case 'card':
+        // Get selected variant.
+        $entity = $context['items']->entity;
+        $parent = $entity->getParentEntity();
+        $cards_sub_variant = $parent->get('field_sub_variant')->value;
+        $cards_sub_variant = substr($cards_sub_variant, strpos($cards_sub_variant, ':'));
+        $cards_sub_variant = preg_replace("/[^a-zA-Z0-9]+/", "", $cards_sub_variant);
+
+        break;
+    }
+  }
+  else {
+    switch ($element['#paragraph_type']) {
+      case 'cards':
+        unset($element['subform']['field_width_minimum']);
+        unset($element['subform']['field_image_media']);
+
+        break;
+
+      case 'card':
+        unset($element['subform']['field_media']);
+        unset($element['subform']['field_background']);
+        if ($theme != 'jcc_professional') {
+          unset($element['subform']['field_icon']);
+          unset($element['subform']['field_entire_card_clickable']);
+        }
+
+        break;
+    }
   }
 }
 
@@ -284,6 +338,9 @@ function jcc_custom_managed_file_process(array &$element, FormStateInterface $fo
   return $element;
 }
 
+/**
+ * Implements hook_preprocess_HOOK().
+ */
 function jcc_custom_preprocess_views_view_row_rss(&$variables) {
   $view = $variables['view'];
   $view_id = $view->id();
@@ -311,4 +368,35 @@ function jcc_custom_preprocess_views_view_row_rss(&$variables) {
       }
     }
   }
+}
+
+/**
+ * Set dynamic allowed values for the bundle field.
+ *
+ * @param \Drupal\field\Entity\FieldStorageConfig $definition
+ *   The field definition.
+ * @param \Drupal\Core\Entity\ContentEntityInterface|null $entity
+ *   The entity being created if applicable.
+ * @param bool $cacheable
+ *   Boolean indicating if the results are cacheable.
+ *
+ * @return array
+ *   An array of possible key and value options.
+ *
+ * @see options_allowed_values()
+ */
+function jcc_custom_background_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+  // Load overlay theme options into select field.
+  $options = [];
+  $file = file_get_contents(\Drupal::service('extension.list.theme')->getPath('jcc_elevated') . '/jcc-background-options.json');
+  if ($file) {
+    $overlays = json_decode($file);
+    foreach ($overlays as $style) {
+      foreach ($style as $key => $overlay) {
+        $options[] = [$key => $overlay];
+      }
+    }
+  }
+
+  return $options;
 }

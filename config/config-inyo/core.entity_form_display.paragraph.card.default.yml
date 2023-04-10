@@ -1,23 +1,48 @@
-uuid: 433d48a6-91ef-4f0e-9844-33687d6777e0
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.card.field_background
     - field.field.paragraph.card.field_brow
+    - field.field.paragraph.card.field_entire_card_clickable
     - field.field.paragraph.card.field_heading
+    - field.field.paragraph.card.field_icon
     - field.field.paragraph.card.field_link
+    - field.field.paragraph.card.field_media
     - field.field.paragraph.card.field_text
     - paragraphs.paragraphs_type.card
   module:
+    - field_group
+    - jcc_courtyard_icons
     - linkit_field
     - text
-_core:
-  default_config_hash: nwNexQd0QdzRgIDnlO9f502AgbSpg7dtA-WacmjHD5E
+third_party_settings:
+  field_group:
+    group_button:
+      children:
+        - field_link
+        - field_entire_card_clickable
+      label: Button
+      region: content
+      parent_name: ''
+      weight: 3
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        id: ''
+        description: ''
+        required_fields: true
 id: paragraph.card.default
 targetEntityType: paragraph
 bundle: card
 mode: default
 content:
+  field_background:
+    type: options_buttons
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_brow:
     type: string_textfield
     weight: 0
@@ -25,6 +50,13 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_entire_card_clickable:
+    type: boolean_checkbox
+    weight: 5
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   field_heading:
     type: string_textfield
@@ -34,12 +66,28 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_icon:
+    type: courtyard_icons_widget
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_link:
     type: linkit_field_linkit
-    weight: 3
+    weight: 4
     region: content
     settings:
       linkit_profile: default
+    third_party_settings: {  }
+  field_media:
+    type: entity_reference_autocomplete
+    weight: 6
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_text:
     type: text_textarea
@@ -50,7 +98,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }

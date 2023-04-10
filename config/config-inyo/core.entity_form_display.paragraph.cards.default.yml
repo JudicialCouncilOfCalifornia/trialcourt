@@ -1,4 +1,3 @@
-uuid: b02cac5d-23b1-4225-a89b-ed61b8e26664
 langcode: en
 status: true
 dependencies:
@@ -6,17 +5,17 @@ dependencies:
     - field.field.paragraph.cards.field_columns
     - field.field.paragraph.cards.field_components
     - field.field.paragraph.cards.field_heading
+    - field.field.paragraph.cards.field_image_media
     - field.field.paragraph.cards.field_lead
     - field.field.paragraph.cards.field_link
     - field.field.paragraph.cards.field_sub_variant
     - field.field.paragraph.cards.field_variant
+    - field.field.paragraph.cards.field_width_minimum
     - paragraphs.paragraphs_type.cards
   module:
     - link
     - paragraphs
     - text
-_core:
-  default_config_hash: pU4J4El7-NK4HsFp8HXXZ2qskOo2MdHGrQ5faqZgCbQ
 id: paragraph.cards.default
 targetEntityType: paragraph
 bundle: cards
@@ -30,7 +29,7 @@ content:
     third_party_settings: {  }
   field_components:
     type: entity_reference_paragraphs
-    weight: 5
+    weight: 6
     region: content
     settings:
       title: Card
@@ -48,6 +47,16 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_image_media:
+    type: entity_reference_autocomplete
+    weight: 8
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_lead:
     type: text_textarea
     weight: 2
@@ -58,7 +67,7 @@ content:
     third_party_settings: {  }
   field_link:
     type: link_default
-    weight: 6
+    weight: 7
     region: content
     settings:
       placeholder_url: ''
@@ -80,8 +89,15 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_width_minimum:
+    type: number
+    weight: 5
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
   translation:
-    weight: 7
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
