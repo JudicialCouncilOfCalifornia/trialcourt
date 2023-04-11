@@ -1,0 +1,21 @@
+name: "Migrate civil cases"
+on:
+  schedule:
+    - cron:  '*/5 * * * *'    # At every 15th minute
+
+jobs:
+  terminus_drush:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+
+      - name: Install Terminus
+        uses: pantheon-systems/terminus-github-actions@main
+        with:
+          pantheon-machine-token: ${{ secrets.PANTHEON_MACHINE_TOKEN }}
+
+      - name: List sites
+        run: terminus site:list
