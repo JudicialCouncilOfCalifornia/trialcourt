@@ -2,7 +2,8 @@
 {% for content in related_content.items %}
   {% if content['#title'] %}
     {% if content['#title']|length > 45 %}
-      {% set news_title = content['#title']|truncate(45) ~ '…' %}
+      {# {% set news_title = content['#title']|truncate(45) ~ '…' %} #}
+      {% set news_title = content['#title'] %}
     {% else %}
       {% set news_title = content['#title'] %}
     {% endif %}
@@ -10,7 +11,7 @@
     {% set media_image %}
       {% if content['#options'].entity.field_images.entity.field_media_image.entity.uri.value %}
         {% set content_image = content['#options'].entity.field_images.entity.field_media_image.entity %}
-        {% set image_url = content_image.uri.value | image_style('crop_16x9') %}
+        {% set image_url = content_image.uri.value | image_style('crop_1x1') %}
         {% set image_alt = content_image.alt %}
           <img src="{{ image_url }}" alt="{{ image_alt }}">
       {% else %}
@@ -22,7 +23,7 @@
       variant: 'related_news__card',
       title: news_title,
       url: news_url,
-      body: media_image,
+      image: media_image,
     }]) %}
   {% endif %}
 {% endfor %}
