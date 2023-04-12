@@ -23,9 +23,6 @@ do_command() {
       then
         echo -e "\n${G}*** Database only for ${site}${RE}"
         terminus backup:create ${site} --element=db &
-      elif [ ${site} == "jcc-stanislaus.${env}" ]
-      then
-        echo -e "\n${G}*** Skipping backup for ${site}${RE}"
       else
         terminus backup:create ${site} &
       fi
