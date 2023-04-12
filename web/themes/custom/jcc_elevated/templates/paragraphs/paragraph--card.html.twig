@@ -14,8 +14,11 @@
 
 {#  Media if in use for bordered-center card #}
 {% set media = null %}
-{% if cards_sub_variant.card != 'striped' and paragraph.field_media.entity.uri.value %}
-  {% set media = paragraph.field_media.entity.uri.value %}
+{% if cards_sub_variant.card != 'striped' and paragraph.field_media.entity.field_media_image.entity.uri.value %}
+  {% set image = paragraph.field_media.entity.field_media_image %}
+  {% set media %}
+    <img src="{{ file_url(image.entity.uri.value) }}"  alt="{{ image.0.alt }}" />
+  {% endset %}
 {% endif %}
 
 {# Icon if in use for striped card #}
