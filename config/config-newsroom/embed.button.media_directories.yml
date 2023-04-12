@@ -3,7 +3,13 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.media.full
+    - core.entity_view_mode.media.media_library
     - entity_browser.browser.media_directories_editor_browser
+    - media.type.file
+    - media.type.image
+    - media.type.menu_icons
+    - media.type.video_embed
   module:
     - entity_embed
     - media
@@ -16,10 +22,14 @@ type_id: entity
 type_settings:
   entity_type: media
   bundles:
+    - file
     - image
+    - menu_icons
+    - video_embed
   display_plugins:
-    - 'entity_reference:media_directories_image_dimensions'
     - 'view_mode:media.full'
+    - 'view_mode:media.media_library'
+    - 'entity_reference:media_directories_image_dimensions'
   entity_browser: media_directories_editor_browser
   entity_browser_settings:
     display_review: false
