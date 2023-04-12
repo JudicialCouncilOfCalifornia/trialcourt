@@ -1,12 +1,6 @@
 {% set related_news = [] %}
 {% for content in related_content.items %}
   {% if content['#title'] %}
-    {% if content['#title']|length > 45 %}
-      {# {% set news_title = content['#title']|truncate(45) ~ '…' %} #}
-      {% set news_title = content['#title'] %}
-    {% else %}
-      {% set news_title = content['#title'] %}
-    {% endif %}
     {% set news_url = content['#url'] %}
     {% set media_image %}
       {% if content['#options'].entity.field_images.entity.field_media_image.entity.uri.value %}
@@ -21,7 +15,7 @@
 
     {% set related_news = related_news|merge([{
       variant: 'related_news__card',
-      title: news_title,
+      title: content['#title'],
       url: news_url,
       image: media_image,
     }]) %}
