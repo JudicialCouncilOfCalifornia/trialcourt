@@ -203,21 +203,42 @@ if (empty($settings['file_scan_ignore_directories'])) {
  * Configure redis.
  */
 if (defined('PANTHEON_ENVIRONMENT')) {
-  // Include the Redis services.yml file. Adjust the path if you installed to a contrib or other subdirectory.
-  $settings['container_yamls'][] = 'modules/redis/example.services.yml';
+  configureCache();
+}
 
-  //phpredis is built into the Pantheon application container.
-  $settings['redis.connection']['interface'] = 'PhpRedis';
-  // These are dynamic variables handled by Pantheon.
-  $settings['redis.connection']['host']      = $_ENV['CACHE_HOST'];
-  $settings['redis.connection']['port']      = $_ENV['CACHE_PORT'];
-  $settings['redis.connection']['password']  = $_ENV['CACHE_PASSWORD'];
+/**
+ * Checks for redis before configuring.
+ */
+function configureCache() {
+  if (\Drupal::hasService('cache.backend.redis')) {
+    // Include the Redis services.yml file. Adjust the path if you installed to a contrib or other subdirectory.
+    $settings['container_yamls'][] = 'modules/redis/example.services.yml';
 
-  $settings['redis_compress_length'] = 100;
-  $settings['redis_compress_level'] = 1;
+    //phpredis is built into the Pantheon application container.
+    $settings['redis.connection']['interface'] = 'PhpRedis';
+    // These are dynamic variables handled by Pantheon.
+    $settings['redis.connection']['host'] = $_ENV['CACHE_HOST'];
+    $settings['redis.connection']['port'] = $_ENV['CACHE_PORT'];
+    $settings['redis.connection']['password'] = $_ENV['CACHE_PASSWORD'];
 
-  $settings['cache']['default'] = 'cache.backend.redis'; // Use Redis as the default cache.
-  $settings['cache_prefix']['default'] = 'pantheon-redis';
+    $settings['redis_compress_length'] = 100;
+    $settings['redis_compress_level'] = 1;
 
-  $settings['cache']['bins']['form'] = 'cache.backend.database'; // Use the database for forms
+    $settings['cache']['default'] = 'cache.backend.redis'; // Use Redis as the default cache.
+    $settings['cache_prefix']['default'] = 'pantheon-redis';
+
+    $settings['cache']['bins']['form'] = 'cache.backend.database'; // Use the database for forms
+
+    return $settings;
+  }
+  else {
+    \Drupal::logger('cache_service_check')->notice('Redis service is not ready for this site. Will retry cache enable in 2 hours.');
+    sleep(7200);
+    if (\Drupal::hasService('cache.backend.redis')) {
+      configureCache();
+    }
+    else {
+      \Drupal::logger('cache_service_check')->warning('Redis service is not available for this site. Confirm if Drupal module and Pantheon service are enabled.');
+    }
+  }
 }
