@@ -203,13 +203,9 @@ if (empty($settings['file_scan_ignore_directories'])) {
  * Configure redis.
  */
 if (defined('PANTHEON_ENVIRONMENT')) {
-  configureCache();
-}
-
-/**
- * Checks for redis before configuring.
- */
-function configureCache() {
+  // Pause redis configuration until deployment is ready.
+  sleep(7200);
+  // Configure redis if service is available.
   if (\Drupal::hasService('cache.backend.redis')) {
     // Include the Redis services.yml file. Adjust the path if you installed to a contrib or other subdirectory.
     $settings['container_yamls'][] = 'modules/redis/example.services.yml';
@@ -232,13 +228,6 @@ function configureCache() {
     return $settings;
   }
   else {
-    \Drupal::logger('cache_service_check')->notice('Redis service is not ready for this site. Will retry cache enable in 2 hours.');
-    sleep(7200);
-    if (\Drupal::hasService('cache.backend.redis')) {
-      configureCache();
-    }
-    else {
-      \Drupal::logger('cache_service_check')->warning('Redis service is not available for this site. Confirm if Drupal module and Pantheon service are enabled.');
-    }
+    \Drupal::logger('cache_service_check')->warning('Redis service is not available for this site. Confirm if Drupal module and Pantheon service are enabled.');
   }
 }
