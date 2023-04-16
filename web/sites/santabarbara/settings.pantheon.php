@@ -208,10 +208,8 @@ if (empty($settings['file_scan_ignore_directories'])) {
  * Configure redis.
  */
 if (defined('PANTHEON_ENVIRONMENT')) {
-  // Pause redis configuration until deployment is ready.
-  sleep(7200);
   // Configure redis if service is available.
-  if (\Drupal::hasService('cache.backend.redis')) {
+  if (extension_loaded('redis')) {
     // Include the Redis services.yml file. Adjust the path if you installed to a contrib or other subdirectory.
     $settings['container_yamls'][] = 'modules/redis/example.services.yml';
 
