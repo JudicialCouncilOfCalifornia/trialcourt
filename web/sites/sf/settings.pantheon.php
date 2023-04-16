@@ -204,9 +204,10 @@ if (empty($settings['file_scan_ignore_directories'])) {
  */
 if (defined('PANTHEON_ENVIRONMENT')) {
   // Configure redis if service is available.
-  if (extension_loaded('redis')) {
+  if (file_exists('modules/contrib/redis/redis.info.yml') && extension_loaded('redis')) {
     // Include the Redis services.yml file. Adjust the path if you installed to a contrib or other subdirectory.
-    $settings['container_yamls'][] = 'modules/redis/example.services.yml';
+    // Also, allows the services to work before the Redis module itself is enabled.
+    $settings['container_yamls'][] = 'modules/contrib/redis/redis.services.yml';
 
     //phpredis is built into the Pantheon application container.
     $settings['redis.connection']['interface'] = 'PhpRedis';
