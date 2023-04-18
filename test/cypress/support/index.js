@@ -14,35 +14,44 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands';
-import addContext from 'mochawesome/addContext';
-import 'cypress-axe';
+import "./commands";
+import addContext from "mochawesome/addContext";
+// import 'cypress-axe';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
 // Clean up titles so they can be used in filenames.
 function cleanTitle(title) {
-  return title.replace(/[.\/#!$%\^&\*;:{}=_`~()]/g,"")
+  return title.replace(/[.\/#!$%\^&\*;:{}=_`~()]/g, "");
 }
 
-Cypress.on('test:after:run', (test, runnable) => {
+function cleanName(name) {
+  return name.replace(/[.\/#!$%\^&\*;:{}=_`~(),]/g, "-").replace(/\s/g, "");
+}
 
+Cypress.on("test:after:run", (test, runnable) => {
+  const grandparentTitle = cleanTitle(runnable.parent.parent.title);
   const parentTitle = cleanTitle(runnable.parent.title);
   const title = cleanTitle(test.title);
 
-  if (test.state == 'failed') {
+  if (test.state == "failed") {
     // Add screenshots to report.
-    const screenshot = `../screenshots/${Cypress.spec.name}/${parentTitle} -- ${title} (failed).png`;
+    const screenshot = `${Cypress.config("screenshotsFolder")}/${
+      Cypress.spec.name
+    }/${grandparentTitle} -- ${parentTitle} -- ${title} (failed).png`;
     addContext({ test }, screenshot);
   }
 
-  if (test.body.includes('matchImageSnapshot')) {
-    const diffImage = `../snapshots/${Cypress.spec.name}/__diff_output__/${parentTitle} -- ${title}.diff.png`;
-    addContext({ test }, diffImage);
-  }
+  // if (test.code.includes("compareSnapshot")) {
+  const name = cleanName(`${title}`).toLowerCase();
+  const diffImage = `${Cypress.config("screenshotsFolder")}/diff/${
+    Cypress.spec.name
+  }/${name}.png`;
+  addContext({ test }, diffImage);
+  // }
 
   // Add videos to report.
-  const video = `../videos/${Cypress.spec.name}.mp4`;
+  const video = `${Cypress.config("videosFolder")}/${Cypress.spec.name}.mp4`;
   addContext({ test }, video);
 });
