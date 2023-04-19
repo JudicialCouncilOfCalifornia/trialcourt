@@ -100,12 +100,8 @@ process:
       ignore_case: true
   field_department:
     -
-      plugin: skip_on_empty
-      source: department
-      method: row
-      message: 'No department found.'
-    -
       plugin: callback
+      source: department
       callable: trim
     -
       plugin: static_map
@@ -138,12 +134,8 @@ process:
       to_timezone: UTC
   field_judge:
     -
-      plugin: skip_on_empty
-      source: judicial_officer
-      method: process
-      message: 'No judge found.'
-    -
       plugin: callback
+      source: judicial_officer
       callable: trim
     -
       plugin: static_map
