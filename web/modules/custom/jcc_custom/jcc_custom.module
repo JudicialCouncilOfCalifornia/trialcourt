@@ -161,16 +161,6 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         $element['#attached']['library'][] = 'jcc_elevated/storybook-card';
 
         break;
-
-      case 'card':
-        // Get selected variant.
-        $entity = $context['items']->entity;
-        $parent = $entity->getParentEntity();
-        $cards_sub_variant = $parent->get('field_sub_variant')->value;
-        $cards_sub_variant = substr($cards_sub_variant, strpos($cards_sub_variant, ':'));
-        $cards_sub_variant = preg_replace("/[^a-zA-Z0-9]+/", "", $cards_sub_variant);
-
-        break;
     }
   }
   else {
