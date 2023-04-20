@@ -103,8 +103,7 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
           '#options' => get_category_types(),          
           '#title' => t('Category'), 
           '#default_value' => NULL,            
-          '#empty_option' => t('- Please Select -'),
-          '#required' => TRUE    
+          '#empty_option' => t('- Please Select -'),           
         ];   
         
         $element['documents'][$document_id]['media'] = [
@@ -140,6 +139,6 @@ function jcc_bulk_document_importer_managed_file_process(array &$element, FormSt
   foreach ($terms as $term) {
     $media_categories[$term->id()] = $term->getName();   
   } 
-  array_multisort($media_categories, SORT_ASC);  
+  asort($media_categories);  
   return $media_categories;
 }
