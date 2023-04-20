@@ -26,9 +26,9 @@ class BulkImporterForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {   
     // Defaulting document type to oral argument.
-    $default_doc_type = Term::load('5');
+    //$default_doc_type = Term::load('5');
     $form['#attached']['library'][] = 'jcc_bulk_document_importer/importer_styling';
 
     $form['document_upload'] = [
@@ -55,7 +55,7 @@ class BulkImporterForm extends FormBase {
       '#title' => $this->t('Document type'),
       '#type' => 'entity_autocomplete',
       '#target_type' => 'taxonomy_term',
-      '#default_value' => $default_doc_type,
+      //'#default_value' => $default_doc_type,
       '#selection_settings' => [
         'target_bundles' => ['document_type'],
       ],
@@ -88,7 +88,7 @@ class BulkImporterForm extends FormBase {
       ],
       '#default_value' => date("Y-m-d"),
       '#date_date_format' => 'Y/m/d',
-    ];
+    ];   
 
     $form['body'] = [
       '#type' => 'text_format',
@@ -100,7 +100,7 @@ class BulkImporterForm extends FormBase {
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Create documents'),
-    ];
+    ];    
     return $form;
   }
 
@@ -115,8 +115,9 @@ class BulkImporterForm extends FormBase {
         if (isset($document) && !empty($document)) {
           $file = File::load($document['doc_id']);
           $file->setPermanent();
-          $file->save();
-
+          $file->save();                 
+          
+          $flag = ($document['media']['only-media'] == 'only-media');
           $media = Media::create([
             'bundle' => 'file',
             'uid' => \Drupal::currentUser()->id(),
@@ -124,8 +125,9 @@ class BulkImporterForm extends FormBase {
               'target_id' => $file->id(),
             ],
             'field_document_type' => $form_state->getValue('document_type', 0),
-          ]);
-          $media->setName($document['custom_title'])->setPublished(TRUE)->save();
+            'field_category' => $document['category'], 
+          ]);         
+          $media->setName($document['custom_title'])->setPublished(TRUE)->save();    
 
           // Hearing date 12:00a default time with GMT adjustment as needed.
           $gmt = date('P');
@@ -150,6 +152,7 @@ class BulkImporterForm extends FormBase {
 
           // Save node
           // Create node object with attached file.
+          if(!$flag) {
           $node = Node::create([
             'type' => 'document',
             'title' => $document['custom_title'],
@@ -164,13 +167,14 @@ class BulkImporterForm extends FormBase {
               'end_value' => $form_state->getValue('document_daterange_end', 0) . 'T' . $time,
             ],
             'field_date' => $document['filing_date'],
-            'field_document_type' => $form_state->getValue('document_type', 0),
+            'field_document_type' => $form_state->getValue('document_type', 0),                        
             'field_case' => $form_state->getValue('document_case_bundle', 0),
             'body' => $form_state->getValue('body', 0),
             'status' => 1,
-          ]);
+          ]);        
           $node->save();
         }
+      }      
       }
     }
   }
