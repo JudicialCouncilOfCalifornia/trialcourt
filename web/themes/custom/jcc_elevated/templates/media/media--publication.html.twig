@@ -14,7 +14,7 @@
  */
 #}
 
-{{ attach_library("jcc_storybook/Hangover") }}
+{{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/List") }}
 {{ attach_library("jcc_storybook/AssetBundle") }}
@@ -32,7 +32,7 @@
     {% endif %}
   {% endfor %}
   {% include "@molecules/List/List.twig" with {
-    variant: 'no-marker',
+    variant: 'none',
     items: items,
   } %}
 {% endset %}
@@ -61,7 +61,7 @@
   {% endif %}
 
   {% include "@molecules/AssetBundle/AssetBundle.twig" with {
-    text: publication.body,
+    text: publication.body|render,
     primary_file_type: publication.primary_file_type,
     doc_type: publication.type,
     assets: documents,
@@ -73,7 +73,7 @@
   } %}
 {% endset %}
 
-{% include "@molecules/Hangover/Hangover.twig" with {
+{% include "@molecules/HeroHangover/HeroHangover.twig" with {
   background: 'base-light-xx',
   heading: name,
   media: false,
