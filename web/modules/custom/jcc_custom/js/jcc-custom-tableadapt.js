@@ -23,12 +23,12 @@
           let $tableHeader = $(this);
           let $headerMarkup = $tableHeader.text();
 
-          if ($formViewId != 'views-exposed-form-imported-events-events') {
-            $tableHeader.attr('data-sortable', '');
-            $tableHeader.attr('scope', 'col');
-            $tableHeader.attr('role', 'columheader');
-            $tableHeader.html($headerMarkup);
-          }
+//          if ($formViewId != 'views-exposed-form-imported-events-events') {
+//            $tableHeader.attr('data-sortable', '');
+//            $tableHeader.attr('scope', 'col');
+//            $tableHeader.attr('role', 'columheader');
+//            $tableHeader.html($headerMarkup);
+//          }
         });
       });
     }
