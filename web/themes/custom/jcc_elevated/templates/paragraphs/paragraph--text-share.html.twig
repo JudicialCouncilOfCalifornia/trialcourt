@@ -1,0 +1,14 @@
+{{ attach_library("jcc_storybook/Container") }}
+{{ attach_library("jcc_storybook/Stack") }}
+
+{% set classes = [
+  'paragraph',
+  'paragraph__text-share',
+  'box'
+] %}
+
+<div class="{{ classes|join(" ") }}">
+  <div class="container stack">
+    {{ content }}
+  </div>
+</div>
