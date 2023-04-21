@@ -1,5 +1,5 @@
 # Pantheon Project UUID.
-UUID=
+UUID=51981b95-31a6-419b-99db-bb42be7e8e2d
 SITE_CODE=calaveras
 # If false, pantheon will deploy to dev. If true it will get the Live tag.
 LIVE=true
