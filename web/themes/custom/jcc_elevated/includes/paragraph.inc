@@ -7,7 +7,6 @@
 
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
-use Drupal\views\Views;
 use Drupal\Core\Url;
 
 /**
@@ -22,8 +21,8 @@ function jcc_elevated_preprocess_paragraph(&$variables) {
 }
 
 /**
-* Implements hook_theme_suggestions_HOOK_alter().
-*/
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
 function jcc_elevated_theme_suggestions_paragraph_alter(&$suggestions, $variables) {
   $paragraph = $variables['elements']['#paragraph'];
   if ($paragraph->bundle() == 'views_reference') {
