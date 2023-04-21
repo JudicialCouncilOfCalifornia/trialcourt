@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\paragraphs\ParagraphInterface;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -34,7 +33,6 @@ function jcc_elevated_preprocess_paragraph__accordion(array &$variables) {
   if ($paragraph->hasField('field_components')) {
     $items = $paragraph->get('field_components')->referencedEntities();
 
-
     foreach ($items as $item) {
       $item = \Drupal::service('entity.repository')->getTranslationFromContext($item, $langcode);
       $variables['accordion_items'][] = [
@@ -54,12 +52,11 @@ function jcc_elevated_preprocess_paragraph__accordion(array &$variables) {
 function jcc_elevated_preprocess_paragraph__steps(array &$variables) {
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $paragraph = $variables['paragraph'];
-  $variables['steps'] = [];;
+  $variables['steps'] = [];
 
   // Build the array of accordion items.
   if ($paragraph->hasField('field_components')) {
     $items = $paragraph->get('field_components')->referencedEntities();
-
 
     foreach ($items as $item) {
       $item = \Drupal::service('entity.repository')->getTranslationFromContext($item, $langcode);
@@ -96,16 +93,20 @@ function jcc_elevated_preprocess_paragraph__iframe(array &$variables) {
       case 'video':
         $variables['iframe_aspect_ratio'] = '16 / 9';
         break;
+
       case 'classic':
         $variables['iframe_aspect_ratio'] = '3 / 4';
         break;
+
       case 'square':
         $variables['iframe_aspect_ratio'] = '1 / 1';
         break;
+
       case 'standard':
       default:
         $variables['iframe_aspect_ratio'] = '4 / 3';
         break;
+
     }
   }
 }
@@ -117,7 +118,6 @@ function jcc_elevated_preprocess_paragraph__iframe(array &$variables) {
  *   The paragraph variables.
  */
 function jcc_elevated_preprocess_paragraph__section(array &$variables) {
-  $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $paragraph = $variables['paragraph'];
   $variables['variant'] = 'default';
 
@@ -133,26 +133,34 @@ function jcc_elevated_preprocess_paragraph__section(array &$variables) {
         case 'striped-primary-dark-xx':
           $variables['variant_class'] = 'color-primary-dark-xx-stripe';
           break;
+
         case 'striped-primary-dark-x':
           $variables['variant_class'] = 'primary-dark-x-stripe';
           break;
+
         case 'striped-primary-light-xx':
           $variables['variant_class'] = 'primary-light-xx-stripe';
           break;
+
         case 'striped-secondary-dark-xx':
           $variables['variant_class'] = 'secondary-dark-xx-stripe';
           break;
+
         case 'striped-secondary':
           $variables['variant_class'] = 'secondary-stripe';
           break;
+
         case 'striped-accent-warm-dark-x':
           $variables['variant_class'] = 'color-warm-dark-x';
           break;
+
         case 'striped-base-dark-x':
           $variables['variant_class'] = 'base-dark-xx-stripe';
           break;
+
         default:
           break;
+
       }
     }
   }
@@ -177,9 +185,11 @@ function jcc_elevated_preprocess_paragraph__alert(array &$variables) {
         case "success":
           $variables['type'] = 'status';
           break;
+
         default:
           $variables['type'] = $variant->alert;
           break;
+
       }
     }
   }
