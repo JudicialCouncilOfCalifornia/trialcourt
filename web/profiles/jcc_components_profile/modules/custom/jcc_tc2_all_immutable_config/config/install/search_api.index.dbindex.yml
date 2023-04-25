@@ -258,52 +258,6 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  transliteration:
-    weights:
-      preprocess_index: -47
-      preprocess_query: -15
-    all_fields: false
-    fields:
-      - rendered_item
-      - title
-  entity_type: {  }
-  add_url: {  }
-  highlight:
-    weights:
-      postprocess_query: 0
-    prefix: '<strong>'
-    suffix: '</strong>'
-    excerpt: true
-    excerpt_always: false
-    excerpt_length: 256
-    exclude_fields:
-      - rendered_item
-    highlight: always
-    highlight_partial: true
-  stemmer:
-    weights:
-      preprocess_index: -42
-      preprocess_query: 0
-    all_fields: true
-    fields:
-      - field_aside
-      - field_brow
-      - field_brow_1
-      - field_heading
-      - field_heading_1
-      - field_subheading
-      - name
-      - processed
-      - processed_1
-      - processed_6
-      - processed_7
-      - rendered_item
-      - summary_processed
-      - title
-    exceptions:
-      mexican: mexic
-      texan: texa
-  aggregated_field: {  }
   html_filter:
     weights:
       preprocess_index: -15
@@ -332,6 +286,77 @@ processor_settings:
       h2: 3
       h3: 2
       strong: 2
+  type_boost:
+    weights:
+      preprocess_index: -50
+    boosts:
+      'entity:node':
+        datasource_boost: !!float 1
+        bundle_boosts:
+          document: !!float 2
+          landing_page: !!float 2
+          news: !!float 3
+          subpage: !!float 2
+  tokenizer:
+    weights:
+      preprocess_index: -44
+      preprocess_query: -6
+    all_fields: false
+    fields:
+      - rendered_item
+    spaces: ''
+    ignored: ._-
+    overlap_cjk: 1
+    minimum_word_size: '3'
+  content_access:
+    weights:
+      preprocess_query: -30
+  transliteration:
+    weights:
+      preprocess_index: -47
+      preprocess_query: -15
+    all_fields: false
+    fields:
+      - rendered_item
+      - title
+  entity_type: {  }
+  stemmer:
+    weights:
+      preprocess_index: -42
+      preprocess_query: 0
+    all_fields: true
+    fields:
+      - field_aside
+      - field_brow
+      - field_brow_1
+      - field_heading
+      - field_heading_1
+      - field_subheading
+      - name
+      - processed
+      - processed_1
+      - processed_6
+      - processed_7
+      - rendered_item
+      - summary_processed
+      - title
+    exceptions:
+      mexican: mexic
+      texan: texa
+  highlight:
+    weights:
+      postprocess_query: 0
+    prefix: '<strong>'
+    suffix: '</strong>'
+    excerpt: true
+    excerpt_always: false
+    excerpt_length: 256
+    exclude_fields:
+      - rendered_item
+    highlight: always
+    highlight_partial: true
+  rendered_item: {  }
+  language_with_fallback: {  }
   ignorecase:
     weights:
       preprocess_index: -20
@@ -352,34 +377,9 @@ processor_settings:
       - rendered_item
       - summary_processed
       - title
-  language_with_fallback: {  }
-  content_access:
-    weights:
-      preprocess_query: -30
-  rendered_item: {  }
   entity_status: {  }
-  tokenizer:
-    weights:
-      preprocess_index: -44
-      preprocess_query: -6
-    all_fields: false
-    fields:
-      - rendered_item
-    spaces: ''
-    ignored: ._-
-    overlap_cjk: 1
-    minimum_word_size: '3'
-  type_boost:
-    weights:
-      preprocess_index: -50
-    boosts:
-      'entity:node':
-        datasource_boost: !!float 1
-        bundle_boosts:
-          document: !!float 2
-          landing_page: !!float 2
-          news: !!float 3
-          subpage: !!float 2
+  aggregated_field: {  }
+  add_url: {  }
   file_attachments:
     excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
     number_indexed: 0
