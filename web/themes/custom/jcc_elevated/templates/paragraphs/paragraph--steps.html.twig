@@ -1,4 +1,4 @@
-{{ attach_library("jcc_storybook/Accordion") }}
+{{ attach_library("jcc_storybook/Steps") }}
 {{ attach_library("jcc_storybook/Container") }}
 {{ attach_library("jcc_storybook/Stack") }}
 
@@ -22,10 +22,26 @@
       </div>
     {% endif %}
 
-    {% include "@molecules/Accordion/Accordion.twig" with {
+    {% include "@organisms/Steps/Steps.twig" with {
       open_first: content.field_toggle.0.value|default(false),
       items: steps,
     } %}
 
   </div>
 </div>
+
+{#{% set sub_component_data %}#}
+{#  {% include "@organisms/Steps/Steps.twig" with {#}
+{#    open_first: content.field_toggle.0.value|default(false),#}
+{#    items: steps,#}
+{#  } %}#}
+{#{% endset %}#}
+
+{#{% include "@organisms/Section/Section.twig" with {#}
+{#  variant: 'default',#}
+{#  heading: content.field_heading,#}
+{#  text: content.field_lead,#}
+{#  sub_component_layout: 'stack',#}
+{#  measure: '75',#}
+{#  sub_component_data: sub_component_data,#}
+{#} %}#}

@@ -161,6 +161,13 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         $element['#attached']['library'][] = 'jcc_elevated/storybook-card';
 
         break;
+
+      case 'section':
+        // Attach Section.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_elevated/storybook-section';
+        $element['#attached']['library'][] = 'jcc_elevated/storybook-card';
+
+        break;
     }
   }
   else {
@@ -392,17 +399,31 @@ function jcc_custom_background_options_bundle(FieldStorageConfig $definition, Co
 }
 
 /**
+ * Set dynamic default value for the section background bundle field.
+ */
+function jcc_custom_section_background_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
+  return [
+    "default" => '<span class="section field--select section--color-default">Default</span>',
+    "primary-dark-xx" => '<span class="section field--select section--color-primary-dark-xx">Primary (Dark)</span>',
+    "primary-dark-xx-stripe" => '<span class="section field--select section--color-primary-dark-xx-stripe">Primary (Dark/Striped)</span>',
+    "warm-dark-xx" => '<span class="section field--select section--color-warm-dark-xx">Warm (Dark)</span>',
+    "warm-dark-x" => '<span class="section field--select section--color-warm-dark-x">Warm</span>',
+    //"white" => '<span class="section field--select section--color-white">White</span>',
+  ];
+}
+
+/**
  * Set dynamic allowed values for the section layout bundle field.
  */
 function jcc_custom_sub_component_layout_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
   return [
-    'center' => 'Center',
+    'stack' => 'Stack content (Default)',
+    'center' => 'Center content',
+    'switcher' => 'Switcher',
     'cluster' => 'Cluster (inline)',
     'grid' => 'Grid',
     'reel' => 'Reel',
     'with-sidebar' => 'With sidebar',
-    'stack' => 'Stack content',
-    'switcher' => 'Switcher',
     'flex flex--75-25' => '25% sidebar',
     'flex flex--70-30' => '30% sidebar',
     'flex flex--60-40' => '40% sidebar',
@@ -425,13 +446,16 @@ function jcc_custom_alignment_options_bundle(FieldStorageConfig $definition, Con
  */
 function jcc_custom_gap_size_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
   return [
-    '--s0' => 'Default',
-    '--s-3' => '--s-1',
-    '--s-2' => '--s-2',
-    '--s-1' => '--s-3',
-    '--s1' => '--s1',
-    '--s2' => '--s2',
-    '--s3' => '--s3',
+    '--s0' => '18px:Default (--s-0)',
+    '--s-3' => '9px (--s-1)',
+    '--s-2' => '11px (--s-2)',
+    '--s-1' => '14px (--s-3)',
+    '--s1' => '23px (--s1)',
+    '--s2' => '28px (--s2)',
+    '--s3' => '36px (--s3)',
+    '--s4' => '45px (--s4)',
+    '--s5' => '57px (--s5)',
+    '--s6' => '72px (--s6)',
   ];
 }
 

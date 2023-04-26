@@ -3,7 +3,6 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.section.field_alignment
-    - field.field.paragraph.section.field_background
     - field.field.paragraph.section.field_brow
     - field.field.paragraph.section.field_components
     - field.field.paragraph.section.field_gap_size
@@ -13,6 +12,7 @@ dependencies:
     - field.field.paragraph.section.field_link
     - field.field.paragraph.section.field_measure
     - field.field.paragraph.section.field_media
+    - field.field.paragraph.section.field_section_background
     - field.field.paragraph.section.field_sidebar_direction
     - field.field.paragraph.section.field_sidebar_width
     - field.field.paragraph.section.field_sub_component_layout
@@ -29,7 +29,6 @@ third_party_settings:
   field_group:
     group_content:
       children:
-        - field_heading
         - group_main_content
         - group_header_content
         - group_style_options
@@ -73,6 +72,7 @@ third_party_settings:
         open: false
     group_header_content:
       children:
+        - field_heading
         - field_brow
         - field_lead
         - field_link
@@ -93,12 +93,12 @@ third_party_settings:
         - field_sub_component_layout
         - field_alignment
         - field_gap_size
-        - field_background
-        - field_media
         - field_sidebar_direction
         - field_sidebar_width
         - field_measure
         - field_grid_min_width
+        - field_section_background
+        - field_media
       label: Styles
       region: content
       parent_name: group_style_options
@@ -117,12 +117,6 @@ content:
   field_alignment:
     type: options_select
     weight: 18
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_background:
-    type: options_buttons
-    weight: 20
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -164,7 +158,7 @@ content:
     third_party_settings: {  }
   field_grid_min_width:
     type: number
-    weight: 25
+    weight: 23
     region: content
     settings:
       placeholder: ''
@@ -205,27 +199,33 @@ content:
         maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
   field_measure:
     type: number
-    weight: 24
+    weight: 22
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_media:
     type: media_library_widget
-    weight: 21
+    weight: 25
     region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
+  field_section_background:
+    type: options_buttons
+    weight: 24
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_sidebar_direction:
     type: options_select
-    weight: 22
+    weight: 20
     region: content
     settings: {  }
     third_party_settings: {  }
   field_sidebar_width:
     type: number
-    weight: 23
+    weight: 21
     region: content
     settings:
       placeholder: ''
