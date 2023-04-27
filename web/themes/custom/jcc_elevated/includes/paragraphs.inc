@@ -26,12 +26,11 @@ function jcc_elevated_preprocess_paragraph(&$variables) {
  */
 function jcc_elevated_paragraph_accordion(array &$variables) {
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
-  $paragraph = $variables['paragraph'];
   $variables['accordion_items'] = [];
 
   // Build the array of accordion items.
-  if ($paragraph->hasField('field_components')) {
-    $items = $paragraph->get('field_components')->referencedEntities();
+  if ($variables['paragraph']->hasField('field_components')) {
+    $items = $variables['paragraph']->get('field_components')->referencedEntities();
 
     foreach ($items as $item) {
       $item = \Drupal::service('entity.repository')->getTranslationFromContext($item, $langcode);
@@ -51,12 +50,11 @@ function jcc_elevated_paragraph_accordion(array &$variables) {
  */
 function jcc_elevated_paragraph_steps(array &$variables) {
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
-  $paragraph = $variables['paragraph'];
   $variables['steps'] = [];
 
   // Build the array of step items.
-  if ($paragraph->hasField('field_components')) {
-    $items = $paragraph->get('field_components')->referencedEntities();
+  if ($variables['paragraph']->hasField('field_components')) {
+    $items = $variables['paragraph']->get('field_components')->referencedEntities();
 
     foreach ($items as $item) {
       $item = \Drupal::service('entity.repository')->getTranslationFromContext($item, $langcode);
@@ -75,12 +73,11 @@ function jcc_elevated_paragraph_steps(array &$variables) {
  *   The paragraph variables.
  */
 function jcc_elevated_paragraph_alert(array &$variables) {
-  $paragraph = $variables['paragraph'];
   $variables['type'] = NULL;
 
   // Get the alert type from the variant field.
-  if ($paragraph->hasField('field_variant')) {
-    $items = $paragraph->get('field_variant')->getValue();
+  if ($variables['paragraph']->hasField('field_variant')) {
+    $items = $variables['paragraph']->get('field_variant')->getValue();
     $variant = json_decode($items[0]['value']);
     if ($variant->alert) {
       $variables['type'] = $variant->alert == 'success' ? 'status' : $variant->alert;
