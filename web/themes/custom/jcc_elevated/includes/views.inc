@@ -66,7 +66,7 @@ function jcc_elevated_preprocess_views_view(&$variables) {
 function jcc_elevated_views_pre_render(ViewExecutable $view) {
   if (($view->id() == 'search') && ($view->current_display == 'search')) {
 
-    // Hide some fields from display on the search page items.
+    // @todo Hide some fields from display on the search page items.
     // $view->field['search_api_excerpt_1']->options['exclude'] = TRUE;.
     // $view->field['field_heading_1']->options['exclude'] = TRUE;.
   }
