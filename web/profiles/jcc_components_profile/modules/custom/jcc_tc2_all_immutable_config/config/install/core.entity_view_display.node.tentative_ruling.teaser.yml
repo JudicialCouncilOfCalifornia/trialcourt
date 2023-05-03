@@ -1,4 +1,3 @@
-uuid: 4a2c448a-d653-43a3-91bf-7c515512c2dd
 langcode: en
 status: true
 dependencies:
@@ -9,13 +8,12 @@ dependencies:
     - field.field.node.tentative_ruling.field_case_type
     - field.field.node.tentative_ruling.field_custom_link
     - field.field.node.tentative_ruling.field_date_time
+    - field.field.node.tentative_ruling.field_department
     - field.field.node.tentative_ruling.field_judge
     - field.field.node.tentative_ruling.field_short_text
     - node.type.tentative_ruling
   module:
     - user
-_core:
-  default_config_hash: jKf-9N5YwfbJ2PPquzMhJ894HsCi92Av17l14oDwAss
 id: node.tentative_ruling.teaser
 targetEntityType: node
 bundle: tentative_ruling
@@ -28,10 +26,14 @@ content:
     region: content
 hidden:
   body: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_caption: true
   field_case_type: true
   field_custom_link: true
   field_date_time: true
+  field_department: true
   field_judge: true
   field_short_text: true
   langcode: true

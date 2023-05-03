@@ -1,0 +1,68 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.preview
+    - field.field.paragraph.cards.field_columns
+    - field.field.paragraph.cards.field_components
+    - field.field.paragraph.cards.field_heading
+    - field.field.paragraph.cards.field_image_media
+    - field.field.paragraph.cards.field_lead
+    - field.field.paragraph.cards.field_link
+    - field.field.paragraph.cards.field_sub_variant
+    - field.field.paragraph.cards.field_variant
+    - field.field.paragraph.cards.field_width_minimum
+    - paragraphs.paragraphs_type.cards
+  module:
+    - link
+    - paragraphs
+    - text
+id: paragraph.cards.preview
+targetEntityType: paragraph
+bundle: cards
+mode: preview
+content:
+  field_components:
+    type: paragraph_summary
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_heading:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_lead:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_link:
+    type: link
+    label: inline
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 3
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_columns: true
+  field_image_media: true
+  field_sub_variant: true
+  field_variant: true
+  field_width_minimum: true
+  search_api_excerpt: true

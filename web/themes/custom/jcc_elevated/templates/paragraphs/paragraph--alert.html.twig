@@ -1,0 +1,9 @@
+{{ attach_library("jcc_storybook/Alert") }}
+{{ attach_library("jcc_storybook/Icon") }}
+
+{% include "@molecules/Alert/Alert.twig" with {
+  type: type,
+  dismissible: false,
+  heading: paragraph.field_heading.get(0).value,
+  content: content|without('field_variant'),
+} %}
