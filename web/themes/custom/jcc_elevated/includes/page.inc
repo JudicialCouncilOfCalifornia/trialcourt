@@ -7,11 +7,9 @@
 
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\EnforcedResponseException;
-use Drupal\Core\Form\FormAjaxException;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\views\Views;
 
@@ -153,9 +151,13 @@ function jcc_elevated_menu_to_array(array $tree, $menu_name) {
 /**
  * Generate the search form from the search view exposed form.
  *
- * @param false $mobile_version
+ * @param bool $mobile_version
+ *   Sets different id's and any other tweaks needed for accessibility on the
+ *   duplicate search forms.
  *
  * @return array
+ *   Return a renderable array.
+ *
  * @throws \Drupal\Core\Form\FormAjaxException
  */
 function jcc_elevated_build_header_search_form(bool $mobile_version = FALSE): array {
@@ -180,7 +182,8 @@ function jcc_elevated_build_header_search_form(bool $mobile_version = FALSE): ar
   try {
     $form = \Drupal::formBuilder()
       ->buildForm('\Drupal\views\Form\ViewsExposedForm', $form_state);
-  } catch (EnforcedResponseException $e) {
+  }
+  catch (EnforcedResponseException $e) {
   }
 
   $form['#view_name'] = $view_name;
@@ -202,7 +205,7 @@ function jcc_elevated_build_header_search_form(bool $mobile_version = FALSE): ar
   $form['search']['#pre_render'] = [];
   $form['search']['#process'] = [];
   $form['search']['#theme_wrappers'] = [];
-  $form['search']['#attributes']['value']= Xss::filter($searched_value);
+  $form['search']['#attributes']['value'] = Xss::filter($searched_value);
   $form['search']['#attributes']['name'] = $form['search']['#name'];
   $form['search']['#attributes']['class'] = [];
   $form['search']['#attributes']['id'] = $mobile_version ? 'header-search__mobile' : 'header-search';
@@ -223,7 +226,7 @@ function jcc_elevated_build_header_search_form(bool $mobile_version = FALSE): ar
   $form['actions']['reset']['#access'] = FALSE;
   unset($form['actions']['submit']['#attributes']['data-bef-auto-submit-click']);
 
-  // This removes ajax elements from the attributes array
+  // This removes ajax elements from the attributes array.
   $form['#attributes']['id'] = $mobile_version ? $form['#id'] . '--mobile' : $form['#id'];
   unset($form['#attributes']['data-auto-submit-full-form']);
   unset($form['#attributes']['data-bef-auto-submit-full-form']);
