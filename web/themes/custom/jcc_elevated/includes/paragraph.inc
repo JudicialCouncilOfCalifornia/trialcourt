@@ -7,6 +7,7 @@
 
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 
 /**
@@ -102,5 +103,18 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
       $build = \Drupal::entityTypeManager()->getViewBuilder('media')->view($card_media->entity);
       $variables['card_media'] = $build;
     }
+  }
+
+  // Disallows links in text if clickable striped card.
+  $parent = $paragraph->getParentEntity();
+  $cards_sub_variant = $parent->get('field_sub_variant')->value;
+  $cards_sub_variant = substr($cards_sub_variant, strpos($cards_sub_variant, ':'));
+  $cards_sub_variant = preg_replace("/[^a-zA-Z0-9]+/", "", $cards_sub_variant);
+  if ($cards_sub_variant == 'striped' && $paragraph->field_entire_card_clickable->value) {
+    // Allowed tags in minimal editor except <a>.
+    $allowed_tags = '<p><em><strong><u><s><sup><sub><ol><li><ul>';
+    $text = $paragraph->get('field_text')->value;
+    $text = strip_tags($text, $allowed_tags);
+    $variables['filtered_text'] = Markup::create($text);
   }
 }
