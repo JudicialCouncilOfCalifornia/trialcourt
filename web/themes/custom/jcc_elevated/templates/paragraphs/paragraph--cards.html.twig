@@ -2,7 +2,7 @@
 {{ attach_library("jcc_storybook/Cards") }}
 
 {# Only allow elevated card variants #}
-{% set card_variant = 'bordered-center' %}
+{% set card_variant = 'default' %}
 {% set cards_sub_variant = paragraph.field_sub_variant.value|json_decode %}
 {% if cards_sub_variant.card == 'striped' or cards_sub_variant == 'bordered-center' %}
   {% set card_variant = cards_sub_variant.card %}
@@ -21,9 +21,7 @@
   } %}
 {% endif %}
 
-{% if card_variant is not empty %}
-  {% set attributes = attributes.addClass(card_variant) %}
-{% endif %}
+{% set image = paragraph.field_image_media.entity.field_media_image.entity.uri.value %}
 
 {% include "@organisms/Section/Section.twig" with {
   variant: 'default',
@@ -35,5 +33,5 @@
   button_data: button_data,
   sub_component_layout: 'grid',
   sub_component_data: cards,
-  attributes: attributes.addClass(card_variant.card),
+  background_image_url: file_url(image),
 } %}
