@@ -158,6 +158,13 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         unset($element['subform']['field_columns']);
 
         // Attach Card.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_custom/storybook-card';
+
+        break;
+
+      case 'section':
+        // Attach Section.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_elevated/storybook-section';
         $element['#attached']['library'][] = 'jcc_elevated/storybook-card';
 
         break;
@@ -375,7 +382,7 @@ function jcc_custom_preprocess_views_view_row_rss(&$variables) {
  *
  * @see options_allowed_values()
  */
-function jcc_custom_background_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+function jcc_custom_background_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
   // Load overlay theme options into select field.
   $options = [];
   $file = file_get_contents(\Drupal::service('extension.list.theme')->getPath('jcc_elevated') . '/jcc-background-options.json');
@@ -389,4 +396,74 @@ function jcc_custom_background_options_bundle(FieldStorageConfig $definition, Co
   }
 
   return $options;
+}
+
+/**
+ * Set dynamic default value for the section background bundle field.
+ */
+function jcc_custom_section_background_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
+  return [
+    "default" => '<span class="section field--select section--color-default">Default</span>',
+    "primary-dark-xx" => '<span class="section field--select section--color-primary-dark-xx">Primary (Dark)</span>',
+    "primary-dark-xx-stripe" => '<span class="section field--select section--color-primary-dark-xx-stripe">Primary (Dark/Striped)</span>',
+    "warm-dark-xx" => '<span class="section field--select section--color-warm-dark-xx">Warm (Dark)</span>',
+    "warm-dark-x" => '<span class="section field--select section--color-warm-dark-x">Warm</span>',
+  ];
+}
+
+/**
+ * Set dynamic allowed values for the section layout bundle field.
+ */
+function jcc_custom_sub_component_layout_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
+  return [
+    'stack' => 'Stack content (Default)',
+    'center' => 'Center content',
+    'switcher' => 'Switcher',
+    'cluster' => 'Cluster (inline)',
+    'grid' => 'Grid',
+    'reel' => 'Reel',
+    'with-sidebar' => 'With sidebar',
+    'flex flex--75-25' => '25% sidebar',
+    'flex flex--70-30' => '30% sidebar',
+    'flex flex--60-40' => '40% sidebar',
+  ];
+}
+
+/**
+ * Set dynamic allowed values for the alignment bundle field.
+ */
+function jcc_custom_alignment_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
+  return [
+    'flex-start' => 'flex-start',
+    'center' => 'center',
+    'flex-end' => 'flex-end',
+  ];
+}
+
+/**
+ * Set dynamic allowed values for the gap width size bundle field.
+ */
+function jcc_custom_gap_size_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
+  return [
+    '--s0' => '18px:Default (--s-0)',
+    '--s-3' => '9px (--s-1)',
+    '--s-2' => '11px (--s-2)',
+    '--s-1' => '14px (--s-3)',
+    '--s1' => '23px (--s1)',
+    '--s2' => '28px (--s2)',
+    '--s3' => '36px (--s3)',
+    '--s4' => '45px (--s4)',
+    '--s5' => '57px (--s5)',
+    '--s6' => '72px (--s6)',
+  ];
+}
+
+/**
+ * Set dynamic allowed values for the sidebar direction bundle field.
+ */
+function jcc_custom_sidebar_direction_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
+  return [
+    'row' => 'Sidebar on left',
+    'row-reverse' => 'Sidebar on right',
+  ];
 }

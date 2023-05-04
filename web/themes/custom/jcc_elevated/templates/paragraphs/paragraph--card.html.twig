@@ -2,22 +2,16 @@
 {{ attach_library("jcc_storybook/Button") }}
 {{ attach_library("jcc_storybook/Icon") }}
 
-{# Only allow elevated card variants #}
-{% set variant = 'bordered-center' %}
+{# Card variant selection set by parent #}
 {% set paragraph_parent = paragraph.getParentEntity() %}
 {% if paragraph_parent %}
   {% set cards_sub_variant = paragraph_parent.field_sub_variant.value|json_decode %}
-  {% if cards_sub_variant.card == 'striped' or cards_sub_variant == 'bordered-center' %}
-    {% set variant = cards_sub_variant.card %}
-  {% endif %}
 {% endif %}
 
-{#  Media if in use for bordered-center card #}
-{% set media = null %}
-{% if cards_sub_variant.card != 'striped' and paragraph.field_media.entity.field_media_image.entity.uri.value %}
-  {% set image = paragraph.field_media.entity.field_media_image %}
+{#  Media if in use for non-striped card #}
+{% if cards_sub_variant.card != 'striped' and card_media %}
   {% set media %}
-    <img src="{{ file_url(image.entity.uri.value) }}"  alt="{{ image.0.alt }}" />
+    {{ card_media }}
   {% endset %}
 {% endif %}
 
@@ -43,11 +37,11 @@
 {% endif %}
 
 {% include "@molecules/Card/Card.twig" with {
-  variant: variant,
+  variant: cards_sub_variant.card,
   clickable_card: cards_sub_variant.card == 'striped' ? paragraph.field_entire_card_clickable.value : null,
   background: cards_sub_variant.card == 'striped' ? paragraph.field_background.value : null,
   media: media,
   heading: content.field_heading,
-  text: content.field_text,
+  text: filtered_text ? filtered_text : content.field_text.0,
   button_data: button_data,
 } %}
