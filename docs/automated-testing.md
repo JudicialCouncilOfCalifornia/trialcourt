@@ -32,16 +32,16 @@ There's a script that's called in the CircleCI workflow that looks for certain t
 
 Cypress test specs are written in Javascript so it's easy to learn and very flexible. The `cypress-ci.sh` script looks in the `test/cypress/integration` directory for spec files named with the following patterns:
 
-  - `[site]-ci.spec.js`
-  - `[site]-vrt.spec.js`
+  - `[site]-ci.cy.js`
+  - `[site]-vrt.cy.js`
 
 Where `[site]` matches the site directory name in `web/sites/`.
 
-The `[site]-ci.spec.js` file can be used to define each site's critical end to end or behavioral tests. A simple one, might be to check if your front page shows all the sections you expect, or doesn't show any error messages, every time you deploy to production. But you can also do anything a user can do in a browser, so you can test end to end user workflows like navigating through the menu to a page, logging in, filling in a form, reading a success/fail message, etc.
+The `[site]-ci.cy.js` file can be used to define each site's critical end to end or behavioral tests. A simple one, might be to check if your front page shows all the sections you expect, or doesn't show any error messages, every time you deploy to production. But you can also do anything a user can do in a browser, so you can test end to end user workflows like navigating through the menu to a page, logging in, filling in a form, reading a success/fail message, etc.
 
 Creating a few tests to check for critical things on deployment can help catch important issues before they impact users.
 
-The `[site]-vrt.spec.js` file is for Visual Regression Testing. CI will do a base snapshot of pages from the live site and then compare those, pixel by pixel to a snap shot of the environment being deployed. It will fail if some threshold of difference is crossed. This is fully configurable. You can even ignore certain elements on a page that you know are dynamic.
+The `[site]-vrt.cy.js` file is for Visual Regression Testing. CI will do a base snapshot of pages from the live site and then compare those, pixel by pixel to a snap shot of the environment being deployed. It will fail if some threshold of difference is crossed. This is fully configurable. You can even ignore certain elements on a page that you know are dynamic.
 
 ### Reports
 
