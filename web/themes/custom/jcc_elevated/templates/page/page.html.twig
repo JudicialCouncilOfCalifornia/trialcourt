@@ -79,24 +79,22 @@
       logo: logo.url,
       label: site_name.first,
       sub_label: site_name.second,
-      attributes: create_attribute(),
     },
     primary_nav_data: {
       header_search_data: {
         variant: "default",
         form: search_form,
-        attributes: create_attribute(),
       },
       header_search_data_duplicate: {
         variant: "no-toggle",
-        form: search_form,
-        attributes: create_attribute(),
+        form: search_form_mobile,
       },
       links: main_links,
-      attributes: create_attribute(),
     },
-    secondary_nav_data: {},
-    attributes: create_attribute(),
+    secondary_nav_data: {
+      variant: "with-divider",
+      links: featured_links,
+    },
   } %}
 
   {% if page.tabs|render %}
