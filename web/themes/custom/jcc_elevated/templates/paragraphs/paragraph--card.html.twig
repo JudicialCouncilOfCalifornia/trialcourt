@@ -4,8 +4,8 @@
 
 {# Card variant selection set by parent #}
 {% set paragraph_parent = paragraph.getParentEntity() %}
-{% if paragraph_parent %}
-  {% set cards_sub_variant = paragraph_parent.field_sub_variant.value|json_decode %}
+{% if paragraph_parent.hasField('field_sub_variant') %}
+  {% set cards_sub_variant = paragraph_parent.field_sub_variant.value|json_decode|default([]) %}
 {% endif %}
 
 {#  Media if in use for non-striped card #}
@@ -42,6 +42,6 @@
   background: cards_sub_variant.card == 'striped' ? paragraph.field_background.value : null,
   media: media,
   heading: content.field_heading,
-  text: filtered_text ? filtered_text : content.field_text.0,
+  text: filtered_text ?? content.field_text|render,
   button_data: button_data,
 } %}

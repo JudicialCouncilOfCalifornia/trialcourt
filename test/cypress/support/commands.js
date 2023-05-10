@@ -24,14 +24,10 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
+const compareSnapshotCommand = require("cypress-visual-regression/dist/command");
 
-// Default config.
-addMatchImageSnapshotCommand({
-  failureThreshold: 0.00,
-  failureThresholdType: 'percent',
-  customDiffConfig: { threshold: 0.0 },
-  capture: 'viewport',
+compareSnapshotCommand({
+  capture: "fullPage",
 });
 
 // Helper for setting viewport in visual regression tests.

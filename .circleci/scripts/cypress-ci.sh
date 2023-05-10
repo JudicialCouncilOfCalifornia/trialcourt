@@ -45,8 +45,8 @@ echo -e "\nPurging old test data."
 rm -rf test/cypress/reports test/cypress/screenshots test/cypress/videos
 
 for name in "$@" ; do
-  ciSpec=test/cypress/integration/${name}-ci.spec.js
-  vrtSpec=test/cypress/integration/${name}-vrt.spec.js
+  ciSpec=test/cypress/integration/${name}-ci.cy.js
+  vrtSpec=test/cypress/integration/${name}-vrt.cy.js
   baseUrl=https://${ENV}-jcc-${name}.pantheonsite.io
 
   # Run CI Specs
@@ -62,11 +62,12 @@ for name in "$@" ; do
 #    npx cypress run --spec ${vrtSpec} --config baseUrl=${baseUrl}
 #  fi
 #
-#  if [ -d "test/cypress/snapshots/${name}-vrt.spec.js/__diff_output__" ] ; then
+#  if [ -d "test/cypress/snapshots/${name}-vrt.cy.js/__diff_output__" ] ; then
 #    vrtFail=true
 #  fi
 done
 
 # Merge Reports
+
 npx mochawesome-merge test/cypress/reports/mocha/*.json > test/cypress/reports/mocha/index.json
 npx marge test/cypress/reports/mocha/index.json -f cypress-report.html -o test/cypress/reports

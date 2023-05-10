@@ -5,8 +5,13 @@
  * Page preprocessors.
  */
 
+use Drupal\Component\Utility\Xss;
+use Drupal\Core\Form\EnforcedResponseException;
+use Drupal\Core\Form\FormState;
 use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
+use Drupal\views\Views;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -20,7 +25,11 @@ function jcc_elevated_preprocess_page(&$variables) {
   ];
 
   $variables['main_links'] = jcc_elevated_get_menu_array('main');
+  $variables['featured_links'] = jcc_elevated_get_menu_array('featured-links');
   $variables['footer_links'] = jcc_elevated_get_menu_array('footer');
+
+  $variables['search_form'] = jcc_elevated_build_header_search_form();
+  $variables['search_form_mobile'] = jcc_elevated_build_header_search_form(TRUE);
 
   $variables['hat'] = [
     'title' => [
@@ -137,4 +146,102 @@ function jcc_elevated_menu_to_array(array $tree, $menu_name) {
     ];
   }
   return $links;
+}
+
+/**
+ * Generate the search form from the search view exposed form.
+ *
+ * @param bool $mobile_version
+ *   Sets different id's and any other tweaks needed for accessibility on the
+ *   duplicate search forms.
+ *
+ * @return array
+ *   Return a renderable array.
+ *
+ * @throws \Drupal\Core\Form\FormAjaxException
+ */
+function jcc_elevated_build_header_search_form(bool $mobile_version = FALSE): array {
+  $view_name = 'search';
+  $display_name = 'search';
+  $searched_value = \Drupal::request()->query->get('search');
+  $form = [];
+
+  $view = Views::getView($view_name);
+  $view->setDisplay($display_name);
+  $view->initHandlers();
+  $form_state = (new FormState())
+    ->setStorage([
+      'view' => $view,
+      'display' => &$view->display_handler->display,
+      'rerender' => TRUE,
+    ])
+    ->setMethod('get')
+    ->setAlwaysProcess()
+    ->disableRedirect();
+  $form_state->set('rerender', NULL);
+  try {
+    $form = \Drupal::formBuilder()
+      ->buildForm('\Drupal\views\Form\ViewsExposedForm', $form_state);
+  }
+  catch (EnforcedResponseException $e) {
+  }
+
+  $form['#view_name'] = $view_name;
+  $form['#display_name'] = $display_name;
+  array_unshift($form['#theme'], 'views_exposed_form__search__search__header_form');
+  if ($mobile_version) {
+    array_unshift($form['#theme'], 'views_exposed_form__search__search__header_form__mobile');
+  }
+
+  foreach (Element::children($form['actions']) as $action_key) {
+    $form['actions'][$action_key]['#attributes']['data-views-ajax-submit-disabled'] = TRUE;
+  }
+
+  // Class necessary to trigger storybook styling.
+  $form['#attributes']['class'][] = 'header-search__form';
+
+  // Alter the search field.
+  $form['search']['#type'] = 'textfield';
+  $form['search']['#pre_render'] = [];
+  $form['search']['#process'] = [];
+  $form['search']['#theme_wrappers'] = [];
+  $form['search']['#attributes']['value'] = Xss::filter($searched_value);
+  $form['search']['#attributes']['name'] = $form['search']['#name'];
+  $form['search']['#attributes']['class'] = [];
+  $form['search']['#attributes']['id'] = $mobile_version ? 'header-search__mobile' : 'header-search';
+  unset($form['search']['#attributes']['data-search-api-autocomplete-search']);
+  unset($form['search']['#attributes']['data-autocomplete-path']);
+  unset($form['search']['#autocomplete_route_name']);
+  unset($form['search']['##autocomplete_route_parameters']);
+  unset($form['search']['#value_callback']);
+
+  // Change the submit attributes and properties.
+  $form['actions']['#theme_wrappers'] = [];
+  $form['actions']['submit']['#theme'] = 'input__submit__search_search_submit';
+  $form['actions']['submit']['#theme_wrappers'] = [];
+  $form['actions']['submit']['#attributes']['class'] = [];
+  $form['actions']['submit']['#attributes']['class'][] = 'header-search__icon';
+  $form['actions']['submit']['#required'] = TRUE;
+  $form['actions']['submit']['#value'] = t('Search');
+  $form['actions']['reset']['#access'] = FALSE;
+  unset($form['actions']['submit']['#attributes']['data-bef-auto-submit-click']);
+
+  // This removes ajax elements from the attributes array.
+  $form['#attributes']['id'] = $mobile_version ? $form['#id'] . '--mobile' : $form['#id'];
+  unset($form['#attributes']['data-auto-submit-full-form']);
+  unset($form['#attributes']['data-bef-auto-submit-full-form']);
+  unset($form['#attributes']['data-auto-submit']);
+  unset($form['#attributes']['data-bef-auto-submit']);
+  unset($form['#attributes']['data-auto-submit-delay']);
+  unset($form['#attributes']['data-bef-auto-submit-delay']);
+  unset($form['#attributes']['data-drupal-selector']);
+  unset($form['ajax-submit']);
+
+  // Remove the captcha.
+  unset($form['captcha']);
+
+  // Remove the items per page element.
+  unset($form['items_per_page']);
+
+  return $form;
 }

@@ -1,3 +1,4 @@
+uuid: 87056c73-f91c-4c21-99c6-2a772a673a30
 langcode: en
 status: true
 dependencies:
@@ -6,6 +7,7 @@ dependencies:
     - field.field.media.publication.field_date
     - field.field.media.publication.field_division
     - field.field.media.publication.field_document_type
+    - field.field.media.publication.field_east_armenian_file
     - field.field.media.publication.field_media_file
     - field.field.media.publication.field_media_file_arabic
     - field.field.media.publication.field_media_file_cambodian
@@ -38,6 +40,7 @@ third_party_settings:
         - field_media_file_cambodian
         - field_media_file_chinese_simple
         - field_media_file_chinese
+        - field_east_armenian_file
         - field_media_file_farsi
         - field_media_file_hmong
         - field_media_file_korean
@@ -74,7 +77,7 @@ third_party_settings:
         description: ''
         required_fields: true
 _core:
-  default_config_hash: 1eBF8M-jLQ4CAvlyYPP53-9rHuOuG6w5drDsm_WrB1E
+  default_config_hash: N2GohBfvx6vrEBB4oedTKzfjlZjZTareOYdwQ1COVNI
 id: media.publication.default
 targetEntityType: media
 bundle: publication
@@ -143,6 +146,13 @@ content:
       new_terms: false
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
+  field_east_armenian_file:
+    type: file_generic
+    weight: 20
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
   field_media_file_arabic:
     type: file_generic
     weight: 16
@@ -159,7 +169,7 @@ content:
     third_party_settings: {  }
   field_media_file_chinese:
     type: file_generic
-    weight: 20
+    weight: 19
     region: content
     settings:
       progress_indicator: throbber
@@ -287,6 +297,11 @@ content:
     settings:
       display_label: true
     third_party_settings: {  }
+  translation:
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
     weight: 11
@@ -298,5 +313,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
 hidden:
+  field_east_armenian_file: true
   field_media_file: true
   replace_file: true

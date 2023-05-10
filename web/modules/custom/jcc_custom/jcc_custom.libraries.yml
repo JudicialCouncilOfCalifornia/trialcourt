@@ -36,9 +36,25 @@ command.managed_file_upload_complete_event_command:
     - core/jquery
     - core/jquery.once
 
+# Libraries to support form styling when JCC Elevated theme is default.
+# @see
+# jcc_custom_field_widget_single_element_entity_reference_paragraphs_form_alter
+storybook-scheme-default:
+  css:
+    theme:
+      /themes/contrib/jcc_storybook/lib/css/scheme-default.css:  { minified: true }
+
 storybook-card:
   css:
-    base:
-      /themes/contrib/jcc_storybook/src/css/scheme-default.css: {}
     theme:
-      /themes/contrib/jcc_storybook/lib/stories/Molecules/Card/Card.css: {}
+      /themes/contrib/jcc_storybook/lib/stories/Molecules/Card/Card.css: { minified: true }
+
+storybook-section:
+  css:
+    theme:
+      /themes/contrib/jcc_storybook/lib/stories/Organisms/Section/Section.css: { minified: true }
+
+gin-elevated:
+  css:
+    theme:
+      css/gin-elevated.css: {}

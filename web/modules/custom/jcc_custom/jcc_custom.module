@@ -149,7 +149,6 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
  */
 function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
   $theme = \Drupal::config('system.theme')->get('default');
-
   // If elevated theme is not in use by all sites.
   if ($theme == 'jcc_elevated') {
     switch ($element['#paragraph_type']) {
@@ -158,15 +157,16 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         unset($element['subform']['field_columns']);
 
         // Attach Card.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
         $element['#attached']['library'][] = 'jcc_custom/storybook-card';
-
+        $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
         break;
 
       case 'section':
         // Attach Section.css for background swatches.
-        $element['#attached']['library'][] = 'jcc_elevated/storybook-section';
-        $element['#attached']['library'][] = 'jcc_elevated/storybook-card';
-
+        $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-section';
+        $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
         break;
     }
   }

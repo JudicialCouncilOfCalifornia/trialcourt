@@ -10,7 +10,7 @@
  */
 function jcc_elevated_preprocess_pager(&$variables) {
   // Add the current value into items for easier theming.
-  $variables['items']['current'] = $variables['current'];
+  $variables['items']['current'] = $variables['current'] ?? 0;
 
   if (isset($variables['items']['first']['text'])) {
     // Lock the text value for the first.
