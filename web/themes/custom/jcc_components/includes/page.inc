@@ -81,7 +81,6 @@ function jcc_components_preprocess_page(&$variables) {
       $variables['google_translate'] = $google_translate->build();
     }
   }
- 
   if (theme_get_setting('enable_twitter_embed') === 1) {
     $variables['#attached']['library'][] = 'jcc_components/twitter_widget';
   }
