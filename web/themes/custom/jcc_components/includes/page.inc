@@ -81,6 +81,10 @@ function jcc_components_preprocess_page(&$variables) {
       $variables['google_translate'] = $google_translate->build();
     }
   }
+ 
+  if (theme_get_setting('enable_twitter_embed') === 1) {
+    $variables['#attached']['library'][] = 'jcc_components/twitter_widget';
+  }
 
   // Display content only when embed param is 1.  Hide header and footer.
   $variables['embed'] = \Drupal::request()->query->get('embed') == 1 ? TRUE : FALSE;
