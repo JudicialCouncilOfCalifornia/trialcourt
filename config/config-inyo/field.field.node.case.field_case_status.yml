@@ -1,0 +1,34 @@
+uuid: bbd768fa-3a0c-4d62-a8cf-5d75648aedb3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_case_status
+    - node.type.case
+    - taxonomy.vocabulary.case_status
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.case.field_case_status
+field_name: field_case_status
+entity_type: node
+bundle: case
+label: 'Case Status'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      case_status: case_status
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference
