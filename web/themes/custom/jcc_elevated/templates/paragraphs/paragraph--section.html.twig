@@ -21,10 +21,10 @@
 {% include "@organisms/Section/Section.twig" with {
   variant: paragraph.field_section_background.get(0).value|default('default'),
   brow_data: {
-    part_one: content.field_brow,
+    part_one: content.field_brow|render,
   },
-  heading: content.field_heading,
-  text: content.field_lead,
+  heading: content.field_heading|render,
+  text: content.field_lead|render,
   sub_component_data: content.field_components|render,
   button_data: button_data,
   background_image_url: background_url,
