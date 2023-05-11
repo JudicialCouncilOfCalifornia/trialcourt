@@ -1,0 +1,134 @@
+uuid: 2cf1c91c-f269-4ed6-9f86-bd6376326879
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.case.field_case_category
+    - field.field.node.case.field_case_number
+    - field.field.node.case.field_case_status
+    - field.field.node.case.field_case_subtype
+    - field.field.node.case.field_case_type
+    - field.field.node.case.field_department
+    - field.field.node.case.field_filing_date
+    - field.field.node.case.field_hearing_date
+    - field.field.node.case.field_hearing_type
+    - field.field.node.case.field_judge
+    - field.field.node.case.field_party_name
+    - field.field.node.case.field_party_type
+    - node.type.case
+  module:
+    - datetime
+    - user
+id: node.case.default
+targetEntityType: node
+bundle: case
+mode: default
+content:
+  field_case_category:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 110
+    region: content
+  field_case_number:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  field_case_status:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 111
+    region: content
+  field_case_subtype:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 109
+    region: content
+  field_case_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 108
+    region: content
+  field_department:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  field_filing_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_hearing_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_hearing_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 112
+    region: content
+  field_judge:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_party_name:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_party_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  langcode: true
+  search_api_excerpt: true

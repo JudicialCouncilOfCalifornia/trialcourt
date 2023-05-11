@@ -36,7 +36,7 @@ Example:
   - `.circleci/scripts/cypress-ci.sh -b newsroom tc` - first set the base snapshots from live for newsroom and slo.
   - `.circleci/scripts/cypress-ci.sh -e develop newsroom tc` - run tests for newroom and slo on the develop env.
 
-The CI script currently expects tests named `sitename-ci.spec.js` and `sitename-vrt.spec.js`. Any tests that should be run during CI should be named this way.
+The CI script currently expects tests named `sitename-ci.cy.js` and `sitename-vrt.cy.js`. Any tests that should be run during CI should be named this way.
 
 This is to allow us to run a select set of tests for CI automation, and still develop other tests to aid in development that don't necessarily run on every deployment. CI config is structured to run Cypress tests on deployments to test environments, as well as master/live. We can control which multisites are run. Failing tests do not prevent deployment to the environment, as they happen after the deployment step.
 
@@ -58,13 +58,13 @@ You can run specific tests locally with:
  - `npm run cy:open` - to run with the GUI
  - `npm run cy:run` - to run headless like it would in CI.
 
- With `cy:run` you should include `--spec test/cypress/my-test.spec.js` for the test you want to run, otherwise it runs everything. If you run `cy:open` you can choose what test to run in the GUI.
+ With `cy:run` you should include `--spec test/cypress/my-test.cy.js` for the test you want to run, otherwise it runs everything. If you run `cy:open` you can choose what test to run in the GUI.
 
  Also include `--config baseUrl=https://your-local-url` to test locally.
 
  Examples:
  - `npm run cy:open -- --config baseUrl=http://slo.lndo.site`
- - `npm run cy:run -- --config baseUrl=http://slo.lndo.site --spec my-test.spec.js`
+ - `npm run cy:run -- --config baseUrl=http://slo.lndo.site --spec my-test.cy.js`
 
 Don't forget the `--` to separate the cypress arguments from the npm arguments.
 

@@ -158,4 +158,11 @@ function jcc_components_form_system_theme_settings_alter(&$form, FormStateInterf
     '#default_value' => theme_get_setting('show_google_translate'),
     '#description'   => t("Show Google translation dropdown in header."),
   ];
+
+  $form['global']['enable_twitter_embed'] = [
+    '#type'          => 'checkbox',
+    '#title'         => t('Enable Twitter embed library'),
+    '#default_value' => theme_get_setting('enable_twitter_embed'),
+    '#description'   => t("Enable Twitter embed library"),
+  ];
 }
