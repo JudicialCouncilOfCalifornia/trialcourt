@@ -68,22 +68,15 @@
   {% set list_items = list_items|merge([item]) %}
 {% endfor %}
 
-{% set sub_component_data %}
-  {% include "@organisms/TeaserPlusList/TeaserPlusList.twig" with {
-      teaser: teaser,
-      list_items: list_items,
-  } %}
-{% endset %}
-
 {% set button_data = {
   label: 'See all news',
   href: news_url,
   variant: "primary",
 } %}
 
-{% include "@organisms/Section/Section.twig" with {
-  first_component: false,
-  heading: 'Latest News',
-  button_data: button_data,
-  sub_component_data: sub_component_data,
+{% include "@organisms/TeaserPlusList/TeaserPlusList.twig" with {
+    heading: 'Latest News',
+    teaser: teaser,
+    list_items: list_items,
+    button_data: button_data,
 } %}
