@@ -1,4 +1,3 @@
-uuid: 3c5081f6-cfc5-479c-815a-781020380853
 langcode: en
 status: true
 dependencies:
@@ -6,6 +5,7 @@ dependencies:
     - core.entity_form_mode.media.media_library
     - field.field.media.remote_video.field_height
     - field.field.media.remote_video.field_matters_served
+    - field.field.media.remote_video.field_media_caption
     - field.field.media.remote_video.field_media_image
     - field.field.media.remote_video.field_media_oembed_video
     - field.field.media.remote_video.field_provider
@@ -17,8 +17,6 @@ dependencies:
     - autocomplete_deluxe
     - cshs
     - svg_image
-_core:
-  default_config_hash: ZEDQsMz87gcta2AnqwDGixEM2kenQmkhnMxCy-IopXg
 id: media.remote_video.media_library
 targetEntityType: media
 bundle: remote_video
@@ -78,9 +76,15 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  translation:
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   created: true
   field_height: true
+  field_media_caption: true
   field_provider: true
   field_width: true
   langcode: true

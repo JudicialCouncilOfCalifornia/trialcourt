@@ -8,13 +8,6 @@
   {% set cards_sub_variant = paragraph_parent.field_sub_variant.value|json_decode|default([]) %}
 {% endif %}
 
-{#  Media if in use for non-striped card #}
-{% if cards_sub_variant.card != 'striped' and card_media %}
-  {% set media %}
-    {{ card_media }}
-  {% endset %}
-{% endif %}
-
 {# Icon if in use for striped card #}
 {% if cards_sub_variant.card == 'striped' and paragraph.field_icon.value %}
   {% set icon_data = {
@@ -40,8 +33,12 @@
   variant: cards_sub_variant.card,
   clickable_card: cards_sub_variant.card == 'striped' ? paragraph.field_entire_card_clickable.value : null,
   background: cards_sub_variant.card == 'striped' ? paragraph.field_background.value : null,
-  media: media,
-  heading: content.field_heading,
-  text: filtered_text ?? content.field_text|render,
+  media: cards_sub_variant.card != 'striped' ? media : false,
+  media_caption: {
+    show: paragraph.field_show_media_caption.value,
+    text: caption,
+  },
+  heading: content.field_heading.0,
+  text: filtered_text ?? content.field_text.0|render,
   button_data: button_data,
 } %}
