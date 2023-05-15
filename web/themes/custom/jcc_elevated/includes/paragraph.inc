@@ -100,9 +100,13 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
 function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $paragraph) {
   if ($paragraph->get('field_media')) {
     $card_media = $paragraph->get('field_media');
+    $card_icon = $paragraph->get('field_icon');
     if ($card_media && $card_media->entity) {
       $build = \Drupal::entityTypeManager()->getViewBuilder('media')->view($card_media->entity);
       $variables['card_media'] = $build;
+    }
+    if ($card_icon && $card_icon->value) {
+      $variables['card_icon'] = trim($card_icon->value, 'icon-');
     }
   }
 
