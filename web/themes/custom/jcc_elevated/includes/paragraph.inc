@@ -106,7 +106,10 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
       $variables['card_media'] = $build;
     }
     if ($card_icon && $card_icon->value) {
-      $variables['card_icon'] = trim($card_icon->value, 'icon-');
+      $variables['card_icon'] = str_replace(
+        ['icon-', 'dark-', 'white-'],
+        ['', '', ''],
+        $card_icon->value);
     }
   }
 
