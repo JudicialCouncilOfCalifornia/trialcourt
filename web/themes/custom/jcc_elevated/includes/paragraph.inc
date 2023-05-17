@@ -109,7 +109,7 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
   // Disallows links in text if clickable striped card.
   $variables['filtered_text'] = NULL;
   $parent = $paragraph->getParentEntity();
-  if ($parent->hasField('field_sub_variant')) {
+  if ($parent && $parent->hasField('field_sub_variant')) {
     $cards_sub_variant = $parent->get('field_sub_variant')->value;
     $cards_sub_variant = substr($cards_sub_variant, strpos($cards_sub_variant, ':'));
     $cards_sub_variant = preg_replace("/[^a-zA-Z0-9]+/", "", $cards_sub_variant);
