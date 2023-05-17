@@ -10,7 +10,7 @@ migration_tags:
   - node
   - case
 migration_group: case_management
-label: 'Case: Import Node (Criminal)'
+label: 'Case: Import Node (Civil)'
 source:
   plugin: csv
   path: sites/default/files/delnorte/default/upload/civil-calendar.csv
@@ -23,6 +23,7 @@ source:
     - party_type
     - department
     - hearing_datetime
+    - hearing_type
   fields:
     -
       name: party_name
@@ -130,7 +131,7 @@ process:
       from_format: 'n/j/Y g:i A'
       to_format: 'Y-m-d\TH:i:s'
       from_timezone: America/Los_Angeles
-      to_timezone: America/Los_Angeles
+      to_timezone: UTC
   field_judge:
     -
       plugin: callback
