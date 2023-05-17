@@ -9,6 +9,7 @@ dependencies:
     - field.field.paragraph.card.field_icon
     - field.field.paragraph.card.field_link
     - field.field.paragraph.card.field_media
+    - field.field.paragraph.card.field_media_alignment
     - field.field.paragraph.card.field_show_media_caption
     - field.field.paragraph.card.field_text
     - paragraphs.paragraphs_type.card
@@ -37,6 +38,7 @@ third_party_settings:
     group_media:
       children:
         - field_media
+        - field_media_alignment
         - field_show_media_caption
       label: Media
       region: content
@@ -102,9 +104,15 @@ content:
     settings:
       media_types: {  }
     third_party_settings: {  }
+  field_media_alignment:
+    type: options_select
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_show_media_caption:
     type: boolean_checkbox
-    weight: 6
+    weight: 7
     region: content
     settings:
       display_label: true
