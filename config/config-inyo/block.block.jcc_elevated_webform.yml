@@ -1,0 +1,33 @@
+uuid: 6d9d709a-0ae6-4f3d-b9ab-d58e100e259f
+langcode: en
+status: true
+dependencies:
+  config:
+    - webform.webform.was_this_helpful
+  module:
+    - system
+    - webform
+  theme:
+    - jcc_elevated
+_core:
+  default_config_hash: jwZ4Y22xaby1Zb7VvfbFlFq-YJEVO_kVUMW5umYU3sA
+id: jcc_elevated_webform
+theme: jcc_elevated
+region: drawer
+weight: 0
+provider: null
+plugin: webform_block
+settings:
+  id: webform_block
+  label: 'Survey Webform'
+  label_display: '0'
+  provider: webform
+  webform_id: was_this_helpful
+  default_data: ''
+  redirect: false
+visibility:
+  request_path:
+    id: request_path
+    negate: true
+    context_mapping: {  }
+    pages: '<front>'

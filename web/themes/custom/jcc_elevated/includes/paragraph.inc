@@ -200,6 +200,26 @@ function jcc_elevated_paragraph_alert(array &$variables) {
 }
 
 /**
+ * Helper function for hero_hangover paragraph.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_elevated_paragraph_hero_hangover(array &$variables, ParagraphInterface $paragraph) {
+  if ($paragraph->get('field_media')) {
+    $card_media = $paragraph->get('field_media');
+    if ($card_media && $card_media->entity) {
+      $build = \Drupal::entityTypeManager()
+        ->getViewBuilder('media')
+        ->view($card_media->entity);
+      $variables['card_media'] = $build;
+    }
+  }
+}
+
+/**
  * Helper function for alert paragraphs.
  *
  * @param array $variables
