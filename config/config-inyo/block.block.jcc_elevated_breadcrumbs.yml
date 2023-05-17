@@ -1,0 +1,31 @@
+uuid: d8bcd44e-01e4-4ddb-be76-13a1082e42a8
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - system
+  theme:
+    - jcc_elevated
+_core:
+  default_config_hash: _uIyC4gP3YPTUwZFf--NV6qq3geW6Vgqlbsls1xjSbc
+id: jcc_elevated_breadcrumbs
+theme: jcc_elevated
+region: navigation
+weight: -1
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Breadcrumbs
+  label_display: '0'
+  provider: system
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: true
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      alert: alert
+      landing_page: landing_page
