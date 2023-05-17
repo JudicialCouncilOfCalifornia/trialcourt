@@ -112,6 +112,11 @@ function jcc_elevated_preprocess_views_view(&$variables) {
     $variables['searched_term'] = !empty($searched_term['search']) ? Xss::filter($searched_term['search']) : NULL;
     $variables['title'] = $view->getTitle();
   }
+
+  if (($view->id() == 'alerts') && ($view->current_display == 'alerts')) {
+    $variables['title_prefix'] = [];
+    $variables['title_suffix'] = [];
+  }
 }
 
 /**
