@@ -10,6 +10,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
+use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -196,4 +197,23 @@ function jcc_elevated_paragraph_alert(array &$variables) {
       $variables['type'] = $variant->alert == 'success' ? 'status' : $variant->alert;
     }
   }
+}
+
+/**
+ * Helper function for alert paragraphs.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ */
+function jcc_elevated_paragraph_action_list(array &$variables) {
+  $action_items = [];
+  $paragraph = $variables['paragraph']->get('field_components')->getValue();
+  foreach ($paragraph as $key => $element) {
+    $action_item = Paragraph::load($element['target_id']);
+    $link_element = $action_item->get('field_link')->getValue();
+    $action_items[$key]['label'] = $link_element[0]['title'];
+    $action_items[$key]['button_data']['href'] = $link_element[0]['uri'];
+    $action_items[$key]['button_data']['label'] = 'Learn More';
+  }
+  $variables['action_items'] = $action_items;
 }

@@ -1,0 +1,9 @@
+{{ attach_library("jcc_storybook/ActionList") }}
+
+<div class="section__content box">
+  {% include "@molecules/ActionList/ActionList.twig" with {
+    heading: content.field_heading|render,
+    text: content.field_lead|render,
+    links: action_items,
+  } %}
+</div>
