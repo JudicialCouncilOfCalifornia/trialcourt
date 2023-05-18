@@ -10,6 +10,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
+use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -100,16 +101,23 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
 function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $paragraph) {
   if ($paragraph->get('field_media')) {
     $card_media = $paragraph->get('field_media');
+    $card_icon = $paragraph->get('field_icon');
     if ($card_media && $card_media->entity) {
       $build = \Drupal::entityTypeManager()->getViewBuilder('media')->view($card_media->entity);
       $variables['card_media'] = $build;
+    }
+    if ($card_icon && $card_icon->value) {
+      $variables['card_icon'] = str_replace(
+        ['icon-', 'dark-', 'white-'],
+        ['', '', ''],
+        $card_icon->value);
     }
   }
 
   // Disallows links in text if clickable striped card.
   $variables['filtered_text'] = NULL;
   $parent = $paragraph->getParentEntity();
-  if ($parent->hasField('field_sub_variant')) {
+  if ($parent && $parent->hasField('field_sub_variant')) {
     $cards_sub_variant = $parent->get('field_sub_variant')->value;
     $cards_sub_variant = substr($cards_sub_variant, strpos($cards_sub_variant, ':'));
     $cards_sub_variant = preg_replace("/[^a-zA-Z0-9]+/", "", $cards_sub_variant);
@@ -189,4 +197,46 @@ function jcc_elevated_paragraph_alert(array &$variables) {
       $variables['type'] = $variant->alert == 'success' ? 'status' : $variant->alert;
     }
   }
+}
+
+/**
+ * Helper function for hero_hangover paragraph.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_elevated_paragraph_hero_hangover(array &$variables, ParagraphInterface $paragraph) {
+  if ($paragraph->get('field_media')) {
+    $card_media = $paragraph->get('field_media');
+    if ($card_media && $card_media->entity) {
+      $build = \Drupal::entityTypeManager()
+        ->getViewBuilder('media')
+        ->view($card_media->entity);
+      $variables['card_media'] = $build;
+    }
+  }
+}
+
+/**
+ * Helper function for alert paragraphs.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ */
+function jcc_elevated_paragraph_action_list(array &$variables) {
+  $action_items = [];
+  $paragraph = $variables['paragraph']->get('field_components')->getValue();
+  foreach ($paragraph as $key => $element) {
+    $action_item = Paragraph::load($element['target_id']);
+    if ($action_item->hasField('field_link')) {
+      if ($link_element = $action_item->get('field_link')->getValue()) {
+        $action_items[$key]['label'] = $link_element[0]['title'];
+        $action_items[$key]['button_data']['href'] = $link_element[0]['uri'];
+        $action_items[$key]['button_data']['label'] = 'Learn More';
+      }
+    }
+  }
+  $variables['action_items'] = $action_items;
 }

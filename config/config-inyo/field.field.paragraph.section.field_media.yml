@@ -1,0 +1,36 @@
+uuid: 3961bcc2-a1c9-4474-96e7-09408e7ed42a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_media
+    - media.type.image
+    - paragraphs.paragraphs_type.section
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: evTmvIaWqQlF2rjC2DZGsCYxWYJXHuz0OXjrXpW99QM
+id: paragraph.section.field_media
+field_name: field_media
+entity_type: paragraph
+bundle: section
+label: 'Background image'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

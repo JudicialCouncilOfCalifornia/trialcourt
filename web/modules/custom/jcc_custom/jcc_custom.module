@@ -23,12 +23,11 @@ use Drupal\views\ViewExecutable;
  */
 function jcc_custom_page_attachments(array &$attachments) {
   $attachments['#attached']['library'][] = 'jcc_custom/fontawesome';
-
+  $attachments['#attached']['library'][] = 'jcc_custom/tableadapt';
   $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
   if (!$is_admin) {
     $attachments['#attached']['library'][] = 'jcc_custom/filelink';
-    $attachments['#attached']['library'][] = 'jcc_custom/forms';
-    $attachments['#attached']['library'][] = 'jcc_custom/tableadapt';
+    $attachments['#attached']['library'][] = 'jcc_custom/forms';  
     $attachments['#attached']['library'][] = 'jcc_custom/feedbacksurvey';
   }
 }
@@ -162,6 +161,7 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
         break;
 
+      case 'hero_hangover':
       case 'section':
         // Attach Section.css for background swatches.
         $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
