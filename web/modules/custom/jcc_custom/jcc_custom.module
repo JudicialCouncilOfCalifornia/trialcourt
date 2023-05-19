@@ -467,3 +467,80 @@ function jcc_custom_sidebar_direction_options_bundle(FieldStorageConfig $definit
     'row-reverse' => 'Sidebar on right',
   ];
 }
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function jcc_custom_field_widget_entity_reference_paragraphs_form_alter(&$element, &$form_state, $context) {
+  if ($element['#paragraph_type'] == 'section') {
+
+    // Set string of subform parents array, for use in form states settings.
+    $parents_array = $element['subform']['#parents'];
+    $parents = array_shift($parents_array) . '[' . implode('][', $parents_array) . ']';
+    $key = ':input[name="' . $parents . '[field_sub_component_layout]"]';
+
+    // Set visibility on style fields depending on value of Layout field.
+    $element['subform']['field_grid_min_width']['#states'] = [
+      'visible' => [
+        $key => ['value' => (string) 'grid'],
+      ],
+    ];
+    $element['subform']['field_measure']['#states'] = [
+      'visible' => [
+        [$key => ['value' => (string) 'center']],
+        'or',
+        [$key => ['value' => (string) 'switcher']],
+      ],
+    ];
+    $element['subform']['field_sidebar_direction']['#states'] = [
+      'visible' => [
+        $key => ['value' => (string) 'with-sidebar'],
+      ],
+    ];
+    $element['subform']['field_sidebar_width']['#states'] = [
+      'visible' => [
+        $key => ['value' => (string) 'with-sidebar'],
+      ],
+    ];
+    $element['subform']['field_alignment']['#states'] = [
+      'visible' => [
+        [$key => ['value' => (string) 'with-sidebar']],
+        'or',
+        [$key => ['value' => (string) 'flex flex--75-25']],
+        'or',
+        [$key => ['value' => (string) 'flex flex--70-30']],
+        'or',
+        [$key => ['value' => (string) 'flex flex--60-40']],
+        'or',
+        [$key => ['value' => (string) 'switcher']],
+        'or',
+        [$key => ['value' => (string) 'grid']],
+        'or',
+        [$key => ['value' => (string) 'reel']],
+      ],
+    ];
+    $element['subform']['field_gap_size']['#states'] = [
+      'visible' => [
+        [$key => ['value' => (string) 'with-sidebar']],
+        'or',
+        [$key => ['value' => (string) 'flex flex--75-25']],
+        'or',
+        [$key => ['value' => (string) 'flex flex--70-30']],
+        'or',
+        [$key => ['value' => (string) 'flex flex--60-40']],
+        'or',
+        [$key => ['value' => (string) 'switcher']],
+        'or',
+        [$key => ['value' => (string) 'grid']],
+        'or',
+        [$key => ['value' => (string) 'reel']],
+        'or',
+        [$key => ['value' => (string) 'center']],
+        'or',
+        [$key => ['value' => (string) 'cluster']],
+        'or',
+        [$key => ['value' => (string) 'stack']],
+      ],
+    ];
+  }
+}
