@@ -1,0 +1,18 @@
+{#
+/**
+ * @file
+ * Default theme implementation for a breadcrumb trail.
+ *
+ * Available variables:
+ * - breadcrumb: Breadcrumb trail items.
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library("jcc_storybook/Breadcrumb") }}
+
+{% if breadcrumb %}
+  {% include "@molecules/Breadcrumb/Breadcrumb.twig" with {
+    breadcrumb: breadcrumb,
+  } %}
+{% endif %}

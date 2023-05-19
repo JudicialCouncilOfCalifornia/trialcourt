@@ -11,12 +11,25 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 use Drupal\views\Views;
 
 /**
  * Implements hook_preprocess_HOOK().
+ *
+ * @throws \Drupal\Core\Form\FormAjaxException
  */
 function jcc_elevated_preprocess_page(&$variables) {
+  // Check if front page.
+  $is_front = \Drupal::service('path.matcher')->isFrontPage();
+
+  // Determine if page is a node.
+  $is_node = FALSE;
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if ($node instanceof NodeInterface) {
+    $is_node = TRUE;
+  }
+
   $variables['logo'] = theme_get_setting('logo', 'jcc_elevated');
 
   $variables['site_name'] = [
@@ -79,7 +92,16 @@ function jcc_elevated_preprocess_page(&$variables) {
   }
 
   // Display content only when embed param is 1.  Hide header and footer.
-  $variables['embed'] = \Drupal::request()->query->get('embed') == 1 ? TRUE : FALSE;
+  $variables['embed'] = \Drupal::request()->query->get('embed') == 1;
+
+  // Set breadcrumb for landing pages and subpages.
+  $variables['breadcrumb'] = FALSE;
+  $types = ['landing_page', 'subpage'];
+  if (!$is_front && $is_node && in_array($node->bundle(), $types)) {
+    $variables['breadcrumb'] = \Drupal::service('breadcrumb')
+      ->build(\Drupal::routeMatch())
+      ->toRenderable();
+  }
 }
 
 /**
@@ -91,7 +113,7 @@ function jcc_elevated_preprocess_page(&$variables) {
  * @return array
  *   The simple array to pass to component templates.
  */
-function jcc_elevated_get_menu_array($menu_name) {
+function jcc_elevated_get_menu_array(string $menu_name): array {
   $menu_tree = \Drupal::menuTree();
   $parameters = new MenuTreeParameters();
   $parameters->onlyEnabledLinks();
@@ -121,7 +143,7 @@ function jcc_elevated_get_menu_array($menu_name) {
  * @return array
  *   An array of links, formatted for a component.
  */
-function jcc_elevated_menu_to_array(array $tree, $menu_name) {
+function jcc_elevated_menu_to_array(array $tree, string $menu_name): array {
   $links = [];
 
   foreach ($tree as $element) {
