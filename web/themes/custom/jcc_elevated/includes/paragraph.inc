@@ -232,9 +232,20 @@ function jcc_elevated_paragraph_action_list(array &$variables) {
     $action_item = Paragraph::load($element['target_id']);
     if ($action_item->hasField('field_link')) {
       if ($link_element = $action_item->get('field_link')->getValue()) {
-        $action_items[$key]['label'] = $link_element[0]['title'];
+
+        if ($action_item->hasField('field_heading')) {
+          if (!empty($action_item->get('field_heading')->getValue())) {
+            $action_item_label = $action_item->get('field_heading')->getValue();
+            $action_items[$key]['label'] = $action_item_label[0]['value'];
+            $action_items[$key]['button_data']['label'] = $link_element[0]['title'];
+          }
+          else {
+            $action_items[$key]['label'] = $link_element[0]['title'];
+            $action_items[$key]['button_data']['label'] = t('Learn More');
+          }
+        }
         $action_items[$key]['button_data']['href'] = $link_element[0]['uri'];
-        $action_items[$key]['button_data']['label'] = 'Learn More';
+        $action_items[$key]['button_data']['variant'] = 'secondary';
       }
     }
   }
