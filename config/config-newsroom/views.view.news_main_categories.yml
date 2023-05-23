@@ -10,6 +10,7 @@ dependencies:
   content:
     - 'taxonomy_term:topics:7223c997-3428-44a6-a715-99ccd7f586c9'
     - 'taxonomy_term:topics:75093b84-0d52-4931-b8da-b3222e7751b8'
+    - 'taxonomy_term:topics:88d73824-61e6-4b42-8dbe-3efba9ca18b9'
     - 'taxonomy_term:topics:f3ed561d-b873-47c9-adbb-364e4220350e'
     - 'taxonomy_term:topics:f8b50cc4-6cec-42bd-8669-39b479a10298'
   module:
@@ -455,10 +456,127 @@ display:
     position: 3
     display_options:
       title: 'Superior Courts'
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            news: news
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        field_topics_target_id:
+          id: field_topics_target_id
+          table: node__field_topics
+          field: field_topics_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value:
+            - 8
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: topics
+          type: textfield
+          hierarchy: false
+          limit: true
+          error_message: true
+        moderation_state:
+          id: moderation_state
+          table: node_field_data
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: moderation_state_filter
+          operator: in
+          value:
+            editorial_workflow-published: editorial_workflow-published
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
       defaults:
         title: false
-        filters: true
-        filter_groups: true
+        filters: false
+        filter_groups: false
       display_description: ''
       display_extenders: {  }
     cache_metadata:
