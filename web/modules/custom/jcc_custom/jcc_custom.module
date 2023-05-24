@@ -133,14 +133,6 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       $form['filters']['status']['filter_html_image_secure']['#description'] = FieldFilteredMarkup::create(t('Disallows usage of &lt;img&gt; tag sources that are not hosted on this site by replacing them with a placeholder image. Disabling this setting will restrict Source editing to allowed roles.'));
 
       break;
-
-    case 'media_publication_add_form':
-      $form['group_translated_files'] = [
-        '#type' => 'details',
-        '#collapsed'  => TRUE,
-      ];
-
-      break;
   }
 }
 
