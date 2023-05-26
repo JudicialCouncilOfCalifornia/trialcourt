@@ -10,6 +10,21 @@
     {% set cards_sub_variant = 'default' %}
   {% endif %}
 {% endif %}
+{% if paragraph_parent.hasField('field_heading') and paragraph_parent.field_heading.value %}
+  {% set has_section_heading = true %}
+{% endif %}
+
+{# Media if in use for non-striped card #}
+{% if cards_sub_variant.card != 'striped' and media %}
+  {% set card_media %}
+    {{ media }}
+  {% endset %}
+
+  {% set media_caption = {
+    show: paragraph.field_show_media_caption.value,
+    text: caption,
+  } %}
+{% endif %}
 
 {# Icon if in use for striped card #}
 {% if cards_sub_variant == 'striped' and paragraph.field_icon.value %}
@@ -42,11 +57,9 @@
   variant: cards_sub_variant,
   clickable_card: cards_sub_variant == 'striped' ? paragraph.field_entire_card_clickable.value : null,
   background: cards_sub_variant == 'striped' ? paragraph.field_background.value : null,
-  media: cards_sub_variant != 'striped' ? media : false,
-  media_caption: {
-    show: paragraph.field_show_media_caption.value,
-    text: caption,
-  },
+  media: card_media,
+  media_caption: media_caption,
+  has_section_heading: has_section_heading,
   heading: content.field_heading.0,
   text: filtered_text ?? content.field_text.0|render,
   button_data: button_data,
