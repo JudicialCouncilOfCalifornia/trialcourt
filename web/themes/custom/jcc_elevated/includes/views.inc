@@ -104,7 +104,6 @@ function jcc_elevated_theme_suggestions_views_view_fields_alter(array &$suggesti
  */
 function jcc_elevated_preprocess_views_view(&$variables) {
   $render = \Drupal::service('renderer');
-  $node_builder = \Drupal::entityTypeManager()->getViewBuilder('node');
   $view = $variables['view'];
 
   if (($view->id() == 'search') && ($view->current_display == 'search')) {
