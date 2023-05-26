@@ -70,7 +70,12 @@
  *   in different view modes.
  */
 #}
-<article{{ attributes }}>
+{{ attach_library("jcc_storybook/SidebarNav") }}
+{{ attach_library("jcc_storybook/Icon") }}
+
+{% set has_sidebar = sidebar_navigation.links is not empty ? 'has-sidebar-navigation' : '' %}
+
+<article{{ attributes.addClass(['node__' ~ node.bundle, has_sidebar]) }}>
 
   {% if not page %}
     <h2{{ title_attributes }}>
@@ -78,18 +83,24 @@
     </h2>
   {% endif %}
 
-  {% if display_submitted %}
-    <footer>
-      {{ author_picture }}
-      <div{{ author_attributes }}>
-        {% trans %}Submitted by {{ author_name }} on {{ date }}{% endtrans %}
-        {{ metadata }}
+  {% if content.content_moderation_control|render is not empty %}
+    <div class="container content-moderation-control">
+      <div class="box">
+        {{ content.content_moderation_control }}
       </div>
-    </footer>
+    </div>
   {% endif %}
 
-  <div{{ content_attributes }}>
-    {{ content }}
+  <div{{ content_attributes.addClass('node__' ~ node.bundle ~ '__content') }}>
+    {{ header }}
+
+    {% if sidebar_navigation.links is not empty %}
+      {% include "@molecules/SidebarNav/SidebarNav.twig" with sidebar_navigation %}
+    {% endif %}
+
+    {% if content|without('content_moderation_control')|render is not empty %}
+      {{ content|without('content_moderation_control') }}
+    {% endif %}
   </div>
 
 </article>

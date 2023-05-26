@@ -90,8 +90,16 @@
     </footer>
   {% endif %}
 
+  {% if content.content_moderation_control|render is not empty %}
+    <div class="box content-moderation-control">
+      <div class="container">
+        {{ content.content_moderation_control }}
+      </div>
+    </div>
+  {% endif %}
+
   <div{{ content_attributes }}>
-    {{ content }}
+    {{ content|without('content_moderation_control') }}
   </div>
 
 </article>
