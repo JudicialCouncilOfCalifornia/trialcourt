@@ -5,6 +5,7 @@
  * Functions for views processing.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 use Drupal\views\ViewExecutable;
 use Drupal\taxonomy\Entity\Term;
@@ -102,7 +103,10 @@ function jcc_elevated_theme_suggestions_views_view_fields_alter(array &$suggesti
  * Implements hook_preprocess_views_view().
  */
 function jcc_elevated_preprocess_views_view(&$variables) {
+  $render = \Drupal::service('renderer');
+  $node_builder = \Drupal::entityTypeManager()->getViewBuilder('node');
   $view = $variables['view'];
+
   if (($view->id() == 'search') && ($view->current_display == 'search')) {
     // Set the item count for setting in the title override.
     $variables['count'] = count($view->result);
@@ -111,11 +115,41 @@ function jcc_elevated_preprocess_views_view(&$variables) {
     $searched_term = $view->getExposedInput();
     $variables['searched_term'] = !empty($searched_term['search']) ? Xss::filter($searched_term['search']) : NULL;
     $variables['title'] = $view->getTitle();
+
+    // Remove the captcha from the search.
+    unset($variables['exposed']['captcha']);
+
+    // Theme the search button.
+    $variables['exposed']['actions']['submit']['#theme_wrappers'][0] = "input__submit__search_search_submit";
+
+    // Process the results for the search api view.
+    foreach ($variables['rows'][0]['#rows'] as $item) {
+
+      // We have to manipulate the excerpt a little to render the html.
+      $excerpt = $item['#row']->_item->getExcerpt() ?? t('No excerpt available.')->render();
+      $text = [
+        '#prefix' => '<p>',
+        '#markup' => Html::decodeEntities($excerpt),
+        '#suffix' => '</p>',
+      ];
+
+      $variables['processed_rows'][] = [
+        'title' => $item['#row']->_entity->label(),
+        'content' => $render->render($text),
+        'url' => $item['#row']->_entity->toUrl()->toString(),
+      ];
+    }
   }
 
   if (($view->id() == 'alerts') && ($view->current_display == 'alerts')) {
     $variables['title_prefix'] = [];
     $variables['title_suffix'] = [];
+  }
+
+  if (($view->id() == 'news') && ($view->current_display == 'news_list')) {
+
+    // Remove the captcha from the search.
+    unset($variables['exposed']['captcha']);
   }
 }
 
