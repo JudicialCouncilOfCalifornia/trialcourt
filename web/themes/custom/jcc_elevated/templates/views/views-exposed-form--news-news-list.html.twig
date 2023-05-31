@@ -1,0 +1,17 @@
+{#
+/**
+ * @file
+ * Theme override of a views exposed form.
+ *
+ * Available variables:
+ * - form: A render element representing the form.
+ *
+ * @see template_preprocess_views_exposed_form()
+ */
+#}
+
+
+<div class="stack">
+  {{ form.search }}
+  {{ form|without('search', 'date_start', 'date_end', 'type') }}
+</div>
