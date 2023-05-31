@@ -49,7 +49,7 @@
 {% set row = sticky_list[0] %}
 {% set teaser = {
   brow_data: {
-    part_one: "",
+    part_one: row['#node'].field_news_type.0.entity.name.value,
     part_two: row['#node'].field_date.0.value|date('M d, Y'),
   },
   heading: row['#node'].title(),

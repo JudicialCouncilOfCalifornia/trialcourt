@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Theme override for a 'form' element.
+ *
+ * Available variables
+ * - attributes: A list of HTML attributes for the wrapper element.
+ * - children: The child elements of the form.
+ *
+ * @see template_preprocess_form()
+ */
+#}
+
+{% set login %}
+  <form{{ attributes.addClass(classes) }}>
+    {{ children }}
+  </form>
+{% endset %}
+
+{% include "@organisms/Section/Section.twig" with {
+  sub_component_layout: 'stack',
+  sub_component_data: login,
+} %}

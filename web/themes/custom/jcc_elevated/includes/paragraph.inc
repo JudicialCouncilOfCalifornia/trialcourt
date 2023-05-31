@@ -200,7 +200,7 @@ function jcc_elevated_paragraph_alert(array &$variables) {
   if ($variables['paragraph']->hasField('field_variant')) {
     $items = $variables['paragraph']->get('field_variant')->getValue();
     $variant = json_decode($items[0]['value']);
-    if ($variant->alert) {
+    if (isset($variant->alert)) {
       $variables['type'] = $variant->alert == 'success' ? 'status' : $variant->alert;
     }
   }

@@ -32,10 +32,9 @@
  * @ingroup themeable
  */
 #}
-{{ attach_library("jcc_storybook/Container") }}
-{{ attach_library("jcc_storybook/Stack") }}
-{{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/HeroHangover") }}
+{{ attach_library("jcc_storybook/InlineForm") }}
+{{ attach_library("jcc_storybook/ViewResults") }}
 
 {%
   set classes = [
@@ -53,46 +52,37 @@
   {% endif %}
 {% endset %}
 
-{#{% if rows -%}#}
-{#  {% set content = rows %}#}
-{#{% elseif empty -%}#}
-{#  {% set content = empty %}#}
-{#{% endif %}#}
-
 <div{{ attributes.addClass(classes) }}>
 
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
-    brow: false,
     heading: page_heading,
-    text: false,
-    media: false,
-    media_hide_portrait: false,
-    bottom_content: false,
     background: 'base-dark-x',
   } %}
 
-  <div class="search-page__content container stack">
-    {{ title_prefix }}
-    {{ title_suffix }}
+  {% set exposed_form %}
+    {% include "@molecules/InlineForm/InlineForm.twig" with {
+      form: exposed|without('items_per_page')|render,
+    } %}
+  {% endset %}
 
-    <div class="search-view__form">
-      {{ exposed|without('items_per_page') }}
-    </div>
-
-    <div class="search-view__results with-sidebar" style="--sidebar-width:20ch;--sidebar-direction:row-reverse;">
-      <div class="sidebar stack">{#  exposed.future_filter_items_go_here #}</div>
-      <div class="stack">
-        {% if rows -%}
-          {{ rows }}
-        {% elseif empty -%}
-          {{ empty }}
-        {% endif %}
-      </div>
-    </div>
-
-    <div class="search-view__footer cluster">
-      {{ pager }}
-      {{ exposed.items_per_page }}
-    </div>
-  </div>
+  {% include "@organisms/ViewResults/ViewResults.twig" with {
+    variant: 'search_results',
+    view_name: id,
+    view_display: display_id,
+    header: '',
+    header_sidebar: '',
+    header_direction_results: 'sidebar-row-reverse',
+    form: exposed_form,
+    form_in_sidebar: false,
+    list_type: 'ol',
+    list_type_divider: true,
+    rows: processed_rows,
+    sidebar: '',
+    sidebar_direction_results: 'sidebar-row-reverse',
+    pager: pager|render,
+    items_per_page: exposed.items_per_page|render,
+    footer: '',
+    footer_sidebar: '',
+    sidebar_direction_footer: 'sidebar-row-reverse',
+  } %}
 </div>

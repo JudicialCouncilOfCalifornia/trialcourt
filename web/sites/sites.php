@@ -93,6 +93,8 @@ $sites['orange.courts.ca.gov'] = 'oc';
 // = 'amdr';
 $sites['www.amador.courts.ca.gov'] = 'amdr';
 $sites['amador.courts.ca.gov'] = 'amdr';
+// = 'partners';
+$sites['languageaccess.courts.ca.gov'] = 'partners';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
