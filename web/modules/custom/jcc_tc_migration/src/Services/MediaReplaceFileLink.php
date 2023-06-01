@@ -44,11 +44,12 @@ class MediaReplaceFileLink {
       $path = parse_url($href, PHP_URL_PATH);
       $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
       // @todo Get this list from config.
-      $file_types = explode(', ', 'pdf, zip, doc, docx, xls, xlsx, ppt, pptx');
+      $file_types = explode(', ', 'pdf, zip, doc, docx, xls, xlsx, ppt, pptx'); //, html, shtml'
 
       if (in_array($extension, $file_types)) {
+       // \Drupal::logger('jcc_tc_migration')->notice(print_r($path, 1));       
         $replace = $this->mediaLink($path, $text, $original);
-        $value = str_replace($original, $replace, $value);
+        $value = str_replace($original, $replace, $value);      
       }
     }
 
@@ -83,15 +84,15 @@ class MediaReplaceFileLink {
       $link = Link::fromTextAndUrl($text, $url);
       $link = $link->toString();
     }
-    else {
+    /*else {
       // Add forward slash to relative path if needed.
       if (stripos($path, 'http') === FALSE) {
         if (strpos($path, '/') !== 0) {
           $new_path = "/$path";
-          $link = str_replace($path, $new_path, $link);
+          $link = str_replace($path, $new_path, $link);         
         }
       }
-    }
+    }*/
 
     return $link;
   }
