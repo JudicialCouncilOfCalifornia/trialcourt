@@ -36,3 +36,24 @@ function jcc_elevated_preprocess_pager(&$variables) {
     // $variables['items']['last'] = [];.
   }
 }
+
+/**
+ * Implements template_preprocess_form_element().
+ */
+function jcc_elevated_preprocess_form_element(&$variables) {
+  $variables['attributes']['class'][] = 'placeholder-container';
+}
+
+/**
+ * Implements template_preprocess_input().
+ */
+function jcc_elevated_preprocess_input(&$variables) {
+  $variables['element']['#placeholder'] = '';
+}
+
+/**
+ * Implements template_preprocess_textarea().
+ */
+function jcc_elevated_preprocess_textarea(&$variables) {
+  $variables['element']['#placeholder'] = '';
+}
