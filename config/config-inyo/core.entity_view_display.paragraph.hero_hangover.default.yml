@@ -1,4 +1,3 @@
-uuid: 586a58d1-7e35-442a-8818-a4daca37da78
 langcode: en
 status: true
 dependencies:
@@ -9,6 +8,7 @@ dependencies:
     - field.field.paragraph.hero_hangover.field_lead
     - field.field.paragraph.hero_hangover.field_media
     - field.field.paragraph.hero_hangover.field_subheading
+    - field.field.paragraph.hero_hangover.field_text
     - paragraphs.paragraphs_type.hero_hangover
   module:
     - options
@@ -23,7 +23,7 @@ content:
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    weight: 0
+    weight: 6
     region: content
   field_brow:
     type: string
@@ -31,7 +31,7 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 1
+    weight: 0
     region: content
   field_heading:
     type: string
@@ -39,14 +39,14 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 4
+    weight: 3
     region: content
   field_lead:
     type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    weight: 3
+    weight: 2
     region: content
   field_media:
     type: entity_reference_label
@@ -54,7 +54,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 2
+    weight: 1
     region: content
   field_subheading:
     type: string
@@ -62,10 +62,11 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 5
+    weight: 4
     region: content
 hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
+  field_text: true
   search_api_excerpt: true
