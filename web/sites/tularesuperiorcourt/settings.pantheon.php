@@ -144,7 +144,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * Issue: https://github.com/pantheon-systems/drops-8/issues/114
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-  $file_path = '/files/private/tularesuperiorcourt/tmp';
+  $file_path = '/files/private/tmp';
   if (!file_exists($file_path)) {
     mkdir($file_path, 0777, true);
   }
