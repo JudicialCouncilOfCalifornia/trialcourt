@@ -2,34 +2,48 @@
 {{ attach_library("jcc_storybook/Button") }}
 {{ attach_library("jcc_storybook/Icon") }}
 
-{# Only allow elevated card variants #}
-{% set variant = 'bordered-center' %}
+{# Card variant selection set by parent #}
 {% set paragraph_parent = paragraph.getParentEntity() %}
-{% if paragraph_parent %}
-  {% set cards_sub_variant = paragraph_parent.field_sub_variant.value|json_decode %}
-  {% if cards_sub_variant.card == 'striped' or cards_sub_variant == 'bordered-center' %}
-    {% set variant = cards_sub_variant.card %}
+{% if paragraph_parent.hasField('field_sub_variant') %}
+  {% set cards_sub_variant = paragraph_parent.field_sub_variant.value|json_decode|default([]).card %}
+  {% if cards_sub_variant == 'cta' %}
+    {% set cards_sub_variant = 'default' %}
   {% endif %}
 {% endif %}
+{% if paragraph_parent.hasField('field_heading') and paragraph_parent.field_heading.value %}
+  {% set has_section_heading = true %}
+{% endif %}
 
-{#  Media if in use for bordered-center card #}
-{% set media = null %}
-{% if cards_sub_variant.card != 'striped' and paragraph.field_media.entity.uri.value %}
-  {% set media = paragraph.field_media.entity.uri.value %}
+{# Media if in use for non-striped card #}
+{% if cards_sub_variant.card != 'striped' and media %}
+  {% set card_media %}
+    {{ media }}
+  {% endset %}
+
+  {% set media_caption = {
+    show: paragraph.field_show_media_caption.value,
+    text: caption,
+  } %}
 {% endif %}
 
 {# Icon if in use for striped card #}
-{% if cards_sub_variant.card == 'striped' and paragraph.field_icon.value %}
+{% if cards_sub_variant == 'striped' and paragraph.field_icon.value %}
   {% set icon_data = {
-    icon: paragraph.field_icon.value,
+    icon: card_icon,
     color: false,
+    icon_path: ' ',
   } %}
+{% endif %}
+
+{# Media alignment if in use #}
+{% if cards_sub_variant == 'default' and paragraph.field_media_alignment.value != 'top' %}
+  {% set cards_sub_variant = 'media-' ~ paragraph.field_media_alignment.value %}
 {% endif %}
 
 {# Button link if in use #}
 {% if paragraph.field_link.get(0).getUrl() is not empty %}
   {% set href = paragraph.field_link.get(0).getUrl() %}
-  {% if cards_sub_variant.card == 'striped' and paragraph.field_entire_card_clickable.value %}
+  {% if cards_sub_variant == 'striped' and paragraph.field_entire_card_clickable.value %}
     {% set href = paragraph.field_link.get(0).getUrl().toString() %}
   {% endif %}
   {% set button_data = {
@@ -40,11 +54,13 @@
 {% endif %}
 
 {% include "@molecules/Card/Card.twig" with {
-  variant: variant,
-  clickable_card: cards_sub_variant.card == 'striped' ? paragraph.field_entire_card_clickable.value : null,
-  background: cards_sub_variant.card == 'striped' ? paragraph.field_background.value : null,
-  media: media,
-  heading: content.field_heading,
-  text: content.field_text,
+  variant: cards_sub_variant,
+  clickable_card: cards_sub_variant == 'striped' ? paragraph.field_entire_card_clickable.value : null,
+  background: cards_sub_variant == 'striped' ? paragraph.field_background.value : null,
+  media: card_media,
+  media_caption: media_caption,
+  has_section_heading: has_section_heading,
+  heading: content.field_heading.0,
+  text: filtered_text ?? content.field_text.0|render,
   button_data: button_data,
 } %}

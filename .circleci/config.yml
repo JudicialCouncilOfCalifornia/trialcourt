@@ -2,6 +2,7 @@
 defaults: &defaults
   docker:
     - image: quay.io/pantheon-public/build-tools-ci:7.x-php7.4
+  resource_class: xlarge
   working_directory: ~/project
   environment:
     #=========================================================================
@@ -31,7 +32,7 @@ defaults: &defaults
 
 cypress: &cypress
   docker:
-    - image: cypress/base:10
+    - image: cypress/base:18.16.0
   working_directory: ~/project
   environment:
     CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
@@ -215,7 +216,7 @@ workflows:
       - deploy:
           matrix:
             parameters:
-              site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "sacramento", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "idm", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "sf", "kern", "tuolumne", "santabarbara", "monterey", "sonoma", "partners", "oc", "amdr", "lassen", "sanmateo"]
+              site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "sacramento", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "idm", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "sf", "kern", "tuolumne", "santabarbara", "monterey", "sonoma", "partners", "oc", "amdr", "lassen", "sanmateo", "delnorte", "calaveras", "santaclara"]
           requires:
             - build_test
           filters:

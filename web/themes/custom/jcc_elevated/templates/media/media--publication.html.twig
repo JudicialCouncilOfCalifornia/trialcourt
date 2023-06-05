@@ -1,0 +1,94 @@
+{#
+/**
+ * @file
+ * Theme override to display a media item.
+ *
+ * Available variables:
+ * - name: Name of the media.
+ * - content: Media content.
+ * - publication: Preprocessed Media content.
+ *
+ * @see template_preprocess_media()
+ *
+ * @ingroup themeable
+ */
+#}
+
+{{ attach_library("jcc_storybook/HeroHangover") }}
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/List") }}
+{{ attach_library("jcc_storybook/AssetBundle") }}
+{{ attach_library("jcc_storybook/Button") }}
+
+{% set details %}
+  {% set items = [] %}
+  {% for key,value in publication.details %}
+    {% if value is not empty %}
+      {% set item = {
+        label: key,
+        text: value,
+      } %}
+      {% set items = items|merge([item]) %}
+    {% endif %}
+  {% endfor %}
+  {% include "@molecules/List/List.twig" with {
+    variant: 'none',
+    items: items,
+  } %}
+{% endset %}
+
+{% set asset %}
+  {% if publication.documents %}
+    {% set documents = [] %}
+    {% for document in publication.documents %}
+      {% set document = {
+        type: document.file_type,
+        url: document.url,
+      } %}
+      {% set documents = documents|merge([document]) %}
+    {% endfor %}
+  {% endif %}
+
+  {% if publication.languages %}
+    {% set languages = [] %}
+    {% for language in publication.languages %}
+      {% set link %}<a href="{{ language.url }}">{{ language.label }}</a> ({{ language.label_en }}){% endset %}
+      {% set language = {
+        text: link|raw,
+      } %}
+      {% set languages = languages|merge([language]) %}
+    {% endfor %}
+  {% endif %}
+
+  {% include "@molecules/AssetBundle/AssetBundle.twig" with {
+    text: publication.body|render,
+    primary_file_type: publication.primary_file_type,
+    doc_type: publication.type,
+    assets: documents,
+    languages: {
+      variant: "ul",
+      layout: "grid",
+      items: languages,
+    },
+  } %}
+{% endset %}
+
+{% include "@molecules/HeroHangover/HeroHangover.twig" with {
+  background: 'base-light-xx',
+  heading: name,
+  media: false,
+  attributes: create_attribute()
+} %}
+
+{% include "@organisms/Section/Section.twig" with {
+  variant: 'default',
+  sub_component_layout: 'with-sidebar',
+  sidebar_direction: 'row',
+  sidebar_width: 39,
+  gap: 's4',
+  sub_component_data: {
+    details,
+    asset,
+  },
+  attributes: create_attribute()
+} %}

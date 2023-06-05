@@ -20,16 +20,17 @@ After this runs it will give you instructions to set up the new Drupal instance 
 
 ## Build a New Drupal Instance Multisite
 
-- `lando multisite [name]`
-  - make sure `[name]` will pattern match to the identifying portion of the live url. It should be the same as `[site]` from the `pantheon_new.sh` command above.
+- `lando multisite [name] [theme]`
+  - Make sure `[name]` will pattern match to the identifying portion of the live url. It should be the same as `[site]` from the `pantheon_new.sh` command above.
     - i.e. www.kings.courts.ca.gov => `kings`
-  - Confirm `web/sites/[site]` setup (extra files and directory seems okay to keep or delete)
-    - .gitignore
-    - services.local.yml
-    - settings.azure.php
-    - settings.pantheon.php
-    - settings.php
-  - Do initial configurations and export (@see Initial configurations)
+  - You can optionally specify an alternate `[theme]` from the JCC Elevated default, specifically to use JCC Components (jcc_components) for the current trial court themes & features.
+- Confirm `web/sites/[site]` setup (extra files and directory seems okay to keep or delete)
+  - .gitignore
+  - services.local.yml
+  - settings.azure.php
+  - settings.pantheon.php
+  - settings.php
+- Do initial configurations and export (@see Initial configurations)
 
 ## Initial configurations
 
@@ -39,10 +40,12 @@ However, when tasked to spin up a new site, you can do some initial configuratio
 
 ### Theme Settings
 
-Install and set only the following themes if not automated
-- JCC Components or JCC Storybook (set as default theme)
-- Gin (administration theme)
-- Claro (Gin dependency/base)
+Confirm that the following themes are installed and applied. Set the themes manually if needed.
+- `/admin/appearance`
+  - JCC Elevated - current default theme
+  - JCC Storybook - component & pattern library for JCC Elevated
+  - Gin - administration theme
+  - JCC Components - alternate theme for trial court series until an upgrade to elevated
 
 Configure theme at `/admin/appearance/settings/jcc_components`:
 - Add the logo.svg to /web/sites/[site]/logo.svg

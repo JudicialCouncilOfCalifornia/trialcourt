@@ -1,27 +1,9 @@
-{{ attach_library("jcc_storybook/Section") }}
-{{ attach_library("jcc_storybook/Brow") }}
-{{ attach_library("jcc_storybook/Card") }}
+{{ attach_library("jcc_storybook/Body") }}
 
-{% include "@organisms/Section/Section.twig" with {
-  variant: "default",
-  first_component: false,
-  brow_data: {
-    attributes: create_attribute(),
-    variant: "default",
-    part_one: "Brow Example",
-    part_two: "",
-  },
-  heading: content.field_heading,
-  text: content.field_lead,
-  sub_component_template: "Card",
-  sub_component_data: {
-    attributes: create_attribute(),
-    variant: "default",
-    media: false,
-    icon_data: {},
-    heading: content.field_heading,
-    text: content.field_text,
-    button: {},
-  },
-  button_data: {}
+{% include "@molecules/Body/Body.twig" with {
+  heading: content.field_heading|render,
+  lead: content.field_lead|render,
+  content: content.field_text|render,
+  subheading: content.field_subheading|render,
+  aside: content.field_aside|render,
 } %}

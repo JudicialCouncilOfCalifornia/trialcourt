@@ -1,0 +1,240 @@
+uuid: 07bce9cc-f922-4106-9a8b-f71a33dff350
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.case.field_case_category
+    - field.field.node.case.field_case_number
+    - field.field.node.case.field_case_status
+    - field.field.node.case.field_case_subtype
+    - field.field.node.case.field_case_type
+    - field.field.node.case.field_department
+    - field.field.node.case.field_filing_date
+    - field.field.node.case.field_hearing_date
+    - field.field.node.case.field_hearing_type
+    - field.field.node.case.field_judge
+    - field.field.node.case.field_party_name
+    - field.field.node.case.field_party_type
+    - node.type.case
+  module:
+    - content_moderation
+    - datetime
+    - path
+    - scheduler
+    - scheduler_content_moderation_integration
+_core:
+  default_config_hash: i315sfctyZslbJsKAJ9TdTdZuoW24OW-vAzW86OhF5I
+id: node.case.default
+targetEntityType: node
+bundle: case
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_case_category:
+    type: entity_reference_autocomplete
+    weight: 17
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_case_number:
+    type: entity_reference_autocomplete
+    weight: 16
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_case_status:
+    type: entity_reference_autocomplete
+    weight: 18
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_case_subtype:
+    type: entity_reference_autocomplete
+    weight: 20
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_case_type:
+    type: entity_reference_autocomplete
+    weight: 19
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_department:
+    type: entity_reference_autocomplete
+    weight: 25
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_filing_date:
+    type: datetime_default
+    weight: 15
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_hearing_date:
+    type: datetime_default
+    weight: 14
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_hearing_type:
+    type: entity_reference_autocomplete
+    weight: 23
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_judge:
+    type: entity_reference_autocomplete
+    weight: 24
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_party_name:
+    type: string_textarea
+    weight: 21
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_party_type:
+    type: entity_reference_autocomplete
+    weight: 22
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 26
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 12
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    weight: 4
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  publish_on:
+    type: datetime_timestamp_no_default
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  publish_state:
+    type: scheduler_moderation
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 13
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    weight: 5
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  translation:
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  unpublish_on:
+    type: datetime_timestamp_no_default
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  unpublish_state:
+    type: scheduler_moderation
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  url_redirects:
+    weight: 11
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

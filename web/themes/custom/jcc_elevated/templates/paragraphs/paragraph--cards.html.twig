@@ -1,6 +1,13 @@
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/Cards") }}
+
 {# Only allow elevated card variants #}
-{% set card_variant = 'bordered-center' %}
-{% set cards_sub_variant = paragraph.field_sub_variant.value|json_decode %}
+{% set card_variant = 'default' %}
+{% set cards_sub_variant = [] %}
+
+{% if paragraph_parent.hasField('field_sub_variant') %}
+  {% set cards_sub_variant = paragraph.field_sub_variant.value|json_decode %}
+{% endif %}
 {% if cards_sub_variant.card == 'striped' or cards_sub_variant == 'bordered-center' %}
   {% set card_variant = cards_sub_variant.card %}
 {% endif %}
@@ -18,20 +25,17 @@
   } %}
 {% endif %}
 
+{% set image = paragraph.field_image_media.entity.field_media_image.entity.uri.value %}
+
 {% include "@organisms/Section/Section.twig" with {
   variant: 'default',
   first_component: false,
-  sub_component_layout: 'grid',
-  measure: null,
-  gap: null,
-  grid_min_width: paragraph.field_minimum_width is not empty ? paragraph.field_minimum_width : 39,
-  sidebar_direction: null,
-  sidebar_width: null,
-  background_image_url: null,
+  grid_min_width: paragraph.field_width_minimum.value ? paragraph.field_width_minimum.value : 41,
   brow_data: brow_data,
   heading: content.field_heading,
   text: content.field_lead,
   button_data: button_data,
+  sub_component_layout: 'grid',
   sub_component_data: cards,
-  attributes: attributes.addClass(card_variant.card),
+  background_image_url: file_url(image),
 } %}

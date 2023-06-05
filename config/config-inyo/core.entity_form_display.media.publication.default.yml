@@ -7,6 +7,7 @@ dependencies:
     - field.field.media.publication.field_date
     - field.field.media.publication.field_division
     - field.field.media.publication.field_document_type
+    - field.field.media.publication.field_east_armenian_file
     - field.field.media.publication.field_media_file
     - field.field.media.publication.field_media_file_arabic
     - field.field.media.publication.field_media_file_cambodian
@@ -39,6 +40,7 @@ third_party_settings:
         - field_media_file_cambodian
         - field_media_file_chinese_simple
         - field_media_file_chinese
+        - field_east_armenian_file
         - field_media_file_farsi
         - field_media_file_hmong
         - field_media_file_korean
@@ -51,14 +53,13 @@ third_party_settings:
       region: content
       parent_name: ''
       weight: 9
-      format_type: fieldset
+      format_type: details
       format_settings:
         classes: ''
         id: ''
+        open: false
         description: ''
         required_fields: true
-        effect: none
-        formatter: closed
     group_tags:
       children:
         - field_division
@@ -68,10 +69,11 @@ third_party_settings:
       region: content
       parent_name: ''
       weight: 8
-      format_type: fieldset
+      format_type: details
       format_settings:
         classes: ''
         id: ''
+        open: true
         description: ''
         required_fields: true
 _core:
@@ -144,6 +146,13 @@ content:
       new_terms: false
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
+  field_east_armenian_file:
+    type: file_generic
+    weight: 20
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
   field_media_file_arabic:
     type: file_generic
     weight: 16
@@ -160,7 +169,7 @@ content:
     third_party_settings: {  }
   field_media_file_chinese:
     type: file_generic
-    weight: 20
+    weight: 19
     region: content
     settings:
       progress_indicator: throbber
@@ -287,6 +296,11 @@ content:
     region: content
     settings:
       display_label: true
+    third_party_settings: {  }
+  translation:
+    weight: 10
+    region: content
+    settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete

@@ -1,0 +1,47 @@
+uuid: a053a4e1-d50c-413b-8bbb-537772027cac
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.preview
+    - field.field.paragraph.steps.field_components
+    - field.field.paragraph.steps.field_heading
+    - field.field.paragraph.steps.field_lead
+    - paragraphs.paragraphs_type.steps
+  module:
+    - paragraphs
+    - text
+_core:
+  default_config_hash: d1QbtsPBYC_vNVLsD5EXdBhWnOElMc3Zb0v73b_gm1s
+id: paragraph.steps.preview
+targetEntityType: paragraph
+bundle: steps
+mode: preview
+content:
+  field_components:
+    type: paragraph_summary
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_heading:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_lead:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true

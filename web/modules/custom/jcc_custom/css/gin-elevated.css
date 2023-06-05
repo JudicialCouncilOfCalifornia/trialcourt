@@ -1,0 +1,58 @@
+
+/* Specific overrides for drupal nav tabs */
+/* This removes the weird black lines that appear on view/edit/delete tabs */
+.nav-tabs .is-horizontal .nav-tabs__tabs--primary:before {
+  border: 0;
+}
+
+.nav-tabs .nav-tabs__tabs--primary .nav-tabs__link {
+  border: 0;
+}
+
+.nav-tabs .is-horizontal .nav-tabs__tabs--primary li .nav-tabs__link {
+  border: 0;
+}
+
+.nav-tabs .is-collapse-enabled .tabs__trigger {
+  margin-inline-end: 1rem;
+}
+
+/* Style for the section background select items (admin side) */
+.section.field--select  {
+  padding: .5rem;
+  max-width: 30ch;
+  border: 1px solid var(--color-base-light-x);
+}
+
+/* Style tweaks for landing and subpage paragraph edit form */
+.js .gin--edit-form .paragraph-type-top {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-block-end: 1rem;
+}
+
+.js .gin--edit-form .paragraph-type-title {
+  align-self: center;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #828388;
+}
+
+/* External link icons */
+svg.ext,
+svg.mailto {
+  width: calc(var(--s0) + 2px);
+  height: calc(var(--s0) + 2px);
+  padding-right: unset;
+  padding-inline-start: var(--s-5);
+  fill: currentColor;
+  font-weight: 600;
+}
+svg.ext path,
+svg.mailto path {
+  stroke: currentColor;
+  stroke-width: 0;
+}
