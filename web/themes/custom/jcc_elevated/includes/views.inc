@@ -5,6 +5,7 @@
  * Functions for views processing.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Link;
@@ -20,7 +21,6 @@ function jcc_elevated_theme_suggestions_views_exposed_form_alter(array &$suggest
   if (strpos($variables['form']['#id'], 'views-exposed-form-') >= 0) {
     $form = str_replace('views-exposed-form-', '', $variables['form']['#id']);
     $form = str_replace('-', '_', $form);
-
     $suggestions[] = $variables['theme_hook_original'] . '__' . $form;
   }
 }
@@ -84,7 +84,6 @@ function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
       $node->field_date->value = '';
     }
   }
-
   // Remove captcha.
   unset($variables['exposed']['captcha']);
 }
@@ -137,13 +136,13 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   foreach ($variables['rows'][0]['#rows'] as $item) {
-
     // Media object and ID.
     $media = $item['#row']->_entity;
     $label = $media->label();
     $description = $media->get('field_media_text')->getValue()[0]['value'] ?? '';
     $date = $media->get('field_date')->getValue()[0]['value'] ?? '';
     $bundle = $bundle_manager->load($media->bundle())->label() ?? '';
+
     $topic = $media->get('field_topic')->referencedEntities() ? $media->get('field_topic')->referencedEntities()[0]->label() : NULL;
     $division = $media->get('field_division')->referencedEntities() ? $media->get('field_division')->referencedEntities()[0]->label() : NULL;
     $document_type = $media->get('field_document_type')->referencedEntities() ? $media->get('field_document_type')->referencedEntities()[0]->label() : NULL;
@@ -218,26 +217,23 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     $files_for_pills = [];
     foreach ($language_files as $file) {
       if ($file['file']) {
-
         $url = Url::fromUri($file['file']->createFileUrl(FALSE));
         $url->setOptions(['attributes' => ['class' => ['pill__link']]]);
-
         $pill = [
           '#prefix' => '<div class="pill pill--default">',
           '#markup' => Link::fromTextAndUrl($file['language'], $url)->toString(),
           '#suffix' => '</div>',
         ];
-
         $files_for_pills[] = $render->render($pill);
       }
     }
 
     $text = ['#markup' => Html::decodeEntities($description)];
-
     $url = $media->toUrl();
     if ($media_files['media_file_multiple']['file']) {
       $url = Url::fromUri($media_files['media_file_multiple']['file']->createFileUrl(FALSE));
     }
+
     $button_data = [
       'label' => t('Download @type', ['@type' => $document_type]),
       'href' => $url,
@@ -292,7 +288,6 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
 
   // Process the results for the search api view.
   foreach ($variables['rows'][0]['#rows'] as $item) {
-
     // We have to manipulate the excerpt a little to render the html.
     $excerpt = $item['#row']->_item->getExcerpt() ?? t('No excerpt available.')->render();
     $text = [
@@ -314,7 +309,6 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
  */
 function jcc_elevated_views_pre_render(ViewExecutable $view) {
   if (($view->id() == 'search') && ($view->current_display == 'search')) {
-
     // @todo Hide some fields from display on the search page items.
     // $view->field['search_api_excerpt_1']->options['exclude'] = TRUE;.
     // $view->field['field_heading_1']->options['exclude'] = TRUE;.
@@ -326,14 +320,13 @@ function jcc_elevated_views_pre_render(ViewExecutable $view) {
  */
 function jcc_elevated_views_post_render(ViewExecutable $view) {
   if (($view->id() == 'search') && ($view->current_display == 'search')) {
-
     // Set our default title for the search page.
     $view->setTitle(t('Search results'));
   }
 }
 
 /**
- * Prepares variables for views mini-pager templates.
+ * Prepare variables for views mini-pager templates.
  */
 function jcc_elevated_preprocess_views_mini_pager(&$variables) {
   if (isset($variables['items']['current'])) {
@@ -357,6 +350,19 @@ function jcc_elevated_preprocess_views_mini_pager(&$variables) {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $view = $form_state->get('view');
+  if (($view->id() == 'search') && ($view->current_display == 'search')) {
+    // Remove captcha from search form.
+    unset($form['captcha']);
+    // Apply the form id to the items per page element so it can be moved out.
+    $form['items_per_page']['#attributes']['form'] = $form['#id'];
+  }
+}
+
+/**
  * Helper function to validate a date string.
  *
  * @param string $date
@@ -367,7 +373,7 @@ function jcc_elevated_preprocess_views_mini_pager(&$variables) {
  * @return bool
  *   TRUE if the string is a valid date format, else FALSE.
  */
-function jcc_elevated_validate_date($date, $format = 'Y-m-d') {
+function jcc_elevated_validate_date(string $date, string $format = 'Y-m-d'): bool {
   $d = DateTime::createFromFormat($format, $date);
   return $d && $d->format($format) === $date;
 }
