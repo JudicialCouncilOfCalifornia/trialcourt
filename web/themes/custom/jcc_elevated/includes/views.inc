@@ -115,7 +115,8 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     $placeholder = $form['#info']['filter-' . $id]['label'] ?? '';
     $form[$id]['#attributes']['placeholder'] = $placeholder;
     if ($form[$id]['#type'] == 'select') {
-      $form[$id]['#options']['All'] = t('- Select @label -', ['@label' => $placeholder]);
+      $form[$id]['#attributes']['placeholder'] = NULL;
+      $form[$id]['#options']['All'] = t('- @label -', ['@label' => $placeholder]);
     }
   }
 
