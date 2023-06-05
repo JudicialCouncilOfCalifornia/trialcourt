@@ -242,7 +242,13 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
 
     $detail_list_data = [
       'label' => t('Details'),
-      'details' => array_filter([$topic, $date, $case_type, $division, $bundle]),
+      'details' => array_filter([
+        $topic,
+        $date,
+        $case_type,
+        $division,
+        $document_type,
+      ]),
     ];
 
     $pills = [
