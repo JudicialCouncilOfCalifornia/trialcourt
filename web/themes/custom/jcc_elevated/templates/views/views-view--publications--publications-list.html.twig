@@ -34,57 +34,53 @@
 #}
 {{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/InlineForm") }}
+{{ attach_library("jcc_storybook/MediaExcerpt") }}
 {{ attach_library("jcc_storybook/ViewResults") }}
+{{ attach_library("jcc_storybook/Pill") }}
+{{ attach_library("jcc_storybook/Pills") }}
 
 {%
   set classes = [
-  dom_id ? 'js-view-dom-id-' ~ dom_id
+  dom_id ? 'js-view-dom-id-' ~ dom_id,
 ]
 %}
 
-{% set page_heading %}
-  {% if count and searched_term -%}
-    {{ count }} {{ 'Results for '|t }} "{{ searched_term }}"
-  {% elseif count and not searched_term -%}
-    {{ 'Search page'|t }}
-  {% elseif empty -%}
-    {{ 'No search results found'|t }}
-  {% endif %}
-{% endset %}
+{% set items = [] %}
+{% for row_item in processed_rows %}
+  {% set pills %}
+    {% include "@molecules/Pills/Pills.twig" with row_item.pills %}
+  {% endset %}
+  {% set item = {
+    'title': row_item.title,
+    'url': row_item.url,
+    'content': row_item.content,
+    'button_data': row_item.button_data,
+    'detail_list_data': row_item.detail_list_data,
+    'pills': pills,
+  } %}
+  {% set items = items|merge([item]) %}
+{% endfor %}
 
 <div{{ attributes.addClass(classes) }}>
 
-  {% include "@molecules/HeroHangover/HeroHangover.twig" with {
-    heading: page_heading,
-    background: 'base-dark-x',
-  } %}
-
-  {% set exposed_form %}
-    {% include "@molecules/InlineForm/InlineForm.twig" with {
-      form: exposed|without('items_per_page')|render,
-    } %}
-  {% endset %}
-
-  <div class="box">
   {% include "@organisms/ViewResults/ViewResults.twig" with {
-    variant: 'search_results',
+    variant: 'default',
     view_name: id,
     view_display: display_id,
     header: '',
     header_sidebar: '',
-    header_direction_results: 'sidebar-row-reverse',
-    form: exposed_form,
-    form_in_sidebar: false,
-    list_type: 'ol',
-    list_type_divider: true,
-    rows: processed_rows,
+    header_direction_results: 'sidebar-row',
+    form: exposed|render,
+    form_in_sidebar: true,
+    list_type: 'ul',
+    list_type_divider: '',
+    rows: items,
     sidebar: '',
-    sidebar_direction_results: 'sidebar-row-reverse',
+    sidebar_direction_results: 'sidebar-row',
     pager: pager|render,
-    items_per_page: exposed.items_per_page|render,
+    items_per_page: '',
     footer: '',
     footer_sidebar: '',
-    sidebar_direction_footer: 'sidebar-row-reverse',
+    sidebar_direction_footer: 'sidebar-row',
   } %}
-  </div>
 </div>

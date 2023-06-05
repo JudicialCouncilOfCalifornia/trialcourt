@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.field.paragraph.hero.field_aside
     - field.field.paragraph.hero.field_heading
+    - field.field.paragraph.hero.field_image_media
     - field.field.paragraph.hero.field_lead
     - field.field.paragraph.hero.field_link
     - field.field.paragraph.hero.field_subheading
@@ -12,6 +13,7 @@ dependencies:
   module:
     - field_group
     - link
+    - media_library
     - text
 third_party_settings:
   field_group:
@@ -56,7 +58,7 @@ third_party_settings:
       label: Content
       region: content
       parent_name: ''
-      weight: 1
+      weight: 0
       format_type: tabs
       format_settings:
         classes: ''
@@ -84,14 +86,11 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_image_media:
-    type: entity_reference_autocomplete
+    type: media_library_widget
     weight: 11
     region: content
     settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
+      media_types: {  }
     third_party_settings: {  }
   field_lead:
     type: text_textarea

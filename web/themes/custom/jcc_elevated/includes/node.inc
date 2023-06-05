@@ -55,7 +55,7 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
   $variables['header'] = FALSE;
   $component_items = $node->get('field_components')->referencedEntities();
   $bundle = $component_items[0]->bundle();
-  if ($bundle == 'hero' || $bundle == 'hero_banner') {
+  if ($bundle == 'hero' || $bundle == 'hero_banner'|| $bundle == 'hero_hangover') {
     $variables['header'] = $node->get('field_components')->first()->view('default');
     $variables['content']['field_components'][0]['#access'] = FALSE;
   }

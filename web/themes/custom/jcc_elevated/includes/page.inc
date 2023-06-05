@@ -37,7 +37,7 @@ function jcc_elevated_preprocess_page(&$variables) {
     'second' => theme_get_setting('site_name_second', 'jcc_elevated'),
   ];
 
-  $variables['main_links'] = jcc_elevated_get_menu_array('main');
+  $variables['main_links'] = jcc_elevated_get_menu_array('main', TRUE);
   $variables['featured_links'] = jcc_elevated_get_menu_array('featured-links');
   $variables['footer_links'] = jcc_elevated_get_menu_array('footer');
 
@@ -113,7 +113,7 @@ function jcc_elevated_preprocess_page(&$variables) {
  * @return array
  *   The simple array to pass to component templates.
  */
-function jcc_elevated_get_menu_array(string $menu_name): array {
+function jcc_elevated_get_menu_array(string $menu_name, $add_overview_links = FALSE): array {
   $menu_tree = \Drupal::menuTree();
   $parameters = new MenuTreeParameters();
   $parameters->onlyEnabledLinks();
@@ -129,7 +129,7 @@ function jcc_elevated_get_menu_array(string $menu_name): array {
     ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
   ];
   $tree = $menu_tree->transform($tree, $manipulators);
-  return jcc_elevated_menu_to_array($tree, $menu_name);
+  return jcc_elevated_menu_to_array($tree, $menu_name, $add_overview_links);
 }
 
 /**
@@ -143,7 +143,7 @@ function jcc_elevated_get_menu_array(string $menu_name): array {
  * @return array
  *   An array of links, formatted for a component.
  */
-function jcc_elevated_menu_to_array(array $tree, string $menu_name): array {
+function jcc_elevated_menu_to_array(array $tree, string $menu_name, bool $add_overview_links = FALSE): array {
   $links = [];
 
   foreach ($tree as $element) {
@@ -159,14 +159,32 @@ function jcc_elevated_menu_to_array(array $tree, string $menu_name): array {
         'url' => $element->link->getUrlObject(),
       ];
     }
+
+    // Build the sublinks array.
+    $sublinks = [];
+    if ($element->subtree) {
+      $sublinks = jcc_elevated_menu_to_array($element->subtree, $menu_name, $add_overview_links);
+
+      // If set, An Overview link (duplicate parent link) will be added to the
+      // start of the sublinks.
+      if ($add_overview_links) {
+        array_unshift($sublinks, [
+          'text' => t('Overview'),
+          'url' => $element->link->getUrlObject(),
+          'is_current' => $element->inActiveTrail,
+        ]);
+      }
+    }
+
     $links[] = [
       'text' => $element->link->getTitle(),
       'url' => $element->link->getUrlObject(),
       'is_current' => $element->inActiveTrail,
-      'links' => jcc_elevated_menu_to_array($element->subtree, $menu_name),
+      'links' => $sublinks,
       'section_link' => $section_link,
     ];
   }
+
   return $links;
 }
 
@@ -239,7 +257,7 @@ function jcc_elevated_build_header_search_form(bool $mobile_version = FALSE): ar
 
   // Change the submit attributes and properties.
   $form['actions']['#theme_wrappers'] = [];
-  $form['actions']['submit']['#theme'] = 'input__submit__search_search_submit';
+  $form['actions']['submit']['#theme'] = 'input__submit__search_search_submit__header';
   $form['actions']['submit']['#theme_wrappers'] = [];
   $form['actions']['submit']['#attributes']['class'] = [];
   $form['actions']['submit']['#attributes']['class'][] = 'header-search__icon';
