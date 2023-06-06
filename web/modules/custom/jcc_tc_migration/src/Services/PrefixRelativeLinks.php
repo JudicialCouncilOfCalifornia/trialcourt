@@ -23,54 +23,57 @@ class PrefixRelativeLinks {
     $dom->loadHTML($value);
 
     $parent_url = explode("**", $value);                           
-    $subdir_original = explode("/", parse_url($parent_url[0], PHP_URL_PATH)); 
-    //$value_original =  $value;         
+    $subdir_original = explode("/", parse_url($parent_url[0], PHP_URL_PATH));           
     
-if ($parent_url[0] == 'https://www.scscourt.org/general_info/contact/contact.shtml') {
-  
+   // if ($parent_url[0] == 'https://www.scscourt.org/general_info/contact/contact.shtml') {  
+   //  if ($parent_url[0] == 'https://www.scscourt.org/court_divisions/small_claims/small_claims_rules.shtml') {
+   // if ($parent_url[0] == 'https://www.scscourt.org/self_help/traffic/citation_types/citations_home.shtml') {
     foreach ($dom->getElementsByTagName('a') as $item) {
-      // The url for the link to determine file name.
-      $href = $item->getAttribute('href');
-      $scheme = parse_url($href, PHP_URL_SCHEME);      
-      // Add leading slash to original link if needed.
-      if (!$scheme) {
-        $path = parse_url($href, PHP_URL_PATH);
+          // The url for the link to determine file name.
+            $href = $item->getAttribute('href');
+            $scheme = parse_url($href, PHP_URL_SCHEME);     
 
-        if($path !== NULL) {
+            if (!$scheme) {
+            $path = parse_url($href, PHP_URL_PATH);
 
-          //$value = $value_original;         
-         // if (preg_match('/^\.\.(?!\/\.\.)[^\/]/', $path)) {
-         //if(((substr($path, 0, 3) === '../') && (substr($path,0,6) !== '../../'))) {    
-         if (preg_match('/^\.\.\/[^\/]+$/', $path )) { //Last tried             
-            //$value = $value_original;
-            $subdir = $subdir_original;
-            $nested_level = count($subdir);          
-            array_pop($subdir);   
-            array_pop($subdir);                 
-            $value_original = str_replace('../', '/'.$subdir[1].'/', $value);  
-            $value = $value_original; 
-        }  elseif (strpos($path, '../../') !== false) {   //For ../../
-           // echo "Path contains ../../";
-            //$value = $value_original;
-            $value_original = str_replace('../../', '/', $value);  
-            $value = $value_original; 
-        } else if (!str_starts_with($path,'/') && !str_starts_with($path,'.')) {
-          // $value = $value_original;
-            echo "Invalid path";
-            /*$subdir = $subdir_original;
-            array_pop($subdir); 
-            $subdir_text = implode("/", $subdir);
-            $new_path = '/'.$subdir_text.'/'.$value;
-            $value_original = str_replace($path, $new_path, $value); */
-        }
-       // $value = $value_original;
+            if($path !== NULL) {  
 
-        } // End of path null check here   
-      }
-    }
-    //return $value;
-    return $value_original;        
-      }    
-       
+            //For ../../  
+            if (str_starts_with($path,'../../') && strpos($path, '../../') !== false) {    
+              //$value = preg_replace('/(href\=\"\.\.\/\.\.\/)(?=[^(\.\.\/)])/', 'href="'.'/', $value, 1);                    
+              $value = preg_replace('/(href\=\"\.\.\/\.\.\/)(?=[^(\.\.\/)])/', 'href="'.'/', $value);                    
+             } else if( ((substr($path, 0, 3)) === '../') && ((substr($path,0,6)) !== '../../') && strpos($path, '../') !== false)  {     //For ../            
+               $subdir = $subdir_original;
+               $nested_level = count($subdir);          
+               array_pop($subdir);   
+                array_pop($subdir);   
+                //$value = preg_replace('/(href\=\"\.\.\/){1}(?=[^(\.\.\/)])/','href="' .'/'.$subdir[1].'/', $value, 1);  
+                $value = preg_replace('/(href\=\"{1,2}\.\.\/){1}(?=[^(\.\.\/)])/','href="' .'/'.$subdir[1].'/', $value);  
+                //$value = preg_replace("/(href\=\"{1,2}\.\.\/){1}(?=[^(\.\.\/)])/", $new_path, $value);                   
+            }           
+            else if (!str_starts_with($path,'/') && !str_starts_with($path,'.')) {     //For others                         
+                $subdir = $subdir_original;
+                array_pop($subdir); 
+                $subdir_text = implode("/", $subdir);
+                $new_path = $subdir_text.'/'.$path;
+                //$pattern = '/(^|\s)' . preg_quote($path, '/') . '(\s|$)/';
+                //$pattern = "/\b$path\b/";
+                //$pattern = '/(?<!\w)' . preg_quote($path, '/') . '\b(?!\.)/';
+                //$pattern = "/\b' . preg_quote($path, '/') . '\b/";
+                //$pattern = '/(?<!\w)' . preg_quote($path, '/') . '(?!\w)/';
+                //$value = preg_replace($pattern, $new_path, $value);   
+                /*$value = preg_replace_callback($pattern, function ($matches) use ($new_path) {
+                  return $new_path;
+              }, $value);*/               
+                $value = preg_replace("/\b$path\b/", $new_path, $value);  
+                //$value = preg_replace("/\b$path\b/", $new_path, $value, 1);                                   
+            }                   
+           }       
+        }         
+      } //for loop      
+     
+   return $value;
+  // if condition for page    
+    
   }
 }     
