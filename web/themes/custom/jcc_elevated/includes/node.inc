@@ -64,13 +64,15 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
   // a menu and only on subpages.
   $variables['sidebar_navigation'] = FALSE;
   $menu_name = 'main';
-  $level = 2;
+  $level = 3;
 
   // Find the menu item corresponding to the entity (node).
   $menu_link_service = \Drupal::getContainer()->get('plugin.manager.menu.link');
   $route_params = ['node' => $node->id()];
   $menu_links = $menu_link_service->loadLinksByRoute('entity.node.canonical', $route_params, $menu_name);
   if (!empty($menu_links)) {
+
+    $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
 
     // Build the active trail and menu parameters.
     $active_trail = Drupal::service('menu.active_trail')->getActiveTrailIds($menu_name);
@@ -101,10 +103,22 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
     // Actually build the tree.
     $menu_build_tree = $menu_tree_service->build($tree);
 
+    // Get the base active trail menu parent title.
+    $parent_menu_title = NULL;
+    foreach ($menu_build_tree['#items'] as $id => $item) {
+      $pid = $menu_link_manager->getParentIds($id);
+      $pid = array_key_first(array_slice($pid, -2, 1));
+      $parent_menu_item = $menu_link_manager->getInstance(['id' => $pid]);
+      $parent_menu_title = $parent_menu_item->getTitle();
+      break;
+    }
+
     // Create our storybook component friendly sidebar navigation.
-    $variables['sidebar_navigation'] = [
-      'menu_heading' => '',
-      'links' => jcc_custom_build_menu_tree($menu_build_tree['#items']),
-    ];
+    if (!empty($menu_build_tree['#items'])) {
+      $variables['sidebar_navigation'] = [
+        'menu_heading' => $parent_menu_title,
+        'links' => jcc_custom_build_menu_tree($menu_build_tree['#items']),
+      ];
+    }
   }
 }

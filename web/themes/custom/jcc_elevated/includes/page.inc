@@ -152,34 +152,28 @@ function jcc_elevated_menu_to_array(array $tree, string $menu_name, bool $add_ov
       continue;
     }
 
+    // Build the sublinks array.
+    $sublinks = [];
     $section_link = [];
-    if ($menu_name == 'main' && $element->depth = 1 && $element->hasChildren) {
+    if ($menu_name == 'main' && $element->depth = 1 && $element->hasChildren && $add_overview_links) {
+      $sublinks = jcc_elevated_menu_to_array($element->subtree, $menu_name, $add_overview_links);
+
       $section_link = [
         'text' => $element->link->getTitle(),
         'url' => $element->link->getUrlObject(),
+        'is_current' => $element->inActiveTrail,
+        'is_overview_link' => TRUE,
+        'links' => [],
       ];
-    }
 
-    // Build the sublinks array.
-    $sublinks = [];
-    if ($element->subtree) {
-      $sublinks = jcc_elevated_menu_to_array($element->subtree, $menu_name, $add_overview_links);
-
-      // If set, An Overview link (duplicate parent link) will be added to the
-      // start of the sublinks.
-      if ($add_overview_links) {
-        array_unshift($sublinks, [
-          'text' => t('Overview'),
-          'url' => $element->link->getUrlObject(),
-          'is_current' => $element->inActiveTrail,
-        ]);
-      }
+      array_unshift($sublinks, $section_link);
     }
 
     $links[] = [
       'text' => $element->link->getTitle(),
       'url' => $element->link->getUrlObject(),
       'is_current' => $element->inActiveTrail,
+      'is_overview_link' => FALSE,
       'links' => $sublinks,
       'section_link' => $section_link,
     ];
