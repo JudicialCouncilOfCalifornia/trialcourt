@@ -5,6 +5,7 @@
  * Preprocess and functions for alert content type and component.
  */
 
+use Drupal\Core\Link;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\node\NodeInterface;
 
@@ -71,7 +72,7 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
   $route_params = ['node' => $node->id()];
   $menu_links = $menu_link_service->loadLinksByRoute('entity.node.canonical', $route_params, $menu_name);
   if (!empty($menu_links)) {
-
+    // Get our menu manager to later find the parent menu.
     $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
 
     // Build the active trail and menu parameters.
@@ -93,30 +94,39 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
     $tree = $menu_tree_service->load($menu_name, $parameters);
 
     // Apply some manipulators (checking the access, sorting).
-    $manipulators = [
+    $tree = $menu_tree_service->transform($tree, [
       ['callable' => 'menu.default_tree_manipulators:checkNodeAccess'],
       ['callable' => 'menu.default_tree_manipulators:checkAccess'],
       ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
-    ];
-    $tree = $menu_tree_service->transform($tree, $manipulators);
+    ]);
 
     // Actually build the tree.
     $menu_build_tree = $menu_tree_service->build($tree);
 
     // Get the base active trail menu parent title.
-    $parent_menu_title = NULL;
+    $parent_link = NULL;
     foreach ($menu_build_tree['#items'] as $id => $item) {
       $pid = $menu_link_manager->getParentIds($id);
       $pid = array_key_first(array_slice($pid, -2, 1));
       $parent_menu_item = $menu_link_manager->getInstance(['id' => $pid]);
-      $parent_menu_title = $parent_menu_item->getTitle();
+      $url = $parent_menu_item->getUrlObject();
+      $url->setOptions([
+        'attributes' => [
+          'style' => 'color: currentColor;text-decoration: none',
+        ],
+      ]);
+      $parent_link = Link::fromTextAndUrl($parent_menu_item->getTitle(), $url)->toString();
       break;
     }
 
     // Create our storybook component friendly sidebar navigation.
     if (!empty($menu_build_tree['#items'])) {
+      // Set caches to trigger on landing and subpage changes.
+      $menu_build_tree['#cache']['contexts'][] = 'user';
+      $menu_build_tree['#cache']['tags'][] = 'node_list:landing_page';
+      $menu_build_tree['#cache']['tags'][] = 'node_list:subpage';
       $variables['sidebar_navigation'] = [
-        'menu_heading' => $parent_menu_title,
+        'menu_heading' => $parent_link,
         'links' => jcc_custom_build_menu_tree($menu_build_tree['#items']),
       ];
     }

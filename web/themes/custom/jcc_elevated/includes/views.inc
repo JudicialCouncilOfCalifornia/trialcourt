@@ -77,7 +77,7 @@ function jcc_elevated_preprocess_views_view__news__sticky_list(&$variables) {
  */
 function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
   // Translation via TMGMT breaks dates where translators entered invalid date
-  // values in date fields. If date is invalid clear it before template renders.
+  // values in date fields. if date is invalid clear it before template renders.
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
     if (!jcc_elevated_validate_date($node->field_date->value)) {
@@ -117,6 +117,7 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     if ($form[$id]['#type'] == 'select') {
       $form[$id]['#attributes']['placeholder'] = NULL;
       $form[$id]['#options']['All'] = t('- @label -', ['@label' => $placeholder]);
+      $form['#info']['filter-' . $id]['label'] = '';
     }
   }
 
