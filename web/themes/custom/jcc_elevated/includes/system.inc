@@ -42,8 +42,7 @@ function jcc_elevated_preprocess_pager(&$variables) {
 /**
  * Implements hook_preprocess_breadcrumb().
  */
-function jcc_elevated_preprocess_breadcrumb(&$variables)
-{
+function jcc_elevated_preprocess_breadcrumb(&$variables) {
 
   // We are creating a variable for the Current Page Title, to allow us to print
   // it after the breadcrumbs loop has run.
