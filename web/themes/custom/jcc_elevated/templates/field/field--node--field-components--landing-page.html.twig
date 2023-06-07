@@ -39,10 +39,14 @@
  */
 #}
 {% for item in items %}
-  {# If the paragraph is added out of a section, cards, hero, or hero banner, #}
-  {# We wrap it in a psuedo section so that sidebars will work. #}
+  {#
+  /**
+   * If the paragraph is added outside of a section, cards, hero, hero_hangover,
+   * or hero banner, We wrap it in a psuedo section so that sidebars will work.
+   */
+  #}
   {% set bundle = item.content['#paragraph'].bundle() %}
-  {% if bundle not in ['section', 'cards', 'hero', 'hero_banner'] %}
+  {% if bundle not in ['section', 'cards', 'hero', 'hero_banner', 'hero_hangover'] %}
     <div class="section">
       <div class="section__content box">
         <div class="container stack">
