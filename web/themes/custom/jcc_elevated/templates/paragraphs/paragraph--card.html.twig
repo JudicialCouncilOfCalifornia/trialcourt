@@ -4,8 +4,11 @@
 
 {# Card variant selection set by parent #}
 {% set paragraph_parent = paragraph.getParentEntity() %}
-{% if paragraph_parent.hasField('field_sub_variant') %}
+{% if paragraph_parent.hasField('field_sub_variant') or paragraph_parent.hasField('field_sub_variant_card') %}
   {% set cards_sub_variant = paragraph_parent.field_sub_variant.value|json_decode|default([]).card %}
+  {% if paragraph_parent.field_sub_variant_card.value %}
+    {% set cards_sub_variant = paragraph_parent.field_sub_variant_card.value|json_decode|default([]).card %}
+  {% endif %}
   {% if cards_sub_variant == 'cta' %}
     {% set cards_sub_variant = 'default' %}
   {% endif %}
