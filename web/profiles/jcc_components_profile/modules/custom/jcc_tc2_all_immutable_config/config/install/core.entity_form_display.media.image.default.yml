@@ -4,14 +4,18 @@ dependencies:
   config:
     - field.field.media.image.field_category
     - field.field.media.image.field_matters_served
+    - field.field.media.image.field_media_caption
     - field.field.media.image.field_media_image
     - field.field.media.image.field_tags
     - image.style.medium
     - media.type.image
   module:
+    - allowed_formats
     - autocomplete_deluxe
     - cshs
     - focal_point
+    - maxlength
+    - text
 id: media.image.default
 targetEntityType: media
 bundle: image
@@ -19,7 +23,7 @@ mode: default
 content:
   field_category:
     type: cshs
-    weight: 3
+    weight: 4
     region: content
     settings:
       force_deepest: false
@@ -32,7 +36,7 @@ content:
     third_party_settings: {  }
   field_matters_served:
     type: cshs
-    weight: 4
+    weight: 5
     region: content
     settings:
       force_deepest: false
@@ -43,6 +47,22 @@ content:
       required_depth: '0'
       save_lineage: false
     third_party_settings: {  }
+  field_media_caption:
+    type: text_textarea
+    weight: 3
+    region: content
+    settings:
+      rows: 2
+      placeholder: ''
+    third_party_settings:
+      maxlength:
+        maxlength_js: 255
+        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+        maxlength_js_enforce: false
+        maxlength_js_truncate_html: false
+      allowed_formats:
+        hide_help: '0'
+        hide_guidelines: '0'
   field_media_image:
     type: image_focal_point
     weight: 1
@@ -55,7 +75,7 @@ content:
     third_party_settings: {  }
   field_tags:
     type: autocomplete_deluxe
-    weight: 5
+    weight: 6
     region: content
     settings:
       match_operator: CONTAINS
@@ -72,7 +92,7 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 6
+    weight: 7
     region: content
     settings:
       include_locked: true
@@ -92,13 +112,13 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 8
+    weight: 9
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   translation:
-    weight: 7
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }

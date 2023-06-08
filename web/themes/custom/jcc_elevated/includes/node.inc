@@ -5,6 +5,7 @@
  * Preprocess and functions for alert content type and component.
  */
 
+use Drupal\Core\Link;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\node\NodeInterface;
 
@@ -55,7 +56,7 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
   $variables['header'] = FALSE;
   $component_items = $node->get('field_components')->referencedEntities();
   $bundle = $component_items[0]->bundle();
-  if ($bundle == 'hero' || $bundle == 'hero_banner') {
+  if ($bundle == 'hero' || $bundle == 'hero_banner'|| $bundle == 'hero_hangover') {
     $variables['header'] = $node->get('field_components')->first()->view('default');
     $variables['content']['field_components'][0]['#access'] = FALSE;
   }
@@ -64,13 +65,15 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
   // a menu and only on subpages.
   $variables['sidebar_navigation'] = FALSE;
   $menu_name = 'main';
-  $level = 2;
+  $level = 3;
 
   // Find the menu item corresponding to the entity (node).
   $menu_link_service = \Drupal::getContainer()->get('plugin.manager.menu.link');
   $route_params = ['node' => $node->id()];
   $menu_links = $menu_link_service->loadLinksByRoute('entity.node.canonical', $route_params, $menu_name);
   if (!empty($menu_links)) {
+    // Get our menu manager to later find the parent menu.
+    $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
 
     // Build the active trail and menu parameters.
     $active_trail = Drupal::service('menu.active_trail')->getActiveTrailIds($menu_name);
@@ -91,20 +94,41 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
     $tree = $menu_tree_service->load($menu_name, $parameters);
 
     // Apply some manipulators (checking the access, sorting).
-    $manipulators = [
+    $tree = $menu_tree_service->transform($tree, [
       ['callable' => 'menu.default_tree_manipulators:checkNodeAccess'],
       ['callable' => 'menu.default_tree_manipulators:checkAccess'],
       ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
-    ];
-    $tree = $menu_tree_service->transform($tree, $manipulators);
+    ]);
 
     // Actually build the tree.
     $menu_build_tree = $menu_tree_service->build($tree);
 
+    // Get the base active trail menu parent title.
+    $parent_link = NULL;
+    foreach ($menu_build_tree['#items'] as $id => $item) {
+      $pid = $menu_link_manager->getParentIds($id);
+      $pid = array_key_first(array_slice($pid, -2, 1));
+      $parent_menu_item = $menu_link_manager->getInstance(['id' => $pid]);
+      $url = $parent_menu_item->getUrlObject();
+      $url->setOptions([
+        'attributes' => [
+          'style' => 'color: currentColor;text-decoration: none',
+        ],
+      ]);
+      $parent_link = Link::fromTextAndUrl($parent_menu_item->getTitle(), $url)->toString();
+      break;
+    }
+
     // Create our storybook component friendly sidebar navigation.
-    $variables['sidebar_navigation'] = [
-      'menu_heading' => '',
-      'links' => jcc_custom_build_menu_tree($menu_build_tree['#items']),
-    ];
+    if (!empty($menu_build_tree['#items'])) {
+      // Set caches to trigger on landing and subpage changes.
+      $menu_build_tree['#cache']['contexts'][] = 'user';
+      $menu_build_tree['#cache']['tags'][] = 'node_list:landing_page';
+      $menu_build_tree['#cache']['tags'][] = 'node_list:subpage';
+      $variables['sidebar_navigation'] = [
+        'menu_heading' => $parent_link,
+        'links' => jcc_custom_build_menu_tree($menu_build_tree['#items']),
+      ];
+    }
   }
 }

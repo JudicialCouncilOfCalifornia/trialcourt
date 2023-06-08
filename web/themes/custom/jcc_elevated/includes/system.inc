@@ -76,3 +76,24 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
   // "Home > Articles" on the Recipes page, which should read "Home > Recipes".
   $variables['#cache']['contexts'][] = 'url';
 }
+
+/**
+ * Implements template_preprocess_form_element().
+ */
+function jcc_elevated_preprocess_form_element(&$variables) {
+  $variables['attributes']['class'][] = 'placeholder-container';
+}
+
+/**
+ * Implements template_preprocess_input().
+ */
+function jcc_elevated_preprocess_input(&$variables) {
+  $variables['element']['#placeholder'] = '';
+}
+
+/**
+ * Implements template_preprocess_textarea().
+ */
+function jcc_elevated_preprocess_textarea(&$variables) {
+  $variables['element']['#placeholder'] = '';
+}

@@ -1,4 +1,3 @@
-uuid: cd870f38-4c38-485a-aac5-fec215dbeaf1
 langcode: en
 status: true
 dependencies:
@@ -6,14 +5,13 @@ dependencies:
     - core.entity_view_mode.media.media_library
     - field.field.media.image.field_category
     - field.field.media.image.field_matters_served
+    - field.field.media.image.field_media_caption
     - field.field.media.image.field_media_image
     - field.field.media.image.field_tags
     - image.style.medium
     - media.type.image
   module:
     - svg_image
-_core:
-  default_config_hash: nGBqQj_wi79SlprAWf42PgwVcEFDl23_9fuHPqB74aQ
 id: media.image.media_library
 targetEntityType: media
 bundle: image
@@ -36,8 +34,12 @@ content:
     region: content
 hidden:
   created: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_category: true
   field_matters_served: true
+  field_media_caption: true
   field_media_image: true
   field_tags: true
   langcode: true

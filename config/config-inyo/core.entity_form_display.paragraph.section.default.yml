@@ -1,4 +1,3 @@
-uuid: ffeafa76-3331-4483-9fca-835306e27e53
 langcode: en
 status: true
 dependencies:
@@ -17,6 +16,7 @@ dependencies:
     - field.field.paragraph.section.field_sidebar_direction
     - field.field.paragraph.section.field_sidebar_width
     - field.field.paragraph.section.field_sub_component_layout
+    - field.field.paragraph.section.field_sub_variant_card
     - field.field.paragraph.section.field_toggle
     - paragraphs.paragraphs_type.section
   module:
@@ -100,6 +100,7 @@ third_party_settings:
         - field_grid_min_width
         - field_section_background
         - field_media
+        - field_sub_variant_card
       label: Styles
       region: content
       parent_name: group_style_options
@@ -110,8 +111,6 @@ third_party_settings:
         id: ''
         description: ''
         required_fields: true
-_core:
-  default_config_hash: rh3xqLdrXpElTpCONj8JhAyFu2BmesHJcs7fJ1nDROI
 id: paragraph.section.default
 targetEntityType: paragraph
 bundle: section
@@ -238,6 +237,14 @@ content:
     weight: 17
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_sub_variant_card:
+    type: string_textfield
+    weight: 26
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_toggle:
     type: boolean_checkbox
