@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - media
+id: publication_type_pattern
+label: 'Publication Type Pattern'
+type: 'canonical_entities:media'
+pattern: '[media:bundle]/[media:name]'
+selection_criteria:
+  80de8419-cd1a-4dc1-b234-b0744fe81153:
+    id: 'entity_bundle:media'
+    negate: false
+    uuid: 80de8419-cd1a-4dc1-b234-b0744fe81153
+    context_mapping:
+      media: media
+    bundles:
+      publication: publication
+selection_logic: and
+weight: -5
+relationships: {  }
