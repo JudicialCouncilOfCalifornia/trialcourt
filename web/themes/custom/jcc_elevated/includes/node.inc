@@ -120,6 +120,8 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
       $menu_build_tree['#cache']['contexts'][] = 'user';
       $menu_build_tree['#cache']['tags'][] = 'node_list:landing_page';
       $menu_build_tree['#cache']['tags'][] = 'node_list:subpage';
+      $menu_build_tree['#cache']['tags'][] = 'node:' . $node->id();
+
       $variables['sidebar_navigation'] = [
         'menu_heading' => $parent_link,
         'links' => jcc_custom_build_menu_tree($menu_build_tree['#items']),

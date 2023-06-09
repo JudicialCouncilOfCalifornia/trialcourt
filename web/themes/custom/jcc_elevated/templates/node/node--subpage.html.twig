@@ -95,7 +95,10 @@
     {{ header }}
 
     {% if sidebar_navigation.links is not empty %}
-      {% include "@molecules/SidebarNav/SidebarNav.twig" with sidebar_navigation %}
+      {% include "@molecules/SidebarNav/SidebarNav.twig" with {
+        menu_heading: sidebar_navigation.heading,
+        links: sidebar_navigation.links,
+      } %}
     {% endif %}
 
     {% if content|without('content_moderation_control')|render is not empty %}
