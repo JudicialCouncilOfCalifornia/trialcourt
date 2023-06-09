@@ -5,7 +5,6 @@
  * Preprocess and functions for alert content type and component.
  */
 
-use Drupal\Core\Link;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\node\NodeInterface;
 
@@ -110,7 +109,10 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
       $pid = array_key_first(array_slice($pid, -2, 1));
       $parent_menu_item = $menu_link_manager->getInstance(['id' => $pid]);
       $url = $parent_menu_item->getUrlObject();
-      $parent_link = Link::fromTextAndUrl($parent_menu_item->getTitle(), $url)->toString();
+      $parent_link = [
+        'title' => $parent_menu_item->getTitle(),
+        'url' => $url,
+      ];
       break;
     }
 

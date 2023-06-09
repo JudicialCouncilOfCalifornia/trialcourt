@@ -10,7 +10,6 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\editor\Entity\Editor;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Element\ManagedFile;
@@ -556,10 +555,10 @@ function jcc_custom_field_widget_entity_reference_paragraphs_form_alter(&$elemen
 function jcc_custom_build_menu_tree(array $tree): array {
   $items = [];
   foreach ($tree as $menu_data) {
-    if ($menu_data['url']->toString()) {
+    if (!empty($menu_data['url'])) {
       $items[] = [
         'title' => $menu_data['title'],
-        'url' => !empty($menu_data['url']) ? $menu_data['url'] : Url::fromRoute('<front>'),
+        'url' => !empty($menu_data['url']) ? $menu_data['url'] : '',
         'attributes' => !empty($menu_data['attributes']) ? $menu_data['attributes']->toArray() : [],
         'active' => $menu_data['in_active_trail'],
         'links' => $menu_data['below'] ? jcc_custom_build_menu_tree($menu_data['below']) : [],
