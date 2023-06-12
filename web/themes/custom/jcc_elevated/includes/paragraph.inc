@@ -103,15 +103,15 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
     $card_media = $paragraph->get('field_media');
     $card_icon = $paragraph->get('field_icon');
     if ($card_media && $card_media->entity) {
-      if ($card_media->entity->field_media_caption) {
-        $media_alt = $card_media->entity->field_media_caption->value;
-      }
-      elseif ($card_media->entity->field_media_image) {
-        $media_alt = '<p>' . $card_media->entity->field_media_image->alt . '</p>';
-      }
       $build = \Drupal::entityTypeManager()->getViewBuilder('media')->view($card_media->entity);
+      $caption = $card_media->entity->field_media_caption && $card_media->entity->field_media_caption->value ? $card_media->entity->field_media_caption->value : NULL;
       $variables['media'] = $build;
-      $variables['caption'] = Markup::create($media_alt);
+      if ($paragraph->get('field_show_media_caption')->value) {
+        $variables['media_caption'] = [
+          'show' => $paragraph->get('field_show_media_caption')->value,
+          'text' => $caption ? Markup::create($caption) : NULL,
+        ];
+      }
     }
     if ($card_icon && $card_icon->value) {
       $variables['card_icon'] = str_replace(
