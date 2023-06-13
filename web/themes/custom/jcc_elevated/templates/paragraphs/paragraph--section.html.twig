@@ -18,11 +18,16 @@
   } %}
 {% endif %}
 
+{% set brow_data = [] %}
+{% if content.field_brow['#content'] is not empty %}
+  {% set brow_data = {
+    part_one: content.field_brow|render,
+  } %}
+{% endif %}
+
 {% include "@organisms/Section/Section.twig" with {
   variant: paragraph.field_section_background.get(0).value|default('default'),
-  brow_data: {
-    part_one: content.field_brow|render,
-  },
+  brow_data: brow_data,
   heading: content.field_heading|render,
   text: content.field_lead|render,
   sub_component_data: content.field_components|render,
