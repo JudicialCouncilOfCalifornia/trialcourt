@@ -1,6 +1,6 @@
-uuid: 22251cd9-d79a-45ef-9644-d9ff4c6929d7
+uuid: 9d703bee-8ed1-4074-86cc-ae3a3c9c408b
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - search_api_solr.solr_cache.cache_document_default_7_0_0
@@ -18,8 +18,9 @@ dependencies:
     - search_api_solr.solr_field_type.text_phonetic_es_7_0_0
     - search_api_solr.solr_field_type.text_phonetic_und_7_0_0
     - search_api_solr.solr_field_type.text_und_7_0_0
-    - search_api_solr.solr_request_dispatcher.request_dispatcher_httpcachingnever_default_7_0_0
+    - search_api_solr.solr_request_dispatcher.request_dispatcher_httpcaching_default_7_0_0
     - search_api_solr.solr_request_handler.request_handler_autocomplete_default_7_0_0
+    - search_api_solr.solr_request_handler.request_handler_elevate_default_7_0_0
     - search_api_solr.solr_request_handler.request_handler_extract_default_7_0_0
     - search_api_solr.solr_request_handler.request_handler_mlt_default_7_0_0
     - search_api_solr.solr_request_handler.request_handler_select_default_7_0_0
@@ -27,12 +28,13 @@ dependencies:
     - search_api_solr.solr_request_handler.request_handler_suggest_default_7_0_0
     - search_api_solr.solr_request_handler.request_handler_tvrh_default_7_0_0
   module:
+    - search_api_pantheon
     - search_api_solr
 _core:
-  default_config_hash: w0uyQKPGALWDf8Rn43RoMVLgGBoLoSdQPuTfwMkASTQ
-id: solr
-name: Solr
-description: 'Solr Server in Azure'
+  default_config_hash: xJR79-lRG0JHelCTH2q0JeLQhg-XcljOTDLI2f-cVzI
+id: pantheon_solr8
+name: 'Pantheon Search'
+description: ''
 backend: search_api_solr
 backend_config:
   retrieve_data: false
@@ -41,13 +43,8 @@ backend_config:
   server_prefix: ''
   domain: generic
   environment: default
-  connector: basic_auth
+  connector: pantheon
   connector_config:
-    scheme: https
-    host: jcc-trialcourt-solr.azurewebsites.net
-    port: 443
-    path: /
-    core: jcc-prod
     timeout: 5
     index_timeout: 5
     optimize_timeout: 10
@@ -56,17 +53,19 @@ backend_config:
     http_method: AUTO
     commit_within: 1000
     jmx: false
+    jts: false
     solr_install_dir: ''
-    username: ''
-    password: ''
+    skip_schema_check: true
   optimize: false
+  fallback_multiple: false
   disabled_field_types: {  }
   disabled_caches: {  }
   disabled_request_handlers:
-    - request_handler_elevate_default_7_0_0
-    - request_handler_replicationmaster_default_7_0_0
     - request_handler_replicationslave_default_7_0_0
+    - request_handler_replicationmaster_default_7_0_0
   disabled_request_dispatchers:
-    - request_dispatcher_httpcaching_default_7_0_0
+    - request_dispatcher_httpcachingnever_default_7_0_0
   rows: 10
-  skip_schema_check: false
+  index_single_documents_fallback_count: 10
+  index_empty_text_fields: false
+  suppress_missing_languages: false
