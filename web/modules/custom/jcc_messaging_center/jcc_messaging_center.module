@@ -14,6 +14,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\Messenger\MessengerInterface;
+
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 use Drupal\views\Views;
@@ -83,7 +86,14 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
   }
   elseif ($form['#form_id'] == 'user_register_form') {
     $form['actions']['submit']['#value'] = t('Subscribe');
+    $form['actions']['submit']['#submit'][] = 'jcc_messaging_center_redirect_handler';
   }
+}
+
+function jcc_messaging_center_redirect_handler($form, FormStateInterface $form_state) {
+  $url = '/registration/confirmation';
+  $response = new RedirectResponse($url);
+  $response->send();
 }
 
 /**
