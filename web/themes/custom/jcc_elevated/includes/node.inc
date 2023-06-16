@@ -40,6 +40,20 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
 }
 
 /**
+ * Node: News preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_alert(array &$variables, NodeInterface $node) {
+  // Prepend alert label directly to the body content so that it renders inline.
+  $label = '<strong>' . $node->label() . '</strong>';
+  $variables['content']['body'][0]['#text'] = $label . ', ' . $variables['content']['body'][0]['#text'];
+}
+
+/**
  * Node: Subpage preprocess.
  *
  * @param array $variables
