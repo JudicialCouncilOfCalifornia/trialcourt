@@ -1,7 +1,32 @@
+
+{# Add subscription component as footer links block #}
+{% set subscribe_text = 'Subscribe with your email address to receive updates' %}
+{% if logged_in %}
+  {% set subscribe_text = 'Subscriptions' %}
+{% endif %}
+{% set links_custom = footer_links %}
+
+{% if messaging_display_footer_form == '1' %}
+  {% set subscriptions %}
+    <div class="subscriptions">
+      {% if not logged_in %}
+        <div><a class="usa-button usa-button--primary" href="/user/register{{ messaging_center_preselected_groups }}">Subscribe</a></div>
+      {% else %}
+        <div><a class="usa-button usa-button--primary" href="/user/{{ user.id }}/edit">Manage subscriptions</a></div>
+      {% endif %}
+    </div>
+  {% endset %}
+
+  {% set links_custom = links_custom|merge([{
+    text: subscribe_text,
+    block: subscriptions,
+  }]) %}
+{% endif %}
+
 {% include '@organisms/global/footer.twig' with {
   footer: {
     background: header_footer_variant,
-    links: footer_links,
+    links: links_custom,
     title: site_name,
     social_links: social_links,
     shoe: shoe,

@@ -1,0 +1,42 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.user.user.field_group
+    - field.field.user.user.field_jcc_messaging_center_group
+    - field.field.user.user.field_last_password_reset
+    - field.field.user.user.field_password_expiration
+  module:
+    - user
+id: user.user.default
+targetEntityType: user
+bundle: user
+mode: default
+content:
+  field_jcc_messaging_center_group:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  masquerade:
+    weight: 50
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  member_for:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_group: true
+  field_last_password_reset: true
+  field_password_expiration: true
+  langcode: true
+  search_api_excerpt: true

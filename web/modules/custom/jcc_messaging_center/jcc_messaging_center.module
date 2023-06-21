@@ -9,9 +9,14 @@ use Drupal\user\Entity\User;
 use SendGrid\Exception;
 use SendGrid\Email;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Entity\EntityInterface;
+
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\Messenger\MessengerInterface;
+
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 use Drupal\views\Views;
@@ -21,27 +26,56 @@ use SendGrid\Client as SClient;
  * Implements hook_form_alter().
  */
 function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
-  if (in_array($form['#form_id'],
-    [
-      'node_messaging_news_item_form',
-      'node_messaging_news_item_edit_form',
-      'taxonomy_term_user_groups_form',
-  // 'user_form',
-    ]
-  )) {
-    if ($form['#form_id'] == 'user_form') {
-      // kint('user_form');.
+
+  $content_types_conf = \Drupal::config('jcc_messaging_center.settings');
+  $cts = [];
+  if ($content_types_conf->get('messaging_content_types') != NULL) {
+    $cts = array_filter($content_types_conf->get('messaging_content_types'));
+  }
+
+  $forms_enabled_on = ['taxonomy_term_user_groups_form'];
+  foreach ($cts as $ct) {
+    $forms_enabled_on[] = 'node_' . $ct . '_form';
+    $forms_enabled_on[] = 'node_' . $ct . '_edit_form';
+  }
+  if (!$content_types_conf->get('messaging_display_footer_form')) {
+    unset($form['#fieldgroups']);
+  }
+
+  $has_messagiing_permissions = \Drupal::currentUser()->hasPermission('Manage Messaging center');
+
+  // Option to send message on node_save.
+  if (in_array($form['#form_id'], $forms_enabled_on) && $has_messagiing_permissions) {
+    $user_groups = [];
+    $vid = 'user_groups';
+    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
+    foreach ($terms as $term) {
+      $user_groups[$term->tid] = $term->name;
     }
-    elseif ($form['#form_id'] == 'node_messaging_news_item_edit_form' ||
-      $form['#form_id'] == 'node_messaging_news_item_form') {
-      $form['group_messaging_options']['field_send_email'] = [
+
+    if (!($form['#form_id'] == 'taxonomy_term_user_groups_form')) {
+      $form['messaging'] = [
+        '#type' => 'details',
+        '#title' => 'Messaging options',
+        '#group' => 'advanced',
+      ];
+      $form['options']['field_send_email'] = [
         '#type' => 'checkbox',
-        '#title' => t('Send an email when saving this news item.'),
+        '#title' => t('Send an email when saving this item.'),
         '#default_value' => FALSE,
         '#weight' => 50,
+        "#group" => "messaging",
+      ];
+
+      $form['messaging']['groups_to_notify'] = [
+        '#type' => 'checkboxes',
+        '#options' => $user_groups,
+        '#title' => 'Send to: ',
+        "#group" => "messaging",
+        '#weight' => 60,
       ];
     }
-    elseif ($form['#form_id'] == 'taxonomy_term_user_groups_form') {
+    else {
       $form['field_author']['widget'][0]['target_id']['#default_value'] = User::load(\Drupal::currentUser()->id());
     }
     foreach (array_keys($form['actions']) as $action) {
@@ -52,25 +86,42 @@ function jcc_messaging_center_form_alter(&$form, &$form_state, $form_id) {
   }
   elseif ($form['#form_id'] == 'user_register_form') {
     $form['actions']['submit']['#value'] = t('Subscribe');
+    $form['actions']['submit']['#submit'][] = 'jcc_messaging_center_redirect_handler';
   }
+}
+
+function jcc_messaging_center_redirect_handler($form, FormStateInterface $form_state) {
+  $url = '/registration/confirmation';
+  $response = new RedirectResponse($url);
+  $response->send();
 }
 
 /**
  * Alters for submission - sends query.
  */
 function jcc_messaging_center_form_submit($form, FormStateInterface $form_state) {
-  if (in_array($form['#form_id'], ['node_messaging_news_item_edit_form', 'node_messaging_news_item_form'])
+  $content_types_conf = \Drupal::config('jcc_messaging_center.settings');
+  $cts = array_filter($content_types_conf->get('messaging_content_types'));
+
+  $forms_enabled_on = [];
+  foreach ($cts as $ct) {
+    $forms_enabled_on[] = 'node_' . $ct . '_form';
+    $forms_enabled_on[] = 'node_' . $ct . '_edit_form';
+  }
+  if (in_array($form['#form_id'], $forms_enabled_on)
     && $form_state->cleanValues()->getValues()['field_send_email'] == 1) {
+
     global $base_url;
     // Gathering emails to send emails to.
     $email_to_sendgrid = [];
+    $email_to_sendgrid_list = '';
     $email_access_keys = [];
-    $form_group_values = $form_state->cleanValues()->getValues()['field_mailing_group'];
+    $form_group_values = array_filter($form_state->cleanValues()->getValues()['groups_to_notify']);
 
     $groups_array = [];
     if ($form_group_values) {
       foreach ($form_group_values as $data) {
-        $groups_array[] = $data['target_id'];
+        $groups_array[] = $data;
       }
     }
     $view = Views::getView('users_by_group');
@@ -85,71 +136,114 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     if ($rows != 0) {
       $view_result = $view->result;
       foreach ($view_result as $key => $row) {
-        if (!array_search($view->field['mail']->getValue($row), $email_to_sendgrid)) {
-          $email_to_sendgrid[] = $view->field['mail']->getValue($row);
+        if (isset($view->field['mail'])) {
+          if (!array_search($view->field['mail']->getValue($row), $email_to_sendgrid)) {
+            $email_to_sendgrid[] = $view->field['mail']->getValue($row);
+            $email_to_sendgrid_list .= $view->field["mail"]->getValue($row) . ', ';
 
-          // Opt out custom tokens.
-          $email_key = user_password();
-          array_push($email_access_keys, $email_key);
-          $store->set('member_email_' . $view->field['mail']->getValue($row), $email_key);
-
-          $id_key = user_password();
-          $store->set('member_id_' . $view->field['uid']->getValue($row), $id_key);
-
+            // Opt out custom tokens.
+            $email_key = user_password();
+            array_push($email_access_keys, $email_key);
+            $store->set('member_email_' . $view->field['mail']->getValue($row), $email_key);
+            $id_key = user_password();
+            $store->set('member_id_' . $view->field['uid']->getValue($row), $id_key);
+          }
         }
       }
     }
 
     // SENDING EMAIL TO SENDGRID
     // Building query for sendgrid.
-    $news_title = $form_state->cleanValues()->getValues()['title'];
-    $news_summary = $form_state->cleanValues()->getValues()['body'];
-    $news_url = $form_state->cleanValues()->getValues()['field_external_url'][0]['value'];
-    $news_post_date_unformated = $form_state->cleanValues()->getValues()['field_date'][0]['value'];
-    // $news_image = $form_state->cleanValues()->getValues()['field_images'];
-    // Date formatting.
-    $date = new DrupalDateTime($news_post_date_unformated, DateTimeItemInterface::STORAGE_TIMEZONE);
-    $news_post_date = $date->format('F j, Y');
+    $email_title = $form_state->cleanValues()->getValues()['title'];
+    $email_summary = $form_state->cleanValues()->getValues()['body'];
+    $read_more_url = '';
+    $read_more_element = '';
+    $email_footer = '';
+    $email_summary_formatted = '';
 
-    // Additional news.
-    $formatted_additional_items = '';
-    $news_additional = $form_state->cleanValues()->getValues()['field_additional_item'];
-    if ($news_additional) {
-      foreach ($news_additional as $additional_item) {
-        $formatted_additional_items .= '<div class="additional_item"><h2><a href="' . $additional_item['inline_entity_form']['field_url'][0]['value'] . '">' . $additional_item['inline_entity_form']['field_title'][0]['value'] . '</a></h2><div>' . $additional_item['inline_entity_form']['field_description'][0]['value'] . '</div><div><p><a href="' . $additional_item['inline_entity_form']['field_url'][0]['value'] . '">Read more ></a></p></div></div><br/>';
+    if ($form_state->getValue('field_messenger_link')) {
+      if ($form_state->getValue('field_messenger_link')[0]['uri'] != ''){
+        $read_more_uri = $form_state->cleanValues()->getValues()['field_messenger_link'][0]['uri'];
+        $read_more_url = Url::fromUri($read_more_uri)->toString();
+        $read_more_text = t('Read more >');
+        if ($form_state->getValue('field_messenger_link')[0]['title'] != ''){
+          $read_more_text = $form_state->getValue('field_messenger_link')[0]['title'];
+        }
+        if (!str_starts_with($read_more_url, 'http')) {
+          $read_more_url = $base_url . $read_more_url;
+          $read_more_element = '<p><a href="' .  $read_more_url . '">' . $read_more_text . '</a></p>';
+        }
       }
+    }
+    elseif ($form_state->getValue('field_external_url')) {
+      if ($form_state->getValue('field_external_url')[0]['uri'] != '') {
+        $read_more_uri = $form_state->cleanValues()->getValues()['field_external_url'][0]['uri'];
+        $read_more_url = Url::fromUri($read_more_uri)->toString();
+        $read_more_text = t('Read more >');
+        if ($form_state->getValue('field_external_url')[0]['title'] != ''){
+          $read_more_text = $form_state->getValue('field_external_url')[0]['title'];
+        }
+        if (!str_starts_with($read_more_url, 'http')) {
+          $read_more_url = $base_url . $read_more_url;
+          $read_more_element = '<p><a href="' .  $read_more_url . '">' . $read_more_text . '</a></p>';
+        }
+      }
+    }
+    else {
+//      Disabled automatic read more links
+//      $read_more_url = $base_url . $form_state->getValue('path')[0]['alias'];
+    }
+
+    if ($form_state->getValue('field_email_footer')) {
+      $email_footer = $form_state->cleanValues()->getValues()['field_email_footer'][0]['value'];
+    }
+
+    if ($form_state->getValue('field_date')) {
+      $email_post_date_unformatted = $form_state->cleanValues()->getValues()['field_date'][0]['value'];
+      // Date formatting.
+      $date = new DrupalDateTime($email_post_date_unformatted, DateTimeItemInterface::STORAGE_TIMEZONE);
+      $email_post_date = $date->format('F j, Y');
+    }
+    else {
+      $email_post_date = date('F j, Y');
+    }
+
+    if($form['#form_id'] == 'node_custom_email_edit_form' || $form['#form_id'] == 'node_custom_email_form'){
+      $email_summary_formatted = $email_summary[0]['value'];
+    } else {
+      $email_summary_formatted = $email_summary[0]['summary'] ?: strip_tags(substr($email_summary[0]['value'], 0, 300));
     }
 
     // Getting from email.
-    if (!empty(\Drupal::service('key.repository')->getKey('sendgrid_webservices'))) {
+    if (!empty(\Drupal::service('key.repository')->getKey('sendgrid'))) {
       $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
       $to = $sendgrid_conf['from_name'];
-      $sendgrid_api_key = \Drupal::service('key.repository')->getKey('sendgrid_webservices')->getKeyValue();
+      $sendgrid_api_key = \Drupal::service('key.repository')->getKey('sendgrid')->getKeyValue();
 
       $body = str_replace(
         [
-          '%news_post_date%',
-          '%news_url%',
-          '%news_title%',
-          '%news_summary%',
+          '%email_post_date%',
+          '%read_more_element%',
+          '%email_title%',
+          '%email_summary%',
           '%base_url%',
-          '%additional_items%',
+          '%email_footer%'
         ],
         [
-          $news_post_date,
-          $news_url,
-          $news_title[0]['value'],
-          $news_summary[0]['summary'] ?: strip_tags(substr($news_summary[0]['value'], 0, 300)),
+          $email_post_date,
+          $read_more_element,
+          $email_title[0]['value'],
+          $email_summary_formatted,
           $base_url,
-          $formatted_additional_items,
+          $email_footer
         ],
         '
-          <div>%news_post_date%</div>
-          <h2><a href="%news_url%">%news_title%</a></h2>
-          <p>%news_summary%</p>
-          <p><a href="%news_url%">Read more ></a></p>
+          <div>%email_post_date%</div>
+          <h2>%email_title%</h2>
+          <p>%email_summary%</p>
+          %read_more_element%
+          <p>%email_footer%</p>
           <br/>
-          <div>%additional_items%</div>
           <br/>
           <p><a href="%base_url%/messaging-center/%member_email%/manage/%email_key%">manage your preferences</a><br>
           or <a href="%base_url%/messaging-center/%member_email%/delete-all/%email_key%">opt out</a> from all communications.</p>
@@ -163,8 +257,8 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
       $email->setSmtpapiTos($email_to_sendgrid)
         ->setFrom($to)
         ->setFromName(\Drupal::config('system.site')->get('name'))
-        ->setSubject($news_title[0]['value'])
-        ->setText($news_title[0]['value'])
+        ->setSubject($email_title[0]['value'])
+        ->setText($email_title[0]['value'])
         ->setHtml($body)
         ->addSubstitution('%member_email%', $email_to_sendgrid)
         ->addSubstitution('%email_key%', $email_access_keys)
@@ -172,16 +266,13 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
         ->addHeader('X-Transport', 'web')
         ->setCategories(
           [
-            'News Alert',
-            'News Alert - ' . $news_title[0]['value'],
+            'Email Alert',
+            'Email Alert - ' . $email_title[0]['value'],
           ]
         );
 
-      // Issue when simply calling $sendgrid->send($email);
-      // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
-      // Send an email using the template stored in SendGrid.
       try {
-        \Drupal::logger('sendgrid_message')->notice('firing send event');
+        \Drupal::logger('sendgrid_message')->notice('firing send event to ' . $email_to_sendgrid_list);
         $sendGridResponse = $sendgrid->send($email);
 
         if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
@@ -207,7 +298,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
  */
 function jcc_messaging_center_user_insert(EntityInterface $entity) {
   $tempstore = \Drupal::service('tempstore.shared');
-  $store = $tempstore->get('jcc_subscriptions');
+  $store = $tempstore->get('jcc_messaging_center');
   $store->set('member_email_' . $entity->get('mail')->value, user_password());
 }
 
@@ -253,8 +344,45 @@ function jcc_messaging_center_tokens($type, $tokens, array $data, array $options
 }
 
 /**
- * Implements hook_entity_type_build().
+ * Implements hook_preprocess_HOOK().
  */
-function jcc_messaging_center_entity_type_build(array &$entity_types) {
-  $entity_types['user']->setFormClass('group_edit', 'Drupal\jcc_messaging_center\Form\ManageMessagingCenter');
+function jcc_messaging_center_preprocess_page(&$variables) {
+  $variables['#attached']['library'][] = 'jcc_messaging_center/jcc_messaging_center';
+}
+
+/**
+ * Implements hook__mail_alter().
+ */
+function jcc_messaging_center_mail_alter(&$message) {
+  if ($message['id'] == 'user_register_no_approval_required') {
+    global $base_url;
+    $email_access_keys = [];
+    $member_email = $message['to'];
+
+    $tempstore = \Drupal::service('tempstore.shared');
+    $store = $tempstore->get('jcc_messaging_center');
+
+    $email_key = user_password();
+    array_push($email_access_keys, $email_key);
+    $store->set('member_email_' . $member_email, $email_key);
+
+    $id_key = user_password();
+    $store->set('member_id_' . $member_email, $id_key);
+
+    $message_body = '<p>Thank you for subscribing. <br>You can now :</p><br>
+            <p><a href="' . $base_url . '/messaging-center/' . $member_email . '/manage/' . $email_key . '">Manage your preferences</a><br>
+          or <a href=' . $base_url . '/messaging-center/' . $member_email . '/delete-all/' . $email_key . '">Opt out</a> from all communications.</p>';
+
+    $message['body'][0] = t($message_body);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ * UI cleanup if no group is defined
+ */
+function jcc_messaging_center_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (empty($form['field_jcc_messaging_center_group']['widget']['#options'])) {
+    unset($form['field_jcc_messaging_center_group']);
+  }
 }
