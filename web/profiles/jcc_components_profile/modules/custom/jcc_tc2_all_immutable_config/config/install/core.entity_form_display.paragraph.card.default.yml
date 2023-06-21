@@ -8,6 +8,7 @@ dependencies:
     - field.field.paragraph.card.field_heading
     - field.field.paragraph.card.field_icon
     - field.field.paragraph.card.field_link
+    - field.field.paragraph.card.field_link_multiple
     - field.field.paragraph.card.field_media
     - field.field.paragraph.card.field_media_alignment
     - field.field.paragraph.card.field_show_media_caption
@@ -16,6 +17,7 @@ dependencies:
   module:
     - field_group
     - jcc_courtyard_icons
+    - link
     - linkit_field
     - media_library
     - text
@@ -25,14 +27,16 @@ third_party_settings:
       children:
         - field_link
         - field_entire_card_clickable
+        - field_link_multiple
       label: Button
       region: content
       parent_name: ''
       weight: 3
-      format_type: fieldset
+      format_type: details
       format_settings:
         classes: ''
         id: ''
+        open: false
         description: ''
         required_fields: true
     group_media:
@@ -111,6 +115,14 @@ content:
     region: content
     settings:
       linkit_profile: default
+    third_party_settings: {  }
+  field_link_multiple:
+    type: link_default
+    weight: 6
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
     third_party_settings: {  }
   field_media:
     type: media_library_widget
