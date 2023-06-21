@@ -1,0 +1,27 @@
+uuid: 639c045a-cb43-4338-a811-5101bc0cc0e0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.domain_access
+    - node.type.subpage
+  module:
+    - domain_entity
+third_party_settings:
+  domain_entity:
+    domains: {  }
+    behavior: user
+id: node.subpage.domain_access
+field_name: domain_access
+entity_type: node
+bundle: subpage
+label: 'Domain Access'
+description: 'Select the affiliate domain(s). If nothing was selected: Affiliated to all domains.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: domain_entity_field_default_domains
+settings:
+  handler: 'default:domain'
+  handler_settings: {  }
+field_type: entity_reference

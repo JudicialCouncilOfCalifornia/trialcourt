@@ -1,0 +1,27 @@
+uuid: c608f996-6c72-4cba-a95b-acc813598ef5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.menu_link_content.domain_access
+  module:
+    - domain_entity
+    - menu_link_content
+third_party_settings:
+  domain_entity:
+    domains: {  }
+    behavior: user
+id: menu_link_content.menu_link_content.domain_access
+field_name: domain_access
+entity_type: menu_link_content
+bundle: menu_link_content
+label: 'Domain Access'
+description: 'Select the affiliate domain(s). If nothing was selected: Affiliated to all domains.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: domain_entity_field_default_domains
+settings:
+  handler: 'default:domain'
+  handler_settings: {  }
+field_type: entity_reference

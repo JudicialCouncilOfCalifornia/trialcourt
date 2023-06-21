@@ -1,0 +1,21 @@
+uuid: 6093105c-3af9-4568-9284-1ca0408b21a8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.domain_access
+    - media.type.publication
+id: media.publication.domain_access
+field_name: domain_access
+entity_type: media
+bundle: publication
+label: 'Domain Access'
+description: 'Select the affiliate domain(s). If nothing was selected: Affiliated to all domains.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: domain_entity_field_default_domains
+settings:
+  handler: 'default:domain'
+  handler_settings: {  }
+field_type: entity_reference

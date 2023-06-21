@@ -128,6 +128,12 @@ function jcc_elevated_get_menu_array(string $menu_name, $add_overview_links = FA
     // Use the default sorting of menu links.
     ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
   ];
+
+  // Check for Domain Access.
+  if (\Drupal::moduleHandler()->moduleExists('domain_menu_access')) {
+    $manipulators[] =
+      ['callable' => 'domain_menu_access.default_tree_manipulators:checkDomain'];
+  }
   $tree = $menu_tree->transform($tree, $manipulators);
   return jcc_elevated_menu_to_array($tree, $menu_name, $add_overview_links);
 }
