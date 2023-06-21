@@ -46,6 +46,14 @@ process:
     -
       plugin: callback
       callable: urldecode
+
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: str_replace
+      search: [ " " ]
+      replace: [ "-" ]
     -
       plugin: skip_on_empty
       method: process
