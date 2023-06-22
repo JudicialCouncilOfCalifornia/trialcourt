@@ -40,6 +40,20 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
 }
 
 /**
+ * Node: News preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_alert(array &$variables, NodeInterface $node) {
+  // Prepend alert label directly to the body content so that it renders inline.
+  $label = '<strong>' . $node->label() . '</strong>';
+  $variables['content']['body'][0]['#text'] = $label . ', ' . $variables['content']['body'][0]['#text'];
+}
+
+/**
  * Node: Subpage preprocess.
  *
  * @param array $variables
@@ -104,20 +118,22 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
 
     // Get the base active trail menu parent title.
     $parent_link = NULL;
-    foreach ($menu_build_tree['#items'] as $id => $item) {
-      $pid = $menu_link_manager->getParentIds($id);
-      $pid = array_key_first(array_slice($pid, -2, 1));
-      $parent_menu_item = $menu_link_manager->getInstance(['id' => $pid]);
-      $url = $parent_menu_item->getUrlObject();
-      $parent_link = [
-        'title' => $parent_menu_item->getTitle(),
-        'url' => $url,
-      ];
-      break;
+    if (isset($menu_build_tree['#items']) && !empty($menu_build_tree['#items'])) {
+      foreach ($menu_build_tree['#items'] as $id => $item) {
+        $pid = $menu_link_manager->getParentIds($id);
+        $pid = array_key_first(array_slice($pid, -2, 1));
+        $parent_menu_item = $menu_link_manager->getInstance(['id' => $pid]);
+        $url = $parent_menu_item->getUrlObject();
+        $parent_link = [
+          'title' => $parent_menu_item->getTitle(),
+          'url' => $url,
+        ];
+        break;
+      }
     }
 
     // Create our storybook component friendly sidebar navigation.
-    if (!empty($menu_build_tree['#items'])) {
+    if (isset($menu_build_tree['#items']) && !empty($menu_build_tree['#items'])) {
       // Set caches to trigger on landing and subpage changes.
       $menu_build_tree['#cache']['contexts'][] = 'user';
       $menu_build_tree['#cache']['tags'][] = 'node_list:landing_page';

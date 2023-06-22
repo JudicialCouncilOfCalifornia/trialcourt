@@ -1,0 +1,36 @@
+uuid: d75e9c25-fa84-476a-86bd-1eac00cafc7e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_jcc_messaging_center_group
+    - taxonomy.vocabulary.user_groups
+  module:
+    - tmgmt_content
+    - user
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: RxMxorLv-0npQDUfuLiRteT1el3Y2OHnAdhudehgGH0
+id: user.user.field_jcc_messaging_center_group
+field_name: field_jcc_messaging_center_group
+entity_type: user
+bundle: user
+label: 'Messaging group'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      user_groups: user_groups
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
