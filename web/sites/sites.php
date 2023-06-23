@@ -26,7 +26,6 @@ foreach ($dirs as $dir) {
 // .slo. - . followed by directory name and ends in .
 // If the custom domain does not contain one of these patterns,
 // add it manually below.
-$sites['www.occourts.org'] = 'oc';
 
 // @todo perhaps move these sites to dir that matches their domain.
 // = 'jcart';
@@ -88,8 +87,10 @@ $sites['supreme.courts.ca.gov'] = 'supremecourt';
 // = 'stanislaus'
 $sites['www.stanct.org'] = 'stanislaus';
 // = 'oc';
+$sites['www.occourts.org'] = 'oc';
 $sites['www.orange.courts.ca.gov'] = 'oc';
 $sites['orange.courts.ca.gov'] = 'oc';
+$sites['qaoccourts.occourts.org'] = 'oc';
 // = 'amdr';
 $sites['www.amador.courts.ca.gov'] = 'amdr';
 $sites['amador.courts.ca.gov'] = 'amdr';
