@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.hero.field_aside
+    - field.field.paragraph.hero.field_components
     - field.field.paragraph.hero.field_heading
     - field.field.paragraph.hero.field_image_media
     - field.field.paragraph.hero.field_lead
@@ -14,6 +15,7 @@ dependencies:
     - field_group
     - link
     - media_library
+    - paragraphs
     - text
 third_party_settings:
   field_group:
@@ -21,6 +23,7 @@ third_party_settings:
       children:
         - field_heading
         - field_lead
+        - field_image_media
       label: 'Main Content'
       region: content
       parent_name: group_content
@@ -52,18 +55,32 @@ third_party_settings:
         open: true
     group_content:
       children:
-        - field_variant
         - group_main_content
         - group_aside
       label: Content
       region: content
       parent_name: ''
-      weight: 0
+      weight: 1
       format_type: tabs
       format_settings:
         classes: ''
         id: ''
         direction: horizontal
+    group_featured:
+      children:
+        - field_components
+      label: Featured
+      region: content
+      parent_name: ''
+      weight: 2
+      format_type: details
+      format_settings:
+        classes: ''
+        id: ''
+        open: false
+        description: 'Promote content and features through the Hero as needed. Displays as buttons at the foot of the Hero.'
+        required_fields: true
+        formatter: closed
 id: paragraph.hero.default
 targetEntityType: paragraph
 bundle: hero
@@ -71,11 +88,23 @@ mode: default
 content:
   field_aside:
     type: text_textarea
-    weight: 3
+    weight: 4
     region: content
     settings:
       rows: 5
       placeholder: ''
+    third_party_settings: {  }
+  field_components:
+    type: entity_reference_paragraphs
+    weight: 4
+    region: content
+    settings:
+      title: Link
+      title_plural: Links
+      edit_mode: preview
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: _none
     third_party_settings: {  }
   field_heading:
     type: string_textfield
@@ -87,7 +116,7 @@ content:
     third_party_settings: {  }
   field_image_media:
     type: media_library_widget
-    weight: 11
+    weight: 3
     region: content
     settings:
       media_types: {  }
@@ -102,7 +131,7 @@ content:
     third_party_settings: {  }
   field_link:
     type: link_default
-    weight: 4
+    weight: 5
     region: content
     settings:
       placeholder_url: ''
@@ -125,7 +154,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }

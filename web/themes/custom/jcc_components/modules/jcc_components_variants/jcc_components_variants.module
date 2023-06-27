@@ -111,11 +111,25 @@ function jcc_components_variants_preview($type) {
   $theme = \Drupal::config('system.theme')->get('default');
 
   // If elevated theme is in use.
-  if ($type == 'card' && $theme == 'jcc_elevated') {
-    $files = array_slice($files, 3);
-  }
-  else {
-    $files = array_slice($files, 0, 3);
+  switch ($type) {
+    case 'card':
+      if ($theme == 'jcc_elevated') {
+        $files = array_slice($files, 3);
+      }
+      else {
+        $files = array_slice($files, 0, 3);
+      }
+      break;
+
+    case 'hero_banner':
+    case 'hero':
+      if ($theme == 'jcc_elevated') {
+        $files = array_slice($files, 2);
+      }
+      else {
+        $files = array_slice($files, 0, 2);
+      }
+      break;
   }
 
   // Generate details and buttons for each variant image provided.
@@ -132,7 +146,8 @@ function jcc_components_variants_preview($type) {
   }
 
   $label = t(':type Variants', [':type' => $type]);
-  $prefix = '<details class="claro-details"><summary class="claro-details__summary">' . ucfirst($label) . '</summary><div class="variants variants--${type}">' . $variants . '</div></details>';
+  $label = str_replace('_', ' ', $label);
+  $prefix = '<details class="claro-details"><summary class="claro-details__summary">' . ucwords($label) . '</summary><div class="variants variants--${type}">' . $variants . '</div></details>';
 
   $preview = [
     'prefix' => $prefix,
