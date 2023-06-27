@@ -79,6 +79,13 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
 
   if ($sticky_list) {
     $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
+    foreach ($variables['sticky_list'] as $sticky_item) {
+      $paragraph_target_id = $sticky_item['#node']->get('field_components')->getValue()[0]['target_id'];
+      $paragraph = Paragraph::load($paragraph_target_id);
+      $bare_text = strip_tags($paragraph->get('field_text')->value);
+      $truncated_text = strlen($bare_text) > 200 ? substr($bare_text, 0, 200) . "..." : $bare_text;
+      $variables['excerpts'][] = $truncated_text;
+    }
   }
 
   // Also get the More News path. Should be a node with path /news but fallback
