@@ -207,6 +207,74 @@ function jcc_elevated_paragraph_alert(array &$variables) {
 }
 
 /**
+ * Helper function for hero paragraph.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $paragraph) {
+  if (!empty($paragraph->get('field_components'))) {
+    foreach ($paragraph->get('field_components') as $card) {
+      $icon = $card->entity->field_icon->value;
+      if ($icon) {
+        $icon = str_replace(['icon-', 'dark-', 'white-'], ['', '', ''], $icon);
+      }
+      $variables['cards'][] = [
+        'variant' => 'striped-aligned',
+        'clickable_card' => TRUE,
+        'icon_data' => [
+          'icon' => $icon,
+          'color' => FALSE,
+          'icon_path' => ' ',
+        ],
+        'heading' => $card->entity->field_link->title,
+        'button_data' => [
+          'label' => 'Button',
+          'href' => Url::fromUri($card->entity->field_link->uri)->toString(),
+          'variant' => 'primary',
+        ],
+      ];
+    }
+  }
+}
+
+/**
+ * Helper function for hero paragraph.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_elevated_paragraph_hero_banner(array &$variables, ParagraphInterface $paragraph) {
+  if (!empty($paragraph->get('field_components'))) {
+    foreach ($paragraph->get('field_components') as $card) {
+      $icon = $card->entity->field_icon->value;
+      if ($icon) {
+        $icon = str_replace(['icon-', 'dark-', 'white-'], ['', '', ''], $icon);
+      }
+      $variables['cards'][] = [
+        'variant' => 'striped-aligned',
+        'clickable_card' => TRUE,
+        'icon_data' => [
+          'icon' => $icon,
+          'color' => FALSE,
+          'icon_path' => ' ',
+        ],
+        'heading' => $card->entity->field_link->title,
+        'button_data' => [
+          'label' => 'Button',
+          'href' => Url::fromUri($card->entity->field_link->uri)->toString(),
+          'variant' => 'primary',
+        ],
+      ];
+    }
+  }
+}
+
+/**
  * Helper function for hero_hangover paragraph.
  *
  * @param array $variables

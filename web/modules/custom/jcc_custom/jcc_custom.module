@@ -145,10 +145,13 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
   if ($theme == 'jcc_elevated') {
     switch ($element['#paragraph_type']) {
       case 'hero':
-        unset($element['subform']['field_variant']);
         unset($element['subform']['field_subheading']);
         unset($element['subform']['field_link']);
         unset($element['subform']['field_aside']);
+        break;
+
+      case 'hero_banner':
+        unset($element['subform']['field_brow']);
         break;
 
       case 'cards':
@@ -189,6 +192,10 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
           unset($element['subform']['field_icon']);
           unset($element['subform']['field_entire_card_clickable']);
         }
+        break;
+
+      case 'hero':
+        unset($element['subform']['field_components']);
         break;
     }
   }
