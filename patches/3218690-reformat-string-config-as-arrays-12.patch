@@ -1,0 +1,29 @@
+diff --git a/easy_breadcrumb.install b/easy_breadcrumb.install
+index e524845..eb909f5 100644
+--- a/easy_breadcrumb.install
++++ b/easy_breadcrumb.install
+@@ -129,3 +129,24 @@ function easy_breadcrumb_install() {
+   $help_url = 'https://www.drupal.org/docs/8/modules/easy-breadcrumb';
+   $messenger->addMessage("Easy Breadcrumb documentation is found in the help module or at $help_url.");
+ }
++
++/**
++ * Re-save string-formatted settings as arrays.
++ */
++function easy_breadcrumb_update_8008() {
++  $config = \Drupal::configFactory()->getEditable('easy_breadcrumb.settings');
++  $settings_to_update = [
++    'capitalizator_ignored_words',
++    'capitalizator_forced_words',
++  ];
++  foreach ($settings_to_update as $setting) {
++    $config_setting = $config->get($setting);
++    if ($config_setting === NULL || $config_setting === '') {
++      $config->set($setting, array());
++    }
++    else if (is_string($config_setting)) {
++      $config->set($setting, explode(' ', $config_setting));
++    }
++  }
++  $config->save(TRUE);
++}
