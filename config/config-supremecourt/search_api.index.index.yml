@@ -7,7 +7,7 @@ dependencies:
     - field.storage.node.field_alert_type
     - field.storage.node.field_byline
     - field.storage.node.field_news_type
-    - search_api.server.solr
+    - search_api.server.pantheon_solr8
     - core.entity_view_mode.node.full
   module:
     - search_api_solr
@@ -20,6 +20,7 @@ third_party_settings:
     finalize: false
     commit_before_finalize: false
     commit_after_finalize: false
+    debug_finalize: false
     highlighter:
       maxAnalyzedChars: 51200
       fragmenter: gap
@@ -46,6 +47,9 @@ third_party_settings:
       maxntp: 2000
       boost: false
       interestingTerms: none
+    term_modifiers:
+      slop: 3
+      fuzzy: 1
     advanced:
       index_prefix: ''
       collection: ''
@@ -53,6 +57,11 @@ third_party_settings:
     multilingual:
       limit_to_content_language: false
       include_language_independent: true
+      use_language_undefined_as_fallback_language: false
+      specific_languages:
+        en: '0'
+        es: '0'
+      use_universal_collation: false
 _core:
   default_config_hash: QV4Lg_P1lO7kUehDM9MOwCrreMgoeXzNUxn29ConE9o
 id: index
@@ -207,6 +216,8 @@ datasource_settings:
 processor_settings:
   add_url: {  }
   aggregated_field: {  }
+  auto_aggregated_fulltext_field: {  }
+  entity_type: {  }
   language_with_fallback: {  }
   rendered_item: {  }
   solr_date_range: {  }
@@ -216,4 +227,5 @@ tracker_settings:
 options:
   cron_limit: 50
   index_directly: true
-server: solr
+  track_changes_in_references: true
+server: pantheon_solr8
