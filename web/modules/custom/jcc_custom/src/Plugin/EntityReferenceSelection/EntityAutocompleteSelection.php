@@ -14,6 +14,7 @@ use Drupal\node\Plugin\EntityReferenceSelection\NodeSelection;
  * )
  */
 class EntityAutocompleteSelection extends NodeSelection {
+
   /**
    * {@inheritdoc}
    */
@@ -26,7 +27,6 @@ class EntityAutocompleteSelection extends NodeSelection {
    */
   protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS') {
     $query = parent::buildEntityQuery($match, $match_operator);
-    $query->LeftJoin('media');
     $query->Condition('status', 1);
     return $query;
   }
