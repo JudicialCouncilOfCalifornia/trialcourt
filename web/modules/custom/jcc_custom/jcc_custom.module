@@ -176,6 +176,7 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
   else {
     switch ($element['#paragraph_type']) {
       case 'hero':
+        unset($element['subform']['field_components']);
         unset($element['subform']['field_image_media']);
         break;
 
@@ -192,10 +193,6 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
           unset($element['subform']['field_icon']);
           unset($element['subform']['field_entire_card_clickable']);
         }
-        break;
-
-      case 'hero':
-        unset($element['subform']['field_components']);
         break;
     }
   }
