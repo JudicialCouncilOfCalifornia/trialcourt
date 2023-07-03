@@ -8,6 +8,7 @@ dependencies:
     - field.field.paragraph.card.field_heading
     - field.field.paragraph.card.field_icon
     - field.field.paragraph.card.field_link
+    - field.field.paragraph.card.field_link_multiple
     - field.field.paragraph.card.field_media
     - field.field.paragraph.card.field_media_alignment
     - field.field.paragraph.card.field_show_media_caption
@@ -15,6 +16,7 @@ dependencies:
     - paragraphs.paragraphs_type.card
   module:
     - jcc_courtyard_icons
+    - link
     - linkit_field
     - options
     - text
@@ -75,6 +77,18 @@ content:
       target: 0
     third_party_settings: {  }
     weight: 2
+    region: content
+  field_link_multiple:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 10
     region: content
   field_media:
     type: entity_reference_label

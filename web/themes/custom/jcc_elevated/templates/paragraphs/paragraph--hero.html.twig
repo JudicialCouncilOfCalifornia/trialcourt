@@ -3,24 +3,26 @@
 {{ attach_library("jcc_storybook/Button") }}
 
 {% set image = paragraph.field_image_media.entity.field_media_image.entity.uri.value %}
+{% set variant = paragraph.field_variant.value|json_decode|default([]).hero %}
 
 {% include "@molecules/Hero/Hero.twig" with {
-  variant: 'content-bg',
+  variant: variant ? variant : 'content-bg',
   content_justify: 'left',
   bg_tint: 'accent-warm-dark-xx',
   background_image_url: file_url(image),
   card_data: {
     attributes: create_attribute(),
-    variant: "default",
+    variant: 'default',
     first_component: true,
     media: false,
     heading: paragraph.field_heading.value,
-    text: content.field_lead,
+    text: content.field_lead.0,
     button_data: {
       attributes: create_attribute(),
-      variant: "primary",
+      variant: 'primary',
       label: paragraph.field_link.title,
       href: paragraph.field_link.uri,
     }
-  }
+  },
+  navigation: cards
 } %}
