@@ -49,36 +49,25 @@
   {% else %}
     {% set custom_index = false %}
   {% endif %}
-
-  {% if item['#paragraph'].field_text.value != null %}
     {% set step = {
       title: item['#paragraph'].field_heading.value,
       body: {
         '#type': 'processed_text',
-        '#body': item['#paragraph'].field_text.value,
-        '#format': item['#paragraph'].field_text.format
+        '#text': item['#paragraph'].field_text.value !=null ? item['#paragraph'].field_text.value : '' ,
+        '#format': item['#paragraph'].field_text.format !=null ? item['#paragraph'].field_text.format : ''
       },
       index: custom_index
     } %}
-  {% endif %}
-  {% set step = {
-    title: item['#paragraph'].field_heading.value,
-    body: {
-      '#type': 'processed_text',
-      '#format': item['#paragraph'].field_text.format
-    },
-    index: custom_index
-  } %}
   {% set items = items|merge([step]) %}
 {% endfor %}
 
 {# Include the component template and pass in the structured data. #}
 {% include "@organisms/steps/steps.twig" with {
-    steps: {
-      heading: {
-        title: content.field_heading.0|render,
-        lead: content.field_lead|render
-      },
-      items: items,
-    }
+  steps: {
+    heading: {
+      title: content.field_heading.0|render,
+      lead: content.field_lead|render
+    },
+    items: items,
+  }
 } %}
