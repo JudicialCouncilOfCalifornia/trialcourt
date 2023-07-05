@@ -53,8 +53,8 @@
       title: item['#paragraph'].field_heading.value,
       body: {
         '#type': 'processed_text',
-        '#text': item['#paragraph'].field_text.value !=null ? item['#paragraph'].field_text.value : '' ,
-        '#format': item['#paragraph'].field_text.format !=null ? item['#paragraph'].field_text.format : ''
+        '#text': item['#paragraph'].field_text.value ?? '',
+        '#format': item['#paragraph'].field_text.format ?? ''
       },
       index: custom_index
     } %}
