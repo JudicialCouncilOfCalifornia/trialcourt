@@ -17,6 +17,7 @@ use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
+use Drupal\Core\Entity\EntityForm;
 
 /**
  * Implements hook_page_attachments().
@@ -580,4 +581,31 @@ function jcc_custom_build_menu_tree(array $tree): array {
  */
 function jcc_custom_is_elevated_site(): bool {
   return \Drupal::config('system.theme')->get('default') == 'jcc_elevated';
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ *
+ * Overriding the selection handler for redirect entity type.
+ */
+function jcc_custom_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  /** @var \Drupal\Core\Entity\EntityForm $form_object */
+  if ($form_state->getBuildInfo()['form_id'] == 'redirect_redirect_form') {
+    $form_object = $form_state->getFormObject();
+
+    if ($form_object instanceof EntityForm) {
+      $entity = $form_object->getEntity();
+      if ($entity->getEntityTypeId() == 'redirect') {
+        if (isset($context['widget'])) {
+          $type = get_class($context['widget']);
+          if (in_array($type, ['Drupal\linkit_field\Plugin\Field\FieldWidget\LinkitWidget',
+            'Drupal\link\Plugin\Field\FieldWidget\LinkWidget',
+          ])) {
+            $element['uri']['#selection_handler'] = 'jcc_custom:node';
+          }
+        }
+      }
+    }
+
+  }
 }
