@@ -1,0 +1,132 @@
+uuid: 565a797a-a2de-4a85-9895-4d4f3a3516a7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.card.field_background
+    - field.field.paragraph.card.field_brow
+    - field.field.paragraph.card.field_entire_card_clickable
+    - field.field.paragraph.card.field_heading
+    - field.field.paragraph.card.field_icon
+    - field.field.paragraph.card.field_link
+    - field.field.paragraph.card.field_link_multiple
+    - field.field.paragraph.card.field_media
+    - field.field.paragraph.card.field_media_alignment
+    - field.field.paragraph.card.field_show_media_caption
+    - field.field.paragraph.card.field_text
+    - paragraphs.paragraphs_type.card
+  module:
+    - jcc_courtyard_icons
+    - link
+    - linkit_field
+    - options
+    - text
+_core:
+  default_config_hash: qP30gfrZ7N2N3iErlpynj0o7aDvgSeV4ndSJp3WwFyo
+id: paragraph.card.default
+targetEntityType: paragraph
+bundle: card
+mode: default
+content:
+  field_background:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_brow:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_entire_card_clickable:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_heading:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_icon:
+    type: courtyard_icons_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_link:
+    type: linkit_field_linkit
+    label: hidden
+    settings:
+      trim_length: '80'
+      linkit_profile: default
+      url_only: false
+      url_plain: false
+      rel: 0
+      target: 0
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_link_multiple:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_media:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_media_alignment:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_show_media_caption:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_text:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true

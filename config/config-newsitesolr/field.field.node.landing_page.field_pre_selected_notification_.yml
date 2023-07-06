@@ -1,0 +1,36 @@
+uuid: 0a6d491f-978e-4e7b-8d0c-7583eeaf93b6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_pre_selected_notification_
+    - node.type.landing_page
+    - taxonomy.vocabulary.user_groups
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: PH5cG7ipCMZvFVYVYVN7qvfGtJFNMEb3I1zAfa7n3Ow
+id: node.landing_page.field_pre_selected_notification_
+field_name: field_pre_selected_notification_
+entity_type: node
+bundle: landing_page
+label: 'Pre-selected notification option'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      user_groups: user_groups
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

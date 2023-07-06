@@ -1,0 +1,36 @@
+uuid: 2fc10346-259a-4447-95f8-5ffb6ee5c203
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_category
+    - media.type.file
+    - taxonomy.vocabulary.media_file_category
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: N95y5e5T1sHyPHgmQeJMlxfyvkd2RGtTZxnMew5ZRGE
+id: media.file.field_category
+field_name: field_category
+entity_type: media
+bundle: file
+label: Category
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      media_file_category: media_file_category
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

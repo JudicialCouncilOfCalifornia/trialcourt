@@ -1,0 +1,51 @@
+uuid: 3b2aa949-fb7a-4c2c-a2d7-4b600aef2666
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_file_multiple
+    - media.type.publication
+  module:
+    - file
+    - filefield_paths
+    - tmgmt_content
+third_party_settings:
+  filefield_paths:
+    enabled: true
+    file_path:
+      value: '[date:custom:Y]-[date:custom:m]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    file_name:
+      value: '[file:ffp-name-only-original].[file:ffp-extension-original]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    redirect: false
+    retroactive_update: false
+    active_updating: false
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: O6_lEn9rebKPANFv2llRtxFvVfauB936Uco55RU6Wuw
+id: media.publication.field_media_file_multiple
+field_name: field_media_file_multiple
+entity_type: media
+bundle: publication
+label: 'Primary Files'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'txt doc docx pdf'
+  max_filesize: ''
+  description_field: false
+field_type: file

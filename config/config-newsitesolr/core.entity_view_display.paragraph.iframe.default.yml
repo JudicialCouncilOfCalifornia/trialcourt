@@ -1,0 +1,42 @@
+uuid: aaa27b75-1a60-49cb-a838-f6ed47b2164d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.iframe.field_aspect_ratio
+    - field.field.paragraph.iframe.field_link
+    - paragraphs.paragraphs_type.iframe
+  module:
+    - link
+    - options
+_core:
+  default_config_hash: bxf7SKAphMxmtn5Y7GzCjAoGKxG-zBOTYq-1-XYtpe4
+id: paragraph.iframe.default
+targetEntityType: paragraph
+bundle: iframe
+mode: default
+content:
+  field_aspect_ratio:
+    type: list_key
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_link:
+    type: link
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true

@@ -1,0 +1,46 @@
+uuid: 600a3866-e21e-4acc-883f-16ac60635683
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.content_stream.field_content_stream
+    - field.field.paragraph.content_stream.field_heading
+    - field.field.paragraph.content_stream.field_lead
+    - paragraphs.paragraphs_type.content_stream
+  module:
+    - block_field
+    - text
+_core:
+  default_config_hash: vZ8BxwDv4HjiFdbw8pwmDudYuzg5zn_KhA_l-JySVsc
+id: paragraph.content_stream.default
+targetEntityType: paragraph
+bundle: content_stream
+mode: default
+content:
+  field_content_stream:
+    type: block_field
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_heading:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_lead:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true

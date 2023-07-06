@@ -1,0 +1,47 @@
+uuid: 0fa1ece7-5c3c-4918-ad28-744694a417f9
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.news.body
+    - field.field.node.news.field_byline
+    - field.field.node.news.field_components
+    - field.field.node.news.field_date
+    - field.field.node.news.field_news_type
+    - node.type.news
+  module:
+    - datetime
+    - user
+_core:
+  default_config_hash: DnK00AzMElwdHq5Ch-ifJVyH_J-DYnaxeznpSGib8gQ
+id: node.news.teaser
+targetEntityType: node
+bundle: news
+mode: teaser
+content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
+  field_date:
+    type: datetime_default
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: m_d_y
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  body: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_byline: true
+  field_components: true
+  field_news_type: true
+  langcode: true
+  links: true
+  search_api_excerpt: true

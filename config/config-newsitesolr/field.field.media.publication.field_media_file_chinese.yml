@@ -1,0 +1,51 @@
+uuid: f14fa2ce-a748-494f-8bdd-e4a61f937ebb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_file_chinese
+    - media.type.publication
+  module:
+    - file
+    - filefield_paths
+    - tmgmt_content
+third_party_settings:
+  filefield_paths:
+    enabled: true
+    file_path:
+      value: '[date:custom:Y]-[date:custom:m]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    file_name:
+      value: '[file:ffp-name-only-original].[file:ffp-extension-original]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    redirect: false
+    retroactive_update: false
+    active_updating: false
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: 7KYBLmDCJwCMuBBollcpCOe2VRnRoPhHnJtNNuk6hUg
+id: media.publication.field_media_file_chinese
+field_name: field_media_file_chinese
+entity_type: media
+bundle: publication
+label: 'Chinese Traditional File'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'txt doc docx pdf'
+  max_filesize: ''
+  description_field: false
+field_type: file

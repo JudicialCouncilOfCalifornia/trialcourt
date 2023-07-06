@@ -1,0 +1,22 @@
+uuid: 84a928af-22c2-46dd-9cc0-79f65dfb1a9b
+langcode: en
+status: true
+dependencies:
+  config:
+    - media.type.boxcast_stream
+_core:
+  default_config_hash: wwGenqYSKNVZH6FT2PHAk591fW1PfrjCDYs-wnw8HVg
+id: media.boxcast_stream.uid
+field_name: uid
+entity_type: media
+bundle: boxcast_stream
+label: 'Authored by'
+description: 'The user ID of the author.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\media\Entity\Media::getDefaultEntityOwner'
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference

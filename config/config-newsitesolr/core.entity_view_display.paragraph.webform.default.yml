@@ -1,0 +1,47 @@
+uuid: 106f1dc9-331a-491f-9fc8-91428e9d949a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.webform.field_heading
+    - field.field.paragraph.webform.field_lead
+    - field.field.paragraph.webform.field_webform
+    - paragraphs.paragraphs_type.webform
+  module:
+    - text
+    - webform
+_core:
+  default_config_hash: sH5STJNOSFtsFsxS17AVN11aUqSlzn51mF6WuDguM98
+id: paragraph.webform.default
+targetEntityType: paragraph
+bundle: webform
+mode: default
+content:
+  field_heading:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_lead:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_webform:
+    type: webform_entity_reference_entity_view
+    label: hidden
+    settings:
+      source_entity: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true

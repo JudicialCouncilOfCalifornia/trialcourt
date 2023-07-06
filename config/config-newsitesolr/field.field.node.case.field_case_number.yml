@@ -1,0 +1,36 @@
+uuid: c9d6b9e5-9316-409b-836e-1f2aa987d6c0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_case_number
+    - node.type.case
+    - taxonomy.vocabulary.case_number
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: c20bWUumbVlzHN6Cfvv4UxG-OnhGlzoPu-vAebNfnrw
+id: node.case.field_case_number
+field_name: field_case_number
+entity_type: node
+bundle: case
+label: 'Case Number'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      case_number: case_number
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference

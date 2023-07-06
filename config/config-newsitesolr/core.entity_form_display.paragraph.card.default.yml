@@ -1,0 +1,165 @@
+uuid: eee6eecb-b490-474b-9cc2-eb19136d1d96
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.card.field_background
+    - field.field.paragraph.card.field_brow
+    - field.field.paragraph.card.field_entire_card_clickable
+    - field.field.paragraph.card.field_heading
+    - field.field.paragraph.card.field_icon
+    - field.field.paragraph.card.field_link
+    - field.field.paragraph.card.field_link_multiple
+    - field.field.paragraph.card.field_media
+    - field.field.paragraph.card.field_media_alignment
+    - field.field.paragraph.card.field_show_media_caption
+    - field.field.paragraph.card.field_text
+    - paragraphs.paragraphs_type.card
+  module:
+    - field_group
+    - jcc_courtyard_icons
+    - link
+    - linkit_field
+    - media_library
+    - text
+third_party_settings:
+  field_group:
+    group_button:
+      children:
+        - field_link
+        - field_entire_card_clickable
+        - field_link_multiple
+      label: Button
+      region: content
+      parent_name: ''
+      weight: 3
+      format_type: details
+      format_settings:
+        classes: ''
+        id: ''
+        open: false
+        description: ''
+        required_fields: true
+    group_media:
+      children:
+        - field_media
+        - field_media_alignment
+        - field_show_media_caption
+      label: Media
+      region: content
+      parent_name: ''
+      weight: 4
+      format_type: details
+      format_settings:
+        classes: ''
+        id: ''
+        open: false
+        description: ''
+        required_fields: true
+    group_background_color:
+      children:
+        - field_background
+      label: 'Background Color (Striped Cards)'
+      region: content
+      parent_name: ''
+      weight: 5
+      format_type: details
+      format_settings:
+        classes: ''
+        id: ''
+        open: false
+        description: ''
+        required_fields: true
+_core:
+  default_config_hash: jYaArdJFqwPzEK_qSYzaa-Z653XUK6hYd3l571i9viQ
+id: paragraph.card.default
+targetEntityType: paragraph
+bundle: card
+mode: default
+content:
+  field_background:
+    type: options_buttons
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_brow:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_entire_card_clickable:
+    type: boolean_checkbox
+    weight: 5
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_heading:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_icon:
+    type: courtyard_icons_widget
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_link:
+    type: linkit_field_linkit
+    weight: 4
+    region: content
+    settings:
+      linkit_profile: default
+    third_party_settings: {  }
+  field_link_multiple:
+    type: link_default
+    weight: 6
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_media:
+    type: media_library_widget
+    weight: 5
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_media_alignment:
+    type: options_select
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_show_media_caption:
+    type: boolean_checkbox
+    weight: 7
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_text:
+    type: text_textarea
+    weight: 2
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  translation:
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

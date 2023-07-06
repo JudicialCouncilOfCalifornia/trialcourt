@@ -1,0 +1,46 @@
+uuid: 80745034-88c6-44ac-82ce-df715f7df2b6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.judge.field_address
+    - field.field.node.judge.field_custom_link
+    - field.field.node.judge.field_department
+    - node.type.judge
+  module:
+    - address
+    - user
+_core:
+  default_config_hash: ww8C3Sj44wej4sPU8oVS275V_Ffarv8_-Ngl8f3MC48
+id: node.judge.default
+targetEntityType: node
+bundle: judge
+mode: default
+content:
+  field_address:
+    type: address_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_department:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_custom_link: true
+  langcode: true
+  search_api_excerpt: true

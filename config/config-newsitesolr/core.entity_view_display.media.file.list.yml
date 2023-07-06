@@ -1,0 +1,62 @@
+uuid: b52c9a0c-f3dd-4c5a-a0a9-81967582a11a
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.list
+    - field.field.media.file.field_category
+    - field.field.media.file.field_document_type
+    - field.field.media.file.field_matters_served
+    - field.field.media.file.field_media_file
+    - field.field.media.file.field_tags
+    - media.type.file
+  module:
+    - media_entity_download
+_core:
+  default_config_hash: CFMJDD7JN_Uj8D5YU99Vlf2153ixR_6KTwkErLBrbw0
+id: media.file.list
+targetEntityType: media
+bundle: file
+mode: list
+content:
+  field_document_type:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_media_file:
+    type: media_entity_download_download_link
+    label: visually_hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: '0'
+      target: '0'
+      disposition: inline
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  name:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_category: true
+  field_matters_served: true
+  field_tags: true
+  langcode: true
+  search_api_excerpt: true
+  thumbnail: true
+  uid: true

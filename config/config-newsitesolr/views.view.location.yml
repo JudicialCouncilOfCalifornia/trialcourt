@@ -1,0 +1,1008 @@
+uuid: 90e4f40f-bc8a-4f09-8c0a-6e44d594f33a
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.card
+    - core.entity_view_mode.node.teaser
+    - field.storage.node.field_geolocation
+    - field.storage.node.field_phone
+    - node.type.location
+  module:
+    - better_exposed_filters
+    - geolocation
+    - node
+    - telephone
+    - user
+_core:
+  default_config_hash: FtzlB8--QUNOTbcOqLDhWlxodLHTUm9jOPa5xPFE3xM
+id: location
+label: Location
+module: views
+description: ''
+tag: ''
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Master
+    display_plugin: default
+    position: 0
+    display_options:
+      title: Locations
+      fields: {  }
+      pager:
+        type: full
+        options:
+          offset: 0
+          items_per_page: 6
+          total_pages: null
+          id: 0
+          tags:
+            next: 'Next ›'
+            previous: '‹ Previous'
+            first: '« First'
+            last: 'Last »'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          quantity: 9
+      exposed_form:
+        type: bef
+        options:
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: basic_html
+          bef:
+            general:
+              autosubmit: true
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+            filter:
+              field_location_type_target_id:
+                plugin_id: bef
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: true
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      empty: {  }
+      sorts:
+        field_weight_value:
+          id: field_weight_value
+          table: node__field_weight
+          field: field_weight_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: field_weight_value
+          exposed: false
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: title
+          exposed: false
+      arguments: {  }
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            location: location
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        langcode:
+          id: langcode
+          table: node_field_data
+          field: langcode
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: langcode
+          plugin_id: language
+          operator: in
+          value:
+            '***LANGUAGE_language_interface***': '***LANGUAGE_language_interface***'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      style:
+        type: default
+        options:
+          row_class: ''
+          default_row_class: false
+          uses_fields: false
+      row:
+        type: 'entity:node'
+        options:
+          relationship: none
+          view_mode: teaser
+      query:
+        type: views_query
+        options:
+          query_comment: ''
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_tags: {  }
+      relationships: {  }
+      header: {  }
+      footer: {  }
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  list:
+    id: list
+    display_title: List
+    display_plugin: page
+    position: 2
+    display_options:
+      display_description: ''
+      display_extenders: {  }
+      path: locations
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  map_list:
+    id: map_list
+    display_title: 'Map with Mini List'
+    display_plugin: block
+    position: 2
+    display_options:
+      fields:
+        field_geolocation:
+          id: field_geolocation
+          table: node__field_geolocation
+          field: field_geolocation
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: geolocation_field
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: ''
+          type: geolocation_latlng
+          settings: {  }
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_phone:
+          id: field_phone
+          table: node__field_phone
+          field: field_phone
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: telephone_link
+          settings:
+            title: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+      pager:
+        type: none
+        options:
+          offset: 0
+      style:
+        type: maps_common
+        options:
+          data_provider_id: geolocation_field_provider
+          geolocation_field: field_geolocation
+          title_field: none
+          label_field: none
+          marker_row_number: 0
+          marker_icon_path: ''
+          even_empty: 1
+          centre:
+            fit_bounds:
+              enable: true
+              weight: -10
+              settings:
+                reset_zoom: false
+                min_zoom: 17
+              map_center_id: fit_bounds
+            client_location:
+              enable: true
+              weight: -9
+              map_center_id: client_location
+            fixed_boundaries:
+              enable: false
+              weight: -8
+              settings:
+                south: ''
+                west: ''
+                north: ''
+                east: ''
+              map_center_id: fixed_boundaries
+            first_row:
+              enable: false
+              weight: -7
+              settings:
+                location_option_id: first_row
+              map_center_id: location_plugins
+            fixed_value:
+              enable: false
+              weight: -6
+              settings:
+                location_option_id: fixed_value
+                latitude: null
+                longitude: null
+              map_center_id: location_plugins
+            freeogeoip:
+              enable: false
+              weight: -5
+              settings:
+                location_option_id: freeogeoip
+              map_center_id: location_plugins
+            ipstack:
+              enable: false
+              weight: -4
+              settings:
+                location_option_id: ipstack
+                access_key: ''
+              map_center_id: location_plugins
+          map_provider_id: leaflet
+          map_provider_settings:
+            map_features:
+              leaflet_control_layer:
+                weight: 0
+                settings:
+                  position: topright
+                  default_label: Default
+                  tile_layer_providers:
+                    OpenStreetMap:
+                      'OpenStreetMap Mapnik':
+                        checkbox: false
+                        label: ''
+                      'OpenStreetMap BlackAndWhite':
+                        checkbox: false
+                        label: ''
+                      'OpenStreetMap DE':
+                        checkbox: false
+                        label: ''
+                      'OpenStreetMap CH':
+                        checkbox: false
+                        label: ''
+                      'OpenStreetMap France':
+                        checkbox: false
+                        label: ''
+                      'OpenStreetMap HOT':
+                        checkbox: false
+                        label: ''
+                      'OpenStreetMap BZH':
+                        checkbox: false
+                        label: ''
+                    OpenTopoMap:
+                      OpenTopoMap:
+                        checkbox: false
+                        label: ''
+                    Thunderforest:
+                      'Thunderforest OpenCycleMap':
+                        checkbox: false
+                        label: ''
+                      'Thunderforest Transport':
+                        checkbox: false
+                        label: ''
+                      'Thunderforest TransportDark':
+                        checkbox: false
+                        label: ''
+                      'Thunderforest SpinalMap':
+                        checkbox: false
+                        label: ''
+                      'Thunderforest Landscape':
+                        checkbox: false
+                        label: ''
+                      'Thunderforest Outdoors':
+                        checkbox: false
+                        label: ''
+                      'Thunderforest Pioneer':
+                        checkbox: false
+                        label: ''
+                    OpenMapSurfer:
+                      'OpenMapSurfer Roads':
+                        checkbox: false
+                        label: ''
+                      'OpenMapSurfer Grayscale':
+                        checkbox: false
+                        label: ''
+                    Hydda:
+                      'Hydda Full':
+                        checkbox: false
+                        label: ''
+                      'Hydda Base':
+                        checkbox: false
+                        label: ''
+                    MapBox:
+                      MapBox:
+                        checkbox: false
+                        label: ''
+                    Stamen:
+                      'Stamen Toner':
+                        checkbox: false
+                        label: ''
+                      'Stamen TonerBackground':
+                        checkbox: false
+                        label: ''
+                      'Stamen TonerLite':
+                        checkbox: false
+                        label: ''
+                      'Stamen Watercolor':
+                        checkbox: false
+                        label: ''
+                      'Stamen Terrain':
+                        checkbox: false
+                        label: ''
+                      'Stamen TerrainBackground':
+                        checkbox: false
+                        label: ''
+                      'Stamen TopOSMRelief':
+                        checkbox: false
+                        label: ''
+                    Esri:
+                      'Esri WorldStreetMap':
+                        checkbox: false
+                        label: ''
+                      'Esri DeLorme':
+                        checkbox: false
+                        label: ''
+                      'Esri WorldTopoMap':
+                        checkbox: false
+                        label: ''
+                      'Esri WorldImagery':
+                        checkbox: false
+                        label: ''
+                      'Esri WorldTerrain':
+                        checkbox: false
+                        label: ''
+                      'Esri WorldShadedRelief':
+                        checkbox: false
+                        label: ''
+                      'Esri WorldPhysical':
+                        checkbox: false
+                        label: ''
+                      'Esri OceanBasemap':
+                        checkbox: false
+                        label: ''
+                      'Esri NatGeoWorldMap':
+                        checkbox: false
+                        label: ''
+                      'Esri WorldGrayCanvas':
+                        checkbox: false
+                        label: ''
+                    HERE:
+                      'HERE normalDay':
+                        checkbox: false
+                        label: ''
+                      'HERE normalDayCustom':
+                        checkbox: false
+                        label: ''
+                      'HERE normalDayGrey':
+                        checkbox: false
+                        label: ''
+                      'HERE normalDayMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE normalDayGreyMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE normalDayTransit':
+                        checkbox: false
+                        label: ''
+                      'HERE normalDayTransitMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE normalNight':
+                        checkbox: false
+                        label: ''
+                      'HERE normalNightMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE normalNightGrey':
+                        checkbox: false
+                        label: ''
+                      'HERE normalNightGreyMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE normalNightTransit':
+                        checkbox: false
+                        label: ''
+                      'HERE normalNightTransitMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE redcuedDay':
+                        checkbox: false
+                        label: ''
+                      'HERE redcuedNight':
+                        checkbox: false
+                        label: ''
+                      'HERE basicMap':
+                        checkbox: false
+                        label: ''
+                      'HERE mapLabels':
+                        checkbox: false
+                        label: ''
+                      'HERE trafficFlow':
+                        checkbox: false
+                        label: ''
+                      'HERE carnavDayGrey':
+                        checkbox: false
+                        label: ''
+                      'HERE hybridDayMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE hybridDayTransit':
+                        checkbox: false
+                        label: ''
+                      'HERE hybridDayGrey':
+                        checkbox: false
+                        label: ''
+                      'HERE pedestrianDay':
+                        checkbox: false
+                        label: ''
+                      'HERE pedestrianNight':
+                        checkbox: false
+                        label: ''
+                      'HERE satelliteDay':
+                        checkbox: false
+                        label: ''
+                      'HERE terrainDay':
+                        checkbox: false
+                        label: ''
+                      'HERE terrainDayMobile':
+                        checkbox: false
+                        label: ''
+                    FreeMapSK:
+                      FreeMapSK:
+                        checkbox: false
+                        label: ''
+                    MtbMap:
+                      MtbMap:
+                        checkbox: false
+                        label: ''
+                    CartoDB:
+                      'CartoDB Positron':
+                        checkbox: false
+                        label: ''
+                      'CartoDB PositronNoLabels':
+                        checkbox: false
+                        label: ''
+                      'CartoDB PositronOnlyLabels':
+                        checkbox: false
+                        label: ''
+                      'CartoDB DarkMatter':
+                        checkbox: false
+                        label: ''
+                      'CartoDB DarkMatterNoLabels':
+                        checkbox: false
+                        label: ''
+                      'CartoDB DarkMatterOnlyLabels':
+                        checkbox: false
+                        label: ''
+                      'CartoDB Voyager':
+                        checkbox: false
+                        label: ''
+                      'CartoDB VoyagerNoLabels':
+                        checkbox: false
+                        label: ''
+                      'CartoDB VoyagerOnlyLabels':
+                        checkbox: false
+                        label: ''
+                      'CartoDB VoyagerLabelsUnder':
+                        checkbox: false
+                        label: ''
+                    HikeBike:
+                      HikeBike:
+                        checkbox: false
+                        label: ''
+                      'HikeBike HillShading':
+                        checkbox: false
+                        label: ''
+                    BasemapAT:
+                      'BasemapAT basemap':
+                        checkbox: false
+                        label: ''
+                      'BasemapAT grau':
+                        checkbox: false
+                        label: ''
+                      'BasemapAT overlay':
+                        checkbox: false
+                        label: ''
+                      'BasemapAT highdpi':
+                        checkbox: false
+                        label: ''
+                      'BasemapAT orthofoto':
+                        checkbox: false
+                        label: ''
+                    NLS:
+                      NLS:
+                        checkbox: false
+                        label: ''
+                    Wikimedia:
+                      Wikimedia:
+                        checkbox: false
+                        label: ''
+                    GeoportailFrance:
+                      'GeoportailFrance parcels':
+                        checkbox: false
+                        label: ''
+                      'GeoportailFrance ignMaps':
+                        checkbox: false
+                        label: ''
+                      'GeoportailFrance maps':
+                        checkbox: false
+                        label: ''
+                      'GeoportailFrance orthos':
+                        checkbox: false
+                        label: ''
+                  tile_providers_options:
+                    Thunderforest:
+                      apikey: ''
+                    MapBox:
+                      accessToken: ''
+                    HERE:
+                      app_id: ''
+                      app_code: ''
+                    GeoportailFrance:
+                      apikey: ''
+                enabled: false
+              leaflet_tile_layer:
+                weight: 0
+                settings:
+                  tile_layer_provider: 'OpenStreetMap Mapnik'
+                  tile_provider_options:
+                    Thunderforest:
+                      apikey: ''
+                    MapBox:
+                      accessToken: ''
+                    HERE:
+                      app_id: ''
+                      app_code: ''
+                    GeoportailFrance:
+                      apikey: ''
+                enabled: false
+              leaflet_tile_layer_overlay:
+                weight: 0
+                settings:
+                  tile_layer_overlay: OpenInfraMap.Power
+                enabled: false
+              leaflet_custom_tile_layer:
+                weight: 0
+                settings:
+                  tile_layer_url: '//{s}.tile.osm.org/{z}/{x}/{y}.png'
+                  tile_layer_attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+                  tile_layer_subdomains: abc
+                  tile_layer_zoom: 18
+                enabled: false
+              leaflet_max_bounds:
+                weight: 0
+                settings:
+                  north: null
+                  south: null
+                  east: null
+                  west: null
+                enabled: false
+              leaflet_marker_zoom_and_animate:
+                weight: 0
+                settings:
+                  marker_zoom_anchor_id: ''
+                enabled: false
+              geolocation_marker_scroll_to_id:
+                weight: 0
+                settings:
+                  scroll_target_id: ''
+                enabled: false
+              leaflet_marker_popup:
+                weight: 0
+                settings:
+                  info_auto_display: false
+                enabled: true
+              leaflet_marker_icon:
+                weight: 0
+                settings:
+                  marker_shadow_path: ''
+                  marker_icon_path: ''
+                  icon_size:
+                    width: null
+                    height: null
+                  icon_anchor:
+                    x: null
+                    'y': null
+                  popup_anchor:
+                    x: 0
+                    'y': 0
+                  shadow_size:
+                    width: null
+                    height: null
+                  shadow_anchor:
+                    x: null
+                    'y': null
+                enabled: false
+              leaflet_marker_clusterer:
+                weight: 0
+                settings:
+                  cluster_settings:
+                    show_coverage_on_hover: true
+                    zoom_to_bounds_on_click: true
+                  disable_clustering_at_zoom: 0
+                enabled: false
+              leaflet_control_zoom:
+                weight: 0
+                settings:
+                  position: topright
+                enabled: false
+              leaflet_control_scale:
+                weight: 0
+                settings:
+                  position: topright
+                  metric: true
+                  imperial: true
+                enabled: false
+              leaflet_control_recenter:
+                weight: 0
+                settings:
+                  position: topright
+                enabled: false
+              leaflet_control_locate:
+                weight: 0
+                settings:
+                  position: topright
+                enabled: false
+              leaflet_control_geocoder:
+                weight: 0
+                settings:
+                  position: topright
+                  geocoder: photon
+                  settings:
+                    label: Address
+                    description: 'Enter an address to be localized.'
+                    autocomplete_min_length: 1
+                    location_priority:
+                      lat: null
+                      lng: null
+                    remove_duplicates: false
+                enabled: false
+              leaflet_control_fullscreen:
+                weight: 0
+                settings:
+                  position: topright
+                enabled: false
+              leaflet_gesture_handling:
+                weight: 0
+                enabled: true
+              leaflet_disable_user_interaction:
+                weight: 0
+                enabled: false
+              leaflet_client_location_indicator:
+                weight: 0
+                enabled: true
+              leaflet_wms:
+                weight: 0
+                settings:
+                  url: ''
+                  version: 1.1.1
+                  layers: ''
+                  styles: ''
+                  srs: ''
+                  format: image/jpeg
+                  transparent: false
+                  identify: false
+                enabled: false
+            zoom: '17'
+            height: 100%
+            width: 100%
+      row:
+        type: 'entity:node'
+        options:
+          relationship: none
+          view_mode: card
+      defaults:
+        pager: false
+        style: false
+        row: false
+        fields: false
+        header: false
+      display_description: ''
+      header:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text
+          empty: false
+          content:
+            value: '<a href="/locations">View Location Details</a>'
+            format: basic_html
+          tokenize: false
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:field.storage.node.field_geolocation'
+        - 'config:field.storage.node.field_phone'
+  map_list_attachment:
+    id: map_list_attachment
+    display_title: 'Mini List'
+    display_plugin: attachment
+    position: 3
+    display_options:
+      title: 'Location Mini List'
+      defaults:
+        title: false
+      display_description: ''
+      display_extenders: {  }
+      displays:
+        map_list: map_list
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
