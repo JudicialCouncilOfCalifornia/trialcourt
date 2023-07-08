@@ -55,3 +55,7 @@ To add a patch to drupal module `foobar` insert the patches section in the extra
     }
 }
 ```
+
+## Updating pantheon.yml for existing sites
+
+For existing sites, changes to the configuration file can only be deployed live through vendor's Dev > Test > Live process.
