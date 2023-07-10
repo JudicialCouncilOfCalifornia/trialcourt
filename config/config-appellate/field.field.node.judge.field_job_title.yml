@@ -1,0 +1,34 @@
+uuid: 497d2574-3289-4340-801a-c7e32faf71f1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_job_title
+    - node.type.judge
+    - taxonomy.vocabulary.job_title
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.judge.field_job_title
+field_name: field_job_title
+entity_type: node
+bundle: judge
+label: 'Job Title'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      job_title: job_title
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
