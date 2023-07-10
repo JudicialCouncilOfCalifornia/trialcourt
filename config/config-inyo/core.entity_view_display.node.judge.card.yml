@@ -1,19 +1,26 @@
-uuid: 42b77773-a3c7-494b-874c-5b4a44553ead
 langcode: en
 status: false
 dependencies:
   config:
     - core.entity_view_mode.node.card
+    - field.field.node.judge.body
     - field.field.node.judge.field_address
     - field.field.node.judge.field_custom_link
+    - field.field.node.judge.field_date
     - field.field.node.judge.field_department
+    - field.field.node.judge.field_division
+    - field.field.node.judge.field_job_title
+    - field.field.node.judge.field_location
+    - field.field.node.judge.field_media
+    - field.field.node.judge.field_media_file_multiple
+    - field.field.node.judge.field_person_type
+    - field.field.node.judge.field_retirement_date
+    - field.field.node.judge.field_tags
     - node.type.judge
   module:
     - address
     - link
     - user
-_core:
-  default_config_hash: WDxyNNNZntm2xQ7lY9d47BW5m8gZ1abnS5Eh7bZiz1g
 id: node.judge.card
 targetEntityType: node
 bundle: judge
@@ -52,8 +59,18 @@ content:
     weight: 0
     region: content
 hidden:
+  body: true
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
+  field_date: true
+  field_division: true
+  field_job_title: true
+  field_location: true
+  field_media: true
+  field_media_file_multiple: true
+  field_person_type: true
+  field_retirement_date: true
+  field_tags: true
   langcode: true
   search_api_excerpt: true
