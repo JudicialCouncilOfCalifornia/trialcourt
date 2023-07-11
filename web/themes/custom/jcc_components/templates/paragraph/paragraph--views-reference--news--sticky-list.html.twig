@@ -48,7 +48,7 @@
   {% set item = {
     title: row['#node'].title(),
     date: row['#node'].field_date.0.value|date('M d, Y'),
-    url: row['#node'].path.value.0.alias,
+    url: row['#lang'] == 'en' ? row['#node'].path.value.0.alias : row['#sticky'],
   } %}
   {% set primary_items = primary_items|merge([item]) %}
 {% endfor %}
@@ -58,7 +58,7 @@
   {% set item = {
     title: row['#node'].title(),
     date: row['#node'].field_date.0.value|date('M d, Y'),
-    url: row['#node'].path.value.0.alias
+    url: row['#lang'].langcode == 'en' ? row['#node'].path.value.0.alias : row['#sticky'],
   } %}
   {% set secondary_items = secondary_items|merge([item]) %}
 {% endfor %}
