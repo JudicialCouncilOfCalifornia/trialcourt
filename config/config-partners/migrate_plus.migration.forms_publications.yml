@@ -42,6 +42,10 @@ source:
       label: Body
       selector: body
     -
+      name: doctype
+      label: 'Document type'
+      selector: document_type
+    -
       name: cambodian_file
       label: 'Cambodian file'
       selector: cambodian_file
@@ -153,6 +157,16 @@ process:
     -
       plugin: migration_lookup
       migration: forms_file
+  field_document_type:
+    - plugin: explode
+      source: doctype
+      delimiter: ','
+    - plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: document_type
+      value_key: name
+      ignore_case: true
   field_media_file_arabic/target_id:
     -
       plugin: skip_on_empty
