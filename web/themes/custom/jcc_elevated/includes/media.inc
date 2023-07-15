@@ -5,7 +5,6 @@
  * Preprocess and functions for paragraphs.
  */
 
-use Drupal\core\Url;
 use Drupal\file\Entity\File;
 use Drupal\taxonomy\Entity\Term;
 
@@ -28,7 +27,7 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
             $file_name_parts = explode('.', $file->getFileName());
             $file_extension = end($file_name_parts);
             $documents[] = [
-              'url' => Url::fromUri($file_url),
+              'url' => $file_url,
               'file_type' => strtoupper($file_extension),
             ];
           }
@@ -40,7 +39,7 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
             $file = File::load($field->target_id);
             $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
             $languages[] = [
-              'url' => Url::fromUri($file_url),
+              'url' => $file_url,
               'label' => $label->label_in_language,
               'label_en' => $label->label_default,
             ];

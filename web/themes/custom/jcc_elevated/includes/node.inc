@@ -6,7 +6,10 @@
  */
 
 use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
 use Drupal\node\NodeInterface;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -145,5 +148,49 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
         'links' => jcc_custom_build_menu_tree($menu_build_tree['#items']),
       ];
     }
+  }
+}
+
+/**
+ * Node: Subpage preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_judge(array &$variables, NodeInterface $node) {
+  // Attachments.
+  foreach ($node->field_media_file_multiple as $media_file) {
+    $media = Media::load($media_file->target_id);
+    $media_name = $media->name->value;
+    $doc_type = Term::load($media->get('field_document_type')->target_id)->get('name')->value;
+    $file = File::load($media->get('field_media_file')->target_id);
+    $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+    if ($doc_type == 'Profile') {
+      $variables['profile_download'] = [
+        'url' => $file_url,
+        'file_name' => $media_name,
+      ];
+    }
+    $link = [
+      '#markup' => '<a href="' . $file_url . '">' . $media_name . '</a>',
+    ];
+    $documents[] = [
+      'text' => $link,
+    ];
+    $variables['documents'] = $documents;
+  }
+
+  // Tags.
+  foreach ($node->field_tags as $tag) {
+    $tid = $tag->target_id;
+    $term = Term::load($tid);
+    $tags[] = [
+      'variant' => 'default',
+      'label' => $term->name->value,
+      // Suppress url until tag browsing view implemented.
+    ];
+    $variables['tags'] = $tags;
   }
 }
