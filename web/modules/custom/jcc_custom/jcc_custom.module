@@ -87,6 +87,8 @@ function jcc_custom_editor_js_settings_alter(&$settings) {
  * Implements hook_form_alter().
  */
 function jcc_custom_form_alter(&$form, $form_state, $form_id) {
+  $theme = \Drupal::config('system.theme')->get('default');
+
   // The body field on these content types is only used for migration of
   // content and temporary display on the initial site build. Editors should
   // not have access.
@@ -133,6 +135,16 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       // See jcc_custom_editor_js_settings_alter why custom description.
       $form['filters']['status']['filter_html_image_secure']['#description'] = FieldFilteredMarkup::create(t('Disallows usage of &lt;img&gt; tag sources that are not hosted on this site by replacing them with a placeholder image. Disabling this setting will restrict Source editing to allowed roles.'));
 
+      break;
+
+    case 'node_judge_form':
+    case 'node_judge_edit_form':
+      if ($theme == 'jcc_elevated') {
+        unset($form['field_address']);
+      }
+      else {
+        unset($form['field_location']);
+      }
       break;
   }
 }

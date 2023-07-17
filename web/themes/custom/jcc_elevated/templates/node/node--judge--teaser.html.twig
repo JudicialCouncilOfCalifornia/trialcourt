@@ -1,0 +1,23 @@
+{{ attach_library("jcc_storybook/Icon") }}
+{{ attach_library("jcc_storybook/ProfileCard") }}
+
+{% set image %}
+  {% set media = node.field_media.entity.field_media_image.entity.uri.value %}
+  {% if media %}
+    <img src="{{ file_url(media) }}">
+  {% else %}
+    {% include "@atoms/Icon/Icon.twig" with {
+      icon: 'line-circle-person',
+      color: 'base',
+      icon_path: ' ',
+    } %}
+  {% endif %}
+{% endset %}
+
+{% include "@molecules/ProfileCard/ProfileCard.twig" with {
+  image:  image|raw,
+  name: label.0,
+  title: node.field_job_title.entity.label,
+  content: 'Since ' ~ node.field_date.value|date('Y'),
+  url: url,
+} %}
