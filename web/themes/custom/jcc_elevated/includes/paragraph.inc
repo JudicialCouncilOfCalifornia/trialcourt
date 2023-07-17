@@ -11,6 +11,7 @@ use Drupal\Core\Url;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
 use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -245,6 +246,11 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
       ];
     }
   }
+  if (!empty($paragraph->get('field_image_media'))) {
+    $cover_image = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
+    $image_url = ImageStyle::load('container_100_percent')->buildUrl($cover_image);
+    $variables['bckg_img_url'] = $image_url;
+  }
 }
 
 /**
@@ -278,6 +284,22 @@ function jcc_elevated_paragraph_hero_banner(array &$variables, ParagraphInterfac
         ],
       ];
     }
+  }
+}
+
+/**
+ * Helper function for section paragraph.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_elevated_paragraph_section(array &$variables, ParagraphInterface $paragraph) {
+  if ($paragraph->get('field_media')[0]->entity && !empty($paragraph->get('field_media'))) {
+    $cover_image = $paragraph->get('field_media')[0]->entity->get('field_media_image')[0]->entity->getFileUri();
+    $image_url = ImageStyle::load('container_100_percent')->buildUrl($cover_image);
+    $variables['bckg_img_url'] = $image_url;
   }
 }
 
