@@ -1,0 +1,18 @@
+{% extends 'node--judge.html.twig' %}
+
+{% set biography %}
+  {% block bio_component %}
+    {% set cta %}
+      {% set title = node.field_job_title.entity.label %}
+      {% set aria_label = 'View ' ~ title ~ label.0 ~ ' profile' %}
+      <a href="{{ url }}" class="button button--secondary button--normal" aria_label="{{ aria_label }}">View Profile</a>
+    {% endset %}
+    {% include "@molecules/ProfileBio/ProfileBio.twig" with {
+      name: label.0,
+      title: title,
+      division: node.field_division.entity.label,
+      date: 'Since ' ~ node.field_date.value|date('Y'),
+      content: cta,
+    } %}
+  {% endblock %}
+{% endset %}
