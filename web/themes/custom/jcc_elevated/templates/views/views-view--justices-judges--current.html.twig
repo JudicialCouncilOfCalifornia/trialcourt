@@ -1,0 +1,36 @@
+{{ attach_library("jcc_storybook/Icon") }}
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/ProfileCard") }}
+{{ attach_library("jcc_storybook/ProfileCards") }}
+
+{% set cards = [] %}
+{% for key, value in profiles %}
+  {% set division = key %}
+  {% set cards %}
+    {% for profile in value %}
+      {% if profile.image.field_media_image.entity.uri.value %}
+        {% set image %}
+          {% set media = profile.image.field_media_image.entity.uri.value %}
+            <img src="{{ file_url(media) }}">
+        {% endset %}
+      {% endif %}
+      {% include "@molecules/ProfileCard/ProfileCard.twig" with {
+        image: image ? image|raw : false,
+        placeholder: {
+          icon: 'justice-avatar',
+          icon_path: ' ',
+        },
+        name: profile.name,
+        title: profile.title,
+        content: profile.content,
+        url: profile.url,
+      } %}
+    {% endfor %}
+  {% endset %}
+
+  {% include "@organisms/ProfileCards/ProfileCards.twig" with {
+    variant: 'multiple',
+    heading: division != 'Unassigned' ? division : '',
+    sub_component_data: [cards],
+  } %}
+{% endfor %}
