@@ -246,7 +246,7 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
       ];
     }
   }
-  if (!empty($paragraph->get('field_image_media'))) {
+  if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
     $cover_image = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
     $image_url = ImageStyle::load('container_100_percent')->buildUrl($cover_image);
     $variables['bckg_img_url'] = $image_url;
