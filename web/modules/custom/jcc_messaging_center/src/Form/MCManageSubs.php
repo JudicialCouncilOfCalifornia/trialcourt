@@ -56,7 +56,6 @@ class MCManageSubs extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state, string $member_email = '', string $access_key = '') {
     $store = $this->tempstore->get('jcc_messaging_center');
     $token_value = $store->get('member_email_' . $member_email);
-//    $token_value = false;
 
     if (!($token_value == $access_key)){
       $form['temp1'] = [
@@ -75,13 +74,6 @@ class MCManageSubs extends FormBase {
         $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($group->tid);
         $user_groups[$group->tid] = $term->label();
       }
-
-      $form['temp2'] = [
-        '#prefix' => '<h2>',
-        '#suffix' => '</h2>',
-        '#markup' => t('token value : ' . $token_value),
-        '#weight' => -100,
-      ];
       $form['title_header'] = [
         '#prefix' => '<h2>',
         '#suffix' => '</h2>',
