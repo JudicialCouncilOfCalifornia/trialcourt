@@ -11,6 +11,7 @@ use Drupal\Component\Utility\Xss;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
+use Drupal\media\Entity\Media;
 use Drupal\views\ViewExecutable;
 use Drupal\taxonomy\Entity\Term;
 
@@ -101,8 +102,6 @@ function jcc_elevated_preprocess_views_view__alerts__alerts(&$variables) {
  * Implements hook_preprocess_HOOK() for publications listing.
  */
 function jcc_elevated_preprocess_views_view__publications__publications_list(&$variables) {
-  $bundle_manager = \Drupal::entityTypeManager()
-    ->getStorage('media_type');
   $render = \Drupal::service('renderer');
   $form = &$variables['exposed'];
 
@@ -143,7 +142,6 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     $label = $media->label();
     $description = $media->get('field_media_text')->getValue()[0]['value'] ?? '';
     $date = $media->get('field_date')->getValue()[0]['value'] ?? '';
-    $bundle = $bundle_manager->load($media->bundle())->label() ?? '';
 
     $topic = $media->get('field_topic')->referencedEntities() ? $media->get('field_topic')->referencedEntities()[0]->label() : NULL;
     $division = $media->get('field_division')->referencedEntities() ? $media->get('field_division')->referencedEntities()[0]->label() : NULL;
@@ -310,6 +308,57 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
       'url' => $item['#row']->_entity->toUrl()->toString(),
     ];
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for justices and judges block view.
+ */
+function jcc_elevated_preprocess_views_view__justices_judges__current(&$variables) {
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $persons = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $node = $row['#row']->_entity;
+    $media = $node->get('field_media')->target_id ? Media::load($node->get('field_media')->target_id) : '';
+    $name = $node->get('title')->value ? $node->get('title')->value : '';
+    $title = $node->get('field_job_title')->target_id ? Term::load($node->get('field_job_title')->target_id)->get('name')->value : '';
+    $division = $node->get('field_division')->target_id ? Term::load($node->get('field_division')->target_id)->get('name')->value : '';
+    $start_date = $node->field_date->date ? $node->field_date->date->format('Y') : '';
+    $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id());
+    $person = [
+      'image' => $media,
+      'name' => $name,
+      'title' => $title,
+      'division' => $division,
+      'content' => 'Since ' . $start_date,
+      'url' => $url,
+    ];
+    array_push($persons, $person);
+  }
+
+  // Group justices by division.
+  $profiles = [];
+  foreach ($persons as $person) {
+    if ($person['division']) {
+      $division = $person['division'];
+      $profiles[$division][] = $person;
+    }
+    else {
+      $profiles['Unassigned'][] = $person;
+    }
+  }
+
+  $variables['profiles'] = $profiles;
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for justices and judges block view.
+ */
+function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables) {
+  // Reuse current justices/judges preprocess since no difference.
+  jcc_elevated_preprocess_views_view__justices_judges__current($variables);
 }
 
 /**
