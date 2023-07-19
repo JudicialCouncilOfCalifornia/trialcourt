@@ -42,7 +42,7 @@
 {% set tiles = [] %}
 {% set variant = paragraph.field_variant.value|json_decode %}
 {% set image_uri = content.field_image_media is not empty ? content.field_image_media.0['#media'].field_media_image.entity.fileuri : NULL %}
-
+{% set photo_attribution = content.field_photo_attribution is not empty ? content.field_photo_attribution.0|render : NULL %}
 {% for icon_link in content.icon_links %}
   {% set item = {
     icon: {
@@ -61,11 +61,12 @@
     style: variant.hero_banner,
     images: {
       side: image_uri ? image_uri|image_style('hero_side'),
-      banner: image_uri ? image_uri|image_style('hero_banner')
+      banner: image_uri ? image_uri|image_style('hero_banner'),
+      signature_title: photo_attribution
     },
     title: {
       first: content.field_brow.0|render,
-      second: content.field_heading.0|render
+      second: content.field_heading.0|render,
     },
     tiles: tiles,
     classes: []
