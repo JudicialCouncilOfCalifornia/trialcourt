@@ -7,6 +7,7 @@ dependencies:
     - field.field.paragraph.hero_banner.field_heading
     - field.field.paragraph.hero_banner.field_image_media
     - field.field.paragraph.hero_banner.field_variant
+    - field.field.paragraph.hero_banner.field_photo_attribution
     - paragraphs.paragraphs_type.hero_banner
   module:
     - media_library
@@ -51,6 +52,18 @@ content:
     settings:
       media_types: {  }
     third_party_settings: {  }
+  field_photo_attribution:
+      type: string_textfield
+      weight: 4
+      region: content
+      settings:
+        size: 40
+        placeholder: ''
+      third_party_settings:
+        maxlength:
+          maxlength_js: null
+          maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+          maxlength_js_enforce: false
   field_variant:
     type: string_textfield
     weight: 0
@@ -60,7 +73,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
