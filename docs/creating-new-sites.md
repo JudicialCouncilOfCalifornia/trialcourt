@@ -30,6 +30,20 @@ After this runs it will give you instructions to set up the new Drupal instance 
   - settings.azure.php
   - settings.pantheon.php
   - settings.php
+    - Remove the following configurations if present:
+      ```
+      $databases['default']['default'] = array (
+        'database' => 'diversity-toolkit',
+        'username' => 'drupal8',
+        'password' => 'drupal8',
+        'prefix' => '',
+        'host' => 'database',
+        'port' => '3306',
+        'namespace' => 'Drupal\\mysql\\Driver\\Database\\mysql',
+        'driver' => 'mysql',
+        'autoload' => 'core/modules/mysql/src/Driver/Database/mysql/',
+      );
+      ```
 - Do initial configurations and export (@see Initial configurations)
 
 ## Initial configurations
@@ -69,7 +83,7 @@ Create Landing Page
 
 - Configure basic site information
   * `/admin/config/system/site-information`:
-  * Site Name: `Superior Court of California | County of ...`
+  * Site Name: `Superior Court of California | County of ...` (or California Courts | Site Name)
   * Site email: `no-reply@courtinfo.ca.gov`
   * Front page: `/node/1`  (or your home page if not node/1)
 - Configure Hat & Shoe
@@ -86,13 +100,13 @@ Create Landing Page
 - Configure Bing Maps API Key:
   * `/admin/config/system/geocoder/geocoder-provider`
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
-- Configure SendGrid:
+- Configure SendGrid (optional):
   * `/admin/config/system/keys/manage/sendgrid`
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
   * Note: site's email address needs to be `no-reply@courtinfo.ca.gov` for SendGrid to work.
 - Setup defaults for Google Tag module: (if available else later done)
   * `lando drush @local.[site] cim --partial --source=/app/web/modules/contrib/google_tag/config/install/`
-- Configure GoogleRecaptcha:
+- Configure GoogleRecaptcha (optional):
   * `/admin/config/people/captcha/recaptcha`
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
 - Configure OpenID with Azure Active Directory (optional)
@@ -108,17 +122,16 @@ Create Landing Page
   - `lando drush @local.[site] urol [role] [user,user,user]`
     - Roles: editor, manager, administrator, translator
 - Alternately you can add these commands to a `scripts/users.sh` file like so:
+  ```
+  #!/usr/bin/env bash
 
-```
-#!/usr/bin/env bash
+  [ -z $NEW ] && NEW=$1
 
-[ -z $NEW ] && NEW=$1
+  drush @local.${NEW} ucrt [name] --mail="[email]"
+  drush @local.${NEW} urol administrator [name,name,name]
+  ```
 
-drush @local.${NEW} ucrt [name] --mail="[email]"
-drush @local.${NEW} urol administrator [name,name,name]
-```
-
-This file is git ignored as it may vary from site to site, or based on what test users are needed.
+  This file is git ignored as it may vary from site to site, or based on what test users are needed.
 
 ### Final steps
 
@@ -128,7 +141,7 @@ This file is git ignored as it may vary from site to site, or based on what test
   - NOTES:  Initial deploy fails because of missing dev modules that are in the split configuration. This is due to db dump of local which has these modules enabled, trying to run on an env that doesn't have those modules.
   - `lando drush @local.[site] pmu devel masquerade stage_file_proxy features_ui twig_xdebug`
 
-- Export config
+- Export config & setup .gitignore
   - `lando drush @local.[site] cex -y`
   - `lando config-ignore` or `scripts/sync_config_ignore.sh`  Make sure this is run before you commit exported config. It will ignore the files that are managed by jcc_tc2_all_immutable_config feature module.
 
@@ -137,6 +150,8 @@ This file is git ignored as it may vary from site to site, or based on what test
 
 - Import the initial database dump to live environment to prepare pantheon for deployment.
 
+- Sync the database and files from live to Dev (not a typo), develop and stage on Pantheon.
+
 - Commit changes and deploy to appropriate environment(s) for testing and other pre-launch work. Live (master), is where content creation will happen pre-launch.
 
-- Sync the db and files from live to develop and stage on Pantheon.
+- After deploying to develop, merge develop to Dev since Pantheon's Solr, possibly other environment aspects, relies on that instance for initialization. Update this instance manually only as needed.

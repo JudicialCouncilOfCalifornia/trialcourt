@@ -1,0 +1,20 @@
+{{ attach_library("jcc_storybook/HeroHangover") }}
+
+{%
+  set classes = [
+    dom_id ? 'js-view-dom-id-' ~ dom_id,
+  ]
+%}
+
+<div{{ attributes.addClass(classes) }}>
+  {% include "@molecules/HeroHangover/HeroHangover.twig" with {
+    heading: feed_icons.0["#title"],
+    background: 'base-dark-x',
+  } %}
+
+  {{ rows.0 }}
+
+  {{ pager }}
+
+  {{ feed_icons }}
+</div>
