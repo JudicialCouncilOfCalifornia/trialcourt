@@ -166,20 +166,30 @@ function jcc_components_paragraph_views_reference(array &$variables, ParagraphIn
  *   The news view.
  */
 function jcc_components_paragraph_views_reference_news_sticky_list(array &$variables, ViewEntityInterface $view) {
+  $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $executable = $view ? $view->getExecutable() : NULL;
   // Start with the sticky_list display.
   $sticky_list = $executable ? $executable->setDisplay('sticky_list') : FALSE;
-  $display = $executable->executeDisplay();
+  $display = $executable->executeDisplay(); 
 
-  if ($sticky_list) {
-    $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
+  foreach ($display['#rows'][0]['#rows'] as &$row) {   
+    $nodeid = $row['#node']->id();
+    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);   
+    $row['#lang'] = $langcode;
+    if($langcode === "es") {
+    $prefixed_translated_path = '/' . $langcode . $translated_path;   
+    $row['#sticky'] = $prefixed_translated_path;    
+    }       
   }
+  if ($sticky_list) {  
+    $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];    
+  }  
   // Also get the More News path. Should be a node with path /news but fallback
   // to view url if it exists.
-  $view_url = !empty($executable->getUrl()) ? $executable->getUrl()->toString() : '';
+  $view_url = !empty($executable->getUrl()) ? $executable->getUrl()->toString() : ''; 
   $path = \Drupal::service('path.validator')->isValid('/news') ? '/news' : $view_url;
-
-  $variables['news_url'] = $path;
+ 
+  $variables['news_url'] = $path; 
   $variables['#cache']['tags'][] = 'node_list:news';
 }
 

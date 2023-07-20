@@ -37,7 +37,7 @@
     {% set items = items|merge([{
       title: {
         text: row['#node'].title.value,
-        url: row['#node'].path.value.0.alias,
+        url: row['#lang'] == 'en' ? row['#node'].path.value.0.alias : row['#sticky'],
       },
       summary: row['#node'].body.summary,
       date: row['#node'].field_date.0.value|date('F d, Y'),
