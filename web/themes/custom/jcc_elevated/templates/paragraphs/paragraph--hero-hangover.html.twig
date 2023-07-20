@@ -3,8 +3,9 @@
 
 {# Hangover Media #}
 {% set blurb = false %}
-{% set hangover_content %}
-  {% if card_media %}
+{% set hangover_content = false %}
+{% if card_media %}
+  {% set hangover_content %}
     {% include "@molecules/Card/Card.twig" with {
       variant: "bordered-center",
       aspect: [4, 3],
@@ -12,7 +13,9 @@
       background: null,
       media: card_media,
     } %}
-  {% elseif paragraph.field_hangover_blurb.value %}
+  {% endset %}
+{% elseif paragraph.field_hangover_blurb.value %}
+  {% set hangover_content %}
     {% include "@molecules/Card/Card.twig" with {
       variant: "bordered-center",
       aspect: [4, 3],
@@ -20,9 +23,10 @@
       background: null,
       text: content.field_hangover_blurb.0|render,
     } %}
-    {% set blurb = true %}
-  {% endif %}
-{% endset %}
+  {% endset %}
+  {% set blurb = true %}
+{% endif %}
+
 
 {% include "@molecules/HeroHangover/HeroHangover.twig" with {
   hangover_hide_compact: false,
