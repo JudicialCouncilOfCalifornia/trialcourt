@@ -6,8 +6,9 @@ dependencies:
     - field.field.paragraph.hero_banner.field_components
     - field.field.paragraph.hero_banner.field_heading
     - field.field.paragraph.hero_banner.field_image_media
-    - field.field.paragraph.hero_banner.field_variant
+    - field.field.paragraph.hero_banner.field_image_title
     - field.field.paragraph.hero_banner.field_photo_attribution
+    - field.field.paragraph.hero_banner.field_variant
     - paragraphs.paragraphs_type.hero_banner
   module:
     - media_library
@@ -27,7 +28,7 @@ content:
     third_party_settings: {  }
   field_components:
     type: entity_reference_paragraphs
-    weight: 5
+    weight: 6
     region: content
     settings:
       title: Link
@@ -52,9 +53,17 @@ content:
     settings:
       media_types: {  }
     third_party_settings: {  }
-  field_photo_attribution:
+  field_image_title:
       type: string_textfield
       weight: 4
+      region: content
+      settings:
+        size: 60
+        placeholder: ''
+      third_party_settings: { }
+  field_photo_attribution:
+      type: string_textfield
+      weight: 5
       region: content
       settings:
         size: 40
@@ -73,7 +82,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 6
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
