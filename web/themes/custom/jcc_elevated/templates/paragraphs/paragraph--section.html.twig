@@ -5,7 +5,11 @@
 {# Background image #}
 {% set background_url = '' %}
 {% if paragraph.field_media is not empty %}
-  {% set background_url = file_url(paragraph.field_media.entity.field_media_image.entity.fileuri) %}
+  {% if bckg_img_url is not null %}
+    {% set background_url = bckg_img_url %}
+  {% else %}
+    {% set background_url = file_url(paragraph.field_media.entity.field_media_image.entity.fileuri) %}
+  {% endif %}
 {% endif %}
 
 {# Button Data #}
