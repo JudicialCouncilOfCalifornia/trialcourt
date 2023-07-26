@@ -46,11 +46,11 @@ function jcc_video_embed_granicus_preprocess_paragraph(array &$variables) {
   if ($variables['paragraph']) {
     $paragraph = $variables['paragraph'];
     // Include view embed as lead content.
-    if ($paragraph->getType() == 'hero' && isset($paragraph->field_granicus_view_link_id)) {
+    if ($paragraph->getType() == 'hero' && isset($paragraph->field_granicus_view_link_id->value)) {
       $variables['#attached']['library'][] = 'jcc_storybook/Iframe';
       $variables['#attached']['library'][] = 'jcc_video_embed_granicus/jcc_video_embed_granicus';
       $lead = $paragraph->get('field_lead')->value ?? '';
-      $granicus_view_id = $paragraph->get('field_granicus_view_link_id')->value;
+      $granicus_view_id = $paragraph->field_granicus_view_link_id->value;
       $granicus_url = 'https://jcc.granicus.com/ViewPublisher.php?view_id=' . $granicus_view_id;
       $iframe_title = 'Granicus live cast';
       $link = '<div class="iframe"><iframe class="iframe--granicus-link" src="' . $granicus_url . '" title="' . $iframe_title . '"></iframe></div>';
