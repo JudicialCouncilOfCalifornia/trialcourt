@@ -6,6 +6,8 @@ dependencies:
     - field.field.paragraph.hero_banner.field_components
     - field.field.paragraph.hero_banner.field_heading
     - field.field.paragraph.hero_banner.field_image_media
+    - field.field.paragraph.hero_banner.field_image_title
+    - field.field.paragraph.hero_banner.field_photo_attribution
     - field.field.paragraph.hero_banner.field_variant
     - paragraphs.paragraphs_type.hero_banner
   module:
@@ -47,7 +49,23 @@ content:
       view_mode: default
       link: false
     third_party_settings: {  }
+    weight: 2
+    region: content
+  field_image_title:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: { }
     weight: 3
+    region: content
+  field_photo_attribution:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: { }
+    weight: 4
     region: content
 hidden:
   field_variant: true
