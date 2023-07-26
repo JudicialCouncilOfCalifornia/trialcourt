@@ -41,8 +41,9 @@
     {% set max = 4 %}
     {% set hearing = global.field_date_range %}
 
-    <h3 class="usa-card__heading">{{ hearing.end_value and hearing.end_value|date('Ymd') > hearing.value|date('Ymd') ? hearing.value|date('F j') ~ ' to ' ~ hearing.end_value|date('j, Y') : hearing.value|date('F j, Y') }} Argued Cases</h3>
+   <h3 class="usa-card__heading"> {{card_title}} </h3>
 
+   {% if show_documents %}
     {% set unique = [] %}
     {% for row in rows[0]['#rows'] if unique|length < max %}
       {% set item = row['#node'] %}
@@ -63,7 +64,9 @@
         {% set items = items|merge([case]) %}
       {% endif %}
     {% endfor %}
-
+    {% else %}
+    <p> Coming soon </p>  
+  {% endif %}
     {# Briefs page link #}
     {% if args_url %}
       {% set more_link = {

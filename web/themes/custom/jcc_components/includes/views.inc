@@ -390,6 +390,15 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
 
     // Return published oral arguments if available.
     $latest_oa = array_slice($oral_args, 0, 1);
+    if($latest_oa) {
+      $variables['show_documents'] = FALSE;
+      $variables['card_title'] = $latest_oa[0]->label();
+      $variables['subpage_pubdate'] = $latest_oa[0]->field_date->value;  
+      $formatted_hearing_date = $hearing_date->format('Y-m-d');     
+      if ( $formatted_hearing_date < $subpage_pubdate) {
+        $variables['show_documents'] = TRUE;
+      }     
+    }
     if ($latest_oa && str_contains($latest_oa[0]->label(), $hearing_date->format('F j'))) {
       $variables['args_url'] = $latest_oa[0]->toUrl()->toString();
     }
