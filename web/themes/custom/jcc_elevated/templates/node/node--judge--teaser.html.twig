@@ -1,0 +1,21 @@
+{{ attach_library("jcc_storybook/Icon") }}
+{{ attach_library("jcc_storybook/ProfileCard") }}
+
+{% if node.field_media.entity.field_media_image.entity.uri %}
+  {% set image %}
+    {% set media_uri = node.field_media.entity.field_media_image.entity.uri.value %}
+    <img src="{{ file_url(media_uri) }}">
+  {% endset %}
+{% endif %}
+
+{% include "@molecules/ProfileCard/ProfileCard.twig" with {
+  image: image ? image|raw : false,
+  placeholder: {
+    icon: 'justice-avatar',
+    icon_path: ' ',
+  },
+  name: label.0,
+  title: node.field_job_title.entity.label,
+  content: 'Since ' ~ node.field_date.value|date('Y'),
+  url: url,
+} %}
