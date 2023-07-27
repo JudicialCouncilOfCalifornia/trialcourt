@@ -66,18 +66,18 @@ function jcc_components_preprocess_views_view__news__sticky_list(&$variables) {
  */
 function jcc_components_preprocess_views_view__news__news_list(&$variables) {
   // Translation via TMGMT breaks dates where translators entered invlid date
-  // values in date fields. If date is invalid clear it before template renders. 
+  // values in date fields. If date is invalid clear it before template renders.
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
 
-  foreach ($variables['rows'][0]['#rows'] as &$row) {    
+  foreach ($variables['rows'][0]['#rows'] as &$row) {
     $node = $row['#node'];
     $nodeid = $node->id();
-    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);    
+    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $nodeid, $langcode);
     $row['#lang'] = $langcode;
-    if($langcode === "es") {
-      $prefixed_translated_path = '/' . $langcode . $translated_path;   
-      $row['#sticky'] = $prefixed_translated_path;    
-    }   
+    if ($langcode === "es") {
+      $prefixed_translated_path = '/' . $langcode . $translated_path;
+      $row['#sticky'] = $prefixed_translated_path;
+    }
     if (!jcc_components_validate_date($node->field_date->value)) {
       $node->field_date->value = '';
     }
@@ -400,14 +400,13 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
 
     // Return published oral arguments if available.
     $latest_oa = array_slice($oral_args, 0, 1);
-    if($latest_oa) {
-      $variables['show_documents'] = FALSE;
+    if ($latest_oa) {
       $variables['card_title'] = $latest_oa[0]->label();
-      $variables['subpage_pubdate'] = $latest_oa[0]->field_date->value;  
-      $formatted_hearing_date = $hearing_date->format('Y-m-d');     
-      if ( $formatted_hearing_date < $subpage_pubdate) {
+      $variables['subpage_pubdate'] = $latest_oa[0]->field_date->value;
+      $formatted_hearing_date = $hearing_date->format('Y-m-d');
+      if ($formatted_hearing_date < $subpage_pubdate) {
         $variables['show_documents'] = TRUE;
-      }     
+      }
     }
     if ($latest_oa && str_contains($latest_oa[0]->label(), $hearing_date->format('F j'))) {
       $variables['args_url'] = $latest_oa[0]->toUrl()->toString();
