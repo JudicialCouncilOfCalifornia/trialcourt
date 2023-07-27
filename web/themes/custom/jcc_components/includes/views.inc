@@ -12,6 +12,7 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\node\Entity\Node;
 use Drupal\views\ViewExecutable;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -65,9 +66,18 @@ function jcc_components_preprocess_views_view__news__sticky_list(&$variables) {
  */
 function jcc_components_preprocess_views_view__news__news_list(&$variables) {
   // Translation via TMGMT breaks dates where translators entered invlid date
-  // values in date fields. If date is invalid clear it before template renders.
-  foreach ($variables['rows'][0]['#rows'] as $row) {
+  // values in date fields. If date is invalid clear it before template renders. 
+  $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+
+  foreach ($variables['rows'][0]['#rows'] as &$row) {    
     $node = $row['#node'];
+    $nodeid = $node->id();
+    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);    
+    $row['#lang'] = $langcode;
+    if($langcode === "es") {
+      $prefixed_translated_path = '/' . $langcode . $translated_path;   
+      $row['#sticky'] = $prefixed_translated_path;    
+    }   
     if (!jcc_components_validate_date($node->field_date->value)) {
       $node->field_date->value = '';
     }
