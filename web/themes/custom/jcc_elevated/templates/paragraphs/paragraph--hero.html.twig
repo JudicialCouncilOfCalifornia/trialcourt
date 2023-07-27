@@ -4,10 +4,16 @@
 
 {% set variant = paragraph.field_variant.value|json_decode|default([]).hero %}
 
+{% if variant == 'banner' %}
+  {% set bg_tint = 'accent-warm-dark-xx' %}
+{% else %}
+  {% set bg_tint = false %}
+{% endif %}
+
 {% include "@molecules/Hero/Hero.twig" with {
   variant: variant ? variant : 'content-bg',
   content_justify: 'left',
-  bg_tint: 'accent-warm-dark-xx',
+  bg_tint: bg_tint,
   background_image_url: file_url(bckg_img_url),
   card_data: {
     attributes: create_attribute(),
