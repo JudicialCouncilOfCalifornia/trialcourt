@@ -31,7 +31,7 @@ source:
       type: string
   constants:
     uri_prefix: 'internal:'
-    document_path: documents/
+    document_path: '/system/files/'
     status_code: 301
 process:
   pseudo_base_path:
@@ -76,7 +76,6 @@ process:
     plugin: concat
     source:
       - constants/uri_prefix
-      - '@pseudo_base_path'
       - constants/document_path
       - '@pseudo_destination_filename'
   status_code: constants/status_code
