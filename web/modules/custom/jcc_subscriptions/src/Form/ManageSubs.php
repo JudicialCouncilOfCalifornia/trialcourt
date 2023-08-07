@@ -62,7 +62,7 @@ class ManageSubs extends FormBase {
     $store = $this->tempstore->get('jcc_subscriptions');
     $token_value = $store->get('member_email_' . $member_email);
 
-    if (!($token_value == $access_key)){
+    if (!($token_value == $access_key)) {
       $form['temp1'] = [
         '#prefix' => '<h2>',
         '#suffix' => '</h2>',
@@ -70,7 +70,8 @@ class ManageSubs extends FormBase {
         '#weight' => -100,
       ];
       jcc_subscriptions_send_email_from_error_management($member_email);
-    } else {
+    }
+    else {
       // Getting groups from myemma / only keeping ones with naming convention.
       $myemma_groups = $emma->list_groups();
       $form_groups = [];
@@ -167,7 +168,7 @@ class ManageSubs extends FormBase {
 /**
  * Send email through sendgrid after an unvalid token.
  *
- * @param string $member_email
+ * @param string $to_email
  *   Member email.
  */
 function jcc_subscriptions_send_email_from_error_management(string $to_email = '') {
