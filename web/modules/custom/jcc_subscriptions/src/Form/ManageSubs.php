@@ -10,6 +10,9 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use SendGrid\Client as SClient;
+use SendGrid\Email;
+
 /**
  * Deletes all groups from user.
  */
@@ -50,53 +53,66 @@ class ManageSubs extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, string $member_email = '') {
+  public function buildForm(array $form, FormStateInterface $form_state, string $member_email = '', string $access_key = '') {
 
     $emma_config = self::config('webform_myemma.settings');
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
     $user = $emma->get_member_detail_by_email($member_email);
 
-    // Getting groups from myemma / only keeping ones with naming convention.
-    $myemma_groups = $emma->list_groups();
-    $form_groups = [];
-    foreach ($myemma_groups as $group) {
-      if (strpos($group->group_name, 'Newsroom mailing') !== FALSE
-        && stripos($group->group_name, 'internal-only') == FALSE) {
-        $form_groups[$group->member_group_id] =
-          str_replace('Newsroom mailing ', '', $group->group_name);
+    $store = $this->tempstore->get('jcc_subscriptions');
+    $token_value = $store->get('member_email_' . $member_email);
+
+    if (!($token_value == $access_key)){
+      $form['temp1'] = [
+        '#prefix' => '<h2>',
+        '#suffix' => '</h2>',
+        '#markup' => t('This link is expired, we sent you a new email'),
+        '#weight' => -100,
+      ];
+      jcc_subscriptions_send_email_from_error_management($member_email);
+    } else {
+      // Getting groups from myemma / only keeping ones with naming convention.
+      $myemma_groups = $emma->list_groups();
+      $form_groups = [];
+      foreach ($myemma_groups as $group) {
+        if (strpos($group->group_name, 'Newsroom mailing') !== FALSE
+          && stripos($group->group_name, 'internal-only') == FALSE) {
+          $form_groups[$group->member_group_id] =
+            str_replace('Newsroom mailing ', '', $group->group_name);
+        }
       }
-    }
 
-    // Creating list of groups form myEmma.
-    $form['myemma_groups'] = [
-      '#type' => 'checkboxes',
-      '#options' => $form_groups,
-      '#title' => $this->t('Manage subscriptions:'),
-    ];
+      // Creating list of groups form myEmma.
+      $form['myemma_groups'] = [
+        '#type' => 'checkboxes',
+        '#options' => $form_groups,
+        '#title' => $this->t('Manage subscriptions:'),
+      ];
 
-    // Populating default values.
-    if (!isset($user->error)) {
-      // pre-populate active categories.
-      $emma_user_id = $user->member_id;
-      $user_groups_object = $emma->list_member_groups($emma_user_id);
-      $user_groups = [];
-      foreach ($user_groups_object as $group_objects) {
-        array_push($user_groups, $group_objects->member_group_id);
+      // Populating default values.
+      if (!isset($user->error)) {
+        // pre-populate active categories.
+        $emma_user_id = $user->member_id;
+        $user_groups_object = $emma->list_member_groups($emma_user_id);
+        $user_groups = [];
+        foreach ($user_groups_object as $group_objects) {
+          array_push($user_groups, $group_objects->member_group_id);
+        }
+        $form['myemma_groups']['#default_value'] = $user_groups;
       }
-      $form['myemma_groups']['#default_value'] = $user_groups;
+
+      $form['email'] = [
+        '#type' => 'value',
+        '#value' => $member_email,
+      ];
+
+      $form['actions']['#type'] = 'actions';
+      $form['actions']['submit'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Save'),
+        '#button_type' => 'primary',
+      ];
     }
-
-    $form['email'] = [
-      '#type' => 'value',
-      '#value' => $member_email,
-    ];
-
-    $form['actions']['#type'] = 'actions';
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Save'),
-      '#button_type' => 'primary',
-    ];
     return $form;
   }
 
@@ -143,12 +159,98 @@ class ManageSubs extends FormBase {
    *   The access result.
    */
   public function access(AccountInterface $account, string $member_email = '', string $access_key = '') {
-    $store = $this->tempstore->get('jcc_subscriptions');
-    $value = $store->get('member_email_' . $member_email);
-
-    return AccessResult::allowedIf(
-      $account->hasPermission('access content')
-      && ($access_key == $value || $account->getEmail() == $member_email));
+    return AccessResult::allowedIf($access_key != '' && $member_email != '');
   }
 
+}
+
+/**
+ * Send email through sendgrid after an unvalid token.
+ *
+ * @param string $member_email
+ *   Member email.
+ */
+function jcc_subscriptions_send_email_from_error_management(string $to_email = '') {
+  global $base_url;
+
+  $tempstore = \Drupal::service('tempstore.shared');
+  $store = $tempstore->get('jcc_subscriptions');
+
+  // Gathering emails to send emails to.
+  $email_to_sendgrid = [$to_email];
+  $id_to_sendgrid = [];
+  $email_access_keys = [];
+  $id_access_keys = [];
+
+  $email_key = user_password();
+  array_push($email_access_keys, $email_key);
+  $store->set('member_email_' . $to_email, $email_key);
+
+  // Getting from email.
+  if (!empty(\Drupal::service('key.repository')->getKey('newsroom_sendgrid'))) {
+    $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
+    $to = $sendgrid_conf['from_name'];
+    $sendgrid_api_key = \Drupal::service('key.repository')->getKey('newsroom_sendgrid')->getKeyValue();
+
+    $body = str_replace(
+      [
+        '%base_url%',
+        '%$email_key%',
+      ],
+      [
+        $base_url,
+        $email_key,
+      ],
+      '
+          <h2>Preferences management</h2>
+          <p>Please use the following link to update your preferences</p>
+          <br/>
+          <p><a href="%base_url%/subscriptions/%member_email%/manage/%email_key%">Manage your preferences</a><br>
+        '
+    );
+
+    // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
+    // Creating email object.
+    $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
+    $email = new Email();
+    $email->setSmtpapiTos($email_to_sendgrid)
+      ->setFrom($to)
+      ->setFromName(\Drupal::config('system.site')->get('name'))
+      ->setSubject('Preferences management')
+      ->setText('Preferences management')
+      ->setHtml($body)
+      ->addSubstitution('%member_id%', $id_to_sendgrid)
+      ->addSubstitution('%member_email%', $email_to_sendgrid)
+      ->addSubstitution('%id_key%', $id_access_keys)
+      ->addSubstitution('%email_key%', $email_access_keys)
+      ->addHeader('X-Sent-Using', 'SendGrid-API')
+      ->addHeader('X-Transport', 'web')
+      ->setCategories(
+        [
+          'Alert',
+          'Alert - Preferences Management',
+        ]
+      );
+
+    // Issue when simply calling $sendgrid->send($email);
+    // fix from https://www.drupal.org/project/sendgrid_integration/issues/3041660#comment-13784755
+    // Send an email using the template stored in SendGrid.
+    try {
+      $sendGridResponse = $sendgrid->send($email);
+
+      if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
+        \Drupal::messenger()->addMessage(t('Email successfully sent'));
+      }
+      else {
+        // Show error.
+        \Drupal::messenger()->addMessage(t('Email was not sent'));
+      }
+    }
+    catch (Exception $e) {
+      $eMessage = $e->getMessage();
+      if (strpos($eMessage, 'success') !== FALSE) {
+        \Drupal::logger('sendgrid_message')->notice('SendGrid: sent');
+      }
+    }
+  }
 }
