@@ -47,12 +47,15 @@
 {% set list_items = [] %}
 
 {% set row = sticky_list[0] %}
+{% set nodeUri = url('entity.node.canonical', {'node': row['#node'].id()}) %}
+
 {% set teaser = {
   brow_data: {
     part_one: row['#node'].field_news_type.0.entity.name.value,
     part_two: row['#node'].field_date.0.value|date('M d, Y'),
   },
   heading: row['#node'].title(),
+  href: nodeUri['#markup'],
   text: excerpts[0],
 } %}
 
@@ -75,7 +78,7 @@
 } %}
 
 {% include "@organisms/TeaserPlusList/TeaserPlusList.twig" with {
-    heading: 'Latest News',
+    heading: 'News and Announcements',
     teaser: teaser,
     list_items: list_items,
     button_data: button_data,
