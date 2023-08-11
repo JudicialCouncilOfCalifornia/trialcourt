@@ -1,0 +1,37 @@
+{#
+/**
+ * @file
+ * Default theme implementation for a select element.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the <select> tag.
+ * - options: The <option> element children.
+ * - custom_access: JCC values to set restictions for elevated sites.
+ *
+ * @see template_preprocess_select()
+ *
+ * @ingroup themeable
+ */
+#}
+{% apply spaceless %}
+  {# Allow first level placement by role if elevated site #}
+  {% set disable_select = false %}
+  <select{{ attributes }}>
+    {% for option in options %}}
+      {% if option.type == 'optgroup' %}
+        <optgroup label="{{ option.label }}">
+          {% for sub_option in option.options %}
+            <option value="{{ sub_option.value }}"{{ sub_option.selected ? ' selected="selected"' }}>{{ sub_option.label }}</option>
+          {% endfor %}
+        </optgroup>
+      {% elseif option.type == 'option' %}
+        {# Allow first level placement by role if elevated site #}
+        {% set disabled = false %}
+        {% if option.label == '<Main navigation>' and not custom_access.is_allowed %}
+          {% set disabled = true %}
+        {% endif %}
+        <option value="{{ option.value }}"{{ option.selected ? ' selected="selected"' }}{{ disabled ? ' disabled="true"' }}>{{ option.label }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+{% endapply %}
