@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_elevated_custom.module.
+ */
+
+use Drupal\Core\Site\Settings;
+
+/**
+ * Get the machine name of the site.
+ *
+ * @return string
+ *   Return the machine name of the site.
+ */
+function jcc_elevated_get_site_name() {
+  return Settings::get('jcc_elevated.site_machine_name') ?? \Drupal::state()->get('jcc_elevated.site_machine_name');
+}
+
+/**
+ * Get a specific JCC Elevated related setting.
+ *
+ * @return string|array
+ *   Return a specific jcc state setting value.
+ */
+function jcc_elevated_get_custom_setting($setting_name) {
+  return !$setting_name ? FALSE : jcc_elevated_get_custom_settings($setting_name);
+}
+
+/**
+ * Get JCC Elevated related settings.
+ *
+ * Add key names in jcc_elevated_keys().
+ *
+ * @return array
+ *   Returns all set jcc state settings and their values.
+ */
+function jcc_elevated_get_custom_settings($setting_name = NULL) {
+  $settings = [];
+  foreach (_jcc_elevated_custom_keys() as $name) {
+    $settings[$name] = \Drupal::state()->get($name);
+    if ($name == 'jcc_elevated.site_machine_name') {
+      $settings[$name] = jcc_elevated_get_site_name();
+    }
+  }
+
+  \Drupal::moduleHandler()->alter('jcc_elevated_settings', $settings);
+
+  return $setting_name ? $settings[$setting_name] : $settings;
+}
+
+/**
+ * Maintain a list of JCC Elevated related settings.
+ *
+ * These will be returned when jcc_elevated_get_custom_settings() is called.
+ *
+ * @return array
+ *   Return the specific keys for state values.
+ */
+function _jcc_elevated_custom_keys() {
+  return [
+    'jcc_elevated.site_machine_name',
+    'jcc_elevated.primary_menu',
+    'jcc_elevated.primary_menu_style',
+    'jcc_elevated.utility_menu',
+    'jcc_elevated.utility_menu_style',
+    'jcc_elevated.sidebar_menu_placement',
+    'jcc_elevated.sidebar_menu_style',
+    'jcc_elevated.sidebar_menu_types',
+    'jcc_elevated.section_menu_placement',
+    'jcc_elevated.section_menu_style',
+    'jcc_elevated.section_menu_types',
+  ];
+}
