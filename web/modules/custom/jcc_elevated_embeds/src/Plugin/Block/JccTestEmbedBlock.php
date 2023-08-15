@@ -4,6 +4,7 @@ namespace Drupal\jcc_elevated_embeds\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\AdminContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -15,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *  admin_label = @Translation("JCC Test Embed"),
  * )
  */
-class JccTestEmbedBlock extends BlockBase {
+class JccTestEmbedBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
    * The admin context.
