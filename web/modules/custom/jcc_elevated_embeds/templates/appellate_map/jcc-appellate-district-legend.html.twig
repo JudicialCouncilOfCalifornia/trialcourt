@@ -1,0 +1,46 @@
+{#
+/**
+* @file
+* Default theme implementation to display a block.
+*
+* @see template_preprocess_block()
+*
+* @ingroup themeable
+*/
+#}
+<div class="jcc-appellate-map__legend">
+  <div class="jcc-appellate-map__legend__container switcher">
+    <div class="jcc-appellate-map__legend__inner stack">
+
+      <div class="jcc-appellate-map__legend__heading">
+        <h2>{{ 'Legend'|t }}</h2>
+      </div>
+
+      <div class="jcc-appellate-map__legend__content stack" style="--gap: var(--s-5);">
+
+        {% for item in district_info %}
+          <details class="jcc-appellate-map__legend__detail"
+                   name="{{ item.district_id }}"
+                   data-district-id="{{ item.district_id }}"
+                   data-district-name="{{ item.district_name }}">
+            <summary>
+              <span class="jcc-appellate-map__legend__district-color-block" data-district-id="{{ item.district_id }}"></span>
+              {{ item.district_name }}
+              <span class="jcc-appellate-map__legend__icon"></span>
+            </summary>
+
+            <p>{{ "We serve @counties_list counties."|t({ '@counties_list': item.counties|join(', ', ' and ') }) }}</p>
+
+            {% if item.district_link_url is not empty %}
+              <a href="{{ item.district_link_url }}" class="jcc-appellate-map__legend__button button button--primary button--normal" _keys="class">{{ item.district_link_title }}</a>
+            {% endif %}
+          </details>
+        {% endfor %}
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
