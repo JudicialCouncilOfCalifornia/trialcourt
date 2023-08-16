@@ -191,3 +191,6 @@ else {
 if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
   include $app_root . '/' . $site_path . '/settings.local.php';
 }
+
+// Lock the site machine name for the site.
+$settings['jcc_elevated.site_machine_name'] = 'appellate';

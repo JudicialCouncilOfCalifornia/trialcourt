@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_elevated_embeds install and uninstall functionality.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function jcc_elevated_embeds_uninstall() {
+
+  // Delete the state variables.
+  Drupal::state()->delete('jcc_elevated_embeds.allowed_blocks');
+}
