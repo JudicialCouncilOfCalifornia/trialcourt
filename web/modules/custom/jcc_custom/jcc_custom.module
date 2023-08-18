@@ -651,12 +651,18 @@ function jcc_custom_preprocess_select__edit_menu_menu_parent(&$variables) {
   if (jcc_custom_is_elevated_site()) {
     $roles = \Drupal::currentUser()->getRoles();
     $is_allowed = array_intersect(['administrator'], $roles);
-    $node = \Drupal::routeMatch()->getParameter('node');
-    $url_alias = $node->toUrl()->toString();
-    $menu_level = substr_count($url_alias, '/');
-    // Disable parent link setting if first level & not allowed.
-    if ($menu_level == 1 && !$is_allowed) {
-      $variables['attributes']['disabled'] = 'true';
+    if (\Drupal::routeMatch()->getParameter('node')) {
+      $node = \Drupal::routeMatch()->getParameter('node');
+      $url_alias = $node->toUrl()->toString();
+      $menu_level = substr_count($url_alias, '/');
+      // Disable parent link setting if first level & not allowed.
+      if ($menu_level == 1 && !$is_allowed) {
+        $variables['attributes']['disabled'] = 'true';
+      }
+    }
+    else {
+      // Flag create time.
+      $variables['create_mode'] = TRUE;
     }
     // For option element since attribute not provided.
     $variables['is_allowed'] = $is_allowed;
@@ -667,22 +673,26 @@ function jcc_custom_preprocess_select__edit_menu_menu_parent(&$variables) {
  * Implements hook_preprocess_input().
  */
 function jcc_custom_preprocess_input(&$variables) {
-  switch ($variables['element']['#id']) {
-    case 'edit-menu-enabled':
-    case 'edit-menu-title':
-    case 'edit-menu-description':
-    case 'edit-menu-weight':
-      // Restrict other menu settings for elevated sites.
-      // Parent link is handled separately.
-      $node = \Drupal::routeMatch()->getParameter('node');
-      $url_alias = $node->toUrl()->toString();
-      $menu_level = substr_count($url_alias, '/');
-      $roles = \Drupal::currentUser()->getRoles();
-      $is_allowed = array_intersect(['administrator'], $roles);
-      // Disable all other menu settings if first level and not allowed.
-      if (jcc_custom_is_elevated_site() && $menu_level == 1 && !$is_allowed) {
-        $variables['attributes']['disabled'] = 'true';
-      }
-      break;
+  if (isset($variables['element']['#id'])) {
+    switch ($variables['element']['#id']) {
+      case 'edit-menu-enabled':
+      case 'edit-menu-title':
+      case 'edit-menu-description':
+      case 'edit-menu-weight':
+        // Restrict other menu settings for elevated sites.
+        // Parent link is handled separately.
+        if (\Drupal::routeMatch()->getParameter('node')) {
+          $node = \Drupal::routeMatch()->getParameter('node');
+          $url_alias = $node->toUrl()->toString();
+          $menu_level = substr_count($url_alias, '/');
+          $roles = \Drupal::currentUser()->getRoles();
+          $is_allowed = array_intersect(['administrator'], $roles);
+          // Disable all other menu settings if first level and not allowed.
+          if (jcc_custom_is_elevated_site() && $menu_level == 1 && !$is_allowed) {
+            $variables['attributes']['disabled'] = 'true';
+          }
+        }
+        break;
+    }
   }
 }
