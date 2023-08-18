@@ -6,7 +6,8 @@
  * Available variables:
  * - attributes: HTML attributes for the <select> tag.
  * - options: The <option> element children.
- * - custom_access: JCC values to set restictions for elevated sites.
+ * - create_mode: JCC flags if creating a new node.
+ * - is_allowed: JCC values to set granular restictions for elevated sites.
  *
  * @see template_preprocess_select()
  *
@@ -14,8 +15,6 @@
  */
 #}
 {% apply spaceless %}
-  {# Allow first level placement by role if elevated site #}
-  {% set disable_select = false %}
   <select{{ attributes }}>
     {% for option in options %}}
       {% if option.type == 'optgroup' %}
@@ -26,11 +25,16 @@
         </optgroup>
       {% elseif option.type == 'option' %}
         {# Allow first level placement by role if elevated site #}
+        {% set selected = option.selected %}
         {% set disabled = false %}
-        {% if option.label == '<Main navigation>' and not custom_access.is_allowed %}
+        {% if option.label == '<Main navigation>' and not is_allowed %}
+          {# Remove selection state when creating node. #}
+          {% if create_mode %}
+            {% set selected = false %}
+          {% endif %}
           {% set disabled = true %}
         {% endif %}
-        <option value="{{ option.value }}"{{ option.selected ? ' selected="selected"' }}{{ disabled ? ' disabled="true"' }}>{{ option.label }}</option>
+        <option value="{{ option.value }}"{{ selected ? ' selected="selected"' }}{{ disabled ? ' disabled="true"' }}>{{ option.label }}</option>
       {% endif %}
     {% endfor %}
   </select>
