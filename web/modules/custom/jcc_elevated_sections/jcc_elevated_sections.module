@@ -441,7 +441,7 @@ function jcc_elevated_sections_pathauto_alias_alter(&$alias, array &$context) {
   // Set some variables.
   $section_service = Drupal::service('jcc_elevated_sections.service');
 
-  // If a node and a sectionable node type.
+  // If a node and a sectionable node type, apply the prefix.
   if ($context['module'] == 'node' && $node = $context['data']['node']) {
 
     if ($section_service->isEntitySectionable($node) && $node->hasField('jcc_section')) {
@@ -459,6 +459,23 @@ function jcc_elevated_sections_pathauto_alias_alter(&$alias, array &$context) {
     }
   }
 
+  // If a media item and a sectionable media type, apply the prefix.
+  if ($context['module'] == 'media' && $media = $context['data']['media']) {
+
+    if ($section_service->isEntitySectionable($media) && $media->hasField('jcc_section')) {
+      $section_id = $media->get('jcc_section')->target_id;
+
+      if ($section_id && is_numeric($section_id)) {
+
+        // Get Section from the ID (Term ID) on the node, then get prefix.
+        $section = JccSection::load($section_id);
+        $prefix = trim($section->getSectionUrlPrefix());
+
+        // Update the alias to include the prefix.
+        $alias = !empty($prefix) ? $prefix . $alias : $alias;
+      }
+    }
+  }
 }
 
 /**
@@ -615,6 +632,24 @@ function jcc_elevated_sections_form_views_exposed_form_alter(&$form, FormStateIn
         '#options' => $options,
         '#default_value' => '',
       ];
+    }
+  }
+
+}
+
+/**
+ * Implements hook_form_views_exposed_form_alter().
+ */
+function jcc_elevated_sections_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  // Set some variables.
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+
+  if ($section_service->isEntitySectionable($entity)) {
+    $current_account = \Drupal::currentUser();
+    $user = \Drupal::entityTypeManager()->getStorage('user')->load($current_account->id());
+
+    if (!$section_service->userCanEditSectionsOnEntity($user, $entity)) {
+      unset($operations['translate']);
     }
   }
 
