@@ -118,7 +118,16 @@ class JccElevatedSectionSettingsForm extends FormBase {
       '#default_value' => $state['section_vocab_source'] ?? $section_vocab_source,
     ];
 
-    $form['section_allowed_types'] = [
+    $form['section_type_group'] = [
+      '#type' => 'details',
+      '#title' => $this
+        ->t('Content types'),
+      '#description' => $this
+        ->t('Select views to apply section contextual filtering, or add a filter to the exposed form filter (if it exists).'),
+      '#open' => TRUE,
+    ];
+
+    $form['section_type_group']['section_allowed_types'] = [
       '#type' => 'checkboxes',
       '#title' => $this
         ->t('Select content types'),
@@ -129,7 +138,16 @@ class JccElevatedSectionSettingsForm extends FormBase {
       '#default_value' => $state['section_allowed_types'] ?? [],
     ];
 
-    $form['section_allowed_media_types'] = [
+    $form['section_media_type_group'] = [
+      '#type' => 'details',
+      '#title' => $this
+        ->t('Media types'),
+      '#description' => $this
+        ->t('Select views to apply section contextual filtering, or add a filter to the exposed form filter (if it exists).'),
+      '#open' => TRUE,
+    ];
+
+    $form['section_media_type_group']['section_allowed_media_types'] = [
       '#type' => 'checkboxes',
       '#title' => $this
         ->t('Select media types'),
