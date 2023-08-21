@@ -24,7 +24,7 @@ function jcc_elevated_get_site_name() {
  *   Return a specific jcc state setting value.
  */
 function jcc_elevated_get_custom_setting($setting_name) {
-  return jcc_elevated_get_custom_settings($setting_name) ?? \Drupal::state()->get($setting_name);
+  return \Drupal::state()->get($setting_name) ?? NULL;
 }
 
 /**
@@ -46,7 +46,7 @@ function jcc_elevated_get_custom_settings($setting_name = NULL) {
 
   \Drupal::moduleHandler()->alter('jcc_elevated_settings', $settings);
 
-  return $setting_name ? $settings[$setting_name] : $settings;
+  return $settings[$setting_name] ?? $settings;
 }
 
 /**
