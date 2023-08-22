@@ -134,13 +134,13 @@ interface JccSectionServiceInterface {
    *
    * @param bool $as_links
    *   Option to return the human-readable list as direct links to the sections.
-   * @param bool $add_all_option
+   * @param bool $add_any_option
    *   Option to return the array with a generic "All" option as the first item.
    *
    * @return mixed
    *   Returns an array of sections, usable in select lists.
    */
-  public function getSectionOptionList(bool $as_links = FALSE, $add_all_option = FALSE);
+  public function getSectionOptionList(bool $as_links = FALSE, $add_any_option = FALSE);
 
   /**
    * Returns a loaded section given a section ID.

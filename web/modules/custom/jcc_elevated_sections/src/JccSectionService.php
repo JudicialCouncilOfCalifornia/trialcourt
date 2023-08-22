@@ -157,7 +157,7 @@ class JccSectionService implements JccSectionServiceInterface {
    */
   public function getSectionForNode(NodeInterface $node) {
     $value = $node->get('jcc_section')->getValue();
-    return $value[0] ?? FALSE;
+    return $value[0]['target_id'] ?? FALSE;
   }
 
   /**
@@ -165,7 +165,7 @@ class JccSectionService implements JccSectionServiceInterface {
    */
   public function getSectionForMedia(MediaInterface $media) {
     $value = $media->get('jcc_section')->getValue();
-    return $value[0] ?? FALSE;
+    return $value[0]['target_id'] ?? FALSE;
   }
 
   /**
@@ -242,9 +242,10 @@ class JccSectionService implements JccSectionServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getSectionOptionList(bool $as_links = FALSE, $add_all_option = FALSE) {
-    $terms = $add_all_option ? ['' => 'All'] : [];
+  public function getSectionOptionList(bool $as_links = FALSE, $add_any_option = FALSE) {
+    $terms = [];
     $options = ['query' => $this->redirectDestination->getAsArray()];
+
     foreach ($this->getSections() as $term) {
       $terms[$term->id()] = $as_links ?
         $term->toLink($term->label(), 'edit-form', $options)->toString() :
@@ -326,7 +327,12 @@ class JccSectionService implements JccSectionServiceInterface {
    */
   public function isViewSectionable($view_name_display): bool {
     $views = $this->state->get('jcc_elevated.section_applied_views', []);
-    return (bool) isset($views[$view_name_display]) && $views[$view_name_display] == $view_name_display;
+
+    if (isset($views[$view_name_display])) {
+      return empty($views[$view_name_display]) ? FALSE : TRUE;
+    }
+
+    return FALSE;
   }
 
 }

@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\jcc_elevated_sections\Entity\JccSection;
@@ -583,9 +584,18 @@ function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id,
 
   if ($section_service->isViewSectionable($view_name_display)) {
 
+    $role_list = [];
+    $roles = Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
+    foreach ($roles as $role) {
+      $role_list[$role] = $role == 'authenticated' ? 'authenticated' : 0;
+    }
+
     // Grab the filter options from the view and set a new one.
     $filters = $view->display_handler->getOption('filters');
+
     $filters['jcc_section'] = $filter_info;
+    $filters['jcc_section']['expose']['remember_roles'] = $role_list;
+
     $view->display_handler->overrideOption('filters', $filters);
 
     if ($node = \Drupal::routeMatch()->getParameter('node')) {
@@ -594,7 +604,7 @@ function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id,
 
           // Grab the filter options from the view and set a new one.
           $filters = $view->display_handler->getOption('filters');
-          $filters['jcc_section'] = $filter_info;
+          // $filters['jcc_section'] = $filter_info;
           $view->display_handler->overrideOption('filters', $filters);
         }
       }
@@ -614,16 +624,23 @@ function jcc_elevated_sections_form_views_exposed_form_alter(&$form, FormStateIn
   $view_name_display = $name . ':' . $display;
   $section_service = Drupal::service('jcc_elevated_sections.service');
 
+  // Add the section filtering if the view is assigned to have a filter.
   if ($section_service->isViewSectionable($view_name_display)) {
 
-    // Add the section filtering if the view is assigned to have a filter.
-    $options = $section_service->getSectionOptionList(FALSE, TRUE);
-    if (!empty($options)) {
+    $route = \Drupal::routeMatch()->getRouteObject();
+    $is_admin = \Drupal::service('router.admin_context')->isAdminRoute($route);
+    $options[''] = $is_admin ? t('- Any -') : t('- Section -');
+
+    if (!empty($section_service->getSections())) {
+
+      foreach ($section_service->getSections() as $term) {
+        $options[$term->id()] = $term->label();
+      }
 
       $form['#info']['filter-jcc_section'] = [
         'operator' => 'jcc_section_op',
         'value' => 'jcc_section',
-        'label' => 'JCC Section',
+        'label' => 'Section',
         'description' => '',
       ];
 
@@ -632,13 +649,15 @@ function jcc_elevated_sections_form_views_exposed_form_alter(&$form, FormStateIn
         '#options' => $options,
         '#default_value' => '',
       ];
+
+      unset($form['jcc_section']['#options']['All']);
     }
   }
 
 }
 
 /**
- * Implements hook_form_views_exposed_form_alter().
+ * Implements hook_entity_operation_alter().
  */
 function jcc_elevated_sections_entity_operation_alter(array &$operations, EntityInterface $entity) {
   // Set some variables.
@@ -653,4 +672,89 @@ function jcc_elevated_sections_entity_operation_alter(array &$operations, Entity
     }
   }
 
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function jcc_elevated_sections_preprocess_page(array &$variables) {
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+  $node_manager = \Drupal::entityTypeManager()->getStorage('node');
+  $route_match = \Drupal::routeMatch();
+  $route = $route_match->getRouteObject();
+  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute($route);
+  $variables['section_navigation'] = FALSE;
+
+  // If we are on a node, and not on the admin side, and the node is of a type
+  // that can be sectioned.
+  if (!$is_admin && $node = $route_match->getParameter('node')) {
+    if ($section_service->isNodeSectionable($node->bundle())) {
+
+      // We need to get the homepage source of the section for the given node.
+      $sid = $section_service->getSectionForNode($node);
+      $section = $section_service->getSectionInfo($sid);
+
+      if ($section) {
+        $section_homepage_nid = $section->getSectionHomepage();
+        $section_homepage = $node_manager->load($section_homepage_nid);
+
+        // Build out the relevant menu tree. This depends on the current page
+        // being in a menu and only on subpages.
+        $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
+        $section_links = $menu_link_manager->loadLinksByRoute('entity.node.canonical', ['node' => $section_homepage_nid]);
+        $menu_id = array_key_first($section_links);
+
+        $params = new MenuTreeParameters();
+        $params->setRoot($menu_id);
+        $params->setActiveTrail([$menu_id, reset($section_links)->getPluginId()]);
+
+        $menu_tree = \Drupal::menuTree();
+        $tree = $menu_tree->load($menu_id, $params);
+        $tree = $menu_tree->transform($tree, [
+          ['callable' => 'menu.default_tree_manipulators:checkNodeAccess'],
+          ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+          ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+        ]);
+
+        $menu_build = $menu_tree->build($tree);
+
+        // If we have a menu that can be built.
+        if (!empty($menu_build)) {
+
+          // Create our storybook component friendly sidebar navigation.
+          if (!empty($menu_build['#items'][$menu_id]['below'])) {
+
+            // We render the sublinks of the node/menu item designated as the
+            // section homepage.
+            $links = $menu_build['#items'][$menu_id]['below'];
+
+            // Set caches to trigger on landing and subpage changes.
+            $variables['section_navigation'] = [
+              'section_heading' => $section_homepage->label(),
+              'links' => jcc_elevated_sections_build_menu_tree($links),
+            ];
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Helper function to build a storybook compatible menu tree.
+ */
+function jcc_elevated_sections_build_menu_tree(array $tree): array {
+  $items = [];
+  foreach ($tree as $menu_data) {
+    if (!empty($menu_data['url'])) {
+      $items[] = [
+        'text' => $menu_data['title'],
+        'url' => $menu_data['url'],
+        'attributes' => !empty($menu_data['attributes']) ? $menu_data['attributes']->toArray() : [],
+        'active' => $menu_data['in_active_trail'],
+        'links' => $menu_data['below'] ? jcc_elevated_sections_build_menu_tree($menu_data['below']) : [],
+      ];
+    }
+  }
+  return $items;
 }

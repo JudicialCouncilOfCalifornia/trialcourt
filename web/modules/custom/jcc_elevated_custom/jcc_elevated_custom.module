@@ -72,3 +72,10 @@ function _jcc_elevated_custom_keys() {
     'jcc_elevated.section_menu_types',
   ];
 }
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function jcc_elevated_custom_preprocess_page(array &$variables) {
+  $variables['#attached']['library'][] = 'jcc_elevated_custom/jcc-elevated-custom';
+}

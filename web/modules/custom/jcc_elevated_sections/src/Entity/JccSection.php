@@ -28,7 +28,7 @@ class JccSection extends Term {
    * Get the NID of the Section Homepage.
    */
   public function getSectionHomepage() {
-    return $this->hasField('jcc_section_homepage') ? $this->get('jcc_section_homepage')->value : FALSE;
+    return $this->hasField('jcc_section_homepage') ? $this->get('jcc_section_homepage')->target_id : FALSE;
   }
 
   /**
