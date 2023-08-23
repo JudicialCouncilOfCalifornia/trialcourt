@@ -58,6 +58,9 @@
 {{ attach_library("jcc_storybook/Shoe") }}
 {{ attach_library("jcc_storybook/Button") }}
 
+{{ attach_library("jcc_storybook/RulesFormatting") }}
+{{ attach_library("jcc_storybook/LegalFormatting") }}
+
 <div class="layout-container">
   {% include "@molecules/Hat/Hat.twig" with {
     variant: "default",
@@ -90,7 +93,9 @@
         variant: "no-toggle",
         form: search_form_mobile,
       },
+      variant: "default",
       links: main_links,
+      mobile_links: mobile_main_links,
     },
     secondary_nav_data: {
       variant: "with-divider",

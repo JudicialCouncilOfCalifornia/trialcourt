@@ -37,8 +37,14 @@ function jcc_elevated_preprocess_page(&$variables) {
     'second' => theme_get_setting('site_name_second', 'jcc_elevated'),
   ];
 
-  $variables['main_links'] = jcc_elevated_get_menu_array('main', TRUE);
+  // Primary navigation and mobile version of links.
+  $variables['main_links'] = jcc_elevated_get_menu_array('main', FALSE);
+  $variables['mobile_main_links'] = jcc_elevated_get_menu_array('main', TRUE);
+
+  // Utility/featured links.
   $variables['featured_links'] = jcc_elevated_get_menu_array('featured-links');
+
+  // Footer menu links.
   $variables['footer_links'] = jcc_elevated_get_menu_array('footer');
 
   $variables['search_form'] = jcc_elevated_build_header_search_form();
@@ -147,7 +153,7 @@ function jcc_elevated_menu_to_array(array $tree, string $menu_name, bool $add_ov
   $links = [];
 
   foreach ($tree as $element) {
-    // Don't include links the user doesnt' have access to.
+    // Don't include links the user doesn't have access to.
     if (!$element->access->isAllowed()) {
       continue;
     }
@@ -167,6 +173,9 @@ function jcc_elevated_menu_to_array(array $tree, string $menu_name, bool $add_ov
       ];
 
       array_unshift($sublinks, $section_link);
+    }
+    elseif ($menu_name == 'main' && $element->depth = 1 && $element->hasChildren) {
+      $sublinks = jcc_elevated_menu_to_array($element->subtree, $menu_name, $add_overview_links);
     }
 
     $links[] = [
