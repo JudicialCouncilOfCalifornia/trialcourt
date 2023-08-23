@@ -334,11 +334,25 @@ function jcc_elevated_paragraph_action_list(array &$variables) {
   $paragraph = $variables['paragraph']->get('field_components')->getValue();
   foreach ($paragraph as $key => $element) {
     $action_item = Paragraph::load($element['target_id']);
+
+    $action_items[$key]['label'] = '';
+    if ($action_item->hasField('field_heading')) {
+      if ($heading_element = $action_item->get('field_heading')->getValue()) {
+        $action_items[$key]['label'] = $heading_element[0]['value'];
+      }
+    }
+
+    $action_items[$key]['description'] = '';
+    if ($action_item->hasField('field_text')) {
+      if ($text_element = $action_item->get('field_text')->getValue()) {
+        $action_items[$key]['description'] = $action_item->field_text->view('default');
+      }
+    }
+
     if ($action_item->hasField('field_link')) {
       if ($link_element = $action_item->get('field_link')->getValue()) {
-        $action_items[$key]['label'] = $link_element[0]['title'];
         $action_items[$key]['button_data']['href'] = $link_element[0]['uri'];
-        $action_items[$key]['button_data']['label'] = 'Learn More';
+        $action_items[$key]['button_data']['label'] = $link_element[0]['title'] ?? t('Learn More');
       }
     }
   }
