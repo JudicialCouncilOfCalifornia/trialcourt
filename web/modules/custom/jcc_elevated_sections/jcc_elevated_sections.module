@@ -705,7 +705,7 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
         $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
         $section_links = $menu_link_manager->loadLinksByRoute('entity.node.canonical', ['node' => $section_homepage_nid]);
 
-        if (!empty($selection_links)) {
+        if (!empty($section_links)) {
           $menu_id = array_key_first($section_links);
 
           $params = new MenuTreeParameters();
