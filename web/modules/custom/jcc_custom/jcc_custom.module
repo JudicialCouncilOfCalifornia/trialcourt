@@ -156,6 +156,8 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
   $theme = \Drupal::config('system.theme')->get('default');
   // If elevated theme is not in use by all sites.
   if ($theme == 'jcc_elevated') {
+    $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
+
     switch ($element['#paragraph_type']) {
       case 'hero':
         unset($element['subform']['field_subheading']);
