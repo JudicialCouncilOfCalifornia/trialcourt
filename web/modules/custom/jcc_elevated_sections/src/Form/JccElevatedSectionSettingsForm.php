@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\State\StateInterface;
+use Drupal\Core\Url;
 use Drupal\jcc_elevated_sections\Constants\JccSectionConstants;
 use Drupal\views\Views;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -107,16 +108,32 @@ class JccElevatedSectionSettingsForm extends FormBase {
         ->t('Configure settings for the grouping/sectioning of the site.'),
     ];
 
+    $options = $this->getVocabularyList();
     $form['section_vocab_source'] = [
       '#type' => 'select',
       '#title' => $this
         ->t('Select source'),
       '#description' => $this
         ->t('Select the taxonomy vocabulary that will be the source of section data.'),
-      '#options' => $this
-        ->getVocabularyList(),
+      '#options' => $options,
       '#default_value' => $state['section_vocab_source'] ?? $section_vocab_source,
     ];
+
+    if ($state['section_vocab_source']) {
+      $route_parameters = ['taxonomy_vocabulary' => $state['section_vocab_source']];
+      $url_options = [
+        'query' => $this->redirectDestination->getAsArray(),
+        'attributes' => [
+          'class' => 'button button--secondary',
+        ],
+      ];
+      $form['link_to_vocab'] = [
+        '#type' => 'link',
+        '#title' => $this
+          ->t('Manage the @name taxonomy', ['@name' => $options[$state['section_vocab_source']]]),
+        '#url' => Url::fromRoute('entity.taxonomy_vocabulary.overview_form', $route_parameters, $url_options),
+      ];
+    }
 
     $form['section_type_group'] = [
       '#type' => 'details',

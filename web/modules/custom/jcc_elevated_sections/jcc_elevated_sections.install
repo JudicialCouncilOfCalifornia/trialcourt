@@ -55,6 +55,7 @@ function jcc_elevated_sections_install() {
   $site_section_vocabulary = JccSectionConstants::JCC_SECTIONS_DEFAULT_SOURCE_ID;
   $term_manager = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
+  // For initial build and testing only. These should be removed before release.
   $terms_to_create = [
     'district_1' => [
       'name' => 'District 1',
@@ -88,16 +89,20 @@ function jcc_elevated_sections_install() {
     ],
   ];
 
-  foreach ($terms_to_create as $term) {
+  if (!empty($terms_to_create)) {
 
-    $new_term = $term_manager->create([
-      'vid' => $site_section_vocabulary,
-      'name' => $term['name'],
-      'jcc_section_machine_name' => $term['jcc_section_machine_name'],
-      'jcc_section_url_prefix' => $term['jcc_section_url_prefix'],
-    ]);
+    foreach ($terms_to_create as $term) {
 
-    $new_term->save();
+      $new_term = $term_manager->create([
+        'vid' => $site_section_vocabulary,
+        'name' => $term['name'],
+        'jcc_section_machine_name' => $term['jcc_section_machine_name'],
+        'jcc_section_url_prefix' => $term['jcc_section_url_prefix'],
+      ]);
+
+      $new_term->save();
+    }
+
   }
 
 }
