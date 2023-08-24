@@ -730,8 +730,8 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
 
             // Set caches to trigger on landing and subpage changes.
             $variables['section_navigation'] = [
-              'section_heading' => $section_homepage->label(),
-              'links' => jcc_elevated_sections_build_menu_tree($links),
+              'section_heading' => $section->label(),
+              'links' => jcc_elevated_sections_build_menu_tree($links, $section_homepage, $section),
             ];
           }
         }
@@ -743,8 +743,20 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
 /**
  * Helper function to build a storybook compatible menu tree.
  */
-function jcc_elevated_sections_build_menu_tree(array $tree): array {
+function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $section = FALSE): array {
   $items = [];
+
+  if ($add_home) {
+    $home = $add_home;
+    $items[] = [
+      'text' => $home->label(),
+      'url' => $home->toUrl(),
+      'attributes' => [],
+      'active' => FALSE,
+      'links' => [],
+    ];
+  }
+
   foreach ($tree as $menu_data) {
     if (!empty($menu_data['url'])) {
       $items[] = [
