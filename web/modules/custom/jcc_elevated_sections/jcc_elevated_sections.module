@@ -586,8 +586,10 @@ function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id,
 
     $role_list = [];
     $roles = Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
-    foreach ($roles as $role) {
-      $role_list[$role] = $role == 'authenticated' ? 'authenticated' : 0;
+    if (!empty($roles)) {
+      foreach ($roles as $role) {
+        $role_list[$role] = $role == 'authenticated' ? 'authenticated' : 0;
+      }
     }
 
     // Grab the filter options from the view and set a new one.
