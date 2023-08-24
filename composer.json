@@ -147,7 +147,7 @@
         }
     },
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.0",
         "ckeditor-plugin/a11ychecker": "^1.1.1",
         "ckeditor-plugin/balloonpanel": "^4.14",
         "ckeditor-plugin/templates": "^4.13",
@@ -357,7 +357,9 @@
             "drupal/console-extend-plugin": true,
             "drupal/core-composer-scaffold": true,
             "oomphinc/composer-installers-extender": true,
-            "zaporylie/composer-drupal-optimizations": true
+            "zaporylie/composer-drupal-optimizations": true,
+            "dealerdirect/phpcodesniffer-composer-installer": false,
+            "php-http/discovery": false
         }
     },
     "autoload": {
@@ -417,12 +419,6 @@
                 "Enable Needs Translation on moderated content.": "https://www.drupal.org/files/issues/2022-02-01/2950626-14.patch",
                 "Recursive rendering images when they are 20+": "https://www.drupal.org/files/issues/2021-09-24/3151977-d9-media-recursive-rendering.patch"
             },
-            "drupal/scheduler_content_moderation_integration": {
-                "Undefined offset bug.": "https://www.drupal.org/files/issues/2020-02-19/undefined_offset_node_creation-3077147-12.patch"
-            },
-            "drupal/mimemail": {
-                "Seeing errors when sending a mail with files attached as file contents": "https://www.drupal.org/files/issues/2022-02-28/mimemail_attachment_errors-2904611-39.patch"
-            },
             "drupal/devel": {
                 "Fix devel count() warning in php 7.2": "patches/devel-count-warning.patch"
             },
@@ -440,21 +436,15 @@
                 "Core version requirement.": "https://www.drupal.org/files/issues/2020-11-12/core_version_requirement_issue-3182162-2.patch"
             },
             "drupal/redirect": {
-                "Allowing wildcards": "https://www.drupal.org/files/issues/2020-09-21/support-for-wildcards-2831605-56.patch",
-                "Redirect source path widget validation prevents creating redirects that vary by query string": "https://www.drupal.org/files/issues/2021-02-19/redirect_source_path-2803105-20.patch"
+                "Allowing wildcards": "https://www.drupal.org/files/issues/2020-09-21/support-for-wildcards-2831605-56.patch"
             },
             "drupal/video_embed_field": {
                 "Allow creation of new video media entities using the Media Browser": "https://www.drupal.org/files/issues/2020-06-20/vef-3039873-media-library-add-32.patch"
             },
-            "drupal/google_tag": {
-                "Accessibility support for noscript iframe": "https://www.drupal.org/files/issues/2020-01-07/google_tag_iframe_title.patch"
-            },
+           
             "drupal/autocomplete_deluxe": {
                 "Allow multiple references with same title": "https://www.drupal.org/files/issues/2019-07-25/3053986_4.patch",
                 "undefined-autocomplete-data-key": "https://www.drupal.org/files/issues/2022-06-09/undefined-autocomplete-data-key-3284962-2.patch"
-            },
-            "drupal/geolocation": {
-                "Fix leaflet gestures loading": "https://www.drupal.org/files/issues/2020-05-27/3143304-2-leaflet-library.patch"
             },
             "drupal/sendgrid_integration": {
                 "Sendgrid email attachments": "https://www.drupal.org/files/issues/2020-12-21/2983707-18.patch"
@@ -472,6 +462,12 @@
             },
             "drupal/easy_breadcrumb": {
                 "D10 Backport: Reformat string configs as arrays": "patches/3218690-reformat-string-config-as-arrays-12.patch"
+            },
+            "laminas" : {
+                "Laminas upgrade issue": "https://www.drupal.org/files/issues/2023-05-03/d95-php82-3354670-24.patch"
+            },
+            "deprecated fix for php upgrade": {
+                "deprecated methods fix" : "https://www.drupal.org/files/issues/2023-03-24/3259716-67.patch"
             }
         },
         "installer-paths": {
