@@ -78,4 +78,20 @@ function _jcc_elevated_custom_keys() {
  */
 function jcc_elevated_custom_preprocess_page(array &$variables) {
   $variables['#attached']['library'][] = 'jcc_elevated_custom/jcc-elevated-custom';
+
+  // Set the variable in case it's not yet set.
+  if (!isset($variables['section_navigation'])) {
+    $variables['section_navigation'] = FALSE;
+  }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function jcc_elevated_custom_preprocess_node(array &$variables) {
+
+  // Set the variable in case it's not yet set.
+  if (!isset($variables['sidebar_navigation'])) {
+    $variables['section_navigation'] = FALSE;
+  }
 }
