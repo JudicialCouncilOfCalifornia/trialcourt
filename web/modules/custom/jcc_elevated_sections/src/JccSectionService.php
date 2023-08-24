@@ -259,6 +259,10 @@ class JccSectionService implements JccSectionServiceInterface {
    * {@inheritdoc}
    */
   public function getSectionInfo($id) {
+    if (!is_numeric($id)) {
+      return FALSE;
+    }
+
     return $this->entityTypeManager->getStorage('taxonomy_term')->load($id) ?? FALSE;
   }
 
@@ -295,7 +299,7 @@ class JccSectionService implements JccSectionServiceInterface {
    */
   public function isNodeSectionable($bundle): bool {
     $bundles = $this->state->get('jcc_elevated.section_allowed_types', []);
-    return (bool) $bundles[$bundle] && $bundles[$bundle] == $bundle;
+    return (bool) isset($bundles[$bundle]) && $bundles[$bundle] == $bundle;
   }
 
   /**
@@ -303,7 +307,7 @@ class JccSectionService implements JccSectionServiceInterface {
    */
   public function isMediaSectionable($bundle): bool {
     $bundles = $this->state->get('jcc_elevated.section_allowed_media_types', []);
-    return (bool) $bundles[$bundle] && $bundles[$bundle] == $bundle;
+    return (bool) isset($bundles[$bundle]) && $bundles[$bundle] == $bundle;
   }
 
   /**

@@ -704,37 +704,43 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
         // being in a menu and only on subpages.
         $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
         $section_links = $menu_link_manager->loadLinksByRoute('entity.node.canonical', ['node' => $section_homepage_nid]);
-        $menu_id = array_key_first($section_links);
 
-        $params = new MenuTreeParameters();
-        $params->setRoot($menu_id);
-        $params->setActiveTrail([$menu_id, reset($section_links)->getPluginId()]);
+        if (!empty($selection_links)) {
+          $menu_id = array_key_first($section_links);
 
-        $menu_tree = \Drupal::menuTree();
-        $tree = $menu_tree->load($menu_id, $params);
-        $tree = $menu_tree->transform($tree, [
-          ['callable' => 'menu.default_tree_manipulators:checkNodeAccess'],
-          ['callable' => 'menu.default_tree_manipulators:checkAccess'],
-          ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
-        ]);
+          $params = new MenuTreeParameters();
+          $params->setRoot($menu_id);
+          $params->setActiveTrail([
+            $menu_id,
+            reset($section_links)->getPluginId(),
+          ]);
 
-        $menu_build = $menu_tree->build($tree);
+          $menu_tree = \Drupal::menuTree();
+          $tree = $menu_tree->load($menu_id, $params);
+          $tree = $menu_tree->transform($tree, [
+            ['callable' => 'menu.default_tree_manipulators:checkNodeAccess'],
+            ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+            ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+          ]);
 
-        // If we have a menu that can be built.
-        if (!empty($menu_build)) {
+          $menu_build = $menu_tree->build($tree);
 
-          // Create our storybook component friendly sidebar navigation.
-          if (!empty($menu_build['#items'][$menu_id]['below'])) {
+          // If we have a menu that can be built.
+          if (!empty($menu_build)) {
 
-            // We render the sublinks of the node/menu item designated as the
-            // section homepage.
-            $links = $menu_build['#items'][$menu_id]['below'];
+            // Create our storybook component friendly sidebar navigation.
+            if (!empty($menu_build['#items'][$menu_id]['below'])) {
 
-            // Set caches to trigger on landing and subpage changes.
-            $variables['section_navigation'] = [
-              'section_heading' => $section->label(),
-              'links' => jcc_elevated_sections_build_menu_tree($links, $section_homepage, $section),
-            ];
+              // We render the sublinks of the node/menu item designated as the
+              // section homepage.
+              $links = $menu_build['#items'][$menu_id]['below'];
+
+              // Set caches to trigger on landing and subpage changes.
+              $variables['section_navigation'] = [
+                'section_heading' => $section->label(),
+                'links' => jcc_elevated_sections_build_menu_tree($links, $section_homepage, $section),
+              ];
+            }
           }
         }
       }
