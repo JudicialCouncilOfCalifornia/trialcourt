@@ -1,0 +1,13 @@
+diff --git a/devel.module b/devel.module
+index 9b6abf2..57fe2bd 100644
+--- a/devel.module
++++ b/devel.module
+@@ -159,7 +159,7 @@ function devel_set_message($msg, $type = NULL) {
+  */
+ function devel_get_handlers() {
+   $error_handlers = \Drupal::config('devel.settings')->get('error_handlers');
+-  if (!empty($error_handlers)) {
++  if (is_array($error_handlers) && !empty($error_handlers)) {  
+     unset($error_handlers[DEVEL_ERROR_HANDLER_NONE]);
+   }
+   return $error_handlers;

@@ -125,7 +125,8 @@ function jcc_components_paragraph_hero_banner(array &$variables, ParagraphInterf
 
     if (!empty($component->field_icon)) {
       $card_icon = !empty($component->field_icon->view('default')[0]) ? $component->field_icon->view('default')[0] : NULL;
-      $card_icon = str_replace("-dark", "-white", $card_icon);
+      //Fix for warning Array to string conversion (php upgrade to 8.1)
+      $card_icon = str_replace("-dark", "-white", $card_icon['#icon_set']);
       $variables['content']['icon_links'][] = [
         'icon' => $card_icon,
         'link' => !empty($component->field_link->view('default')[0]) ? $component->field_link->view('default')[0] : NULL,
