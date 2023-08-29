@@ -333,7 +333,7 @@ class JccSectionService implements JccSectionServiceInterface {
     $views = $this->state->get('jcc_elevated.section_applied_views', []);
 
     if (isset($views[$view_name_display])) {
-      return empty($views[$view_name_display]) ? FALSE : TRUE;
+      return !empty($views[$view_name_display]);
     }
 
     return FALSE;

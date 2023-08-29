@@ -495,7 +495,7 @@ function jcc_elevated_sections_entity_access(EntityInterface $entity, $operation
 
       // See if user has restricted general editing.
       $restrict = $user->get('jcc_restrict')->getValue();
-      $user_can_only_edit_matching_section_content = $restrict[0]['value'];
+      $user_can_only_edit_matching_section_content = $restrict[0]['value'] ?? FALSE;
 
       // Check if entity has a section applied.
       $entity_has_section = (bool) $section_service->getSectionForEntity($entity);
@@ -588,7 +588,7 @@ function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id,
     $roles = Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
     if (!empty($roles)) {
       foreach ($roles as $role) {
-        $role_list[$role] = $role == 'authenticated' ? 'authenticated' : 0;
+        $role_list[$role->id()] = $role->id() == 'authenticated' ? 'authenticated' : 0;
       }
     }
 
