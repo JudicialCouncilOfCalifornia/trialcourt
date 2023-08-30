@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\State\StateInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\jcc_elevated_sections\Constants\JccSectionConstants;
 use Drupal\media\MediaInterface;
 use Drupal\node\NodeInterface;
@@ -17,6 +18,8 @@ use Drupal\node\NodeInterface;
  * @package Drupal\jcc_elevated_sections\Services
  */
 class JccSectionService implements JccSectionServiceInterface {
+
+  use StringTranslationTrait;
 
   /**
    * Drupal\Core\Entity\EntityTypeManagerInterface definition.
@@ -262,6 +265,10 @@ class JccSectionService implements JccSectionServiceInterface {
     $terms = [];
     $options = ['query' => $this->redirectDestination->getAsArray()];
 
+    if ($add_any_option) {
+      $terms['_none'] = $this->t('- No Section (General Content) -');
+    }
+
     foreach ($this->getSections() as $term) {
       $terms[$term->id()] = $as_links ?
         $term->toLink($term->label(), 'edit-form', $options)->toString() :
@@ -322,7 +329,7 @@ class JccSectionService implements JccSectionServiceInterface {
    */
   public function isNodeSectionable($bundle): bool {
     $bundles = $this->state->get('jcc_elevated.section_allowed_types', []);
-    return (bool) isset($bundles[$bundle]) && $bundles[$bundle] == $bundle;
+    return (bool) isset($bundles[$bundle]) && $bundles[$bundle] != FALSE;
   }
 
   /**
@@ -330,7 +337,7 @@ class JccSectionService implements JccSectionServiceInterface {
    */
   public function isMediaSectionable($bundle): bool {
     $bundles = $this->state->get('jcc_elevated.section_allowed_media_types', []);
-    return (bool) isset($bundles[$bundle]) && $bundles[$bundle] == $bundle;
+    return (bool) isset($bundles[$bundle]) && $bundles[$bundle] != FALSE;
   }
 
   /**
