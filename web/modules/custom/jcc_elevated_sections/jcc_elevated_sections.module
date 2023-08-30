@@ -283,7 +283,6 @@ function jcc_elevated_sections_form_node_form_alter(&$form, FormStateInterface $
   $entity_manager = \Drupal::entityTypeManager();
   $account = \Drupal::currentUser();
   $user = $entity_manager->getStorage('user')->load($account->id());
-  $form['#tree'] = TRUE;
 
   // Determine if Node type is sectionable.
   $is_sectionable = $section_service->isNodeSectionable($node->bundle());
@@ -348,7 +347,6 @@ function jcc_elevated_sections_form_media_form_alter(&$form, FormStateInterface 
   $account = \Drupal::currentUser();
   $user = $entity_manager->getStorage('user')->load($account->id());
   $is_sectionable = $section_service->isMediaSectionable($media->bundle());
-  $form['#tree'] = TRUE;
 
   if (!$is_sectionable) {
 
@@ -566,7 +564,6 @@ function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id,
   $section_service = Drupal::service('jcc_elevated_sections.service');
 
   if ($section_service->isViewSectionable($view_name_display)) {
-
     // Grab the filter options from the view and set a new one.
     $filters = $view->display_handler->getOption('filters');
 
@@ -575,16 +572,11 @@ function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id,
 
     $view->display_handler->overrideOption('filters', $filters);
 
-    if ($node = \Drupal::routeMatch()->getParameter('node')) {
-      if ($section = $section_service->getSectionForEntity($node)) {
-        if (is_object($section)) {
-
-          // Grab the filter options from the view and set a new one.
-          $filters = $view->display_handler->getOption('filters');
-          // $filters['jcc_section'] = $filter_info;
-          $view->display_handler->overrideOption('filters', $filters);
-        }
-      }
+    if ($section = $section_service->currentPageSection()) {
+      // Grab the filter options from the view and set a new one.
+      $filters = $view->display_handler->getOption('filters');
+      // $filters['jcc_section'] = $filter_info;
+      $view->display_handler->overrideOption('filters', $filters);
     }
   }
 

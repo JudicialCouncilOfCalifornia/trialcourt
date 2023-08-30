@@ -72,6 +72,14 @@ class JccSectionService implements JccSectionServiceInterface {
    * {@inheritdoc}
    */
   public function currentPageSection() {
+    $route = \Drupal::routeMatch();
+    $node = $route->getParameter('node');
+    if ($node instanceof NodeInterface) {
+      if ($this->isNodeSectionable($node->bundle())) {
+        return $this->getSectionForNode($node);
+      }
+    }
+
     return NULL;
   }
 
