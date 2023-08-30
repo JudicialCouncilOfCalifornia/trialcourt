@@ -1,0 +1,100 @@
+langcode: en
+status: true
+dependencies: {  }
+id: appellate_node_news
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - appellate
+  - node
+  - news
+migration_group: appellate
+label: 'Appellate News: Import Node'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: 'https://raw.githubusercontent.com/JudicialCouncilOfCalifornia/scrape/main/results/google-dca-news.json'
+  item_selector: entry
+  fields:
+    -
+      name: id
+      label: ID
+      selector: id
+    -
+      name: title
+      label: Title
+      selector: title
+    -
+      name: body
+      label: Body
+      selector: body
+    -
+      name: district
+      label: District
+      selector: district
+    -
+      name: date
+      label: Date
+      selector: date
+    -
+      name: byline
+      label: Byline
+      selector: byline
+  ids:
+    id:
+      type: string
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  title:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: TITLE
+  path/pathauto:
+    plugin: default_value
+    default_value: 1
+  jcc_section:
+    plugin: static_map
+    source: district
+    map:
+      - ''
+      - 71
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+  field_date:
+    -
+      plugin: callback
+      callable: strtotime
+      source: date
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m-d
+  field_byline: byline
+  pseudo_content_paragraph:
+    plugin: migration_lookup
+    migration: appellate_paragraph_news
+    source: id
+  field_components:
+    plugin: sub_process
+    source:
+      - '@pseudo_content_paragraph'
+    process:
+      target_id: '0'
+      target_revision_id: '1'
+destination:
+  plugin: 'entity:node'
+  default_bundle: news
+
+migration_dependencies:
+  required:
+    - appellate_paragraph_news
