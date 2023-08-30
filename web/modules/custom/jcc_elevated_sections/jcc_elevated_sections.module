@@ -14,6 +14,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\jcc_elevated_sections\Constants\JccSectionConstants;
 use Drupal\jcc_elevated_sections\Entity\JccSection;
 use Drupal\views\ViewExecutable;
 
@@ -282,6 +283,7 @@ function jcc_elevated_sections_form_node_form_alter(&$form, FormStateInterface $
   $entity_manager = \Drupal::entityTypeManager();
   $account = \Drupal::currentUser();
   $user = $entity_manager->getStorage('user')->load($account->id());
+  $form['#tree'] = TRUE;
 
   // Determine if Node type is sectionable.
   $is_sectionable = $section_service->isNodeSectionable($node->bundle());
@@ -289,7 +291,7 @@ function jcc_elevated_sections_form_node_form_alter(&$form, FormStateInterface $
   if ($is_sectionable) {
 
     // Get the allowed sections for current user.
-    $assigned_sections = $section_service->getUserAllowedSections($user);
+    $user_is_restricted = (bool) $section_service->userIsRestrictedFromGeneralContent($user);
 
     $form['section'] = [
       '#type' => 'details',
@@ -301,15 +303,30 @@ function jcc_elevated_sections_form_node_form_alter(&$form, FormStateInterface $
     ];
     $form['jcc_section']['#group'] = 'section';
 
+    // Clarify the General content value.
+    if (isset($form['jcc_section']['widget']['#options']['_none'])) {
+      $form['jcc_section']['widget']['#options']['_none'] = t('- No section (General content) -');
+    }
+
+    // If user is restricted from general content editing, require that they
+    // add the content to Section.
+    $form['jcc_section']['widget']['#required'] = $user_is_restricted;
+
     if (!$section_service->userCanAdminSections($user)) {
 
       // If user doesn't have free access to admin sections for content, then
       // we assume the user is restricted to specific sections. We limit the
       // list of allowable options that the content can be sectioned to.
-      $pre_options = $form['jcc_section']['widget']['#options'];
-      $none['_none'] = $pre_options['_none'];
-      $post_options = array_intersect($pre_options, $assigned_sections);
-      $form['jcc_section']['widget']['#options'] = array_merge($none, $post_options);
+      $forbidden = $section_service->getUserForbiddenSections($user);
+      foreach ($form['jcc_section']['widget']['#options'] as $id => $value) {
+        if (isset($forbidden[$id])) {
+          unset($form['jcc_section']['widget']['#options'][$id]);
+        }
+      }
+
+      if ($user_is_restricted) {
+        unset($form['jcc_section']['widget']['#options']['_none']);
+      }
     }
   }
 
@@ -331,11 +348,12 @@ function jcc_elevated_sections_form_media_form_alter(&$form, FormStateInterface 
   $account = \Drupal::currentUser();
   $user = $entity_manager->getStorage('user')->load($account->id());
   $is_sectionable = $section_service->isMediaSectionable($media->bundle());
+  $form['#tree'] = TRUE;
 
   if (!$is_sectionable) {
 
     // Get sections of a user.
-    $assigned_sections = $section_service->getUserAllowedSections($user);
+    $user_is_restricted = (bool) $section_service->userIsRestrictedFromGeneralContent($user);
 
     $form['section'] = [
       '#type' => 'details',
@@ -348,15 +366,30 @@ function jcc_elevated_sections_form_media_form_alter(&$form, FormStateInterface 
 
     $form['jcc_section']['#group'] = 'section';
 
+    // Clarify the General content value.
+    if (isset($form['jcc_section']['widget']['#options']['_none'])) {
+      $form['jcc_section']['widget']['#options']['_none'] = t('- No section (General content) -');
+    }
+
+    // If user is restricted from general content editing, require that they
+    // add the content to Section.
+    $form['jcc_section']['widget']['#required'] = $user_is_restricted;
+
     if (!$section_service->userCanAdminSections($user)) {
 
       // If user doesn't have free access to admin sections for content, then
       // we assume the user is restricted to specific sections. We limit the
       // list of allowable options that the content can be sectioned to.
-      $pre_options = $form['jcc_section']['widget']['#options'];
-      $none['_none'] = $pre_options['_none'];
-      $post_options = array_intersect($pre_options, $assigned_sections);
-      $form['jcc_section']['widget']['#options'] = array_merge($none, $post_options);
+      $forbidden = $section_service->getUserForbiddenSections($user);
+      foreach ($form['jcc_section']['widget']['#options'] as $id => $value) {
+        if (isset($forbidden[$id])) {
+          unset($form['jcc_section']['widget']['#options'][$id]);
+        }
+      }
+
+      if ($user_is_restricted) {
+        unset($form['jcc_section']['widget']['#options']['_none']);
+      }
     }
   }
 
@@ -490,19 +523,19 @@ function jcc_elevated_sections_entity_access(EntityInterface $entity, $operation
   if ($operation == 'update' || $operation == 'edit' || $operation == 'delete' || $operation == 'translate') {
 
     $section_service = Drupal::service('jcc_elevated_sections.service');
+
     if ($section_service->isEntitySectionable($entity)) {
       $user = \Drupal::entityTypeManager()->getStorage('user')->load($account->id());
 
       // See if user has restricted general editing.
-      $restrict = $user->get('jcc_restrict')->getValue();
-      $user_can_only_edit_matching_section_content = $restrict[0]['value'] ?? FALSE;
+      $user_is_restricted = $section_service->userIsRestrictedFromGeneralContent($user);
 
       // Check if entity has a section applied.
       $entity_has_section = (bool) $section_service->getSectionForEntity($entity);
 
       // If entity does not have a section, check if user is not allowed to
       // edit non-sectioned general content.
-      if (!$entity_has_section && $user_can_only_edit_matching_section_content) {
+      if (!$entity_has_section && $user_is_restricted) {
         return AccessResult::forbidden();
       }
 
@@ -640,54 +673,69 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
 
       if ($section) {
         $section_homepage_nid = $section->getSectionHomepage();
-        $section_homepage = $node_manager->load($section_homepage_nid);
 
-        // Build out the relevant menu tree. This depends on the current page
-        // being in a menu and only on subpages.
-        $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
-        $section_links = $menu_link_manager->loadLinksByRoute('entity.node.canonical', ['node' => $section_homepage_nid]);
+        // Check if there is a section homepage id.
+        if (is_numeric($section_homepage_nid)) {
+          $section_homepage = $node_manager->load($section_homepage_nid);
 
-        if (!empty($section_links)) {
-          $menu_id = array_key_first($section_links);
+          // Build out the relevant menu tree. This depends on the current page
+          // being in a menu and only on subpages.
+          $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
+          $section_links = $menu_link_manager->loadLinksByRoute('entity.node.canonical', ['node' => $section_homepage_nid]);
 
-          $params = new MenuTreeParameters();
-          $params->setRoot($menu_id);
-          $params->setActiveTrail([
-            $menu_id,
-            reset($section_links)->getPluginId(),
-          ]);
+          if (!empty($section_links)) {
+            $menu_id = array_key_first($section_links);
 
-          $menu_tree = \Drupal::menuTree();
-          $tree = $menu_tree->load($menu_id, $params);
-          $tree = $menu_tree->transform($tree, [
-            ['callable' => 'menu.default_tree_manipulators:checkNodeAccess'],
-            ['callable' => 'menu.default_tree_manipulators:checkAccess'],
-            ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
-          ]);
+            $params = new MenuTreeParameters();
+            $params->setRoot($menu_id);
+            $params->setActiveTrail([
+              $menu_id,
+              reset($section_links)->getPluginId(),
+            ]);
 
-          $menu_build = $menu_tree->build($tree);
+            $menu_tree = \Drupal::menuTree();
+            $tree = $menu_tree->load($menu_id, $params);
+            $tree = $menu_tree->transform($tree, [
+              ['callable' => 'menu.default_tree_manipulators:checkNodeAccess'],
+              ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+              ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+            ]);
 
-          // If we have a menu that can be built.
-          if (!empty($menu_build)) {
+            $menu_build = $menu_tree->build($tree);
 
-            // Create our storybook component friendly sidebar navigation.
-            if (!empty($menu_build['#items'][$menu_id]['below'])) {
+            // If we have a menu that can be built.
+            if (!empty($menu_build['#items'])) {
 
-              // We render the sublinks of the node/menu item designated as the
-              // section homepage.
-              $links = $menu_build['#items'][$menu_id]['below'];
+              // Set cacheTags to help with menu builds.
+              $menu_build['#cache']['contexts'][] = 'user';
+              $menu_build['#cache']['tags'][] = 'taxonomy_term_list:' . JccSectionConstants::JCC_SECTIONS_DEFAULT_SOURCE_ID;
+              $menu_build['#cache']['tags'][] = 'node:' . $node->id();
+              foreach ($section_service->getSectionableTypes() as $name) {
+                if ($name) {
+                  $menu_build['#cache']['tags'][] = 'node_list:' . $name;
+                }
+              }
 
-              // Set caches to trigger on landing and subpage changes.
-              $variables['section_navigation'] = [
-                'section_heading' => $section->label(),
-                'links' => jcc_elevated_sections_build_menu_tree($links, $section_homepage, $section),
-              ];
+              // Create our storybook component friendly sidebar navigation.
+              if (!empty($menu_build['#items'][$menu_id]['below'])) {
+
+                // We render the sublinks of the node/menu item designated as
+                // the section homepage.
+                $links = $menu_build['#items'][$menu_id]['below'];
+
+                // Set caches to trigger on landing and subpage changes.
+                $variables['section_navigation'] = [
+                  'section_heading' => $section->label(),
+                  'links' => jcc_elevated_sections_build_menu_tree($links, $section_homepage, $section),
+                ];
+              }
             }
           }
         }
       }
     }
   }
+
 }
 
 /**
@@ -724,7 +772,7 @@ function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $
 /**
  * Return default filter info data, needed as base for building new filters.
  */
-function _jcc_elevated_sections_default_view_filter_info() {
+function _jcc_elevated_sections_default_view_filter_info(): array {
 
   // Build list of roles for the default "remember roles" spot.
   $role_list = [];

@@ -25,6 +25,17 @@ interface JccSectionServiceInterface {
   public function currentPageSection();
 
   /**
+   * Check if user has general content edit restriction.
+   *
+   * @param object $user
+   *   Loaded user entity.
+   *
+   * @return mixed
+   *   Returns true if user is restricted from editing general content.
+   */
+  public function userIsRestrictedFromGeneralContent($user);
+
+  /**
    * Check if user can edit the sections on a given entity.
    *
    * @param object $user
@@ -71,6 +82,17 @@ interface JccSectionServiceInterface {
    *   Returns the sections that a given user is allowed to edit.
    */
   public function getUserAllowedSections($user);
+
+  /**
+   * Get the sections that a given user is NOT allowed to edit.
+   *
+   * @param object $user
+   *   Loaded user entity.
+   *
+   * @return mixed
+   *   Returns the sections that a given user is NOT allowed to edit.
+   */
+  public function getUserForbiddenSections($user);
 
   /**
    * Returns the section that is applied to a given node.

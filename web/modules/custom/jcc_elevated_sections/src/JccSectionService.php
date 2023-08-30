@@ -78,13 +78,19 @@ class JccSectionService implements JccSectionServiceInterface {
   /**
    * {@inheritdoc}
    */
+  public function userIsRestrictedFromGeneralContent($user) {
+    return $user->jcc_restrict->value ?? FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function userCanAccessSection($user, $sid): bool {
     if ($this->userCanAdminSections($user)) {
       return TRUE;
     }
 
     $assigned_sections = $this->getUserAllowedSections($user);
-
     if (isset($assigned_sections[$sid])) {
       return TRUE;
     }
@@ -155,6 +161,23 @@ class JccSectionService implements JccSectionServiceInterface {
   /**
    * {@inheritdoc}
    */
+  public function getUserForbiddenSections($user) {
+    $allowed_sections = $this->getUserAllowedSections($user) ?? [];
+    $all = $this->getSectionAllInfo();
+    if (is_array($all)) {
+      foreach ($all as $id => $section) {
+        if (!isset($allowed_sections[$id])) {
+          $forbidden_sections[$id] = $section['name'];
+        }
+      }
+    }
+
+    return $forbidden_sections ?? [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSectionForNode(NodeInterface $node) {
     $value = $node->get('jcc_section')->getValue();
     return $value[0]['target_id'] ?? FALSE;
@@ -175,15 +198,15 @@ class JccSectionService implements JccSectionServiceInterface {
     $type = $entity->bundle();
 
     $node_types = $this->getSectionableTypes();
-    if (!empty($node_types[$type])) {
+    if ($node_types[$type] == $type) {
       $value = $entity->get('jcc_section')->getValue();
-      return $value[0]['target_id'] ?? FALSE;
+      return $value[0]['target_id'];
     }
 
     $media_types = $this->getSectionableMediaTypes();
-    if (!empty($media_types[$type])) {
+    if ($media_types[$type] == $type) {
       $value = $entity->get('jcc_section')->getValue();
-      return $value[0]['target_id'] ?? FALSE;
+      return $value[0]['target_id'];
     }
 
     return FALSE;
