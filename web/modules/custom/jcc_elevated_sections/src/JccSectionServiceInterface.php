@@ -17,14 +17,6 @@ use Drupal\node\NodeInterface;
 interface JccSectionServiceInterface {
 
   /**
-   * Get the section of the current page.
-   *
-   * @return mixed
-   *   Returns the loaded section term.
-   */
-  public function currentPageSection();
-
-  /**
    * Check if user has general content edit restriction.
    *
    * @param object $user
@@ -198,6 +190,14 @@ interface JccSectionServiceInterface {
    *   Returns an array of node types that can be sectioned.
    */
   public function getSectionableTypes();
+
+  /**
+   * Returns an array of node types that should have the Prefix applied.
+   *
+   * @return mixed
+   *   Returns an array of node types hat should have the Prefix applied.
+   */
+  public function getSectionableUrlPrefixTypes();
 
   /**
    * Returns an array of media types that can be sectioned.

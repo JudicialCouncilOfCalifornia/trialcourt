@@ -71,21 +71,6 @@ class JccSectionService implements JccSectionServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function currentPageSection() {
-    $route = \Drupal::routeMatch();
-    $node = $route->getParameter('node');
-    if ($node instanceof NodeInterface) {
-      if ($this->isNodeSectionable($node->bundle())) {
-        return $this->getSectionForNode($node);
-      }
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function userIsRestrictedFromGeneralContent($user) {
     return $user->jcc_restrict->value ?? FALSE;
   }
@@ -323,6 +308,13 @@ class JccSectionService implements JccSectionServiceInterface {
    */
   public function getSectionableMediaTypes() {
     return $this->state->get('jcc_elevated.section_allowed_media_types', []);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSectionableUrlPrefixTypes() {
+    return $this->state->get('jcc_elevated.section_url_prefix_types', []);
   }
 
   /**

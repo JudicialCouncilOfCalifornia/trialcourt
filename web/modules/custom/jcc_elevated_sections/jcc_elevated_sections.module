@@ -478,15 +478,18 @@ function jcc_elevated_sections_pathauto_alias_alter(&$alias, array &$context) {
 
     if ($section_service->isEntitySectionable($node) && $node->hasField('jcc_section')) {
       $section_id = $node->get('jcc_section')->target_id;
+      $bundle = $node->bundle();
 
       if ($section_id && is_numeric($section_id)) {
 
-        // Get Section from the ID (Term ID) on the node, then get prefix.
-        $section = JccSection::load($section_id);
-        $prefix = trim($section->getSectionUrlPrefix());
-
-        // Update the alias to include the prefix.
-        $alias = !empty($prefix) ? $prefix . $alias : $alias;
+        $allowed_prefix_types = $section_service->getSectionableUrlPrefixTypes();
+        if ($allowed_prefix_types[$bundle] != FALSE) {
+          // Get Section from the ID (Term ID) on the node, then get prefix.
+          $section = JccSection::load($section_id);
+          $prefix = trim($section->getSectionUrlPrefix());
+          // Update the alias to include the prefix.
+          $alias = !empty($prefix) ? $prefix . $alias : $alias;
+        }
       }
     }
   }
@@ -564,6 +567,7 @@ function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id,
   $section_service = Drupal::service('jcc_elevated_sections.service');
 
   if ($section_service->isViewSectionable($view_name_display)) {
+
     // Grab the filter options from the view and set a new one.
     $filters = $view->display_handler->getOption('filters');
 
@@ -572,12 +576,18 @@ function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id,
 
     $view->display_handler->overrideOption('filters', $filters);
 
-    if ($section = $section_service->currentPageSection()) {
-      // Grab the filter options from the view and set a new one.
-      $filters = $view->display_handler->getOption('filters');
-      // $filters['jcc_section'] = $filter_info;
-      $view->display_handler->overrideOption('filters', $filters);
+    if ($node = \Drupal::routeMatch()->getParameter('node')) {
+      if ($section = $section_service->getSectionForEntity($node)) {
+        if (is_object($section)) {
+
+          // Grab the filter options from the view and set a new one.
+          $filters = $view->display_handler->getOption('filters');
+          // $filters['jcc_section'] = $filter_info;
+          $view->display_handler->overrideOption('filters', $filters);
+        }
+      }
     }
+
   }
 
 }

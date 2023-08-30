@@ -84,6 +84,7 @@ class JccElevatedSectionSettingsForm extends FormBase {
       'section_allowed_types' => $this->state->get('jcc_elevated.section_allowed_types', []),
       'section_allowed_media_types' => $this->state->get('jcc_elevated.section_allowed_media_types', []),
       'section_applied_views' => $this->state->get('jcc_elevated.section_applied_views', []),
+      'section_url_prefix_types' => $this->state->get('jcc_elevated.section_url_prefix_types', []),
     ];
   }
 
@@ -153,6 +154,17 @@ class JccElevatedSectionSettingsForm extends FormBase {
       '#options' => $this
         ->getContentTypesList(),
       '#default_value' => $state['section_allowed_types'] ?? [],
+    ];
+
+    $form['section_type_group']['section_url_prefix_types'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this
+        ->t('Select types for URL prefix'),
+      '#description' => $this
+        ->t('Select the content types that should have the URL prefix applied to it.'),
+      '#options' => $this
+        ->getContentTypesList(),
+      '#default_value' => $state['section_url_prefix_types'] ?? [],
     ];
 
     $form['section_media_type_group'] = [
