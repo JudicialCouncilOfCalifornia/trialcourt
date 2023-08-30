@@ -71,7 +71,7 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
   // the sidebar navigation between the hero and the rest of the content.
   $variables['header'] = FALSE;
   $component_items = $node->get('field_components')->referencedEntities();
-  $bundle = $component_items[0]->bundle();
+  $bundle = $component_items ? $component_items[0]->bundle() : NULL;
   if ($bundle == 'hero' || $bundle == 'hero_banner'|| $bundle == 'hero_hangover') {
     $variables['header'] = $node->get('field_components')->first()->view('default');
     $variables['content']['field_components'][0]['#access'] = FALSE;
