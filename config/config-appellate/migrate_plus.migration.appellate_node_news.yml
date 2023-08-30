@@ -46,6 +46,9 @@ source:
     id:
       type: string
 process:
+  moderation_state:
+    plugin: default_value
+    default_value: 'published'
   uid:
     plugin: default_value
     default_value: 1
@@ -91,7 +94,6 @@ process:
     process:
       target_id: '0'
       target_revision_id: '1'
-  status: 1
 destination:
   plugin: 'entity:node'
   default_bundle: news
