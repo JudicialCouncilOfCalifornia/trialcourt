@@ -361,7 +361,12 @@ class JccSectionService implements JccSectionServiceInterface {
    */
   public function isViewSectionable($view_name_display): bool {
     $views = $this->state->get('jcc_elevated.section_applied_views', []);
-    return (bool) isset($views[$view_name_display]) && $views[$view_name_display] != FALSE;
+
+    if (isset($views[$view_name_display])) {
+      return !empty($views[$view_name_display]);
+    }
+
+    return FALSE;
   }
 
 }

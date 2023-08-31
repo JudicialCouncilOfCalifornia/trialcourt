@@ -601,8 +601,66 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
       $view->result = $filteredResults;
       $view->total_rows = count($filteredResults);
     }
+
+    if (!$sid) {
+      $results = $view->result;
+      $filteredResults = [];
+
+      foreach ($results as $result) {
+
+        // Find the section for each resulting entity, and if the value is
+        // empty, then it is most likely general/non-sectioned content. In that
+        // case we don't remove it (we just add it back to the list of items).
+        // If the result entity does return a section ID, and it matches the
+        // current Section ID, we add it back to the result list. This setup
+        // removes Sectioned content that does not match current section
+        // context.
+        $result_section = $result->_entity->jcc_section->getValue();
+        if (empty($result_section)) {
+          $filteredResults[] = $result;
+        }
+      }
+
+      $view->result = $filteredResults;
+      $view->total_rows = count($filteredResults);
+    }
   }
 
+}
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+  // Set some variables.
+  $name = $view->id();
+  $display = $view->current_display;
+  $view_name_display = $name . ':' . $display;
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+
+  // If we have a view that is assigned to be contextually filtered.
+  if ($section_service->isViewSectionable($view_name_display)) {
+
+    // Grab the filter options from the view and set a new one.
+    $filters = $view->display_handler->getOption('filters');
+
+    // Build out our default filter for our custom "jcc_section".
+    $filters['jcc_section'] = _jcc_elevated_sections_default_view_filter_info();
+
+    $view->display_handler->overrideOption('filters', $filters);
+
+    if ($node = \Drupal::routeMatch()->getParameter('node')) {
+      if ($section = $section_service->getSectionForEntity($node)) {
+        if (is_object($section)) {
+
+          // Grab the filter options from the view and set a new one.
+          $filters = $view->display_handler->getOption('filters');
+          // $filters['jcc_section'] = $filter_info;
+          $view->display_handler->overrideOption('filters', $filters);
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -618,8 +676,13 @@ function jcc_elevated_sections_form_views_exposed_form_alter(&$form, FormStateIn
 
   // Check if form has info items, which means it has an exposed form from view.
   // This is the way we check that Sectionable views with existing exposed forms
-  // receive the JCC Sections exposed form element.
-  $has_exposed_form = (bool) $form['#info'];
+  // receive the JCC Sections exposed form element. We add 'filter-jcc_section'
+  // in a previous hook for reasons, but if it is the only item in the info, we
+  // need to remove it. This way we will know that originally this view does not
+  // have a form.
+  $info = $form['#info'];
+  unset($info['filter-jcc_section']);
+  $has_exposed_form = (bool) !empty($info);
 
   // Add the section filtering if the view is assigned to have a filter.
   if ($has_exposed_form && $section_service->isViewSectionable($view_name_display)) {
@@ -650,7 +713,9 @@ function jcc_elevated_sections_form_views_exposed_form_alter(&$form, FormStateIn
       unset($form['jcc_section']['#options']['All']);
     }
   }
-
+  else {
+    $form['jcc_section']['#access'] = FALSE;
+  }
 }
 
 /**
