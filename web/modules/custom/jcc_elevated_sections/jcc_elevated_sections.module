@@ -566,34 +566,41 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
   $display = $view->current_display;
   $view_name_display = $name . ':' . $display;
   $section_service = Drupal::service('jcc_elevated_sections.service');
+  $route_match = \Drupal::routeMatch();
+  $route = $route_match->getRouteObject();
+  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute($route);
 
   // If we have a view that is assigned to be contextually filtered.
-  if ($section_service->isViewSectionable($view_name_display)) {
+  if (!$is_admin && $section_service->isViewSectionable($view_name_display)) {
 
     // Figure out the section for the current node.
     $sid = jcc_get_current_page_section();
-    $results = $view->result;
-    $filteredResults = [];
 
-    foreach ($results as $result) {
+    if ($sid) {
+      $results = $view->result;
+      $filteredResults = [];
 
-      // Find the section for each resulting entity, and if the value is empty,
-      // then it is most likely general/non-sectioned content. In that case we
-      // don't remove it (we just add it back to the list of items). If the
-      // result entity does return a section ID, and it matches the current
-      // Section ID, we add it back to the result list. This setup removes
-      // Sectioned content that does not match current section context.
-      $result_section = $result->_entity->jcc_section->getValue();
-      if (empty($result_section)) {
-        $filteredResults[] = $result;
+      foreach ($results as $result) {
+
+        // Find the section for each resulting entity, and if the value is
+        // empty, then it is most likely general/non-sectioned content. In that
+        // case we don't remove it (we just add it back to the list of items).
+        // If the result entity does return a section ID, and it matches the
+        // current Section ID, we add it back to the result list. This setup
+        // removes Sectioned content that does not match current section
+        // context.
+        $result_section = $result->_entity->jcc_section->getValue();
+        if (empty($result_section)) {
+          $filteredResults[] = $result;
+        }
+        elseif ($result_section[0]['target_id'] == $sid) {
+          $filteredResults[] = $result;
+        }
       }
-      elseif ($result_section[0]['target_id'] == $sid) {
-        $filteredResults[] = $result;
-      }
+
+      $view->result = $filteredResults;
+      $view->total_rows = count($filteredResults);
     }
-
-    $view->result = $filteredResults;
-    $view->total_rows = count($filteredResults);
   }
 
 }
