@@ -34,6 +34,14 @@ source:
       name: title
       selector: title
       label: Title
+    -
+      name: district
+      selector: district
+      label: District
+    -
+      name: name
+      selector: name
+      label: Name
 process:
   pseudo_encoded_title:
     plugin: callback
@@ -54,7 +62,11 @@ process:
       plugin: skip_on_empty
       method: process
       message: 'Cannot import empty filename.'
-  name: '@pseudo_encoded_title'
+  name:
+    - plugin: null_coalesce
+      source:
+        - name
+        - '@pseudo_encoded_title'
   field_media_file/target_id:
     -
       plugin: migration_lookup
@@ -67,6 +79,17 @@ process:
   uid:
     plugin: default_value
     default_value: 1
+  jcc_section:
+    plugin: static_map
+    source: district
+    map:
+      - ''
+      - 71
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
 destination:
   plugin: 'entity:media'
   default_bundle: file

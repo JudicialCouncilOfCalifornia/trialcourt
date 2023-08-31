@@ -62,6 +62,9 @@ process:
       source: body
     -
       plugin: prefix_relative_links
+    -
+      plugin: callback
+      callable: htmlspecialchars_decode
   body/format:
     plugin: default_value
     default_value: full_html
