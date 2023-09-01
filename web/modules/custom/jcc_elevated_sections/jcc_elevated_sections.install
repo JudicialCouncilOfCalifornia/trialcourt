@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_elevated_sections install and uninstall functionality.
+ */
+
+use Drupal\jcc_elevated_sections\Constants\JccSectionConstants;
+
+/**
+ * Implements hook_module_preinstall().
+ */
+function jcc_elevated_sections_module_preinstall() {
+  Drupal::state()->set('jcc_elevated.section_vocab_source', JccSectionConstants::JCC_SECTIONS_DEFAULT_SOURCE_ID);
+  Drupal::state()->set('jcc_elevated.section_allowed_types', []);
+  Drupal::state()->set('jcc_elevated.section_allowed_media_types', []);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function jcc_elevated_sections_uninstall() {
+  $vid = Drupal::state()->get('jcc_elevated.section_vocab_source', JccSectionConstants::JCC_SECTIONS_DEFAULT_SOURCE_ID);
+
+  if ($vid) {
+    $entity_manager = \Drupal::entityTypeManager();
+    $term_manager = $entity_manager->getStorage('taxonomy_term');
+    $vocab_manager = $entity_manager->getStorage('taxonomy_vocabulary');
+
+    // Delete the site sections terms.
+    $tids = \Drupal::entityQuery('taxonomy_term')
+      ->condition('vid', $vid)
+      ->execute();
+
+    $entities = $term_manager->loadMultiple($tids);
+    $term_manager->delete($entities);
+
+    // Delete the site sections vocabulary.
+    $vocab = $vocab_manager->load($vid);
+    if ($vocab) {
+      $vocab->delete();
+    }
+  }
+
+  // Delete the state variables.
+  Drupal::state()->delete('jcc_elevated.section_vocab_source');
+  Drupal::state()->delete('jcc_elevated.section_allowed_types');
+  Drupal::state()->delete('jcc_elevated.section_allowed_media_types');
+}

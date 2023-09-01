@@ -24,7 +24,7 @@ function jcc_elevated_get_site_name() {
  *   Return a specific jcc state setting value.
  */
 function jcc_elevated_get_custom_setting($setting_name) {
-  return jcc_elevated_get_custom_settings($setting_name) ?? \Drupal::state()->get($setting_name);
+  return \Drupal::state()->get($setting_name) ?? NULL;
 }
 
 /**
@@ -46,7 +46,7 @@ function jcc_elevated_get_custom_settings($setting_name = NULL) {
 
   \Drupal::moduleHandler()->alter('jcc_elevated_settings', $settings);
 
-  return $setting_name ? $settings[$setting_name] : $settings;
+  return $settings[$setting_name] ?? $settings;
 }
 
 /**
@@ -71,4 +71,27 @@ function _jcc_elevated_custom_keys() {
     'jcc_elevated.section_menu_style',
     'jcc_elevated.section_menu_types',
   ];
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function jcc_elevated_custom_preprocess_page(array &$variables) {
+  $variables['#attached']['library'][] = 'jcc_elevated_custom/jcc-elevated-custom';
+
+  // Set the variable in case it's not yet set.
+  if (!isset($variables['section_navigation'])) {
+    $variables['section_navigation'] = FALSE;
+  }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function jcc_elevated_custom_preprocess_node(array &$variables) {
+
+  // Set the variable in case it's not yet set.
+  if (!isset($variables['sidebar_navigation'])) {
+    $variables['section_navigation'] = FALSE;
+  }
 }

@@ -115,7 +115,9 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     $form[$id]['#attributes']['placeholder'] = $placeholder;
     if ($form[$id]['#type'] == 'select') {
       $form[$id]['#attributes']['placeholder'] = NULL;
-      $form[$id]['#options']['All'] = t('- @label -', ['@label' => $placeholder]);
+      if ($id != 'jcc_section') {
+        $form[$id]['#options']['All'] = t('- @label -', ['@label' => $placeholder]);
+      }
       $form['#info']['filter-' . $id]['label'] = '';
     }
   }
