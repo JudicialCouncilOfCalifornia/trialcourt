@@ -22,16 +22,6 @@
         e.preventDefault();
       });
 
-      // Show only when scroll down 70% or more
-      $surveyContainer.hide();
-      $(window).scroll( function () {
-        if ( $(this).scrollTop() < (($(document).height() - $(window).height()) * 0.7) && $surveyContainer.attr('open') !== 'open') {
-          $surveyContainer.hide('0.5');
-        } else {
-          $surveyContainer.show('0.5');
-        }
-      });
-
       // Sync offcanvas component action and actual webform radio buttons
       $surveyYesBtn.on('click', function(e) {
         e.preventDefault();

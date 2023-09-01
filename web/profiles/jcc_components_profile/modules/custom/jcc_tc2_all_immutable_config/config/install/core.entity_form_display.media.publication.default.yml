@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.media.publication.field_case_type
+    - field.field.media.publication.field_code
     - field.field.media.publication.field_date
     - field.field.media.publication.field_division
     - field.field.media.publication.field_document_type
@@ -22,6 +23,7 @@ dependencies:
     - field.field.media.publication.field_media_file_tagalog
     - field.field.media.publication.field_media_file_vietnamese
     - field.field.media.publication.field_media_text
+    - field.field.media.publication.field_publication_category
     - field.field.media.publication.field_topic
     - media.type.publication
   module:
@@ -86,6 +88,12 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  directory:
+    type: options_select
+    weight: 2
+    region: content
+    settings: { }
+    third_party_settings: { }
   field_case_type:
     type: autocomplete_deluxe
     weight: 5
@@ -310,5 +318,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
 hidden:
+  field_code: true
   field_media_file: true
+  field_publication_category: true
   replace_file: true

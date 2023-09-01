@@ -87,8 +87,6 @@ function jcc_custom_editor_js_settings_alter(&$settings) {
  * Implements hook_form_alter().
  */
 function jcc_custom_form_alter(&$form, $form_state, $form_id) {
-  $theme = \Drupal::config('system.theme')->get('default');
-
   // The body field on these content types is only used for migration of
   // content and temporary display on the initial site build. Editors should
   // not have access.
@@ -139,7 +137,7 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
 
     case 'node_judge_form':
     case 'node_judge_edit_form':
-      if ($theme == 'jcc_elevated') {
+      if (jcc_custom_is_elevated_site()) {
         unset($form['field_address']);
       }
       else {
@@ -156,6 +154,8 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
   $theme = \Drupal::config('system.theme')->get('default');
   // If elevated theme is not in use by all sites.
   if ($theme == 'jcc_elevated') {
+    $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
+
     switch ($element['#paragraph_type']) {
       case 'hero':
         unset($element['subform']['field_subheading']);
@@ -619,5 +619,82 @@ function jcc_custom_field_widget_form_alter(&$element, FormStateInterface $form_
       }
     }
 
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_select_alter().
+ */
+function jcc_custom_theme_suggestions_select_alter(array &$suggestions, array $variables, $hook) {
+  if (isset($variables['element']['#id'])) {
+    $suggestions[] = $hook . '__' . str_replace('-', '_', $variables['element']['#id']);
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function jcc_custom_theme($existing, $type, $theme, $path) {
+  // Override elevated admin theme templates.
+  if (jcc_custom_is_elevated_site()) {
+    return [
+      'select__edit_menu_menu_parent' => [
+        'base hook' => 'select',
+      ],
+    ];
+  }
+}
+
+/**
+ * Implements hook_preprocess_select().
+ */
+function jcc_custom_preprocess_select__edit_menu_menu_parent(&$variables) {
+  // Restrict first menu level placement for elevated sites.
+  if (jcc_custom_is_elevated_site()) {
+    $roles = \Drupal::currentUser()->getRoles();
+    $is_allowed = array_intersect(['administrator'], $roles);
+    if (\Drupal::routeMatch()->getParameter('node')) {
+      $node = \Drupal::routeMatch()->getParameter('node');
+      $url_alias = $node->toUrl()->toString();
+      $menu_level = substr_count($url_alias, '/');
+      // Disable parent link setting if first level & not allowed.
+      if ($menu_level == 1 && !$is_allowed) {
+        $variables['attributes']['disabled'] = 'true';
+      }
+    }
+    else {
+      // Flag create time.
+      $variables['create_mode'] = TRUE;
+    }
+    // For option element since attribute not provided.
+    $variables['is_allowed'] = $is_allowed;
+  }
+}
+
+/**
+ * Implements hook_preprocess_input().
+ */
+function jcc_custom_preprocess_input(&$variables) {
+  if (isset($variables['element']['#id'])) {
+    switch ($variables['element']['#id']) {
+      case 'edit-menu-enabled':
+      case 'edit-menu-title':
+      case 'edit-menu-description':
+      case 'edit-menu-weight':
+        // Restrict other menu settings for elevated sites.
+        // Parent link is handled separately.
+        if (\Drupal::routeMatch()->getParameter('node')) {
+          $node = \Drupal::routeMatch()->getParameter('node');
+          $url_alias = $node->toUrl()->toString();
+          $menu_level = substr_count($url_alias, '/');
+          $roles = \Drupal::currentUser()->getRoles();
+          $is_allowed = array_intersect(['administrator'], $roles);
+          // Disable all other menu settings if first level and not allowed.
+          if (jcc_custom_is_elevated_site() && $menu_level == 1 && !$is_allowed) {
+            $variables['attributes']['disabled'] = 'true';
+          }
+        }
+        break;
+    }
   }
 }

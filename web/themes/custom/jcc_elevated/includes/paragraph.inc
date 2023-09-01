@@ -11,6 +11,7 @@ use Drupal\Core\Url;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
 use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -245,6 +246,11 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
       ];
     }
   }
+  if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
+    $cover_image = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
+    $image_url = ImageStyle::load('hero_banner')->buildUrl($cover_image);
+    $variables['bckg_img_url'] = $image_url;
+  }
 }
 
 /**
@@ -282,6 +288,22 @@ function jcc_elevated_paragraph_hero_banner(array &$variables, ParagraphInterfac
 }
 
 /**
+ * Helper function for section paragraph.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_elevated_paragraph_section(array &$variables, ParagraphInterface $paragraph) {
+  if ($paragraph->get('field_media')[0]->entity && !empty($paragraph->get('field_media'))) {
+    $cover_image = $paragraph->get('field_media')[0]->entity->get('field_media_image')[0]->entity->getFileUri();
+    $image_url = ImageStyle::load('container_100_percent')->buildUrl($cover_image);
+    $variables['bckg_img_url'] = $image_url;
+  }
+}
+
+/**
  * Helper function for hero_hangover paragraph.
  *
  * @param array $variables
@@ -312,11 +334,25 @@ function jcc_elevated_paragraph_action_list(array &$variables) {
   $paragraph = $variables['paragraph']->get('field_components')->getValue();
   foreach ($paragraph as $key => $element) {
     $action_item = Paragraph::load($element['target_id']);
+
+    $action_items[$key]['label'] = '';
+    if ($action_item->hasField('field_heading')) {
+      if ($heading_element = $action_item->get('field_heading')->getValue()) {
+        $action_items[$key]['label'] = $heading_element[0]['value'];
+      }
+    }
+
+    $action_items[$key]['description'] = '';
+    if ($action_item->hasField('field_text')) {
+      if ($text_element = $action_item->get('field_text')->getValue()) {
+        $action_items[$key]['description'] = $action_item->field_text->view('default');
+      }
+    }
+
     if ($action_item->hasField('field_link')) {
       if ($link_element = $action_item->get('field_link')->getValue()) {
-        $action_items[$key]['label'] = $link_element[0]['title'];
         $action_items[$key]['button_data']['href'] = $link_element[0]['uri'];
-        $action_items[$key]['button_data']['label'] = 'Learn More';
+        $action_items[$key]['button_data']['label'] = $link_element[0]['title'] ?? t('Learn More');
       }
     }
   }

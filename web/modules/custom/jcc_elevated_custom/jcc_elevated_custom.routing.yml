@@ -1,0 +1,23 @@
+jcc_elevated_custom.customization_overview:
+  path: "/admin/config/jcc-elevated"
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'JCC Elevated'
+  requirements:
+    _permission: 'access administration pages'
+
+jcc_elevated_custom.site_settings:
+  path: "/admin/config/jcc-elevated/site-settings"
+  defaults:
+    _form: '\Drupal\jcc_elevated_custom\Form\JccElevatedCustomAdminForm'
+    _title: "JCC Elevated: Site Settings"
+  requirements:
+    _permission: "administer site configuration"
+
+jcc_elevated_custom.navigation_settings:
+  path: "/admin/config/jcc-elevated/navigation-customization"
+  defaults:
+    _form: '\Drupal\jcc_elevated_custom\Form\JccElevatedCustomNavigationAdminForm'
+    _title: "JCC Elevated: Navigation Customizations"
+  requirements:
+    _permission: "administer site configuration"
