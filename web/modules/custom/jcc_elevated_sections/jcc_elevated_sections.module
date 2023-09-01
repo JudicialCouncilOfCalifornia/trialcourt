@@ -1,0 +1,947 @@
+<?php
+
+/**
+ * @file
+ * The jcc_elevated_sections module file.
+ */
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Drupal\jcc_elevated_sections\Constants\JccSectionConstants;
+use Drupal\jcc_elevated_sections\Entity\JccSection;
+use Drupal\node\NodeInterface;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_entity_bundle_info_alter().
+ */
+function jcc_elevated_sections_entity_bundle_info_alter(array &$bundles): void {
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+  $vocab_source = $section_service->getSectionSourceId();
+
+  // Extend the Term entity for terms that have Site Section functionality.
+  if ($vocab_source && isset($bundles['taxonomy_term'][$vocab_source])) {
+    $bundles['taxonomy_term'][$vocab_source]['class'] = JccSection::class;
+  }
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function jcc_elevated_sections_entity_base_field_info(EntityTypeInterface $entity_type): array {
+  // Set some variables.
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+  $vocab_source = $section_service->getSectionSourceId();
+
+  $fields = [];
+
+  // Set fields for Taxonomy terms entity.
+  if ($entity_type->id() === 'taxonomy_term') {
+    $fields['jcc_section_machine_name'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Section machine name'))
+      ->setDescription(t('The machine_name for this section. Try not to change once set.'))
+      ->setRequired(TRUE)
+      ->setSetting('max_length', 255)
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setDisplayOptions('form', [
+        'weight' => 10,
+      ]);
+
+    $fields['jcc_section_url_prefix'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Section URL prefix'))
+      ->setDescription(t('The prefix to apply to all content in this section. Try not to change once set.'))
+      ->setRequired(TRUE)
+      ->setSetting('max_length', 255)
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setDisplayOptions('form', [
+        'weight' => 11,
+      ]);
+
+    $fields['jcc_section_homepage'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Section homepage'))
+      ->setDescription(t('Set the page that will act as the starting point for this section.'))
+      ->setRequired(TRUE)
+      ->setSetting('target_type', 'node')
+      ->setSetting('handler_settings', [
+        'target_bundles' => [
+          'landing_page' => 'landing_page',
+          'subpage' => 'subpage',
+        ],
+      ])
+      ->setCardinality(1)
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setDisplayOptions('form', [
+        'weight' => 12,
+      ]);
+  }
+
+  // Set fields for User entity.
+  if ($entity_type->id() === 'user') {
+    $fields['jcc_sections'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Allowed sections'))
+      ->setDescription(t('Set the sections that this user is only allowed to edit.'))
+      ->setSetting('target_type', 'taxonomy_term')
+      ->setSetting('handler', 'default:taxonomy_term')
+      ->setSetting('handler_settings', [
+        'target_bundles' => [$vocab_source => $vocab_source],
+        'sort' => ['field' => 'name'],
+        'auto_create' => FALSE,
+        'auto_create_bundle' => '',
+      ])
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayOptions('form', [
+        'type' => 'options_buttons',
+        'weight' => 3,
+        'settings' => [],
+      ]);
+
+    $fields['jcc_restrict'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Restrict general content editing'))
+      ->setDescription(t('Unchecked, user may still edit non-sectioned content. Checked, user will only have edit access to the content in their assigned section(s).'))
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setDisplayOptions('form', ['weight' => 11]);
+  }
+
+  // Set fields for Node entity.
+  if ($entity_type->id() === 'node') {
+    $fields['jcc_section'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Section'))
+      ->setDescription(t('Set this page into a section. Leave unassigned to designate as general content.'))
+      ->setRequired(FALSE)
+      ->setSetting('target_type', 'taxonomy_term')
+      ->setSetting('handler', 'default:taxonomy_term')
+      ->setSetting('handler_settings', [
+        'target_bundles' => [$vocab_source => $vocab_source],
+        'sort' => ['field' => 'name'],
+        'auto_create' => FALSE,
+        'auto_create_bundle' => '',
+      ])
+      ->setCardinality(1)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'weight' => 3,
+        'settings' => [],
+      ]);
+  }
+
+  // Set fields for Media entity.
+  if ($entity_type->id() === 'media') {
+    $fields['jcc_section'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Section'))
+      ->setDescription(t('Set this media item into a section. Leave unassigned to designate as general content.'))
+      ->setRequired(FALSE)
+      ->setSetting('target_type', 'taxonomy_term')
+      ->setSetting('handler', 'default:taxonomy_term')
+      ->setSetting('handler_settings', [
+        'target_bundles' => [$vocab_source => $vocab_source],
+        'sort' => ['field' => 'name'],
+        'auto_create' => FALSE,
+        'auto_create_bundle' => '',
+      ])
+      ->setCardinality(1)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'weight' => 3,
+        'settings' => [],
+      ]);
+  }
+
+  return $fields;
+}
+
+/**
+ * Implements hook_form_ENTITY_FORM_alter().
+ */
+function jcc_elevated_sections_form_taxonomy_term_form_alter(&$form, FormStateInterface $form_state) {
+  // Set some variables.
+  $term = $form_state->getFormObject()->getEntity();
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+  $vocab_source = $section_service->getSectionSourceId();
+
+  // We are going to alter the admin/add/edit form for all terms in the section
+  // taxonomy. This will improve the UI and management of the functionality.
+  if ($term->bundle() == $vocab_source) {
+
+    // Prevent going to view the term on save. Reloads the edit page.
+    $form_state->disableRedirect();
+
+    // Hide the description.
+    $form['description']['#access'] = FALSE;
+
+    // Hide the relations.
+    $form['relations']['#access'] = FALSE;
+
+    // Hide the Generate URL options. Set to FALSE always.
+    $form['path']['widget'][0]['pathauto']['#default_value'] = FALSE;
+    $form['path']['widget'][0]['pathauto']['#access'] = FALSE;
+
+    // Hide the alias field. Set to FALSE always.
+    $form['path']['widget'][0]['alias']['#access'] = FALSE;
+
+    // Hide the Save and Go to list link.
+    $form['actions']['overview']['#access'] = FALSE;
+
+    // Add custom submission that will redirect to admin page on save.
+    $form['actions']['submit']['#submit'][] = '_jcc_elevated_sections_term_redirect';
+  }
+
+  if ($term->bundle() != $vocab_source) {
+    // Hide the section related fields from none section taxonomy terms.
+    $form['jcc_section_machine_name']['#access'] = FALSE;
+    $form['jcc_section_url_prefix']['#access'] = FALSE;
+    $form['jcc_section_homepage']['#access'] = FALSE;
+  }
+}
+
+/**
+ * Custom redirect on Site Section term save. Goes to custom admin page.
+ */
+function _jcc_elevated_sections_term_redirect($form, FormStateInterface $form_state) {
+  $url = Url::fromRoute('jcc_elevated_sections.settings');
+  $form_state->setRedirectUrl($url);
+}
+
+/**
+ * Implements hook_form_ENTITY_FORM_alter().
+ */
+function jcc_elevated_sections_form_user_form_alter(&$form, FormStateInterface $form_state) {
+  // Set some variables.
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+  $listed_user = $form_state->getFormObject()->getEntity();
+  $current_account = \Drupal::currentUser();
+  $current_user = \Drupal::entityTypeManager()->getStorage('user')->load($current_account->id());
+
+  // Listed user that is being viewed/edited.
+  $listed_user_exempt_from_any_restrictions = $section_service->userCanAdminSections($listed_user);
+
+  // Current logged-in user information.
+  $current_user_has_access_to_set_sections = $section_service->userCanAdminSections($current_user);
+
+  $form['allowed'] = [
+    '#type' => 'details',
+    '#title' => t('Sections'),
+    '#description' => t('Assign sections for this user.'),
+    '#open' => TRUE,
+    '#weight' => 91,
+  ];
+
+  $form['jcc_sections']['#group'] = 'allowed';
+  $form['jcc_restrict']['#group'] = 'allowed';
+
+  // If listed user is exempt from any section restrictions (they are admins).
+  if ($listed_user_exempt_from_any_restrictions) {
+    $form['allowed']['#description'] = t('This user has a role(s) that exempts them from any Section restrictions.');
+    $form['jcc_sections']['#access'] = FALSE;
+    $form['jcc_restrict']['#access'] = FALSE;
+  }
+
+  // If listed user is NOT exempt from any section restrictions.
+  if (!$listed_user_exempt_from_any_restrictions) {
+
+    // If current user is allowed to admin the settings for the listed user.
+    if ($current_user_has_access_to_set_sections) {
+      $form['allowed']['#description'] = t('Please assign a section(s) for this user.');
+    }
+
+    // If current user is not allowed to admin the settings for the listed user.
+    if (!$current_user_has_access_to_set_sections) {
+      $sections = implode(', ', $section_service->getUserAllowedSections($listed_user));
+      $form['allowed']['#description'] = t('This user is assigned to @sections. Only an admin can change the assigned sections.', ['@sections' => $sections]);
+      $form['jcc_sections']['#access'] = FALSE;
+      $form['jcc_restrict']['#access'] = FALSE;
+
+      if ($current_account->id() == $listed_user->id()) {
+        $form['allowed']['#description'] = t('Your are assigned to sections @sections. Contact an admin to change the assigned sections.', ['@sections' => $sections]);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_ENTITY_FORM_alter().
+ */
+function jcc_elevated_sections_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  // Set some variables.
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+  $node = $form_state->getFormObject()->getEntity();
+  $entity_manager = \Drupal::entityTypeManager();
+  $account = \Drupal::currentUser();
+  $user = $entity_manager->getStorage('user')->load($account->id());
+
+  // Determine if Node type is sectionable.
+  $is_sectionable = $section_service->isNodeSectionable($node->bundle());
+
+  if ($is_sectionable) {
+
+    // Get the allowed sections for current user.
+    $user_is_restricted = (bool) $section_service->userIsRestrictedFromGeneralContent($user);
+
+    $form['section'] = [
+      '#type' => 'details',
+      '#title' => t('Section'),
+      '#open' => TRUE,
+      '#weight' => -9,
+      '#group' => 'advanced',
+      '#description' => t('Assign this node to a section.'),
+    ];
+    $form['jcc_section']['#group'] = 'section';
+
+    // Clarify the General content value.
+    if (isset($form['jcc_section']['widget']['#options']['_none'])) {
+      $form['jcc_section']['widget']['#options']['_none'] = t('- No section (General content) -');
+    }
+
+    // If user is restricted from general content editing, require that they
+    // add the content to Section.
+    $form['jcc_section']['widget']['#required'] = $user_is_restricted;
+
+    if (!$section_service->userCanAdminSections($user)) {
+
+      // If user doesn't have free access to admin sections for content, then
+      // we assume the user is restricted to specific sections. We limit the
+      // list of allowable options that the content can be sectioned to.
+      $forbidden = $section_service->getUserForbiddenSections($user);
+      foreach ($form['jcc_section']['widget']['#options'] as $id => $value) {
+        if (isset($forbidden[$id])) {
+          unset($form['jcc_section']['widget']['#options'][$id]);
+        }
+      }
+
+      if ($user_is_restricted) {
+        unset($form['jcc_section']['widget']['#options']['_none']);
+      }
+    }
+  }
+
+  if (!$is_sectionable) {
+    $form['jcc_section']['#access'] = FALSE;
+    $form['section']['#access'] = FALSE;
+  }
+
+}
+
+/**
+ * Implements hook_form_ENTITY_FORM_alter().
+ */
+function jcc_elevated_sections_form_media_form_alter(&$form, FormStateInterface $form_state) {
+  // Set some variables.
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+  $media = $form_state->getFormObject()->getEntity();
+  $entity_manager = \Drupal::entityTypeManager();
+  $account = \Drupal::currentUser();
+  $user = $entity_manager->getStorage('user')->load($account->id());
+  $is_sectionable = $section_service->isMediaSectionable($media->bundle());
+
+  if (!$is_sectionable) {
+
+    // Get sections of a user.
+    $user_is_restricted = (bool) $section_service->userIsRestrictedFromGeneralContent($user);
+
+    $form['section'] = [
+      '#type' => 'details',
+      '#title' => t('Section'),
+      '#open' => TRUE,
+      '#weight' => 20,
+      '#group' => 'advanced',
+      '#description' => t('Assign this node to a section.'),
+    ];
+
+    $form['jcc_section']['#group'] = 'section';
+
+    // Clarify the General content value.
+    if (isset($form['jcc_section']['widget']['#options']['_none'])) {
+      $form['jcc_section']['widget']['#options']['_none'] = t('- No section (General content) -');
+    }
+
+    // If user is restricted from general content editing, require that they
+    // add the content to Section.
+    $form['jcc_section']['widget']['#required'] = $user_is_restricted;
+
+    if (!$section_service->userCanAdminSections($user)) {
+
+      // If user doesn't have free access to admin sections for content, then
+      // we assume the user is restricted to specific sections. We limit the
+      // list of allowable options that the content can be sectioned to.
+      $forbidden = $section_service->getUserForbiddenSections($user);
+      foreach ($form['jcc_section']['widget']['#options'] as $id => $value) {
+        if (isset($forbidden[$id])) {
+          unset($form['jcc_section']['widget']['#options'][$id]);
+        }
+      }
+
+      if ($user_is_restricted) {
+        unset($form['jcc_section']['widget']['#options']['_none']);
+      }
+    }
+  }
+
+  if (!$is_sectionable) {
+    $form['jcc_section']['#access'] = FALSE;
+    $form['section']['#access'] = FALSE;
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_page_title().
+ */
+function jcc_elevated_sections_preprocess_page_title(&$variables) {
+  // Set some variables.
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+  $vocab_source = $section_service->getSectionSourceId();
+  $edit_form = 'entity.taxonomy_term.edit_form';
+  $add_form = 'entity.taxonomy_term.add_form';
+  $route_match = \Drupal::routeMatch();
+  $route = $route_match->getRouteName();
+
+  // If we are on the taxonomy edit form.
+  if ($route == $edit_form) {
+    if ($vocab = $route_match->getParameter('taxonomy_vocabulary')) {
+      // If editing a term in source vocabulary, add the vocab name to title.
+      $variables['title'] = $vocab->id() == $vocab_source ?
+        t('Edit @bundle', ['@bundle' => $vocab->label()]) :
+        $variables['title'];
+    }
+  }
+
+  // If we are on the taxonomy add form.
+  if ($route == $add_form) {
+    if ($vocab = $route_match->getParameter('taxonomy_vocabulary')) {
+      // If adding a term to the source vocabulary, add the vocab name to title.
+      $variables['title'] = $vocab->id() == $vocab_source ?
+        t('Edit @bundle', ['@bundle' => $vocab->label()]) :
+        $variables['title'];
+    }
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_page_title().
+ */
+function jcc_elevated_sections_preprocess_html(&$variables) {
+  // Set some variables.
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+  $vocab_source = $section_service->getSectionSourceId();
+  $edit_form = 'entity.taxonomy_term.edit_form';
+  $add_form = 'entity.taxonomy_term.add_form';
+  $route_match = \Drupal::routeMatch();
+  $route = $route_match->getRouteName();
+
+  // If we are on the taxonomy edit form.
+  if ($route == $edit_form) {
+    if ($vocab = $route_match->getParameter('taxonomy_vocabulary')) {
+      // If editing a term in source vocabulary, add the vocab name to title.
+      $variables['head_title']['title'] = $vocab->id() == $vocab_source ?
+        t('Edit @bundle', ['@bundle' => $vocab->label()]) :
+        $variables['head_title']['title'];
+    }
+  }
+
+  // If we are on the taxonomy add form.
+  if ($route == $add_form) {
+    if ($vocab = $route_match->getParameter('taxonomy_vocabulary')) {
+      // If adding a term to the source vocabulary, add the vocab name to title.
+      $variables['head_title']['title'] = $vocab->id() == $vocab_source ?
+        t('Edit @bundle', ['@bundle' => $vocab->label()]) :
+        $variables['head_title']['title'];
+    }
+  }
+
+}
+
+/**
+ * Implements hook_pathauto_alias_alter().
+ */
+function jcc_elevated_sections_pathauto_alias_alter(&$alias, array &$context) {
+  // Set some variables.
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+
+  // If a node and a sectionable node type, apply the prefix.
+  if ($context['module'] == 'node' && $node = $context['data']['node']) {
+
+    if ($section_service->isEntitySectionable($node) && $node->hasField('jcc_section')) {
+      $section_id = $node->get('jcc_section')->target_id;
+      $bundle = $node->bundle();
+
+      if ($section_id && is_numeric($section_id)) {
+
+        $allowed_prefix_types = $section_service->getSectionableUrlPrefixTypes();
+        if ($allowed_prefix_types[$bundle] != FALSE) {
+          // Get Section from the ID (Term ID) on the node, then get prefix.
+          $section = JccSection::load($section_id);
+          $prefix = trim($section->getSectionUrlPrefix());
+          // Update the alias to include the prefix.
+          $alias = !empty($prefix) ? $prefix . $alias : $alias;
+        }
+      }
+    }
+  }
+
+  // If a media item and a sectionable media type, apply the prefix.
+  if ($context['module'] == 'media' && $media = $context['data']['media']) {
+
+    if ($section_service->isEntitySectionable($media) && $media->hasField('jcc_section')) {
+      $section_id = $media->get('jcc_section')->target_id;
+
+      if ($section_id && is_numeric($section_id)) {
+
+        // Get Section from the ID (Term ID) on the node, then get prefix.
+        $section = JccSection::load($section_id);
+        $prefix = trim($section->getSectionUrlPrefix());
+
+        // Update the alias to include the prefix.
+        $alias = !empty($prefix) ? $prefix . $alias : $alias;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_access().
+ */
+function jcc_elevated_sections_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
+
+  // We want to limit the edit and delete access for sectioned content to only
+  // those who have full admin over sections or to those who are assigned to
+  // the section on the entity.
+  if ($operation == 'update' || $operation == 'edit' || $operation == 'delete' || $operation == 'translate') {
+
+    $section_service = Drupal::service('jcc_elevated_sections.service');
+
+    if ($section_service->isEntitySectionable($entity)) {
+      $user = \Drupal::entityTypeManager()->getStorage('user')->load($account->id());
+
+      // See if user has restricted general editing.
+      $user_is_restricted = $section_service->userIsRestrictedFromGeneralContent($user);
+
+      // Check if entity has a section applied.
+      $entity_has_section = (bool) $section_service->getSectionForEntity($entity);
+
+      // If entity does not have a section, check if user is not allowed to
+      // edit non-sectioned general content.
+      if (!$entity_has_section && $user_is_restricted) {
+        return AccessResult::forbidden();
+      }
+
+      // If entity has a section, check if user can access that section by
+      // comparing the entity section to the applied sections of the user.
+      if ($entity_has_section) {
+        if ($section_service->userCanAccessSection($user, $section_service->getSectionForEntity($entity))) {
+          return AccessResult::allowed();
+        }
+        else {
+          return AccessResult::forbidden();
+        }
+      }
+    }
+  }
+
+  return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
+  // Set some variables.
+  $name = $view->id();
+  $display = $view->current_display;
+  $view_name_display = $name . ':' . $display;
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+  $route_match = \Drupal::routeMatch();
+  $route = $route_match->getRouteObject();
+  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute($route);
+
+  // If we have a view that is assigned to be contextually filtered.
+  if (!$is_admin && $section_service->isViewSectionable($view_name_display)) {
+
+    // Figure out the section for the current node.
+    $sid = jcc_get_current_page_section();
+
+    if ($sid) {
+      $results = $view->result;
+      $filteredResults = [];
+
+      foreach ($results as $result) {
+
+        // Find the section for each resulting entity, and if the value is
+        // empty, then it is most likely general/non-sectioned content. In that
+        // case we don't remove it (we just add it back to the list of items).
+        // If the result entity does return a section ID, and it matches the
+        // current Section ID, we add it back to the result list. This setup
+        // removes Sectioned content that does not match current section
+        // context.
+        $result_section = $result->_entity->jcc_section->getValue();
+        if (empty($result_section)) {
+          $filteredResults[] = $result;
+        }
+        elseif ($result_section[0]['target_id'] == $sid) {
+          $filteredResults[] = $result;
+        }
+      }
+
+      $view->result = $filteredResults;
+      $view->total_rows = count($filteredResults);
+    }
+
+    if (!$sid) {
+      $results = $view->result;
+      $filteredResults = [];
+
+      foreach ($results as $result) {
+
+        // Find the section for each resulting entity, and if the value is
+        // empty, then it is most likely general/non-sectioned content. In that
+        // case we don't remove it (we just add it back to the list of items).
+        // If the result entity does return a section ID, and it matches the
+        // current Section ID, we add it back to the result list. This setup
+        // removes Sectioned content that does not match current section
+        // context.
+        $result_section = $result->_entity->jcc_section->getValue();
+        if (empty($result_section)) {
+          $filteredResults[] = $result;
+        }
+      }
+
+      $view->result = $filteredResults;
+      $view->total_rows = count($filteredResults);
+    }
+  }
+
+}
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+  // Set some variables.
+  $name = $view->id();
+  $display = $view->current_display;
+  $view_name_display = $name . ':' . $display;
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+
+  // If we have a view that is assigned to be contextually filtered.
+  if ($section_service->isViewSectionable($view_name_display)) {
+
+    // Grab the filter options from the view and set a new one.
+    $filters = $view->display_handler->getOption('filters');
+
+    // Build out our default filter for our custom "jcc_section".
+    $filters['jcc_section'] = _jcc_elevated_sections_default_view_filter_info();
+
+    $view->display_handler->overrideOption('filters', $filters);
+
+    if ($node = \Drupal::routeMatch()->getParameter('node')) {
+      if ($section = $section_service->getSectionForEntity($node)) {
+        if (is_object($section)) {
+
+          // Grab the filter options from the view and set a new one.
+          $filters = $view->display_handler->getOption('filters');
+          // $filters['jcc_section'] = $filter_info;
+          $view->display_handler->overrideOption('filters', $filters);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_views_exposed_form_alter().
+ */
+function jcc_elevated_sections_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Set some variables.
+  $view = $form_state->get('view');
+  $name = $view->id();
+  $display = $view->current_display;
+  $view_name_display = $name . ':' . $display;
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+
+  // Check if form has info items, which means it has an exposed form from view.
+  // This is the way we check that Sectionable views with existing exposed forms
+  // receive the JCC Sections exposed form element. We add 'filter-jcc_section'
+  // in a previous hook for reasons, but if it is the only item in the info, we
+  // need to remove it. This way we will know that originally this view does not
+  // have a form.
+  $info = $form['#info'];
+  unset($info['filter-jcc_section']);
+  $has_exposed_form = (bool) !empty($info);
+
+  // Add the section filtering if the view is assigned to have a filter.
+  if ($has_exposed_form && $section_service->isViewSectionable($view_name_display)) {
+
+    $route = \Drupal::routeMatch()->getRouteObject();
+    $is_admin = \Drupal::service('router.admin_context')->isAdminRoute($route);
+    $options[''] = $is_admin ? t('- Any -') : t('- Section -');
+
+    if (!empty($section_service->getSections())) {
+
+      foreach ($section_service->getSections() as $term) {
+        $options[$term->id()] = $term->label();
+      }
+
+      $form['#info']['filter-jcc_section'] = [
+        'operator' => 'jcc_section_op',
+        'value' => 'jcc_section',
+        'label' => 'Section',
+        'description' => '',
+      ];
+
+      $form['jcc_section'] = [
+        '#type' => 'select',
+        '#options' => $options,
+        '#default_value' => '',
+      ];
+
+      unset($form['jcc_section']['#options']['All']);
+    }
+  }
+  else {
+    $form['jcc_section']['#access'] = FALSE;
+  }
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function jcc_elevated_sections_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  // Set some variables.
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+
+  if ($section_service->isEntitySectionable($entity)) {
+    $current_account = \Drupal::currentUser();
+    $user = \Drupal::entityTypeManager()->getStorage('user')->load($current_account->id());
+
+    if (!$section_service->userCanEditSectionsOnEntity($user, $entity)) {
+      unset($operations['translate']);
+    }
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function jcc_elevated_sections_preprocess_page(array &$variables) {
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+  $node_manager = \Drupal::entityTypeManager()->getStorage('node');
+  $route_match = \Drupal::routeMatch();
+  $route = $route_match->getRouteObject();
+  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute($route);
+  $variables['section_navigation'] = FALSE;
+
+  // If we are on a node, and not on the admin side, and the node is of a type
+  // that can be sectioned.
+  if (!$is_admin && $node = $route_match->getParameter('node')) {
+    if ($section_service->isNodeSectionable($node->bundle())) {
+
+      // We need to get the homepage source of the section for the given node.
+      $sid = $section_service->getSectionForNode($node);
+      $section = $section_service->getSectionInfo($sid);
+
+      if ($section) {
+        $section_homepage_nid = $section->getSectionHomepage();
+
+        // Check if there is a section homepage id.
+        if (is_numeric($section_homepage_nid)) {
+          $section_homepage = $node_manager->load($section_homepage_nid);
+
+          // Build out the relevant menu tree. This depends on the current page
+          // being in a menu and only on subpages.
+          $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
+          $section_links = $menu_link_manager->loadLinksByRoute('entity.node.canonical', ['node' => $section_homepage_nid]);
+
+          if (!empty($section_links)) {
+            $menu_id = array_key_first($section_links);
+
+            $params = new MenuTreeParameters();
+            $params->setRoot($menu_id);
+            $params->setActiveTrail([
+              $menu_id,
+              reset($section_links)->getPluginId(),
+            ]);
+
+            $menu_tree = \Drupal::menuTree();
+            $tree = $menu_tree->load($menu_id, $params);
+            $tree = $menu_tree->transform($tree, [
+              ['callable' => 'menu.default_tree_manipulators:checkNodeAccess'],
+              ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+              ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+            ]);
+
+            $menu_build = $menu_tree->build($tree);
+
+            // If we have a menu that can be built.
+            if (!empty($menu_build['#items'])) {
+
+              // Set cacheTags to help with menu builds.
+              $menu_build['#cache']['contexts'][] = 'user';
+              $menu_build['#cache']['tags'][] = 'taxonomy_term_list:' . JccSectionConstants::JCC_SECTIONS_DEFAULT_SOURCE_ID;
+              $menu_build['#cache']['tags'][] = 'node:' . $node->id();
+              foreach ($section_service->getSectionableTypes() as $name) {
+                if ($name) {
+                  $menu_build['#cache']['tags'][] = 'node_list:' . $name;
+                }
+              }
+
+              // Create our storybook component friendly sidebar navigation.
+              if (!empty($menu_build['#items'][$menu_id]['below'])) {
+
+                // We render the sublinks of the node/menu item designated as
+                // the section homepage.
+                $links = $menu_build['#items'][$menu_id]['below'];
+
+                // Set caches to trigger on landing and subpage changes.
+                $variables['section_navigation'] = [
+                  'section_heading' => $section->label(),
+                  'links' => jcc_elevated_sections_build_menu_tree($links, $section_homepage, $section),
+                ];
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+}
+
+/**
+ * Helper function to build a storybook compatible menu tree.
+ */
+function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $section = FALSE): array {
+  $items = [];
+
+  if ($add_home) {
+    $home = $add_home;
+    $items[] = [
+      'text' => t('Home'),
+      'url' => $home->toUrl(),
+      'attributes' => [],
+      'active' => FALSE,
+      'links' => [],
+    ];
+  }
+
+  foreach ($tree as $menu_data) {
+    if (!empty($menu_data['url'])) {
+      $items[] = [
+        'text' => $menu_data['title'],
+        'url' => $menu_data['url'],
+        'attributes' => !empty($menu_data['attributes']) ? $menu_data['attributes']->toArray() : [],
+        'active' => $menu_data['in_active_trail'],
+        'links' => $menu_data['below'] ? jcc_elevated_sections_build_menu_tree($menu_data['below']) : [],
+      ];
+    }
+  }
+  return $items;
+}
+
+/**
+ * Return default filter info data, needed as base for building new filters.
+ */
+function _jcc_elevated_sections_default_view_filter_info(): array {
+
+  // Build list of roles for the default "remember roles" spot.
+  $role_list = [];
+  $roles = Drupal::entityTypeManager()
+    ->getStorage('user_role')
+    ->loadMultiple();
+
+  if (!empty($roles)) {
+    foreach ($roles as $role) {
+      $role_list[$role->id()] = $role->id() == 'authenticated' ? 'authenticated' : 0;
+    }
+  }
+
+  return [
+    'id' => 'jcc_section',
+    'table' => 'node_field_data',
+    'field' => 'jcc_section',
+    'relationship' => 'none',
+    'group_type' => 'group',
+    'admin_label' => '',
+    'entity_type' => 'node',
+    'entity_field' => 'jcc_section',
+    'plugin_id' => 'numeric',
+    'operator' => '=',
+    'value' => [
+      'min' => '',
+      'max' => '',
+      'value' => '',
+    ],
+    'group' => 1,
+    'exposed' => TRUE,
+    'expose' => [
+      'operator_id' => 'jcc_section_op',
+      'label' => 'Section',
+      'description' => '',
+      'use_operator' => FALSE,
+      'operator' => 'jcc_section_op',
+      'operator_limit_selection' => FALSE,
+      'operator_list' => [],
+      'identifier' => 'jcc_section',
+      'required' => FALSE,
+      'remember' => FALSE,
+      'multiple' => FALSE,
+      'remember_roles' => $role_list,
+      'min_placeholder' => '',
+      'max_placeholder' => '',
+      'placeholder' => '',
+    ],
+    'is_grouped' => FALSE,
+    'group_info' => [
+      'label' => '',
+      'description' => '',
+      'identifier' => '',
+      'optional' => TRUE,
+      'widget' => 'select',
+      'multiple' => FALSE,
+      'remember' => FALSE,
+      'default_group' => 'All',
+      'default_group_multiple' => [],
+      'group_items' => [],
+    ],
+  ];
+}
+
+/**
+ * Helper function to return the Section of the current page (node).
+ */
+function jcc_get_current_page_section() {
+  $route_match = \Drupal::routeMatch();
+  $route = $route_match->getRouteObject();
+  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute($route);
+
+  if (!$is_admin && $node = $route_match->getParameter('node')) {
+    if ($node instanceof NodeInterface) {
+      $section_service = Drupal::service('jcc_elevated_sections.service');
+      $node_manager = \Drupal::entityTypeManager()->getStorage('node');
+      $node = $node_manager->load($node->id());
+
+      if ($section_service->isNodeSectionable($node->bundle())) {
+        $sid = $section_service->getSectionForNode($node);
+        return is_numeric($sid) ? $sid : FALSE;
+      }
+    }
+  }
+
+  return FALSE;
+}
