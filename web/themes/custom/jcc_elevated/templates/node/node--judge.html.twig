@@ -133,9 +133,9 @@
     {% block bio_component %}
         {% include "@molecules/ProfileBio/ProfileBio.twig" with {
           name: label.0,
-          title: node.field_job_title.entity.label,
-          division: node.field_division.entity.label,
-          date: 'Since ' ~ node.field_date.value|date('Y'),
+          title: node.field_job_title.value ? node.field_job_title.entity.label,
+          division: node.field_division.value ? node.field_division.entity.label,
+          date: node.field_date.value ? 'Since ' ~ node.field_date.value|date('Y'),
           content: content.body.0|render,
           share: {
             print_url: 'javascript: window.print();',
