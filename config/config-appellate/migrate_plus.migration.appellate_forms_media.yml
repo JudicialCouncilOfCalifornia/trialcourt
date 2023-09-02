@@ -11,15 +11,17 @@ migration_tags:
   - forms
   - media
 migration_group: appellate
-label: 'Appellate Forms: Import media'
+label: 'Appellate: Import publication'
 source:
   plugin: url
   data_fetcher_plugin: http
   data_parser_plugin: google_sheets
-  urls: 'https://raw.githubusercontent.com/JudicialCouncilOfCalifornia/scrape/main/results/google-dca-files.json'
+  urls: 'https://raw.githubusercontent.com/JudicialCouncilOfCalifornia/scrape/main/results/google-dca-publication.json'
   item_selector: entry
   ids:
     id:
+      type: string
+    district:
       type: string
   fields:
     -
@@ -27,21 +29,41 @@ source:
       selector: url
       label: 'Unique Identifier'
     -
-      name: url
-      selector: url
-      label: 'Attachment file url'
-    -
       name: title
       selector: title
       label: Title
     -
-      name: district
-      selector: district
-      label: District
+      name: url
+      selector: url
+      label: URL
     -
-      name: name
-      selector: name
-      label: Name
+      name: date
+      label: Date
+      selector: date
+    -
+      name: body
+      label: Body
+      selector: body
+    -
+      name: doctype
+      label: 'Document type'
+      selector: document_type
+    -
+      name: division
+      label: Division
+      selector: division
+    -
+      name: code
+      label: Code
+      selector: code
+    -
+      name: district
+      label: District
+      selector: district
+    -
+      name: publication_category
+      label: 'Publication Category'
+      selector: category
 process:
   pseudo_encoded_title:
     plugin: callback
@@ -51,7 +73,6 @@ process:
     -
       plugin: path_from_url
       source: url
-      remove_extension: true
     -
       plugin: callback
       callable: basename
@@ -59,23 +80,93 @@ process:
       plugin: callback
       callable: urldecode
     -
+      plugin: str_replace
+      search: ' '
+      replace: '-'
+    -
+      plugin: callback
+      callable: strtolower
+    -
       plugin: skip_on_empty
       method: process
-      message: 'Cannot import empty filename.'
+      message: 'Cannot import empty image filename.'
   name:
-    - plugin: null_coalesce
-      source:
-        - name
-        - '@pseudo_encoded_title'
-  field_media_file/target_id:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: '@pseudo_destination_filename'
+  field_date:
+    -
+      plugin: callback
+      callable: strtotime
+      source: date
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m-d
+  field_media_text/value: body
+  field_media_text/format: snippet
+  field_media_file_multiple:
+    -
+      plugin: explode
+      delimiter: ','
+      source: url
+    -
+      plugin: callback
+      callable: trim
     -
       plugin: migration_lookup
       migration: appellate_forms_file
-      source: id
+  field_document_type:
     -
-      plugin: skip_on_empty
-      method: process
-      message: 'Cannot import empty filename.'
+      plugin: explode
+      source: doctype
+      delimiter: ','
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: document_type
+      value_key: name
+      ignore_case: true
+  field_division:
+    -
+      plugin: explode
+      source: division
+      delimiter: ','
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: division
+      value_key: name
+      ignore_case: true
+  field_code:
+    -
+      plugin: explode
+      source: code
+      delimiter: ','
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: code
+      value_key: name
+      ignore_case: true
+  field_publication_category:
+    -
+      plugin: explode
+      source: publication_category
+      delimiter: ','
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: publication_category
+      value_key: name
+      ignore_case: true
   uid:
     plugin: default_value
     default_value: 1
@@ -84,15 +175,15 @@ process:
     source: district
     map:
       '': ''
-      1: 71
-      2: 72
-      3: 73
-      4: 74
-      5: 75
-      6: 76
+      1: 69
+      2: 70
+      3: 71
+      4: 72
+      5: 73
+      6: 74
 destination:
   plugin: 'entity:media'
-  default_bundle: file
+  default_bundle: publication
 migration_dependencies:
   required:
     - appellate_forms_file
