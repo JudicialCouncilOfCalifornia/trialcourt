@@ -200,6 +200,19 @@ function jcc_elevated_sections_form_taxonomy_term_form_alter(&$form, FormStateIn
 
     // Add custom submission that will redirect to admin page on save.
     $form['actions']['submit']['#submit'][] = '_jcc_elevated_sections_term_redirect';
+
+    // If delete is block from entity_access, print our helper message.
+    if (!$form['actions']['delete']['#access']) {
+      $message[] = t('Deleting is prevented.');
+      $message[] = t('This section has content, media, and/or users associated with it.');
+      $message[] = t('Please delete or edit that content first, to remove this section term.');
+      $form['notify'] = [
+        '#prefix' => '<p class="form-item__description">',
+        '#markup' => implode('<br/>', $message),
+        '#weight' => 101,
+        '#suffix' => '</p>',
+      ];
+    }
   }
 
   if ($term->bundle() != $vocab_source) {
@@ -551,6 +564,26 @@ function jcc_elevated_sections_entity_access(EntityInterface $entity, $operation
           return AccessResult::forbidden();
         }
       }
+    }
+  }
+
+  // When deleting the section taxonomy, prevent deletion if there is content
+  // associated with the section. Better to edit the term with a new name, or
+  // edit the content that is associated with it.
+  if ($operation == 'delete') {
+    if ($entity->getEntityTypeId() == 'taxonomy_term') {
+      $section_service = Drupal::service('jcc_elevated_sections.service');
+      $vid = $section_service->getSectionSourceId();
+      if ($entity->bundle() == $vid) {
+
+        // See if any content is associated with our section.
+        $content_ids_associated_with_the_section_term = _jcc_elevated_sections_get_all_entities_connected_to_section($entity->id());
+
+        if ($content_ids_associated_with_the_section_term) {
+          return AccessResult::forbidden();
+        }
+      }
+
     }
   }
 
@@ -944,4 +977,31 @@ function jcc_get_current_page_section() {
   }
 
   return FALSE;
+}
+
+/**
+ * Helper function to see if any content is tagged with a section.
+ *
+ * Finds all node ids, media item ids, and user ids tagged with a section term.
+ */
+function _jcc_elevated_sections_get_all_entities_connected_to_section($sid) {
+  // Get the node ids of content associated with the section term.
+  $nids = \Drupal::database()->select('node_field_data', 'n')
+    ->fields('n', ['nid'])
+    ->condition('jcc_section', $sid)
+    ->execute()->fetchCol();
+
+  // Get the media ids of media associated with the section term.
+  $mids = \Drupal::database()->select('media_field_data', 'm')
+    ->fields('m', ['mid'])
+    ->condition('jcc_section', $sid)
+    ->execute()->fetchCol();
+
+  // Get the ids of users associated with the section term.
+  $uids = \Drupal::database()->select('user__jcc_sections', 'u')
+    ->fields('u', ['entity_id'])
+    ->condition('jcc_sections_target_id', $sid)
+    ->execute()->fetchCol();
+
+  return array_merge($nids, $mids, $uids);
 }
