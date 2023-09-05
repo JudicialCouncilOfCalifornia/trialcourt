@@ -70,16 +70,6 @@ $is_installer_url = (strpos($_SERVER['SCRIPT_NAME'], '/core/install.php') === 0)
  * at https://www.drupal.org/node/2431247
  *
  */
-if ($is_installer_url) {
-  $config_directories = array(
-    CONFIG_SYNC_DIRECTORY => 'sites/default/files/tuolumne',
-  );
-}
-else {
-  $config_directories = array(
-    CONFIG_SYNC_DIRECTORY => '../config/config-tuolumne',
-  );
-}
 
 /**
  * Allow Drupal 8 to Cleanly Redirect to Install.php For New Sites.

@@ -69,18 +69,8 @@ $is_installer_url = (strpos($_SERVER['SCRIPT_NAME'], '/core/install.php') === 0)
  * you should relocate these locations. See "After Installation"
  * at https://www.drupal.org/node/2431247
  */
-if ($is_installer_url) {
-  $config_directories = [
-    CONFIG_SYNC_DIRECTORY => 'sites/default/files/deprep',
-  ];
-}
-else {
-  $config_directories = [
-    CONFIG_SYNC_DIRECTORY => '../config/config-deprep',
-  ];
-}
 
-/**
+ /**
  * Allow Drupal 8 to Cleanly Redirect to Install.php For New Sites.
  *
  * Issue: https://github.com/pantheon-systems/drops-8/issues/3
