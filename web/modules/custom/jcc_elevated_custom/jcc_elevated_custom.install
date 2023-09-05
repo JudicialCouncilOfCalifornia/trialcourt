@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_elevated_custom install and uninstall functionality.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function jcc_elevated_custom_uninstall() {
+  $settings = jcc_elevated_get_custom_settings();
+
+  // Delete the state variables related to jcc.
+  foreach ($settings as $key) {
+    Drupal::state()->delete($key);
+  }
+}

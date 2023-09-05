@@ -1,0 +1,137 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_elevated_embeds module functionality.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function jcc_elevated_embeds_theme($existing, $type, $theme, $path): array {
+  return [
+    'block__jcc_appellate_map' => [
+      'variables' => [],
+      'template' => 'block--jcc-appellate-map',
+      'base hook' => 'block',
+      'path' => $path . '/templates/appellate_map',
+    ],
+    'jcc_appellate_map' => [
+      'path' => $path . '/templates/appellate_map',
+      'variables' => [
+        'legend' => [],
+        'map_viewport' => [],
+      ],
+    ],
+    'jcc_appellate_viewport' => [
+      'path' => $path . '/templates/appellate_map',
+      'variables' => [
+        'district_info' => [],
+        'map_src' => NULL,
+      ],
+    ],
+    'jcc_appellate_district_legend' => [
+      'path' => $path . '/templates/appellate_map',
+      'variables' => [
+        'district_info' => [],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_entity_bundle_info_alter().
+ */
+function jcc_elevated_embeds_entity_bundle_info_alter(array &$bundles) {
+  // Help make it clearer that Content stream allows for embedding (blocks).
+  if (jcc_custom_is_elevated_site()) {
+    $bundles['paragraph']['content_stream']['label'] = "Content Stream/Embed";
+  }
+}
+
+/**
+ * Implements hook_block_field_block_field_selection_info_alter().
+ */
+function jcc_elevated_embeds_block_field_block_field_selection_info_alter(&$variables) {
+  if (jcc_custom_is_elevated_site()) {
+    // Change the blocks selection plugin.
+    $variables['blocks']['id'] = "jcc_elevated_embeds_blocks";
+    $variables['blocks']['label'] = t('JCC Elevated: Blocks');
+    $variables['blocks']['class'] = "Drupal\jcc_elevated_embeds\Plugin\block_field\BlockFieldSelection\JccElevatedEmbedsBlocks";
+
+    // Change the categories selection plugin.
+    $variables['categories']['id'] = "jcc_elevated_embeds_blocks";
+    $variables['categories']['label'] = t('JCC Elevated: Categories');
+    $variables['categories']['class'] = "Drupal\jcc_elevated_embeds\Plugin\block_field\BlockFieldSelection\JccElevatedEmbedsBlocks";
+  }
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function jcc_elevated_embeds_field_widget_entity_reference_paragraphs_form_alter(&$element, &$form_state, $context) {
+  if ($element['#paragraph_type'] == 'content_stream') {
+    if (isset($element['subform']['field_content_stream'])) {
+
+      // Alter the field widget label.
+      $element['subform']['field_content_stream']['widget']['#title'] = 'Content Stream/App/Block Embed';
+      $element['subform']['field_content_stream']['widget'][0]['#title'] = 'Content Stream/App/Block Embed';
+
+      // Add our own options.
+      $options = _jcc_allowed_content_stream_blocks_override();
+      $element['subform']['field_content_stream']['widget'][0]['plugin_id']['#options'] = $options;
+    }
+  }
+}
+
+/**
+ * Find the available blocks that can be embedded in content_stream paragraphs.
+ *
+ * @param bool $flat
+ *   Return a flat list of allowed blocks, keyed by plugin id.
+ *
+ * @return array
+ *   Return an array of allowed blocks. Default is grouped by category/module.
+ */
+function _jcc_allowed_content_stream_blocks_override($flat = FALSE): array {
+  $options = [];
+  $blockManager = \Drupal::service('plugin.manager.block');
+  $contextRepository = \Drupal::service('context.repository');
+  $definitions = $blockManager->getDefinitionsForContexts($contextRepository->getAvailableContexts());
+
+  $all_options = [];
+  foreach ($definitions as $plugin_id => $definition) {
+    $all_options[$plugin_id] = [
+      'label' => $definition['admin_label'],
+      'group' => $definition['category'],
+    ];
+  }
+
+  $set_overrides = \Drupal::state()->get('jcc_elevated_embeds.allowed_blocks') ?? [];
+  $default_value = !empty($set_overrides) ? $set_overrides : array_keys($all_options);
+  $override_values = array_combine($default_value, $default_value);
+
+  if ($flat) {
+    foreach ($override_values as $plugin_id => $name) {
+      if (!is_numeric($plugin_id)) {
+        $options[$plugin_id] = $all_options[$plugin_id]['label'];
+      }
+    }
+  }
+  else {
+    foreach ($override_values as $plugin_id => $name) {
+      if (!is_numeric($plugin_id)) {
+        $options[$all_options[$plugin_id]['group']][$plugin_id] = $all_options[$plugin_id]['label'];
+      }
+    }
+  }
+
+  return $options;
+}
+
+/**
+ * Implements hook_jcc_elevated_settings_alter().
+ */
+function jcc_elevated_embeds_jcc_elevated_settings_alter(&$settings) {
+  // $settings['jcc_elevated.test'] = 'This is a test value';
+}

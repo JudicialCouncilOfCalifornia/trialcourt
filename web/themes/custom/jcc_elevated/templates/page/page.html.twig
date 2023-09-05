@@ -58,6 +58,9 @@
 {{ attach_library("jcc_storybook/Shoe") }}
 {{ attach_library("jcc_storybook/Button") }}
 
+{{ attach_library("jcc_storybook/RulesFormatting") }}
+{{ attach_library("jcc_storybook/LegalFormatting") }}
+
 <div class="layout-container">
   {% include "@molecules/Hat/Hat.twig" with {
     variant: "default",
@@ -90,7 +93,9 @@
         variant: "no-toggle",
         form: search_form_mobile,
       },
+      variant: "default",
       links: main_links,
+      mobile_links: mobile_main_links,
     },
     secondary_nav_data: {
       variant: "with-divider",
@@ -113,6 +118,27 @@
   {{ page.highlighted }}
 
   {{ page.help }}
+
+  {% if section_navigation %}
+    <div class="jcc-section-navigation">
+      <div class="section box">
+        <div class="container stack">
+          {% if section_navigation.section_heading %}
+            <h2>{{ section_navigation.section_heading }}</h2>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Alternate section contextual nav uses the PrimaryNav alt skin #}
+      {% include "@molecules/PrimaryNav/PrimaryNav.twig" with {
+        variant: "alternate",
+        header_search_data: [],
+        header_search_data_duplicate: [],
+        links: section_navigation.links,
+        mobile_links: section_navigation.links,
+      } %}
+    </div>
+  {% endif %}
 
   <main role="main">
     <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
