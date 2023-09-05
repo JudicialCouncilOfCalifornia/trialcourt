@@ -1,7 +1,13 @@
 {{ attach_library("jcc_storybook/Accordion") }}
 
+{% set expand_close_all = false %}
+{% if content.field_expand_close_all[0]['#markup'] == 'On' %}
+  {% set expand_close_all = true %}
+{% endif %}
+
 {% include "@molecules/Accordion/Accordion.twig" with {
   open_first: content.field_toggle.0.value|default(false),
+  expand_button: expand_close_all,
   heading: content.field_heading,
   lead: content.field_lead,
   items: accordion_items,
