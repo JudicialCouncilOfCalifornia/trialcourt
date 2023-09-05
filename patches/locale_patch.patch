@@ -1,0 +1,13 @@
+diff --git a/core/modules/locale/src/LocaleConfigManager.php b/core/modules/locale/src/LocaleConfigManager.php
+index 2ebdd735c9..fa30dd919e 100644
+--- a/core/modules/locale/src/LocaleConfigManager.php
++++ b/core/modules/locale/src/LocaleConfigManager.php
+@@ -220,7 +220,7 @@ protected function processTranslatableData($name, array $active, array $translat
+       }
+       if (is_array($item)) {
+         // Only add this key if there was a translated value underneath.
+-        $value = $this->processTranslatableData($name, $active[$key], $item, $langcode);
++        $value = $this->processTranslatableData($name, $active, $item, $langcode);
+         if (!empty($value)) {
+           $translated[$key] = $value;
+         }

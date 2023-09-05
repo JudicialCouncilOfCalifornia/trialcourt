@@ -6,7 +6,9 @@
  */
 
 // Dynamically match sites directory to current host.
-$dirs = preg_grep('/^([^.])/', scandir('sites/'));
+$filesdir = scandir('sites/');
+if(is_array($filesdir)) {
+$dirs = preg_grep('/^([^.])/', $filesdir);
 foreach ($dirs as $dir) {
   // Map any host that contains dir as the part of subdomain to that dir.
   // Either as the start of the string, or preceded by a - or . and always
@@ -17,6 +19,7 @@ foreach ($dirs as $dir) {
       $sites[$http_host] = $dir;
     }
   }
+}
 }
 
 // Custom domains for any that do not match above.
