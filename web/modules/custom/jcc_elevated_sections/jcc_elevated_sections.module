@@ -200,6 +200,19 @@ function jcc_elevated_sections_form_taxonomy_term_form_alter(&$form, FormStateIn
 
     // Add custom submission that will redirect to admin page on save.
     $form['actions']['submit']['#submit'][] = '_jcc_elevated_sections_term_redirect';
+
+    // If delete is block from entity_access, print our helper message.
+    if (!$form['actions']['delete']['#access']) {
+      $message[] = t('Deleting is prevented.');
+      $message[] = t('This section has content, media, and/or users associated with it.');
+      $message[] = t('Please delete or edit that content first, to remove this section term.');
+      $form['notify'] = [
+        '#prefix' => '<p class="form-item__description">',
+        '#markup' => implode('<br/>', $message),
+        '#weight' => 101,
+        '#suffix' => '</p>',
+      ];
+    }
   }
 
   if ($term->bundle() != $vocab_source) {
@@ -554,6 +567,26 @@ function jcc_elevated_sections_entity_access(EntityInterface $entity, $operation
     }
   }
 
+  // When deleting the section taxonomy, prevent deletion if there is content
+  // associated with the section. Better to edit the term with a new name, or
+  // edit the content that is associated with it.
+  if ($operation == 'delete') {
+    if ($entity->getEntityTypeId() == 'taxonomy_term') {
+      $section_service = Drupal::service('jcc_elevated_sections.service');
+      $vid = $section_service->getSectionSourceId();
+      if ($entity->bundle() == $vid) {
+
+        // See if any content is associated with our section.
+        $content_ids_associated_with_the_section_term = _jcc_elevated_sections_get_all_entities_connected_to_section($entity->id());
+
+        if ($content_ids_associated_with_the_section_term) {
+          return AccessResult::forbidden();
+        }
+      }
+
+    }
+  }
+
   return AccessResult::neutral();
 }
 
@@ -573,12 +606,39 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
   // If we have a view that is assigned to be contextually filtered.
   if (!$is_admin && $section_service->isViewSectionable($view_name_display)) {
 
+    // Grab the filter options from the view and set a new one.
+    $filters = $view->display_handler->getOption('filters');
+
+    // Determine if the view has an exposed form. If it has an exposed form, we
+    // do not want to do any contextual filtering. The exposed form will handle
+    // that functionality.
+    $base_table = array_key_first($view->getBaseTables());
+    $jcc_section_filter_name = $base_table == 'users_field_data' ? 'jcc_sections_target_id' : 'jcc_section';
+    $view_contains_exposed_filter = FALSE;
+    foreach ($filters as $filter) {
+      // If the only filter applied is the code based jcc filter, ignore it.
+      if ($filter['id'] == $jcc_section_filter_name) {
+        continue;
+      }
+      // Look at the other filters and see if any of them are set to exposed.
+      if (isset($filter['exposed']) && $filter['exposed']) {
+        $view_contains_exposed_filter = TRUE;
+      }
+    }
+
     // Figure out the section for the current node.
     $sid = jcc_get_current_page_section();
 
-    if ($sid) {
+    if ($sid && !$view_contains_exposed_filter) {
       $results = $view->result;
       $filteredResults = [];
+
+      // Here is where we need to set the option to make a view general content
+      // inclusive (TRUE) or exclusive (FALSE). Inclusive means display content
+      // that is not sectioned, but still matches the other criteria. Exclusive
+      // means only display content that has a section set and matching.
+      // VVVVV This needs work to make dynamic.
+      $general_item_inclusive = TRUE;
 
       foreach ($results as $result) {
 
@@ -590,11 +650,22 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
         // removes Sectioned content that does not match current section
         // context.
         $result_section = $result->_entity->jcc_section->getValue();
-        if (empty($result_section)) {
-          $filteredResults[] = $result;
+
+        // If "display general content" along with section contextual content is
+        // set to true.
+        if ($general_item_inclusive) {
+          if (empty($result_section)) {
+            $filteredResults[] = $result;
+          }
+          elseif ($result_section[0]['target_id'] == $sid) {
+            $filteredResults[] = $result;
+          }
         }
-        elseif ($result_section[0]['target_id'] == $sid) {
-          $filteredResults[] = $result;
+        else {
+          // If this view should only display contextual sectioned items.
+          if ($result_section[0]['target_id'] == $sid) {
+            $filteredResults[] = $result;
+          }
         }
       }
 
@@ -602,12 +673,11 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
       $view->total_rows = count($filteredResults);
     }
 
-    if (!$sid) {
+    if (!$sid && !$view_contains_exposed_filter) {
       $results = $view->result;
       $filteredResults = [];
 
       foreach ($results as $result) {
-
         // Find the section for each resulting entity, and if the value is
         // empty, then it is most likely general/non-sectioned content. In that
         // case we don't remove it (we just add it back to the list of items).
@@ -641,25 +711,29 @@ function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id,
   // If we have a view that is assigned to be contextually filtered.
   if ($section_service->isViewSectionable($view_name_display)) {
 
+    $base_table = array_key_first($view->getBaseTables());
+    $jcc_section_filter_name = $base_table == 'users_field_data' ? 'jcc_sections_target_id' : 'jcc_section';
+
     // Grab the filter options from the view and set a new one.
     $filters = $view->display_handler->getOption('filters');
 
-    // Build out our default filter for our custom "jcc_section".
-    $filters['jcc_section'] = _jcc_elevated_sections_default_view_filter_info();
+    $enable_form_filter = FALSE;
+    foreach ($filters as $filter) {
+      if ($filter['id'] == $jcc_section_filter_name) {
+        continue;
+      }
 
-    $view->display_handler->overrideOption('filters', $filters);
-
-    if ($node = \Drupal::routeMatch()->getParameter('node')) {
-      if ($section = $section_service->getSectionForEntity($node)) {
-        if (is_object($section)) {
-
-          // Grab the filter options from the view and set a new one.
-          $filters = $view->display_handler->getOption('filters');
-          // $filters['jcc_section'] = $filter_info;
-          $view->display_handler->overrideOption('filters', $filters);
-        }
+      if (isset($filter['exposed']) && $filter['exposed']) {
+        $enable_form_filter = TRUE;
       }
     }
+
+    // Build out our default filter for our custom "jcc_section".
+    if ($enable_form_filter) {
+      $filters[$jcc_section_filter_name] = _jcc_elevated_sections_default_view_filter_info($base_table);
+    }
+
+    $view->display_handler->overrideOption('filters', $filters);
   }
 }
 
@@ -674,6 +748,9 @@ function jcc_elevated_sections_form_views_exposed_form_alter(&$form, FormStateIn
   $view_name_display = $name . ':' . $display;
   $section_service = Drupal::service('jcc_elevated_sections.service');
 
+  $base_table = array_key_first($view->getBaseTables());
+  $jcc_section_filter_name = $base_table == 'users_field_data' ? 'jcc_sections_target_id' : 'jcc_section';
+
   // Check if form has info items, which means it has an exposed form from view.
   // This is the way we check that Sectionable views with existing exposed forms
   // receive the JCC Sections exposed form element. We add 'filter-jcc_section'
@@ -681,11 +758,13 @@ function jcc_elevated_sections_form_views_exposed_form_alter(&$form, FormStateIn
   // need to remove it. This way we will know that originally this view does not
   // have a form.
   $info = $form['#info'];
-  unset($info['filter-jcc_section']);
+  unset($info['filter-' . $jcc_section_filter_name]);
   $has_exposed_form = (bool) !empty($info);
 
   // Add the section filtering if the view is assigned to have a filter.
   if ($has_exposed_form && $section_service->isViewSectionable($view_name_display)) {
+
+    $form['captcha']['#access'] = FALSE;
 
     $route = \Drupal::routeMatch()->getRouteObject();
     $is_admin = \Drupal::service('router.admin_context')->isAdminRoute($route);
@@ -697,25 +776,25 @@ function jcc_elevated_sections_form_views_exposed_form_alter(&$form, FormStateIn
         $options[$term->id()] = $term->label();
       }
 
-      $form['#info']['filter-jcc_section'] = [
-        'operator' => 'jcc_section_op',
-        'value' => 'jcc_section',
+      $form['#info']['filter-' . $jcc_section_filter_name] = [
+        'operator' => $jcc_section_filter_name . '_op',
+        'value' => $jcc_section_filter_name,
         'label' => 'Section',
         'description' => '',
       ];
 
-      $form['jcc_section'] = [
+      $form[$jcc_section_filter_name] = [
         '#type' => 'select',
         '#options' => $options,
         '#default_value' => '',
       ];
 
-      unset($form['jcc_section']['#options']['All']);
+      $form['captcha']['#access'] = FALSE;
+
+      unset($form[$jcc_section_filter_name]['#options']['All']);
     }
   }
-  else {
-    $form['jcc_section']['#access'] = FALSE;
-  }
+
 }
 
 /**
@@ -857,7 +936,7 @@ function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $
 /**
  * Return default filter info data, needed as base for building new filters.
  */
-function _jcc_elevated_sections_default_view_filter_info(): array {
+function _jcc_elevated_sections_default_view_filter_info($table, $enable_form_filter = FALSE): array {
 
   // Build list of roles for the default "remember roles" spot.
   $role_list = [];
@@ -871,15 +950,39 @@ function _jcc_elevated_sections_default_view_filter_info(): array {
     }
   }
 
+  switch ($table) {
+    case 'users_field_data':
+      // Use a diff table for Users, but it starts from users_field_data.
+      $table = 'user__jcc_sections';
+      $field_name = 'jcc_sections_target_id';
+      $type = 'user';
+      $entity_field = 'jcc_sections';
+      break;
+
+    case 'media_field_data':
+      $table = 'media_field_data';
+      $field_name = 'jcc_section';
+      $type = 'media';
+      $entity_field = 'jcc_section';
+      break;
+
+    default:
+      $table = 'node_field_data';
+      $field_name = 'jcc_section';
+      $type = 'node';
+      $entity_field = 'jcc_section';
+      break;
+  }
+
   return [
-    'id' => 'jcc_section',
-    'table' => 'node_field_data',
-    'field' => 'jcc_section',
+    'id' => $field_name,
+    'table' => $table,
+    'field' => $field_name,
     'relationship' => 'none',
     'group_type' => 'group',
     'admin_label' => '',
-    'entity_type' => 'node',
-    'entity_field' => 'jcc_section',
+    'entity_type' => $type,
+    'entity_field' => $entity_field,
     'plugin_id' => 'numeric',
     'operator' => '=',
     'value' => [
@@ -890,14 +993,14 @@ function _jcc_elevated_sections_default_view_filter_info(): array {
     'group' => 1,
     'exposed' => TRUE,
     'expose' => [
-      'operator_id' => 'jcc_section_op',
+      'operator_id' => $field_name . '_op',
       'label' => 'Section',
       'description' => '',
       'use_operator' => FALSE,
-      'operator' => 'jcc_section_op',
+      'operator' => $field_name . '_op',
       'operator_limit_selection' => FALSE,
       'operator_list' => [],
-      'identifier' => 'jcc_section',
+      'identifier' => $field_name,
       'required' => FALSE,
       'remember' => FALSE,
       'multiple' => FALSE,
@@ -944,4 +1047,31 @@ function jcc_get_current_page_section() {
   }
 
   return FALSE;
+}
+
+/**
+ * Helper function to see if any content is tagged with a section.
+ *
+ * Finds all node ids, media item ids, and user ids tagged with a section term.
+ */
+function _jcc_elevated_sections_get_all_entities_connected_to_section($sid) {
+  // Get the node ids of content associated with the section term.
+  $nids = \Drupal::database()->select('node_field_data', 'n')
+    ->fields('n', ['nid'])
+    ->condition('jcc_section', $sid)
+    ->execute()->fetchCol();
+
+  // Get the media ids of media associated with the section term.
+  $mids = \Drupal::database()->select('media_field_data', 'm')
+    ->fields('m', ['mid'])
+    ->condition('jcc_section', $sid)
+    ->execute()->fetchCol();
+
+  // Get the ids of users associated with the section term.
+  $uids = \Drupal::database()->select('user__jcc_sections', 'u')
+    ->fields('u', ['entity_id'])
+    ->condition('jcc_sections_target_id', $sid)
+    ->execute()->fetchCol();
+
+  return array_merge($nids, $mids, $uids);
 }
