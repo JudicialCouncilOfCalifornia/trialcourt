@@ -1,4 +1,3 @@
-uuid: cced076d-f3fb-49d8-a96a-eb68f44970b8
 langcode: en
 status: true
 dependencies:
@@ -14,6 +13,7 @@ dependencies:
     - media.type.publication
     - media.type.remote_video
     - node.type.alert
+    - node.type.custom_email
     - node.type.document
     - node.type.judge
     - node.type.landing_page
@@ -37,6 +37,7 @@ dependencies:
     - taxonomy.vocabulary.subject_matter
     - taxonomy.vocabulary.tags
     - taxonomy.vocabulary.topics
+    - taxonomy.vocabulary.user_groups
     - workflows.workflow.editorial
   module:
     - captcha
@@ -50,7 +51,9 @@ dependencies:
     - file
     - filter
     - google_tag
+    - jcc_messaging_center
     - media
+    - media_file_delete
     - menu_admin_per_menu
     - moderated_content_bulk_publish
     - node
@@ -63,6 +66,7 @@ dependencies:
     - redirect
     - role_delegation
     - scheduler
+    - sitemap
     - system
     - taxonomy
     - toolbar
@@ -70,13 +74,12 @@ dependencies:
     - webform
     - webform_translation_permissions
     - xlsx
-_core:
-  default_config_hash: ikm79uqWKPP8vwvkCAhJuwpX0zqhGIUO4JWbgfs12LU
 id: manager
 label: Manager
 weight: -7
 is_admin: null
 permissions:
+  - 'Manage Messaging center'
   - 'access administration pages'
   - 'access content overview'
   - 'access contextual links'
@@ -111,11 +114,14 @@ permissions:
   - 'assign editor role'
   - 'assign legal_files role'
   - 'assign manager role'
+  - 'assign tentative_rulings_editor role'
+  - 'assign translator role'
   - 'bypass pages password protection'
   - 'change own username'
   - 'create alert content'
   - 'create boxcast_stream media'
   - 'create content translations'
+  - 'create custom_email content'
   - 'create document content'
   - 'create file media'
   - 'create image media'
@@ -143,12 +149,14 @@ permissions:
   - 'create terms in subject_matter'
   - 'create terms in tags'
   - 'create terms in topics'
+  - 'create terms in user_groups'
   - 'create url aliases'
   - 'create webform'
   - 'delete alert revisions'
   - 'delete all revisions'
   - 'delete any alert content'
   - 'delete any boxcast_stream media'
+  - 'delete any custom_email content'
   - 'delete any document content'
   - 'delete any file'
   - 'delete any file media'
@@ -164,6 +172,7 @@ permissions:
   - 'delete any tentative_ruling content'
   - 'delete any webform'
   - 'delete content translations'
+  - 'delete custom_email revisions'
   - 'delete document revisions'
   - 'delete judge revisions'
   - 'delete landing_page revisions'
@@ -173,6 +182,7 @@ permissions:
   - 'delete orphan revisions'
   - 'delete own alert content'
   - 'delete own boxcast_stream media'
+  - 'delete own custom_email content'
   - 'delete own document content'
   - 'delete own file media'
   - 'delete own image media'
@@ -207,6 +217,7 @@ permissions:
   - 'delete xlsx mapping'
   - 'edit any alert content'
   - 'edit any boxcast_stream media'
+  - 'edit any custom_email content'
   - 'edit any document content'
   - 'edit any file media'
   - 'edit any image media'
@@ -222,6 +233,7 @@ permissions:
   - 'edit any webform submission'
   - 'edit own alert content'
   - 'edit own boxcast_stream media'
+  - 'edit own custom_email content'
   - 'edit own document content'
   - 'edit own file media'
   - 'edit own image media'
@@ -251,6 +263,7 @@ permissions:
   - 'edit terms in subject_matter'
   - 'edit terms in tags'
   - 'edit terms in topics'
+  - 'edit terms in user_groups'
   - 'edit xlsx mapping'
   - 'export xlsx'
   - 'grant node permissions'
@@ -262,6 +275,7 @@ permissions:
   - 'rebuild cache access'
   - 'revert alert revisions'
   - 'revert all revisions'
+  - 'revert custom_email revisions'
   - 'revert document revisions'
   - 'revert judge revisions'
   - 'revert landing_page revisions'
@@ -313,6 +327,7 @@ permissions:
   - 'view all media revisions'
   - 'view any unpublished content'
   - 'view any webform submission'
+  - 'view custom_email revisions'
   - 'view document revisions'
   - 'view judge revisions'
   - 'view landing_page revisions'
