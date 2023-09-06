@@ -51,24 +51,28 @@
 
 {% set teaser = {
   brow_data: {
-    part_one: row['#node'].field_news_type.0.entity.name.value,
-    part_two: row['#node'].field_date.0.value|date('M d, Y'),
+    part_one: row['#node'].field_news_type.0.entity.name.value|default(''),
+    part_two: row['#node'].field_date.0.value|date('M d, Y')|default(''),
   },
-  heading: row['#node'].title(),
-  href: nodeUri['#markup'],
-  text: excerpts[0],
+  heading: row['#node'].title()|default(''),
+  href: nodeUri['#markup']|default(''),
+  text: excerpts[0]|default(''),
 } %}
 
 {% for i in 1..3 %}
   {% set row = sticky_list[i] %}
-  {% set item = {
-    link: {
-      label: row['#node'].title(),
-      href: url('entity.node.canonical', { 'node': row['#node'].id() })|render,
-    },
-    footer: row['#node'].field_date.0.value|date('M d, Y'),
-  } %}
-  {% set list_items = list_items|merge([item]) %}
+
+  {% if row['#node'] %}
+    {% set item = {
+      link: {
+        label: row['#node'].title(),
+        href: url('entity.node.canonical', { 'node': row['#node'].id() })|render,
+      },
+      footer: row['#node'].field_date.0.value|date('M d, Y'),
+    } %}
+    {% set list_items = list_items|merge([item]) %}
+  {% endif %}
+
 {% endfor %}
 
 {% set button_data = {

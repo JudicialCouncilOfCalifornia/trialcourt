@@ -413,12 +413,33 @@ function jcc_elevated_preprocess_views_mini_pager(&$variables) {
  */
 function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $view = $form_state->get('view');
+
   if (($view->id() == 'search') && ($view->current_display == 'search')) {
     // Remove captcha from search form.
     unset($form['captcha']);
-    // Apply the form id to the items per page element so it can be moved out.
+    // Apply the form id to the items per page element, so it can be moved out.
     $form['items_per_page']['#attributes']['form'] = $form['#id'];
   }
+
+  // Hide select form elements if their options are empty or only All/Any item.
+  foreach (Element::children($form) as $name) {
+    if (isset($form[$name]) && $form[$name]['#type'] == 'select') {
+
+      // Disable Chosen on views select items. Re-enable on items as needed.
+      $form[$name]['#attributes']['class'][] = 'chosen-disable';
+
+      // Hide select items if empty options.
+      if (empty($form[$name]['#options'])) {
+        $form[$name]['#access'] = FALSE;
+      }
+
+      // Hide if only All/Any option is available.
+      if (count($form[$name]['#options']) <= 1 && isset($form[$name]['#options']['All'])) {
+        $form[$name]['#access'] = FALSE;
+      }
+    }
+  }
+
 }
 
 /**
