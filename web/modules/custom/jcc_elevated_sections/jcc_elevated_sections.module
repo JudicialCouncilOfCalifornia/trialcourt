@@ -606,10 +606,30 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
   // If we have a view that is assigned to be contextually filtered.
   if (!$is_admin && $section_service->isViewSectionable($view_name_display)) {
 
+    // Grab the filter options from the view and set a new one.
+    $filters = $view->display_handler->getOption('filters');
+
+    // Determine if the view has an exposed form. If it has an exposed form, we
+    // do not want to do any contextual filtering. The exposed form will handle
+    // that functionality.
+    $base_table = array_key_first($view->getBaseTables());
+    $jcc_section_filter_name = $base_table == 'users_field_data' ? 'jcc_sections_target_id' : 'jcc_section';
+    $view_contains_exposed_filter = FALSE;
+    foreach ($filters as $filter) {
+      // If the only filter applied is the code based jcc filter, ignore it.
+      if ($filter['id'] == $jcc_section_filter_name) {
+        continue;
+      }
+      // Look at the other filters and see if any of them are set to exposed.
+      if (isset($filter['exposed']) && $filter['exposed']) {
+        $view_contains_exposed_filter = TRUE;
+      }
+    }
+
     // Figure out the section for the current node.
     $sid = jcc_get_current_page_section();
 
-    if ($sid) {
+    if ($sid && !$view_contains_exposed_filter) {
       $results = $view->result;
       $filteredResults = [];
 
@@ -653,12 +673,11 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
       $view->total_rows = count($filteredResults);
     }
 
-    if (!$sid) {
+    if (!$sid && !$view_contains_exposed_filter) {
       $results = $view->result;
       $filteredResults = [];
 
       foreach ($results as $result) {
-
         // Find the section for each resulting entity, and if the value is
         // empty, then it is most likely general/non-sectioned content. In that
         // case we don't remove it (we just add it back to the list of items).
