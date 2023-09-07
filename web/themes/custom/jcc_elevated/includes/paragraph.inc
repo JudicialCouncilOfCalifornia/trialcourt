@@ -296,10 +296,15 @@ function jcc_elevated_paragraph_hero_banner(array &$variables, ParagraphInterfac
  *   The paragraph.
  */
 function jcc_elevated_paragraph_section(array &$variables, ParagraphInterface $paragraph) {
-  if ($paragraph->get('field_media')[0]->entity && !empty($paragraph->get('field_media'))) {
-    $cover_image = $paragraph->get('field_media')[0]->entity->get('field_media_image')[0]->entity->getFileUri();
-    $image_url = ImageStyle::load('container_100_percent')->buildUrl($cover_image);
-    $variables['bckg_img_url'] = $image_url;
+  $variables['bckg_img_url'] = NULL;
+
+  if (isset($paragraph->get('field_media')[0]) && $paragraph->get('field_media')[0]->entity) {
+    foreach ($paragraph->get('field_media') as $media) {
+      $cover_image = $media->get('field_media_image')[0]->entity->getFileUri();
+      $image_url = ImageStyle::load('container_100_percent')
+        ->buildUrl($cover_image);
+      $variables['bckg_img_url'] = $image_url ?? NULL;
+    }
   }
 }
 

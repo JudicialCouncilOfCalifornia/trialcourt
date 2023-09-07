@@ -8,6 +8,7 @@ use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\jcc_elevated_sections\Constants\JccSectionConstants;
 use Drupal\media\MediaInterface;
 use Drupal\node\NodeInterface;
@@ -60,15 +61,19 @@ class JccSectionService implements JccSectionServiceInterface {
    *   The state manager.
    * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
    *   The redirect destination manager.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The translation service.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager,
                               AccountInterface $currentUser,
                               StateInterface $state,
-                              RedirectDestinationInterface $redirect_destination) {
+                              RedirectDestinationInterface $redirect_destination,
+                              TranslationInterface $string_translation) {
     $this->entityTypeManager = $entity_type_manager;
     $this->currentUser = $currentUser;
     $this->state = $state;
     $this->redirectDestination = $redirect_destination;
+    $this->setStringTranslation($string_translation);
   }
 
   /**
@@ -196,13 +201,13 @@ class JccSectionService implements JccSectionServiceInterface {
     $node_types = $this->getSectionableTypes();
     if ($node_types[$type] == $type) {
       $value = $entity->get('jcc_section')->getValue();
-      return $value[0]['target_id'];
+      return $value ? $value[0]['target_id'] : FALSE;
     }
 
     $media_types = $this->getSectionableMediaTypes();
     if ($media_types[$type] == $type) {
       $value = $entity->get('jcc_section')->getValue();
-      return $value[0]['target_id'];
+      return $value ? $value[0]['target_id'] : FALSE;
     }
 
     return FALSE;
@@ -235,6 +240,7 @@ class JccSectionService implements JccSectionServiceInterface {
   public function getSectionIds() {
     return $this->entityTypeManager->getStorage('taxonomy_term')->getQuery()
       ->condition('vid', $this->getSectionSourceId())
+      ->condition('status', TRUE)
       ->sort('weight')
       ->execute() ?? [];
   }
