@@ -421,6 +421,32 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
     $form['items_per_page']['#attributes']['form'] = $form['#id'];
   }
 
+  if (($view->id() == 'publications') && ($view->current_display == 'publications_list')) {
+
+    // Specifically hide the Case type filter from the publication list.
+    $form['field_case_type_target_id']['#access'] = FALSE;
+
+    // Change the date filter wrapper.
+    $form['field_date_value_wrapper']['#type'] = 'fieldset';
+    $form['field_date_value_wrapper']['#weight'] = -1;
+    $form['field_date_value_wrapper']['#attributes']['class'][] = 'form-item';
+    $form['field_date_value_wrapper']['#title'] = '';
+
+    // Change the "from" date filter to a datetime filter.
+    $form['field_date_value_wrapper']['field_date_value']['min']['#title'] = FALSE;
+    $form['field_date_value_wrapper']['field_date_value']['min']['#type'] = 'datetime';
+    $form['field_date_value_wrapper']['field_date_value']['min']['#date_date_element'] = 'date';
+    $form['field_date_value_wrapper']['field_date_value']['min']['#date_time_element'] = 'none';
+    $form['field_date_value_wrapper']['field_date_value']['min']['#date_year_range'] = '2000:+1';
+
+    // Change the "to" date filter to a datetime filter.
+    $form['field_date_value_wrapper']['field_date_value']['max']['#title'] = FALSE;
+    $form['field_date_value_wrapper']['field_date_value']['max']['#type'] = 'datetime';
+    $form['field_date_value_wrapper']['field_date_value']['max']['#date_date_element'] = 'date';
+    $form['field_date_value_wrapper']['field_date_value']['max']['#date_time_element'] = 'none';
+    $form['field_date_value_wrapper']['field_date_value']['max']['#date_year_range'] = '2000:+1';
+  }
+
   // Hide select form elements if their options are empty or only All/Any item.
   foreach (Element::children($form) as $name) {
     if (isset($form[$name]) && $form[$name]['#type'] == 'select') {
