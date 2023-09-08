@@ -698,3 +698,18 @@ function jcc_custom_preprocess_input(&$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function jcc_custom_form_taxonomy_overview_vocabularies_alter(&$form, FormStateInterface $form_state) {
+  // Hide the "JCC Sections" vocabulary from Vocab if "jcc_elevated_sections"
+  // module is not enabled. Since the vocab config must be in the immutable
+  // feature, this will at least hide it for all sites that are not using the
+  // "JCC Sections" functionality.
+  $moduleHandler = \Drupal::service('module_handler');
+  if (!$moduleHandler->moduleExists('jcc_elevated_sections')) {
+    unset($form['vocabularies']['jcc_sections']);
+  }
+
+}
