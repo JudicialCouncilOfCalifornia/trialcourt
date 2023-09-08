@@ -108,7 +108,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
 }
 
 /**
- * Helper function for cards paragraphs.
+ * Helper function for card paragraphs.
  *
  * @param array $variables
  *   The paragraph variables.
