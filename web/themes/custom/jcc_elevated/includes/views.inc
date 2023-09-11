@@ -99,6 +99,22 @@ function jcc_elevated_preprocess_views_view__alerts__alerts(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for publication forms view.
+ */
+function jcc_elevated_preprocess_views_view__publication_forms(&$variables) {
+  foreach ($variables['rows'] as $item) {
+    $sub_items = [];
+    foreach ($item['#rows'] as $sub_item) {
+      $sub_items[] = $sub_item;
+    }
+    $variables['accordion_items'][] = [
+      'label' => $item['#title'],
+      'content' => $sub_items,
+    ];
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK() for publications listing.
  */
 function jcc_elevated_preprocess_views_view__publications__publications_list(&$variables) {
