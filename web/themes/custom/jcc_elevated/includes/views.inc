@@ -449,7 +449,7 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
 
   // Hide select form elements if their options are empty or only All/Any item.
   foreach (Element::children($form) as $name) {
-    if (isset($form[$name]) && $form[$name]['#type'] == 'select') {
+    if (isset($form[$name]) && isset($form[$name]['#type']) && $form[$name]['#type'] == 'select') {
 
       // Disable Chosen on views select items. Re-enable on items as needed.
       $form[$name]['#attributes']['class'][] = 'chosen-disable';
