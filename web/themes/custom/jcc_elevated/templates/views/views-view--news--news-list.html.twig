@@ -36,19 +36,20 @@
 {%
   set classes = [
   dom_id ? 'js-view-dom-id-' ~ dom_id,
+  'views-view--news--news-list',
   'with-sidebar',
   'container',
   'box',
 ]
 %}
 
-<div{{ attributes.addClass(classes) }} style="--gap:var(--s0);--sidebar-width:36ch;--sidebar-direction:row;">
+<div{{ attributes.addClass(classes) }} style="--gap:var(--s6);--sidebar-width:'36ch';--sidebar-direction:row;">
 
-  <div class="box sidebar">
+  <div class="sidebar">
     {{ exposed }}
   </div>
 
-  <div class="">
+  <div style="--gap:var(--s0);">
     {{ title_prefix }}
     {{ title }}
     {{ title_suffix }}
