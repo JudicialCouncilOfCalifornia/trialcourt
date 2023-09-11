@@ -375,4 +375,17 @@ class JccSectionService implements JccSectionServiceInterface {
     return FALSE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function isViewGeneralContentExcluded($view_name_display): bool {
+    $views = $this->state->get('jcc_elevated.section_applied_views_general_content_excluded', []);
+
+    if (isset($views[$view_name_display])) {
+      return !empty($views[$view_name_display]);
+    }
+
+    return FALSE;
+  }
+
 }
