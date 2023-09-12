@@ -47,6 +47,18 @@ source:
       name: image
       label: Image
       selector: image
+    -
+      name: startdate
+      label: 'Start Date'
+      selector: startdate
+    -
+      name: enddate
+      label: 'End Date'
+      selector: enddate
+    -
+      name: tags
+      label: 'Tags'
+      selector: tags
   ids:
     url:
       type: string
@@ -100,14 +112,21 @@ process:
       ignore_case: true
   field_job_title:
     -
+      plugin: skip_on_empty
+      method: process
+      source: role
+    -
       plugin: entity_generate
       entity_type: taxonomy_term
       bundle_key: vid
-      bundle: person_type
+      bundle: job_title
       value_key: name
       ignore_case: true
-      source: role
   field_division:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: division
     -
       plugin: entity_generate
       entity_type: taxonomy_term
@@ -115,15 +134,54 @@ process:
       bundle: division
       value_key: name
       ignore_case: true
-      source: division
+  field_tags:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: tags
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: tags
+      value_key: name
+      ignore_case: true
   field_media:
-    plugin: migration_lookup
-    migration: appellate_images
-    source: image
+    -
+      plugin: skip_on_empty
+      method: process
+      source: image
+    -
+      plugin: migration_lookup
+      migration: appellate_images
   field_media_file_multiple:
     plugin: migration_lookup
     migration: appellate_forms_media
     source: url
+  field_date:
+    -
+      plugin: callback
+      callable: strtotime
+      source: startdate
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m-d
+  field_retirement_date:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: enddate
+    -
+      plugin: callback
+      callable: strtotime
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m-d
 destination:
   plugin: 'entity:node'
   default_bundle: judge
