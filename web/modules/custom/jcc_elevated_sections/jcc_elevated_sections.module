@@ -644,7 +644,7 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
     // Figure out the section for the current node.
     $sid = jcc_get_current_page_section();
 
-    if ($sid && !$view_contains_exposed_filter) {
+    if ($sid && !$view_contains_exposed_filter && !empty($view->result)) {
       $results = $view->result;
       $filteredResults = [];
 
@@ -671,13 +671,13 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
           if (empty($result_section)) {
             $filteredResults[] = $result;
           }
-          elseif ($result_section[0]['target_id'] == $sid) {
+          elseif (isset($result_section[0]) && $result_section[0]['target_id'] == $sid) {
             $filteredResults[] = $result;
           }
         }
         else {
           // If this view should only display contextual sectioned items.
-          if ($result_section[0]['target_id'] == $sid) {
+          if (isset($result_section[0]) && $result_section[0]['target_id'] == $sid) {
             $filteredResults[] = $result;
           }
         }
