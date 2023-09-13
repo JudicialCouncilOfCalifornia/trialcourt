@@ -683,8 +683,11 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
         }
       }
 
+      $count = count($filteredResults);
       $view->result = $filteredResults;
-      $view->total_rows = count($filteredResults);
+      $view->total_rows = $count;
+      $view->getPager()->total_items = $count;
+      $view->getPager()->updatePageInfo();
     }
 
     if (!$sid && !$view_contains_exposed_filter) {
@@ -695,18 +698,19 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
         // Find the section for each resulting entity, and if the value is
         // empty, then it is most likely general/non-sectioned content. In that
         // case we don't remove it (we just add it back to the list of items).
-        // If the result entity does return a section ID, and it matches the
-        // current Section ID, we add it back to the result list. This setup
-        // removes Sectioned content that does not match current section
-        // context.
+        // If the result entity does return a section ID. This setup
+        // removes Sectioned content from general content views.
         $result_section = $result->_entity->jcc_section->getValue();
         if (empty($result_section)) {
           $filteredResults[] = $result;
         }
       }
 
+      $count = count($filteredResults);
       $view->result = $filteredResults;
-      $view->total_rows = count($filteredResults);
+      $view->total_rows = $count;
+      $view->getPager()->total_items = $count;
+      $view->getPager()->updatePageInfo();
     }
   }
 
