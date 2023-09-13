@@ -81,7 +81,8 @@ function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
   // values in date fields. if date is invalid clear it before template renders.
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
-    if (!jcc_elevated_validate_date($node->field_date->value)) {
+    $date = is_string($node->field_date->value) ? $node->field_date->value : '';
+    if (!jcc_elevated_validate_date($date)) {
       $node->field_date->value = '';
     }
   }
