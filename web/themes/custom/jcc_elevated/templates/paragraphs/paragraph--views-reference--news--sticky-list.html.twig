@@ -47,7 +47,7 @@
 {% set list_items = [] %}
 
 {% set row = sticky_list[0] %}
-{% set nodeUri = url('entity.node.canonical', {'node': row['#node'].id()}) %}
+{% set nodeUri = row['#node'] ? url('entity.node.canonical', {'node': row['#node'].id()})|render|default('') : '' %}
 
 {% set teaser = {
   brow_data: {

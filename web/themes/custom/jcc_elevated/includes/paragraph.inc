@@ -94,6 +94,15 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
   $view_url = !empty($executable->getUrl()) ? $executable->getUrl()->toString() : '';
   $path = \Drupal::service('path.validator')->isValid('/news') ? '/news' : $view_url;
   $options = ['absolute' => TRUE];
+
+  // Apply a section query to this link, if the sections module is enabled and
+  // the current page has a section applied.
+  if (\Drupal::service('module_handler')->moduleExists('jcc_elevated_sections')) {
+    if ($sid = jcc_get_current_page_section()) {
+      $options['query'] = ['jcc_section' => $sid];
+    }
+  }
+
   $variables['news_url'] = Url::fromUserInput($path, $options);
   $variables['#cache']['tags'][] = 'node_list:news';
 }
