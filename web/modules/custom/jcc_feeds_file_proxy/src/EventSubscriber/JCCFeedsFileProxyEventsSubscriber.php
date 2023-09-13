@@ -25,11 +25,20 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
   protected $request;
 
   /**
+   * File system service.
+   *
+   * @var Drupal\Core\File\FileSystemInterface
+   */
+
+  protected $fileSystem;
+
+  /**
    * Constructor.
    */
-  public function __construct(RequestStack $request_stack, FileRepository $file_repository) {
+  public function __construct(RequestStack $request_stack, FileRepository $file_repository, FileSystemInterface $file_system) {
     $this->request = $request_stack->getCurrentRequest();
     $this->fileRepository = $file_repository;
+    $this->fileSystem = $file_system;
   }
 
   /**
@@ -38,7 +47,8 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('request_stack'),
-      $container->get('file.repository')
+      $container->get('file.repository'),
+      $container->get('file.system')
     );
   }
 
@@ -93,7 +103,7 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
     $file_data = file_get_contents($img_url);
 
     if (!file_exists('public://newslink/')) {
-      drupal_mkdir('public://newslink/');
+      $this->fileSystem->mkdir('public://newslink/');
     }
 
     $filename = "public://newslink/" . $img_id . ".png";
