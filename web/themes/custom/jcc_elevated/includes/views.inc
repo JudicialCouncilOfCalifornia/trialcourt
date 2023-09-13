@@ -107,10 +107,12 @@ function jcc_elevated_preprocess_views_view__publication_forms(&$variables) {
     foreach ($item['#rows'] as $sub_item) {
       $sub_items[] = $sub_item;
     }
-    $variables['accordion_items'][] = [
-      'label' => $item['#title'],
-      'content' => $sub_items,
-    ];
+    if (!empty($sub_items)) {
+      $variables['accordion_items'][] = [
+        'label' => $item['#title'],
+        'content' => $sub_items,
+      ];
+    }
   }
 }
 
