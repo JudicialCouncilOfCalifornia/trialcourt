@@ -632,6 +632,7 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
     if ($sid && !$view_contains_exposed_filter) {
       $results = $view->result;
       $filteredResults = [];
+      $index_key = 0;
 
       // Here is where we need to set the option to make a view general content
       // inclusive (TRUE) or exclusive (FALSE). Inclusive means display content
@@ -655,16 +656,22 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
         // set to true.
         if ($general_item_inclusive) {
           if (empty($result_section)) {
+            $result->index = $index_key;
             $filteredResults[] = $result;
+            $index_key += 1;
           }
           elseif ($result_section[0]['target_id'] == $sid) {
+            $result->index = $index_key;
             $filteredResults[] = $result;
+            $index_key += 1;
           }
         }
         else {
           // If this view should only display contextual sectioned items.
           if ($result_section[0]['target_id'] == $sid) {
+            $result->index = $index_key;
             $filteredResults[] = $result;
+            $index_key += 1;
           }
         }
       }
