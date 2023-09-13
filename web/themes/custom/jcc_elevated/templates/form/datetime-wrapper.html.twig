@@ -31,6 +31,13 @@
 {% endif %}
 
 <div>
+
+  {% if description %}
+    <div{{ description_attributes.addClass(description_classes) }}>
+      {{ description }}
+    </div>
+  {% endif %}
+
   {{ content }}
 
   {% if errors %}
@@ -39,9 +46,4 @@
     </div>
   {% endif %}
 
-  {% if description %}
-    <div{{ description_attributes.addClass(description_classes) }}>
-      {{ description }}
-    </div>
-  {% endif %}
 </div>
