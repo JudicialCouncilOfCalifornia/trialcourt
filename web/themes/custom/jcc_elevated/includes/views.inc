@@ -439,8 +439,10 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
 
   if (($view->id() == 'publications') && ($view->current_display == 'publications_list')) {
 
-    // Specifically hide the Case type filter from the publication list.
-    $form['field_case_type_target_id']['#access'] = FALSE;
+    // Specifically hide the Case type filter from the publication list on LAS.
+    if (function_exists('jcc_elevated_get_site_name') && jcc_elevated_get_site_name() == 'partners') {
+      $form['field_case_type_target_id']['#access'] = FALSE;
+    }
 
     // Change the date filter wrapper.
     $form['field_date_value_wrapper']['#type'] = 'fieldset';
