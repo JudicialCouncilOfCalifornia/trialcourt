@@ -440,6 +440,7 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
     $form['field_date_value_wrapper']['field_date_value']['min']['#date_date_element'] = 'date';
     $form['field_date_value_wrapper']['field_date_value']['min']['#date_time_element'] = 'none';
     $form['field_date_value_wrapper']['field_date_value']['min']['#date_year_range'] = '2000:+1';
+    $form['field_date_value_wrapper']['field_date_value']['min']['#description'] = 'From';
 
     // Change the "to" date filter to a datetime filter.
     $form['field_date_value_wrapper']['field_date_value']['max']['#title'] = FALSE;
@@ -447,6 +448,7 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
     $form['field_date_value_wrapper']['field_date_value']['max']['#date_date_element'] = 'date';
     $form['field_date_value_wrapper']['field_date_value']['max']['#date_time_element'] = 'none';
     $form['field_date_value_wrapper']['field_date_value']['max']['#date_year_range'] = '2000:+1';
+    $form['field_date_value_wrapper']['field_date_value']['max']['#description'] = 'To';
   }
 
   // Hide select form elements if their options are empty or only All/Any item.
