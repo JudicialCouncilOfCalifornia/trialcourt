@@ -163,7 +163,7 @@ function jcc_tc_custom_cleanup_empty_filters(&$form, $form_name, $field_name) {
   $sth->groupBy('tags.' . $form_name);
 
   $data = $sth->execute();
-  $results = array_flip($data->fetchAll(\PDO::FETCH_COLUMN, $form_name));
+  $results = array_flip($data->fetchAll(\PDO::FETCH_COLUMN));
   $options = array_intersect_key($options, $results);
   $form[$form_name]['#options'] = $options;
 }
