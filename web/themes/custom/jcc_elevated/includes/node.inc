@@ -174,22 +174,25 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node) {
     if ($media->get('field_document_type')->target_id) {
       $doc_type = Term::load($media->get('field_document_type')->target_id)->get('name')->value;
     }
-    $file = File::load($media->get('field_media_file')->target_id);
-    $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
-    // Profile doc as download link, else general docs.
-    if ($doc_type && $doc_type == 'Profile') {
-      $variables['profile_download'] = [
-        'url' => $file_url,
-        'file_name' => $media_name,
+    if ($media->get('field_media_file_multiple')->target_id) {
+      $file = File::load($media->get('field_media_file_multiple')->target_id);
+      $file_url = \Drupal::service('file_url_generator')
+        ->generateAbsoluteString($file->uri->value);
+      // Profile doc as download link, else general docs.
+      if ($doc_type && $doc_type == 'Profile') {
+        $variables['profile_download'] = [
+          'url' => $file_url,
+          'file_name' => $media_name,
+        ];
+      }
+      $link = [
+        '#markup' => '<a href="' . $file_url . '">' . $media_name . '</a>',
       ];
+      $documents[] = [
+        'text' => $link,
+      ];
+      $variables['documents'] = $documents;
     }
-    $link = [
-      '#markup' => '<a href="' . $file_url . '">' . $media_name . '</a>',
-    ];
-    $documents[] = [
-      'text' => $link,
-    ];
-    $variables['documents'] = $documents;
   }
 
   // Tags.

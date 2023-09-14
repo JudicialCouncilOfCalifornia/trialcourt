@@ -44,26 +44,16 @@ function jcc_elevated_sections_entity_base_field_info(EntityTypeInterface $entit
 
   // Set fields for Taxonomy terms entity.
   if ($entity_type->id() === 'taxonomy_term') {
-    $fields['jcc_section_machine_name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Section machine name'))
-      ->setDescription(t('The machine_name for this section. Try not to change once set.'))
+
+    $fields['jcc_section_url_prefix'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Section URL prefix'))
+      ->setDescription(t('The URL prefix to apply to all content in this section. Start with "/" ("/example/path"). Try not to change once set.'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 255)
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', FALSE)
       ->setDisplayOptions('form', [
         'weight' => 10,
-      ]);
-
-    $fields['jcc_section_url_prefix'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Section URL prefix'))
-      ->setDescription(t('The prefix to apply to all content in this section. Try not to change once set.'))
-      ->setRequired(TRUE)
-      ->setSetting('max_length', 255)
-      ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', FALSE)
-      ->setDisplayOptions('form', [
-        'weight' => 11,
       ]);
 
     $fields['jcc_section_homepage'] = BaseFieldDefinition::create('entity_reference')
@@ -78,6 +68,17 @@ function jcc_elevated_sections_entity_base_field_info(EntityTypeInterface $entit
         ],
       ])
       ->setCardinality(1)
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setDisplayOptions('form', [
+        'weight' => 11,
+      ]);
+
+    $fields['jcc_section_machine_name'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Section machine name'))
+      ->setDescription(t('The machine_name for this section. This value is for Dev/Backend use. Try not to change once set.'))
+      ->setRequired(FALSE)
+      ->setSetting('max_length', 255)
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', FALSE)
       ->setDisplayOptions('form', [
@@ -202,8 +203,8 @@ function jcc_elevated_sections_form_taxonomy_term_form_alter(&$form, FormStateIn
     $form['actions']['submit']['#submit'][] = '_jcc_elevated_sections_term_redirect';
 
     // If delete is block from entity_access, print our helper message.
-    if (!$form['actions']['delete']['#access']) {
-      $message[] = t('Deleting is prevented.');
+    if (!$form['actions']['delete']['#access'] && $form['tid']['#value']) {
+      $message[] = t('Deleting this Section term is prevented.');
       $message[] = t('This section has content, media, and/or users associated with it.');
       $message[] = t('Please delete or edit that content first, to remove this section term.');
       $form['notify'] = [
@@ -531,14 +532,13 @@ function jcc_elevated_sections_pathauto_alias_alter(&$alias, array &$context) {
  * Implements hook_entity_access().
  */
 function jcc_elevated_sections_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+  $vid = $section_service->getSectionSourceId();
 
   // We want to limit the edit and delete access for sectioned content to only
   // those who have full admin over sections or to those who are assigned to
   // the section on the entity.
   if ($operation == 'update' || $operation == 'edit' || $operation == 'delete' || $operation == 'translate') {
-
-    $section_service = Drupal::service('jcc_elevated_sections.service');
-
     if ($section_service->isEntitySectionable($entity)) {
       $user = \Drupal::entityTypeManager()->getStorage('user')->load($account->id());
 
@@ -572,8 +572,6 @@ function jcc_elevated_sections_entity_access(EntityInterface $entity, $operation
   // edit the content that is associated with it.
   if ($operation == 'delete') {
     if ($entity->getEntityTypeId() == 'taxonomy_term') {
-      $section_service = Drupal::service('jcc_elevated_sections.service');
-      $vid = $section_service->getSectionSourceId();
       if ($entity->bundle() == $vid) {
 
         // See if any content is associated with our section.
@@ -584,6 +582,23 @@ function jcc_elevated_sections_entity_access(EntityInterface $entity, $operation
         }
       }
 
+    }
+  }
+
+  // When viewing the JCC Section taxonomy terms, Only allow users that are set
+  // to access those sections.
+  if ($operation == 'view') {
+    if ($entity->getEntityTypeId() == 'taxonomy_term') {
+      if ($entity->bundle() == $vid) {
+        $user = \Drupal::entityTypeManager()->getStorage('user')->load($account->id());
+        $sid = $entity->id();
+        if ($section_service->userCanAccessSection($user, $sid)) {
+          return AccessResult::allowed();
+        }
+        else {
+          return AccessResult::forbidden();
+        }
+      }
     }
   }
 
@@ -629,16 +644,16 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
     // Figure out the section for the current node.
     $sid = jcc_get_current_page_section();
 
-    if ($sid && !$view_contains_exposed_filter) {
+    if ($sid && !$view_contains_exposed_filter && !empty($view->result)) {
       $results = $view->result;
       $filteredResults = [];
+      $index_key = 0;
 
       // Here is where we need to set the option to make a view general content
       // inclusive (TRUE) or exclusive (FALSE). Inclusive means display content
       // that is not sectioned, but still matches the other criteria. Exclusive
       // means only display content that has a section set and matching.
-      // VVVVV This needs work to make dynamic.
-      $general_item_inclusive = TRUE;
+      $general_content_excluded = $section_service->isViewGeneralContentExcluded($view_name_display);
 
       foreach ($results as $result) {
 
@@ -653,46 +668,59 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
 
         // If "display general content" along with section contextual content is
         // set to true.
-        if ($general_item_inclusive) {
+        if (!$general_content_excluded) {
           if (empty($result_section)) {
+            $result->index = $index_key;
             $filteredResults[] = $result;
+            $index_key += 1;
           }
-          elseif ($result_section[0]['target_id'] == $sid) {
+          elseif (isset($result_section[0]) && $result_section[0]['target_id'] == $sid) {
+            $result->index = $index_key;
             $filteredResults[] = $result;
+            $index_key += 1;
           }
         }
         else {
           // If this view should only display contextual sectioned items.
-          if ($result_section[0]['target_id'] == $sid) {
+          if (isset($result_section[0]) && $result_section[0]['target_id'] == $sid) {
+            $result->index = $index_key;
             $filteredResults[] = $result;
+            $index_key += 1;
           }
         }
       }
 
+      $count = count($filteredResults);
       $view->result = $filteredResults;
-      $view->total_rows = count($filteredResults);
+      $view->total_rows = $count;
+      $view->getPager()->total_items = $count;
+      $view->getPager()->updatePageInfo();
     }
 
     if (!$sid && !$view_contains_exposed_filter) {
       $results = $view->result;
       $filteredResults = [];
+      $index_key = 0;
 
       foreach ($results as $result) {
         // Find the section for each resulting entity, and if the value is
         // empty, then it is most likely general/non-sectioned content. In that
         // case we don't remove it (we just add it back to the list of items).
-        // If the result entity does return a section ID, and it matches the
-        // current Section ID, we add it back to the result list. This setup
-        // removes Sectioned content that does not match current section
-        // context.
+        // If the result entity does return a section ID. This setup
+        // removes Sectioned content from general content views.
         $result_section = $result->_entity->jcc_section->getValue();
         if (empty($result_section)) {
+          $result->index = $index_key;
           $filteredResults[] = $result;
+          $index_key += 1;
         }
       }
 
+      $count = count($filteredResults);
       $view->result = $filteredResults;
-      $view->total_rows = count($filteredResults);
+      $view->total_rows = $count;
+      $view->getPager()->total_items = $count;
+      $view->getPager()->updatePageInfo();
     }
   }
 
@@ -710,6 +738,9 @@ function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id,
 
   // If we have a view that is assigned to be contextually filtered.
   if ($section_service->isViewSectionable($view_name_display)) {
+
+    $route = \Drupal::routeMatch()->getRouteObject();
+    $is_admin = \Drupal::service('router.admin_context')->isAdminRoute($route);
 
     $base_table = array_key_first($view->getBaseTables());
     $jcc_section_filter_name = $base_table == 'users_field_data' ? 'jcc_sections_target_id' : 'jcc_section';
@@ -730,7 +761,7 @@ function jcc_elevated_sections_views_pre_view(ViewExecutable $view, $display_id,
 
     // Build out our default filter for our custom "jcc_section".
     if ($enable_form_filter) {
-      $filters[$jcc_section_filter_name] = _jcc_elevated_sections_default_view_filter_info($base_table);
+      $filters[$jcc_section_filter_name] = _jcc_elevated_sections_default_view_filter_info($base_table, $is_admin);
     }
 
     $view->display_handler->overrideOption('filters', $filters);
@@ -779,7 +810,7 @@ function jcc_elevated_sections_form_views_exposed_form_alter(&$form, FormStateIn
       $form['#info']['filter-' . $jcc_section_filter_name] = [
         'operator' => $jcc_section_filter_name . '_op',
         'value' => $jcc_section_filter_name,
-        'label' => 'Section',
+        'label' => $is_admin ? 'Section' : '',
         'description' => '',
       ];
 
@@ -870,13 +901,13 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
             // If we have a menu that can be built.
             if (!empty($menu_build['#items'])) {
 
-              // Set cacheTags to help with menu builds.
-              $menu_build['#cache']['contexts'][] = 'user';
-              $menu_build['#cache']['tags'][] = 'taxonomy_term_list:' . JccSectionConstants::JCC_SECTIONS_DEFAULT_SOURCE_ID;
-              $menu_build['#cache']['tags'][] = 'node:' . $node->id();
+              // Set cacheTags on the page to help with menu builds.
+              $variables['page']['#cache']['contexts'][] = 'user';
+              $variables['page']['#cache']['tags'][] = 'taxonomy_term_list:' . JccSectionConstants::JCC_SECTIONS_DEFAULT_SOURCE_ID;
+              $variables['page']['#cache']['tags'][] = 'node:' . $node->id();
               foreach ($section_service->getSectionableTypes() as $name) {
                 if ($name) {
-                  $menu_build['#cache']['tags'][] = 'node_list:' . $name;
+                  $variables['page']['#cache']['tags'][] = 'node_list:' . $name;
                 }
               }
 
@@ -936,7 +967,7 @@ function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $
 /**
  * Return default filter info data, needed as base for building new filters.
  */
-function _jcc_elevated_sections_default_view_filter_info($table, $enable_form_filter = FALSE): array {
+function _jcc_elevated_sections_default_view_filter_info($table, $display_label = TRUE, $enable_form_filter = FALSE): array {
 
   // Build list of roles for the default "remember roles" spot.
   $role_list = [];
@@ -974,6 +1005,8 @@ function _jcc_elevated_sections_default_view_filter_info($table, $enable_form_fi
       break;
   }
 
+  $label = $display_label ? 'Section' : '';
+
   return [
     'id' => $field_name,
     'table' => $table,
@@ -994,7 +1027,7 @@ function _jcc_elevated_sections_default_view_filter_info($table, $enable_form_fi
     'exposed' => TRUE,
     'expose' => [
       'operator_id' => $field_name . '_op',
-      'label' => 'Section',
+      'label' => $label,
       'description' => '',
       'use_operator' => FALSE,
       'operator' => $field_name . '_op',
@@ -1051,10 +1084,11 @@ function jcc_get_current_page_section() {
 
 /**
  * Helper function to see if any content is tagged with a section.
- *
- * Finds all node ids, media item ids, and user ids tagged with a section term.
  */
 function _jcc_elevated_sections_get_all_entities_connected_to_section($sid) {
+  // Finds all node ids, media item ids, and user ids tagged with a
+  // section term.
+  //
   // Get the node ids of content associated with the section term.
   $nids = \Drupal::database()->select('node_field_data', 'n')
     ->fields('n', ['nid'])

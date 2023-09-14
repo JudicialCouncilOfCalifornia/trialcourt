@@ -53,8 +53,16 @@ function jcc_custom_ckeditor_css_alter(array &$css, Editor $editor) {
       'minimal',
     ];
 
-    if (in_array($editor->getFilterFormat()->id(), $known_formats)) {
-      $css[] = drupal_get_path('core', NULL) . "/../libraries/courtyard-artifact/2.x/public/css/${scheme}.css";
+    if (!jcc_custom_is_elevated_site() && in_array($editor->getFilterFormat()->id(), $known_formats)) {
+      $css[] = "/libraries/courtyard-artifact/2.x/public/css/${scheme}.css";
+    }
+    else {
+      $css[] = "/themes/contrib/jcc_storybook/lib/css/scheme-default.css";
+      $css[] = "/themes/contrib/jcc_storybook/lib/css/elements.css";
+      // For paragraphs embedded as ckeditor content.
+      if ($editor->getFilterFormat()->id() == 'body') {
+        $css[] = "/themes/contrib/jcc_storybook/lib/stories/Molecules/ReadMore/ReadMore.css";
+      }
     }
   }
 }
