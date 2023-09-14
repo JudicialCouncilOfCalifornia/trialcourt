@@ -41,10 +41,11 @@
 
 {# Create an items array from referenced accordion items. #}
 {% set items = [] %}
-{% set text = item['#paragraph'].field_text.value is not empty ? item['#paragraph'].field_text.value : NULL %}
-{% set format = item['#paragraph'].field_text.format is not empty ? item['#paragraph'].field_text.format : NULL %}
 
 {% for k, item in content.field_components if k|first != "#" %}
+  {% set text = item['#paragraph'].field_text.value is not empty ? item['#paragraph'].field_text.value : NULL %}
+  {% set format = item['#paragraph'].field_text.format is not empty ? item['#paragraph'].field_text.format : NULL %}
+  
   {% set accordion = {
     title: item['#paragraph'].field_heading.value,
     body: {
