@@ -631,6 +631,15 @@ function jcc_custom_field_widget_form_alter(&$element, FormStateInterface $form_
 }
 
 /**
+ * Implements hook_theme_suggestions_details_alter().
+ */
+function jcc_custom_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
+  if (isset($variables['element']['#id'])) {
+    $suggestions[] = $hook . '__' . str_replace('-', '_', $variables['element']['#id']);
+  }
+}
+
+/**
  * Implements hook_theme_suggestions_select_alter().
  */
 function jcc_custom_theme_suggestions_select_alter(array &$suggestions, array $variables, $hook) {
@@ -646,6 +655,9 @@ function jcc_custom_theme($existing, $type, $theme, $path) {
   // Override elevated admin theme templates.
   if (jcc_custom_is_elevated_site()) {
     return [
+      'details__edit_menu' => [
+        'base hook' => 'details',
+      ],
       'select__edit_menu_menu_parent' => [
         'base hook' => 'select',
       ],
@@ -654,55 +666,89 @@ function jcc_custom_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Implements hook_preprocess_select().
+ * Implements hook_preprocess_details().
  */
-function jcc_custom_preprocess_select__edit_menu_menu_parent(&$variables) {
-  // Restrict first menu level placement for elevated sites.
-  if (jcc_custom_is_elevated_site()) {
-    $roles = \Drupal::currentUser()->getRoles();
-    $is_allowed = array_intersect(['administrator'], $roles);
-    if (\Drupal::routeMatch()->getParameter('node')) {
+function jcc_custom_preprocess_details(&$variables) {
+  // Elements for menu settings if first level and not allowed.
+  if (jcc_custom_is_elevated_site() && \Drupal::routeMatch()->getParameter('node')) {
+    if ($variables['title'] && !is_array($variables['title']) && $variables['title'] == 'Menu settings') {
       $node = \Drupal::routeMatch()->getParameter('node');
       $url_alias = $node->toUrl()->toString();
       $menu_level = substr_count($url_alias, '/');
-      // Disable parent link setting if first level & not allowed.
+      $roles = \Drupal::currentUser()->getRoles();
+      $is_allowed = in_array('administrator', $roles);
       if ($menu_level == 1 && !$is_allowed) {
-        $variables['attributes']['disabled'] = 'true';
+        // Menu title.
+        $title_label_exp = '/<label(?:.*?)for=\"edit-menu-title\"(?:.*)>([^"]+)<\/.*>/';
+        preg_match($title_label_exp, $variables['children'], $title_label);
+        $title_val_exp = '/<input(?:.*?)id=\"edit-menu-title\"(?:.*)value=\"([^"]+).*/';
+        preg_match($title_val_exp, $variables['children'], $title_value);
+
+        // Menu description.
+        $desc_label_exp = '/<label(?:.*?)for=\"edit-menu-description\"(?:.*)>([^"]+)<\/.*>/';
+        preg_match($desc_label_exp, $variables['children'], $description_label);
+        $desc_value_exp = '/<input(?:.*?)id=\"edit-menu-description\"(?:.*)value=\"([^"]+).*/';
+        preg_match($desc_value_exp, $variables['children'], $description_value);
+
+        // Menu parent.
+        $parent_label_exp = '/<label(?:.*?)for=\"edit-menu-menu-parent\"(?:.*)>([^"]+)<\/.*>/';
+        preg_match($parent_label_exp, $variables['children'], $parent_label);
+        $parent_value_exp = '/<option(?:.*?)selected(?:.*?)>([^"]+)<\/(?:.*?)>/';
+        preg_match($parent_value_exp, $variables['children'], $parent_value);
+        $parent_value = preg_replace('/&#?[a-z0-9]{2,8};/', '', $parent_value[1]);
+
+        // Menu weight.
+        $weight_label_exp = '/<label(?:.*?)for=\"edit-menu-weight\"(?:.*)>([^"]+)<\/.*>/';
+        preg_match($weight_label_exp, $variables['children'], $weight_label);
+        $weight_value_exp = '/<input(?:.*?)id=\"edit-menu-weight\"(?:.*)value=\"([^"]+).*/';
+        preg_match($weight_value_exp, $variables['children'], $weight_value);
+
+        // Readonly menu details.
+        $variables['readonly'] = [
+          'menu_title' => [
+            'label' => $title_label[1],
+            'value' => $title_value[1],
+          ],
+          'menu_description' => [
+            'label' => $description_label[1],
+            'value' => $description_value[1],
+          ],
+          'menu_parent' => [
+            'label' => $parent_label[1],
+            'value' => $parent_value,
+          ],
+          'menu_weight' => [
+            'label' => $weight_label[1],
+            'value' => $weight_value[1],
+          ],
+        ];
+
+        // Flags and attributes to visibly hide settings.
+        $variables['is_not_allowed'] = TRUE;
+        $variables['attributes']['aria-hidden'] = 'true';
       }
     }
-    else {
-      // Flag create time.
-      $variables['create_mode'] = TRUE;
-    }
-    // For option element since attribute not provided.
-    $variables['is_allowed'] = $is_allowed;
   }
 }
 
 /**
- * Implements hook_preprocess_input().
+ * Implements hook_preprocess_select().
  */
-function jcc_custom_preprocess_input(&$variables) {
-  if (isset($variables['element']['#id'])) {
-    switch ($variables['element']['#id']) {
-      case 'edit-menu-enabled':
-      case 'edit-menu-title':
-      case 'edit-menu-description':
-      case 'edit-menu-weight':
-        // Restrict other menu settings for elevated sites.
-        // Parent link is handled separately.
-        if (\Drupal::routeMatch()->getParameter('node')) {
-          $node = \Drupal::routeMatch()->getParameter('node');
-          $url_alias = $node->toUrl()->toString();
-          $menu_level = substr_count($url_alias, '/');
-          $roles = \Drupal::currentUser()->getRoles();
-          $is_allowed = array_intersect(['administrator'], $roles);
-          // Disable all other menu settings if first level and not allowed.
-          if (jcc_custom_is_elevated_site() && $menu_level == 1 && !$is_allowed) {
-            $variables['attributes']['disabled'] = 'true';
-          }
-        }
-        break;
+function jcc_custom_preprocess_select__edit_menu_menu_parent(&$variables) {
+  // Flags to restrict 'Main navigation' (first level) selection.
+  if (jcc_custom_is_elevated_site()) {
+    $roles = \Drupal::currentUser()->getRoles();
+    $is_allowed = in_array('administrator', $roles);
+    $variables['is_allowed'] = $is_allowed;
+    if (\Drupal::routeMatch()->getParameter('node')) {
+      $node = \Drupal::routeMatch()->getParameter('node');
+      $url_alias = $node->toUrl()->toString();
+      $menu_level = substr_count($url_alias, '/');
+      $variables['menu_level'] = $menu_level;
+    }
+    else {
+      // Flag create mode.
+      $variables['create_mode'] = TRUE;
     }
   }
 }
