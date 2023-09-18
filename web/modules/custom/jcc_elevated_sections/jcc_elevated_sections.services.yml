@@ -1,0 +1,9 @@
+services:
+  jcc_elevated_sections.service:
+    class: Drupal\jcc_elevated_sections\JccSectionService
+    arguments: [ '@entity_type.manager', '@current_user', '@state', '@redirect.destination', '@string_translation' ]
+  theme.negotiator.jcc_elevated_sections:
+    class: Drupal\jcc_elevated_sections\ThemeNegotiator\JccElevatedSectionsThemeNegotiator
+    arguments: [ '@config.factory', '@entity_type.manager' ]
+    tags:
+      - { name: theme_negotiator, priority: -50 }

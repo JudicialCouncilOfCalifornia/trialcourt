@@ -1,0 +1,87 @@
+uuid: 1aac0908-fe0c-4d7b-a3fc-dc63733bcbad
+langcode: en
+status: true
+dependencies: {  }
+id: appellate_node_subpage
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - appellate
+  - node
+  - subpage
+migration_group: appellate
+label: 'Appellate Subpage: Import Node'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: 'https://raw.githubusercontent.com/JudicialCouncilOfCalifornia/scrape/main/results/google-dca-pages.json'
+  item_selector: entry
+  fields:
+    -
+      name: src_unique_id
+      label: 'Unique ID'
+      selector: url
+    -
+      name: url
+      label: Url
+      selector: url
+    -
+      name: title
+      label: Title
+      selector: title
+    -
+      name: body
+      label: Body
+      selector: body
+    -
+      name: district
+      label: District
+      selector: district
+  ids:
+    src_unique_id:
+      type: string
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  title:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: TITLE
+  path/pathauto:
+    plugin: default_value
+    default_value: 1
+  body/value:
+    -
+      plugin: media_replace_file_link
+      source: body
+    -
+      plugin: prefix_relative_links
+    -
+      plugin: callback
+      callable: htmlspecialchars_decode
+  body/format:
+    plugin: default_value
+    default_value: full_html
+  jcc_section:
+    plugin: static_map
+    source: district
+    map:
+      '': ''
+      1: 69
+      2: 70
+      3: 71
+      4: 72
+      5: 73
+      6: 74
+destination:
+  plugin: 'entity:node'
+  default_bundle: subpage
+migration_dependencies:
+  optional:
+    - appellate_forms_media
