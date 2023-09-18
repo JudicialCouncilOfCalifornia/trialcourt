@@ -3,6 +3,9 @@
 {{ attach_library("jcc_storybook/Button") }}
 
 {% set variant = paragraph.field_variant.value|json_decode|default([]).hero %}
+{% if variant == 'default' %}
+  {% set variant = 'banner' %}
+{% endif %}
 
 {% if variant == 'banner' %}
   {% set bg_tint = 'accent-warm-dark-xx' %}
@@ -11,7 +14,7 @@
 {% endif %}
 
 {% include "@molecules/Hero/Hero.twig" with {
-  variant: variant ? variant : 'content-bg',
+  variant: variant,
   content_justify: 'left',
   bg_tint: bg_tint,
   background_image_url: file_url(bckg_img_url),

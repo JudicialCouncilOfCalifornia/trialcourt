@@ -1,0 +1,133 @@
+diff --git a/core/modules/taxonomy/src/Form/OverviewTerms.php b/core/modules/taxonomy/src/Form/OverviewTerms.php
+index 19030a47cb..9533c76a34 100644
+--- a/core/modules/taxonomy/src/Form/OverviewTerms.php
++++ b/core/modules/taxonomy/src/Form/OverviewTerms.php
+@@ -158,7 +158,9 @@ public function buildForm(array $form, FormStateInterface $form_state, Vocabular
+ 
+     $delta = 0;
+     $term_deltas = [];
+-    $tree = $this->storageController->loadTree($taxonomy_vocabulary->id(), 0, NULL, TRUE);
++    // Terms are not loaded to avoid excessive memory consumption for large
++    // vocabularies. Needed terms are loaded explicitly afterward.
++    $tree = $this->storageController->loadTree($taxonomy_vocabulary->id(), 0, NULL, FALSE);
+     $tree_index = 0;
+     $complete_tree = NULL;
+     do {
+@@ -179,7 +181,10 @@ public function buildForm(array $form, FormStateInterface $form_state, Vocabular
+       }
+ 
+       // Do not let a term start the page that is not at the root.
+-      $term = $tree[$tree_index];
++      $raw_term = $tree[$tree_index];
++      $term = $this->storageController->load($raw_term->tid);
++      $term->depth = $raw_term->depth;
++      $term->parents = $raw_term->parents;
+       if (isset($term->depth) && ($term->depth > 0) && !isset($back_step)) {
+         $back_step = 0;
+         while ($pterm = $tree[--$tree_index]) {
+@@ -512,7 +517,9 @@ public function submitForm(array &$form, FormStateInterface $form_state) {
+ 
+     $vocabulary = $form_state->get(['taxonomy', 'vocabulary']);
+     $changed_terms = [];
+-    $tree = $this->storageController->loadTree($vocabulary->id(), 0, NULL, TRUE);
++    // Terms are not loaded to avoid excessive memory consumption for large
++    // vocabularies. Needed terms are loaded explicitly afterward.
++    $tree = $this->storageController->loadTree($vocabulary->id(), 0, NULL, FALSE);
+ 
+     if (empty($tree)) {
+       return;
+@@ -520,9 +527,10 @@ public function submitForm(array &$form, FormStateInterface $form_state) {
+ 
+     // Build a list of all terms that need to be updated on previous pages.
+     $weight = 0;
+-    $term = $tree[0];
+-    while ($term->id() != $form['#first_tid']) {
+-      if ($term->parents[0] == 0 && $term->getWeight() != $weight) {
++    $raw_term = $tree[0];
++    while ($raw_term->tid != $form['#first_tid']) {
++      if ($raw_term->parents[0] == 0 && $raw_term->weight != $weight) {
++        $term = $this->storageController->load($raw_term->tid);
+         $term->setWeight($weight);
+         $changed_terms[$term->id()] = $term;
+       }
+@@ -559,8 +567,9 @@ public function submitForm(array &$form, FormStateInterface $form_state) {
+ 
+     // Build a list of all terms that need to be updated on following pages.
+     for ($weight; $weight < count($tree); $weight++) {
+-      $term = $tree[$weight];
+-      if ($term->parents[0] == 0 && $term->getWeight() != $weight) {
++      $raw_term = $tree[$weight];
++      if ($raw_term->parents[0] == 0 && $raw_term->weight != $weight) {
++        $term = $this->storageController->load($raw_term->tid);
+         $term->parent->target_id = $term->parents[0];
+         $term->setWeight($weight);
+         $changed_terms[$term->id()] = $term;
+diff --git a/core/modules/taxonomy/tests/modules/taxonomy_test/taxonomy_test.module b/core/modules/taxonomy/tests/modules/taxonomy_test/taxonomy_test.module
+index e6bf91b469..e640fea433 100644
+--- a/core/modules/taxonomy/tests/modules/taxonomy_test/taxonomy_test.module
++++ b/core/modules/taxonomy/tests/modules/taxonomy_test/taxonomy_test.module
+@@ -46,3 +46,16 @@ function taxonomy_test_form_taxonomy_term_form_alter(&$form, FormStateInterface
+     $form['relations']['parent']['#disabled'] = TRUE;
+   }
+ }
++
++/**
++ * Implements hook_ENTITY_TYPE_load() for the taxonomy term.
++ */
++function taxonomy_test_taxonomy_term_load($entities) {
++  $value = \Drupal::state()->get(__FUNCTION__);
++  if (isset($value)) {
++    foreach ($entities as $entity) {
++      $value[$entity->id()] = $entity;
++    }
++    \Drupal::state()->set(__FUNCTION__, $value);
++  }
++}
+diff --git a/core/modules/taxonomy/tests/src/Functional/TaxonomyTermPagerTest.php b/core/modules/taxonomy/tests/src/Functional/TaxonomyTermPagerTest.php
+index 5233169832..eb7df5e15a 100644
+--- a/core/modules/taxonomy/tests/src/Functional/TaxonomyTermPagerTest.php
++++ b/core/modules/taxonomy/tests/src/Functional/TaxonomyTermPagerTest.php
+@@ -14,7 +14,7 @@ class TaxonomyTermPagerTest extends TaxonomyTestBase {
+    *
+    * @var array
+    */
+-  protected static $modules = ['taxonomy'];
++  protected static $modules = ['taxonomy', 'taxonomy_test'];
+ 
+   /**
+    * {@inheritdoc}
+@@ -73,4 +73,34 @@ public function testTaxonomyTermOverviewPager() {
+     $this->assertSession()->responseMatches('|<nav class="pager" [^>]*>|');
+   }
+ 
++  /**
++   * Tests that overview page only loads the necessary terms.
++   */
++  public function testTaxonomyTermOverviewTermLoad() {
++    // Set limit to 3 terms per page.
++    $this->config('taxonomy.settings')
++      ->set('terms_per_page_admin', '3')
++      ->save();
++
++    $state = $this->container->get('state');
++    $state->set('taxonomy_test_taxonomy_term_load', []);
++
++    // Create 5 terms.
++    for ($x = 0; $x <= 10; $x++) {
++      $this->createTerm($this->vocabulary, ['weight' => $x]);
++    }
++
++    // Check the overview page.
++    $state->set('taxonomy_test_taxonomy_term_load', []);
++    $this->drupalGet('admin/structure/taxonomy/manage/' . $this->vocabulary->id() . '/overview');
++    $loaded_terms = $state->get('taxonomy_test_taxonomy_term_load');
++    $this->assertCount(5, $loaded_terms);
++
++    // Check the overview page for submit callback.
++    $state->set('taxonomy_test_taxonomy_term_load', []);
++    $this->submitForm([], 'Save');
++    $loaded_terms = $state->get('taxonomy_test_taxonomy_term_load');
++    $this->assertCount(5, $loaded_terms);
++  }
++
+ }

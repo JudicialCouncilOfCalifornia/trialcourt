@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.accordion.field_components
+    - field.field.paragraph.accordion.field_expand_close_all
     - field.field.paragraph.accordion.field_heading
     - field.field.paragraph.accordion.field_lead
     - field.field.paragraph.accordion.field_toggle
@@ -17,7 +18,7 @@ mode: default
 content:
   field_components:
     type: entity_reference_paragraphs
-    weight: 3
+    weight: 4
     region: content
     settings:
       title: 'Accordion Item'
@@ -26,6 +27,13 @@ content:
       add_mode: dropdown
       form_display_mode: default
       default_paragraph_type: accordion_item
+    third_party_settings: {  }
+  field_expand_close_all:
+    type: boolean_checkbox
+    weight: 3
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   field_heading:
     type: string_textfield
@@ -51,7 +59,7 @@ content:
       display_label: true
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }

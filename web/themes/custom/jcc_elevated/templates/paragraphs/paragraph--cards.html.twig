@@ -1,17 +1,6 @@
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/Cards") }}
 
-{# Only allow elevated card variants #}
-{% set card_variant = 'default' %}
-{% set cards_sub_variant = [] %}
-
-{% if paragraph_parent.hasField('field_sub_variant') %}
-  {% set cards_sub_variant = paragraph.field_sub_variant.value|json_decode %}
-{% endif %}
-{% if cards_sub_variant.card == 'striped' or cards_sub_variant == 'bordered-center' %}
-  {% set card_variant = cards_sub_variant.card %}
-{% endif %}
-
 {% set cards = [] %}
 {% for key, child in content.field_components if key|first != '#' %}
   {% set cards = cards|merge([child]) %}

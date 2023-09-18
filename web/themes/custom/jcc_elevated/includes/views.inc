@@ -81,7 +81,8 @@ function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
   // values in date fields. if date is invalid clear it before template renders.
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
-    if (!jcc_elevated_validate_date($node->field_date->value)) {
+    $date = is_string($node->field_date->value) ? $node->field_date->value : '';
+    if (!jcc_elevated_validate_date($date)) {
       $node->field_date->value = '';
     }
   }
@@ -413,12 +414,63 @@ function jcc_elevated_preprocess_views_mini_pager(&$variables) {
  */
 function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $view = $form_state->get('view');
+
   if (($view->id() == 'search') && ($view->current_display == 'search')) {
     // Remove captcha from search form.
     unset($form['captcha']);
-    // Apply the form id to the items per page element so it can be moved out.
+    // Apply the form id to the items per page element, so it can be moved out.
     $form['items_per_page']['#attributes']['form'] = $form['#id'];
   }
+
+  if (($view->id() == 'publications') && ($view->current_display == 'publications_list')) {
+
+    // Specifically hide the Case type filter from the publication list on LAS.
+    if (function_exists('jcc_elevated_get_site_name') && jcc_elevated_get_site_name() == 'partners') {
+      $form['field_case_type_target_id']['#access'] = FALSE;
+    }
+
+    // Change the date filter wrapper.
+    $form['field_date_value_wrapper']['#type'] = 'fieldset';
+    $form['field_date_value_wrapper']['#weight'] = -1;
+    $form['field_date_value_wrapper']['#attributes']['class'][] = 'form-item';
+    $form['field_date_value_wrapper']['#title'] = '';
+
+    // Change the "from" date filter to a datetime filter.
+    $form['field_date_value_wrapper']['field_date_value']['min']['#title'] = FALSE;
+    $form['field_date_value_wrapper']['field_date_value']['min']['#type'] = 'datetime';
+    $form['field_date_value_wrapper']['field_date_value']['min']['#date_date_element'] = 'date';
+    $form['field_date_value_wrapper']['field_date_value']['min']['#date_time_element'] = 'none';
+    $form['field_date_value_wrapper']['field_date_value']['min']['#date_year_range'] = '2000:+1';
+    $form['field_date_value_wrapper']['field_date_value']['min']['#description'] = 'From';
+
+    // Change the "to" date filter to a datetime filter.
+    $form['field_date_value_wrapper']['field_date_value']['max']['#title'] = FALSE;
+    $form['field_date_value_wrapper']['field_date_value']['max']['#type'] = 'datetime';
+    $form['field_date_value_wrapper']['field_date_value']['max']['#date_date_element'] = 'date';
+    $form['field_date_value_wrapper']['field_date_value']['max']['#date_time_element'] = 'none';
+    $form['field_date_value_wrapper']['field_date_value']['max']['#date_year_range'] = '2000:+1';
+    $form['field_date_value_wrapper']['field_date_value']['max']['#description'] = 'To';
+  }
+
+  // Hide select form elements if their options are empty or only All/Any item.
+  foreach (Element::children($form) as $name) {
+    if (isset($form[$name]) && isset($form[$name]['#type']) && $form[$name]['#type'] == 'select') {
+
+      // Disable Chosen on views select items. Re-enable on items as needed.
+      $form[$name]['#attributes']['class'][] = 'chosen-disable';
+
+      // Hide select items if empty options.
+      if (empty($form[$name]['#options'])) {
+        $form[$name]['#access'] = FALSE;
+      }
+
+      // Hide if only All/Any option is available.
+      if (count($form[$name]['#options']) <= 1 && isset($form[$name]['#options']['All'])) {
+        $form[$name]['#access'] = FALSE;
+      }
+    }
+  }
+
 }
 
 /**

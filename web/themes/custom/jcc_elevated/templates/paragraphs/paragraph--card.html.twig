@@ -4,21 +4,18 @@
 
 {# Card variant selection set by parent #}
 {% set paragraph_parent = paragraph.getParentEntity() %}
-{% if paragraph_parent.hasField('field_sub_variant') or paragraph_parent.hasField('field_sub_variant_card') %}
-  {% set cards_sub_variant = paragraph_parent.field_sub_variant.value|json_decode|default([]).card %}
-  {% if paragraph_parent.field_sub_variant_card.value %}
-    {% set cards_sub_variant = paragraph_parent.field_sub_variant_card.value|json_decode|default([]).card %}
-  {% endif %}
-  {% if cards_sub_variant == 'cta' %}
-    {% set cards_sub_variant = 'default' %}
-  {% endif %}
+{% set cards_sub_variant = paragraph_parent.field_sub_variant.value|json_decode|default([]).card %}
+{% if cards_sub_variant == 'cta' %}
+  {% set cards_sub_variant = 'default' %}
 {% endif %}
-{% if paragraph_parent.hasField('field_heading') and paragraph_parent.field_heading.value %}
+
+{# Adjust heading hierarchy #}
+{% if paragraph_parent.field_heading.value %}
   {% set has_section_heading = true %}
 {% endif %}
 
 {# Icon if in use for striped card #}
-{% if cards_sub_variant == 'striped' and paragraph.field_icon.value %}
+{% if (cards_sub_variant == 'striped' or cards_sub_variant == 'striped-aligned') and paragraph.field_icon.value %}
   {% set icon_data = {
     icon: card_icon,
     color: false,
@@ -60,7 +57,7 @@
 {% include "@molecules/Card/Card.twig" with {
   variant: cards_sub_variant,
   clickable_card: cards_sub_variant == 'striped' ? paragraph.field_entire_card_clickable.value : null,
-  background: cards_sub_variant == 'striped' ? paragraph.field_background.value : null,
+  background: cards_sub_variant == 'striped' or cards_sub_variant == 'striped-aligned' ? paragraph.field_background.value : null,
   media: cards_sub_variant != 'striped' ? media : false,
   media_caption: media_caption,
   has_section_heading: has_section_heading,

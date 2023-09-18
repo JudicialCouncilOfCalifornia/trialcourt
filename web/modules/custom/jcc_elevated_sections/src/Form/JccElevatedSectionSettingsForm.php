@@ -82,9 +82,10 @@ class JccElevatedSectionSettingsForm extends FormBase {
     return [
       'section_vocab_source' => $this->state->get('jcc_elevated.section_vocab_source', JccSectionConstants::JCC_SECTIONS_DEFAULT_SOURCE_ID),
       'section_allowed_types' => $this->state->get('jcc_elevated.section_allowed_types', []),
+      'section_url_prefix_types' => $this->state->get('jcc_elevated.section_url_prefix_types', []),
       'section_allowed_media_types' => $this->state->get('jcc_elevated.section_allowed_media_types', []),
       'section_applied_views' => $this->state->get('jcc_elevated.section_applied_views', []),
-      'section_url_prefix_types' => $this->state->get('jcc_elevated.section_url_prefix_types', []),
+      'section_applied_views_general_content_excluded' => $this->state->get('jcc_elevated.section_applied_views_general_content_excluded', []),
     ];
   }
 
@@ -205,6 +206,17 @@ class JccElevatedSectionSettingsForm extends FormBase {
       '#options' => $this
         ->getViewDisplayList(),
       '#default_value' => $state['section_applied_views'] ?? [],
+    ];
+
+    $form['section_views']['section_applied_views_general_content_excluded'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this
+        ->t('General content excluded'),
+      '#description' => $this
+        ->t('If if view is set to be sectioned, the default behavior is to include general/non-sectioned content in returned results. Select to view here to change the default behavior and exclude non-sectioned content.'),
+      '#options' => $this
+        ->getViewDisplayList(),
+      '#default_value' => $state['section_applied_views_general_content_excluded'] ?? [],
     ];
 
     $form['actions']['#type'] = 'actions';

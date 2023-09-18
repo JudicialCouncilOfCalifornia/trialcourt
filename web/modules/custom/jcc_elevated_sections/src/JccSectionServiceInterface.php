@@ -251,4 +251,15 @@ interface JccSectionServiceInterface {
    */
   public function isViewSectionable($view_name_display): bool;
 
+  /**
+   * Returns if a view should have non-sectioned/general content excluded..
+   *
+   * @param string $view_name_display
+   *   The view name and display combo string in "name:display" format.
+   *
+   * @return bool
+   *   Returns if a view should have a section filter applied to it.
+   */
+  public function isViewGeneralContentExcluded($view_name_display): bool;
+
 }
