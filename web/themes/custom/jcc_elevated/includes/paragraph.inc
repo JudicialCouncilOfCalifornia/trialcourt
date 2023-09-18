@@ -94,12 +94,21 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
   $view_url = !empty($executable->getUrl()) ? $executable->getUrl()->toString() : '';
   $path = \Drupal::service('path.validator')->isValid('/news') ? '/news' : $view_url;
   $options = ['absolute' => TRUE];
+
+  // Apply a section query to this link, if the sections module is enabled and
+  // the current page has a section applied.
+  if (\Drupal::service('module_handler')->moduleExists('jcc_elevated_sections')) {
+    if ($sid = jcc_get_current_page_section()) {
+      $options['query'] = ['jcc_section' => $sid];
+    }
+  }
+
   $variables['news_url'] = Url::fromUserInput($path, $options);
   $variables['#cache']['tags'][] = 'node_list:news';
 }
 
 /**
- * Helper function for cards paragraphs.
+ * Helper function for card paragraphs.
  *
  * @param array $variables
  *   The paragraph variables.
@@ -157,6 +166,10 @@ function jcc_elevated_paragraph_accordion(array &$variables) {
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $variables['accordion_items'] = [];
 
+  if (\Drupal::request()->query->get('acc')) {
+    $variables['open_on_load'] = \Drupal::request()->query->get('acc');
+  }
+
   // Build the array of accordion items.
   if ($variables['paragraph']->hasField('field_components')) {
     $items = $variables['paragraph']->get('field_components')->referencedEntities();
@@ -166,6 +179,7 @@ function jcc_elevated_paragraph_accordion(array &$variables) {
       $variables['accordion_items'][] = [
         'label' => $item->hasField('field_heading') ? $item->get('field_heading')->first()->value : '',
         'content' => $item->get('field_text')->view('default'),
+        'id' => $item->get('field_id')->value,
       ];
     }
   }
@@ -296,10 +310,15 @@ function jcc_elevated_paragraph_hero_banner(array &$variables, ParagraphInterfac
  *   The paragraph.
  */
 function jcc_elevated_paragraph_section(array &$variables, ParagraphInterface $paragraph) {
-  if ($paragraph->get('field_media')[0]->entity && !empty($paragraph->get('field_media'))) {
-    $cover_image = $paragraph->get('field_media')[0]->entity->get('field_media_image')[0]->entity->getFileUri();
-    $image_url = ImageStyle::load('container_100_percent')->buildUrl($cover_image);
-    $variables['bckg_img_url'] = $image_url;
+  $variables['bckg_img_url'] = NULL;
+
+  if (isset($paragraph->get('field_media')[0]) && $paragraph->get('field_media')[0]->entity) {
+    foreach ($paragraph->get('field_media') as $media) {
+      $cover_image = $media->get('field_media_image')[0]->entity->getFileUri();
+      $image_url = ImageStyle::load('container_100_percent')
+        ->buildUrl($cover_image);
+      $variables['bckg_img_url'] = $image_url ?? NULL;
+    }
   }
 }
 
