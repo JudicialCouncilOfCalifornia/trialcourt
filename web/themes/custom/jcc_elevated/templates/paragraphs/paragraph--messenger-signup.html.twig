@@ -1,23 +1,24 @@
 {{ attach_library("jcc_storybook/Card") }}
 
-{% set signup_form %}
-  <div class="subscriptions frame">
-    {% if not logged_in %}
-      <div><a class="button button--secondary button--normal" href="/user/register">Subscribe</a></div>
-    {% else %}
-      <div><a class="button button--secondary button--normal" href="/user/{{ user.id }}/edit">Manage subscriptions</a></div>
-    {% endif %}
-  </div>
-{% endset %}
+{% if not logged_in %}
+  {% set button_label = "Subscribe" %}
+  {% set button_uri = "internal:/user/register" %}
+{% else %}
+  {% set button_label = "Manage subscriptions" %}
+  {% set button_uri = "internal:/user/" ~ user.id ~ "/edit" %}
+{% endif %}
 
 
 <div class="container">
   {% include "@molecules/Card/Card.twig" with {
     variant: 'striped',
     background: 'solid-primary-dark-xx',
-    media: content,
-    aspect: [3,1],
     has_section_heading: false,
-    text: signup_form,
+    text: content,
+    button_data: {
+      label: button_label,
+      href: button_uri,
+      variant: "secondary"
+    }
   } %}
 </div>
