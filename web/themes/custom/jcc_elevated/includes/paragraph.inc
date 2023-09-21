@@ -73,7 +73,9 @@ function jcc_elevated_paragraph_views_reference(array &$variables, ParagraphInte
  *   The news view.
  */
 function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variables, ViewEntityInterface $view) {
+  $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $executable = $view ? $view->getExecutable() : NULL;
+
   // Start with the sticky_list display.
   $sticky_list = $executable ? $executable->setDisplay('sticky_list') : FALSE;
   $display = $executable->executeDisplay();
@@ -83,9 +85,11 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
     foreach ($variables['sticky_list'] as $sticky_item) {
       $paragraph_target_id = $sticky_item['#node']->get('field_components')->getValue()[0]['target_id'];
       $paragraph = Paragraph::load($paragraph_target_id);
-      $bare_text = strip_tags($paragraph->get('field_text')->value);
-      $truncated_text = strlen($bare_text) > 200 ? substr($bare_text, 0, 200) . "..." : $bare_text;
-      $variables['excerpts'][] = $truncated_text;
+
+      // Render the text field the same as if it was being rendered in the full
+      // default view mode. This helps apply proper text/html filtering.
+      $item = \Drupal::service('entity.repository')->getTranslationFromContext($paragraph, $langcode);
+      $variables['excerpts'][] = $item->get('field_text')->view('default');
     }
   }
 

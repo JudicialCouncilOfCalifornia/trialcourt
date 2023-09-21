@@ -199,13 +199,13 @@ class JccSectionService implements JccSectionServiceInterface {
     $type = $entity->bundle();
 
     $node_types = $this->getSectionableTypes();
-    if ($node_types[$type] == $type) {
+    if (isset($node_types[$type]) && $node_types[$type] == $type) {
       $value = $entity->get('jcc_section')->getValue();
       return $value ? $value[0]['target_id'] : FALSE;
     }
 
     $media_types = $this->getSectionableMediaTypes();
-    if ($media_types[$type] == $type) {
+    if (isset($media_types[$type]) && $media_types[$type] == $type) {
       $value = $entity->get('jcc_section')->getValue();
       return $value ? $value[0]['target_id'] : FALSE;
     }
