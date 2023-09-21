@@ -922,6 +922,7 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
                 $variables['section_navigation'] = [
                   'section_heading' => $section->label(),
                   'links' => jcc_elevated_sections_build_menu_tree($links, $section_homepage, $section),
+                  'mobile_links' => jcc_elevated_sections_build_menu_tree($links, $section_homepage, $section, TRUE),
                 ];
               }
             }
@@ -936,7 +937,7 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
 /**
  * Helper function to build a storybook compatible menu tree.
  */
-function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $section = FALSE): array {
+function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $section = FALSE, $overview_link = FALSE): array {
   $items = [];
 
   if ($add_home) {
@@ -952,15 +953,33 @@ function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $
 
   foreach ($tree as $menu_data) {
     if (!empty($menu_data['url'])) {
+
+      $section_link = [];
+      $sublinks = $menu_data['below'] ? jcc_elevated_sections_build_menu_tree($menu_data['below']) : [];
+
+      if ($overview_link && !empty($sublinks)) {
+        $section_link = [
+          'text' => $menu_data['title'],
+          'url' => $menu_data['url'],
+          'is_overview_link' => TRUE,
+          'links' => [],
+        ];
+
+        array_unshift($sublinks, $section_link);
+      }
+
       $items[] = [
         'text' => $menu_data['title'],
         'url' => $menu_data['url'],
         'attributes' => !empty($menu_data['attributes']) ? $menu_data['attributes']->toArray() : [],
         'active' => $menu_data['in_active_trail'],
-        'links' => $menu_data['below'] ? jcc_elevated_sections_build_menu_tree($menu_data['below']) : [],
+        'links' => $sublinks,
+        'section_link' => $section_link,
       ];
+
     }
   }
+
   return $items;
 }
 

@@ -24,7 +24,7 @@
           {% endfor %}
         </optgroup>
       {% elseif option.type == 'option' %}
-        {# Allow first level placement by role if elevated site #}
+        {# Restrict first level placement if setting is visible and not allowed. #}
         {% set selected = option.selected %}
         {% set disabled = false %}
         {% if option.label == '<Main navigation>' and not is_allowed %}
@@ -32,7 +32,10 @@
           {% if create_mode %}
             {% set selected = false %}
           {% endif %}
-          {% set disabled = true %}
+          {# Disable option when needed. #}
+          {% if create_mode or menu_level != 1 %}
+            {% set disabled = true %}
+          {% endif %}
         {% endif %}
         <option value="{{ option.value }}"{{ selected ? ' selected="selected"' }}{{ disabled ? ' disabled="true"' }}>{{ option.label }}</option>
       {% endif %}

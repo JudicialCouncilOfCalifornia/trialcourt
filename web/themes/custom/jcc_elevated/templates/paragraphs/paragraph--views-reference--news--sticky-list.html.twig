@@ -47,17 +47,18 @@
 {% set list_items = [] %}
 
 {% set row = sticky_list[0] %}
-{% set nodeUri = row['#node'] ? url('entity.node.canonical', {'node': row['#node'].id()})|render|default('') : '' %}
 
-{% set teaser = {
-  brow_data: {
-    part_one: row['#node'].field_news_type.0.entity.name.value|default(''),
-    part_two: row['#node'].field_date.0.value|date('M d, Y')|default(''),
-  },
-  heading: row['#node'].title()|default(''),
-  href: nodeUri['#markup']|default(''),
-  text: excerpts[0]|default(''),
-} %}
+{% if row['#node'] %}
+  {% set teaser = {
+    brow_data: {
+      part_one: row['#node'].field_news_type.0.entity.name.value|default(''),
+      part_two: row['#node'].field_date.0.value|date('M d, Y')|default(''),
+    },
+    heading: row['#node'].title()|default(''),
+    href: url('entity.node.canonical', {'node': row['#node'].id()})|render,
+    text: excerpts[0]|default(''),
+  } %}
+{% endif %}
 
 {% for i in 1..3 %}
   {% set row = sticky_list[i] %}
@@ -66,7 +67,7 @@
     {% set item = {
       link: {
         label: row['#node'].title(),
-        href: row['#node'] ? url('entity.node.canonical', { 'node': row['#node'].id() })|render|default('') : '',
+        href: url('entity.node.canonical', { 'node': row['#node'].id() })|render,
       },
       footer: row['#node'].field_date.0.value|date('M d, Y'),
     } %}

@@ -1,9 +1,10 @@
 .case-search-field-modal {
-  display: block;
+  display: block !important;
   position: absolute;
   top: 2.5rem;
   width: 100%;
-  background-color: #faf3d1;
+  max-width: 50ch !important;
+  background-color: #faf3d1 !important;
   padding: 1rem;
   color: #000;
 }
@@ -22,6 +23,7 @@
 }
 
 .search__message--item p {
+  margin-top: 0;
   padding: 1rem 1.5rem;
 }
 
@@ -68,6 +70,13 @@
   top: unset !important;
   right: unset !important;
   width: auto !important;
+  min-width: auto !important;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+
+.lookup-case__trigger:after {
+  display: none !important;
 }
 
 .lookup-case__trigger:hover, .lookup-case__trigger:focus {
