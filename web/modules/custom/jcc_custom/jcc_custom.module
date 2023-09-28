@@ -40,28 +40,35 @@ function jcc_custom_page_attachments(array &$attachments) {
 function jcc_custom_ckeditor_css_alter(array &$css, Editor $editor) {
   $theme_handler = \Drupal::service('theme_handler');
 
-  if ($scheme = theme_get_setting('scheme', $theme_handler->getDefault())) {
+  $known_formats = [
+    'basic_html',
+    'full_html',
+    'body',
+    'aside',
+    'minimal',
+  ];
+
+  if (jcc_custom_is_elevated_site() && in_array($editor->getFilterFormat()->id(), $known_formats)) {
     if (!$editor->hasAssociatedFilterFormat()) {
       return;
     }
 
-    $known_formats = [
-      'basic_html',
-      'full_html',
-      'body',
-      'aside',
-      'minimal',
-    ];
-
-    if (!jcc_custom_is_elevated_site() && in_array($editor->getFilterFormat()->id(), $known_formats)) {
-      $css[] = "/libraries/courtyard-artifact/2.x/public/css/${scheme}.css";
+    $css[] = "/themes/contrib/jcc_storybook/lib/css/scheme-default.css";
+    $css[] = "/themes/contrib/jcc_storybook/lib/css/elements.css";
+    // For paragraphs embedded as ckeditor content.
+    if ($editor->getFilterFormat()->id() == 'body') {
+      $css[] = "/themes/contrib/jcc_storybook/lib/stories/Atoms/Button/Button.css";
+      $css[] = "/themes/contrib/jcc_storybook/lib/stories/Molecules/ReadMore/ReadMore.css";
     }
-    else {
-      $css[] = "/themes/contrib/jcc_storybook/lib/css/scheme-default.css";
-      $css[] = "/themes/contrib/jcc_storybook/lib/css/elements.css";
-      // For paragraphs embedded as ckeditor content.
-      if ($editor->getFilterFormat()->id() == 'body') {
-        $css[] = "/themes/contrib/jcc_storybook/lib/stories/Molecules/ReadMore/ReadMore.css";
+  }
+  else {
+    if ($scheme = theme_get_setting('scheme', $theme_handler->getDefault())) {
+      if (!$editor->hasAssociatedFilterFormat()) {
+        return;
+      }
+
+      if (in_array($editor->getFilterFormat()->id(), $known_formats)) {
+        $css[] = "/libraries/courtyard-artifact/2.x/public/css/${scheme}.css";
       }
     }
   }
