@@ -1,0 +1,146 @@
+uuid: 35190bb9-d74c-4e7d-8878-fa52133880d5
+langcode: en
+status: true
+dependencies: {  }
+id: scdb_mediators
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - node
+migration_group: jcc2
+label: 'SCDB Mediators.'
+source:
+  plugin: csv
+  path: modules/custom/jcc_tc_migration/csv/scdb-Mediators.csv
+  delimiter: ','
+  enclosure: '"'
+  ids:
+    - 'Legacy ID'
+process:
+  status:
+    plugin: static_map
+    map:
+      'TRUE': 1
+      'FALSE': 0
+      '': 0
+    source: Active
+  title:
+    plugin: concat
+    source:
+      - First
+      - Last
+    delimiter: ' '
+  field_id: 'Legacy ID'
+  field_first_name: First
+  field_last_name: Last
+  field_mi: MI
+  field_sbn: SBN
+  field_phone_number: 'Phone Number'
+  field_fax: 'Fax Number'
+  field_email_address: 'Email Address'
+  field_basic_mediation_fee: 'Basic Mediation Fee'
+  field_basic_mediation_fee_max: 'Basic Mediation Fee Max'
+  field_hourly_rate:
+    plugin: static_map
+    map:
+      'TRUE': 1
+      'FALSE': 0
+      '': 0
+    source: Hourly
+  field_adr_process:
+    -
+      plugin: skip_on_empty
+      source: 'ADR Process'
+      method: process
+      message: 'Skipped because no data.'
+    -
+      plugin: explode
+      delimiter: ','
+  field_subject_matter:
+    -
+      plugin: skip_on_empty
+      source: 'Subject Matter Area'
+      method: process
+      message: 'Skipped because no data.'
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: entity_lookup
+      value_key: field_id
+      bundle_key: vid
+      bundle: subject_matter_area
+      entity_type: taxonomy_term
+  field_subject_matter_other:
+    -
+      plugin: skip_on_empty
+      source: 'Subject Matter Area Other'
+      method: process
+      message: 'Skipped because no data.'
+    -
+      plugin: explode
+      delimiter: ','
+  field_foreign_language:
+    -
+      plugin: skip_on_empty
+      source: 'Foreign Language'
+      method: process
+      message: 'Skipped because no data.'
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: entity_lookup
+      value_key: field_languageid
+      bundle_key: vid
+      bundle: language
+      entity_type: taxonomy_term
+  field_language_other:
+    -
+      plugin: skip_on_empty
+      source: 'Other Language'
+      method: process
+      message: 'Skipped because no data.'
+    -
+      plugin: explode
+      delimiter: ','
+  field_address/country_code:
+    plugin: default_value
+    default_value: US
+  field_address/postal_code: 'Zip Code'
+  field_address/locality: City
+  field_address/address_line1: Street
+  field_address/administrative_area:
+    plugin: default_value
+    default_value: CA
+  field_county: County
+destination:
+  plugin: 'entity:node'
+  default_bundle: common
+  overwrite_properties:
+    - status
+    - field_id
+    - title
+    - field_mi
+    - field_sbn
+    - field_phone_number
+    - field_fax
+    - field_email_address
+    - field_basic_mediation_fee
+    - field_basic_mediation_fee_max
+    - field_hourly_rate
+    - field_adr_process
+    - field_subject_matter
+    - field_subject_matter_other
+    - field_foreign_language
+    - field_language_other
+    - field_address/country_code
+    - field_address/postal_code
+    - field_address/locality
+    - field_address/address_line1
+    - field_address/administrative_area
+    - field_county
+    - field_first_name
+    - field_last_name
+migration_dependencies: {  }
