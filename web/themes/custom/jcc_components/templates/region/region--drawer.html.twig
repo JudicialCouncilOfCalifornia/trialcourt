@@ -12,9 +12,8 @@
  * @see template_preprocess_region()
  */
 #}
-{% include '@organisms/offcanvas/offcanvas.twig' with {
-  offcanvas: {
-    id: 'feedback-survey',
+{% if not hide_was_this_helpful %}
+  {% set dialog = {
     hero: {
       main: {
         icon: {
@@ -34,14 +33,23 @@
       },
     },
     embed: content,
-    button: {
-      text: 'Was this helpful?'|t,
-      icon: {
-        name: 'like-dislike',
-        set: 'fig',
-        width: 40,
-        height: 22,
-      },
+  } %}
+
+  {% set button = {
+    text: 'Was this helpful?'|t,
+    icon: {
+      name: 'like-dislike',
+      set: 'fig',
+      width: 40,
+      height: 22,
     },
+  } %}
+{% endif %}
+
+{% include '@organisms/offcanvas/offcanvas.twig' with {
+  offcanvas: {
+    id: 'feedback-survey',
+    dialog: dialog,
+    button: button,
   }
 } %}
