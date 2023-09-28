@@ -151,26 +151,4 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
     '#default_value' => theme_get_setting('hide_translation'),
     '#description'   => t("Hide translation dropdown from header."),
   ];
-
-  // BEGIN: Special header body/feature.
-  $form['special'] = [
-    '#type' => 'details',
-    '#title' => t('Special'),
-    '#collapsed'  => TRUE,
-  ];
-  $header_body_value = '';
-  $header_body_format = 'full_html';
-  $header_body = theme_get_setting('header_body');
-  if (isset($header_body)) {
-    $header_body_value = $header_body['value'];
-    $header_body_format = $header_body['format'];
-  }
-
-  $form['special']['header_body'] = [
-    '#type' => 'text_format',
-    '#title' => 'Homepage Header Body',
-    '#description' => t('For inserting special content or features into the homepage header area (e.g. Granicus live cast embed).'),
-    '#default_value' => $header_body_value,
-    '#format' => $header_body_format,
-  ];
 }
