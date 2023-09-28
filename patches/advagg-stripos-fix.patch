@@ -1,0 +1,364 @@
+From 1b0524207a1dfd54c44f03d52912e43159ea0652 Mon Sep 17 00:00:00 2001
+From: j-barnes <j-barnes@3542106.no-reply.drupal.org>
+Date: Sun, 16 Jan 2022 12:42:53 +0800
+Subject: [PATCH 1/5] Issue #3258389: PHP 8.1 deprecation: stripos(): Passing
+ null to parameter
+
+---
+ advagg_mod/src/EventSubscriber/InitSubscriber.php | 2 +-
+ src/Asset/CssOptimizer.php                        | 8 ++++----
+ src/Asset/JsOptimizer.php                         | 8 ++++----
+ src/EventSubscriber/ResponseSubscriber.php        | 2 +-
+ src/Form/SettingsForm.php                         | 4 ++--
+ 5 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/advagg_mod/src/EventSubscriber/InitSubscriber.php b/advagg_mod/src/EventSubscriber/InitSubscriber.php
+index 5056df17..b9e52428 100644
+--- a/advagg_mod/src/EventSubscriber/InitSubscriber.php
++++ b/advagg_mod/src/EventSubscriber/InitSubscriber.php
+@@ -127,7 +127,7 @@ class InitSubscriber implements EventSubscriberInterface {
+    * Only if using unified_multisite_dir.
+    */
+   public function onEvent() {
+-    $dir = rtrim($this->config->get('unified_multisite_dir'), '/');
++    $dir = rtrim((string) $this->config->get('unified_multisite_dir'), '/');
+     if (empty($dir) || !file_exists($dir) || !is_dir($dir)) {
+       return;
+     }
+diff --git a/src/Asset/CssOptimizer.php b/src/Asset/CssOptimizer.php
+index a90177a3..d18ed4ea 100644
+--- a/src/Asset/CssOptimizer.php
++++ b/src/Asset/CssOptimizer.php
+@@ -55,24 +55,24 @@ class CssOptimizer extends AssetOptimizer {
+     if ($asset['type'] === 'external') {
+       // If type is external but path doesn't start with http, https, or //
+       // change it to file.
+-      if (stripos($path, 'http') !== 0 && stripos($path, '//') !== 0) {
++      if (stripos((string) $path, 'http') !== 0 && stripos((string) $path, '//') !== 0) {
+         $asset['type'] = 'file';
+       }
+       // If type is external and starts with http, https, or // but points to
+       // this host change to file, but move it to the top of the aggregation
+       // stack as long as css.preserve_external is not set.
+-      elseif (stripos($path, $this->basePath) !== FALSE && !$this->config->get('css.preserve_external')) {
++      elseif (stripos((string) $path, $this->basePath) !== FALSE && !$this->config->get('css.preserve_external')) {
+         $asset['type'] = 'file';
+         $asset['group'] = CSS_BASE;
+         $asset['every_page'] = TRUE;
+         $asset['weight'] = -40000;
+-        $asset['data'] = substr($asset['data'], stripos($asset['data'], $this->basePath) + $this->basePathLen);
++        $asset['data'] = substr($asset['data'], stripos((string) $asset['data'], $this->basePath) + $this->basePathLen);
+       }
+     }
+ 
+     // If type is file but it starts with http, https, or // change it to
+     // external.
+-    elseif ($asset['type'] === 'file' && (stripos($path, 'http') === 0 || (stripos($path, '//') === 0))) {
++    elseif ($asset['type'] === 'file' && (stripos((string) $path, 'http') === 0 || (stripos((string) $path, '//') === 0))) {
+       $asset['type'] = 'external';
+     }
+ 
+diff --git a/src/Asset/JsOptimizer.php b/src/Asset/JsOptimizer.php
+index 908226bb..c476ecba 100644
+--- a/src/Asset/JsOptimizer.php
++++ b/src/Asset/JsOptimizer.php
+@@ -46,24 +46,24 @@ class JsOptimizer extends AssetOptimizer {
+     if ($asset['type'] === 'external') {
+       // If type is external but path doesn't start with http, https, or //
+       // change it to file.
+-      if (stripos($path, 'http') !== 0 && stripos($path, '//') !== 0) {
++      if (stripos((string) $path, 'http') !== 0 && stripos((string) $path, '//') !== 0) {
+         $asset['type'] = 'file';
+       }
+       // If type is external and starts with http, https, or // but points to
+       // this host change to file, but move it to the top of the aggregation
+       // stack as long as js.preserve_external is not set.
+-      elseif (stripos($path, $this->basePath) !== FALSE && !$this->config->get('js.preserve_external')) {
++      elseif (stripos((string) $path, $this->basePath) !== FALSE && !$this->config->get('js.preserve_external')) {
+         $asset['type'] = 'file';
+         $asset['group'] = JS_LIBRARY;
+         $asset['every_page'] = TRUE;
+         $asset['weight'] = -40000;
+-        $asset['data'] = substr($asset['data'], stripos($asset['data'], $this->basePath) + $this->basePathLen);
++        $asset['data'] = substr($asset['data'], stripos((string) $asset['data'], $this->basePath) + $this->basePathLen);
+       }
+     }
+ 
+     // If type is file but it starts with http, https, or // change it to
+     // external.
+-    elseif ($asset['type'] === 'file' && (stripos($path, 'http') === 0 || (stripos($path, '//') === 0))) {
++    elseif ($asset['type'] === 'file' && (stripos((string) $path, 'http') === 0 || (stripos($path, '//') === 0))) {
+       $asset['type'] = 'external';
+     }
+ 
+diff --git a/src/EventSubscriber/ResponseSubscriber.php b/src/EventSubscriber/ResponseSubscriber.php
+index 8b19fa9c..55834091 100644
+--- a/src/EventSubscriber/ResponseSubscriber.php
++++ b/src/EventSubscriber/ResponseSubscriber.php
+@@ -54,7 +54,7 @@ class ResponseSubscriber implements EventSubscriberInterface {
+       $response = $event->getResponse();
+ 
+       // Ensure that it is an html response.
+-      if (stripos($response->headers->get('Content-Type'), 'text/html') === FALSE) {
++      if (stripos((string) $response->headers->get('Content-Type'), 'text/html') === FALSE) {
+         return;
+       }
+ 
+diff --git a/src/Form/SettingsForm.php b/src/Form/SettingsForm.php
+index 26741c0c..86a60bf7 100644
+--- a/src/Form/SettingsForm.php
++++ b/src/Form/SettingsForm.php
+@@ -153,7 +153,7 @@ class SettingsForm extends ConfigFormBase {
+         ],
+       ],
+     ];
+-    if (stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== FALSE) {
++    if (stripos((string) $_SERVER['SERVER_SOFTWARE'], 'nginx') !== FALSE) {
+       $form['global']['server_config']['immutable_group']['immutable']['#access'] = FALSE;
+       $form['global']['server_config']['immutable_group']['nginx'] = [
+         '#type' => 'html_tag',
+@@ -189,7 +189,7 @@ class SettingsForm extends ConfigFormBase {
+       '#title' => $this->t('Compression Options'),
+       '#description' => $this->t('Compressed files will automatically be served by the Apache server'),
+     ];
+-    if (stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== FALSE) {
++    if (stripos((string) $_SERVER['SERVER_SOFTWARE'], 'nginx') !== FALSE) {
+       $form['compression']['#description'] = $this->t("AdvAgg can't configure your Nginx server to automatically serve compressed assets. See the <a href='@url'>AdvAgg manual</a> for instructions on manually doing so.", [
+         '@url' => 'https://www.drupal.org/docs/8/modules/advanced-cssjs-aggregation/advanced-aggregates#server-settings',
+       ]);
+-- 
+GitLab
+
+
+From 000bea99306472378d9cee3f31c51064673d5f1b Mon Sep 17 00:00:00 2001
+From: Robin van Sloten <robin@robinvansloten.nl>
+Date: Tue, 26 Apr 2022 17:43:03 +0200
+Subject: [PATCH 2/5] Issue #3258389: PHP 8.1 deprecations warnings: Passing
+ null to parameter (stripos, rtrim)
+
+---
+ advagg_mod/advagg_mod.install                     | 14 ++++++++++++++
+ advagg_mod/config/install/advagg_mod.settings.yml |  1 +
+ src/EventSubscriber/ResponseSubscriber.php        |  2 +-
+ 3 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/advagg_mod/advagg_mod.install b/advagg_mod/advagg_mod.install
+index 01105c79..5bffd8be 100644
+--- a/advagg_mod/advagg_mod.install
++++ b/advagg_mod/advagg_mod.install
+@@ -28,6 +28,20 @@ function advagg_mod_update_8301() {
+   $config->save();
+ }
+ 
++/**
++ * Add missing configuration parameter for unified_multisite_dir when undefined.
++ */
++function advagg_mod_update_8401() {
++  $config = \Drupal::configFactory()->getEditable('advagg_mod.settings');
++  if ($config->get('unified_multisite_dir')) {
++    return;
++  }
++  else {
++    $config->set('unified_multisite_dir', '');
++    $config->save();
++  }
++}
++
+ /**
+  * Implements hook_install().
+  *
+diff --git a/advagg_mod/config/install/advagg_mod.settings.yml b/advagg_mod/config/install/advagg_mod.settings.yml
+index 3ee9b925..8f499c72 100644
+--- a/advagg_mod/config/install/advagg_mod.settings.yml
++++ b/advagg_mod/config/install/advagg_mod.settings.yml
+@@ -13,3 +13,4 @@ js_async_in_header: false
+ js_defer: 0
+ js_preprocess: false
+ prefetch: false
++unified_multisite_dir: ''
+diff --git a/src/EventSubscriber/ResponseSubscriber.php b/src/EventSubscriber/ResponseSubscriber.php
+index 55834091..386f2c81 100644
+--- a/src/EventSubscriber/ResponseSubscriber.php
++++ b/src/EventSubscriber/ResponseSubscriber.php
+@@ -54,7 +54,7 @@ class ResponseSubscriber implements EventSubscriberInterface {
+       $response = $event->getResponse();
+ 
+       // Ensure that it is an html response.
+-      if (stripos((string) $response->headers->get('Content-Type'), 'text/html') === FALSE) {
++      if (!$response->headers->get('Content-Type') || stripos($response->headers->get('Content-Type'), 'text/html') === FALSE) {
+         return;
+       }
+ 
+-- 
+GitLab
+
+
+From f7627d965e239f1e6fa1bdb386b45e62b7d53454 Mon Sep 17 00:00:00 2001
+From: Robin van Sloten <robin@robinvansloten.nl>
+Date: Tue, 26 Apr 2022 17:54:20 +0200
+Subject: [PATCH 3/5] Issue #3258389: PHP 8.1 deprecations warnings: Passing
+ null to parameter (stripos, rtrim)
+
+---
+ advagg_mod/src/EventSubscriber/InitSubscriber.php | 2 +-
+ src/Asset/CssOptimizer.php                        | 8 ++++----
+ src/Asset/JsOptimizer.php                         | 8 ++++----
+ src/Form/SettingsForm.php                         | 4 ++--
+ 4 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/advagg_mod/src/EventSubscriber/InitSubscriber.php b/advagg_mod/src/EventSubscriber/InitSubscriber.php
+index b9e52428..5056df17 100644
+--- a/advagg_mod/src/EventSubscriber/InitSubscriber.php
++++ b/advagg_mod/src/EventSubscriber/InitSubscriber.php
+@@ -127,7 +127,7 @@ class InitSubscriber implements EventSubscriberInterface {
+    * Only if using unified_multisite_dir.
+    */
+   public function onEvent() {
+-    $dir = rtrim((string) $this->config->get('unified_multisite_dir'), '/');
++    $dir = rtrim($this->config->get('unified_multisite_dir'), '/');
+     if (empty($dir) || !file_exists($dir) || !is_dir($dir)) {
+       return;
+     }
+diff --git a/src/Asset/CssOptimizer.php b/src/Asset/CssOptimizer.php
+index d18ed4ea..a90177a3 100644
+--- a/src/Asset/CssOptimizer.php
++++ b/src/Asset/CssOptimizer.php
+@@ -55,24 +55,24 @@ class CssOptimizer extends AssetOptimizer {
+     if ($asset['type'] === 'external') {
+       // If type is external but path doesn't start with http, https, or //
+       // change it to file.
+-      if (stripos((string) $path, 'http') !== 0 && stripos((string) $path, '//') !== 0) {
++      if (stripos($path, 'http') !== 0 && stripos($path, '//') !== 0) {
+         $asset['type'] = 'file';
+       }
+       // If type is external and starts with http, https, or // but points to
+       // this host change to file, but move it to the top of the aggregation
+       // stack as long as css.preserve_external is not set.
+-      elseif (stripos((string) $path, $this->basePath) !== FALSE && !$this->config->get('css.preserve_external')) {
++      elseif (stripos($path, $this->basePath) !== FALSE && !$this->config->get('css.preserve_external')) {
+         $asset['type'] = 'file';
+         $asset['group'] = CSS_BASE;
+         $asset['every_page'] = TRUE;
+         $asset['weight'] = -40000;
+-        $asset['data'] = substr($asset['data'], stripos((string) $asset['data'], $this->basePath) + $this->basePathLen);
++        $asset['data'] = substr($asset['data'], stripos($asset['data'], $this->basePath) + $this->basePathLen);
+       }
+     }
+ 
+     // If type is file but it starts with http, https, or // change it to
+     // external.
+-    elseif ($asset['type'] === 'file' && (stripos((string) $path, 'http') === 0 || (stripos((string) $path, '//') === 0))) {
++    elseif ($asset['type'] === 'file' && (stripos($path, 'http') === 0 || (stripos($path, '//') === 0))) {
+       $asset['type'] = 'external';
+     }
+ 
+diff --git a/src/Asset/JsOptimizer.php b/src/Asset/JsOptimizer.php
+index c476ecba..908226bb 100644
+--- a/src/Asset/JsOptimizer.php
++++ b/src/Asset/JsOptimizer.php
+@@ -46,24 +46,24 @@ class JsOptimizer extends AssetOptimizer {
+     if ($asset['type'] === 'external') {
+       // If type is external but path doesn't start with http, https, or //
+       // change it to file.
+-      if (stripos((string) $path, 'http') !== 0 && stripos((string) $path, '//') !== 0) {
++      if (stripos($path, 'http') !== 0 && stripos($path, '//') !== 0) {
+         $asset['type'] = 'file';
+       }
+       // If type is external and starts with http, https, or // but points to
+       // this host change to file, but move it to the top of the aggregation
+       // stack as long as js.preserve_external is not set.
+-      elseif (stripos((string) $path, $this->basePath) !== FALSE && !$this->config->get('js.preserve_external')) {
++      elseif (stripos($path, $this->basePath) !== FALSE && !$this->config->get('js.preserve_external')) {
+         $asset['type'] = 'file';
+         $asset['group'] = JS_LIBRARY;
+         $asset['every_page'] = TRUE;
+         $asset['weight'] = -40000;
+-        $asset['data'] = substr($asset['data'], stripos((string) $asset['data'], $this->basePath) + $this->basePathLen);
++        $asset['data'] = substr($asset['data'], stripos($asset['data'], $this->basePath) + $this->basePathLen);
+       }
+     }
+ 
+     // If type is file but it starts with http, https, or // change it to
+     // external.
+-    elseif ($asset['type'] === 'file' && (stripos((string) $path, 'http') === 0 || (stripos($path, '//') === 0))) {
++    elseif ($asset['type'] === 'file' && (stripos($path, 'http') === 0 || (stripos($path, '//') === 0))) {
+       $asset['type'] = 'external';
+     }
+ 
+diff --git a/src/Form/SettingsForm.php b/src/Form/SettingsForm.php
+index 86a60bf7..26741c0c 100644
+--- a/src/Form/SettingsForm.php
++++ b/src/Form/SettingsForm.php
+@@ -153,7 +153,7 @@ class SettingsForm extends ConfigFormBase {
+         ],
+       ],
+     ];
+-    if (stripos((string) $_SERVER['SERVER_SOFTWARE'], 'nginx') !== FALSE) {
++    if (stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== FALSE) {
+       $form['global']['server_config']['immutable_group']['immutable']['#access'] = FALSE;
+       $form['global']['server_config']['immutable_group']['nginx'] = [
+         '#type' => 'html_tag',
+@@ -189,7 +189,7 @@ class SettingsForm extends ConfigFormBase {
+       '#title' => $this->t('Compression Options'),
+       '#description' => $this->t('Compressed files will automatically be served by the Apache server'),
+     ];
+-    if (stripos((string) $_SERVER['SERVER_SOFTWARE'], 'nginx') !== FALSE) {
++    if (stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== FALSE) {
+       $form['compression']['#description'] = $this->t("AdvAgg can't configure your Nginx server to automatically serve compressed assets. See the <a href='@url'>AdvAgg manual</a> for instructions on manually doing so.", [
+         '@url' => 'https://www.drupal.org/docs/8/modules/advanced-cssjs-aggregation/advanced-aggregates#server-settings',
+       ]);
+-- 
+GitLab
+
+
+From 9e0ae39c0b9e5dda24fd91d279aff5ebc0f16ffe Mon Sep 17 00:00:00 2001
+From: Neograph734 <neograph734@2397482.no-reply.drupal.org>
+Date: Mon, 23 May 2022 19:55:03 +0000
+Subject: [PATCH 4/5] Incorporate feedback from neclimdul
+
+---
+ src/EventSubscriber/ResponseSubscriber.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/EventSubscriber/ResponseSubscriber.php b/src/EventSubscriber/ResponseSubscriber.php
+index 386f2c81..f666e182 100644
+--- a/src/EventSubscriber/ResponseSubscriber.php
++++ b/src/EventSubscriber/ResponseSubscriber.php
+@@ -54,7 +54,7 @@ class ResponseSubscriber implements EventSubscriberInterface {
+       $response = $event->getResponse();
+ 
+       // Ensure that it is an html response.
+-      if (!$response->headers->get('Content-Type') || stripos($response->headers->get('Content-Type'), 'text/html') === FALSE) {
++      if (stripos($response->headers->get('Content-Type', ''), 'text/html') === FALSE) {
+         return;
+       }
+ 
+-- 
+GitLab
+
+
+From ac666ecc8443a5f46271ca9a856ba00dc14f4ebd Mon Sep 17 00:00:00 2001
+From: Neograph734 <neograph734@2397482.no-reply.drupal.org>
+Date: Tue, 19 Jul 2022 20:13:52 +0000
+Subject: [PATCH 5/5] Update advagg_mod.install
+
+---
+ advagg_mod/advagg_mod.install | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/advagg_mod/advagg_mod.install b/advagg_mod/advagg_mod.install
+index 5bffd8be..53fe137a 100644
+--- a/advagg_mod/advagg_mod.install
++++ b/advagg_mod/advagg_mod.install
+@@ -31,7 +31,7 @@ function advagg_mod_update_8301() {
+ /**
+  * Add missing configuration parameter for unified_multisite_dir when undefined.
+  */
+-function advagg_mod_update_8401() {
++function advagg_mod_update_9501() {
+   $config = \Drupal::configFactory()->getEditable('advagg_mod.settings');
+   if ($config->get('unified_multisite_dir')) {
+     return;
+-- 
+GitLab
+
