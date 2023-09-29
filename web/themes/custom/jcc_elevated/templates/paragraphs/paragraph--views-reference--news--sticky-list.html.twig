@@ -55,7 +55,7 @@
       part_two: row['#node'].field_date.0.value|date('M d, Y')|default(''),
     },
     heading: row['#node'].title()|default(''),
-    href: url('entity.node.canonical', {'node': row['#node'].id()})|render,
+    href: row['#node'].id() ? url('entity.node.canonical', {'node': row['#node'].id()})|render : '',
     text: excerpts[0]|default(''),
   } %}
 {% endif %}
@@ -67,7 +67,7 @@
     {% set item = {
       link: {
         label: row['#node'].title(),
-        href: url('entity.node.canonical', { 'node': row['#node'].id() })|render,
+        href: row['#node'].id() ? url('entity.node.canonical', {'node': row['#node'].id()})|render : '',
       },
       footer: row['#node'].field_date.0.value|date('M d, Y'),
     } %}

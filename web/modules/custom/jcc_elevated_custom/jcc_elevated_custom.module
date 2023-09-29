@@ -5,6 +5,7 @@
  * Contains jcc_elevated_custom.module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Site\Settings;
 
 /**
@@ -94,4 +95,32 @@ function jcc_elevated_custom_preprocess_node(array &$variables) {
   if (!isset($variables['sidebar_navigation'])) {
     $variables['section_navigation'] = FALSE;
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function jcc_elevated_custom_form_content_moderation_entity_moderation_form_alter(array &$form, FormStateInterface $form_state) {
+
+  // Alterations to the moderation form to improve style/layout.
+  $form['current_label'] = [
+    '#type' => 'item',
+    '#title' => '',
+    '#weight' => -99,
+    '#markup' => t('Current moderation state:'),
+  ];
+
+  $form['current']['#type'] = 'item';
+  $form['current']['#title'] = '';
+  $form['current']['#weight'] = -98;
+
+  $form['new_state_label'] = [
+    '#type' => 'item',
+    '#title' => '',
+    '#weight' => -97,
+    '#markup' => t('Change to:'),
+  ];
+
+  $form['new_state']['#title'] = '';
+  $form['new_state']['#weight'] = -96;
 }

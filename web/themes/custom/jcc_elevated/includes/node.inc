@@ -101,6 +101,11 @@ function jcc_elevated_preprocess_node(&$variables) {
     }
   }
 
+  // Set page to true if we are in full mode. This will trigger the proper
+  // values for moderation full view.
+  if ($variables['view_mode'] == 'full') {
+    $variables['page'] = TRUE;
+  }
 }
 
 /**
