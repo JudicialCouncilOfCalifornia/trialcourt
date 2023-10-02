@@ -296,6 +296,10 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
  * Implements hook_preprocess_views_view() for search listing page.
  */
 function jcc_elevated_preprocess_views_view__search__search(&$variables) {
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
   $render = \Drupal::service('renderer');
   $view = $variables['view'];
 
