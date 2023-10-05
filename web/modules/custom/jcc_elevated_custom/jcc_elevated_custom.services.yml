@@ -4,3 +4,8 @@ services:
     arguments: ['@string_translation']
     tags:
       - { name: twig.extension }
+  jcc_elevated_custom_alerts_redirect_events_subscriber:
+    class: Drupal\jcc_elevated_custom\EventSubscriber\JccElevatedAlertRedirectSubscriber
+    arguments: ['@entity_type.manager', '@module_handler', '@current_user']
+    tags:
+      - { name: event_subscriber }

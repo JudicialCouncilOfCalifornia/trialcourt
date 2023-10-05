@@ -77,7 +77,7 @@ class MCManageSubs extends FormBase {
       $form['title_header'] = [
         '#prefix' => '<h2>',
         '#suffix' => '</h2>',
-        '#markup' => t('Notifications from the Supreme Court of California'),
+        '#markup' => t('Manage preferences'),
         '#weight' => -100,
       ];
       $form['text_header'] = [

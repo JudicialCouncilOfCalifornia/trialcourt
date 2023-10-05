@@ -1,0 +1,25 @@
+{{ attach_library("jcc_storybook/Card") }}
+
+{% if not logged_in %}
+  {% set button_label = "Subscribe" %}
+  {% set button_uri = "internal:/user/register" %}
+{% else %}
+  {% set button_label = "Manage subscriptions" %}
+  {% set button_uri = "internal:/user/" ~ user.id ~ "/edit" %}
+{% endif %}
+
+
+<div class="container">
+  {% include "@molecules/Card/Card.twig" with {
+    variant: 'striped',
+    background: 'solid-primary-dark-xx',
+    has_section_heading: true,
+    extra_padding: true,
+    text: content,
+    button_data: {
+      label: button_label,
+      href: button_uri,
+      variant: "secondary"
+    }
+  } %}
+</div>

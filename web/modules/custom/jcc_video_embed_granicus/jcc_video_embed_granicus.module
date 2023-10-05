@@ -5,8 +5,6 @@
  * Contains jcc_video_embed_granicus.module.
  */
 
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -22,40 +20,5 @@ function jcc_video_embed_granicus_help($route_name, RouteMatchInterface $route_m
       return $output;
 
     default:
-  }
-}
-
-/**
- * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
- */
-function jcc_video_embed_granicus_field_widget_single_element_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
-  if ($element['#paragraph_type'] && $element['#paragraph_type'] == 'hero') {
-    // Ensure field_granicus_view_link_id is enabled.
-    $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('paragraph', 'hero');
-    $form_display_array = $form_display->toArray();
-    if (in_array('field_granicus_view_link_id', $form_display_array['hidden'])) {
-      $form_display->setComponent('field_granicus_view_link_id', ['type' => 'number'])->save();
-    }
-  }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function jcc_video_embed_granicus_preprocess_paragraph(array &$variables) {
-  if ($variables['paragraph']) {
-    $paragraph = $variables['paragraph'];
-    // Include view embed as lead content.
-    if ($paragraph->getType() == 'hero' && isset($paragraph->field_granicus_view_link_id->value)) {
-      $variables['#attached']['library'][] = 'jcc_storybook/Iframe';
-      $variables['#attached']['library'][] = 'jcc_video_embed_granicus/jcc_video_embed_granicus';
-      $lead = $paragraph->get('field_lead')->value ?? '';
-      $granicus_view_id = $paragraph->field_granicus_view_link_id->value;
-      $granicus_url = 'https://jcc.granicus.com/ViewPublisher.php?view_id=' . $granicus_view_id;
-      $iframe_title = 'Granicus live cast';
-      $link = '<div class="iframe"><iframe class="iframe--granicus-link" src="' . $granicus_url . '" title="' . $iframe_title . '"></iframe></div>';
-      $custom = $lead . $link;
-      $variables['custom'] = Markup::create($custom);
-    }
   }
 }
