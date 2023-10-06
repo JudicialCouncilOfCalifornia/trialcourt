@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Preprocess and functions for alert content type and component.
+ * Preprocess and functions for node types and components.
  */
 
 use Drupal\Core\Menu\MenuTreeParameters;
@@ -87,11 +87,15 @@ function jcc_elevated_preprocess_node(&$variables) {
 
       // Create our storybook component friendly sidebar navigation.
       if (isset($menu_build_tree['#items']) && !empty($menu_build_tree['#items'])) {
-        // Set caches to trigger on landing and subpage changes.
-        $menu_build_tree['#cache']['contexts'][] = 'user';
-        $menu_build_tree['#cache']['tags'][] = 'node_list:landing_page';
-        $menu_build_tree['#cache']['tags'][] = 'node_list:subpage';
-        $menu_build_tree['#cache']['tags'][] = 'node:' . $node->id();
+        // Set caches to trigger on changes.
+        $variables['#cache']['contexts'][] = 'user.roles';
+        $variables['#cache']['tags'][] = 'node:' . $node->id();
+
+        foreach ($allowed_types as $type) {
+          if (!empty($type)) {
+            $variables['#cache']['tags'][] = 'node_list:' . $type;
+          }
+        }
 
         $variables['sidebar_navigation'] = [
           'menu_heading' => $parent_link,
@@ -135,6 +139,57 @@ function jcc_elevated_node_alert(array &$variables, NodeInterface $node) {
   // Prepend alert label directly to the body content so that it renders inline.
   $label = '<strong>' . $node->label() . '</strong>';
   $variables['content']['body'][0]['#text'] = $label . ', ' . $variables['content']['body'][0]['#text'];
+  $variables['content']['body'][0]['#format'] = 'restricted_html';
+
+  // Set the type/icons.
+  $variables['type'] = NULL;
+
+  // Get the alert type from the variant field.
+  if ($node->hasField('field_alert_type')) {
+    $items = $node->get('field_alert_type')->first()->getValue();
+    if (isset($items['value'])) {
+      $variables['type'] = $items['value'] == 'success' ? 'status' : $items['value'];
+    }
+  }
+
+  // Default is to hide the alert content.
+  $variables['display_alert'] = FALSE;
+
+  $is_front = \Drupal::service('path.matcher')->isFrontPage();
+  $current_page = \Drupal::routeMatch()->getParameter('node');
+  $only_frontpage = $node->get('field_switch')->first()->getValue()['value'];
+  $references = $node->get('field_node_reference')->referencedEntities();
+
+  // If we are on the frontpage and the "frontpage only" switch is turned on.
+  if ($only_frontpage && $is_front) {
+    $variables['display_alert'] = TRUE;
+    return;
+  }
+
+  // If not "frontpage only", and no specific references set, show everywhere.
+  if (!$only_frontpage && empty($references)) {
+    $variables['display_alert'] = TRUE;
+    return;
+  }
+
+  // Check if we're on an allowed page. First confirm we are on a node page.
+  if ($current_page instanceof NodeInterface) {
+
+    // If the current node is the actual alert node.
+    if ($current_page->id() == $node->id()) {
+      $variables['display_alert'] = TRUE;
+    }
+    else {
+      // Otherwise check specific pages to show alert on.
+      foreach ($references as $ref) {
+        if ($current_page->id() == $ref->id()) {
+          $variables['display_alert'] = TRUE;
+          return;
+        }
+      }
+    }
+  }
+
 }
 
 /**
