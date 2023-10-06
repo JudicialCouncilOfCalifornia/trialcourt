@@ -1,0 +1,87 @@
+uuid: be47f7ce-fc16-4317-88f6-6e0cbe75dec5
+langcode: en
+status: true
+dependencies: {  }
+id: appellate_remote_media
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - appellate
+  - remote
+  - media
+migration_group: appellate
+label: 'Appellate: Import Remote Media (Youtube)'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: 'https://sheets.googleapis.com/v4/spreadsheets/1mOUsAoFIB0hn3J95TSW5ybP8UuLFoZofj_lKB_JjwRo/values/_videos?alt=json&key=AIzaSyAxmipRUFA9HP-fbprnM1Yn0z33aZ1PxdE'
+  item_selector: entry
+  ids:
+    url:
+      type: string
+    district:
+      type: string
+  fields:
+    -
+      name: title
+      selector: title
+      label: Title
+    -
+      name: url
+      selector: url
+      label: URL
+    -
+      name: district
+      label: District
+      selector: district
+    -
+      name: transcript
+      label: Transcript
+      selector: transcript
+    -
+      name: bio
+      label: Bio
+      selector: bio
+process:
+  name:
+    -
+      plugin: callback
+      callable: htmlspecialchars_decode
+      source: title
+  field_media_oembed_video:
+    -
+      plugin: callback
+      callable: trim
+      source: url
+  field_media_caption/value: bio
+  field_media_caption/format: caption
+  field_media_file:
+    -
+      plugin: callback
+      callable: trim
+      source: transcript
+    -
+      plugin: migration_lookup
+      migration: appellate_forms_file
+  uid:
+    plugin: default_value
+    default_value: 1
+  jcc_section:
+    plugin: static_map
+    source: district
+    map:
+      '': ''
+      1: 69
+      2: 70
+      3: 71
+      4: 72
+      5: 73
+      6: 74
+destination:
+  plugin: 'entity:media'
+  default_bundle: remote_video
+migration_dependencies:
+  optional:
+    - appellate_forms_file
