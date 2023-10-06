@@ -128,7 +128,7 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
 }
 
 /**
- * Node: News preprocess.
+ * Node: Alerts preprocess.
  *
  * @param array $variables
  *   The preprocess variables.
@@ -153,41 +153,9 @@ function jcc_elevated_node_alert(array &$variables, NodeInterface $node) {
   }
 
   // Default is to hide the alert content.
-  $variables['display_alert'] = FALSE;
-
   $is_front = \Drupal::service('path.matcher')->isFrontPage();
   $current_page = \Drupal::routeMatch()->getParameter('node');
-  $only_frontpage = $node->get('field_switch')->first()->getValue()['value'];
-  $references = $node->get('field_node_reference')->referencedEntities();
-
-  // If we are on the frontpage and the "frontpage only" switch is turned on.
-  if ($only_frontpage && $is_front) {
-    $variables['display_alert'] = TRUE;
-  }
-
-  // If not "frontpage only", and no specific references set, show everywhere.
-  elseif (!$only_frontpage && empty($references)) {
-    $variables['display_alert'] = TRUE;
-  }
-
-  // Check if we're on an allowed page. First confirm we are on a node page.
-  elseif (!$only_frontpage && !empty($references) && ($current_page instanceof NodeInterface)) {
-
-    // If the current node is the actual alert node.
-    if ($current_page->id() == $node->id()) {
-      $variables['display_alert'] = TRUE;
-    }
-    else {
-      // Otherwise check specific pages to show alert on.
-      foreach ($references as $ref) {
-        if ($current_page->id() == $ref->id()) {
-          $variables['display_alert'] = TRUE;
-          return;
-        }
-      }
-    }
-  }
-
+  $variables['display_alert'] = jcc_elevated_should_alert_display($node, $current_page, $is_front);
 }
 
 /**
@@ -259,4 +227,48 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node) {
     ];
     $variables['tags'] = $tags;
   }
+}
+
+/**
+ * Helper function to decide if alert should be displayed or not.
+ */
+function jcc_elevated_should_alert_display($alert_node, $current_page, $is_front): bool {
+
+  // If we are trying to pass a non-alert node, block the display.
+  if ($alert_node->bundle() != 'alert') {
+    return FALSE;
+  }
+
+  $only_frontpage = $alert_node->get('field_switch')->first()->getValue()['value'];
+  $references = $alert_node->get('field_node_reference')->referencedEntities();
+
+  // If we are on the frontpage and the "frontpage only" switch is turned on.
+  if ($only_frontpage && $is_front) {
+    return TRUE;
+  }
+
+  // If not "frontpage only", and no specific references set, show everywhere.
+  if (!$only_frontpage && empty($references)) {
+    return TRUE;
+  }
+
+  // Check if we're on an allowed page. First confirm we are on a node page.
+  if (!$only_frontpage && !empty($references) && ($current_page instanceof NodeInterface)) {
+
+    // If the current node is the actual alert node.
+    if ($current_page->id() == $alert_node->id()) {
+      return TRUE;
+    }
+    else {
+      // Otherwise check specific pages to show alert on.
+      foreach ($references as $ref) {
+        if ($current_page->id() == $ref->id()) {
+          return TRUE;
+        }
+      }
+    }
+  }
+
+  // Default is to hide the alert.
+  return FALSE;
 }
