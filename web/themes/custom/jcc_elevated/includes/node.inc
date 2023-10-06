@@ -163,17 +163,15 @@ function jcc_elevated_node_alert(array &$variables, NodeInterface $node) {
   // If we are on the frontpage and the "frontpage only" switch is turned on.
   if ($only_frontpage && $is_front) {
     $variables['display_alert'] = TRUE;
-    return;
   }
 
   // If not "frontpage only", and no specific references set, show everywhere.
-  if (!$only_frontpage && empty($references)) {
+  elseif (!$only_frontpage && empty($references)) {
     $variables['display_alert'] = TRUE;
-    return;
   }
 
   // Check if we're on an allowed page. First confirm we are on a node page.
-  if ($current_page instanceof NodeInterface) {
+  elseif (!$only_frontpage && !empty($references) && ($current_page instanceof NodeInterface)) {
 
     // If the current node is the actual alert node.
     if ($current_page->id() == $node->id()) {
