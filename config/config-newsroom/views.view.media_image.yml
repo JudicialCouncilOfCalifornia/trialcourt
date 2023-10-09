@@ -5,6 +5,7 @@ dependencies:
   config:
     - image.style.thumbnail
     - media.type.image
+    - system.menu.admin
   module:
     - entity_usage
     - media
@@ -593,10 +594,10 @@ display:
           admin_label: ''
           plugin_id: numeric
           label: Usage
-          exclude: true
+          exclude: false
           alter:
-            alter_text: true
-            text: '<a href="/media/{{ mid }}/edit/usage">used {{ source_id }} times</a>'
+            alter_text: false
+            text: ''
             make_link: true
             path: 'media/{{ mid }}/edit/usage'
             absolute: false
@@ -639,63 +640,6 @@ display:
           separator: ','
           format_plural: true
           format_plural_string: !!binary MSBQbGFjZQNAY291bnQgUGxhY2Vz
-          prefix: ''
-          suffix: ''
-        source_id:
-          id: source_id
-          table: entity_usage
-          field: source_id
-          relationship: media_to_usage_entity
-          group_type: count_distinct
-          admin_label: ''
-          plugin_id: numeric
-          label: 'Usage count'
-          exclude: false
-          alter:
-            alter_text: true
-            text: '<a href="/media/{{ mid }}/edit/usage">{{ source_id }} Places</a>'
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          set_precision: false
-          precision: 0
-          decimal: .
-          separator: ','
-          format_plural: true
-          format_plural_string: !!binary MQNAY291bnQ=
           prefix: ''
           suffix: ''
       pager:
@@ -1097,7 +1041,7 @@ display:
       tags: {  }
   media_page_list:
     id: media_page_list
-    display_title: 'Media Image usage'
+    display_title: 'Media Image'
     display_plugin: page
     position: 1
     display_options:
@@ -1105,8 +1049,8 @@ display:
       display_extenders: {  }
       path: admin/content/media-image-usage
       menu:
-        type: tab
-        title: 'Media Image'
+        type: normal
+        title: 'Media Usage'
         description: ''
         weight: 0
         expanded: false
