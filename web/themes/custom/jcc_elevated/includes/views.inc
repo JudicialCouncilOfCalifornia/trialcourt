@@ -97,6 +97,21 @@ function jcc_elevated_preprocess_views_view__alerts__alerts(&$variables) {
   // Hide admin links.
   $variables['title_prefix'] = [];
   $variables['title_suffix'] = [];
+
+  // Remove access to alerts that should not display on the page.
+  $is_front = \Drupal::service('path.matcher')->isFrontPage();
+  $current_page = \Drupal::routeMatch()->getParameter('node');
+  foreach ($variables['rows'] as $index => $row) {
+    $alerts = $variables['rows'][$index]['#rows'];
+    foreach ($alerts as $delta => $alert) {
+      $alert_node = $alert['#node'];
+      if (!jcc_elevated_should_alert_display($alert_node, $current_page, $is_front)) {
+        unset($variables['rows'][$index]['#rows'][$delta]);
+      }
+    }
+  }
+
+  $variables['#cache']['max-age'] = 0;
 }
 
 /**
