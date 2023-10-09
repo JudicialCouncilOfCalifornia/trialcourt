@@ -128,6 +128,14 @@
       } %}
     {% endset %}
   {% endif %}
+  
+  {% set date %}
+    {% if node.field_retirement_date.value %}
+      {{ 'From ' ~ node.field_date.value|date('Y') ~ ' to ' ~ node.field_retirement_date.value|date('Y')}}
+    {% else %}
+      {{ 'Since ' ~ node.field_date.value|date('Y') }}
+    {% endif %}
+  {% endset %}
 
   {% set biography %}
     {% block bio_component %}
@@ -135,7 +143,7 @@
           name: label.0,
           title: node.field_job_title.value ? node.field_job_title.entity.label,
           division: node.field_division.value ? node.field_division.entity.label,
-          date: node.field_date.value ? 'Since ' ~ node.field_date.value|date('Y'),
+          date: date,
           content: content.body.0|render,
           share: {
             print_url: 'javascript: window.print();',
