@@ -39,7 +39,7 @@ class RegistrationConfirmation extends ControllerBase {
    */
   public function registrationconfirmation() {
     return [
-      '#markup' => '<div class="jcc-section--container"><div class="jcc-section jcc-section--background-alt"><div class="jcc-section__inner">' . t("<h1>Thank you!</h1>A welcome message with further instructions has been sent to your email address. If you have not seen it check your spam folder.") . '<br><br><a class="usa-button usa-button--primary" href="/">Home</a></div></div></div>',
+      '#markup' => '<div class="jcc-section--container section__content box"><div class="jcc-section jcc-section--background-alt container stack"><div class="jcc-section__inner">' . t("<h1>Thank you!</h1>A welcome message with further instructions has been sent to your email address. If you have not seen it check your spam folder.") . '<br><br><a class="usa-button usa-button--primary" href="/">Home</a></div></div></div>',
     ];
   }
 }
