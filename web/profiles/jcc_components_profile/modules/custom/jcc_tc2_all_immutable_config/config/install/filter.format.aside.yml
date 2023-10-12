@@ -4,6 +4,7 @@ dependencies:
   config:
     - core.entity_view_mode.media.full
   module:
+    - emptyparagraphkiller
     - entity_embed
     - glossify_taxonomy
     - linkit
@@ -12,13 +13,18 @@ name: Aside
 format: aside
 weight: -7
 filters:
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
+    status: true
+    weight: 0
   filter_html:
     id: filter_html
     provider: filter
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <ul type class> <ol type start class> <li> <blockquote class="blockquote blockquote--callout"> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <p class> <h4> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary jcc-button--cta-link jcc-button--primary jcc-button--cta-link twitter-library jcc-button--primary jcc-button--cta-link twitter-timeline jcc-button--primary button jcc-button--secondary button button--secondary jcc-button--cta-link button button--text twitter-timeline">'
+      allowed_html: '<em> <strong> <ul type class dir> <ol type start class dir> <li> <blockquote class="blockquote blockquote--callout" dir> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <p class dir> <h4 dir> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary jcc-button--cta-link jcc-button--primary jcc-button--cta-link twitter-library jcc-button--primary jcc-button--cta-link twitter-timeline jcc-button--primary button jcc-button--secondary button button--secondary jcc-button--cta-link button button--text twitter-timeline">'
       filter_html_help: true
       filter_html_nofollow: false
   glossify_taxonomy:
