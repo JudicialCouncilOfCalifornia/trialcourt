@@ -5,6 +5,7 @@ dependencies:
     - field.field.media.remote_video.field_height
     - field.field.media.remote_video.field_matters_served
     - field.field.media.remote_video.field_media_caption
+    - field.field.media.remote_video.field_media_file
     - field.field.media.remote_video.field_media_image
     - field.field.media.remote_video.field_media_oembed_video
     - field.field.media.remote_video.field_provider
@@ -12,12 +13,21 @@ dependencies:
     - field.field.media.remote_video.field_width
     - media.type.remote_video
   module:
+    - file
     - media
 id: media.remote_video.default
 targetEntityType: media
 bundle: remote_video
 mode: default
 content:
+  field_media_file:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
   field_media_oembed_video:
     type: oembed
     label: hidden

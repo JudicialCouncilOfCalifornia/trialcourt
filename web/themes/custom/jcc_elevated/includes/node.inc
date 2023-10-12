@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Preprocess and functions for alert content type and component.
+ * Preprocess and functions for node types and components.
  */
 
 use Drupal\Core\Menu\MenuTreeParameters;
@@ -87,11 +87,15 @@ function jcc_elevated_preprocess_node(&$variables) {
 
       // Create our storybook component friendly sidebar navigation.
       if (isset($menu_build_tree['#items']) && !empty($menu_build_tree['#items'])) {
-        // Set caches to trigger on landing and subpage changes.
-        $menu_build_tree['#cache']['contexts'][] = 'user';
-        $menu_build_tree['#cache']['tags'][] = 'node_list:landing_page';
-        $menu_build_tree['#cache']['tags'][] = 'node_list:subpage';
-        $menu_build_tree['#cache']['tags'][] = 'node:' . $node->id();
+        // Set caches to trigger on changes.
+        $variables['#cache']['contexts'][] = 'user.roles';
+        $variables['#cache']['tags'][] = 'node:' . $node->id();
+
+        foreach ($allowed_types as $type) {
+          if (!empty($type)) {
+            $variables['#cache']['tags'][] = 'node_list:' . $type;
+          }
+        }
 
         $variables['sidebar_navigation'] = [
           'menu_heading' => $parent_link,
@@ -124,7 +128,7 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
 }
 
 /**
- * Node: News preprocess.
+ * Node: Alerts preprocess.
  *
  * @param array $variables
  *   The preprocess variables.
@@ -135,6 +139,23 @@ function jcc_elevated_node_alert(array &$variables, NodeInterface $node) {
   // Prepend alert label directly to the body content so that it renders inline.
   $label = '<strong>' . $node->label() . '</strong>';
   $variables['content']['body'][0]['#text'] = $label . ', ' . $variables['content']['body'][0]['#text'];
+  $variables['content']['body'][0]['#format'] = 'restricted_html';
+
+  // Set the type/icons.
+  $variables['type'] = NULL;
+
+  // Get the alert type from the variant field.
+  if ($node->hasField('field_alert_type')) {
+    $items = $node->get('field_alert_type')->first()->getValue();
+    if (isset($items['value'])) {
+      $variables['type'] = $items['value'] == 'success' ? 'status' : $items['value'];
+    }
+  }
+
+  // Default is to hide the alert content.
+  $is_front = \Drupal::service('path.matcher')->isFrontPage();
+  $current_page = \Drupal::routeMatch()->getParameter('node');
+  $variables['display_alert'] = jcc_elevated_should_alert_display($node, $current_page, $is_front);
 }
 
 /**
@@ -206,4 +227,48 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node) {
     ];
     $variables['tags'] = $tags;
   }
+}
+
+/**
+ * Helper function to decide if alert should be displayed or not.
+ */
+function jcc_elevated_should_alert_display($alert_node, $current_page, $is_front): bool {
+
+  // If we are trying to pass a non-alert node, block the display.
+  if ($alert_node->bundle() != 'alert') {
+    return FALSE;
+  }
+
+  $only_frontpage = $alert_node->get('field_switch')->first()->getValue()['value'];
+  $references = $alert_node->get('field_node_reference')->referencedEntities();
+
+  // If we are on the frontpage and the "frontpage only" switch is turned on.
+  if ($only_frontpage && $is_front) {
+    return TRUE;
+  }
+
+  // If not "frontpage only", and no specific references set, show everywhere.
+  if (!$only_frontpage && empty($references)) {
+    return TRUE;
+  }
+
+  // Check if we're on an allowed page. First confirm we are on a node page.
+  if (!$only_frontpage && !empty($references) && ($current_page instanceof NodeInterface)) {
+
+    // If the current node is the actual alert node.
+    if ($current_page->id() == $alert_node->id()) {
+      return TRUE;
+    }
+    else {
+      // Otherwise check specific pages to show alert on.
+      foreach ($references as $ref) {
+        if ($current_page->id() == $ref->id()) {
+          return TRUE;
+        }
+      }
+    }
+  }
+
+  // Default is to hide the alert.
+  return FALSE;
 }
