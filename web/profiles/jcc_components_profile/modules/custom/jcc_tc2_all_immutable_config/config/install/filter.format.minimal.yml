@@ -2,19 +2,25 @@ langcode: en
 status: true
 dependencies:
   module:
+    - emptyparagraphkiller
     - glossify_taxonomy
     - linkit
 name: Minimal
 format: minimal
 weight: -8
 filters:
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
+    status: true
+    weight: 0
   filter_html:
     id: filter_html
     provider: filter
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <a href hreflang title data-entity-substitution data-entity-type data-entity-uuid> <u> <s> <sup> <sub> <ol> <li> <ul>'
+      allowed_html: '<em> <strong> <a href hreflang title data-entity-substitution data-entity-type data-entity-uuid> <u> <s> <sup> <sub> <ol dir> <li> <ul dir> <p dir>'
       filter_html_help: true
       filter_html_nofollow: false
   glossify_taxonomy:

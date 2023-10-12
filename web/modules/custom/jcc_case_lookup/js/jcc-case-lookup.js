@@ -12,6 +12,7 @@
    */
   Drupal.behaviors.jccCaseLookup = {
     attach: function () {
+      const caseLookupUrl = 'https://appellatecases.courtinfo.ca.gov';
       const globalSearchField = '#header-search';
       const modal = '#case-search-field-modal';
       const inputField = '#query-case-number__input';
@@ -106,9 +107,11 @@
           // Set district for case search URL.
           const casePrefix = query[0].charAt(0);
           let district = getDistrictCode(casePrefix);
-          $('#searchFormNumber').attr('action', 'https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=' + district + '&search=number');
+          $('#searchFormNumber').attr('action', caseLookupUrl + '/search/searchResults.cfm?dist=' + district + '&search=number');
           $('#query_caseNumber').val(query);
           $('form[name="searchFormNumber"]').submit();
+          // Remove form re-submit blocker esp for non-elevated sites.
+          $('#searchFormNumber').removeAttr('data-drupal-form-submit-last');
         }
       }
 
@@ -127,9 +130,11 @@
             // Display helper when multiple case numbers.
             let casePrefix = submittedCases[0].charAt(0);
             let district = getDistrictCode(casePrefix);
-            $('#searchFormNumber').attr('action', 'https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=' + district + '&search=number');
+            $('#searchFormNumber').attr('action', caseLookupUrl + '/search/searchResults.cfm?dist=' + district + '&search=number');
             $('#query_caseNumber').val(submittedCases);
             $('form[name="searchFormNumber"]').submit();
+            // Remove form re-submit blocker esp for non-elevated sites.
+            $('#searchFormNumber').removeAttr('data-drupal-form-submit-last');
           } else {
             $(caseListing).show();
             // Insert/Update listing.
@@ -157,7 +162,7 @@
       $(document).ready(function() {
         // BEGIN Load hidden ACCMS lookup form onto page if global search field exists.
         if ($(globalSearchField).length && $('#searchFormNumber').length === 0) {
-          const searchForm = '<form class="sr-only" aria-hidden="true" name="searchFormNumber" id="searchFormNumber" method="post" action="https://appellatecases.courtinfo.ca.gov/" target="_blank">' +
+          const searchForm = '<form class="sr-only" aria-hidden="true" name="searchFormNumber" id="searchFormNumber" method="post" action="' + caseLookupUrl + '" target="_blank">' +
             '<input type="text" name="query_caseNumber" id="query_caseNumber" />' +
             '<input type="checkbox" name="bot_check_1" id="bot_check_1" value="Y" checked>' +
             '<input type="checkbox" name="bot_check_6" id="bot_check_6" value="Y">' +

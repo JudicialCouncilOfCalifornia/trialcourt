@@ -70,13 +70,17 @@
  *   in different view modes.
  */
 #}
-{{ attach_library("jcc_storybook/Alert") }}
-{{ attach_library("jcc_storybook/Icon") }}
+{% if display_alert %}
 
-{% include "@molecules/Alert/Alert.twig" with {
-  type: node.field_alert_type.get(0).value|default('info'),
-  dismissible: node.field_toggle.get(0).value|default(false),
-  heading: '',
-  content: [content.body|render],
-  icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
-} %}
+  {{ attach_library("jcc_storybook/Alert") }}
+  {{ attach_library("jcc_storybook/Icon") }}
+
+  {% include "@molecules/Alert/Alert.twig" with {
+    type: type|default('info'),
+    dismissible: node.field_toggle.get(0).value|default(false),
+    heading: '',
+    content: [content.body.0|render],
+    icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
+  } %}
+
+{% endif %}

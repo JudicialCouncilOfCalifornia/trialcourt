@@ -31,7 +31,7 @@ source:
       type: string
   constants:
     uri_prefix: 'internal:'
-    document_path: '/system/files/'
+    document_path: /system/files/
     status_code: 301
 process:
   pseudo_base_path:
@@ -46,14 +46,15 @@ process:
     -
       plugin: callback
       callable: urldecode
-
     -
       plugin: callback
       callable: strtolower
     -
       plugin: str_replace
-      search: [ " " ]
-      replace: [ "-" ]
+      search:
+        - ' '
+      replace:
+        - '-'
     -
       plugin: skip_on_empty
       method: process
