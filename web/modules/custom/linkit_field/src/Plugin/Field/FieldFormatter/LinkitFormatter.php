@@ -115,7 +115,7 @@ class LinkitFormatter extends LinkFormatter {
       $link_item = $items->get($delta);
       $substituted_url = $this->getSubstitutedUrl($link_item);
       // Convert generated URL into a URL object.
-      if ($substituted_url && ($url = $this->pathValidator->getUrlIfValid($substituted_url->getGeneratedUrl()))) {
+       if ($substituted_url && ($url = $this->pathValidator->getUrlIfValid($substituted_url->toString()))) {
         // Keep query and fragment.
         $parsed_url = parse_url($link_item->uri);
         if (!empty($parsed_url['query'])) {
