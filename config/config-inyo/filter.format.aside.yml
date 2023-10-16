@@ -1,13 +1,20 @@
+uuid: 3b683ae7-2931-47b7-902b-dfb230f08ef3
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.media.container_100_percent
+    - core.entity_view_mode.media.container_25_percent
+    - core.entity_view_mode.media.container_50_percent
+    - core.entity_view_mode.media.container_75_percent
     - core.entity_view_mode.media.full
   module:
     - entity_embed
     - glossify_taxonomy
     - linkit
     - media
+_core:
+  default_config_hash: Co4xaaWaAhJ33ShOcD88hcN-EZdTuhrBjQEBZ_C5pzQ
 name: Aside
 format: aside
 weight: -7
@@ -66,8 +73,15 @@ filters:
     settings:
       default_view_mode: default
       allowed_view_modes:
+        container_100_percent: container_100_percent
+        container_25_percent: container_25_percent
+        container_50_percent: container_50_percent
+        container_75_percent: container_75_percent
         full: full
       allowed_media_types:
+        boxcast_stream: boxcast_stream
+        image: image
+        remote_video: remote_video
         snippet: snippet
   entity_embed:
     id: entity_embed
