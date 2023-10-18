@@ -150,8 +150,6 @@ Create Landing Page
 
 - Import the initial database dump to live environment to prepare pantheon for deployment.
 
-- Sync the database and files from live to Dev (not a typo), develop and stage on Pantheon.
-
 - Commit changes and deploy to appropriate environment(s) for testing and other pre-launch work. Live (master), is where content creation will happen pre-launch.
 
 - After deploying to develop, merge develop to Dev since Pantheon's Solr, possibly other environment aspects, relies on that instance for initialization. Update this instance manually only as needed.
