@@ -103,6 +103,20 @@ function jcc_components_form_views_exposed_form_alter(&$form, FormStateInterface
     $form['#validate'][] = 'jcc_components_tentative_rulings_search_validate';
 
   }
+
+  $view = $form_state->get('view');
+  if ($view->id() == 'arbitrators') {
+    $options = $form['arbitrator_type']['#options'];
+    unset($options["All"]);
+    $options = array_flip($options);
+    $form['adr_process']['#states']['visible'] = [
+      ':input[name="arbitrator_type"]' => ['value' => $options['Civil ADR Provider']],
+    ];
+
+    $form['areas_of_law']['#states']['visible'] = [
+      ':input[name="arbitrator_type"]' => ['value' => $options['Civil Early Settlement Conference (CESC) Neutral']],
+    ];
+  }
 }
 
 /**
