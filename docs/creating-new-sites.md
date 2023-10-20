@@ -26,7 +26,9 @@ After this runs it will give you instructions to set up the new Drupal instance 
   - You can optionally specify an alternate `[theme]` from the JCC Elevated default, specifically to use JCC Components (jcc_components) for the current trial court themes & features.
 - For elevated sites:
   - Install the following manually until we can automate or consolidate themes:
-    - `lando drush en jcc_elevated_custom -l @local.[site]`
+    - `lando drush en jcc_elevated_custom -l @local.[site]` - customizations only for elevated sites.
+    - `lando drush en jcc_elevated_embed -l @local.[site]` - embeddable views/features.
+    - `lando drush en jcc_elevated_sections -l @local.[site]` - if needed to create content division.
   - Set 'JCC' starter user role as administrator else you won't be able to administer menu structures. The password is noted in the lando multisite dialog else create yourself an admin account.
 - Confirm `web/sites/[site]` setup (extra files and directory seems okay to keep or delete)
   - .gitignore
@@ -153,6 +155,10 @@ Create Landing Page
 
 - Export db from local
   - `lando drush @local.[site] sql-dump > data/[site]-install.sql`
+  - For elevated sites, modify loading weight in `core.extension.yml` to 100 for:
+    - jcc_elevated_custom
+    - jcc_elevated_embeds
+    - jcc_elevated_sections (if installed)
 
 - Import the initial database dump to live environment to prepare pantheon for deployment.
 
