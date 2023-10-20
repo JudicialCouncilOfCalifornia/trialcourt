@@ -595,7 +595,7 @@ function jcc_custom_build_menu_tree(array $tree): array {
         'url' => !empty($menu_data['url']) ? $menu_data['url'] : '',
         'attributes' => !empty($menu_data['attributes']) ? $menu_data['attributes']->toArray() : [],
         'active' => $menu_data['in_active_trail'],
-        'links' => $menu_data['below'] ? jcc_custom_build_menu_tree($menu_data['below']) : [],
+        'links' => $menu_data['below'] && $menu_data['in_active_trail'] ? jcc_custom_build_menu_tree($menu_data['below']) : [],
       ];
     }
   }
