@@ -43,7 +43,7 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
         }
       }
       elseif (isset($row->_entity->field_images)) {
-        $first_image = _jcc_get_first_image($row->_entity, 'max_1300x1300');
+        $first_image = _jcc_get_first_image($row->_entity, 'crop_16x9');
         if ($first_image) {
           $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $first_image['url'] . '" alt="' . $first_image['alt'] . '"></a>');
         }
