@@ -64,12 +64,46 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
     }
   }
 
+  $add_homepage_to_breadcrumb = TRUE;
+
+  if (function_exists('jcc_get_current_page_section') && $section_id = jcc_get_current_page_section()) {
+    // Since this is a section, do not auto add the "Home" item.
+    $add_homepage_to_breadcrumb = FALSE;
+
+    // Replace the first item with a link to the section homepage.
+    $node_manager = \Drupal::entityTypeManager()->getStorage('node');
+    $section_service = Drupal::service('jcc_elevated_sections.service');
+    $section = $section_service->getSectionInfo($section_id);
+    $section_homepage_nid = $section->jcc_section_homepage->target_id;
+    $section_homepage_node = $node_manager->load($section_homepage_nid);
+    $url = Url::fromRoute('entity.node.canonical', ['node' => $section_homepage_nid]);
+    $variables['breadcrumb'][0]['text'] = $section_homepage_node->label();
+    $variables['breadcrumb'][0]['url'] = $url->toString();
+
+    // If the last item and first item are essentially the same thing, remove
+    // the first item. This only applies for sections because the section home
+    // is duplicated on the breadcrumb because the default behavior is to add
+    // the title of the current page to the end of the breadcrumb, and we have
+    // already set the same value as the new home/start link in the breadcrumb.
+    $last = end($variables['breadcrumb']);
+    if ($variables['breadcrumb'][0]['text'] == $last['text']) {
+      unset($variables['breadcrumb'][0]);
+    }
+  }
+
   // Add homepage link to start of breadcrumb.
-  $url = Url::fromRoute('<front>');
-  array_unshift($variables['breadcrumb'], [
-    'text' => t('Home'),
-    'url' => $url->toString(),
-  ]);
+  if ($add_homepage_to_breadcrumb) {
+    $url = Url::fromRoute('<front>');
+    array_unshift($variables['breadcrumb'], [
+      'text' => t('Home'),
+      'url' => $url->toString(),
+    ]);
+  }
+
+  // Remove breadcrumb if only 1 item.
+  if (count($variables['breadcrumb']) <= 1) {
+    $variables['breadcrumb'] = [];
+  }
 
   // Since we are printing the 'Current Page Title', add the URL cache context.
   // If we don't, then we might end up with something like

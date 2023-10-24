@@ -134,7 +134,12 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * Issue: https://github.com/pantheon-systems/drops-8/issues/114
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-  $config['system.file']['path']['temporary'] = $_SERVER['HOME'] . '/tmp';
+  // Persistent tmp - used only when absolutely necessary & feasible load.
+  $file_path = '/files/private/tmp';
+  if (!file_exists($file_path)) {
+    mkdir($file_path, 0777, true);
+  }
+  $config['system.file']['path']['temporary'] = 'sites/default' . $file_path;
 }
 
 /**
