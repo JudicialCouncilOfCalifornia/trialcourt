@@ -89,6 +89,19 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
     if ($variables['breadcrumb'][0]['text'] == $last['text']) {
       unset($variables['breadcrumb'][0]);
     }
+
+    $labels = [];
+    $urls = [];
+    foreach ($variables['breadcrumb'] as $delta => $item) {
+      if (in_array($item['text'], $labels) && in_array($item['url'], $urls)) {
+        // If the text already exists in the array, remove the duplicate.
+        unset($variables['breadcrumb'][$delta]);
+      }
+      else {
+        $labels[] = $item['text'];
+        $urls[] = $item['url'];
+      }
+    }
   }
 
   // Add homepage link to start of breadcrumb.
