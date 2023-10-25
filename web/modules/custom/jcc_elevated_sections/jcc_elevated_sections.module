@@ -485,8 +485,14 @@ function jcc_elevated_sections_preprocess_html(&$variables) {
     $sid = $section_service->getSectionForNode($node);
     $section = $section_service->getSectionInfo($sid);
     if ($section && $section->label()) {
-      $site_name = \Drupal::config('system.site')->get('name');
-      $variables['head_title']['title'] = $node->getTitle() . ' | ' . $section->label() . ' | ' . $site_name;
+      $section_homepage_nid = $section->get('jcc_section_homepage')->target_id;
+      $current_nid = $node->id();
+      // We only need to apply this to section pages that are not the section
+      // homepage.
+      if ($current_nid != $section_homepage_nid) {
+        $site_name = \Drupal::config('system.site')->get('name');
+        $variables['head_title']['title'] = $node->getTitle() . ' | ' . $section->label() . ' | ' . $site_name;
+      }
     }
   }
 }
