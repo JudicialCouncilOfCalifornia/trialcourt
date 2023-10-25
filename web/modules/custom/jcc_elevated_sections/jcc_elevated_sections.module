@@ -448,7 +448,7 @@ function jcc_elevated_sections_preprocess_page_title(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_page_title().
+ * Implements hook_preprocess_preprocess_html().
  */
 function jcc_elevated_sections_preprocess_html(&$variables) {
   // Set some variables.
@@ -479,6 +479,16 @@ function jcc_elevated_sections_preprocess_html(&$variables) {
     }
   }
 
+  // If the node is a sectioned node, set the page html title to follow the
+  // pattern of "page-title | section-name | site-name".
+  if ($node = $route_match->getParameter('node')) {
+    $sid = $section_service->getSectionForNode($node);
+    $section = $section_service->getSectionInfo($sid);
+    if ($section && $section->label()) {
+      $site_name = \Drupal::config('system.site')->get('name');
+      $variables['head_title']['title'] = $node->getTitle() . ' | ' . $section->label() . ' | ' . $site_name;
+    }
+  }
 }
 
 /**
