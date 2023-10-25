@@ -144,6 +144,7 @@ Create Landing Page
 - Export config & setup .gitignore
   - `lando drush @local.[site] cex -y`
   - `lando config-ignore` or `scripts/sync_config_ignore.sh`  Make sure this is run before you commit exported config. It will ignore the files that are managed by jcc_tc2_all_immutable_config feature module.
+  - NOTE: Some configurations are user managed but cannot be immutable or easily managed by the `config-ignore` script. These settings are still exported as source but ignored at `/admin/config/development/configuration/ignore`.
 
 - Export db from local
   - `lando drush @local.[site] sql-dump > data/[site]-install.sql`
