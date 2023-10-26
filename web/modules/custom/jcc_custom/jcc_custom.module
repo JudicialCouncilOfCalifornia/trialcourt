@@ -595,7 +595,7 @@ function jcc_custom_build_menu_tree(array $tree): array {
         'url' => !empty($menu_data['url']) ? $menu_data['url'] : '',
         'attributes' => !empty($menu_data['attributes']) ? $menu_data['attributes']->toArray() : [],
         'active' => $menu_data['in_active_trail'],
-        'links' => $menu_data['below'] ? jcc_custom_build_menu_tree($menu_data['below']) : [],
+        'links' => $menu_data['below'] && $menu_data['in_active_trail'] ? jcc_custom_build_menu_tree($menu_data['below']) : [],
       ];
     }
   }
@@ -680,6 +680,7 @@ function jcc_custom_preprocess_details(&$variables) {
   // Elements for menu settings if first level and not allowed.
   if (jcc_custom_is_elevated_site() && \Drupal::routeMatch()->getParameter('node')) {
     if ($variables['title'] && !is_array($variables['title']) && $variables['title'] == 'Menu settings') {
+      $enabled = $variables['element']['enabled']['#default_value'];
       $node = \Drupal::routeMatch()->getParameter('node');
       $url_alias = $node->toUrl()->toString();
       $menu_level = substr_count($url_alias, '/');
@@ -701,7 +702,7 @@ function jcc_custom_preprocess_details(&$variables) {
         // Menu parent.
         $parent_label_exp = '/<label(?:.*?)for=\"edit-menu-menu-parent\"(?:.*)>([^"]+)<\/.*>/';
         preg_match($parent_label_exp, $variables['children'], $parent_label);
-        $parent_value_exp = '/<option(?:.*?)selected(?:.*?)>([^"]+)<\/(?:.*?)>/';
+        $parent_value_exp = '/<option(?:.*?)selected(?:.*?)>([^"]+)<\/option>/';
         preg_match($parent_value_exp, $variables['children'], $parent_value);
         $parent_value = preg_replace('/&#?[a-z0-9]{2,8};/', '', $parent_value[1]);
 
@@ -715,19 +716,19 @@ function jcc_custom_preprocess_details(&$variables) {
         $variables['readonly'] = [
           'menu_title' => [
             'label' => $title_label[1],
-            'value' => $title_value[1],
+            'value' => $title_value[1] ?? '(Not set)',
           ],
           'menu_description' => [
             'label' => $description_label[1],
-            'value' => $description_value[1],
+            'value' => $description_value[1] ?? '(Not set)',
           ],
           'menu_parent' => [
             'label' => $parent_label[1],
-            'value' => $parent_value,
+            'value' => $enabled ? $parent_value : '(Not set)',
           ],
           'menu_weight' => [
             'label' => $weight_label[1],
-            'value' => $weight_value[1],
+            'value' => $enabled ? $weight_value[1] : '(Not set)',
           ],
         ];
 

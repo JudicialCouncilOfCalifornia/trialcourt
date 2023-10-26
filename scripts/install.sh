@@ -65,7 +65,7 @@ sed -i "s/sandbox-1/jcc-${NEW}-sandbox-1/g" /app/web/sites/${NEW}/settings.php
 echo -e "\n${G}Multisite configured... now running installation. This will take a while...${RE}"
 
 cd /app
-drush si -l ${NEW}.lndo.site -vvv -y --site-name="SITE NAME" --site-mail="no-reply@courtinfo.ca.gov" --account-name="JCC" --account-mail="hosting@chapterthree.com"
+drush si -l ${NEW}.lndo.site -vvv -y --site-name="SITE NAME" --site-mail="no-reply@courtinfo.ca.gov" --account-name="JCC" --account-mail="webdev@jud.ca.gov"
 
 echo -e "\nExporting config and enabling features..."
 # Enable the main feature and ensure it's imported.

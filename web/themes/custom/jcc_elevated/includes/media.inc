@@ -18,8 +18,12 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
   $languages = [];
   foreach ($media as $field) {
     if ($field->getFieldDefinition()->getType() == 'file') {
-      $lang_variant = explode(' ', $field->getFieldDefinition()->getLabel());
+      // Get language variant from field label.
+      $lang_variant = trim(str_replace(['File', 'file'], '', $field->getFieldDefinition()->getLabel()));
+
+      // File management.
       if ($field->getName() == 'field_media_file_multiple') {
+        // Primary file English variants.
         foreach ($field as $primary_file) {
           $file = File::load($primary_file->target_id);
           if ($file) {
@@ -34,8 +38,10 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
         }
       }
       else {
+        // Filter for translated files.
+        // Match field labels with language set labels.
         foreach ($lang_label_sets as $label) {
-          if (($lang_variant[0] == $label->label_default) && $field->target_id) {
+          if (($lang_variant == $label->label_default) && $field->target_id) {
             $file = File::load($field->target_id);
             $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
             $languages[] = [
