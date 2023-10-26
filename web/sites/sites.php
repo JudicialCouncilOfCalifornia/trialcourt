@@ -10,6 +10,9 @@ $filesdir = scandir('sites/');
 if(is_array($filesdir)) {
 $dirs = preg_grep('/^([^.])/', $filesdir);
 foreach ($dirs as $dir) {
+  if ($dir == "courts") {
+    continue;
+  }
   // Map any host that contains dir as the part of subdomain to that dir.
   // Either as the start of the string, or preceded by a - or . and always
   // followed by a .
@@ -29,9 +32,23 @@ foreach ($dirs as $dir) {
 // .slo. - . followed by directory name and ends in .
 // If the custom domain does not contain one of these patterns,
 // add it manually below.
-$sites['www.occourts.org'] = 'oc';
 
 // @todo perhaps move these sites to dir that matches their domain.
+$sites['www.occourts.org'] = 'oc';
+
+// courts
+$sites['courts.lndo.site'] = 'courts';
+$sites['develop-jcc-courts.pantheonsite.io'] = 'courts';
+$sites['stage-jcc-courts.pantheonsite.io'] = 'courts';
+$sites['epic-uat-jcc-courts.pantheonsite.io'] = 'courts';
+$sites['live-jcc-courts.pantheonsite.io'] = 'courts';
+$sites['develop.courts.ca.gov'] = 'courts';
+$sites['stage.courts.ca.gov'] = 'courts';
+$sites['uat.courts.ca.gov'] = 'courts';
+$sites['www.courts.ca.gov'] = 'courts';
+$sites['courts.ca.gov'] = 'courts';
+$sites['beta.courts.ca.gov'] = 'courts';
+
 // = 'jcart';
 $sites['develop.jcart.courts.ca.gov'] = 'deprep';
 $sites['stage.jcart.courts.ca.gov'] = 'deprep';
@@ -88,6 +105,8 @@ $sites['nevada.courts.ca.gov'] = 'nccourt';
 // = 'supremecourt'
 $sites['www.supreme.courts.ca.gov'] = 'supremecourt';
 $sites['supreme.courts.ca.gov'] = 'supremecourt';
+$sites['stage.supreme.courts.ca.gov'] = 'supremecourt';
+$sites['develop.supreme.courts.ca.gov'] = 'supremecourt';
 // = 'stanislaus'
 $sites['www.stanct.org'] = 'stanislaus';
 // = 'oc';
