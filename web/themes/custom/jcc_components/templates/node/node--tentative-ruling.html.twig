@@ -93,39 +93,24 @@
       } %}
 
       {% set body %}
-        {% if content.field_caption %}
-          <div class="jcc-tentative-ruling-details">
+        {% if content.field_caption %}          
             <h3>{{ 'Case Number'|t }}</h3>
-            <p>{{ label }}</p>
-            <p>&nbsp;</p>
-          </div>
+            <p>{{ label }}</p>         
         {% endif %}
-        {% if content.field_case_type %}
-          <div class="jcc-tentative-ruling-details">
+        {% if content.field_case_type %}          
             <h3>{{ 'Case Type'|t }}</h3>
-            <p>{{ content.field_case_type|render }}</p>
-            <p>&nbsp;</p>
-          </div>
+            <p>{{ content.field_case_type|render }}</p>            
         {% endif %}
-        {% if content.field_date_time %}
-          <div class="jcc-tentative-ruling-details">
+        {% if content.field_date_time %}          
             <h3>{{ 'Hearing Date / Time'|t }}</h3>
-            <p>{{ content.field_date_time|render|striptags }}</p>
-            <p>&nbsp;</p>
-          </div>
+            <p>{{ content.field_date_time|render|striptags }}</p>            
         {% endif %}
-        {% if content.field_short_text %}
-          <div class="jcc-tentative-ruling-details">
+        {% if content.field_short_text %}         
             <h3>{{ 'Nature of Proceedings'|t }}</h3>
-            <p>{{ content.field_short_text|render|striptags }}</p>
-            <p>&nbsp;</p>
-          </div>
-        {% endif %}
-        <div class="tentative-ruling-content">
+            <p>{{ content.field_short_text|render|striptags }}</p>            
+        {% endif %}        
           <h3>{{  'Tentative Ruling'|t }}</h3>
-          <p>{{ content.body }}</p>
-          <p>&nbsp;</p>
-        </div>
+          <p>{{ content.body }}</p>         
       {% endset %}
 
     {% if content.field_judge %}
