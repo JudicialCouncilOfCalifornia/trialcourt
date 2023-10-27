@@ -1176,7 +1176,15 @@ function jcc_elevated_sections_pathauto_pattern_alter(PathautoPatternInterface $
     if ($sid = $section_service->getSectionForNode($node)) {
       $section = $section_service->getSectionInfo($sid);
 
-      if ($section) {
+      $allowed_prefix_types = $section_service->getSectionableUrlPrefixTypes();
+      // If we have a sectioned page AND it is NOT a type that has the prefix
+      // managed via jcc_elevated_sections_pathauto_alias_alter(), then we need
+      // to still apply a different default pattern. The default is to use the
+      // menu label to build the URL. We need to change the default behavior to
+      // use the parent URL. Content that is defined as using the prefix, have
+      // the prefix applied to the generated URL. In this case, we need to alter
+      // the pattern used to generate the URL itself.
+      if ($section && !$allowed_prefix_types[$context['bundle']]) {
         // Change the pattern on section pages to use url of the menu parent
         // page. Previous pattern uses the menu label as source, which does not
         // set the desired URL pattern.
