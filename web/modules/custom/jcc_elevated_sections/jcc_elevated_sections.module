@@ -17,6 +17,7 @@ use Drupal\Core\Url;
 use Drupal\jcc_elevated_sections\Constants\JccSectionConstants;
 use Drupal\jcc_elevated_sections\Entity\JccSection;
 use Drupal\node\NodeInterface;
+use Drupal\pathauto\PathautoPatternInterface;
 use Drupal\views\ViewExecutable;
 
 /**
@@ -896,7 +897,6 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
 
           if (!empty($section_links)) {
             $menu_id = array_key_first($section_links);
-
             $params = new MenuTreeParameters();
             $params->setRoot($menu_id);
             $params->setActiveTrail([
@@ -918,8 +918,18 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
             if (!empty($menu_build['#items'])) {
 
               // Set cacheTags on the page to help with menu builds.
+              $variables['page']['#cache']['contexts'][] = 'url.path';
               $variables['page']['#cache']['contexts'][] = 'user';
+
+              // Add menu changes to the tag list.
+              $variables['page']['#cache']['tags'][] = 'menu_link_content_list';
+              $variables['page']['#cache']['tags'][] = 'config:system.menu.' . $menu_id;
+              $variables['page']['#cache']['tags'][] = 'menu:' . $menu_id;
+
+              // Add section taxonomy term to tag list.
               $variables['page']['#cache']['tags'][] = 'taxonomy_term_list:' . JccSectionConstants::JCC_SECTIONS_DEFAULT_SOURCE_ID;
+
+              // Set the section node and its type to the tag list.
               $variables['page']['#cache']['tags'][] = 'node:' . $node->id();
               foreach ($section_service->getSectionableTypes() as $name) {
                 if ($name) {
@@ -936,7 +946,7 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
 
                 // Set caches to trigger on landing and subpage changes.
                 $variables['section_navigation'] = [
-                  'section_heading' => $section->label(),
+                  'section_heading' => $node->id() != $section_homepage->id() ? $section->label() : '',
                   'links' => jcc_elevated_sections_build_menu_tree($links, $section_homepage, $section),
                   'mobile_links' => jcc_elevated_sections_build_menu_tree($links, $section_homepage, $section, TRUE),
                 ];
@@ -956,39 +966,64 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
 function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $section = FALSE, $overview_link = FALSE): array {
   $items = [];
 
+  $current_relative_url = \Drupal::request()->getRequestUri();
+
+  // Set up the Home link.
   if ($add_home) {
     $home = $add_home;
+    $home_url = $home->toUrl();
+
+    // For the section Home link, determine if it is the currently active page.
+    $active = FALSE;
+    $current_node = \Drupal::routeMatch()->getParameter('node');
+    if ($current_node instanceof NodeInterface) {
+      $active = $current_node->id() == $home->id();
+    }
+
     $items[] = [
       'text' => t('Home'),
-      'url' => $home->toUrl(),
+      'url' => $home_url->setOption('set_active_class', $active),
       'attributes' => [],
-      'active' => FALSE,
+      'active' => $active,
       'links' => [],
     ];
   }
 
+  // Set up the existing menu links.
   foreach ($tree as $menu_data) {
     if (!empty($menu_data['url'])) {
+
+      $active = $menu_data['url']->getOption('set_active_class');
+      $menu_item_relative_url = $menu_data['url']->toString();
 
       $section_link = [];
       $sublinks = $menu_data['below'] ? jcc_elevated_sections_build_menu_tree($menu_data['below']) : [];
 
+      if (str_contains($current_relative_url, $menu_item_relative_url) && ($current_relative_url != $menu_item_relative_url)) {
+        $attributes = (array) $menu_data['url']->getOption('attributes');
+        $attributes['class'][] = 'in-active-trail';
+        $menu_data['url']->setOption('attributes', $attributes);
+        $active = TRUE;
+      }
+
+      // Add overview link to sublinks array. Needed for mobile links.
       if ($overview_link && !empty($sublinks)) {
         $section_link = [
           'text' => $menu_data['title'],
-          'url' => $menu_data['url'],
+          'url' => $menu_data['url']->setOption('set_active_class', $active),
+          'attributes' => !empty($menu_data['attributes']->toArray()) ? $menu_data['attributes']->toArray() : [],
+          'active' => $active,
           'is_overview_link' => TRUE,
           'links' => [],
         ];
-
         array_unshift($sublinks, $section_link);
       }
 
       $items[] = [
         'text' => $menu_data['title'],
         'url' => $menu_data['url'],
-        'attributes' => !empty($menu_data['attributes']) ? $menu_data['attributes']->toArray() : [],
-        'active' => $menu_data['in_active_trail'],
+        'attributes' => !empty($menu_data['attributes']->toArray()) ? $menu_data['attributes']->toArray() : [],
+        'active' => $active,
         'links' => $sublinks,
         'section_link' => $section_link,
       ];
@@ -1120,7 +1155,7 @@ function jcc_get_current_page_section() {
 /**
  * Helper function to see if any content is tagged with a section.
  */
-function _jcc_elevated_sections_get_all_entities_connected_to_section($sid) {
+function _jcc_elevated_sections_get_all_entities_connected_to_section($sid): array {
   // Finds all node ids, media item ids, and user ids tagged with a
   // section term.
   //
@@ -1143,4 +1178,48 @@ function _jcc_elevated_sections_get_all_entities_connected_to_section($sid) {
     ->execute()->fetchCol();
 
   return array_merge($nids, $mids, $uids);
+}
+
+/**
+ * Implements hook_pathauto_pattern_alter().
+ */
+function jcc_elevated_sections_pathauto_pattern_alter(PathautoPatternInterface $pattern, array $context) {
+  $section_service = Drupal::service('jcc_elevated_sections.service');
+
+  if ($context['module'] == 'node' && $section_service->isNodeSectionable($context['bundle'])) {
+    $node = $context['data']['node'];
+
+    if ($sid = $section_service->getSectionForNode($node)) {
+      $section = $section_service->getSectionInfo($sid);
+
+      $allowed_prefix_types = $section_service->getSectionableUrlPrefixTypes();
+      // If we have a sectioned page AND it is NOT a type that has the prefix
+      // managed via jcc_elevated_sections_pathauto_alias_alter(), then we need
+      // to still apply a different default pattern. The default is to use the
+      // menu label to build the URL. We need to change the default behavior to
+      // use the parent URL. Content that is defined as using the prefix, have
+      // the prefix applied to the generated URL. In this case, we need to alter
+      // the pattern used to generate the URL itself.
+      if ($section && !$allowed_prefix_types[$context['bundle']]) {
+        // Change the pattern on section pages to use url of the menu parent
+        // page. Previous pattern uses the menu label as source, which does not
+        // set the desired URL pattern.
+        $new_pattern = "[node:menu-link:parent:url:path]/[node:title]";
+        $pattern->setPattern($new_pattern);
+
+        // Set the section homepage to match the Url prefix pattern. Directly
+        // applying the value doesn't seem to work. We have to apply it
+        // piecemeal for it to trigger.
+        $section_home_id = $section->get('jcc_section_homepage')->target_id;
+        if ($section_home_id == $node->id()) {
+          if ($section_url_prefix = $section->get('jcc_section_url_prefix')->value) {
+            // We grab the last element if the prefix. We assume that the parent
+            // url path matches the previous elements of the prefix URL.
+            $prefix = explode('/', $section_url_prefix);
+            $pattern->setPattern("[node:menu-link:parent:url:path]/" . end($prefix));
+          }
+        }
+      }
+    }
+  }
 }
