@@ -44,6 +44,14 @@ source:
       name: bio
       label: Bio
       selector: bio
+    -
+      name: category
+      label: Category
+      selector: category
+    -
+      name: profile
+      label: Profile
+      selector: profile
 process:
   name:
     -
@@ -55,7 +63,7 @@ process:
       plugin: callback
       callable: trim
       source: url
-  field_media_caption/value: bio
+  field_media_caption/value: profile
   field_media_caption/format: caption
   field_media_file:
     -
@@ -65,6 +73,21 @@ process:
     -
       plugin: migration_lookup
       migration: appellate_forms_file
+  field_tags:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: category
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: tags
+      value_key: name
+      ignore_case: true
   uid:
     plugin: default_value
     default_value: 1
