@@ -162,7 +162,7 @@ class JccElevatedSectionSettingsForm extends FormBase {
       '#title' => $this
         ->t('Select types for URL prefix'),
       '#description' => $this
-        ->t('Select the content types that should have the URL prefix applied to it.'),
+        ->t('Select the content types that should have the URL prefix applied to it. <strong>NOTE: Types NOT checked here will still use a modified URL pattern applied to them as they will still need to use the URL pattern of any parent menu items.</strong>'),
       '#options' => $this
         ->getContentTypesList(),
       '#default_value' => $state['section_url_prefix_types'] ?? [],

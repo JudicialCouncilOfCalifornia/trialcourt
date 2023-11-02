@@ -8,14 +8,15 @@
   {% set division = key %}
   {% set cards %}
     {% for profile in value %}
-      {% if profile.image.field_media_image.entity.uri.value %}
+      {% set image = '' %}
+      {% if profile.image %}
         {% set image %}
           {% set media_uri = profile.image.field_media_image.entity.uri.value %}
           <img src="{{ file_url(media_uri) }}">
         {% endset %}
       {% endif %}
       {% include "@molecules/ProfileCard/ProfileCard.twig" with {
-        image: image ? image|raw : false,
+        image: image ? image|raw,
         placeholder: {
           icon: 'justice-avatar',
           icon_path: ' ',

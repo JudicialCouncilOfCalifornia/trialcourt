@@ -7,12 +7,13 @@ Meta:
  - I've tried to make the steps clear and scalable for dozens of sites.
  - This would be necessary regardless of hosting platform, (not a because we're running multisite on pantheon issue, it's because we want to keep the fleet in sync with all updates)
  - There are some Drupal quirks with config diff sort.
+ - There are some user managed configurations that are ignored during Drupal synchronization and will be exported as source for the site and cannot be made immutable. These ignored configurations are specified at `/admin/config/development/configuration/ignore` and the Drupal ignore setting is added as immutable.
 
 **UPDATE 2021-12-17**
 
 While the above is still true, we've refined the process to be more efficient. As we grew to more sites, the time it took to sync features and then export on every site before deployment caused deployments to take several hours.
 
-Now, rather than syncing config via feature import > config export, we rely on the Features to manage all it's own config and remove the redundancy of Drupal config management. We DO still use Drupal config management for anything not managed by the feature module jcc_tc2_all_immutable_config. The feature config is ignored by Drupal core and those exported config files are ignored in git.
+Now, rather than syncing config via feature import > config export, we rely on the Features to manage all its own config and remove the redundancy of Drupal config management. We DO still use Drupal config management for anything not managed by the feature module jcc_tc2_all_immutable_config. The feature config is ignored by Drupal core and those exported config files are ignored in git.
 
 This is handled by a hook and a bash script to run instead of "fleet config-sync". You only need to work with the pilot site "Inyo" now. You do not need to install all sites to sync config.
 
