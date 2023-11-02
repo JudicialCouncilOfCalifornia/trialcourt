@@ -34,7 +34,7 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
           $promo_img_file = File::load($promo_media->field_media_image->target_id);
           if ($promo_img_file) {
             $file_uri = $promo_img_file->getFileUri();
-            $img_style = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_1300x1300');
+            $img_style = \Drupal::entityTypeManager()->getStorage('image_style')->load('crop_16x9');
             $promo_image_url = _jcc_components_remove_image_protocol($img_style->buildUrl($file_uri));
             $promo_image_alt = $promo_img_file->alt;
 
@@ -43,7 +43,7 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
         }
       }
       elseif (isset($row->_entity->field_images)) {
-        $first_image = _jcc_get_first_image($row->_entity, 'max_1300x1300');
+        $first_image = _jcc_get_first_image($row->_entity, 'crop_16x9');
         if ($first_image) {
           $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $first_image['url'] . '" alt="' . $first_image['alt'] . '"></a>');
         }
