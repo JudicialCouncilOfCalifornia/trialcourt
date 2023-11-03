@@ -197,8 +197,7 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node) {
     }
     if ($media->get('field_media_file_multiple')->target_id) {
       $file = File::load($media->get('field_media_file_multiple')->target_id);
-      $file_url = \Drupal::service('file_url_generator')
-        ->generateAbsoluteString($file->uri->value);
+      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
       // Profile doc as download link, else general docs.
       if ($doc_type && $doc_type == 'Profile') {
         $variables['profile_download'] = [
