@@ -366,14 +366,21 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
     $name = $node->get('title')->value ? $node->get('title')->value : '';
     $title = $node->get('field_job_title')->target_id ? Term::load($node->get('field_job_title')->target_id)->get('name')->value : '';
     $division = $node->get('field_division')->target_id ? Term::load($node->get('field_division')->target_id)->get('name')->value : '';
-    $start_date = $node->field_date->date ? $node->field_date->date->format('Y') : '';
     $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id());
+    // Service time.
+    $start_date = $node->field_date->date ? $node->field_date->date->format('Y') : '';
+    $retirement_date = $node->field_retirement_date->date ? $node->field_retirement_date->date->format('Y') : '';
+    $service_time = 'Since ' . $start_date;
+    if ($retirement_date) {
+      $service_time = 'From ' . $start_date . ' to ' . $retirement_date;
+    }
+
     $person = [
       'image' => $media,
       'name' => $name,
       'title' => $title,
       'division' => $division,
-      'content' => 'Since ' . $start_date,
+      'content' => $service_time,
       'url' => $url,
     ];
     array_push($persons, $person);
@@ -398,51 +405,8 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
  * Implements hook_preprocess_HOOK() for justices and judges block view.
  */
 function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables) {
-  if (empty($variables['rows'][0]['#rows'])) {
-    return;
-  }
-
-  $persons = [];
-  foreach ($variables['rows'][0]['#rows'] as $row) {
-    $node = $row['#row']->_entity;
-    $media = $node->get('field_media')->target_id ? Media::load($node->get('field_media')->target_id) : '';
-    $name = $node->get('title')->value ? $node->get('title')->value : '';
-    $title = $node->get('field_job_title')->target_id ? Term::load($node->get('field_job_title')->target_id)->get('name')->value : '';
-    $division = $node->get('field_division')->target_id ? Term::load($node->get('field_division')->target_id)->get('name')->value : '';
-    $start_date = $node->field_date->date ? $node->field_date->date->format('Y') : '';
-    $retirement_date = $node->field_retirement_date->date ? $node->field_retirement_date->date->format('Y') : '';
-    $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id());
-
-    if ($retirement_date) {
-      $active_date = 'From ' . $start_date . ' to ' . $retirement_date;
-    }
-    else {
-      'Since ' . $start_date;
-    }
-    $person = [
-      'image' => $media,
-      'name' => $name,
-      'title' => $title,
-      'division' => $division,
-      'content' => $active_date,
-      'url' => $url,
-    ];
-    array_push($persons, $person);
-  }
-
-  // Group justices by division.
-  $profiles = [];
-  foreach ($persons as $person) {
-    if ($person['division']) {
-      $division = $person['division'];
-      $profiles[$division][] = $person;
-    }
-    else {
-      $profiles['Unassigned'][] = $person;
-    }
-  }
-
-  $variables['profiles'] = $profiles;
+  // Reuse current justices/judges as common preprocess.
+  jcc_elevated_preprocess_views_view__justices_judges__current($variables);
 }
 
 /**

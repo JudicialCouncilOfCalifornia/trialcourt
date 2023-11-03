@@ -8,6 +8,14 @@
   {% endset %}
 {% endif %}
 
+{# Service time. #}
+{% set start_date = node.field_date.value is not empty ? node.field_date.value|date('Y') : '' %}
+{% set retire_date = node.field_retirement_date is not empty ? node.field_retirement_date.value|date('Y') : '' %}
+{% set service_time = 'Since ' ~ start_date %}
+{% if retire_date %}
+  {% set service_time = 'From ' ~ start_date ~ ' to ' ~ retire_date %}
+{% endif %}
+
 {% include "@molecules/ProfileCard/ProfileCard.twig" with {
   image: image ? image|raw : false,
   placeholder: {
@@ -16,6 +24,6 @@
   },
   name: label.0,
   title: node.field_job_title.entity.label,
-  content: 'Since ' ~ node.field_date.value|date('Y'),
+  content: service_time,
   url: url,
 } %}
