@@ -11,8 +11,9 @@
       {% set image = '' %}
       {% if profile.image %}
         {% set image %}
-          {% set media_uri = profile.image.field_media_image.entity.uri.value %}
-          <img src="{{ file_url(media_uri) }}">
+          {% set media_uri = profile.image.field_media_image.entity.uri.value %}   
+          {% set image_alt = profile.image.field_media_image.alt %}      
+          <img src="{{ file_url(media_uri)}}" alt="{{image_alt ? image_alt : "Portrait of Justice's Name"}}">
         {% endset %}
       {% endif %}
       {% include "@molecules/ProfileCard/ProfileCard.twig" with {
