@@ -1,0 +1,29 @@
+uuid: b561cbd7-4c20-4a99-990a-223ac1d1d573
+langcode: en
+status: true
+dependencies: {  }
+id: language
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - taxonomy
+migration_group: jcc2
+label: 'Taxonomy Term: Languages Import.'
+source:
+  plugin: csv
+  path: modules/custom/jcc_tc_migration/csv/Language.csv
+  delimiter: ','
+  enclosure: '"'
+  ids:
+    - LanguageID
+process:
+  vid:
+    plugin: default_value
+    default_value: language
+  name: 'Foreign Language'
+  field_languageid: LanguageID
+destination:
+  plugin: 'entity:taxonomy_term'
+  default_bundle: language
+migration_dependencies: {  }
