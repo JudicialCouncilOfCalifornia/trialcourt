@@ -90,16 +90,22 @@
         <h2><span>Professional Bio</span></h2>
 			<h3>Contact Information</h3>
 			
-			<p class="name_personal_bio">{{content.field_last_name.0['#context']['value']}},{{content.field_first_name.0['#context']['value']}}<br>
-			Email:<a href="mailto:{{content.field_email_address.0['#context']['value']}}">{{content.field_email_address.0['#context']['value']}}</a><br>
-            Phone Number:<a href="{{content.field_phone_number.0['#context']['value']}}">{{content.field_phone_number.0['#context']['value']}}</a><br>
-			{% set fax=content.field_fax.0['#context']['value'] %}
-			{% if fax %}
-			Fax:{{content.field_fax.0['#context']['value']}}
-			{%endif%}
+			<p class="name_personal_bio">Full Name: {{content.field_last_name.0['#context']['value']}},{{content.field_first_name.0['#context']['value']}}<br>
+				Email: <a href="mailto:{{content.field_email_address.0['#context']['value']}}">{{content.field_email_address.0['#context']['value']}}</a><br>
+				Phone Number: <a href="{{content.field_phone_number.0['#context']['value']}}">{{content.field_phone_number.0['#context']['value']}}</a><br>
+				{% set fax=content.field_fax.0['#context']['value'] %}
+				{% if fax %}
+				Fax:{{content.field_fax.0['#context']['value']}}
+				{%endif%}
 			<br>
+			<div class="address-title">Address</div>
 			{{content.field_address}}</p>
+			{% set county=content.field_county.0['#context']['value'] %}
+											{% if county != null %}
+												<p>County:{{county}}</p>
+											{% endif %}
 			<br>
+			</p>
 
 			
 				<div class="general_information">
@@ -107,20 +113,26 @@
 				
 			{% if mediator.0 %}
 					<h3>General Information</h3>
-					<p class="mediator">Mediator{{content.field_mediator}}</p>
+					<p class="mediator">Mediator: {{content.field_mediator.0["#title"]}}</p>
 				</div>
 			{% endif %}
+			{% set sbn=content.field_sbn.0['#markup'] %}
+			{% if sbn != null %}
+				<div class="sbn">
+					<p>SBN:{{sbn}}</p>
+				</div>
+				{%endif%}
+				{% set mi=content.field_mi.0['#context']['value'] %}
+			{% if mi != null %}
+				<div class="sbn">
+					<p>MI:{{mi}}</p>
+				</div>
+				{%endif%}
 			{% set linksArray = content.field_foreign_language %}
 									{% if linksArray.0 %}
 										<div class="links-table">
 											<h3>Foreign language</h3>
 											<table class="table-custom">
-												<thead >
-													<tr>
-														<th>Language</th>
-														
-													</tr>
-												</thead>
 												<tbody>
 													{% for linkData in linksArray %}
                                                     {% if linkData['#url'] %}
@@ -140,12 +152,6 @@
 										<div class="links-table">
 											<h3>Other language</h3>
 											<table class="table-custom">
-												<thead >
-													<tr>
-														<th> Other Language</th>
-														
-													</tr>
-												</thead>
 												<tbody>
 													{% for linkData in linksArray %}
 														 {% if linkData.value %}
@@ -196,12 +202,6 @@
 										<div class="links-table">
 											<h3> Process</h3>
 											<table class="table-custom">
-												<thead >
-													<tr>
-														<th>Title</th>
-														
-													</tr>
-												</thead>
 												<tbody>
 													{% for linkData in linksArray %}
 														 {% if linkData.value %}
@@ -220,12 +220,6 @@
 										<div class="links-table">
 											<h3>ADR Process</h3>
 											<table class="table-custom">
-												<thead >
-													<tr>
-														<th>Title</th>
-														
-													</tr>
-												</thead>
 												<tbody>
 													{% for linkData in linksArray %}
 														 {% if linkData.value %}
@@ -239,33 +233,22 @@
 											</table>
 										</div>
 									{% endif %}
-								{% set sbn=content.field_sbn.0['#markup'] %}
-								{% if sbn != null %}
-									<div class="sbn">
-										<p>SBN:{{sbn}}</p>
-									</div>
-									{%endif%}
-                                    {% set mi=content.field_mi.0['#context']['value'] %}
-								{% if mi != null %}
-									<div class="sbn">
-										<p>MI:{{mi}}</p>
-									</div>
-									{%endif%}
+
 									{% set linksArray = content.field_subject_matter %}
 									{% if linksArray.0 %}
 										<div class="links-table">
 											<h3>Subject Matter</h3>
 											<table class="table-custom">
 												<tbody>
-													{% for linkData in linksArray %}
-                                                    {% if linkData['#url'] %}
-														<tr>
-                                                        <td>{{ linkData['#title'] }}</td>
-															
-														</tr>
-                                                        {% endif %}
-													{% endfor %}
-												</tbody>
+  {% for linkData in linksArray %}
+    {% if linkData['#url'] %}
+      <tr>
+        <td>{{ linkData['#title'] }}</td>
+      </tr>
+    {% endif %}
+  {% endfor %}
+</tbody>
+
 											</table>
 										</div>
 									{% endif %}
@@ -276,17 +259,11 @@
 										<div class="links-table">
 											<h3>Subject Matter Other</h3>
 											<table class="table-custom">
-												<thead >
-													<tr>
-														<th> Tittle</th>
-														
-													</tr>
-												</thead>
 												<tbody>
 													{% for linkData in linksArray %}
-														 {% if linkData.value %}
+														 {% if linkData['#title'] %}
 														<tr>
-                                                        <td>{{linkData.value }}</td>
+                                                        <td>{{ linkData['#title'] }}/td>
 															
 														</tr>
                                                         {% endif %}
@@ -303,12 +280,6 @@
 										<div class="links-table">
 											<h3>Area of Law</h3>
 											<table class="table-custom">
-												<thead >
-													<tr>
-														<th>Title</th>
-														
-													</tr>
-												</thead>
 												<tbody>
 													{% for linkData in linksArray %}
                                                     {% if linkData['#url'] %}
@@ -322,9 +293,9 @@
 											</table>
 										</div>
 									{% endif %}
-											{% set county=content.field_county.0['#context']['value'] %}
+											{# {% set county=content.field_county.0['#context']['value'] %}
 											{% if county != null %}
 												<p>County:{{county}}</p>
-											{% endif %}
+											{% endif %} #}
 										{% endblock %}
 									</article>
