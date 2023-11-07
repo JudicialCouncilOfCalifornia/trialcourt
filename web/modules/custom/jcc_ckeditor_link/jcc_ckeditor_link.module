@@ -421,3 +421,12 @@ function jcc_ckeditor_link_editor_js_settings_alter(array &$settings) {
   }
 
 }
+
+/**
+ * Implements hook_page_attachments().
+ */
+function jcc_ckeditor_link_page_attachments(array &$page) {
+  if (!\Drupal::service('router.admin_context')->isAdminRoute()) {
+    $page['#attached']['library'][] = 'jcc_ckeditor_link/jcc_ckeditor_link';
+  }
+}
