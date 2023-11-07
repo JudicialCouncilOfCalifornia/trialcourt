@@ -1,0 +1,35 @@
+uuid: cba3d1aa-1ea0-487c-ba06-73abe5a51b05
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.areas_of_law.field_areas_of_law_id
+    - taxonomy.vocabulary.areas_of_law
+  module:
+    - text
+id: taxonomy_term.areas_of_law.default
+targetEntityType: taxonomy_term
+bundle: areas_of_law
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_areas_of_law_id:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  langcode: true
+  search_api_excerpt: true

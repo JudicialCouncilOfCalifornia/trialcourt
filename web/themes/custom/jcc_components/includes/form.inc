@@ -95,15 +95,42 @@ function jcc_components_form_views_exposed_form_alter(&$form, FormStateInterface
       $options[$node->id()] = $node->getTitle();
     }
 
-    $form['field_judge_target_id']['#type'] = 'select';
-    $form['field_judge_target_id']['#options'] = ['' => 'Select'] + $options;
-    $form['field_judge_target_id']['#multiple'] = FALSE;
-    $form['field_judge_target_id']['#size'] = 1;
-
-    $form['#validate'][] = 'jcc_components_tentative_rulings_search_validate';
+    
 
   }
+
+  $view = $form_state->get('view');
+
+  if ($view->id() == 'arbitrators') {
+ $termID=$view->args[0];
+ $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($termID);
+ if($term){
+  $term_name=$term->getName();
+ }
+
+    if ($termID == 'Civil-ADR-Provider') {
+     
+      $form['adr_process']['#states'] = [
+        'visible' => [
+          ':input[name="arbitrator_type"]' => ['value' => $options['Civil ADR Provider']],
+        ],
+      ];
+      $form['areas_of_law']['#access'] =false; 
+    } elseif ($termID == 'Civil-Early-Settlement-Conference-(CESC)-Neutral') {
+      
+      $form['areas_of_law']['#states'] = [
+        'visible' => [
+          ':input[name="arbitrator_type"]' => ['value' => $options['Civil Early Settlement Conference (CESC) Neutral']],
+        ],
+      ];
+      $form['adr_process']['#access'] =false;; 
+    } else {
+      $form['adr_process']['#access'] =false;
+      $form['areas_of_law']['#access'] =false;
+    }
+  }
 }
+
 
 /**
  * Validate search parameters for tentative rulings.
@@ -118,4 +145,5 @@ function jcc_components_tentative_rulings_search_validate(array &$form, FormStat
   if (empty($values['case_number']) && empty($values['field_judge_target_id']) && ($form['#id'] != 'views-exposed-form-tentative-rulings-block-1')) {
     $form_state->setErrorByName('field_judge_target_id', t('Enter a case number or select a Judicial Officer.'));
   }
+
 }
