@@ -29,7 +29,6 @@ dependencies:
     - node.type.common
   module:
     - address
-    - file
     - text
     - user
 id: node.common.default
@@ -60,10 +59,11 @@ content:
     weight: 121
     region: content
   field_arbitrary_pdf:
-    type: file_default
+    type: entity_reference_entity_view
     label: above
     settings:
-      use_description_as_link_text: true
+      view_mode: default
+      link: false
     third_party_settings: {  }
     weight: 143
     region: content
