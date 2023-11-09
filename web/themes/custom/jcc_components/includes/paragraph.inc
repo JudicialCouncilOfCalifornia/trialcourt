@@ -170,26 +170,26 @@ function jcc_components_paragraph_views_reference_news_sticky_list(array &$varia
   $executable = $view ? $view->getExecutable() : NULL;
   // Start with the sticky_list display.
   $sticky_list = $executable ? $executable->setDisplay('sticky_list') : FALSE;
-  $display = $executable->executeDisplay(); 
+  $display = $executable->executeDisplay();
 
-  foreach ($display['#rows'][0]['#rows'] as &$row) {   
+  foreach ($display['#rows'][0]['#rows'] as &$row) {
     $nodeid = $row['#node']->id();
-    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);   
+    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);
     $row['#lang'] = $langcode;
     if($langcode === "es") {
-    $prefixed_translated_path = '/' . $langcode . $translated_path;   
-    $row['#sticky'] = $prefixed_translated_path;    
-    }       
+    $prefixed_translated_path = '/' . $langcode . $translated_path;
+    $row['#sticky'] = $prefixed_translated_path;
+    }
   }
-  if ($sticky_list) {  
-    $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];    
-  }  
+  if ($sticky_list) {
+    $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
+  }
   // Also get the More News path. Should be a node with path /news but fallback
   // to view url if it exists.
-  $view_url = !empty($executable->getUrl()) ? $executable->getUrl()->toString() : ''; 
+  $view_url = !empty($executable->getUrl()) ? $executable->getUrl()->toString() : '';
   $path = \Drupal::service('path.validator')->isValid('/news') ? '/news' : $view_url;
- 
-  $variables['news_url'] = $path; 
+
+  $variables['news_url'] = $path;
   $variables['#cache']['tags'][] = 'node_list:news';
 }
 
@@ -309,6 +309,7 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
     $extra = NULL;
     $icon = [];
     $media = [];
+    $media_card = [];
     $bgcolor = NULL;
     $brow = NULL;
     $is_clickable = NULL;
@@ -354,6 +355,24 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
           $sub_variants['card'] = $card->field_entire_card_clickable->value ? 'media-full usa-card--hover' : 'media-full';
         }
       }
+    }
+
+    if ($card->field_media && !$card->field_media->isEmpty()) {
+      if ($card->field_media->entity->hasTranslation($langcode)) {
+        $mediaImage = $card->field_media->entity->getTranslation($langcode)->get('field_media_image');
+      }
+      $alt = $mediaImage->alt;
+
+      $img_media = Media::load($card->field_media[0]->getValue('target_id')['target_id']);
+      $fid = $img_media->thumbnail->target_id;
+      $file = File::load($fid);
+      $styled_image_url = ImageStyle::load('crop_16x9')->buildUrl($file->getFileUri());
+
+      $media_card['src'] = _jcc_components_remove_image_protocol($styled_image_url);
+      $media_card['alt'] = $alt;
+
+      $sub_variants['card'] = $card->field_media_alignment->value ? 'media-top-overlay media-top-split' : 'media-full';
+
     }
 
     if ($card->field_icon && $card->field_icon->value) {
@@ -415,7 +434,9 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       ],
       'classes' => [],
       'bgcolor' => $bgcolor,
+
       'media' => $media,
+      'media' => $media_card,
     ];
   }
 
