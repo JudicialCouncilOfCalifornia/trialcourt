@@ -174,11 +174,11 @@ function jcc_components_paragraph_views_reference_news_sticky_list(array &$varia
 
   foreach ($display['#rows'][0]['#rows'] as &$row) {
     $nodeid = $row['#node']->id();
-    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);
+    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $nodeid, $langcode);
     $row['#lang'] = $langcode;
-    if($langcode === "es") {
-    $prefixed_translated_path = '/' . $langcode . $translated_path;
-    $row['#sticky'] = $prefixed_translated_path;
+    if ($langcode === "es") {
+      $prefixed_translated_path = '/' . $langcode . $translated_path;
+      $row['#sticky'] = $prefixed_translated_path;
     }
   }
   if ($sticky_list) {
