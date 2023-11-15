@@ -13,13 +13,6 @@ for name in "$@" ; do
   # Include project variables.
   . .circleci/scripts/project-${name}.sh
 
-  # Skip deployment step for master branch if "DEPLOY_MASTER" is set explicitly to false.
-  if [ "$CIRCLE_BRANCH" = "master" ] && [ "$DEPLOY_MASTER" = false ]; then
-    echo "Skipping deployment."
-    circleci-agent step halt
-    exit 0
-  fi
-
   # Leaving the old way here to roll back easily if loop method times out.
   # Remove the loop and name check condition, then call from config.yml
   # with multiple run steps passing project name like:
@@ -36,6 +29,11 @@ for name in "$@" ; do
   ARTIFACT_GIT=ssh://codeserver.dev.${UUID}@codeserver.dev.${UUID}.drush.in:2222/~/repository.git
   TIMESTAMP=$(date +'%y-%m-%dT%H:%m:%S')
   PANTHEON_ENV=$CIRCLE_BRANCH
+
+   # Skip deployment step for master branch if "LIVE" is set explicitly to false.
+  if [ "$CIRCLE_BRANCH" = "master" ] && [ "$LIVE" = false ]; then
+    PANTHEON_ENV="dev"
+  fi
 
   git config --global user.email "$GIT_EMAIL"
   git config --global user.name "JCC-Webdev"
