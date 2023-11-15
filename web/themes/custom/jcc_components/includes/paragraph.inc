@@ -309,7 +309,6 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
     $extra = NULL;
     $icon = [];
     $media = [];
-    $media_card = [];
     $bgcolor = NULL;
     $brow = NULL;
     $is_clickable = NULL;
@@ -368,10 +367,10 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       $file = File::load($fid);
       $styled_image_url = ImageStyle::load('crop_16x9')->buildUrl($file->getFileUri());
 
-      $media_card['src'] = _jcc_components_remove_image_protocol($styled_image_url);
-      $media_card['alt'] = $alt;
+      $media['src'] = _jcc_components_remove_image_protocol($styled_image_url);
+      $media['alt'] = $alt;
 
-      $sub_variants['card'] = $card->field_media_alignment->value ? 'media-top-overlay media-top-split' : 'media-full';
+      $sub_variants['card'] = 'media-top';
 
     }
 
@@ -436,7 +435,6 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       'bgcolor' => $bgcolor,
 
       'media' => $media,
-      'media' => $media_card,
     ];
   }
 
