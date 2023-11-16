@@ -1,11 +1,12 @@
-uuid: 2337b9fd-5d31-451e-a70a-a90234a6f17c
 langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.media.field_code
     - field.storage.media.field_date
     - field.storage.media.field_division
     - field.storage.media.field_document_type
+    - field.storage.media.field_publication_category
     - media.type.publication
     - system.menu.admin
     - taxonomy.vocabulary.case_type
@@ -17,8 +18,6 @@ dependencies:
     - media
     - taxonomy
     - user
-_core:
-  default_config_hash: 4ZfAraxshvsgdWcjq1_YqF4ZKNg7conBWigcLuX9-Tk
 id: media_publications
 label: 'Media: Publications'
 module: views
@@ -172,6 +171,132 @@ display:
           admin_label: ''
           plugin_id: field
           label: Office/Division
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: true
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_code:
+          id: field_code
+          table: media__field_code
+          field: field_code
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: Code
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: true
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_publication_category:
+          id: field_publication_category
+          table: media__field_publication_category
+          field: field_publication_category
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: 'Publication category'
           exclude: false
           alter:
             alter_text: false
@@ -641,7 +766,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'view media'
+          perm: 'edit any publication media'
       cache:
         type: tag
         options: {  }
@@ -1173,9 +1298,11 @@ display:
         - user
         - user.permissions
       tags:
+        - 'config:field.storage.media.field_code'
         - 'config:field.storage.media.field_date'
         - 'config:field.storage.media.field_division'
         - 'config:field.storage.media.field_document_type'
+        - 'config:field.storage.media.field_publication_category'
   publication_manager:
     id: publication_manager
     display_title: Page
@@ -1203,6 +1330,8 @@ display:
         - user
         - user.permissions
       tags:
+        - 'config:field.storage.media.field_code'
         - 'config:field.storage.media.field_date'
         - 'config:field.storage.media.field_division'
         - 'config:field.storage.media.field_document_type'
+        - 'config:field.storage.media.field_publication_category'
