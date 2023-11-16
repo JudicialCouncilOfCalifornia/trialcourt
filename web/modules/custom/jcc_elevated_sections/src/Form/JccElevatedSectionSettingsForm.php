@@ -86,6 +86,7 @@ class JccElevatedSectionSettingsForm extends FormBase {
       'section_allowed_media_types' => $this->state->get('jcc_elevated.section_allowed_media_types', []),
       'section_applied_views' => $this->state->get('jcc_elevated.section_applied_views', []),
       'section_applied_views_general_content_excluded' => $this->state->get('jcc_elevated.section_applied_views_general_content_excluded', []),
+      'section_applied_views_override_exposed_to_contextual' => $this->state->get('jcc_elevated.section_applied_views_override_exposed_to_contextual', []),
     ];
   }
 
@@ -143,7 +144,7 @@ class JccElevatedSectionSettingsForm extends FormBase {
         ->t('Content types'),
       '#description' => $this
         ->t('Select views to apply section contextual filtering, or add a filter to the exposed form filter (if it exists).'),
-      '#open' => TRUE,
+      '#open' => FALSE,
     ];
 
     $form['section_type_group']['section_allowed_types'] = [
@@ -152,6 +153,7 @@ class JccElevatedSectionSettingsForm extends FormBase {
         ->t('Select content types'),
       '#description' => $this
         ->t('Select the content types that may be sectioned.'),
+      '#description_display' => 'before',
       '#options' => $this
         ->getContentTypesList(),
       '#default_value' => $state['section_allowed_types'] ?? [],
@@ -163,6 +165,7 @@ class JccElevatedSectionSettingsForm extends FormBase {
         ->t('Select types for URL prefix'),
       '#description' => $this
         ->t('Select the content types that should have the URL prefix applied to it. <strong>NOTE: Types NOT checked here will still use a modified URL pattern applied to them as they will still need to use the URL pattern of any parent menu items.</strong>'),
+      '#description_display' => 'before',
       '#options' => $this
         ->getContentTypesList(),
       '#default_value' => $state['section_url_prefix_types'] ?? [],
@@ -174,7 +177,7 @@ class JccElevatedSectionSettingsForm extends FormBase {
         ->t('Media types'),
       '#description' => $this
         ->t('Select views to apply section contextual filtering, or add a filter to the exposed form filter (if it exists).'),
-      '#open' => TRUE,
+      '#open' => FALSE,
     ];
 
     $form['section_media_type_group']['section_allowed_media_types'] = [
@@ -183,6 +186,7 @@ class JccElevatedSectionSettingsForm extends FormBase {
         ->t('Select media types'),
       '#description' => $this
         ->t('Select the media types that may be sectioned.'),
+      '#description_display' => 'before',
       '#options' => $this
         ->getMediaTypesList(),
       '#default_value' => $state['section_allowed_media_types'] ?? [],
@@ -194,26 +198,40 @@ class JccElevatedSectionSettingsForm extends FormBase {
         ->t('Views filtering'),
       '#description' => $this
         ->t('Select views to apply section contextual filtering, or add a filter to the exposed form filter (if it exists).'),
-      '#open' => TRUE,
+      '#open' => FALSE,
     ];
 
     $form['section_views']['section_applied_views'] = [
       '#type' => 'checkboxes',
       '#title' => $this
-        ->t('Select views'),
+        ->t('Select views to apply auto section filtering.'),
       '#description' => $this
         ->t('Select the view:display combo that you would like to auto apply the section filtering.'),
+      '#description_display' => 'before',
       '#options' => $this
         ->getViewDisplayList(),
       '#default_value' => $state['section_applied_views'] ?? [],
     ];
 
+    $form['section_views']['section_applied_views_override_exposed_to_contextual'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this
+        ->t('Exposed form to contextual auto filtering'),
+      '#description' => $this
+        ->t('By default if a view has an exposed form, auto filtering adds an exposed item to the view. Select a view in this list if you want to apply the contextual filter instead (override the default added form filter setup).'),
+      '#description_display' => 'before',
+      '#options' => $this
+        ->getViewDisplayList(),
+      '#default_value' => $state['section_applied_views_override_exposed_to_contextual'] ?? [],
+    ];
+
     $form['section_views']['section_applied_views_general_content_excluded'] = [
       '#type' => 'checkboxes',
       '#title' => $this
-        ->t('General content excluded'),
+        ->t('General content excluded from auto section filtering'),
       '#description' => $this
         ->t('If if view is set to be sectioned, the default behavior is to include general/non-sectioned content in returned results. Select to view here to change the default behavior and exclude non-sectioned content.'),
+      '#description_display' => 'before',
       '#options' => $this
         ->getViewDisplayList(),
       '#default_value' => $state['section_applied_views_general_content_excluded'] ?? [],
