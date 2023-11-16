@@ -19,20 +19,6 @@ use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
 use Drupal\Core\Entity\EntityForm;
 
-
-/**
- * Implements hook_toolbar_alter().
- */
-function jcc_custom_toolbar_alter_toolbar_alter(&$items) { 
-  if (!empty($items['environment_indicator'])) {
-    $env_name = \Drupal::service('config.factory')
-      ->get('environment_indicator.indicator')
-      ->get('name');     
-    $items['environment_indicator']['tab']['#title'] = $env_name;
-    $items['environment_indicator']['tab']['#attached']['drupalSettings']['environmentIndicator']['name'] = $env_name;
-  } 
-}
-
 /**
  * Implements hook_page_attachments().
  */
