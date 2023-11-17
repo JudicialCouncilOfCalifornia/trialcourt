@@ -2,6 +2,7 @@
 
 namespace Drupal\jcc_elevated_embeds\Plugin\Block;
 
+use Drupal\Core\Block\Annotation\Block;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -186,7 +187,8 @@ class JccAppellateMapBlock extends BlockBase implements ContainerFactoryPluginIn
       '#district_info' => $district_info,
       '#map_src' => [
         '#type' => 'inline_template',
-        '#template' => '<?xml-stylesheet type="text/css" href="jcc-appellate-map.css" ?>' . $this->getMap(),
+        '#template' => '',
+/*        '#template' => '<?xml-stylesheet type="text/css" href="jcc-appellate-map.css" ?>' . $this->getMap(),*/
       ],
     ];
 
@@ -226,22 +228,24 @@ class JccAppellateMapBlock extends BlockBase implements ContainerFactoryPluginIn
    * {@inheritdoc}
    */
   protected function getFullDistrictInformation(): array {
-    $cacheId = 'jcc_elevated_embeds:appellate_map_full_district_info';
+//    $cacheId = 'jcc_elevated_embeds:appellate_map_full_district_info';
+//
+//    if ($cache = $this->cache->get($cacheId)) {
+//      return $cache->data;
+//    }
+//
+//    $url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSyg7Rvs4sYh7zEDx0jv0HH9aUTw2aLarcULPeI2UYrxsZALv45MBYb5rvQ_h3s8fxXp43uiGpOhfcG/pub?gid=0&single=true&output=csv';
+//    $data = array_map('str_getcsv', file($url));
+//    // Remove first line, which is just header info.
+//    $headers = array_shift($data);
+//    $info = [];
+//    foreach ($data as $id => $row) {
+//      $info[$id] = array_combine($headers, $row);
+//    }
+//
+//    $this->cache->set($cacheId, $info, CacheBackendInterface::CACHE_PERMANENT);
 
-    if ($cache = $this->cache->get($cacheId)) {
-      return $cache->data;
-    }
-
-    $url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSyg7Rvs4sYh7zEDx0jv0HH9aUTw2aLarcULPeI2UYrxsZALv45MBYb5rvQ_h3s8fxXp43uiGpOhfcG/pub?gid=0&single=true&output=csv';
-    $data = array_map('str_getcsv', file($url));
-    // Remove first line, which is just header info.
-    $headers = array_shift($data);
     $info = [];
-    foreach ($data as $id => $row) {
-      $info[$id] = array_combine($headers, $row);
-    }
-
-    $this->cache->set($cacheId, $info, CacheBackendInterface::CACHE_PERMANENT);
 
     return $info;
   }
@@ -254,23 +258,23 @@ class JccAppellateMapBlock extends BlockBase implements ContainerFactoryPluginIn
     $config = $this->getConfiguration();
 
     $info = [];
-    foreach ($this->getFullDistrictInformation() as $row) {
-      $num = $row['district'];
-      $id = $row['district_id'];
-      $county = $row['county'];
-      $county_id = $row['county_id'];
-
-      $entity = is_numeric($config[$id . '_page']) ? $node_manager->load($config[$id . '_page']) : NULL;
-
-      $info[$id]['district_number'] = $num;
-      $info[$id]['district_id'] = $id;
-      $info[$id]['district_name'] = $this->t('@num District', ['@num' => $this->getNumber($num)])->render();
-      $info[$id]['district_link_title'] = $this->t('View @num District website', ['@num' => $this->getNumber($num)])->render();
-      $info[$id]['district_link_url'] = $entity ? $entity->toUrl()->toString() : '';
-      $info[$id]['counties'][$county_id] = $county;
-    }
-
-    ksort($info);
+//    foreach ($this->getFullDistrictInformation() as $row) {
+//      $num = $row['district'];
+//      $id = $row['district_id'];
+//      $county = $row['county'];
+//      $county_id = $row['county_id'];
+//
+//      $entity = is_numeric($config[$id . '_page']) ? $node_manager->load($config[$id . '_page']) : NULL;
+//
+//      $info[$id]['district_number'] = $num;
+//      $info[$id]['district_id'] = $id;
+//      $info[$id]['district_name'] = $this->t('@num District', ['@num' => $this->getNumber($num)])->render();
+//      $info[$id]['district_link_title'] = $this->t('View @num District website', ['@num' => $this->getNumber($num)])->render();
+//      $info[$id]['district_link_url'] = $entity ? $entity->toUrl()->toString() : '';
+//      $info[$id]['counties'][$county_id] = $county;
+//    }
+//
+//    ksort($info);
 
     return $info;
   }
