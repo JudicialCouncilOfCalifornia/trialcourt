@@ -439,8 +439,9 @@ function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
     }
 
     // Get teaser.
-    $teaser = $node->get('body')->view('teaser') ?? '';
+    $teaser = $node->get('body') ?? '';
     if ($teaser) {
+      $teaser = $node->get('body')->view('teaser');
       $teaser = strval($render->render($teaser));
       $teaser = strip_tags($teaser);
     }
