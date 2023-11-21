@@ -139,7 +139,7 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
   $render = \Drupal::service('renderer');
 
   // Customize filter UI.
-  //__jcc_view_results_filter_init($variables);
+  __jcc_view_results_filter_init($variables);
 
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
@@ -422,7 +422,7 @@ function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
   $render = \Drupal::service('renderer');
 
   // Customize filter UI.
-  //__jcc_view_results_filter_init($variables);
+  __jcc_view_results_filter_init($variables);
 
   if (empty($variables['rows'][0]['#rows'])) {
     return;
@@ -439,15 +439,15 @@ function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
     }
 
     // Get teaser.
-    $teaser = $node->get('body') ?? '';
-    if ($teaser) {
-      $teaser = $node->get('body')->view('teaser');
-      $teaser = strval($render->render($teaser));
-      $teaser = strip_tags($teaser);
-    }
+//    $teaser = $node->get('body') ?? '';
+//    if ($teaser) {
+//      $teaser = $node->get('body')->view('teaser');
+//      $teaser = strval($render->render($teaser));
+//      $teaser = strip_tags($teaser);
+//    }
 
     // Get locations.
-    //$locations = __jcc_get_job_locations($node);
+    $locations = __jcc_get_job_locations($node);
 
     // Assemble details.
     $detail_list_data = [
