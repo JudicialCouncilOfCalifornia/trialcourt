@@ -1,0 +1,22 @@
+uuid: c820cb3a-35c0-4941-8d19-41a10666b849
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: job_content_type_pattern
+label: 'Job Content Type Pattern'
+type: 'canonical_entities:node'
+pattern: '[node:content-type]/[node:title]--[node:field_job_id]'
+selection_criteria:
+  a647ecb7-dda7-45bd-a09a-d6834eb481a6:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: a647ecb7-dda7-45bd-a09a-d6834eb481a6
+    context_mapping:
+      node: node
+    bundles:
+      job: job
+selection_logic: and
+weight: -5
+relationships: {  }
