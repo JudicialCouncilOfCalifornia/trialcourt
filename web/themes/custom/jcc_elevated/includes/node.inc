@@ -5,6 +5,7 @@
  * Preprocess and functions for node types and components.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -180,7 +181,7 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
 }
 
 /**
- * Node: Subpage preprocess.
+ * Node: Justices & Judges preprocess.
  *
  * @param array $variables
  *   The preprocess variables.
@@ -215,18 +216,111 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node) {
       $variables['documents'] = $documents;
     }
   }
+}
 
-  // Tags.
-  foreach ($node->field_tags as $tag) {
-    $tid = $tag->target_id;
-    $term = Term::load($tid);
-    $tags[] = [
-      'variant' => 'default',
-      'label' => $term->name->value,
-      'url' => $term->toUrl(),
-    ];
-    $variables['tags'] = $tags;
+/**
+ * Node: Job preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_job(array &$variables, NodeInterface $node) {
+  // Get locations.
+  $locations = __jcc_get_job_locations($node);
+
+  // Get salary.
+  // Declare currency formatter in USD without cents.
+  $usd_format = new NumberFormatter('en_EN', NumberFormatter::CURRENCY);
+  $usd_format->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
+  // Get and format values.
+  $salary_min = $node->get('field_job_salary')->getValue()[0]['from'] ?? '';
+  if ($salary_min) {
+    $salary_min = $usd_format->formatCurrency($salary_min, 'USD');
   }
+  $salary_max = $node->get('field_job_salary')->getValue()[0]['to'] ?? '';
+  if ($salary_max) {
+    $salary_max = $usd_format->formatCurrency($salary_max, 'USD');
+  }
+  $salary = '';
+  // If salary range or not.
+  if ($salary_min && $salary_max) {
+    $salary = $salary_min . ' to ' . $salary_max;
+  }
+  else {
+    if ($salary_min) {
+      $salary = $salary_min;
+    }
+    elseif ($salary_max) {
+      $salary = $salary_max;
+    }
+  }
+
+  // Publishing schedule.
+  // Using 'created' time since scheduler 'publish_on' is removed on publish.
+  // And 'created' will sync with last known 'publish_on' value when set.
+  $posted = $node->get('created')->value ? date('F j, Y', $node->get('created')->value) : '';
+  $deadline = $node->get('unpublish_on')->value ? date('F j, Y', $node->get('unpublish_on')->value) : '';
+  // If no deadline or 12/12/9999.
+  if (!$deadline || $deadline === 'December 12, 9999') {
+    $deadline = t('Open Until Filled');
+  }
+
+  // Custom apply button if used.
+  $custom_apply = [];
+  if ($node->get('field_custom_link')) {
+    $custom_apply = [
+      'label' => $node->get('field_custom_link')->title ?? '',
+      'url' => $node->get('field_custom_link')->uri ?? '',
+    ];
+  }
+
+  // Boilerplate message.
+  $boilerplate_msg = t('The Judicial Council of California Is an Equal Opportunity Employer.');
+  $boilerplate = ['#markup' => Html::decodeEntities('<p><em>' . $boilerplate_msg . '</em></p>')];
+
+  // Refined job details object.
+  $job = [
+    'details' => [
+      'job_id' => [
+        'label' => 'Job ID',
+        'value' => $node->get('field_job_id')->value ?? '',
+      ],
+      'job_type' => [
+        'label' => 'Full/Part-Time',
+        'value' => $node->get('field_job_type')->target_id ? Term::load($node->get('field_job_type')->target_id)->get('name')->value : '',
+      ],
+      'location' => [
+        'label' => 'Location',
+        'value' => $locations,
+      ],
+      'office' => [
+        'label' => 'Office',
+        'value' => $node->get('field_office')->target_id ? Term::load($node->get('field_office')->target_id)->get('name')->value : '',
+      ],
+      'salary' => [
+        'label' => 'Salary',
+        'value' => $salary ? $salary . ' per month' : '',
+      ],
+      'is_temporary' => [
+        'label' => 'Regular/Temporary',
+        'value' => $node->get('field_is_temporary')->value ? 'Temporary' : 'Regular',
+      ],
+      'deadline' => [
+        'label' => 'Deadline',
+        'value' => $deadline,
+      ],
+      'posted' => [
+        'label' => 'Posted',
+        'value' => $posted,
+      ],
+    ],
+    'custom_apply' => $custom_apply,
+    'boilerplate' => $boilerplate,
+  ];
+
+  $variables['job'] = $job;
 }
 
 /**
