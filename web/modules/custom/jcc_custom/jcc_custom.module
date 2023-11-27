@@ -228,6 +228,19 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
 }
 
 /**
+ * Implements hook_preprocess_views_view() for global use.
+ */
+function jcc_custom_preprocess_views_view(&$variables) {
+  $view_id = $variables['view_array']['#view_id'] ?? '';
+  $display_id = $variables['view_array']['#display_id'] ?? '';
+
+  // Suppress job search view exposed filters from node edit preview.
+  if ($variables['theme_hook_original'] === 'views_view' && ($view_id === 'jobs' && $display_id === 'search')) {
+    $variables['exposed'] = [];
+  }
+}
+
+/**
  * Implements hook_sendgrid_integration_categories_alter().
  */
 function jcc_custom_sendgrid_integration_categories_alter($message, $categories) {
