@@ -522,6 +522,77 @@ function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_views_view() for job search listing block.
+ */
+function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
+  $render = \Drupal::service('renderer');
+
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
+
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $jobs = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $node = $row['#node'];
+
+    // Render deadline date.
+    $deadline = $node->get('unpublish_on')->value ? date('F j, Y', $node->get('unpublish_on')->value) : '';
+    // If no deadline or 12/12/9999.
+    if (!$deadline || $deadline === 'December 12, 9999') {
+      $deadline = t('Open Until Filled');
+    }
+
+    // Get teaser.
+    $teaser = $node->get('body') ?? '';
+    if ($teaser) {
+      $teaser = $node->get('body')->view('teaser');
+      $teaser = strval($render->render($teaser));
+      $teaser = strip_tags($teaser);
+    }
+
+    // Get locations.
+    $locations = __jcc_get_job_locations($node);
+
+    // Assemble details.
+    $detail_list_data = [
+      'details' => array_filter([
+        $locations ? $locations . ', CA' : '',
+        $node->get('field_is_temporary')->value ? 'Temporary' : 'Regular' . ' Employment',
+      ]),
+    ];
+
+    $job = [
+      'id' => $node->get('field_job_id')->value ? 'ID: ' . $node->get('field_job_id')->value : '',
+      'deadline' => $deadline ? ['#markup' => Html::decodeEntities('<strong>Deadline:</strong> ' . $deadline)] : '',
+      'type' => $node->get('field_job_type')->target_id ? Term::load($node->get('field_job_type')->target_id)->get('name')->value : '',
+      'title' => [
+        'text' => $node->get('title')->value ?? '',
+        'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
+      ],
+      'teaser' => $teaser,
+      'detail_list_data' => $detail_list_data,
+    ];
+    $jobs[] = $job;
+  }
+
+  // Count summary for the current page of results.
+  $jobs['count_summary'] = $variables['header']['result']['#markup'] ?? '';
+
+  $variables['jobs'] = $jobs;
+}
+
+/**
+ * Implements hook_preprocess_views_view() for job search listing page.
+ */
+function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
+  // Reuse current jobs search block as common preprocess.
+  jcc_elevated_preprocess_views_view__jobs__search($variables);
+}
+
+/**
  * Implements hook_views_pre_render().
  */
 function jcc_elevated_views_pre_render(ViewExecutable $view) {
