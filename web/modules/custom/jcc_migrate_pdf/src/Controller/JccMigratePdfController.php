@@ -10,6 +10,7 @@ use Drupal\file\Entity\File;
 use Drupal\jcc_migrate_pdf\Services\JccMigratePdfService;
 use Drupal\node\Entity\Node;
 use GuzzleHttp\ClientInterface;
+use Drupal\media\Entity\Media;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class JccMigratePdfController extends ControllerBase
@@ -131,16 +132,32 @@ class JccMigratePdfController extends ControllerBase
                         $file->save();
 
                         $fileID = $file->id();
+                        $media = Media::create([
+                            'bundle' => 'file', // Replace with your media bundle.
+                            'uid' => 1, // Replace with the user ID associated with the media.
+                            'field_media_file' => [
+                            'target_id' => $file->id(),
+                             ],
+                            ]);
+                            $media->save();
+                            // Get the media ID.
+                            $media_id = $media->id();
+                        //dd($fileID);
+                        //dd($media_id);
+                        //dd($file->getFileUri());
 
                         // Set the file ID in the field_arbitrary_pdf field.
                         $node_values->field_arbitrary_pdf->setValue([
-                            'target_id' => $fileID,
+                            'target_id' => $media_id,
                             'display' => 1,
                             'uri' => $file->getFileUri(),
                         ]);
 
                         // Save the node.
                         $node_values->save();
+                       //dd($node_values);
+                       // dd($node_values->field_arbitrary_pdf);
+                        
 
                     } else {
                         $file_contents = file_get_contents($file_url);
