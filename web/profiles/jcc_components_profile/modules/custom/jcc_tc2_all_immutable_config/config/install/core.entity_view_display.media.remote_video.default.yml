@@ -13,27 +13,21 @@ dependencies:
     - field.field.media.remote_video.field_width
     - media.type.remote_video
   module:
-    - file
-    - media
+    - colorbox
 id: media.remote_video.default
 targetEntityType: media
 bundle: remote_video
 mode: default
 content:
-  field_media_file:
-    type: file_default
-    label: above
-    settings:
-      use_description_as_link_text: true
-    third_party_settings: {  }
-    weight: 1
-    region: content
   field_media_oembed_video:
-    type: oembed
+    type: remote_video_colorbox
     label: hidden
     settings:
-      max_width: 884
-      max_height: 497
+      max_width: '884'
+      max_height: '497'
+      display: thumbnail
+      link_text: 'View Video'
+      image_style: hero_banner
     third_party_settings: {  }
     weight: 0
     region: content
@@ -45,6 +39,7 @@ hidden:
   field_height: true
   field_matters_served: true
   field_media_caption: true
+  field_media_file: true
   field_media_image: true
   field_provider: true
   field_tags: true
