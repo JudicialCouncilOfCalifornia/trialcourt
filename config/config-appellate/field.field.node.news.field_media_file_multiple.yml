@@ -1,0 +1,34 @@
+uuid: 08884c30-1782-4707-bc21-416d813007f0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_media_file_multiple
+    - media.type.image
+    - node.type.news
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.news.field_media_file_multiple
+field_name: field_media_file_multiple
+entity_type: node
+bundle: news
+label: 'Sidebar images'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: file
+field_type: entity_reference

@@ -10,6 +10,7 @@ use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -125,6 +126,29 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
   $output = \Drupal::service('renderer')->render($render_array);
   $variables['components_teaser'] =
     mb_strimwidth(trim(strip_tags($output)), 0, 250, '...');
+
+  $basic_page = Node::load($node->id());
+  if ($basic_page->hasField('field_node_reference')) {
+    $relatednewsdata = [];
+    $relatednews = $basic_page->get('field_node_reference');
+    foreach ($relatednews->referencedEntities() as $news) {
+      $relatednewsdata[] = [
+        'title' => $news->getTitle(),
+        'url' => $news->toUrl()->toString(),
+      ];
+    }
+    $variables['relatednewsdata'] = $relatednewsdata;
+  }
+
+  $sidebarimages = [];
+  foreach ($node->field_media_file_multiple as $media_file) {
+    $media = Media::load($media_file->target_id);
+    $sidebarimages[] = [
+      'caption' => $media->get('field_media_caption')->value,
+      'citation' => $media->get('field_citation')->value,
+    ];
+  }
+  $variables['sidebarimages'] = $sidebarimages;
 }
 
 /**
