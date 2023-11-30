@@ -6,7 +6,9 @@
  */
 
 // Dynamically match sites directory to current host.
-$dirs = preg_grep('/^([^.])/', scandir('sites/'));
+$filesdir = scandir('sites/');
+if(is_array($filesdir)) {
+$dirs = preg_grep('/^([^.])/', $filesdir);
 foreach ($dirs as $dir) {
   if ($dir == "courts") {
     continue;
@@ -20,6 +22,7 @@ foreach ($dirs as $dir) {
       $sites[$http_host] = $dir;
     }
   }
+}
 }
 
 // Custom domains for any that do not match above.
