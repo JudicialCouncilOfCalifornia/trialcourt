@@ -39,6 +39,8 @@ $sites['www.occourts.org'] = 'oc';
 // courts
 $sites['courts.lndo.site'] = 'courts';
 $sites['develop-jcc-courts.pantheonsite.io'] = 'courts';
+$sites['dev-jcc-courts.pantheonsite.io'] = 'courts';
+$sites['test-jcc-courts.pantheonsite.io'] = 'courts';
 $sites['stage-jcc-courts.pantheonsite.io'] = 'courts';
 $sites['epic-uat-jcc-courts.pantheonsite.io'] = 'courts';
 $sites['live-jcc-courts.pantheonsite.io'] = 'courts';
