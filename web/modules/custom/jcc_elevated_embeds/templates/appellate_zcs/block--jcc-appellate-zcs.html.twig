@@ -25,9 +25,40 @@
  * @see template_preprocess_block()
  */
 #}
-<div class="jcc-appellate-map">
-  <div class="jcc-appellate-map__inner with-sidebar" style="--sidebar-width: 48%; --gap: 1%;">
-    {{ legend }}
-    {{ map_viewport }}
-  </div>
+{%
+  set classes = [
+    'switcher',
+    'block',
+    'block__jcc-appellate-zcs',
+    'detect-wrap',
+    'detect-wrap--observed',
+  ]|merge(classes|default([]))
+%}
+<div {{ attributes|without('id').addClass(classes) }}>
+  {% block content %}
+    {{ content.library }}
+
+    <div class="block__jcc-appellate-zcs__search stack">
+      {% if label %}
+        <h2 class="block__jcc-appellate-zcs__label">{{ label }}</h2>
+      {% endif %}
+
+      {% if content.description %}
+        <div class="block__jcc-appellate-zcs__description">
+          {{ content.description }}
+        </div>
+      {% endif %}
+
+      <div class="block__jcc-appellate-zcs__form">
+        {{ content.form }}
+      </div>
+    </div>
+
+    <div class="block__jcc-appellate-zcs__map">
+      <div class="block__jcc-appellate-zcs__map__container">
+        {{ content.map }}
+        {{ content.map_links }}
+      </div>
+    </div>
+  {% endblock %}
 </div>
