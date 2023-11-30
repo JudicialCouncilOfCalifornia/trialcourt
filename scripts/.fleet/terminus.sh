@@ -9,12 +9,28 @@ show_help() {
 }
 
 do_command() {
+  PIDS=""
+  declare -a sitemap
+
   for site in $sites
   do
     alias="jcc-${site}.${env}"
 
     echo -e "\n${B}Running ${RE}terminus ${alias} ${command} ${@}"
-    terminus $command $alias $@
+    terminus $command $alias $@ &
+
+    PIDS+=" $!"
+    sitemap["$!"]="${site}"
+
+    sleep 3
+  done
+
+  for p in $PIDS; do
+    if wait $p; then
+      echo "${sitemap["$p"]} succeeded"
+    else
+      echo "${sitemap["$p"]} failed"
+    fi
   done
 }
 
