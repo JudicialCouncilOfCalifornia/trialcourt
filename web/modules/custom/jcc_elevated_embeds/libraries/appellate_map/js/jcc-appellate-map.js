@@ -45,22 +45,3 @@ svgGroups.forEach((targetSvgGroup) => {
   });
 });
 
-/**
- * SVG Viewport zoom functionality
- */
-// const svgViewPort = document.querySelector('.jcc-appellate-map__map-viewport');
-// const svgImage = document.querySelector('.jcc-appellate-map__map-viewport svg');
-// // Zoom functionality
-// if (svgImage.hasAttribute('transform')) {
-//   svgImage.removeAttribute('transform');
-// } else {
-//   let objRect = targetSvgGroup.getBoundingClientRect();
-//   let svgRect = svgViewPort.getBoundingClientRect();
-//   let scaleX = svgRect.width / 255.1;
-//   let scaleY = svgRect.height / 170.1;
-//   let newX = (svgRect.left - objRect.left) / scaleX;
-//   let newY = (svgRect.top - objRect.top) / scaleY;
-//   let xScale = svgRect.width / objRect.width;
-//   let yScale = svgRect.height / objRect.height;
-//   svgImage.setAttribute("transform", "matrix(" + xScale + " 0 0 " + yScale + " " + newX * xScale + " " + newY * yScale + ")");
-// }
