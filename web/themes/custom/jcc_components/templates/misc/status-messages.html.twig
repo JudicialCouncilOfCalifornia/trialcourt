@@ -17,7 +17,7 @@
   {% set type = type == "status" ? "success" : type %}
   {% set text = '' %}
 
-  {% if messages|length > 1 %}
+  {% if not messages is empty %}
     {% for message in messages %}
       {% set text = text ~ "<li>" ~ message ~ "</li>" %}
     {% endfor %}
@@ -25,7 +25,6 @@
   {% else %}
     {% set text = messages|first %}
   {% endif %}
-
   {% include "@molecules/alert/alert.twig" with {
     alert: {
       type: type,
