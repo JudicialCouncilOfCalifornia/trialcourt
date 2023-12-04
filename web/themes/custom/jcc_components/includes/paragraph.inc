@@ -124,7 +124,7 @@ function jcc_components_paragraph_hero_banner(array &$variables, ParagraphInterf
     $component = \Drupal::service('entity.repository')->getTranslationFromContext($component, $langcode);
     if (!empty($component->field_icon)) {
       $card_icon = !empty($component->field_icon->view('default')[0]) ? $component->field_icon->view('default')[0] : NULL;
-     // $card_icon = str_replace("-dark", "-white", $card_icon);
+      // $card_icon = str_replace("-dark", "-white", $card_icon);
       $card_icon['#icon_set'] = str_replace("-dark", "-white", $card_icon['#icon_set']);
       $variables['content']['icon_links'][] = [
         'icon' => $card_icon,
@@ -370,9 +370,10 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       $media['src'] = _jcc_components_remove_image_protocol($styled_image_url);
       $media['alt'] = $alt;
 
-      if(count($cards) > 1) {
+      if (count($cards) > 1) {
         $sub_variants['card'] = 'media-top';
-      }else{
+      }
+      else {
         $sub_variants['card'] = 'media-left';
       }
 
