@@ -147,12 +147,13 @@
         }
     },
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.1",
         "ckeditor-plugin/a11ychecker": "^1.1.1",
         "ckeditor-plugin/balloonpanel": "^4.14",
         "ckeditor-plugin/templates": "^4.13",
         "ckeditor/inserthtml4x": "^2.0",
         "composer/installers": "^1.9",
+        "consolidation/site-process": "^4.0.0",
         "cweagans/composer-patches": "^1.7",
         "drupal/access_unpublished": "^1.0",
         "drupal/address": "^1.7",
@@ -189,7 +190,7 @@
         "drupal/ctools": "^3.6",
         "drupal/diff": "^1.0@RC",
         "drupal/dropzonejs": "^2.0@alpha",
-        "drupal/easy_breadcrumb": "^2.0",
+        "drupal/easy_breadcrumb": "2.x-dev@dev",
         "drupal/editor_advanced_link": "^1.8",
         "drupal/email_registration": "^1.2",
         "drupal/embed": "^1.6",
@@ -216,7 +217,7 @@
         "drupal/fullcalendar_view": "^5.0.0",
         "drupal/ga_login": "^1.0@alpha",
         "drupal/geocoder": "^3.0",
-        "drupal/geolocation": "^3.1.0",
+        "drupal/geolocation": "^3.12",
         "drupal/gin": "^3.0@alpha",
         "drupal/glossify": "^2.0",
         "drupal/google_tag": "^1.2",
@@ -227,6 +228,8 @@
         "drupal/imagemagick": "^3.1",
         "drupal/inline_entity_form": "^1.0@RC",
         "drupal/insert_view_adv": "^1.0@beta",
+        "drupal/jquery_ui_autocomplete": "^2.0",
+        "drupal/jquery_ui_menu": "^2.0",
         "drupal/json_feed": "1.2",
         "drupal/key": "^1.12",
         "drupal/layout_paragraphs": "^1.0@beta",
@@ -262,7 +265,7 @@
         "drupal/pantheon_advanced_page_cache": "^1.2",
         "drupal/paragraphs": "^1.11",
         "drupal/paragraphs_inline_entity_form": "^1.0@beta",
-        "drupal/password_policy": "^3.0@beta",
+        "drupal/password_policy": "^4.0",
         "drupal/pathauto": "^1.11",
         "drupal/protected_pages": "^1.6",
         "drupal/queue_ui": "^2.2",
@@ -282,7 +285,7 @@
         "drupal/search_api_attachments": "^9.0",
         "drupal/search_api_autocomplete": "^1.7",
         "drupal/search_api_exclude": "^2.0",
-        "drupal/search_api_solr": "^4.2",
+        "drupal/search_api_solr": "^4.3",
         "drupal/search_api_sorts": "^1.1",
         "drupal/selective_better_exposed_filters": "^3.0@beta",
         "drupal/sendgrid_integration": "1.x-dev",
@@ -310,7 +313,7 @@
         "drupal/views_daterange_filters": "^1.0.0-alpha1",
         "drupal/views_entity_form_field": "^1.0@beta",
         "drupal/views_taxonomy_term_name_depth": "^7.0.0",
-        "drupal/viewsreference": "^1.7",
+        "drupal/viewsreference": "^1.8",
         "drupal/webform": "^6.0",
         "drupal/webform_myemma": "1.0",
         "drupal/webform_translation_permissions": "^1.1",
@@ -318,7 +321,7 @@
         "drupal/webp": "^1.0@beta",
         "drupal/weight": "^3.2",
         "drupal/x_frame_options_configuration": "^1.2",
-        "drupal/xmlsitemap": "^1.0@alpha",
+        "drupal/xmlsitemap": "^1.5",
         "drush/drush": "^10.0.0",
         "enyo/dropzone": "^5.5",
         "geocoder-php/bing-maps-provider": "^4.0",
@@ -342,7 +345,7 @@
         "components/highlightjs": "9.7.*",
         "d3/d3": "3.5.*",
         "drupal/coder": "^8.3",
-        "drupal/devel": "^4.0.0",
+        "drupal/devel": "^5.1",
         "drupal/masquerade": "^2.0@beta",
         "drupal/stage_file_proxy": "^1.0@RC",
         "drupal/twig_xdebug": "^1.1",
@@ -363,7 +366,9 @@
             "drupal/core-composer-scaffold": true,
             "oomphinc/composer-installers-extender": true,
             "zaporylie/composer-drupal-optimizations": true,
-            "drupal/core-project-message": true
+            "drupal/core-project-message": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "php-http/discovery": true
         }
     },
     "autoload": {
@@ -423,20 +428,18 @@
                 "Enable Needs Translation on moderated content.": "https://www.drupal.org/files/issues/2022-02-01/2950626-14.patch",
                 "Recursive rendering images when they are 20+": "https://www.drupal.org/files/issues/2021-09-24/3151977-d9-media-recursive-rendering.patch",
                 "Required fields support under collapsed details grouping": "https://www.drupal.org/files/issues/2023-05-24/3333481-fix-details-html5-validation-10.patch",
-                "Taxonomy terms load in admin side give white screen": "https://www.drupal.org/files/issues/2023-06-06/2183565-69.patch"
+                "Taxonomy terms load in admin side give white screen": "https://www.drupal.org/files/issues/2023-06-06/2183565-69.patch",
+                "Fix for unable to decode outout into JSON": "patches/locale_patch.patch",
+                "PoStreamReader error": "https://www.drupal.org/files/issues/2023-01-17/drupal_core-PoStreamReader_readLine_throws_an_error_on_module_install-3301239-7.patch",
+                "Fix for PHP warning isArray check": "patches/fixphp-warning.patch",
+                "Fix for deprecated function": "https://www.drupal.org/files/issues/2022-08-23/3302838-13.patch"                
             },
             "drupal/entity_usage": {
-                "Remove old rivisions from usage count.": "https://www.drupal.org/files/issues/2020-09-26/entity_usage_views_integration_usage_count-3043388-6.patch",
-                "[error] Update failed: entity_usage_post_update_regenerate_2x": "https://www.drupal.org/files/issues/2021-09-24/database-update-error-3231720-4.patch"
-            },
-            "drupal/scheduler_content_moderation_integration": {
-                "Undefined offset bug.": "https://www.drupal.org/files/issues/2020-02-19/undefined_offset_node_creation-3077147-12.patch"
-            },
-            "drupal/mimemail": {
-                "Seeing errors when sending a mail with files attached as file contents": "https://www.drupal.org/files/issues/2022-02-28/mimemail_attachment_errors-2904611-39.patch"
+                "Remove old rivisions from usage count.": "https://www.drupal.org/files/issues/2020-09-26/entity_usage_views_integration_usage_count-3043388-6.patch"
             },
             "drupal/devel": {
-                "Fix devel count() warning in php 7.2": "patches/devel-count-warning.patch"
+                "Fix devel count() warning in php 7.2": "patches/devel-count-warning.patch",
+                "Fix Cannot unset offset in a non-array variable in devel_get_handlers" : "patches/devel-unset-issue.patch"
             },
             "drupal/json_feed": {
                 "Adds JSONP support to feeds": "patches/json_feed_jsonp_support.patch"
@@ -452,21 +455,14 @@
                 "Core version requirement.": "https://www.drupal.org/files/issues/2020-11-12/core_version_requirement_issue-3182162-2.patch"
             },
             "drupal/redirect": {
-                "Allowing wildcards": "https://www.drupal.org/files/issues/2020-09-21/support-for-wildcards-2831605-56.patch",
-                "Redirect source path widget validation prevents creating redirects that vary by query string": "https://www.drupal.org/files/issues/2021-02-19/redirect_source_path-2803105-20.patch"
+                "Allowing wildcards": "https://www.drupal.org/files/issues/2020-09-21/support-for-wildcards-2831605-56.patch"
             },
             "drupal/video_embed_field": {
                 "Allow creation of new video media entities using the Media Browser": "https://www.drupal.org/files/issues/2020-06-20/vef-3039873-media-library-add-32.patch"
             },
-            "drupal/google_tag": {
-                "Accessibility support for noscript iframe": "https://www.drupal.org/files/issues/2020-01-07/google_tag_iframe_title.patch"
-            },
             "drupal/autocomplete_deluxe": {
                 "Allow multiple references with same title": "https://www.drupal.org/files/issues/2019-07-25/3053986_4.patch",
                 "undefined-autocomplete-data-key": "https://www.drupal.org/files/issues/2022-06-09/undefined-autocomplete-data-key-3284962-2.patch"
-            },
-            "drupal/geolocation": {
-                "Fix leaflet gestures loading": "https://www.drupal.org/files/issues/2020-05-27/3143304-2-leaflet-library.patch"
             },
             "drupal/sendgrid_integration": {
                 "Sendgrid email attachments": "https://www.drupal.org/files/issues/2020-12-21/2983707-18.patch"
@@ -482,8 +478,20 @@
                 "Fix private file path redirects.": "https://www.drupal.org/files/issues/2022-05-26/3269636-incorrect-private-file-redirect-path-2.patch",
                 "https://www.drupal.org/files/issues/2021-07-19/incorrect_redirect_hash_generated-3045063-7.patch": "https://www.drupal.org/files/issues/2021-07-19/incorrect_redirect_hash_generated-3045063-7.patch"
             },
-            "drupal/easy_breadcrumb": {
-                "D10 Backport: Reformat string configs as arrays": "patches/3218690-reformat-string-config-as-arrays-12.patch"
+            "drupal/advagg": {
+                "Fix for stripos deprecated": "patches/advagg-stripos-fix.patch"
+            },
+            "drupal/fullcalendar_view" : {
+                "Fix for Calendar options": "patches/fix-jserror-fullcalendarview.patch"
+            },
+            "drupal/search_api_autocomplete": {
+                "Fix for Solr error":"https://www.drupal.org/files/issues/2023-10-01/3382226-22--solr_version_check_bug.patch"
+            },
+            "drupal/feeds": {
+                "Fix for call to a member function unlink() on null": "https://www.drupal.org/files/issues/2023-09-29/feeds-3390530.patch"
+            },
+            "drupal/mimemail": {
+                "Webform fix  PHP upgrade" : "https://www.drupal.org/files/issues/2023-03-24/3302223-check-in-public-path.patch"
             }
         },
         "installer-paths": {
