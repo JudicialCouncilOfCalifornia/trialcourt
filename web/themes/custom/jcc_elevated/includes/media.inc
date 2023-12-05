@@ -13,6 +13,8 @@ use Drupal\taxonomy\Entity\Term;
  */
 function jcc_elevated_preprocess_media__publication(&$variables) {
   $media = $variables['media'];
+
+  // Documents.
   $lang_label_sets = __jcc_language_sets();
   $documents = [];
   $languages = [];
@@ -58,13 +60,13 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
   $publication = [
     'details' => [
       'published' => $media->field_date->value ? $media->field_date->date->format('F j, Y') : '',
-      'division' => $media->field_division->target_id ? Term::load($media->field_division->target_id)->get('name')->value : '',
-      'topic' => $media->field_topic->target_id ? Term::load($media->field_topic->target_id)->get('name')->value : '',
-      'case_type' => $media->field_case_type->target_id ? Term::load($media->field_case_type->target_id)->get('name')->value : '',
+      'division' => Term::load($media->field_division->target_id) ? Term::load($media->field_division->target_id)->get('name')->value : '',
+      'topic' => Term::load($media->field_topic->target_id) ? Term::load($media->field_topic->target_id)->get('name')->value : '',
+      'case_type' => Term::load($media->field_case_type->target_id) ? Term::load($media->field_case_type->target_id)->get('name')->value : '',
     ],
     'body' => $media->field_media_text->view('default'),
     'primary_file_type' => $documents ? $documents[0]['file_type'] : '',
-    'type' => $media->field_document_type->target_id ? Term::load($media->field_document_type->target_id)->get('name')->value : '',
+    'type' => Term::load($media->field_document_type->target_id) ? Term::load($media->field_document_type->target_id)->get('name')->value : '',
     'documents' => $documents,
     'languages' => $languages,
   ];
