@@ -176,7 +176,7 @@ class JccElevatedEmbedZipCityCountyAutoCompleteController extends ControllerBase
 
     $file = fopen($csv, 'r');
     while (!feof($file)) {
-      $csv_file = fgetcsv($file, '', ",");
+      $csv_file = fgetcsv($file, NULL, ",");
       $data[$csv_file[0]] = $csv_file[1];
     }
     fclose($file);
