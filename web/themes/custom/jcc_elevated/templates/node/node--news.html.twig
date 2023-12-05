@@ -94,10 +94,11 @@
       clickable_card: false,
       background: null,
       media: card_image,
+      caption_overlay: true,
       citation: "Some citation text here",
       media_caption: {
       show: true,
-      text: "This is caption for the media if provided",
+      text: "media caption if provided*",
     },
     } %} 
   {% endset %} 
@@ -117,6 +118,34 @@
   hangover_content: hangover_content  
 } %}
 
+
+{% set sidebarimages %}
+  {% for image in sidebarimages %}
+    {% set sidebar_image = '' %}
+      {% if image.url %}
+        {% set sidebar_image %}
+          {% set media_uri = profile.image.field_media_image.entity.uri.value %}
+          <img src={{image.url}}>
+        {% endset %}
+      {% endif %}
+
+    {% include "@molecules/Card/Card.twig" with {
+      variant: "media-right",
+      aspect: [],
+      clickable_card: false,
+      background: null,
+      media: sidebar_image | raw,
+      caption_overlay: true,
+      citation: image.citation,
+      media_caption: {
+      show: true,
+      text: image.caption,
+    },
+    } %} 
+    {% endfor %}
+{% endset %}   
+
+
   <div class="container">
     {% include "@molecules/Body/Body.twig" with {
       variant: "default",
@@ -124,7 +153,7 @@
      lead: content.body,
      content: "",
      subheading: "",
-     aside: multiple_image_cards
+     aside: sidebarimages
     } %}   
     
     <p>Related News</p>

@@ -11,6 +11,7 @@ use Drupal\media\Entity\Media;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\node\Entity\Node;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -140,12 +141,15 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
     $variables['relatednewsdata'] = $relatednewsdata;
   }
 
-  $sidebarimages = [];
+ $sidebarimages = [];
   foreach ($node->field_media_file_multiple as $media_file) {
     $media = Media::load($media_file->target_id);
+    $uri = $media->field_media_image->entity->getFileUri();   
+    $media_url = file_create_url($uri);  
     $sidebarimages[] = [
       'caption' => $media->get('field_media_caption')->value,
       'citation' => $media->get('field_citation')->value,
+      'url' => $media_url,    
     ];
   }
   $variables['sidebarimages'] = $sidebarimages;
