@@ -243,6 +243,8 @@ class JccAppellateMapBlock extends BlockBase implements ContainerFactoryPluginIn
 
     $this->cache->set($cacheId, $info, CacheBackendInterface::CACHE_PERMANENT);
 
+    $info = [];
+
     return $info;
   }
 
