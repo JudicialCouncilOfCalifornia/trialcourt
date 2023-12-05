@@ -14,6 +14,8 @@ function jcc_elevated_sections_module_preinstall() {
   Drupal::state()->set('jcc_elevated.section_vocab_source', JccSectionConstants::JCC_SECTIONS_DEFAULT_SOURCE_ID);
   Drupal::state()->set('jcc_elevated.section_allowed_types', []);
   Drupal::state()->set('jcc_elevated.section_allowed_media_types', []);
+  Drupal::state()->set('jcc_elevated.section_applied_views_general_content_excluded', []);
+  Drupal::state()->set('jcc_elevated.section_applied_views_override_exposed_to_contextual', []);
 }
 
 /**
@@ -46,4 +48,6 @@ function jcc_elevated_sections_uninstall() {
   Drupal::state()->delete('jcc_elevated.section_vocab_source');
   Drupal::state()->delete('jcc_elevated.section_allowed_types');
   Drupal::state()->delete('jcc_elevated.section_allowed_media_types');
+  Drupal::state()->delete('jcc_elevated.section_applied_views_general_content_excluded');
+  Drupal::state()->delete('jcc_elevated.section_applied_views_override_exposed_to_contextual');
 }
