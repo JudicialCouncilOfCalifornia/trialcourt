@@ -68,18 +68,19 @@ function jcc_components_preprocess_views_view__news__news_list(&$variables) {
   // Translation via TMGMT breaks dates where translators entered invlid date
   // values in date fields. If date is invalid clear it before template renders. 
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
-
-  foreach ($variables['rows'][0]['#rows'] as &$row) {    
-    $node = $row['#node'];
-    $nodeid = $node->id();
-    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);    
-    $row['#lang'] = $langcode;
-    if($langcode === "es") {
-      $prefixed_translated_path = '/' . $langcode . $translated_path;   
-      $row['#sticky'] = $prefixed_translated_path;    
-    }   
-    if (!jcc_components_validate_date($node->field_date->value)) {
-      $node->field_date->value = '';
+  if (isset($variables['rows'][0]['#rows']) && is_array($variables['rows'][0]['#rows'])) {
+    foreach ($variables['rows'][0]['#rows'] as &$row) {    
+      $node = $row['#node'];
+      $nodeid = $node->id();
+     $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);    
+      $row['#lang'] = $langcode;
+     if($langcode === "es") {
+        $prefixed_translated_path = '/' . $langcode . $translated_path;   
+        $row['#sticky'] = $prefixed_translated_path;    
+      }   
+      if (!jcc_components_validate_date($node->field_date->value)) {
+        $node->field_date->value = '';
+      }
     }
   }
 }
