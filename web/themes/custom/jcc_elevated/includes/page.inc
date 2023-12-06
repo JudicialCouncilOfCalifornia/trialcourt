@@ -248,8 +248,8 @@ function jcc_elevated_build_header_search_form(bool $mobile_version = FALSE): ar
   $form['search']['#pre_render'] = [];
   $form['search']['#process'] = [];
   $form['search']['#theme_wrappers'] = [];
-  if ($searched_value !== null) {
-  $form['search']['#attributes']['value'] = Xss::filter($searched_value);
+  if ($searched_value !== NULL) {
+    $form['search']['#attributes']['value'] = Xss::filter($searched_value);
   }
   $form['search']['#attributes']['name'] = $form['search']['#name'];
   $form['search']['#attributes']['class'] = [];
