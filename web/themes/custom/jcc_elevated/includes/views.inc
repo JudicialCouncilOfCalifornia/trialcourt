@@ -14,6 +14,7 @@ use Drupal\Core\Url;
 use Drupal\media\Entity\Media;
 use Drupal\views\ViewExecutable;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -268,22 +269,30 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     $text = ['#markup' => Html::decodeEntities($description)];
     $url = $media->toUrl();
     if ($media_files['media_file_multiple']['file']) {
-      $url = Url::fromUri($media_files['media_file_multiple']['file']->createFileUrl(FALSE));
+      $url = $media_files['media_file_multiple']['file']->createFileUrl(FALSE);
+    }
+    else {
+      $url = NULL;
     }
 
-    $button_data = [
-      'label' => t('Download @type', ['@type' => $document_type]),
-      'href' => $url,
-    ];
+    if ($url != NULL) {
+      $button_data = [
+        'label' => ['#markup' => t('Download @type', ['@type' => $document_type])],
+        'href' => $url,
+      ];
+    }
+    else {
+      $button_data = [];
+    }
 
     $detail_list_data = [
-      'label' => t('Details'),
+      'label' => ['#markup' => t('Details')],
       'details' => array_filter([
-        $topic,
-        $date,
-        $case_type,
-        $division,
-        $document_type,
+        ['#markup' => $topic],
+        ['#markup' => $date],
+        ['#markup' => $case_type],
+        ['#markup' => $division],
+        ['#markup' => $document_type],
       ]),
     ];
 
@@ -297,10 +306,10 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     ];
 
     $variables['processed_rows'][] = [
-      'title' => $label,
-      'url' => $media->toUrl(),
+      'title' => ['#markup' => $label],
+      'url' => ['#markup' => $media->toUrl()->toString()],
       'main_file' => '',
-      'content' => $render->render($text),
+      'content' => ['#markup' => $render->render($text)],
       'button_data' => $button_data,
       'detail_list_data' => $detail_list_data,
       'pills' => $files_for_pills ? $pills : [],
