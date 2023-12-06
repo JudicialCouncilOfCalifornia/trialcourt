@@ -123,8 +123,10 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
   // Render and truncate field_components.
   $render_array = $node->field_components->view('default');
   $output = \Drupal::service('renderer')->render($render_array);
+  if ($output !== null) {
   $variables['components_teaser'] =
     mb_strimwidth(trim(strip_tags($output)), 0, 250, '...');
+  }
 }
 
 /**

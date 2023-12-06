@@ -153,7 +153,9 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
       // Allowed tags in minimal editor except <a>.
       $allowed_tags = '<p><em><strong><u><s><sup><sub><ol><li><ul>';
       $text = $paragraph->get('field_text')->value;
+      if ($text !== null) {
       $text = strip_tags($text, $allowed_tags);
+      }
       $variables['filtered_text'] = Markup::create($text);
     }
   }
