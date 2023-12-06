@@ -73,8 +73,9 @@ class JccEntityAutocompleteController extends \Drupal\system\Controller\EntityAu
     if ($input = $request->query
       ->get('q')) {
       $typed_string = Tags::explode($input);
+      if ($typed_string !== null) {
       $typed_string = mb_strtolower(array_pop($typed_string));
-
+      }  
       // Selection settings are passed in as a hashed key of a serialized array
       // stored in the key/value store.
       $selection_settings = $this->keyValue
