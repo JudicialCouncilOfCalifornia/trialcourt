@@ -73,9 +73,9 @@ class JccEntityAutocompleteController extends \Drupal\system\Controller\EntityAu
     if ($input = $request->query
       ->get('q')) {
       $typed_string = Tags::explode($input);
-      if ($typed_string !== null) {
-      $typed_string = mb_strtolower(array_pop($typed_string));
-      }  
+      if ($typed_string !== NULL) {
+        $typed_string = mb_strtolower(array_pop($typed_string));
+      } 
       // Selection settings are passed in as a hashed key of a serialized array
       // stored in the key/value store.
       $selection_settings = $this->keyValue
@@ -84,8 +84,8 @@ class JccEntityAutocompleteController extends \Drupal\system\Controller\EntityAu
         $selection_settings_hash = Crypt::hmacBase64(serialize($selection_settings) . $target_type . $selection_handler, Settings::getHashSalt());
         if ($selection_settings_hash !== $selection_settings_key) {
 
-          // Disallow access when the selection settings hash does not match the
-          // passed-in key.
+         // Disallow access when the selection settings hash does not match the
+         // passed-in key.
           throw new AccessDeniedHttpException('Invalid selection settings key.');
         }
       }
