@@ -195,7 +195,7 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node) {
     $media = Media::load($media_file->target_id);
     $media_name = $media->name->value;
     if ($media->get('field_document_type')->target_id) {
-      $doc_type = Term::load($media->get('field_document_type')->target_id)->get('name')->value;
+      $doc_type = Term::load($media->get('field_document_type')->target_id) ? Term::load($media->get('field_document_type')->target_id)->get('name')->value : '';
     }
     if ($media->get('field_media_file_multiple')->target_id) {
       $file = File::load($media->get('field_media_file_multiple')->target_id);

@@ -5,16 +5,15 @@
  * Functions for views processing.
  */
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\media\Entity\Media;
-use Drupal\views\ViewExecutable;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\file\Entity\File;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -373,8 +372,8 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
     $node = $row['#row']->_entity;
     $media = $node->get('field_media')->target_id ? Media::load($node->get('field_media')->target_id) : '';
     $name = $node->get('title')->value ? $node->get('title')->value : '';
-    $title = $node->get('field_job_title')->target_id ? Term::load($node->get('field_job_title')->target_id)->get('name')->value : '';
-    $division = $node->get('field_division')->target_id ? Term::load($node->get('field_division')->target_id)->get('name')->value : '';
+    $title = Term::load($node->get('field_job_title')->target_id) ? Term::load($node->get('field_job_title')->target_id)->get('name')->value : '';
+    $division = Term::load($node->get('field_division')->target_id) ? Term::load($node->get('field_division')->target_id)->get('name')->value : '';
     $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id());
     // Service time.
     $start_date = $node->field_date->date ? $node->field_date->date->format('Y') : '';
