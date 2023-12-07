@@ -72,7 +72,7 @@
 #}
 
 {{ attach_library("jcc_storybook/Brow") }}
-{{ attach_library("jcc_storybook/MediaExcerpt") }}
+{{ attach_library("jcc_storybook/ResultExcerpt") }}
 
 {%
   set classes = [
@@ -88,7 +88,7 @@
       part_two: content.field_date|render|striptags,
     } %}
 
-    {% include "@molecules/MediaExcerpt/MediaExcerpt.twig" with {
+    {% include "@molecules/ResultExcerpt/ResultExcerpt.twig" with {
       title: label,
       url: url,
       content: components_teaser,
