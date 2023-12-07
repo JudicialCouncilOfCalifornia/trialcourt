@@ -47,18 +47,15 @@ class ElevatedMediaMatcher extends EntityMatcher {
       $entity = $this->entityRepository->getTranslationFromContext($entity);
 
       // Get jcc_section taxonomy term ID loaded.
-      $term_id = $entity->jcc_section->getValue();
-      if (isset($term_id[0])) {
-        $term = Term::load($term_id[0]['target_id']);
-        if ($term_id[0]['target_id']) {
-          $term_name = ' ' . $term->getName();
+      $term_name = '';
+      if ($entity->hasField('jcc_section')) {
+        $term_id = $entity->jcc_section->getValue();
+        if (isset($term_id[0])) {
+          $term = Term::load($term_id[0]['target_id']);
+          if ($term_id[0]['target_id']) {
+            $term_name = ' ' . $term->getName();
+          }
         }
-        else {
-          $term_name = '';
-        }
-      }
-      else {
-        $term_name = '';
       }
 
       $suggestion = new EntitySuggestion();
