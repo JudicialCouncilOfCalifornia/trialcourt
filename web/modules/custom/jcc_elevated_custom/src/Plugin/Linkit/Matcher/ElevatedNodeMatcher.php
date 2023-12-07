@@ -53,7 +53,7 @@ class ElevatedNodeMatcher extends NodeMatcher {
         if (isset($term_id[0])) {
           $term = Term::load($term_id[0]['target_id']);
           if ($term_id[0]['target_id']) {
-            $term_name = ' ' . $term->getName();
+            $term_name = ' / ' . $term->getName();
           }
         }
       }
