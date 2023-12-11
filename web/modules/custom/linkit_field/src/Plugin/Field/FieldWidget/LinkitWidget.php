@@ -76,8 +76,10 @@ class LinkitWidget extends WidgetBase {
 
     $item = $items[$delta];
     $uri = $item->uri;
-    $uri_scheme = parse_url($uri, PHP_URL_SCHEME);
-    $is_nolink = substr($uri, 0, 14) === 'route:<nolink>';
+    if ($uri !== NULL) {
+      $uri_scheme = parse_url($uri, PHP_URL_SCHEME);
+      $is_nolink = substr($uri, 0, 14) === 'route:<nolink>';
+    }
     if (!empty($uri) && empty($uri_scheme) && $is_nolink) {
       $uri = LinkitHelper::uriFromUserInput($uri);
       $uri_scheme = parse_url($uri, PHP_URL_SCHEME);
@@ -87,7 +89,9 @@ class LinkitWidget extends WidgetBase {
     }
     else {
       // Decode stored URI so it's not double encoded when generating the URL.
-      $uri = rawurldecode($uri);
+      if ($uri !== NULL) {
+        $uri = rawurldecode($uri);
+      }
       $uri_as_url = !empty($uri) ? Url::fromUri($uri)->toString() : '';
     }
     $linkit_profile_id = $this->getSetting('linkit_profile');

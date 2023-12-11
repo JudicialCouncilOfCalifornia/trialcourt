@@ -17,11 +17,8 @@
   {% set type = type == "status" ? "success" : type %}
   {% set text = '' %}
 
-  {% if not messages is empty %}
-    {% for message in messages %}
-      {% set text = text ~ "<li>" ~ message ~ "</li>" %}
-    {% endfor %}
-    {% set text = "<ul>" ~ text ~ "</ul>" %}
+  {% if messages is not empty %}   
+     {% set text = "<ul>" ~ messages|default([])|map(item => item is not null and item is not iterable ? item|default('') : '')|join('</li><li>') ~ "</ul>" %}
   {% else %}
     {% set text = messages|first %}
   {% endif %}
