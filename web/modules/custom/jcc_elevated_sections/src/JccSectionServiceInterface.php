@@ -252,7 +252,7 @@ interface JccSectionServiceInterface {
   public function isViewSectionable($view_name_display): bool;
 
   /**
-   * Returns if a view should have non-sectioned/general content excluded..
+   * Returns if a view should have non-sectioned/general content excluded.
    *
    * @param string $view_name_display
    *   The view name and display combo string in "name:display" format.
@@ -261,5 +261,20 @@ interface JccSectionServiceInterface {
    *   Returns if a view should have a section filter applied to it.
    */
   public function isViewGeneralContentExcluded($view_name_display): bool;
+
+  /**
+   * Returns if a view is marked to use contextual sectioning as default.
+   *
+   * If a view is marked to be sectioned, AND HAS AN EXPOSED FORM, use this
+   * and the associated setting to mark the view to use the contextual version
+   * of the section argument, rather than adding an exposed form element.
+   *
+   * @param string $view_name_display
+   *   The view name and display combo string in "name:display" format.
+   *
+   * @return bool
+   *   Returns if a view should use the contextual argument by default.
+   */
+  public function isViewExposedFormContextualOverride($view_name_display): bool;
 
 }
