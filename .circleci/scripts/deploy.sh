@@ -29,11 +29,12 @@ for name in "$@" ; do
   ARTIFACT_GIT=ssh://codeserver.dev.${UUID}@codeserver.dev.${UUID}.drush.in:2222/~/repository.git
   TIMESTAMP=$(date +'%y-%m-%dT%H:%m:%S')
   PANTHEON_ENV=$CIRCLE_BRANCH
-
+   
+   # Uncomment if Dev deployment is needed.
    # Skip deployment step for master branch if "LIVE" is set explicitly to false.
-  if [ "$CIRCLE_BRANCH" = "master" ] && [ "$LIVE" = false ]; then
-    PANTHEON_ENV="dev"
-  fi
+  #if [ "$CIRCLE_BRANCH" = "master" ] && [ "$LIVE" = false ]; then
+  #  PANTHEON_ENV="dev"
+  #fi
 
   git config --global user.email "$GIT_EMAIL"
   git config --global user.name "JCC-Webdev"
