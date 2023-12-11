@@ -217,6 +217,18 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node) {
       $variables['documents'] = $documents;
     }
   }
+
+  // Tags.
+  foreach ($node->field_tags as $tag) {
+    $tid = $tag->target_id;
+    $term = Term::load($tid);
+    $tags[] = [
+      'variant' => 'default',
+      'label' => $term->name->value,
+      'url' => $term->toUrl(),
+    ];
+    $variables['tags'] = $tags;
+  }
 }
 
 /**
