@@ -1,0 +1,11 @@
+{{ attach_library("jcc_storybook/Button") }}
+
+{% set custom_css = paragraph.field_custom_classes.value ? ' ' ~ paragraph.field_custom_classes.value : '' %}
+{% set link = content.field_link.0 %}
+
+{% include "@atoms/Button/Button.twig" with {
+  variant: 'primary' ~ custom_css,
+  size: 'normal',
+  label: link['#title'],
+  href: link['#url'] ? link['#url'] : 'javascript:void(0);',
+} %}
