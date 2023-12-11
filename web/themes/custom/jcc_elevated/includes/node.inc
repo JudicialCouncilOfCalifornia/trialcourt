@@ -130,16 +130,18 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
 
   $basic_page = Node::load($node->id());
   if ($basic_page->hasField('field_node_reference')) {
-    $relatednewsdata = [];
+    $relatednewsdata = [];   
     $relatednews = $basic_page->get('field_node_reference');
     foreach ($relatednews->referencedEntities() as $news) {
-      $relatednewsdata[] = [
-        'title' => $news->getTitle(),
-        'url' => $news->toUrl()->toString(),
+      $link = [
+        '#markup' => '<a href="' . $news->toUrl()->toString() . '">' . $news->getTitle() . '</a>'
       ];
+      $relatednewsdata[] = [
+        'text' => $link,
+      ];      
     }
-    $variables['relatednewsdata'] = $relatednewsdata;
-  }
+    $variables['relatednewsdata'] = $relatednewsdata; 
+    }     
 
  $sidebarimages = [];
   foreach ($node->field_media_file_multiple as $media_file) {

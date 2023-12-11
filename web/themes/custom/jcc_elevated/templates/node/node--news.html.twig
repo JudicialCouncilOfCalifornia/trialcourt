@@ -155,28 +155,13 @@
      subheading: "",
      aside: sidebarimages
     } %}   
-    
-    <p>Related News</p>
     <hr />
-    {% if relatednewsdata %}
-      <ul style="list-style-type: none; padding: 0; margin: 0;">
-    {% for news in relatednewsdata %}
-      <li>
-        <a href="{{news.url}}">{{news.title}}</a>
-      </li>      
-    {% endfor %}  
-  </ul>  
-  {% endif %}   
-
-<p>Trying with List component here</p>
-{% if documents %}
-     {% set attachments %} 
-  {% include "@molecules/List/List.twig" with {
-        variant: 'none',
-        heading: 'Related News',
-        items: relatednewsdata,
+    {% if relatednewsdata %}     
+     {% include "@molecules/List/List.twig" with {
+          variant: 'none',
+          heading: 'Related News',
+          items: relatednewsdata,
       } %}  
-    {% endset %} 
   {% endif %}
   </div>
   {% endblock %}
