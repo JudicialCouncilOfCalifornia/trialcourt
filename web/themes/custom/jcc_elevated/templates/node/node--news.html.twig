@@ -74,6 +74,9 @@
 {{ attach_library("jcc_storybook/Brow") }}
 {{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/Body") }}
+{{ attach_library("jcc_storybook/Card") }}
+{{ attach_library("jcc_storybook/List") }}
 
 {% set components = [] %}
 {% for k, component in content.field_components if k|first != "#" %}
@@ -81,26 +84,85 @@
 {% endfor %}
 
 <article{{ attributes }}>
-  {% block layout %}
+  {% block layout %} 
+
+  {% set card_image = content.field_media|render ? content.field_media : '' %}
+  {% set hangover_content %}
+    {% include "@molecules/Card/Card.twig" with {
+      variant: "media-right",
+      aspect: [],
+      clickable_card: false,
+      background: null,
+      media: card_image,
+      caption_overlay: true,
+      citation: "Some citation text here",
+      media_caption: {
+      show: true,
+      text: "media caption if provided*",
+    },
+    } %} 
+  {% endset %} 
 
     {% include "@molecules/HeroHangover/HeroHangover.twig" with {
-      background: 'base-light-xx',
-      media: false,
-      attributes: create_attribute(),
-      brow: {
-        part_one: node.field_news_type.0.entity.name.value,
-        part_two: content.field_date|render|striptags,
-      },
-      heading: label,
-      text: content.field_byline|render|striptags,
-    } %}
+  hangover_hide_compact: false,
+  hangover_offset: 22,
+  background: striped-base-light,
+  brow: {
+    variant: 'default',
+    part_one: content.field_news_type,
+    part_two: content.field_date, 
+  },
+  heading: node.title.value,
+  news_header: true,
+  text: content.field_byline,
+  hangover_content: hangover_content  
+} %}
 
-    {% include "@organisms/Section/Section.twig" with {
+
+{% set sidebarimages %}
+  {% for image in sidebarimages %}
+    {% set sidebar_image = '' %}
+      {% if image.url %}
+        {% set sidebar_image %}
+          {% set media_uri = profile.image.field_media_image.entity.uri.value %}
+          <img src={{image.url}}>
+        {% endset %}
+      {% endif %}
+
+    {% include "@molecules/Card/Card.twig" with {
+      variant: "media-right",
+      aspect: [],
+      clickable_card: false,
+      background: null,
+      media: sidebar_image | raw,
+      caption_overlay: true,
+      citation: image.citation,
+      media_caption: {
+      show: true,
+      text: image.caption,
+    },
+    } %} 
+    {% endfor %}
+{% endset %}   
+
+
+  <div class="container">
+    {% include "@molecules/Body/Body.twig" with {
       variant: "default",
-      first_component: false,
-      sub_component_layout: "stack",
-      sub_component_data: components,
-    } %}
-
+     heading: "",
+     lead: content.body,
+     content: "",
+     subheading: "",
+     aside: sidebarimages
+    } %}   
+    <hr />
+    {% if relatednewsdata %}     
+     {% include "@molecules/List/List.twig" with {
+          variant: 'none',
+          heading: 'Related News',
+          items: relatednewsdata,
+      } %}  
+  {% endif %}
+  </div>
   {% endblock %}
 </article>

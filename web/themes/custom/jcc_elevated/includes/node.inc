@@ -10,6 +10,7 @@ use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -125,7 +126,35 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
   $output = \Drupal::service('renderer')->render($render_array);
   $variables['components_teaser'] =
     mb_strimwidth(trim(strip_tags($output)), 0, 250, '...');
-}
+
+    $basic_page = Node::load($node->id());
+    if ($basic_page->hasField('field_node_reference')) {
+      $relatednewsdata = [];   
+      $relatednews = $basic_page->get('field_node_reference');
+      foreach ($relatednews->referencedEntities() as $news) {
+        $link = [
+          '#markup' => '<a href="' . $news->toUrl()->toString() . '">' . $news->getTitle() . '</a>'
+        ];
+        $relatednewsdata[] = [
+          'text' => $link,
+        ];      
+      }
+      $variables['relatednewsdata'] = $relatednewsdata; 
+      }     
+  
+   $sidebarimages = [];
+    foreach ($node->field_media_file_multiple as $media_file) {
+      $media = Media::load($media_file->target_id);
+      $uri = $media->field_media_image->entity->getFileUri();   
+      $media_url = file_create_url($uri);  
+      $sidebarimages[] = [
+        'caption' => $media->get('field_media_caption')->value,
+        'citation' => $media->get('field_media_citation')->value,
+        'url' => $media_url,    
+      ];
+    }
+    $variables['sidebarimages'] = $sidebarimages;
+  }  
 
 /**
  * Node: Alerts preprocess.
