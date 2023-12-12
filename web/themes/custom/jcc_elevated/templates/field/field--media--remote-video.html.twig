@@ -1,3 +1,5 @@
+{{ attach_library('jcc_elevated/colorboxAccessibility') }}
+
 {%
   set title_classes = [
   label_display == 'visually_hidden' ? 'visually-hidden',
@@ -13,7 +15,11 @@
     </div>
   {% else %}
     {% for item in items %}
-      {{ item.content }}
+      {% set custom_content = item.content %}
+      {% set attr = custom_content['#attributes'] %}
+      {% set attr = attr|merge({'tabindex': '0'}) %}
+      {% set custom_content = custom_content|merge({'#attributes': attr}) %}
+      {{ custom_content }}
     {% endfor %}
   {% endif %}
 {% else %}
