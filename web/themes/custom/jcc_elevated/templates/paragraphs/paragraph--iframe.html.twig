@@ -1,4 +1,5 @@
 {{ attach_library("jcc_storybook/Iframe") }}
+{{ attach_library("jcc_custom/iframeresizer") }}
 
 <div class="container">
   {% include "@molecules/Iframe/Iframe.twig" with {
@@ -8,3 +9,12 @@
   } %}
 </div>
 
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function(event) {
+    let iframe = document.getElementsByTagName("iframe")[0];
+    if (iframe) {
+      let iframeID = '#' + document.getElementsByTagName("iframe")[0].id;
+      iFrameResize({lowestElement: true}, iframeID);
+    }
+  });
+</script>
