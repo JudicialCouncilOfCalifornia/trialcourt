@@ -147,7 +147,7 @@ function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'editor_link_dialog') {
     $form['link_to_file'] = [
       '#type'          => 'checkbox',
-      '#title'         => t('Link media to file'),
+      '#title'         => t('Link media to file when saving'),
       '#required'      => FALSE,
       '#default_value' => FALSE,
     ];
@@ -176,6 +176,9 @@ function jcc_custom_elevated_link_to_file_submit(&$form, $form_state) {
         $form_state->setValue('href_dirty_check', $file_url);
         $form_state->setValue('attributes', [
           'href' => $file_url,
+          'data-entity-type' => '',
+          'data-entity-uuid' => '',
+          'data-entity-substitution' => '',
         ]);
       }
     }
