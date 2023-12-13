@@ -32,6 +32,10 @@ class PathFromUrl extends ProcessPluginBase {
    */
   public function transform($value, MigrateExecutableInterface $migrateExecutable, Row $row, $destinationProperty) {
 
+    if (empty($value)) {
+      return $value;
+    }
+
     $path = parse_url($value, PHP_URL_PATH);
 
     // Remove trailing slash.
@@ -40,7 +44,7 @@ class PathFromUrl extends ProcessPluginBase {
 
     $remove_extension = !empty($this->configuration['remove_extension']) ? $this->configuration['remove_extension'] : FALSE;
     if ($remove_extension) {
-      $path = substr($path, 0 , (strrpos($path, ".")));
+      $path = substr($path, 0, (strrpos($path, ".")));
     }
 
     return $path;
