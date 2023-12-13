@@ -283,7 +283,7 @@ function _jcc_ckeditor_link_parse_url_field(?string $href, array $input = []) {
   }
 
   // If we are dealing with a media link.
-  if ((isset($input['data-link-type']) && $input['data-link-type'] == 'media_link') || preg_match('/^\/media/', $href,)) {
+  if ((isset($input['data-link-type']) && $input['data-link-type'] == 'media_link') || (isset($href) && preg_match('/^\/media/', $href,))) {
     preg_match('/media(.*)/', $href, $matches);
     return [
       'type' => $input['data-link-type'] ?? 'media_link',
@@ -293,7 +293,7 @@ function _jcc_ckeditor_link_parse_url_field(?string $href, array $input = []) {
 
   // If we are dealing with a map link.
   if ((isset($input['data-link-type']) && $input['data-link-type'] == 'map')
-    || preg_match('/(^geo:|^maps:|map|^comgooglemaps:)(.*?)/', $href, $matches)) {
+    || (isset($href) && preg_match('/(^geo:|^maps:|map|^comgooglemaps:)(.*?)/', $href, $matches))) {
 
     return [
       'type' => 'map',
