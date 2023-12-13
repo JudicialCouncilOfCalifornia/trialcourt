@@ -73,7 +73,7 @@ class LinkitWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-
+    $is_nolink = '';
     $item = $items[$delta];
     $uri = $item->uri;
     if ($uri !== NULL) {
