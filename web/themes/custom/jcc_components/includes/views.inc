@@ -430,8 +430,13 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
           $body_content = "";
           if ($view->field['field_department']->advancedRender($row) != "") {
             $body_content = $view->field['field_department']->advancedRender($row)->__toString() . '<br>';
-          }
-          $body_content .= $view->field['field_address']->advancedRender($row)->__toString();
+          }         
+          $renderedContent = $view->field['field_address']->advancedRender($row);
+          if (is_object($renderedContent) && method_exists($renderedContent, '__toString')) {
+            $body_content .= $renderedContent->__toString();
+          } else {
+            $body_content .= $renderedContent;
+          }        
           $view->element['#custom_items'][$key]['body'] = Markup::create($body_content);
           if ($view->field['field_custom_link']->advancedRender($row) != "") {
             $link_uri = $view->field['field_custom_link']->advancedRender($row)->__toString();
