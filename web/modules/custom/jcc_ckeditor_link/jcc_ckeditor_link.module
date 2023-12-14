@@ -1,0 +1,432 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for JCC CKEditor links module.
+ */
+
+use Drupal\Component\Utility\UrlHelper;
+use Drupal\Component\Utility\Xss;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_editor_js_settings_alter().
+ */
+function jcc_ckeditor_editor_js_settings_alter(array &$settings) {
+
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function jcc_ckeditor_link_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state) {
+  $user_input = $form_state->getUserInput();
+
+  $input = $user_input['editor_object'] ?? [];
+
+  $url_field = _jcc_ckeditor_link_parse_url_field($input['href'] ?? NULL, $input);
+
+  // Remove captcha from this form.
+  if ($form['captcha']) {
+    $form['captcha']['#access'] = FALSE;
+  }
+
+  // Setup link type field.
+  $type_help_text = [
+    t('Use <strong>Link</strong> for standard links (internal and external).'),
+    t('Use <strong>Link to Media</strong> for linking to site files and media items.'),
+    t('Use <strong>Email link</strong> for links that auto open up a users email client.'),
+    t('Use <strong>Telephone</strong> for a link that initiates a phone call.'),
+    t('Use <strong>Map/GeoLocation link</strong> for a link that opens a map app to a desired location.'),
+  ];
+
+  // Link type needs to be in this if/else setup because of render order issue.
+  if (isset($form['link_type'])) {
+    $form['link_type']['#options']['link'] = t('Link');
+    if (isset($form['attributes']['media_library'])) {
+      $form['link_type']['#options']['media_link'] = t('Link to Media item');
+    }
+    $form['link_type']['#options']['mailto'] = t('Email link');
+    $form['link_type']['#options']['tel'] = t('Telephone');
+    $form['link_type']['#options']['map'] = t('Map');
+    $form['link_type']['#description'] = implode("<br>", $type_help_text);
+    $form['link_type']['#weight'] = -333;
+  }
+  else {
+    // Options are added below as needed.
+    $form['link_type'] = [
+      '#type' => 'select',
+      '#title' => t('Link type'),
+      '#options' => [],
+      '#default_value' => $url_field['type'],
+      '#weight' => -333,
+      '#description' => implode("<br>", $type_help_text),
+    ];
+    $form['link_type']['#options']['link'] = t('Link');
+    if (isset($form['attributes']['media_library'])) {
+      $form['link_type']['#options']['media_link'] = t('Link to Media item');
+    }
+    $form['link_type']['#options']['mailto'] = t('Email link');
+    $form['link_type']['#options']['tel'] = t('Telephone');
+    $form['link_type']['#options']['map'] = t('Map');
+  }
+
+  // Modify the URL/Href field.
+  $href_help_text = [
+    t('• For internal links to pages and files in this website, use a relative URL.'),
+    t('• <em>Example "/path/to/my/page" or "/path/to/my/file.pdf").</em>'),
+    t('• <strong>Try to avoid absolute urls to internal pages.</strong>'),
+    t('• For external links, make sure to use "https" in the URL'),
+    t('• <em>Example "https://www.google.com" instead of "http://www.google.com"</em>'),
+  ];
+
+  if (isset($form['attributes']['href_help']['#description'])) {
+    array_unshift($form['attributes']['href_help']['#description'], $href_help_text);
+  }
+
+  $form['attributes']['href_help']['#type'] = 'fieldset';
+  $form['attributes']['href_help']['#title'] = 'Notes:';
+  $form['attributes']['href_help']['#weight'] = 99;
+  $form['attributes']['href_help']['#description'] = implode("<br>", $href_help_text);
+  $form['attributes']['href_help']['#description_display'] = 'before';
+  $form['attributes']['href_help']['#states'] = [
+    'visible' => [
+      'select[name="link_type"]' => [
+        ['value' => 'link'],
+      ],
+    ],
+  ];
+
+  $form['attributes']['href']['#states'] = [
+    'visible' => [
+      'select[name="link_type"]' => [
+        ['value' => 'link'],
+        ['value' => 'media_link'],
+      ],
+    ],
+  ];
+
+  // Modify the Media link field.
+  if (isset($form['link_type']['#options']['media_link'])) {
+    $form['attributes']['media_library']['#weight'] = -98;
+    $form['attributes']['media_library']['#states'] = [
+      'visible' => [
+        'select[name="link_type"]' => ['value' => 'media_link'],
+      ],
+    ];
+  }
+
+  // Set up the Email link.
+  $form['attributes']['mailto'] = [
+    '#type' => 'fieldset',
+    '#description' => t('This will create a "mailto:" type of link. It will automatically open a users preferred system email client, with any of the below items preset.'),
+    '#description_display' => 'before',
+    '#states' => [
+      'visible' => [
+        'select[name="link_type"]' => ['value' => 'mailto'],
+      ],
+    ],
+  ];
+
+  $form['attributes']['mailto']['email'] = [
+    '#title' => t('Email'),
+    '#type' => 'email',
+    '#default_value' => $url_field['mailto']['email'] ?? $input['data-link-email'] ?? '',
+    '#maxlength' => 2048,
+  ];
+
+  $form['attributes']['mailto']['subject'] = [
+    '#title' => t('Subject'),
+    '#type' => 'textfield',
+    '#default_value' => $url_field['mailto']['subject'] ?? $input['data-link-subject'] ?? '',
+    '#maxlength' => 2048,
+  ];
+
+  $form['attributes']['mailto']['body'] = [
+    '#title' => t('Body'),
+    '#type' => 'textarea',
+    '#default_value' => $url_field['mailto']['body'] ?? $input['data-link-body'] ?? '',
+    '#maxlength' => 2048,
+  ];
+
+  // Set up the Telephone link.
+  $form['attributes']['tel_wrapper'] = [
+    '#type' => 'fieldset',
+    '#description' => t('This will create a "tel:" type of link. It will automatically initiate a phone call on mobile, or open a preferred app on a users computer, such as Skype.'),
+    '#description_display' => 'before',
+    '#states' => [
+      'visible' => [
+        'select[name="link_type"]' => ['value' => 'tel'],
+      ],
+    ],
+  ];
+
+  $form['attributes']['tel_wrapper']['tel'] = [
+    '#title' => t('Telephone number'),
+    '#type' => 'tel',
+    '#default_value' => $url_field['tel']['number'] ?? $input['data-link-tel'] ?? '',
+    '#maxlength' => 2048,
+  ];
+
+  // Set up the Map link.
+  $map_help_text = [
+    t('Please enter the Latitude and Longitude <strong>OR</strong> an inline Address/Search.'),
+    t('Example: <em>"123 Street, City, CA 12345"</em> or <em>"Restaurants near San Francisco"</em>'),
+  ];
+  $form['attributes']['map'] = [
+    '#type' => 'fieldset',
+    '#description_display' => 'before',
+    '#description' => implode("<br>", $map_help_text),
+    '#states' => [
+      'visible' => [
+        'select[name="link_type"]' => ['value' => 'map'],
+      ],
+    ],
+  ];
+
+  $form['attributes']['map']['latitude'] = [
+    '#title' => t('Latitude'),
+    '#type' => 'textfield',
+    '#default_value' => $url_field['map']['latitude'] ?? $input['data-link-latitude'] ?? '',
+    '#maxlength' => 60,
+  ];
+
+  $form['attributes']['map']['longitude'] = [
+    '#title' => t('Longitude'),
+    '#type' => 'textfield',
+    '#default_value' => $url_field['map']['longitude'] ?? $input['data-link-longitude'] ?? '',
+    '#maxlength' => 60,
+  ];
+
+  $form['attributes']['map']['address'] = [
+    '#title' => t('Address'),
+    '#type' => 'textfield',
+    '#default_value' => $url_field['map']['address'] ?? $input['data-link-address'] ?? '',
+    '#maxlength' => 120,
+  ];
+
+  // Add the handler to process all the attributes into useful urls.
+  $form['#submit'][] = '_jcc_ckeditor_link_submit_handler';
+
+}
+
+/**
+ * Custom handler for CKEditor link form.
+ */
+function _jcc_ckeditor_link_submit_handler(array &$form, FormStateInterface $form_state) {
+  $form_values = $form_state->getValues();
+
+  if ($form_values['link_type'] == 'mailto') {
+    $form_state->setValue('attributes', [
+      'href' => 'mailto:' . _jcc_ckeditor_link_build_mailto_link($form_values['attributes']['mailto']),
+      'data-link-type' => $form_values['link_type'],
+      'data-link-email' => $form_values['attributes']['mailto']['email'],
+      'data-link-subject' => $form_values['attributes']['mailto']['subject'],
+      'data-link-body' => $form_values['attributes']['mailto']['body'],
+    ]);
+  }
+
+  elseif ($form_values['link_type'] == 'tel') {
+    $form_state->setValue('attributes', [
+      'href' => 'tel:' . $form_values['attributes']['tel_wrapper']['tel'],
+      'data-link-type' => $form_values['link_type'],
+      'data-link-tel' => $form_values['attributes']['tel_wrapper']['tel'],
+    ]);
+  }
+
+  elseif ($form_values['link_type'] == 'map') {
+    $form_state->setValue('attributes', [
+      'href' => _jcc_ckeditor_link_build_map_link($form_values),
+      'data-link-type' => $form_values['link_type'],
+      'data-link-latitude' => $form_values['attributes']['map']['latitude'],
+      'data-link-longitude' => $form_values['attributes']['map']['longitude'],
+      'data-link-address' => $form_values['attributes']['map']['address'],
+    ]);
+  }
+
+  else {
+    $form_state->setValue('attributes', [
+      'href' => $form_values['attributes']['href'],
+      'data-link-type' => $form_values['link_type'],
+    ]);
+  }
+}
+
+/**
+ * Helper function to parse the link data and figure out the type.
+ */
+function _jcc_ckeditor_link_parse_url_field(?string $href, array $input = []) {
+
+  // If we are dealing with a telephone link.
+  if ((isset($input['data-link-type']) && $input['data-link-type'] == 'tel') || preg_match('/^tel:/', $href,)) {
+    preg_match('/tel:(.*)/', $href, $matches);
+    return [
+      'type' => $input['data-link-type'] ?? 'tel',
+      'tel' => [
+        'number' => $input['data-link-tel'] ?? $matches[1] ?? '',
+      ],
+    ];
+  }
+
+  // If we are dealing with an email link.
+  if ((isset($input['data-link-type']) && $input['data-link-type'] == 'mailto') || preg_match('/^mailto:/', $href,)) {
+    preg_match('/mailto:(.*?)\?(.*)/', $href, $matches);
+    parse_str($matches[2], $output);
+    return [
+      'type' => $input['data-link-type'] ?? 'mailto',
+      'mailto' => [
+        'email' => $input['data-link-email'] ?? $matches[1] ?? '',
+        'subject' => $input['data-link-subject'] ?? $output['subject'] ?? '',
+        'body' => $input['data-link-body'] ?? $output['body'] ?? '',
+      ],
+    ];
+  }
+
+  // If we are dealing with a media link.
+  if ((isset($input['data-link-type']) && $input['data-link-type'] == 'media_link') || (isset($href) && preg_match('/^\/media/', $href,))) {
+    preg_match('/media(.*)/', $href, $matches);
+    return [
+      'type' => $input['data-link-type'] ?? 'media_link',
+      'href' => $href,
+    ];
+  }
+
+  // If we are dealing with a map link.
+  if ((isset($input['data-link-type']) && $input['data-link-type'] == 'map')
+    || (isset($href) && preg_match('/(^geo:|^maps:|map|^comgooglemaps:)(.*?)/', $href, $matches))) {
+
+    return [
+      'type' => 'map',
+      'map' => [
+        'latitude' => $input['data-link-latitude'] ?? '',
+        'longitude' => $input['data-link-longitude'] ?? '',
+        'address' => $input['data-link-address'] ?? '',
+      ],
+    ];
+  }
+
+  // Default url/link return.
+  return [
+    'type' => 'link',
+    'href' => $href,
+  ];
+}
+
+/**
+ * Helper function to generate the mail url with query.
+ *
+ * @param array $values
+ *   Array of submitted values for building the email link.
+ *
+ * @return mixed|string
+ *   Url string with email data.
+ */
+function _jcc_ckeditor_link_build_mailto_link(array $values) {
+  $ret = Xss::filter($values['email']);
+
+  $params = [];
+  if ($values['subject']) {
+    $params['subject'] = Xss::filter($values['subject']);
+  }
+  if ($values['body']) {
+    $params['body'] = Xss::filter($values['body']);
+  }
+
+  if ($params) {
+    $ret .= '?' . UrlHelper::buildQuery($params);
+  }
+
+  return $ret;
+}
+
+/**
+ * Helper function to generate the map url with query.
+ *
+ * @param array $values
+ *   Array of submitted values for building the lat, long, and address query.
+ *
+ * @return string
+ *   Url string with map data.
+ */
+function _jcc_ckeditor_link_build_map_link(array $values) {
+
+  // https://maps.google.com/?ll=latitude,longitude
+  // https://www.google.com/maps/search/?api=1&query=1200%20Pennsylvania%20Ave%20SE%2C%20Washington%2C%20District%20of%20Columbia%2C%2020003
+  // geo:36,-121?q=36,-121
+  // http://maps.google.com/maps?ll=37.331044,-122.029202
+  // http://maps:q=<some+search+value>
+  // Build the params for the url (href="geo:0,0,0").
+  // For Google Maps, we need to add the lat and long as a query parameter,
+  // otherwise it won't display a pin on the map.
+  $url = 'https://maps.google.com/';
+  $query = [];
+  $key = '?q=';
+
+  if ($values['attributes']['map']['latitude']) {
+    $query[] = Xss::filter($values['attributes']['map']['latitude']) ?? '0';
+  }
+
+  if ($values['attributes']['map']['longitude']) {
+    $query[] = Xss::filter($values['attributes']['map']['longitude']) ?? '0';
+  }
+
+  if ($values['attributes']['map']['address']) {
+    $query[] = urlencode(Xss::filter($values['attributes']['map']['address']));
+  }
+
+  if (!empty($query)) {
+    $url .= $key . implode(',', $query);
+  }
+
+  return $url;
+}
+
+/**
+ * Implements hook_editor_js_settings_alter().
+ */
+function jcc_ckeditor_link_editor_js_settings_alter(array &$settings) {
+
+  $known_formats = [
+    'basic_html',
+    'full_html',
+    'body',
+    'aside',
+    'minimal',
+    'caption',
+    'snippet',
+  ];
+
+  foreach ($known_formats as $format) {
+    if (isset($settings['editor']['formats'][$format]['editorSettings']['allowedContent']['a']['attributes'])) {
+      $additional_link_attributes = [
+        'data-link-type',
+        'data-link-alias',
+        'data-link-email',
+        'data-link-subject',
+        'data-link-body',
+        'data-link-tel',
+        'data-link-location-type',
+        'data-link-latitude',
+        'data-link-longitude',
+        'data-link-address',
+        'data-link-address1',
+        'data-link-address2',
+        'data-link-city',
+        'data-link-state',
+        'data-link-zip',
+      ];
+
+      $settings['editor']['formats'][$format]['editorSettings']['allowedContent']['a']['attributes'] .= implode(',', $additional_link_attributes);
+    }
+  }
+
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function jcc_ckeditor_link_page_attachments(array &$page) {
+  if (!\Drupal::service('router.admin_context')->isAdminRoute()) {
+    $page['#attached']['library'][] = 'jcc_ckeditor_link/jcc_ckeditor_link';
+  }
+}

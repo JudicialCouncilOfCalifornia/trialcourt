@@ -5,15 +5,15 @@
  * Functions for views processing.
  */
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\media\Entity\Media;
-use Drupal\views\ViewExecutable;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -137,39 +137,9 @@ function jcc_elevated_preprocess_views_view__publication_forms(&$variables) {
  */
 function jcc_elevated_preprocess_views_view__publications__publications_list(&$variables) {
   $render = \Drupal::service('renderer');
-  $form = &$variables['exposed'];
 
-  // Remove captcha.
-  unset($form['captcha']);
-
-  // Set the placeholder and Select all text.
-  foreach (Element::children($form) as $id) {
-    $form[$id]['#title_display'] = 'none';
-    $placeholder = $form['#info']['filter-' . $id]['label'] ?? '';
-    $form[$id]['#attributes']['placeholder'] = $placeholder;
-
-    if (isset($form[$id]['#type']) && $form[$id]['#type'] == 'select') {
-      $form[$id]['#attributes']['placeholder'] = NULL;
-      if ($id != 'jcc_section') {
-        $form[$id]['#options']['All'] = t('- @label -', ['@label' => $placeholder]);
-      }
-      $form['#info']['filter-' . $id]['label'] = '';
-    }
-  }
-
-  // Add a label to the form.
-  $form['search_label'] = [
-    '#type' => 'html_tag',
-    '#tag' => 'h2',
-    '#value' => t('Search and Filter'),
-    '#weight' => '-99',
-  ];
-
-  // Style the submit and reset buttons.
-  $form['actions']['submit']['#attributes']['class'][] = 'button--secondary button--normal';
-  if (isset($form['actions']['reset'])) {
-    $form['actions']['reset']['#attributes']['class'][] = 'button--primary button--normal';
-  }
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
 
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
@@ -364,16 +334,23 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
     $node = $row['#row']->_entity;
     $media = $node->get('field_media')->target_id ? Media::load($node->get('field_media')->target_id) : '';
     $name = $node->get('title')->value ? $node->get('title')->value : '';
-    $title = $node->get('field_job_title')->target_id ? Term::load($node->get('field_job_title')->target_id)->get('name')->value : '';
-    $division = $node->get('field_division')->target_id ? Term::load($node->get('field_division')->target_id)->get('name')->value : '';
-    $start_date = $node->field_date->date ? $node->field_date->date->format('Y') : '';
+    $title = Term::load($node->get('field_job_title')->target_id) ? Term::load($node->get('field_job_title')->target_id)->get('name')->value : '';
+    $division = Term::load($node->get('field_division')->target_id) ? Term::load($node->get('field_division')->target_id)->get('name')->value : '';
     $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id());
+    // Service time.
+    $start_date = $node->field_date->date ? $node->field_date->date->format('Y') : '';
+    $retirement_date = $node->field_retirement_date->date ? $node->field_retirement_date->date->format('Y') : '';
+    $service_time = 'Since ' . $start_date;
+    if ($retirement_date) {
+      $service_time = 'From ' . $start_date . ' to ' . $retirement_date;
+    }
+
     $person = [
       'image' => $media,
       'name' => $name,
       'title' => $title,
       'division' => $division,
-      'content' => 'Since ' . $start_date,
+      'content' => $service_time,
       'url' => $url,
     ];
     array_push($persons, $person);
@@ -398,51 +375,79 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
  * Implements hook_preprocess_HOOK() for justices and judges block view.
  */
 function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables) {
+  // Reuse current justices/judges as common preprocess.
+  jcc_elevated_preprocess_views_view__justices_judges__current($variables);
+}
+
+/**
+ * Implements hook_preprocess_views_view() for job search listing block.
+ */
+function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
+  $render = \Drupal::service('renderer');
+
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
+
   if (empty($variables['rows'][0]['#rows'])) {
     return;
   }
 
-  $persons = [];
+  $jobs = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
-    $node = $row['#row']->_entity;
-    $media = $node->get('field_media')->target_id ? Media::load($node->get('field_media')->target_id) : '';
-    $name = $node->get('title')->value ? $node->get('title')->value : '';
-    $title = $node->get('field_job_title')->target_id ? Term::load($node->get('field_job_title')->target_id)->get('name')->value : '';
-    $division = $node->get('field_division')->target_id ? Term::load($node->get('field_division')->target_id)->get('name')->value : '';
-    $start_date = $node->field_date->date ? $node->field_date->date->format('Y') : '';
-    $retirement_date = $node->field_retirement_date->date ? $node->field_retirement_date->date->format('Y') : '';
-    $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id());
+    $node = $row['#node'];
 
-    if ($retirement_date) {
-      $active_date = 'From ' . $start_date . ' to ' . $retirement_date;
+    // Render deadline date.
+    $deadline = $node->get('unpublish_on')->value ? date('F j, Y', $node->get('unpublish_on')->value) : '';
+    // If no deadline or 12/12/9999.
+    if (!$deadline || $deadline === 'December 12, 9999') {
+      $deadline = t('Open Until Filled');
     }
-    else {
-      'Since ' . $start_date;
+
+    // Get teaser.
+    $teaser = $node->get('body') ?? '';
+    if ($teaser) {
+      $teaser = $node->get('body')->view('teaser');
+      $teaser = strval($render->render($teaser));
+      $teaser = strip_tags($teaser);
     }
-    $person = [
-      'image' => $media,
-      'name' => $name,
-      'title' => $title,
-      'division' => $division,
-      'content' => $active_date,
-      'url' => $url,
+
+    // Get locations.
+    $locations = __jcc_get_job_locations($node);
+
+    // Assemble details.
+    $detail_list_data = [
+      'details' => array_filter([
+        $locations ? $locations . ', CA' : '',
+        $node->get('field_is_temporary')->value ? 'Temporary' : 'Regular' . ' Employment',
+      ]),
     ];
-    array_push($persons, $person);
+
+    $job = [
+      'id' => $node->get('field_job_id')->value ? 'ID: ' . $node->get('field_job_id')->value : '',
+      'deadline' => $deadline ? ['#markup' => Html::decodeEntities('<strong>Deadline:</strong> ' . $deadline)] : '',
+      'type' => Term::load($node->get('field_job_type')->target_id) ? Term::load($node->get('field_job_type')->target_id)->get('name')->value : '',
+      'title' => [
+        'text' => $node->get('title')->value ?? '',
+        'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
+      ],
+      'teaser' => $teaser,
+      'detail_list_data' => $detail_list_data,
+    ];
+    $jobs[] = $job;
   }
 
-  // Group justices by division.
-  $profiles = [];
-  foreach ($persons as $person) {
-    if ($person['division']) {
-      $division = $person['division'];
-      $profiles[$division][] = $person;
-    }
-    else {
-      $profiles['Unassigned'][] = $person;
-    }
-  }
+  // Count summary for the current page of results.
+  $jobs['count_summary'] = $variables['header']['result']['#markup'] ?? '';
 
-  $variables['profiles'] = $profiles;
+  $variables['jobs'] = $jobs;
+}
+
+/**
+ * Implements hook_preprocess_views_view() for job search listing page.
+ */
+function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
+  // Reuse current jobs search block as common preprocess.
+  jcc_elevated_preprocess_views_view__jobs__search($variables);
 }
 
 /**
@@ -568,4 +573,45 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
 function jcc_elevated_validate_date(string $date, string $format = 'Y-m-d'): bool {
   $d = DateTime::createFromFormat($format, $date);
   return $d && $d->format($format) === $date;
+}
+
+/**
+ * Helper function to apply exposed filter UI customizations.
+ */
+function __jcc_view_results_exposed_filter_init(&$variables) {
+  $form = &$variables['exposed'];
+
+  // Remove captcha.
+  unset($form['captcha']);
+
+  // Set the placeholder and Select all text.
+  foreach (Element::children($form) as $id) {
+    $placeholder = $form['#info']['filter-' . $id]['label'] ?? '';
+    $form[$id]['#attributes']['placeholder'] = $placeholder;
+
+    if (isset($form[$id]['#type']) && $form[$id]['#type'] == 'select') {
+      // Set label as 'select all' option label.
+      $form[$id]['#attributes']['placeholder'] = NULL;
+      if ($id != 'jcc_section') {
+        $form[$id]['#options']['All'] = t('- @label -', ['@label' => $placeholder]);
+      }
+      // Visually hide field label for accessibility.
+      // form-element-label.html.twig.
+      $form[$id]['#title_display'] = 'invisible';
+    }
+  }
+
+  // Add a label to the form.
+  $form['search_label'] = [
+    '#type' => 'html_tag',
+    '#tag' => 'h2',
+    '#value' => t('Search and Filter'),
+    '#weight' => '-99',
+  ];
+
+  // Style submit and reset buttons.
+  $form['actions']['submit']['#attributes']['class'][] = 'button button--secondary button--normal';
+  if (isset($form['actions']['reset'])) {
+    $form['actions']['reset']['#attributes']['class'][] = 'button button--secondary button--normal';
+  }
 }

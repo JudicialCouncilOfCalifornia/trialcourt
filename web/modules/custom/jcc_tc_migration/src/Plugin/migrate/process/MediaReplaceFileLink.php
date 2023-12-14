@@ -32,7 +32,9 @@ class MediaReplaceFileLink extends ProcessPluginBase {
    */
   public function transform($value, MigrateExecutableInterface $migrateExecutable, Row $row, $destinationProperty) {
 
-    $value = \Drupal::service('jcc_tc_migration.media_replace_file_link')->replace($value);
+    if (!empty($value)) {
+      $value = \Drupal::service('jcc_tc_migration.media_replace_file_link')->replace($value);
+    }
 
     return $value;
   }

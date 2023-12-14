@@ -5,6 +5,7 @@
  * Preprocess and functions for node types and components.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -123,8 +124,10 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
   // Render and truncate field_components.
   $render_array = $node->field_components->view('default');
   $output = \Drupal::service('renderer')->render($render_array);
-  $variables['components_teaser'] =
-    mb_strimwidth(trim(strip_tags($output)), 0, 250, '...');
+  if ($output !== NULL) {
+    $variables['components_teaser'] =
+      mb_strimwidth(trim(strip_tags($output)), 0, 250, '...');
+  }
 }
 
 /**
@@ -180,7 +183,7 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
 }
 
 /**
- * Node: Subpage preprocess.
+ * Node: Justices & Judges preprocess.
  *
  * @param array $variables
  *   The preprocess variables.
@@ -193,12 +196,11 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node) {
     $media = Media::load($media_file->target_id);
     $media_name = $media->name->value;
     if ($media->get('field_document_type')->target_id) {
-      $doc_type = Term::load($media->get('field_document_type')->target_id)->get('name')->value;
+      $doc_type = Term::load($media->get('field_document_type')->target_id) ? Term::load($media->get('field_document_type')->target_id)->get('name')->value : '';
     }
     if ($media->get('field_media_file_multiple')->target_id) {
       $file = File::load($media->get('field_media_file_multiple')->target_id);
-      $file_url = \Drupal::service('file_url_generator')
-        ->generateAbsoluteString($file->uri->value);
+      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
       // Profile doc as download link, else general docs.
       if ($doc_type && $doc_type == 'Profile') {
         $variables['profile_download'] = [
@@ -227,6 +229,115 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node) {
     ];
     $variables['tags'] = $tags;
   }
+}
+
+/**
+ * Node: Job preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_job(array &$variables, NodeInterface $node) {
+  // Get locations.
+  $locations = __jcc_get_job_locations($node);
+
+  // Get salary.
+  // Declare currency formatter in USD without cents.
+  $usd_format = new NumberFormatter('en_EN', NumberFormatter::CURRENCY);
+  $usd_format->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
+  // Get and format values.
+  $salary_min = $node->get('field_job_salary')->getValue()[0]['from'] ?? '';
+  if ($salary_min) {
+    $salary_min = $usd_format->formatCurrency($salary_min, 'USD');
+  }
+  $salary_max = $node->get('field_job_salary')->getValue()[0]['to'] ?? '';
+  if ($salary_max) {
+    $salary_max = $usd_format->formatCurrency($salary_max, 'USD');
+  }
+  $salary = '';
+  // If salary range or not.
+  if ($salary_min && $salary_max) {
+    $salary = $salary_min . ' to ' . $salary_max;
+  }
+  else {
+    if ($salary_min) {
+      $salary = $salary_min;
+    }
+    elseif ($salary_max) {
+      $salary = $salary_max;
+    }
+  }
+
+  // Publishing schedule.
+  // Using 'created' time since scheduler 'publish_on' is removed on publish.
+  // And 'created' will sync with last known 'publish_on' value when set.
+  $posted = $node->get('created')->value ? date('F j, Y', $node->get('created')->value) : '';
+  $deadline = $node->get('unpublish_on')->value ? date('F j, Y', $node->get('unpublish_on')->value) : '';
+  // If no deadline or 12/12/9999.
+  if (!$deadline || $deadline === 'December 12, 9999') {
+    $deadline = t('Open Until Filled');
+  }
+
+  // Custom apply button if used.
+  $custom_apply = [];
+  if ($node->get('field_custom_link')) {
+    $custom_apply = [
+      'label' => $node->get('field_custom_link')->title ?? '',
+      'url' => $node->get('field_custom_link')->uri ?? '',
+    ];
+  }
+
+  // Boilerplate message.
+  $boilerplate_msg = t('The Judicial Council of California Is an Equal Opportunity Employer.');
+  $boilerplate = ['#markup' => Html::decodeEntities('<p><em>' . $boilerplate_msg . '</em></p>')];
+
+  // Refined job details object.
+  $job = [
+    'details' => [
+      'job_id' => [
+        'label' => t('Job ID'),
+        'value' => $node->get('field_job_id')->value ?? '',
+      ],
+      'job_type' => [
+        'label' => t('Full/Part-Time'),
+        'value' => Term::load($node->get('field_job_type')->target_id) ? Term::load($node->get('field_job_type')->target_id)->get('name')->value : t('Full-Time'),
+      ],
+      'location' => [
+        'label' => t('Location'),
+        'value' => $locations,
+      ],
+      'office' => [
+        'label' => t('Office'),
+        'value' => Term::load($node->get('field_office')[0]->target_id) ? Term::load($node->get('field_office')[0]->target_id)->get('name')->value : '',
+      ],
+      'Department' => [
+        'label' => t('Department'),
+        'value' => Term::load($node->get('field_department')[0]->target_id) ? Term::load($node->get('field_department')[0]->target_id)->get('name')->value : '',
+      ],
+      'salary' => [
+        'label' => t('Salary'),
+        'value' => $salary ? $salary . ' ' . t('per month') : '',
+      ],
+      'is_temporary' => [
+        'label' => t('Regular/Temporary'),
+        'value' => $node->get('field_is_temporary')->value ? t('Temporary') : t('Regular'),
+      ],
+      'deadline' => [
+        'label' => t('Deadline'),
+        'value' => $deadline,
+      ],
+      'posted' => [
+        'label' => t('Posted'),
+        'value' => $posted,
+      ],
+    ],
+    'custom_apply' => $custom_apply,
+    'boilerplate' => $boilerplate,
+  ];
+
+  $variables['job'] = $job;
 }
 
 /**

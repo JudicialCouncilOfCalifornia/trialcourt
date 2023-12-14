@@ -5,3 +5,10 @@ jcc_elevated_embeds.content_stream_embed_override_settings:
     _title: "JCC Elevated: Embeddable settings"
   requirements:
     _permission: "administer site configuration"
+jcc_elevated_embeds.autocomplete.zip_city_county_info:
+  path: '/jcc-elevated/embeds/autocomplete/zcs'
+  defaults:
+    _controller: '\Drupal\jcc_elevated_embeds\Controller\JccElevatedEmbedZipCityCountyAutoCompleteController::handleAutocomplete'
+    _format: json
+  requirements:
+    _permission: 'access content'
