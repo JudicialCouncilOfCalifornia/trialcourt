@@ -102,7 +102,9 @@ class LinkitFormatter extends LinkFormatter {
     // encoded by the core link field formatter.
     foreach ($items as $delta => $item) {
       $link_value = $item->getValue();
-      $link_value['uri'] = rawurldecode($link_value['uri']);
+      if (isset($link_value['uri']) && $link_value['uri'] !== NULL) {
+        $link_value['uri'] = rawurldecode($link_value['uri']);
+      }
       $item->setValue($link_value);
       $items[$delta] = $item;
     }

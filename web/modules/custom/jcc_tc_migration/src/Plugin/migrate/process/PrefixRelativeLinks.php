@@ -31,7 +31,9 @@ class PrefixRelativeLinks extends ProcessPluginBase {
    */
   public function transform($value, MigrateExecutableInterface $migrateExecutable, Row $row, $destinationProperty) {
 
-    $value = \Drupal::service('jcc_tc_migration.prefix_relative_links')->replace($value);
+    if (!empty($value)) {
+      $value = \Drupal::service('jcc_tc_migration.prefix_relative_links')->replace($value);
+    }
 
     return $value;
   }

@@ -419,7 +419,9 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
    *   The machine name.
    */
   protected function convertLabelToMachineName(string $label): string {
-    return mb_strtolower(preg_replace('/[^a-z0-9_]+/ui', '_', $label));
+    if ($label !== NULL) {
+      return mb_strtolower(preg_replace('/[^a-z0-9_]+/ui', '_', $label));
+    } 
   }
 
   /**

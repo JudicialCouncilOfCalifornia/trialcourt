@@ -128,14 +128,14 @@
       } %}
     {% endset %}
   {% endif %}
-  
-  {% set date %}
-    {% if node.field_retirement_date.value %}
-      {{ 'From ' ~ node.field_date.value|date('Y') ~ ' to ' ~ node.field_retirement_date.value|date('Y')}}
-    {% else %}
-      {{ 'Since ' ~ node.field_date.value|date('Y') }}
-    {% endif %}
-  {% endset %}
+
+  {# Service time. #}
+  {% set start_date = node.field_date.value is not empty ? node.field_date.value|date('Y') : '' %}
+  {% set retire_date = node.field_retirement_date is not empty ? node.field_retirement_date.value|date('Y') : '' %}
+  {% set service_time = 'Since ' ~ start_date %}
+  {% if retire_date %}
+    {% set service_time = 'From ' ~ start_date ~ ' to ' ~ retire_date %}
+  {% endif %}
 
   {% set biography %}
     {% block bio_component %}
@@ -143,7 +143,7 @@
           name: label.0,
           title: node.field_job_title.value ? node.field_job_title.entity.label,
           division: node.field_division.value ? node.field_division.entity.label,
-          date: date,
+          date: service_time,
           content: content.body.0|render,
           share: {
             print_url: 'javascript: window.print();',

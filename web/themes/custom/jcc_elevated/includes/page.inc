@@ -248,7 +248,9 @@ function jcc_elevated_build_header_search_form(bool $mobile_version = FALSE): ar
   $form['search']['#pre_render'] = [];
   $form['search']['#process'] = [];
   $form['search']['#theme_wrappers'] = [];
-  $form['search']['#attributes']['value'] = Xss::filter($searched_value);
+  if ($searched_value !== NULL) {
+    $form['search']['#attributes']['value'] = Xss::filter($searched_value);
+  }
   $form['search']['#attributes']['name'] = $form['search']['#name'];
   $form['search']['#attributes']['class'] = [];
   $form['search']['#attributes']['id'] = $mobile_version ? 'header-search__mobile' : 'header-search';
