@@ -6,7 +6,10 @@ dependencies:
     - field.field.node.news.field_byline
     - field.field.node.news.field_components
     - field.field.node.news.field_date
+    - field.field.node.news.field_media
+    - field.field.node.news.field_media_file_multiple
     - field.field.node.news.field_news_type
+    - field.field.node.news.field_node_reference
     - node.type.news
     - workflows.workflow.editorial
   module:
@@ -68,11 +71,41 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_media:
+    type: entity_reference_autocomplete
+    weight: 26
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_media_file_multiple:
+    type: entity_reference_autocomplete
+    weight: 27
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_news_type:
     type: options_select
     weight: 0
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_node_reference:
+    type: entity_reference_autocomplete
+    weight: 28
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   langcode:
     type: language_select

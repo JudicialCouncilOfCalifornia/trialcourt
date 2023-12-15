@@ -6,7 +6,10 @@ dependencies:
     - field.field.node.news.field_byline
     - field.field.node.news.field_components
     - field.field.node.news.field_date
+    - field.field.node.news.field_media
+    - field.field.node.news.field_media_file_multiple
     - field.field.node.news.field_news_type
+    - field.field.node.news.field_node_reference
     - node.type.news
   module:
     - datetime
@@ -56,6 +59,22 @@ content:
     third_party_settings: {  }
     weight: 2
     region: content
+  field_media:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_media_file_multiple:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 6
+    region: content
   field_news_type:
     type: entity_reference_label
     label: hidden
@@ -63,6 +82,14 @@ content:
       link: false
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_node_reference:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 7
     region: content
 hidden:
   entity_print_view_epub: true

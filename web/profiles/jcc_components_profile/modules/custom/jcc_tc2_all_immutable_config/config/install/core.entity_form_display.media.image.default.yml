@@ -2,9 +2,10 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.media.image.field_category
+    - field.field.media.image.field_category    
     - field.field.media.image.field_matters_served
     - field.field.media.image.field_media_caption
+    - field.field.media.image.field_media_citation
     - field.field.media.image.field_media_image
     - field.field.media.image.field_tags
     - image.style.medium
@@ -32,26 +33,34 @@ content:
     weight: 4
     region: content
     settings:
+      save_lineage: false
       force_deepest: false
       parent: ''
       level_labels: ''
-      none_label: '- Please select -'
-      save_lineage: false
       hierarchy_depth: 0
       required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
+  field_citation:
+    type: text_textarea
+    weight: 26
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
     third_party_settings: {  }
   field_matters_served:
     type: cshs
     weight: 5
     region: content
     settings:
+      save_lineage: false
       force_deepest: false
       parent: null
       level_labels: ''
+      hierarchy_depth: 0
+      required_depth: 0
       none_label: '- Please select -'
-      hierarchy_depth: '0'
-      required_depth: '0'
-      save_lineage: false
     third_party_settings: {  }
   field_media_caption:
     type: text_textarea
@@ -130,5 +139,6 @@ content:
     third_party_settings: {  }
 hidden:
   created: true
+  field_media_citation: true
   path: true
   uid: true
