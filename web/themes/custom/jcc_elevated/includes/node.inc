@@ -131,6 +131,16 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
   }
 
     $basic_page = Node::load($node->id());
+    if ($basic_page->hasField('field_media')) {    
+      $card_media = $basic_page->get('field_media');
+      $media = Media::load($card_media->target_id);
+      $uri = $media->field_media_image->entity->getFileUri();   
+      $image_url = file_create_url($uri);     
+      $variables['imageurl'] = $image_url;
+      $variables['caption'] = $media->get('field_media_caption')->value;
+      $variables['citation'] = $media->get('field_media_citation')->value;      
+    }
+
     if ($basic_page->hasField('field_node_reference')) {
       $relatednewsdata = [];   
       $relatednews = $basic_page->get('field_node_reference');
@@ -143,7 +153,7 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
         ];      
       }
       $variables['relatednewsdata'] = $relatednewsdata; 
-      }     
+    }     
   
    $sidebarimages = [];
     foreach ($node->field_media_file_multiple as $media_file) {

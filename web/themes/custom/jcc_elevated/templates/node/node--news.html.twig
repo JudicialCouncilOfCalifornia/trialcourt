@@ -85,20 +85,23 @@
 
 <article{{ attributes }}>
   {% block layout %} 
-
-  {% set card_image = content.field_media|render ? content.field_media : '' %}
+   {% if imageurl is not empty %}
+    {% set imageTag %}
+    <img src={{imageurl}} />
+    {% endset %} 
+  {% endif %}   
   {% set hangover_content %}
     {% include "@molecules/Card/Card.twig" with {
       variant: "media-right",
       aspect: [],
       clickable_card: false,
       background: null,
-      media: card_image,
+      media: imageTag,
       caption_overlay: true,
-      citation: "Some citation text here",
+      citation: citation,
       media_caption: {
       show: true,
-      text: "media caption if provided*",
+      text:caption      
     },
     } %} 
   {% endset %} 
