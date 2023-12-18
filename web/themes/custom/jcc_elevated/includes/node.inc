@@ -9,9 +9,9 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -129,45 +129,43 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
     $variables['components_teaser'] =
       mb_strimwidth(trim(strip_tags($output)), 0, 250, '...');
   }
+  $basic_page = Node::load($node->id());
 
-    $basic_page = Node::load($node->id());
-    if ($basic_page->hasField('field_media')) {    
-      $card_media = $basic_page->get('field_media');
-      $media = Media::load($card_media->target_id);
-      $uri = $media->field_media_image->entity->getFileUri();   
-      $image_url = file_create_url($uri);     
-      $variables['imageurl'] = $image_url;
-      $variables['caption'] = $media->get('field_media_caption')->value;
-      $variables['citation'] = $media->get('field_media_citation')->value;      
-    }
-
-    if ($basic_page->hasField('field_node_reference')) {
-      $relatednewsdata = [];   
-      $relatednews = $basic_page->get('field_node_reference');
-      foreach ($relatednews->referencedEntities() as $news) {
-        $link = [
-          '#markup' => '<a href="' . $news->toUrl()->toString() . '">' . $news->getTitle() . '</a>'
-        ];
-        $relatednewsdata[] = [
-          'text' => $link,
-        ];      
-      }
-      $variables['relatednewsdata'] = $relatednewsdata; 
-    }     
-  
-   $sidebarimages = [];
-    foreach ($node->field_media_file_multiple as $media_file) {
-      $media = Media::load($media_file->target_id);
-      $uri = $media->field_media_image->entity->getFileUri();   
-      $media_url = file_create_url($uri);  
-      $sidebarimages[] = [
-        'caption' => $media->get('field_media_caption')->value,
-        'citation' => $media->get('field_media_citation')->value,
-        'url' => $media_url,    
+  if ($basic_page->hasField('field_media')) {
+    $card_media = $basic_page->get('field_media');
+    $media = Media::load($card_media->target_id);
+    $uri = $media->field_media_image->entity->getFileUri();
+    $image_url = file_create_url($uri);
+    $variables['imageurl'] = $image_url;
+    $variables['caption'] = strip_tags($media->get('field_media_caption')->value);
+    $variables['citation'] = strip_tags($media->get('field_media_citation')->value);
+  }
+  if ($basic_page->hasField('field_node_reference')) {
+    $relatednewsdata = [];
+    $relatednews = $basic_page->get('field_node_reference');
+    foreach ($relatednews->referencedEntities() as $news) {
+      $link = [
+        '#markup' => '<a href="' . $news->toUrl()->toString() . '">' . $news->getTitle() . '</a>',
+      ];
+      $relatednewsdata[] = [
+        'text' => $link,
       ];
     }
-    $variables['sidebarimages'] = $sidebarimages;
-  }  
+    $variables['relatednewsdata'] = $relatednewsdata;
+  }
+  $sidebarimages = [];
+  foreach ($node->field_media_file_multiple as $media_file) {
+    $media = Media::load($media_file->target_id);
+    $uri = $media->field_media_image->entity->getFileUri();
+    $media_url = file_create_url($uri);
+    $sidebarimages[] = [
+      'caption' => strip_tags($media->get('field_media_caption')->value),
+      'citation' => strip_tags($media->get('field_media_citation')->value),
+      'url' => $media_url,
+    ];
+  }
+  $variables['sidebarimages'] = $sidebarimages;
+}
 
 /**
  * Node: Alerts preprocess.
