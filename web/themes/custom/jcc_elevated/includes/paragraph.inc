@@ -51,12 +51,14 @@ function jcc_elevated_theme_suggestions_paragraph_alter(&$suggestions, $variable
  */
 function jcc_elevated_paragraph_views_reference(array &$variables, ParagraphInterface $paragraph) {
   // In some cases we need to pass the views results to the paragraph.
+  $ref_override = [];
+
   if (!empty($paragraph->field_views_reference)) {
     $view = $paragraph->field_views_reference->referencedEntities()[0];
     $reference = $paragraph->field_views_reference->first();
 
     $value = $reference->getValue();
-    $ref_override = $value['data'] ? unserialize($value['data']) : [];
+    $ref_override = $value['data'] ? unserialize($value['data']) : []; // phpcs:ignore
 
     $target_id = $reference->target_id;
     $display_id = $reference->display_id;
