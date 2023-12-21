@@ -117,6 +117,10 @@ function jcc_elevated_preprocess_node(&$variables) {
  *   The node.
  */
 function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
+  $type_manager = \Drupal::entityTypeManager();
+  $node_manager = $type_manager->getStorage('node');
+  $media_manager = $type_manager->getStorage('media');
+
   $variables['breadcrumb'] = \Drupal::service('breadcrumb')
     ->build(\Drupal::routeMatch())
     ->toRenderable();
@@ -127,6 +131,55 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
   if ($output !== NULL) {
     $variables['components_teaser'] =
       mb_strimwidth(trim(strip_tags($output)), 0, 250, '...');
+  }
+
+  $basic_page = $node_manager->load($node->id());
+
+  $variables['imageurl'] = '';
+  $variables['caption'] = '';
+  $variables['citation'] = '';
+
+  if ($basic_page->hasField('field_media')) {
+    $card_media = $basic_page->get('field_media');
+    $media = $media_manager->load($card_media->target_id) ?? FALSE;
+    if ($media) {
+      $uri = $media->field_media_image->entity->getFileUri();
+      $image_url = file_create_url($uri);
+      $variables['imageurl'] = $image_url;
+      $variables['caption'] = strip_tags($media->get('field_media_caption')->value);
+      $variables['citation'] = strip_tags($media->get('field_media_citation')->value);
+    }
+  }
+
+  if ($basic_page->hasField('field_node_reference')) {
+    $relatednewsdata = [];
+    $relatednews = $basic_page->get('field_node_reference');
+    foreach ($relatednews->referencedEntities() as $news) {
+      $link = [
+        '#markup' => '<a href="' . $news->toUrl()->toString() . '">' . $news->getTitle() . '</a>',
+      ];
+      $relatednewsdata[] = [
+        'text' => $link,
+      ];
+    }
+    $variables['relatednewsdata'] = $relatednewsdata;
+  }
+
+  if ($node->hasField('field_media_file_multiple')) {
+    $variables['sidebarimages'] = [];
+    $sidebarimages = [];
+    $file_multiple = $node->get('field_media_file_multiple')->getValue();
+    foreach ($file_multiple as $media_file) {
+      $media = $media_manager->load($media_file->target_id);
+      $uri = $media->field_media_image->entity->getFileUri();
+      $media_url = file_create_url($uri);
+      $sidebarimages[] = [
+        'caption' => strip_tags($media->get('field_media_caption')->value),
+        'citation' => strip_tags($media->get('field_media_citation')->value),
+        'url' => $media_url,
+      ];
+    }
+    $variables['sidebarimages'] = $sidebarimages;
   }
 }
 
