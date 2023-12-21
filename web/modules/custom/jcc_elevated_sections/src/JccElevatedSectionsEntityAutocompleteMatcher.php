@@ -98,8 +98,10 @@ class JccElevatedSectionsEntityAutocompleteMatcher extends EntityAutocompleteMat
           if ($entity->getEntityType()->id() == 'node') {
             $section_id = $this->jccElevatedSectionsService->getSectionForNode($entity);
             $section = $this->jccElevatedSectionsService->getSectionInfo($section_id);
-            $section_label = $section->label();
-            $section_label = $section ? " <span style='font-size: 13px;color: var(--gin-color-primary);font-style: italic'>{$section_label}</span>" : "";
+            if ($section) {
+              $section_label = $section->label();
+              $section_label = $section ? " <span style='font-size: 13px;color: var(--gin-color-primary);font-style: italic'>{$section_label}</span>" : "";
+            }
           }
 
           $key = $label . ' (' . $entity_id . ')';
