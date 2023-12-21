@@ -289,6 +289,13 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node) {
     ];
   }
 
+  // Check for a job type id, office id, and department id first. This is just
+  // here because with dev work It is possible to have a job node without the
+  // field or type declared.
+  $job_type_id = $node->hasField('field_job_type') ? $node->get('field_job_type')->target_id : FALSE;
+  $job_office_id = $node->hasField('field_office') ? $node->get('field_office')[0]->target_id : FALSE;
+  $job_department_id = $node->hasField('field_department') ? $node->get('field_department')[0]->target_id : FALSE;
+
   // Boilerplate message.
   $boilerplate_msg = t('The Judicial Council of California Is an Equal Opportunity Employer.');
   $boilerplate = ['#markup' => Html::decodeEntities('<p><em>' . $boilerplate_msg . '</em></p>')];
@@ -302,7 +309,7 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node) {
       ],
       'job_type' => [
         'label' => t('Full/Part-Time'),
-        'value' => Term::load($node->get('field_job_type')->target_id) ? Term::load($node->get('field_job_type')->target_id)->get('name')->value : t('Full-Time'),
+        'value' => $job_type_id && Term::load($job_type_id) ? Term::load($job_type_id)->get('name')->value : t('Full-Time'),
       ],
       'location' => [
         'label' => t('Location'),
@@ -310,11 +317,11 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node) {
       ],
       'office' => [
         'label' => t('Office'),
-        'value' => Term::load($node->get('field_office')[0]->target_id) ? Term::load($node->get('field_office')[0]->target_id)->get('name')->value : '',
+        'value' => $job_office_id && Term::load($job_office_id) ? Term::load($job_office_id)->get('name')->value : '',
       ],
       'Department' => [
         'label' => t('Department'),
-        'value' => Term::load($node->get('field_department')[0]->target_id) ? Term::load($node->get('field_department')[0]->target_id)->get('name')->value : '',
+        'value' => $job_department_id && Term::load($job_department_id) ? Term::load($job_department_id)->get('name')->value : '',
       ],
       'salary' => [
         'label' => t('Salary'),
