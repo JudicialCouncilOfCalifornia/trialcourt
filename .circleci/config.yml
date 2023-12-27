@@ -111,6 +111,17 @@ jobs:
                 name: Deploying << parameters.site >>
                 command: .circleci/scripts/deploy.sh << parameters.site >>
 
+    reset:
+        <<: *defaults
+        parameters:
+            site:
+                type: string
+        description: Reset configuration of << parameters.site >>
+        steps:
+            - add_ssh_keys:
+                fingerprints:
+                  - "69:0e:5d:fb:16:69:1a:79:8c:ef:b9:28:a6:8e:39:ca"
+
             - run:
                 name: Clearing cache of << parameters.site >>
                 command: .circleci/scripts/deploy-cr.sh << parameters.site >>
@@ -159,6 +170,17 @@ jobs:
             - run:
                 name: Deploying << parameters.site >>
                 command: .circleci/scripts/deploy.sh << parameters.site >>
+
+    reset_legacy:
+        <<: *defaults
+        parameters:
+            site:
+                type: string
+        description: Reset configuration of << parameters.site >>
+        steps:
+            - add_ssh_keys:
+                fingerprints:
+                  - "69:0e:5d:fb:16:69:1a:79:8c:ef:b9:28:a6:8e:39:ca"
 
             - run:
                 name: Clearing cache of << parameters.site >>
@@ -262,6 +284,19 @@ workflows:
                 - stage
                 - master
                 - /^epic-.*/
+      - reset:
+          matrix:
+            parameters:
+              site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "sacramento", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "idm", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "sf", "kern", "tuolumne", "santabarbara", "monterey", "sonoma", "partners", "oc", "amdr", "lassen", "sanmateo", "delnorte", "calaveras", "santaclara", "appellate", "plumas", "diversity-toolkit", "shasta", "marin", "courts"]
+          requires:
+            - deploy
+          filters:
+            branches:
+              only:
+                - develop
+                - stage
+                - master
+                - /^epic-.*/
       - deploy_legacy:
           matrix:
             parameters:
@@ -275,12 +310,25 @@ workflows:
                 - stage
                 - master
                 - /^epic-.*/
+      - reset_legacy:
+          matrix:
+            parameters:
+              site: ["newsroom", "deprep"]
+          requires:
+            - deploy_legacy
+          filters:
+            branches:
+              only:
+                - develop
+                - stage
+                - master
+                - /^epic-.*/
       - cypress:
           matrix:
             parameters:
               site: ["colusa", "inyo", "slo2", "sc", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "kern", "tuolumne", "santabarbara"]
           requires:
-            - deploy
+            - reset
           filters:
             branches:
               only:
@@ -291,7 +339,7 @@ workflows:
             parameters:
               site: ["newsroom"]
           requires:
-            - deploy_legacy-newsroom
+            - reset_legacy-newsroom
           filters:
             branches:
               only:
