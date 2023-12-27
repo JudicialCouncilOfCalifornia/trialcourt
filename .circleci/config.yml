@@ -173,10 +173,6 @@ jobs:
                 command: .circleci/scripts/deploy-cim.sh << parameters.site >>
 
             - run:
-                name: Reverting Immutable Features of << parameters.site >>
-                command: .circleci/scripts/deploy-fra.sh << parameters.site >>
-
-            - run:
                 name: Clearing cache of << parameters.site >>
                 command: .circleci/scripts/deploy-cr.sh << parameters.site >>
 
