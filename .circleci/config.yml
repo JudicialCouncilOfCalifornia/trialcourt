@@ -111,6 +111,26 @@ jobs:
                 name: Deploying << parameters.site >>
                 command: .circleci/scripts/deploy.sh << parameters.site >>
 
+            - run:
+                name: Clearing cache of << parameters.site >>
+                command: .circleci/scripts/deploy-cr.sh << parameters.site >>
+
+            - run:
+                name: Updating DB of << parameters.site >>
+                command: .circleci/scripts/deploy-db.sh << parameters.site >>
+
+            - run:
+                name: Importing Config of << parameters.site >>
+                command: .circleci/scripts/deploy-cim.sh << parameters.site >>
+
+            - run:
+                name: Reverting Immutable Features of << parameters.site >>
+                command: .circleci/scripts/deploy-fra.sh << parameters.site >>
+
+            - run:
+                name: Clearing cache of << parameters.site >>
+                command: .circleci/scripts/deploy-cr.sh << parameters.site >>
+
     deploy_legacy:
         <<: *defaults
         parameters:
@@ -139,6 +159,26 @@ jobs:
             - run:
                 name: Deploying << parameters.site >>
                 command: .circleci/scripts/deploy.sh << parameters.site >>
+
+            - run:
+                name: Clearing cache of << parameters.site >>
+                command: .circleci/scripts/deploy-cr.sh << parameters.site >>
+
+            - run:
+                name: Updating DB of << parameters.site >>
+                command: .circleci/scripts/deploy-db.sh << parameters.site >>
+
+            - run:
+                name: Importing Config of << parameters.site >>
+                command: .circleci/scripts/deploy-cim.sh << parameters.site >>
+
+            - run:
+                name: Reverting Immutable Features of << parameters.site >>
+                command: .circleci/scripts/deploy-fra.sh << parameters.site >>
+
+            - run:
+                name: Clearing cache of << parameters.site >>
+                command: .circleci/scripts/deploy-cr.sh << parameters.site >>
 
     cypress:
         <<: *cypress
