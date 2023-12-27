@@ -1,0 +1,47 @@
+uuid: 50bb2f66-91f9-4660-b117-6d1ac91466a0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.event_time.field_enddate
+    - field.field.paragraph.event_time.field_startdate
+    - field.field.paragraph.event_time.field_url
+    - paragraphs.paragraphs_type.event_time
+  module:
+    - datetime
+    - text
+id: paragraph.event_time.default
+targetEntityType: paragraph
+bundle: event_time
+mode: default
+content:
+  field_enddate:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_startdate:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_url:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true

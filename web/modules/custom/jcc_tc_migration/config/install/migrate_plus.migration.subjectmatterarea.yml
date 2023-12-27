@@ -1,0 +1,26 @@
+id: subjectmatterarea
+label: "Taxonomy Term: Subject Matter Area Import."
+status: true
+migration_tags:
+  - taxonomy
+migration_group: jcc2
+
+source:
+  plugin: 'csv'
+  path: 'modules/custom/jcc_tc_migration/csv/SubjectMatter.csv'
+  delimiter: ','
+  enclosure: '"'
+  ids:
+    - ID
+process:
+  vid:
+    plugin: default_value
+    default_value: subject_matter_area
+  name: subject matter area
+  field_id: ID
+
+destination:
+  plugin: entity:taxonomy_term
+  default_bundle: subject_matter_area
+
+migration_dependencies: {}
