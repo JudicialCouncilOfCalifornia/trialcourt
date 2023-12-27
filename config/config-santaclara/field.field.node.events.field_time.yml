@@ -1,0 +1,98 @@
+uuid: 0ebb81fb-f49b-44e0-85b0-b4ff9bd7d8f3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_time
+    - node.type.events
+    - paragraphs.paragraphs_type.event_time
+  module:
+    - entity_reference_revisions
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.events.field_time
+field_name: field_time
+entity_type: node
+bundle: events
+label: time
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      event_time: event_time
+    negate: 0
+    target_bundles_drag_drop:
+      accordion:
+        weight: 23
+        enabled: false
+      accordion_item:
+        weight: 24
+        enabled: false
+      action_list:
+        weight: 25
+        enabled: false
+      action_list_item:
+        weight: 26
+        enabled: false
+      alert:
+        weight: 27
+        enabled: false
+      body:
+        weight: 28
+        enabled: false
+      card:
+        weight: 29
+        enabled: false
+      cards:
+        weight: 30
+        enabled: false
+      content_stream:
+        weight: 31
+        enabled: false
+      event_time:
+        weight: 32
+        enabled: true
+      hero:
+        weight: 33
+        enabled: false
+      hero_banner:
+        weight: 34
+        enabled: false
+      hero_hangover:
+        weight: 35
+        enabled: false
+      hours:
+        weight: 36
+        enabled: false
+      icon_link:
+        weight: 37
+        enabled: false
+      iframe:
+        weight: 38
+        enabled: false
+      section:
+        weight: 39
+        enabled: false
+      step:
+        weight: 40
+        enabled: false
+      steps:
+        weight: 41
+        enabled: false
+      text_share:
+        weight: 42
+        enabled: false
+      views_reference:
+        weight: 43
+        enabled: false
+      webform:
+        weight: 44
+        enabled: false
+field_type: entity_reference_revisions

@@ -1,0 +1,217 @@
+uuid: a3b6a5fa-1efb-4bd5-8173-aa2729a9ecec
+langcode: en
+status: true
+dependencies: {  }
+id: events
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - node
+migration_group: json
+label: events
+source:
+  plugin: url
+  data_fetcher_plugin: file
+  data_parser_plugin: json
+  urls:
+    - modules/custom/jcc_tc_migration/json/automatedMeetings.json
+  item_selector: ''
+  fields:
+    -
+      name: Attendees
+      label: 'Event Attendees'
+      selector: Attendees
+    -
+      name: CaseType
+      label: 'Event Case Type'
+      selector: CaseType
+    -
+      name: ConferenceId
+      label: 'Event Conference ID'
+      selector: ConferenceId
+    -
+      name: ConferenceNumber
+      label: 'Event Conference Number'
+      selector: ConferenceNumber
+    -
+      name: EndDate
+      label: 'Event End Date'
+      selector: EndDate
+    -
+      name: Id
+      label: 'Event ID'
+      selector: Id
+    -
+      name: Location
+      label: 'Event Location'
+      selector: Location
+    -
+      name: MeetingOptions
+      label: 'Event Meeting Options'
+      selector: MeetingOptions
+    -
+      name: ProviderId
+      label: 'Event Provider ID'
+      selector: ProviderId
+    -
+      name: Recurrence
+      label: 'Event Recurrence'
+      selector: Recurrence
+    -
+      name: StartDate
+      label: 'Event Start Date'
+      selector: StartDate
+    -
+      name: Subject
+      label: 'Event Subject'
+      selector: Subject
+    -
+      name: Url
+      label: 'Event URL'
+      selector: Url
+    -
+      name: IsPublic
+      label: 'Event Is Public'
+      selector: IsPublic
+    -
+      name: Organizer
+      label: 'Event Organizer'
+      selector: Organizer
+  ids:
+    Id:
+      type: integer
+process:
+  status:
+    plugin: default_value
+    default_value: 1
+  title:
+    plugin: skip_on_empty
+    method: process
+    source: Location
+    fallback: ''
+  field_node_handling:
+    plugin: node_handling
+    method: process
+    source:
+      - Location
+      - StartDate
+      - EndDate
+      - Subject
+      - Url
+  field_id:
+    plugin: skip_on_empty
+    method: process
+    source: Id
+    fallback: 0
+  field_attendees:
+    plugin: skip_on_empty
+    method: process
+    source: Attendees
+    fallback: ''
+  field_casetype:
+    plugin: skip_on_empty
+    method: process
+    source: CaseType
+    fallback: ''
+  field_conferenceid:
+    plugin: skip_on_empty
+    method: process
+    source: ConferenceId
+    fallback: 0
+  field_conference_number:
+    plugin: skip_on_empty
+    method: process
+    source: ConferenceNumber
+    fallback: ''
+  field_enddate:
+    plugin: skip_on_empty
+    method: process
+    source: EndDate
+    fallback: '1970-01-01T00:00:00'
+  field_event_location:
+    plugin: skip_on_empty
+    method: process
+    source: Location
+    fallback: ''
+  field_ispublic:
+    plugin: skip_on_empty
+    method: process
+    source: IsPublic
+    fallback: 0
+  field_meetingoptions:
+    plugin: skip_on_empty
+    method: process
+    source: MeetingOptions
+    fallback: ''
+  field_password:
+    plugin: skip_on_empty
+    method: process
+    source: Password
+    fallback: ''
+  field_organizer:
+    plugin: skip_on_empty
+    method: process
+    source: Organizer
+    fallback: ''
+  field_type:
+    plugin: skip_on_empty
+    method: process
+    source: Type
+    fallback: ''
+  field_providerid:
+    plugin: skip_on_empty
+    method: process
+    source: ProviderId
+    fallback: ''
+  field_recurrence:
+    plugin: skip_on_empty
+    method: process
+    source: Recurrence
+    fallback: ''
+  field_startdate:
+    plugin: skip_on_empty
+    method: process
+    source: StartDate
+    fallback: '1970-01-01T00:00:00'
+  field_url/uri:
+    plugin: skip_on_empty
+    method: process
+    source: Url
+    fallback: ''
+  field_url/title:
+    plugin: default_value
+    default_value: 'Open MS Teams Meeting'
+  field_subject:
+    plugin: skip_on_empty
+    method: process
+    source: Subject
+    fallback: ''
+  field_delete:
+    plugin: node_handling
+    method: delete
+    source: Location
+destination:
+  plugin: 'entity:node'
+  default_bundle: events
+  overwrite_properties:
+    - status
+    - field_id
+    - title
+    - field_attendees
+    - field_casetype
+    - field_conferenceid
+    - field_conference_number
+    - field_enddate
+    - field_event_location
+    - field_ispublic
+    - field_meetingoptions
+    - field_organizer
+    - field_providerid
+    - field_recurrence
+    - field_startdate
+    - field_url
+    - field_subject
+    - field_password
+    - field_type
+migration_dependencies: {  }
