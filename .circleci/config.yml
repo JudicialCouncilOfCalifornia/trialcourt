@@ -122,6 +122,8 @@ jobs:
                 fingerprints:
                   - "69:0e:5d:fb:16:69:1a:79:8c:ef:b9:28:a6:8e:39:ca"
 
+            - checkout
+
             - run:
                 name: Clearing cache of << parameters.site >>
                 command: .circleci/scripts/deploy-cr.sh << parameters.site >>
@@ -181,6 +183,8 @@ jobs:
             - add_ssh_keys:
                 fingerprints:
                   - "69:0e:5d:fb:16:69:1a:79:8c:ef:b9:28:a6:8e:39:ca"
+
+            - checkout
 
             - run:
                 name: Clearing cache of << parameters.site >>
@@ -272,6 +276,7 @@ workflows:
       # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
       - build_test
       - deploy:
+          name: deploy-<< matrix.site >>
           matrix:
             parameters:
               site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "sacramento", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "idm", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "sf", "kern", "tuolumne", "santabarbara", "monterey", "sonoma", "partners", "oc", "amdr", "lassen", "sanmateo", "delnorte", "calaveras", "santaclara", "appellate", "plumas", "diversity-toolkit", "shasta", "marin", "courts"]
@@ -285,11 +290,12 @@ workflows:
                 - master
                 - /^epic-.*/
       - reset:
+          name: reset-<< matrix.site >>
           matrix:
             parameters:
               site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "sacramento", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "idm", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "sf", "kern", "tuolumne", "santabarbara", "monterey", "sonoma", "partners", "oc", "amdr", "lassen", "sanmateo", "delnorte", "calaveras", "santaclara", "appellate", "plumas", "diversity-toolkit", "shasta", "marin", "courts"]
           requires:
-            - deploy
+            - deploy-<< matrix.site >>
           filters:
             branches:
               only:
@@ -298,6 +304,7 @@ workflows:
                 - master
                 - /^epic-.*/
       - deploy_legacy:
+          name: deploy_legacy-<< matrix.site >>
           matrix:
             parameters:
               site: ["newsroom", "deprep"]
@@ -311,11 +318,12 @@ workflows:
                 - master
                 - /^epic-.*/
       - reset_legacy:
+          name: reset_legacy-<< matrix.site >>
           matrix:
             parameters:
               site: ["newsroom", "deprep"]
           requires:
-            - deploy_legacy
+            - deploy_legacy-<< matrix.site >>
           filters:
             branches:
               only:
@@ -324,11 +332,12 @@ workflows:
                 - master
                 - /^epic-.*/
       - cypress:
+          name: cypress-<< matrix.site >>
           matrix:
             parameters:
               site: ["colusa", "inyo", "slo2", "sc", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "kern", "tuolumne", "santabarbara"]
           requires:
-            - reset
+            - reset-<< matrix.site >>
           filters:
             branches:
               only:
@@ -339,7 +348,7 @@ workflows:
             parameters:
               site: ["newsroom"]
           requires:
-            - reset_legacy-newsroom
+            - reset_legacy-<< matrix.site >>
           filters:
             branches:
               only:
