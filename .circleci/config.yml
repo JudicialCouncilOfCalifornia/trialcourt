@@ -127,12 +127,8 @@ jobs:
                 fingerprints:
                   - "69:0e:5d:fb:16:69:1a:79:8c:ef:b9:28:a6:8e:39:ca"
 
-            - restore_cache:
-                keys:
-                  - composer-cache
-
             - attach_workspace:
-                at: ~/project/data/artifact
+                at: ~/
 
             - run:
                 name: Clearing cache of << parameters.site >>
@@ -199,12 +195,8 @@ jobs:
                 fingerprints:
                   - "69:0e:5d:fb:16:69:1a:79:8c:ef:b9:28:a6:8e:39:ca"
 
-            - restore_cache:
-                keys:
-                  - composer-cache
-
             - attach_workspace:
-                at: ~/project/data/artifact
+                at: ~/
 
             - run:
                 name: Clearing cache of << parameters.site >>
