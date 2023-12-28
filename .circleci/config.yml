@@ -111,6 +111,11 @@ jobs:
                 name: Deploying << parameters.site >>
                 command: .circleci/scripts/deploy.sh << parameters.site >>
 
+            - persist_to_workspace:
+                root: ~/
+                paths:
+                    - project
+
     reset:
         <<: *defaults
         parameters:
@@ -122,7 +127,12 @@ jobs:
                 fingerprints:
                   - "69:0e:5d:fb:16:69:1a:79:8c:ef:b9:28:a6:8e:39:ca"
 
-            - checkout
+            - restore_cache:
+                keys:
+                  - composer-cache
+
+            - attach_workspace:
+                at: ~/project/data/artifact
 
             - run:
                 name: Clearing cache of << parameters.site >>
@@ -173,6 +183,11 @@ jobs:
                 name: Deploying << parameters.site >>
                 command: .circleci/scripts/deploy.sh << parameters.site >>
 
+            - persist_to_workspace:
+                root: ~/
+                paths:
+                    - project
+
     reset_legacy:
         <<: *defaults
         parameters:
@@ -184,7 +199,12 @@ jobs:
                 fingerprints:
                   - "69:0e:5d:fb:16:69:1a:79:8c:ef:b9:28:a6:8e:39:ca"
 
-            - checkout
+            - restore_cache:
+                keys:
+                  - composer-cache
+
+            - attach_workspace:
+                at: ~/project/data/artifact
 
             - run:
                 name: Clearing cache of << parameters.site >>
@@ -303,6 +323,18 @@ workflows:
                 - stage
                 - master
                 - /^epic-.*/
+      - cypress:
+          name: cypress-<< matrix.site >>
+          matrix:
+            parameters:
+              site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "sacramento", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "idm", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "sf", "kern", "tuolumne", "santabarbara", "monterey", "sonoma", "partners", "oc", "amdr", "lassen", "sanmateo", "delnorte", "calaveras", "santaclara", "appellate", "plumas", "diversity-toolkit", "shasta", "marin", "courts"]
+          requires:
+            - reset-<< matrix.site >>
+          filters:
+            branches:
+              only:
+                - develop
+                - stage
       - deploy_legacy:
           name: deploy_legacy-<< matrix.site >>
           matrix:
@@ -331,18 +363,6 @@ workflows:
                 - stage
                 - master
                 - /^epic-.*/
-      - cypress:
-          name: cypress-<< matrix.site >>
-          matrix:
-            parameters:
-              site: ["colusa", "inyo", "slo2", "sc", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "kern", "tuolumne", "santabarbara"]
-          requires:
-            - reset-<< matrix.site >>
-          filters:
-            branches:
-              only:
-                - develop
-                - stage
       - cypress:
           matrix:
             parameters:
