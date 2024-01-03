@@ -514,6 +514,8 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
     if (function_exists('jcc_elevated_get_site_name') && jcc_elevated_get_site_name() == 'partners') {
       $form['field_case_type_target_id']['#access'] = FALSE;
     }
+    // Removing date filter for elevated themes.
+    unset($form['field_date_value_wrapper']);
   }
 
   // Hide select form elements if their options are empty or only All/Any item.
