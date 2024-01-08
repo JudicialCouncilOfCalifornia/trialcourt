@@ -2,6 +2,11 @@
   --gap: var(--s1);
   --measure: 80ch;
   margin-block-start: calc(var(--s4) * -1);
+  gap: 3rem !important;
+}
+
+.block__jcc-appellate-zcs.wrapping {
+  gap: 2rem !important;
 }
 
 h2.block__jcc-appellate-zcs__label {
@@ -69,6 +74,7 @@ li.zcs__item a:hover > .zcs__district-name {
 
 .block__jcc-appellate-zcs__form__actions {
   display: flex;
+  justify-content: flex-end;
 }
 
 .block__jcc-appellate-zcs__form__view-all {
@@ -130,27 +136,22 @@ svg > g > g > g#District_1:hover {
 }
 
 svg > g > g > g#District_2:hover {
-  /*fill: #0B4778;*/
   fill: #919191;
 }
 
 svg > g > g > g#District_3:hover {
-  /*fill: #25B6E2;*/
   fill: #005EA2;
 }
 
 svg > g > g > g#District_4:hover {
-  /*fill: #5C5C5C;*/
   fill: #1F303E;
 }
 
 svg > g > g > g#District_5:hover {
-  /*fill: #2378C3;*/
   fill: #902524;
 }
 
 svg > g > g > g#District_6:hover {
-  /*fill: #4BD6A7;*/
   fill: #C05600;
 }
 
@@ -165,15 +166,18 @@ svg > g > g > g#District_6:hover {
 }
 
 .block__jcc-appellate-zcs__map {
-  /*max-width: 60ch;*/
   margin-inline: auto;
 }
 
 .block__jcc-appellate-zcs__map__container {
-  width: 340px;
+  width: 320px;
   max-height: 400px;
   margin-inline: auto;
   position: relative;
+}
+
+.block__jcc-appellate-zcs.wrapping .block__jcc-appellate-zcs__map__container {
+  width: 270px;
 }
 
 .block__jcc-appellate-zcs__map svg {
@@ -200,9 +204,17 @@ svg > g > g > g#District_6:hover {
   text-align: right;
 }
 
+.block__jcc-appellate-zcs.wrapping .zcs-map-link__item.district_1 {
+  inset: 25% 99% auto auto;
+}
+
 .zcs-map-link__item.district_2 {
   inset: 75% 66% auto auto;
   text-align: right;
+}
+
+.block__jcc-appellate-zcs.wrapping .zcs-map-link__item.district_2 {
+  inset: 74% 63% auto auto;
 }
 
 .zcs-map-link__item.district_3 {
@@ -213,6 +225,10 @@ svg > g > g > g#District_6:hover {
   inset: 65% auto auto 95%;
 }
 
+.block__jcc-appellate-zcs.wrapping .zcs-map-link__item.district_4 {
+  inset: 57% auto auto 89%;
+}
+
 .zcs-map-link__item.district_5 {
   inset: 40% auto auto 63%;
 }
@@ -220,15 +236,20 @@ svg > g > g > g#District_6:hover {
 .zcs-map-link__item.district_5:after {
   display: block;
   content: '';
-  width: 4rem;
+  width: 3.25rem;
   position: absolute;
   border-top: 2px solid var(--color-base-dark-xxx);
-  margin-inline-start: -85%;
+  margin-inline-start: -72%;
   rotate: 315deg;
   margin-block-start: 9%;
+}
+
+.block__jcc-appellate-zcs.wrapping .zcs-map-link__item.district_5:after {
+  margin-inline-start: -83%;
 }
 
 .zcs-map-link__item.district_6 {
   inset: 56% 79% auto auto;
   text-align: right;
 }
+
