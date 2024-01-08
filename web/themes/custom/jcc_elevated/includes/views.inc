@@ -384,6 +384,8 @@ function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
   $render = \Drupal::service('renderer');
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
@@ -422,10 +424,14 @@ function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
       ]),
     ];
 
+    // Check for a job type id first. This is just here because with dev work
+    // It is possible to have a job node without the field or type declared.
+    $job_type_id = $node->hasField('field_job_type') ? $node->get('field_job_type')->target_id : FALSE;
+
     $job = [
       'id' => $node->get('field_job_id')->value ? 'ID: ' . $node->get('field_job_id')->value : '',
       'deadline' => $deadline ? ['#markup' => Html::decodeEntities('<strong>Deadline:</strong> ' . $deadline)] : '',
-      'type' => Term::load($node->get('field_job_type')->target_id) ? Term::load($node->get('field_job_type')->target_id)->get('name')->value : '',
+      'type' => is_numeric($job_type_id) && !empty($taxonomy_manager->load($job_type_id)) ? $taxonomy_manager->load($job_type_id)->get('name')->value : '',
       'title' => [
         'text' => $node->get('title')->value ?? '',
         'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
