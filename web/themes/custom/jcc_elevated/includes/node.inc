@@ -156,7 +156,9 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
   $sidebarimages = [];
   foreach ($node->field_media_file_multiple as $media_file) {
     $media = Media::load($media_file->target_id);
-    $uri = $media->field_media_image->entity->getFileUri();
+    if ($media && $media->field_media_image->entity) {
+      $uri = $media->field_media_image->entity->getFileUri();
+    }
     $media_url = file_create_url($uri);
     $sidebarimages[] = [
       'caption' => strip_tags($media->get('field_media_caption')->value),
