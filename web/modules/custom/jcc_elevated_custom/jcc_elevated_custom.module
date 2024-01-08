@@ -155,5 +155,17 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
   if ($current_action_path == '/views/news' || $view_name_display == 'news:news_list') {
     $form['#action'] = $current_action_path != $current_alias_path ? $current_alias_path : $current_action_path;
   }
+}
 
+/**
+ * Implements hook_preprocess_VIEW_ID().
+ */
+function jcc_elevated_custom_preprocess_views_view_table(&$variables) {
+  $view = $variables['view'];
+  if ($view->current_display == 'publication_manager') {
+    if (!isset($variables['fields']['jcc_section'])) {
+      $view->addHandler('publication_manager', 'field', 'node_field_data', 'jcc_section', [], NULL);
+      $view->save();
+    }
+  }
 }
