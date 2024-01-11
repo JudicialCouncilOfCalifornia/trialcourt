@@ -21,7 +21,7 @@ do_command() {
       PIDS+=" $!"
       sitemap["$!"]="${site}"
 
-      sleep 3
+      sleep 10
     done
 
   for p in $PIDS; do

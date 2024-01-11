@@ -45,22 +45,6 @@
 ]
 %}
 
-{% set items = [] %}
-{% for row_item in processed_rows %}
-  {% set pills %}
-    {% include "@molecules/Pills/Pills.twig" with row_item.pills %}
-  {% endset %}
-  {% set item = {
-    'title': row_item.title,
-    'url': row_item.url,
-    'content': row_item.content,
-    'button_data': row_item.button_data,
-    'detail_list_data': row_item.detail_list_data,
-    'pills': pills,
-  } %}
-  {% set items = items|merge([item]) %}
-{% endfor %}
-
 <div{{ attributes.addClass(classes) }}>
 
   {% include "@organisms/ViewResults/ViewResults.twig" with {
@@ -74,7 +58,7 @@
     form_in_sidebar: true,
     list_type: 'ul',
     list_type_divider: '',
-    rows: items,
+    rows: processed_rows,
     sidebar: '',
     sidebar_direction_results: 'sidebar-row',
     pager: pager|render,
