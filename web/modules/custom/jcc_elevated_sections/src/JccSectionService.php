@@ -388,4 +388,17 @@ class JccSectionService implements JccSectionServiceInterface {
     return FALSE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function isViewExposedFormContextualOverride($view_name_display): bool {
+    $views = $this->state->get('jcc_elevated.section_applied_views_override_exposed_to_contextual', []);
+
+    if (isset($views[$view_name_display])) {
+      return !empty($views[$view_name_display]);
+    }
+
+    return FALSE;
+  }
+
 }

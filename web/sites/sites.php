@@ -6,7 +6,9 @@
  */
 
 // Dynamically match sites directory to current host.
-$dirs = preg_grep('/^([^.])/', scandir('sites/'));
+$filesdir = scandir('sites/');
+if(is_array($filesdir)) {
+$dirs = preg_grep('/^([^.])/', $filesdir);
 foreach ($dirs as $dir) {
   if ($dir == "courts") {
     continue;
@@ -20,6 +22,7 @@ foreach ($dirs as $dir) {
       $sites[$http_host] = $dir;
     }
   }
+}
 }
 
 // Custom domains for any that do not match above.
@@ -36,6 +39,8 @@ $sites['www.occourts.org'] = 'oc';
 // courts
 $sites['courts.lndo.site'] = 'courts';
 $sites['develop-jcc-courts.pantheonsite.io'] = 'courts';
+$sites['dev-jcc-courts.pantheonsite.io'] = 'courts';
+$sites['test-jcc-courts.pantheonsite.io'] = 'courts';
 $sites['stage-jcc-courts.pantheonsite.io'] = 'courts';
 $sites['epic-uat-jcc-courts.pantheonsite.io'] = 'courts';
 $sites['live-jcc-courts.pantheonsite.io'] = 'courts';

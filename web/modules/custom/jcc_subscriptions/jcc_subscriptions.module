@@ -90,7 +90,9 @@ function jcc_subscriptions_form_alter(&$form, &$form_state, $form_id) {
 
       // Moving the list to the social fieldgroup.
       $form['#group_children']['subscriptions_fieldset'] = 'group_social';
-      $form['#fieldgroups']['group_social']->children[] = 'subscriptions_fieldset';
+      if (isset($form['#fieldgroups']['group_social'])) {
+        $form['#fieldgroups']['group_social']->children[] = 'subscriptions_fieldset';
+      }
       $form['group_social']['subscriptions_fieldset']['myemma_groups']['#states'] = [
         'visible' => [
           ':input[name="field_send_email"]' => ['checked' => TRUE],

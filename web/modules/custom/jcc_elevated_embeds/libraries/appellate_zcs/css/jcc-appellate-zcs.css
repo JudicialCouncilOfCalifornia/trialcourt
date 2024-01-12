@@ -1,0 +1,255 @@
+.block__jcc-appellate-zcs {
+  --gap: var(--s1);
+  --measure: 80ch;
+  margin-block-start: calc(var(--s4) * -1);
+  gap: 3rem !important;
+}
+
+.block__jcc-appellate-zcs.wrapping {
+  gap: 2rem !important;
+}
+
+h2.block__jcc-appellate-zcs__label {
+  margin-block-start: var(--s4);
+}
+
+.block__jcc-appellate-zcs__form {
+  position: relative;
+}
+
+ul.zcs__items {
+  position: absolute;
+  border: 1px solid var(--color-base-light-x);
+  min-width: 100%;
+  max-height: 11rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: white;
+  padding-inline: 0;
+}
+
+li.zcs__item {
+  display: flex;
+  width: 100%;
+}
+
+li.zcs__item a,
+li.zcs__item .zcs__no-match {
+  display: flex;
+  width: 100%;
+  gap: var(--s-4);
+  text-decoration: none;
+  font-size: var(--s0);
+  line-height: var(--s0);
+  padding-inline: var(--s0);
+  padding-block: .5rem;
+  color: var(--color-base-dark-x);
+}
+
+li.zcs__item a:hover,
+li.zcs__item a:focus,
+li.zcs__item a:focus-within {
+  background: var(--color-base-light-xx);
+  color: var(--color-base-dark-xxx);
+}
+
+li.zcs__item a:after {
+  margin-inline-start: var(--s-5);
+  content: "\2192";
+  align-self: flex-end;
+}
+
+li.zcs__item a > * {
+  text-decoration: none;
+}
+
+li.zcs__item a > .zcs__district-name,
+li.zcs__item a:hover > .zcs__district-name {
+  text-decoration: underline;
+}
+
+.zcs__district-name {
+  margin-inline-start: auto;
+}
+
+.block__jcc-appellate-zcs__form__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.block__jcc-appellate-zcs__form__view-all {
+  margin-inline-start: auto;
+  margin-block-start: var(--s0);
+}
+
+.block__jcc-appellate-zcs__form__submit {
+  margin-inline-start: var(--s0);
+  margin-block-start: var(--s0);
+}
+
+/* Map styling */
+svg > g > g > g {
+  transition: all ease .5s;
+}
+
+svg > g > g > g#District_1 {
+  fill: #34A37E;
+}
+
+svg > g > g > g#District_2 {
+  fill: #919191;
+}
+
+svg > g > g > g#District_3 {
+  fill: #005EA2;
+}
+
+svg > g > g > g#District_4 {
+  fill: #1F303E;
+}
+
+svg > g > g > g#District_5 {
+  fill: #902524;
+}
+
+svg > g > g > g#District_6 {
+  fill: #C05600;
+}
+
+svg > g > g > g.not-hovered,
+svg > g:hover > g > g.not-hovered,
+svg > g:hover > g > g {
+  pointer-events: fill;
+  opacity: 0.3;
+  fill: #C9C9C9;
+  transition: all ease .5s;
+}
+
+svg > g > g > g:hover {
+  opacity: 1;
+  transition: all ease .5s;
+  cursor: pointer;
+}
+
+svg > g > g > g#District_1:hover {
+  fill: #34A37E;
+}
+
+svg > g > g > g#District_2:hover {
+  fill: #919191;
+}
+
+svg > g > g > g#District_3:hover {
+  fill: #005EA2;
+}
+
+svg > g > g > g#District_4:hover {
+  fill: #1F303E;
+}
+
+svg > g > g > g#District_5:hover {
+  fill: #902524;
+}
+
+svg > g > g > g#District_6:hover {
+  fill: #C05600;
+}
+
+.block__jcc-appellate-zcs.wrapping .block__jcc-appellate-zcs__form__matches ul.zcs__items {
+  position: relative;
+  max-height: 21rem;
+}
+
+.block__jcc-appellate-zcs.wrapping .block__jcc-appellate-zcs__form__actions button {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.block__jcc-appellate-zcs__map {
+  margin-inline: auto;
+}
+
+.block__jcc-appellate-zcs__map__container {
+  width: 320px;
+  max-height: 400px;
+  margin-inline: auto;
+  position: relative;
+}
+
+.block__jcc-appellate-zcs.wrapping .block__jcc-appellate-zcs__map__container {
+  width: 270px;
+}
+
+.block__jcc-appellate-zcs__map svg {
+  max-width: 100%;
+  max-height: inherit;
+}
+
+.block__jcc-appellate-zcs__map .zcs-map-link__item {
+  font-size: var(--s-1);
+  color: var(--color-base);
+  display: inline-block;
+  position: absolute;
+  text-align: left;
+  text-wrap: nowrap;
+}
+
+.block__jcc-appellate-zcs__map .zcs-map-link__item:hover,
+.block__jcc-appellate-zcs__map .zcs-map-link__item:focus {
+  color: var(--color-base-dark-xxx);
+}
+
+.zcs-map-link__item.district_1 {
+  inset: 25% 96% auto auto;
+  text-align: right;
+}
+
+.block__jcc-appellate-zcs.wrapping .zcs-map-link__item.district_1 {
+  inset: 25% 99% auto auto;
+}
+
+.zcs-map-link__item.district_2 {
+  inset: 75% 66% auto auto;
+  text-align: right;
+}
+
+.block__jcc-appellate-zcs.wrapping .zcs-map-link__item.district_2 {
+  inset: 74% 63% auto auto;
+}
+
+.zcs-map-link__item.district_3 {
+  inset: 18% auto auto 46%;
+}
+
+.zcs-map-link__item.district_4 {
+  inset: 65% auto auto 95%;
+}
+
+.block__jcc-appellate-zcs.wrapping .zcs-map-link__item.district_4 {
+  inset: 57% auto auto 89%;
+}
+
+.zcs-map-link__item.district_5 {
+  inset: 40% auto auto 63%;
+}
+
+.zcs-map-link__item.district_5:after {
+  display: block;
+  content: '';
+  width: 3.25rem;
+  position: absolute;
+  border-top: 2px solid var(--color-base-dark-xxx);
+  margin-inline-start: -72%;
+  rotate: 315deg;
+  margin-block-start: 9%;
+}
+
+.block__jcc-appellate-zcs.wrapping .zcs-map-link__item.district_5:after {
+  margin-inline-start: -83%;
+}
+
+.zcs-map-link__item.district_6 {
+  inset: 56% 79% auto auto;
+  text-align: right;
+}
+
