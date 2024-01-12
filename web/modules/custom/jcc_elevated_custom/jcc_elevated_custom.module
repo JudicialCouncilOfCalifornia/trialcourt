@@ -163,9 +163,14 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
 function jcc_elevated_custom_preprocess_views_view_table(&$variables) {
   $view = $variables['view'];
   if ($view->current_display == 'publication_manager') {
-    if (!isset($variables['fields']['jcc_section'])) {
-      $view->addHandler('publication_manager', 'field', 'node_field_data', 'jcc_section', [], NULL);
-      $view->save();
+    // Check if first publication have the jcc_section field available.
+    $first_result = $view->result[0]->_entity;
+    if ($first_result->hasField('jcc_section')) {
+      // Check if the view doesn't already have the field in display.
+      if (!isset($variables['fields']['jcc_section'])) {
+        $view->addHandler('publication_manager', 'field', 'node_field_data', 'jcc_section', [], NULL);
+        $view->save();
+      }
     }
   }
 }
