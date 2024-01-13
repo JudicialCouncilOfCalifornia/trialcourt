@@ -136,7 +136,7 @@ function jcc_components_paragraph_hero_banner(array &$variables, ParagraphInterf
     $component = \Drupal::service('entity.repository')->getTranslationFromContext($component, $langcode);
     if (!empty($component->field_icon)) {
       $card_icon = !empty($component->field_icon->view('default')[0]) ? $component->field_icon->view('default')[0] : NULL;
-     // $card_icon = str_replace("-dark", "-white", $card_icon);
+      // $card_icon = str_replace("-dark", "-white", $card_icon);
       $card_icon['#icon_set'] = str_replace("-dark", "-white", $card_icon['#icon_set']);
       $variables['content']['icon_links'][] = [
         'icon' => $card_icon,
@@ -186,11 +186,11 @@ function jcc_components_paragraph_views_reference_news_sticky_list(array &$varia
 
   foreach ($display['#rows'][0]['#rows'] as &$row) {
     $nodeid = $row['#node']->id();
-    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);
+    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $nodeid, $langcode);
     $row['#lang'] = $langcode;
-    if($langcode === "es") {
-    $prefixed_translated_path = '/' . $langcode . $translated_path;
-    $row['#sticky'] = $prefixed_translated_path;
+    if ($langcode === "es") {
+      $prefixed_translated_path = '/' . $langcode . $translated_path;
+      $row['#sticky'] = $prefixed_translated_path;
     }
   }
   if ($sticky_list) {
@@ -368,6 +368,30 @@ function _jcc_components_generate_cards($cards, $sub_variants) {
       }
     }
 
+    // Media source use.
+    if ($card->field_media && !$card->field_media->isEmpty()) {
+      if ($card->field_media->entity->hasTranslation($langcode)) {
+        $mediaImage = $card->field_media->entity->getTranslation($langcode)->get('field_media_image');
+      }
+      $alt = $mediaImage->alt;
+
+      $img_media = Media::load($card->field_media[0]->getValue('target_id')['target_id']);
+      $fid = $img_media->thumbnail->target_id;
+      $file = File::load($fid);
+      $styled_image_url = ImageStyle::load('crop_16x9')->buildUrl($file->getFileUri());
+
+      $media['src'] = _jcc_components_remove_image_protocol($styled_image_url);
+      $media['alt'] = $alt;
+
+      if (count($cards) > 1) {
+        $sub_variants['card'] = 'media-top';
+      }
+      else {
+        $sub_variants['card'] = 'media-left';
+      }
+    }
+
+    // Icon component library use.
     if ($card->field_icon && $card->field_icon->value) {
       $icon['name'] = str_replace("icon-fa-", "", $card->field_icon->value);
       if (str_contains($card->field_icon->value, "icon-fa-")) {
