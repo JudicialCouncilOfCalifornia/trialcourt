@@ -2,8 +2,18 @@ services:
   jcc_elevated_sections.service:
     class: Drupal\jcc_elevated_sections\JccSectionService
     arguments: [ '@entity_type.manager', '@current_user', '@state', '@redirect.destination', '@string_translation' ]
+
   theme.negotiator.jcc_elevated_sections:
     class: Drupal\jcc_elevated_sections\ThemeNegotiator\JccElevatedSectionsThemeNegotiator
     arguments: [ '@config.factory', '@entity_type.manager' ]
     tags:
       - { name: theme_negotiator, priority: -50 }
+
+  jcc_elevated_sections.route_subscriber:
+    class: Drupal\jcc_elevated_sections\Routing\JccElevatedSectionsAutocompleteRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  jcc_elevated_sections.autocomplete_matcher:
+    class: Drupal\jcc_elevated_sections\JccElevatedSectionsEntityAutocompleteMatcher
+    arguments: ['@plugin.manager.entity_reference_selection', '@entity_type.manager', '@entity.repository', '@jcc_elevated_sections.service']
