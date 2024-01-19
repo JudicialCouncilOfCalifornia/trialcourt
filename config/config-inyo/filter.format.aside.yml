@@ -3,25 +3,35 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.media.container_100_percent
+    - core.entity_view_mode.media.container_25_percent
+    - core.entity_view_mode.media.container_50_percent
+    - core.entity_view_mode.media.container_75_percent
     - core.entity_view_mode.media.full
   module:
+    - emptyparagraphkiller
     - entity_embed
     - glossify_taxonomy
     - linkit
     - media
 _core:
-  default_config_hash: yj-yjBCXGpDm-Zh2po41jpoJjOu_TSKVntSJm51ASBs
+  default_config_hash: p4wWnZdONszzSyW-J9SmjrLuy3-cfVMktkVBVL9SUxg
 name: Aside
 format: aside
 weight: -7
 filters:
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
+    status: true
+    weight: 0
   filter_html:
     id: filter_html
     provider: filter
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <ul type> <ol type start> <li> <blockquote class="blockquote blockquote--callout"> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary jcc-button--cta-link jcc-button--primary jcc-button--cta-link twitter-library jcc-button--primary jcc-button--cta-link twitter-timeline"> <p> <h4>'
+      allowed_html: '<em> <strong> <ul type class dir> <ol type start class dir> <li> <blockquote class="blockquote blockquote--callout" dir> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <p class dir> <h4 dir> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary jcc-button--cta-link jcc-button--primary jcc-button--cta-link twitter-library jcc-button--primary jcc-button--cta-link twitter-timeline jcc-button--primary button jcc-button--secondary button button--secondary jcc-button--cta-link button button--text twitter-timeline"> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title data-langcode>'
       filter_html_help: true
       filter_html_nofollow: false
   glossify_taxonomy:
@@ -33,6 +43,7 @@ filters:
       glossify_taxonomy_case_sensitivity: '1'
       glossify_taxonomy_first_only: '1'
       glossify_taxonomy_type: tooltips
+      glossify_taxonomy_tooltip_truncate: '0'
       glossify_taxonomy_vocabs: ''
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
   linkit:
@@ -69,8 +80,15 @@ filters:
     settings:
       default_view_mode: default
       allowed_view_modes:
+        container_100_percent: container_100_percent
+        container_25_percent: container_25_percent
+        container_50_percent: container_50_percent
+        container_75_percent: container_75_percent
         full: full
       allowed_media_types:
+        boxcast_stream: boxcast_stream
+        image: image
+        remote_video: remote_video
         snippet: snippet
   entity_embed:
     id: entity_embed

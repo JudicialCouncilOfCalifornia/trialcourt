@@ -69,16 +69,6 @@ $is_installer_url = (strpos($_SERVER['SCRIPT_NAME'], '/core/install.php') === 0)
  * you should relocate these locations. See "After Installation"
  * at https://www.drupal.org/node/2431247
  */
-if ($is_installer_url) {
-  $config_directories = [
-    CONFIG_SYNC_DIRECTORY => 'sites/default/files',
-  ];
-}
-else {
-  $config_directories = [
-    CONFIG_SYNC_DIRECTORY => '../config/config-calaveras',
-  ];
-}
 
 /**
  * Allow Drupal 8 to Cleanly Redirect to Install.php For New Sites.
@@ -144,7 +134,12 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * Issue: https://github.com/pantheon-systems/drops-8/issues/114
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-  $config['system.file']['path']['temporary'] = $_SERVER['HOME'] . '/tmp';
+  // Persistent tmp - used only when absolutely necessary & feasible load.
+  $file_path = '/files/private/tmp';
+  if (!file_exists($file_path)) {
+    mkdir($file_path, 0777, true);
+  }
+  $config['system.file']['path']['temporary'] = 'sites/default' . $file_path;
 }
 
 /**

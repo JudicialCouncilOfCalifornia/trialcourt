@@ -54,6 +54,7 @@
 {{ attach_library("jcc_storybook/Footer") }}
 {{ attach_library("jcc_storybook/PrimaryNav") }}
 {{ attach_library("jcc_storybook/SecondaryNav") }}
+{{ attach_library("jcc_storybook/SidebarNav") }}
 {{ attach_library("jcc_storybook/HeaderSearch") }}
 {{ attach_library("jcc_storybook/Shoe") }}
 {{ attach_library("jcc_storybook/Button") }}
@@ -113,21 +114,15 @@
     {{ page.messaging }}
   {% endif %}
 
-  {{ breadcrumb }}
-
-  {{ page.highlighted }}
-
-  {{ page.help }}
-
   {% if section_navigation %}
     <div class="jcc-section-navigation">
-      <div class="section box">
-        <div class="container stack">
-          {% if section_navigation.section_heading %}
+      {% if section_navigation.section_heading %}
+        <div class="section box">
+          <div class="container stack">
             <h2>{{ section_navigation.section_heading }}</h2>
-          {% endif %}
+          </div>
         </div>
-      </div>
+      {% endif %}
 
       {# Alternate section contextual nav uses the PrimaryNav alt skin #}
       {% include "@molecules/PrimaryNav/PrimaryNav.twig" with {
@@ -139,6 +134,12 @@
       } %}
     </div>
   {% endif %}
+
+  {{ breadcrumb }}
+
+  {{ page.highlighted }}
+
+  {{ page.help }}
 
   <main role="main">
     <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}

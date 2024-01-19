@@ -5,6 +5,7 @@
  * Contains jcc_elevated_custom.module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Site\Settings;
 
 /**
@@ -93,5 +94,83 @@ function jcc_elevated_custom_preprocess_node(array &$variables) {
   // Set the variable in case it's not yet set.
   if (!isset($variables['sidebar_navigation'])) {
     $variables['section_navigation'] = FALSE;
+  }
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function jcc_elevated_custom_field_widget_entity_reference_paragraphs_form_alter(&$element, &$form_state, $context) {
+  if ($element['#paragraph_type'] == 'views_reference') {
+    // Hide access to view reference variants on elevated sites (sites using
+    // the elevated theme).
+    $element['subform']['field_variant']['#access'] = !jcc_custom_is_elevated_site();
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function jcc_elevated_custom_form_content_moderation_entity_moderation_form_alter(array &$form, FormStateInterface $form_state) {
+
+  // Alterations to the moderation form to improve style/layout.
+  $form['current_label'] = [
+    '#type' => 'item',
+    '#title' => '',
+    '#weight' => -99,
+    '#markup' => t('Current moderation state:'),
+  ];
+
+  $form['current']['#type'] = 'item';
+  $form['current']['#title'] = '';
+  $form['current']['#weight'] = -98;
+
+  $form['new_state_label'] = [
+    '#type' => 'item',
+    '#title' => '',
+    '#weight' => -97,
+    '#markup' => t('Change to:'),
+  ];
+
+  $form['new_state']['#title'] = '';
+  $form['new_state']['#weight'] = -96;
+
+  $form['captcha']['#access'] = FALSE;
+}
+
+/**
+ * Implements hook_form_views_exposed_form_alter().
+ */
+function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Set some variables.
+  $view = $form_state->get('view');
+  $name = $view->id();
+  $display = $view->current_display;
+  $view_name_display = $name . ':' . $display;
+
+  // Alter the news view.
+  $current_action_path = $form['#action'];
+  $current_path = \Drupal::service('path.current')->getPath();
+  $current_alias_path = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+  if ($current_action_path == '/views/news' || $view_name_display == 'news:news_list') {
+    $form['#action'] = $current_action_path != $current_alias_path ? $current_alias_path : $current_action_path;
+  }
+}
+
+/**
+ * Implements hook_preprocess_VIEW_ID().
+ */
+function jcc_elevated_custom_preprocess_views_view_table(&$variables) {
+  $view = $variables['view'];
+  if ($view->current_display == 'publication_manager') {
+    // Check if first publication have the jcc_section field available.
+    $first_result = $view->result[0]->_entity;
+    if ($first_result->hasField('jcc_section')) {
+      // Check if the view doesn't already have the field in display.
+      if (!isset($variables['fields']['jcc_section'])) {
+        $view->addHandler('publication_manager', 'field', 'node_field_data', 'jcc_section', [], NULL);
+        $view->save();
+      }
+    }
   }
 }

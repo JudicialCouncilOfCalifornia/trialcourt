@@ -97,6 +97,7 @@ terminus env:deploy jcc-${name}.live --note="Initialize from pantheon_new.sh"
 echo -e "\n${P}Creating multidev environments develop and stage for ${RE}jcc-${name}"
 terminus multidev:create jcc-${name}.live develop
 terminus multidev:create jcc-${name}.live stage
+terminus multidev:create jcc-${name}.live epic-uat
 
 # Enable cacheserver
 echo -e "\n${P}Enabling redis for ${RE}jcc-${name}"

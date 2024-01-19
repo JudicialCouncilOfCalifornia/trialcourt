@@ -8,6 +8,7 @@
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\editor\Entity\Editor;
@@ -17,7 +18,6 @@ use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
-use Drupal\Core\Entity\EntityForm;
 
 /**
  * Implements hook_page_attachments().
@@ -40,28 +40,35 @@ function jcc_custom_page_attachments(array &$attachments) {
 function jcc_custom_ckeditor_css_alter(array &$css, Editor $editor) {
   $theme_handler = \Drupal::service('theme_handler');
 
-  if ($scheme = theme_get_setting('scheme', $theme_handler->getDefault())) {
+  $known_formats = [
+    'basic_html',
+    'full_html',
+    'body',
+    'aside',
+    'minimal',
+  ];
+
+  if (jcc_custom_is_elevated_site() && in_array($editor->getFilterFormat()->id(), $known_formats)) {
     if (!$editor->hasAssociatedFilterFormat()) {
       return;
     }
 
-    $known_formats = [
-      'basic_html',
-      'full_html',
-      'body',
-      'aside',
-      'minimal',
-    ];
-
-    if (!jcc_custom_is_elevated_site() && in_array($editor->getFilterFormat()->id(), $known_formats)) {
-      $css[] = "/libraries/courtyard-artifact/2.x/public/css/${scheme}.css";
+    $css[] = "/themes/contrib/jcc_storybook/lib/css/scheme-default.css";
+    $css[] = "/themes/contrib/jcc_storybook/lib/css/elements.css";
+    // For paragraphs embedded as ckeditor content.
+    if ($editor->getFilterFormat()->id() == 'body') {
+      $css[] = "/themes/contrib/jcc_storybook/lib/stories/Atoms/Button/Button.css";
+      $css[] = "/themes/contrib/jcc_storybook/lib/stories/Molecules/ReadMore/ReadMore.css";
     }
-    else {
-      $css[] = "/themes/contrib/jcc_storybook/lib/css/scheme-default.css";
-      $css[] = "/themes/contrib/jcc_storybook/lib/css/elements.css";
-      // For paragraphs embedded as ckeditor content.
-      if ($editor->getFilterFormat()->id() == 'body') {
-        $css[] = "/themes/contrib/jcc_storybook/lib/stories/Molecules/ReadMore/ReadMore.css";
+  }
+  else {
+    if ($scheme = theme_get_setting('scheme', $theme_handler->getDefault())) {
+      if (!$editor->hasAssociatedFilterFormat()) {
+        return;
+      }
+
+      if (in_array($editor->getFilterFormat()->id(), $known_formats)) {
+        $css[] = "/libraries/courtyard-artifact/2.x/public/css/${scheme}.css";
       }
     }
   }
@@ -199,6 +206,7 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
       case 'hero':
         unset($element['subform']['field_components']);
         unset($element['subform']['field_image_media']);
+        unset($element['subform']['field_granicus_view_link_id']);
         break;
 
       case 'cards':
@@ -216,6 +224,19 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         }
         break;
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view() for global use.
+ */
+function jcc_custom_preprocess_views_view(&$variables) {
+  $view_id = $variables['view_array']['#view_id'] ?? '';
+  $display_id = $variables['view_array']['#display_id'] ?? '';
+
+  // Suppress job search view exposed filters from node edit preview.
+  if ($variables['theme_hook_original'] === 'views_view' && ($view_id === 'jobs' && $display_id === 'search')) {
+    $variables['exposed'] = [];
   }
 }
 
@@ -587,7 +608,7 @@ function jcc_custom_build_menu_tree(array $tree): array {
         'url' => !empty($menu_data['url']) ? $menu_data['url'] : '',
         'attributes' => !empty($menu_data['attributes']) ? $menu_data['attributes']->toArray() : [],
         'active' => $menu_data['in_active_trail'],
-        'links' => $menu_data['below'] ? jcc_custom_build_menu_tree($menu_data['below']) : [],
+        'links' => $menu_data['below'] && $menu_data['in_active_trail'] ? jcc_custom_build_menu_tree($menu_data['below']) : [],
       ];
     }
   }
@@ -672,6 +693,7 @@ function jcc_custom_preprocess_details(&$variables) {
   // Elements for menu settings if first level and not allowed.
   if (jcc_custom_is_elevated_site() && \Drupal::routeMatch()->getParameter('node')) {
     if ($variables['title'] && !is_array($variables['title']) && $variables['title'] == 'Menu settings') {
+      $enabled = $variables['element']['enabled']['#default_value'];
       $node = \Drupal::routeMatch()->getParameter('node');
       $url_alias = $node->toUrl()->toString();
       $menu_level = substr_count($url_alias, '/');
@@ -693,7 +715,7 @@ function jcc_custom_preprocess_details(&$variables) {
         // Menu parent.
         $parent_label_exp = '/<label(?:.*?)for=\"edit-menu-menu-parent\"(?:.*)>([^"]+)<\/.*>/';
         preg_match($parent_label_exp, $variables['children'], $parent_label);
-        $parent_value_exp = '/<option(?:.*?)selected(?:.*?)>([^"]+)<\/(?:.*?)>/';
+        $parent_value_exp = '/<option(?:.*?)selected(?:.*?)>([^"]+)<\/option>/';
         preg_match($parent_value_exp, $variables['children'], $parent_value);
         $parent_value = preg_replace('/&#?[a-z0-9]{2,8};/', '', $parent_value[1]);
 
@@ -707,19 +729,19 @@ function jcc_custom_preprocess_details(&$variables) {
         $variables['readonly'] = [
           'menu_title' => [
             'label' => $title_label[1],
-            'value' => $title_value[1],
+            'value' => $title_value[1] ?? '(Not set)',
           ],
           'menu_description' => [
             'label' => $description_label[1],
-            'value' => $description_value[1],
+            'value' => $description_value[1] ?? '(Not set)',
           ],
           'menu_parent' => [
             'label' => $parent_label[1],
-            'value' => $parent_value,
+            'value' => $enabled ? $parent_value : '(Not set)',
           ],
           'menu_weight' => [
             'label' => $weight_label[1],
-            'value' => $weight_value[1],
+            'value' => $enabled ? $weight_value[1] : '(Not set)',
           ],
         ];
 

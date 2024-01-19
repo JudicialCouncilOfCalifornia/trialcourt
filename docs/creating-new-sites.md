@@ -24,6 +24,12 @@ After this runs it will give you instructions to set up the new Drupal instance 
   - Make sure `[name]` will pattern match to the identifying portion of the live url. It should be the same as `[site]` from the `pantheon_new.sh` command above.
     - i.e. www.kings.courts.ca.gov => `kings`
   - You can optionally specify an alternate `[theme]` from the JCC Elevated default, specifically to use JCC Components (jcc_components) for the current trial court themes & features.
+- For elevated sites:
+  - Install the following manually until we can automate or consolidate themes:
+    - `lando drush en jcc_elevated_custom -l @local.[site]` - customizations only for elevated sites.
+    - `lando drush en jcc_elevated_embed -l @local.[site]` - embeddable views/features.
+    - `lando drush en jcc_elevated_sections -l @local.[site]` - if needed to create content division.
+  - Set 'JCC' starter user role as administrator else you won't be able to administer menu structures. The password is noted in the lando multisite dialog else create yourself an admin account.
 - Confirm `web/sites/[site]` setup (extra files and directory seems okay to keep or delete)
   - .gitignore
   - services.local.yml
@@ -61,10 +67,10 @@ Confirm that the following themes are installed and applied. Set the themes manu
   - Gin - administration theme
   - JCC Components - alternate theme for trial court series until an upgrade to elevated
 
-Configure theme at `/admin/appearance/settings/jcc_components`:
+Configure theme at `/admin/appearance/settings/[jcc_elevated|jcc_components]`:
 - Add the logo.svg to /web/sites/[site]/logo.svg
 - Set the path to sites/[site]/logo.svg
-- Set the various other theme settings. When in doubt, use the placeholders but not the `Base` scheme.
+- Set the various other theme settings. When in doubt, use the placeholders but not the `Base` scheme for jcc_components.
 - Disable the translation menu if not in use
 
 If admin console UI seems broken, confirm/configure administration theme at `/admin/appearance`:
@@ -102,7 +108,8 @@ Create Landing Page
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
 - Configure SendGrid (optional):
   * `/admin/config/system/keys/manage/sendgrid`
-  * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
+  * See JIRA for trial court keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
+  * For all other sites, a new key may be required. See OneNote documentation.
   * Note: site's email address needs to be `no-reply@courtinfo.ca.gov` for SendGrid to work.
 - Setup defaults for Google Tag module: (if available else later done)
   * `lando drush @local.[site] cim --partial --source=/app/web/modules/contrib/google_tag/config/install/`
@@ -110,10 +117,11 @@ Create Landing Page
   * `/admin/config/people/captcha/recaptcha`
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
 - Configure OpenID with Azure Active Directory (optional)
-  - See OneNote documentation
+  - `/admin/config/services/openid-connect`
+  - See OneNote documentation.
 - Add language support as needed
   - `/admin/config/regional/language`
-  - Add Spanish at minimum
+  - Add Spanish at minimum.
 
 ### Create users
 
@@ -144,14 +152,21 @@ Create Landing Page
 - Export config & setup .gitignore
   - `lando drush @local.[site] cex -y`
   - `lando config-ignore` or `scripts/sync_config_ignore.sh`  Make sure this is run before you commit exported config. It will ignore the files that are managed by jcc_tc2_all_immutable_config feature module.
+  - NOTE: Some configurations are user managed but cannot be immutable or easily managed by the `config-ignore` script. These settings are still exported as source but ignored at `/admin/config/development/configuration/ignore`.
 
 - Export db from local
   - `lando drush @local.[site] sql-dump > data/[site]-install.sql`
+  - For elevated sites, modify loading weight in `core.extension.yml` to 100 for:
+    - jcc_elevated_custom
+    - jcc_elevated_embeds
+    - jcc_elevated_sections (if installed)
 
 - Import the initial database dump to live environment to prepare pantheon for deployment.
 
-- Sync the database and files from live to Dev (not a typo), develop and stage on Pantheon.
-
 - Commit changes and deploy to appropriate environment(s) for testing and other pre-launch work. Live (master), is where content creation will happen pre-launch.
-
-- After deploying to develop, merge develop to Dev since Pantheon's Solr, possibly other environment aspects, relies on that instance for initialization. Update this instance manually only as needed.
+  - Environments:
+    - live
+    - stage - production deployment dry run tests
+    - develop - deployment integration tests
+    - epic-uat - stakeholder/user testing and review
+  - After deploying to develop, merge develop to Dev since Pantheon's Solr, possibly other environment aspects, relies on that instance for initialization. Update this instance manually only as needed.

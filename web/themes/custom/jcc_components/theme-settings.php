@@ -145,6 +145,13 @@ function jcc_components_form_system_theme_settings_alter(&$form, FormStateInterf
     '#collapsed'  => TRUE,
   ];
 
+  $form['global']['hide_was_this_helpful'] = [
+    '#type'          => 'checkbox',
+    '#title'         => t('Hide feedback widget'),
+    '#default_value' => theme_get_setting('hide_was_this_helpful'),
+    '#description'   => t("Hide 'Was this helpful' widget"),
+  ];
+
   $form['global']['hide_translation'] = [
     '#type'          => 'checkbox',
     '#title'         => t('Hide translation'),

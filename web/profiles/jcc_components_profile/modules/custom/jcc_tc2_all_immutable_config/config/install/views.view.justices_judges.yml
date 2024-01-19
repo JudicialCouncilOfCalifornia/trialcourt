@@ -9,11 +9,12 @@ dependencies:
   module:
     - datetime
     - node
+    - taxonomy
     - user
 id: justices_judges
 label: 'Justices & Judges'
 module: views
-description: 'Listing of Justices and/or Judges by content type with person type'
+description: 'Listing of Justices and/or Judges content type'
 tag: ''
 base_table: node_field_data
 base_field: nid
@@ -298,30 +299,34 @@ display:
         options:
           perm: 'access content'
       cache:
-        type: tag
+        type: none
         options: {  }
       empty: {  }
       sorts:
-        field_division_target_id:
-          id: field_division_target_id
-          table: node__field_division
-          field: field_division_target_id
-          relationship: none
+        weight:
+          id: weight
+          table: taxonomy_term_field_data
+          field: weight
+          relationship: field_division
           group_type: group
           admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: weight
           plugin_id: standard
           order: ASC
           expose:
             label: ''
             field_identifier: ''
           exposed: false
-        field_job_title_target_id:
-          id: field_job_title_target_id
-          table: node__field_job_title
-          field: field_job_title_target_id
-          relationship: none
+        weight_1:
+          id: weight_1
+          table: taxonomy_term_field_data
+          field: weight
+          relationship: field_job_title
           group_type: group
           admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: weight
           plugin_id: standard
           order: ASC
           expose:
@@ -341,7 +346,7 @@ display:
             label: ''
             field_identifier: ''
           exposed: false
-          granularity: second
+          granularity: month
       arguments: {  }
       filters:
         type:
@@ -460,7 +465,25 @@ display:
           distinct: false
           replica: false
           query_tags: {  }
-      relationships: {  }
+      relationships:
+        field_division:
+          id: field_division
+          table: node__field_division
+          field: field_division
+          relationship: none
+          group_type: group
+          admin_label: 'field_division: Taxonomy term'
+          plugin_id: standard
+          required: false
+        field_job_title:
+          id: field_job_title
+          table: node__field_job_title
+          field: field_job_title
+          relationship: none
+          group_type: group
+          admin_label: 'field_job_title: Taxonomy term'
+          plugin_id: standard
+          required: false
       header: {  }
       footer: {  }
       display_extenders: {  }
@@ -502,6 +525,36 @@ display:
     position: 1
     display_options:
       title: 'Former Justices and Judges'
+      sorts:
+        weight:
+          id: weight
+          table: taxonomy_term_field_data
+          field: weight
+          relationship: field_division
+          group_type: group
+          admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: weight
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+        field_retirement_date_value:
+          id: field_retirement_date_value
+          table: node__field_retirement_date
+          field: field_retirement_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: month
       filters:
         type:
           id: type
@@ -609,6 +662,7 @@ display:
           1: AND
       defaults:
         title: false
+        sorts: false
         filters: false
         filter_groups: false
       display_description: ''
