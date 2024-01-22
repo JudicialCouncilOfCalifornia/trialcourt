@@ -135,6 +135,50 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
 }
 
 /**
+ * Node: Advisory body preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node) {
+  $tabs = [];
+  if ($node->get('field_members')->first()) {
+    $tabs[] = [
+      'label' => 'Member',
+      'content' => $node->get('field_members')->first()->getValue()['value'],
+    ];
+  }
+  if ($node->get('field_subcommittees')->first()) {
+    $tabs[] = [
+      'label' => 'Subcommittees',
+      'content' => $node->get('field_subcommittees')->first()->getValue()['value'],
+    ];
+  }
+  if ($node->get('field_updates_resources')->first()) {
+    $tabs[] = [
+      'label' => 'Updates & resources',
+      'content' => $node->get('field_updates_resources')->first()->getValue()['value'],
+    ];
+  }
+  if ($node->get('field_about')->first()) {
+    $tabs[] = [
+      'label' => 'About',
+      'content' => $node->get('field_about')->first()->getValue()['value'],
+    ];
+  }
+  if ($node->get('field_related_links')->first()) {
+    $tabs[] = [
+      'label' => 'Related links',
+      'content' => $node->get('field_related_links')->first()->getValue()['value'],
+    ];
+  }
+  $variables['tabs'] = $tabs;
+  dsm($variables);
+}
+
+/**
  * Node: Alerts preprocess.
  *
  * @param array $variables
