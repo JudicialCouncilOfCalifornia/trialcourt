@@ -520,28 +520,8 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
     if (function_exists('jcc_elevated_get_site_name') && jcc_elevated_get_site_name() == 'partners') {
       $form['field_case_type_target_id']['#access'] = FALSE;
     }
-
-    // Change the date filter wrapper.
-    $form['field_date_value_wrapper']['#type'] = 'fieldset';
-    $form['field_date_value_wrapper']['#weight'] = -1;
-    $form['field_date_value_wrapper']['#attributes']['class'][] = 'form-item';
-    $form['field_date_value_wrapper']['#title'] = '';
-
-    // Change the "from" date filter to a datetime filter.
-    $form['field_date_value_wrapper']['field_date_value']['min']['#title'] = FALSE;
-    $form['field_date_value_wrapper']['field_date_value']['min']['#type'] = 'datetime';
-    $form['field_date_value_wrapper']['field_date_value']['min']['#date_date_element'] = 'date';
-    $form['field_date_value_wrapper']['field_date_value']['min']['#date_time_element'] = 'none';
-    $form['field_date_value_wrapper']['field_date_value']['min']['#date_year_range'] = '2000:+1';
-    $form['field_date_value_wrapper']['field_date_value']['min']['#description'] = t('From');
-
-    // Change the "to" date filter to a datetime filter.
-    $form['field_date_value_wrapper']['field_date_value']['max']['#title'] = FALSE;
-    $form['field_date_value_wrapper']['field_date_value']['max']['#type'] = 'datetime';
-    $form['field_date_value_wrapper']['field_date_value']['max']['#date_date_element'] = 'date';
-    $form['field_date_value_wrapper']['field_date_value']['max']['#date_time_element'] = 'none';
-    $form['field_date_value_wrapper']['field_date_value']['max']['#date_year_range'] = '2000:+1';
-    $form['field_date_value_wrapper']['field_date_value']['max']['#description'] = t('To');
+    // Removing date filter for elevated themes.
+    unset($form['field_date_value_wrapper']);
   }
 
   // Hide select form elements if their options are empty or only All/Any item.
