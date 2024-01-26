@@ -1,3 +1,4 @@
+uuid: cced076d-f3fb-49d8-a96a-eb68f44970b8
 langcode: en
 status: true
 dependencies:
@@ -42,6 +43,7 @@ dependencies:
     - taxonomy.vocabulary.user_groups
     - workflows.workflow.editorial
   module:
+    - access_unpublished
     - captcha
     - content_moderation
     - content_translation
@@ -68,7 +70,6 @@ dependencies:
     - redirect
     - role_delegation
     - scheduler
-    - sitemap
     - system
     - taxonomy
     - toolbar
@@ -76,6 +77,8 @@ dependencies:
     - webform
     - webform_translation_permissions
     - xlsx
+_core:
+  default_config_hash: oqHP2RnaO0yI0A7V_SOLjcf-kzT4ZuwtbRj5aEl0pEo
 id: manager
 label: Manager
 weight: -7
@@ -221,6 +224,7 @@ permissions:
   - 'delete terms in subject_matter'
   - 'delete terms in tags'
   - 'delete terms in topics'
+  - 'delete token'
   - 'delete xlsx mapping'
   - 'edit any alert content'
   - 'edit any boxcast_stream media'
@@ -282,6 +286,7 @@ permissions:
   - 'openid connect set own password'
   - 'perform batch updates entity usage'
   - 'rebuild cache access'
+  - 'renew token'
   - 'revert alert revisions'
   - 'revert all revisions'
   - 'revert custom_email revisions'
