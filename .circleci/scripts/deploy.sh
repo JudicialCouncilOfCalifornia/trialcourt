@@ -29,7 +29,7 @@ for name in "$@" ; do
   ARTIFACT_GIT=ssh://codeserver.dev.${UUID}@codeserver.dev.${UUID}.drush.in:2222/~/repository.git
   TIMESTAMP=$(date +'%y-%m-%dT%H:%m:%S')
   PANTHEON_ENV=$CIRCLE_BRANCH
-   
+
    # Uncomment if Dev deployment is needed.
    # Skip deployment step for master branch if "LIVE" is set explicitly to false.
   #if [ "$CIRCLE_BRANCH" = "master" ] && [ "$LIVE" = false ]; then
@@ -104,24 +104,24 @@ for name in "$@" ; do
   echo "Waiting $WAIT seconds for code to sync on host."
   sleep $WAIT
 
-  echo
-  echo Clearing Cache for $PANTHEON_ENV
-  drush @${SITE_CODE}.${PANTHEON_ENV} cr
+  # echo
+  # echo Clearing Cache for $PANTHEON_ENV
+  # drush @${SITE_CODE}.${PANTHEON_ENV} cr
 
-  echo
-  echo Running Database Updates for $PANTHEON_ENV
-  drush @${SITE_CODE}.${PANTHEON_ENV} updb -y
+  # echo
+  # echo Running Database Updates for $PANTHEON_ENV
+  # drush @${SITE_CODE}.${PANTHEON_ENV} updb -y
 
-  echo
-  echo Importing Config for $PANTHEON_ENV
-  drush @${SITE_CODE}.${PANTHEON_ENV} cim -y
+  # echo
+  # echo Importing Config for $PANTHEON_ENV
+  # drush @${SITE_CODE}.${PANTHEON_ENV} cim -y
 
-  echo
-  echo Importing Features for $PANTHEON_ENV
-  drush @${SITE_CODE}.${PANTHEON_ENV} fra --bundle=jcc_tc2 -y
+  # echo
+  # echo Importing Features for $PANTHEON_ENV
+  # drush @${SITE_CODE}.${PANTHEON_ENV} fra --bundle=jcc_tc2 -y
 
-  echo
-  echo Clearing Cache for $PANTHEON_ENV
-  drush @${SITE_CODE}.${PANTHEON_ENV} cr
+  # echo
+  # echo Clearing Cache for $PANTHEON_ENV
+  # drush @${SITE_CODE}.${PANTHEON_ENV} cr
 
 done

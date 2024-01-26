@@ -7,6 +7,8 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Site\Settings;
+use Drupal\media\Entity\Media;
+use Drupal\file\Entity\File;
 
 /**
  * Get the machine name of the site.
@@ -155,5 +157,67 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
   if ($current_action_path == '/views/news' || $view_name_display == 'news:news_list') {
     $form['#action'] = $current_action_path != $current_alias_path ? $current_alias_path : $current_action_path;
   }
+}
 
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == 'editor_link_dialog') {
+    $form['link_to_file'] = [
+      '#type'          => 'checkbox',
+      '#title'         => t('Link media to file when saving'),
+      '#required'      => FALSE,
+      '#default_value' => FALSE,
+    ];
+    $form['actions']['save_modal']['#submit'][] = 'jcc_custom_elevated_link_to_file_submit';
+  }
+}
+
+/**
+ * Implements hook_preprocess_VIEW_ID().
+ */
+function jcc_elevated_custom_preprocess_views_view_table(&$variables) {
+  $view = $variables['view'];
+  if ($view->current_display == 'publication_manager') {
+    // Check if first publication have the jcc_section field available.
+    $first_result = $view->result[0]->_entity;
+    if ($first_result->hasField('jcc_section')) {
+      // Check if the view doesn't already have the field in display.
+      if (!isset($variables['fields']['jcc_section'])) {
+        $view->addHandler('publication_manager', 'field', 'node_field_data', 'jcc_section', [], NULL);
+        $view->save();
+      }
+    }
+  }
+}
+
+/**
+ * Custom callback for linkit modal window.
+ */
+function jcc_custom_elevated_link_to_file_submit(&$form, $form_state) {
+  if ($form_state->getValue('link_to_file') == '1') {
+    if (str_contains($form_state->getValue('href_dirty_check'), '/media/')) {
+
+      // Get media entity and retrieve its first file's url.
+      $media_id = str_replace("/media/", "", $form_state->getValue('href_dirty_check'));
+      $media = Media::load($media_id);
+
+      // If no file then skip the logic.
+      if ($media->field_media_file_multiple) {
+        $fid = $media->field_media_file_multiple->first()->target_id;
+        $file = File::load($fid);
+        $file_url = $file->createFileUrl(TRUE);
+
+        // Populate form state with new url.
+        $form_state->setValue('href_dirty_check', $file_url);
+        $form_state->setValue('attributes', [
+          'href' => $file_url,
+          'data-entity-type' => '',
+          'data-entity-uuid' => '',
+          'data-entity-substitution' => '',
+        ]);
+      }
+    }
+  }
 }

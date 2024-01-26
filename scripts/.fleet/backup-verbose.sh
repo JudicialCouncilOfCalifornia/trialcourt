@@ -31,7 +31,7 @@ do_command() {
       sitemap["$!"]="${site}"
 
       # Don't overwhelm pantheon.
-      sleep 3
+      sleep 10
     done
 
   for p in $PIDS; do

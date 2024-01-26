@@ -150,7 +150,7 @@ class JccAppellateZipCitySearchBlock extends BlockBase implements ContainerFacto
 
     $form['view_all'] = [
       '#type' => 'details',
-      '#title' => $this->t('View all link'),
+      '#title' => $this->t('Link one'),
     ];
 
     $form['view_all']['view_all_title'] = [
@@ -164,7 +164,7 @@ class JccAppellateZipCitySearchBlock extends BlockBase implements ContainerFacto
       '#target_type' => 'node',
       '#title' => $this->t('Url'),
       '#description' => $this->t('Internal or external urls are allowed.'),
-      '#required' => TRUE,
+      '#required' => FALSE,
       '#process_default_value' => FALSE,
       '#default_value' => $config['view_all_url'] ?? '',
       '#attributes' => [
@@ -178,9 +178,18 @@ class JccAppellateZipCitySearchBlock extends BlockBase implements ContainerFacto
       ],
     ];
 
+    // Process the url for an entity or an external URL.
+    if (strpos($form['view_all']['view_all_url']['#default_value'], 'entity:') === 0) {
+      $value = explode('/', $form['view_all']['view_all_url']['#default_value']);
+      $entity_id = end($value);
+      $entity = \Drupal::entityTypeManager()->getStorage($form['view_all']['view_all_url']['#target_type'])->load($entity_id);
+      $form['view_all']['view_all_url']['#default_value'] = $entity_id ? $entity : '';
+      $form['view_all']['view_all_url']['#process_default_value'] = TRUE;
+    }
+
     $form['fmc'] = [
       '#type' => 'details',
-      '#title' => $this->t('Find my court'),
+      '#title' => $this->t('Link two'),
     ];
 
     $form['fmc']['fmc_title'] = [
@@ -194,7 +203,7 @@ class JccAppellateZipCitySearchBlock extends BlockBase implements ContainerFacto
       '#target_type' => 'node',
       '#title' => $this->t('Url'),
       '#description' => $this->t('Internal or external urls are allowed.'),
-      '#required' => TRUE,
+      '#required' => FALSE,
       '#process_default_value' => FALSE,
       '#default_value' => $config['fmc_url'] ?? '',
       '#attributes' => [
@@ -207,6 +216,15 @@ class JccAppellateZipCitySearchBlock extends BlockBase implements ContainerFacto
         ],
       ],
     ];
+
+    // Process the url for an entity or an external URL.
+    if (strpos($form['fmc']['fmc_url']['#default_value'], 'entity:') === 0) {
+      $value = explode('/', $form['fmc']['fmc_url']['#default_value']);
+      $entity_id = end($value);
+      $entity = \Drupal::entityTypeManager()->getStorage($form['fmc']['fmc_url']['#target_type'])->load($entity_id);
+      $form['fmc']['fmc_url']['#default_value'] = $entity_id ? $entity : '';
+      $form['fmc']['fmc_url']['#process_default_value'] = TRUE;
+    }
 
     return $form;
   }

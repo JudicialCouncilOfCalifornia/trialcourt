@@ -26,14 +26,14 @@ source:
     - hearing_type
   fields:
     -
+      name: hearing_datetime
+      label: 'Hearing Date and Time'
+    -
       name: party_name
       label: 'Party Name'
     -
       name: department
       label: Department
-    -
-      name: hearing_datetime
-      label: 'Hearing Date and Time'
     -
       name: judicial_officer
       label: 'Judicial Officer'
@@ -128,7 +128,7 @@ process:
       source: hearing_datetime
     -
       plugin: format_date
-      from_format: 'n/j/Y g:i A'
+      from_format: 'm/d/Y h:i A'
       to_format: 'Y-m-d\TH:i:s'
       from_timezone: America/Los_Angeles
       to_timezone: UTC

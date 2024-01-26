@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements hook_editor_js_settings_alter().
  */
-function jcc_ckeditor_editor_js_settings_alter(array &$settings) {
+function jcc_ckeditor_link_js_settings_alter(array &$settings) {
 
 }
 
@@ -256,6 +256,10 @@ function _jcc_ckeditor_link_submit_handler(array &$form, FormStateInterface $for
  * Helper function to parse the link data and figure out the type.
  */
 function _jcc_ckeditor_link_parse_url_field(?string $href, array $input = []) {
+
+  // php8 warning fix with preg_match and potentially passing a null value as
+  // the second argument. Convert null to an empty string.
+  $href = $href == NULL ? '' : $href;
 
   // If we are dealing with a telephone link.
   if ((isset($input['data-link-type']) && $input['data-link-type'] == 'tel') || preg_match('/^tel:/', $href,)) {

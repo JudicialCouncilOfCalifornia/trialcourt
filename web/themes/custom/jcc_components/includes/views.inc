@@ -413,6 +413,9 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
 function jcc_components_views_pre_render(ViewExecutable $view) {
   switch ($view->storage->id()) {
     case 'tentative_rulings':
+      if ($view->current_display == 'block_1') {
+        $view->result = [];
+      }
       if (($view->current_display == 'tentative_rulings') && ($view->total_rows != 0)) {
         unset($view->attachment_before[1]);
       }
