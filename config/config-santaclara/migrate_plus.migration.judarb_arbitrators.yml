@@ -1,0 +1,108 @@
+uuid: 89668628-fbb0-4fc9-9cb1-bff6891a31e5
+langcode: en
+status: true
+dependencies: {  }
+id: judarb_arbitrators
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - node
+migration_group: jcc2
+label: 'Judarb Arbitrators'
+source:
+  plugin: csv
+  path: modules/custom/jcc_tc_migration/csv/judarb-Arbitrators.csv
+  delimiter: ','
+  enclosure: '"'
+  ids:
+    - 'Legacy ID'
+process:
+  status:
+    plugin: static_map
+    map:
+      'TRUE': 1
+      'FALSE': 0
+      '': 0
+    source: Active
+  title:
+    plugin: concat
+    source:
+      - First
+      - Last
+    delimiter: ' '
+  field_Legacy_id: 'Legacy ID'
+  field_county: County
+  field_email_address: Email
+  field_fax: Fax
+  field_first_name: First
+  field_last_name: Last
+  field_mi: MI
+  field_phone_number: Phone
+  field_subject_matter:
+    -
+      plugin: skip_on_empty
+      source: 'Subject Matter Area'
+      method: process
+      message: 'Skipped because no data.'
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: entity_lookup
+      value_key: field_subject_mater_area_id
+      bundle_key: vid
+      bundle: subject_matter_area
+      entity_type: taxonomy_term
+  field_subject_matter_other:
+    -
+      plugin: skip_on_empty
+      source: 'Subject Matter Area Other'
+      method: process
+      message: 'Skipped because no data.'
+    -
+      plugin: explode
+      delimiter: ','
+  field_address/country_code:
+    plugin: default_value
+    default_value: US
+  field_address/postal_code: 'Zip Code'
+  field_address/locality: City
+  field_address/address_line1: Street
+  field_address/administrative_area:
+    plugin: default_value
+    default_value: CA
+  field_mediator_type:
+    -
+      plugin: default_value
+      default_value: 'Civil Judicial Arbitrator'
+    -
+      plugin: entity_generate
+      value_key: name
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: mediator_type
+      ignore_case: true
+destination:
+  plugin: 'entity:node'
+  default_bundle: arbitrator
+  overwrite_properties:
+    - status
+    - field_legacy_id
+    - title
+    - field_first_name
+    - field_last_name
+    - field_mi
+    - field_phone_number
+    - field_fax
+    - field_county
+    - field_email_address
+    - field_subject_matter
+    - field_subject_matter_other
+    - field_address/country_code
+    - field_address/postal_code
+    - field_address/locality
+    - field_address/address_line1
+    - field_address/administrative_area
+    - field_mediator_type
+migration_dependencies: {  }

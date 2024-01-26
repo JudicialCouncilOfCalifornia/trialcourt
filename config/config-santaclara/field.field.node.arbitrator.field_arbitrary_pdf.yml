@@ -1,0 +1,34 @@
+uuid: f48a69a2-a8b2-49ca-a79f-89b1bc1dc508
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_arbitrary_pdf
+    - media.type.file
+    - node.type.arbitrator
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.arbitrator.field_arbitrary_pdf
+field_name: field_arbitrary_pdf
+entity_type: node
+bundle: arbitrator
+label: 'Arbitrary pdf'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      file: file
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

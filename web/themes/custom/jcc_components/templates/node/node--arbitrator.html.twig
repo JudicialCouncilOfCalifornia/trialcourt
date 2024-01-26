@@ -1,0 +1,301 @@
+{#
+/**
+ * @file
+ * Theme override to display a node.
+ *
+ * Available variables:
+ * - node: The node entity with limited access to object properties and methods.
+ *   Only method names starting with "get", "has", or "is" and a few common
+ *   methods such as "id", "label", and "bundle" are available. For example:
+ *   - node.getCreatedTime() will return the node creation timestamp.
+ *   - node.hasField('field_example') returns TRUE if the node bundle includes
+ *     field_example. (This does not indicate the presence of a value in this
+ *     field.)
+ *   - node.isPublished() will return whether the node is published or not.
+ *   Calling other methods, such as node.delete(), will result in an exception.
+ *   See \Drupal\node\Entity\Node for a full list of public properties and
+ *   methods for the node object.
+ * - label: The title of the node.
+ * - content: All node items. Use {{ content }} to print them all,
+ *   or print a subset such as {{ content.field_example }}. Use
+ *   {{ content|without('field_example') }} to temporarily suppress the printing
+ *   of a given child element.
+ * - author_picture: The node author user entity, rendered using the "compact"
+ *   view mode.
+ * - metadata: Metadata for this node.
+ * - date: Themed creation date field.
+ * - author_name: Themed author name field.
+ * - url: Direct URL of the current node.
+ * - display_submitted: Whether submission information should be displayed.
+ * - attributes: HTML attributes for the containing element.
+ *   The attributes.class element may contain one or more of the following
+ *   classes:
+ *   - node: The current template type (also known as a "theming hook").
+ *   - node--type-[type]: The current node type. For example, if the node is an
+ *     "Article" it would result in "node--type-article". Note that the machine
+ *     name will often be in a short form of the human readable label.
+ *   - node--view-mode-[view_mode]: The View Mode of the node; for example, a
+ *     teaser would result in: "node--view-mode-teaser", and
+ *     full: "node--view-mode-full".
+ *   The following are controlled through the node publishing options.
+ *   - node--promoted: Appears on nodes promoted to the front page.
+ *   - node--sticky: Appears on nodes ordered above other non-sticky nodes in
+ *     teaser listings.
+ *   - node--unpublished: Appears on unpublished nodes visible only to site
+ *     admins.
+ * - title_attributes: Same as attributes, except applied to the main title
+ *   tag that appears in the template.
+ * - content_attributes: Same as attributes, except applied to the main
+ *   content tag that appears in the template.
+ * - author_attributes: Same as attributes, except applied to the author of
+ *   the node tag that appears in the template.
+ * - title_prefix: Additional output populated by modules, intended to be
+ *   displayed in front of the main title tag that appears in the template.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+ * - view_mode: View mode; for example, "teaser" or "full".
+ * - teaser: Flag for the teaser state. Will be true if view_mode is 'teaser'.
+ * - page: Flag for the full page state. Will be true if view_mode is 'full'.
+ * - readmore: Flag for more state. Will be true if the teaser content of the
+ *   node cannot hold the main body content.
+ * - logged_in: Flag for authenticated user status. Will be true when the
+ *   current user is a logged-in member.
+ * - is_admin: Flag for admin user status. Will be true when the current user
+ *   is an administrator.
+ *
+ * @see template_preprocess_node()
+ *
+ * @todo Remove the id attribute (or make it a class), because if that gets
+ *   rendered twice on a page this is invalid CSS for example: two lists
+ *   in different view modes.
+ */
+#}
+
+{% set components = [] %}
+{% for k, component in content.field_components if k|first != "#" %}
+  {% set components = components|merge([component]) %}
+{% endfor %}
+
+<article{{attributes}}>
+  {% block layout %}
+  {# Display breadcrumb #}
+  {{ breadcrumb }}
+
+  {# {{dump(content)}} #}
+  <div class="name_header">
+
+    <h2>{{content.field_last_name.0['#context']['value']}},{{content.field_first_name.0['#context']['value']}}</h2>
+  </div>
+
+  <div class="personal_bio">
+    <h2><span>Professional Bio</span></h2>
+    <h3>Contact Information</h3>
+
+    <p class="name_personal_bio">Full Name: {{content.field_last_name.0['#context']['value']}},{{content.field_first_name.0['#context']['value']}}<br>
+      Email: <a href="mailto:{{content.field_email_address.0['#context']['value']}}">{{content.field_email_address.0['#context']['value']}}</a><br>
+      Phone Number: <a href="{{content.field_phone_number.0['#context']['value']}}">{{content.field_phone_number.0['#context']['value']}}</a><br>
+      {% set fax=content.field_fax.0['#context']['value'] %}
+      {% if fax %}
+        Fax:{{content.field_fax.0['#context']['value']}}
+      {%endif%}
+      <br>
+    <div class="address-title">Address</div>
+    {{content.field_address}}</div>
+    {% set county=content.field_county.0['#context']['value'] %}
+    {% if county != null %}
+      <p>County:{{county}}</p>
+    {% endif %}
+    <br>
+
+
+    <div class="general_information">
+      {% set mediator =content.field_mediator %}
+
+      {% if mediator.0 %}
+      <h3>General Information</h3>
+      <p class="mediator">Mediator: {{content.field_mediator_type.0["#title"]}}</p>
+    </div>
+    {% endif %}
+    {% set sbn=content.field_sbn.0['#markup'] %}
+    {% if sbn != null %}
+      <div class="sbn">
+        <p>SBN:{{sbn}}</p>
+      </div>
+    {%endif%}
+    {% set mi=content.field_mi.0['#context']['value'] %}
+    {% if mi != null %}
+      <div class="sbn">
+        <p>MI:{{mi}}</p>
+      </div>
+    {%endif%}
+    {% set linksArray = content.field_foreign_language %}
+    {% if linksArray.0 %}
+      <div class="links-table">
+        <h3>Foreign language</h3>
+        <table class="table-custom">
+          <tbody>
+          {% for linkData in linksArray %}
+            {% if linkData['#url'] %}
+              <tr>
+                <td>{{ linkData['#title'] }}</td>
+
+              </tr>
+            {% endif %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+    {% set linksArray = content.field_language_other %}
+    {% if linksArray %}
+      {% if linksArray.0 %}
+        <div class="links-table">
+          <h3>Other language</h3>
+          <table class="table-custom">
+            <tbody>
+            {% for linkData in linksArray %}
+              {% if linkData.value %}
+                <tr>
+                  <td>{{linkData.value }}</td>
+
+                </tr>
+              {% endif %}
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+    {% endif %}
+
+    {% set hourly=content.field_hourly_rate.0['#markup'] %}
+    {% set baseFare=content.field_basic_mediation_fee.0 %}
+    {% set high=content.field_basic_mediation_fee_max.0 %}
+    {% if hourly=='On' %}
+      {% if baseFare != "0" %}
+        {% if high != "0" %}
+          <p>
+            Hourly Rate:
+            {{baseFare}}-{{high}}
+
+
+            / hr</p>
+        {% else  %}
+          <p>
+            Hourly Rate:
+            {{baseFare}}
+            / hr</p>
+        {% endif  %}
+      {% endif  %}
+    {% else %}
+      {% if high != 0 %}
+        {% if base!= 0 %}
+          Mediation Fee:
+          {{baseFare}}-{{high}}
+        {% else %}
+          Mediation Fee:{{baseFare}}
+        {%endif%}
+      {%endif%}
+    {%endif%}
+    {% set process=content.field_process %}
+    {% set linksArray =content.field_process %}
+    {% if linksArray.0 %}
+      <div class="links-table">
+        <h3> Process</h3>
+        <table class="table-custom">
+          <tbody>
+          {% for linkData in linksArray %}
+            {% if linkData.value %}
+              <tr>
+                <td>{{linkData.value }}</td>
+
+              </tr>
+            {% endif %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+    {% set linksArray =content.field_adr_process %}
+    {% if linksArray.0 %}
+      <div class="links-table">
+        <h3>ADR Process</h3>
+        <table class="table-custom">
+          <tbody>
+          {% for linkData in linksArray %}
+            {% if linkData.value %}
+              <tr>
+                <td>{{linkData.value }}</td>
+
+              </tr>
+            {% endif %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
+    {% set linksArray = content.field_subject_matter %}
+    {% if linksArray.0 %}
+      <div class="links-table">
+        <h3>Subject Matter</h3>
+        <table class="table-custom">
+          <tbody>
+          {% for linkData in linksArray %}
+            {% if linkData['#url'] %}
+              <tr>
+                <td>{{ linkData['#title'] }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+    {% endif %}
+
+    {% set linksArray = content.field_subject_matter_other %}
+    {% if linksArray %}
+      {% if linksArray.0 %}
+        <div class="links-table">
+          <h3>Subject Matter Other</h3>
+          <table class="table-custom">
+            <tbody>
+            {% for linkData in linksArray %}
+              {% if linkData['#title'] %}
+                <tr>
+                  <td>{{ linkData['#title'] }}/td>
+
+                </tr>
+              {% endif %}
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+    {% endif %}
+
+    {% set linksArray = content.field_areas_of_law %}
+
+    {% if linksArray.0 %}
+      <div class="links-table">
+        <h3>Area of Law</h3>
+        <table class="table-custom">
+          <tbody>
+          {% for linkData in linksArray %}
+            {% if linkData['#url'] %}
+              <tr>
+                <td>{{ linkData['#title'] }}</td>
+
+              </tr>
+            {% endif %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+    {# {% set county=content.field_county.0['#context']['value'] %}
+                                            {% if county != null %}
+                                                <p>County:{{county}}</p>
+                                            {% endif %} #}
+    {% endblock %}
+</article>

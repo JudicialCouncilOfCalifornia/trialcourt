@@ -1,0 +1,55 @@
+uuid: 19ed6459-de1c-4c9b-87a8-17d9830a26c2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_address
+    - node.type.arbitrator
+  module:
+    - address
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.arbitrator.field_address
+field_name: field_address
+entity_type: node
+bundle: arbitrator
+label: Address
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    langcode: null
+    country_code: US
+    administrative_area: null
+    locality: null
+    dependent_locality: null
+    postal_code: null
+    sorting_code: null
+    address_line1: null
+    address_line2: null
+    organization: null
+    given_name: null
+    additional_name: null
+    family_name: null
+default_value_callback: ''
+settings:
+  available_countries: {  }
+  langcode_override: ''
+  field_overrides:
+    givenName:
+      override: hidden
+    additionalName:
+      override: hidden
+    familyName:
+      override: hidden
+    organization:
+      override: hidden
+    sortingCode:
+      override: hidden
+    dependentLocality:
+      override: hidden
+  fields: {  }
+field_type: address

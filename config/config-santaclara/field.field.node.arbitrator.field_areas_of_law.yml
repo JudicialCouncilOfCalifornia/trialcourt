@@ -1,0 +1,34 @@
+uuid: cc12ff73-5e81-41cd-94bc-6ce8bcfe79b8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_areas_of_law
+    - node.type.arbitrator
+    - taxonomy.vocabulary.areas_of_law
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.arbitrator.field_areas_of_law
+field_name: field_areas_of_law
+entity_type: node
+bundle: arbitrator
+label: 'Areas of Law'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      areas_of_law: areas_of_law
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
