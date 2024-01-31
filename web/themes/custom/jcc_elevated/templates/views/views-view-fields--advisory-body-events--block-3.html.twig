@@ -1,0 +1,110 @@
+{#
+/**
+ * @file
+ * Default view template to display all the fields in a row.
+ *
+ * Available variables:
+ * - view: The view in use.
+ * - fields: A list of fields, each one contains:
+ *   - content: The output of the field.
+ *   - raw: The raw data for the field, if it exists. This is NOT output safe.
+ *   - class: The safe class ID to use.
+ *   - handler: The Views field handler controlling this field.
+ *   - inline: Whether or not the field should be inline.
+ *   - wrapper_element: An HTML element for a wrapper.
+ *   - wrapper_attributes: List of attributes for wrapper element.
+ *   - separator: An optional separator that may appear before a field.
+ *   - label: The field's label text.
+ *   - label_element: An HTML element for a label wrapper.
+ *   - label_attributes: List of attributes for label wrapper.
+ *   - label_suffix: Colon after the label.
+ *   - element_type: An HTML element for the field content.
+ *   - element_attributes: List of attributes for HTML element for field content.
+ *   - has_label_colon: A boolean indicating whether to display a colon after
+ *     the label.
+ *   - element_type: An HTML element for the field content.
+ *   - element_attributes: List of attributes for HTML element for field content.
+ * - row: The raw result from the query, with all data it fetched.
+ *
+ * @see template_preprocess_views_view_fields()
+ *
+ * @ingroup themeable
+ */
+#}
+
+{{ attach_library("jcc_storybook/Card") }}
+{{ attach_library("jcc_storybook/Icon") }}
+
+{% set card_content %}
+  <div class="cluster" style="align-items: start;">
+    <div class="box">
+      <div class="card-label">Past meeting</div>
+      <h3>
+        {{ fields.field_event_date_1.content }}
+      </h3>
+    </div>
+    <div class="box list-links" style="border-left: 1px solid #c9c9c9;">
+      {% if fields.field_agenda.content %}
+        <div class="cluster">
+          {% include "@atoms/icon/Icon.twig" with {
+            icon: "experimental-file",
+            color: "accent-warm-dark-x",
+            icon_path:  ' '
+          } %}
+          {{ fields.field_agenda.content }}
+        </div>
+      {% endif %}
+      {% if fields.field_materials.content %}
+        <div class="cluster">
+          {% include "@atoms/icon/Icon.twig" with {
+            icon: "experimental-file",
+            color: "accent-warm-dark-x",
+            icon_path:  ' '
+          } %}
+          {{ fields.field_materials.content }}
+        </div>
+      {% endif %}
+      {% if fields.field_meeting_audio.content %}
+        <div class="cluster">
+          {% include "@atoms/icon/Icon.twig" with {
+            icon: "experimental-file",
+            color: "accent-warm-dark-x",
+            icon_path:  ' '
+          } %}
+          {{ fields.field_meeting_audio.content }}
+        </div>
+      {% endif %}
+      {% if fields.field_minutes.content %}
+        <div class="cluster">
+          {% include "@atoms/icon/Icon.twig" with {
+            icon: "experimental-file",
+            color: "accent-warm-dark-x",
+            icon_path:  ' '
+          } %}
+          {{ fields.field_minutes.content }}
+        </div>
+      {% endif %}
+      <div class="cluster">
+        {% include "@atoms/icon/Icon.twig" with {
+          icon: "experimental-calendar",
+          color: "accent-warm-dark-x",
+          icon_path:  ' '
+        } %}
+        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ fields.title.content }}&details={{ fields.body.content }}&dates={{ fields.field_event_date_3.content }}">Add to Calendar</a>
+      </div>
+    </div>
+  </div>
+  <div class="box">
+    {{ fields.body.content }}
+  </div>
+{% endset %}
+
+<div class="{{ fields.nid.content }}">
+  {% include "@molecules/card/Card.twig" with {
+    variant: "bordered",
+    clickable_card: false,
+    background: null,
+    aspect: [],
+    text: card_content,
+  } %}
+</div>

@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.advisory_body.field_contact_info
     - field.field.node.advisory_body.field_date_established
     - field.field.node.advisory_body.field_date_note
+    - field.field.node.advisory_body.field_events
     - field.field.node.advisory_body.field_members
     - field.field.node.advisory_body.field_related_links
     - field.field.node.advisory_body.field_subcommittees
@@ -32,7 +33,7 @@ third_party_settings:
       label: Tabs
       region: content
       parent_name: ''
-      weight: 19
+      weight: 20
       format_type: fieldset
       format_settings:
         classes: ''
@@ -110,6 +111,16 @@ content:
     region: content
     settings:
       rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_events:
+    type: entity_reference_autocomplete
+    weight: 19
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
       placeholder: ''
     third_party_settings: {  }
   field_members:

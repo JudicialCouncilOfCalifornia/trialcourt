@@ -372,6 +372,54 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
 }
 
 /**
+ * Implements template_preprocess_views_view_field().
+ */
+function jcc_elevated_preprocess_views_view_field(&$variables) {
+  $view = $variables['view'];
+  $field = $variables['field'];
+
+  if ($view->id() == 'advisory_body_events' && $view->current_display == 'block_1') {
+    switch ($field->field) {
+      case 'field_event_date':
+        // If date field is not the one with time.
+        if (!(str_contains($variables['output'], 'am') || str_contains($variables['output'], 'pm') || str_contains($variables['output'], ' / '))) {
+          $variables['output'] = date('F d, Y', strtotime($variables['output']));
+        }
+        elseif (str_contains($variables['output'], ' / ')) {
+          $variables['output'] = str_replace(' / ', '/', $variables['output']);
+        }
+        break;
+    }
+  }
+  elseif ($view->id() == 'advisory_body_events' && $view->current_display == 'block_2') {
+    switch ($field->field) {
+      case 'nid':
+        // This breaks when DEBUG is enabled.
+        $variables['output'] = ".colorbox_loadelem_" . $field->original_value;
+        $variables['test'] = ".colorbox_loadelem_" . $field->original_value;
+        break;
+    }
+  }
+  elseif ($view->id() == 'advisory_body_events' && $view->current_display == 'block_3') {
+    switch ($field->field) {
+      case 'nid':
+        $variables['output'] = "colorbox_loadelem_" . $field->original_value;
+        break;
+
+      case 'field_event_date':
+        // If date field is not the one with time.
+        if (!(str_contains($variables['output'], 'am') || str_contains($variables['output'], 'pm') || str_contains($variables['output'], ' / '))) {
+          $variables['output'] = date('F d, Y', strtotime($variables['output']));
+        }
+        elseif (str_contains($variables['output'], ' / ')) {
+          $variables['output'] = str_replace(' / ', '/', $variables['output']);
+        }
+        break;
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK() for justices and judges block view.
  */
 function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables) {

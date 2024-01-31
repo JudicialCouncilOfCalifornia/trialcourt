@@ -76,42 +76,78 @@
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/Card") }}
 
+{% set events_card %}
+  <div class="cluster" style="align-items: start;">
+    <div>
+      {{ events_view }}
+    </div>
+    <div class="box">
+      {{ past_events_view }}
+      <div style="display:none;">
+        {{ past_events_view_list }}
+      </div>
+    </div>
+  </div>
+{% endset %}
+
 {% set meetings %}
   {% include "@molecules/card/Card.twig" with {
     variant: "bordered",
     clickable_card: false,
     background: null,
     aspect: [],
-    text: "Next meeting info",
+    text: events_card,
   } %}
 {% endset %}
 
+{% set tabs_elems = {} %}
+
+{% if content.field_members[0] is not empty %}
+  {% set tabs_elems = tabs_elems|merge({'members': {'label':'Members','content': content.field_members}}) %}
+{% endif %}
+
+{% if content.field_subcommittees[0] is not empty %}
+  {% set tabs_elems = tabs_elems|merge({'subcommittees': {'label':'Subcommittees','content': content.field_subcommittees}}) %}
+{% endif %}
+
+{% if content.field_updates_resources[0] is not empty %}
+  {% set tabs_elems = tabs_elems|merge({'updates_resources': {'label':'Updates & resources','content': content.field_updates_resources}}) %}
+{% endif %}
+
+{% if content.field_about[0] is not empty %}
+  {% set tabs_elems = tabs_elems|merge({'about': {'label':'About','content': content.field_about}}) %}
+{% endif %}
+
 {% set tabs_elem %}
   {% include "@molecules/Tabs/Tabs.twig" with {
-    items: tabs
+    items: tabs_elems
   } %}
 {% endset %}
 
 {% set main_content %}
-  <div>
+  <div class="stack" style=" --gap: var(--s5); ">
     {{ meetings }}
     {{ tabs_elem }}
   </div>
 {% endset %}
 
 {% set sidebar_content %}
-  <div>
-    {{ content.field_date_established }}
-    {{ content.field_date_note }}
-    {{ content.field_contact_info }}
+  <div class="box">
+    <h4>Date established</h4>
+    <p>{{ content.field_date_established }}</p>
+    <p>{{ content.field_date_note }}</p>
+    <h4>Related links</h4>
+    <p>{{ content.field_related_links }}</p>
+    <h4>Contact Info</h4>
+    <p>{{ content.field_contact_info }}</p>
   </div>
 {% endset %}
 
 {% set sidebar %}
   {% include "@molecules/card/Card.twig" with {
-    variant: "overlay",
+    variant: "default",
     clickable_card: false,
-    background: 'red',
+    background: 'base-light-xxx',
     aspect: [],
     text: sidebar_content,
   } %}
@@ -122,6 +158,7 @@
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
     hangover_hide_compact: false,
     hangover_offset: 22,
+    background: 'striped-base-light-xx',
     brow: {
       part_one: content.field_advisory_body_type,
     },
@@ -129,21 +166,16 @@
     text: content.body,
   } %}
 
-
-
   {% include "@organisms/Section/Section.twig" with {
     variant: 'default',
     sub_component_layout: "flex flex--70-30",
     sidebar_direction: 'row',
-    sidebar_width: 39,
-    gap: 's4',
+    gap: '5',
     sub_component_data: {
       main_content,
       sidebar,
     },
     attributes: create_attribute()
   } %}
-
-  {{ kint() }}
 
 </article>

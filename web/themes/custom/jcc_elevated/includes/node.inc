@@ -143,39 +143,14 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
  *   The node.
  */
 function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node) {
-  $tabs = [];
-  if ($node->get('field_members')->first()) {
-    $tabs[] = [
-      'label' => 'Member',
-      'content' => $node->get('field_members')->first()->getValue()['value'],
-    ];
-  }
-  if ($node->get('field_subcommittees')->first()) {
-    $tabs[] = [
-      'label' => 'Subcommittees',
-      'content' => $node->get('field_subcommittees')->first()->getValue()['value'],
-    ];
-  }
-  if ($node->get('field_updates_resources')->first()) {
-    $tabs[] = [
-      'label' => 'Updates & resources',
-      'content' => $node->get('field_updates_resources')->first()->getValue()['value'],
-    ];
-  }
-  if ($node->get('field_about')->first()) {
-    $tabs[] = [
-      'label' => 'About',
-      'content' => $node->get('field_about')->first()->getValue()['value'],
-    ];
-  }
-  if ($node->get('field_related_links')->first()) {
-    $tabs[] = [
-      'label' => 'Related links',
-      'content' => $node->get('field_related_links')->first()->getValue()['value'],
-    ];
-  }
-  $variables['tabs'] = $tabs;
-  dsm($variables);
+  $events = views_embed_view('advisory_body_events', 'block_1');
+  $variables["events_view"] = \Drupal::service('renderer')->renderRoot($events);
+
+  $past_events = views_embed_view('advisory_body_events', 'block_2');
+  $variables["past_events_view"] = \Drupal::service('renderer')->renderRoot($past_events);
+
+  $past_events_list = views_embed_view('advisory_body_events', 'block_3');
+  $variables["past_events_view_list"] = \Drupal::service('renderer')->renderRoot($past_events_list);
 }
 
 /**
