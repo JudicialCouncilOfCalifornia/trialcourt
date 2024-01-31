@@ -84,13 +84,16 @@
 {% endfor %}
 
 <article{{ attributes }}>
-  {% block layout %} 
+   {% block layout %} 
    {% if imageurl is not empty %}
     {% set imageTag %}
     <img src={{imageurl}} />
     {% endset %} 
   {% endif %}   
+   
   {% set hangover_content %}
+  <p>testing here</p>
+ 
     {% include "@molecules/Card/Card.twig" with {
       variant: "media-right",
       aspect: [],
@@ -149,7 +152,8 @@
 {% endset %}   
 
 
-  <div class="container">
+  <div class="container">    
+   {% set content %}
     {% include "@molecules/Body/Body.twig" with {
       variant: "default",
      heading: "",
@@ -158,14 +162,24 @@
      subheading: "",
      aside: sidebarimages
     } %}   
-    <hr />
     {% if relatednewsdata %}     
      {% include "@molecules/List/List.twig" with {
           variant: 'none',
           heading: 'Related News',
           items: relatednewsdata,
-      } %}  
-  {% endif %}
+          wider_span: 'true',
+      } %}    
+  {% endif %}  
+    {% endset %} 
   </div>
+
+
+{% block section %}
+    {% include "@organisms/Section/Section.twig" with {
+      sub_component_layout: 'stack',
+      sub_component_data: content,
+      }      
+    %}
+{% endblock %}
   {% endblock %}
 </article>

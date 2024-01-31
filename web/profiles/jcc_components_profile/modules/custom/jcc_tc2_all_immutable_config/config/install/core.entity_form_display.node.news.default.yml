@@ -16,6 +16,7 @@ dependencies:
     - allowed_formats
     - content_moderation
     - datetime
+    - media_library
     - paragraphs
     - path
     - scheduler
@@ -73,7 +74,7 @@ content:
     third_party_settings: {  }
   field_media:
     type: entity_reference_autocomplete
-    weight: 26
+    weight: 29
     region: content
     settings:
       match_operator: CONTAINS
@@ -82,14 +83,11 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_media_file_multiple:
-    type: entity_reference_autocomplete
+    type: media_library_widget
     weight: 27
     region: content
     settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
+      media_types: {  }
     third_party_settings: {  }
   field_news_type:
     type: options_select
