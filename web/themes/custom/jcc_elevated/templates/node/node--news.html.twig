@@ -91,9 +91,7 @@
     {% endset %} 
   {% endif %}   
    
-  {% set hangover_content %}
-  <p>testing here</p>
- 
+  {% set hangover_content %} 
     {% include "@molecules/Card/Card.twig" with {
       variant: "media-right",
       aspect: [],
@@ -110,76 +108,73 @@
   {% endset %} 
 
     {% include "@molecules/HeroHangover/HeroHangover.twig" with {
-  hangover_hide_compact: false,
-  hangover_offset: 22,
-  background: striped-base-light,
-  brow: {
-    variant: 'default',
-    part_one: content.field_news_type,
-    part_two: content.field_date, 
-  },
-  heading: node.title.value,
-  news_header: true,
-  text: content.field_byline,
-  hangover_content: hangover_content  
-} %}
+      hangover_hide_compact: false,
+      hangover_offset: 22,
+      background: striped-base-light,
+      brow: {
+        variant: 'default',
+        part_one: content.field_news_type,
+        part_two: content.field_date, 
+      },
+      heading: node.title.value,
+      news_header: true,
+      text: content.field_byline,
+      hangover_content: hangover_content  
+    } %}
 
+    {% set sidebarimages %}
+      {% for image in sidebarimages %}
+        {% set sidebar_image = '' %}
+          {% if image.url %}
+            {% set sidebar_image %}
+              {% set media_uri = profile.image.field_media_image.entity.uri.value %}
+              <img src={{image.url}}>
+            {% endset %}
+          {% endif %}
 
-{% set sidebarimages %}
-  {% for image in sidebarimages %}
-    {% set sidebar_image = '' %}
-      {% if image.url %}
-        {% set sidebar_image %}
-          {% set media_uri = profile.image.field_media_image.entity.uri.value %}
-          <img src={{image.url}}>
-        {% endset %}
-      {% endif %}
+        {% include "@molecules/Card/Card.twig" with {
+          variant: "media-right",
+          aspect: [],
+          clickable_card: false,
+          background: null,
+          media: sidebar_image | raw,
+          caption_overlay: true,
+          citation: image.citation,
+          media_caption: {
+          show: true,
+          text: image.caption,
+        },
+        } %} 
+        {% endfor %}
+    {% endset %}
 
-    {% include "@molecules/Card/Card.twig" with {
-      variant: "media-right",
-      aspect: [],
-      clickable_card: false,
-      background: null,
-      media: sidebar_image | raw,
-      caption_overlay: true,
-      citation: image.citation,
-      media_caption: {
-      show: true,
-      text: image.caption,
-    },
-    } %} 
-    {% endfor %}
-{% endset %}   
+    <div class="container">    
+    {% set content %}
+      {% include "@molecules/Body/Body.twig" with {
+        variant: "default",
+      heading: "",
+      lead: content.body,
+      content: "",
+      subheading: "",
+      aside: sidebarimages
+      } %}   
+      {% if relatednewsdata %}     
+      {% include "@molecules/List/List.twig" with {
+            variant: 'none',
+            heading: 'Related News',
+            items: relatednewsdata,
+            wider_span: 'true',
+        } %}    
+    {% endif %}  
+      {% endset %} 
+    </div>
 
-
-  <div class="container">    
-   {% set content %}
-    {% include "@molecules/Body/Body.twig" with {
-      variant: "default",
-     heading: "",
-     lead: content.body,
-     content: "",
-     subheading: "",
-     aside: sidebarimages
-    } %}   
-    {% if relatednewsdata %}     
-     {% include "@molecules/List/List.twig" with {
-          variant: 'none',
-          heading: 'Related News',
-          items: relatednewsdata,
-          wider_span: 'true',
-      } %}    
-  {% endif %}  
-    {% endset %} 
-  </div>
-
-
-{% block section %}
-    {% include "@organisms/Section/Section.twig" with {
-      sub_component_layout: 'stack',
-      sub_component_data: content,
-      }      
-    %}
-{% endblock %}
+    {% block section %}
+        {% include "@organisms/Section/Section.twig" with {
+          sub_component_layout: 'stack',
+          sub_component_data: content,
+          }      
+        %}
+    {% endblock %}
   {% endblock %}
 </article>
