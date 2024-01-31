@@ -133,13 +133,19 @@
 
 {% set sidebar_content %}
   <div class="box">
-    <h4>Date established</h4>
-    <p>{{ content.field_date_established }}</p>
-    <p>{{ content.field_date_note }}</p>
-    <h4>Related links</h4>
-    <p>{{ content.field_related_links }}</p>
-    <h4>Contact Info</h4>
-    <p>{{ content.field_contact_info }}</p>
+    {% if node.field_date_established is not empty %}
+      <h4>Date established</h4>
+      {{ content.field_date_established }}
+      {{ content.field_date_note }}
+    {% endif %}
+    {% if node.field_related_links is not empty %}
+      <h4>Related links</h4>
+      {{ content.field_related_links }}
+    {% endif %}
+    {% if node.field_contact_info is not empty %}
+      <h4>Contact Info</h4>
+      {{ content.field_contact_info }}
+    {% endif %}
   </div>
 {% endset %}
 
@@ -154,13 +160,17 @@
 {% endset %}
 
 <article{{ attributes }}>
-
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
     hangover_hide_compact: false,
     hangover_offset: 22,
     background: 'striped-base-light-xx',
     brow: {
       part_one: content.field_advisory_body_type,
+    },
+    share: {
+      print_url: 'javascript: window.print();',
+      print_aria_label: 'Print advisory body',
+      icon_path: '/themes/contrib/jcc_storybook/src/assets/icons.svg',
     },
     heading: label,
     text: content.body,

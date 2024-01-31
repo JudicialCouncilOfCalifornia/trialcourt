@@ -3,41 +3,19 @@ status: true
 dependencies:
   config:
     - field.field.node.event.body
-    - field.field.node.event.field_agenda
     - field.field.node.event.field_event_date
+    - field.field.node.event.field_event_files
+    - field.field.node.event.field_event_open
     - field.field.node.event.field_granicus_link
-    - field.field.node.event.field_materials
-    - field.field.node.event.field_meeting_audio
-    - field.field.node.event.field_minutes
     - node.type.event
   module:
     - content_moderation
     - datetime_range
-    - field_group
     - media_library
     - path
     - scheduler
     - scheduler_content_moderation_integration
     - text
-third_party_settings:
-  field_group:
-    group_documents:
-      children:
-        - field_agenda
-        - field_materials
-        - field_minutes
-        - field_meeting_audio
-      label: Documents
-      region: content
-      parent_name: ''
-      weight: 15
-      format_type: fieldset
-      format_settings:
-        classes: ''
-        show_empty_fields: false
-        id: ''
-        description: ''
-        required_fields: true
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -45,7 +23,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 14
+    weight: 16
     region: content
     settings:
       rows: 9
@@ -59,47 +37,33 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_agenda:
-    type: media_library_widget
-    weight: 16
-    region: content
-    settings:
-      media_types: {  }
-    third_party_settings: {  }
   field_event_date:
     type: daterange_default
-    weight: 19
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_granicus_link:
-    type: text_textarea
-    weight: 21
-    region: content
-    settings:
-      rows: 5
-      placeholder: ''
-    third_party_settings: {  }
-  field_materials:
+  field_event_files:
     type: media_library_widget
     weight: 17
     region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
-  field_meeting_audio:
-    type: media_library_widget
-    weight: 19
+  field_event_open:
+    type: boolean_checkbox
+    weight: 15
     region: content
     settings:
-      media_types: {  }
+      display_label: true
     third_party_settings: {  }
-  field_minutes:
-    type: media_library_widget
+  field_granicus_link:
+    type: text_textarea
     weight: 18
     region: content
     settings:
-      media_types: {  }
+      rows: 5
+      placeholder: ''
     third_party_settings: {  }
   langcode:
     type: language_select

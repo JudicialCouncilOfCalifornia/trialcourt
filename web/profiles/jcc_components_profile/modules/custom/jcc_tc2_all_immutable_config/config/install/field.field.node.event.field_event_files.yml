@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_agenda
+    - field.storage.node.field_event_files
     - media.type.file
     - node.type.event
   module:
@@ -10,11 +10,11 @@ dependencies:
 third_party_settings:
   tmgmt_content:
     excluded: false
-id: node.event.field_agenda
-field_name: field_agenda
+id: node.event.field_event_files
+field_name: field_event_files
 entity_type: node
 bundle: event
-label: Agenda
+label: 'Event files'
 description: ''
 required: false
 translatable: false
@@ -28,6 +28,6 @@ settings:
     sort:
       field: _none
       direction: ASC
-    auto_create: true
+    auto_create: false
     auto_create_bundle: ''
 field_type: entity_reference
