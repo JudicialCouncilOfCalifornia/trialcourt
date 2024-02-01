@@ -141,6 +141,9 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
+  // Language label sets.
+  $lang_label_sets = __jcc_language_sets();
+
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   foreach ($variables['rows'][0]['#rows'] as $item) {
@@ -169,55 +172,55 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     $language_files = [
       'media_file_arabic' => [
         'file' => $media->get('field_media_file_arabic')->referencedEntities() ? $media->get('field_media_file_arabic')->referencedEntities()[0] : NULL,
-        'language' => t('Arabic'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_arabic_url']['label_default'] : '',
       ],
       'media_file_cambodian' => [
         'file' => $media->get('field_media_file_cambodian')->referencedEntities() ? $media->get('field_media_file_cambodian')->referencedEntities()[0] : NULL,
-        'language' => t('Cambodian'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_cambodian_url']['label_default'] : '',
       ],
       'media_file_chinese_simple' => [
         'file' => $media->get('field_media_file_chinese_simple')->referencedEntities() ? $media->get('field_media_file_chinese_simple')->referencedEntities()[0] : NULL,
-        'language' => t('Chinese - Simple'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_chinese_url']['label_default'] : '',
       ],
       'media_file_chinese' => [
         'file' => $media->get('field_media_file_chinese')->referencedEntities() ? $media->get('field_media_file_chinese')->referencedEntities()[0] : NULL,
-        'language' => t('Chinese'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_chinese_traditional_url']['label_default'] : '',
       ],
       'media_east_armenian_file' => [
         'file' => $media->get('field_east_armenian_file')->referencedEntities() ? $media->get('field_east_armenian_file')->referencedEntities()[0] : NULL,
-        'language' => t('East Armenian'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_east_armenian_url']['label_default'] : '',
       ],
       'media_file_farsi' => [
         'file' => $media->get('field_media_file_farsi')->referencedEntities() ? $media->get('field_media_file_farsi')->referencedEntities()[0] : NULL,
-        'language' => t('Farsi'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_farsi_url']['label_default'] : '',
       ],
       'media_file_hmong' => [
         'file' => $media->get('field_media_file_hmong')->referencedEntities() ? $media->get('field_media_file_hmong')->referencedEntities()[0] : NULL,
-        'language' => t('Hmong'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_hmong_url']['label_default'] : '',
       ],
       'media_file_korean' => [
         'file' => $media->get('field_media_file_korean')->referencedEntities() ? $media->get('field_media_file_korean')->referencedEntities()[0] : NULL,
-        'language' => t('Korean'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_korean_url']['label_default'] : '',
       ],
       'media_file_punjabi' => [
         'file' => $media->get('field_media_file_punjabi')->referencedEntities() ? $media->get('field_media_file_punjabi')->referencedEntities()[0] : NULL,
-        'language' => t('Punjabi'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_punjabi_url']['label_default'] : '',
       ],
       'media_file_russian' => [
         'file' => $media->get('field_media_file_russian')->referencedEntities() ? $media->get('field_media_file_russian')->referencedEntities()[0] : NULL,
-        'language' => t('Russian'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_russian_url']['label_default'] : '',
       ],
       'media_file_spanish' => [
         'file' => $media->get('field_media_file_spanish')->referencedEntities() ? $media->get('field_media_file_spanish')->referencedEntities()[0] : NULL,
-        'language' => t('Spanish'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_spanish_url']['label_default'] : '',
       ],
       'media_file_tagalog' => [
         'file' => $media->get('field_media_file_tagalog')->referencedEntities() ? $media->get('field_media_file_tagalog')->referencedEntities()[0] : NULL,
-        'language' => t('Tagalog'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_tagalog_url']['label_default'] : '',
       ],
       'media_file_vietnamese' => [
         'file' => $media->get('field_media_file_vietnamese')->referencedEntities() ? $media->get('field_media_file_vietnamese')->referencedEntities()[0] : NULL,
-        'language' => t('Vietnamese'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_vietnamese_url']['label_default'] : '',
       ],
     ];
 
