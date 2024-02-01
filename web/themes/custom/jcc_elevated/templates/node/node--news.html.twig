@@ -107,13 +107,19 @@
     } %} 
   {% endset %} 
 
+    {% if content.field_news_type['#title'] is null %}
+      {% set newstype = '' %}
+    {% else %}
+     {% set newstype = content.field_news_type %}
+    {% endif %}
+
     {% include "@molecules/HeroHangover/HeroHangover.twig" with {
       hangover_hide_compact: false,
       hangover_offset: 22,
-      background: striped-base-light,
+      background: 'striped-base-light-xx',
       brow: {
-        variant: 'default',
-        part_one: content.field_news_type,
+        variant: 'default_with_date',
+        part_one: newstype,
         part_two: content.field_date, 
       },
       heading: node.title.value,
