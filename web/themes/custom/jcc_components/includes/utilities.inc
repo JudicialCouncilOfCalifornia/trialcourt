@@ -55,15 +55,3 @@ function _jcc_components_can_edit_entity(EntityInterface $entity, string $cta) {
 function _jcc_components_remove_image_protocol($image) {
   return preg_replace('(^https?:||^http?:)', '', $image);
 }
-
-/**
- * Helper function to load language labels.
- *
- * @return string
- *   Language labels JSON.
- */
-function __jcc_language_sets() {
-  $data = file_get_contents(\Drupal::service('extension.path.resolver')->getPath('theme', 'jcc_components') . '/jcc-language-labels.json');
-
-  return json_decode($data);
-}

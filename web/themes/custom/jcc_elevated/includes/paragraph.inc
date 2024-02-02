@@ -8,10 +8,10 @@
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
-use Drupal\paragraphs\Entity\Paragraph;
-use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -51,17 +51,27 @@ function jcc_elevated_theme_suggestions_paragraph_alter(&$suggestions, $variable
  */
 function jcc_elevated_paragraph_views_reference(array &$variables, ParagraphInterface $paragraph) {
   // In some cases we need to pass the views results to the paragraph.
+  $ref_override = [];
+
   if (!empty($paragraph->field_views_reference)) {
     $view = $paragraph->field_views_reference->referencedEntities()[0];
     $reference = $paragraph->field_views_reference->first();
+
+    $value = $reference->getValue();
+    $ref_override = $value['data'] ? unserialize($value['data']) : []; // phpcs:ignore
+
     $target_id = $reference->target_id;
     $display_id = $reference->display_id;
     $function = "jcc_elevated_paragraph_views_reference_{$target_id}_{$display_id}";
   }
 
+  $variables['more']['use_more_text'] = !empty($ref_override['use_more_text']) ? $ref_override['use_more_text'] : FALSE;
+  $variables['more']['link_display'] = !empty($ref_override['link_display']) ? Url::fromUri($ref_override['link_display']) : FALSE;
+
   if (!empty($function) && function_exists($function)) {
     $function($variables, $view);
   }
+
 }
 
 /**
@@ -381,7 +391,7 @@ function jcc_elevated_paragraph_action_list(array &$variables) {
 
     $action_items[$key]['description'] = '';
     if ($action_item->hasField('field_text')) {
-      if ($text_element = $action_item->get('field_text')->getValue()) {
+      if (!empty($action_item->get('field_text')->getValue())) {
         $action_items[$key]['description'] = $action_item->field_text->view('default');
       }
     }
