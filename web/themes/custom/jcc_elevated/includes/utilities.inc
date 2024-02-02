@@ -14,9 +14,9 @@ use Drupal\taxonomy\Entity\Term;
  *   Language labels JSON.
  */
 function __jcc_language_sets() {
-  $data = file_get_contents(\Drupal::service('extension.path.resolver')->getPath('theme', 'jcc_components') . '/jcc-language-labels.json');
+  $data = file_get_contents(\Drupal::service('extension.path.resolver')->getPath('theme', 'jcc_elevated') . '/jcc-language-labels.json');
 
-  return json_decode($data);
+  return json_decode($data, TRUE);
 }
 
 /**
