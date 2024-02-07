@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
@@ -372,6 +373,28 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
 }
 
 /**
+ * Implements template_preprocess_views_view_fields().
+ */
+function jcc_elevated_preprocess_views_view_fields(&$variables) {
+  $view = $variables['view'];
+  $row = $variables['row'];
+
+  $variables['event_files'] = [];
+  if (($view->id() == 'advisory_body_events' && $view->current_display == 'block_1') ||
+    ($view->id() == 'advisory_body_events' && $view->current_display == 'block_3')) {
+    $row_entity = $row->_entity;
+    foreach ($row_entity->get('field_event_files') as $key => $event_file) {
+      $media_object = Media::load($event_file->target_id);
+      $file_id = $media_object->getSource()->getSourceFieldValue($media_object);
+      $file_object = File::load($file_id);
+      $file_url = $file_object->createFileUrl();
+      $variables['event_files'][$key]['url'] = $file_url;
+      $variables['event_files'][$key]['label'] = $media_object->getName();
+    }
+  }
+}
+
+/**
  * Implements template_preprocess_views_view_field().
  */
 function jcc_elevated_preprocess_views_view_field(&$variables) {
@@ -391,21 +414,8 @@ function jcc_elevated_preprocess_views_view_field(&$variables) {
         break;
     }
   }
-  elseif ($view->id() == 'advisory_body_events' && $view->current_display == 'block_2') {
-    switch ($field->field) {
-      case 'nid':
-        // This breaks when DEBUG is enabled.
-        $variables['output'] = ".colorbox_loadelem_" . $field->original_value;
-        $variables['test'] = ".colorbox_loadelem_" . $field->original_value;
-        break;
-    }
-  }
   elseif ($view->id() == 'advisory_body_events' && $view->current_display == 'block_3') {
     switch ($field->field) {
-      case 'nid':
-        $variables['output'] = "colorbox_loadelem_" . $field->original_value;
-        break;
-
       case 'field_event_date':
         // If date field is not the one with time.
         if (!(str_contains($variables['output'], 'am') || str_contains($variables['output'], 'pm') || str_contains($variables['output'], ' / '))) {

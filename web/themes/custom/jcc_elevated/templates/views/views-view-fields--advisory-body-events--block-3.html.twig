@@ -44,21 +44,23 @@
       </h3>
     </div>
     <div class="box list-links" style="border-left: 1px solid #c9c9c9;">
-      {% if fields.field_event_files.content %}
-        <div class="cluster">
-          {% include "@atoms/icon/Icon.twig" with {
-            icon: "experimental-file",
-            color: "accent-warm-dark-x",
-            icon_path:  ' '
-          } %}
-          {{ fields.field_event_files.content }}
-        </div>
+      {% if event_files %}
+        {% for file in event_files %}
+          <div class="cluster">
+            {% include "@atoms/icon/Icon.twig" with {
+              icon: "experimental-file",
+              color: "accent-warm-dark-x",
+              icon_path: ' '
+            } %}
+            <a href="{{ file.url }}">{{ file.label }}</a>
+          </div>
+        {% endfor %}
       {% endif %}
       <div class="cluster">
         {% include "@atoms/icon/Icon.twig" with {
           icon: "experimental-calendar",
           color: "accent-warm-dark-x",
-          icon_path:  ' '
+          icon_path: ' '
         } %}
         <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ fields.title.content }}&details={{ fields.body.content }}&dates={{ fields.field_event_date_3.content }}">Add to Calendar</a>
       </div>
@@ -69,7 +71,7 @@
   </div>
 {% endset %}
 
-<div class="{{ fields.nid.content }}">
+<div class="colorbox_loadelem_{{ row._entity.nid.value }}">
   {% include "@molecules/card/Card.twig" with {
     variant: "bordered",
     clickable_card: false,
