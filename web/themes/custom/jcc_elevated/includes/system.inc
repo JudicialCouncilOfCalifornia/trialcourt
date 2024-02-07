@@ -128,7 +128,7 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
  * Implements template_preprocess_form_element().
  */
 function jcc_elevated_preprocess_form_element(&$variables) {
-  $variables['attributes']['class'][] = 'placeholder-container';
+  $variables['attributes']['class'] = 'placeholder-container';
 }
 
 /**
