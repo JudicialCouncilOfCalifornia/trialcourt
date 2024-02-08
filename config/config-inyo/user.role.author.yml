@@ -1,3 +1,4 @@
+uuid: 4bb334b1-79df-4642-ba43-29570886e845
 langcode: en
 status: true
 dependencies:
@@ -36,6 +37,7 @@ dependencies:
     - taxonomy.vocabulary.topics
     - workflows.workflow.editorial
   module:
+    - access_unpublished
     - captcha
     - content_moderation
     - content_translation
@@ -52,6 +54,8 @@ dependencies:
     - redirect
     - system
     - toolbar
+_core:
+  default_config_hash: EZzcqybRrqlAagT_DiiZigYrcm0GgnBA3ooQeMN0APw
 id: author
 label: Author
 weight: -10
@@ -87,6 +91,7 @@ permissions:
   - 'create subpage content'
   - 'create url aliases'
   - 'delete content translations'
+  - 'delete token'
   - 'edit any alert content'
   - 'edit any boxcast_stream media'
   - 'edit any document content'
@@ -116,6 +121,7 @@ permissions:
   - 'edit own subpage content'
   - 'edit own tentative_ruling content'
   - 'rebuild cache access'
+  - 'renew token'
   - 'skip CAPTCHA'
   - 'translate alert node'
   - 'translate department taxonomy_term'
