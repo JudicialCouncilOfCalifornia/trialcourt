@@ -136,7 +136,18 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       }
       break;
 
+    case 'node_alert_delete_form':
+    case 'node_case_delete_form':
+    case 'node_custom_email_delete_form':
+    case 'node_document_delete_form':
+    case 'node_importer_delete_form':
+    case 'node_job_delete_form':
+    case 'node_judge_delete_form':
     case 'node_landing_page_delete_form':
+    case 'node_location_delete_form':
+    case 'node_news_delete_form':
+    case 'node_subpage_delete_form':
+    case 'node_tentative_ruling_delete_form':
       $form['description'] = [
         '#type' => 'inline_template',
         '#template' => '<h2><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 512 512"><title>ionicons-v5-r</title><path fill="#ce6060" d="M449.07,399.08,278.64,82.58c-12.08-22.44-44.26-22.44-56.35,0L51.87,399.08A32,32,0,0,0,80,446.25H420.89A32,32,0,0,0,449.07,399.08Zm-198.6-1.83a20,20,0,1,1,20-20A20,20,0,0,1,250.47,397.25ZM272.19,196.1l-5.74,122a16,16,0,0,1-32,0l-5.74-121.95v0a21.73,21.73,0,0,1,21.5-22.69h.21a21.74,21.74,0,0,1,21.73,22.7Z"/></svg>{{ "This action cannot be undone."|t }}</h2><p>{{ "If you would like to remove a page without deleting it, select the status <b>[Archived]</b> on the <b>Edit</b> page."|t }}</p>',

@@ -85,7 +85,9 @@
     {% if node.field_media.entity.field_media_image.entity.uri %}
       {% set image %}
         {% set media_uri = node.field_media.entity.field_media_image.entity.uri.value %}
-        <img src="{{ file_url(media_uri) }}">
+        {% set image_alt = node.field_media.entity.field_media_image.alt %}             
+        {% set judge_name = node.field_media.entity.field_media_caption.value %} 
+        <img src="{{ file_url(media_uri)}}" alt="{{image_alt ? image_alt : 'Portrait of ' ~ judge_name}}">
       {% endset %}
     {% endif %}
     {% include "@molecules/ProfileCard/ProfileCard.twig" with {
@@ -93,6 +95,8 @@
       placeholder: {
         icon: 'justice-avatar',
         icon_path: ' ',
+        id: judge_name,
+        title: judge_name is not empty ?'Placeholder for image of ' ~ judge_name : 'Placeholder for judge image'  
       },
       name: false,
       title: false,
