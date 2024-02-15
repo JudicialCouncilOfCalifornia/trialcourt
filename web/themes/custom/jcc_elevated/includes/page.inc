@@ -108,6 +108,11 @@ function jcc_elevated_preprocess_page(&$variables) {
       ->build(\Drupal::routeMatch())
       ->toRenderable();
   }
+
+  // Feedback widget visibility.
+  if (theme_get_setting('hide_was_this_helpful') === 1) {
+    $variables['hide_was_this_helpful'] = theme_get_setting('hide_was_this_helpful');
+  }
 }
 
 /**
