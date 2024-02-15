@@ -7,16 +7,17 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Site\Settings;
-use Drupal\media\Entity\Media;
 use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
 
+// @codingStandardsIgnoreStart
 /**
  * Get the machine name of the site.
  *
  * @return string
  *   Return the machine name of the site.
  */
-function jcc_elevated_get_site_name() {
+function jcc_elevated_get_site_name(): string {
   return Settings::get('jcc_elevated.site_machine_name') ?? \Drupal::state()->get('jcc_elevated.site_machine_name');
 }
 
@@ -26,7 +27,7 @@ function jcc_elevated_get_site_name() {
  * @return string|array
  *   Return a specific jcc state setting value.
  */
-function jcc_elevated_get_custom_setting($setting_name) {
+function jcc_elevated_get_custom_setting($setting_name): array|string|null {
   return \Drupal::state()->get($setting_name) ?? NULL;
 }
 
@@ -38,7 +39,7 @@ function jcc_elevated_get_custom_setting($setting_name) {
  * @return array
  *   Returns all set jcc state settings and their values.
  */
-function jcc_elevated_get_custom_settings($setting_name = NULL) {
+function jcc_elevated_get_custom_settings($setting_name = NULL): array|string {
   $settings = [];
   foreach (_jcc_elevated_custom_keys() as $name) {
     $settings[$name] = \Drupal::state()->get($name);
@@ -60,7 +61,7 @@ function jcc_elevated_get_custom_settings($setting_name = NULL) {
  * @return array
  *   Return the specific keys for state values.
  */
-function _jcc_elevated_custom_keys() {
+function _jcc_elevated_custom_keys(): array {
   return [
     'jcc_elevated.site_machine_name',
     'jcc_elevated.primary_menu',
@@ -75,12 +76,18 @@ function _jcc_elevated_custom_keys() {
     'jcc_elevated.section_menu_types',
   ];
 }
+// @codingStandardsIgnoreEnd
 
 /**
  * Implements hook_preprocess_page().
  */
-function jcc_elevated_custom_preprocess_page(array &$variables) {
+function jcc_elevated_custom_preprocess_page(array &$variables): void {
   $variables['#attached']['library'][] = 'jcc_elevated_custom/jcc-elevated-custom';
+
+  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
+  if ($is_admin) {
+    $variables['#attached']['library'][] = 'jcc_elevated_custom/jcc-elevated-admin-custom';
+  }
 
   // Set the variable in case it's not yet set.
   if (!isset($variables['section_navigation'])) {
@@ -91,7 +98,7 @@ function jcc_elevated_custom_preprocess_page(array &$variables) {
 /**
  * Implements hook_preprocess_page().
  */
-function jcc_elevated_custom_preprocess_node(array &$variables) {
+function jcc_elevated_custom_preprocess_node(array &$variables): void {
 
   // Set the variable in case it's not yet set.
   if (!isset($variables['sidebar_navigation'])) {
@@ -102,7 +109,7 @@ function jcc_elevated_custom_preprocess_node(array &$variables) {
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
-function jcc_elevated_custom_field_widget_entity_reference_paragraphs_form_alter(&$element, &$form_state, $context) {
+function jcc_elevated_custom_field_widget_entity_reference_paragraphs_form_alter(&$element, &$form_state, $context): void {
   if ($element['#paragraph_type'] == 'views_reference') {
     // Hide access to view reference variants on elevated sites (sites using
     // the elevated theme).
@@ -113,7 +120,7 @@ function jcc_elevated_custom_field_widget_entity_reference_paragraphs_form_alter
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function jcc_elevated_custom_form_content_moderation_entity_moderation_form_alter(array &$form, FormStateInterface $form_state) {
+function jcc_elevated_custom_form_content_moderation_entity_moderation_form_alter(array &$form, FormStateInterface $form_state): void {
 
   // Alterations to the moderation form to improve style/layout.
   $form['current_label'] = [
@@ -143,7 +150,7 @@ function jcc_elevated_custom_form_content_moderation_entity_moderation_form_alte
 /**
  * Implements hook_form_views_exposed_form_alter().
  */
-function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   // Set some variables.
   $view = $form_state->get('view');
   $name = $view->id();
@@ -162,7 +169,7 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
 /**
  * Implements hook_form_alter().
  */
-function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id) {
+function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
   if ($form_id == 'editor_link_dialog') {
     $form['link_to_file'] = [
       '#type'          => 'checkbox',
@@ -170,14 +177,14 @@ function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id) {
       '#required'      => FALSE,
       '#default_value' => FALSE,
     ];
-    $form['actions']['save_modal']['#submit'][] = 'jcc_custom_elevated_link_to_file_submit';
+    $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_custom_link_to_file_submit';
   }
 }
 
 /**
  * Implements hook_preprocess_VIEW_ID().
  */
-function jcc_elevated_custom_preprocess_views_view_table(&$variables) {
+function jcc_elevated_custom_preprocess_views_view_table(&$variables): void {
   $view = $variables['view'];
   if ($view->current_display == 'publication_manager') {
     // Check if first publication have the jcc_section field available.
@@ -195,7 +202,7 @@ function jcc_elevated_custom_preprocess_views_view_table(&$variables) {
 /**
  * Custom callback for linkit modal window.
  */
-function jcc_custom_elevated_link_to_file_submit(&$form, $form_state) {
+function jcc_elevated_custom_link_to_file_submit(&$form, $form_state): void {
   if ($form_state->getValue('link_to_file') == '1') {
     if (str_contains($form_state->getValue('href_dirty_check'), '/media/')) {
 

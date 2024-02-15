@@ -800,3 +800,23 @@ function jcc_custom_form_taxonomy_overview_vocabularies_alter(&$form, FormStateI
   }
 
 }
+
+/**
+ * Sets the Request (RFP) type options.
+ */
+function jcc_custom_request_rfp_type_options(): array {
+  return [
+    'rfp' => 'RFP',
+    'rfi' => 'RFI',
+  ];
+}
+
+/**
+ * Sets the Request (RFP) status options.
+ */
+function jcc_custom_request_rfp_status_options(): array {
+  return [
+    1 => t('Open'),
+    0 => t('Closed'),
+  ];
+}
