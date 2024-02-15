@@ -307,7 +307,7 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
   $variables['exposed']['actions']['submit']['#theme_wrappers'][0] = "input__submit__search_search_submit";
 
   // Process the results for the search api view.
-  foreach ($variables['rows'][0]['#rows'] as $item) {
+  foreach ($variables['rows'][0]['#rows'] as $index => $item) {
     // We have to manipulate the excerpt a little to render the html.
     $excerpt = $item['#row']->_item->getExcerpt() ?? t('No excerpt available.')->render();
     $text = [
@@ -316,11 +316,27 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
       '#suffix' => '</p>',
     ];
 
-    $variables['processed_rows'][] = [
-      'title' => $item['#row']->_entity->label(),
+    $entity = $item['#row']->_entity;
+
+    $variables['processed_rows'][$index] = [
+      'title' => $entity->label(),
       'content' => $render->render($text),
-      'url' => $item['#row']->_entity->toUrl()->toString(),
+      'url' => $entity->toUrl()->toString(),
     ];
+
+    // Append section as a notation to search results, if module enabled and
+    // section exists.
+    $module_handler = \Drupal::service('module_handler');
+    if ($module_handler->moduleExists('jcc_elevated_sections')) {
+      $section_service = \Drupal::service('jcc_elevated_sections.service');
+      $section = $section_service->getSectionForNode($entity);
+      if ($section_info = $section_service->getSectionInfo($section)) {
+        if ($section_name = $section_info->getName()) {
+          $variables['processed_rows'][$index]['brow']['notation'] = $section_name;
+        }
+      }
+    }
+
   }
 }
 
@@ -337,8 +353,12 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
     $node = $row['#row']->_entity;
     $media = $node->get('field_media')->target_id ? Media::load($node->get('field_media')->target_id) : '';
     $name = $node->get('title')->value ? $node->get('title')->value : '';
-    $title = Term::load($node->get('field_job_title')->target_id) ? Term::load($node->get('field_job_title')->target_id)->get('name')->value : '';
-    $division = Term::load($node->get('field_division')->target_id) ? Term::load($node->get('field_division')->target_id)->get('name')->value : '';
+    if ($title_tid = $node->get('field_job_title')->target_id) {
+      $title = Term::load($title_tid) ? Term::load($title_tid)->get('name')->value : '';
+    }
+    if ($division_tid = $node->get('field_division')->target_id) {
+      $division = Term::load($division_tid) ? Term::load($division_tid)->get('name')->value : '';
+    }
     $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id());
     // Service time.
     $start_date = $node->field_date->date ? $node->field_date->date->format('Y') : '';
