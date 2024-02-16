@@ -138,11 +138,17 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
   if ($basic_page->hasField('field_media')) {
     $card_media = $basic_page->get('field_media');
     $media = Media::load($card_media->target_id);
-    $uri = $media->field_media_image->entity->getFileUri();
-    $image_url = file_create_url($uri);
-    $variables['imageurl'] = $image_url;
-    $variables['caption'] = strip_tags($media->get('field_media_caption')->value);
-    $variables['citation'] = strip_tags($media->get('field_media_citation')->value);
+    if ($media && $media->field_media_image) {
+      $uri = $media->field_media_image->entity->getFileUri();
+      $image_url = file_create_url($uri);
+      $variables['imageurl'] = $image_url;
+    }
+    if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
+      $caption_value = $media->get('field_media_caption')->value;
+      $citation_value = $media->get('field_media_citation')->value;
+      $variables['caption'] = $caption_value !== NULL ? strip_tags($caption_value) : '';
+      $variables['citation'] = $citation_value !== NULL ? strip_tags($citation_value) : '';
+    }
   }
   if ($basic_page->hasField('field_node_reference')) {
     $relatednewsdata = [];
@@ -162,13 +168,19 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
     $media = Media::load($media_file->target_id);
     if ($media && $media->field_media_image->entity) {
       $uri = $media->field_media_image->entity->getFileUri();
+      $media_url = file_create_url($uri);
     }
-    $media_url = file_create_url($uri);
-    $sidebarimages[] = [
-      'caption' => strip_tags($media->get('field_media_caption')->value),
-      'citation' => strip_tags($media->get('field_media_citation')->value),
-      'url' => $media_url,
-    ];
+    if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
+      $caption_value = $media->get('field_media_caption')->value;
+      $citation_value = $media->get('field_media_citation')->value;
+      $caption = $caption_value !== NULL ? strip_tags($caption_value) : '';
+      $citation = $citation_value !== NULL ? strip_tags($citation_value) : '';
+      $sidebarimages[] = [
+        'caption' => $caption,
+        'citation' => $citation,
+        'url' => $media_url,
+      ];
+    }
   }
   $variables['sidebarimages'] = $sidebarimages;
 }
