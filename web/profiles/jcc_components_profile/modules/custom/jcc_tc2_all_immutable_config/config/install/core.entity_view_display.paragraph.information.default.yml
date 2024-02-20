@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.information.field_brow
     - field.field.paragraph.information.field_heading
     - field.field.paragraph.information.field_link_multiple
     - field.field.paragraph.information.field_text
@@ -14,13 +15,21 @@ targetEntityType: paragraph
 bundle: information
 mode: default
 content:
-  field_heading:
+  field_brow:
     type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_heading:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
     region: content
   field_link_multiple:
     type: link
@@ -32,14 +41,14 @@ content:
       rel: ''
       target: ''
     third_party_settings: {  }
-    weight: 2
+    weight: 3
     region: content
   field_text:
     type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    weight: 1
+    weight: 2
     region: content
 hidden:
   entity_print_view_epub: true
