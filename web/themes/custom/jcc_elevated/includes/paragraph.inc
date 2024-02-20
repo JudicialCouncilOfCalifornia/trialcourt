@@ -39,6 +39,10 @@ function jcc_elevated_theme_suggestions_paragraph_alter(&$suggestions, $variable
       $suggestions[] = $suggestion;
     }
   }
+
+  // Allow for parent bundle type in template suggestion.
+  $parent = $paragraph->getParentEntity();
+  $suggestions[] = 'paragraph__' . $paragraph->bundle() . '__' . $parent->bundle();
 }
 
 /**
