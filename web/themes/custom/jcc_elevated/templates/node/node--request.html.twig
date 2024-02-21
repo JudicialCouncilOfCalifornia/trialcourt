@@ -100,13 +100,13 @@
 {% set main %}
   <main class="request__main-content stack" style="order: 1;">
     {% if rfp_blurb_box_data is not empty %}
-    <section style="--measure: 50ch;">
-      {% include "@molecules/BlurbBox/BlurbBox.twig" with {
-        variant: 'default',
-        data: rfp_blurb_box_data,
-        attributes: create_attribute()
-      } %}
-    </section>
+      <section style="--measure: 50ch;">
+        {% include "@molecules/BlurbBox/BlurbBox.twig" with {
+          variant: 'default',
+          data: rfp_blurb_box_data,
+          attributes: create_attribute()
+        } %}
+      </section>
     {% endif %}
 
     {% if content.body.0 %}
@@ -126,28 +126,40 @@
 {% endset %}
 
 {% set sidebar %}
-  <div class="request__main-sidebar stack" style="order: 2;">
-    {% include "@molecules/SidebarList/SidebarList.twig" with {
-      variant: 'primary',
-      heading: '',
-      data: rfp_first_submission_info,
-      attributes: create_attribute()
-    } %}
+  <aside class="request__main-sidebar stack" style="order: 2;">
+    {% if rfp_first_submission_info is not empty %}
+      <section>
+        {% include "@molecules/SidebarList/SidebarList.twig" with {
+          variant: 'primary',
+          heading: '',
+          data: rfp_first_submission_info,
+          attributes: create_attribute()
+        } %}
+      </section>
+    {% endif %}
 
-    {% include "@molecules/SidebarList/SidebarList.twig" with {
-      variant: 'secondary',
-      heading: '',
-      data: rfp_submission_info,
-      attributes: create_attribute()
-    } %}
+    {% if rfp_submission_info is not empty %}
+      <section class="stack__no-space">
+        {% include "@molecules/SidebarList/SidebarList.twig" with {
+          variant: 'secondary',
+          heading: '',
+          data: rfp_submission_info,
+          attributes: create_attribute()
+        } %}
+      </section>
+    {% endif %}
 
-    {% include "@molecules/SidebarList/SidebarList.twig" with {
-      variant: 'default',
-      heading: 'Important dates'|t,
-      data: rfp_dates,
-      attributes: create_attribute()
-    } %}
-  </div>
+    {% if rfp_submission_info is not empty %}
+      <section>
+        {% include "@molecules/SidebarList/SidebarList.twig" with {
+          variant: 'default',
+          heading: 'Important dates'|t,
+          data: rfp_dates,
+          attributes: create_attribute()
+        } %}
+      </section>
+    {% endif %}
+  </aside>
 {% endset %}
 
 <div class="section section--color-default">

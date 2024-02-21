@@ -121,10 +121,6 @@ function jcc_elevated_preprocess_node(&$variables) {
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
 function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
-  $type_manager = \Drupal::entityTypeManager();
-  $node_manager = $type_manager->getStorage('node');
-  $media_manager = $type_manager->getStorage('media');
-
   $variables['breadcrumb'] = \Drupal::service('breadcrumb')
     ->build(\Drupal::routeMatch())
     ->toRenderable();
@@ -403,7 +399,9 @@ function jcc_elevated_should_alert_display($alert_node, $current_page, $is_front
 }
 
 /**
- * Node: request preprocess.
+ * Node: Request (RFP) preprocess.
+ *
+ * Display: Full page/Default.
  *
  * @param array $variables
  *   The preprocess variables.
@@ -430,8 +428,8 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   $rfp_start_date = $node->get('field_rfp_start_date')->getValue();
   if (isset($rfp_start_date[0])) {
     $rfp_start_date = [
-      'heading' => t('Issued date'),
-      'date_info' => $node->get('field_rfp_start_date')->first()->view('full'),
+      'brow' => t('Issued date'),
+      'heading' => $node->get('field_rfp_start_date')->first()->view('full'),
     ];
     $rfp_dates[] = $rfp_start_date;
   }
@@ -441,8 +439,8 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   if (isset($rfp_important_dates[0])) {
     foreach ($rfp_important_dates as $date) {
       $rfp_dates[] = [
-        'heading' => $date->get('field_heading')->first()->view('full'),
-        'date_info' => $date->get('field_date_range')->first()->view('full'),
+        'brow' => $date->get('field_heading')->first()->view('full'),
+        'heading' => $date->get('field_date_range')->first()->view('full'),
         'text' => $date->get('field_text')->first()->view('full'),
       ];
     }
@@ -452,8 +450,8 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   $rfp_end_date = $node->get('field_rfp_end_date')->getValue();
   if (isset($rfp_end_date[0])) {
     $rfp_end_date = [
-      'heading' => t('Deadline'),
-      'date_info' => $node->get('field_rfp_end_date')->first()->view('full'),
+      'brow' => t('Deadline'),
+      'heading' => $node->get('field_rfp_end_date')->first()->view('full'),
     ];
     $rfp_dates[] = $rfp_end_date;
   }
