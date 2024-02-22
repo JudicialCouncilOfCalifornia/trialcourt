@@ -7,8 +7,8 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Site\Settings;
-use Drupal\media\Entity\Media;
 use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
 
 /**
  * Get the machine name of the site.
@@ -16,6 +16,7 @@ use Drupal\file\Entity\File;
  * @return string
  *   Return the machine name of the site.
  */
+// @codingStandardsIgnoreStart
 function jcc_elevated_get_site_name() {
   return Settings::get('jcc_elevated.site_machine_name') ?? \Drupal::state()->get('jcc_elevated.site_machine_name');
 }
@@ -51,6 +52,7 @@ function jcc_elevated_get_custom_settings($setting_name = NULL) {
 
   return $settings[$setting_name] ?? $settings;
 }
+// @codingStandardsIgnoreEnd
 
 /**
  * Maintain a list of JCC Elevated related settings.
@@ -162,22 +164,26 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
 /**
  * Implements hook_form_alter().
  */
-function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id) {
-  if ($form_id == 'editor_link_dialog') {
-    $form['link_to_file'] = [
-      '#type'          => 'checkbox',
-      '#title'         => t('Link media to file when saving'),
-      '#required'      => FALSE,
-      '#default_value' => FALSE,
-    ];
-    $form['actions']['save_modal']['#submit'][] = 'jcc_custom_elevated_link_to_file_submit';
+function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
+  // Wrapped in a module check, because this functionality should be controlled
+  // by jcc_ckeditor_link if it is enabled.
+  if (!\Drupal::service('module_handler')->moduleExists('jcc_ckeditor_link')) {
+    if ($form_id == 'editor_link_dialog') {
+      $form['link_to_file'] = [
+        '#type' => 'checkbox',
+        '#title' => t('Link media to file when saving'),
+        '#required' => FALSE,
+        '#default_value' => FALSE,
+      ];
+      $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_custom_link_to_file_submit';
+    }
   }
 }
 
 /**
  * Implements hook_preprocess_VIEW_ID().
  */
-function jcc_elevated_custom_preprocess_views_view_table(&$variables) {
+function jcc_elevated_custom_preprocess_views_view_table(&$variables): void {
   $view = $variables['view'];
   if ($view->current_display == 'publication_manager') {
     // Check if first publication have the jcc_section field available.
@@ -195,28 +201,32 @@ function jcc_elevated_custom_preprocess_views_view_table(&$variables) {
 /**
  * Custom callback for linkit modal window.
  */
-function jcc_custom_elevated_link_to_file_submit(&$form, $form_state) {
-  if ($form_state->getValue('link_to_file') == '1') {
-    if (str_contains($form_state->getValue('href_dirty_check'), '/media/')) {
+function jcc_elevated_custom_link_to_file_submit(&$form, $form_state): void {
+  // Wrapped in a module check, because this functionality should be controlled
+  // by jcc_ckeditor_link if it is enabled.
+  if (!\Drupal::service('module_handler')->moduleExists('jcc_ckeditor_link')) {
+    if ($form_state->getValue('link_to_file') == '1') {
+      if (str_contains($form_state->getValue('href_dirty_check'), '/media/')) {
 
-      // Get media entity and retrieve its first file's url.
-      $media_id = str_replace("/media/", "", $form_state->getValue('href_dirty_check'));
-      $media = Media::load($media_id);
+        // Get media entity and retrieve its first file's url.
+        $media_id = str_replace("/media/", "", $form_state->getValue('href_dirty_check'));
+        $media = Media::load($media_id);
 
-      // If no file then skip the logic.
-      if ($media->field_media_file_multiple) {
-        $fid = $media->field_media_file_multiple->first()->target_id;
-        $file = File::load($fid);
-        $file_url = $file->createFileUrl(TRUE);
+        // If no file then skip the logic.
+        if ($media->field_media_file_multiple) {
+          $fid = $media->field_media_file_multiple->first()->target_id;
+          $file = File::load($fid);
+          $file_url = $file->createFileUrl(TRUE);
 
-        // Populate form state with new url.
-        $form_state->setValue('href_dirty_check', $file_url);
-        $form_state->setValue('attributes', [
-          'href' => $file_url,
-          'data-entity-type' => '',
-          'data-entity-uuid' => '',
-          'data-entity-substitution' => '',
-        ]);
+          // Populate form state with new url.
+          $form_state->setValue('href_dirty_check', $file_url);
+          $form_state->setValue('attributes', [
+            'href' => $file_url,
+            'data-entity-type' => '',
+            'data-entity-uuid' => '',
+            'data-entity-substitution' => '',
+          ]);
+        }
       }
     }
   }
