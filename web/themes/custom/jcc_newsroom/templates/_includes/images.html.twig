@@ -23,23 +23,25 @@
       {# Break up images into two groups #}
       {% if gallery_images|length > 1 %}
         {% set batch_size = gallery_images|length/2 %}
-      {% endif %}
+      {% endif %}     
       {% for set in gallery_images|batch(batch_size) %} {# Display grouped images in separate columns #}
         <div class="grid-col-12 tablet:grid-col-5 height-full">
-          {% for key, image in set %}
+          {% for key, image in set %}                       
             <div class="jcc-gallery-sidebar__card">
               <div class="jcc-gallery-sidebar__card-inner">
                 {% if image.entity.field_media_image.entity.uri.value %}
                   {% set image_id = image.entity.field_media_image.entity.fid.value %}
                   {% set image_url = file_url(image.entity.field_media_image.entity.uri.value) %}
-                  {% set image_alt = image.entity.field_media_image.alt %}
-                  {% set media_caption = image.entity.field_media_caption.value|join(' ')|striptags %}
-
+                  {% set image_alt = image.entity.field_media_image.alt %}                  
+                  {% if image.entity.field_media_caption.value %}
+                    {% set media_caption = image.entity.field_media_caption.value|striptags('<a>')|raw  %}
+                  {% endif %}                 
                   {% if image_url %}
-                    <a href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ media_caption }}" aria-label="Click to view larger image">
+                  <a href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" aria-label="Click to view larger image">
                       <img src="{{ image_url }}" alt="{{ img_alt }}">
                     </a>
-                  {% endif %}
+                    <p>{{media_caption|raw}}</p>
+                  {% endif %}    
                 {% endif %}
               </div>
             </div>
