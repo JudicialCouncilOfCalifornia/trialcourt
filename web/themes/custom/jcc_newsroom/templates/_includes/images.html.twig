@@ -37,7 +37,7 @@
                     {% set media_caption = image.entity.field_media_caption.value|striptags('<a>')|raw  %}
                   {% endif %}                 
                   {% if image_url %}
-                  <a href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" aria-label="Click to view larger image">
+                  <a href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" aria-label="Click to view larger image" title="{{media_caption|striptags}}">
                       <img src="{{ image_url }}" alt="{{ img_alt }}">
                     </a>
                     <p>{{media_caption|raw}}</p>
