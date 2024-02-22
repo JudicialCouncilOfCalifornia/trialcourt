@@ -39,9 +39,12 @@
  */
 #}
 {% if items is not empty %}
-<ul>
+  {{ attach_library("jcc_storybook/List") }}
+  <ul class="list__container">
   {% for item in items %}
-    <li>{{ item.content }}</li>
+    <li class="list__item">
+      {{ item.content }}
+    </li>
   {% endfor %}
 </ul>
 {% endif %}

@@ -117,11 +117,18 @@
     {% endif %}
 
     {% if content.field_rfp_attachments.0 %}
-      <section class="stack__xl-space">
-        <h2>{{ 'Attachments'|t }}</h2>
+      <section class="stack__xl-space stack">
+        <h2>{{ 'RFP Attachments'|t }}</h2>
         {{ content.field_rfp_attachments }}
       </section>
     {% endif %}
+
+    <section class="stack__xl-space disclaimer-content">
+      <h3>{{ 'Disclaimer'|t }}</h3>
+      <p>{{ 'The Judicial Council, as a public entity, prohibits direct contact with any Council personnel during the solicitation process in order to maintain fairness and equality to all proposers.'|t }}
+        {{ 'Proposers are specifically directed NOT to contact any judicial branch entity personnel or consultants for meetings, conferences, or discussions that are related to the solicitation at any time between release of the solicitation and any award and execution of a contract.'|t }}
+        {{ 'Unauthorized contact with any judicial branch entity personnel or consultants may be cause for rejection of the Proposer’s proposal.'|t }}</p>
+    </section>
   </main>
 {% endset %}
 
