@@ -117,10 +117,6 @@ function jcc_elevated_preprocess_node(&$variables) {
  *   The node.
  */
 function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
-  $type_manager = \Drupal::entityTypeManager();
-  $node_manager = $type_manager->getStorage('node');
-  $media_manager = $type_manager->getStorage('media');
-
   $variables['breadcrumb'] = \Drupal::service('breadcrumb')
     ->build(\Drupal::routeMatch())
     ->toRenderable();
@@ -277,10 +273,7 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node) {
     }
   }
 
-  // Publishing schedule.
-  // Using 'created' time since scheduler 'publish_on' is removed on publish.
-  // And 'created' will sync with last known 'publish_on' value when set.
-  $posted = $node->get('created')->value ? date('F j, Y', $node->get('created')->value) : '';
+  // Publishing schedule deadline.
   $deadline = $node->get('unpublish_on')->value ? date('F j, Y', $node->get('unpublish_on')->value) : '';
   // If no deadline or 12/12/9999.
   if (!$deadline || $deadline === 'December 12, 9999') {
@@ -344,7 +337,7 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node) {
       ],
       'posted' => [
         'label' => t('Posted'),
-        'value' => $posted,
+        'value' => $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '',
       ],
     ],
     'custom_apply' => $custom_apply,
