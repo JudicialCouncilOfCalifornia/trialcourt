@@ -64,20 +64,20 @@ process:
   field_mi: MI
   field_phone_number: 'Phone Number'
   field_subject_matter:
-    -
-      plugin: skip_on_empty
-      source: 'Subject Matter'
-      method: process
-      message: 'Skipped because no data.'
-    -
-      plugin: explode
-      delimiter: ','
-    -
-      plugin: entity_lookup
-      value_key: field_subject_mater_area_id
-      bundle_key: vid
-      bundle: subject_matter_area
-      entity_type: taxonomy_term
+  -
+    plugin: skip_on_empty
+    source: 'Subject Matter'
+    method: process
+    message: 'Skipped because no data.'
+  -
+    plugin: explode
+    delimiter: ','
+  -
+    plugin: entity_lookup
+    value_key: field_id
+    bundle_key: vid
+    bundle: subject_matter_area
+    entity_type: taxonomy_term
   field_subject_matter_other:
     -
       plugin: skip_on_empty
