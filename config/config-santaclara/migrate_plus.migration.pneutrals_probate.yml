@@ -1,0 +1,172 @@
+uuid: e8189529-0276-4ce9-b96d-2694f2db3e9f
+langcode: en
+status: true
+dependencies: {  }
+id: pneutrals_probate
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - node
+migration_group: jcc2
+label: 'PNeutrals Probate.'
+source:
+  plugin: csv
+  path: modules/custom/jcc_tc_migration/csv/PNeutrals-Probate.csv
+  delimiter: ','
+  enclosure: '"'
+  ids:
+    - 'Legacy ID'
+process:
+  status:
+    plugin: static_map
+    map:
+      'TRUE': 1
+      'FALSE': 0
+      '': ''
+    source: Active
+  title:
+    plugin: concat
+    source:
+      - First
+      - Last
+    delimiter: ' '
+  field_first_name: First
+  field_last_name: Last
+  field_Legacy_id: 'Legacy ID'
+  field_mi: MI
+  field_sbn: SBN
+  field_phone_number: Phone
+  field_fax: Fax
+  field_email_address: Email
+  field_subject_matter_other:
+    -
+      plugin: skip_on_empty
+      source: 'Other Subject Matter'
+      method: process
+    -
+      plugin: explode
+      delimiter: ','
+  bu:
+    -
+      plugin: static_map
+      map:
+        'TRUE': BU
+        'FALSE': ''
+        '': ''
+      source: BU
+  cn:
+    -
+      plugin: static_map
+      map:
+        'TRUE': CN
+        'FALSE': ''
+        '': ''
+      source: CN
+  gd:
+    -
+      plugin: static_map
+      map:
+        'TRUE': GD
+        'FALSE': ''
+        '': ''
+      source: GD
+  oo:
+    -
+      plugin: static_map
+      map:
+        'TRUE': OO
+        'FALSE': ''
+        '': ''
+      source: OO
+  re:
+    -
+      plugin: static_map
+      map:
+        'TRUE': RE
+        'FALSE': ''
+        '': ''
+      source: RE
+  tr:
+    -
+      plugin: static_map
+      map:
+        'TRUE': TR
+        'FALSE': ''
+        '': ''
+      source: TR
+  ad:
+    -
+      plugin: static_map
+      map:
+        'TRUE': AD
+        'FALSE': ''
+        '': ''
+      source: AD
+  fm:
+    -
+      plugin: static_map
+      map:
+        'TRUE': FM
+        'FALSE': ''
+        '': ''
+      source: FM
+  field_areas_of_law:
+    -
+      plugin: areas_of_law
+      source:
+        - '@bu'
+        - '@cn'
+        - '@gd'
+        - '@oo'
+        - '@re'
+        - '@tr'
+        - '@ad'
+        - '@fm'
+    -
+      plugin: entity_lookup
+      value_key: field_areas_of_law_id
+      bundle_key: vid
+      bundle: areas_of_law
+      entity_type: taxonomy_term
+  field_address/country_code:
+    plugin: default_value
+    default_value: US
+  field_address/postal_code: Zip
+  field_address/locality: City
+  field_address/address_line1: Address
+  field_address/administrative_area: State
+  field_mediator_type:
+    -
+      plugin: default_value
+      default_value: 'Probate Early Settlement Program Neutrals'
+    -
+      plugin: entity_generate
+      value_key: name
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: mediator_type
+      ignore_case: true
+destination:
+  plugin: 'entity:node'
+  default_bundle: arbitrator
+  overwrite_properties:
+    - title
+    - field_legacy_id
+    - status
+    - field_areas_of_law
+    - field_first_name
+    - field_last_name
+    - field_mi
+    - field_sbn
+    - field_phone_number
+    - field_fax
+    - field_email_address
+    - field_subject_matter_other
+    - field_address/country_code
+    - field_address/postal_code
+    - field_address/locality
+    - field_address/address_line1
+    - field_address/administrative_area
+    - field_mediator_type
+migration_dependencies: {  }
