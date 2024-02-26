@@ -113,7 +113,122 @@ When you run the migration, if there are any fails for forms_file after this, it
 
 ## Other notes
 
-- It's useful to disable the search index while doing the imports and reenable it afterwards (avoids some notices on your local).
+- It's useful to disable the search index while doing the imports and re-enable it afterwards (avoids some notices on your local).
+
+## Migration Configurations
+
+How to create additional migration profiles through configuration files for [Migration Plus](https://www.drupal.org/project/migrate_plus.
+
+ - If not an immutable profile, log into a Drupal site and go to `Structure > Migrations` or `/admin/structure/migrate`
+ - Use `Add migration group` to create a new migration group, named contextually for specific site use (e.g. the site name). This name will be specified as the `migration_group` for the profile configurations.
+ - If an immutable profile, you will specify `jcc2` as the `migration_group` in the profile configurations.
+   - Under `config/config-sitename`, create/copy a new `migrate_plus.migration.\[profile_name]\.yml file (i.e. migrate_plus.migration.courts_node_job.yml).
+     - [Configuration example](../config/config-courts/migrate_plus.migration.courts_node_job.yml) migrating XML source into content type.
+     - <details>
+         <summary>Notable configuration details & examples</summary>
+
+         ```
+         id: ... same `[profile_name]` as the file name
+         migration_tags: ... `[profile_name]` broken up by underscore delimiter
+           - profile
+           - name
+         migration_group: ... grouping name
+         label: ... Displayed in at `/admin/structure/migrate`
+         source: ... the content origin
+           plugin: ... typically `url` but can be file type like `csv`
+           data_fetcher_plugin: ... `http` (typically) or `file` if the origin is local to the site
+           data_parser_plugin: ... origin format such as `google_sheet` or `xml`
+           urls: ... origin location such as URL or file path and can be multiple locations
+           item_selector: ... where in the origin's structure to import (e.g. /root/jcc_apl_tao)
+             fields: ... identifying content to import by tag/key/column
+               -
+                 name: ... field name same as `selector` below to match context
+                 label: ... for display purposes
+                 selector: ... tag/key/column
+               -
+                 name: ...
+                 label: ...
+                 selector: ...
+               -
+                 ... (repeat as many selectors as needed)
+             ids: ... use origin selector from above as a unique identifier during import
+               selector
+                 type: ... value type such as `string` or `integer`
+         process: ... Drupal entity destination/data mapping processing
+           moderation_state: ... publish state on import example
+             plugin: ... default_value
+             default_value: ... published
+           uid:
+             plugin: default_value
+             default_value: 1
+           title:
+             -
+               plugin: get
+               source: title ... origin selector
+             -
+               plugin: default_value
+               default_value: TITLE
+           path/pathauto:
+             plugin: default_value
+             default_value: 1
+           body/value: ... combining multiple source example
+             plugin: concat
+             source:
+               - description
+               - constants/break
+               - url
+           body/format:
+             plugin: default_value
+             default_value: body
+           field_department: ... import as taxonomy example
+             -
+               plugin: skip_on_empty
+               method: process ... sets as null if empty or can skip entire record if set to `row`
+               source: department
+             -
+               plugin: entity_generate ... assigns or creates term in Drupal
+               entity_type: taxonomy_term
+               bundle_key: vid
+               bundle: department
+               value_key: name
+               ignore_case: true
+           field_date/value: ... date import example
+             -
+               plugin: callback
+               callable: strtotime ... convert to server time
+               source: open_date
+             -
+               plugin: format_date
+               from_format: U
+               to_format: Y-m-d
+           field_is_temporary:  ... boolean based on value example
+             plugin: evaluate_condition
+             source: reg_temp
+             condition:
+               plugin: equals
+               value: Temporary
+           field...  (repeat as many migration processes as needed)
+         destination: ... entity target example
+           plugin: 'entity:node'
+           default_bundle: job
+         migration_dependencies: null
+         ```
+         </details>
+
+Documentation:
+ - [Migrate API](https://www.drupal.org/docs/drupal-apis/migrate-api)
+   - [Migrate Examples](https://www.drupal.org/docs/drupal-apis/migrate-api/migrate-destination-plugins-examples)
+ - [Migrate Conditions](https://www.drupal.org/docs/8/api/migrate-api/migrate-process-plugins/migrate-conditions/migrate-conditions-process-plugins) - requires separate module add-on
+
+## Automating Migrations
+
+Schedule migrations when the content needs to be updated periodically. For example, case information or job postings are provided by separate systems so that content needs to be imported constantly in bulk.
+We are currently using GitHub actions to schedule migration jobs through the hosting service, currently Pantheon.
+
+ - [Git clone the terminus-actions repos](https://github.com/JudicialCouncilOfCalifornia/terminus-actions)
+ - Create/Copy a new workflow configuration at `.github/workflows`.
+ - Add terminus commands for the workflow to execute the migration profiles as described in this document. [Example](https://github.com/JudicialCouncilOfCalifornia/terminus-actions/blob/main/.github/workflows/migration-cases.yml)
+ - [Monitor the scheduled migration](https://github.com/JudicialCouncilOfCalifornia/terminus-actions/actions) from the `Actions` tab in the GitHub project.
 
 ## Missing Pieces
 
