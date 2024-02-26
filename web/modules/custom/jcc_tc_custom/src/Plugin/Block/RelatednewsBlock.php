@@ -27,7 +27,7 @@ class RelatednewsBlock extends BlockBase implements BlockPluginInterface {
       $block_content = $config['related_news_custom'];
     }
     else {
-      $block_content = $this->t('<p><a href="https://live-jcc-newsroom.pantheonsite.io/basic-page/supreme-court-oral-argument-archive">Oral Argument Archive</a><br /><a href="https://jcc.legistar.com/Calendar.aspx">Judicial Council Meeting Archive</a></p>');
+      $block_content = $this->t('<p><a href="https://supreme.courts.ca.gov/case-information/oral-arguments">Oral Argument Archive</a><br /><a href="https://jcc.legistar.com/Calendar.aspx">Judicial Council Meeting Archive</a></p>');
     }
     return [
       '#markup' => $block_content,
@@ -45,7 +45,7 @@ class RelatednewsBlock extends BlockBase implements BlockPluginInterface {
     $form['related_news_custom'] = [
       '#type' => 'textarea',
       '#title' => $this->t('content'),
-      '#default_value' => isset($config['related_news_custom']) ? $config['related_news_custom'] : '<p><a href="https://live-jcc-newsroom.pantheonsite.io/basic-page/supreme-court-oral-argument-archive">Oral Argument Archive</a><br /><a href="https://jcc.legistar.com/Calendar.aspx">Judicial Council Meeting Archive</a></p>\'',
+      '#default_value' => isset($config['related_news_custom']) ? $config['related_news_custom'] : '<p><a href="https://supreme.courts.ca.gov/case-information/oral-arguments">Oral Argument Archive</a><br /><a href="https://jcc.legistar.com/Calendar.aspx">Judicial Council Meeting Archive</a></p>\'',
     ];
 
     return $form;
