@@ -170,6 +170,15 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
         unset($form['field_location']);
       }
       break;
+
+    case 'node_request_form':
+    case 'node_request_edit_form':
+      $form['body']['widget'][0]['summary']['#required'] = TRUE;
+      $form['body']['widget'][0]['summary']['#title'] = t('Summary/Teaser text');
+      $form['body']['widget'][0]['summary']['#description'] = t('This summary will populate the header on full page display, and the text on teasers.');
+      $form['field_rfp_status']['widget']['#required'] = TRUE;
+      $form['field_rfp_type']['widget']['#required'] = TRUE;
+      break;
   }
 }
 
@@ -700,7 +709,7 @@ function jcc_custom_theme($existing, $type, $theme, $path) {
 /**
  * Implements hook_preprocess_details().
  */
-function jcc_custom_preprocess_details(&$variables) {
+function jcc_custom_preprocess_details(&$variables): void {
   // Elements for menu settings if first level and not allowed.
   if (jcc_custom_is_elevated_site() && \Drupal::routeMatch()->getParameter('node')) {
     if ($variables['title'] && !is_array($variables['title']) && $variables['title'] == 'Menu settings') {
@@ -767,7 +776,7 @@ function jcc_custom_preprocess_details(&$variables) {
 /**
  * Implements hook_preprocess_select().
  */
-function jcc_custom_preprocess_select__edit_menu_menu_parent(&$variables) {
+function jcc_custom_preprocess_select__edit_menu_menu_parent(&$variables): void {
   // Flags to restrict 'Main navigation' (first level) selection.
   if (jcc_custom_is_elevated_site()) {
     $roles = \Drupal::currentUser()->getRoles();
@@ -789,7 +798,7 @@ function jcc_custom_preprocess_select__edit_menu_menu_parent(&$variables) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function jcc_custom_form_taxonomy_overview_vocabularies_alter(&$form, FormStateInterface $form_state) {
+function jcc_custom_form_taxonomy_overview_vocabularies_alter(&$form, FormStateInterface $form_state): void {
   // Hide the "JCC Sections" vocabulary from Vocab if "jcc_elevated_sections"
   // module is not enabled. Since the vocab config must be in the immutable
   // feature, this will at least hide it for all sites that are not using the
@@ -799,4 +808,28 @@ function jcc_custom_form_taxonomy_overview_vocabularies_alter(&$form, FormStateI
     unset($form['vocabularies']['jcc_sections']);
   }
 
+}
+
+/**
+ * Sets the Request (RFP) type options.
+ */
+function jcc_custom_request_rfp_type_options(): array {
+  return [
+    'rfp' => 'Request for Proposal',
+    'rfq' => 'Request for Quote',
+    'rfi' => 'Request for Information',
+    'rfo' => 'Request for Offer',
+    'ifb' => 'Invitation for Bid',
+  ];
+}
+
+/**
+ * Sets the Request (RFP) status options.
+ */
+function jcc_custom_request_rfp_status_options(): array {
+  return [
+    1 => t('Open'),
+    0 => t('Closed'),
+    2 => t('Canceled'),
+  ];
 }

@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\node\NodeInterface;
@@ -115,12 +116,11 @@ function jcc_elevated_preprocess_node(&$variables) {
  *   The preprocess variables.
  * @param Drupal\node\NodeInterface $node
  *   The node.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
-  $type_manager = \Drupal::entityTypeManager();
-  $node_manager = $type_manager->getStorage('node');
-  $media_manager = $type_manager->getStorage('media');
-
+function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
   $variables['breadcrumb'] = \Drupal::service('breadcrumb')
     ->build(\Drupal::routeMatch())
     ->toRenderable();
@@ -142,7 +142,7 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
  * @param Drupal\node\NodeInterface $node
  *   The node.
  */
-function jcc_elevated_node_alert(array &$variables, NodeInterface $node) {
+function jcc_elevated_node_alert(array &$variables, NodeInterface $node): void {
   // Prepend alert label directly to the body content so that it renders inline.
   $label = '<strong>' . $node->label() . '</strong>';
   $variables['content']['body'][0]['#text'] = $label . ', ' . $variables['content']['body'][0]['#text'];
@@ -173,7 +173,7 @@ function jcc_elevated_node_alert(array &$variables, NodeInterface $node) {
  * @param Drupal\node\NodeInterface $node
  *   The node.
  */
-function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
+function jcc_elevated_node_subpage(array &$variables, NodeInterface $node): void {
   // If the first paragraph on the subpage is a hero, move it out to the header
   // variable, and hide it from the default content array. We want to inject
   // the sidebar navigation between the hero and the rest of the content.
@@ -194,7 +194,7 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node) {
  * @param Drupal\node\NodeInterface $node
  *   The node.
  */
-function jcc_elevated_node_judge(array &$variables, NodeInterface $node) {
+function jcc_elevated_node_judge(array &$variables, NodeInterface $node): void {
   // Attachments.
   foreach ($node->field_media_file_multiple as $media_file) {
     $media = Media::load($media_file->target_id);
@@ -243,7 +243,7 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node) {
  * @param Drupal\node\NodeInterface $node
  *   The node.
  */
-function jcc_elevated_node_job(array &$variables, NodeInterface $node) {
+function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
@@ -396,4 +396,138 @@ function jcc_elevated_should_alert_display($alert_node, $current_page, $is_front
 
   // Default is to hide the alert.
   return FALSE;
+}
+
+/**
+ * Node: Request (RFP) preprocess.
+ *
+ * Display: Full page/Default.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ *
+ * @throws \Drupal\Core\TypedData\Exception\MissingDataException
+ */
+function jcc_elevated_node_request(array &$variables, NodeInterface $node): void {
+
+  //
+  // Get the full text of out type.
+  $variables['rfp_type'] = FALSE;
+  $rfp_type = $node->get('field_rfp_type')->getValue();
+  if (isset($rfp_type[0])) {
+    $variables['rfp_type'] = $node->get('field_rfp_type')->first()->view('full');
+  }
+
+  //
+  // Create an array for our important dates.
+  $rfp_dates = [];
+
+  // Grab our start date and add to our array.
+  $rfp_start_date = $node->get('field_rfp_start_date')->getValue();
+  if (isset($rfp_start_date[0])) {
+    $rfp_start_date = [
+      'brow' => t('Issued date'),
+      'heading' => $node->get('field_rfp_start_date')->first()->view('full'),
+    ];
+    $rfp_dates[] = $rfp_start_date;
+  }
+
+  // Grab our additional dates and add to our array.
+  $rfp_important_dates = $node->get('field_rfp_important_dates')->referencedEntities();
+  if (isset($rfp_important_dates[0])) {
+    foreach ($rfp_important_dates as $date) {
+      $rfp_dates[] = [
+        'brow' => $date->get('field_heading')->first()->view('full'),
+        'heading' => $date->get('field_date_range')->first()->view('full'),
+        'text' => $date->get('field_text')->first()->view('full'),
+      ];
+    }
+  }
+
+  // Grab our end date and add to our array.
+  $rfp_end_date = $node->get('field_rfp_end_date')->getValue();
+  if (isset($rfp_end_date[0])) {
+    $rfp_end_date = [
+      'brow' => t('Deadline'),
+      'heading' => $node->get('field_rfp_end_date')->first()->view('full'),
+    ];
+    $rfp_dates[] = $rfp_end_date;
+  }
+
+  $variables['rfp_dates'] = $rfp_dates;
+
+  //
+  // Grab our submission info and create our arrays.
+  $rfp_submission_information = $node->get('field_rfp_submission_information')->referencedEntities();
+  if (isset($rfp_submission_information[0])) {
+    foreach ($rfp_submission_information as $sub_info) {
+      $links = [];
+      foreach ($sub_info->get('field_link_multiple')->getValue() as $link) {
+        $links[] = [
+          'url' => Url::fromUri($link['uri'], $link['options']),
+          'title' => $link['title'],
+        ];
+      }
+      $rfp_submission_info[] = [
+        'brow' => $sub_info->get('field_brow')->first() ? $sub_info->get('field_brow')->first()->view('full') : NULL,
+        'heading' => $sub_info->get('field_heading')->first() ? $sub_info->get('field_heading')->first()->view('full') : NULL,
+        'text' => $sub_info->get('field_text')->first() ? $sub_info->get('field_text')->first()->view('full') : NULL,
+        'links' => !empty($links) ? $links : NULL,
+      ];
+    }
+  }
+
+  // We separate the first submission info for a primary SidebarList callout,
+  // with the others rendered as a secondary SidebarList callout.
+  $first = array_shift($rfp_submission_info);
+  $variables['rfp_first_submission_info'] = [$first];
+  $variables['rfp_submission_info'] = $rfp_submission_info;
+
+  //
+  // Create our BlurbBox data.
+  $rfp_blurb_box = [];
+
+  $rfp_status = $node->get('field_rfp_status')->getValue();
+  if (isset($rfp_status[0])) {
+    $rfp_status = [
+      'brow' => $node->get('field_rfp_status')->getFieldDefinition()->getLabel(),
+      'heading' => $node->get('field_rfp_status')->first()->view('full'),
+      'text' => FALSE,
+    ];
+    $rfp_blurb_box[] = $rfp_status;
+  }
+
+  $rfp_topic = $node->get('field_rfp_topic')->getValue();
+  if (isset($rfp_topic[0])) {
+    $rfp_topic = [
+      'brow' => $node->get('field_rfp_topic')->getFieldDefinition()->getLabel(),
+      'heading' => $node->get('field_rfp_topic')->first()->view('full'),
+      'text' => FALSE,
+    ];
+    $rfp_blurb_box[] = $rfp_topic;
+  }
+
+  $rfp_end_date = $node->get('field_rfp_end_date')->getValue();
+  if (isset($rfp_end_date[0])) {
+    $rfp_end_date = [
+      'brow' => t('Deadline'),
+      'heading' => $node->get('field_rfp_end_date')->first()->view('full'),
+      'text' => FALSE,
+    ];
+    $rfp_blurb_box[] = $rfp_end_date;
+  }
+
+  $rfp_number = $node->get('field_rfp_number')->getValue();
+  if (isset($rfp_number[0])) {
+    $rfp_number = [
+      'brow' => $node->get('field_rfp_number')->getFieldDefinition()->getLabel(),
+      'heading' => $node->get('field_rfp_number')->first()->view('full'),
+      'text' => FALSE,
+    ];
+    $rfp_blurb_box[] = $rfp_number;
+  }
+
+  $variables['rfp_blurb_box_data'] = $rfp_blurb_box;
 }
