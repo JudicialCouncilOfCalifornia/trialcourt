@@ -104,7 +104,39 @@ function jcc_components_form_views_exposed_form_alter(&$form, FormStateInterface
     $form['#validate'][] = 'jcc_components_tentative_rulings_search_validate';
 
   }
+
+  $view = $form_state->get('view');
+
+  if ($view->id() == 'arbitrators') {
+    $termID = $view->args[0];
+    $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($termID);
+    if ($term) {
+      $term_name = $term->getName();
+    }
+
+    if ($termID == 'Civil-ADR-Provider') {
+      $form['adr_process']['#states'] = [
+        'visible' => [
+          ':input[name="arbitrator_type"]' => ['value' => $options['Civil ADR Provider']],
+        ],
+      ];
+      $form['areas_of_law']['#access'] = FALSE;
+    }
+    elseif ($termID == 'Civil-Early-Settlement-Conference-(CESC)-Neutral') {
+      $form['areas_of_law']['#states'] = [
+        'visible' => [
+          ':input[name="arbitrator_type"]' => ['value' => $options['Civil Early Settlement Conference (CESC) Neutral']],
+        ],
+      ];
+      $form['adr_process']['#access'] = FALSE;
+    }
+    else {
+      $form['adr_process']['#access'] = FALSE;
+      $form['areas_of_law']['#access'] = FALSE;
+    }
+  }
 }
+
 
 /**
  * Validate search parameters for tentative rulings.
