@@ -277,10 +277,7 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
     }
   }
 
-  // Publishing schedule.
-  // Using 'created' time since scheduler 'publish_on' is removed on publish.
-  // And 'created' will sync with last known 'publish_on' value when set.
-  $posted = $node->get('created')->value ? date('F j, Y', $node->get('created')->value) : '';
+  // Publishing schedule deadline.
   $deadline = $node->get('unpublish_on')->value ? date('F j, Y', $node->get('unpublish_on')->value) : '';
   // If no deadline or 12/12/9999.
   if (!$deadline || $deadline === 'December 12, 9999') {
@@ -344,7 +341,7 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
       ],
       'posted' => [
         'label' => t('Posted'),
-        'value' => $posted,
+        'value' => $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '',
       ],
     ],
     'custom_apply' => $custom_apply,
@@ -460,6 +457,8 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
 
   //
   // Grab our submission info and create our arrays.
+  $variables['rfp_first_submission_info'] = [];
+  $variables['rfp_submission_info'] = [];
   $rfp_submission_information = $node->get('field_rfp_submission_information')->referencedEntities();
   if (isset($rfp_submission_information[0])) {
     foreach ($rfp_submission_information as $sub_info) {
@@ -481,9 +480,11 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
 
   // We separate the first submission info for a primary SidebarList callout,
   // with the others rendered as a secondary SidebarList callout.
-  $first = array_shift($rfp_submission_info);
-  $variables['rfp_first_submission_info'] = [$first];
-  $variables['rfp_submission_info'] = $rfp_submission_info;
+  if (!empty($rfp_submission_info)) {
+    $first = array_shift($rfp_submission_info);
+    $variables['rfp_first_submission_info'] = [$first];
+    $variables['rfp_submission_info'] = !empty($rfp_submission_info) ? $rfp_submission_info : [];
+  }
 
   //
   // Create our BlurbBox data.
