@@ -155,14 +155,15 @@
         } %} 
         {% endfor %}
     {% endset %}
+   {% set news_content = content.body is not empty ? content.body : textshare %}
 
     <div class="container">    
     {% set content %}
       {% include "@molecules/Body/Body.twig" with {
         variant: "default",
       heading: "",
-      lead: content.body,
-      content: "",
+      lead: "",
+      content: news_content,
       subheading: "",
       aside: sidebarimages
       } %}   

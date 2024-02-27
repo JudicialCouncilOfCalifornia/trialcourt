@@ -115,6 +115,14 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       $user = \Drupal::currentUser();
       $access = $user->hasPermission('access migration body');
       $form['body']['#access'] = $access;
+      if (!jcc_custom_is_elevated_site()) {
+        unset($form['field_node_reference']);
+        unset($form['field_media_file_multiple']);
+        unset($form['field_media']);
+      }
+      else {
+        unset($form['field_components']);
+      }
       break;
 
     case 'node_document_form':

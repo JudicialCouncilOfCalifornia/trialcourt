@@ -127,14 +127,28 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node) {
     ->toRenderable();
 
   // Render and truncate field_components.
-  $render_array = $node->field_components->view('default');
-  $output = \Drupal::service('renderer')->render($render_array);
+  if ($node->body->isEmpty()) {
+    $render_array = $node->field_components->view('default');
+    $output = \Drupal::service('renderer')->render($render_array);
+  }
+  else {
+    $content = $node->body->view('default');
+    if (!empty($content['#items'])) {
+      $body_content = $content['#items']->getValue()[0]['value'];
+      $output = $body_content;
+    }
+  }
   if ($output !== NULL) {
     $variables['components_teaser'] =
       mb_strimwidth(trim(strip_tags($output)), 0, 250, '...');
   }
   $basic_page = Node::load($node->id());
-
+  if ($basic_page->hasField('field_components')) {
+    $textshare = $basic_page->get('field_components')->referencedEntities();
+    foreach ($textshare as $text) {
+      $variables['textshare'] = $text->get('field_text')->getValue()[0]['value'];
+    }
+  }
   if ($basic_page->hasField('field_media')) {
     $card_media = $basic_page->get('field_media');
     $media = Media::load($card_media->target_id);
