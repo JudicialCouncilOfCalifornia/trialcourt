@@ -121,6 +121,10 @@ function jcc_elevated_preprocess_node(&$variables) {
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
 function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $node_manager = $entity_type_manager->getStorage('node');
+  $media_manager = $entity_type_manager->getStorage('media');
+
   $variables['breadcrumb'] = \Drupal::service('breadcrumb')
     ->build(\Drupal::routeMatch())
     ->toRenderable();
@@ -132,6 +136,71 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
     $variables['components_teaser'] =
       mb_strimwidth(trim(strip_tags($output)), 0, 250, '...');
   }
+
+  $basic_page = $node_manager->load($node->id());
+
+  $variables['imageurl'] = '';
+  $variables['caption'] = '';
+  $variables['citation'] = '';
+
+  if ($basic_page->hasField('field_media')) {
+    $card_media = $basic_page->get('field_media');
+    $media = $media_manager->load($card_media->target_id) ?? FALSE;
+    if ($media) {
+      $uri = $media->field_media_image->entity->getFileUri();
+      $image_url = file_create_url($uri);
+      $variables['imageurl'] = $image_url;
+      $variables['caption'] = strip_tags($media->get('field_media_caption')->value);
+      $variables['citation'] = strip_tags($media->get('field_media_citation')->value);
+    }
+  }
+
+  if ($basic_page->hasField('field_node_reference')) {
+    $relatednewsdata = [];
+    $relatednews = $basic_page->get('field_node_reference');
+    foreach ($relatednews->referencedEntities() as $news) {
+      $link = [
+        '#markup' => '<a href="' . $news->toUrl()->toString() . '">' . $news->getTitle() . '</a>',
+      ];
+      $relatednewsdata[] = [
+        'text' => $link,
+      ];
+    }
+    $variables['relatednewsdata'] = $relatednewsdata;
+  }
+  $sidebarimages = [];
+  foreach ($node->field_media_file_multiple as $media_file) {
+    $media = $media_manager->load($media_file->target_id);
+    if ($media && $media->field_media_image->entity) {
+      $uri = $media->field_media_image->entity->getFileUri();
+    }
+    $media_url = file_create_url($uri);
+    $sidebarimages[] = [
+      'caption' => strip_tags($media->get('field_media_caption')->value),
+      'citation' => strip_tags($media->get('field_media_citation')->value),
+      'url' => $media_url,
+    ];
+  }
+  $variables['sidebarimages'] = $sidebarimages;
+}
+
+/**
+ * Node: Advisory body preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node) {
+  $events = views_embed_view('advisory_body_events', 'block_1');
+  $variables["events_view"] = \Drupal::service('renderer')->renderRoot($events);
+
+  $past_events = views_embed_view('advisory_body_events', 'block_2');
+  $variables["past_events_view"] = \Drupal::service('renderer')->renderRoot($past_events);
+
+  $past_events_list = views_embed_view('advisory_body_events', 'block_3');
+  $variables["past_events_view_list"] = \Drupal::service('renderer')->renderRoot($past_events_list);
 }
 
 /**
@@ -277,10 +346,7 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
     }
   }
 
-  // Publishing schedule.
-  // Using 'created' time since scheduler 'publish_on' is removed on publish.
-  // And 'created' will sync with last known 'publish_on' value when set.
-  $posted = $node->get('created')->value ? date('F j, Y', $node->get('created')->value) : '';
+  // Publishing schedule deadline.
   $deadline = $node->get('unpublish_on')->value ? date('F j, Y', $node->get('unpublish_on')->value) : '';
   // If no deadline or 12/12/9999.
   if (!$deadline || $deadline === 'December 12, 9999') {
@@ -344,7 +410,7 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
       ],
       'posted' => [
         'label' => t('Posted'),
-        'value' => $posted,
+        'value' => $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '',
       ],
     ],
     'custom_apply' => $custom_apply,
@@ -460,6 +526,8 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
 
   //
   // Grab our submission info and create our arrays.
+  $variables['rfp_first_submission_info'] = [];
+  $variables['rfp_submission_info'] = [];
   $rfp_submission_information = $node->get('field_rfp_submission_information')->referencedEntities();
   if (isset($rfp_submission_information[0])) {
     foreach ($rfp_submission_information as $sub_info) {
@@ -481,9 +549,11 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
 
   // We separate the first submission info for a primary SidebarList callout,
   // with the others rendered as a secondary SidebarList callout.
-  $first = array_shift($rfp_submission_info);
-  $variables['rfp_first_submission_info'] = [$first];
-  $variables['rfp_submission_info'] = $rfp_submission_info;
+  if (!empty($rfp_submission_info)) {
+    $first = array_shift($rfp_submission_info);
+    $variables['rfp_first_submission_info'] = [$first];
+    $variables['rfp_submission_info'] = !empty($rfp_submission_info) ? $rfp_submission_info : [];
+  }
 
   //
   // Create our BlurbBox data.
