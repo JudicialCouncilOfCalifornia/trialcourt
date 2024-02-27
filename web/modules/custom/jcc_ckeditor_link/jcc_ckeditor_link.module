@@ -27,7 +27,7 @@ function jcc_ckeditor_link_form_editor_link_dialog_alter(&$form, FormStateInterf
   $url_field = _jcc_ckeditor_link_parse_url_field($input['href'] ?? NULL, $input);
 
   // Remove captcha from this form.
-  if ($form['captcha']) {
+  if (isset($form['captcha'])) {
     $form['captcha']['#access'] = FALSE;
   }
 
@@ -259,17 +259,18 @@ function _jcc_ckeditor_link_submit_handler(array &$form, FormStateInterface $for
     $media_to_file = $form_values['attributes']['media_link_to_file'];
 
     if ($media_to_file) {
+      $fid = NULL;
       $manager = \Drupal::entityTypeManager();
       $media_manager = $manager->getStorage('media');
       $file_manager = $manager->getStorage('file');
       $media_id = str_replace("/media/", "", $form_values['attributes']['href']);
       $media = $media_manager->load($media_id);
 
-      if ($media->hasField('field_media_file_multiple')) {
-        $fid = $media->get('field_media_file_multiple')->first()->getValue();
+      if ($media && $media->hasField('field_media_file_multiple')) {
+        $fid = $media->get('field_media_file_multiple')->first() ? $media->get('field_media_file_multiple')->first()->getValue() : NULL;
       }
-      elseif ($media->hasField('field_media_file')) {
-        $fid = $media->get('field_media_file')->first()->getValue();
+      elseif ($media && $media->hasField('field_media_file')) {
+        $fid = $media->get('field_media_file')->first() ? $media->get('field_media_file')->first()->getValue() : NULL;
       }
 
       if (isset($fid['target_id'])) {
@@ -283,7 +284,7 @@ function _jcc_ckeditor_link_submit_handler(array &$form, FormStateInterface $for
       'data-entity-type' => '',
       'data-entity-uuid' => '',
       'data-entity-substitution' => '',
-      'data-link-type' => $media_to_file ? 'link' : $form_values['link_type'],
+      'data-link-type' => $media_to_file ? 'link' : 'media_link',
       'data-link-media-link-to-file' => $form_values['attributes']['media_link_to_file'] ?? '',
     ]);
   }
