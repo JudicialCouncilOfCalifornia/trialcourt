@@ -12,6 +12,7 @@ migration_tags:
   - job
 migration_group: courts
 label: 'Courts: Import Job Postings'
+description: 'Scheduled migrations of HREMS job postings.'
 source:
   plugin: url
   data_fetcher_plugin: http
@@ -161,9 +162,7 @@ process:
     -
       plugin: format_date
       from_format: Y-m-d
-      to_format: 'Y-m-d 17:00'
-      from_timezone: 'UTC'
-      to_timezone: 'America/Los_Angeles'
+      to_format: 'Y-m-d 17:00 -08:00'
     -
       plugin: callback
       callable: strtotime
