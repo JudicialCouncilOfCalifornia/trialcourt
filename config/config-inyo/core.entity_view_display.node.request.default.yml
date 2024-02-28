@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.node.request.body
+    - field.field.node.request.field_media_file_multiple
     - field.field.node.request.field_rfp_attachments
     - field.field.node.request.field_rfp_end_date
     - field.field.node.request.field_rfp_important_dates
@@ -30,6 +31,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 5
+    region: content
+  field_media_file_multiple:
+    type: entity_reference_entity_id
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
     region: content
   field_rfp_attachments:
     type: entity_reference_revisions_entity_view

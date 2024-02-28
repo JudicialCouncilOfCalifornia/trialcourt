@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.node.request.body
+    - field.field.node.request.field_media_file_multiple
     - field.field.node.request.field_rfp_attachments
     - field.field.node.request.field_rfp_end_date
     - field.field.node.request.field_rfp_important_dates
@@ -17,6 +18,7 @@ dependencies:
     - content_moderation
     - datetime
     - field_group
+    - media_library
     - paragraphs
     - path
     - scheduler
@@ -77,6 +79,7 @@ third_party_settings:
         required_fields: true
     group_attachments:
       children:
+        - field_media_file_multiple
         - field_rfp_attachments
       label: Attachments
       region: content
@@ -143,9 +146,19 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_media_file_multiple:
+    type: media_library_widget
+    weight: 12
+    region: content
+    settings:
+      media_types:
+        - file
+        - publication
+        - image
+    third_party_settings: {  }
   field_rfp_attachments:
     type: paragraphs
-    weight: 10
+    weight: 13
     region: content
     settings:
       title: Attachment
@@ -246,19 +259,19 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 4
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 6
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 7
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -269,7 +282,7 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 5
+    weight: 6
     region: content
     settings:
       display_label: true
@@ -284,13 +297,13 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 8
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 9
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
