@@ -14,7 +14,6 @@ dependencies:
     - node.type.arbitrator
     - taxonomy.vocabulary.areas_of_law
     - taxonomy.vocabulary.language
-    - taxonomy.vocabulary.mediator_type
     - taxonomy.vocabulary.subject_matter_area
   module:
     - better_exposed_filters
@@ -851,14 +850,16 @@ display:
           exposed: false
           granularity: second
       arguments:
-        tid:
-          id: tid
-          table: taxonomy_index
-          field: tid
-          relationship: none
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: field_mediator_type
           group_type: group
           admin_label: ''
-          plugin_id: taxonomy_index_tid
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: string
           default_action: ignore
           exception:
             value: all
@@ -879,20 +880,19 @@ display:
             sort_order: asc
             number_of_records: 0
             format: default_summary
-          specify_validation: true
+          specify_validation: false
           validate:
-            type: taxonomy_term_name
+            type: none
             fail: 'not found'
-          validate_options:
-            bundles:
-              mediator_type: mediator_type
-            access: false
-            operation: view
-            transform: false
+          validate_options: {  }
+          glossary: false
+          limit: 0
+          case: none
+          path_case: none
+          transform_dash: false
           break_phrase: false
           add_table: false
           require_value: false
-          reduce_duplicates: false
       filters:
         status:
           id: status
@@ -1244,7 +1244,17 @@ display:
           distinct: false
           replica: false
           query_tags: {  }
-      relationships: {  }
+      relationships:
+        field_mediator_type:
+          id: field_mediator_type
+          table: node__field_mediator_type
+          field: field_mediator_type
+          relationship: none
+          group_type: group
+          admin_label: 'field_mediator_type: Taxonomy term'
+          plugin_id: standard
+          required: false
+      css_class: arbitrator
       use_more: false
       use_more_always: true
       use_more_text: more
