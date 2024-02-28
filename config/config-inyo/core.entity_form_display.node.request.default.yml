@@ -18,6 +18,7 @@ dependencies:
     - datetime
     - field_group
     - paragraphs
+    - path
     - scheduler
     - scheduler_content_moderation_integration
     - text
@@ -134,7 +135,7 @@ content:
       rows: 9
       summary_rows: 3
       placeholder: ''
-      show_summary: false
+      show_summary: true
     third_party_settings: {  }
   created:
     type: datetime_timestamp
@@ -243,15 +244,21 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  path:
+    type: path
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 5
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 6
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -262,7 +269,7 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 4
+    weight: 5
     region: content
     settings:
       display_label: true
@@ -277,19 +284,18 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 7
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 8
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
   langcode: true
-  path: true
   promote: true
   sticky: true
   uid: true
