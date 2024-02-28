@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.node.request.body
+    - field.field.node.request.field_media_file_multiple
     - field.field.node.request.field_rfp_attachments
     - field.field.node.request.field_rfp_end_date
     - field.field.node.request.field_rfp_important_dates
@@ -14,12 +15,12 @@ dependencies:
     - field.field.node.request.field_rfp_type
     - node.type.request
   module:
-    - allowed_formats
     - content_moderation
     - datetime
     - field_group
-    - maxlength
+    - media_library
     - paragraphs
+    - path
     - scheduler
     - scheduler_content_moderation_integration
     - text
@@ -78,7 +79,7 @@ third_party_settings:
         required_fields: true
     group_attachments:
       children:
-        - field_rfp_attachments
+        - field_media_file_multiple
       label: Attachments
       region: content
       parent_name: group_t
@@ -144,24 +145,15 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_rfp_attachments:
-    type: paragraphs
-    weight: 10
+  field_media_file_multiple:
+    type: media_library_widget
+    weight: 12
     region: content
     settings:
-      title: Attachment
-      title_plural: Attachments
-      edit_mode: closed_expand_nested
-      closed_mode: summary
-      autocollapse: none
-      closed_mode_threshold: 0
-      add_mode: button
-      form_display_mode: default
-      default_paragraph_type: _none
-      features:
-        add_above: '0'
-        collapse_edit_all: '0'
-        duplicate: '0'
+      media_types:
+        - file
+        - publication
+        - image
     third_party_settings: {  }
   field_rfp_end_date:
     type: datetime_default
@@ -245,15 +237,21 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  path:
+    type: path
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 5
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 6
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -264,7 +262,7 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 4
+    weight: 5
     region: content
     settings:
       display_label: true
@@ -279,19 +277,19 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 7
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 8
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_rfp_attachments: true
   langcode: true
-  path: true
   promote: true
   sticky: true
   uid: true

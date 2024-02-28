@@ -183,6 +183,22 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
+ * Implements hook__field_group_form_process_build_alter().
+ */
+function jcc_custom_field_group_form_process_build_alter(array &$element, FormStateInterface $form_state, &$complete_form): void {
+  $form_id = $element['#form_id'];
+  switch ($form_id) {
+    case 'node_request_form':
+    case 'node_request_edit_form':
+      $element['group_dates']['#description'] = $element['field_rfp_important_dates']['widget']['#description'];
+      $element['field_rfp_important_dates']['widget']['#description'] = NULL;
+      $element['group_submission_additional_info']['#title'] = t('Sidebar callouts');
+      $element['group_submission_additional_info']['#description'] = t('This content will display in the sidebar section, above the Dates output. The first callout will display with the light blue background and NO Brow text. Additional items will have the dark blue background and will display the Brow text.');
+      break;
+  }
+}
+
+/**
  * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
  */
 function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
@@ -815,11 +831,11 @@ function jcc_custom_form_taxonomy_overview_vocabularies_alter(&$form, FormStateI
  */
 function jcc_custom_request_rfp_type_options(): array {
   return [
-    'rfp' => 'Request for Proposal',
-    'rfq' => 'Request for Quote',
-    'rfi' => 'Request for Information',
-    'rfo' => 'Request for Offer',
-    'ifb' => 'Invitation for Bid',
+    'rfp' => t('Request for Proposal'),
+    'rfq' => t('Request for Quote'),
+    'rfi' => t('Request for Information'),
+    'rfo' => t('Request for Offer'),
+    'ifb' => t('Invitation for Bid'),
   ];
 }
 

@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Link;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
@@ -408,6 +409,11 @@ function jcc_elevated_should_alert_display($alert_node, $current_page, $is_front
  * @throws \Drupal\Core\TypedData\Exception\MissingDataException
  */
 function jcc_elevated_node_request(array &$variables, NodeInterface $node): void {
+  $entity_manager = \Drupal::entityTypeManager();
+  $media_manager = $entity_manager->getStorage('media');
+  $file_manager = $entity_manager->getStorage('file');
+  $formatter = \Drupal::service('date.formatter');
+  $renderer = \Drupal::service('renderer');
 
   //
   // Get the full text of out type.
@@ -531,4 +537,65 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   }
 
   $variables['rfp_blurb_box_data'] = $rfp_blurb_box;
+
+  //
+  // Build our attachments list from multiple media field.
+  $variables['attachments_list'] = [];
+  $items = [];
+  if ($node->hasField('field_media_file_multiple')) {
+    $current = Drupal::time()->getCurrentTime();
+    $offset = 2592000;
+
+    $rfp_attachments = $node->get('field_media_file_multiple')->getValue();
+    foreach ($rfp_attachments as $delta => $media_target) {
+      $media = $media_target['target_id'] ? $media_manager->load($media_target['target_id']) : FALSE;
+      if ($media) {
+        $fid = $media->getSource()->getSourceFieldValue($media);
+        $file = $file_manager->load($fid);
+        $file_url = $file->createFileUrl();
+        $url = Url::fromUserInput($file_url);
+        $file_field_data = $media->get('field_media_file')->first()->getValue();
+        $label = !empty($file_field_data['description']) ? $file_field_data['description'] : $media->label();
+
+        // If last updated date of media item is within 30 days, and not a new
+        // item, set update TRUE.
+        $update = $current - $media->getChangedTime() <= $offset;
+        $new = $current - $media->getCreatedTime() <= $offset;
+        $status = FALSE;
+        if ($new) {
+          $status = [
+            '#prefix' => '<em class="attachment__new-label">',
+            '#markup' => t('New'),
+            '#suffix' => '</em>',
+          ];
+        }
+        if ($update and !$new) {
+          $status = [
+            '#prefix' => '<em class="attachment__recent-updated-date">',
+            '#markup' => t('Revised:') . ' ' . $formatter->format($media->getChangedTime(), 'm_d_y'),
+            '#suffix' => '</em>',
+          ];
+        }
+        $items[$delta] = [
+          '#prefix' => $new ? '<div class="attachment__label attachment__new">' : '<div class="attachment__label">',
+          '#markup' => Link::fromTextAndUrl($label, $url)->toString() . $renderer->render($status),
+          '#suffix' => '</div>',
+          '#wrapper_attributes' => ['class' => 'list__item'],
+        ];
+      }
+    }
+
+    if ($items) {
+      $variables['attachments_list'] = [
+        '#theme' => 'item_list',
+        '#type' => 'ul',
+        '#title' => '',
+        '#items' => $items,
+        '#attributes' => [
+          'class' => 'list__container',
+        ],
+      ];
+    }
+
+  }
 }
