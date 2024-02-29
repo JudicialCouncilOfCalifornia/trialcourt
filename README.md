@@ -45,7 +45,9 @@ Add your author information for historical reference and professional context, a
    - [Commandline](./docs/migrations.md#command-line)
    - [Drupal UI](./docs/migrations.md#drupal-ui)
    - [Other Migrate Commands](./docs/migrations.md#other-migrate-commands)
-   - [Important Forms File Migration](./docs/migrations.mk#forms-file)
+   - [Important Forms File Migration](./docs/migrations.md#forms-file)
+   - [Migration Configurations](./docs/migrations.md#migration-configurations)
+   - [Automating Migration](./docs/migrations.md#automating-migrations)
  - [Creating New Sites](./docs/creating-new-sites.md)
  - [Feature and Config Management](./docs/feature-config-management.md)
  - **Other Documentation**
