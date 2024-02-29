@@ -276,6 +276,7 @@ class JccAppellateZipCitySearchBlock extends BlockBase implements ContainerFacto
       '#autocomplete_path' => '/admin/config/jcc-elevated/embeds/autocomplete/zip_city_county_info',
       '#attributes' => [
         'id' => 'zcs-input',
+        'aria-labelledby' => 'jcc-zcs-label',
       ],
       '#suffix' => '<div class="block__jcc-appellate-zcs__form__matches" id="zcs-matches"></div>',
     ];

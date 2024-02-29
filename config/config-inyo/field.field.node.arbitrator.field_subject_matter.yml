@@ -1,0 +1,36 @@
+uuid: 5215c953-696b-4d99-95ce-b409445530be
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_subject_matter
+    - node.type.arbitrator
+    - taxonomy.vocabulary.subject_matter_area
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: qffSql3tzaBBXin5TTEFkDW-qPbLq3zEriM0BSZhl1E
+id: node.arbitrator.field_subject_matter
+field_name: field_subject_matter
+entity_type: node
+bundle: arbitrator
+label: 'Subject Matter'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      subject_matter_area: subject_matter_area
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

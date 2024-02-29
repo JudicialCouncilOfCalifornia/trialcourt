@@ -39,6 +39,12 @@ function jcc_elevated_theme_suggestions_paragraph_alter(&$suggestions, $variable
       $suggestions[] = $suggestion;
     }
   }
+
+  // Allow for parent bundle type in template suggestion.
+  $parent = $paragraph->getParentEntity();
+  if ($parent && $parent->bundle()) {
+    $suggestions[] = 'paragraph__' . $paragraph->bundle() . '__' . $parent->bundle();
+  }
 }
 
 /**
@@ -49,7 +55,7 @@ function jcc_elevated_theme_suggestions_paragraph_alter(&$suggestions, $variable
  * @param \Drupal\paragraphs\ParagraphInterface $paragraph
  *   The paragraph.
  */
-function jcc_elevated_paragraph_views_reference(array &$variables, ParagraphInterface $paragraph) {
+function jcc_elevated_paragraph_views_reference(array &$variables, ParagraphInterface $paragraph): void {
   // In some cases we need to pass the views results to the paragraph.
   $ref_override = [];
 
@@ -411,4 +417,52 @@ function jcc_elevated_paragraph_action_list(array &$variables) {
     }
   }
   $variables['action_items'] = $action_items;
+}
+
+/**
+ * Helper function for attachment paragraphs.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function jcc_elevated_paragraph_attachment(array &$variables): void {
+  $media_manager = \Drupal::entityTypeManager()->getStorage('media');
+  $formatter = \Drupal::service('date.formatter');
+  $paragraph = $variables['paragraph'];
+  $media_target = $paragraph->get('field_media')->first() ? $paragraph->get('field_media')->first()->getValue() : FALSE;
+  $media = $media_target['target_id'] ? $media_manager->load($media_target['target_id']) : FALSE;
+
+  if ($media) {
+    $current = Drupal::time()->getCurrentTime();
+    $offset = 2592000;
+
+    // If last updated date of media item is within 30 days, and not a new item,
+    // set update TRUE.
+    $update = $current - $media->getChangedTime() <= $offset;
+    $new = $current - $media->getCreatedTime() <= $offset;
+
+    $variables['attachment_status'] = FALSE;
+    if ($new) {
+      $variables['attachment_status'] = [
+        '#prefix' => '<em class="attachment__new-label">',
+        '#markup' => t('New'),
+        '#suffix' => '</em>',
+      ];
+    }
+
+    if ($update and !$new) {
+      $variables['attachment_status'] = [
+        '#prefix' => '<em class="attachment__recent-updated-date">',
+        '#markup' => t('Revised:') . ' ' . $formatter->format($media->getChangedTime(), 'm_d_y'),
+        '#suffix' => '</em>',
+      ];
+    }
+
+    // If new item, setup some classes.
+    $variables['new'] = $new ? 'attachment__new' : '';
+  }
+
 }
