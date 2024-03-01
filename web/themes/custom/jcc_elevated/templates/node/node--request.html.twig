@@ -109,7 +109,7 @@
       </section>
     {% endif %}
 
-    {% if content.body.0 %}
+    {% if content.body.0['#text'] is not empty %}
       <section class="stack__xl-space">
         <h2>{{ 'Description'|t }}</h2>
         {{ content.body.0 }}
