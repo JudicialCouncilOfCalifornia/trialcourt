@@ -9,7 +9,7 @@
           $(".remote-video-colorbox-launch-modal").attr( "tabindex", "0" );
         });
         $(document).on( "keypress", ".remote-video-colorbox-launch-modal", function(e) {
-          if (e.which == 13){
+          if (e.which == 13 || e.which == 32){
             $(this).click();
           }
         });
