@@ -42,6 +42,24 @@ function jcc_components_preprocess_media(&$variables) {
   }
 
   if ($media->bundle() == 'remote_video') {
+    $view_mode = $variables['view_mode'];
+    $view_mode_alignments = [
+      'container_25_percent' => 'left',
+      'container_50_percent' => 'left',
+      'container_75_percent' => 'center',
+      'container_100_percent' => 'none',
+    ];
+
+    // Add additional CSS Classes directly to Remote Video Element.
+    $remote_video_classes = [
+      Html::getClass('video__' . $view_mode),
+    ];
+
+    $variables['video_classes'] =implode(' ', $remote_video_classes);
+
+    // Get the current path for the media embed 
+    $current_path = \Drupal::service('path.current')->getPath();
+    $variables['path'] = $current_path;
     // Extract the video ID from the url.
     $url = $media->field_media_oembed_video->value;
     $parsed = parse_url($url) ?? [];
@@ -55,5 +73,6 @@ function jcc_components_preprocess_media(&$variables) {
       $args = explode('/', $parsed['path']);
       $variables['video_id'] = $args[1];
     }
+
   }
 }
