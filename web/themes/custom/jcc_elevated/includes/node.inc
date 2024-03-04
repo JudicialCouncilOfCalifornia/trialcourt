@@ -470,9 +470,19 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
     foreach ($rfp_submission_information as $sub_info) {
       $links = [];
       foreach ($sub_info->get('field_link_multiple')->getValue() as $link) {
+
+        if (!empty($link['options']['attributes']['mailto_subject'])) {
+          $link['options']['query']['subject'] = $link['options']['attributes']['mailto_subject'];
+          unset($link['options']['attributes']['mailto_subject']);
+        }
+        if (!empty($link['options']['attributes']['mailto_body'])) {
+          $link['options']['query']['body'] = $link['options']['attributes']['mailto_body'];
+          unset($link['options']['attributes']['mailto_body']);
+        }
+
         $links[] = [
           'url' => Url::fromUri($link['uri'], $link['options']),
-          'title' => $link['title'],
+          'title' => !empty($link['title']) ? $link['title'] : $link['uri'],
         ];
       }
       $rfp_submission_info[] = [
