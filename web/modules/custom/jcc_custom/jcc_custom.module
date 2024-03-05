@@ -108,10 +108,15 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
   // The field will only render if there are no components added by paragraph
   // reference. See respective node templates.
   switch ($form_id) {
-    case 'node_news_edit_form':
     case 'node_subpage_edit_form':
-    case 'node_news_form':
     case 'node_subpage_form':
+      $user = \Drupal::currentUser();
+      $access = $user->hasPermission('access migration body');
+      $form['body']['#access'] = $access;
+      break;
+
+    case 'node_news_edit_form':
+    case 'node_news_form':
       if (!jcc_custom_is_elevated_site()) {
         unset($form['field_node_reference']);
         unset($form['field_media_file_multiple']);

@@ -11,9 +11,9 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -147,7 +147,7 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
   if ($basic_page->hasField('field_components')) {
     $textshare = $basic_page->get('field_components')->referencedEntities();
     foreach ($textshare as $text) {
-      $variables['textshare'] = $text->get('field_text')->getValue()[0]['value'];
+      $variables['textshare'] = $text->get('field_text')->view('default');
     }
   }
   if ($basic_page->hasField('field_media')) {
