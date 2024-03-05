@@ -75,6 +75,8 @@
 {{ attach_library("jcc_storybook/Tabs") }}
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/Card") }}
+{{ attach_library("jcc_storybook/Brow") }}
+{{ attach_library("jcc_storybook/Share") }}
 
 {% set events_card %}
   <div class="cluster" style="align-items: start;">
@@ -163,8 +165,8 @@
 
 <article{{ attributes }}>
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
-    hangover_hide_compact: false,
-    hangover_offset: 22,
+    variant: 'with_print',
+    news_header: true,
     background: 'striped-base-light-xx',
     brow: {
       part_one: content.field_advisory_body_type,
@@ -172,7 +174,7 @@
     share: {
       print_url: 'javascript: window.print();',
       print_aria_label: 'Print advisory body',
-      icon_path: '/themes/contrib/jcc_storybook/src/assets/icons.svg',
+      icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
     },
     heading: label,
     text: content.body,
