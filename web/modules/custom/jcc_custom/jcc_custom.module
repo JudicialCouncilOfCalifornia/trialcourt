@@ -136,7 +136,18 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       }
       break;
 
+    case 'node_alert_delete_form':
+    case 'node_case_delete_form':
+    case 'node_custom_email_delete_form':
+    case 'node_document_delete_form':
+    case 'node_importer_delete_form':
+    case 'node_job_delete_form':
+    case 'node_judge_delete_form':
     case 'node_landing_page_delete_form':
+    case 'node_location_delete_form':
+    case 'node_news_delete_form':
+    case 'node_subpage_delete_form':
+    case 'node_tentative_ruling_delete_form':
       $form['description'] = [
         '#type' => 'inline_template',
         '#template' => '<h2><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 512 512"><title>ionicons-v5-r</title><path fill="#ce6060" d="M449.07,399.08,278.64,82.58c-12.08-22.44-44.26-22.44-56.35,0L51.87,399.08A32,32,0,0,0,80,446.25H420.89A32,32,0,0,0,449.07,399.08Zm-198.6-1.83a20,20,0,1,1,20-20A20,20,0,0,1,250.47,397.25ZM272.19,196.1l-5.74,122a16,16,0,0,1-32,0l-5.74-121.95v0a21.73,21.73,0,0,1,21.5-22.69h.21a21.74,21.74,0,0,1,21.73,22.7Z"/></svg>{{ "This action cannot be undone."|t }}</h2><p>{{ "If you would like to remove a page without deleting it, select the status <b>[Archived]</b> on the <b>Edit</b> page."|t }}</p>',
@@ -158,6 +169,31 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       else {
         unset($form['field_location']);
       }
+      break;
+
+    case 'node_request_form':
+    case 'node_request_edit_form':
+      $form['body']['widget'][0]['summary']['#required'] = TRUE;
+      $form['body']['widget'][0]['summary']['#title'] = t('Summary/Teaser text');
+      $form['body']['widget'][0]['summary']['#description'] = t('This summary will populate the header on full page display, and the text on teasers.');
+      $form['field_rfp_status']['widget']['#required'] = TRUE;
+      $form['field_rfp_type']['widget']['#required'] = TRUE;
+      break;
+  }
+}
+
+/**
+ * Implements hook__field_group_form_process_build_alter().
+ */
+function jcc_custom_field_group_form_process_build_alter(array &$element, FormStateInterface $form_state, &$complete_form): void {
+  $form_id = $element['#form_id'];
+  switch ($form_id) {
+    case 'node_request_form':
+    case 'node_request_edit_form':
+      $element['group_dates']['#description'] = $element['field_rfp_important_dates']['widget']['#description'];
+      $element['field_rfp_important_dates']['widget']['#description'] = NULL;
+      $element['group_submission_additional_info']['#title'] = t('Sidebar callouts');
+      $element['group_submission_additional_info']['#description'] = t('This content will display in the sidebar section, above the Dates output. The first callout will display with the light blue background and NO Brow text. Additional items will have the dark blue background and will display the Brow text.');
       break;
   }
 }
@@ -215,7 +251,7 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         break;
 
       case 'card':
-        unset($element['subform']['field_media']);
+        unset($element['subform']['field_media_alignment']);
         unset($element['subform']['field_background']);
         unset($element['subform']['field_link_multiple']);
         if ($theme != 'jcc_professional') {
@@ -689,7 +725,7 @@ function jcc_custom_theme($existing, $type, $theme, $path) {
 /**
  * Implements hook_preprocess_details().
  */
-function jcc_custom_preprocess_details(&$variables) {
+function jcc_custom_preprocess_details(&$variables): void {
   // Elements for menu settings if first level and not allowed.
   if (jcc_custom_is_elevated_site() && \Drupal::routeMatch()->getParameter('node')) {
     if ($variables['title'] && !is_array($variables['title']) && $variables['title'] == 'Menu settings') {
@@ -756,7 +792,7 @@ function jcc_custom_preprocess_details(&$variables) {
 /**
  * Implements hook_preprocess_select().
  */
-function jcc_custom_preprocess_select__edit_menu_menu_parent(&$variables) {
+function jcc_custom_preprocess_select__edit_menu_menu_parent(&$variables): void {
   // Flags to restrict 'Main navigation' (first level) selection.
   if (jcc_custom_is_elevated_site()) {
     $roles = \Drupal::currentUser()->getRoles();
@@ -778,7 +814,7 @@ function jcc_custom_preprocess_select__edit_menu_menu_parent(&$variables) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function jcc_custom_form_taxonomy_overview_vocabularies_alter(&$form, FormStateInterface $form_state) {
+function jcc_custom_form_taxonomy_overview_vocabularies_alter(&$form, FormStateInterface $form_state): void {
   // Hide the "JCC Sections" vocabulary from Vocab if "jcc_elevated_sections"
   // module is not enabled. Since the vocab config must be in the immutable
   // feature, this will at least hide it for all sites that are not using the
@@ -788,4 +824,28 @@ function jcc_custom_form_taxonomy_overview_vocabularies_alter(&$form, FormStateI
     unset($form['vocabularies']['jcc_sections']);
   }
 
+}
+
+/**
+ * Sets the Request (RFP) type options.
+ */
+function jcc_custom_request_rfp_type_options(): array {
+  return [
+    'rfp' => t('Request for Proposal'),
+    'rfq' => t('Request for Quote'),
+    'rfi' => t('Request for Information'),
+    'rfo' => t('Request for Offer'),
+    'ifb' => t('Invitation for Bid'),
+  ];
+}
+
+/**
+ * Sets the Request (RFP) status options.
+ */
+function jcc_custom_request_rfp_status_options(): array {
+  return [
+    1 => t('Open'),
+    0 => t('Closed'),
+    2 => t('Canceled'),
+  ];
 }

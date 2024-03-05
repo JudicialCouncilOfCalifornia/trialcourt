@@ -19,7 +19,7 @@ function jcc_ckeditor_link_js_settings_alter(array &$settings) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function jcc_ckeditor_link_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state) {
+function jcc_ckeditor_link_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state): void {
   $user_input = $form_state->getUserInput();
 
   $input = $user_input['editor_object'] ?? [];
@@ -27,7 +27,7 @@ function jcc_ckeditor_link_form_editor_link_dialog_alter(&$form, FormStateInterf
   $url_field = _jcc_ckeditor_link_parse_url_field($input['href'] ?? NULL, $input);
 
   // Remove captcha from this form.
-  if ($form['captcha']) {
+  if (isset($form['captcha'])) {
     $form['captcha']['#access'] = FALSE;
   }
 
@@ -112,6 +112,17 @@ function jcc_ckeditor_link_form_editor_link_dialog_alter(&$form, FormStateInterf
     $form['attributes']['media_library']['#states'] = [
       'visible' => [
         'select[name="link_type"]' => ['value' => 'media_link'],
+      ],
+    ];
+    $form['attributes']['media_link_to_file'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Link media to file when saving'),
+      '#required'  => FALSE,
+      '#default_value' => $url_field['media_link_to_file'] ?? FALSE,
+      '#states' => [
+        'visible' => [
+          'select[name="link_type"]' => ['value' => 'media_link'],
+        ],
       ],
     ];
   }
@@ -213,7 +224,7 @@ function jcc_ckeditor_link_form_editor_link_dialog_alter(&$form, FormStateInterf
 /**
  * Custom handler for CKEditor link form.
  */
-function _jcc_ckeditor_link_submit_handler(array &$form, FormStateInterface $form_state) {
+function _jcc_ckeditor_link_submit_handler(array &$form, FormStateInterface $form_state): void {
   $form_values = $form_state->getValues();
 
   if ($form_values['link_type'] == 'mailto') {
@@ -244,6 +255,40 @@ function _jcc_ckeditor_link_submit_handler(array &$form, FormStateInterface $for
     ]);
   }
 
+  elseif ($form_values['link_type'] == 'media_link') {
+    $media_to_file = $form_values['attributes']['media_link_to_file'];
+
+    if ($media_to_file) {
+      $fid = NULL;
+      $manager = \Drupal::entityTypeManager();
+      $media_manager = $manager->getStorage('media');
+      $file_manager = $manager->getStorage('file');
+      $media_id = str_replace("/media/", "", $form_values['attributes']['href']);
+      $media = $media_manager->load($media_id);
+
+      if ($media && $media->hasField('field_media_file_multiple')) {
+        $fid = $media->get('field_media_file_multiple')->first() ? $media->get('field_media_file_multiple')->first()->getValue() : NULL;
+      }
+      elseif ($media && $media->hasField('field_media_file')) {
+        $fid = $media->get('field_media_file')->first() ? $media->get('field_media_file')->first()->getValue() : NULL;
+      }
+
+      if (isset($fid['target_id'])) {
+        $file = $file_manager->load($fid['target_id']);
+        $form_values['attributes']['href'] = $file->createFileUrl(TRUE);
+      }
+    }
+
+    $form_state->setValue('attributes', [
+      'href' => $form_values['attributes']['href'],
+      'data-entity-type' => '',
+      'data-entity-uuid' => '',
+      'data-entity-substitution' => '',
+      'data-link-type' => $media_to_file ? 'link' : 'media_link',
+      'data-link-media-link-to-file' => $form_values['attributes']['media_link_to_file'] ?? '',
+    ]);
+  }
+
   else {
     $form_state->setValue('attributes', [
       'href' => $form_values['attributes']['href'],
@@ -255,7 +300,7 @@ function _jcc_ckeditor_link_submit_handler(array &$form, FormStateInterface $for
 /**
  * Helper function to parse the link data and figure out the type.
  */
-function _jcc_ckeditor_link_parse_url_field(?string $href, array $input = []) {
+function _jcc_ckeditor_link_parse_url_field(?string $href, array $input = []): array {
 
   // php8 warning fix with preg_match and potentially passing a null value as
   // the second argument. Convert null to an empty string.
@@ -287,7 +332,8 @@ function _jcc_ckeditor_link_parse_url_field(?string $href, array $input = []) {
   }
 
   // If we are dealing with a media link.
-  if ((isset($input['data-link-type']) && $input['data-link-type'] == 'media_link') || (isset($href) && preg_match('/^\/media/', $href,))) {
+  if ((isset($input['data-link-type']) && $input['data-link-type'] == 'media_link')
+      || (isset($href) && preg_match('/^\/media/', $href,))) {
     preg_match('/media(.*)/', $href, $matches);
     return [
       'type' => $input['data-link-type'] ?? 'media_link',
@@ -298,7 +344,6 @@ function _jcc_ckeditor_link_parse_url_field(?string $href, array $input = []) {
   // If we are dealing with a map link.
   if ((isset($input['data-link-type']) && $input['data-link-type'] == 'map')
     || (isset($href) && preg_match('/(^geo:|^maps:|map|^comgooglemaps:)(.*?)/', $href, $matches))) {
-
     return [
       'type' => 'map',
       'map' => [
@@ -325,7 +370,7 @@ function _jcc_ckeditor_link_parse_url_field(?string $href, array $input = []) {
  * @return mixed|string
  *   Url string with email data.
  */
-function _jcc_ckeditor_link_build_mailto_link(array $values) {
+function _jcc_ckeditor_link_build_mailto_link(array $values): mixed {
   $ret = Xss::filter($values['email']);
 
   $params = [];
@@ -352,8 +397,9 @@ function _jcc_ckeditor_link_build_mailto_link(array $values) {
  * @return string
  *   Url string with map data.
  */
-function _jcc_ckeditor_link_build_map_link(array $values) {
+function _jcc_ckeditor_link_build_map_link(array $values): string {
 
+  // Example URLs for google maps.
   // https://maps.google.com/?ll=latitude,longitude
   // https://www.google.com/maps/search/?api=1&query=1200%20Pennsylvania%20Ave%20SE%2C%20Washington%2C%20District%20of%20Columbia%2C%2020003
   // geo:36,-121?q=36,-121
@@ -388,11 +434,10 @@ function _jcc_ckeditor_link_build_map_link(array $values) {
 /**
  * Implements hook_editor_js_settings_alter().
  */
-function jcc_ckeditor_link_editor_js_settings_alter(array &$settings) {
+function jcc_ckeditor_link_editor_js_settings_alter(array &$settings): void {
 
   $known_formats = [
     'basic_html',
-    'full_html',
     'body',
     'aside',
     'minimal',
@@ -413,17 +458,12 @@ function jcc_ckeditor_link_editor_js_settings_alter(array &$settings) {
         'data-link-latitude',
         'data-link-longitude',
         'data-link-address',
-        'data-link-address1',
-        'data-link-address2',
-        'data-link-city',
-        'data-link-state',
-        'data-link-zip',
+        'data-link-*',
       ];
 
       $settings['editor']['formats'][$format]['editorSettings']['allowedContent']['a']['attributes'] .= implode(',', $additional_link_attributes);
     }
   }
-
 }
 
 /**

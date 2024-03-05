@@ -44,13 +44,13 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
         // Filter for translated files.
         // Match field labels with language set labels.
         foreach ($lang_label_sets as $label) {
-          if (($lang_variant == $label->label_default) && $field->target_id) {
+          if (($lang_variant == $label['label_default']) && $field->target_id) {
             $file = File::load($field->target_id);
             $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
             $languages[] = [
               'url' => $file_url,
-              'label' => $label->label_in_language,
-              'label_en' => $label->label_default,
+              'label' => $label['label_in_language'],
+              'label_en' => $label['label_default'],
             ];
           }
         }
