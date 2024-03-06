@@ -127,6 +127,8 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
     ->build(\Drupal::routeMatch())
     ->toRenderable();
 
+  $body_field = $node->body->value;
+  $variables['body_length'] = strlen($body_field);
   // Render and truncate field_components.
   if ($node->body->isEmpty()) {
     $render_array = $node->field_components->view('default');
