@@ -124,6 +124,9 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       }
       else {
         unset($form['field_components']);
+        if (isset($form['body'])) {
+          $form['body']['widget'][0]['#description'] = '';
+        }
       }
       break;
 
