@@ -1,0 +1,60 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.facilities.body
+    - field.field.node.facilities.field_agency
+    - field.field.node.facilities.field_agency_manager
+    - field.field.node.facilities.field_architectural_engineering_
+    - field.field.node.facilities.field_budget
+    - field.field.node.facilities.field_date
+    - field.field.node.facilities.field_fund
+    - field.field.node.facilities.field_gross_square_footage
+    - field.field.node.facilities.field_initial_funding_year
+    - field.field.node.facilities.field_media_file_multiple
+    - field.field.node.facilities.field_occupancy_date
+    - field.field.node.facilities.field_project_status
+    - field.field.node.facilities.field_schedule
+    - field.field.node.facilities.field_total_courtrooms
+    - node.type.facilities
+  module:
+    - text
+    - user
+id: node.facilities.teaser
+targetEntityType: node
+bundle: facilities
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_agency: true
+  field_agency_manager: true
+  field_architectural_engineering_: true
+  field_budget: true
+  field_date: true
+  field_fund: true
+  field_gross_square_footage: true
+  field_initial_funding_year: true
+  field_media_file_multiple: true
+  field_occupancy_date: true
+  field_project_status: true
+  field_schedule: true
+  field_total_courtrooms: true
+  langcode: true
+  search_api_excerpt: true
