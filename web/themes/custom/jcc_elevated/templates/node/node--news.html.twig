@@ -155,7 +155,7 @@
         } %} 
         {% endfor %}
     {% endset %}
-    {% set news_content = content.body| render| length ? content.body : textshare| render %}
+   {% set news_content = (body_length > 0) ? content.body: textshare | render %}   
     <div class="container">    
     {% set content %}
       {% include "@molecules/Body/Body.twig" with {
