@@ -55,9 +55,9 @@ function jcc_components_preprocess_media(&$variables) {
       Html::getClass('video__' . $view_mode),
     ];
 
-    $variables['video_classes'] =implode(' ', $remote_video_classes);
+    $variables['video_classes'] = implode(' ', $remote_video_classes);
 
-    // Get the current path for the media embed 
+    // Get the current path for the media embed.
     $current_path = \Drupal::service('path.current')->getPath();
     $variables['path'] = $current_path;
     // Extract the video ID from the url.
