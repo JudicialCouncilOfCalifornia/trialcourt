@@ -11,6 +11,7 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 
@@ -126,13 +127,79 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
     ->build(\Drupal::routeMatch())
     ->toRenderable();
 
+  $body_field = $node->body->value;
+  $variables['body_length'] = strlen($body_field);
   // Render and truncate field_components.
-  $render_array = $node->field_components->view('default');
-  $output = \Drupal::service('renderer')->render($render_array);
+  if ($node->body->isEmpty()) {
+    $render_array = $node->field_components->view('default');
+    $output = \Drupal::service('renderer')->render($render_array);
+  }
+  else {
+    $content = $node->body->view('default');
+    if (!empty($content['#items'])) {
+      $body_content = $content['#items']->getValue()[0]['value'];
+      $output = $body_content;
+    }
+  }
   if ($output !== NULL) {
     $variables['components_teaser'] =
       mb_strimwidth(trim(strip_tags($output)), 0, 250, '...');
   }
+  $basic_page = Node::load($node->id());
+  if ($basic_page->hasField('field_components')) {
+    $textshare = $basic_page->get('field_components')->referencedEntities();
+    foreach ($textshare as $text) {
+      $variables['textshare'] = $text->get('field_text')->view('default');
+    }
+  }
+  if ($basic_page->hasField('field_media')) {
+    $card_media = $basic_page->get('field_media');
+    $media = Media::load($card_media->target_id);
+    if ($media && $media->field_media_image) {
+      $uri = $media->field_media_image->entity->getFileUri();
+      $image_url = file_create_url($uri);
+      $variables['imageurl'] = $image_url;
+    }
+    if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
+      $caption_value = $media->get('field_media_caption')->value;
+      $citation_value = $media->get('field_media_citation')->value;
+      $variables['caption'] = $caption_value !== NULL ? strip_tags($caption_value) : '';
+      $variables['citation'] = $citation_value !== NULL ? strip_tags($citation_value) : '';
+    }
+  }
+  if ($basic_page->hasField('field_node_reference')) {
+    $relatednewsdata = [];
+    $relatednews = $basic_page->get('field_node_reference');
+    foreach ($relatednews->referencedEntities() as $news) {
+      $link = [
+        '#markup' => '<a href="' . $news->toUrl()->toString() . '">' . $news->getTitle() . '</a>',
+      ];
+      $relatednewsdata[] = [
+        'text' => $link,
+      ];
+    }
+    $variables['relatednewsdata'] = $relatednewsdata;
+  }
+  $sidebarimages = [];
+  foreach ($node->field_media_file_multiple as $media_file) {
+    $media = Media::load($media_file->target_id);
+    if ($media && $media->field_media_image->entity) {
+      $uri = $media->field_media_image->entity->getFileUri();
+      $media_url = file_create_url($uri);
+    }
+    if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
+      $caption_value = $media->get('field_media_caption')->value;
+      $citation_value = $media->get('field_media_citation')->value;
+      $caption = $caption_value !== NULL ? strip_tags($caption_value) : '';
+      $citation = $citation_value !== NULL ? strip_tags($citation_value) : '';
+      $sidebarimages[] = [
+        'caption' => $caption,
+        'citation' => $citation,
+        'url' => $media_url,
+      ];
+    }
+  }
+  $variables['sidebarimages'] = $sidebarimages;
 }
 
 /**
@@ -489,9 +556,19 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
     foreach ($rfp_submission_information as $sub_info) {
       $links = [];
       foreach ($sub_info->get('field_link_multiple')->getValue() as $link) {
+
+        if (!empty($link['options']['attributes']['mailto_subject'])) {
+          $link['options']['query']['subject'] = $link['options']['attributes']['mailto_subject'];
+          unset($link['options']['attributes']['mailto_subject']);
+        }
+        if (!empty($link['options']['attributes']['mailto_body'])) {
+          $link['options']['query']['body'] = $link['options']['attributes']['mailto_body'];
+          unset($link['options']['attributes']['mailto_body']);
+        }
+
         $links[] = [
           'url' => Url::fromUri($link['uri'], $link['options']),
-          'title' => $link['title'],
+          'title' => !empty($link['title']) ? $link['title'] : $link['uri'],
         ];
       }
       $rfp_submission_info[] = [
