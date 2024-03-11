@@ -9,46 +9,40 @@ use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\jcc_migrate_pdf\Services\JccMigratePdfService;
 use Drupal\node\Entity\Node;
-use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class JccMigratePdfController extends ControllerBase
 {
-
-    protected $jccMigratePdfService;
-    protected $httpClient;
-
+    public $jccMigratePdfService;
+    /**
+     * Class constructor.
+     */
     public static function create(ContainerInterface $container)
     {
         return new static(
-            $container->get('jcc_migrate_pdf.jcc_migrate_pdf_service'),
-            $container->get('http_client')
+            $container->get('jcc_migrate_pdf.jcc_migrate_pdf_service')
         );
     }
 
-    public function __construct(JccMigratePdfService $jccMigratePdfService, ClientInterface $http_client)
+    public function __construct(JccMigratePdfService $jccMigratePdfService)
     {
         $this->jccMigratePdfService = $jccMigratePdfService;
-        $this->httpClient = $http_client;
     }
+
     public function migratePdf()
     {
 
         $query = $this->jccMigratePdfService->getContentTypeQuery();
 
-        $nodes = $query;
+        $nodes = Node::loadMultiple($query);
 
-        $success = false;
-        foreach ($nodes as $key => $nid) {
-
-            $node_values = Node::load($nid);
+        foreach ($nodes as $key => $node_values) {
             $taxonomy_id = $node_values->field_mediator->target_id;
             $legacy_id = $node_values->field_id->value;
 
             $terms = \Drupal::entityTypeManager()
                 ->getStorage('taxonomy_term')
                 ->loadByProperties(['tid' => $taxonomy_id]);
-
             $termsname = '';
             foreach ($terms as $key => $terms_values) {
                 $termsname .= $terms_values->name->value;
@@ -56,24 +50,21 @@ class JccMigratePdfController extends ControllerBase
             switch ($termsname) {
 
                 case 'Civil Judicial Arbitrator':
-                    $file_url = 'https://www.scscourt.org/court_divisions/family/adr/background/'.$legacy_id.'.pdf';
+                    $file_path = 'https://www.scscourt.org/court_divisions/civil/adr/searchjudarb/jaPDF/128.pdf';
                     $filename = 'Civil_Judicial_Arbitrator';
-                    $this->fileAddedToField($file_url, $node_values, $legacy_id, $filename);
-
+                    $this->fileAddedToField($file_path, $node_values, $legacy_id, $filename);
                     $this->messenger()->addStatus("Civil Judicial Arbitrator Added");
                     break;
                 case 'Family ADR Providers':
-                    $file_url = 'https://www.scscourt.org/court_divisions/civil/adr/searchjudarb/jaPDF/'.$legacy_id.'.pdf';
+                    $file_path = 'https://www.scscourt.org/court_divisions/family/adr/background/13.pdf';
                     $filename = 'Family_ADR_Providers';
-                    $this->fileAddedToField($file_url, $node_values, $legacy_id, $filename);
+                    $this->fileAddedToField($file_path, $node_values, $legacy_id, $filename);
                     $this->messenger()->addStatus("Family ADR Providers Added");
                     break;
                 case 'Civil ADR Provider':
-
-                    $file_url = 'https://www.scscourt.org/court_divisions/civil/adr/searchadr/background/'.$legacy_id.'.pdf';
+                    $file_path = 'https://www.scscourt.org/court_divisions/civil/adr/searchadr/background/16.pdf';
                     $filename = 'Civil_ADR_Provider';
-
-                    $this->fileAddedToField($file_url, $node_values, $legacy_id, $filename);
+                    $this->fileAddedToField($file_path, $node_values, $legacy_id, $filename);
                     $this->messenger()->addStatus("Civil ADR Providers Added");
                     break;
                 case 'Probate Early Settlement Program Neutrals':
@@ -83,106 +74,43 @@ class JccMigratePdfController extends ControllerBase
                     $this->messenger()->addStatus("Migrate Family Mediator Sheet");
                     break;
             }
-            $fileAddedSuccessfully = true;
-            if ($fileAddedSuccessfully) {
-                $success = true;
-            }
-
         }
-
-        if ($success) {
-            $this->messenger()->addStatus("Data added successfully");
-        } else {
-            $this->messenger()->addError("Data not added. Please contact the admin.");
-        }
-        return ["#markup" => "Migrate process completed."];
-
+        return ["#markup" => "Added Successfully"];
     }
 
-    public function fileAddedToField($file_url, $node_values, $legacy_id, $file_name)
+    public function fileAddedToField($file_path, $node_values, $legacy_id, $file_name)
     {
-        if ($file_url) {
-        
-            if (preg_match('/(\d+)\.pdf$/', $file_url, $matches)) {
-                $urllegacyId = $matches[1];
+        $urllegacyId = null;
+        if (file_exists($file_path)) {
+            $file_contents = file_get_contents($file_path);
+            if (preg_match('/(\d+)\.pdf$/', $file_path, $matches)) {
                 $destination = $this->createFolder() . '/' . $file_name . $urllegacyId . '.pdf';
+                $urllegacyId = $matches[1];
+                if ($legacy_id == $urllegacyId) {
+                    $uid = \Drupal::currentUser()->id();
+                    $file = File::create([
+                        'uri' => $destination,
+                        'filemime' => 'application/pdf',
+                        'uid' => $uid,
+                    ]);
 
-                try {
-                    $client = \Drupal::httpClient(); 
-                    $response = $client->request('GET', $file_url, [ 'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'], 
-'verify'=>false, ]);
-                    $response->getStatusCode();
-                    
-                    $file_contents = $response->getBody()->getContents();
-                    // Check if the file contents are not empty.
-                    if (!empty($file_contents)) {
-                        // Save the file to the destination.
-                        file_save_data($file_contents, $destination, FileSystemInterface::EXISTS_REPLACE);
+                    $file->setPermanent();
+                    file_save_data($file_contents, $destination, FileSystemInterface::EXISTS_REPLACE);
 
-                        // Create or load the file entity.
-                        $file = File::create([
-                            'uri' => $destination,
-                            'filemime' => 'application/pdf',
-                            'uid' => \Drupal::currentUser()->id(),
-                            'origname' => $file_url,
-                        ]);
+                    $file->save();
 
-                        $file->setPermanent();
-                        $file->save();
-
-                        $fileID = $file->id();
-
-                        // Set the file ID in the field_arbitrary_pdf field.
-                        $node_values->field_arbitrary_pdf->setValue([
-                            'target_id' => $fileID,
-                            'display' => 1,
-                            'uri' => $file->getFileUri(),
-                        ]);
-
-                        // Save the node.
-                        $node_values->save();
-
-                    } else {
-                        $file_contents = file_get_contents($file_url);
-                        if (preg_match('/(\d+)\.pdf$/', $file_url, $matches)) {
-                            $destination = $this->createFolder() . '/' . $file_name . $urllegacyId . '.pdf';
-                            $urllegacyId = $matches[1];
-                            if ($legacy_id == $urllegacyId) {
-                                $file = File::create([
-                                    'uri' => $destination,
-                                    'filemime' => 'application/pdf',
-                                    'uid' => \Drupal::currentUser()->id(),
-
-                                    'origname' => $file_url,
-                                ]);
-
-                                $file->setPermanent();
-                                file_save_data($file_contents, $destination, FileSystemInterface::EXISTS_REPLACE);
-
-                                $file->save();
-
-                                $fileID = $file->id();
-
-                                $node_values->field_arbitrary_pdf->setValue([
-                                    'target_id' => $fileID,
-                                    'display' => 1,
-                                    'uri' => $destination,
-                                ]);
-                                $node_values->save();
-
-                            }
-
-                        }
-                        \Drupal::logger('jcc_migrate_pdf')->error('Error: Empty file contents received from URL: @url', ['@url' => $file_url]);
-                    }
-                } catch (\Exception $e) {
-                    \Drupal::logger('jcc_migrate_pdf')->error('Error downloading or saving file: @error', ['@error' => $e->getMessage()]);
-
+                    $fileID = $file->id();
+                    $node_values->field_arbitrary_pdf->setValue([
+                        'target_id' => $fileID,
+                        'display' => 1,
+                        'uri' => $destination,
+                    ]);
+                    $node_values->save();
                 }
+
             }
         }
     }
-
     public function createFolder()
     {
         $directory = 'public://arbitrator_pdf';
@@ -213,5 +141,6 @@ class JccMigratePdfController extends ControllerBase
         return [
             '#markup' => $markup,
         ];
-    }    
+    }
+
 }
