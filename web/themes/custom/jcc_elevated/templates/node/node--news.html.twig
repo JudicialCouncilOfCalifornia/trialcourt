@@ -74,6 +74,9 @@
 {{ attach_library("jcc_storybook/Brow") }}
 {{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/Body") }}
+{{ attach_library("jcc_storybook/Card") }}
+{{ attach_library("jcc_storybook/List") }}
 
 {% set components = [] %}
 {% for k, component in content.field_components if k|first != "#" %}
@@ -81,26 +84,105 @@
 {% endfor %}
 
 <article{{ attributes }}>
-  {% block layout %}
+   {% block layout %} 
+   {% if imageurl is not empty %}
+    {% set imageTag %}
+    <img src={{imageurl}} />
+    {% endset %} 
+  {% endif %}   
+   
+  {% set hangover_content %} 
+    {% include "@molecules/Card/Card.twig" with {
+      variant: "media-right",
+      aspect: [],
+      clickable_card: false,
+      background: null,
+      media: imageTag,
+      caption_overlay: true,
+      citation: citation,
+      caption_in_image: true,
+      media_caption: {
+      show: true,
+      text:caption      
+    },
+    } %} 
+  {% endset %} 
+
+    {% if content.field_news_type['#title'] is null %}
+      {% set newstype = '' %}
+    {% else %}
+     {% set newstype = content.field_news_type %}
+    {% endif %}
 
     {% include "@molecules/HeroHangover/HeroHangover.twig" with {
-      background: 'base-light-xx',
-      media: false,
-      attributes: create_attribute(),
+      hangover_hide_compact: false,
+      hangover_offset: 22,
+      background: 'striped-base-light-xx',
       brow: {
-        part_one: node.field_news_type.0.entity.name.value,
-        part_two: content.field_date|render|striptags,
+        variant: 'default_with_date',
+        part_one: newstype,
+        part_two: content.field_date, 
       },
-      heading: label,
-      text: content.field_byline|render|striptags,
+      heading: node.title.value,
+      news_header: true,
+      text: content.field_byline,
+      hangover_content: hangover_content  
     } %}
 
-    {% include "@organisms/Section/Section.twig" with {
-      variant: "default",
-      first_component: false,
-      sub_component_layout: "stack",
-      sub_component_data: components,
-    } %}
+    {% set sidebarimages %}
+      {% for image in sidebarimages %}
+        {% set sidebar_image = '' %}
+          {% if image.url %}
+            {% set sidebar_image %}
+              {% set media_uri = profile.image.field_media_image.entity.uri.value %}
+              <img src={{image.url}}>
+            {% endset %}
+          {% endif %}
 
+        {% include "@molecules/Card/Card.twig" with {
+          variant: "media-right",
+          aspect: [0,0],
+          clickable_card: false,
+          background: null,
+          media: sidebar_image | raw,
+          caption_overlay: true,
+          citation: image.citation,
+          media_caption: {
+          show: true,
+          text: image.caption,
+          caption_in_image: false,
+        },
+        } %} 
+        {% endfor %}
+    {% endset %}
+   {% set news_content = (body_length > 0) ? content.body: textshare | render %}   
+    <div class="container">    
+    {% set content %}
+      {% include "@molecules/Body/Body.twig" with {
+        variant: "default",
+      heading: "",
+      lead: "",
+      content: news_content,
+      subheading: "",
+      aside: sidebarimages
+      } %}   
+      {% if relatednewsdata %}     
+      {% include "@molecules/List/List.twig" with {
+            variant: 'none',
+            heading: 'Related News',
+            items: relatednewsdata,
+            wider_span: 'true',
+        } %}    
+    {% endif %}  
+      {% endset %} 
+    </div>
+
+    {% block section %}
+        {% include "@organisms/Section/Section.twig" with {
+          sub_component_layout: 'stack',
+          sub_component_data: content,
+          }      
+        %}
+    {% endblock %}
   {% endblock %}
 </article>

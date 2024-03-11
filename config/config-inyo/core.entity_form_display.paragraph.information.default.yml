@@ -8,7 +8,7 @@ dependencies:
     - field.field.paragraph.information.field_text
     - paragraphs.paragraphs_type.information
   module:
-    - link_attributes
+    - jcc_custom
     - text
 id: paragraph.information.default
 targetEntityType: paragraph
@@ -32,21 +32,23 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_link_multiple:
-    type: link_attributes
+    type: link_email_with_attributes
     weight: 4
     region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
       enabled_attributes:
-        target: true
-        class: true
-        aria-label: true
-        id: false
-        name: false
-        rel: false
-        accesskey: false
-        title: false
+        mailto_subject: mailto_subject
+        mailto_body: mailto_body
+        target: target
+        aria-label: aria-label
+        id: 0
+        name: 0
+        rel: 0
+        class: 0
+        accesskey: 0
+        title: 0
     third_party_settings: {  }
   field_text:
     type: text_textarea
