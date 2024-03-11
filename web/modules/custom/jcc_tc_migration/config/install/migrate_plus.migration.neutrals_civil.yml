@@ -1,0 +1,123 @@
+id: neutrals_civil
+label: 'Neutrals Civil.'
+status: true
+migration_tags:
+  - node
+migration_group: jcc2
+
+source:
+  plugin: 'csv'
+  path: 'modules/custom/jcc_tc_migration/csv/Neutrals-Civil.csv'
+  delimiter: ','
+  enclosure: '"'
+  ids:
+    - ID
+process:
+  status:
+    plugin: static_map
+    map:
+      'TRUE': 1
+      'FALSE': 0
+      '': 0
+    source: Active
+  title:
+    plugin: concat
+    source:
+      - First Name
+      - Last Name
+    delimiter: " "
+  field_id: ID
+  field_first_name: First Name
+  field_last_name: Last Name
+  field_mi: Middle Initial
+  field_sbn: SBN
+  field_phone_number: Phone Number (Main)
+  field_fax: Fax Number
+  field_email_address: Email
+  bu:
+    plugin: static_map
+    map:
+      'TRUE': BU
+      'FALSE': ''
+      '': ''
+    source: BU
+  co:
+    plugin: static_map
+    map:
+      'TRUE': CO
+      'FALSE': ''
+      '': ''
+    source: CO
+  le:
+    plugin: static_map
+    map:
+      'TRUE': LE
+      'FALSE': ''
+      '': ''
+    source: LE
+  pi:
+    plugin: static_map
+    map:
+      'TRUE': PI
+      'FALSE': ''
+      '': ''
+    source: PI
+  field_areas_of_law:
+    -
+      plugin: areas_of_law
+      source:
+        - '@bu'
+        - '@co'
+        - '@le'
+        - '@pi'
+    -
+      plugin: entity_lookup
+      value_key: field_areas_of_law_id
+      bundle_key: vid
+      bundle: areas_of_law
+      entity_type: taxonomy_term
+
+  field_address/country_code:
+    plugin: default_value
+    default_value: US
+
+  field_address/postal_code: Zip Code
+  field_address/locality: City
+  field_address/address_line1: Street Address
+  field_address/administrative_area: State
+  field_mediator:
+    -
+      plugin: default_value
+      default_value: Civil Early Settlement Conference (CESC) Neutral
+    -
+      plugin: entity_generate
+      value_key: name
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: mediators
+      ignore_case: true
+
+destination:
+  plugin: entity:node
+  default_bundle: common
+  overwrite_properties:
+    - status
+    - field_id
+    - title
+    - field_first_name
+    - field_last_name
+    - field_areas_of_law
+    - field_sbn
+    - field_mi
+    - field_sbn
+    - field_phone_number
+    - field_fax
+    - field_email_address
+    - field_address/country_code
+    - field_address/postal_code
+    - field_address/locality
+    - field_address/address_line1
+    - field_address/administrative_area
+    - field_mediator
+
+migration_dependencies: {}

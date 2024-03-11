@@ -1,0 +1,26 @@
+id: language
+label: "Taxonomy Term: Languages Import."
+status: true
+migration_tags:
+  - taxonomy
+migration_group: jcc2
+
+source:
+  plugin: 'csv'
+  path: 'modules/custom/jcc_tc_migration/csv/Language.csv'
+  delimiter: ','
+  enclosure: '"'
+  ids:
+    - LanguageID
+process:
+  vid:
+    plugin: default_value
+    default_value: language
+  name: Foreign Language
+  field_languageid: LanguageID
+
+destination:
+  plugin: entity:taxonomy_term
+  default_bundle: language
+
+migration_dependencies: {}

@@ -1,0 +1,29 @@
+<?php
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\jcc_tc_migration\Controller\MigrateEventsDeletionController;
+use Drupal\node\Entity\Node;
+
+use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Queue\QueueWorkerManagerInterface;
+
+/**
+ * Implements hook_cron().
+ */
+function jcc_tc_migration_cron() {
+    
+    $last_execution_time = \Drupal::state()->get('jcc_tc_migration_last_execution', 0);
+    $current_time = \Drupal::time()->getCurrentTime();
+   
+    
+    $scheduled_time = strtotime('today 5:00:00');
+  
+    $current_hour = date('G', $current_time);
+    
+    if ($last_execution_time < $scheduled_time &&  ($current_hour >= 5 ) ){
+        
+        $controller = new Drupal\jcc_tc_migration\Controller\MigrateEventsDeletionController();
+        $controller->deleteOldEvents();
+        
+        \Drupal::state()->set('jcc_tc_migration_last_execution', $current_time);
+    }
+}

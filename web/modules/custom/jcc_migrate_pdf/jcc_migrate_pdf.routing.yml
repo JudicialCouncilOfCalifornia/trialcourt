@@ -1,0 +1,16 @@
+
+jcc_migrate_pdf.migrate_pdf:
+  path: '/admin/migrate/pdf'  # Adjust the path as needed
+  defaults:
+    _controller: '\Drupal\jcc_migrate_pdf\Controller\JccMigratePdfController::migratePdf'
+    _title: 'Migrate PDF Page'
+  requirements:
+    _permission: 'access content'  # Adjust the permission as needed
+# Require the 'administrator' role to access this route
+jcc_migrate_pdf.migrate_pdf_page:
+  path: '/admin/migrate/pdf/page'  # Adjust the path as needed
+  defaults:
+    _controller: '\Drupal\jcc_migrate_pdf\Controller\JccMigratePdfController::triggerPdfPageLink'
+    _title: 'Migrate PDF Page'
+  requirements:
+    _permission: 'access content'  # Adjust the permission as needed

@@ -1,0 +1,24 @@
+id: pdf_media_migration
+label: 'Custom Pdf Migration: Import PDF files'
+migration_tags:
+  - node
+  - json_migration
+migration_group: jcc2
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: json
+  urls: 'http://localhost/modules/custom/jcc_migrate_pdf/all_files.json'
+  item_selector: '*'
+
+destination:
+  plugin: 'entity:node'
+  default_bundle: common
+  
+
+process:
+  field_arbitrary_pdf:
+    -
+      plugin: extract
+      source: values.1  
+migration_dependencies: {}
