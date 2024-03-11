@@ -1,14 +1,32 @@
-uuid: 67556bba-8c22-4f1f-9f22-a0c8fedd7e21
+uuid: 77c497ad-73f3-43ec-91fc-85e4ea840ee9
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_arbitrary_pdf
-    - media.type.file
     - node.type.common
   module:
+    - file
+    - filefield_paths
     - tmgmt_content
 third_party_settings:
+  filefield_paths:
+    enabled: true
+    file_path:
+      value: '[date:custom:Y]-[date:custom:m]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    file_name:
+      value: '[file:ffp-name-only-original].[file:ffp-extension-original]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    redirect: false
+    retroactive_update: false
+    active_updating: false
   tmgmt_content:
     excluded: false
 id: node.common.field_arbitrary_pdf
@@ -22,13 +40,10 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: 'default:media'
-  handler_settings:
-    target_bundles:
-      file: file
-    sort:
-      field: _none
-      direction: ASC
-    auto_create: false
-    auto_create_bundle: ''
-field_type: entity_reference
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: pdf
+  max_filesize: ''
+  description_field: false
+field_type: file
