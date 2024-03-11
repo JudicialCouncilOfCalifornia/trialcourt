@@ -68,18 +68,19 @@ function jcc_components_preprocess_views_view__news__news_list(&$variables) {
   // Translation via TMGMT breaks dates where translators entered invlid date
   // values in date fields. If date is invalid clear it before template renders. 
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
-
-  foreach ($variables['rows'][0]['#rows'] as &$row) {    
-    $node = $row['#node'];
-    $nodeid = $node->id();
-    $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);    
-    $row['#lang'] = $langcode;
-    if($langcode === "es") {
-      $prefixed_translated_path = '/' . $langcode . $translated_path;   
-      $row['#sticky'] = $prefixed_translated_path;    
-    }   
-    if (!jcc_components_validate_date($node->field_date->value)) {
-      $node->field_date->value = '';
+  if (isset($variables['rows'][0]['#rows']) && is_array($variables['rows'][0]['#rows'])) {
+    foreach ($variables['rows'][0]['#rows'] as &$row) {    
+      $node = $row['#node'];
+      $nodeid = $node->id();
+     $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);    
+      $row['#lang'] = $langcode;
+     if($langcode === "es") {
+        $prefixed_translated_path = '/' . $langcode . $translated_path;   
+        $row['#sticky'] = $prefixed_translated_path;    
+      }   
+      if (!jcc_components_validate_date($node->field_date->value)) {
+        $node->field_date->value = '';
+      }
     }
   }
 }
@@ -412,6 +413,9 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
 function jcc_components_views_pre_render(ViewExecutable $view) {
   switch ($view->storage->id()) {
     case 'tentative_rulings':
+      if ($view->current_display == 'block_1') {
+        $view->result = [];
+      }
       if (($view->current_display == 'tentative_rulings') && ($view->total_rows != 0)) {
         unset($view->attachment_before[1]);
       }
@@ -429,8 +433,13 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
           $body_content = "";
           if ($view->field['field_department']->advancedRender($row) != "") {
             $body_content = $view->field['field_department']->advancedRender($row)->__toString() . '<br>';
-          }
-          $body_content .= $view->field['field_address']->advancedRender($row)->__toString();
+          }         
+          $renderedContent = $view->field['field_address']->advancedRender($row);
+          if (is_object($renderedContent) && method_exists($renderedContent, '__toString')) {
+            $body_content .= $renderedContent->__toString();
+          } else {
+            $body_content .= $renderedContent;
+          }        
           $view->element['#custom_items'][$key]['body'] = Markup::create($body_content);
           if ($view->field['field_custom_link']->advancedRender($row) != "") {
             $link_uri = $view->field['field_custom_link']->advancedRender($row)->__toString();

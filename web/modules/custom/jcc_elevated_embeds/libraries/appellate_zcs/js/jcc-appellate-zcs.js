@@ -109,32 +109,52 @@ document.addEventListener('keydown', e => {
   elemToFocus.focus();
 });
 
+const svgGroups = document.querySelectorAll(".block__jcc-appellate-zcs__map__container svg > g > g > g");
+const mapLinkItems = document.querySelectorAll(".zcs-map-link__item");
 
 /**
  * Trigger the corresponding link of the click map district.
+ * Trigger hover of link when svg is hovered.
  */
-const svgGroups = document.querySelectorAll(".block__jcc-appellate-zcs__map__container svg > g > g > g");
+['mouseup', 'mouseover','mouseout'].forEach((evt) => {
+  svgGroups.forEach((targetSvgGroup) => {
+    targetSvgGroup.addEventListener(evt, (e) => {
 
-svgGroups.forEach((targetSvgGroup) => {
-  targetSvgGroup.addEventListener("mouseup", () => {
+      // Using the ID from the svg group, find the link with the same name.
+      const groupId = targetSvgGroup.getAttribute('id');
+      const LinkDetails = document.getElementsByName(groupId);
 
-    // Using the ID from the svg group, find the link with the same name.
-    const groupId = targetSvgGroup.getAttribute('id');
-    const LinkDetails = document.getElementsByName(groupId);
+      // Find the link with the matching name/ID and map class, and trigger it.
+      if (e.type === "mouseup") {
+        LinkDetails.forEach(LinkDetail => {
+          if (LinkDetail.classList.contains('zcs-map-link__item')) {
+            LinkDetail.click();
+          }
+        });
+      }
 
-    // Find the link with the matching name/ID and map class, and trigger it.
-    LinkDetails.forEach(LinkDetail => {
-      if (LinkDetail.classList.contains('zcs-map-link__item')) {
-        LinkDetail.click();
+      if (e.type === "mouseover") {
+        mapLinkItems.forEach(targetMapLink => {
+          if (targetMapLink.getAttribute('name') === groupId) {
+            targetMapLink.classList.add('hovered');
+          }
+        });
+      }
+
+      if (e.type === "mouseout") {
+        mapLinkItems.forEach(targetMapLink => {
+          if (targetMapLink.getAttribute('name') === groupId) {
+            targetMapLink.classList.remove('hovered');
+          }
+        });
       }
     });
   });
 });
 
-
-// Trigger hover of svg when link is hovered.
-const mapLinkItems = document.querySelectorAll(".zcs-map-link__item");
-
+/**
+ * Trigger hover of svg when link is hovered.
+ */
 ['mouseover','mouseout'].forEach((evt) => {
   mapLinkItems.forEach((targetMapLink) => {
     targetMapLink.addEventListener(evt, (e) => {

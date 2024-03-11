@@ -5,15 +5,15 @@
  * Functions for views processing.
  */
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\media\Entity\Media;
-use Drupal\views\ViewExecutable;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -141,6 +141,9 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
+  // Language label sets.
+  $lang_label_sets = __jcc_language_sets();
+
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   foreach ($variables['rows'][0]['#rows'] as $item) {
@@ -169,55 +172,55 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     $language_files = [
       'media_file_arabic' => [
         'file' => $media->get('field_media_file_arabic')->referencedEntities() ? $media->get('field_media_file_arabic')->referencedEntities()[0] : NULL,
-        'language' => t('Arabic'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_arabic_url']['label_default'] : '',
       ],
       'media_file_cambodian' => [
         'file' => $media->get('field_media_file_cambodian')->referencedEntities() ? $media->get('field_media_file_cambodian')->referencedEntities()[0] : NULL,
-        'language' => t('Cambodian'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_cambodian_url']['label_default'] : '',
       ],
       'media_file_chinese_simple' => [
         'file' => $media->get('field_media_file_chinese_simple')->referencedEntities() ? $media->get('field_media_file_chinese_simple')->referencedEntities()[0] : NULL,
-        'language' => t('Chinese - Simple'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_chinese_url']['label_default'] : '',
       ],
       'media_file_chinese' => [
         'file' => $media->get('field_media_file_chinese')->referencedEntities() ? $media->get('field_media_file_chinese')->referencedEntities()[0] : NULL,
-        'language' => t('Chinese'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_chinese_traditional_url']['label_default'] : '',
       ],
       'media_east_armenian_file' => [
         'file' => $media->get('field_east_armenian_file')->referencedEntities() ? $media->get('field_east_armenian_file')->referencedEntities()[0] : NULL,
-        'language' => t('East Armenian'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_east_armenian_url']['label_default'] : '',
       ],
       'media_file_farsi' => [
         'file' => $media->get('field_media_file_farsi')->referencedEntities() ? $media->get('field_media_file_farsi')->referencedEntities()[0] : NULL,
-        'language' => t('Farsi'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_farsi_url']['label_default'] : '',
       ],
       'media_file_hmong' => [
         'file' => $media->get('field_media_file_hmong')->referencedEntities() ? $media->get('field_media_file_hmong')->referencedEntities()[0] : NULL,
-        'language' => t('Hmong'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_hmong_url']['label_default'] : '',
       ],
       'media_file_korean' => [
         'file' => $media->get('field_media_file_korean')->referencedEntities() ? $media->get('field_media_file_korean')->referencedEntities()[0] : NULL,
-        'language' => t('Korean'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_korean_url']['label_default'] : '',
       ],
       'media_file_punjabi' => [
         'file' => $media->get('field_media_file_punjabi')->referencedEntities() ? $media->get('field_media_file_punjabi')->referencedEntities()[0] : NULL,
-        'language' => t('Punjabi'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_punjabi_url']['label_default'] : '',
       ],
       'media_file_russian' => [
         'file' => $media->get('field_media_file_russian')->referencedEntities() ? $media->get('field_media_file_russian')->referencedEntities()[0] : NULL,
-        'language' => t('Russian'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_russian_url']['label_default'] : '',
       ],
       'media_file_spanish' => [
         'file' => $media->get('field_media_file_spanish')->referencedEntities() ? $media->get('field_media_file_spanish')->referencedEntities()[0] : NULL,
-        'language' => t('Spanish'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_spanish_url']['label_default'] : '',
       ],
       'media_file_tagalog' => [
         'file' => $media->get('field_media_file_tagalog')->referencedEntities() ? $media->get('field_media_file_tagalog')->referencedEntities()[0] : NULL,
-        'language' => t('Tagalog'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_tagalog_url']['label_default'] : '',
       ],
       'media_file_vietnamese' => [
         'file' => $media->get('field_media_file_vietnamese')->referencedEntities() ? $media->get('field_media_file_vietnamese')->referencedEntities()[0] : NULL,
-        'language' => t('Vietnamese'),
+        'language' => is_array($lang_label_sets) ? $lang_label_sets['field_vietnamese_url']['label_default'] : '',
       ],
     ];
 
@@ -304,7 +307,7 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
   $variables['exposed']['actions']['submit']['#theme_wrappers'][0] = "input__submit__search_search_submit";
 
   // Process the results for the search api view.
-  foreach ($variables['rows'][0]['#rows'] as $item) {
+  foreach ($variables['rows'][0]['#rows'] as $index => $item) {
     // We have to manipulate the excerpt a little to render the html.
     $excerpt = $item['#row']->_item->getExcerpt() ?? t('No excerpt available.')->render();
     $text = [
@@ -313,11 +316,27 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
       '#suffix' => '</p>',
     ];
 
-    $variables['processed_rows'][] = [
-      'title' => $item['#row']->_entity->label(),
+    $entity = $item['#row']->_entity;
+
+    $variables['processed_rows'][$index] = [
+      'title' => $entity->label(),
       'content' => $render->render($text),
-      'url' => $item['#row']->_entity->toUrl()->toString(),
+      'url' => $entity->toUrl()->toString(),
     ];
+
+    // Append section as a notation to search results, if module enabled and
+    // section exists.
+    $module_handler = \Drupal::service('module_handler');
+    if ($module_handler->moduleExists('jcc_elevated_sections')) {
+      $section_service = \Drupal::service('jcc_elevated_sections.service');
+      $section = $section_service->getSectionForNode($entity);
+      if ($section_info = $section_service->getSectionInfo($section)) {
+        if ($section_name = $section_info->getName()) {
+          $variables['processed_rows'][$index]['brow']['notation'] = $section_name;
+        }
+      }
+    }
+
   }
 }
 
@@ -334,8 +353,12 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
     $node = $row['#row']->_entity;
     $media = $node->get('field_media')->target_id ? Media::load($node->get('field_media')->target_id) : '';
     $name = $node->get('title')->value ? $node->get('title')->value : '';
-    $title = $node->get('field_job_title')->target_id ? Term::load($node->get('field_job_title')->target_id)->get('name')->value : '';
-    $division = $node->get('field_division')->target_id ? Term::load($node->get('field_division')->target_id)->get('name')->value : '';
+    if ($title_tid = $node->get('field_job_title')->target_id) {
+      $title = Term::load($title_tid) ? Term::load($title_tid)->get('name')->value : '';
+    }
+    if ($division_tid = $node->get('field_division')->target_id) {
+      $division = Term::load($division_tid) ? Term::load($division_tid)->get('name')->value : '';
+    }
     $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id());
     // Service time.
     $start_date = $node->field_date->date ? $node->field_date->date->format('Y') : '';
@@ -384,6 +407,8 @@ function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
   $render = \Drupal::service('renderer');
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
@@ -422,10 +447,14 @@ function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
       ]),
     ];
 
+    // Check for a job type id first. This is just here because with dev work
+    // It is possible to have a job node without the field or type declared.
+    $job_type_id = $node->hasField('field_job_type') ? $node->get('field_job_type')->target_id : FALSE;
+
     $job = [
       'id' => $node->get('field_job_id')->value ? 'ID: ' . $node->get('field_job_id')->value : '',
       'deadline' => $deadline ? ['#markup' => Html::decodeEntities('<strong>Deadline:</strong> ' . $deadline)] : '',
-      'type' => $node->get('field_job_type')->target_id ? Term::load($node->get('field_job_type')->target_id)->get('name')->value : '',
+      'type' => is_numeric($job_type_id) && !empty($taxonomy_manager->load($job_type_id)) ? $taxonomy_manager->load($job_type_id)->get('name')->value : '',
       'title' => [
         'text' => $node->get('title')->value ?? '',
         'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
@@ -451,145 +480,85 @@ function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_views_view() for job search listing block.
+ * Implements hook_preprocess_HOOK() for Requests(RPF) listing.
  */
-function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
-  $render = \Drupal::service('renderer');
-
+function jcc_elevated_preprocess_views_view__requests__requests_rfp_listing(&$variables): void {
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
-  if (empty($variables['rows'][0]['#rows'])) {
-    return;
-  }
+  // Process the results for the search api view.
+  $variables['processed_rows'] = [];
+  if (isset($variables['rows'][0]['#rows'])) {
+    foreach ($variables['rows'][0]['#rows'] as $item) {
+      $request = $item['#row']->_entity;
 
-  $jobs = [];
-  foreach ($variables['rows'][0]['#rows'] as $row) {
-    $node = $row['#node'];
+      $brow = [];
+      $items = [
+        'primary' => $request->get('field_rfp_type')
+          ->first() ? $request->get('field_rfp_type')
+          ->first()
+          ->view('teaser') : '',
+        'secondary' => $request->get('field_rfp_number')
+          ->first() ? $request->get('field_rfp_number')
+          ->first()
+          ->view('teaser') : '',
+        'notation' => $request->get('field_rfp_start_date')
+          ->first() ? $request->get('field_rfp_start_date')
+          ->first()
+          ->view('teaser') : '',
+      ];
+      foreach ($items as $key => $value) {
+        if (!empty($value)) {
+          if ($key == 'secondary') {
+            $value['#context']['value'] = t('No.') . ' ' . $value['#context']['value'];
+          }
+          if ($key == 'notation') {
+            $value['#text'] = t('Issued:') . ' ' . $value['#text'];
+          }
+          $brow[$key] = $value;
+        }
+      }
 
-    // Render deadline date.
-    $deadline = $node->get('unpublish_on')->value ? date('F j, Y', $node->get('unpublish_on')->value) : '';
-    // If no deadline or 12/12/9999.
-    if (!$deadline || $deadline === 'December 12, 9999') {
-      $deadline = t('Open Until Filled');
+      $details = [];
+      $items = [
+        'status' => $request->get('field_rfp_status')
+          ->first() ? $request->get('field_rfp_status')
+          ->first()
+          ->view('teaser') : '',
+        'deadline' => $request->get('field_rfp_end_date')
+          ->first() ? $request->get('field_rfp_end_date')
+          ->first()
+          ->view('teaser') : '',
+        'last_updated' => t('Last updated:') . ' ' . \Drupal::service('date.formatter')
+          ->format($request->getChangedTime(), 'm_d_y'),
+      ];
+      foreach ($items as $key => $value) {
+        if (!empty($value)) {
+          if ($key == 'status') {
+            $value['#markup'] = t('Status:') . ' ' . $value['#markup']->__toString();
+          }
+          if ($key == 'deadline') {
+            $value['#text'] = t('Deadline:') . ' ' . $value['#text'];
+          }
+          $details[$key] = $value;
+        }
+      }
+
+      $variables['processed_rows'][] = [
+        'brow' => $brow,
+        'title' => $request->label(),
+        'url' => $request->toUrl(),
+        'content' => $request->get('body')->first() ? $request->get('body')
+          ->first()
+          ->view('teaser') : '',
+        'detail_list_data' => [
+          'label' => t('Details'),
+          'details' => $details,
+        ],
+        'item_classes' => ['result-extra-style__heading__lg'],
+      ];
     }
-
-    // Get teaser.
-    $teaser = $node->get('body') ?? '';
-    if ($teaser) {
-      $teaser = $node->get('body')->view('teaser');
-      $teaser = strval($render->render($teaser));
-      $teaser = strip_tags($teaser);
-    }
-
-    // Get locations.
-    $locations = __jcc_get_job_locations($node);
-
-    // Assemble details.
-    $detail_list_data = [
-      'details' => array_filter([
-        $locations ? $locations . ', CA' : '',
-        $node->get('field_is_temporary')->value ? 'Temporary' : 'Regular' . ' Employment',
-      ]),
-    ];
-
-    $job = [
-      'id' => $node->get('field_job_id')->value ? 'ID: ' . $node->get('field_job_id')->value : '',
-      'deadline' => $deadline ? ['#markup' => Html::decodeEntities('<strong>Deadline:</strong> ' . $deadline)] : '',
-      'type' => $node->get('field_job_type')->target_id ? Term::load($node->get('field_job_type')->target_id)->get('name')->value : '',
-      'title' => [
-        'text' => $node->get('title')->value ?? '',
-        'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
-      ],
-      'teaser' => $teaser,
-      'detail_list_data' => $detail_list_data,
-    ];
-    $jobs[] = $job;
   }
-
-  // Count summary for the current page of results.
-  $jobs['count_summary'] = $variables['header']['result']['#markup'] ?? '';
-
-  $variables['jobs'] = $jobs;
-}
-
-/**
- * Implements hook_preprocess_views_view() for job search listing page.
- */
-function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
-  // Reuse current jobs search block as common preprocess.
-  jcc_elevated_preprocess_views_view__jobs__search($variables);
-}
-
-/**
- * Implements hook_preprocess_views_view() for job search listing block.
- */
-function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
-  $render = \Drupal::service('renderer');
-
-  // Customize filter UI.
-  __jcc_view_results_exposed_filter_init($variables);
-
-  if (empty($variables['rows'][0]['#rows'])) {
-    return;
-  }
-
-  $jobs = [];
-  foreach ($variables['rows'][0]['#rows'] as $row) {
-    $node = $row['#node'];
-
-    // Render deadline date.
-    $deadline = $node->get('unpublish_on')->value ? date('F j, Y', $node->get('unpublish_on')->value) : '';
-    // If no deadline or 12/12/9999.
-    if (!$deadline || $deadline === 'December 12, 9999') {
-      $deadline = t('Open Until Filled');
-    }
-
-    // Get teaser.
-    $teaser = $node->get('body') ?? '';
-    if ($teaser) {
-      $teaser = $node->get('body')->view('teaser');
-      $teaser = strval($render->render($teaser));
-      $teaser = strip_tags($teaser);
-    }
-
-    // Get locations.
-    $locations = __jcc_get_job_locations($node);
-
-    // Assemble details.
-    $detail_list_data = [
-      'details' => array_filter([
-        $locations ? $locations . ', CA' : '',
-        $node->get('field_is_temporary')->value ? 'Temporary' : 'Regular' . ' Employment',
-      ]),
-    ];
-
-    $job = [
-      'id' => $node->get('field_job_id')->value ? 'ID: ' . $node->get('field_job_id')->value : '',
-      'deadline' => $deadline ? ['#markup' => Html::decodeEntities('<strong>Deadline:</strong> ' . $deadline)] : '',
-      'type' => $node->get('field_job_type')->target_id ? Term::load($node->get('field_job_type')->target_id)->get('name')->value : '',
-      'title' => [
-        'text' => $node->get('title')->value ?? '',
-        'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
-      ],
-      'teaser' => $teaser,
-      'detail_list_data' => $detail_list_data,
-    ];
-    $jobs[] = $job;
-  }
-
-  // Count summary for the current page of results.
-  $jobs['count_summary'] = $variables['header']['result']['#markup'] ?? '';
-
-  $variables['jobs'] = $jobs;
-}
-
-/**
- * Implements hook_preprocess_views_view() for job search listing page.
- */
-function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
-  // Reuse current jobs search block as common preprocess.
-  jcc_elevated_preprocess_views_view__jobs__search($variables);
 }
 
 /**
@@ -656,28 +625,8 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
     if (function_exists('jcc_elevated_get_site_name') && jcc_elevated_get_site_name() == 'partners') {
       $form['field_case_type_target_id']['#access'] = FALSE;
     }
-
-    // Change the date filter wrapper.
-    $form['field_date_value_wrapper']['#type'] = 'fieldset';
-    $form['field_date_value_wrapper']['#weight'] = -1;
-    $form['field_date_value_wrapper']['#attributes']['class'][] = 'form-item';
-    $form['field_date_value_wrapper']['#title'] = '';
-
-    // Change the "from" date filter to a datetime filter.
-    $form['field_date_value_wrapper']['field_date_value']['min']['#title'] = FALSE;
-    $form['field_date_value_wrapper']['field_date_value']['min']['#type'] = 'datetime';
-    $form['field_date_value_wrapper']['field_date_value']['min']['#date_date_element'] = 'date';
-    $form['field_date_value_wrapper']['field_date_value']['min']['#date_time_element'] = 'none';
-    $form['field_date_value_wrapper']['field_date_value']['min']['#date_year_range'] = '2000:+1';
-    $form['field_date_value_wrapper']['field_date_value']['min']['#description'] = t('From');
-
-    // Change the "to" date filter to a datetime filter.
-    $form['field_date_value_wrapper']['field_date_value']['max']['#title'] = FALSE;
-    $form['field_date_value_wrapper']['field_date_value']['max']['#type'] = 'datetime';
-    $form['field_date_value_wrapper']['field_date_value']['max']['#date_date_element'] = 'date';
-    $form['field_date_value_wrapper']['field_date_value']['max']['#date_time_element'] = 'none';
-    $form['field_date_value_wrapper']['field_date_value']['max']['#date_year_range'] = '2000:+1';
-    $form['field_date_value_wrapper']['field_date_value']['max']['#description'] = t('To');
+    // Removing date filter for elevated themes.
+    unset($form['field_date_value_wrapper']);
   }
 
   // Hide select form elements if their options are empty or only All/Any item.

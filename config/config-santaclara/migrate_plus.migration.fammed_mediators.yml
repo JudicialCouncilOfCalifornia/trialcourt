@@ -16,7 +16,7 @@ source:
   delimiter: ','
   enclosure: '"'
   ids:
-    - ID
+    - 'Legacy ID'
 process:
   status:
     plugin: static_map
@@ -31,7 +31,7 @@ process:
       - First
       - Last
     delimiter: ' '
-  field_id: ID
+  field_legacy_id: 'Legacy ID'
   field_first_name: First
   field_last_name: Last
   field_county: County
@@ -64,20 +64,20 @@ process:
   field_mi: MI
   field_phone_number: 'Phone Number'
   field_subject_matter:
-    -
-      plugin: skip_on_empty
-      source: 'Subject Matter'
-      method: process
-      message: 'Skipped because no data.'
-    -
-      plugin: explode
-      delimiter: ','
-    -
-      plugin: entity_lookup
-      value_key: field_id
-      bundle_key: vid
-      bundle: subject_matter_area
-      entity_type: taxonomy_term
+  -
+    plugin: skip_on_empty
+    source: 'Subject Matter'
+    method: process
+    message: 'Skipped because no data.'
+  -
+    plugin: explode
+    delimiter: ','
+  -
+    plugin: entity_lookup
+    value_key: field_id
+    bundle_key: vid
+    bundle: subject_matter_area
+    entity_type: taxonomy_term
   field_subject_matter_other:
     -
       plugin: skip_on_empty
@@ -97,7 +97,7 @@ process:
       'NULL': 0
       '': 0
     source: 'Hourly Rate'
-  field_process:
+  field_adr_process:
     -
       plugin: skip_on_empty
       source: Process
@@ -115,7 +115,7 @@ process:
   field_address/administrative_area:
     plugin: default_value
     default_value: CA
-  field_mediator:
+  field_mediator_type:
     -
       plugin: default_value
       default_value: 'Family ADR Providers'
@@ -124,14 +124,14 @@ process:
       value_key: name
       entity_type: taxonomy_term
       bundle_key: vid
-      bundle: mediators
+      bundle: mediator_type
       ignore_case: true
 destination:
   plugin: 'entity:node'
-  default_bundle: common
+  default_bundle: arbitrator
   overwrite_properties:
     - status
-    - field_id
+    - field_legacy_id
     - title
     - field_first_name
     - field_last_name
@@ -144,7 +144,7 @@ destination:
     - field_basic_mediation_fee
     - field_basic_mediation_fee_max
     - field_hourly_rate
-    - field_process
+    - field_adr_process
     - field_subject_matter
     - field_subject_matter_other
     - field_foreign_language
@@ -154,5 +154,5 @@ destination:
     - field_address/locality
     - field_address/address_line1
     - field_address/administrative_area
-    - field_mediator
+    - field_mediator_type
 migration_dependencies: {  }

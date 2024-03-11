@@ -158,10 +158,12 @@ process:
       plugin: migration_lookup
       migration: forms_file
   field_document_type:
-    - plugin: explode
+    -
+      plugin: explode
       source: doctype
       delimiter: ','
-    - plugin: entity_generate
+    -
+      plugin: entity_generate
       entity_type: taxonomy_term
       bundle_key: vid
       bundle: document_type

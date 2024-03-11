@@ -108,6 +108,11 @@ function jcc_elevated_preprocess_page(&$variables) {
       ->build(\Drupal::routeMatch())
       ->toRenderable();
   }
+
+  // Feedback widget visibility.
+  if (theme_get_setting('hide_was_this_helpful') === 1) {
+    $variables['hide_was_this_helpful'] = theme_get_setting('hide_was_this_helpful');
+  }
 }
 
 /**
@@ -248,9 +253,12 @@ function jcc_elevated_build_header_search_form(bool $mobile_version = FALSE): ar
   $form['search']['#pre_render'] = [];
   $form['search']['#process'] = [];
   $form['search']['#theme_wrappers'] = [];
-  $form['search']['#attributes']['value'] = Xss::filter($searched_value);
+  if ($searched_value !== NULL) {
+    $form['search']['#attributes']['value'] = Xss::filter($searched_value);
+  }
   $form['search']['#attributes']['name'] = $form['search']['#name'];
   $form['search']['#attributes']['class'] = [];
+  $form['search']['#attributes']['aria-label'] = t('Site search');
   $form['search']['#attributes']['id'] = $mobile_version ? 'header-search__mobile' : 'header-search';
   unset($form['search']['#attributes']['data-search-api-autocomplete-search']);
   unset($form['search']['#attributes']['data-autocomplete-path']);

@@ -19,6 +19,7 @@
 {{ attach_library("jcc_storybook/List") }}
 {{ attach_library("jcc_storybook/AssetBundle") }}
 {{ attach_library("jcc_storybook/Button") }}
+{{ attach_library("jcc_storybook/Icons") }}
 
 {% set details %}
   {% set items = [] %}
@@ -31,10 +32,12 @@
       {% set items = items|merge([item]) %}
     {% endif %}
   {% endfor %}
-  {% include "@molecules/List/List.twig" with {
-    variant: 'none',
-    items: items,
-  } %}
+  {% if items %}
+    {% include "@molecules/List/List.twig" with {
+      variant: 'none',
+      items: items,
+    } %}
+  {% endif %}
 {% endset %}
 
 {% set asset %}
@@ -82,7 +85,7 @@
 
 {% include "@organisms/Section/Section.twig" with {
   variant: 'default',
-  sub_component_layout: 'with-sidebar',
+  sub_component_layout: 'with-sidebar grid',
   sidebar_direction: 'row',
   sidebar_width: 39,
   gap: 's4',

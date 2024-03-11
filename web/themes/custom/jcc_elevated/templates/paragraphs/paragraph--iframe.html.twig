@@ -1,10 +1,23 @@
 {{ attach_library("jcc_storybook/Iframe") }}
+{{ attach_library("jcc_custom/iframeresizer") }}
 
 <div class="container">
   {% include "@molecules/Iframe/Iframe.twig" with {
     variant: paragraph.field_aspect_ratio.value,
+    manual_height: paragraph.field_manual_height.value,
     url: paragraph.field_link.uri,
     ratio: 'square'
   } %}
 </div>
 
+{% if paragraph.field_use_iframe_resizer.value %}
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+      let iframe = document.getElementsByTagName("iframe")[0];
+      if (iframe) {
+        let iframeID = '#' + document.getElementsByTagName("iframe")[0].id;
+        iFrameResize({lowestElement: true}, iframeID);
+      }
+    });
+  </script>
+{% endif %}

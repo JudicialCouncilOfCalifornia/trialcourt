@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: request_rfp_content_type_pattern
+label: 'Request (RFP) Content Type Pattern'
+type: 'canonical_entities:node'
+pattern: '[node:content-type]/[node:field_rfp_number:value]/[node:field_rfp_type:value]/[node:title]'
+selection_criteria:
+  d6198b3c-40ec-4152-8708-03a5a9e24e0e:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: d6198b3c-40ec-4152-8708-03a5a9e24e0e
+    context_mapping:
+      node: node
+    bundles:
+      request: request
+selection_logic: and
+weight: -5
+relationships: {  }

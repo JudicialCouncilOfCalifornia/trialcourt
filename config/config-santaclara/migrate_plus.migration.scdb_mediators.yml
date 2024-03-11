@@ -16,7 +16,7 @@ source:
   delimiter: ','
   enclosure: '"'
   ids:
-    - ID
+    - 'Legacy ID'
 process:
   status:
     plugin: static_map
@@ -31,7 +31,7 @@ process:
       - First
       - Last
     delimiter: ' '
-  field_id: ID
+  field_legacy_id: 'Legacy ID'
   field_first_name: First
   field_last_name: Last
   field_mi: MI
@@ -58,20 +58,20 @@ process:
       plugin: explode
       delimiter: ','
   field_subject_matter:
-    -
-      plugin: skip_on_empty
-      source: 'Subject Matter Area'
-      method: process
-      message: 'Skipped because no data.'
-    -
-      plugin: explode
-      delimiter: ','
-    -
-      plugin: entity_lookup
-      value_key: field_id
-      bundle_key: vid
-      bundle: subject_matter_area
-      entity_type: taxonomy_term
+  -
+    plugin: skip_on_empty
+    source: 'Subject Matter Area'
+    method: process
+    message: 'Skipped because no data.'
+  -
+    plugin: explode
+    delimiter: ','
+  -
+    plugin: entity_lookup
+    value_key: field_id
+    bundle_key: vid
+    bundle: subject_matter_area
+    entity_type: taxonomy_term
   field_subject_matter_other:
     -
       plugin: skip_on_empty
@@ -115,7 +115,7 @@ process:
     plugin: default_value
     default_value: CA
   field_county: County
-  field_mediator:
+  field_mediator_type:
     -
       plugin: default_value
       default_value: 'Civil ADR Provider'
@@ -124,14 +124,14 @@ process:
       value_key: name
       entity_type: taxonomy_term
       bundle_key: vid
-      bundle: mediators
+      bundle: mediator_type
       ignore_case: true
 destination:
   plugin: 'entity:node'
-  default_bundle: common
+  default_bundle: arbitrator
   overwrite_properties:
     - status
-    - field_id
+    - field_Legacy_id
     - title
     - field_mi
     - field_sbn
@@ -154,5 +154,5 @@ destination:
     - field_county
     - field_first_name
     - field_last_name
-    - field_mediator
+    - field_mediator_type
 migration_dependencies: {  }

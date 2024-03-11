@@ -119,8 +119,11 @@
 } %}
 
 {% set description %}
+  {% set no_description %}
+    <p>{{ 'Job description to come.'|t }}</p>
+  {% endset %}
   <div>
-    {{ content.body.0|render }}
+    {{ content.body ? content.body : no_description }}
     {{ job.boilerplate }}
     {{ button }}
   </div>
@@ -128,7 +131,7 @@
 
 {% include "@organisms/Section/Section.twig" with {
   variant: 'default',
-  sub_component_layout: 'with-sidebar',
+  sub_component_layout: 'with-sidebar grid',
   sidebar_direction: 'row',
   sidebar_width: 39,
   gap: 's4',

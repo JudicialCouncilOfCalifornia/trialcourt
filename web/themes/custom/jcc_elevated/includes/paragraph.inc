@@ -8,10 +8,10 @@
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
-use Drupal\paragraphs\Entity\Paragraph;
-use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -39,6 +39,12 @@ function jcc_elevated_theme_suggestions_paragraph_alter(&$suggestions, $variable
       $suggestions[] = $suggestion;
     }
   }
+
+  // Allow for parent bundle type in template suggestion.
+  $parent = $paragraph->getParentEntity();
+  if ($parent && $parent->bundle()) {
+    $suggestions[] = 'paragraph__' . $paragraph->bundle() . '__' . $parent->bundle();
+  }
 }
 
 /**
@@ -49,19 +55,29 @@ function jcc_elevated_theme_suggestions_paragraph_alter(&$suggestions, $variable
  * @param \Drupal\paragraphs\ParagraphInterface $paragraph
  *   The paragraph.
  */
-function jcc_elevated_paragraph_views_reference(array &$variables, ParagraphInterface $paragraph) {
+function jcc_elevated_paragraph_views_reference(array &$variables, ParagraphInterface $paragraph): void {
   // In some cases we need to pass the views results to the paragraph.
+  $ref_override = [];
+
   if (!empty($paragraph->field_views_reference)) {
     $view = $paragraph->field_views_reference->referencedEntities()[0];
     $reference = $paragraph->field_views_reference->first();
+
+    $value = $reference->getValue();
+    $ref_override = $value['data'] ? unserialize($value['data']) : []; // phpcs:ignore
+
     $target_id = $reference->target_id;
     $display_id = $reference->display_id;
     $function = "jcc_elevated_paragraph_views_reference_{$target_id}_{$display_id}";
   }
 
+  $variables['more']['use_more_text'] = !empty($ref_override['use_more_text']) ? $ref_override['use_more_text'] : FALSE;
+  $variables['more']['link_display'] = !empty($ref_override['link_display']) ? Url::fromUri($ref_override['link_display']) : FALSE;
+
   if (!empty($function) && function_exists($function)) {
     $function($variables, $view);
   }
+
 }
 
 /**
@@ -153,7 +169,9 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
       // Allowed tags in minimal editor except <a>.
       $allowed_tags = '<p><em><strong><u><s><sup><sub><ol><li><ul>';
       $text = $paragraph->get('field_text')->value;
-      $text = strip_tags($text, $allowed_tags);
+      if ($text !== NULL) {
+        $text = strip_tags($text, $allowed_tags);
+      }
       $variables['filtered_text'] = Markup::create($text);
     }
   }
@@ -379,7 +397,7 @@ function jcc_elevated_paragraph_action_list(array &$variables) {
 
     $action_items[$key]['description'] = '';
     if ($action_item->hasField('field_text')) {
-      if ($text_element = $action_item->get('field_text')->getValue()) {
+      if (!empty($action_item->get('field_text')->getValue())) {
         $action_items[$key]['description'] = $action_item->field_text->view('default');
       }
     }
@@ -392,4 +410,52 @@ function jcc_elevated_paragraph_action_list(array &$variables) {
     }
   }
   $variables['action_items'] = $action_items;
+}
+
+/**
+ * Helper function for attachment paragraphs.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function jcc_elevated_paragraph_attachment(array &$variables): void {
+  $media_manager = \Drupal::entityTypeManager()->getStorage('media');
+  $formatter = \Drupal::service('date.formatter');
+  $paragraph = $variables['paragraph'];
+  $media_target = $paragraph->get('field_media')->first() ? $paragraph->get('field_media')->first()->getValue() : FALSE;
+  $media = $media_target['target_id'] ? $media_manager->load($media_target['target_id']) : FALSE;
+
+  if ($media) {
+    $current = Drupal::time()->getCurrentTime();
+    $offset = 2592000;
+
+    // If last updated date of media item is within 30 days, and not a new item,
+    // set update TRUE.
+    $update = $current - $media->getChangedTime() <= $offset;
+    $new = $current - $media->getCreatedTime() <= $offset;
+
+    $variables['attachment_status'] = FALSE;
+    if ($new) {
+      $variables['attachment_status'] = [
+        '#prefix' => '<em class="attachment__new-label">',
+        '#markup' => t('New'),
+        '#suffix' => '</em>',
+      ];
+    }
+
+    if ($update and !$new) {
+      $variables['attachment_status'] = [
+        '#prefix' => '<em class="attachment__recent-updated-date">',
+        '#markup' => t('Revised:') . ' ' . $formatter->format($media->getChangedTime(), 'm_d_y'),
+        '#suffix' => '</em>',
+      ];
+    }
+
+    // If new item, setup some classes.
+    $variables['new'] = $new ? 'attachment__new' : '';
+  }
+
 }

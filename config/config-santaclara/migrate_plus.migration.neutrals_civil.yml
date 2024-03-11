@@ -16,7 +16,7 @@ source:
   delimiter: ','
   enclosure: '"'
   ids:
-    - ID
+    - 'Legacy ID'
 process:
   status:
     plugin: static_map
@@ -31,7 +31,7 @@ process:
       - 'First Name'
       - 'Last Name'
     delimiter: ' '
-  field_id: ID
+  field_Legacy_id: 'Legacy ID'
   field_first_name: 'First Name'
   field_last_name: 'Last Name'
   field_mi: 'Middle Initial'
@@ -88,7 +88,7 @@ process:
   field_address/locality: City
   field_address/address_line1: 'Street Address'
   field_address/administrative_area: State
-  field_mediator:
+  field_mediator_type:
     -
       plugin: default_value
       default_value: 'Civil Early Settlement Conference (CESC) Neutral'
@@ -97,14 +97,14 @@ process:
       value_key: name
       entity_type: taxonomy_term
       bundle_key: vid
-      bundle: mediators
+      bundle: mediator_type
       ignore_case: true
 destination:
   plugin: 'entity:node'
-  default_bundle: common
+  default_bundle: arbitrator
   overwrite_properties:
     - status
-    - field_id
+    - field_legacy_id
     - title
     - field_first_name
     - field_last_name
@@ -120,5 +120,5 @@ destination:
     - field_address/locality
     - field_address/address_line1
     - field_address/administrative_area
-    - field_mediator
+    - field_mediator_type
 migration_dependencies: {  }

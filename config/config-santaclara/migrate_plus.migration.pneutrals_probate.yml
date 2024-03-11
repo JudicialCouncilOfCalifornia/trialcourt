@@ -16,7 +16,7 @@ source:
   delimiter: ','
   enclosure: '"'
   ids:
-    - ID
+    - 'Legacy ID'
 process:
   status:
     plugin: static_map
@@ -33,7 +33,7 @@ process:
     delimiter: ' '
   field_first_name: First
   field_last_name: Last
-  field_id: ID
+  field_Legacy_id: 'Legacy ID'
   field_mi: MI
   field_sbn: SBN
   field_phone_number: Phone
@@ -136,7 +136,7 @@ process:
   field_address/locality: City
   field_address/address_line1: Address
   field_address/administrative_area: State
-  field_mediator:
+  field_mediator_type:
     -
       plugin: default_value
       default_value: 'Probate Early Settlement Program Neutrals'
@@ -145,14 +145,14 @@ process:
       value_key: name
       entity_type: taxonomy_term
       bundle_key: vid
-      bundle: mediators
+      bundle: mediator_type
       ignore_case: true
 destination:
   plugin: 'entity:node'
-  default_bundle: common
+  default_bundle: arbitrator
   overwrite_properties:
     - title
-    - field_id
+    - field_legacy_id
     - status
     - field_areas_of_law
     - field_first_name
@@ -168,5 +168,5 @@ destination:
     - field_address/locality
     - field_address/address_line1
     - field_address/administrative_area
-    - field_mediator
+    - field_mediator_type
 migration_dependencies: {  }
