@@ -7,10 +7,12 @@ dependencies:
     - field.field.node.facilities.field_agency_manager
     - field.field.node.facilities.field_architectural_engineering_
     - field.field.node.facilities.field_budget
+    - field.field.node.facilities.field_ceqa
     - field.field.node.facilities.field_date
     - field.field.node.facilities.field_fund
     - field.field.node.facilities.field_gross_square_footage
     - field.field.node.facilities.field_initial_funding_year
+    - field.field.node.facilities.field_media
     - field.field.node.facilities.field_media_file_multiple
     - field.field.node.facilities.field_occupancy_date
     - field.field.node.facilities.field_project_status
@@ -66,6 +68,13 @@ content:
     third_party_settings: {  }
     weight: 106
     region: content
+  field_ceqa:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 116
+    region: content
   field_date:
     type: datetime_default
     label: above
@@ -99,6 +108,14 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     weight: 109
+    region: content
+  field_media:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 115
     region: content
   field_media_file_multiple:
     type: entity_reference_label

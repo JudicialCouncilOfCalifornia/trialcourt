@@ -203,6 +203,49 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
 }
 
 /**
+ * Node: Facilities preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): void {
+  $render = \Drupal::service('renderer');
+  $basic_page = Node::load($node->id());
+  $variables['node'] = $node;
+  $field_schedule_render_array = $node->field_schedule->view('default');
+  if (!$field_schedule_render_array['#items']->isEmpty()) {
+    $schedule_content = render($field_schedule_render_array[0]['#text']);
+  }
+  /* $sample = $node->get('field_date')->date ?
+  $node->get('field_date')->date->format('F j, Y') : '';
+  $variables['completiondate'] = $sample;*/
+  $details = [
+    'project_information' => [
+      'Gross Square Footage' => $node->field_gross_square_footage->value,
+      'Total Courtrooms' => $node->field_total_courtrooms->value,
+      'Completion Date' => $node->get('field_date')->value,
+    ],
+    'schedule' => $schedule_content,
+  ];
+
+  $projectimages = [];
+  foreach ($node->field_media_file_multiple as $media_file) {
+    $media = Media::load($media_file->target_id);
+    if ($media && $media->field_media_image->entity) {
+      $uri = $media->field_media_image->entity->getFileUri();
+      $media_url = file_create_url($uri);
+    }
+    $projectimages[] = [
+      'url' => $media_url,
+    ];
+  }
+  $variables['projectimages'] = $projectimages;
+  $variables['details'] = $details;
+}
+
+/**
  * Node: Alerts preprocess.
  *
  * @param array $variables

@@ -1,0 +1,39 @@
+ {{ attach_library("jcc_storybook/List") }}
+
+  {% set items = [] %}
+  {% for key,value in details.project_information %}
+    {% if value is not empty %}
+      {% set item = {
+        label: key,
+        text: value,
+      } %}
+      {% set items = items|merge([item]) %}
+    {% endif %}
+  {% endfor %} 
+<p>{{items}}</p>
+
+  {% if items %}
+    {% include "@molecules/List/List.twig" with {
+      variant: 'none',
+      items: items,
+    } %}
+  {% endif %}
+ 
+<p>TITLE: {{node.title.value}}</p>
+<p>Completion date {{details.completion_date}}</p>
+<p>BACKGROUND: {{content.body  }} </p>
+<p> SCHEDULE{{details.schedule | raw }} </p>
+
+{% for i in textshare %}
+    {{ i.content['#string']|raw }}
+  {% endfor %}
+
+<p>Project Images: </p>   
+      {% for image in projectimages %}       
+          {% if image.url %}          
+              <img src={{image.url|raw}} alt={{image.alt}}>            
+          {% endif %}
+      {% endfor %}
+   
+
+    

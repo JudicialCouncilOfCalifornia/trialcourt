@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_schedule
+    - field.storage.node.field_ceqa
     - node.type.facilities
   module:
     - allowed_formats
@@ -14,15 +14,17 @@ third_party_settings:
       - full_html
   tmgmt_content:
     excluded: false
-id: node.facilities.field_schedule
-field_name: field_schedule
+id: node.facilities.field_ceqa
+field_name: field_ceqa
 entity_type: node
 bundle: facilities
-label: Schedule
+label: ceqa
 description: ''
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings: {  }
-field_type: text_long
+settings:
+  display_summary: false
+  required_summary: false
+field_type: text_with_summary
