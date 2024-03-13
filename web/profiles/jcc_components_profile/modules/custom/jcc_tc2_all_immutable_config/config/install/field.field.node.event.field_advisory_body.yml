@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_events
+    - field.storage.node.field_advisory_body
     - node.type.advisory_body
     - node.type.event
   module:
@@ -10,11 +10,11 @@ dependencies:
 third_party_settings:
   tmgmt_content:
     excluded: false
-id: node.advisory_body.field_events
-field_name: field_events
+id: node.event.field_advisory_body
+field_name: field_advisory_body
 entity_type: node
-bundle: advisory_body
-label: Events
+bundle: event
+label: 'Advisory body'
 description: ''
 required: false
 translatable: false
@@ -24,7 +24,7 @@ settings:
   handler: 'default:node'
   handler_settings:
     target_bundles:
-      event: event
+      advisory_body: advisory_body
     sort:
       field: _none
       direction: ASC

@@ -211,14 +211,6 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
  *   The node.
  */
 function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node) {
-  $events = views_embed_view('advisory_body_events', 'block_1');
-  $variables["events_view"] = \Drupal::service('renderer')->renderRoot($events);
-
-  $past_events = views_embed_view('advisory_body_events', 'block_2');
-  $variables["past_events_view"] = \Drupal::service('renderer')->renderRoot($past_events);
-
-  $past_events_list = views_embed_view('advisory_body_events', 'block_3');
-  $variables["past_events_view_list"] = \Drupal::service('renderer')->renderRoot($past_events_list);
 }
 
 /**
