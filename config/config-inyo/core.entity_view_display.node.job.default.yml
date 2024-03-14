@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.field.node.job.body
     - field.field.node.job.field_custom_link
+    - field.field.node.job.field_date
     - field.field.node.job.field_department
     - field.field.node.job.field_is_temporary
     - field.field.node.job.field_job_id
@@ -13,6 +14,7 @@ dependencies:
     - field.field.node.job.field_office
     - node.type.job
   module:
+    - datetime
     - link
     - range
     - text
@@ -40,6 +42,15 @@ content:
       target: ''
     third_party_settings: {  }
     weight: 109
+    region: content
+  field_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 111
     region: content
   field_department:
     type: entity_reference_label
