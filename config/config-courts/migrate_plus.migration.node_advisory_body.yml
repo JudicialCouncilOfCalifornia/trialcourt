@@ -1,0 +1,120 @@
+uuid: 56dc2659-15bd-49d8-a627-bf81f50ad084
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: DETWfrp-GWfk6QZgRvifM087QzgNvOw9Ge24FpxLaMQ
+id: node_advisory_body
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - node
+  - advisory_body
+migration_group: jcc2
+label: 'Advisory body: Import Node'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: 'https://sheets.googleapis.com/v4/spreadsheets/11A3LdU2sXK_hJROq9hHwv-uy2ojy5ApW-xBI567X-eM/values/Sheet1?alt=json&key=AIzaSyCVTRFONjafrBZ2FtLQmrndNNLzWSHm8BQ'
+  item_selector: entry
+  fields:
+    -
+      name: src_unique_id
+      label: 'Unique ID'
+      selector: url
+    -
+      name: url
+      label: Url
+      selector: url
+    -
+      name: title
+      label: Title
+      selector: title
+    -
+      name: body
+      label: Body
+      selector: body
+    -
+      name: field_subcommittees
+      label: Subcommittees
+      selector: field_subcommittees
+    -
+      name: field_members
+      label: Members
+      selector: field_members
+    -
+      name: field_about
+      label: About
+      selector: field_about
+    -
+      name: field_updates_resources
+      label: Updates & Resources
+      selector: field_updates_resources
+  ids:
+    src_unique_id:
+      type: string
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  title:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: TITLE
+  path/pathauto:
+    plugin: default_value
+    default_value: 1
+  body/value:
+    -
+      plugin: media_replace_file_link
+      source: body
+    -
+      plugin: prefix_relative_links
+  body/format:
+    plugin: default_value
+    default_value: full_html
+  field_subcommittees/value:
+    -
+      plugin: media_replace_file_link
+      source: body
+    -
+      plugin: prefix_relative_links
+  field_subcommittees/format:
+    plugin: default_value
+    default_value: full_html
+  field_members/value:
+    -
+      plugin: media_replace_file_link
+      source: body
+    -
+      plugin: prefix_relative_links
+  field_members/format:
+    plugin: default_value
+    default_value: full_html
+  field_about/value:
+    -
+      plugin: media_replace_file_link
+      source: body
+    -
+      plugin: prefix_relative_links
+  field_about/format:
+    plugin: default_value
+    default_value: full_html
+  field_updates_resources/value:
+    -
+      plugin: media_replace_file_link
+      source: body
+    -
+      plugin: prefix_relative_links
+  field_updates_resources/format:
+    plugin: default_value
+    default_value: full_html
+destination:
+  plugin: 'entity:node'
+  default_bundle: advisory_body
+migration_dependencies: null
