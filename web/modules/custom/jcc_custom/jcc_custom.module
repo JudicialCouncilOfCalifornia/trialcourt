@@ -199,7 +199,7 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
  * Implements hook__field_group_form_process_build_alter().
  */
 function jcc_custom_field_group_form_process_build_alter(array &$element, FormStateInterface $form_state, &$complete_form): void {
-  $form_id = $element['#form_id'];
+  $form_id = $element['#form_id'] ?? '';
   switch ($form_id) {
     case 'node_request_form':
     case 'node_request_edit_form':
