@@ -10,6 +10,7 @@ dependencies:
     - taxonomy.vocabulary.office
   module:
     - better_exposed_filters
+    - datetime
     - node
     - taxonomy
     - user
@@ -53,8 +54,8 @@ display:
       exposed_form:
         type: bef
         options:
-          submit_button: 'Search Jobs'
-          reset_button: false
+          submit_button: 'Search Jobs →'
+          reset_button: true
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
           expose_sort_order: true
@@ -80,27 +81,53 @@ display:
                   placeholder_text: ''
                   collapsible: false
                   is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
               field_job_location_target_id:
                 plugin_id: default
                 advanced:
+                  sort_options: false
                   rewrite:
                     filter_rewrite_values: ''
                   collapsible: false
                   is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+              field_office_target_id:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
               field_department_target_id:
                 plugin_id: default
                 advanced:
+                  sort_options: false
                   rewrite:
                     filter_rewrite_values: ''
                   collapsible: false
                   is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
               field_job_type_target_id:
                 plugin_id: default
                 advanced:
+                  sort_options: false
                   rewrite:
                     filter_rewrite_values: ''
                   collapsible: false
                   is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
               field_is_temporary_value:
                 plugin_id: default
                 advanced:
@@ -109,6 +136,9 @@ display:
                     filter_rewrite_values: ''
                   collapsible: false
                   is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
       access:
         type: perm
         options:
@@ -118,22 +148,35 @@ display:
         options: {  }
       empty: {  }
       sorts:
-        unpublish_on:
-          id: unpublish_on
+        status:
+          id: status
           table: node_field_data
-          field: unpublish_on
+          field: status
           relationship: none
           group_type: group
           admin_label: ''
           entity_type: node
-          entity_field: unpublish_on
-          plugin_id: date
+          entity_field: status
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+        field_date_value:
+          id: field_date_value
+          table: node__field_date
+          field: field_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
           order: DESC
           expose:
             label: ''
             field_identifier: ''
           exposed: false
-          granularity: hour
+          granularity: minute
       arguments: {  }
       filters:
         type:
@@ -571,7 +614,7 @@ display:
     display_options:
       display_description: ''
       display_extenders: {  }
-      block_description: 'Search Jobs &#8594;'
+      block_description: 'Search Jobs'
     cache_metadata:
       max-age: -1
       contexts:
