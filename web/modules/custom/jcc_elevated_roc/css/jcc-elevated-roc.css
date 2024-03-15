@@ -1,0 +1,90 @@
+@media screen and (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+.roc-document-list {
+  padding-block-start: var(--s4);
+}
+ul.roc-document-toc {
+  list-style-type: none;
+  padding-inline: 0;
+}
+li.TOClevel1 {
+  padding-block-end: var(--s1);
+  border-block-end: 1px solid var(--color-base);
+  margin-block-end: var(--s1);
+  font-weight: bold;
+  font-size: var(--s1);
+}
+li.TOClevel3 {
+  margin-inline-start: var(--s2);
+}
+ul.roc-document-toc li.TOClevel3 + li.TOClevel2 {
+  margin-block-start: var(--s-1);
+}
+ul.roc-document-toc li.TOClevel2 + li.TOClevel2 {
+  margin-block-start: var(--s-3);
+}
+.roc-document-toc__nav-links {
+  color: var(--color-primary);
+  position: sticky;
+  top: 0;
+}
+body.toolbar-tray-open.toolbar-horizontal .roc-document-toc__nav-links {
+  top: 39px;
+}
+body.toolbar-tray-open.toolbar-horizontal .roc-document-toc__nav-links {
+  top: 79px;
+}
+.roc-document-toc__nav-links.upper-links {
+  background: var(--color-primary-light-xxx);
+  padding-block: var(--s-1);
+}
+.roc-document-toc__nav-links.lower-links {
+  background: transparent;
+  padding-block: var(--s2) var(--s6);
+  border-top: 1px solid var(--color-primary-light-xxx);
+}
+.roc-document-toc__nav-links ul {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.roc-document-toc__nav-links ul li {
+  font-size: var(--s-1);
+  display: inline-block;
+}
+.roc-document-toc__nav-links ul li + li{
+  margin-inline-start: var(--s-1);
+  padding-inline-start: var(--s-1);
+  border-inline-start: 1px solid var(--color-base);
+}
+.roc-document-toc__nav-links li.align-right {
+  border-inline-start: 0 solid var(--color-primary);
+  margin-inline-start: auto;
+}
+.roc-document-toc__nav-links li.align-right + li.align-right {
+  border-inline-start: 1px solid var(--color-base);
+  margin-inline-start: var(--s-1);
+}
+.roc-document-list__item + .roc-document-list__item {
+  margin-block-start: 0;
+}
+.roc-document-list__item > *:not(.roc-document-list__item__link) {
+  border-inline-start: 2px solid var(--color-base);
+  margin-inline-start: var(--s-3);
+  padding-inline-start: var(--s-3);
+}
+.roc-document-toc__nav-links .item__align-right {
+  border-inline-start: none;
+  margin-inline-start: auto;
+}
+.roc-document-list__item__pdf-link {
+  font-size: var(--s-2);
+}
+.layout-content .section__content.box .section__content.box .section__main ul.roc-document-list {
+  margin-inline-start: -1.5rem;
+}

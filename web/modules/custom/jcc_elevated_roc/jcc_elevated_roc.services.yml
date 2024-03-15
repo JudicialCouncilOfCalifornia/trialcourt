@@ -1,0 +1,26 @@
+services:
+  jcc_elevated_roc.rule.service:
+    class: Drupal\jcc_elevated_roc\Service\JccElevatedRocRuleService
+    arguments: [ '@entity_type.manager', '@state', '@string_translation', '@module_handler', '@file_system' ]
+
+  jcc_elevated_roc.rule_link.service:
+    class: Drupal\jcc_elevated_roc\Service\JccElevatedRocRuleLinkService
+    arguments: [ '@string_translation', '@jcc_elevated_roc.rule.service' ]
+
+  jcc_elevated_roc.rule_list.service:
+    class: Drupal\jcc_elevated_roc\Service\JccElevatedRocRuleListService
+    arguments: [ '@string_translation', '@jcc_elevated_roc.rule.service', '@jcc_elevated_roc.rule_link.service' ]
+
+  jcc_elevated_roc.rule_display.service:
+    class: Drupal\jcc_elevated_roc\Service\JccElevatedRocRuleDisplayService
+    arguments: [ '@string_translation', '@jcc_elevated_roc.rule.service', '@jcc_elevated_roc.rule_link.service' ]
+
+  jcc_elevated_roc.rule_print.service:
+    class: Drupal\jcc_elevated_roc\Service\JccElevatedRocRulePrintService
+    arguments: [ '@string_translation', '@jcc_elevated_roc.rule.service', '@jcc_elevated_roc.rule_link.service' ]
+
+  jcc_elevated_roc.roc_event_subscriber:
+    class: Drupal\jcc_elevated_roc\EventSubscriber\JccElevatedRocEventSubscriber
+    arguments: ['@entity_type.manager', '@module_handler']
+    tags:
+      - { name: event_subscriber }

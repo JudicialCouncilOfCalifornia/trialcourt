@@ -1,0 +1,71 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - eck.eck_type.processed_content.processed_content
+    - field.field.processed_content.processed_content.field_content
+    - field.field.processed_content.processed_content.field_content_search
+    - field.field.processed_content.processed_content.field_parent_node
+    - field.field.processed_content.processed_content.field_parent_node_document_id
+    - field.field.processed_content.processed_content.field_parent_section
+    - field.field.processed_content.processed_content.field_section_level
+    - field.field.processed_content.processed_content.field_section_style
+    - field.field.processed_content.processed_content.field_section_style_name
+    - field.field.processed_content.processed_content.field_title
+  module:
+    - entity_print
+    - text
+third_party_settings:
+  entity_print:
+    pdf_label: 'View PDF'
+id: processed_content.processed_content.default
+targetEntityType: processed_content
+bundle: processed_content
+mode: default
+content:
+  entity_print_view_pdf:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_content:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_parent_node:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_title:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: -5
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_word_docx: true
+  field_content_search: true
+  field_parent_node_document_id: true
+  field_parent_section: true
+  field_section_level: true
+  field_section_style: true
+  field_section_style_name: true
+  langcode: true
+  search_api_excerpt: true

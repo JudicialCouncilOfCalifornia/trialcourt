@@ -1,0 +1,83 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display an ECK entity.
+ *
+ * Available variables:
+ * - eck_entity: The full ECK entity with limited access to object properties
+ *   and methods. Only "getter" methods (method names starting with "get",
+ *   "has", or "is") and a few common methods such as "id" and "label" are
+ *   available. Calling other methods (such as node.delete) will result in an
+ *   exception.
+ * - content: All ECK entity items. Use {{ content }} to print them all,
+ *   or print a subset such as {{ content.field_example }}. Use
+ *   {{ content|without('field_example') }} to temporarily suppress the printing
+ *   of a given child element.
+ * - attributes: HTML attributes for the containing element.
+ * - view_mode: View mode; for example, "teaser" or "full".
+ *
+ * @see template_preprocess_eck_entity()
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library("jcc_storybook/HeroHangover") }}
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/List") }}
+{{ attach_library("jcc_storybook/Button") }}
+{{ attach_library("jcc_storybook/Share") }}
+{{ attach_library("jcc_storybook/Brow") }}
+{{ attach_library("jcc_storybook/BlurbBox") }}
+{{ attach_library("jcc_storybook/SidebarList") }}
+{{ attach_library("jcc_storybook/RulesFormatting") }}
+{{ attach_library("jcc_storybook/LegalFormatting") }}
+
+{% include "@molecules/HeroHangover/HeroHangover.twig" with {
+  variant: 'with_print',
+  news_header: true,
+  background: 'striped-base-light-xx',
+  brow: {
+    part_one: "now"|date("Y"),
+  },
+  heading: 'California Rules of Court'|t,
+  share: {
+    variant: 'default',
+    print_url: content.entity_print_view_pdf['#url'],
+    print_aria_label: 'Print Request',
+    icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
+  },
+  attributes: create_attribute()
+} %}
+
+{#entity-print-view-pdf#}
+{% if content.in_page_nav %}
+  <div class="section section--color-default">
+    <div class="section__content box">
+      <div class="container stack">
+        <div class="section__main with-sidebar cluster">
+          {{ content.in_page_nav }}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{% set main %}
+  <main class="request__main-content stack" style="order: 1;">
+    <h3>{{ content.field_title }}</h3>
+    <div class="court-rules body">
+      {{ content.field_content[0] }}
+    </div>
+  </main>
+{% endset %}
+
+<div class="section section--color-default">
+  <div class="section__content box">
+    <div class="container stack">
+      <div class="section__main with-sidebar grid" style="gap: 3rem;--sidebar-direction: row-reverse;--sidebar-width: 35ch;">
+        <div></div>
+        {{ main }}
+      </div>
+    </div>
+  </div>
+</div>

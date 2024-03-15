@@ -12,6 +12,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\media\Entity\Media;
+use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
 
@@ -318,26 +319,37 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
 
     $entity = $item['#row']->_entity;
 
-    $variables['processed_rows'][$index] = [
-      'title' => $entity->label(),
-      'content' => $render->render($text),
-      'url' => $entity->toUrl()->toString(),
-    ];
+    if ($entity instanceof NodeInterface) {
+      $variables['processed_rows'][$index] = [
+        'title' => $entity->label(),
+        'content' => $render->render($text),
+        'url' => $entity->toUrl()->toString(),
+      ];
+    }
+    else {
+      $variables['processed_rows'][$index] = [
+        'title' => $entity->hasField('field_title') ? $entity->get('field_title')->value : t('View page'),
+        'content' => $render->render($text),
+        'url' => $entity->toUrl()->toString(),
+      ];
+    }
 
     // Append section as a notation to search results, if module enabled and
     // section exists.
-    $module_handler = \Drupal::service('module_handler');
-    if ($module_handler->moduleExists('jcc_elevated_sections')) {
-      $section_service = \Drupal::service('jcc_elevated_sections.service');
-      $section = $section_service->getSectionForNode($entity);
-      if ($section_info = $section_service->getSectionInfo($section)) {
-        if ($section_name = $section_info->getName()) {
-          $variables['processed_rows'][$index]['brow']['notation'] = $section_name;
+    if ($entity instanceof NodeInterface) {
+      $module_handler = \Drupal::service('module_handler');
+      if ($module_handler->moduleExists('jcc_elevated_sections')) {
+        $section_service = \Drupal::service('jcc_elevated_sections.service');
+        $section = $section_service->getSectionForNode($entity);
+        if ($section_info = $section_service->getSectionInfo($section)) {
+          if ($section_name = $section_info->getName()) {
+            $variables['processed_rows'][$index]['brow']['notation'] = $section_name;
+          }
         }
       }
     }
-
   }
+
 }
 
 /**

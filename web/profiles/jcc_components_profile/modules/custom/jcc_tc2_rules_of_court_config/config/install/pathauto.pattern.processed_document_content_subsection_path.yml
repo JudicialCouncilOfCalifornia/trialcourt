@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - eck
+id: processed_document_content_subsection_path
+label: 'Processed Document content subsection path'
+type: 'canonical_entities:processed_content'
+pattern: '/cms/rules/index/[processed_content:field_parent_node_document_id:value]/[processed_content:field_parent_section:value]'
+selection_criteria:
+  09d41740-8b13-42c5-8aff-4c7e42f2597e:
+    id: 'entity_bundle:processed_content'
+    negate: false
+    uuid: 09d41740-8b13-42c5-8aff-4c7e42f2597e
+    context_mapping:
+      processed_content: processed_content
+    bundles:
+      processed_content: processed_content
+selection_logic: and
+weight: -5
+relationships: {  }

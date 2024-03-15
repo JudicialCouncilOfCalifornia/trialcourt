@@ -1,0 +1,53 @@
+jcc_elevated_roc.list_display:
+  path: '/cms/rules/index'
+  defaults:
+    _controller: '\Drupal\jcc_elevated_roc\Controller\JccElevatedRocRuleDisplayController::displayRuleList'
+    _title: "California Rules of Court"
+  requirements:
+    _permission: "access content"
+
+#jcc_elevated_roc.toc_display:
+#  path: '/cms/rules/index/{doc_id}'
+#  defaults:
+#    _controller: '\Drupal\jcc_elevated_roc\Controller\JccElevatedRocRuleDisplayController::displayRuleToc'
+#    _title: "California Rules of Court"
+#  requirements:
+#    _doc_title: '{doc_id}'
+#    _permission: "access content"
+#
+#jcc_elevated_roc.full_pdf_display:
+#  path: '/cms/rules/index/{doc_id}/print'
+#  defaults:
+#    _controller: '\Drupal\jcc_elevated_roc\Controller\JccElevatedRocRuleDisplayController::displayRuleFullPrint'
+#    _title: "California Rules of Court"
+#  requirements:
+#    _doc_title: '{doc_id}'
+#    _permission: "access content"
+#
+#jcc_elevated_roc.rule_display:
+#  path: '/cms/rules/index/{doc_id}/linkid/{doc_section_id}'
+#  defaults:
+#    _controller: '\Drupal\jcc_elevated_roc\Controller\JccElevatedRocRuleDisplayController::displayRuleSection'
+#    _title: "California Rules of Court"
+#  requirements:
+#    _doc_title: '{doc_id}'
+#    _doc_linkid: '{doc_section_id}'
+#    _permission: "access content"
+#
+#jcc_elevated_roc.rule_print:
+#  path: '/cms/rules/index/{doc_id}/linkid/{doc_section_id}/print'
+#  defaults:
+#    _controller: '\Drupal\jcc_elevated_roc\Controller\JccElevatedRocRuleDisplayController::displayRuleSectionPrint'
+#    _title: "California Rules of Court"
+#  requirements:
+#    _doc_title: '{doc_id}'
+#    _doc_linkid: '{doc_section_id}'
+#    _permission: "access content"
+
+jcc_elevated_roc.settings:
+  path: '/admin/config/jcc-elevated/roc-settings'
+  defaults:
+    _form: '\Drupal\jcc_elevated_roc\Form\JccElevatedRocSettingsForm'
+    _title: "JCC Elevated: Rules of Court Settings"
+  requirements:
+    _permission: "administer site configuration"

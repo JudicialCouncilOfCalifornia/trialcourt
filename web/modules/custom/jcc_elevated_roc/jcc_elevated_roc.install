@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_elevated_roc install and uninstall functionality.
+ */
+
+use Drupal\Core\Field\BaseFieldDefinition;
+
+/**
+ * Implements hook_install().
+ */
+function jcc_elevated_roc_install() {
+  module_set_weight('jcc_elevated_roc', 100);
+}
+
+///**
+// * Add 'note' field to 'media' entities.
+// */
+//function jcc_elevated_roc_update_9001() {
+//  $storage_definition = BaseFieldDefinition::create('string')
+//    ->setLabel(t('Note'))
+//    ->setDescription(t('Additional info like Rule numbers or Revision date.'))
+//    ->setRequired(FALSE)
+//    ->setSetting('max_length', 255)
+//    ->setDisplayConfigurable('view', FALSE)
+//    ->setDisplayConfigurable('form', FALSE)
+//    ->setCardinality(1)
+//    ->setDisplayOptions('form', [
+//      'weight' => 0,
+//    ]);
+//
+//  \Drupal::entityDefinitionUpdateManager()
+//    ->installFieldStorageDefinition('note', 'media', 'jcc_elevated_roc', $storage_definition);
+//}

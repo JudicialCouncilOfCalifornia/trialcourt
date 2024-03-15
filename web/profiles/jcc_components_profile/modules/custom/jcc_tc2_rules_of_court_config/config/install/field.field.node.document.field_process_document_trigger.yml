@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_process_document_trigger
+    - node.type.document
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.document.field_process_document_trigger
+field_name: field_process_document_trigger
+entity_type: node
+bundle: document
+label: 'Process document'
+description: 'Check here if you want the word document to be processed/reprocessed into the processed content sections.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

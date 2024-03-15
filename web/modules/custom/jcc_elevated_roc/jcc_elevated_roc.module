@@ -1,0 +1,135 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_elevated_roc.module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+
+// Include all files from the inc directory.
+$includes_path = dirname(__FILE__) . '/inc/*.inc';
+foreach (glob($includes_path) as $filename) {
+  require_once dirname(__FILE__) . '/inc/' . basename($filename);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function jcc_elevated_roc_node_presave(EntityInterface $entity): void {
+
+  // If not a document node, ignore the presave.
+  if ($entity->bundle() != 'document') {
+    return;
+  }
+
+  // If the process document trigger is not found, ignore the presave.
+  if (!$entity->hasField('field_process_document_trigger')) {
+    $entity->set('field_process_document_trigger', FALSE);
+    return;
+  }
+
+  // If Process content trigger is set, work our magic.
+  $trigger = $entity->get('field_process_document_trigger')->first()
+    ? $entity->get('field_process_document_trigger')->first()->getValue()
+    : FALSE;
+  if (!$trigger['value']) {
+    $entity->set('field_process_document_trigger', FALSE);
+    return;
+  }
+
+  // Get our Services.
+  $pc_manager = \Drupal::entityTypeManager()->getStorage('processed_content');
+  $roc_rule_service = \Drupal::service('jcc_elevated_roc.rule.service');
+
+  // Load a Word document (get the real path to the file).
+  $real_path_to_file = $roc_rule_service->getMediaDocumentFilePath($entity);
+  if (!$real_path_to_file) {
+    // If not file, clear out the processed content. We will assume that the
+    // file has been deleted.
+    $entity->set('field_processed_document_content', []);
+    \Drupal::messenger()->addStatus(t('Processed document content has been cleared.'));
+    return;
+  }
+
+  // Load a Word doc and pull out the elements of document into an array.
+  $doc_elements = $roc_rule_service->getDocumentElements($real_path_to_file);
+
+  // Process Word document into useful data. This is the heavy lifter.
+  $data = $roc_rule_service->processRuleDocumentData($doc_elements, $entity);
+
+  // Use a potential document ID from the first item of the document. Use
+  // the existing document_id from the field if it exists. This is a field that
+  // can be manually controlled.
+  $document_id = FALSE;
+  if ($entity->hasField('field_document_id')) {
+    $field_document_id = $entity->get('field_document_id')->getValue();
+    $document_id = $field_document_id[0]['value'] ?? FALSE;
+    if (!$document_id) {
+      // If not set on the field, set the field to the ID pulled from the doc.
+      $entity->set('field_document_id', $data['document_id']);
+    }
+    else {
+      // If value already exists, replace the data sources document ID with the
+      // field set value.
+      $data['document_id'] = $document_id;
+    }
+  }
+
+//  kint($data);
+//  die();
+  // If no content array from the processed data, we assume nothing to process,
+  // and we should clear out the field of any existing references.
+  if (!$data['content']) {
+    $entity->set('field_processed_document_content', []);
+    \Drupal::messenger()->addStatus(t('No content to process'));
+    return;
+  }
+
+  // Get our existing attached eck entity ID's (processed document contents)
+  $existing_items = $entity->get('field_processed_document_content')->getValue();
+  $processed_content_items = [];
+  foreach ($data['content'] as $delta => $item) {
+
+    // For each item in the data array, if there is an entity already at that
+    // delta, reset its field data. Otherwise, we create a new entity.
+    if ($existing_items[$delta]['target_id'] && $existing_items[$delta]['target_id'] != '0') {
+      $pci = $pc_manager->load($existing_items[$delta]['target_id']);
+    }
+    else {
+      $pci = $pc_manager->create(['type' => 'processed_content']);
+    }
+
+    // Set the fields.
+    $pci->set('field_title', $item['field_title']);
+    $pci->set('field_content', [
+      'value' => json_encode($item['field_content']),
+      'format' => 'full_html',
+    ]);
+    $pci->set('field_content_search', json_encode($item['field_content_search']));
+    $pci->set('field_parent_node', $entity->id());
+    $pci->set('field_parent_section', $item['field_parent_section']);
+    $pci->set('field_parent_node_document_id', $document_id);
+    $pci->set('field_section_level', $item['field_section_level']);
+    $pci->set('field_section_style', $item['field_section_style']);
+    $pci->set('field_section_style_name', $item['field_section_style_name']);
+
+    // Add our new or existing entity into our array of target IDs.
+    // $pci = $roc_rule_service->updateProcessedDocumentContent($pci, $item, $document_id);
+    $pci->save();
+
+    // Update processed document content path alias.
+    \Drupal::service('pathauto.generator')->updateEntityAlias($pci, 'update');
+
+    $processed_content_items[$delta] = ['target_id' => $pci->id()];
+  }
+
+  // Add our new and existing content to the reference field.
+  $entity->set('field_processed_document_content', $processed_content_items);
+
+  // Alert our success.
+  \Drupal::messenger()->addStatus(t('Document has been processed.'));
+
+  // Set process trigger back to false. We only want this triggered manually.
+  $entity->set('field_process_document_trigger', FALSE);
+}

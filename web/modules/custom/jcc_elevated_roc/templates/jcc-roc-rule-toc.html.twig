@@ -1,0 +1,35 @@
+{{ attach_library("jcc_storybook/HeroHangover") }}
+{{ attach_library("jcc_storybook/RulesFormatting") }}
+{{ attach_library("jcc_storybook/Button") }}
+
+{% include "@molecules/HeroHangover/HeroHangover.twig" with hero_title %}
+
+{% if upper_links %}
+  <div class="box roc-document-toc__nav-links upper-links">
+    <nav class="container stack">
+      {{ upper_links }}
+    </nav>
+  </div>
+{% endif %}
+
+{% if highlight_form %}
+  <div class="box roc-document-toc__highlight-form upper-links">
+    <nav class="container stack">
+      {{ highlight_form }}
+    </nav>
+  </div>
+{% endif %}
+
+<div class="box stack">
+  <div class="container">
+    {{ rule_toc }}
+  </div>
+</div>
+
+{% if lower_links %}
+  <div class="box roc-document-toc__nav-links lower-links">
+    <nav class="container stack">
+      {{ lower_links }}
+    </nav>
+  </div>
+{% endif %}
