@@ -83,11 +83,12 @@
 {{ attach_library("jcc_storybook/LegalFormatting") }}
 
 {# 'javascript: window.print();', #}
+<span id="document_top"></span>
 
 {% include "@molecules/HeroHangover/HeroHangover.twig" with {
   variant: 'with_print',
   news_header: true,
-  background: 'striped-base-light-xx',
+  background: 'solid-base-light-xx',
   brow: {
     part_one: "now"|date("Y"),
   },
@@ -101,30 +102,30 @@
   attributes: create_attribute()
 } %}
 
-{% if content.in_page_nav %}
-<div class="section section--color-default">
-  <div class="section__content box">
-    <div class="container stack">
-      <div class="section__main with-sidebar cluster">
-        {{ content.in_page_nav }}
-      </div>
-    </div>
+{% if content.upper_links %}
+  <div class="box roc-document-toc__nav-links upper-links">
+    <nav class="container stack">
+      {{ content.upper_links }}
+    </nav>
   </div>
-</div>
 {% endif %}
-
-{% set main %}
-  <main class="request__main-content stack" style="order: 1;">
-    {{ content.table_of_contents }}
-  </main>
-{% endset %}
 
 <div class="section section--color-default">
   <div class="section__content box">
     <div class="container stack">
       <div class="section__main with-sidebar grid" style="gap: 3rem;--sidebar-direction: row;--sidebar-width: 35ch;">
-        {{ main }}
+        <main class="request__main-content stack" style="order: 1;">
+          {{ content.table_of_contents }}
+        </main>
       </div>
     </div>
   </div>
 </div>
+
+{% if content.lower_links %}
+  <div class="box roc-document-toc__nav-links lower-links">
+    <nav class="container stack">
+      {{ content.lower_links }}
+    </nav>
+  </div>
+{% endif %}

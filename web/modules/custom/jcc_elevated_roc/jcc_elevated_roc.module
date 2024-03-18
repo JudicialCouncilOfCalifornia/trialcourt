@@ -133,3 +133,59 @@ function jcc_elevated_roc_node_presave(EntityInterface $entity): void {
   // Set process trigger back to false. We only want this triggered manually.
   $entity->set('field_process_document_trigger', FALSE);
 }
+
+/**
+ * Implements hook_cron().
+ */
+function jcc_elevated_roc_cron(): void {
+
+  // @TODO turn this into a batch process and set it to only run once per day.
+
+  $entity_manager = Drupal::entityTypeManager();
+  $node_manager = $entity_manager->getStorage('node');
+  $pc_manager = $entity_manager->getStorage('processed_content');
+  $pathauto_service = \Drupal::service('pathauto.generator');
+  $alias_storage = \Drupal::service('pathauto.alias_storage_helper');
+
+  $query = \Drupal::entityQuery('node');
+  $query->condition('type', 'document');
+  $query->condition('status', 1);
+  $entity_ids = $query->execute();
+  $nodes = $node_manager->loadMultiple($entity_ids);
+
+  $active_pc_ids = [];
+  foreach ($nodes as $node) {
+    $processed_content_items_in_node = $node->get('field_processed_document_content')->getValue();
+    foreach ($processed_content_items_in_node as $pci) {
+      $active_pc_ids[] = $pci['target_id'];
+    }
+  }
+
+  $query = \Drupal::entityQuery('processed_content');
+  $query->condition('type', 'processed_content');
+  $all_pc_ids = $query->execute();
+
+  $pc_ids_to_delete = array_diff($all_pc_ids, $active_pc_ids);
+
+  // If there are items to delete.
+  if (!empty($pc_ids_to_delete)) {
+    $count = count($pc_ids_to_delete);
+
+    foreach ($pc_ids_to_delete as $pc_id_to_delete) {
+      $pc_to_delete = $pc_manager->load($pc_id_to_delete);
+      pathauto_entity_delete($pc_to_delete);
+      $pc_to_delete->delete();
+    }
+
+    \Drupal::messenger()->addMessage(t('@count inactive processed content items are deleted.', ['@count' => $count]), 'roc');
+
+    // After removing inactive Processed content, and their pathauto aliases,
+    // update the active Processed content aliases. This should remove urls with
+    // *-0 or *-1 type of endings
+    foreach ($active_pc_ids as $pc_id_to_update) {
+      $pc_to_update = $pc_manager->load($pc_id_to_update);
+      $pathauto_service->updateEntityAlias($pc_to_update, 'update', ['force' => TRUE]);
+    }
+  }
+
+}
