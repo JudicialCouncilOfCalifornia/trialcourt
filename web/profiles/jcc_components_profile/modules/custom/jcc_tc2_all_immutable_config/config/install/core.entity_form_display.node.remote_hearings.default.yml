@@ -1,0 +1,265 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.remote_hearings.body
+    - field.field.node.remote_hearings.field_am_access_code
+    - field.field.node.remote_hearings.field_am_conference_id
+    - field.field.node.remote_hearings.field_am_conference_number
+    - field.field.node.remote_hearings.field_am_meeting_end_time
+    - field.field.node.remote_hearings.field_am_meeting_start_time
+    - field.field.node.remote_hearings.field_am_meeting_url
+    - field.field.node.remote_hearings.field_department_id
+    - field.field.node.remote_hearings.field_pm_access_code
+    - field.field.node.remote_hearings.field_pm_conference_id
+    - field.field.node.remote_hearings.field_pm_conference_number
+    - field.field.node.remote_hearings.field_pm_meeting_end_time
+    - field.field.node.remote_hearings.field_pm_meeting_start_time
+    - field.field.node.remote_hearings.field_pm_meeting_url
+    - node.type.remote_hearings
+  module:
+    - content_moderation
+    - datetime
+    - field_group
+    - link
+    - path
+    - scheduler
+    - scheduler_content_moderation_integration
+third_party_settings:
+  field_group:
+    group_morning_session:
+      children:
+        - field_am_conference_id
+        - field_am_conference_number
+        - field_am_access_code
+        - field_am_meeting_start_time
+        - field_am_meeting_end_time
+        - field_am_meeting_url
+      label: 'Morning Session'
+      region: content
+      parent_name: ''
+      weight: 15
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        description: ''
+        required_fields: true
+    group_afternoon_session:
+      children:
+        - field_pm_conference_id
+        - field_pm_conference_number
+        - field_pm_access_code
+        - field_pm_meeting_start_time
+        - field_pm_meeting_end_time
+        - field_pm_meeting_url
+      label: 'Afternoon Session'
+      region: content
+      parent_name: ''
+      weight: 16
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        description: ''
+        required_fields: false
+id: node.remote_hearings.default
+targetEntityType: node
+bundle: remote_hearings
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_am_access_code:
+    type: string_textfield
+    weight: 21
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_am_conference_id:
+    type: string_textfield
+    weight: 18
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_am_conference_number:
+    type: string_textfield
+    weight: 19
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_am_meeting_end_time:
+    type: datetime_default
+    weight: 23
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_am_meeting_start_time:
+    type: datetime_default
+    weight: 22
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_am_meeting_url:
+    type: link_default
+    weight: 24
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_department_id:
+    type: string_textfield
+    weight: 14
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_pm_access_code:
+    type: string_textfield
+    weight: 22
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_pm_conference_id:
+    type: string_textfield
+    weight: 20
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_pm_conference_number:
+    type: string_textfield
+    weight: 21
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_pm_meeting_end_time:
+    type: string_textfield
+    weight: 25
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_pm_meeting_start_time:
+    type: datetime_default
+    weight: 24
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_pm_meeting_url:
+    type: link_default
+    weight: 26
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 1
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 12
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    weight: 4
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  publish_on:
+    type: datetime_timestamp_no_default
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  publish_state:
+    type: scheduler_moderation
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 13
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    weight: 5
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 2
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  unpublish_on:
+    type: datetime_timestamp_no_default
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  unpublish_state:
+    type: scheduler_moderation
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  url_redirects:
+    weight: 11
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  body: true

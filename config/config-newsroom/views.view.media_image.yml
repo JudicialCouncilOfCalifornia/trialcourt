@@ -6,6 +6,8 @@ dependencies:
     - image.style.thumbnail
     - media.type.image
     - system.menu.admin
+    - user.role.administrator
+    - user.role.editor
   module:
     - entity_usage
     - media
@@ -731,9 +733,11 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       access:
-        type: perm
+        type: role
         options:
-          perm: 'access media overview'
+          role:
+            editor: editor
+            administrator: administrator
       cache:
         type: tag
         options: {  }
@@ -1094,7 +1098,7 @@ display:
         - url
         - url.query_args
         - user
-        - user.permissions
+        - user.roles
       tags: {  }
   media_page_list:
     id: media_page_list
@@ -1122,5 +1126,5 @@ display:
         - url
         - url.query_args
         - user
-        - user.permissions
+        - user.roles
       tags: {  }

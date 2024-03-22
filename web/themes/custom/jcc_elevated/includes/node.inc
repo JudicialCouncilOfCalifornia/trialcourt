@@ -123,12 +123,13 @@ function jcc_elevated_preprocess_node(&$variables) {
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
 function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
+  $render = \Drupal::service('renderer');
   $variables['breadcrumb'] = \Drupal::service('breadcrumb')
     ->build(\Drupal::routeMatch())
     ->toRenderable();
 
   $body_field = $node->body->value;
-  $variables['body_length'] = strlen($body_field);
+  $variables['body_length'] = $body_field !== NULL ? strlen($body_field) : 0;
   // Render and truncate field_components.
   if ($node->body->isEmpty()) {
     $render_array = $node->field_components->view('default');
@@ -150,6 +151,13 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
     $textshare = $basic_page->get('field_components')->referencedEntities();
     foreach ($textshare as $text) {
       $variables['textshare'] = $text->get('field_text')->view('default');
+      if ((empty($node->body->value)) && (!empty($text))) {
+        $field_view = $text->get('field_text')->view('default');
+        $textshare = $render->render($field_view);
+        $news_content = trim(str_replace(["\n", "\r"], '', strip_tags($textshare)));
+        $node->body->value = $news_content;
+        $node->save();
+      }
     }
   }
   if ($basic_page->hasField('field_media')) {
