@@ -195,8 +195,8 @@ function jcc_elevated_custom_preprocess_views_view_table(&$variables): void {
   $view = $variables['view'];
   if ($view->current_display == 'publication_manager') {
     // Check if first publication have the jcc_section field available.
-    $first_result = $view->result[0]->_entity;
-    if ($first_result->hasField('jcc_section')) {
+    $first_result = $view->result[0]->_entity ?? FALSE;
+    if ($first_result && $first_result->hasField('jcc_section')) {
       // Check if the view doesn't already have the field in display.
       if (!isset($variables['fields']['jcc_section'])) {
         $view->addHandler('publication_manager', 'field', 'node_field_data', 'jcc_section', [], NULL);
