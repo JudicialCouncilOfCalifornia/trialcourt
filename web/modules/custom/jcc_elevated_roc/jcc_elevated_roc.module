@@ -88,13 +88,16 @@ function jcc_elevated_roc_node_presave(EntityInterface $entity): void {
 
   // Get our existing attached eck entity ID's (processed document contents)
   $existing_items = $entity->get('field_processed_document_content')->getValue();
+
   $processed_content_items = [];
   foreach ($data['content'] as $delta => $item) {
+    $existing = FALSE;
 
     // For each item in the data array, if there is an entity already at that
     // delta, reset its field data. Otherwise, we create a new entity.
     if ($existing_items[$delta]['target_id'] && $existing_items[$delta]['target_id'] != '0') {
       $pci = $pc_manager->load($existing_items[$delta]['target_id']);
+      $existing = TRUE;
     }
     else {
       $pci = $pc_manager->create(['type' => 'processed_content']);
@@ -119,7 +122,8 @@ function jcc_elevated_roc_node_presave(EntityInterface $entity): void {
     $pci->save();
 
     // Update processed document content path alias.
-    \Drupal::service('pathauto.generator')->updateEntityAlias($pci, 'update');
+    $op = $existing ? 'update' : 'insert';
+    \Drupal::service('pathauto.generator')->updateEntityAlias($pci, $op);
 
     $processed_content_items[$delta] = ['target_id' => $pci->id()];
   }

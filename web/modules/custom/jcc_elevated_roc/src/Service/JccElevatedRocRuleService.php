@@ -247,6 +247,7 @@ class JccElevatedRocRuleService {
         return 'advcommtext';
 
       case '[Numbers] + Left: 0 pt First line: 0 pt':
+      case '[Numbers] + Left:  0 pt First line:  0 pt':
         return 'numberedlist';
 
       case 'Heading 8':
