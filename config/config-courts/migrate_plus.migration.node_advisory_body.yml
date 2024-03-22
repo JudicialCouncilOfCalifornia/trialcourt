@@ -11,8 +11,8 @@ cck_plugin_method: null
 migration_tags:
   - node
   - advisory_body
-migration_group: jcc2
-label: 'Advisory body: Import Node'
+migration_group: Courts
+label: 'Courts: Import Advisory body'
 source:
   plugin: url
   data_fetcher_plugin: http
@@ -50,8 +50,19 @@ source:
       selector: field_about
     -
       name: field_updates_resources
-      label: Updates & Resources
+      label: 'Updates & Resources'
       selector: field_updates_resources
+    -
+      name: field_advisory_body_type
+      label: 'Advisory body type'
+      selector: field_advisory_body_type
+    -
+      name: field_date_note
+      label: 'Date note'
+      selector: field_date_note
+    - name: field_related_links
+      label: 'Related links'
+      selector: field_related_links
   ids:
     src_unique_id:
       type: string
@@ -77,43 +88,71 @@ process:
       plugin: prefix_relative_links
   body/format:
     plugin: default_value
-    default_value: full_html
+    default_value: body
   field_subcommittees/value:
     -
       plugin: media_replace_file_link
-      source: body
+      source: field_subcommittees
     -
       plugin: prefix_relative_links
   field_subcommittees/format:
     plugin: default_value
-    default_value: full_html
+    default_value: body
   field_members/value:
     -
       plugin: media_replace_file_link
-      source: body
+      source: field_members
     -
       plugin: prefix_relative_links
   field_members/format:
     plugin: default_value
-    default_value: full_html
+    default_value: body
   field_about/value:
     -
       plugin: media_replace_file_link
-      source: body
+      source: field_about
     -
       plugin: prefix_relative_links
   field_about/format:
     plugin: default_value
-    default_value: full_html
+    default_value: body
   field_updates_resources/value:
     -
       plugin: media_replace_file_link
-      source: body
+      source: field_updates_resources
     -
       plugin: prefix_relative_links
   field_updates_resources/format:
     plugin: default_value
-    default_value: full_html
+    default_value: body
+  field_advisory_body_type:
+    -
+      plugin: explode
+      source: field_advisory_body_type
+      delimiter: ','
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: advisory_body_type
+      value_key: name
+      ignore_case: true
+  field_date_note/value:
+    -
+      plugin: media_replace_file_link
+      source: field_date_value
+    -
+      plugin: prefix_relative_links
+  field_date_note/format:
+    plugin: default_value
+    default_value: body
+  field_related_links/value:
+    - plugin: media_replace_file_link
+      source: field_related_links
+    - plugin: prefix_relative_links
+  field_related_links/format:
+    plugin: default_value
+    default_value: body
 destination:
   plugin: 'entity:node'
   default_bundle: advisory_body
