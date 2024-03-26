@@ -216,6 +216,7 @@ How to create additional migration profiles through configuration files for [Mig
          </details>
 
 Documentation:
+ - [Migration 101](https://drupalmigrate.org/)
  - [Migrate API](https://www.drupal.org/docs/drupal-apis/migrate-api)
    - [Migrate Examples](https://www.drupal.org/docs/drupal-apis/migrate-api/migrate-destination-plugins-examples)
  - [Migrate Conditions](https://www.drupal.org/docs/8/api/migrate-api/migrate-process-plugins/migrate-conditions/migrate-conditions-process-plugins) - requires separate module add-on
