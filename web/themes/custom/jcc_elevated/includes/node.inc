@@ -162,7 +162,7 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
   }
   if ($basic_page->hasField('field_media')) {
     $card_media = $basic_page->get('field_media');
-    $media = Media::load($card_media->target_id);
+    $media = $card_media->target_id ? Media::load($card_media->target_id) : FALSE;
     if ($media && $media->field_media_image) {
       $uri = $media->field_media_image->entity->getFileUri();
       $image_url = file_create_url($uri);

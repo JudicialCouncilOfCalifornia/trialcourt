@@ -8,10 +8,14 @@ dependencies:
     - field.field.node.news.field_byline
     - field.field.node.news.field_components
     - field.field.node.news.field_date
+    - field.field.node.news.field_media
+    - field.field.node.news.field_media_file_multiple
     - field.field.node.news.field_news_type
+    - field.field.node.news.field_node_reference
     - node.type.news
   module:
     - datetime
+    - text
     - user
 _core:
   default_config_hash: DnK00AzMElwdHq5Ch-ifJVyH_J-DYnaxeznpSGib8gQ
@@ -20,10 +24,18 @@ targetEntityType: node
 bundle: news
 mode: teaser
 content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 300
+    third_party_settings: {  }
+    weight: 2
+    region: content
   content_moderation_control:
     settings: {  }
     third_party_settings: {  }
-    weight: -20
+    weight: 0
     region: content
   field_date:
     type: datetime_default
@@ -32,13 +44,18 @@ content:
       timezone_override: ''
       format_type: m_d_y
     third_party_settings: {  }
-    weight: 0
+    weight: 1
     region: content
 hidden:
-  body: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_byline: true
   field_components: true
+  field_media: true
+  field_media_file_multiple: true
   field_news_type: true
+  field_node_reference: true
   langcode: true
   links: true
   search_api_excerpt: true
