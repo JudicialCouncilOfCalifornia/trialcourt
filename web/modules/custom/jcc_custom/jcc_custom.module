@@ -199,7 +199,7 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
  * Implements hook__field_group_form_process_build_alter().
  */
 function jcc_custom_field_group_form_process_build_alter(array &$element, FormStateInterface $form_state, &$complete_form): void {
-  $form_id = $element['#form_id'];
+  $form_id = $element['#form_id'] ?? '';
   switch ($form_id) {
     case 'node_request_form':
     case 'node_request_edit_form':
@@ -280,11 +280,10 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
  * Implements hook_preprocess_views_view() for global use.
  */
 function jcc_custom_preprocess_views_view(&$variables) {
-  $view_id = $variables['view_array']['#view_id'] ?? '';
-  $display_id = $variables['view_array']['#display_id'] ?? '';
+  $views_reference = $variables['view']->element['#viewsreference']['parent_entity_type'] ?? '';
 
-  // Suppress job search view exposed filters from node edit preview.
-  if ($variables['theme_hook_original'] === 'views_view' && ($view_id === 'jobs' && $display_id === 'search')) {
+  // Suppress exposed view filters from node edit preview.
+  if ($variables['theme_hook_original'] === 'views_view' && $views_reference === 'paragraph') {
     $variables['exposed'] = [];
   }
 }
