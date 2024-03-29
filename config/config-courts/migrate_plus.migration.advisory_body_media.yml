@@ -11,7 +11,7 @@ cck_plugin_method: null
 migration_tags:
   - advisory_body
   - media
-migration_group: jcc2
+migration_group: courts
 label: 'Advisory body: Import media'
 source:
   plugin: url
@@ -25,16 +25,20 @@ source:
   fields:
     -
       name: id
-      selector: url
+      selector: id
       label: 'Unique Identifier'
     -
       name: url
-      selector: url
+      selector: id
       label: 'Attachment file url'
     -
       name: title
       selector: title
       label: Title
+    -
+      name: media_type
+      label: 'Media type'
+      selector: type
 process:
   pseudo_encoded_title:
     plugin: callback
@@ -59,12 +63,25 @@ process:
   field_media_file/target_id:
     -
       plugin: migration_lookup
-      migration: forms_file
+      migration: advisory_body_files
       source: id
     -
       plugin: skip_on_empty
       method: process
       message: 'Cannot import empty filename.'
+  field_media_file/description: '@pseudo_encoded_title'
+  field_category:
+    -
+      plugin: explode
+      source: media_type
+      delimiter: ','
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: media_file_category
+      value_key: name
+      ignore_case: true
   uid:
     plugin: default_value
     default_value: 1
@@ -73,4 +90,4 @@ destination:
   default_bundle: file
 migration_dependencies:
   required:
-    - forms_file
+    - advisory_body_files

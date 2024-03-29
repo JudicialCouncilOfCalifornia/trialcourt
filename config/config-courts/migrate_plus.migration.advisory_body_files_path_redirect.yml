@@ -12,7 +12,7 @@ migration_tags:
   - advisory_body
   - file
   - redirect
-migration_group: jcc2
+migration_group: courts
 label: 'Advisory body: Import Path Redirects'
 source:
   plugin: url
@@ -24,11 +24,11 @@ source:
     -
       name: id
       label: 'Unique ID'
-      selector: url
+      selector: id
     -
       name: url
       label: Url
-      selector: url
+      selector: id
   ids:
     id:
       type: string
@@ -91,4 +91,4 @@ destination:
   plugin: 'entity:redirect'
 migration_dependencies:
   required:
-    - forms_file
+    - advisory_body_files
