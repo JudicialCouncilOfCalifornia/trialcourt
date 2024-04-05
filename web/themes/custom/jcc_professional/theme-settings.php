@@ -108,6 +108,12 @@ function jcc_professional_form_system_theme_settings_alter(&$form, FormStateInte
     '#default_value' => theme_get_setting('facebook'),
     '#placeholder' => 'https://www.facebook.com/[name]/',
   ];
+  $form['social']['instagram'] = [
+    '#type' => 'textfield',
+    '#title' => t('Instagram'),
+    '#default_value' => theme_get_setting('instagram'),
+    '#placeholder' => 'https://www.instagram.com/[name]',
+  ];
   $form['social']['flickr'] = [
     '#type' => 'textfield',
     '#title' => t('Flickr'),
