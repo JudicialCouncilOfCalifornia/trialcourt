@@ -2,19 +2,23 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_advisory_body
+    - field.storage.node.field_content_reference
     - node.type.advisory_body
+    - node.type.arbitrator
+    - node.type.case
     - node.type.event
+    - node.type.subpage
+    - node.type.tentative_ruling
   module:
     - tmgmt_content
 third_party_settings:
   tmgmt_content:
     excluded: false
-id: node.event.field_advisory_body
-field_name: field_advisory_body
+id: node.event.field_content_reference
+field_name: field_content_reference
 entity_type: node
 bundle: event
-label: 'Advisory body'
+label: 'Content reference'
 description: ''
 required: false
 translatable: false
@@ -25,9 +29,13 @@ settings:
   handler_settings:
     target_bundles:
       advisory_body: advisory_body
+      arbitrator: arbitrator
+      case: case
+      subpage: subpage
+      tentative_ruling: tentative_ruling
     sort:
       field: _none
       direction: ASC
     auto_create: false
-    auto_create_bundle: ''
+    auto_create_bundle: advisory_body
 field_type: entity_reference
