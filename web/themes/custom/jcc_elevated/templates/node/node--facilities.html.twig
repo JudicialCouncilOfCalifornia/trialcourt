@@ -1,5 +1,9 @@
  {{ attach_library("jcc_storybook/List") }}
 
+  {% if imageurl is not empty %}   
+    <img src={{imageurl}} />    
+  {% endif %}  
+
   {% set items = [] %}
   {% for key,value in details.project_information %}
     {% if value is not empty %}
@@ -20,7 +24,7 @@
   {% endif %}
  
 <p>TITLE: {{node.title.value}}</p>
-<p>Completion date {{details.completion_date}}</p>
+{# <p>Completion date {{completiondate}}</p> #}
 <p>BACKGROUND: {{content.body  }} </p>
 <p> SCHEDULE{{details.schedule | raw }} </p>
 

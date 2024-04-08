@@ -403,6 +403,13 @@ function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables
 }
 
 /**
+ * Implements hook_preprocess_views_view() for facilities block.
+ */
+function jcc_elevated_preprocess_views_view__facilities__block_1(&$variables) {
+  __jcc_view_results_exposed_filter_init($variables);
+}
+
+/**
  * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {

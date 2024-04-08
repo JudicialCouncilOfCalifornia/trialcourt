@@ -223,17 +223,17 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $basic_page = Node::load($node->id());
   $variables['node'] = $node;
   $field_schedule_render_array = $node->field_schedule->view('default');
-  if (!$field_schedule_render_array['#items']->isEmpty()) {
+  if ($field_schedule_render_array['#items'] && !$field_schedule_render_array['#items']->isEmpty()) {
     $schedule_content = render($field_schedule_render_array[0]['#text']);
   }
-  /* $sample = $node->get('field_date')->date ?
-  $node->get('field_date')->date->format('F j, Y') : '';
-  $variables['completiondate'] = $sample;*/
+  $sample = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '';
+  $variables['completiondate'] = $sample;
+  
   $details = [
     'project_information' => [
       'Gross Square Footage' => $node->field_gross_square_footage->value,
       'Total Courtrooms' => $node->field_total_courtrooms->value,
-      'Completion Date' => $node->get('field_date')->value,
+      'Completion Date' => $sample,
     ],
     'schedule' => $schedule_content,
   ];
@@ -249,6 +249,18 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       'url' => $media_url,
     ];
   }
+
+  // Hero Image
+  if ($basic_page->hasField('field_media')) {
+    $hero_image = $basic_page->get('field_media');
+    $media = Media::load($hero_image->target_id);
+    if ($media && $media->field_media_image) {
+      $uri = $media->field_media_image->entity->getFileUri();
+      $image_url = file_create_url($uri);
+      $variables['imageurl'] = $image_url;
+    }
+  }
+
   $variables['projectimages'] = $projectimages;
   $variables['details'] = $details;
 }
