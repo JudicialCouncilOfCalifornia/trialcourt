@@ -110,7 +110,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
         $content = $item->get('field_text')->view('default');
       }
       else {
-        $content = $sticky_item['#node']->get('body')->view('default');
+        $content = $sticky_item['#node']->get('body')->view('teaser');
       }
       $variables['excerpts'][] = $content;
     }
