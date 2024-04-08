@@ -1,0 +1,73 @@
+diff --git a/js/fullcalendar_view.js b/js/fullcalendar_view.js
+index aaf89c3..d4f3dfa 100644
+--- a/js/fullcalendar_view.js
++++ b/js/fullcalendar_view.js
+@@ -52,6 +52,28 @@
+       }
+     }
+   }
++  /**
++   * Event Title render handler
++   */
++   function eventTitleRender (info) {
++    let viewIndex = parseInt(this.el.getAttribute("data-calendar-view-index"));
++    let viewSettings = drupalSettings.fullCalendarView[viewIndex];
++    // Event title html markup.
++    let eventTitleEle = info.el.getElementsByClassName('fc-title');
++    if(eventTitleEle.length > 0) {
++      eventTitleEle[0].innerHTML = info.event.title;
++    }
++    // Event list tile html markup.
++    let eventListTitleEle = info.el.getElementsByClassName('fc-list-item-title');
++    if(eventListTitleEle.length > 0) {
++      if (info.event.url) {
++        eventListTitleEle[0].innerHTML = '<a href="' + info.event.url + '">' + info.event.title + '</a>';
++      }
++      else {
++        eventListTitleEle[0].innerHTML = info.event.title;
++      }
++    }
++   }
+   /**
+    * Event resize handler
+    */
+@@ -141,6 +163,9 @@
+     info.jsEvent.preventDefault();
+     let thisEvent = info.event;
+     let viewIndex = parseInt(this.el.getAttribute("data-calendar-view-index"));
++    if(isNaN(viewIndex)){
++      viewIndex = 0;
++    }
+     let viewSettings = drupalSettings.fullCalendarView[viewIndex];
+     let des = thisEvent.extendedProps.des;
+     // Show the event detail in a pop up dialog.
+@@ -282,14 +307,20 @@
+     .each(function() {              
+       let calendarEl = this;
+       let viewIndex = parseInt(calendarEl.getAttribute("data-calendar-view-index"));
++      if (isNaN(viewIndex)) {
++        viewIndex = 0;
++      }
+       let viewSettings = drupalSettings.fullCalendarView[viewIndex];
++      if(viewSettings.calendar_options !== undefined) {
+       var calendarOptions = JSON.parse(viewSettings.calendar_options);
+       // Switch default view at mobile widths.
+       if (calendarOptions.mobileWidth !== undefined && calendarOptions.defaultMobileView !== undefined && $(window).width() <= calendarOptions.mobileWidth) {
+        calendarOptions.defaultView = calendarOptions.defaultMobileView;
+       }
+       // Bind the render event handler.
+-      calendarOptions.eventRender = eventRender;
++      //calendarOptions.eventRender = eventRender;
++      // Bind the render title event handler.
++      calendarOptions.eventRender = eventTitleRender;
+       // Bind the resize event handler.
+       calendarOptions.eventResize = eventResize;
+       // Bind the day click handler.
+@@ -373,6 +404,7 @@
+ 
+         });
+       }
++    }
+     });
+   }
+   
