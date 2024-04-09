@@ -6,17 +6,25 @@ dependencies:
     - field.field.node.facilities.field_agency
     - field.field.node.facilities.field_agency_manager
     - field.field.node.facilities.field_architectural_engineering_
+    - field.field.node.facilities.field_award
     - field.field.node.facilities.field_budget
     - field.field.node.facilities.field_ceqa
+    - field.field.node.facilities.field_criteria_architect
     - field.field.node.facilities.field_date
+    - field.field.node.facilities.field_design_build_entity
     - field.field.node.facilities.field_fund
+    - field.field.node.facilities.field_general_contractor
     - field.field.node.facilities.field_gross_square_footage
     - field.field.node.facilities.field_initial_funding_year
+    - field.field.node.facilities.field_managed_by
     - field.field.node.facilities.field_media
     - field.field.node.facilities.field_media_file_multiple
     - field.field.node.facilities.field_occupancy_date
+    - field.field.node.facilities.field_planning_study
+    - field.field.node.facilities.field_project_advisory_group
     - field.field.node.facilities.field_project_status
     - field.field.node.facilities.field_schedule
+    - field.field.node.facilities.field_summary
     - field.field.node.facilities.field_total_courtrooms
     - node.type.facilities
   module:
@@ -60,6 +68,14 @@ content:
     third_party_settings: {  }
     weight: 103
     region: content
+  field_award:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 125
+    region: content
   field_budget:
     type: string
     label: above
@@ -75,6 +91,14 @@ content:
     third_party_settings: {  }
     weight: 116
     region: content
+  field_criteria_architect:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 121
+    region: content
   field_date:
     type: datetime_default
     label: above
@@ -84,6 +108,13 @@ content:
     third_party_settings: {  }
     weight: 102
     region: content
+  field_design_build_entity:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 124
+    region: content
   field_fund:
     type: string
     label: above
@@ -91,6 +122,14 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     weight: 107
+    region: content
+  field_general_contractor:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 119
     region: content
   field_gross_square_footage:
     type: number_integer
@@ -108,6 +147,14 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     weight: 109
+    region: content
+  field_managed_by:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 122
     region: content
   field_media:
     type: entity_reference_label
@@ -134,6 +181,20 @@ content:
     third_party_settings: {  }
     weight: 110
     region: content
+  field_planning_study:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 118
+    region: content
+  field_project_advisory_group:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 120
+    region: content
   field_project_status:
     type: list_default
     label: above
@@ -147,6 +208,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 113
+    region: content
+  field_summary:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 123
     region: content
   field_total_courtrooms:
     type: number_integer
