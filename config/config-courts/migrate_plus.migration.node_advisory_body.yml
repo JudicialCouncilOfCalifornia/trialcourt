@@ -23,11 +23,11 @@ source:
     -
       name: src_unique_id
       label: 'Unique ID'
-      selector: url
+      selector: id
     -
       name: url
       label: Url
-      selector: url
+      selector: id
     -
       name: title
       label: Title
@@ -49,9 +49,9 @@ source:
       label: About
       selector: field_about
     -
-      name: field_updates_resources
-      label: 'Updates & Resources'
-      selector: field_updates_resources
+      name: field_news_reports
+      label: 'News reports'
+      selector: field_news_reports
     -
       name: field_advisory_body_type
       label: 'Advisory body type'
@@ -64,6 +64,14 @@ source:
       name: field_related_links
       label: 'Related links'
       selector: field_related_links
+    -
+      name: field_date_established
+      label: 'Date established'
+      selector: field_date_established
+    -
+      name: field_contact_info
+      label: 'Contact info'
+      selector: field_contact_info
   ids:
     src_unique_id:
       type: string
@@ -117,13 +125,13 @@ process:
   field_about/format:
     plugin: default_value
     default_value: body
-  field_updates_resources/value:
+  field_news_reports/value:
     -
       plugin: media_replace_file_link
-      source: field_updates_resources
+      source: field_news_reports
     -
       plugin: prefix_relative_links
-  field_updates_resources/format:
+  field_news_reports/format:
     plugin: default_value
     default_value: body
   field_advisory_body_type:
@@ -141,7 +149,7 @@ process:
   field_date_note/value:
     -
       plugin: media_replace_file_link
-      source: field_date_value
+      source: field_date_note
     -
       plugin: prefix_relative_links
   field_date_note/format:
@@ -154,6 +162,11 @@ process:
   field_related_links/format:
     plugin: default_value
     default_value: body
+  field_date_established/value:
+    - plugin: format_date
+      source: field_date_established
+      from_format: 'F j, Y'
+      to_format: 'Y-m-d'
 destination:
   plugin: 'entity:node'
   default_bundle: advisory_body

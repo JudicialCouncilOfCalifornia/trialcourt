@@ -1,0 +1,96 @@
+uuid: 56dc2659-15bd-49d8-a627-bf81f50ad088
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: DETWfrp-GWfk6QZgRvifM087QzgNvOw9Ge24FpxLaMQ
+id: node_events
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - node
+  - events
+migration_group: Courts
+label: 'Courts: Events'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  fields:
+    -
+      name: id
+      label: 'Unique ID'
+      selector: event_id
+    -
+      name: title
+      label: Title
+      selector: event_name
+    -
+      name: start_date
+      label: 'Start date'
+      selector: start_date
+    -
+      name: end_date
+      label: 'End date'
+      selector: end_date
+    -
+      name: files
+      label: 'Files'
+      selector: files
+    -
+      name: advisory_body
+      label: 'Advisory body'
+      selector: advisory_body_id
+  ids:
+    id:
+      type: string
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  title:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: TITLE
+  path/pathauto:
+    plugin: default_value
+    default_value: 1
+  field_event_date/value:
+    - plugin: format_date
+      source: start_date
+      from_format: 'F j, Y'
+      to_format: 'Y-m-d'
+  field_event_date/end_value:
+    plugin: format_date
+    source: end_date
+    from_format: 'F j, Y'
+    to_format: 'Y-m-d'
+#  field_event_files:
+#    - plugin: explode
+#      source: files
+#      delimiter: ','
+#    - plugin: deepen
+#    - plugin: sub_process
+#      process:
+#        target_id:
+#          - plugin: migration_lookup
+#            migration: advisory_body_media
+#            source: id
+#          - plugin: extract
+#            index:
+#              - 0
+#        target_revision_id: '@target_id'
+  field_content_reference:
+    - plugin: migration_lookup
+      migration: node_advisory_body
+      source: advisory_body
+destination:
+  plugin: 'entity:node'
+  default_bundle: event
+migration_dependencies: null
