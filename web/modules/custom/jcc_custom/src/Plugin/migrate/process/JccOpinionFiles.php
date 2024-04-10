@@ -30,7 +30,7 @@ class JccOpinionFiles extends ProcessPluginBase {
     if ($value) {
       $files = [
         0 => $value . '.PDF',
-        1 => $value . '.DOCX',
+        1 => $value . '.DOC',
       ];
       return $files;
     }
