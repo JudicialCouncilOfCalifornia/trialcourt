@@ -35,6 +35,15 @@ source:
     file_id:
       type: string
 process:
+  field_media_file/target_id:
+    -
+      plugin: migration_lookup
+      migration: courts_file_opinion
+      source: file_id
+    -
+      plugin: skip_on_empty
+      method: row
+      message: 'No file to attach to media.'
   pseudo_destination_filename:
     -
       plugin: path_from_url
@@ -48,18 +57,9 @@ process:
       callable: urldecode
     -
       plugin: skip_on_empty
-      method: row
+      method: process
       message: 'Cannot create media name from missing filename.'
   name: '@pseudo_destination_filename'
-  field_media_file/target_id:
-    -
-      plugin: migration_lookup
-      migration: courts_file_opinion
-      source: file_id
-    -
-      plugin: skip_on_empty
-      method: process
-      message: 'No file to attach to media.'
   field_category:
     -
       plugin: default_value
@@ -102,5 +102,5 @@ destination:
   plugin: 'entity:media'
   default_bundle: file
 migration_dependencies:
-  required:
+  optional:
     - courts_file_opinion
