@@ -119,8 +119,11 @@ process:
       bundle: opinion_source
   field_date/value:
     -
-      plugin: format_date
+      plugin: callback
+      callable: strtotime
       source: posted
+    -
+      plugin: format_date
       from_format: U
       to_format: Y-m-d
   field_case_number_plain: case
@@ -140,6 +143,7 @@ process:
     -
       plugin: migration_lookup
       migration: courts_media_opinion
+      no_stub: true
     -
       plugin: skip_on_empty
       method: process
@@ -169,5 +173,5 @@ destination:
   plugin: 'entity:node'
   default_bundle: opinion
 migration_dependencies:
-  required:
+  optional:
     - courts_media_opinion

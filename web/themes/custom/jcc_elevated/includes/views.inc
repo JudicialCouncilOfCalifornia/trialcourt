@@ -649,7 +649,9 @@ function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variabl
               // Link to media file.
               $media_file_id = $media->field_media_file[0]->getValue()['target_id'];
               $citing_file = File::load($media_file_id);
-              $citing_url = \Drupal::service('file_url_generator')->generateAbsoluteString($citing_file->getFileUri());
+              if ($citing_file) {
+                $citing_url = \Drupal::service('file_url_generator')->generateAbsoluteString($citing_file->getFileUri());
+              }
               break;
           }
         }
