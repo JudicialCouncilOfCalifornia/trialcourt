@@ -691,3 +691,107 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
 
   }
 }
+
+/**
+ * Node: Opinion preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void {
+  $case_number = $node->get('field_case_number_plain')->value;
+  $opinion_source = Term::load($node->get('field_opinion_source')->target_id)->get('name')->value;
+
+  // Attachments.
+  $attachments = [];
+  if ($node->get('field_media_file_multiple')->getValue()) {
+    foreach ($node->get('field_media_file_multiple')->getValue() as $attachment) {
+      $media = Media::load($attachment['target_id']);
+      $file = File::load($media->field_media_file->target_id);
+      if ($file) {
+        $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+        $file_name = $file->getFileName();
+        $file_name_parts = explode('.', $file_name);
+        $file_extension = end($file_name_parts);
+        $attachments[] = [
+          'url' => $file_url,
+          'file_type' => strtoupper($file_extension),
+          'aria_label' => t('Download or view') . ' ' . $file_name,
+        ];
+      }
+    }
+  }
+
+  // Related cases.
+  $related_cases_urls = [];
+  $related_cases = $node->get('field_related_cases_plain')->value;
+  if ($related_cases) {
+    // If space delimited by accident or from migration.
+    if (strpos($related_cases, ' ')) {
+      $related_cases = preg_split('/\s+/', $related_cases);
+    }
+    else {
+      // Remove any spaces from comma delimited list.
+      $related_cases = preg_replace('/\s+/', '', $related_cases);
+      // Convert to array.
+      $related_cases = explode(',', $related_cases);
+    }
+    foreach ($related_cases as $related_case) {
+      $accms_url = __jcc_accms_link_builder($related_case);
+      if ($accms_url) {
+        $related_cases_urls[] = '<a href="' . $accms_url . '" arial_label="View related case ' . $related_case . '">' . $related_case . '</a>';
+      }
+    }
+  }
+
+  // Web page citings.
+  $citings_urls = [];
+  $citings = $node->get('field_web_page_citings')->getValue();
+  if ($citings) {
+    foreach ($citings as $citing) {
+      $citing_url = $citing['uri'];
+      $citing_url_parts = parse_url($citing_url);
+      $citing_title = $citing['title'];
+
+      // If linked to Drupal URI.
+      if ($citing_url_parts['scheme'] == 'entity') {
+        $entity_path = Url::fromUri($citing['uri'])->toString();
+        $entity_path_parts = explode('/', $entity_path);
+        switch ($entity_path_parts[1]) {
+          case 'media':
+            $media_id = $entity_path_parts[2];
+            $media = Media::load($media_id);
+            // Migration link title substitute.
+            if (is_null($citing_title) && $media->get('field_media_text')->value) {
+              $citing_title = $media->get('field_media_text')->value;
+            }
+            // Link to media file.
+            $media_file_id = $media->field_media_file[0]->getValue()['target_id'];
+            $citing_file = File::load($media_file_id);
+            $citing_url = \Drupal::service('file_url_generator')->generateAbsoluteString($citing_file->getFileUri());
+            break;
+        }
+      }
+
+      // If no link title provided.
+      if (is_null($citing_title)) {
+        $citing_title = $citing['uri'];
+      }
+
+      $citings_urls[] = [
+        'text' => ['#markup' => '<a href="' . $citing_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
+      ];
+    }
+  }
+
+  $opinion = [
+    'details' => $case_number && $opinion_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
+    'attachments' => $attachments,
+    'related_cases' => $related_cases_urls ? implode(' ', $related_cases_urls) : '',
+    'citings' => $citings_urls,
+  ];
+
+  $variables['opinion'] = $opinion;
+}
