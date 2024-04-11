@@ -72,6 +72,21 @@ source:
     hrs_job_opening_id:
       type: string
 process:
+  field_office:
+    -
+      plugin: skip_on_condition
+      method: row
+      source: jcc_office
+      condition:
+        plugin: not:matches
+        regex: /Appeal/
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: office
+      value_key: name
+      ignore_case: true
   moderation_state:
     plugin: default_value
     default_value: published
@@ -120,21 +135,6 @@ process:
       entity_type: taxonomy_term
       bundle_key: vid
       bundle: job_location
-      value_key: name
-      ignore_case: true
-  field_office:
-    -
-      plugin: skip_on_condition
-      method: row
-      source: jcc_office
-      condition:
-        plugin: not:matches
-        regex: /District Court of Appeal/
-    -
-      plugin: entity_generate
-      entity_type: taxonomy_term
-      bundle_key: vid
-      bundle: office
       value_key: name
       ignore_case: true
   field_job_salary/from: min_salary
