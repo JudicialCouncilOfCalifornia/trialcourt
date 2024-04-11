@@ -26,15 +26,16 @@ function jcc_components_preprocess_page(&$variables) {
 
   $variables['messaging_display_footer_form'] = \Drupal::config('jcc_messaging_center.settings')->get('messaging_display_footer_form');
   $variables['messaging_center_preselected_groups'] = '';
-  if($variables['messaging_display_footer_form'] == 1){
+  if ($variables['messaging_display_footer_form'] == 1) {
     $node = \Drupal::routeMatch()->getParameter('node');
-    if ($node instanceof \Drupal\node\NodeInterface) {
-      if($node->hasField('field_pre_selected_notification_')){
+    if ($node instanceof NodeInterface) {
+      if ($node->hasField('field_pre_selected_notification_')) {
         $preselected_values = $node->get('field_pre_selected_notification_')->getValue();
         foreach ($preselected_values as $key => $preselected_value) {
           if ($key == 0) {
             $variables['messaging_center_preselected_groups'] .= '?preselected=' . $preselected_value['target_id'];
-          } else {
+          }
+          else {
             $variables['messaging_center_preselected_groups'] .= ',' . $preselected_value['target_id'];
           }
         }
@@ -189,6 +190,10 @@ function jcc_components_social_links() {
     [
       'name' => 'facebook',
       'title' => t('Facebook'),
+    ],
+    [
+      'name' => 'instagram',
+      'title' => t('Instagram'),
     ],
     [
       'name' => 'flickr',
