@@ -562,7 +562,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
       foreach ($related_cases as $related_case) {
         $accms_url = __jcc_accms_link_builder($related_case);
         if ($accms_url) {
-          $related_cases_urls[] = '<a href="' . $accms_url . '">' . $related_case . '</a>';
+          $related_cases_urls[] = '<a href="' . $accms_url . '" arial_label="View related case ' . $related_case . '">' . $related_case . '</a>';
         }
       }
     }
@@ -602,7 +602,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
         }
 
         $citings_urls[] = [
-          'text' => ['#markup' => '<a href="' . $citing_url . '">' . $citing_title . '</a>'],
+          'text' => ['#markup' => '<a href="' . $citing_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
         ];
       }
     }
