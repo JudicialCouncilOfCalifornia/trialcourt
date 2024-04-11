@@ -222,12 +222,25 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $render = \Drupal::service('renderer');
   $basic_page = Node::load($node->id());
   $variables['node'] = $node;
-  $field_schedule_render_array = $node->field_schedule->view('default');
+  /*$field_schedule_render_array = $node->field_schedule->view('default');
   if ($field_schedule_render_array['#items'] && !$field_schedule_render_array['#items']->isEmpty()) {
     $schedule_content = render($field_schedule_render_array[0]['#text']);
   }
   $sample = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '';
-  $variables['completiondate'] = $sample;
+  $variables['completiondate'] = $sample;*/
+
+  $budget_field = $node->get('field_budget');
+  if (!$budget_field->isEmpty()) {
+      $budget_value = $budget_field->getValue()[0]['value'];     
+      dpm($budget_value);
+  }
+  
+  $courtroom = $node->get('field_total_courtrooms');  
+  dpm($courtroom->getValue()[0]['value']);
+
+  $fund = $node->get('field_fund');
+  dpm($fund);
+  dpm($fund->getValue()[0]['value']);
   
   $details = [
     'project_information' => [

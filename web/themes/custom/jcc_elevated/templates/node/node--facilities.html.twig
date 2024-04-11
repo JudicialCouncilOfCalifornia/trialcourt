@@ -1,10 +1,14 @@
  {{ attach_library("jcc_storybook/List") }}
 
+{{dump(node)}}
+{{node.title.value}}
+
+
   {% if imageurl is not empty %}   
     <img src={{imageurl}} />    
   {% endif %}  
 
-  {% set items = [] %}
+  {% set items = [] %} 
   {% for key,value in details.project_information %}
     {% if value is not empty %}
       {% set item = {
@@ -14,7 +18,7 @@
       {% set items = items|merge([item]) %}
     {% endif %}
   {% endfor %} 
-<p>{{items}}</p>
+<p>ITEMS: {{items}}</p>
 
   {% if items %}
     {% include "@molecules/List/List.twig" with {

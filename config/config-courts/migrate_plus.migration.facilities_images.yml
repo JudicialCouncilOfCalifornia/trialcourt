@@ -1,4 +1,4 @@
-#uuid: 0c301833-dde5-4a43-9589-68e8b2e2bb2d
+uuid: 84842778-e74c-4a04-8d1f-f67c584e9759
 langcode: en
 status: true
 dependencies: {  }
@@ -16,7 +16,7 @@ source:
   plugin: url
   data_fetcher_plugin: http
   data_parser_plugin: google_sheets
-  urls: 'https://sheets.googleapis.com/v4/spreadsheets/1iw2IqLI9Sn-XIPVKoq3WX0sVerkFChX9SYCxp8Mckmo/values/sheet2?alt=json&key=AIzaSyAzdemHmR62jLqko8umkV0-sNS080BgOJw'
+  urls: ''
   item_selector: entry
   ids:
     id:
@@ -62,16 +62,16 @@ process:
       message: 'Cannot import empty image filename.'
   name: '@pseudo_destination_filename'
   field_media_image:
-      -
-        plugin: explode
-        delimiter: ','
-        source: url
-      -
-        plugin: callback
-        callable: trim
-      -
-        plugin: migration_lookup
-        migration: appellate_forms_file
+    -
+      plugin: explode
+      delimiter: ','
+      source: url
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: migration_lookup
+      migration: facilities_forms_file_images
   field_media_caption/value: '@pseudo_encoded_title'
   field_media_caption/format: caption
   uid:
@@ -81,5 +81,5 @@ destination:
   plugin: 'entity:media'
   default_bundle: image
 migration_dependencies:
-  required:
-    - facilities_forms_file
+  optional:
+    - facilities_forms_file_images
