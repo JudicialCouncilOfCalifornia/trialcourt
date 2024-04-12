@@ -82,7 +82,7 @@
   brow: {
     variant: "default",
     part_one: node.field_case_number_plain.value,
-    part_two: node.field_date.value|date('F j, Y'),
+    part_two: node.field_date.value ? node.field_date.value|date('F j, Y') : '',
   },
   heading: node.title.value,
   media: false,
@@ -92,8 +92,12 @@
 {% set content %}
   <div class="stack">
     <div class="asset-bundle__details">
-      <span>{{ node.field_opinion_source.entity.name.value }}</span>
-      <span>{{ node.field_opinion_type.entity.name.value }} Opinion</span>
+      {% if node.field_opinion_source.value %}
+        <span>{{ node.field_opinion_source.entity.name.value }}</span>
+      {% endif %}
+      {% if node.field_opinion_type.value %}
+        <span>{{ node.field_opinion_type.entity.name.value }} Opinion</span>
+      {% endif %}
       {% if node.field_review_granted.value %}
         <span>Review Granted</span>
       {% endif %}

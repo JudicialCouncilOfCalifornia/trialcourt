@@ -522,6 +522,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
   $opinions = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
+    $type = Term::load($node->get('field_opinion_type')->target_id) ? Term::load($node->get('field_opinion_type')->target_id)->get('name')->value : '';
     $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
     $case_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
 
@@ -584,10 +585,6 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
             case 'media':
               $media_id = $entity_path_parts[2];
               $media = Media::load($media_id);
-              // Migration link title substitute.
-              if (is_null($citing_title) && $media->get('field_media_text')->value) {
-                $citing_title = $media->get('field_media_text')->value;
-              }
               // Link to media file.
               $media_file_id = $media->field_media_file[0]->getValue()['target_id'];
               $citing_file = File::load($media_file_id);
@@ -608,9 +605,11 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     }
 
     $opinion = [
+      'type' => $type,
       'case_number' => t('Case:') . ' ' . $case_number ? $case_number : t('Unspecified'),
       'posted' => $node->get('field_date')->value ? $node->get('field_date')->date->format('F j, Y') : '',
       'source' => $case_source,
+      'review_granted' => $node->get('field_review_granted')->value,
       'title' => [
         'text' => $node->get('title')->value ?? '',
         'url' => $case_number && $case_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
@@ -667,10 +666,6 @@ function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variabl
             case 'media':
               $media_id = $entity_path_parts[2];
               $media = Media::load($media_id);
-              // Migration link title substitute.
-              if (is_null($citing_title) && $media->get('field_media_text')->value) {
-                $citing_title = $media->get('field_media_text')->value;
-              }
               // Link to media file.
               $media_file_id = $media->field_media_file[0]->getValue()['target_id'];
               $citing_file = File::load($media_file_id);
