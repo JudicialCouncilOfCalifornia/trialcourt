@@ -11,7 +11,7 @@ migration_tags:
   - node
   - opinion
 migration_group: courts
-label: 'Courts: Import opinions, media attachments, and web citings'
+label: 'Courts: Import opinions with media attachments and web citings'
 source:
   plugin: url
   data_fetcher_plugin: http
@@ -162,13 +162,16 @@ process:
       plugin: migration_lookup
       migration: courts_media_opinion
     -
-      plugin: jcc_media_path
+      plugin: jcc_media_lookup
     -
-      plugin: link_uri
+      plugin: sub_process
+      process:
+        uri: uri
+        title: description
     -
       plugin: skip_on_empty
       method: process
-      message: 'No media to attach to opinion.'
+      message: 'No citings to attach to opinion.'
 destination:
   plugin: 'entity:node'
   default_bundle: opinion

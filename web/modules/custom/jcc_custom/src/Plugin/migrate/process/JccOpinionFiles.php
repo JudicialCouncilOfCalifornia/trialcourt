@@ -18,7 +18,7 @@ use Drupal\migrate\Row;
  * @code
  * field_link:
  *   plugin: jcc_opinion_files
- *   source: string
+ *   source: array
  * @endcode
  */
 class JccOpinionFiles extends ProcessPluginBase {
