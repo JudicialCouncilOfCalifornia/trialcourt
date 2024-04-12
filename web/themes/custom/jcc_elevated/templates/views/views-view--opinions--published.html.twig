@@ -45,6 +45,12 @@
 
 {% set items = [] %}
 {% for opinion in opinions %}
+  {% set notation %}
+    {{ opinion.source and opinion.type ? opinion.source : '(Select court)' }}
+    {{ opinion.source and opinion.type ? ' • ' ~ opinion.type : '' }}
+    {{ opinion.source and opinion.type and opinion.review_granted ? ' • Review Granted' : '' }}
+  {% endset %}
+
   {% set content %}
     {% if opinion.attachments %}
       <div style="margin-block-end: var(--s0)">
@@ -77,7 +83,7 @@
     brow: {
       primary: opinion.case_number,
       secondary: opinion.posted,
-      notation: opinion.source,
+      notation: notation,
     },
     title: opinion.title.text,
     url: opinion.title.url,
