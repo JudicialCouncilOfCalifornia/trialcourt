@@ -6,7 +6,7 @@ dependencies:
     - field.field.node.event.field_content_reference
     - field.field.node.event.field_event_date
     - field.field.node.event.field_event_files
-    - field.field.node.event.field_event_open
+    - field.field.node.event.field_event_state
     - field.field.node.event.field_granicus_link
     - node.type.event
   module:
@@ -61,12 +61,15 @@ content:
     settings:
       media_types: {  }
     third_party_settings: {  }
-  field_event_open:
-    type: boolean_checkbox
-    weight: 15
+  field_event_state:
+    type: entity_reference_autocomplete
+    weight: 26
     region: content
     settings:
-      display_label: true
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_granicus_link:
     type: text_textarea

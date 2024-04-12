@@ -44,6 +44,14 @@ source:
       name: advisory_body
       label: 'Advisory body'
       selector: advisory_body_id
+    -
+      name: event_state
+      label: 'Event state'
+      selector: event_state
+    -
+      name: event_description
+      label: 'Event description'
+      selector: event_description
   ids:
     id:
       type: string
@@ -71,6 +79,23 @@ process:
     source: end_date
     from_format: 'F j, Y'
     to_format: 'Y-m-d'
+  field_event_state:
+    - plugin: explode
+      source: event_state
+      delimiter: ','
+    - plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: event_state
+      value_key: name
+      ignore_case: true
+  body/value:
+    - plugin: media_replace_file_link
+      source: event_description
+    - plugin: prefix_relative_links
+  body/format:
+    plugin: default_value
+    default_value: body
 #  field_event_files:
 #    - plugin: explode
 #      source: files
