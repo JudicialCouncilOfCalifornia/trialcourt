@@ -641,10 +641,6 @@ function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variabl
             case 'media':
               $media_id = $entity_path_parts[2];
               $media = Media::load($media_id);
-              // Migration link title substitute.
-              if (is_null($citing_title) && $media->get('field_media_text')->value) {
-                $citing_title = $media->get('field_media_text')->value;
-              }
               // Link to media file.
               $media_file_id = $media->field_media_file[0]->getValue()['target_id'];
               $citing_file = File::load($media_file_id);
