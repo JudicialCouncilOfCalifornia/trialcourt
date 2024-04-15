@@ -73,12 +73,12 @@ process:
     - plugin: format_date
       source: start_date
       from_format: 'F j, Y'
-      to_format: 'Y-m-d'
+      to_format: 'Y-m-d\TH:i:s'
   field_event_date/end_value:
     plugin: format_date
     source: end_date
     from_format: 'F j, Y'
-    to_format: 'Y-m-d'
+    to_format: 'Y-m-d\TH:i:s'
   field_event_state:
     - plugin: explode
       source: event_state
