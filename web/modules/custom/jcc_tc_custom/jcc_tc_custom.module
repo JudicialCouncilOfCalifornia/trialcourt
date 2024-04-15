@@ -112,12 +112,22 @@ function jcc_tc_custom_form_alter(&$form, &$form_state, $form_id) {
  * Helper function.
  */
 function main_menu_cleaning_helper(&$form, $field, $group) {
-  if (!empty($form[$field])) {
-    $form[$field]['#group'] = $group;
-    $form['#group_children'][$field] = $group;
-    array_push($form['#fieldgroups'][$group]->children, $field);
-    $form[$group][$field] = $form[$field];
-    unset($form[$field]);
+  if (isset($form['#fieldgroups'][$group])) {
+    if (!empty($form[$field])) {
+      $form[$field]['#group'] = $group;
+      $form['#group_children'][$field] = $group;
+      if (!isset($form['#fieldgroups'][$group]->children)) {
+        $form['#fieldgroups'][$group]->children = [];
+      }
+      array_push($form['#fieldgroups'][$group]->children, $field);
+      $form[$group][$field] = $form[$field];
+      unset($form[$field]);
+    }
+  }
+  else {
+    // Log an error if the group does not exist.
+    \Drupal::logger('jcc_tc_custom')->error('Group @group does not exist in form.', ['@group' => $group]);
+    // Optionally, you can skip modifying the form or perform other actions here.
   }
 }
 
