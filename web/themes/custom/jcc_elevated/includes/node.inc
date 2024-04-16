@@ -222,14 +222,14 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $render = \Drupal::service('renderer');
   $basic_page = Node::load($node->id());
   $variables['node'] = $node;
-  /*$field_schedule_render_array = $node->field_schedule->view('default');
+  $field_schedule_render_array = $node->field_schedule->view('default');
   if ($field_schedule_render_array['#items'] && !$field_schedule_render_array['#items']->isEmpty()) {
     $schedule_content = render($field_schedule_render_array[0]['#text']);
   }
-  $sample = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '';
+  /*$sample = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '';
   $variables['completiondate'] = $sample;*/
 
-  $budget_field = $node->get('field_budget');
+  /*$budget_field = $node->get('field_budget');
   if (!$budget_field->isEmpty()) {
       $budget_value = $budget_field->getValue()[0]['value'];     
       dpm($budget_value);
@@ -240,7 +240,16 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
 
   $fund = $node->get('field_fund');
   dpm($fund);
-  dpm($fund->getValue()[0]['value']);
+  dpm($fund->getValue()[0]['value']);*/
+  $ceqa = $node->field_ceqa->view('default');
+  if ($ceqa['#items'] && !$ceqa['#items']->isEmpty()) {
+    $ceqa_content = render($ceqa[0]['#text']);
+  }
+
+  $summary = $node->field_summary->view('default');
+  if ($summary['#items'] && !$summary['#items']->isEmpty()) {
+    $summary_content = render($summary[0]['#text']);
+  }
   
   $details = [
     'project_information' => [
@@ -249,19 +258,28 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       'Completion Date' => $sample,
     ],
     'schedule' => $schedule_content,
+    'ceqa' => $ceqa_content,
+    'summary' => $summary_content,
   ];
 
   $projectimages = [];
+  dpm("project images");  
   foreach ($node->field_media_file_multiple as $media_file) {
-    $media = Media::load($media_file->target_id);
+    if (!empty($media_file->target_id)) {
+    $media = Media::load($media_file->target_id);    
+    dpm($media);
     if ($media && $media->field_media_image->entity) {
-      $uri = $media->field_media_image->entity->getFileUri();
+      $uri = $media->field_media_image->entity->getFileUri();      
       $media_url = file_create_url($uri);
+      dpm($media_url);
     }
     $projectimages[] = [
       'url' => $media_url,
     ];
   }
+  }
+  dpm($projectimages);
+  $variables['projectimages'] = $projectimages;
 
   // Hero Image
   if ($basic_page->hasField('field_media')) {
@@ -274,7 +292,6 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     }
   }
 
-  $variables['projectimages'] = $projectimages;
   $variables['details'] = $details;
 }
 

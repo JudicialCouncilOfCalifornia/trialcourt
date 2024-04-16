@@ -29,51 +29,91 @@ source:
     -
       name: title
       selector: title
-      label: Title      
+      label: Title
     -
       name: field_total_courtrooms
       selector: field_total_courtrooms
-      label: Total Courtrooms  
+      label: 'Total Courtrooms'
     -
-      name: field_budget 
+      name: field_budget
       selector: field_budget
-      label: Authorized Project Budget
-    -  
-       name: field_fund 
-       selector: field_fund
-       label: Fund   
-    -  
-       name: field_project_status 
-       selector: field_project_status #List(text)
-       label: Project Status
-    - 
-      name: field_gross_square_footage  
+      label: 'Authorized Project Budget'
+    -
+      name: field_fund
+      selector: field_fund
+      label: Fund
+    -
+      name: field_project_status
+      selector: field_project_status
+      label: 'Project Status'
+    -
+      name: field_gross_square_footage
       selector: field_gross_square_footage
-      label: Gross Square Footage
-    - 
-      name: field_initial_funding_year 
+      label: 'Gross Square Footage'
+    -
+      name: field_initial_funding_year
       selector: field_initial_funding_year
-      label: Initial Funding Year
+      label: 'Initial Funding Year'
     -
       name: image
-      label: Hero Image
-      selector: image    
+      label: 'Hero Image'
+      selector: image
     -
       name: body
       label: Body
-      selector: body 
+      selector: body
     -
       name: field_occupancy_date
       label: 'Occupancy Date'
-      selector: field_occupancy_date  
+      selector: field_occupancy_date
     -
       name: field_completion_date
       label: 'Completion Date'
-      selector: field_completion_date 
+      selector: field_completion_date
     -
       name: field_schedule
       label: Schedule
-      selector: field_schedule       
+      selector: field_schedule
+    -
+      name: field_ceqa
+      label: CEQA
+      selector: field_ceqa
+    -
+      name: field_summary  
+      label: Summary
+      selector: field_summary
+    - 
+      name: field_media_file_multiple
+      label: Project Images
+      selector: field_media_file_multiple 
+    -
+      name: field_architectural_engineering_
+      label: 'Architectural Firm'
+      selector: field_architectural_engineering_
+    -
+      name: field_agency_manager
+      label: 'Construction Manager At Risk'
+      selector: field_agency_manager
+    -
+      name: field_agency
+      label: 'Construction Management Agency'
+      selector: field_agency
+    -
+      name: field_general_contractor
+      label: 'General Contractor'
+      selector: field_general_contractor  
+    -
+      name: field_criteria_architect
+      label: 'Criteria Architect'
+      selector: field_criteria_architect   
+    -
+      name: field_managed_by
+      label: 'Managed By'
+      selector: field_managed_by
+    -
+      name: field_design_build_entity
+      label: 'Design-Build Entity'
+      selector: field_design_build_entity    
 process:
   uid:
     plugin: default_value
@@ -85,21 +125,22 @@ process:
     -
       plugin: default_value
       default_value: TITLE
-  field_total_courtrooms: field_total_courtrooms    
+  field_total_courtrooms: field_total_courtrooms
   field_budget: field_budget
   field_fund: field_fund
-  field_project_status: 
+  field_project_status:
     -
+      plugin: get
+      source: field_project_status
+    -  
       plugin: default_value
-      default_value: inprogress
+      default_value: inprogress      
     -
       plugin: skip_on_empty
       method: process
   field_gross_square_footage: field_gross_square_footage
   field_initial_funding_year: field_initial_funding_year
-  field_project_status:
-    plugin: default_value
-    source: field_project_status
+  field_completion_date: field_completion_date
   field_media:
     -
       plugin: skip_on_empty
@@ -107,25 +148,67 @@ process:
       source: image
     -
       plugin: migration_lookup
-      migration: facilities_images  
+      migration: facilities_images
+  field_media_file_multiple:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_media_file_multiple
+    -
+      plugin: explode
+      delimiter: ','
+      source: field_media_file_multiple
+    -
+      plugin: skip_on_empty
+      method: row  
+    -
+      plugin: migration_lookup
+      migration: facilities_images    
   body/value:
     -
       plugin: media_replace_file_link
       source: body
     -
-      plugin: prefix_relative_links    
+      plugin: prefix_relative_links
   body/format:
     plugin: default_value
-    default_value: body    
+    default_value: body
+  field_summary/value:
+    -
+      plugin: media_replace_file_link
+      source: field_summary
+    -
+      plugin: prefix_relative_links
+  field_summary/format:
+    plugin: default_value
+    default_value: full_html
   field_schedule/value:
     -
       plugin: media_replace_file_link
       source: field_schedule
     -
-      plugin: prefix_relative_links    
+      plugin: prefix_relative_links
   field_schedule/format:
     plugin: default_value
-    default_value: body     # Check if this is correct?
+    default_value: body  
+  field_ceqa/value:
+    -
+      plugin: media_replace_file_link
+      source: field_ceqa
+    -
+      plugin: prefix_relative_links
+  field_ceqa/format:
+    plugin: default_value
+    default_value: body
+  field_design_build_entity/value:
+    -
+      plugin: media_replace_file_link
+      source: field_design_build_entity
+    -
+      plugin: prefix_relative_links
+  field_design_build_entity/format:
+    plugin: default_value
+    default_value: body  
   field_occupancy_date:
     -
       plugin: callback
@@ -135,15 +218,96 @@ process:
       plugin: format_date
       from_format: U
       to_format: Y-m-d
-  field_completion_date:
+  field_general_contractor:
     -
       plugin: callback
-      callable: strtotime
-      source: field_completion_date
+      callable: trim
     -
-      plugin: format_date
-      from_format: U
-      to_format: Y-m-d    
+      plugin: skip_on_empty
+      method: process
+      source: field_general_contractor
+    -        
+      plugin: entity_generate     
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: contractor
+      value_key: name
+      ignore_case: true      
+  field_agency_manager:
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_agency_manager
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: agency
+      value_key: name
+      ignore_case: true
+  field_architectural_engineering_:
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_architectural_engineering_
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: firm
+      value_key: name
+      ignore_case: true
+  field_agency:
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_agency
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: agency
+      value_key: name
+      ignore_case: true   
+  field_managed_by:
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_managed_by
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: managed_by
+      value_key: name
+      ignore_case: true    
+  field_criteria_architect:
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_criteria_architect
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: criteria_architect
+      value_key: name
+      ignore_case: true            
 destination:
   plugin: 'entity:node'
   default_bundle: facilities

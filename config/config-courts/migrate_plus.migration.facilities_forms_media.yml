@@ -29,7 +29,7 @@ source:
     -
       name: url
       selector: id
-      label: 'Attachment file url'  
+      label: 'Attachment file url'
     -
       name: title
       selector: title
@@ -53,19 +53,19 @@ process:
       callable: basename
     -
       plugin: callback
-      callable: urldecode   
+      callable: urldecode
     -
       plugin: str_replace
       search: ' '
       replace: '-'
     -
       plugin: callback
-      callable: strtolower   
+      callable: strtolower
     -
       plugin: skip_on_empty
       method: process
       message: 'Cannot import empty filename.'
-  name: '@pseudo_destination_filename'     
+  name: '@pseudo_destination_filename'
   field_media_file/target_id:
     -
       plugin: migration_lookup

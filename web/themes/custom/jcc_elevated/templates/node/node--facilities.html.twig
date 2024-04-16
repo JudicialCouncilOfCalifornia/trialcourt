@@ -1,8 +1,5 @@
  {{ attach_library("jcc_storybook/List") }}
-
-{{dump(node)}}
 {{node.title.value}}
-
 
   {% if imageurl is not empty %}   
     <img src={{imageurl}} />    
@@ -31,6 +28,8 @@
 {# <p>Completion date {{completiondate}}</p> #}
 <p>BACKGROUND: {{content.body  }} </p>
 <p> SCHEDULE{{details.schedule | raw }} </p>
+<p>CEQA {{details.ceqa | raw}} </p>
+<p>Summary {{details.summary | raw}} </p>
 
 {% for i in textshare %}
     {{ i.content['#string']|raw }}
