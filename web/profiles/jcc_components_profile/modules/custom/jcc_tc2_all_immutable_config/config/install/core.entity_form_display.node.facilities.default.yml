@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.facilities.field_budget
     - field.field.node.facilities.field_ceqa
     - field.field.node.facilities.field_completion_date
+    - field.field.node.facilities.field_consortium_partners
     - field.field.node.facilities.field_criteria_architect
     - field.field.node.facilities.field_design_build_entity
     - field.field.node.facilities.field_fund
@@ -22,14 +23,19 @@ dependencies:
     - field.field.node.facilities.field_occupancy_date
     - field.field.node.facilities.field_planning_study
     - field.field.node.facilities.field_project_advisory_group
+    - field.field.node.facilities.field_project_company
+    - field.field.node.facilities.field_project_delivery_method
+    - field.field.node.facilities.field_project_financing
     - field.field.node.facilities.field_project_status
     - field.field.node.facilities.field_schedule
     - field.field.node.facilities.field_summary
+    - field.field.node.facilities.field_total_capital_project_cost
     - field.field.node.facilities.field_total_courtrooms
     - node.type.facilities
   module:
     - content_moderation
     - datetime
+    - media_library
     - path
     - scheduler
     - scheduler_content_moderation_integration
@@ -122,6 +128,14 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_consortium_partners:
+    type: text_textarea
+    weight: 43
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
   field_criteria_architect:
     type: entity_reference_autocomplete
     weight: 26
@@ -197,14 +211,11 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_media_file_multiple:
-    type: entity_reference_autocomplete
+    type: media_library_widget
     weight: 33
     region: content
     settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
+      media_types: {  }
     third_party_settings: {  }
   field_occupancy_date:
     type: datetime_default
@@ -223,6 +234,30 @@ content:
   field_project_advisory_group:
     type: text_textarea
     weight: 35
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_project_company:
+    type: text_textarea
+    weight: 42
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_project_delivery_method:
+    type: text_textarea
+    weight: 44
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_project_financing:
+    type: text_textarea
+    weight: 45
     region: content
     settings:
       rows: 5
@@ -251,6 +286,14 @@ content:
       summary_rows: 3
       placeholder: ''
       show_summary: false
+    third_party_settings: {  }
+  field_total_capital_project_cost:
+    type: text_textarea
+    weight: 41
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
     third_party_settings: {  }
   field_total_courtrooms:
     type: string_textfield
