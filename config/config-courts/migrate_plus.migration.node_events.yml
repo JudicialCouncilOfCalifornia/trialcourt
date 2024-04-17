@@ -75,10 +75,10 @@ process:
       from_format: 'F j, Y'
       to_format: 'Y-m-d\TH:i:s'
   field_event_date/end_value:
-    plugin: format_date
-    source: end_date
-    from_format: 'F j, Y'
-    to_format: 'Y-m-d\TH:i:s'
+    - plugin: format_date
+      source: end_date
+      from_format: 'F j, Y'
+      to_format: 'Y-m-d\TH:i:s'
   field_event_state:
     - plugin: explode
       source: event_state
@@ -96,21 +96,17 @@ process:
   body/format:
     plugin: default_value
     default_value: body
-#  field_event_files:
-#    - plugin: explode
-#      source: files
-#      delimiter: ','
-#    - plugin: deepen
-#    - plugin: sub_process
-#      process:
-#        target_id:
-#          - plugin: migration_lookup
-#            migration: advisory_body_media
-#            source: id
-#          - plugin: extract
-#            index:
-#              - 0
-#        target_revision_id: '@target_id'
+  field_event_files:
+    - plugin: explode
+      source: files
+      delimiter: ','
+    - plugin: multiple_values
+    - plugin: migration_lookup
+      migration: advisory_body_media
+      no_stub: true
+    - plugin: skip_on_empty
+      method: process
+      message: 'No media to attach to opinion.'
   field_content_reference:
     - plugin: migration_lookup
       migration: node_advisory_body

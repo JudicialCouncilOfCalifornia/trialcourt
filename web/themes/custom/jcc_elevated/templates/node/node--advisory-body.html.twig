@@ -78,25 +78,9 @@
 {{ attach_library("jcc_storybook/Brow") }}
 {{ attach_library("jcc_storybook/Share") }}
 
-{% set events_card %}
-  <div class="cluster" style="align-items: start;">
-    <div>
-      {{ events_view }}
-    </div>
-  </div>
-{% endset %}
-
-{% set meetings %}
-  {% include "@molecules/card/Card.twig" with {
-    variant: "bordered",
-    clickable_card: false,
-    background: null,
-    aspect: [],
-    text: events_card,
-  } %}
-{% endset %}
-
 {% set tabs_elems = {} %}
+
+{% set tabs_elems = tabs_elems|merge({'meetings': {'label':'Meetings','content': events_view}}) %}
 
 {% if content.field_members[0] is not empty %}
   {% set tabs_elems = tabs_elems|merge({'members': {'label':'Members','content': content.field_members}}) %}

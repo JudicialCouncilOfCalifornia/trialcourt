@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.advisory_body_events
     - field.field.node.event.body
     - field.field.node.event.field_content_reference
     - field.field.node.event.field_event_date
@@ -10,48 +11,64 @@ dependencies:
     - field.field.node.event.field_granicus_link
     - node.type.event
   module:
+    - datetime_range
+    - text
     - user
-id: node.event.default
+id: node.event.advisory_body_events
 targetEntityType: node
 bundle: event
-mode: default
+mode: advisory_body_events
 content:
-  field_content_reference:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
     third_party_settings: {  }
-    weight: 104
+    weight: 4
+    region: content
+  field_event_date:
+    type: daterange_default
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: medium
+      separator: '-'
+    third_party_settings: {  }
+    weight: 3
     region: content
   field_event_files:
     type: entity_reference_entity_view
-    label: above
+    label: hidden
     settings:
       view_mode: default
       link: false
     third_party_settings: {  }
-    weight: 102
+    weight: 1
     region: content
   field_event_state:
     type: entity_reference_label
-    label: above
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }
-    weight: 105
+    weight: 2
+    region: content
+  field_granicus_link:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
     region: content
   links:
     settings: {  }
     third_party_settings: {  }
-    weight: 100
+    weight: 0
     region: content
 hidden:
-  body: true
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
-  field_event_date: true
-  field_granicus_link: true
+  field_content_reference: true
   langcode: true
   search_api_excerpt: true
