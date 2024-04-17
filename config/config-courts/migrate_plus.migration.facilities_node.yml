@@ -153,14 +153,17 @@ process:
     -
       plugin: skip_on_empty
       method: process
-      source: field_media_file_multiple
+      source: field_media_file_multiple    
     -
       plugin: explode
       delimiter: ','
       source: field_media_file_multiple
     -
-      plugin: skip_on_empty
-      method: row  
+      plugin: callback
+      callable: trim  
+    #-
+    #  plugin: skip_on_empty
+    #  method: row  
     -
       plugin: migration_lookup
       migration: facilities_images    

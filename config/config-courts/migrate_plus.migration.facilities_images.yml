@@ -24,7 +24,7 @@ source:
   fields:
     -
       name: id
-      selector: url
+      selector: id
       label: 'Unique Identifier'
     -
       name: title
@@ -43,6 +43,7 @@ process:
     -
       plugin: path_from_url
       source: url
+      remove_extension: true
     -
       plugin: callback
       callable: basename
