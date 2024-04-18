@@ -285,6 +285,12 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
  * Implements hook_preprocess_views_view() for search listing page.
  */
 function jcc_elevated_preprocess_views_view__search__search(&$variables) {
+  // No results message.
+  $no_results_msg = theme_get_setting('no_search_results_message');
+  if ($no_results_msg['value']) {
+    $variables['no_results_message'] = ['#markup' => Html::decodeEntities($no_results_msg['value'])];
+  }
+
   if (empty($variables['rows'][0]['#rows'])) {
     return;
   }
@@ -336,7 +342,6 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
         }
       }
     }
-
   }
 }
 

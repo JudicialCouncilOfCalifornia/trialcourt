@@ -158,6 +158,16 @@ function jcc_professional_form_system_theme_settings_alter(&$form, FormStateInte
     '#description'   => t("Hide translation dropdown from header."),
   ];
 
+  // Edit no search results message.
+  $no_results_msg = theme_get_setting('no_search_results_message');
+  $form['global']['no_search_results_message'] = [
+    '#type'          => 'text_format',
+    '#format'        => $no_results_msg['format'] ?: 'body',
+    '#title'         => t('No search results message'),
+    '#default_value' => $no_results_msg['value'] ?: '',
+    '#description'   => t("Customize the no search results message."),
+  ];
+
   // BEGIN: Special header body/feature.
   $form['special'] = [
     '#type' => 'details',

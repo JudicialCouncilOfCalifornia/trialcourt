@@ -36,6 +36,8 @@
 {{ attach_library("jcc_storybook/InlineForm") }}
 {{ attach_library("jcc_storybook/ViewResults") }}
 {{ attach_library("jcc_storybook/ResultExcerpt") }}
+{{ attach_library("jcc_storybook/Alert") }}
+{{ attach_library("jcc_storybook/Icon") }}
 
 {%
   set classes = [
@@ -48,13 +50,12 @@
     {{ count }} {{ 'Results for '|t }} "{{ searched_term }}"
   {% elseif count and not searched_term -%}
     {{ 'Search page'|t }}
-  {% elseif empty -%}
+  {% else -%}
     {{ 'No search results found'|t }}
   {% endif %}
 {% endset %}
 
 <div{{ attributes.addClass(classes) }}>
-
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
     heading: page_heading,
     background: 'base-dark-x',
@@ -65,6 +66,17 @@
       form: exposed|without('items_per_page')|render,
     } %}
   {% endset %}
+
+  {% if no_results_message %}
+    {% set no_results_msg %}
+      {% include "@molecules/Alert/Alert.twig" with {
+        type: 'warning',
+        heading: 'We are unable to find a result for you.',
+        content: [no_results_message|render],
+        icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
+      } %}
+    {% endset %}
+  {% endif %}
 
   <div class="box">
   {% include "@organisms/ViewResults/ViewResults.twig" with {
@@ -79,6 +91,7 @@
     list_type: 'ol',
     list_type_divider: true,
     rows: processed_rows,
+    no_results_msg: no_results_msg,
     sidebar: '',
     sidebar_direction_results: 'sidebar-row-reverse',
     pager: pager|render,
