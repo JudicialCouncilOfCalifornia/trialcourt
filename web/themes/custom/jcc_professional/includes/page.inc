@@ -6,7 +6,7 @@
  */
 
 use Drupal\node\Entity\Node;
-use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -53,21 +53,22 @@ function jcc_professional_preprocess_page(&$variables) {
   }
 
   $node = \Drupal::routeMatch()->getParameter('node');
-  if ($node instanceof \Drupal\node\NodeInterface) {
-    if($node->hasField('field_pre_selected_notification_')){
-      if(!$node->get('field_pre_selected_notification_')->isEmpty()){
-        if($node->getType() == 'subpage' ||
-          $node->getType() == 'landing_page'){
+  if ($node instanceof NodeInterface) {
+    if ($node->hasField('field_pre_selected_notification_')) {
+      if (!$node->get('field_pre_selected_notification_')->isEmpty()) {
+        if ($node->getType() == 'subpage' ||
+          $node->getType() == 'landing_page') {
           $moduleHandler = \Drupal::service('module_handler');
           if ($moduleHandler->moduleExists('jcc_messaging_center')) {
             $groups = $node->field_pre_selected_notification_->referencedEntities();
             $variables['group_target_id'] = '';
             $group_labels = '';
-            foreach ($groups as $key=>$group) {
-              if($key == 0){
+            foreach ($groups as $key => $group) {
+              if ($key == 0) {
                 $group_labels = $group->label();
                 $variables['group_target_id'] = $group->id();
-              }else{
+              }
+              else {
                 $group_labels = $group_labels . ', ' . $group->label();
                 $variables['group_target_id'] = $variables['group_target_id'] . '-' . $group->id();
               }
@@ -94,6 +95,10 @@ function jcc_professional_social_links() {
     [
       'name' => 'facebook',
       'title' => t('Facebook'),
+    ],
+    [
+      'name' => 'instagram',
+      'title' => t('Instagram'),
     ],
     [
       'name' => 'flickr',
