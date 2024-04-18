@@ -1,16 +1,22 @@
 <?php
 
-/**
- * @file
- * Load Drupal bootstrap.
- */
+use Drupal\Core\DrupalKernel;
+use Symfony\Component\HttpFoundation\Request;
+
+// Bootstrap Drupal.
+$autoloader = require_once __DIR__ . '/../../../autoload.php';
+$request = Request::createFromGlobals();
+$kernel = DrupalKernel::createFromRequest($request, $autoloader, 'dev');
+$kernel->boot();
 
 // Add the redirect update code here.
 use Drupal\Core\Url;
+use Drupal\Core\Database\Database;
+use Drupal\Core\Entity\EntityTypeManager;
 
 // Load the redirect entities that need to be updated.
-$redirects = \Drupal::entityTypeManager()->getStorage('redirect')->loadByProperties([
-// Wildcard for any filename.
+$storage = \Drupal::entityTypeManager()->getStorage('redirect');
+$redirects = $storage->loadByProperties([
   'redirect_source__uri' => '%/sites/default/files/santaclara/default/documents/%',
 ]);
 
