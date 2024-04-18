@@ -9,7 +9,7 @@ require_once __DIR__ . '/../../../../vendor/autoload.php';
 // Bootstrap Drupal.
 $autoloader = require_once __DIR__ . '/../../../autoload.php';
 $request = Request::createFromGlobals();
-$kernel = DrupalKernel::createFromRequest($request, $autoloader, 'prod');
+$kernel = DrupalKernel::createFromRequest($request, $autoloader, 'dev');
 $kernel->boot();
 
 // Add the redirect update code here.
