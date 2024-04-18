@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.preview
+    - field.field.paragraph.rule_section.field_rule_section_label
+    - field.field.paragraph.rule_section.field_rule_subsection_content
+    - paragraphs.paragraphs_type.rule_section
+id: paragraph.rule_section.preview
+targetEntityType: paragraph
+bundle: rule_section
+mode: preview
+content:
+  field_rule_section_label:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_rule_subsection_content:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true
