@@ -66,18 +66,18 @@ function jcc_roc_entity_extra_field_info(): array {
 }
 
 /**
- * Returns true if the current route is a edit route.
+ * Returns true if the current route is an add/edit route.
  *
  * @return bool
  *   Returns true for edit routes.
  */
-function jcc_roc_is_edit_route() {
+function jcc_roc_is_edit_route(): bool {
   $is_edit_route = drupal_static(__FUNCTION__);
   if ($is_edit_route !== NULL) {
     return $is_edit_route;
   }
 
-  $route_match = \Drupal::routeMatch();
+  $route_match = Drupal::routeMatch();
   $route_name = $route_match->getRouteName();
   $is_edit_route = FALSE;
 
@@ -96,9 +96,9 @@ function jcc_roc_is_edit_route() {
   }
 
   // Check the theme the current route renders in.
-  $current_rendered_theme = \Drupal::service('theme.negotiator')->determineActiveTheme($route_match);
-  $admin_theme = \Drupal::config('system.theme')->get('admin');
-  $admin_theme_name = \Drupal::service('theme_handler')->getName($admin_theme);
+  $current_rendered_theme = Drupal::service('theme.negotiator')->determineActiveTheme($route_match);
+  $admin_theme = Drupal::config('system.theme')->get('admin');
+  $admin_theme_name = Drupal::service('theme_handler')->getName($admin_theme);
   if ($current_rendered_theme == $admin_theme_name) {
     $is_edit_route = TRUE;
   }
@@ -129,7 +129,7 @@ function jcc_roc_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $e
  * Implements hook_page_attachments().
  */
 function jcc_roc_page_attachments(&$page): void {
-  if (\Drupal::service('router.admin_context')->isAdminRoute()) {
+  if (Drupal::service('router.admin_context')->isAdminRoute()) {
     // $page['#attached']['library'][] =
     // 'jcc_roc/jcc_roc_admin_layout_paragraphs_edit_override';
   }
