@@ -129,8 +129,12 @@ function jcc_roc_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $e
  * Implements hook_page_attachments().
  */
 function jcc_roc_page_attachments(&$page): void {
-  if (Drupal::service('router.admin_context')->isAdminRoute()) {
-    // $page['#attached']['library'][] =
-    // 'jcc_roc/jcc_roc_admin_layout_paragraphs_edit_override';
+  $is_admin = Drupal::service('router.admin_context')->isAdminRoute();
+  if ($is_admin) {
+    $page['#attached']['library'][] = 'jcc_roc/jcc-roc-admin-custom';
+  }
+
+  if (!$is_admin) {
+    $page['#attached']['library'][] = 'jcc_roc/jcc-roc-custom';
   }
 }
