@@ -1,15 +1,16 @@
 <?php
 
-
 use Drupal\Core\DrupalKernel;
 use Symfony\Component\HttpFoundation\Request;
 
+// Include the Composer autoloader.
+require_once __DIR__ . '/../../../../vendor/autoload.php';
+
 // Bootstrap Drupal.
-require_once __DIR__ . '/../../../autoload.php';
-$kernel = new DrupalKernel('dev', $autoloader);
+$autoloader = require_once __DIR__ . '/../../../autoload.php';
 $request = Request::createFromGlobals();
-$response = $kernel->handle($request);
-$kernel->terminate($request, $response);
+$kernel = DrupalKernel::createFromRequest($request, $autoloader, 'prod');
+$kernel->boot();
 
 // Add the redirect update code here.
 use Drupal\Core\Url;
