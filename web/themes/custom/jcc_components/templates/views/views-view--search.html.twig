@@ -31,13 +31,32 @@
  */
 #}
 
+{% if no_results_heading or no_results_message %}
+  {% set no_results_msg %}
+    {% include "@molecules/alert/alert.twig" with {
+      alert: {
+        type: 'warning',
+        size: 'full',
+        heading: no_results_heading,
+        text: {
+          '#type': 'processed_text',
+          '#text': no_results_message|render,
+          '#format': 'full_html'
+        },
+        close: false,
+        classes: []
+      }
+    } %}
+  {% endset %}
+{% endif %}
+
 {% include "@templates/search/search.twig" with {
   search: {
     background: header_footer_variant,
     message: message,
     keywords: keywords,
     num_results: num_results,
-    results: rows,
+    results: no_results_msg ? no_results_msg : rows,
     form: exposed,
     pager: pager,
   }
