@@ -5,6 +5,7 @@
  * Contains jcc_roc module functionality.
  */
 
+use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 
 // Include all files from the inc directory.
@@ -72,11 +73,6 @@ function jcc_roc_entity_extra_field_info(): array {
  *   Returns true for edit routes.
  */
 function jcc_roc_is_edit_route(): bool {
-  $is_edit_route = drupal_static(__FUNCTION__);
-  if ($is_edit_route !== NULL) {
-    return $is_edit_route;
-  }
-
   $route_match = Drupal::routeMatch();
   $route_name = $route_match->getRouteName();
   $is_edit_route = FALSE;
@@ -136,5 +132,15 @@ function jcc_roc_page_attachments(&$page): void {
 
   if (!$is_admin) {
     $page['#attached']['library'][] = 'jcc_roc/jcc-roc-custom';
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function jcc_roc_query_entity_reference_alter(AlterableInterface $query): void {
+  $metadata = $query->getMetaData('entity_reference_selection_handler');
+  if ($metadata->getPluginId() == 'bert:node') {
+    $query->range(0, 5);
   }
 }

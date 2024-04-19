@@ -27,6 +27,8 @@ function jcc_roc_form_alter(&$form, &$form_state, $form_id): void {
     $form['field_rule_section_attachment']['widget']['header_actions']['actions']['collapse_all']['#access'] = FALSE;
     $form['field_rule_section_attachment']['widget']['add_more']['add_more_button_rule_section']['#value'] = t('Add @type', ['@type' => 'a new rule section grouping']);
 
+    $form['field_rule_section_attachment']['widget']['#title'] = '';
+
     $promote_title = t('Display in Rules of Court');
     $form['promote']['widget']['#title'] = $promote_title;
     $form['promote']['widget']['value']['#title'] = $promote_title;
@@ -57,17 +59,51 @@ function jcc_roc_field_widget_form_alter(&$element, &$form_state, $context): voi
 
   if (in_array($context['widget']->getPluginId(), $widget_types)) {
     $name = $context['items']->getFieldDefinition()->getName();
+
     if ($name == 'field_rule_section_attachment') {
       $element['subform']['field_rule_section_label']['widget'][0]['value']['#title'] = FALSE;
       $element['subform']['field_rule_section']['widget'][0]['value']['#title_display'] = 'hidden';
       $element['subform']['field_rule_section_label']['widget'][0]['value']['#title_display'] = 'hidden';
     }
+
     if ($name == 'field_rule_section') {
       $element['subform']['field_rule_section_label']['widget'][0]['value']['#title'] = FALSE;
       $element['subform']['field_rule_section']['widget'][0]['value']['#title_display'] = 'hidden';
       $element['subform']['field_rule_section_label']['widget'][0]['value']['#title_display'] = 'hidden';
     }
+
+    if ($name == 'field_rule_subsection_content') {
+      // Add the nids of subsections that do not contain the parent document id.
+      // This will limit the returned list to only subsections already marked
+      // for the document we are working on.
+      $rule_section_paragraph_entity = $context['items']->getEntity();
+      $parent_rule_document = $rule_section_paragraph_entity->getParentEntity() ?? FALSE;
+      $parent_rule_document_id = $parent_rule_document ? $parent_rule_document->id() : FALSE;
+      if ($parent_rule_document_id) {
+        $ignored_entities = $element['add']['entity']['#selection_settings']['ignored_entities'];
+        $additional_subsections_to_ignore = jcc_roc_get_subsection_ids_not_with_document_id($parent_rule_document_id);
+        $new_ignored_entities = array_merge($ignored_entities, $additional_subsections_to_ignore);
+        $element['add']['entity']['#selection_settings']['ignored_entities'] = $new_ignored_entities;
+      }
+    }
   }
+}
+
+/**
+ * Get subsections that do not have the document id assigned to them.
+ */
+function jcc_roc_get_subsection_ids_not_with_document_id($parent_rule_document_id): array {
+  if (!$parent_rule_document_id) {
+    return [];
+  }
+
+  $results = \Drupal::entityQuery('node')
+    ->condition('type', 'rule_subsection')
+    ->condition('field_rule_subsection_document', $parent_rule_document_id, '!=')
+    ->sort('title', 'ASC')
+    ->execute();
+
+  return array_values($results);
 }
 
 /**
