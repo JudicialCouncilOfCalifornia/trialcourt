@@ -193,6 +193,17 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       $form['field_rfp_type']['widget']['#required'] = TRUE;
       break;
   }
+  if (strpos($form_id, 'node_form') === 0) {
+    // Get the node type from the form ID.
+    $node_type = substr($form_id, strlen('node_form_'));
+    // Check if the user is not an administrator.
+    if (!\Drupal::currentUser()->hasPermission('administer site configuration')) {
+      // Replace 'your_field_machine_name' with the machine name of the field you want to restrict access to.
+      if (isset($form['field_e'][$node_type]['#access'])) {
+        $form['field_e'][$node_type]['#access'] = FALSE;
+      }
+    }
+  }
 }
 
 /**
