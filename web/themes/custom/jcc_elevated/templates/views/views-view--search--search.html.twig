@@ -67,11 +67,11 @@
     } %}
   {% endset %}
 
-  {% if no_results_message %}
+  {% if no_results_heading or no_results_message %}
     {% set no_results_msg %}
       {% include "@molecules/Alert/Alert.twig" with {
         type: 'warning',
-        heading: 'We are unable to find a result for you.',
+        heading: no_results_heading,
         content: [no_results_message|render],
         icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
       } %}

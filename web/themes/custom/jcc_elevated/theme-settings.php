@@ -161,16 +161,20 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
 
   // BEGIN Edit no search results message.
   $form['global']['no_search_results'] = [
-    '#type' => 'fieldset',
+    '#type' => 'details',
     '#title' => t('No search results message'),
+    '#collapsed'  => TRUE,
+  ];
+  $form['global']['no_search_results']['no_search_results_heading'] = [
+    '#type'          => 'textfield',
+    '#title'         => t('Personalized heading'),
+    '#default_value' => theme_get_setting('no_search_results_heading'),
   ];
   $no_results_msg = theme_get_setting('no_search_results_message');
   $form['global']['no_search_results']['no_search_results_message'] = [
     '#type'          => 'text_format',
-    '#format'        => $no_results_msg ? $no_results_msg['format'] : 'body',
-    '#title'         => t('Message'),
+    '#format'        => $no_results_msg ? $no_results_msg['format'] : 'snippet',
+    '#title'         => t('Personalized message'),
     '#default_value' => $no_results_msg ? $no_results_msg['value'] : '',
-    '#description'   => t("Customize the no search results message."),
   ];
-  // END.
 }

@@ -159,16 +159,25 @@ function jcc_professional_form_system_theme_settings_alter(&$form, FormStateInte
   ];
 
   // Edit no search results message.
+  $form['global']['no_search_results'] = [
+    '#type' => 'details',
+    '#title' => t('No search results message'),
+    '#collapsed'  => TRUE,
+  ];
+  $form['global']['no_search_results']['no_search_results_heading'] = [
+    '#type'          => 'textfield',
+    '#title'         => t('Personalized heading'),
+    '#default_value' => theme_get_setting('no_search_results_heading'),
+  ];
   $no_results_msg = theme_get_setting('no_search_results_message');
-  $form['global']['no_search_results_message'] = [
+  $form['global']['no_search_results']['no_search_results_message'] = [
     '#type'          => 'text_format',
-    '#format'        => $no_results_msg['format'] ?: 'body',
-    '#title'         => t('No search results message'),
-    '#default_value' => $no_results_msg['value'] ?: '',
-    '#description'   => t("Customize the no search results message."),
+    '#format'        => $no_results_msg ? $no_results_msg['format'] : 'snippet',
+    '#title'         => t('Personalized message'),
+    '#default_value' => $no_results_msg ? $no_results_msg['value'] : '',
   ];
 
-  // BEGIN: Special header body/feature.
+  // Special header body/feature.
   $form['special'] = [
     '#type' => 'details',
     '#title' => t('Special'),
@@ -181,7 +190,6 @@ function jcc_professional_form_system_theme_settings_alter(&$form, FormStateInte
     $header_body_value = $header_body['value'];
     $header_body_format = $header_body['format'];
   }
-
   $form['special']['header_body'] = [
     '#type' => 'text_format',
     '#title' => 'Homepage Header Body',
