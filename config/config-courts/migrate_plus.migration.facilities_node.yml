@@ -113,7 +113,11 @@ source:
     -
       name: field_design_build_entity
       label: 'Design-Build Entity'
-      selector: field_design_build_entity    
+      selector: field_design_build_entity   
+    - 
+      name: field_award
+      label: 'Awards and Recognition'
+      selector: field_award   
 process:
   uid:
     plugin: default_value
@@ -160,10 +164,7 @@ process:
       source: field_media_file_multiple
     -
       plugin: callback
-      callable: trim  
-    #-
-    #  plugin: skip_on_empty
-    #  method: row  
+      callable: trim     
     -
       plugin: migration_lookup
       migration: facilities_images    
@@ -310,7 +311,26 @@ process:
       bundle_key: vid
       bundle: criteria_architect
       value_key: name
-      ignore_case: true            
+      ignore_case: true  
+  field_award:
+    - 
+      plugin: callback
+      callable: trim
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_award    
+    -
+      plugin: explode
+      delimiter: '#'
+      source: field_award
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: award_body
+      value_key: name
+      ignore_case: true          
 destination:
   plugin: 'entity:node'
   default_bundle: facilities

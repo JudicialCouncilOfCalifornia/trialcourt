@@ -1,0 +1,91 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a view of unformatted rows.
+ *
+ * Available variables:
+ * - title: The title of this group of rows. May be empty.
+ * - rows: A list of the view's row items.
+ *   - attributes: The row's HTML attributes.
+ *   - content: The row's content.
+ * - view: The view object.
+ * - default_row_class: A flag indicating whether default classes should be
+ *   used on rows.
+ *
+ * @see template_preprocess_views_view_unformatted()
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library("jcc_storybook/HeroHangover") }}
+{{ attach_library("jcc_storybook/ViewResults") }}
+{{ attach_library("jcc_storybook/ResultExcerpt") }}
+{{ attach_library("jcc_storybook/Pill") }}
+
+{%
+  set classes = [
+  dom_id ? 'js-view-dom-id-' ~ dom_id,
+]
+%}
+
+{% set header %}
+  <div class="cluster">
+    <h2>{{ 'Find a Project'|t }}</h2>
+    <div>Currently, the Judicial Council is managing 17 active or in-progress capital projects and 1 study. A total of 34 projects and 1 study have been completed to date.</div>
+  </div>
+{% endset %}
+
+
+{% set items = [] %}
+
+{% for facility in facilities %}
+     {% set item = {
+    title: facility.title,
+    content: facility.status,
+    url: facility.url    
+   } %}
+ {% set items = items|merge([item]) %}
+{% endfor %}
+
+{# {% for title in titles %}
+    <p>{{ title }}**</p>
+{% endfor %} #}
+
+
+{% include "@molecules/HeroHangover/HeroHangover.twig" with {
+  heading: 'Building California Courthouses'|t,
+  media: false,
+  attributes: create_attribute()
+} %}
+
+ {% include "@atoms/Pill/Pill.twig" with {
+            variant: 'default',
+            label: 'ABCD',
+            url: tag.url,
+          } %}
+        
+
+<div{{ attributes.addClass(classes) }}>
+  {% include "@organisms/ViewResults/ViewResults.twig" with {
+    variant: 'default',
+    view_name: id,
+    view_display: display_id,
+    header: header,
+    header_sidebar: '',
+    header_direction_results: 'sidebar-row',
+    form: exposed|render,
+    form_in_sidebar: true,
+    list_type: 'ul',
+    list_type_divider: '',
+    rows: items,
+    sidebar: '',
+    sidebar_direction_results: 'sidebar-row',
+    pager: pager|render,
+    items_per_page: '',
+    footer: '',
+    footer_sidebar: '',
+    sidebar_direction_footer: 'sidebar-row',
+  } %}
+
+  
+</div>

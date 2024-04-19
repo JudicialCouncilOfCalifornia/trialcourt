@@ -405,10 +405,26 @@ function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables
 /**
  * Implements hook_preprocess_views_view() for facilities block.
  */
-function jcc_elevated_preprocess_views_view__facilities__block_1(&$variables) {
-  __jcc_view_results_exposed_filter_init($variables);
-}
-
+function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$variables) {
+  __jcc_view_results_exposed_filter_init($variables);  
+    $facilities = [];
+    foreach ($variables['rows'][0]['#rows'] as $row) {      
+        if (isset($row['#node'])) {
+            $node = $row['#node'];
+            if ($node->hasField('title')) {
+                $facility_title = $node->get('title')->value;
+                $facilities_title[] = $facility_title;
+            } 
+        }
+        $facility = [
+          'title' => $node->hasField('title')? $node->get('title')->value : '',
+          'status' =>  $node->get('field_project_status')->value,
+          'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
+        ];
+        $facilities[] = $facility;
+    }   
+    $variables['facilities'] = $facilities;
+  }  
 /**
  * Implements hook_preprocess_views_view() for job search listing block.
  */
