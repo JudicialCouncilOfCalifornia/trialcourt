@@ -158,4 +158,11 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
     '#default_value' => theme_get_setting('hide_translation'),
     '#description'   => t("Hide translation dropdown from header."),
   ];
+
+  $form['global']['show_google_translate'] = [
+    '#type'          => 'checkbox',
+    '#title'         => t('Show Google translator'),
+    '#default_value' => theme_get_setting('show_google_translate'),
+    '#description'   => t("Show Google translation dropdown in header."),
+  ];
 }
