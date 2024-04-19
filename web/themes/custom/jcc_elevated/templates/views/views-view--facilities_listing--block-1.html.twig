@@ -39,18 +39,22 @@
 {% set items = [] %}
 
 {% for facility in facilities %}
+
+{% set status_pills  %}
+ {% include "@atoms/Pill/Pill.twig" with {
+            variant: 'default',
+            label: facility.status,            
+          } %} 
+{% endset %}          
+ 
      {% set item = {
     title: facility.title,
-    content: facility.status,
-    url: facility.url    
+    content: status_pills,
+    url: facility.url,
+   
    } %}
  {% set items = items|merge([item]) %}
 {% endfor %}
-
-{# {% for title in titles %}
-    <p>{{ title }}**</p>
-{% endfor %} #}
-
 
 {% include "@molecules/HeroHangover/HeroHangover.twig" with {
   heading: 'Building California Courthouses'|t,
@@ -58,11 +62,6 @@
   attributes: create_attribute()
 } %}
 
- {% include "@atoms/Pill/Pill.twig" with {
-            variant: 'default',
-            label: 'ABCD',
-            url: tag.url,
-          } %}
         
 
 <div{{ attributes.addClass(classes) }}>
