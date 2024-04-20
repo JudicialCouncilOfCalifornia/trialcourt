@@ -90,7 +90,19 @@
       <div class="grid-row">
         <div class="page__content grid-col-12 desktop:grid-col-8">
           <h1>Search results</h1>
-          {{ page.content }}
+          {% if page.content %}
+            {{ page.content }}
+          {% else %}
+            {% include '@molecules/blocks/alert/alert.twig' with {
+              alert: {
+                tag: "div",
+                icon: true,
+                type: "warning",
+                heading: no_results_heading,
+                text: no_results_message,
+              }
+            } only %}
+          {% endif %}
         </div>
 
         {% if page.title|render %}
