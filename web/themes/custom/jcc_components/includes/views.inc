@@ -419,7 +419,7 @@ function jcc_components_preprocess_views_view__search(&$variables) {
   }
   $variables['no_results_message'] = ['#markup' => Html::decodeEntities('Visit our <a href="/">homepage</a> for more options.')];
   $no_results_msg = theme_get_setting('no_search_results_message');
-  if ($no_results_msg) {
+  if ($no_results_msg['value']) {
     $variables['no_results_message'] = ['#markup' => Html::decodeEntities($no_results_msg['value'])];
   }
 }
