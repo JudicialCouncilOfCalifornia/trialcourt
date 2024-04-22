@@ -235,7 +235,7 @@ function  jcc_tc_custom_custom_validate($form, FormStateInterface $form_state) {
   $selected_nodes = $form_state->getValue('node_bulk_form');
   // Validate the action. keeping all the possible value of actions to prevent error.
   $valid_actions = [
-    'change_to_archived',
+    'change_to_archived', 
     'change_to_draft',
     'change_to_published',
     'change_to_ready_for_review',
@@ -284,7 +284,9 @@ function jcc_tc_custom_node_form_submit($form, FormStateInterface $form_state) {
         $latest_revision = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($latest_vid); 
         // update the latest revision
         $latest_revision->set('moderation_state', $action)->save();
-        }
-      }
-    }
+       }
+     }
+   }
  }
+ 
+

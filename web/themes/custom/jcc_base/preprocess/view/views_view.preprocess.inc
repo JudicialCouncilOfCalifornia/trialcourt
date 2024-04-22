@@ -5,6 +5,7 @@
  * Taxonomy term manipulation.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\taxonomy\Entity\Term;
 
 /**
@@ -110,5 +111,21 @@ function jcc_base_preprocess_views_view_unformatted__faq__block(&$variables) {
       'title' => $row['content']['#row']->_entity->getTitle(),
       'body' => $content,
     ];
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function jcc_base_preprocess_views_view__search(&$variables) {
+  // Personalized no results message.
+  $variables['no_results_heading'] = 'We are unable to find a result for your search.';
+  if (theme_get_setting('no_search_results_heading')) {
+    $variables['no_results_heading'] = theme_get_setting('no_search_results_heading');
+  }
+  $variables['no_results_message'] = ['#markup' => Html::decodeEntities('Visit our <a href="/">homepage</a> for more options.')];
+  $no_results_msg = theme_get_setting('no_search_results_message');
+  if ($no_results_msg['value']) {
+    $variables['no_results_message'] = ['#markup' => Html::decodeEntities($no_results_msg['value'])];
   }
 }

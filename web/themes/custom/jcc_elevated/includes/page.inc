@@ -89,11 +89,14 @@ function jcc_elevated_preprocess_page(&$variables) {
     }
   }
 
-  // Add Google Translate block.
+  // BEGIN Translate features.
+  // @todo Add Drupal translate menu to array.
+  $variables['translate'] = [];
+  // Google Translate.
   if (theme_get_setting('show_google_translate')) {
     $google_translate = \Drupal::service('plugin.manager.block')->createInstance('google_translate_block', []);
     if (isset($google_translate) && !empty($google_translate)) {
-      $variables['google_translate'] = $google_translate->build();
+      $variables['translate'][] = $google_translate->build();
     }
   }
 
