@@ -1,0 +1,48 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.rule_subsection.body
+    - field.field.node.rule_subsection.field_rule_subsection_document
+    - field.field.node.rule_subsection.field_rule_subsection_id
+    - field.field.node.rule_subsection.field_rule_subsection_parent
+    - node.type.rule_subsection
+  module:
+    - entity_print
+    - text
+    - user
+third_party_settings:
+  entity_print:
+    pdf_label: 'View PDF'
+    word_docx_label: 'View Word Document'
+id: node.rule_subsection.default
+targetEntityType: node
+bundle: rule_subsection
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  entity_print_view_pdf:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  in_page_nav:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_word_docx: true
+  field_rule_subsection_document: true
+  field_rule_subsection_id: true
+  field_rule_subsection_parent: true
+  langcode: true
+  links: true
+  search_api_excerpt: true

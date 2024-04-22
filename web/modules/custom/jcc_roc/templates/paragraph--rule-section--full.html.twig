@@ -1,0 +1,9 @@
+{{ attach_library("jcc_storybook/List") }}
+<li class="list__item paragraph--type--rule-section--default">
+  {{ content.field_rule_section_label }}
+  {% if content.regions %}
+    <ul class="list__container">
+      {{ content|without('field_rule_section_label') }}
+    </ul>
+  {% endif %}
+</li>
