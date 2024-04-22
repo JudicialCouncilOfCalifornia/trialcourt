@@ -242,7 +242,7 @@ function  jcc_tc_custom_custom_validate($form, FormStateInterface $form_state) {
     'node_break_lock_action',
     'node_promote_action',
     'node_unpromote_action'
-    ]; 
+    ];
 
   if (!in_array($action, $valid_actions)) {
     $form_state->setErrorByName('action', t('The selected action is not valid.'));
@@ -271,16 +271,22 @@ function jcc_tc_custom_node_form_submit($form, FormStateInterface $form_state) {
     // Handle unknown action, perhaps log or set a default.
     $action = $action_key;  // Set your default or handle as required.
   }
-  foreach ($selected_nodes as $nid) {
-    $node_id = json_decode(base64_decode($nid), true)[1];
-    $node = Node::load($node_id);
-    if($node){    
-      // get latest revision ID
-      $latest_vid = \Drupal::entityTypeManager()->getStorage('node')->getLatestRevisionId($node_id);
-      // load latest revision
-      $latest_revision = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($latest_vid); 
-      // update the latest revision
-      $latest_revision->set('moderation_state', $action)->save();
-      }
+  foreach ($selected_nodes as $nid) {   
+    if(!is_null($nid)){
+      $node_id = json_decode(base64_decode($nid), true)[1];
     }
+    if(!empty($node_id)){
+      $node = Node::load($node_id);
+      if($node){    
+        // get latest revision ID
+        $latest_vid = \Drupal::entityTypeManager()->getStorage('node')->getLatestRevisionId($node_id);
+        // load latest revision
+        $latest_revision = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($latest_vid); 
+        // update the latest revision
+        $latest_revision->set('moderation_state', $action)->save();
+       }
+     }
+   }
  }
+ 
+
