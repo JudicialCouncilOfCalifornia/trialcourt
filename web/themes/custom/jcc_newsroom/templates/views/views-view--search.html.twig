@@ -31,31 +31,49 @@
  */
 #}
 
-{% set no_results_msg %}
-  {% include "@molecules/alert/alert.twig" with {
-    alert: {
-      type: 'warning',
-      size: 'full',
-      heading: no_results_heading,
-      text: {
-        '#type': 'processed_text',
-        '#text': no_results_message|render,
-        '#format': 'full_html'
-      },
-      close: false,
-      classes: []
-    }
-  } %}
-{% endset %}
+{%
+  set classes = [
+  dom_id ? 'js-view-dom-id-' ~ dom_id,
+]
+%}
 
-{% include "@templates/search/search.twig" with {
-  search: {
-    background: header_footer_variant,
-    message: message,
-    keywords: keywords,
-    num_results: num_results,
-    results: no_results_msg ? no_results_msg : rows,
-    form: exposed,
-    pager: pager,
-  }
-} %}
+<div{{ attributes.addClass(classes) }}>
+  {{ title_prefix }}
+  {{ title }}
+  {{ title_suffix }}
+
+  {% if header %}
+    <header>
+      {{ header }}
+    </header>
+  {% endif %}
+
+  {{ exposed }}
+  {{ attachment_before }}
+
+  {% if rows -%}
+    {{ rows }}
+  {% elseif rows is empty -%}
+    {% include '@molecules/blocks/alert/alert.twig' with {
+      alert: {
+        tag: "div",
+        icon: true,
+        type: "warning",
+        heading: no_results_heading,
+        text: no_results_message|render
+      }
+    } only %}
+  {% endif %}
+  {{ pager }}
+
+  {{ attachment_after }}
+  {{ more }}
+
+  {% if footer %}
+    <footer>
+      {{ footer }}
+    </footer>
+  {% endif %}
+
+  {{ feed_icons }}
+</div>

@@ -5,14 +5,15 @@
  * Functions for views processing.
  */
 
-use Drupal\Core\Url;
-use Drupal\media\Entity\Media;
-use Drupal\file\Entity\File;
-use Drupal\taxonomy\Entity\Term;
-use Drupal\node\Entity\Node;
-use Drupal\views\ViewExecutable;
-use Drupal\Core\Render\Markup;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
+use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
+use Drupal\node\Entity\Node;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -66,18 +67,18 @@ function jcc_components_preprocess_views_view__news__sticky_list(&$variables) {
  */
 function jcc_components_preprocess_views_view__news__news_list(&$variables) {
   // Translation via TMGMT breaks dates where translators entered invlid date
-  // values in date fields. If date is invalid clear it before template renders. 
+  // values in date fields. If date is invalid clear it before template renders.
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   if (isset($variables['rows'][0]['#rows']) && is_array($variables['rows'][0]['#rows'])) {
-    foreach ($variables['rows'][0]['#rows'] as &$row) {    
+    foreach ($variables['rows'][0]['#rows'] as &$row) {
       $node = $row['#node'];
       $nodeid = $node->id();
-     $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/'. $nodeid, $langcode);    
+      $translated_path = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $nodeid, $langcode);
       $row['#lang'] = $langcode;
-     if($langcode === "es") {
-        $prefixed_translated_path = '/' . $langcode . $translated_path;   
-        $row['#sticky'] = $prefixed_translated_path;    
-      }   
+      if ($langcode === "es") {
+        $prefixed_translated_path = '/' . $langcode . $translated_path;
+        $row['#sticky'] = $prefixed_translated_path;
+      }
       if (!jcc_components_validate_date($node->field_date->value)) {
         $node->field_date->value = '';
       }
@@ -408,6 +409,22 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for short document listing.
+ */
+function jcc_components_preprocess_views_view__search(&$variables) {
+  // Personalized no results message.
+  $variables['no_results_heading'] = 'We are unable to find a result for your search.';
+  if (theme_get_setting('no_search_results_heading')) {
+    $variables['no_results_heading'] = theme_get_setting('no_search_results_heading');
+  }
+  $variables['no_results_message'] = ['#markup' => Html::decodeEntities('Visit our <a href="/">homepage</a> for more options.')];
+  $no_results_msg = theme_get_setting('no_search_results_message');
+  if ($no_results_msg['value']) {
+    $variables['no_results_message'] = ['#markup' => Html::decodeEntities($no_results_msg['value'])];
+  }
+}
+
+/**
  * Implements hook_views_pre_render().
  */
 function jcc_components_views_pre_render(ViewExecutable $view) {
@@ -433,13 +450,14 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
           $body_content = "";
           if ($view->field['field_department']->advancedRender($row) != "") {
             $body_content = $view->field['field_department']->advancedRender($row)->__toString() . '<br>';
-          }         
+          }
           $renderedContent = $view->field['field_address']->advancedRender($row);
           if (is_object($renderedContent) && method_exists($renderedContent, '__toString')) {
             $body_content .= $renderedContent->__toString();
-          } else {
+          }
+          else {
             $body_content .= $renderedContent;
-          }        
+          }
           $view->element['#custom_items'][$key]['body'] = Markup::create($body_content);
           if ($view->field['field_custom_link']->advancedRender($row) != "") {
             $link_uri = $view->field['field_custom_link']->advancedRender($row)->__toString();
