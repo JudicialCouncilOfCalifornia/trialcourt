@@ -14,6 +14,7 @@ use Drupal\Component\Utility\Xss;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -214,3 +215,72 @@ function jcc_tc_custom_entity_access(EntityInterface $entity, $operation, Accoun
   }
   return AccessResult::neutral();
 }
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter() for news dashboard page.
+ */
+function jcc_tc_custom_form_views_form_news_dashboard_page_1_alter(&$form, FormStateInterface $form_state) {
+  // Add a custom validation handler before the submit handlers.
+  array_unshift($form['#validate'], 'jcc_tc_custom_custom_validate');
+  // Add custom submission handler to the form.
+  $form['#submit'][] = 'jcc_tc_custom_node_form_submit';
+
+}
+
+/**
+ * Custom validation handler for the news dashboard form.
+ */
+function  jcc_tc_custom_custom_validate($form, FormStateInterface $form_state) {
+  $action = $form_state->getValue('action');
+  $selected_nodes = $form_state->getValue('node_bulk_form');
+  // Validate the action. keeping all the possible value of actions to prevent error.
+  $valid_actions = [
+    'change_to_archived',
+    'change_to_draft',
+    'change_to_published',
+    'change_to_ready_for_review',
+    'node_break_lock_action',
+    'node_promote_action',
+    'node_unpromote_action'
+    ];
+
+  if (!in_array($action, $valid_actions)) {
+    $form_state->setErrorByName('action', t('The selected action is not valid.'));
+  }
+}
+
+/**
+ * Custom submit handler for the news dashboard page.
+ */
+function jcc_tc_custom_node_form_submit($form, FormStateInterface $form_state) {
+  $action_key = $form_state->getValues()['action'];
+  $selected_nodes = $form_state->getValues()['node_bulk_form'];
+
+  // Map form actions to internal actions.
+  $action_map = [
+    'change_to_archived' => 'archived',
+    'change_to_draft' => 'draft',
+    'change_to_published' => 'published',
+    'change_to_ready_for_review' => 'ready_for_review'
+  ];
+
+  // Check if the provided action key exists in the map.
+  if (isset($action_map[$action_key])) {
+    $action = $action_map[$action_key];
+  } else {
+    // Handle unknown action, perhaps log or set a default.
+    $action = $action_key;  // Set your default or handle as required.
+  }
+  foreach ($selected_nodes as $nid) {
+    $node_id = json_decode(base64_decode($nid), true)[1];
+    $node = Node::load($node_id);
+    if($node){
+      // get latest revision ID
+      $latest_vid = \Drupal::entityTypeManager()->getStorage('node')->getLatestRevisionId($node_id);
+      // load latest revision
+      $latest_revision = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($latest_vid);
+      // update the latest revision
+      $latest_revision->set('moderation_state', $action)->save();
+      }
+    }
+ }
