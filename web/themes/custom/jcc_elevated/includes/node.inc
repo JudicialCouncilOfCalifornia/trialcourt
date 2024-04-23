@@ -280,7 +280,7 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node): void {
     }
     if ($media->get('field_media_file_multiple')->target_id) {
       $file = File::load($media->get('field_media_file_multiple')->target_id);
-      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
       // Profile doc as download link, else general docs.
       if ($doc_type && $doc_type == 'Profile') {
         $variables['profile_download'] = [
@@ -702,7 +702,7 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   if ($node->get('field_media_file_multiple')->getValue()) {
     foreach ($node->get('field_media_file_multiple')->getValue() as $attachment) {
       $media = Media::load($attachment['target_id']);
-      $file = File::load($media->field_media_file->target_id);
+      $file = File::load($media->get('field_media_file')->target_id);
       if ($file) {
         $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
         $file_name = $file->getFileName();
@@ -739,39 +739,22 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
     }
   }
 
-  // Web page citings.
-  $citings_urls = [];
-  $citings = $node->get('field_web_page_citings')->getValue();
-  if ($citings) {
-    foreach ($citings as $citing) {
-      $citing_url = $citing['uri'];
-      $citing_url_parts = parse_url($citing_url);
-      $citing_title = $citing['title'];
-
-      // If linked to Drupal URI.
-      if ($citing_url_parts['scheme'] == 'entity') {
-        $entity_path = Url::fromUri($citing['uri'])->toString();
-        $entity_path_parts = explode('/', $entity_path);
-        switch ($entity_path_parts[1]) {
-          case 'media':
-            $media_id = $entity_path_parts[2];
-            $media = Media::load($media_id);
-            // Link to media file.
-            $media_file_id = $media->field_media_file[0]->getValue()['target_id'];
-            $citing_file = File::load($media_file_id);
-            $citing_url = \Drupal::service('file_url_generator')->generateAbsoluteString($citing_file->getFileUri());
-            break;
+  // Citings.
+  $citings = [];
+  if ($node->get('field_opinion_citings')->getValue()) {
+    foreach ($node->get('field_opinion_citings')->getValue() as $citing) {
+      $media = Media::load($citing['target_id']);
+      $file = File::load($media->get('field_media_file')->target_id);
+      if ($file) {
+        $citing_title = $media->get('field_media_text')->value;
+        if (is_null($citing_title)) {
+          $citing_title = $media->get('name')->value;
         }
+        $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
+        $citings[] = [
+          'text' => ['#markup' => '<a href="' . $file_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
+        ];
       }
-
-      // If no link title provided.
-      if (is_null($citing_title)) {
-        $citing_title = $citing['uri'];
-      }
-
-      $citings_urls[] = [
-        'text' => ['#markup' => '<a href="' . $citing_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
-      ];
     }
   }
 
@@ -779,7 +762,7 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
     'details' => $case_number && $opinion_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
     'attachments' => $attachments,
     'related_cases' => $related_cases_urls ? implode(' ', $related_cases_urls) : '',
-    'citings' => $citings_urls,
+    'citings' => $citings,
   ];
 
   $variables['opinion'] = $opinion;
