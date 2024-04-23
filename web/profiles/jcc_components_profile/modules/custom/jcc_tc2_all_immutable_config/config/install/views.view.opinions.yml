@@ -1046,16 +1046,19 @@ display:
                   max: ''
                   value: '-120 days'
                   type: offset
-        field_web_page_citings_uri:
-          id: field_web_page_citings_uri
-          table: node__field_web_page_citings
-          field: field_web_page_citings_uri
+        field_opinion_citings_target_id:
+          id: field_opinion_citings_target_id
+          table: node__field_opinion_citings
+          field: field_opinion_citings_target_id
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: string
+          plugin_id: numeric
           operator: 'not empty'
-          value: ''
+          value:
+            min: ''
+            max: ''
+            value: ''
           group: 1
           exposed: false
           expose:
@@ -1072,6 +1075,8 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            min_placeholder: ''
+            max_placeholder: ''
             placeholder: ''
           is_grouped: false
           group_info:
