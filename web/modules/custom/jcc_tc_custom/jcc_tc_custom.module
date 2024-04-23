@@ -235,7 +235,7 @@ function  jcc_tc_custom_custom_validate($form, FormStateInterface $form_state) {
   $selected_nodes = $form_state->getValue('node_bulk_form');
   // Validate the action. keeping all the possible value of actions to prevent error.
   $valid_actions = [
-    'change_to_archived',
+    'change_to_archived', 
     'change_to_draft',
     'change_to_published',
     'change_to_ready_for_review',
@@ -272,10 +272,19 @@ function jcc_tc_custom_node_form_submit($form, FormStateInterface $form_state) {
     $action = $action_key;  // Set your default or handle as required.
   }
   foreach ($selected_nodes as $nid) {   
-    if(!is_null($nid)){
-      $node_id = json_decode(base64_decode($nid), true)[1];
+    // Decode the base64 string 
+    $decoded_string = base64_decode($nid);
+    if($decoded_string === false){
+      continue; // skip this iteration
     }
-    if(!empty($node_id)){
+
+    $decoded_json = json_decode($decoded_string , true);
+    if($decoded_json === null || !is_array($decoded_json)){
+      continue; //skip this iteration
+    }
+
+    if(isset($decoded_json[1])){
+      $node_id = $decoded_json[1];
       $node = Node::load($node_id);
       if($node){    
         // get latest revision ID
@@ -285,6 +294,11 @@ function jcc_tc_custom_node_form_submit($form, FormStateInterface $form_state) {
         // update the latest revision
         $latest_revision->set('moderation_state', $action)->save();
         }
-      }
-    }
- }
+    }else{
+      //skip the iteration
+      continue;  
+    }    
+  }
+}
+ 
+
