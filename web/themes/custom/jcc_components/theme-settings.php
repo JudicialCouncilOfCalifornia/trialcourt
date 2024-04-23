@@ -178,4 +178,23 @@ function jcc_components_form_system_theme_settings_alter(&$form, FormStateInterf
     '#default_value' => theme_get_setting('enable_twitter_embed'),
     '#description'   => t("Enable Twitter embed library"),
   ];
+
+  // Edit no search results message.
+  $form['global']['no_search_results'] = [
+    '#type' => 'details',
+    '#title' => t('No search results message'),
+    '#collapsed'  => TRUE,
+  ];
+  $form['global']['no_search_results']['no_search_results_heading'] = [
+    '#type'          => 'textfield',
+    '#title'         => t('Personalized heading'),
+    '#default_value' => theme_get_setting('no_search_results_heading'),
+  ];
+  $no_results_msg = theme_get_setting('no_search_results_message');
+  $form['global']['no_search_results']['no_search_results_message'] = [
+    '#type'          => 'text_format',
+    '#format'        => $no_results_msg ? $no_results_msg['format'] : 'snippet',
+    '#title'         => t('Personalized message'),
+    '#default_value' => $no_results_msg ? $no_results_msg['value'] : '',
+  ];
 }

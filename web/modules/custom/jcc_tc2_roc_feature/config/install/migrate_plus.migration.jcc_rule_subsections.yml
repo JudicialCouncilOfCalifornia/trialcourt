@@ -1,0 +1,158 @@
+langcode: en
+status: true
+dependencies: {  }
+id: jcc_rule_subsections
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: jcc2
+label: 'JCC: Rules of Court: Rule Subsections'
+source:
+  plugin: csv
+  path: modules/custom/jcc_roc/data/jcc_rule_subsections.csv
+  delimiter: ','
+  header_offset: 0
+  ids:
+    - field_rule_subsection_id
+  fields:
+    -
+      name: id
+      label: 'Unique identifier'
+      selector: id
+    -
+      name: title
+      label: Title
+      selector: title
+    -
+      name: field_rule_subsection_id
+      label: 'Rule Subsection ID'
+      selector: field_rule_subsection_id
+    -
+      name: field_rule_subsection_document
+      label: 'Rule Subsection Parent Document'
+      selector: field_rule_subsection_document
+    -
+      name: body
+      label: Body
+      selector: body
+process:
+  title: title
+  field_rule_subsection_id: field_rule_subsection_id
+  field_rule_subsection_document:
+    -
+      plugin: entity_lookup
+      source: field_rule_subsection_document
+      value_key: field_rule_document_id
+      bundle: rule_document
+      entity_type: node
+      ignore_case: true
+      access_check: false
+  body/value:
+    -
+      plugin: str_replace
+      case_insensitive: true
+      source: body
+      search: '<p><a href="#TopOfPage">[ Back to Top ]</a></p>'
+      replace: ''
+    -
+      plugin: dom
+      method: import
+      source: body
+    -
+      plugin: dom_remove
+      selector: '//a[contains(@name,"TopOfPage")]'
+    -
+      plugin: dom_remove
+      selector: '//a[contains(@href,"index.cfm?title")]'
+    -
+      plugin: dom_remove
+      selector: '//a[href^=index.cfm]'
+    -
+      plugin: dom_remove
+      selector: '//a[contains(@href,"printfriendly.cfm")]'
+    -
+      plugin: dom_remove
+      selector: '//a[href^=printfriendly]'
+    -
+      plugin: dom_remove
+      selector: '//a[contains(@name,"maincontent")]'
+    -
+      plugin: dom_remove
+      selector: '//a[name=maincontent]'
+    -
+      plugin: dom_remove
+      selector: '//div#topnav//a'
+    -
+      plugin: dom_remove
+      selector: '//div#left//a//strong'
+    -
+      plugin: dom_remove
+      selector: '//div#left//a'
+    -
+      plugin: dom_remove
+      selector: '//div#middle//a//strong'
+    -
+      plugin: dom_remove
+      selector: '//div#middle//a'
+    -
+      plugin: dom_remove
+      selector: '//div#right//a//strong'
+    -
+      plugin: dom_remove
+      selector: '//div#right//a'
+    -
+      plugin: dom_remove
+      selector: '//div#img//img'
+    -
+      plugin: dom_remove
+      selector: '//div#img'
+    -
+      plugin: dom_remove
+      selector: '//div[contains(@id,"img")]'
+    -
+      plugin: dom_remove
+      selector: '//img[contains(@src,"images/icon-print.gif")]'
+    -
+      plugin: dom_remove
+      selector: '//img[contains(@src,"images/seal.gif")]'
+    -
+      plugin: dom_remove
+      selector: //h1
+    -
+      plugin: dom_remove
+      selector: '//p[class="ruleheading"]'
+    -
+      plugin: dom_remove
+      selector: '//p[contains(@class,"ruleheading")]'
+    -
+      plugin: dom_remove
+      selector: '//div[contains(@id,"left")]'
+    -
+      plugin: dom_remove
+      selector: '//div#left'
+    -
+      plugin: dom_remove
+      selector: '//div[contains(@id,"middle")]'
+    -
+      plugin: dom_remove
+      selector: '//div#middle'
+    -
+      plugin: dom_remove
+      selector: '//div[contains(@id,"right")]'
+    -
+      plugin: dom_remove
+      selector: '//div#right'
+    -
+      plugin: dom_remove
+      selector: '//div[contains(@id,"topnav")]'
+    -
+      plugin: dom
+      method: export
+  body/format:
+    plugin: default_value
+    default_value: body
+destination:
+  plugin: 'entity:node'
+  default_bundle: rule_subsection
+migration_dependencies: null
