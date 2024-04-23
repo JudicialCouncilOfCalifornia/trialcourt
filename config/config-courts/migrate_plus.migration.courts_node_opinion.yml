@@ -148,7 +148,7 @@ process:
       plugin: skip_on_empty
       method: process
       message: 'No media to attach to opinion.'
-  field_web_page_citings:
+  field_opinion_citings:
     -
       plugin: explode
       source: citings
@@ -161,20 +161,15 @@ process:
     -
       plugin: migration_lookup
       migration: courts_media_opinion
-    -
-      plugin: jcc_media_lookup
-    -
-      plugin: sub_process
-      process:
-        uri: uri
-        title: description
+      no_stub: true
     -
       plugin: skip_on_empty
       method: process
-      message: 'No citings to attach to opinion.'
+      message: 'No citing media to attach to opinion.'
 destination:
   plugin: 'entity:node'
   default_bundle: opinion
 migration_dependencies:
   optional:
     - courts_media_opinion
+    - courts_media_opinion_citing
