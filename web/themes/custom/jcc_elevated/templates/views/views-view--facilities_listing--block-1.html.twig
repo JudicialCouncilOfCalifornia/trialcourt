@@ -38,23 +38,17 @@
 
 {% set items = [] %}
 
-{% for facility in facilities %}
+ {% for facility in facilities %}
 
-{% set status_pills  %}
- {% include "@atoms/Pill/Pill.twig" with {
-            variant: 'default',
-            label: facility.status,            
-          } %} 
-{% endset %}          
  
      {% set item = {
     title: facility.title,
-    content: status_pills,
+    content: '',
     url: facility.url,
    
    } %}
  {% set items = items|merge([item]) %}
-{% endfor %}
+{% endfor %} 
 
 {% include "@molecules/HeroHangover/HeroHangover.twig" with {
   heading: 'Building California Courthouses'|t,
@@ -84,7 +78,5 @@
     footer: '',
     footer_sidebar: '',
     sidebar_direction_footer: 'sidebar-row',
-  } %}
-
-  
+  } %}  
 </div>

@@ -218,29 +218,21 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
  * @param Drupal\node\NodeInterface $node
  *   The node.
  */
-function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): void {
+function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): void {  
   $render = \Drupal::service('renderer');
   $basic_page = Node::load($node->id());
-  $variables['node'] = $node;
+  $variables['node'] = $node;  
   $field_schedule_render_array = $node->field_schedule->view('default');
   if ($field_schedule_render_array['#items'] && !$field_schedule_render_array['#items']->isEmpty()) {
     $schedule_content = render($field_schedule_render_array[0]['#text']);
   }
-  /*$sample = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '';
+  /*$sample = $node->get('field_completion_date')->date ? $node->get('field_date')->date->format('F j, Y') : '';
   $variables['completiondate'] = $sample;*/
 
-  /*$budget_field = $node->get('field_budget');
+  $budget_field = $node->get('field_budget');
   if (!$budget_field->isEmpty()) {
       $budget_value = $budget_field->getValue()[0]['value'];     
-      dpm($budget_value);
-  }
-  
-  $courtroom = $node->get('field_total_courtrooms');  
-  dpm($courtroom->getValue()[0]['value']);
-
-  $fund = $node->get('field_fund');
-  dpm($fund);
-  dpm($fund->getValue()[0]['value']);*/
+  }  
   $ceqa = $node->field_ceqa->view('default');
   if ($ceqa['#items'] && !$ceqa['#items']->isEmpty()) {
     $ceqa_content = render($ceqa[0]['#text']);
@@ -255,30 +247,31 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     'project_information' => [
       'Gross Square Footage' => $node->field_gross_square_footage->value,
       'Total Courtrooms' => $node->field_total_courtrooms->value,
+      'Current Authorized Project Budget' => $node->field_budget->value,
+      'Architectural/Engineering Firm'  => $node->field_architectural_engineering_->value,
+      'General Contractor' => $node->field_general_contractor->value,
+      'Fund' => $node->field_fund->value,
       'Completion Date' => $sample,
     ],
     'schedule' => $schedule_content,
     'ceqa' => $ceqa_content,
     'summary' => $summary_content,
+    'status' => $node->field_project_status->value
   ];
 
-  $projectimages = [];
-  dpm("project images");  
+  $projectimages = [];  
   foreach ($node->field_media_file_multiple as $media_file) {
     if (!empty($media_file->target_id)) {
-    $media = Media::load($media_file->target_id);    
-    dpm($media);
+    $media = Media::load($media_file->target_id);       
     if ($media && $media->field_media_image->entity) {
       $uri = $media->field_media_image->entity->getFileUri();      
-      $media_url = file_create_url($uri);
-      dpm($media_url);
+      $media_url = file_create_url($uri);      
     }
     $projectimages[] = [
       'url' => $media_url,
     ];
   }
   }
-  dpm($projectimages);
   $variables['projectimages'] = $projectimages;
 
   // Hero Image
@@ -290,8 +283,36 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       $image_url = file_create_url($uri);
       $variables['imageurl'] = $image_url;
     }
+  } 
+  
+  if (!empty($details['summary'])) {
+    $elements[] = "<h2>Project Info</h2>";
+    $elements[] = $details['summary'];
+    $elements[] = "<hr />";
+  }
+  
+  if (!empty($node->body->value)) {
+    $elements[] = "<h2>Background</h2>";
+    $elements[] = $node->body->value;
+    $elements[] = "<hr />";
   }
 
+  // Add Schedule
+  if (!empty($details['schedule'])) {
+    $elements[] = "<h2>Schedule</h2>";
+    $elements[] = $details['schedule'];
+    $elements[] = "<hr />";
+  }
+
+  // Add Project Images
+  if (!empty($projectimages)) {
+  $elements[] = "<h2>Project Images</h2>";
+  }
+
+  foreach ($elements as $element) {
+    $body[]['#text'] = $element;
+}
+  $variables['content']['body'] = $body;
   $variables['details'] = $details;
 }
 

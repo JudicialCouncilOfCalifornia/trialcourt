@@ -1,11 +1,45 @@
- {{ attach_library("jcc_storybook/List") }}
-{{node.title.value}}
+{{ attach_library("jcc_storybook/Brow") }}
+{{ attach_library("jcc_storybook/HeroHangover") }}
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/Body") }}
+{{ attach_library("jcc_storybook/Card") }}
+{{ attach_library("jcc_storybook/List") }}
+{{ attach_library("jcc_storybook/Pill") }}
 
-  {% if imageurl is not empty %}   
-    <img src={{imageurl}} />    
-  {% endif %}  
+  {#{% block layout %}#}
+  {% if imageurl is not empty %}
+    {% set imageTag %}
+    <img src={{imageurl}} />
+    {% endset %} 
+  {% endif %}
+ 
+ {% set mediacontent = imageTag is not empty ? imageTag : '' %} 
+ {% set hangover_content %}  
+    {% include "@molecules/Card/Card.twig" with {
+      variant: "media-right",
+      aspect: [],
+      clickable_card: false,
+      background: null,
+      media: mediacontent,     
+    } %} 
+  {% endset %} 
 
-  {% set items = [] %} 
+
+ {% include "@molecules/HeroHangover/HeroHangover.twig" with {
+      hangover_hide_compact: false,
+      hangover_offset: 22,
+      background: 'striped-base-light-xx',
+      brow: {
+        variant: 'default_with_date',
+        part_one: 'test text here',        
+      },
+      heading: node.title.value,
+      news_header: true,      
+      hangover_content: hangover_content,
+      text: ''  
+    } %}
+
+ {% set items = [] %} 
   {% for key,value in details.project_information %}
     {% if value is not empty %}
       {% set item = {
@@ -14,33 +48,85 @@
       } %}
       {% set items = items|merge([item]) %}
     {% endif %}
-  {% endfor %} 
-<p>ITEMS: {{items}}</p>
-
-  {% if items %}
+  {% endfor %}
+ 
+  {% set projectdetails %}   
     {% include "@molecules/List/List.twig" with {
       variant: 'none',
       items: items,
     } %}
-  {% endif %}
+    <div> 
+    {% include "@atoms/Pill/Pill.twig" with {
+      variant: 'default',
+      label: details['status'],
+      url: ''
+    } %} 
+    </div>
+   {% endset %} 
  
-<p>TITLE: {{node.title.value}}</p>
-{# <p>Completion date {{completiondate}}</p> #}
-<p>BACKGROUND: {{content.body  }} </p>
-<p> SCHEDULE{{details.schedule | raw }} </p>
-<p>CEQA {{details.ceqa | raw}} </p>
-<p>Summary {{details.summary | raw}} </p>
+{% set detailscard %}
+  {% include "@molecules/Card/Card.twig" with {
+          variant: "bordered",
+          aspect: [],
+          clickable_card: false,
+          background: null  ,
+          text: projectdetails,
+          button_data:[],
+          heading: 'DETAILS'        
+        }
+  %} 
+{% endset %} 
 
-{% for i in textshare %}
-    {{ i.content['#string']|raw }}
-  {% endfor %}
+{% set bodycontent %}
+     {% for item in content.body %}
+  {{ item['#text'] | raw }}  
+{% endfor %}
+{% endset %}
 
-<p>Project Images: </p>   
-      {% for image in projectimages %}       
-          {% if image.url %}          
-              <img src={{image.url|raw}} alt={{image.alt}}>            
-          {% endif %}
-      {% endfor %}
-   
+    {% set allcontent %}       
+          {% include "@molecules/Body/Body.twig" with {
+          variant: "default",
+          heading: "",
+          lead: "",
+          content: bodycontent,
+          subheading: '',
+          aside: detailscard
+          } %}   
 
-    
+  {# START OF PROJECT IMAGES HERE #}
+  {% if projectimages is not empty %}
+<p> Click on an image below to see in full size </p>
+<div class="container">
+<div class="grid grid-demo" style="--grid-min-width: 30ch;">
+{% for image in projectimages %}
+ {% if image.url %}
+    {% set project_image %}     
+        <img src={{image.url}}>
+            {% endset %}
+ {% endif %}
+         {% include "@molecules/Card/Card.twig" with {
+          variant: "default",
+          aspect: [],
+          clickable_card: false,
+          background: null,
+          media:  project_image | raw,
+          heading: '',
+          button_data:[],
+          text: '',          
+        } %}
+        {% endfor %}
+</div>
+</div>   
+{% endif %}
+{# END OF PROJECT IMAGES HERE #}
+{% endset %}
+</div>
+  
+ {% block section %}
+        {% include "@organisms/Section/Section.twig" with {
+          sub_component_layout: 'stack',
+          sub_component_data: allcontent,
+          }      
+        %}
+
+  {% endblock %}
