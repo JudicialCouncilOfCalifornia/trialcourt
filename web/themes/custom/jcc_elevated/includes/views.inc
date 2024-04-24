@@ -461,6 +461,13 @@ function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables
 }
 
 /**
+ * Implements hook_preprocess_views_view() for events listing block.
+ */
+function jcc_elevated_preprocess_views_view_unformatted__advisory_body_events__block_1(&$variables) {
+
+}
+
+/**
  * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {

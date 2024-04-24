@@ -18,33 +18,18 @@
  */
 #}
 
-{{ attach_library("jcc_storybook/ViewResults") }}
-
-{#{% if title %}#}
-{#  <h3>{{ title }}</h3>#}
-{#{% endif %}#}
-{#{% for row in rows %}#}
-{#  {%#}
-{#    set row_classes = [#}
-{#      default_row_class ? 'views-row',#}
-{#    ]#}
-{#  %}#}
-{#  <div{{ row.attributes.addClass(row_classes) }}>#}
-{#    {{- row.content -}}#}
-{#  </div>#}
-{#{% endfor %}#}
+{#Libraries loaded in advisory body template#}
 
 <div{{ attributes.addClass(classes) }}>
 
   {% include "@organisms/ViewResults/ViewResults.twig" with {
-    variant: 'default',
+    variant: 'search_results',
     view_name: id,
     view_display: display_id,
     header: '',
     header_sidebar: '',
     header_direction_results: 'sidebar-row',
-    form: exposed|render,
-    form_in_sidebar: true,
+    form_in_sidebar: false,
     list_type: 'ul',
     list_type_divider: '',
     rows: rows,
@@ -56,4 +41,5 @@
     footer_sidebar: '',
     sidebar_direction_footer: 'sidebar-row',
   } %}
+
 </div>

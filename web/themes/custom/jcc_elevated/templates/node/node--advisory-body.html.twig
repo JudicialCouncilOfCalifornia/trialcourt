@@ -77,10 +77,12 @@
 {{ attach_library("jcc_storybook/Card") }}
 {{ attach_library("jcc_storybook/Brow") }}
 {{ attach_library("jcc_storybook/Share") }}
+{{ attach_library("jcc_storybook/ViewResults") }}
+{{ attach_library("jcc_storybook/ResultExcerpt") }}
 
 {% set tabs_elems = {} %}
 
-{% set tabs_elems = tabs_elems|merge({'meetings': {'label':'Meetings','content': events_view}}) %}
+{% set tabs_elems = tabs_elems|merge({'meetings': {'label':'Meetings','content': content.meetings_tab}}) %}
 
 {% if content.field_members[0] is not empty %}
   {% set tabs_elems = tabs_elems|merge({'members': {'label':'Members','content': content.field_members}}) %}
@@ -90,12 +92,12 @@
   {% set tabs_elems = tabs_elems|merge({'subcommittees': {'label':'Subcommittees','content': content.field_subcommittees}}) %}
 {% endif %}
 
-{% if content.field_updates_resources[0] is not empty %}
-  {% set tabs_elems = tabs_elems|merge({'updates_resources': {'label':'Updates & resources','content': content.field_updates_resources}}) %}
+{% if content.field_news_reports[0] is not empty %}
+  {% set tabs_elems = tabs_elems|merge({'news_reports': {'label':'News & reports','content': content.field_news_reports}}) %}
 {% endif %}
 
-{% if content.field_about[0] is not empty %}
-  {% set tabs_elems = tabs_elems|merge({'about': {'label':'About','content': content.field_about}}) %}
+{% if (content.field_about[0] is not empty) or (content.field_date_established[0] is not empty) %}
+  {% set tabs_elems = tabs_elems|merge({'about': {'label':'About','content': content.about_tab }}) %}
 {% endif %}
 
 {% set tabs_elem %}
@@ -113,13 +115,6 @@
 
 {% set sidebar_content %}
   <div class="box">
-    {% if node.field_date_established is not empty %}
-      <h4 class="sidebar-label">Date established</h4>
-      <div class="sidebar-date">
-        {{ content.field_date_established }}
-      </div>
-      {{ content.field_date_note }}
-    {% endif %}
     {% if node.field_related_links is not empty %}
       <h4 class="sidebar-label">Related links</h4>
       {{ content.field_related_links }}
@@ -133,7 +128,7 @@
 
 {% set sidebar %}
   {% include "@molecules/card/Card.twig" with {
-    variant: "default",
+    variant: "bordered",
     clickable_card: false,
     background: 'base-light-xxx',
     aspect: [],
