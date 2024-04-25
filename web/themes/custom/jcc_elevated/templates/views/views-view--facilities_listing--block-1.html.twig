@@ -21,6 +21,8 @@
 {{ attach_library("jcc_storybook/ViewResults") }}
 {{ attach_library("jcc_storybook/ResultExcerpt") }}
 {{ attach_library("jcc_storybook/Pill") }}
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/BlurbBox") }}
 
 {%
   set classes = [
@@ -43,8 +45,9 @@
  
      {% set item = {
     title: facility.title,
-    content: '',
-    url: facility.url,
+    content: facility.status,
+    url: facility.url,        
+    detail_list_data: facility.detail_list_data,
    
    } %}
  {% set items = items|merge([item]) %}
@@ -79,4 +82,34 @@
     footer_sidebar: '',
     sidebar_direction_footer: 'sidebar-row',
   } %}  
+
+
+<div
+  class="with-sidebar sidebar-demo container"
+  style=" --gap:var(--s0);--sidebar-width:40ch;--sidebar-direction:row-reverse;background-color: #FEF2E4;"
+> 
+ {% block section %}
+ 
+ {% set contactinfo %}       
+  {% include "@molecules/Body/Body.twig" with {
+          variant: "default",
+          heading: "Overview",
+          lead: "",
+          content: bodycontent,
+          subheading: '',
+          aside: contactinfoaside
+          } %}   
+{% endset %}       
+      <div class="container stack">
+        {% include "@organisms/Section/Section.twig" with {
+          sub_component_layout: 'stack',
+          sub_component_data: contactinfo,
+          }      
+        %}
+      </div>  
+  {% endblock %}
+
+  </div>
+
+
 </div>

@@ -409,16 +409,24 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
   __jcc_view_results_exposed_filter_init($variables); 
     $facilities = [];    
     foreach ($variables['rows'][0]['#rows'] as $row) {
-      if (isset($row['#node'])) {
-        $node = $row['#node'];
+      $node = $row['#node'];
+      if (isset($row['#node'])) {      
         if ($node->hasField('title')) {
           $facility_title = $node->get('title')->value;              
         }            
       }
+
+      $detail_list_data = [
+        'details' => array_filter([         
+          $node->get('title')->value ,
+        ]),
+      ];
+      
       $facility = [
         'title' => $node->get('title')->value ? $node->get('title')->value : '',
-        'status' =>  $node->get('field_project_status')->value,
+        'status' =>  $node->get('field_project_status')->value == 'inprogress' ? 'In-Progress' : 'Completed',
         'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
+        'detail_list_data' => $detail_list_data
       ];     
       $facilities[] = $facility;     
     }    

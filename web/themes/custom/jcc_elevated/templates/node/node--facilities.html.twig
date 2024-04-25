@@ -98,11 +98,12 @@
 <p> Click on an image below to see in full size </p>
 <div class="container">
 <div class="grid grid-demo" style="--grid-min-width: 30ch;">
-{% for image in projectimages %}
+{% for image in projectimages %}  
  {% if image.url %}
-    {% set project_image %}     
-        <img src={{image.url}}>
-            {% endset %}
+    {% set project_image %}   
+    <a href="{{ image.url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ image.alt }}" aria-label="Click to view larger image">
+    <img src="{{ image.url }}"></a>
+    {% endset %}
  {% endif %}
          {% include "@molecules/Card/Card.twig" with {
           variant: "default",
