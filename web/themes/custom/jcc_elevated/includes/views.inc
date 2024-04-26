@@ -427,7 +427,6 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
     $event_files = '';
     if ($node->hasField('field_event_files')) {
       foreach ($node->get('field_event_files') as $file) {
-        $node_files = '';
         $media = Media::load($file->target_id);
         $fid = $media->field_media_file->target_id;
         $file = File::load($fid);
