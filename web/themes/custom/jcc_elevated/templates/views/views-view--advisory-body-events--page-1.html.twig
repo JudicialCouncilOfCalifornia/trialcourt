@@ -42,11 +42,11 @@
 ]
 %}
 
-{% set header %}
-  <div class="cluster">
-    <h2>{{ 'Past meetings'|t }}</h2>
-  </div>
-{% endset %}
+{% include "@molecules/HeroHangover/HeroHangover.twig" with {
+  heading: 'Pas meetings'|t,
+  media: false,
+  attributes: create_attribute()
+} %}
 
 <div{{ attributes.addClass(classes) }}>
   {% include "@organisms/ViewResults/ViewResults.twig" with {
@@ -60,7 +60,7 @@
     form_in_sidebar: true,
     list_type: 'ul',
     list_type_divider: '',
-    rows: rows,
+    rows: events,
     sidebar: '',
     sidebar_direction_results: 'sidebar-row',
     pager: pager|render,

@@ -396,63 +396,6 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
 }
 
 /**
- * Implements template_preprocess_views_view_fields().
- */
-function jcc_elevated_preprocess_views_view_fields(&$variables) {
-  $view = $variables['view'];
-  $row = $variables['row'];
-
-  $variables['event_files'] = [];
-  if (($view->id() == 'advisory_body_events' && $view->current_display == 'block_1') ||
-    ($view->id() == 'advisory_body_events' && $view->current_display == 'block_3')) {
-    $row_entity = $row->_entity;
-    foreach ($row_entity->get('field_event_files') as $key => $event_file) {
-      $media_object = Media::load($event_file->target_id);
-      $file_id = $media_object->getSource()->getSourceFieldValue($media_object);
-      $file_object = File::load($file_id);
-      $file_url = $file_object->createFileUrl();
-      $variables['event_files'][$key]['url'] = $file_url;
-      $variables['event_files'][$key]['label'] = $media_object->getName();
-    }
-  }
-}
-
-/**
- * Implements template_preprocess_views_view_field().
- */
-function jcc_elevated_preprocess_views_view_field(&$variables) {
-  $view = $variables['view'];
-  $field = $variables['field'];
-
-  if ($view->id() == 'advisory_body_events' && $view->current_display == 'block_1') {
-    switch ($field->field) {
-      case 'field_event_date':
-        // If date field is not the one with time.
-        if (!(str_contains($variables['output'], 'am') || str_contains($variables['output'], 'pm') || str_contains($variables['output'], ' / '))) {
-          $variables['output'] = date('F d, Y', strtotime($variables['output']));
-        }
-        elseif (str_contains($variables['output'], ' / ')) {
-          $variables['output'] = str_replace(' / ', '/', $variables['output']);
-        }
-        break;
-    }
-  }
-  elseif ($view->id() == 'advisory_body_events' && $view->current_display == 'block_3') {
-    switch ($field->field) {
-      case 'field_event_date':
-        // If date field is not the one with time.
-        if (!(str_contains($variables['output'], 'am') || str_contains($variables['output'], 'pm') || str_contains($variables['output'], ' / '))) {
-          $variables['output'] = date('F d, Y', strtotime($variables['output']));
-        }
-        elseif (str_contains($variables['output'], ' / ')) {
-          $variables['output'] = str_replace(' / ', '/', $variables['output']);
-        }
-        break;
-    }
-  }
-}
-
-/**
  * Implements hook_preprocess_HOOK() for justices and judges block view.
  */
 function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables) {
@@ -463,8 +406,50 @@ function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables
 /**
  * Implements hook_preprocess_views_view() for events listing block.
  */
-function jcc_elevated_preprocess_views_view_unformatted__advisory_body_events__block_1(&$variables) {
+function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$variables) {
+  $render = \Drupal::service('renderer');
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $node = $row['#node'];
+    $event = [];
+
+    // Get teaser.
+    $teaser = $node->get('body') ?? '';
+    if ($teaser) {
+      $teaser = $node->get('body')->view('teaser');
+      $teaser = strval($render->render($teaser));
+      $teaser = strip_tags($teaser);
+    }
+
+    // Get files.
+    $event_files = '';
+    if ($node->hasField('field_event_files')) {
+      foreach ($node->get('field_event_files') as $file) {
+        $node_files = '';
+        $media = Media::load($file->target_id);
+        $fid = $media->field_media_file->target_id;
+        $file = File::load($fid);
+        $url = $file->createFileUrl();
+        $event_files .= '<a class="excerpt-file" href="' . $url . '">' . $media->field_media_file->description . '</a> ';
+      }
+    }
+
+    // Get Event state.
+    $event_state_id = $node->hasField('field_event_state') ? $node->get('field_event_state')->target_id : FALSE;
+
+    $event['title'] = $node->get('title')->value;
+    $event['content']['#markup'] = is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Meeting Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
+    if ($teaser != '') {
+      $event['content']['#markup'] .= '<br>' . $teaser;
+    }
+    if ($event_files != '') {
+      $event['content']['#markup'] .= '<br>' . $event_files;
+    }
+
+    $variables['events'][] = $event;
+  }
 }
 
 /**
