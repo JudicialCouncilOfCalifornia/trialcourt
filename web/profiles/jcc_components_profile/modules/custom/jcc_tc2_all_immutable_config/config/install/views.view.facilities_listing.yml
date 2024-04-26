@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.teaser
     - node.type.facilities
   module:
     - node
@@ -94,7 +95,7 @@ display:
         type: basic
         options:
           submit_button: Apply
-          reset_button: false
+          reset_button: true
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
           expose_sort_order: true
@@ -168,7 +169,7 @@ display:
           exposed: true
           expose:
             operator_id: field_project_status_value_op
-            label: 'Project Status (field_project_status)'
+            label: Status
             description: ''
             use_operator: false
             operator: field_project_status_value_op
@@ -209,7 +210,10 @@ display:
       style:
         type: default
       row:
-        type: fields
+        type: 'entity:node'
+        options:
+          relationship: none
+          view_mode: teaser
       query:
         type: views_query
         options:
