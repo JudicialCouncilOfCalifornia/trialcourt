@@ -1,3 +1,4 @@
+uuid: 28136dab-d967-4169-816b-21149d0bd822
 langcode: en
 status: true
 dependencies: {  }
@@ -55,6 +56,11 @@ process:
   field_rule_revised_date: field_rule_revised_date
   promote: promote
   sticky: sticky
+  field_rule_section_attachment:
+    -
+      plugin: jcc_rule_document_lookup
+      migration_id: jcc_rule_documents_section_paragraphs
+      source: field_rule_document_id
 destination:
   plugin: 'entity:node'
   default_bundle: rule_document

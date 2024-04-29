@@ -5,7 +5,6 @@
  * Contains jcc_roc module functionality.
  */
 
-use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 
 // Include all files from the inc directory.
@@ -132,15 +131,5 @@ function jcc_roc_page_attachments(&$page): void {
 
   if (!$is_admin) {
     $page['#attached']['library'][] = 'jcc_roc/jcc-roc-custom';
-  }
-}
-
-/**
- * Implements hook_query_TAG_alter().
- */
-function jcc_roc_query_entity_reference_alter(AlterableInterface $query): void {
-  $metadata = $query->getMetaData('entity_reference_selection_handler');
-  if ($metadata->getPluginId() == 'bert:node') {
-    $query->range(0, 5);
   }
 }
