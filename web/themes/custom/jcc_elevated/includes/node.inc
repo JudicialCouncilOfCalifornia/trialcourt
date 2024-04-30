@@ -219,6 +219,8 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
  *   The node.
  */
 function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): void {
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $render = \Drupal::service('renderer');
   $basic_page = Node::load($node->id());
   $variables['node'] = $node;
@@ -226,14 +228,12 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   if ($field_schedule_render_array['#items'] && !$field_schedule_render_array['#items']->isEmpty()) {
     $schedule_content = render($field_schedule_render_array[0]['#text']);
   }
-  /*$sample = $node->get('field_completion_date')->date ? $node->get
-  ('field_date')->date->format('F j, Y') : '';
-  $variables['completiondate'] = $sample;*/
-
+  $completion_date = $node->get('field_completion_date')->date ? $node->get('field_completion_date')->date->format('F j, Y') : '';
+  $occupancy_date = $node->get('field_occupancy_date')->date ? $node->get('field_occupancy_date')->date->format('F j, Y') : '';
   $budget_field = $node->get('field_budget');
   if (!$budget_field->isEmpty()) {
-    $budget_value = $budget_field->getValue()[0]['value'];     
-  }  
+    $budget_value = $budget_field->getValue()[0]['value'];
+  }
   $ceqa = $node->field_ceqa->view('default');
   if ($ceqa['#items'] && !$ceqa['#items']->isEmpty()) {
     $ceqa_content = render($ceqa[0]['#text']);
@@ -243,7 +243,21 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   if ($summary['#items'] && !$summary['#items']->isEmpty()) {
     $summary_content = render($summary[0]['#text']);
   }
-  
+
+  if (isset($variables['node']) && $node->hasField('field_design_build_entity')) {
+    $design_build_entity = $node->get('field_design_build_entity')->value;
+  }
+
+  if (isset($variables['node']) && $node->hasField('field_initial_funding_year')) {
+    $initial_funding_year = $node->get('field_initial_funding_year')->value;
+  }
+
+  $agency_manager = $node->hasField('field_agency_manager') ? $node->get('field_agency_manager')->target_id : FALSE;
+  $agency = $node->hasField('field_agency') ? $node->get('field_agency')->target_id : FALSE;
+  $contractor = $node->hasField('field_general_contractor') ? $node->get('field_general_contractor')->target_id : FALSE;
+  $criteria_architect = $node->hasField('field_criteria_architect') ? $node->get('field_criteria_architect')->target_id : FALSE;
+  $managed_by = $node->hasField('field_managed_by') ? $node->get('field_managed_by')->target_id : FALSE;
+
   $details = [
     'project_information' => [
       'Gross Square Footage' => $node->field_gross_square_footage->value,
@@ -252,26 +266,36 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       'Architectural/Engineering Firm'  => $node->field_architectural_engineering_->value,
       'General Contractor' => $node->field_general_contractor->value,
       'Fund' => $node->field_fund->value,
-      'Completion Date' => $sample,
+      'Completion Date' => $completion_date,
+      'Design-Build Entity' => $design_build_entity,
+      'Initial Funding Year' => $initial_funding_year,
+      'Occupancy Date' => $occupancy_date,
+      'Construction Manager At Risk' => $agency_manager && $taxonomy_manager->load($agency_manager) ? $taxonomy_manager->load($agency_manager)->get('name')->value : '',
+      'Construction Management Agency' => $agency && $taxonomy_manager->load($agency) ? $taxonomy_manager->load($agency)->get('name')->value : '',
+      'General Contractor' => $contractor && $taxonomy_manager->load($contractor) ? $taxonomy_manager->load($contractor)->get('name')->value : '',
+      'Criteria Architect' => $criteria_architect && $taxonomy_manager->load($criteria_architect) ? $taxonomy_manager->load($criteria_architect)->get('name')->value : '',
+      'Managed By' => $criteria_architect && $taxonomy_manager->load($field_managed_by) ? $taxonomy_manager->load($field_managed_by)->get('name')->value : '',
     ],
     'schedule' => $schedule_content,
     'ceqa' => $ceqa_content,
     'summary' => $summary_content,
-    'status' => $node->field_project_status->value
+    'status' => $node->field_project_status->value == 'inprogress' ? 'In-Progress' : 'Completed',
+    'hero_title' => $node->field_hero_title,
+    'county' => $node->field_county,
   ];
 
-  $projectimages = [];  
+  $projectimages = [];
   foreach ($node->field_media_file_multiple as $media_file) {
     if (!empty($media_file->target_id)) {
-    $media = Media::load($media_file->target_id);       
-    if ($media && $media->field_media_image->entity) {
-      $uri = $media->field_media_image->entity->getFileUri();      
-      $media_url = file_create_url($uri);      
+      $media = Media::load($media_file->target_id);
+      if ($media && $media->field_media_image->entity) {
+        $uri = $media->field_media_image->entity->getFileUri();
+        $media_url = file_create_url($uri);
+      }
+      $projectimages[] = [
+        'url' => $media_url,
+      ];
     }
-    $projectimages[] = [
-      'url' => $media_url,
-    ];
-  }
   }
   $variables['projectimages'] = $projectimages;
 
@@ -284,14 +308,14 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       $image_url = file_create_url($uri);
       $variables['imageurl'] = $image_url;
     }
-  } 
-  
+  }
+
   if (!empty($details['summary'])) {
     $elements[] = "<h2>Project Info</h2>";
     $elements[] = $details['summary'];
     $elements[] = "<hr />";
   }
-  
+
   if (!empty($node->body->value)) {
     $elements[] = "<h2>Background</h2>";
     $elements[] = $node->body->value;
@@ -307,12 +331,12 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
 
   // Add Project Images
   if (!empty($projectimages)) {
-  $elements[] = "<h2>Project Images</h2>";
+    $elements[] = "<h2>Project Images</h2>";
   }
 
   foreach ($elements as $element) {
     $body[]['#text'] = $element;
-}
+  }
   $variables['content']['body'] = $body;
   $variables['details'] = $details;
 }

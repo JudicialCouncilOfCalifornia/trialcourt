@@ -24,16 +24,15 @@
     } %} 
   {% endset %} 
 
-
  {% include "@molecules/HeroHangover/HeroHangover.twig" with {
       hangover_hide_compact: false,
       hangover_offset: 22,
       background: 'striped-base-light-xx',
       brow: {
         variant: 'default_with_date',
-        part_one: 'test text here',        
+        part_one: details.county.value,        
       },
-      heading: node.title.value,
+      heading: details.hero_title.value,
       news_header: true,      
       hangover_content: hangover_content,
       text: ''  
@@ -76,7 +75,6 @@
         }
   %} 
 {% endset %} 
-
 {% set bodycontent %}
      {% for item in content.body %}
   {{ item['#text'] | raw }}  

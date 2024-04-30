@@ -44,10 +44,15 @@
 
  
      {% set item = {
+      brow: {
+      primary: facility.county,
+      secondary: facility.status,
+      notation: '',
+    },    
     title: facility.title,
-    content: facility.status,
+    content: '',
     url: facility.url,        
-    detail_list_data: facility.detail_list_data,
+    detail_list_data: '',
    
    } %}
  {% set items = items|merge([item]) %}
@@ -58,8 +63,6 @@
   media: false,
   attributes: create_attribute()
 } %}
-
-        
 
 <div{{ attributes.addClass(classes) }}>
   {% include "@organisms/ViewResults/ViewResults.twig" with {
