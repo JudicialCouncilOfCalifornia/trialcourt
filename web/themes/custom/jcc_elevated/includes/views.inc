@@ -417,6 +417,8 @@ function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables
  */
 function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$variables) {
   __jcc_view_results_exposed_filter_init($variables); 
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $facilities = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
@@ -432,10 +434,12 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
       ]),
     ];
     $status = $node->get('field_project_status')->value == 'inprogress' ? 'In-Progress' : 'Completed';
+    $county = $node->hasField('field_facility_county') ? $node->get('field_facility_county')->target_id : FALSE;
+    $county_value = $county && $taxonomy_manager->load($county) ? $taxonomy_manager->load($county)->get('name')->value : '';
     $facility = [
       'title' => $node->get('title')->value ? $node->get('title')->value : '',
       'status' => $status ? ['#markup' => Html::decodeEntities('<strong>Status:</strong> ' . $status)] : '',
-      'county' => $node->get('field_county')->value ? $node->get('field_county')->value : '',
+      'county' => $county_value ? $county_value : '',
       'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
       'detail_list_data' => $detail_list_data,
     ];
