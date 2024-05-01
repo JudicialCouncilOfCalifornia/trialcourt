@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.facilities.field_county
     - field.field.node.facilities.field_criteria_architect
     - field.field.node.facilities.field_design_build_entity
+    - field.field.node.facilities.field_facility_county
     - field.field.node.facilities.field_fund
     - field.field.node.facilities.field_general_contractor
     - field.field.node.facilities.field_gross_square_footage
@@ -138,14 +139,6 @@ content:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-  field_county:
-    type: string_textfield
-    weight: 47
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_criteria_architect:
     type: entity_reference_autocomplete
     weight: 26
@@ -165,6 +158,16 @@ content:
       summary_rows: 3
       placeholder: ''
       show_summary: false
+    third_party_settings: {  }
+  field_facility_county:
+    type: entity_reference_autocomplete
+    weight: 47
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_fund:
     type: string_textfield
@@ -408,4 +411,5 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_county: true
