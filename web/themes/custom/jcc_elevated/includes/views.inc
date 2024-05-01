@@ -431,7 +431,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
         $fid = $media->field_media_file->target_id;
         $file = File::load($fid);
         $url = $file->createFileUrl();
-        $event_files .= '<a class="excerpt-file" href="' . $url . '">' . $media->field_media_file->description . '</a> ';
+        $event_files .= '<a class="file-download" href="' . $url . '">' . $media->field_media_file->description . '</a> ';
       }
     }
 
@@ -441,14 +441,20 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
     $event['title'] = $node->get('title')->value;
     $event['content']['#markup'] = is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Meeting Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
     if ($teaser != '') {
-      $event['content']['#markup'] .= '<br>' . $teaser;
+      $event['content']['#markup'] .= '<div>' . $teaser . '</div>';
     }
     if ($event_files != '') {
-      $event['content']['#markup'] .= '<br>' . $event_files;
+      $event['content']['#markup'] .= '<div>' . $event_files . '</div>';
     }
+
+    // Count summary for the current page of results.
+    $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
 
     $variables['events'][] = $event;
   }
+  $advisory_body_id = $variables['view']->args[0];
+  $parent_advisory_body = \Drupal::entityTypeManager()->getStorage('node')->load($advisory_body_id);
+  $variables['view_title'] = $parent_advisory_body->getTitle() . ' past meetings';
 }
 
 /**
