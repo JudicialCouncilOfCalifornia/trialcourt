@@ -257,7 +257,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $contractor = $node->hasField('field_general_contractor') ? $node->get('field_general_contractor')->target_id : FALSE;
   $criteria_architect = $node->hasField('field_criteria_architect') ? $node->get('field_criteria_architect')->target_id : FALSE;
   $managed_by = $node->hasField('field_managed_by') ? $node->get('field_managed_by')->target_id : FALSE;
-
+  $county = $node->hasField('field_facility_county') ? $node->get('field_facility_county')->target_id : FALSE;    
   $details = [
     'project_information' => [
       'Gross Square Footage' => $node->field_gross_square_footage->value,
@@ -274,14 +274,14 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       'Construction Management Agency' => $agency && $taxonomy_manager->load($agency) ? $taxonomy_manager->load($agency)->get('name')->value : '',
       'General Contractor' => $contractor && $taxonomy_manager->load($contractor) ? $taxonomy_manager->load($contractor)->get('name')->value : '',
       'Criteria Architect' => $criteria_architect && $taxonomy_manager->load($criteria_architect) ? $taxonomy_manager->load($criteria_architect)->get('name')->value : '',
-      'Managed By' => $criteria_architect && $taxonomy_manager->load($field_managed_by) ? $taxonomy_manager->load($field_managed_by)->get('name')->value : '',
+      'Managed By' => $managed_by && $taxonomy_manager->load($managed_by) ? $taxonomy_manager->load($managed_by)->get('name')->value : '',
     ],
     'schedule' => $schedule_content,
     'ceqa' => $ceqa_content,
     'summary' => $summary_content,
     'status' => $node->field_project_status->value == 'inprogress' ? 'In-Progress' : 'Completed',
     'hero_title' => $node->field_hero_title,
-    'county' => $node->field_county,
+    'county' => $county && $taxonomy_manager->load($county) ? $taxonomy_manager->load($county)->get('name')->value : '',
   ];
 
   $projectimages = [];

@@ -119,9 +119,9 @@ source:
       label: 'Awards and Recognition'
       selector: field_award
     - 
-      name: field_county
+      name: field_facility_county
       label: County
-      selector: field_county
+      selector: field_facility_county
     -
       name: field_hero_title
       label: Hero Title
@@ -172,8 +172,7 @@ process:
       method: process
   field_gross_square_footage: field_gross_square_footage
   field_initial_funding_year: field_initial_funding_year
-  field_completion_date: field_completion_date
-  field_county: field_county
+  field_completion_date: field_completion_date  
   field_hero_title: field_hero_title
   field_total_capital_project_cost: field_total_capital_project_cost
   field_project_company: field_project_company
@@ -271,7 +270,22 @@ process:
       bundle_key: vid
       bundle: contractor
       value_key: name
-      ignore_case: true      
+      ignore_case: true
+  field_facility_county:
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_facility_county
+    -        
+      plugin: entity_generate     
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: county
+      value_key: name
+      ignore_case: true            
   field_agency_manager:
     -
       plugin: callback

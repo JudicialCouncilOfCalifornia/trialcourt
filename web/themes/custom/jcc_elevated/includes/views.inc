@@ -416,7 +416,7 @@ function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables
  * Implements hook_preprocess_views_view() for facilities block.
  */
 function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$variables) {
-  __jcc_view_results_exposed_filter_init($variables);
+  __jcc_view_results_exposed_filter_init($variables); 
   $facilities = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
@@ -439,7 +439,7 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
       'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
       'detail_list_data' => $detail_list_data,
     ];
-    $facilities[] = $facility;
+    $facilities[] = $facility;    
   }
   $variables['facilities'] = $facilities;
 }
