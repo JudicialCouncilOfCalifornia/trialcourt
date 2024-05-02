@@ -36,7 +36,7 @@
 {{ attach_library("jcc_storybook/InlineForm") }}
 {{ attach_library("jcc_storybook/ViewResults") }}
 {{ attach_library("jcc_storybook/ResultExcerpt") }}
-{{ attach_library("jcc_storybook/Alert") }}
+{{ attach_library("jcc_storybook/Card") }}
 {{ attach_library("jcc_storybook/Icon") }}
 
 {%
@@ -68,11 +68,11 @@
   {% endset %}
 
   {% set no_results_msg %}
-    {% include "@molecules/Alert/Alert.twig" with {
-      type: 'warning',
+    {% include "@molecules/Card/Card.twig" with {
+      variant: "bordered",
+      clickable_card: false,
       heading: no_results_heading,
-      content: [no_results_message|render],
-      icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
+      text: no_results_message,
     } %}
   {% endset %}
 
