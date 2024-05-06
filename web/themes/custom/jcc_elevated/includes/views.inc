@@ -411,7 +411,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
-  foreach ($variables['rows'] as $key => $group) {
+  foreach ($variables['rows'] as $group) {
     foreach ($group['#rows'] as $row) {
       $node = $row['#node'];
       $event = [];
