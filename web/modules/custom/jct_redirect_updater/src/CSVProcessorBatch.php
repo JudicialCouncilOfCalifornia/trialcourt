@@ -2,6 +2,8 @@
 
 namespace Drupal\jct_redirect_updater;
 
+ini_set('memory_limit', '512M'); // Increase to 256MB
+
 use Drupal\redirect\Entity\Redirect;
 use Drupal\file\Entity\File;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -31,8 +33,14 @@ class CSVProcessorBatch {
       $messenger->addError(t('Failed to open file for reading: @path', ['@path' => $real_path]));
       return;
     }
+      
+       // Check if the pointer is set in the context, then seek to that position
+       if (!empty($context['sandbox']['pointer'])) {
+        fseek($handle, $context['sandbox']['pointer']);
+      } else {
+        $context['sandbox']['pointer'] = ftell($handle); // Initialize pointer if not set
+      }
 
-    // Initialize or resume batch processing.
     if (empty($context['sandbox']['progress'])) {
       $context['sandbox']['progress'] = 0;
       $context['sandbox']['pointer'] = 0;
@@ -40,16 +48,27 @@ class CSVProcessorBatch {
       while (fgetcsv($handle)) {
         $total++;
       }
-      rewind($handle); // Go back to the beginning of the file after counting.
-      $context['sandbox']['max'] = $total - 1; // Assume first row is header.
+      rewind($handle);
+      
+      $context['sandbox']['max'] = $total - 1;
     }
 
-    // Process a chunk of rows.
-    $limit = $context['sandbox']['pointer'] + 25;
-    while ($context['sandbox']['pointer'] < $limit && ($row = fgetcsv($handle)) !== FALSE) {
-      self::updateRedirect($row[0], $row[1]); // Column 0 is old path, Column 1 is new path.
-      $context['sandbox']['progress']++;
-      $context['sandbox']['pointer']++;
+    $limit = $context['sandbox']['pointer'] + 675;
+    
+   // \Drupal::logger('jct_redirect_updater')->notice('limit'.$limit );
+    while ($context['sandbox']['pointer'] < $limit && !feof($handle)) {
+      $row = fgetcsv($handle);
+      if ($row === FALSE) {
+        \Drupal::logger('jct_redirect_updater')->notice('Read error or end of file reached at row: @row', ['@row' => $context['sandbox']['pointer']]);
+        break;
+      }
+      \Drupal::logger('jct_redirect_updater')->notice('<pre>'.print_r($row, TRUE).'</pre>');
+      if( ($row[0]!== "undefined" && $row[1] !== "undefined")){
+        self::updateRedirect($row[0], $row[1]);
+        $context['sandbox']['progress']++;
+        $context['sandbox']['pointer']++;
+      }
+
     }
 
     fclose($handle);
@@ -60,35 +79,37 @@ class CSVProcessorBatch {
     ]);
 
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    \Drupal::logger('jct_redirect_updater')->notice('Batch progress: @progress of @total', [
+      '@progress' => $context['sandbox']['progress'],
+      '@total' => $context['sandbox']['max']
+    ]);
   }
 
   /**
    * Updates or creates a redirect from an old path to a new path.
    *
-   * @param string|array $old_path
+   * @param string|array $rid
    *   The old path, which needs to be a string.
    * @param string $new_path
    *   The new path.
    */
-  private static function updateRedirect($old_path, $new_path) {
+  private static function updateRedirect($rid, $new_path) {
     $messenger = \Drupal::messenger();
 
-    // Ensure $old_path is a string.
-    if (is_array($old_path)) {
-      $old_path = print_r($old_path, TRUE);
-    }
+    // Ensure $rid is a string.
+
 
     $redirects = \Drupal::entityTypeManager()
       ->getStorage('redirect')
-      ->loadByProperties(['redirect_source__path' => $old_path]);
+      ->loadByProperties(['rid' => $rid]);
 
     if (!empty($redirects)) {
       $redirect = reset($redirects);
       $redirect->setRedirect($new_path);
       $redirect->save();
-      $messenger->addMessage(t('Redirect updated successfully for @path.', ['@path' => $old_path]));
+      $messenger->addMessage(t('Redirect updated successfully for @path.', ['@path' => $rid]));
     } else {
-      $messenger->addWarning(t('No redirect found for @path, skipping.', ['@path' => $old_path]));
+      $messenger->addWarning(t('No redirect found for @path, skipping.', ['@path' => $rid]));
     }
   }
 
