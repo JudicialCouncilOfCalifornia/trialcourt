@@ -805,8 +805,10 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   foreach (Element::children($form) as $id) {
     $placeholder = $form['#info']['filter-' . $id]['label'] ?? '';
     $form[$id]['#attributes']['placeholder'] = $placeholder;
-
-    if (isset($form[$id]['#type']) && $form[$id]['#type'] == 'select') {
+    if (isset($form[$id]['#type']) && $id == 'items_per_page') {
+      // Do nothing.
+    }
+    elseif (isset($form[$id]['#type']) && $form[$id]['#type'] == 'select') {
       // Set label as 'select all' option label.
       $form[$id]['#attributes']['placeholder'] = NULL;
       if ($id != 'jcc_section') {
