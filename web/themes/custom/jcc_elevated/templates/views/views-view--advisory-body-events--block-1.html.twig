@@ -32,47 +32,24 @@
  * @ingroup themeable
  */
 #}
-{{ attach_library("jcc_storybook/HeroHangover") }}
-{{ attach_library("jcc_storybook/Brow") }}
-{{ attach_library("jcc_storybook/InlineForm") }}
+
 {{ attach_library("jcc_storybook/ViewResults") }}
 {{ attach_library("jcc_storybook/ResultExcerpt") }}
 
-{%
-  set classes = [
-  dom_id ? 'js-view-dom-id-' ~ dom_id,
-]
-%}
-
-{% set header %}
-  <div class="cluster">
-    <h2>{{ 'Past meetings'|t }}</h2>
-    <div>{{ count_summary }}</div>
-  </div>
-{% endset %}
-
-{% include "@molecules/HeroHangover/HeroHangover.twig" with {
-  heading: view_title|t,
-  media: false,
-  attributes: create_attribute(),
-  background: 'striped-base-light-xx',
-  brow: {
-    part_one: 'Advisory Committee',
-  },
-} %}
-
 <div{{ attributes.addClass(classes) }}>
+
   {% include "@organisms/ViewResults/ViewResults.twig" with {
-    variant: 'grouped_view',
+    variant: 'default',
+    top_margin: false,
     view_name: id,
     view_display: display_id,
-    header: header,
+    header: '',
     header_sidebar: '',
     header_direction_results: 'sidebar-row',
-    form: exposed|render,
-    form_in_sidebar: true,
+    form_in_sidebar: false,
     list_type: 'ul',
     list_type_divider: '',
+    list_divider_skip_first: true,
     rows: events,
     sidebar: '',
     sidebar_direction_results: 'sidebar-row',
@@ -82,4 +59,5 @@
     footer_sidebar: '',
     sidebar_direction_footer: 'sidebar-row',
   } %}
+
 </div>

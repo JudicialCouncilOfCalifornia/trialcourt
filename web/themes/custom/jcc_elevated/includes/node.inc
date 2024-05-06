@@ -234,11 +234,9 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
 
   // About tab.
   if ($variables['elements']['field_date_established']) {
-    $variables['content']['about_tab']['0']['#markup'] = '<h3>Date established</h3>';
-    $variables['content']['about_tab']['1'] = $variables['elements']['field_date_established'];
-    $variables['content']['about_tab']['2'] = $variables['elements']['field_date_note'];
+    $variables['content']['about_tab']['0']['#markup'] = '<div><h3>Date established</h3><div>' . $variables['elements']['field_date_established'][0]['#text'] . '</div><div>' . $variables['elements']['field_date_note'][0]['#text'] . '</div></div>';
   }
-  $variables['content']['about_tab']['3'] = $variables['elements']['field_about'];
+  $variables['content']['about_tab']['1'] = $variables['elements']['field_about'];
 }
 
 /**

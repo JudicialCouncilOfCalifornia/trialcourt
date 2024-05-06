@@ -115,25 +115,27 @@
 
 {% set sidebar_content %}
   <div class="box">
-    {% if node.field_related_links is not empty %}
-      <h4 class="sidebar-label">Related links</h4>
-      {{ content.field_related_links }}
-    {% endif %}
     {% if node.field_contact_info is not empty %}
       <h4 class="sidebar-label">Contact Info</h4>
       {{ content.field_contact_info }}
+    {% endif %}
+    {% if node.field_related_links is not empty %}
+      <h4 class="sidebar-label">Related links</h4>
+      {{ content.field_related_links }}
     {% endif %}
   </div>
 {% endset %}
 
 {% set sidebar %}
-  {% include "@molecules/card/Card.twig" with {
-    variant: "bordered",
-    clickable_card: false,
-    background: 'base-light-xxx',
-    aspect: [],
-    text: sidebar_content,
-  } %}
+  <div class="main-sidebar">
+    {% include "@molecules/card/Card.twig" with {
+      variant: "bordered",
+      clickable_card: false,
+      background: 'base-light-xxx',
+      aspect: [],
+      text: sidebar_content,
+    } %}
+  </div>
 {% endset %}
 
 <article{{ attributes }}>
