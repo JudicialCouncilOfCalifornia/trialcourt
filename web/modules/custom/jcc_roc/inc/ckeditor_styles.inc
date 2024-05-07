@@ -148,6 +148,14 @@ function jcc_roc_subsection_styles_info(): array {
     ],
   ];
 
+  $styles[] = [
+    'name' => 'Add grid/borders',
+    'element' => 'table',
+    'attributes' => [
+      'class' => 'add-borders',
+    ],
+  ];
+
   return $styles;
 
 }
