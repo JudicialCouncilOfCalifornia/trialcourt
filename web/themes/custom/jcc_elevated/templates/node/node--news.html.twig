@@ -91,21 +91,23 @@
       {% endset %}
     {% endif %}
 
-    {% set hangover_content %}
-      {% include "@molecules/Card/Card.twig" with {
-        variant: "media-right",
-        aspect: [],
-        clickable_card: false,
-        background: null,
-        media: imageTag,
-        media_caption: {
-          show: caption or citation ? true,
-          text: caption,
-          citation: citation,
-          overlay: true,
-        },
-      } %}
-    {% endset %}
+    {% if imageTag %}
+      {% set hangover_content %}
+        {% include "@molecules/Card/Card.twig" with {
+          variant: "media-right",
+          aspect: [],
+          clickable_card: false,
+          background: null,
+          media: imageTag,
+          media_caption: {
+            show: caption or citation ? true,
+            text: caption,
+            citation: citation,
+            overlay: true,
+          },
+        } %}
+      {% endset %}
+    {% endif %}
 
     {% if content.field_news_type['#title'] is null %}
       {% set newstype = '' %}
@@ -123,7 +125,7 @@
         part_two: content.field_date,
       },
       heading: node.title.value,
-      news_header: true,
+      no_media_margins: true,
       text: content.field_byline,
       hangover_content: hangover_content
     } %}
