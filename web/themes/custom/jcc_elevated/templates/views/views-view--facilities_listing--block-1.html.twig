@@ -30,14 +30,6 @@
 ]
 %}
 
-{% set header %}
-  <div class="cluster">
-    <h2>{{ 'Find a Project'|t }}</h2>
-    <div>Currently, the Judicial Council is managing 17 active or in-progress capital projects and 1 study. A total of 34 projects and 1 study have been completed to date.</div>
-  </div>
-{% endset %}
-
-
 {% set items = [] %}
 
  {% for facility in facilities %}
@@ -58,11 +50,6 @@
  {% set items = items|merge([item]) %}
 {% endfor %} 
 
-{% include "@molecules/HeroHangover/HeroHangover.twig" with {
-  heading: 'Building California Courthouses'|t,
-  media: false,
-  attributes: create_attribute()
-} %}
 
 <div{{ attributes.addClass(classes) }}>
   {% include "@organisms/ViewResults/ViewResults.twig" with {
@@ -85,34 +72,6 @@
     footer_sidebar: '',
     sidebar_direction_footer: 'sidebar-row',
   } %}  
-
-
-<div
-  class="with-sidebar sidebar-demo container"
-  style=" --gap:var(--s0);--sidebar-width:40ch;--sidebar-direction:row-reverse;background-color: #FEF2E4;"
-> 
- {% block section %}
- 
- {% set contactinfo %}       
-  {% include "@molecules/Body/Body.twig" with {
-          variant: "default",
-          heading: "Overview",
-          lead: "",
-          content: bodycontent,
-          subheading: '',
-          aside: contactinfoaside
-          } %}   
-{% endset %}       
-      <div class="container stack">
-        {% include "@organisms/Section/Section.twig" with {
-          sub_component_layout: 'stack',
-          sub_component_data: contactinfo,
-          }      
-        %}
-      </div>  
-  {% endblock %}
-
-  </div>
 
 
 </div>
