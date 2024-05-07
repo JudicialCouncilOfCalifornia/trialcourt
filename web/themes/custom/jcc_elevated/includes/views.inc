@@ -285,6 +285,14 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
  * Implements hook_preprocess_views_view() for search listing page.
  */
 function jcc_elevated_preprocess_views_view__search__search(&$variables) {
+  $render = \Drupal::service('renderer');
+  $view = $variables['view'];
+
+  // Get the searched term for setting in the title override.
+  $searched_term = $view->getExposedInput();
+  $variables['searched_term'] = !empty($searched_term['search']) ? Xss::filter($searched_term['search']) : NULL;
+  $variables['title'] = $view->getTitle();
+
   // Personalized no results message.
   $variables['no_results_heading'] = 'We are unable to find a result for your search.';
   if (theme_get_setting('no_search_results_heading')) {
@@ -299,17 +307,6 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
   if (empty($variables['rows'][0]['#rows'])) {
     return;
   }
-
-  $render = \Drupal::service('renderer');
-  $view = $variables['view'];
-
-  // Set the item count for setting in the title override.
-  $variables['count'] = count($view->result);
-
-  // Get the searched term for setting in the title override.
-  $searched_term = $view->getExposedInput();
-  $variables['searched_term'] = !empty($searched_term['search']) ? Xss::filter($searched_term['search']) : NULL;
-  $variables['title'] = $view->getTitle();
 
   // Remove the captcha from the search.
   unset($variables['exposed']['captcha']);
@@ -348,6 +345,9 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
       }
     }
   }
+
+  // Count summary for the current page of results.
+  $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
 }
 
 /**
