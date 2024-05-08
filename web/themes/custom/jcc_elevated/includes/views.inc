@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
@@ -485,11 +486,231 @@ function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_views_view() for job search listing page.
+ * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
   // Reuse current jobs search block as common preprocess.
   jcc_elevated_preprocess_views_view__jobs__search($variables);
+}
+
+/**
+ * Implements hook_preprocess_views_view() for published opinions listing block.
+ */
+function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
+
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $opinions = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $node = $row['#node'];
+    $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
+    $case_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
+
+    // Attachments.
+    $attachments = [];
+    if ($node->get('field_media_file_multiple')->getValue()) {
+      foreach ($node->get('field_media_file_multiple')->getValue() as $attachment) {
+        $media = Media::load($attachment['target_id']);
+        $file = File::load($media->field_media_file->target_id);
+        if ($file) {
+          $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+          $file_name = $file->getFileName();
+          $file_name_parts = explode('.', $file_name);
+          $file_extension = end($file_name_parts);
+          $attachments[] = [
+            'url' => $file_url,
+            'file_type' => strtoupper($file_extension),
+            'aria_label' => t('Download or view') . ' ' . $file_name,
+          ];
+        }
+      }
+    }
+
+    // Related cases.
+    $related_cases_urls = [];
+    $related_cases = $node->get('field_related_cases_plain')->value;
+    if ($related_cases) {
+      // If space delimited by accident or from migration.
+      if (strpos($related_cases, ' ')) {
+        $related_cases = preg_split('/\s+/', $related_cases);
+      }
+      else {
+        // Remove any spaces from comma delimited list.
+        $related_cases = preg_replace('/\s+/', '', $related_cases);
+        // Convert to array.
+        $related_cases = explode(',', $related_cases);
+      }
+      foreach ($related_cases as $related_case) {
+        $accms_url = __jcc_accms_link_builder($related_case);
+        if ($accms_url) {
+          $related_cases_urls[] = '<a href="' . $accms_url . '">' . $related_case . '</a>';
+        }
+      }
+    }
+
+    // Web page citings.
+    $citings_urls = [];
+    $citings = $node->get('field_web_page_citings')->getValue();
+    if ($citings) {
+      foreach ($citings as $citing) {
+        $citing_url = $citing['uri'];
+        $citing_url_parts = parse_url($citing_url);
+        $citing_title = $citing['title'];
+
+        // If linked to Drupal URI.
+        if ($citing_url_parts['scheme'] == 'entity') {
+          $entity_path = Url::fromUri($citing['uri'])->toString();
+          $entity_path_parts = explode('/', $entity_path);
+          switch ($entity_path_parts[1]) {
+            case 'media':
+              $media_id = $entity_path_parts[2];
+              $media = Media::load($media_id);
+              // Migration link title substitute.
+              if (is_null($citing_title) && $media->get('field_media_text')->value) {
+                $citing_title = $media->get('field_media_text')->value;
+              }
+              // Link to media file.
+              $media_file_id = $media->field_media_file[0]->getValue()['target_id'];
+              $citing_file = File::load($media_file_id);
+              $citing_url = \Drupal::service('file_url_generator')->generateAbsoluteString($citing_file->getFileUri());
+              break;
+          }
+        }
+
+        // If no link title provided.
+        if (is_null($citing_title)) {
+          $citing_title = $citing['uri'];
+        }
+
+        $citings_urls[] = [
+          'text' => ['#markup' => '<a href="' . $citing_url . '">' . $citing_title . '</a>'],
+        ];
+      }
+    }
+
+    $opinion = [
+      'case_number' => t('Case:') . ' ' . $case_number ? $case_number : t('Unspecified'),
+      'posted' => $node->get('field_date')->value ? $node->get('field_date')->date->format('F j, Y') : '',
+      'source' => $case_source,
+      'title' => [
+        'text' => $node->get('title')->value ?? '',
+        'url' => $case_number && $case_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
+      ],
+      'attachments' => $attachments,
+      'related_cases' => $related_cases_urls ? implode(' ', $related_cases_urls) : '',
+      'citings' => $citings_urls,
+    ];
+    $opinions[] = $opinion;
+  }
+
+  $variables['opinions'] = $opinions;
+}
+
+/**
+ * Implements hook_preprocess_views_view() for unpublished opinions listing block.
+ */
+function jcc_elevated_preprocess_views_view__opinions__unpublished(&$variables) {
+  // Reuse current published opinions search block as common preprocess.
+  jcc_elevated_preprocess_views_view__opinions__published($variables);
+}
+
+/**
+ * Implements hook_preprocess_views_view() for published opinions citings archive search block.
+ */
+function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variables) {
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $opinions = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $node = $row['#node'];
+    $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
+    $case_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
+
+    // Web page citings.
+    $citings_urls = [];
+    $citings = $node->get('field_web_page_citings')->getValue();
+    if ($citings) {
+      foreach ($citings as $citing) {
+        $citing_url = $citing['uri'];
+        $citing_url_parts = parse_url($citing_url);
+        $citing_title = $citing['title'];
+
+        // If linked to Drupal URI.
+        if ($citing_url_parts['scheme'] == 'entity') {
+          $entity_path = Url::fromUri($citing['uri'])->toString();
+          $entity_path_parts = explode('/', $entity_path);
+          switch ($entity_path_parts[1]) {
+            case 'media':
+              $media_id = $entity_path_parts[2];
+              $media = Media::load($media_id);
+              // Migration link title substitute.
+              if (is_null($citing_title) && $media->get('field_media_text')->value) {
+                $citing_title = $media->get('field_media_text')->value;
+              }
+              // Link to media file.
+              $media_file_id = $media->field_media_file[0]->getValue()['target_id'];
+              $citing_file = File::load($media_file_id);
+              $citing_url = \Drupal::service('file_url_generator')->generateAbsoluteString($citing_file->getFileUri());
+              break;
+          }
+        }
+
+        // If no link title provided.
+        if (is_null($citing_title)) {
+          $citing_title = $citing['uri'];
+        }
+
+        $citings_urls[] = [
+          'text' => ['#markup' => '<a href="' . $citing_url . '">' . $citing_title . '</a>'],
+        ];
+      }
+    }
+
+    $opinion = [
+      'case_number' => t('Case:') . ' ' . $case_number ? $case_number : t('Unspecified'),
+      'posted' => $node->get('field_date')->value ? $node->get('field_date')->date->format('F j, Y') : '',
+      'year' => $node->get('field_date')->value ? $node->get('field_date')->date->format('Y') : '',
+      'source' => $case_source,
+      'title' => [
+        'text' => $node->get('title')->value ?? '',
+        'url' => $case_number && $case_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
+      ],
+      'citings' => $citings_urls,
+    ];
+
+    $opinions[] = $opinion;
+
+    // Group opinions by year.
+    $grouped_opinions = [];
+    foreach ($opinions as $item) {
+      if ($item['posted']) {
+        $year = $item['year'];
+        $grouped_opinions[$year][] = $item;
+      }
+    }
+  }
+
+  $variables['opinions'] = $grouped_opinions;
+}
+
+/**
+ * Implements hook_preprocess_views_view() for published opinions listing page.
+ */
+function jcc_elevated_preprocess_views_view__opinions__all_page(&$variables) {
+  // Reuse current published opinions search block as common preprocess.
+  jcc_elevated_preprocess_views_view__opinions__published($variables);
 }
 
 /**
@@ -718,4 +939,67 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   if (isset($form['actions']['reset'])) {
     $form['actions']['reset']['#attributes']['class'][] = 'button button--secondary button--normal';
   }
+}
+
+/**
+ * Helper function to map case numbers to ACCMS dist ids.
+ */
+function __jcc_accms_link_builder($case_number) {
+  // Exclude any trailing opinion revision code.
+  $case_number = $string = substr($case_number, 0, 7);
+  // Court id is first character from case number.
+  $court_id = substr($case_number, 0, 1);
+
+  if ($court_id) {
+    // Map court code with ACCMS dist id.
+    switch ($court_id) {
+      case 'S':
+        $accms_dist_id = '0';
+        break;
+
+      case 'A':
+        $accms_dist_id = '1';
+        break;
+
+      case 'B':
+        $accms_dist_id = '2';
+        break;
+
+      case 'C':
+        $accms_dist_id = '3';
+        break;
+
+      case 'D':
+        $accms_dist_id = '41';
+        break;
+
+      case 'E':
+        $accms_dist_id = '42';
+        break;
+
+      case 'F':
+        $accms_dist_id = '43';
+        break;
+
+      case 'G':
+        $accms_dist_id = '5';
+        break;
+
+      case 'H':
+        $accms_dist_id = '6';
+        break;
+    }
+
+    // Assemble ACCMS lookup URL.
+    $accms_url = '';
+    $accms_dist_query = 'https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=';
+    if ($accms_dist_id) {
+      $accms_url = $accms_dist_query . $accms_dist_id . '&search=number&useSession=0&query_caseNumber=' . $case_number;
+    }
+    elseif ($court_id == 'S') {
+      $accms_url = $accms_dist_query . '0&search=number&useSession=0&query_caseNumber=' . $case_number;
+    }
+  }
+
+  return $accms_url;
 }
