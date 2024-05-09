@@ -2,13 +2,13 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_rule_document_id
-    - field.storage.node.field_rule_index_listing_note
-    - field.storage.node.field_rule_media
-    - field.storage.node.field_rule_subsection_document
-    - field.storage.node.field_rule_subsection_id
-    - node.type.rule_document
-    - node.type.rule_subsection
+    - field.storage.node.field_roc_rule_id
+    - field.storage.node.field_roc_rule_index_id
+    - field.storage.node.field_roc_rule_index_list_note
+    - field.storage.node.field_roc_rule_media
+    - field.storage.node.field_roc_rule_parent_index
+    - node.type.roc_rule
+    - node.type.roc_rule_index
   module:
     - better_exposed_filters
     - draggableviews
@@ -174,14 +174,44 @@ display:
           id: type
           table: node_field_data
           field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          operator: in
           value:
-            rule_document: rule_document
+            roc_rule_index: roc_rule_index
+          group: 1
+          exposed: false
           expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
             operator_limit_selection: false
             operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
       style:
         type: table
         options:
@@ -191,11 +221,9 @@ display:
           columns:
             node_bulk_form: node_bulk_form
             title: title
-            field_rule_subsection_id: field_rule_subsection_id
-            field_rule_subsection_document: field_rule_subsection_document
             status: status
             operations: operations
-          default: field_rule_subsection_document
+          default: title
           info:
             node_bulk_form:
               align: ''
@@ -203,20 +231,6 @@ display:
               empty_column: false
               responsive: ''
             title:
-              sortable: true
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            field_rule_subsection_id:
-              sortable: true
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            field_rule_subsection_document:
               sortable: true
               default_sort_order: asc
               align: ''
@@ -324,10 +338,10 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_rule_index_listing_note:
-          id: field_rule_index_listing_note
-          table: node__field_rule_index_listing_note
-          field: field_rule_index_listing_note
+        field_roc_rule_index_list_note:
+          id: field_roc_rule_index_list_note
+          table: node__field_roc_rule_index_list_note
+          field: field_roc_rule_index_list_note
           relationship: none
           group_type: group
           admin_label: ''
@@ -387,10 +401,10 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_rule_media:
-          id: field_rule_media
-          table: node__field_rule_media
-          field: field_rule_media
+        field_roc_rule_media:
+          id: field_roc_rule_media
+          table: node__field_roc_rule_media
+          field: field_roc_rule_media
           relationship: none
           group_type: group
           admin_label: ''
@@ -493,14 +507,44 @@ display:
           id: type
           table: node_field_data
           field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          operator: in
           value:
-            rule_document: rule_document
+            roc_rule_index: roc_rule_index
+          group: 1
+          exposed: false
           expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
             operator_limit_selection: false
             operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
         promote:
           id: promote
           table: node_field_data
@@ -586,15 +630,15 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_rule_index_listing_note'
-        - 'config:field.storage.node.field_rule_media'
-  document_content_admin:
-    id: document_content_admin
-    display_title: 'Document admin page'
+        - 'config:field.storage.node.field_roc_rule_index_list_note'
+        - 'config:field.storage.node.field_roc_rule_media'
+  roc_rule_index_content_admin:
+    id: roc_rule_index_content_admin
+    display_title: 'Rule indexes admin page'
     display_plugin: page
     position: 1
     display_options:
-      title: Documents
+      title: 'Rule indexes'
       fields:
         node_bulk_form:
           id: node_bulk_form
@@ -665,7 +709,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: field
-          label: 'Document label'
+          label: 'Rule index label'
           exclude: false
           alter:
             alter_text: false
@@ -720,15 +764,15 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_rule_document_id:
-          id: field_rule_document_id
-          table: node__field_rule_document_id
-          field: field_rule_document_id
+        field_roc_rule_index_id:
+          id: field_roc_rule_index_id
+          table: node__field_roc_rule_index_id
+          field: field_roc_rule_index_id
           relationship: none
           group_type: group
           admin_label: ''
           plugin_id: field
-          label: 'Rule Document ID'
+          label: 'Rule index ID'
           exclude: false
           alter:
             alter_text: false
@@ -1064,15 +1108,44 @@ display:
           id: type
           table: node_field_data
           field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          operator: in
           value:
-            rule_document: rule_document
+            roc_rule_index: roc_rule_index
           group: 1
+          exposed: false
           expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
             operator_limit_selection: false
             operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
         title:
           id: title
           table: node_field_data
@@ -1112,6 +1185,58 @@ display:
               tentative_rulings_editor: '0'
               messaging_manager: '0'
               request_manager: '0'
+              rules_manager: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_roc_rule_index_id_value:
+          id: field_roc_rule_index_id_value
+          table: node__field_roc_rule_index_id
+          field: field_roc_rule_index_id_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: string
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_roc_rule_index_id_value_op
+            label: 'Index ID'
+            description: ''
+            use_operator: false
+            operator: field_roc_rule_index_id_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_roc_rule_index_id_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+              rules_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -1190,7 +1315,7 @@ display:
         filter_groups: false
       display_description: ''
       display_extenders: {  }
-      path: admin/content/rules/documents
+      path: admin/content/rules/rule_indexes
       menu:
         type: none
         title: Documents9
@@ -1215,14 +1340,14 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_rule_document_id'
-  document_sorting:
-    id: document_sorting
-    display_title: 'Document index sorting page'
+        - 'config:field.storage.node.field_roc_rule_index_id'
+  roc_rule_index_sorting:
+    id: roc_rule_index_sorting
+    display_title: 'Rule indexes sorting page'
     display_plugin: page
     position: 3
     display_options:
-      title: 'Rule document sorting'
+      title: 'Rule indexes sorting'
       fields:
         title:
           id: title
@@ -1234,7 +1359,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: field
-          label: 'Document label'
+          label: 'Rule index label'
           exclude: false
           alter:
             alter_text: false
@@ -1289,15 +1414,15 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_rule_document_id:
-          id: field_rule_document_id
-          table: node__field_rule_document_id
-          field: field_rule_document_id
+        field_roc_rule_index_id:
+          id: field_roc_rule_index_id
+          table: node__field_roc_rule_index_id
+          field: field_roc_rule_index_id
           relationship: none
           group_type: group
           admin_label: ''
           plugin_id: field
-          label: 'Rule Document ID'
+          label: 'Rule index ID'
           exclude: false
           alter:
             alter_text: false
@@ -1352,15 +1477,78 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_rule_index_listing_note:
-          id: field_rule_index_listing_note
-          table: node__field_rule_index_listing_note
-          field: field_rule_index_listing_note
+        field_roc_rule_parent_index:
+          id: field_roc_rule_parent_index
+          table: node__field_roc_rule_parent_index
+          field: field_roc_rule_parent_index
           relationship: none
           group_type: group
           admin_label: ''
           plugin_id: field
-          label: 'Index Listing Note'
+          label: 'Rule parent index'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: true
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_roc_rule_index_list_note:
+          id: field_roc_rule_index_list_note
+          table: node__field_roc_rule_index_list_note
+          field: field_roc_rule_index_list_note
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: 'Rule index listing note'
           exclude: false
           alter:
             alter_text: false
@@ -1566,15 +1754,44 @@ display:
           id: type
           table: node_field_data
           field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          operator: in
           value:
-            rule_document: rule_document
+            roc_rule_index: roc_rule_index
           group: 1
+          exposed: false
           expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
             operator_limit_selection: false
             operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
         promote:
           id: promote
           table: node_field_data
@@ -1627,20 +1844,12 @@ display:
           default_row_class: true
           columns:
             title: title
-            field_rule_document_id: field_rule_document_id
             field_rule_index_listing_note: field_rule_index_listing_note
             status: status
             draggableviews: draggableviews
           default: '-1'
           info:
             title:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            field_rule_document_id:
               sortable: false
               default_sort_order: asc
               align: ''
@@ -1691,7 +1900,7 @@ display:
         filter_groups: false
       display_description: ''
       display_extenders: {  }
-      path: admin/config/jcc-elevated/roc-sorting
+      path: admin/config/jcc-elevated/roc-rule-indexes-sorting
       menu:
         type: none
         title: Documents9
@@ -1714,15 +1923,16 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_rule_document_id'
-        - 'config:field.storage.node.field_rule_index_listing_note'
-  subsection_content_admin:
-    id: subsection_content_admin
-    display_title: 'Subsection admin page'
+        - 'config:field.storage.node.field_roc_rule_index_id'
+        - 'config:field.storage.node.field_roc_rule_index_list_note'
+        - 'config:field.storage.node.field_roc_rule_parent_index'
+  roc_rules_content_admin:
+    id: roc_rules_content_admin
+    display_title: 'Rules admin page'
     display_plugin: page
     position: 2
     display_options:
-      title: Subsections
+      title: Rules
       fields:
         node_bulk_form:
           id: node_bulk_form
@@ -1791,7 +2001,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: field
-          label: 'Subsection title'
+          label: 'Rule title'
           exclude: false
           alter:
             alter_text: false
@@ -1846,15 +2056,15 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_rule_subsection_id:
-          id: field_rule_subsection_id
-          table: node__field_rule_subsection_id
-          field: field_rule_subsection_id
+        field_roc_rule_id:
+          id: field_roc_rule_id
+          table: node__field_roc_rule_id
+          field: field_roc_rule_id
           relationship: none
           group_type: group
           admin_label: ''
           plugin_id: field
-          label: 'Rule Subsection ID'
+          label: 'Rule ID'
           exclude: false
           alter:
             alter_text: false
@@ -1909,15 +2119,15 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_rule_subsection_document:
-          id: field_rule_subsection_document
-          table: node__field_rule_subsection_document
-          field: field_rule_subsection_document
+        field_roc_rule_parent_index:
+          id: field_roc_rule_parent_index
+          table: node__field_roc_rule_parent_index
+          field: field_roc_rule_parent_index
           relationship: none
           group_type: group
           admin_label: ''
           plugin_id: field
-          label: 'Parent Rule Document'
+          label: 'Rule parent index'
           exclude: false
           alter:
             alter_text: false
@@ -2139,10 +2349,6 @@ display:
             filter:
               title:
                 plugin_id: default
-              field_rule_subsection_id_value:
-                plugin_id: default
-              field_rule_subsection_document_target_id:
-                plugin_id: default
               status:
                 plugin_id: default
       access:
@@ -2163,7 +2369,7 @@ display:
           plugin_id: bundle
           operator: in
           value:
-            rule_subsection: rule_subsection
+            roc_rule: roc_rule
           group: 1
           exposed: false
           expose:
@@ -2203,7 +2409,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: string
-          operator: word
+          operator: contains
           value: ''
           group: 1
           exposed: true
@@ -2216,56 +2422,6 @@ display:
             operator_limit_selection: false
             operator_list: {  }
             identifier: title
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              request_manager: '0'
-            placeholder: ''
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-        field_rule_subsection_id_value:
-          id: field_rule_subsection_id_value
-          table: node__field_rule_subsection_id
-          field: field_rule_subsection_id_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: string
-          operator: contains
-          value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_rule_subsection_id_value_op
-            label: 'Subsection ID'
-            description: ''
-            use_operator: false
-            operator: field_rule_subsection_id_value_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_rule_subsection_id_value
             required: false
             remember: false
             multiple: false
@@ -2296,30 +2452,27 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-        field_rule_subsection_document_target_id:
-          id: field_rule_subsection_document_target_id
-          table: node__field_rule_subsection_document
-          field: field_rule_subsection_document_target_id
+        field_roc_rule_id_value:
+          id: field_roc_rule_id_value
+          table: node__field_roc_rule_id
+          field: field_roc_rule_id_value
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: numeric
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
+          plugin_id: string
+          operator: contains
+          value: ''
           group: 1
           exposed: true
           expose:
-            operator_id: field_rule_subsection_document_target_id_op
-            label: 'Parent Document'
+            operator_id: field_roc_rule_id_value_op
+            label: 'Rule ID'
             description: ''
             use_operator: false
-            operator: field_rule_subsection_document_target_id_op
+            operator: field_roc_rule_id_value_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: field_rule_subsection_document_target_id
+            identifier: field_roc_rule_id_value
             required: false
             remember: false
             multiple: false
@@ -2336,6 +2489,61 @@ display:
               tentative_rulings_editor: '0'
               messaging_manager: '0'
               request_manager: '0'
+              rules_manager: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_roc_rule_parent_index_target_id:
+          id: field_roc_rule_parent_index_target_id
+          table: node__field_roc_rule_parent_index
+          field: field_roc_rule_parent_index_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: numeric
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_roc_rule_parent_index_target_id_op
+            label: 'Parent index'
+            description: ''
+            use_operator: false
+            operator: field_roc_rule_parent_index_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_roc_rule_parent_index_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+              rules_manager: '0'
             min_placeholder: ''
             max_placeholder: ''
             placeholder: ''
@@ -2417,7 +2625,7 @@ display:
         filter_groups: false
       display_description: ''
       display_extenders: {  }
-      path: admin/content/rules/subsections
+      path: admin/content/rules/rules
       menu:
         type: none
         title: Subsections
@@ -2442,5 +2650,5 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_rule_subsection_document'
-        - 'config:field.storage.node.field_rule_subsection_id'
+        - 'config:field.storage.node.field_roc_rule_id'
+        - 'config:field.storage.node.field_roc_rule_parent_index'

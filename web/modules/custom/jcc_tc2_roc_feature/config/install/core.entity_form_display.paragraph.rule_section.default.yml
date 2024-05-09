@@ -2,8 +2,8 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.rule_section.field_rule_section_label
-    - field.field.paragraph.rule_section.field_rule_subsection_content
+    - field.field.paragraph.rule_section.field_rule_index_section_content
+    - field.field.paragraph.rule_section.field_rule_index_section_label
     - paragraphs.paragraphs_type.rule_section
   module:
     - bert
@@ -13,39 +13,33 @@ targetEntityType: paragraph
 bundle: rule_section
 mode: default
 content:
-  field_rule_section_label:
+  field_rule_index_section_content:
+    type: bert
+    weight: 1
+    region: content
+    settings:
+      list: title
+      add: auto_complete
+      add_placeholder: 'Select an entity'
+      wrapper: '1'
+      disable_duplicate_selection: 0
+      disable_remove: 0
+      disable_drag_and_drop: 0
+    third_party_settings: {  }
+  field_rule_index_section_label:
     type: string_textarea
     weight: 0
     region: content
     settings:
       rows: 1
-      placeholder: 'Add a rule grouping/section'
+      placeholder: ''
     third_party_settings:
       maxlength:
         maxlength_js: null
         maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
         maxlength_js_enforce: false
         maxlength_js_truncate_html: false
-  field_rule_subsection_content:
-    type: bert
-    weight: 1
-    region: content
-    settings:
-      list: title_publishing
-      add: auto_complete
-      add_placeholder: 'Select a rule subsection'
-      disable_duplicate_selection: 0
-      disable_remove: 0
-      disable_drag_and_drop: 0
-      wrapper: 0
-    third_party_settings: {  }
-  status:
-    type: boolean_checkbox
-    weight: 2
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
 hidden:
   created: true
   layout_paragraphs_fields: true
+  status: true
