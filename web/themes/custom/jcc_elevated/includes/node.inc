@@ -14,6 +14,7 @@ use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\views\Views;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -208,6 +209,34 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
     }
   }
   $variables['sidebarimages'] = $sidebarimages;
+}
+
+/**
+ * Node: Advisory body preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node) {
+  // Meetings tab.
+  $events = views_embed_view('advisory_body_events', 'block_1', $node->id());
+  $variables['content']['meetings_tab']['0']['#markup'] = \Drupal::service('renderer')->renderRoot($events);
+
+  $past_events = Views::getView('advisory_body_events');
+  $past_events->setDisplay('page_1');
+  $past_events->setArguments([$node->id()]);
+  $past_events->execute();
+  if (count($past_events->result) > 0) {
+    $variables['content']['meetings_tab']['1']['#markup'] = '<div><h3>Past Meetings</h3><a class="button button--text button--normal icon--arrow" href="/past-meetings/' . $node->id() . '">View ' . $node->getTitle() . ' Past meetings</a></div>';
+  }
+
+  // About tab.
+  if ($variables['elements']['field_date_established']) {
+    $variables['content']['about_tab']['0']['#markup'] = '<div><h3>Date established</h3><div>' . $variables['elements']['field_date_established'][0]['#text'] . '</div><div>' . $variables['elements']['field_date_note'][0]['#text'] . '</div></div>';
+  }
+  $variables['content']['about_tab']['1'] = $variables['elements']['field_about'];
 }
 
 /**

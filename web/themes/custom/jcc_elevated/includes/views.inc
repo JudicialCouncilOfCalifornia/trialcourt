@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
@@ -413,6 +414,131 @@ function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables
 }
 
 /**
+ * Implements hook_preprocess_views_view() for events listing block.
+ */
+function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$variables) {
+  $render = \Drupal::service('renderer');
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+
+  foreach ($variables['rows'] as $group) {
+    foreach ($group['#rows'] as $row) {
+      $node = $row['#node'];
+      $event = [];
+
+      // Get teaser.
+      $teaser = $node->get('body') ?? '';
+      if ($teaser) {
+        $teaser = $node->get('body')->view('teaser');
+        $teaser = strval($render->render($teaser));
+        $teaser = strip_tags($teaser);
+      }
+
+      // Get files.
+      $event_files = '';
+      if ($node->hasField('field_event_files')) {
+        foreach ($node->get('field_event_files') as $file) {
+          $media = Media::load($file->target_id);
+          $fid = $media->field_media_file->target_id;
+          $file = File::load($fid);
+          if ($file) {
+            $url = $file->createFileUrl();
+            $event_files .= '<a class="file-download" href="' . $url . '">' . $media->field_media_file->description . '</a> ';
+          }
+        }
+      }
+
+      // Get Event state.
+      $event_state_id = $node->hasField('field_event_state') ? $node->get('field_event_state')->target_id : FALSE;
+
+      // Get event time start and end.
+      $event_date_time = '<strong>Time: </strong> ' . $node->field_event_date->start_date->format('g:i a') . ' to ' . $node->field_event_date->end_date->format('g:i a');
+
+      // Populating the event object.
+      $event['title'] = $node->field_event_date->start_date->format('F j, Y');
+      if ($teaser != '') {
+        $event['content']['#markup'] .= '<div>' . $teaser . '</div>';
+      }
+      $event['content']['#markup'] .= is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Meeting Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
+      $event['content']['#markup'] .= '<div>' . $event_date_time . '</div>';
+
+      if ($event_files != '') {
+        $event['content']['#markup'] .= '<div>' . $event_files . '</div>';
+      }
+
+      $variables['events'][] = $event;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view() for events listing block.
+ */
+function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$variables) {
+  $render = \Drupal::service('renderer');
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
+
+  foreach ($variables['rows'] as $key => $group) {
+    $variables['events'][$key]['list_label'] = $group['#title'];
+    foreach ($group['#rows'] as $row) {
+      $node = $row['#node'];
+      $event = [];
+
+      // Get teaser.
+      $teaser = $node->get('body') ?? '';
+      if ($teaser) {
+        $teaser = $node->get('body')->view('teaser');
+        $teaser = strval($render->render($teaser));
+        $teaser = strip_tags($teaser);
+      }
+
+      // Get files.
+      $event_files = '';
+      if ($node->hasField('field_event_files')) {
+        foreach ($node->get('field_event_files') as $file) {
+          $media = Media::load($file->target_id);
+          $fid = $media->field_media_file->target_id;
+          $file = File::load($fid);
+          if ($file) {
+            $url = $file->createFileUrl();
+            $event_files .= '<a class="file-download" href="' . $url . '">' . $media->field_media_file->description . '</a> ';
+          }
+        }
+      }
+
+      // Get Event state.
+      $event_state_id = $node->hasField('field_event_state') ? $node->get('field_event_state')->target_id : FALSE;
+
+      $event['title'] = $node->get('title')->value;
+      $event['content']['#markup'] = is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Meeting Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
+      if ($teaser != '') {
+        $event['content']['#markup'] .= '<div>' . $teaser . '</div>';
+      }
+      if ($event_files != '') {
+        $event['content']['#markup'] .= '<div>' . $event_files . '</div>';
+      }
+
+      // Count summary for the current page of results.
+      $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
+
+      $variables['events'][$key]['items'][] = $event;
+    }
+  }
+  $advisory_body_id = $variables['view']->args[0];
+  $parent_advisory_body = \Drupal::entityTypeManager()->getStorage('node')->load($advisory_body_id);
+  if ($parent_advisory_body) {
+    $variables['view_title'] = $parent_advisory_body->getTitle() . ' past meetings';
+  }
+  else {
+    $variables['view_title'] = '';
+  }
+}
+
+/**
  * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
@@ -689,8 +815,10 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   foreach (Element::children($form) as $id) {
     $placeholder = $form['#info']['filter-' . $id]['label'] ?? '';
     $form[$id]['#attributes']['placeholder'] = $placeholder;
-
-    if (isset($form[$id]['#type']) && $form[$id]['#type'] == 'select') {
+    if (isset($form[$id]['#type']) && $id == 'items_per_page') {
+      // Do nothing.
+    }
+    elseif (isset($form[$id]['#type']) && $form[$id]['#type'] == 'select') {
       // Set label as 'select all' option label.
       $form[$id]['#attributes']['placeholder'] = NULL;
       if ($id != 'jcc_section') {
