@@ -77,7 +77,7 @@ class JccRocRuleListEmbedBlock extends BlockBase implements ContainerFactoryPlug
       $plugin_id,
       $plugin_definition,
       $container->get('router.admin_context'),
-      $container->get('jcc_roc.rule.service'),
+      $container->get('jcc_tc2_roc_feature.rule.service'),
     );
   }
 

@@ -97,7 +97,7 @@
       part_one: "now"|date("Y"),
     },
     heading: 'California Rules of Court'|t,
-    text: content.field_rule_revised_date,
+    text: content.field_roc_rule_revised_date,
     share: {
       variant: 'default',
       print_url: 'javascript: window.print();',
@@ -130,14 +130,14 @@
           <h2{{ title_attributes.addClass('roc__document__title') }}>{{ label }}</h2>
         {% endif %}
 
-        {% if content.field_rule_section_attachment.0 %}
-          {{ content.field_rule_section_attachment }}
+        {% if content.field_roc_rule_index_sections.0 %}
+          {{ content.field_roc_rule_index_sections }}
         {% endif %}
 
-        {% if content.field_rule_media.0 %}
+        {% if content.field_roc_rule_media.0 %}
           <div class="roc__document__attached-files">
-            <h3 class="field--label">{{ 'Documents'|t }}</h3>
-            {{ content.field_rule_media }}
+            <h3 class="field--label">{{ 'Attached Documents'|t }}</h3>
+            {{ content.field_roc_rule_media }}
           </div>
         {% endif %}
 

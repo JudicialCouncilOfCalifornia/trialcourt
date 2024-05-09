@@ -13,11 +13,11 @@ use Drupal\Core\Entity\EntityInterface;
  */
 function jcc_tc2_roc_feature_entity_insert(EntityInterface $entity): void {
   if ($entity->bundle() == 'roc_rule_index') {
-    jcc_roc_rule_index_set_pathalias($entity);
+    jcc_tc2_roc_feature_rule_index_set_pathalias($entity);
   }
 
   if ($entity->bundle() == 'roc_rule') {
-    jcc_roc_rule_set_pathalias($entity);
+    jcc_tc2_roc_feature_rule_set_pathalias($entity);
   }
 }
 
@@ -26,11 +26,11 @@ function jcc_tc2_roc_feature_entity_insert(EntityInterface $entity): void {
  */
 function jcc_tc2_roc_feature_entity_update(EntityInterface $entity): void {
   if ($entity->bundle() == 'roc_rule_index') {
-    jcc_roc_rule_index_set_pathalias($entity);
+    jcc_tc2_roc_feature_rule_index_set_pathalias($entity);
   }
 
   if ($entity->bundle() == 'roc_rule') {
-    jcc_roc_rule_set_pathalias($entity);
+    jcc_tc2_roc_feature_rule_set_pathalias($entity);
   }
 }
 
@@ -56,7 +56,7 @@ function jcc_tc2_roc_feature_node_presave(EntityInterface $entity): void {
   if ($entity->bundle() == 'roc_rule_index') {
     $entity_manager = \Drupal::entityTypeManager();
     $node_manager = $entity_manager->getStorage('node');
-    $roc_rule_link_service = \Drupal::service('jcc_roc.rule_link.service');
+    $roc_rule_link_service = \Drupal::service('jcc_tc2_roc_feature.rule_link.service');
 
     // Assign the rule document id to all the subsections that are attached.
     $ordered_list_of_subsections = $roc_rule_link_service->getRocRuleIdsFromIndex($entity);

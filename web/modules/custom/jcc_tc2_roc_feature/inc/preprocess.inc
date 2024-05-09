@@ -108,7 +108,7 @@ function jcc_tc2_roc_feature_preprocess_views_view_fields(&$variables): void {
       return;
     }
 
-    $roc_rule_service = \Drupal::service('jcc_roc.rule.service');
+    $roc_rule_service = \Drupal::service('jcc_tc2_roc_feature.rule.service');
     $file = $roc_rule_service->getMediaDocumentFile($media_entities[0]);
 
     $mime = $file->getMimeType();

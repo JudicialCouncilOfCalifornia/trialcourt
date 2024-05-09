@@ -12,7 +12,7 @@ use Drupal\Core\Entity\EntityInterface;
  * Build the in page navigation for the rule document node.
  */
 function jcc_tc2_roc_feature_rule_index_build_in_page_navigation(EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode): array {
-  $roc_rule_link_service = \Drupal::service('jcc_roc.rule_link.service');
+  $roc_rule_link_service = \Drupal::service('jcc_tc2_roc_feature.rule_link.service');
 
   $items = [];
   $items['roc_main_listing_page'] = $roc_rule_link_service->getRocMainListingPageLink();
@@ -35,13 +35,13 @@ function jcc_tc2_roc_feature_rule_index_build_in_page_navigation(EntityInterface
  * Build the in page navigation for the rule document node.
  */
 function jcc_tc2_roc_feature_rule_build_in_page_navigation(EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode): array {
-  $roc_rule_link_service = \Drupal::service('jcc_roc.rule_link.service');
+  $roc_rule_link_service = \Drupal::service('jcc_tc2_roc_feature.rule_link.service');
   $parent_document = $roc_rule_link_service->getRocIndexFromRule($entity);
 
   $items = [];
 
   if ($parent_document) {
-    $ordered_list_of_subsections = $roc_rule_link_service->getRocSubSectionIdsFromDocument($parent_document);
+    $ordered_list_of_subsections = $roc_rule_link_service->getRocRuleIdsFromIndex($parent_document);
     $number_of_subsections = count($ordered_list_of_subsections);
 
     $a = array_search($entity->id(), $ordered_list_of_subsections);
