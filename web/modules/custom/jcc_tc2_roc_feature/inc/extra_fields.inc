@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains jcc_roc extra fields module functionality.
+ * Contains jcc_tc2_roc_feature extra fields module functionality.
  */
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;

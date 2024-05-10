@@ -18,7 +18,7 @@ class JccRocRuleLinkService {
   /**
    * The module handler.
    *
-   * @var \Drupal\jcc_roc\Service\JccRocRuleService
+   * @var \Drupal\jcc_tc2_roc_feature\Service\JccRocRuleService
    */
   protected JccRocRuleService $jccRocRuleService;
 
@@ -27,7 +27,7 @@ class JccRocRuleLinkService {
    *
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The translation service.
-   * @param \Drupal\jcc_roc\Service\JccRocRuleService $jcc_roc_rule_service
+   * @param \Drupal\jcc_tc2_roc_feature\Service\JccRocRuleService $jcc_roc_rule_service
    *   The roc rule service.
    */
   public function __construct(TranslationInterface $string_translation, JccRocRuleService $jcc_roc_rule_service) {
@@ -67,7 +67,7 @@ class JccRocRuleLinkService {
   public function getLinkToRuleIndexToc($rule_index, $text = FALSE): GeneratedLink|bool {
     $options = [
       'attributes' => [
-        'class' => ['roc-document-list__item__link'],
+        'class' => ['roc-rule-index-list__item__link'],
         'title' => $this->t('View the table of contents for "@name"', ['@name' => $rule_index->label()]),
       ],
     ];

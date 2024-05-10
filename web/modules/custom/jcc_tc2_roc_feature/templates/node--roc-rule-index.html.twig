@@ -94,9 +94,10 @@
     news_header: true,
     background: 'striped-base-light-xx',
     brow: {
-      part_one: "now"|date("Y"),
+      part_one: 'California Rules of Court'|t,
+      part_two: "now"|date("Y"),
     },
-    heading: 'California Rules of Court'|t,
+    heading: label,
     text: content.field_roc_rule_revised_date,
     share: {
       variant: 'default',
@@ -108,7 +109,7 @@
   } %}
 
   {% if content.in_page_nav %}
-    <div class="box roc-document-toc__nav-links upper-links">
+    <div class="box roc-rule-toc__nav-links upper-links">
       <div class="container stack">
         {{ content.in_page_nav }}
       </div>
@@ -123,34 +124,27 @@
     </div>
   {% endif %}
 
-  <div{{ content_attributes.addClass('roc__document__content') }}>
-    <div class="box">
-      <div class="container stack">
-        {% if page %}
-          <h2{{ title_attributes.addClass('roc__document__title') }}>{{ label }}</h2>
-        {% endif %}
+  <div class="box roc__rule-index__content">
+    <div class="container stack">
 
-        {% if content.field_roc_rule_index_sections.0 %}
-          {{ content.field_roc_rule_index_sections }}
-        {% endif %}
+      {% if content.field_roc_rule_index_sections.0 %}
+        {{ content.field_roc_rule_index_sections }}
+      {% endif %}
 
-        {% if content.field_roc_rule_media.0 %}
-          <div class="roc__document__attached-files">
-            <h3 class="field--label">{{ 'Attached Documents'|t }}</h3>
-            {{ content.field_roc_rule_media }}
-          </div>
-        {% endif %}
+      {% if content.field_roc_rule_media.0 %}
+        <div class="roc__rule-index__attached-files">
+          <h3 class="field--label">{{ 'Attached Documents'|t }}</h3>
+          {{ content.field_roc_rule_media }}
+        </div>
+      {% endif %}
 
-        {% if content.body.0 %}
-          <div class="roc__document__notes">
-            <h3 class="field--label">{{ 'Additional information'|t }}</h3>
-            {{ content.body }}
-          </div>
-        {% endif %}
-      </div>
+      {% if content.body.0 %}
+        <div class="roc__rule-index__attached-files">
+          <h3 class="field--label">{{ 'Additional information'|t }}</h3>
+          {{ content.body }}
+        </div>
+      {% endif %}
     </div>
   </div>
 
-  <div class="box roc-document-toc__nav-links lower-links">
-  </div>
 </article>

@@ -86,16 +86,17 @@
 
 <span id="document_top"></span>
 
-<article{{ attributes.addClass('roc__subsection') }}>
+<article{{ attributes.addClass('roc__rule') }}>
 
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
     variant: 'with_print',
     news_header: true,
     background: 'striped-base-light-xx',
     brow: {
-      part_one: "now"|date("Y"),
+      part_one: 'California Rules of Court'|t,
+      part_two: "now"|date("Y"),
     },
-    heading: 'California Rules of Court'|t,
+    heading: label,
     text: null,
     share: {
       variant: 'default',
@@ -107,7 +108,7 @@
   } %}
 
   {% if content.in_page_nav %}
-    <div class="box roc-document-toc__nav-links upper-links">
+    <div class="box roc-rule-toc__nav-links upper-links">
       <div class="container stack">
         {{ content.in_page_nav }}
       </div>
@@ -122,24 +123,10 @@
     </div>
   {% endif %}
 
-  <div{{ content_attributes.addClass('roc__subsection__content') }}>
-
-    <div class="box">
-      <div class="container">
-        {% if page %}
-          <h2{{ title_attributes.addClass('roc__subsection__title') }}>{{ label }}</h2>
-        {% endif %}
-      </div>
+  <div class="box roc__rule__content">
+    <div class="container jcc-rulesformatting stack">
+      {{ content|without('content_moderation_control', 'entity_print_view_pdf', 'in_page_nav', 'field_roc_rule_parent_index') }}
     </div>
-
-    <div class="box">
-      <div class="container jcc-rulesformatting">
-        {{ content|without('content_moderation_control', 'entity_print_view_pdf', 'in_page_nav', 'field_roc_rule_parent_index') }}
-      </div>
-    </div>
-
   </div>
 
-  <div class="box roc-document-toc__nav-links lower-links">
-  </div>
 </article>

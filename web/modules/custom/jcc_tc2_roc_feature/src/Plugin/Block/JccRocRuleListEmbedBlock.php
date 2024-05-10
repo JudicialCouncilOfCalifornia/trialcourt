@@ -6,7 +6,7 @@ use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\AdminContext;
-use Drupal\jcc_roc\Service\JccRocRuleService;
+use Drupal\jcc_tc2_roc_feature\Service\JccRocRuleService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -29,7 +29,7 @@ class JccRocRuleListEmbedBlock extends BlockBase implements ContainerFactoryPlug
   /**
    * The Roc Rules Service.
    *
-   * @var \Drupal\jcc_roc\Service\JccRocRuleService
+   * @var \Drupal\jcc_tc2_roc_feature\Service\JccRocRuleService
    */
   protected $jccRocRuleService;
 
@@ -44,7 +44,7 @@ class JccRocRuleListEmbedBlock extends BlockBase implements ContainerFactoryPlug
    *   Plugin definition.
    * @param \Drupal\Core\Routing\AdminContext $admin_context
    *   Admin route context service.
-   * @param \Drupal\jcc_roc\Service\JccRocRuleService $jcc_roc_rule_service
+   * @param \Drupal\jcc_tc2_roc_feature\Service\JccRocRuleService $jcc_roc_rule_service
    *   ROC Rule service.
    */
   public function __construct(array $configuration,

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains jcc_roc form_alter module functionality.
+ * Contains jcc_tc2_roc_feature form_alter module functionality.
  */
 
 use Drupal\Core\Form\FormStateInterface;

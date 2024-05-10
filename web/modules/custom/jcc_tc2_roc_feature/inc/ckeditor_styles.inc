@@ -5,6 +5,7 @@
  * Contains jcc_tc2_roc_feature ckeditor module functionality.
  */
 
+use Drupal\editor\Entity\Editor;
 use Drupal\node\NodeInterface;
 
 /**
@@ -15,25 +16,81 @@ function jcc_tc2_roc_feature_editor_js_settings_alter(array &$settings): void {
   // Change the style set on rule_subsection nodes with RuleFormatting items.
   foreach (array_keys($settings['editor']['formats']) as $text_format_id) {
     if ($settings['editor']['formats'][$text_format_id]['editor'] === 'ckeditor') {
-      $styles = $settings['editor']['formats'][$text_format_id]['editorSettings']['stylesSet'];
 
       $route_match = \Drupal::routeMatch();
       $route_name = $route_match->getRouteName();
 
-      // Check if an edit route.
+      // Check if a node add/edit route.
       if (in_array($route_name, ['entity.node.edit_form', 'node.add'])) {
         $current_node = \Drupal::request()->attributes->get('node');
         if ($current_node instanceof NodeInterface) {
           if ($current_node->bundle() == 'roc_rule') {
+
+            // Control our available styles for Rules editing.
             $styles = [];
             foreach (jcc_tc2_roc_feature_rule_styles_info() as $style) {
               $styles[] = $style;
+            }
+            $settings['editor']['formats'][$text_format_id]['editorSettings']['stylesSet'] = $styles;
+
+            // Control available tools for Rules editing.
+            $tools_to_remove = [
+              'DrupalMediaLibrary',
+              'tooltip',
+              'paragraphs_inline_entity_form',
+              'BidiLtr',
+              'BidiRtl',
+              'Subscript',
+              'Superscript',
+              'Format',
+            ];
+            foreach ($settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'] as $g_delta => $toolbar_group) {
+              if (is_array($toolbar_group)) {
+                foreach ($toolbar_group['items'] as $t_delta => $tool_name) {
+                  if (in_array($tool_name, $tools_to_remove)) {
+                    unset($settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][$t_delta]);
+                  }
+                }
+                $cleaned_array = array_values($settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items']);
+                $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'] = $cleaned_array;
+
+                if ($toolbar_group['name'] == 'Tools') {
+                  $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Maximize';
+                }
+              }
             }
           }
         }
       }
 
-      $settings['editor']['formats'][$text_format_id]['editorSettings']['stylesSet'] = $styles;
+    }
+  }
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function jcc_tc2_roc_feature_ckeditor_css_alter(array &$css, Editor $editor): void {
+  if (jcc_custom_is_elevated_site() && in_array($editor->getFilterFormat()->id(), ['body'])) {
+    if (!$editor->hasAssociatedFilterFormat()) {
+      return;
+    }
+
+//    $css[] = "/themes/contrib/jcc_storybook/lib/stories/Atoms/RulesFormatting/RulesFormatting.css";
+//    $css[] = "/modules/custom/jcc_tc2_roc_feature/css/jcc-roc-custom-ckeditor.css";
+
+    $route_match = \Drupal::routeMatch();
+    $route_name = $route_match->getRouteName();
+
+    // Check if an edit route.
+    if (in_array($route_name, ['entity.node.edit_form', 'node.add'])) {
+      $current_node = \Drupal::request()->attributes->get('node');
+      if ($current_node instanceof NodeInterface) {
+        if ($current_node->bundle() == 'roc_rule') {
+          $css[] = "/modules/custom/jcc_tc2_roc_feature/css/jcc-roc-custom-ckeditor.css";
+          $css[] = "/themes/contrib/jcc_storybook/lib/stories/Atoms/RulesFormatting/RulesFormatting.css";
+        }
+      }
     }
   }
 }
@@ -89,6 +146,14 @@ function jcc_tc2_roc_feature_rule_styles_info(): array {
     'element' => 'p',
     'attributes' => [
       'class' => 'subparagraphlist',
+    ],
+  ];
+
+  $styles[] = [
+    'name' => 'SubItem List',
+    'element' => 'p',
+    'attributes' => [
+      'class' => 'itemlist',
     ],
   ];
 
