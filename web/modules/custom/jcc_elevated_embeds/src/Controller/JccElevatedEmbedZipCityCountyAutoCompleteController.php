@@ -2,17 +2,17 @@
 
 namespace Drupal\jcc_elevated_embeds\Controller;
 
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\AdminContext;
 use Drupal\jcc_elevated_sections\JccSectionServiceInterface;
 use Drupal\path_alias\AliasManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Drupal\Component\Utility\Xss;
 
 /**
  * Defines a route controller for watches autocomplete form elements.
@@ -125,7 +125,7 @@ class JccElevatedEmbedZipCityCountyAutoCompleteController extends ControllerBase
     $input = $request->query->get('q');
 
     // Get the typed string from the URL, if it exists.
-    if (!$input || strlen($input) <= 2) {
+    if (!$input || strlen($input) <= 3) {
       return new JsonResponse([$this->t('Please enter more characters for your search.')]);
     }
 

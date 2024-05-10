@@ -84,34 +84,33 @@
 {% endfor %}
 
 <article{{ attributes }}>
-   {% block layout %} 
-   {% if imageurl is not empty %}
-    {% set imageTag %}
-    <img src={{imageurl}} />
-    {% endset %} 
-  {% endif %}   
-   
-  {% set hangover_content %} 
-    {% include "@molecules/Card/Card.twig" with {
-      variant: "media-right",
-      aspect: [],
-      clickable_card: false,
-      background: null,
-      media: imageTag,
-      caption_overlay: true,
-      citation: citation,
-      caption_in_image: true,
-      media_caption: {
-      show: true,
-      text:caption      
-    },
-    } %} 
-  {% endset %} 
+  {% block layout %}
+    {% if imageurl is not empty %}
+      {% set imageTag %}
+        <img src={{imageurl}} />
+      {% endset %}
+    {% endif %}
+
+    {% set hangover_content %}
+      {% include "@molecules/Card/Card.twig" with {
+        variant: "media-right",
+        aspect: [],
+        clickable_card: false,
+        background: null,
+        media: imageTag,
+        media_caption: {
+          show: caption or citation ? true,
+          text: caption,
+          citation: citation,
+          overlay: true,
+        },
+      } %}
+    {% endset %}
 
     {% if content.field_news_type['#title'] is null %}
       {% set newstype = '' %}
     {% else %}
-     {% set newstype = content.field_news_type %}
+      {% set newstype = content.field_news_type %}
     {% endif %}
 
     {% include "@molecules/HeroHangover/HeroHangover.twig" with {
@@ -121,23 +120,23 @@
       brow: {
         variant: 'default_with_date',
         part_one: newstype,
-        part_two: content.field_date, 
+        part_two: content.field_date,
       },
       heading: node.title.value,
       news_header: true,
       text: content.field_byline,
-      hangover_content: hangover_content  
+      hangover_content: hangover_content
     } %}
 
     {% set sidebarimages %}
       {% for image in sidebarimages %}
         {% set sidebar_image = '' %}
-          {% if image.url %}
-            {% set sidebar_image %}
-              {% set media_uri = profile.image.field_media_image.entity.uri.value %}
-              <img src={{image.url}}>
-            {% endset %}
-          {% endif %}
+        {% if image.url %}
+          {% set sidebar_image %}
+            {% set media_uri = profile.image.field_media_image.entity.uri.value %}
+            <img src={{image.url}}>
+          {% endset %}
+        {% endif %}
 
         {% include "@molecules/Card/Card.twig" with {
           variant: "media-right",
@@ -145,44 +144,42 @@
           clickable_card: false,
           background: null,
           media: sidebar_image | raw,
-          caption_overlay: true,
-          citation: image.citation,
           media_caption: {
-          show: true,
-          text: image.caption,
-          caption_in_image: false,
-        },
-        } %} 
-        {% endfor %}
+            show: image.caption or image.citation ? true,
+            text: image.caption,
+            citation: image.citation,
+            overlay: false,
+          },
+        } %}
+      {% endfor %}
     {% endset %}
-   {% set news_content = (body_length > 0) ? content.body: textshare | render %}   
-    <div class="container">    
-    {% set content %}
-      {% include "@molecules/Body/Body.twig" with {
-        variant: "default",
-      heading: "",
-      lead: "",
-      content: news_content,
-      subheading: "",
-      aside: sidebarimages
-      } %}   
-      {% if relatednewsdata %}     
-      {% include "@molecules/List/List.twig" with {
+   {% set news_content = (body_length > 0) ? content.body: textshare | render %}
+    <div class="container">
+      {% set content %}
+        {% include "@molecules/Body/Body.twig" with {
+          variant: "default",
+          heading: "",
+          lead: "",
+          content: news_content,
+          subheading: "",
+          aside: sidebarimages
+        } %}
+        {% if relatednewsdata %}
+          {% include "@molecules/List/List.twig" with {
             variant: 'none',
             heading: 'Related News',
             items: relatednewsdata,
             wider_span: 'true',
-        } %}    
-    {% endif %}  
-      {% endset %} 
+          } %}
+        {% endif %}
+      {% endset %}
     </div>
 
     {% block section %}
-        {% include "@organisms/Section/Section.twig" with {
-          sub_component_layout: 'stack',
-          sub_component_data: content,
-          }      
-        %}
+      {% include "@organisms/Section/Section.twig" with {
+        sub_component_layout: 'stack',
+        sub_component_data: content,
+      } %}
     {% endblock %}
   {% endblock %}
 </article>

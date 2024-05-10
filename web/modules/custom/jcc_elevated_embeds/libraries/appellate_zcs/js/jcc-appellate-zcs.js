@@ -61,14 +61,10 @@
       const searchZCSinfo = async searchText => {
         let matches = [];
 
-        if (searchText.length >= 3 ) {
+        if (searchText.length > 0) {
           const res = await fetch('/jcc-elevated/embeds/autocomplete/zcs?q=' + searchText);
           const data = await res.json();
           matches = Object.entries(data);
-        }
-
-        if (searchText.length <= 2 ) {
-          matches = [];
         }
 
         outputMatchesHtml(matches, searchText);
