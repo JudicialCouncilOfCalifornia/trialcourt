@@ -5,5 +5,9 @@
   not paragraph.isPublished() ? 'paragraph--unpublished'
 ] %}
 <div{{ attributes.addClass(classes) }}>
-  {{ content }}
+  {{ content.field_rule_index_section_label }}
+  <ul class="list__container">
+    {{ content.field_rule_index_section_content }}
+  </ul>
+  {{ content|without('field_rule_index_section_label', 'field_rule_index_section_content') }}
 </div>
