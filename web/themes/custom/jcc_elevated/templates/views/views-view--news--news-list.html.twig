@@ -25,61 +25,65 @@
  * - attachment_after: An optional attachment view to be displayed after the
  *   view content.
  * - dom_id: Unique id for every view being printed to give unique class for
- *   Javascript.
+ *   JavaScript.
  *
  * @see template_preprocess_views_view()
  */
 #}
-
-{{ attach_library("jcc_storybook/Sidebar") }}
+{{ attach_library("jcc_storybook/InlineForm") }}
 {{ attach_library("jcc_storybook/ViewResults") }}
+{{ attach_library("jcc_storybook/ResultExcerpt") }}
 
 {%
   set classes = [
   dom_id ? 'js-view-dom-id-' ~ dom_id,
-  'views-view--news--news-list',
-  'with-sidebar',
-  'container',
-  'box',
 ]
 %}
 
-<div{{ attributes.addClass(classes) }} style="--gap:var(--s6);--sidebar-width:'36ch';--sidebar-direction:row;">
+{% set items = [] %}
+{% for row in rows[0]['#rows'] %}
+  {% set news = row['#node'] %}
 
-  <div class="sidebar">
-    {{ exposed }}
-  </div>
+  {% if news.body.0.value %}
+    {% set content = {
+      '#type': 'processed_text',
+      '#text':  news.body.0.value|length > 250 ? news.body.0.value|slice(0, 250) ~ ' ...' : news.body.0.value,
+      '#format': news.body.format,
+  } %}
+  {% endif %}
 
-  <div style="--gap:var(--s0);">
-    {{ title_prefix }}
-    {{ title }}
-    {{ title_suffix }}
+  {% set item = {
+    brow: {
+      primary: news.field_news_type.entity.name.value ? news.field_news_type.entity.name.value : '',
+      secondary: news.field_date.value ? news.field_date.value|date('F j, Y') : '',
+    },
+    title: news.title.value,
+    url: news.id ? path('entity.node.canonical', { 'node': news.id }) : '',
+    content: content|render,
+    attributes: create_attribute(),
+  } %}
+  {% set items = items|merge([item]) %}
+{% endfor %}
 
-    {% if header %}
-      <header>
-        {{ header }}
-      </header>
-    {% endif %}
-
-    {{ attachment_before }}
-
-    {% if rows -%}
-      {{ rows }}
-    {% elseif empty -%}
-      {{ empty }}
-    {% endif %}
-
-    {{ pager }}
-    {{ attachment_after }}
-    {{ more }}
-
-    {% if footer %}
-      <footer>
-        {{ footer }}
-      </footer>
-    {% endif %}
-
-    {{ feed_icons }}
-  </div>
-
+<div{{ attributes.addClass(classes) }}>
+  {% include "@organisms/ViewResults/ViewResults.twig" with {
+    variant: 'default',
+    view_name: id,
+    view_display: display_id,
+    header: header,
+    header_sidebar: '',
+    header_direction_results: 'sidebar-row',
+    form: exposed|render,
+    form_in_sidebar: true,
+    list_type: 'ul',
+    list_type_divider: '',
+    rows: items,
+    sidebar: '',
+    sidebar_direction_results: 'sidebar-row',
+    pager: pager|render,
+    items_per_page: '',
+    footer: '',
+    footer_sidebar: '',
+    sidebar_direction_footer: 'sidebar-row',
+  } %}
 </div>
