@@ -363,9 +363,11 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
     $node = $row['#row']->_entity;
     $media = $node->get('field_media')->target_id ? Media::load($node->get('field_media')->target_id) : '';
     $name = $node->get('title')->value ? $node->get('title')->value : '';
+    $title = '';
     if ($title_tid = $node->get('field_job_title')->target_id) {
       $title = Term::load($title_tid) ? Term::load($title_tid)->get('name')->value : '';
     }
+    $division = '';
     if ($division_tid = $node->get('field_division')->target_id) {
       $division = Term::load($division_tid) ? Term::load($division_tid)->get('name')->value : '';
     }
