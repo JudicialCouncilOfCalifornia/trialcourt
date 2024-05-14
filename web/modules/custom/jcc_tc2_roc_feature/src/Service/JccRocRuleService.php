@@ -135,6 +135,7 @@ class JccRocRuleService {
     $nids = $query->condition('type', 'roc_rule_index')
       ->condition('status', TRUE)
       ->condition('promote', TRUE)
+      ->accessCheck(FALSE)
       ->execute();
     return $node_manager->loadMultiple($nids);
   }
@@ -146,6 +147,7 @@ class JccRocRuleService {
     $node_manager = $this->entityTypeManager->getStorage('node');
     $query = $node_manager->getQuery();
     $nids = $query->condition('type', 'roc_rule_index')
+      ->accessCheck(FALSE)
       ->execute();
     return $node_manager->loadMultiple($nids);
   }
