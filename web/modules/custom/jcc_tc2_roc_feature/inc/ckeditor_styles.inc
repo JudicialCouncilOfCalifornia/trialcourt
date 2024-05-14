@@ -55,7 +55,36 @@ function jcc_tc2_roc_feature_editor_js_settings_alter(array &$settings): void {
                 $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'] = $cleaned_array;
 
                 if ($toolbar_group['name'] == 'Tools') {
-                  $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Maximize';
+                  if (!in_array('A11ychecker', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'A11ychecker';
+                  }
+                  if (!in_array('Maximize', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Maximize';
+                  }
+                }
+
+                if ($toolbar_group['name'] == 'Lists') {
+                  if (!in_array('Outdent', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Outdent';
+                  }
+                  if (!in_array('Indent', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Indent';
+                  }
+                }
+
+                if ($toolbar_group['name'] == 'Formatting') {
+                  if (!in_array('JustifyLeft', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'JustifyLeft';
+                  }
+                  if (!in_array('JustifyCenter', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'JustifyCenter';
+                  }
+                  if (!in_array('JustifyRight', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'JustifyRight';
+                  }
+                  if (!in_array('JustifyBlock', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'JustifyBlock';
+                  }
                 }
               }
             }
@@ -75,9 +104,6 @@ function jcc_tc2_roc_feature_ckeditor_css_alter(array &$css, Editor $editor): vo
     if (!$editor->hasAssociatedFilterFormat()) {
       return;
     }
-
-//    $css[] = "/themes/contrib/jcc_storybook/lib/stories/Atoms/RulesFormatting/RulesFormatting.css";
-//    $css[] = "/modules/custom/jcc_tc2_roc_feature/css/jcc-roc-custom-ckeditor.css";
 
     $route_match = \Drupal::routeMatch();
     $route_name = $route_match->getRouteName();

@@ -106,3 +106,26 @@ body:is(.cke_editable) blockquote {
 body:is(.cke_editable) p[style*="TEXT-INDENT: 40px"] {
   text-indent: 2.25rem;
 }
+
+/* Table style */
+body:is(.cke_editable) table  {
+  border-collapse: collapse;
+  margin-block-start: var(--gap);
+  margin-block-end: calc(var(--gap) * 2);
+  border: 1px solid var(--color-base-light-x);
+  table-layout: fixed;
+  width: 100%;
+}
+
+body:is(.cke_editable) table td,
+body:is(.cke_editable) table th {
+  border: 1px dotted var(--color-base-light-x);
+  padding: var(--s-2) var(--s-2);
+  background-color: var(--color-base-light-xxx);
+}
+
+body:is(.cke_editable) table th {
+  color: var(--color-white);
+  background-color: var(--color-base-dark-x);
+  text-align: left;
+}
