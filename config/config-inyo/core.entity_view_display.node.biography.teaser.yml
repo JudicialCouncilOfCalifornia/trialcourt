@@ -1,0 +1,52 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.biography.body
+    - field.field.node.biography.field_custom_link
+    - field.field.node.biography.field_department
+    - field.field.node.biography.field_division
+    - field.field.node.biography.field_job_title
+    - field.field.node.biography.field_location
+    - field.field.node.biography.field_media
+    - field.field.node.biography.field_media_file_multiple
+    - field.field.node.biography.field_person_type
+    - field.field.node.biography.field_tags
+    - node.type.biography
+  module:
+    - text
+    - user
+id: node.biography.teaser
+targetEntityType: node
+bundle: biography
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_custom_link: true
+  field_department: true
+  field_division: true
+  field_job_title: true
+  field_location: true
+  field_media: true
+  field_media_file_multiple: true
+  field_person_type: true
+  field_tags: true
+  langcode: true
+  search_api_excerpt: true

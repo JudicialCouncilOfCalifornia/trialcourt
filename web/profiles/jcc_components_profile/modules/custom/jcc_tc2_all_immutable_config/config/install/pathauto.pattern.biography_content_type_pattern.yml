@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: biography_content_type_pattern
+label: 'Biography Content Type Pattern'
+type: 'canonical_entities:node'
+pattern: 'bio/[node:title]'
+selection_criteria:
+  6c29b375-45cd-4e15-aa7c-3ab1a29b89a6:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: 6c29b375-45cd-4e15-aa7c-3ab1a29b89a6
+    context_mapping:
+      node: node
+    bundles:
+      biography: biography
+      judge: judge
+selection_logic: and
+weight: -5
+relationships: {  }
