@@ -27,7 +27,7 @@ class RelatednewsBlock extends BlockBase implements BlockPluginInterface {
       $block_content = $config['related_news_custom'];
     }
     else {
-      $block_content = $this->t('<p><a href="https://supreme.courts.ca.gov/case-information/oral-arguments">Oral Argument Archive</a><br /><a href="https://jcc.legistar.com/Calendar.aspx">Judicial Council Meeting Archive</a></p>');
+      $block_content = $this->t('<p><a href="https://supreme.courts.ca.gov/case-information/oral-arguments">Oral Argument Archive</a><br /><a href="https://jcc.legistar.com/Calendar.aspx">Judicial Council Meeting Archive</a><br /><a href="/sites/default/files/newsroom/2024-05/2025-jc-mtg-dates-only-20240411.pdf">2025 Judicial Council Meeting Calendar</a></p>');
     }
     return [
       '#markup' => $block_content,
