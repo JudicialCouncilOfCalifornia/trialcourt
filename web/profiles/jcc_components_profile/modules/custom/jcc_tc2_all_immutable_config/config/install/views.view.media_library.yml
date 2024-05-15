@@ -9,6 +9,7 @@ dependencies:
     - taxonomy.vocabulary.media_image_category
     - taxonomy.vocabulary.media_tags
   module:
+    - file
     - media
     - media_library
     - svg_image
@@ -280,6 +281,58 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        filename:
+          id: filename
+          table: file_managed
+          field: filename
+          relationship: field_media_file_target_id
+          group_type: group
+          admin_label: ''
+          entity_type: file
+          entity_field: filename
+          plugin_id: string
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: filename_op
+            label: Filename
+            description: ''
+            use_operator: false
+            operator: filename_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: filename
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
         bundle:
           id: bundle
           table: media_field_data
@@ -333,6 +386,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -372,19 +426,18 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: media_file_category
+          type: select
           hierarchy: true
+          limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
           parent: null
           level_labels: ''
-          force_deepest: false
-          save_lineage: false
           hierarchy_depth: 0
           required_depth: 0
           none_label: '- Please select -'
-          plugin_id: taxonomy_index_tid
         field_category_target_id_1:
           id: field_category_target_id_1
           table: media__field_category
@@ -392,6 +445,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -431,19 +485,18 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: media_image_category
+          type: select
           hierarchy: true
+          limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
           parent: null
           level_labels: ''
-          force_deepest: false
-          save_lineage: false
           hierarchy_depth: 0
           required_depth: 0
           none_label: '- Please select -'
-          plugin_id: taxonomy_index_tid
         field_matters_served_target_id:
           id: field_matters_served_target_id
           table: media__field_matters_served
@@ -451,6 +504,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -490,19 +544,18 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: matters_served
+          type: select
           hierarchy: false
+          limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
           parent: null
           level_labels: ''
-          force_deepest: false
-          save_lineage: false
           hierarchy_depth: 0
           required_depth: 0
           none_label: '- Please select -'
-          plugin_id: taxonomy_index_tid
         field_tags_target_id:
           id: field_tags_target_id
           table: media__field_tags
@@ -510,6 +563,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -549,19 +603,18 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: media_tags
+          type: select
           hierarchy: false
+          limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
           parent: null
           level_labels: ''
-          force_deepest: false
-          save_lineage: false
           hierarchy_depth: 0
           required_depth: 0
           none_label: '- Please select -'
-          plugin_id: taxonomy_index_tid
         status:
           id: status
           table: media_field_data
@@ -569,6 +622,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: media
+          entity_field: status
+          plugin_id: boolean
           operator: '='
           value: '1'
           group: 1
@@ -607,9 +663,6 @@ display:
                 title: Unpublished
                 operator: '='
                 value: '0'
-          plugin_id: boolean
-          entity_type: media
-          entity_field: status
         status_extra:
           id: status_extra
           table: media_field_data
@@ -692,6 +745,10 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
       style:
         type: default
         options:
@@ -713,12 +770,17 @@ display:
           distinct: false
           replica: false
           query_tags: {  }
-      relationships: {  }
+      relationships:
+        field_media_file_target_id:
+          id: field_media_file_target_id
+          table: media__field_media_file
+          field: field_media_file_target_id
+          relationship: none
+          group_type: group
+          admin_label: 'file from field_media_file'
+          plugin_id: standard
+          required: false
       css_class: ''
-      filter_groups:
-        operator: AND
-        groups:
-          1: AND
       use_ajax: true
       header: {  }
       footer: {  }
@@ -734,13 +796,23 @@ display:
         - user
         - user.permissions
       tags:
-        - 'config:core.entity_view_display.media.file.default'
-        - 'config:core.entity_view_display.media.file.media_library'
         - 'config:core.entity_view_display.media.boxcast_stream.default'
         - 'config:core.entity_view_display.media.boxcast_stream.media_library'
+        - 'config:core.entity_view_display.media.file.default'
         - 'config:core.entity_view_display.media.file.list'
+        - 'config:core.entity_view_display.media.file.media_library'
+        - 'config:core.entity_view_display.media.image.container_100_percent'
+        - 'config:core.entity_view_display.media.image.container_25_percent'
+        - 'config:core.entity_view_display.media.image.container_50_percent'
+        - 'config:core.entity_view_display.media.image.container_75_percent'
         - 'config:core.entity_view_display.media.image.default'
         - 'config:core.entity_view_display.media.image.media_library'
+        - 'config:core.entity_view_display.media.publication.default'
+        - 'config:core.entity_view_display.media.publication.media_library'
+        - 'config:core.entity_view_display.media.remote_video.container_100_percent'
+        - 'config:core.entity_view_display.media.remote_video.container_25_percent'
+        - 'config:core.entity_view_display.media.remote_video.container_50_percent'
+        - 'config:core.entity_view_display.media.remote_video.container_75_percent'
         - 'config:core.entity_view_display.media.remote_video.default'
         - 'config:core.entity_view_display.media.remote_video.media_library'
         - 'config:core.entity_view_display.media.snippet.default'
@@ -1047,8 +1119,18 @@ display:
         - 'config:core.entity_view_display.media.file.default'
         - 'config:core.entity_view_display.media.file.list'
         - 'config:core.entity_view_display.media.file.media_library'
+        - 'config:core.entity_view_display.media.image.container_100_percent'
+        - 'config:core.entity_view_display.media.image.container_25_percent'
+        - 'config:core.entity_view_display.media.image.container_50_percent'
+        - 'config:core.entity_view_display.media.image.container_75_percent'
         - 'config:core.entity_view_display.media.image.default'
         - 'config:core.entity_view_display.media.image.media_library'
+        - 'config:core.entity_view_display.media.publication.default'
+        - 'config:core.entity_view_display.media.publication.media_library'
+        - 'config:core.entity_view_display.media.remote_video.container_100_percent'
+        - 'config:core.entity_view_display.media.remote_video.container_25_percent'
+        - 'config:core.entity_view_display.media.remote_video.container_50_percent'
+        - 'config:core.entity_view_display.media.remote_video.container_75_percent'
         - 'config:core.entity_view_display.media.remote_video.default'
         - 'config:core.entity_view_display.media.remote_video.media_library'
         - 'config:core.entity_view_display.media.snippet.default'
@@ -1290,6 +1372,58 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        filename:
+          id: filename
+          table: file_managed
+          field: filename
+          relationship: field_media_file_target_id
+          group_type: group
+          admin_label: ''
+          entity_type: file
+          entity_field: filename
+          plugin_id: string
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: filename_op
+            label: Filename
+            description: ''
+            use_operator: false
+            operator: filename_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: filename
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
         default_langcode:
           id: default_langcode
           table: media_field_data
@@ -1337,6 +1471,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -1376,19 +1511,18 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: media_file_category
+          type: select
           hierarchy: true
+          limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
           parent: null
           level_labels: ''
-          force_deepest: false
-          save_lineage: false
           hierarchy_depth: 0
           required_depth: 0
           none_label: '- Please select -'
-          plugin_id: taxonomy_index_tid
         field_category_target_id_1:
           id: field_category_target_id_1
           table: media__field_category
@@ -1396,6 +1530,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -1435,19 +1570,18 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: media_image_category
+          type: select
           hierarchy: true
+          limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
           parent: null
           level_labels: ''
-          force_deepest: false
-          save_lineage: false
           hierarchy_depth: 0
           required_depth: 0
           none_label: '- Please select -'
-          plugin_id: taxonomy_index_tid
         field_matters_served_target_id:
           id: field_matters_served_target_id
           table: media__field_matters_served
@@ -1455,6 +1589,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -1494,19 +1629,18 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: matters_served
+          type: select
           hierarchy: false
+          limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
           parent: null
           level_labels: ''
-          force_deepest: false
-          save_lineage: false
           hierarchy_depth: 0
           required_depth: 0
           none_label: '- Please select -'
-          plugin_id: taxonomy_index_tid
         field_tags_target_id:
           id: field_tags_target_id
           table: media__field_tags
@@ -1514,6 +1648,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -1553,19 +1688,18 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: media_tags
+          type: select
           hierarchy: false
+          limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
           parent: null
           level_labels: ''
-          force_deepest: false
-          save_lineage: false
           hierarchy_depth: 0
           required_depth: 0
           none_label: '- Please select -'
-          plugin_id: taxonomy_index_tid
       filter_groups:
         operator: AND
         groups:
@@ -1615,8 +1749,18 @@ display:
         - 'config:core.entity_view_display.media.file.default'
         - 'config:core.entity_view_display.media.file.list'
         - 'config:core.entity_view_display.media.file.media_library'
+        - 'config:core.entity_view_display.media.image.container_100_percent'
+        - 'config:core.entity_view_display.media.image.container_25_percent'
+        - 'config:core.entity_view_display.media.image.container_50_percent'
+        - 'config:core.entity_view_display.media.image.container_75_percent'
         - 'config:core.entity_view_display.media.image.default'
         - 'config:core.entity_view_display.media.image.media_library'
+        - 'config:core.entity_view_display.media.publication.default'
+        - 'config:core.entity_view_display.media.publication.media_library'
+        - 'config:core.entity_view_display.media.remote_video.container_100_percent'
+        - 'config:core.entity_view_display.media.remote_video.container_25_percent'
+        - 'config:core.entity_view_display.media.remote_video.container_50_percent'
+        - 'config:core.entity_view_display.media.remote_video.container_75_percent'
         - 'config:core.entity_view_display.media.remote_video.default'
         - 'config:core.entity_view_display.media.remote_video.media_library'
         - 'config:core.entity_view_display.media.snippet.default'
@@ -1867,6 +2011,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -1906,19 +2051,18 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: media_file_category
+          type: select
           hierarchy: true
+          limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
           parent: null
           level_labels: ''
-          force_deepest: false
-          save_lineage: false
           hierarchy_depth: 0
           required_depth: 0
           none_label: '- Please select -'
-          plugin_id: taxonomy_index_tid
         field_category_target_id_1:
           id: field_category_target_id_1
           table: media__field_category
@@ -1926,6 +2070,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -1965,19 +2110,18 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: media_image_category
+          type: select
           hierarchy: true
+          limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
           parent: null
           level_labels: ''
-          force_deepest: false
-          save_lineage: false
           hierarchy_depth: 0
           required_depth: 0
           none_label: '- Please select -'
-          plugin_id: taxonomy_index_tid
         field_matters_served_target_id:
           id: field_matters_served_target_id
           table: media__field_matters_served
@@ -1985,6 +2129,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -2024,19 +2169,18 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: matters_served
+          type: select
           hierarchy: false
+          limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
           parent: null
           level_labels: ''
-          force_deepest: false
-          save_lineage: false
           hierarchy_depth: 0
           required_depth: 0
           none_label: '- Please select -'
-          plugin_id: taxonomy_index_tid
         field_tags_target_id:
           id: field_tags_target_id
           table: media__field_tags
@@ -2044,6 +2188,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -2083,19 +2228,18 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: media_tags
+          type: select
           hierarchy: false
+          limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
           parent: null
           level_labels: ''
-          force_deepest: false
-          save_lineage: false
           hierarchy_depth: 0
           required_depth: 0
           none_label: '- Please select -'
-          plugin_id: taxonomy_index_tid
       filter_groups:
         operator: AND
         groups:
