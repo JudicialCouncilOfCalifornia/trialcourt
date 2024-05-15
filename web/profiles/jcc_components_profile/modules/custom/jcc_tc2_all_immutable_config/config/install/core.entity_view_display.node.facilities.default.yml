@@ -36,6 +36,7 @@ dependencies:
     - field.field.node.facilities.field_total_courtrooms
     - node.type.facilities
   module:
+    - cshs
     - datetime
     - options
     - text
@@ -77,10 +78,14 @@ content:
     weight: 103
     region: content
   field_award:
-    type: entity_reference_label
+    type: cshs_group_by_root
     label: above
     settings:
-      link: true
+      linked: false
+      reverse: false
+      sort: none
+      depth: 0
+      last_child: false
     third_party_settings: {  }
     weight: 125
     region: content
