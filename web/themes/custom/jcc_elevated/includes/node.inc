@@ -257,7 +257,13 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $contractor = $node->hasField('field_general_contractor') ? $node->get('field_general_contractor')->target_id : FALSE;
   $criteria_architect = $node->hasField('field_criteria_architect') ? $node->get('field_criteria_architect')->target_id : FALSE;
   $managed_by = $node->hasField('field_managed_by') ? $node->get('field_managed_by')->target_id : FALSE;
-  $county = $node->hasField('field_facility_county') ? $node->get('field_facility_county')->target_id : FALSE;    
+  $county = $node->hasField('field_facility_county') ? $node->get('field_facility_county')->target_id : FALSE;
+  $field_award_rendered = '';
+  if ($node->hasField('field_award')) {
+    $renderer = \Drupal::service('renderer');
+    $field_award_rendered = $renderer->renderRoot($variables['content']['field_award']);
+  } 
+
   $details = [
     'project_information' => [
       'Gross Square Footage' => $node->field_gross_square_footage->value,
@@ -283,7 +289,6 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     'hero_title' => $node->field_hero_title,
     'county' => $county && $taxonomy_manager->load($county) ? $taxonomy_manager->load($county)->get('name')->value : '',
   ];
-
   $projectimages = [];
   foreach ($node->field_media_file_multiple as $media_file) {
     if (!empty($media_file->target_id)) {
@@ -322,14 +327,17 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     $elements[] = "<hr />";
   }
 
-  // Add Schedule
   if (!empty($details['schedule'])) {
     $elements[] = "<h2>Schedule</h2>";
     $elements[] = $details['schedule'];
     $elements[] = "<hr />";
   }
 
-  // Add Project Images
+  if (!empty($field_award_rendered)) {
+    $elements[] = "<h2>Awards & Recognition</h2>";
+    $elements[] = $field_award_rendered;
+  }
+  
   if (!empty($projectimages)) {
     $elements[] = "<h2>Project Images</h2>";
   }
