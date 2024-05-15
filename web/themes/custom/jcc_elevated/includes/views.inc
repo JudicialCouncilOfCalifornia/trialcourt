@@ -490,9 +490,16 @@ function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK() for Requests(RPF) listing.
+ * Implements hook_preprocess_HOOK() for Requests(RPF) archived items listing.
  */
-function jcc_elevated_preprocess_views_view__requests__requests_rfp_listing(&$variables): void {
+function jcc_elevated_preprocess_views_view__requests__requests_listing_archived(&$variables): void {
+  jcc_elevated_preprocess_views_view__requests__requests_listing_active($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for Requests(RPF) active items listing.
+ */
+function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&$variables): void {
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 

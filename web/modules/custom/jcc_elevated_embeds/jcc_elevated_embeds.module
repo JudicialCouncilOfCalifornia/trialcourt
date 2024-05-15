@@ -84,7 +84,7 @@ function jcc_elevated_embeds_field_widget_entity_reference_paragraphs_form_alter
       $element['subform']['field_content_stream']['widget'][0]['#title'] = 'Content Stream/App/Block Embed';
 
       // Add our own options.
-      $options = _jcc_allowed_content_stream_blocks_override();
+      $options = _jcc_allowed_content_stream_blocks_override(TRUE);
       $element['subform']['field_content_stream']['widget'][0]['plugin_id']['#options'] = $options;
     }
   }
