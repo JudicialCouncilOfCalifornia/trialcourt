@@ -259,10 +259,12 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $managed_by = $node->hasField('field_managed_by') ? $node->get('field_managed_by')->target_id : FALSE;
   $county = $node->hasField('field_facility_county') ? $node->get('field_facility_county')->target_id : FALSE;
   $field_award_rendered = '';
+  
   if ($node->hasField('field_award')) {
     $renderer = \Drupal::service('renderer');
-    $field_award_rendered = $renderer->renderRoot($variables['content']['field_award']);
-  } 
+    $field_award_items = $node->get('field_award');
+    $field_award_rendered = $renderer->renderRoot($variables['content']['field_award']);    
+  }
 
   $details = [
     'project_information' => [
@@ -335,7 +337,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
 
   if (!empty($field_award_rendered)) {
     $elements[] = "<h2>Awards & Recognition</h2>";
-    $elements[] = $field_award_rendered;
+    $elements[] = $field_award_rendered;  
   }
   
   if (!empty($projectimages)) {
