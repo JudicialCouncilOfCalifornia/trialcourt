@@ -5,6 +5,7 @@ dependencies:
     - field.field.paragraph.steps.field_components
     - field.field.paragraph.steps.field_heading
     - field.field.paragraph.steps.field_lead
+    - field.field.paragraph.steps.field_toggle
     - paragraphs.paragraphs_type.steps
   module:
     - paragraphs
@@ -16,7 +17,7 @@ mode: default
 content:
   field_components:
     type: entity_reference_paragraphs
-    weight: 2
+    weight: 3
     region: content
     settings:
       title: Step
@@ -41,6 +42,13 @@ content:
     settings:
       rows: 5
       placeholder: ''
+    third_party_settings: {  }
+  field_toggle:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
 hidden:
   created: true
