@@ -19,79 +19,86 @@ function jcc_tc2_roc_feature_editor_js_settings_alter(array &$settings): void {
 
       $route_match = \Drupal::routeMatch();
       $route_name = $route_match->getRouteName();
+      $path = Drupal::request()->getPathInfo();
+      $alter_ckeditor_for_rules = FALSE;
 
-      // Check if a node add/edit route.
-      if (in_array($route_name, ['entity.node.edit_form', 'node.add'])) {
-        $current_node = \Drupal::request()->attributes->get('node');
+      // Check if a node edit route for rules.
+      if ($route_name == 'entity.node.edit_form') {
+        $current_node = Drupal::request()->attributes->get('node');
         if ($current_node instanceof NodeInterface) {
           if ($current_node->bundle() == 'roc_rule') {
+            $alter_ckeditor_for_rules = TRUE;
+          }
+        }
+      }
 
-            // Control our available styles for Rules editing.
-            $styles = [];
-            foreach (jcc_tc2_roc_feature_rule_styles_info() as $style) {
-              $styles[] = $style;
+      // Check if a node add route for rules.
+      if ($route_name == 'node.add' && $path == '/node/add/roc_rule') {
+        $alter_ckeditor_for_rules = TRUE;
+      }
+
+      if ($alter_ckeditor_for_rules) {
+        // Control our available styles for Rules editing.
+        $styles = [];
+        foreach (jcc_tc2_roc_feature_rule_styles_info() as $style) {
+          $styles[] = $style;
+        }
+        $settings['editor']['formats'][$text_format_id]['editorSettings']['stylesSet'] = $styles;
+
+        // Control available tools for Rules editing.
+        $tools_to_remove = [
+          'DrupalMediaLibrary',
+          'tooltip',
+          'paragraphs_inline_entity_form',
+          'BidiLtr',
+          'BidiRtl',
+          'Subscript',
+          'Superscript',
+          'Format',
+        ];
+        foreach ($settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'] as $g_delta => $toolbar_group) {
+          if (is_array($toolbar_group)) {
+            foreach ($toolbar_group['items'] as $t_delta => $tool_name) {
+              if (in_array($tool_name, $tools_to_remove)) {
+                unset($settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][$t_delta]);
+              }
             }
-            $settings['editor']['formats'][$text_format_id]['editorSettings']['stylesSet'] = $styles;
+            $cleaned_array = array_values($settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items']);
+            $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'] = $cleaned_array;
 
-            // Control available tools for Rules editing.
-            $tools_to_remove = [
-              'DrupalMediaLibrary',
-              'tooltip',
-              'paragraphs_inline_entity_form',
-              'BidiLtr',
-              'BidiRtl',
-              'Subscript',
-              'Superscript',
-              'Format',
-            ];
-            foreach ($settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'] as $g_delta => $toolbar_group) {
-              if (is_array($toolbar_group)) {
-                foreach ($toolbar_group['items'] as $t_delta => $tool_name) {
-                  if (in_array($tool_name, $tools_to_remove)) {
-                    unset($settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][$t_delta]);
-                  }
-                }
-                $cleaned_array = array_values($settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items']);
-                $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'] = $cleaned_array;
-
-                if ($toolbar_group['name'] == 'Tools') {
-                  if (!in_array('A11ychecker', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
-                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'A11ychecker';
-                  }
-                  if (!in_array('Maximize', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
-                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Maximize';
-                  }
-                }
-
-                if ($toolbar_group['name'] == 'Lists') {
-                  if (!in_array('Outdent', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
-                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Outdent';
-                  }
-                  if (!in_array('Indent', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
-                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Indent';
-                  }
-                }
-
-                if ($toolbar_group['name'] == 'Formatting') {
-                  if (!in_array('JustifyLeft', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
-                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'JustifyLeft';
-                  }
-                  if (!in_array('JustifyCenter', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
-                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'JustifyCenter';
-                  }
-                  if (!in_array('JustifyRight', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
-                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'JustifyRight';
-                  }
-                  if (!in_array('JustifyBlock', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
-                    $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'JustifyBlock';
-                  }
-                }
+            if ($toolbar_group['name'] == 'Tools') {
+              if (!in_array('A11ychecker', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'A11ychecker';
+              }
+              if (!in_array('Maximize', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Maximize';
+              }
+            }
+            if ($toolbar_group['name'] == 'Lists') {
+              if (!in_array('Outdent', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Outdent';
+              }
+              if (!in_array('Indent', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Indent';
+              }
+            }
+            if ($toolbar_group['name'] == 'Formatting') {
+              if (!in_array('JustifyLeft', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'JustifyLeft';
+              }
+              if (!in_array('JustifyCenter', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'JustifyCenter';
+              }
+              if (!in_array('JustifyRight', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'JustifyRight';
+              }
+              if (!in_array('JustifyBlock', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+                $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'JustifyBlock';
               }
             }
           }
         }
       }
-
     }
   }
 }

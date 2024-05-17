@@ -32,7 +32,7 @@ function jcc_tc2_roc_feature_preprocess_node(array &$variables): void {
   if ($node->bundle() == 'roc_rule_index') {
     $variables['content']['field_roc_rule_revised_date']['#label_display'] = 'hidden';
     if (isset($variables['content']['field_roc_rule_revised_date'][0]['#text'])) {
-      $variables['content']['field_roc_rule_revised_date'][0]['#text'] = t('Revised') . ' ' . $variables['content']['field_roc_rule_revised_date'][0]['#text'];
+      $variables['content']['field_roc_rule_revised_date'][0]['#text'] = t('Current as of') . ' ' . $variables['content']['field_roc_rule_revised_date'][0]['#text'];
     }
   }
 }
