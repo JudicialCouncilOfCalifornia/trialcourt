@@ -46,14 +46,20 @@
 %}
 
 {% set page_heading %}
-  {% if count and searched_term -%}
-    {{ count }} {{ 'Results for '|t }} "{{ searched_term }}"
-  {% elseif count and not searched_term -%}
-    {{ 'Search page'|t }}
+  {% if searched_term -%}
+    {{ 'Results for '|t }} "{{ searched_term }}"
   {% else -%}
-    {{ 'No search results found'|t }}
+    {{ 'Search page'|t }}
   {% endif %}
 {% endset %}
+
+{% if count_summary %}
+  {% set header %}
+    <div class="cluster">
+      <div>{{ count_summary }}</div>
+    </div>
+  {% endset %}
+{% endif %}
 
 <div{{ attributes.addClass(classes) }}>
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
@@ -81,7 +87,7 @@
     variant: 'search_results',
     view_name: id,
     view_display: display_id,
-    header: '',
+    header: header,
     header_sidebar: '',
     header_direction_results: 'sidebar-row-reverse',
     form: exposed_form,
