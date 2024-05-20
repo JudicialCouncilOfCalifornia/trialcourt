@@ -14,6 +14,11 @@
 {% set login %}
   <form{{ attributes.addClass(classes) }}>
     {{ children }}
+    {% if user_login_display != 'replace' %}
+      <p style="margin-block-start:var(--s5); font-size:var(--s1);">
+        <strong>&mdash; Or log in with your Drupal account &mdash;</strong>
+      </p>
+    {% endif %}
   </form>
 {% endset %}
 
