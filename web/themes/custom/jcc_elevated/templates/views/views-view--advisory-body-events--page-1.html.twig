@@ -46,7 +46,6 @@
 
 {% set header %}
   <div class="cluster">
-    <h2>{{ 'Past meetings'|t }}</h2>
     <div>{{ count_summary }}</div>
   </div>
 {% endset %}
@@ -66,10 +65,11 @@
     variant: 'grouped_view',
     view_name: id,
     view_display: display_id,
-    header: header,
+    header: '',
     header_sidebar: '',
     header_direction_results: 'sidebar-row',
-    form: exposed|render,
+    content_header: header,
+    form: exposed,
     form_in_sidebar: true,
     list_type: 'ul',
     list_type_divider: '',
@@ -77,7 +77,7 @@
     sidebar: '',
     sidebar_direction_results: 'sidebar-row',
     pager: pager|render,
-    items_per_page: '',
+    items_per_page: items_per_page,
     footer: '',
     footer_sidebar: '',
     sidebar_direction_footer: 'sidebar-row',

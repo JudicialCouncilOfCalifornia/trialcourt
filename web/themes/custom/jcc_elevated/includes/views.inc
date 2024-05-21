@@ -423,6 +423,9 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
+  if (count($variables['rows']) == 0) {
+    $variables['no_results_msg']['#markup'] = $variables['empty']['area']['#text'];
+  }
   foreach ($variables['rows'] as $group) {
     foreach ($group['#rows'] as $row) {
       $node = $row['#node'];
@@ -483,6 +486,15 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
 
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
+
+  // Items per page filter.
+  $variables['items_per_page'] = $variables['exposed']['items_per_page'];
+  $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+  foreach ($variables['items_per_page']['#options'] as $key => $value) {
+    $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
+  }
+  unset($variables['items_per_page']['#title']);
+  unset($variables['exposed']['items_per_page']);
 
   foreach ($variables['rows'] as $key => $group) {
     $variables['events'][$key]['list_label'] = $group['#title'];
