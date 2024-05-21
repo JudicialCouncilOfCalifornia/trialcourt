@@ -489,8 +489,11 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
 
   // Items per page filter.
   $variables['items_per_page'] = $variables['exposed']['items_per_page'];
-  $variables['items_per_page']['#title'] = 'Show ' . $variables['exposed']['items_per_page']['#value'] . ' / page';
   $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+  foreach ($variables['items_per_page']['#options'] as $key => $value) {
+    $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
+  }
+  unset($variables['items_per_page']['#title']);
   unset($variables['exposed']['items_per_page']);
 
   foreach ($variables['rows'] as $key => $group) {
