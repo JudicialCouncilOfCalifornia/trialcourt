@@ -74,9 +74,24 @@ process:
     -
       plugin: str_replace
       case_insensitive: true
-      search: ['<p>&nbsp;</p>', '&nbsp;', '<p></p>']
-      replace: ['', '', '']
+      search: '<p style="margin-left:40px">&nbsp;</p>'
+      replace: ''
       source: body
+    -
+      plugin: str_replace
+      case_insensitive: true
+      search: '&nbsp;'
+      replace: ''
+    -
+      plugin: str_replace
+      case_insensitive: true
+      search: ['<p>&nbsp;</p>', '&nbsp;', '<p></p>', '<p>&nbsp; </p>']
+      replace: ['', '', '', '']
+    -
+      plugin: str_replace
+      case_insensitive: true
+      search: ['&#39;', '&#34;', '&quot;']
+      replace: ["'", '"', '"']
     -
       plugin: str_replace
       case_insensitive: true
@@ -88,9 +103,20 @@ process:
       search: '<img alt="DOC file type icon" src="/images/icon-doc.gif" />'
       replace: ''
     -
+      plugin: str_replace
+      case_insensitive: true
+      search: '<img alt="External link icon" src="/images/icon-ext.gif" />'
+      replace: ''
+    -
       plugin: dom
       method: import
       source: body
+    -
+      plugin: dom_remove
+      selector: '//img[contains(@src,"icon-ext.gif")]'
+    -
+      plugin: dom_remove
+      selector: '//img[contains(@class,"filter-image-invalid")]'
     -
       plugin: dom_remove
       selector: '//img[contains(@class,"filetype-icon")]'
