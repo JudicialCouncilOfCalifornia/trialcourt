@@ -61,7 +61,7 @@ function jcc_components_preprocess_form_element(array &$variables) {
  * Implements hook_preprocess_input().
  */
 function jcc_components_preprocess_input(array &$variables) {
-  if ($variables['element']['#form_id'] == 'openid_connect_login_form') {
+  if (isset($variables['element']['#form_id']) && $variables['element']['#form_id'] == 'openid_connect_login_form') {
     // OpenID's placement setting to show/hide Drupal login context.
     $user_login_display = \Drupal::config('openid_connect.settings')->get('user_login_display');
     if ($user_login_display) {
