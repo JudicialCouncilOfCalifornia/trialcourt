@@ -376,6 +376,13 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
   $job_office_id = $node->hasField('field_office') ? $node->get('field_office')->target_id : FALSE;
   $job_department_id = $node->hasField('field_department') ? $node->get('field_department')->target_id : FALSE;
 
+  // Salary range context.
+  $salary_range_context = t('per year');
+  $field_salary_range = $node->get('field_job_salary_context')->value;
+  if ($field_salary_range == 'monthly') {
+    $salary_range_context = t('per month');
+  }
+
   // Boilerplate message.
   $boilerplate_msg = t('The Judicial Council of California Is an Equal Opportunity Employer.');
   $boilerplate = ['#markup' => Html::decodeEntities('<p><em>' . $boilerplate_msg . '</em></p>')];
@@ -405,7 +412,7 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
       ],
       'salary' => [
         'label' => t('Salary'),
-        'value' => $salary ? $salary . ' ' . t('per month') : '',
+        'value' => $salary ? $salary . ' ' . $salary_range_context : '',
       ],
       'is_temporary' => [
         'label' => t('Regular/Temporary'),
