@@ -317,7 +317,7 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
   // Process the results for the search api view.
   foreach ($variables['rows'][0]['#rows'] as $index => $item) {
     // We have to manipulate the excerpt a little to render the html.
-    $excerpt = $item['#row']->_item->getExcerpt() ?? t('No excerpt available.')->render();
+    $excerpt = $item['#row']->_item->getExcerpt() ?? t('No preview is available for this search result. Click for more information.')->render();
     $text = [
       '#prefix' => '<p>',
       '#markup' => Html::decodeEntities($excerpt),
