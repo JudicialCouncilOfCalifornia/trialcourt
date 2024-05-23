@@ -4,7 +4,7 @@ dependencies:
   config:
     - field.storage.node.field_general_contractor
     - node.type.facilities
-    - taxonomy.vocabulary.contractor
+    - taxonomy.vocabulary.agency
   module:
     - tmgmt_content
 third_party_settings:
@@ -24,10 +24,10 @@ settings:
   handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      contractor: contractor
+      agency: agency
     sort:
       field: name
       direction: asc
     auto_create: false
-    auto_create_bundle: ''
+    auto_create_bundle: agency
 field_type: entity_reference
