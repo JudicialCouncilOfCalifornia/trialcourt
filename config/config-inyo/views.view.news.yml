@@ -668,7 +668,7 @@ display:
           exposed: true
           expose:
             operator_id: combine_op
-            label: ''
+            label: 'Search News'
             description: ''
             use_operator: false
             operator: combine_op
@@ -680,10 +680,17 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              editor: '0'
               author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
               administrator: '0'
               anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
             placeholder: 'Search title or topic'
           is_grouped: false
           group_info:
@@ -726,23 +733,16 @@ display:
           group: 1
           exposed: true
           expose:
-            operator_id: field_news_type_target_id_op
-            label: ''
-            description: ''
+            label: 'News Type (field_news_type)'
+            description: null
             use_operator: false
             operator: field_news_type_target_id_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: type
+            identifier: field_news_type_target_id
             required: false
             remember: false
-            multiple: true
-            remember_roles:
-              authenticated: authenticated
-              editor: '0'
-              author: '0'
-              administrator: '0'
-              anonymous: '0'
+            multiple: false
             reduce: false
           is_grouped: false
           group_info:
@@ -762,6 +762,13 @@ display:
           hierarchy: false
           limit: true
           error_message: true
+          save_lineage: false
+          force_deepest: false
+          parent: null
+          level_labels: ''
+          hierarchy_depth: 0
+          required_depth: 0
+          none_label: '- Please select -'
         field_date_value:
           id: field_date_value
           table: node__field_date
