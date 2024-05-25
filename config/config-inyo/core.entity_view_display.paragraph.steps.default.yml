@@ -1,4 +1,4 @@
-uuid: 0d2d039f-94df-4640-89ff-e9af40d333e5
+uuid: 2867654f-e4bf-411a-baa4-6da0d5aec717
 langcode: en
 status: true
 dependencies:
@@ -6,6 +6,7 @@ dependencies:
     - field.field.paragraph.steps.field_components
     - field.field.paragraph.steps.field_heading
     - field.field.paragraph.steps.field_lead
+    - field.field.paragraph.steps.field_toggle
     - paragraphs.paragraphs_type.steps
   module:
     - entity_reference_revisions
@@ -40,6 +41,16 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 1
+    region: content
+  field_toggle:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 3
     region: content
 hidden:
   entity_print_view_epub: true

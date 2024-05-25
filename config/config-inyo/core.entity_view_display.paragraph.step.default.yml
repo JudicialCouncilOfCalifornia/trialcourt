@@ -1,20 +1,29 @@
-uuid: 3aed49db-21d1-438d-ab79-490fd3f84df6
+uuid: b7fa96b8-3997-42af-991d-ac8dd6be8872
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.step.field_custom_index
     - field.field.paragraph.step.field_heading
     - field.field.paragraph.step.field_text
     - paragraphs.paragraphs_type.step
   module:
     - text
 _core:
-  default_config_hash: Ar1Di_n9tc6XWf7CImrYx1h3Y_HQAJSItWnL-WD7ThQ
+  default_config_hash: MLJ6ZvMEEK5qfOO5bua0l9TaQlBa_IYEY0EinQjzmwk
 id: paragraph.step.default
 targetEntityType: paragraph
 bundle: step
 mode: default
 content:
+  field_custom_index:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
   field_heading:
     type: string
     label: hidden
@@ -31,4 +40,7 @@ content:
     weight: 1
     region: content
 hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   search_api_excerpt: true

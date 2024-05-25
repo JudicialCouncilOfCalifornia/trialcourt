@@ -231,6 +231,7 @@ function jcc_elevated_paragraph_steps(array &$variables) {
     foreach ($items as $item) {
       $item = \Drupal::service('entity.repository')->getTranslationFromContext($item, $langcode);
       $variables['steps'][] = [
+        'index' => $item->hasField('field_custom_index') ? $item->get('field_custom_index')->value : '',
         'label' => $item->hasField('field_heading') ? $item->get('field_heading')->first()->value : '',
         'content' => $item->get('field_text')->view('default'),
       ];
