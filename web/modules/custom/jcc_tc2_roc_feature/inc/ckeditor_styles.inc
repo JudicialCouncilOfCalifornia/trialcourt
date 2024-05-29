@@ -70,6 +70,12 @@ function jcc_tc2_roc_feature_editor_js_settings_alter(array &$settings): void {
               if (!in_array('A11ychecker', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
                 $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'A11ychecker';
               }
+//              if (!in_array('Mathjax', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+//                $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Mathjax';
+//              }
+//              if (!in_array('MathType', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
+//                $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'MathType';
+//              }
               if (!in_array('Maximize', $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'])) {
                 $settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$g_delta]['items'][] = 'Maximize';
               }
@@ -114,16 +120,27 @@ function jcc_tc2_roc_feature_ckeditor_css_alter(array &$css, Editor $editor): vo
 
     $route_match = \Drupal::routeMatch();
     $route_name = $route_match->getRouteName();
+    $path = Drupal::request()->getPathInfo();
+    $alter_ckeditor_for_rules = FALSE;
 
     // Check if an edit route.
     if (in_array($route_name, ['entity.node.edit_form', 'node.add'])) {
       $current_node = \Drupal::request()->attributes->get('node');
       if ($current_node instanceof NodeInterface) {
         if ($current_node->bundle() == 'roc_rule') {
-          $css[] = "/modules/custom/jcc_tc2_roc_feature/css/jcc-roc-custom-ckeditor.css";
-          $css[] = "/themes/contrib/jcc_storybook/lib/stories/Atoms/RulesFormatting/RulesFormatting.css";
+          $alter_ckeditor_for_rules = TRUE;
         }
       }
+    }
+
+    // Check if a node add route for rules.
+    if ($route_name == 'node.add' && $path == '/node/add/roc_rule') {
+      $alter_ckeditor_for_rules = TRUE;
+    }
+
+    if ($alter_ckeditor_for_rules) {
+      //$css[] = "/modules/custom/jcc_tc2_roc_feature/css/jcc-roc-custom-ckeditor.css";
+      $css[] = "/themes/contrib/jcc_storybook/lib/stories/Atoms/RulesFormatting/RulesFormatting.css";
     }
   }
 }
@@ -133,6 +150,14 @@ function jcc_tc2_roc_feature_ckeditor_css_alter(array &$css, Editor $editor): vo
  */
 function jcc_tc2_roc_feature_rule_styles_info(): array {
   $styles = [];
+
+  $styles[] = [
+    'name' => 'Normal',
+    'element' => 'p',
+    'attributes' => [
+      'class' => 'normal',
+    ],
+  ];
 
   $styles[] = [
     'name' => 'Subdivision Heading',
