@@ -494,6 +494,11 @@ role_alias:
     weight: '0'
     name: 'Rules manager'
     allow: 0
+  facilities:
+    alias: Facilities
+    name: Facilities
+    weight: 0
+    allow: 0
 role_map:
   author: 1
   legal_files: 2
@@ -508,6 +513,7 @@ role_map:
   messaging_manager: 11
   request_manager: 12
   rules_manager: 13
+  facilities: 14
 allowed_types:
   alert: 0
   arbitrator: 0
@@ -528,6 +534,7 @@ allowed_types:
   tentative_ruling: 0
   advisory_body: 0
   event: 0
+  facilities: 0
 judge:
   anonymous:
     grant_view: '1'
@@ -811,6 +818,19 @@ arbitrator:
     grant_view: 0
     grant_update: 0
     grant_delete: 0
+facilities:
+  anonymous:
+    grant_view: '1'
+    grant_update: 0
+    grant_delete: 0
+  authenticated:
+    grant_view: '1'
+    grant_update: 0
+    grant_delete: 0
+  author:
+    grant_view: 0
+    grant_update: 0
+    grant_delete: 0
 event:
   anonymous:
     grant_view: 1
@@ -866,7 +886,7 @@ event:
     grant_delete: 0
 remote_hearings:
   anonymous:
-    grant_view: '1'
+    grant_view: 1
     grant_update: 0
     grant_delete: 0
   authenticated:

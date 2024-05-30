@@ -6,9 +6,10 @@
   ]
 %}
 
+{% set title = header.entity_taxonomy_term['#taxonomy_term'].name.value %}
 <div{{ attributes.addClass(classes) }}>
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
-    heading: feed_icons.0["#title"],
+    heading: title,
     background: 'base-dark-x',
   } %}
 
