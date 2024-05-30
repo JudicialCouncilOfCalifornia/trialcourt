@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.roc_rule_index.field_roc_rule_media
     - field.field.node.roc_rule_index.field_roc_rule_revised_date
     - node.type.roc_rule_index
+    - workflows.workflow.editorial
   module:
     - allowed_formats
     - content_moderation
@@ -18,6 +19,7 @@ dependencies:
     - maxlength
     - media_library
     - path
+    - scheduler
     - text
 third_party_settings:
   field_group:
@@ -185,6 +187,17 @@ content:
     settings:
       display_label: true
     third_party_settings: {  }
+  publish_on:
+    type: datetime_timestamp_no_default
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  scheduler_settings:
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   status:
     type: boolean_checkbox
     weight: 2
@@ -207,12 +220,25 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 8
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  unpublish_on:
+    type: datetime_timestamp_no_default
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   created: true
   langcode: true
-  publish_on: true
   publish_state: true
-  uid: true
-  unpublish_on: true
   unpublish_state: true
   url_redirects: true

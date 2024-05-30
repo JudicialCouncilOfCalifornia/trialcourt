@@ -5,6 +5,7 @@
  * Contains jcc_tc2_roc_feature form_alter module functionality.
  */
 
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -16,34 +17,75 @@ function jcc_tc2_roc_feature_form_alter(&$form, &$form_state, $form_id): void {
     // This is for the paragraph components form.
   }
 
-  $form_names = [
+  $moderation_description = [
+    t('<strong>"Published"</strong> will immediately post any edits.'),
+    t('<strong>"Draft"</strong> will start a new version for continued editing, only accessible by editors/admins. Last published version (if exists) will remain active.'),
+    t('<strong>"Archived"</strong> will disable for all, without deleting content'),
+  ];
+
+  $rule_index_form_names = [
     'node_roc_rule_index_form',
     'node_roc_rule_index_edit_form',
   ];
 
-  if (in_array($form_id, $form_names)) {
+  if (in_array($form_id, $rule_index_form_names)) {
+    // Close and move Alias item.
+    $form['path']['widget'][0]['#weight'] = 1;
+    $form['path']['widget'][0]['#open'] = FALSE;
+
+    // Revision log changes. Set to required, so it's always saved with notes.
+    $form['revision_log']['widget'][0]['value']['#rows'] = 2;
+    $form['revision_log']['widget'][0]['value']['#required'] = TRUE;
+
+    // Hide the revision checkbox since its locked and defaulted to true.
+    $form['revision']['#access'] = FALSE;
+
+    // Alterations to the layout paragraphs setup.
     $form['field_roc_rule_index_sections']['widget']['header_actions']['dropdown_actions']['dragdrop_mode']['#access'] = FALSE;
     $form['field_roc_rule_index_sections']['widget']['header_actions']['dropdown_actions']['edit_all']['#access'] = FALSE;
     $form['field_roc_rule_index_sections']['widget']['header_actions']['actions']['collapse_all']['#access'] = FALSE;
     $form['field_roc_rule_index_sections']['widget']['add_more']['add_more_button_rule_section']['#value'] = t('Add @type', ['@type' => 'a new rule section grouping']);
-
     $form['field_roc_rule_index_sections']['widget']['#title'] = '';
 
-    $promote_title = t('Display in Rules of Court');
+    $promote_title = t('Display in Rules of Court Listing');
     $form['promote']['widget']['#title'] = $promote_title;
     $form['promote']['widget']['value']['#title'] = $promote_title;
 
-    $promote_description = t('Display this rule document in the main listing of Rules of Court.');
+    $promote_description = t('Display this rule index/title in the main listing of the Rules of Court.');
     $form['promote']['widget']['#description'] = $promote_description;
     $form['promote']['widget']['value']['#description'] = $promote_description;
 
-    $sticky_title = t('Link to file in main index');
+    $sticky_title = t('Link directly to file in Rules of Court Listing');
     $form['sticky']['widget']['#title'] = $sticky_title;
     $form['sticky']['widget']['value']['#title'] = $sticky_title;
 
-    $sticky_description = t('On the main listing, set the link to the first attached file instead of this node.');
+    $sticky_description = t('On the main listing, set the link to the first attached media/file instead of viewing this node.');
     $form['sticky']['widget']['#description'] = $sticky_description;
     $form['sticky']['widget']['value']['#description'] = $sticky_description;
+
+    // Set helper text on moderation state field.
+    $form['moderation_state']['widget'][0]['state']['#description'] = implode('<br/>', $moderation_description);
+  }
+
+  $rule_form_names = [
+    'node_roc_rule_form',
+    'node_roc_rule_edit_form',
+  ];
+
+  if (in_array($form_id, $rule_form_names)) {
+    // Close and move Alias item.
+    $form['path']['widget'][0]['#weight'] = 1;
+    $form['path']['widget'][0]['#open'] = FALSE;
+
+    // Revision log changes. Set to required, so it's always saved with notes.
+    $form['revision_log']['widget'][0]['value']['#rows'] = 2;
+    $form['revision_log']['widget'][0]['value']['#required'] = TRUE;
+
+    // Hide the revision checkbox since its locked and defaulted to true.
+    $form['revision']['#access'] = FALSE;
+
+    // Set helper text on moderation state field.
+    $form['moderation_state']['widget'][0]['state']['#description'] = implode('<br/>', $moderation_description);
   }
 }
 
@@ -162,4 +204,11 @@ function jcc_tc2_roc_feature_form_views_exposed_form_alter(&$form, &$form_state)
     $form['field_roc_rule_parent_index_target_id']['#options'] = $options;
   }
 
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function jcc_tc2_roc_feature_field_widget_datetime_timestamp_no_default_form_alter(&$element, FormStateInterface $form_state, $context): void {
+  $element['value']['#date_time_element'] = 'none';
 }
