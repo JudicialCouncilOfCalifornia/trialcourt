@@ -10,12 +10,14 @@ dependencies:
     - field.field.node.job.field_job_id
     - field.field.node.job.field_job_location
     - field.field.node.job.field_job_salary
+    - field.field.node.job.field_job_salary_context
     - field.field.node.job.field_job_type
     - field.field.node.job.field_office
     - node.type.job
   module:
     - datetime
     - link
+    - options
     - range
     - text
     - user
@@ -101,6 +103,13 @@ content:
       combined_prefix_suffix: false
     third_party_settings: {  }
     weight: 108
+    region: content
+  field_job_salary_context:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 112
     region: content
   field_job_type:
     type: entity_reference_label
