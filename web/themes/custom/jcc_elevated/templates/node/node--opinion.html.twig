@@ -102,14 +102,14 @@
         <span>Review Granted</span>
       {% endif %}
     </div>
-    {% if opinion.attachments %}
+    {% if opinion.remote_files %}
       <div>
-        {% for attachment in opinion.attachments %}
+        {% for remote_file in opinion.remote_files %}
           {% include "@atoms/Button/Button.twig" with {
             variant: loop.index == 1 ?'primary' : 'secondary',
-            label: attachment.file_type,
-            href: attachment.url,
-            aria_label: attachment.aria_label,
+            label: remote_file.file_type,
+            href: remote_file.url,
+            aria_label: remote_file.aria_label,
           } %}
         {% endfor %}
       </div>
@@ -123,14 +123,6 @@
 
     {% if opinion.related_cases %}
       <p>Related Cases: {{ opinion.related_cases|raw }}</p>
-    {% endif %}
-
-    {% if opinion.citings %}
-      <p>Web Page Citings:</p>
-      {% include "@molecules/List/List.twig" with {
-        variant: 'ul',
-        items: opinion.citings|raw,
-      } %}
     {% endif %}
   </div>
 {% endset %}
