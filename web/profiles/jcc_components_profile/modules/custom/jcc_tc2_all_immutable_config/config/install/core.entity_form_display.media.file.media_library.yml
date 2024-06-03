@@ -7,6 +7,7 @@ dependencies:
     - field.field.media.file.field_document_type
     - field.field.media.file.field_matters_served
     - field.field.media.file.field_media_file
+    - field.field.media.file.field_media_text
     - field.field.media.file.field_tags
     - media.type.file
   module:
@@ -29,13 +30,13 @@ content:
     weight: 2
     region: content
     settings:
+      save_lineage: false
       force_deepest: false
       parent: ''
       level_labels: ''
-      none_label: '- Please select -'
-      save_lineage: false
       hierarchy_depth: 0
       required_depth: 0
+      none_label: '- Please select -'
     third_party_settings: {  }
   field_document_type:
     type: options_select
@@ -48,13 +49,13 @@ content:
     weight: 3
     region: content
     settings:
+      save_lineage: false
       force_deepest: false
       parent: ''
       level_labels: ''
-      none_label: '- Please select -'
-      save_lineage: false
       hierarchy_depth: 0
       required_depth: 0
+      none_label: '- Please select -'
     third_party_settings: {  }
   field_media_file:
     type: file_generic
@@ -95,6 +96,7 @@ content:
     third_party_settings: {  }
 hidden:
   created: true
+  field_media_text: true
   langcode: true
   path: true
   replace_file: true

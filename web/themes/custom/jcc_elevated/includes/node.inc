@@ -450,7 +450,7 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node): void {
     }
     if ($media->get('field_media_file_multiple')->target_id) {
       $file = File::load($media->get('field_media_file_multiple')->target_id);
-      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
       // Profile doc as download link, else general docs.
       if ($doc_type && $doc_type == 'Profile') {
         $variables['profile_download'] = [
@@ -546,6 +546,13 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
   $job_office_id = $node->hasField('field_office') ? $node->get('field_office')->target_id : FALSE;
   $job_department_id = $node->hasField('field_department') ? $node->get('field_department')->target_id : FALSE;
 
+  // Salary range context.
+  $salary_range_context = t('per year');
+  $field_salary_range = $node->get('field_job_salary_context')->value;
+  if ($field_salary_range == 'monthly') {
+    $salary_range_context = t('per month');
+  }
+
   // Boilerplate message.
   $boilerplate_msg = t('The Judicial Council of California Is an Equal Opportunity Employer.');
   $boilerplate = ['#markup' => Html::decodeEntities('<p><em>' . $boilerplate_msg . '</em></p>')];
@@ -575,7 +582,7 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
       ],
       'salary' => [
         'label' => t('Salary'),
-        'value' => $salary ? $salary . ' ' . t('per month') : '',
+        'value' => $salary ? $salary . ' ' . $salary_range_context : '',
       ],
       'is_temporary' => [
         'label' => t('Regular/Temporary'),
@@ -853,4 +860,76 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
     }
 
   }
+}
+
+/**
+ * Node: Opinion preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void {
+  $type = Term::load($node->get('field_opinion_type')->target_id) ? Term::load($node->get('field_opinion_type')->target_id)->get('name')->value : '';
+  $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
+  $opinion_source = $node->get('field_opinion_source')->target_id ? Term::load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
+  $review_granted = $node->get('field_review_granted')->value;
+
+  // Remote files.
+  $file_url_base = 'https://courts.ca.gov/opinions/';
+  if ($type == 'Unpublished') {
+    $url = $file_url_base . 'nonpub/';
+    if ($review_granted) {
+      $url = $file_url_base . 'revnppub/';
+    }
+  }
+  else {
+    $url = $file_url_base . 'documents/';
+    if ($review_granted) {
+      $url = $file_url_base . 'revpub/';
+    }
+  }
+  $remote_files = [
+    0 => [
+      'url' => $url . $case_number . '.PDF',
+      'file_type' => 'PDF',
+      'aria_label' => t('Download or view') . ' ' . $case_number . '.PDF',
+    ],
+    1 => [
+      'url' => $url . $case_number . '.DOCX',
+      'file_type' => 'DOCX',
+      'aria_label' => t('Download or view') . ' ' . $case_number . '.DOCX',
+    ],
+  ];
+
+  // Related cases.
+  $related_cases_urls = [];
+  $related_cases = $node->get('field_related_cases_plain')->value;
+  if ($related_cases) {
+    // If space delimited by accident or from migration.
+    if (strpos($related_cases, ' ')) {
+      $related_cases = preg_split('/\s+/', $related_cases);
+    }
+    else {
+      // Remove any spaces from comma delimited list.
+      $related_cases = preg_replace('/\s+/', '', $related_cases);
+      // Convert to array.
+      $related_cases = explode(',', $related_cases);
+    }
+    foreach ($related_cases as $related_case) {
+      $accms_url = __jcc_accms_link_builder($related_case);
+      if ($accms_url) {
+        $related_cases_urls[] = '<a href="' . $accms_url . '" arial_label="View related case ' . $related_case . '">' . $related_case . '</a>';
+      }
+    }
+  }
+
+  $opinion = [
+    'details' => $case_number && $opinion_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
+    'remote_files' => $remote_files,
+    'related_cases' => $related_cases_urls ? implode(' ', $related_cases_urls) : '',
+  ];
+
+  $variables['opinion'] = $opinion;
 }
