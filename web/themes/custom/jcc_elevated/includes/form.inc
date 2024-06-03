@@ -31,3 +31,16 @@ function jcc_elevated_theme_suggestions_alter(array &$suggestions, array $variab
     $suggestions[] = $hook . '__' . $element['#name'] . '__' . $element['#type'] . '__' . $formid;
   }
 }
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function jcc_elevated_preprocess_form(&$variables) {
+  if ($variables['attributes']['id'] == 'openid-connect-login-form') {
+    // OpenID's placement setting to show/hide Drupal login context.
+    $user_login_display = \Drupal::config('openid_connect.settings')->get('user_login_display');
+    if ($user_login_display) {
+      $variables['user_login_display'] = $user_login_display;
+    }
+  }
+}

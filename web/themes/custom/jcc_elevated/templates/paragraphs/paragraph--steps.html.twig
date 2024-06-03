@@ -1,6 +1,7 @@
 {{ attach_library("jcc_storybook/Steps") }}
 
 {% include "@organisms/Steps/Steps.twig" with {
+  variant: content.field_toggle ? 'custom-index',
   open_first: content.field_toggle.0.value|default(false),
   heading: content.field_heading,
   lead: content.field_lead,

@@ -1,8 +1,9 @@
-uuid: 4d7281f5-1c72-4a3a-b794-6c02509361a9
+uuid: 2de7a09f-be31-45ba-ac69-f7bed60194e9
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.step.field_custom_index
     - field.field.paragraph.step.field_heading
     - field.field.paragraph.step.field_text
     - paragraphs.paragraphs_type.step
@@ -15,6 +16,14 @@ targetEntityType: paragraph
 bundle: step
 mode: default
 content:
+  field_custom_index:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_heading:
     type: string_textfield
     weight: 0

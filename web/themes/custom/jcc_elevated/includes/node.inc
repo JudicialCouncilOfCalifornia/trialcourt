@@ -221,7 +221,6 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
 function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): void {
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
-  $render = \Drupal::service('renderer');
   $basic_page = Node::load($node->id());
   $variables['node'] = $node;
   $field_schedule_render_array = $node->field_schedule->view('default');
@@ -230,10 +229,6 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   }
   $completion_date = $node->get('field_completion_date')->date ? $node->get('field_completion_date')->date->format('F j, Y') : '';
   $occupancy_date = $node->get('field_occupancy_date')->date ? $node->get('field_occupancy_date')->date->format('F j, Y') : '';
-  $budget_field = $node->get('field_budget');
-  if (!$budget_field->isEmpty()) {
-    $budget_value = $budget_field->getValue()[0]['value'];
-  }
   $ceqa = $node->field_ceqa->view('default');
   if ($ceqa['#items'] && !$ceqa['#items']->isEmpty()) {
     $ceqa_content = render($ceqa[0]['#text']);
@@ -259,11 +254,10 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $managed_by = $node->hasField('field_managed_by') ? $node->get('field_managed_by')->target_id : FALSE;
   $county = $node->hasField('field_facility_county') ? $node->get('field_facility_county')->target_id : FALSE;
   $field_award_rendered = '';
-  
+
   if ($node->hasField('field_award')) {
     $renderer = \Drupal::service('renderer');
-    $field_award_items = $node->get('field_award');
-    $field_award_rendered = $renderer->renderRoot($variables['content']['field_award']);    
+    $field_award_rendered = $renderer->renderRoot($variables['content']['field_award']);
   }
 
   $details = [
@@ -306,7 +300,6 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   }
   $variables['projectimages'] = $projectimages;
 
-  // Hero Image
   if ($basic_page->hasField('field_media')) {
     $hero_image = $basic_page->get('field_media');
     $media = Media::load($hero_image->target_id);
@@ -337,13 +330,11 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
 
   if (!empty($field_award_rendered)) {
     $elements[] = "<h2>Awards & Recognition</h2>";
-    $elements[] = $field_award_rendered;  
+    $elements[] = $field_award_rendered;
   }
-  
   if (!empty($projectimages)) {
     $elements[] = "<h2>Project Images</h2>";
   }
-
   foreach ($elements as $element) {
     $body[]['#text'] = $element;
   }
@@ -517,6 +508,13 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
   $job_office_id = $node->hasField('field_office') ? $node->get('field_office')->target_id : FALSE;
   $job_department_id = $node->hasField('field_department') ? $node->get('field_department')->target_id : FALSE;
 
+  // Salary range context.
+  $salary_range_context = t('per year');
+  $field_salary_range = $node->get('field_job_salary_context')->value;
+  if ($field_salary_range == 'monthly') {
+    $salary_range_context = t('per month');
+  }
+
   // Boilerplate message.
   $boilerplate_msg = t('The Judicial Council of California Is an Equal Opportunity Employer.');
   $boilerplate = ['#markup' => Html::decodeEntities('<p><em>' . $boilerplate_msg . '</em></p>')];
@@ -546,7 +544,7 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
       ],
       'salary' => [
         'label' => t('Salary'),
-        'value' => $salary ? $salary . ' ' . t('per month') : '',
+        'value' => $salary ? $salary . ' ' . $salary_range_context : '',
       ],
       'is_temporary' => [
         'label' => t('Regular/Temporary'),
