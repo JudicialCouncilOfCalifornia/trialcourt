@@ -54,7 +54,6 @@ function jcc_elevated_get_custom_settings($setting_name = NULL): array|string {
 
   return $settings[$setting_name] ?? $settings;
 }
-// @codingStandardsIgnoreEnd
 
 /**
  * Maintain a list of JCC Elevated related settings.
@@ -259,7 +258,8 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view, $display_id, a
 
     if ($display_id == 'requests_admin_active'
       || $display_id == 'requests_admin_archived'
-      || $display_id == 'requests_listing_archived') {
+      || $display_id == 'requests_listing_archived'
+      || $display_id == 'requests_grouped_archived') {
 
       $field_name = 'field_rfp_end_date_value';
 
@@ -268,39 +268,26 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view, $display_id, a
 
       /*
        * We will dynamically create the year groups. For each year that exists
-       * for our publications field_date, generate a grouping filter. Also create
-       * a placeholder variable that we will add back later on if group filters
-       * are still empty. This should remove some php notices.
+       * for our publications field_date, generate a grouping filter. Also
+       * create a placeholder variable that we will add back later on if group
+       * filters are still empty. This should remove some php notices.
        */
       $items_placeholder = $filters[$field_name]['group_info']['group_items'];
 
+      $year_options = [];
       $start_year = 2001;
       $time1 = strtotime("-2 years", time());
       $two_years_ago_date = date("Y", $time1);
       $time2 = strtotime("now", time());
       $current_year = date("Y", $time2);
+      $time3 = strtotime("-1 year", time());
 
       // Alter the Archived Requests Admin view.
       if ($display_id == 'requests_admin_archived' || $display_id == 'requests_listing_archived') {
 
         // Reset the group values.
         $filters[$field_name]['group_info']['group_items'] = [];
-
-        $year_options = array_map(function($year) {return $year;}, range($start_year, $current_year));
-        $archived_year_options = array_reverse($year_options);
-
-        foreach ($archived_year_options as $index => $year) {
-          $filters[$field_name]['group_info']['group_items'][$index] = [
-            'title' => (string) $year,
-            'operator' => "between",
-            'value' => [
-              'min' => "$year-01-01 00:00:00",
-              'max' => "$year-12-31 23:59:59",
-              'value' => "",
-              'type' => "date",
-            ],
-          ];
-        }
+        $year_options = array_reverse(range($start_year, $current_year));
       }
 
       // Alter the Active Requests Admin view.
@@ -308,11 +295,19 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view, $display_id, a
 
         // Reset the group values.
         $filters[$field_name]['group_info']['group_items'] = [];
+        $year_options = array_reverse(range($two_years_ago_date, $current_year));
+      }
 
-        $year_options = array_map(function($year) {return $year;}, range($two_years_ago_date, $current_year));
-        $active_year_options = array_reverse($year_options);
+      // Alter the Active Requests Admin view.
+      if ($display_id == 'requests_grouped_archived') {
 
-        foreach ($active_year_options as $index => $year) {
+        // Reset the group values.
+        $filters[$field_name]['group_info']['group_items'] = [];
+        $year_options = array_reverse(range($start_year, date("Y", $time3)));
+      }
+
+      if ($year_options) {
+        foreach ($year_options as $index => $year) {
           $filters[$field_name]['group_info']['group_items'][$index] = [
             'title' => (string) $year,
             'operator' => "between",
@@ -324,9 +319,11 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view, $display_id, a
             ],
           ];
         }
+
+        $filters[$field_name]['group_info']['default_group'] = array_key_first($year_options);
       }
 
-      // If for some reason our group items are still empty, add back placeholder.
+      // If our group items are still empty, add back placeholder.
       if (empty($filters[$field_name]['group_info']['group_items'])) {
         $filters[$field_name]['group_info']['group_items'] = $items_placeholder;
       }

@@ -497,6 +497,52 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for Requests(RPF) archived items listing.
+ */
+function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived(&$variables): void {
+  __jcc_view_results_exposed_filter_init($variables);
+
+  // Process the results for the search api view.
+  $variables['processed_rows'] = [];
+  if (isset($variables['rows'][0]['#rows'])) {
+    foreach ($variables['rows'] as $group) {
+      $list_label = trim($group['#title']);
+      $variables['processed_rows'][$list_label]['list_label'] = $list_label;
+      foreach ($group['#rows'] as $delta => $item) {
+        $request = $item['#row']->_entity;
+
+        $brow = [];
+        $items = [
+          'primary' => $request->get('field_rfp_type')
+            ->first() ? $request->get('field_rfp_type')
+            ->first()
+            ->view('teaser') : '',
+          'secondary' => $request->get('field_rfp_number')
+            ->first() ? $request->get('field_rfp_number')
+            ->first()
+            ->view('teaser') : '',
+        ];
+        foreach ($items as $key => $value) {
+          if (!empty($value)) {
+            if ($key == 'secondary') {
+              $value['#context']['value'] = t('No.') . ' ' . $value['#context']['value'];
+            }
+            $brow[$key] = $value;
+          }
+        }
+
+        $variables['processed_rows'][$list_label]['items'][$delta] = [
+          'brow' => $brow,
+          'title' => $request->label(),
+          'url' => $request->toUrl(),
+          'item_classes' => ['result-extra-style__heading__lg'],
+        ];
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK() for Requests(RPF) active items listing.
  */
 function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&$variables): void {
@@ -506,75 +552,79 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   if (isset($variables['rows'][0]['#rows'])) {
-    foreach ($variables['rows'][0]['#rows'] as $item) {
-      $request = $item['#row']->_entity;
+    foreach ($variables['rows'] as $group) {
+      foreach ($group['#rows'] as $item) {
+        $request = $item['#row']->_entity;
 
-      $brow = [];
-      $items = [
-        'primary' => $request->get('field_rfp_type')
-          ->first() ? $request->get('field_rfp_type')
-          ->first()
-          ->view('teaser') : '',
-        'secondary' => $request->get('field_rfp_number')
-          ->first() ? $request->get('field_rfp_number')
-          ->first()
-          ->view('teaser') : '',
-        'notation' => $request->get('field_rfp_start_date')
-          ->first() ? $request->get('field_rfp_start_date')
-          ->first()
-          ->view('teaser') : '',
-      ];
-      foreach ($items as $key => $value) {
-        if (!empty($value)) {
-          if ($key == 'secondary') {
-            $value['#context']['value'] = t('No.') . ' ' . $value['#context']['value'];
+        $brow = [];
+        $items = [
+          'primary' => $request->get('field_rfp_type')
+            ->first() ? $request->get('field_rfp_type')
+            ->first()
+            ->view('teaser') : '',
+          'secondary' => $request->get('field_rfp_number')
+            ->first() ? $request->get('field_rfp_number')
+            ->first()
+            ->view('teaser') : '',
+          'notation' => $request->get('field_rfp_start_date')
+            ->first() ? $request->get('field_rfp_start_date')
+            ->first()
+            ->view('teaser') : '',
+        ];
+        foreach ($items as $key => $value) {
+          if (!empty($value)) {
+            if ($key == 'secondary') {
+              $value['#context']['value'] = t('No.') . ' ' . $value['#context']['value'];
+            }
+            if ($key == 'notation') {
+              $value['#text'] = t('Issued:') . ' ' . $value['#text'];
+            }
+            $brow[$key] = $value;
           }
-          if ($key == 'notation') {
-            $value['#text'] = t('Issued:') . ' ' . $value['#text'];
-          }
-          $brow[$key] = $value;
         }
-      }
 
-      $details = [];
-      $items = [
-        'status' => $request->get('field_rfp_status')
-          ->first() ? $request->get('field_rfp_status')
-          ->first()
-          ->view('teaser') : '',
-        'deadline' => $request->get('field_rfp_end_date')
-          ->first() ? $request->get('field_rfp_end_date')
-          ->first()
-          ->view('teaser') : '',
-        'last_updated' => t('Last updated:') . ' ' . \Drupal::service('date.formatter')
-          ->format($request->getChangedTime(), 'm_d_y'),
-      ];
-      foreach ($items as $key => $value) {
-        if (!empty($value)) {
-          if ($key == 'status') {
-            $value['#markup'] = t('Status:') . ' ' . $value['#markup']->__toString();
+        $details = [];
+        $items = [
+          'status' => $request->get('field_rfp_status')
+            ->first() ? $request->get('field_rfp_status')
+            ->first()
+            ->view('teaser') : '',
+          'deadline' => $request->get('field_rfp_end_date')
+            ->first() ? $request->get('field_rfp_end_date')
+            ->first()
+            ->view('teaser') : '',
+          'last_updated' => t('Last updated:') . ' ' . \Drupal::service('date.formatter')
+            ->format($request->getChangedTime(), 'm_d_y'),
+        ];
+        foreach ($items as $key => $value) {
+          if (!empty($value)) {
+            if ($key == 'status') {
+              $value['#markup'] = t('Status:') . ' ' . $value['#markup']->__toString();
+            }
+            if ($key == 'deadline') {
+              $value['#text'] = t('Deadline:') . ' ' . $value['#text'];
+            }
+            $details[$key] = $value;
           }
-          if ($key == 'deadline') {
-            $value['#text'] = t('Deadline:') . ' ' . $value['#text'];
-          }
-          $details[$key] = $value;
         }
-      }
 
-      $variables['processed_rows'][] = [
-        'brow' => $brow,
-        'title' => $request->label(),
-        'url' => $request->toUrl(),
-        'content' => $request->get('body')->first() ? $request->get('body')
-          ->first()
-          ->view('teaser') : '',
-        'detail_list_data' => [
-          'label' => t('Details'),
-          'details' => $details,
-        ],
-        'item_classes' => ['result-extra-style__heading__lg'],
-      ];
+        $variables['processed_rows'][] = [
+          'brow' => $brow,
+          'title' => $request->label(),
+          'url' => $request->toUrl(),
+          'content' => $request->get('body')->first() ? $request->get('body')
+            ->first()
+            ->view('teaser') : '',
+          'detail_list_data' => [
+            'label' => t('Details'),
+            'details' => $details,
+          ],
+          'item_classes' => ['result-extra-style__heading__lg'],
+        ];
+
+      }
     }
+
   }
 }
 
@@ -665,6 +715,12 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
     }
   }
 
+  // Alter the Archived Requests exposed form.
+  if (($view->id() == 'requests') && ($view->current_display == 'requests_grouped_archived')) {
+    // Remove captcha from search form.
+    unset($form['captcha']);
+    unset($form['field_rfp_end_date_value']['#options']['All']);
+  }
 }
 
 /**
@@ -700,7 +756,7 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
     if (isset($form[$id]['#type']) && $form[$id]['#type'] == 'select') {
       // Set label as 'select all' option label.
       $form[$id]['#attributes']['placeholder'] = NULL;
-      if ($id != 'jcc_section') {
+      if ($id != 'jcc_section' && isset($form[$id]['#options']['All'])) {
         $form[$id]['#options']['All'] = t('- @label -', ['@label' => $placeholder]);
       }
       // Visually hide field label for accessibility.
