@@ -1,0 +1,50 @@
+{#
+/**
+ * @file
+ * Theme override for an item list.
+ *
+ * Available variables:
+ * - items: A list of items. Each item contains:
+ *   - attributes: HTML attributes to be applied to each list item.
+ *   - value: The content of the list element.
+ * - title: The title of the list.
+ * - list_type: The tag for list element ("ul" or "ol").
+ * - wrapper_attributes: HTML attributes to be applied to the list wrapper.
+ * - attributes: HTML attributes to be applied to the list.
+ * - empty: A message to display when there are no items. Allowed value is a
+ *   string or render array.
+ * - context: A list of contextual data associated with the list. May contain:
+ *   - list_style: The custom list style.
+ *
+ * @see template_preprocess_item_list()
+ */
+#}
+{% if context.list_style %}
+  {%- set wrapper_attributes = wrapper_attributes.addClass('item-list--' ~ context.list_style) %}
+  {%- set attributes = attributes.addClass('item-list__' ~ context.list_style) %}
+{% endif %}
+<div {{ wrapper_attributes }}>
+  <div class="container">
+    {% if items or empty -%}
+      {%- if items -%}
+        <ul {{ attributes }} role="directory">
+          {%- if items.previous -%}
+            <li{{ items.previous.attributes }}>{{ items.previous.value }}</li>
+          {%- endif -%}
+
+          {%- if items.index_link -%}
+            <li{{ items.index_link.attributes }}>{{ items.index_link.value }}</li>
+          {%- endif -%}
+
+          {%- if items.next -%}
+            <li{{ items.next.attributes }}>{{ items.next.value }}</li>
+          {%- endif -%}
+
+          {%- if items.back_to_top -%}
+            <li{{ items.back_to_top.attributes }}>{{ items.back_to_top.value }}</li>
+          {%- endif -%}
+        </ul>
+      {%- endif -%}
+    {%- endif %}
+  </div>
+</div>

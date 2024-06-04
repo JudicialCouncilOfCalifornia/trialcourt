@@ -4,6 +4,10 @@
   }
 }
 
+html {
+  scroll-padding-top: 79px;
+}
+
 /* Rule index styles */
 .roc__rule-index__content.box {
   padding-block: 3rem 5rem;
@@ -90,8 +94,12 @@ body.toolbar-tray-open.toolbar-horizontal .roc-rule-toc__nav-links {
 .roc__rule__content.box{
   padding-block: 3rem 5rem;
 }
-div:is(.body, .jcc-rulesformatting) p:is(.itemList, .itemlist) {
+div:is(.jcc-rulesformatting) p:is(.itemList, .itemlist) {
   margin-inline-start: 7rem;
+}
+
+.jcc-rulesformatting.stack>* {
+  inline-size: auto;
 }
 
 /* Rules of Court block listing */
@@ -126,4 +134,52 @@ div:is(.body, .jcc-rulesformatting) p:is(.itemList, .itemlist) {
 }
 .layout-content .section__content.box .section__content.box .section__main ul.roc-rule-index-list {
   margin-inline-start: -1.5rem;
+}
+
+@media print {
+  body  {
+    font-size: 1rem !important;
+    line-height: normal !important;
+  }
+
+  .container {
+    max-inline-size: 6.5in !important;
+    max-width: 6.5in !important;
+    margin: 0 !important;
+  }
+
+  .drawer,
+  .roc-rule-toc__nav-links,
+  .hangover__top-hangover-content {
+    display: none !important;
+  }
+
+  .hangover.hangover--with-share .box {
+    margin-block: 0 !important;
+    padding-block: 0 !important;
+  }
+
+  h1 {
+    font-size: 1.5rem !important;
+    line-height: normal !important;
+  }
+
+  .roc__rule__content.box {
+    padding-block: 1rem 3rem !important;
+  }
+
+  p  {
+    font-size: 16px;
+    line-height: normal !important;
+  }
+
+  @page {
+    margin-top: .75in !important;
+    margin-right: 1in !important;
+    margin-bottom: .75in !important;
+    margin-left: .5in !important;
+  }
+  @page :first {
+    margin-top: .5in !important;
+  }
 }

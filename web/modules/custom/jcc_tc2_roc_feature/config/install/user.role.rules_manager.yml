@@ -4,7 +4,9 @@ dependencies:
   config:
     - node.type.roc_rule
     - node.type.roc_rule_index
+    - workflows.workflow.roc_editorial
   module:
+    - content_moderation
     - draggableviews
     - node
 id: rules_manager
@@ -27,5 +29,12 @@ permissions:
   - 'edit own roc_rule_index content'
   - 'revert roc_rule revisions'
   - 'revert roc_rule_index revisions'
+  - 'use roc_editorial transition archive'
+  - 'use roc_editorial transition create_new_draft'
+  - 'use roc_editorial transition publish'
+  - 'use roc_editorial transition restore'
+  - 'use roc_editorial transition restore_to_draft'
+  - 'view latest version'
+  - 'view own unpublished content'
   - 'view roc_rule revisions'
   - 'view roc_rule_index revisions'
