@@ -15,6 +15,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Views;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -288,11 +289,11 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $managed_by = $node->hasField('field_managed_by') ? $node->get('field_managed_by')->target_id : FALSE;
   $county = $node->hasField('field_facility_county') ? $node->get('field_facility_county')->target_id : FALSE;
   $field_award_rendered = '';
-  
+
   if ($node->hasField('field_award')) {
     $renderer = \Drupal::service('renderer');
     $field_award_items = $node->get('field_award');
-    $field_award_rendered = $renderer->renderRoot($variables['content']['field_award']);    
+    $field_award_rendered = $renderer->renderRoot($variables['content']['field_award']);
   }
 
   $details = [
@@ -366,9 +367,9 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
 
   if (!empty($field_award_rendered)) {
     $elements[] = "<h2>Awards & Recognition</h2>";
-    $elements[] = $field_award_rendered;  
+    $elements[] = $field_award_rendered;
   }
-  
+
   if (!empty($projectimages)) {
     $elements[] = "<h2>Project Images</h2>";
   }
@@ -876,7 +877,9 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   $opinion_source = $node->get('field_opinion_source')->target_id ? Term::load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
   $review_granted = $node->get('field_review_granted')->value;
 
-  // Remote files.
+  // Remote file locations.
+  $client = \Drupal::httpClient();
+  $remote_files = [];
   $file_url_base = 'https://courts.ca.gov/opinions/';
   if ($type == 'Unpublished') {
     $url = $file_url_base . 'nonpub/';
@@ -890,18 +893,57 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
       $url = $file_url_base . 'revpub/';
     }
   }
-  $remote_files = [
-    0 => [
-      'url' => $url . $case_number . '.PDF',
+
+  // PDF.
+  $pdf_case = $case_number . '.PDF';
+  $pdf_url = $url . $pdf_case;
+  try {
+    $request = $client->get($pdf_url);
+    $pdf_status = $request->getStatusCode();
+  }
+  catch (RequestException $e) {
+    $message = $e->getMessage();
+    \Drupal::logger('opinion')->warning($message);
+  }
+  if ($pdf_status == 200) {
+    $remote_files[] = [
+      'url' => $pdf_url,
       'file_type' => 'PDF',
-      'aria_label' => t('Download or view') . ' ' . $case_number . '.PDF',
-    ],
-    1 => [
-      'url' => $url . $case_number . '.DOCX',
-      'file_type' => 'DOCX',
-      'aria_label' => t('Download or view') . ' ' . $case_number . '.DOCX',
-    ],
-  ];
+      'aria_label' => t('Download or view') . ' ' . $pdf_case,
+    ];
+  }
+  // DOCX or DOC.
+  $docx_status = NULL;
+  $doc_status = NULL;
+  $docx_case = $case_number . '.DOCX';
+  $docx_url = $url . $docx_case;
+  $doc_case = $case_number . '.DOC';
+  $doc_url = $url . $doc_case;
+  try {
+    if ($client->get($docx_url)) {
+      $request = $client->get($docx_url);
+      $docx_status = $request->getStatusCode();
+    }
+  }
+  catch (RequestException) {
+    try {
+      if ($client->get($doc_url)) {
+        $request = $client->get($doc_url);
+        $doc_status = $request->getStatusCode();
+      }
+    }
+    catch (RequestException $e) {
+      $message = $e->getMessage();
+      \Drupal::logger('opinion')->warning($message);
+    }
+  }
+  if ($docx_status == 200 || $doc_status == 200) {
+    $remote_files[] = [
+      'url' => $docx_status == 200 ? $docx_url : $doc_url,
+      'file_type' => $docx_status == 200 ? 'DOCX' : 'DOC',
+      'aria_label' => t('Download or view opinion document') . ' ' . $doc_case ? $doc_case : $docx_case,
+    ];
+  }
 
   // Related cases.
   $related_cases_urls = [];
