@@ -14,6 +14,7 @@ use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -701,27 +702,77 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
  *   The node.
  */
 function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void {
-  $case_number = $node->get('field_case_number_plain')->value;
-  $opinion_source = Term::load($node->get('field_opinion_source')->target_id)->get('name')->value;
+  $type = Term::load($node->get('field_opinion_type')->target_id) ? Term::load($node->get('field_opinion_type')->target_id)->get('name')->value : '';
+  $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
+  $opinion_source = $node->get('field_opinion_source')->target_id ? Term::load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
+  $review_granted = $node->get('field_review_granted')->value;
 
-  // Attachments.
-  $attachments = [];
-  if ($node->get('field_media_file_multiple')->getValue()) {
-    foreach ($node->get('field_media_file_multiple')->getValue() as $attachment) {
-      $media = Media::load($attachment['target_id']);
-      $file = File::load($media->get('field_media_file')->target_id);
-      if ($file) {
-        $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
-        $file_name = $file->getFileName();
-        $file_name_parts = explode('.', $file_name);
-        $file_extension = end($file_name_parts);
-        $attachments[] = [
-          'url' => $file_url,
-          'file_type' => strtoupper($file_extension),
-          'aria_label' => t('Download or view') . ' ' . $file_name,
-        ];
+  // Remote file locations.
+  $client = \Drupal::httpClient();
+  $remote_files = [];
+  $file_url_base = 'https://courts.ca.gov/opinions/';
+  if ($type == 'Unpublished') {
+    $url = $file_url_base . 'nonpub/';
+    if ($review_granted) {
+      $url = $file_url_base . 'revnppub/';
+    }
+  }
+  else {
+    $url = $file_url_base . 'documents/';
+    if ($review_granted) {
+      $url = $file_url_base . 'revpub/';
+    }
+  }
+
+  // PDF.
+  $pdf_case = $case_number . '.PDF';
+  $pdf_url = $url . $pdf_case;
+  try {
+    $request = $client->get($pdf_url);
+    $pdf_status = $request->getStatusCode();
+  }
+  catch (RequestException $e) {
+    $message = $e->getMessage();
+    \Drupal::logger('opinion')->warning($message);
+  }
+  if ($pdf_status == 200) {
+    $remote_files[] = [
+      'url' => $pdf_url,
+      'file_type' => 'PDF',
+      'aria_label' => t('Download or view') . ' ' . $pdf_case,
+    ];
+  }
+  // DOCX or DOC.
+  $docx_status = NULL;
+  $doc_status = NULL;
+  $docx_case = $case_number . '.DOCX';
+  $docx_url = $url . $docx_case;
+  $doc_case = $case_number . '.DOC';
+  $doc_url = $url . $doc_case;
+  try {
+    if ($client->get($docx_url)) {
+      $request = $client->get($docx_url);
+      $docx_status = $request->getStatusCode();
+    }
+  }
+  catch (RequestException) {
+    try {
+      if ($client->get($doc_url)) {
+        $request = $client->get($doc_url);
+        $doc_status = $request->getStatusCode();
       }
     }
+    catch (RequestException $e) {
+      $message = $e->getMessage();
+      \Drupal::logger('opinion')->warning($message);
+    }
+  }
+  if ($docx_status == 200 || $doc_status == 200) {
+    $remote_files[] = [
+      'url' => $docx_status == 200 ? $docx_url : $doc_url,
+      'file_type' => $docx_status == 200 ? 'DOCX' : 'DOC',
+      'aria_label' => t('Download or view opinion document') . ' ' . $doc_case ? $doc_case : $docx_case,
+    ];
   }
 
   // Related cases.
@@ -746,30 +797,10 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
     }
   }
 
-  // Citings.
-  $citings = [];
-  if ($node->get('field_opinion_citings')->getValue()) {
-    foreach ($node->get('field_opinion_citings')->getValue() as $citing) {
-      $media = Media::load($citing['target_id']);
-      $file = File::load($media->get('field_media_file')->target_id);
-      if ($file) {
-        $citing_title = $media->get('field_media_text')->value;
-        if (is_null($citing_title)) {
-          $citing_title = $media->get('name')->value;
-        }
-        $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
-        $citings[] = [
-          'text' => ['#markup' => '<a href="' . $file_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
-        ];
-      }
-    }
-  }
-
   $opinion = [
     'details' => $case_number && $opinion_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
-    'attachments' => $attachments,
+    'remote_files' => $remote_files,
     'related_cases' => $related_cases_urls ? implode(' ', $related_cases_urls) : '',
-    'citings' => $citings,
   ];
 
   $variables['opinion'] = $opinion;
