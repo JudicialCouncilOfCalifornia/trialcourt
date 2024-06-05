@@ -52,15 +52,15 @@
   {% endset %}
 
   {% set content %}
-    {% if opinion.attachments %}
+    {% if opinion.remote_files %}
       <div style="margin-block-end: var(--s0)">
-        {% for attachment in opinion.attachments %}
+        {% for remote_file in opinion.remote_files %}
           {% include "@atoms/Button/Button.twig" with {
             variant: loop.index == 1 ?'primary' : 'secondary',
             size: 'small',
-            label: attachment.file_type,
-            href: attachment.url,
-            aria_label: attachment.aria_label,
+            label: remote_file.file_type,
+            href: remote_file.url,
+            aria_label: remote_file.aria_label,
           } %}
         {% endfor %}
       </div>
