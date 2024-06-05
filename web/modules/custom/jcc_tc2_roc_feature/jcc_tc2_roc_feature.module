@@ -14,6 +14,26 @@ foreach (glob($includes_path) as $filename) {
 }
 
 /**
+ * Implements hook_config_ignore_settings_alter().
+ */
+function jcc_tc2_roc_feature_config_ignore_settings_alter(array &$settings) {
+  // Ignore any config that exists in this module's config/install.
+  $module_handler = \Drupal::service('module_handler');
+  $module_path = $module_handler->getModule('jcc_tc2_roc_feature')->getPath();
+  $paths[] = "${module_path}/config/install";
+
+  foreach ($paths as $path) {
+    $config = scandir($path);
+    foreach ($config as $item) {
+      $name = str_replace('.yml', '', $item);
+      if (strpos($name, '.') !== 0 && !in_array($name, $settings)) {
+        $settings[] = $name;
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_theme().
  */
 function jcc_tc2_roc_feature_theme($existing, $type, $theme, $path): array {
