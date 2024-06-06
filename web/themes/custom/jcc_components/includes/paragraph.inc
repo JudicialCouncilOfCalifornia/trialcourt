@@ -235,6 +235,7 @@ function jcc_components_paragraph_views_reference_location_map_list(array &$vari
         'title' => $row['#node']->getTitle(),
         'address' => $row['#node']->field_address,
         'phone' => $row['#node']->field_phone,
+        'location_detail_page_url' =>$row['#node']->toUrl()->toString(),
       ];
     }
   }
