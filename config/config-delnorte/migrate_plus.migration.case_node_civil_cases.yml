@@ -16,39 +16,49 @@ source:
   path: sites/default/files/delnorte/default/upload/civil-calendar.csv
   delimiter: ','
   enclosure: '"'
-  header_offset: 0
+  header_offset: null
   ids:
     - case_number
     - party_name
     - party_type
     - department
-    - hearing_datetime
+    - hearing_date
+    - hearing_time
     - hearing_type
   fields:
     -
-      name: hearing_datetime
-      label: 'Hearing Date and Time'
+      name: case_type
+      label: 'Case Type'
     -
-      name: party_name
-      label: 'Party Name'
-    -
-      name: department
-      label: Department
-    -
-      name: judicial_officer
-      label: 'Judicial Officer'
-    -
-      name: hearing_type
-      label: 'Hearing Type'
-    -
-      name: party_type
-      label: 'Party Type'
+      name: courthouse
+      label: 'Courthouse'
     -
       name: case_number
       label: 'Case Number'
     -
-      name: case_type
-      label: 'Case Type'
+      name: citation_number
+      label: 'Citation Number'
+    -
+      name: party_name
+      label: 'Party Name'
+    -
+      name: party_type
+      label: 'Party Type'
+    -
+      name: hearing_type
+      label: 'Hearing Type'
+    -
+      name: department
+      label: Department
+    -
+      name: hearing_date
+      label: 'Hearing Date'
+    -
+      name: hearing_time
+      label: 'Hearing Time'
+    -
+      name: judicial_officer
+      label: 'Judicial Officer'
 process:
   field_party_name:
     -
@@ -104,28 +114,23 @@ process:
       source: department
       callable: trim
     -
-      plugin: static_map
-      map:
-        'SB Dept 3': 'Dept. 3 SB-Anacapa'
-        'SM Dept 3': 'Dept. 3 SM-Cook'
-        'SB Dept 4': 'Dept. 4 SB-Anacapa'
-        'SM Dept 4': 'Dept. 4 SM-Cook'
-        'SB Dept 5': 'Dept. 5 SB-Anacapa'
-        'SB Dept 6': 'Dept. 6 SB-Anacapa'
-        'SM Dept 2': 'Dept. 2 SM-Cook'
-      bypass: true
-    -
       plugin: entity_generate
       bundle: department
       value_key: name
       bundle_key: vid
       entity_type: taxonomy_term
       ignore_case: true
+  pseudo_date_time:
+      plugin: concat
+      source:
+        - hearing_date
+        - hearing_time
+      delimiter: ' '
   field_hearing_date:
     -
       plugin: skip_on_empty
       method: row
-      source: hearing_datetime
+      source: '@pseudo_date_time'
     -
       plugin: format_date
       from_format: 'm/d/Y h:i A'
@@ -137,16 +142,6 @@ process:
       plugin: callback
       source: judicial_officer
       callable: trim
-    -
-      plugin: static_map
-      map:
-        'Anderle, Thomas P': 'Judge Thomas Anderle'
-        'Beebe, Jed': 'Judge Jed Beebe'
-        'Geck, Donna D': 'Judge Donna Geck'
-        'Maxwell, Pauline': 'Judge Pauline Maxwell'
-        'Rigali, James F': 'Judge James F. Rigali'
-        'Sterne, Colleen K': 'Judge Colleen Sterne'
-      bypass: true
     -
       plugin: entity_generate
       bundle: judge
