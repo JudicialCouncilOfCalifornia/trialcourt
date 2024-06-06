@@ -1,5 +1,5 @@
 # Pantheon Project UUID.
-UUID=
+UUID=df457271-d743-47b8-a77d-49ddddef42ed
 SITE_CODE=solano
 # If false, pantheon will deploy to dev. If true it will get the Live tag.
 LIVE=true
