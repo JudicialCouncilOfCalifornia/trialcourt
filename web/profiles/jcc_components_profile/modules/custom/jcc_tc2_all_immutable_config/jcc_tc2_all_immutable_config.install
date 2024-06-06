@@ -1062,3 +1062,16 @@ function jcc_tc2_all_immutable_config_update_9005() {
 
   node_access_rebuild(TRUE);
 }
+
+/**
+ * Install contrib modules needed for rules of court.
+ */
+function jcc_tc2_all_immutable_config_update_9006(): void {
+  $modules = [
+    'views_tree',
+    'shs',
+    'colorbox_inline',
+  ];
+
+  \Drupal::service('module_installer')->install($modules);
+}
