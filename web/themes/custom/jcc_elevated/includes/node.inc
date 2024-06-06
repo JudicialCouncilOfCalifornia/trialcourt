@@ -230,7 +230,8 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $completion_date = $node->get('field_completion_date')->date ? $node->get('field_completion_date')->date->format('F j, Y') : '';
   $occupancy_date = $node->get('field_occupancy_date')->date ? $node->get('field_occupancy_date')->date->format('F j, Y') : '';
   $ceqa = $node->field_ceqa->view('default');
-  if ($ceqa['#items'] && !$ceqa['#items']->isEmpty()) {
+  $ceqa_content = '';
+  if (isset($ceqa['#items']) && !$ceqa['#items']->isEmpty()) {  
     $ceqa_content = render($ceqa[0]['#text']);
   }
 
@@ -293,8 +294,16 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
         $uri = $media->field_media_image->entity->getFileUri();
         $media_url = file_create_url($uri);
       }
+      if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
+        $caption_value = $media->get('field_media_caption')->value;
+        $citation_value = $media->get('field_media_citation')->value;
+        $caption = $caption_value !== NULL ? strip_tags($caption_value) : '';
+        $citation = $citation_value !== NULL ? strip_tags($citation_value) : '';
+       }
       $projectimages[] = [
         'url' => $media_url,
+        'caption' => $caption,
+        'citation' => $citation,
       ];
     }
   }
@@ -313,26 +322,33 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   if (!empty($details['summary'])) {
     $elements[] = "<h2>Project Info</h2>";
     $elements[] = $details['summary'];
+    $elements[] = "<br />";
     $elements[] = "<hr />";
+    $elements[] = "<br />";
   }
 
-  if (!empty($node->body->value)) {
+  if (!empty($node->body->value)) {    
     $elements[] = "<h2>Background</h2>";
     $elements[] = $node->body->value;
+    $elements[] = "<br />";
     $elements[] = "<hr />";
+    $elements[] = "<br />";
   }
 
-  if (!empty($details['schedule'])) {
+  if (!empty($details['schedule'])) {    
     $elements[] = "<h2>Schedule</h2>";
     $elements[] = $details['schedule'];
+    $elements[] = "<br />";
     $elements[] = "<hr />";
+    $elements[] = "<br />";
   }
 
-  if (!empty($field_award_rendered)) {
+  if (!empty($field_award_rendered)) {    
     $elements[] = "<h2>Awards & Recognition</h2>";
     $elements[] = $field_award_rendered;
+    $elements[] = "<br />";    
   }
-  if (!empty($projectimages)) {
+  if (!empty($projectimages)) {    
     $elements[] = "<h2>Project Images</h2>";
   }
   foreach ($elements as $element) {

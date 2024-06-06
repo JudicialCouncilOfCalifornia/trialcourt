@@ -104,14 +104,20 @@
     {% endset %}
  {% endif %}
          {% include "@molecules/Card/Card.twig" with {
-          variant: "default",
+          variant: "media-right",
           aspect: [],
           clickable_card: false,
           background: null,
           media:  project_image | raw,
           heading: '',
           button_data:[],
-          text: '',          
+          text: '',  
+         media_caption: {
+            show: image.caption or image.citation ? true,
+            text: image.caption,
+            citation: image.citation,
+            overlay: true,
+          },         
         } %}
         {% endfor %}
 </div>
