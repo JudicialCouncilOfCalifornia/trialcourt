@@ -1,0 +1,70 @@
+uuid: 46dab212-abed-45ee-a275-1e690ec8fadf
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.user.user.field_group
+    - field.field.user.user.field_jcc_messaging_center_group
+    - field.field.user.user.field_last_password_reset
+    - field.field.user.user.field_password_expiration
+    - field.field.user.user.field_pending_expire_sent
+  module:
+    - datetime
+    - path
+    - user
+_core:
+  default_config_hash: TXRyUqQnN0zHdnNs8U1eTu-fL4chY2KBJic9kQEkYgI
+id: user.user.default
+targetEntityType: user
+bundle: user
+mode: default
+content:
+  account:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  contact:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_jcc_messaging_center_group:
+    type: options_buttons
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_last_password_reset:
+    type: datetime_default
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_password_expiration:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  language:
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  timezone:
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_group: true
+  field_pending_expire_sent: true
+  langcode: true

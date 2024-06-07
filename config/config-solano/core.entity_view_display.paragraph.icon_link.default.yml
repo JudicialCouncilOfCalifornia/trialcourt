@@ -1,0 +1,42 @@
+uuid: bb6a9fd7-3ff0-424f-8428-ef1aad439152
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.icon_link.field_icon
+    - field.field.paragraph.icon_link.field_link
+    - paragraphs.paragraphs_type.icon_link
+  module:
+    - jcc_courtyard_icons
+    - link
+_core:
+  default_config_hash: DnZk5K_XPepME73S2wJqI9yycG-nJnRgPwWAyuyB2M0
+id: paragraph.icon_link.default
+targetEntityType: paragraph
+bundle: icon_link
+mode: default
+content:
+  field_icon:
+    type: courtyard_icons_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_link:
+    type: link
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true

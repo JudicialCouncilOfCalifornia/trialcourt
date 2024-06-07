@@ -1,0 +1,40 @@
+uuid: 191476c8-8b34-41e3-8cda-7abfb54fe314
+langcode: en
+status: true
+dependencies:
+  module:
+    - glossify_taxonomy
+    - linkit
+_core:
+  default_config_hash: cAjYK9Mqrjt-bY1H-AHFt_ax11ToywJOAn3TF-9EK8o
+name: 'Full HTML'
+format: full_html
+weight: -4
+filters:
+  glossify_taxonomy:
+    id: glossify_taxonomy
+    provider: glossify_taxonomy
+    status: false
+    weight: -10
+    settings:
+      glossify_taxonomy_case_sensitivity: '1'
+      glossify_taxonomy_first_only: '1'
+      glossify_taxonomy_type: tooltips
+      glossify_taxonomy_vocabs: ''
+      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: false
+    weight: -10
+    settings:
+      allowed_html: '<em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title data-link-*>'
+      filter_html_help: true
+      filter_html_nofollow: false
+  linkit:
+    id: linkit
+    provider: linkit
+    status: true
+    weight: 0
+    settings:
+      title: true

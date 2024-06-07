@@ -1,0 +1,36 @@
+uuid: 5d7ad612-4073-442e-a7c1-93d6e39726ce
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_opinion_type
+    - node.type.opinion
+    - taxonomy.vocabulary.opinion_type
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: 1XQFS882JA1H2LDIXnwX9mGTCgsW2FqjI85GWzW7LAA
+id: node.opinion.field_opinion_type
+field_name: field_opinion_type
+entity_type: node
+bundle: opinion
+label: Type
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      opinion_type: opinion_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

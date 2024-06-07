@@ -1,0 +1,71 @@
+uuid: 68fe298c-f322-48c7-b369-bbd29db5b585
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.accordion.field_components
+    - field.field.paragraph.accordion.field_expand_close_all
+    - field.field.paragraph.accordion.field_heading
+    - field.field.paragraph.accordion.field_lead
+    - field.field.paragraph.accordion.field_toggle
+    - paragraphs.paragraphs_type.accordion
+  module:
+    - paragraphs
+    - text
+_core:
+  default_config_hash: ccRWIYhR9imPmD4oB4giP-jw_uXA171zcwI1XfG2fuo
+id: paragraph.accordion.default
+targetEntityType: paragraph
+bundle: accordion
+mode: default
+content:
+  field_components:
+    type: entity_reference_paragraphs
+    weight: 4
+    region: content
+    settings:
+      title: 'Accordion Item'
+      title_plural: 'Accordion Items'
+      edit_mode: preview
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: accordion_item
+    third_party_settings: {  }
+  field_expand_close_all:
+    type: boolean_checkbox
+    weight: 3
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_heading:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_lead:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_toggle:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  translation:
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

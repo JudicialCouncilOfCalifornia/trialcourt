@@ -1,0 +1,51 @@
+uuid: 853ba2fa-e3ec-4ba3-a26f-84578070df8b
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.preview
+    - field.field.paragraph.body.field_aside
+    - field.field.paragraph.body.field_heading
+    - field.field.paragraph.body.field_lead
+    - field.field.paragraph.body.field_subheading
+    - field.field.paragraph.body.field_text
+    - paragraphs.paragraphs_type.body
+  module:
+    - text
+_core:
+  default_config_hash: qG-A_aZXPNHMcSkFkRZRMUXYZxuSvRrDPRwnTi1ZYtc
+id: paragraph.body.preview
+targetEntityType: paragraph
+bundle: body
+mode: preview
+content:
+  field_heading:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_lead:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_subheading:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_aside: true
+  field_text: true
+  search_api_excerpt: true

@@ -1,0 +1,111 @@
+uuid: 06c9edfa-f0eb-4500-a2f0-2c26db74dcd3
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.container_100_percent
+    - core.entity_view_mode.media.container_25_percent
+    - core.entity_view_mode.media.container_50_percent
+    - core.entity_view_mode.media.container_75_percent
+    - core.entity_view_mode.media.full
+  module:
+    - emptyparagraphkiller
+    - entity_embed
+    - glossify_taxonomy
+    - linkit
+    - media
+    - tooltip
+_core:
+  default_config_hash: AA5Krgg1inJL38knUhPJxQkcGF8hyiafpLdI5nYKUr4
+name: Body
+format: body
+weight: -9
+filters:
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
+    status: true
+    weight: 0
+    settings: {  }
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<em> <strong> <b> <i class> <cite> <ul type class dir> <ol type start class="legal" dir> <li> <dl dir> <dt> <dd> <h2 id class dir> <h3 id dir> <h4 id dir> <h5 id dir> <h6 id dir> <table class> <img src alt data-entity-type data-entity-uuid data-align data-caption> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <blockquote cite class="blockquote blockquote--alert blockquote--alert--warning blockquote--alert--error blockquote--alert--success blockquote--alert--info blockquote--callout blockquote--italic blockquote--box" dir> <p id class dir> <caption dir> <tbody> <thead> <tfoot> <th> <td> <tr> <hr> <video> <iframe longdesc name scrolling src title width height frameborder align> <u> <s> <sup> <sub> <span data-tooltip> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid data-radiomast-id title name class="twitter-timeline button button--primary jcc-button--primary button--secondary jcc-button--secondary jcc-button--cta-link button--cta-link button--text twitter-timeline" data-link-*> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title data-langcode>'
+      filter_html_help: false
+      filter_html_nofollow: false
+  entity_embed:
+    id: entity_embed
+    provider: entity_embed
+    status: true
+    weight: 100
+    settings: {  }
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: true
+    weight: 0
+    settings: {  }
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
+    provider: filter
+    status: true
+    weight: 10
+    settings: {  }
+  filter_html_image_secure:
+    id: filter_html_image_secure
+    provider: filter
+    status: true
+    weight: 9
+    settings: {  }
+  filter_url:
+    id: filter_url
+    provider: filter
+    status: true
+    weight: 0
+    settings:
+      filter_url_length: 72
+  glossify_taxonomy:
+    id: glossify_taxonomy
+    provider: glossify_taxonomy
+    status: false
+    weight: -10
+    settings:
+      glossify_taxonomy_case_sensitivity: '1'
+      glossify_taxonomy_first_only: '1'
+      glossify_taxonomy_type: tooltips
+      glossify_taxonomy_vocabs: ''
+      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+  linkit:
+    id: linkit
+    provider: linkit
+    status: true
+    weight: 0
+    settings:
+      title: true
+  media_embed:
+    id: media_embed
+    provider: media
+    status: true
+    weight: 100
+    settings:
+      default_view_mode: default
+      allowed_view_modes:
+        container_100_percent: container_100_percent
+        container_25_percent: container_25_percent
+        container_50_percent: container_50_percent
+        container_75_percent: container_75_percent
+        full: full
+      allowed_media_types:
+        boxcast_stream: boxcast_stream
+        image: image
+        remote_video: remote_video
+        snippet: snippet
+  tooltip:
+    id: tooltip
+    provider: tooltip
+    status: true
+    weight: 0
+    settings: {  }

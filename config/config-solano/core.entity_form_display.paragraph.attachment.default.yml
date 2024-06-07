@@ -1,0 +1,56 @@
+uuid: 8a960a36-9585-4f0e-827e-5b83916818a2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.attachment.field_media
+    - field.field.paragraph.attachment.field_text
+    - paragraphs.paragraphs_type.attachment
+  module:
+    - allowed_formats
+    - maxlength
+    - media_library
+    - text
+_core:
+  default_config_hash: vqUcgvDljFNFbXUdROLJ1SH6227ZKk5td-pfnllTtJY
+id: paragraph.attachment.default
+targetEntityType: paragraph
+bundle: attachment
+mode: default
+content:
+  field_media:
+    type: media_library_widget
+    weight: 1
+    region: content
+    settings:
+      media_types:
+        - file
+        - publication
+        - image
+        - remote_video
+    third_party_settings: {  }
+  field_text:
+    type: text_textarea
+    weight: 2
+    region: content
+    settings:
+      rows: 3
+      placeholder: ''
+    third_party_settings:
+      allowed_formats:
+        hide_help: '1'
+        hide_guidelines: '1'
+      maxlength:
+        maxlength_js: null
+        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+        maxlength_js_enforce: false
+        maxlength_js_truncate_html: false
+  status:
+    type: boolean_checkbox
+    weight: 0
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden:
+  created: true

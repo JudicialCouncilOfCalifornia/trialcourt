@@ -1,0 +1,79 @@
+uuid: 4adbe95c-d8a2-4dc9-a434-0ae787bada18
+langcode: en
+status: false
+dependencies:
+  config:
+    - core.entity_view_mode.node.card
+    - field.field.node.judge.body
+    - field.field.node.judge.field_address
+    - field.field.node.judge.field_custom_link
+    - field.field.node.judge.field_date
+    - field.field.node.judge.field_department
+    - field.field.node.judge.field_division
+    - field.field.node.judge.field_job_title
+    - field.field.node.judge.field_location
+    - field.field.node.judge.field_media
+    - field.field.node.judge.field_media_file_multiple
+    - field.field.node.judge.field_person_type
+    - field.field.node.judge.field_retirement_date
+    - field.field.node.judge.field_tags
+    - node.type.judge
+  module:
+    - address
+    - link
+    - user
+_core:
+  default_config_hash: 3qw0luoTunNQdkd0o31FwoQbh_D-C7An1H0N1T6XUmc
+id: node.judge.card
+targetEntityType: node
+bundle: judge
+mode: card
+content:
+  field_address:
+    type: address_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_custom_link:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_department:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  body: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_date: true
+  field_division: true
+  field_job_title: true
+  field_location: true
+  field_media: true
+  field_media_file_multiple: true
+  field_person_type: true
+  field_retirement_date: true
+  field_tags: true
+  langcode: true
+  search_api_excerpt: true

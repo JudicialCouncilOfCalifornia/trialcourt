@@ -1,0 +1,36 @@
+uuid: 23ab743f-f01e-4b88-b1e6-333c02afd10e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tags
+    - node.type.judge
+    - taxonomy.vocabulary.tags
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: _Dr-mOkxa6kNtb1-0D8rhEW06xcw6F-j5wWlT-yOf18
+id: node.judge.field_tags
+field_name: field_tags
+entity_type: node
+bundle: judge
+label: Tags
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      tags: tags
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference

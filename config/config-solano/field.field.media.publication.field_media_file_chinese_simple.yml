@@ -1,0 +1,51 @@
+uuid: 4a08bfb8-0f44-401b-b4a1-eaeb5040b18b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_file_chinese_simple
+    - media.type.publication
+  module:
+    - file
+    - filefield_paths
+    - tmgmt_content
+third_party_settings:
+  filefield_paths:
+    enabled: true
+    file_path:
+      value: '[date:custom:Y]-[date:custom:m]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    file_name:
+      value: '[file:ffp-name-only-original].[file:ffp-extension-original]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    redirect: false
+    retroactive_update: false
+    active_updating: false
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: rv7WTQE29TklFY8pk--k-h2KnuO7oBH3YZhM2UQfYUA
+id: media.publication.field_media_file_chinese_simple
+field_name: field_media_file_chinese_simple
+entity_type: media
+bundle: publication
+label: 'Chinese Simplified File'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'txt doc docx pdf'
+  max_filesize: ''
+  description_field: false
+field_type: file

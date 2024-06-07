@@ -1,0 +1,72 @@
+uuid: 5b6a749e-13c2-49e3-b534-8a385c2e70ca
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.information.field_brow
+    - field.field.paragraph.information.field_heading
+    - field.field.paragraph.information.field_link_multiple
+    - field.field.paragraph.information.field_text
+    - paragraphs.paragraphs_type.information
+  module:
+    - jcc_custom
+    - text
+_core:
+  default_config_hash: 1Wnxr_7dJlbVnJMSX_Ug4XJrkzDrq38QQctLgqTh20s
+id: paragraph.information.default
+targetEntityType: paragraph
+bundle: information
+mode: default
+content:
+  field_brow:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_heading:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_link_multiple:
+    type: link_email_with_attributes
+    weight: 4
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+      enabled_attributes:
+        mailto_subject: mailto_subject
+        mailto_body: mailto_body
+        target: target
+        aria-label: aria-label
+        id: 0
+        name: 0
+        rel: 0
+        class: 0
+        accesskey: 0
+        title: 0
+    third_party_settings: {  }
+  field_text:
+    type: text_textarea
+    weight: 3
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 0
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden:
+  created: true

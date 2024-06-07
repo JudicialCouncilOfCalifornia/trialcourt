@@ -1,0 +1,36 @@
+uuid: bc262886-d156-457c-bd5b-3cae60dd8a03
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_division
+    - node.type.judge
+    - taxonomy.vocabulary.division
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: 9JWyS5OOoAfPrUNIHewmtVgI-IqnSqGph_PZrSvjH6Y
+id: node.judge.field_division
+field_name: field_division
+entity_type: node
+bundle: judge
+label: Division
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      division: division
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

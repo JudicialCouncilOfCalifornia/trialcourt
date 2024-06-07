@@ -1,0 +1,327 @@
+uuid: 01b58fa6-ed16-4730-9d5c-ade7e017486c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.media.publication.field_case_type
+    - field.field.media.publication.field_code
+    - field.field.media.publication.field_date
+    - field.field.media.publication.field_division
+    - field.field.media.publication.field_document_type
+    - field.field.media.publication.field_east_armenian_file
+    - field.field.media.publication.field_media_file
+    - field.field.media.publication.field_media_file_arabic
+    - field.field.media.publication.field_media_file_cambodian
+    - field.field.media.publication.field_media_file_chinese
+    - field.field.media.publication.field_media_file_chinese_simple
+    - field.field.media.publication.field_media_file_farsi
+    - field.field.media.publication.field_media_file_hmong
+    - field.field.media.publication.field_media_file_korean
+    - field.field.media.publication.field_media_file_multiple
+    - field.field.media.publication.field_media_file_punjabi
+    - field.field.media.publication.field_media_file_russian
+    - field.field.media.publication.field_media_file_spanish
+    - field.field.media.publication.field_media_file_tagalog
+    - field.field.media.publication.field_media_file_vietnamese
+    - field.field.media.publication.field_media_text
+    - field.field.media.publication.field_publication_category
+    - field.field.media.publication.field_topic
+    - media.type.publication
+  module:
+    - autocomplete_deluxe
+    - datetime
+    - field_group
+    - file
+    - path
+    - text
+third_party_settings:
+  field_group:
+    group_translated_files:
+      children:
+        - field_media_file_arabic
+        - field_media_file_cambodian
+        - field_media_file_chinese_simple
+        - field_media_file_chinese
+        - field_east_armenian_file
+        - field_media_file_farsi
+        - field_media_file_hmong
+        - field_media_file_korean
+        - field_media_file_punjabi
+        - field_media_file_russian
+        - field_media_file_spanish
+        - field_media_file_tagalog
+        - field_media_file_vietnamese
+      label: 'Translated Files'
+      region: content
+      parent_name: ''
+      weight: 9
+      format_type: details
+      format_settings:
+        classes: ''
+        id: ''
+        open: false
+        description: ''
+        required_fields: true
+    group_tags:
+      children:
+        - field_division
+        - field_topic
+        - field_case_type
+      label: Tags
+      region: content
+      parent_name: ''
+      weight: 8
+      format_type: details
+      format_settings:
+        classes: ''
+        id: ''
+        open: true
+        description: ''
+        required_fields: true
+_core:
+  default_config_hash: bTPQyIL0RNDrATeH23MFtwDsTIJ4Wx5CeohGS-nv80E
+id: media.publication.default
+targetEntityType: media
+bundle: publication
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 12
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  directory:
+    type: options_select
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_case_type:
+    type: autocomplete_deluxe
+    weight: 5
+    region: content
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+  field_date:
+    type: datetime_default
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_division:
+    type: autocomplete_deluxe
+    weight: 3
+    region: content
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+  field_document_type:
+    type: autocomplete_deluxe
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+  field_east_armenian_file:
+    type: file_generic
+    weight: 20
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_arabic:
+    type: file_generic
+    weight: 16
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_cambodian:
+    type: file_generic
+    weight: 17
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_chinese:
+    type: file_generic
+    weight: 19
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_chinese_simple:
+    type: file_generic
+    weight: 18
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_farsi:
+    type: file_generic
+    weight: 21
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_hmong:
+    type: file_generic
+    weight: 22
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_korean:
+    type: file_generic
+    weight: 23
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_multiple:
+    type: file_generic
+    weight: 7
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_punjabi:
+    type: file_generic
+    weight: 24
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_russian:
+    type: file_generic
+    weight: 25
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_spanish:
+    type: file_generic
+    weight: 26
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_tagalog:
+    type: file_generic
+    weight: 27
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file_vietnamese:
+    type: file_generic
+    weight: 28
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_text:
+    type: text_textarea
+    weight: 6
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_topic:
+    type: autocomplete_deluxe
+    weight: 4
+    region: content
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 10
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 13
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 14
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  translation:
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 11
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  field_code: true
+  field_media_file: true
+  field_publication_category: true
+  replace_file: true

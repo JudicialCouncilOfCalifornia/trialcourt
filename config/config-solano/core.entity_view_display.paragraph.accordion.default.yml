@@ -1,0 +1,70 @@
+uuid: b8510ea3-39a6-410c-a654-4e9e18d94c0f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.accordion.field_components
+    - field.field.paragraph.accordion.field_expand_close_all
+    - field.field.paragraph.accordion.field_heading
+    - field.field.paragraph.accordion.field_lead
+    - field.field.paragraph.accordion.field_toggle
+    - paragraphs.paragraphs_type.accordion
+  module:
+    - entity_reference_revisions
+    - text
+_core:
+  default_config_hash: T8z6iMnNny92QNrFoo9MC5E-0nygp-rqrd9p6oQ9dM0
+id: paragraph.accordion.default
+targetEntityType: paragraph
+bundle: accordion
+mode: default
+content:
+  field_components:
+    type: entity_reference_revisions_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_expand_close_all:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_heading:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_lead:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_toggle:
+    type: boolean
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true

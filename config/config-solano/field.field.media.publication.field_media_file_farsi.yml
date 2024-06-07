@@ -1,0 +1,51 @@
+uuid: 297dd344-ebc6-48a0-b3ac-39b28da69bae
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_file_farsi
+    - media.type.publication
+  module:
+    - file
+    - filefield_paths
+    - tmgmt_content
+third_party_settings:
+  filefield_paths:
+    enabled: true
+    file_path:
+      value: '[date:custom:Y]-[date:custom:m]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    file_name:
+      value: '[file:ffp-name-only-original].[file:ffp-extension-original]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    redirect: false
+    retroactive_update: false
+    active_updating: false
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: AtjCkvKf2WDl_zk8Xh-TLG-7zS55y9dS3kytTCBWXGA
+id: media.publication.field_media_file_farsi
+field_name: field_media_file_farsi
+entity_type: media
+bundle: publication
+label: 'Farsi File'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'txt doc docx pdf'
+  max_filesize: ''
+  description_field: false
+field_type: file

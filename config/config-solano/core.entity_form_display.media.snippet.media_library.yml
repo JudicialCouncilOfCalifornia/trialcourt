@@ -1,0 +1,80 @@
+uuid: 4cc02f81-dda1-4c18-b38c-4f63e2689488
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.snippet.field_matters_served
+    - field.field.media.snippet.field_media_text
+    - field.field.media.snippet.field_tags
+    - media.type.snippet
+  module:
+    - autocomplete_deluxe
+    - cshs
+    - text
+_core:
+  default_config_hash: c0B4OPs69372tujQaZFarkBObw76-DMDaBOvJLpxZjA
+id: media.snippet.media_library
+targetEntityType: media
+bundle: snippet
+mode: media_library
+content:
+  directory:
+    type: options_select
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_matters_served:
+    type: cshs
+    weight: 2
+    region: content
+    settings:
+      force_deepest: false
+      parent: ''
+      level_labels: ''
+      none_label: '- Please select -'
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
+    third_party_settings: {  }
+  field_media_text:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_tags:
+    type: autocomplete_deluxe
+    weight: 3
+    region: content
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  langcode: true
+  path: true
+  status: true
+  translation: true
+  uid: true

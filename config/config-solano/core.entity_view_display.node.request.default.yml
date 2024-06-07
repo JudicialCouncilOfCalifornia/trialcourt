@@ -1,0 +1,126 @@
+uuid: 87037abf-167a-46f9-a77b-9601b263cf51
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.request.body
+    - field.field.node.request.field_media_file_multiple
+    - field.field.node.request.field_rfp_attachments
+    - field.field.node.request.field_rfp_end_date
+    - field.field.node.request.field_rfp_important_dates
+    - field.field.node.request.field_rfp_number
+    - field.field.node.request.field_rfp_start_date
+    - field.field.node.request.field_rfp_status
+    - field.field.node.request.field_rfp_submission_information
+    - field.field.node.request.field_rfp_topic
+    - field.field.node.request.field_rfp_type
+    - node.type.request
+  module:
+    - datetime
+    - entity_reference_revisions
+    - options
+    - text
+    - user
+_core:
+  default_config_hash: e4ZuzWla_KPwnUYVIvjAWLKmTvmg9DV0zyr9c-1OHVI
+id: node.request.default
+targetEntityType: node
+bundle: request
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_media_file_multiple:
+    type: entity_reference_entity_id
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_rfp_attachments:
+    type: entity_reference_revisions_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_rfp_end_date:
+    type: datetime_default
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: m_d_y
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_rfp_important_dates:
+    type: entity_reference_revisions_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_rfp_number:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_rfp_start_date:
+    type: datetime_default
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: m_d_y
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_rfp_status:
+    type: list_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_rfp_submission_information:
+    type: entity_reference_revisions_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_rfp_topic:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_rfp_type:
+    type: list_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  langcode: true
+  links: true
+  search_api_excerpt: true

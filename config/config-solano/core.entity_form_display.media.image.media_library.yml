@@ -1,0 +1,112 @@
+uuid: 4827471a-5004-41e3-b52b-5da6ef5523af
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.image.field_category
+    - field.field.media.image.field_matters_served
+    - field.field.media.image.field_media_caption
+    - field.field.media.image.field_media_citation
+    - field.field.media.image.field_media_image
+    - field.field.media.image.field_tags
+    - image.style.thumbnail
+    - media.type.image
+  module:
+    - autocomplete_deluxe
+    - cshs
+    - focal_point
+_core:
+  default_config_hash: DC6yOI2yRIC6SiU_nmgWXZ-KA5i2LJJwE-x7S-qAY8I
+id: media.image.media_library
+targetEntityType: media
+bundle: image
+mode: media_library
+content:
+  directory:
+    type: options_select
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_category:
+    type: cshs
+    weight: 2
+    region: content
+    settings:
+      save_lineage: false
+      force_deepest: false
+      parent: ''
+      level_labels: ''
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
+  field_matters_served:
+    type: cshs
+    weight: 3
+    region: content
+    settings:
+      save_lineage: false
+      force_deepest: false
+      parent: ''
+      level_labels: ''
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
+  field_media_image:
+    type: image_focal_point
+    weight: 1
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+      preview_link: true
+      offsets: '50,50'
+    third_party_settings: {  }
+  field_tags:
+    type: autocomplete_deluxe
+    weight: 4
+    region: content
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 5
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  translation:
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_media_caption: true
+  field_media_citation: true
+  path: true
+  replace_file: true
+  status: true
+  uid: true

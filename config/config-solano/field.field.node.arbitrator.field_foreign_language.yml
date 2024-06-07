@@ -1,0 +1,36 @@
+uuid: e855da48-f04f-400f-9408-ffefa5214ddf
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_foreign_language
+    - node.type.arbitrator
+    - taxonomy.vocabulary.language
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: kzIqCE4iwNAFprcPluzAFwRjG8QKZmB-3HoFFGWdJwo
+id: node.arbitrator.field_foreign_language
+field_name: field_foreign_language
+entity_type: node
+bundle: arbitrator
+label: 'Foreign Language'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      language: language
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

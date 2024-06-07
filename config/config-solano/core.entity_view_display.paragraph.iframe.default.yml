@@ -1,0 +1,62 @@
+uuid: ef915eb6-9098-49f9-a41e-c0e1277dbf27
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.iframe.field_aspect_ratio
+    - field.field.paragraph.iframe.field_link
+    - field.field.paragraph.iframe.field_manual_height
+    - field.field.paragraph.iframe.field_use_iframe_resizer
+    - paragraphs.paragraphs_type.iframe
+  module:
+    - link
+    - options
+_core:
+  default_config_hash: N8IRVhCgFDj-MVHj9n22uDMvSiLvWatkWUB6beHiMNA
+id: paragraph.iframe.default
+targetEntityType: paragraph
+bundle: iframe
+mode: default
+content:
+  field_aspect_ratio:
+    type: list_key
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_link:
+    type: link
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_manual_height:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_use_iframe_resizer:
+    type: boolean
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true

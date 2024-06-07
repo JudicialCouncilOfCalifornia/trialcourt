@@ -1,0 +1,55 @@
+uuid: cfef5e7a-ee68-4c04-81a6-c3ecd0c5d29f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.action_list.field_components
+    - field.field.paragraph.action_list.field_heading
+    - field.field.paragraph.action_list.field_lead
+    - paragraphs.paragraphs_type.action_list
+  module:
+    - paragraphs
+    - text
+_core:
+  default_config_hash: mvSZ-id2DcG4KCkSWl29J6LM7ANqGNf38FnMLsefgAA
+id: paragraph.action_list.default
+targetEntityType: paragraph
+bundle: action_list
+mode: default
+content:
+  field_components:
+    type: entity_reference_paragraphs
+    weight: 2
+    region: content
+    settings:
+      title: Item
+      title_plural: Items
+      edit_mode: preview
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: action_list_item
+    third_party_settings: {  }
+  field_heading:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_lead:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  translation:
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

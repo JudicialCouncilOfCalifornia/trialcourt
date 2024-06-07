@@ -1,0 +1,36 @@
+uuid: eb7adfdd-a226-4ec9-9830-cc8e0d22e943
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_department
+    - node.type.tentative_ruling
+    - taxonomy.vocabulary.department
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: TxqAB44WdBks-a1-pw5bbDpCfj7Xjggw0sx3BaS1cDU
+id: node.tentative_ruling.field_department
+field_name: field_department
+entity_type: node
+bundle: tentative_ruling
+label: Department
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      department: department
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

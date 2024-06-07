@@ -1,0 +1,24 @@
+uuid: ef753281-1e53-4710-b275-1ba6ed0a81a8
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: _G7R7yvSI_ekDBMzgpd0uYiIFfyl2tgVaCbIenNACy0
+id: request_rfp_content_type_pattern
+label: 'Request (RFP) Content Type Pattern'
+type: 'canonical_entities:node'
+pattern: 'request/[node:field_rfp_number:value]/[node:field_rfp_type:value]/[node:title]'
+selection_criteria:
+  d6198b3c-40ec-4152-8708-03a5a9e24e0e:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: d6198b3c-40ec-4152-8708-03a5a9e24e0e
+    context_mapping:
+      node: node
+    bundles:
+      request: request
+selection_logic: and
+weight: -5
+relationships: {  }

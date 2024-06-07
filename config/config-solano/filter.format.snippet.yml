@@ -1,0 +1,66 @@
+uuid: be4d391e-15da-4aab-bba0-ff470e999349
+langcode: en
+status: true
+dependencies:
+  module:
+    - emptyparagraphkiller
+    - glossify_taxonomy
+    - linkit
+_core:
+  default_config_hash: hMSzP7ZixXAQS6Qf8cw7wMvCWUQHVv5tGdsxnwlf7Vc
+name: Snippet
+format: snippet
+weight: -10
+filters:
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
+    status: true
+    weight: 0
+    settings: {  }
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: true
+    weight: 0
+    settings: {  }
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<em> <strong> <ul type dir> <ol type start dir> <li> <blockquote class="blockquote blockquote--callout" dir> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary button button--primary jcc-button--cta-link jcc-button--primary button button--cta-link jcc-button--secondary button button--secondary jcc-button--cta-link button button--text" data-link-*> <p dir>'
+      filter_html_help: true
+      filter_html_nofollow: false
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
+    provider: filter
+    status: true
+    weight: 10
+    settings: {  }
+  filter_url:
+    id: filter_url
+    provider: filter
+    status: true
+    weight: 0
+    settings:
+      filter_url_length: 72
+  glossify_taxonomy:
+    id: glossify_taxonomy
+    provider: glossify_taxonomy
+    status: false
+    weight: -10
+    settings:
+      glossify_taxonomy_case_sensitivity: '1'
+      glossify_taxonomy_first_only: '1'
+      glossify_taxonomy_type: tooltips
+      glossify_taxonomy_vocabs: ''
+      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+  linkit:
+    id: linkit
+    provider: linkit
+    status: true
+    weight: 0
+    settings:
+      title: true

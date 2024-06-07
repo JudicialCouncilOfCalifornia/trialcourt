@@ -1,0 +1,36 @@
+uuid: 4b189698-3c14-4b02-9d99-b1a5d76b4334
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_department
+    - node.type.job
+    - taxonomy.vocabulary.department
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: U2rGCwugAK6l4kLE4DLHmyE01WJcJOKdWUErsgev7Kk
+id: node.job.field_department
+field_name: field_department
+entity_type: node
+bundle: job
+label: Department
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      department: department
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

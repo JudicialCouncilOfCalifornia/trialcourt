@@ -1,0 +1,51 @@
+uuid: ade8b725-b49b-4939-8f66-0c1043054b9e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_east_armenian_file
+    - media.type.publication
+  module:
+    - file
+    - filefield_paths
+    - tmgmt_content
+third_party_settings:
+  filefield_paths:
+    enabled: true
+    file_path:
+      value: '[date:custom:Y]-[date:custom:m]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    file_name:
+      value: '[file:ffp-name-only-original].[file:ffp-extension-original]'
+      options:
+        slashes: false
+        pathauto: false
+        transliterate: false
+    redirect: false
+    retroactive_update: false
+    active_updating: false
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: gEqFQKByZgwMJSf3sLG0RdT8D7iX-qtrGb0VYv141m4
+id: media.publication.field_east_armenian_file
+field_name: field_east_armenian_file
+entity_type: media
+bundle: publication
+label: 'East Armenian File'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'txt doc docx pdf'
+  max_filesize: ''
+  description_field: false
+field_type: file

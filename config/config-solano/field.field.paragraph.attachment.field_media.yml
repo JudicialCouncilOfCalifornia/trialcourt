@@ -1,0 +1,42 @@
+uuid: 59f715aa-fb5e-428e-845a-ea465078567b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_media
+    - media.type.file
+    - media.type.image
+    - media.type.publication
+    - media.type.remote_video
+    - paragraphs.paragraphs_type.attachment
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: dRwHa-fJcqQWeILURDhj6zyVWUUEGcBOi0AsHkOcd64
+id: paragraph.attachment.field_media
+field_name: field_media
+entity_type: paragraph
+bundle: attachment
+label: 'Attached media'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      file: file
+      image: image
+      publication: publication
+      remote_video: remote_video
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: file
+field_type: entity_reference

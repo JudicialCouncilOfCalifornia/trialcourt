@@ -1,0 +1,51 @@
+uuid: 22f31bb8-cc73-4639-97af-ad14d702ac4a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.iframe.field_aspect_ratio
+    - field.field.paragraph.iframe.field_link
+    - field.field.paragraph.iframe.field_manual_height
+    - field.field.paragraph.iframe.field_use_iframe_resizer
+    - paragraphs.paragraphs_type.iframe
+  module:
+    - link
+_core:
+  default_config_hash: CY5EaEA7Jp9hIUGl2hTEBKGHOL5wY5WJu8fMKl31EfU
+id: paragraph.iframe.default
+targetEntityType: paragraph
+bundle: iframe
+mode: default
+content:
+  field_aspect_ratio:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_link:
+    type: link_default
+    weight: 0
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_manual_height:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_use_iframe_resizer:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

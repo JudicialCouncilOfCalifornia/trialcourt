@@ -1,0 +1,36 @@
+uuid: d732cbdb-b59e-4e8e-84be-677fdb392d01
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_matters_served
+    - media.type.file
+    - taxonomy.vocabulary.matters_served
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: HPx_OKKAj4JKlE6evg6diK7Bfe_d6TfT18lAc7__F-s
+id: media.file.field_matters_served
+field_name: field_matters_served
+entity_type: media
+bundle: file
+label: 'Matters served'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      matters_served: matters_served
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

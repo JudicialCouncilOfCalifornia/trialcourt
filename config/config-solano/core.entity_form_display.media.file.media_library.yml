@@ -1,0 +1,105 @@
+uuid: 7c0e262d-6c53-4e71-93ec-1b64fa3c2e54
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.file.field_category
+    - field.field.media.file.field_document_type
+    - field.field.media.file.field_matters_served
+    - field.field.media.file.field_media_file
+    - field.field.media.file.field_tags
+    - media.type.file
+  module:
+    - autocomplete_deluxe
+    - cshs
+    - file
+_core:
+  default_config_hash: pmwSWE60ft0Tz9MnyD1YplIYgoS4J2xqjJsEPL6My3Q
+id: media.file.media_library
+targetEntityType: media
+bundle: file
+mode: media_library
+content:
+  directory:
+    type: options_select
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_category:
+    type: cshs
+    weight: 2
+    region: content
+    settings:
+      force_deepest: false
+      parent: ''
+      level_labels: ''
+      none_label: '- Please select -'
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
+    third_party_settings: {  }
+  field_document_type:
+    type: options_select
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_matters_served:
+    type: cshs
+    weight: 3
+    region: content
+    settings:
+      force_deepest: false
+      parent: ''
+      level_labels: ''
+      none_label: '- Please select -'
+      save_lineage: false
+      hierarchy_depth: 0
+      required_depth: 0
+    third_party_settings: {  }
+  field_media_file:
+    type: file_generic
+    weight: 1
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_tags:
+    type: autocomplete_deluxe
+    weight: 4
+    region: content
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: true
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: true
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  translation:
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  langcode: true
+  path: true
+  replace_file: true
+  status: true
+  uid: true

@@ -1,0 +1,60 @@
+uuid: 16023b93-0aa2-4fbc-a54b-94db6e0c8df2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.date_information.field_date_range
+    - field.field.paragraph.date_information.field_heading
+    - field.field.paragraph.date_information.field_text
+    - paragraphs.paragraphs_type.date_information
+  module:
+    - allowed_formats
+    - datetime_range
+    - maxlength
+    - text
+_core:
+  default_config_hash: a36_Ka8YdFqTtA-izUMntySc3deFLTJYXzev5OYYvf4
+id: paragraph.date_information.default
+targetEntityType: paragraph
+bundle: date_information
+mode: default
+content:
+  field_date_range:
+    type: daterange_default
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_heading:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_text:
+    type: text_textarea
+    weight: 3
+    region: content
+    settings:
+      rows: 3
+      placeholder: ''
+    third_party_settings:
+      allowed_formats:
+        hide_help: '1'
+        hide_guidelines: '1'
+      maxlength:
+        maxlength_js: null
+        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+        maxlength_js_enforce: false
+        maxlength_js_truncate_html: false
+  status:
+    type: boolean_checkbox
+    weight: 0
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden:
+  created: true

@@ -1,0 +1,36 @@
+uuid: f0706b45-10a2-4f48-88c5-71353bf1f6e2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_job_type
+    - node.type.job
+    - taxonomy.vocabulary.job_type
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: S3xmR7S-0_yXydvgRfbUE-hmOEARfDkPCyQtgNE7GMQ
+id: node.job.field_job_type
+field_name: field_job_type
+entity_type: node
+bundle: job
+label: Type
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      job_type: job_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

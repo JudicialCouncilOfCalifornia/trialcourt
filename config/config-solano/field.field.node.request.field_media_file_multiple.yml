@@ -1,0 +1,40 @@
+uuid: 3ac212ec-b9ea-443b-a08d-591f42e4cbfd
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_media_file_multiple
+    - media.type.file
+    - media.type.image
+    - media.type.publication
+    - node.type.request
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: aiFB6uBEsJlraZbXvtyOIJleIgUFAx73i9O7xLlU2Rc
+id: node.request.field_media_file_multiple
+field_name: field_media_file_multiple
+entity_type: node
+bundle: request
+label: 'Request Attachments (media)'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      file: file
+      image: image
+      publication: publication
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: file
+field_type: entity_reference

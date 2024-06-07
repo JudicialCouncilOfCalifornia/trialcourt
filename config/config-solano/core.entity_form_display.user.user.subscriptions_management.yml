@@ -1,0 +1,37 @@
+uuid: b9d88478-11a1-4317-aa7d-76435c932bfb
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.user.subscriptions_management
+    - field.field.user.user.field_group
+    - field.field.user.user.field_jcc_messaging_center_group
+    - field.field.user.user.field_last_password_reset
+    - field.field.user.user.field_password_expiration
+    - field.field.user.user.field_pending_expire_sent
+  module:
+    - user
+_core:
+  default_config_hash: oLZYeOlTMrPQekU5LAZG3SViJmulANAWZ1tyMSo-bwY
+id: user.user.subscriptions_management
+targetEntityType: user
+bundle: user
+mode: subscriptions_management
+content:
+  field_jcc_messaging_center_group:
+    type: options_buttons
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  account: true
+  contact: true
+  field_group: true
+  field_last_password_reset: true
+  field_password_expiration: true
+  field_pending_expire_sent: true
+  langcode: true
+  language: true
+  path: true
+  timezone: true
