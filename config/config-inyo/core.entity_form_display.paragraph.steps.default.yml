@@ -1,4 +1,4 @@
-uuid: c0f0c0e7-2930-45ab-b683-f4c42ef8614a
+uuid: 422a7409-464c-46de-becd-bb600b39b2c6
 langcode: en
 status: true
 dependencies:
@@ -6,6 +6,7 @@ dependencies:
     - field.field.paragraph.steps.field_components
     - field.field.paragraph.steps.field_heading
     - field.field.paragraph.steps.field_lead
+    - field.field.paragraph.steps.field_toggle
     - paragraphs.paragraphs_type.steps
   module:
     - paragraphs
@@ -19,7 +20,7 @@ mode: default
 content:
   field_components:
     type: entity_reference_paragraphs
-    weight: 2
+    weight: 3
     region: content
     settings:
       title: Step
@@ -44,6 +45,13 @@ content:
     settings:
       rows: 5
       placeholder: ''
+    third_party_settings: {  }
+  field_toggle:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
 hidden:
   created: true

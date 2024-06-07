@@ -78,6 +78,9 @@ function jcc_elevated_preprocess_views_view__news__sticky_list(&$variables) {
  * Implements hook_preprocess_HOOK() for news listing.
  */
 function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
+
   // Translation via TMGMT breaks dates where translators entered invalid date
   // values in date fields. if date is invalid clear it before template renders.
   foreach ($variables['rows'][0]['#rows'] as $row) {
@@ -87,8 +90,6 @@ function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
       $node->field_date->value = '';
     }
   }
-  // Remove captcha.
-  unset($variables['exposed']['captcha']);
 }
 
 /**
@@ -318,7 +319,7 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
   // Process the results for the search api view.
   foreach ($variables['rows'][0]['#rows'] as $index => $item) {
     // We have to manipulate the excerpt a little to render the html.
-    $excerpt = $item['#row']->_item->getExcerpt() ?? t('No excerpt available.')->render();
+    $excerpt = $item['#row']->_item->getExcerpt() ?? t('No preview is available for this search result. Click for more information.')->render();
     $text = [
       '#prefix' => '<p>',
       '#markup' => Html::decodeEntities($excerpt),
