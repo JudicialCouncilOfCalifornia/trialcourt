@@ -5,13 +5,36 @@
  * Contains jcc_tc2_roc_feature form_alter module functionality.
  */
 
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_form_alter().
  */
 function jcc_tc2_roc_feature_form_alter(&$form, &$form_state, $form_id): void {
+
+  if ($form_id == 'views_bulk_operations_configure_action') {
+
+    $storage = $form_state->getStorage();
+    $bulk_operation = $storage['views_bulk_operations'];
+    if ($bulk_operation['view_id'] == 'jcc_roc_views') {
+      // Rules index admin.
+      if ($bulk_operation['display_id'] == 'roc_rule_index_content_admin') {
+        // Set ROC view bulk operation to only use roc editorial workflow.
+        if (isset($form['workflow']['#options']['editorial'])) {
+          unset($form['workflow']['#options']['editorial']);
+        }
+      }
+
+      // Rules (individual item) admin.
+      if ($bulk_operation['display_id'] == 'roc_rule_content_admin') {
+        // Set ROC view bulk operation to only use roc editorial workflow.
+        if (isset($form['workflow']['#options']['editorial'])) {
+          unset($form['workflow']['#options']['editorial']);
+        }
+      }
+    }
+
+  }
 
   if ($form_id == 'layout_paragraphs_component_form') {
     // This is for the paragraph components form.

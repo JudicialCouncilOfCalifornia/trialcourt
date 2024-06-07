@@ -9,11 +9,16 @@ dependencies:
     - field.storage.node.field_roc_rule_parent_index
     - node.type.roc_rule
     - node.type.roc_rule_index
+    - user.role.administrator
+    - user.role.rules_manager
+    - workflows.workflow.roc_editorial
   module:
     - better_exposed_filters
+    - content_moderation
     - draggableviews
     - node
     - user
+    - views_bulk_operations
 id: jcc_roc_views
 label: 'Rules of Court'
 module: views
@@ -221,9 +226,12 @@ display:
           columns:
             node_bulk_form: node_bulk_form
             title: title
+            field_roc_rule_id: field_roc_rule_id
+            field_roc_rule_parent_index: field_roc_rule_parent_index
             status: status
+            moderation_state: moderation_state
             operations: operations
-          default: title
+          default: field_roc_rule_id
           info:
             node_bulk_form:
               align: ''
@@ -237,7 +245,28 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
+            field_roc_rule_id:
+              sortable: true
+              default_sort_order: desc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_roc_rule_parent_index:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
             status:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            moderation_state:
               sortable: false
               default_sort_order: asc
               align: ''
@@ -622,6 +651,8 @@ display:
       display_description: ''
       display_extenders: {  }
       block_description: 'Rules of Court Index Listing'
+      allow:
+        items_per_page: false
     cache_metadata:
       max-age: -1
       contexts:
@@ -640,16 +671,15 @@ display:
     display_options:
       title: 'Rule indexes'
       fields:
-        node_bulk_form:
-          id: node_bulk_form
-          table: node
-          field: node_bulk_form
+        views_bulk_operations_bulk_form:
+          id: views_bulk_operations_bulk_form
+          table: views
+          field: views_bulk_operations_bulk_form
           relationship: none
           group_type: group
           admin_label: ''
-          entity_type: node
-          plugin_id: node_bulk_form
-          label: 'Node operations bulk form'
+          plugin_id: views_bulk_operations_bulk_form
+          label: ''
           exclude: false
           alter:
             alter_text: false
@@ -682,7 +712,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: true
+          element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -690,15 +720,28 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
+          batch: true
+          batch_size: 50
+          form_step: true
+          buttons: false
           action_title: Action
-          include_exclude: include
+          clear_on_exposed: true
+          force_selection_info: true
           selected_actions:
-            - node_delete_action
-            - node_promote_action
-            - node_publish_action
-            - node_save_action
-            - node_unpromote_action
-            - node_unpublish_action
+            0:
+              action_id: 'moderation_state_change:node'
+              preconfiguration:
+                label_override: 'Change moderation state of rule index(es)'
+                add_confirmation: 1
+            14:
+              action_id: views_bulk_operations_delete_entity
+              preconfiguration:
+                label_override: 'Delete rule index(es)'
+            15:
+              action_id: 'entity:save_action:node'
+              preconfiguration:
+                label_override: 'Re-Save rule index(es)'
+                add_confirmation: 0
         title:
           id: title
           table: node_field_data
@@ -971,7 +1014,7 @@ display:
           entity_type: node
           entity_field: status
           plugin_id: field
-          label: Status
+          label: 'Publication status'
           exclude: false
           alter:
             alter_text: false
@@ -1016,8 +1059,71 @@ display:
           type: boolean
           settings:
             format: custom
-            format_custom_false: unpublished
-            format_custom_true: published
+            format_custom_false: Unpublished
+            format_custom_true: Published
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        moderation_state:
+          id: moderation_state
+          table: node_field_data
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: moderation_state_field
+          label: 'Moderation state'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: content_moderation_state
+          settings: {  }
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -1083,10 +1189,68 @@ display:
         type: none
         options:
           offset: 0
-      access:
-        type: perm
+      exposed_form:
+        type: bef
         options:
-          perm: 'jcc roc admin'
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: snippet
+          bef:
+            general:
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+              reset_button_always_show: false
+            filter:
+              title:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
+              field_roc_rule_index_id_value:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
+              status:
+                plugin_id: default
+                advanced:
+                  sort_options: true
+                  rewrite:
+                    filter_rewrite_values: "Yes|Published\r\nNo|Unpublished"
+                  collapsible: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
+      access:
+        type: role
+        options:
+          role:
+            administrator: administrator
+            rules_manager: rules_manager
       sorts:
         title:
           id: title
@@ -1301,6 +1465,61 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        moderation_state:
+          id: moderation_state
+          table: node_field_data
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: moderation_state_filter
+          operator: in
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: moderation_state_op
+            label: 'Moderation state'
+            description: null
+            use_operator: false
+            operator: moderation_state_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: moderation_state
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: true
+          group_info:
+            label: 'Moderation state'
+            description: ''
+            identifier: moderation_state
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: Draft
+                operator: in
+                value:
+                  roc_editorial-draft: roc_editorial-draft
+              2:
+                title: Published
+                operator: in
+                value:
+                  roc_editorial-published: roc_editorial-published
+              3:
+                title: Archived
+                operator: in
+                value:
+                  roc_editorial-archived: roc_editorial-archived
       filter_groups:
         operator: AND
         groups:
@@ -1309,6 +1528,7 @@ display:
         access: false
         title: false
         pager: false
+        exposed_form: false
         fields: false
         sorts: false
         filters: false
@@ -1338,9 +1558,10 @@ display:
         - url
         - url.query_args
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags:
         - 'config:field.storage.node.field_roc_rule_index_id'
+        - 'config:workflow_list'
   roc_rule_index_sorting:
     id: roc_rule_index_sorting
     display_title: 'Rule indexes sorting page'
@@ -1666,9 +1887,11 @@ display:
         options:
           offset: 0
       access:
-        type: perm
+        type: role
         options:
-          perm: 'jcc roc admin'
+          role:
+            administrator: administrator
+            rules_manager: rules_manager
       sorts:
         weight:
           id: weight
@@ -1858,7 +2081,7 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags:
         - 'config:field.storage.node.field_roc_rule_index_id'
         - 'config:field.storage.node.field_roc_rule_index_list_note'
@@ -1870,15 +2093,14 @@ display:
     display_options:
       title: Rules
       fields:
-        node_bulk_form:
-          id: node_bulk_form
-          table: node
-          field: node_bulk_form
+        views_bulk_operations_bulk_form:
+          id: views_bulk_operations_bulk_form
+          table: views
+          field: views_bulk_operations_bulk_form
           relationship: none
           group_type: group
           admin_label: ''
-          entity_type: node
-          plugin_id: node_bulk_form
+          plugin_id: views_bulk_operations_bulk_form
           label: ''
           exclude: false
           alter:
@@ -1920,13 +2142,36 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
+          batch: true
+          batch_size: 50
+          form_step: true
+          buttons: false
           action_title: Action
-          include_exclude: include
+          clear_on_exposed: true
+          force_selection_info: true
           selected_actions:
-            - node_delete_action
-            - node_publish_action
-            - node_save_action
-            - node_unpublish_action
+            0:
+              action_id: 'moderation_state_change:node'
+              preconfiguration:
+                label_override: 'Change moderation of state of rule(s)'
+                add_confirmation: 1
+            2:
+              action_id: archive_current_revision_action
+              preconfiguration:
+                label_override: 'Archive rule(s)'
+            3:
+              action_id: publish_latest_revision_action
+            5:
+              action_id: unpublish_current_revision_action
+            14:
+              action_id: views_bulk_operations_delete_entity
+              preconfiguration:
+                label_override: 'Delete rule(s)'
+            15:
+              action_id: 'entity:save_action:node'
+              preconfiguration:
+                label_override: 'Re-Save rule(s)'
+                add_confirmation: 0
         title:
           id: title
           table: node_field_data
@@ -2128,7 +2373,7 @@ display:
           entity_type: node
           entity_field: status
           plugin_id: field
-          label: Status
+          label: 'Publication status'
           exclude: false
           alter:
             alter_text: false
@@ -2175,6 +2420,69 @@ display:
             format: custom
             format_custom_false: Unpublished
             format_custom_true: Published
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        moderation_state:
+          id: moderation_state
+          table: node_field_data
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: moderation_state_field
+          label: 'Moderation state'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: content_moderation_state
+          settings: {  }
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -2268,7 +2576,7 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
           text_input_required: 'Select any filter and click on Apply to see results'
-          text_input_required_format: null
+          text_input_required_format: snippet
           bef:
             general:
               autosubmit: false
@@ -2280,17 +2588,55 @@ display:
               secondary_label: 'Advanced options'
               secondary_open: false
               reset_button_always_show: false
-            sort:
-              plugin_id: default
             filter:
               title:
                 plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
+              field_roc_rule_id_value:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
+              field_roc_rule_parent_index_target_id:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
               status:
                 plugin_id: default
+                advanced:
+                  sort_options: true
+                  rewrite:
+                    filter_rewrite_values: "Yes|Published\r\nNo|Unpublished"
+                  collapsible: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
       access:
-        type: perm
+        type: role
         options:
-          perm: 'jcc roc admin'
+          role:
+            administrator: administrator
+            rules_manager: rules_manager
       sorts: {  }
       filters:
         type:
@@ -2546,6 +2892,76 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        moderation_state:
+          id: moderation_state
+          table: node_field_data
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: moderation_state_filter
+          operator: in
+          value:
+            roc_editorial-draft: roc_editorial-draft
+            roc_editorial-published: roc_editorial-published
+            roc_editorial-archived: roc_editorial-archived
+          group: 1
+          exposed: true
+          expose:
+            operator_id: moderation_state_op
+            label: 'Moderation state'
+            description: ''
+            use_operator: false
+            operator: moderation_state_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: moderation_state
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+              rules_manager: '0'
+            reduce: true
+          is_grouped: true
+          group_info:
+            label: 'Moderation state'
+            description: ''
+            identifier: moderation_state
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: Draft
+                operator: in
+                value:
+                  roc_editorial-draft: roc_editorial-draft
+              2:
+                title: Published
+                operator: in
+                value:
+                  roc_editorial-published: roc_editorial-published
+              3:
+                title: Archived
+                operator: in
+                value:
+                  roc_editorial-archived: roc_editorial-archived
       filter_groups:
         operator: AND
         groups:
@@ -2584,7 +3000,8 @@ display:
         - url
         - url.query_args
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags:
         - 'config:field.storage.node.field_roc_rule_id'
         - 'config:field.storage.node.field_roc_rule_parent_index'
+        - 'config:workflow_list'
