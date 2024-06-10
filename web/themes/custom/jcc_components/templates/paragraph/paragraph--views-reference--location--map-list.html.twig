@@ -38,16 +38,15 @@
  * @ingroup themeable
  */
 #}
-
 {% set locations = [] %}
 {% for row in location_items %}
   {% set address %}
     {{ row.address|view }} {{ row.phone|view }}
   {% endset %}
-
   {% set item = {
     title: row.title,
-    address: address
+    address: address,
+    title_url: row.location_detail_page_url,
   } %}
   {% set locations = locations|merge([item]) %}
 {% endfor %}
