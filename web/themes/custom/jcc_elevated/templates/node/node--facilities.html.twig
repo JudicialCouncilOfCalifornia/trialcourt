@@ -20,7 +20,14 @@
       aspect: [],
       clickable_card: false,
       background: null,
-      media: mediacontent,     
+      media: mediacontent,
+       media_caption: {
+            show: hero_caption or hero_citation ? true,
+            text: hero_caption,
+            citation: hero_citation,
+            overlay: true,
+          },         
+             
     } %} 
   {% endset %} 
 
@@ -114,7 +121,7 @@
           text: '',  
          media_caption: {
             show: image.caption or image.citation ? true,
-            text: image.caption,
+            text: image.caption ~ image.citation ~ media_caption.show,
             citation: image.citation,
             overlay: true,
           },         
