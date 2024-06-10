@@ -124,6 +124,14 @@
     {% if opinion.related_cases %}
       <p>Related Cases: {{ opinion.related_cases|raw }}</p>
     {% endif %}
+
+    {% if opinion.citings %}
+      <p>Web Page Citings:</p>
+      {% include "@molecules/List/List.twig" with {
+        variant: 'ul',
+        items: opinion.citings|raw,
+      } %}
+    {% endif %}
   </div>
 {% endset %}
 
