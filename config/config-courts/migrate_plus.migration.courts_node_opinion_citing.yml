@@ -104,9 +104,23 @@ process:
       to_format: Y-m-d
   field_case_number_plain: case
   field_related_cases_plain: related
+  field_media_file_multiple:
+    -
+      plugin: jcc_attach_opinion_citing
+      source: case
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: multiple_values
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'No media to attach to opinion.'
 destination:
   plugin: 'entity:node'
   default_bundle: opinion
-migration_dependencies:
-  required:
-    - courts_media_opinion_citing
+migration_dependencies: null
