@@ -78,10 +78,8 @@
 
 <article{{attributes}}>
   {% block layout %}
-  {# Display breadcrumb #}
   {{ breadcrumb }}
 
-  {# {{dump(content)}} #}
   <div class="name_header">
 
     <h2>{{content.field_last_name.0['#context']['value']}},{{content.field_first_name.0['#context']['value']}}</h2>
@@ -93,21 +91,24 @@
 
     <p class="name_personal_bio">Full Name: {{content.field_last_name.0['#context']['value']}},{{content.field_first_name.0['#context']['value']}}<br>
       Email: <a href="mailto:{{content.field_email_address.0['#context']['value']}}">{{content.field_email_address.0['#context']['value']}}</a><br>
-      Phone Number: <a href="{{content.field_phone_number.0['#context']['value']}}">{{content.field_phone_number.0['#context']['value']}}</a><br>
+      Phone Number: <a href="tel:{{content.field_phone_number.0['#context']['value']}}">{{content.field_phone_number.0['#context']['value']}}</a><br>
       {% set fax=content.field_fax.0['#context']['value'] %}
       {% if fax %}
         Fax:{{content.field_fax.0['#context']['value']}}
       {%endif%}
       <br>
-    <div class="address-title">Address</div>
-    {{content.field_address}}</div>
-    {% set county=content.field_county.0['#context']['value'] %}
-    {% if county != null %}
-      <p>County:{{county}}</p>
+    <div class="address-container">
+      <div class="address-title"></div>
+      {{ content.field_address }}
+    </div>
+    {% if content.field_county.0['#context']['value'] %}
+      <div class="county-container">
+        <p>County: {{ content.field_county.0['#context']['value'] }}</p>
+      </div>
     {% endif %}
+  </div>
     <br>
-
-
+    
     <div class="general_information">
       {% set mediator =content.field_mediator %}
 
@@ -261,10 +262,9 @@
           <table class="arbitrator-table-custom">
             <tbody>
             {% for linkData in linksArray %}
-              {% if linkData['#title'] %}
+              {% if linkData.value %}
                 <tr>
-                  <td>{{ linkData['#title'] }}/td>
-
+                  <td>{{ linkData.value }}</td>
                 </tr>
               {% endif %}
             {% endfor %}
@@ -293,9 +293,5 @@
         </table>
       </div>
     {% endif %}
-    {# {% set county=content.field_county.0['#context']['value'] %}
-                                            {% if county != null %}
-                                                <p>County:{{county}}</p>
-                                            {% endif %} #}
     {% endblock %}
 </article>
