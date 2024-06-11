@@ -211,6 +211,9 @@ process:
   body/format:
     plugin: default_value
     default_value: body
+  body/teaser:
+    plugin: get
+    source: field_summary    
   field_summary/value:
     -
       plugin: media_replace_file_link
@@ -365,6 +368,7 @@ process:
     - 
       plugin: callback
       callable: trim
+      source: field_award
     -
       plugin: skip_on_empty
       method: process
