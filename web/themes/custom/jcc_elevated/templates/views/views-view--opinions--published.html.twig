@@ -46,9 +46,9 @@
 {% set items = [] %}
 {% for opinion in opinions %}
   {% set notation %}
-    {{ opinion.source and opinion.type ? opinion.source : '(Select court)' }}
-    {{ opinion.source and opinion.type ? ' • ' ~ opinion.type : '' }}
-    {{ opinion.source and opinion.type and opinion.review_granted ? ' • Review Granted' : '' }}
+    {{ opinion.source ? opinion.source : '(Select court)' }}
+    {{ opinion.type ? ' • ' ~ opinion.type : '' }}
+    {{ opinion.review_granted ? ' • Review Granted' : '' }}
   {% endset %}
 
   {% set content %}
