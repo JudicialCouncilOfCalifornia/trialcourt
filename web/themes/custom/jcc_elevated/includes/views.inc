@@ -468,7 +468,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       if ($teaser != '') {
         $event['content']['#markup'] .= '<div>' . $teaser . '</div>';
       }
-      $event['content']['#markup'] .= is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Meeting Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
+      $event['content']['#markup'] .= is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Event Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
       $event['content']['#markup'] .= '<div>' . $event_date_time . '</div>';
 
       if ($event_granicus_link != '') {
@@ -539,7 +539,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       $event_state_id = $node->hasField('field_event_state') ? $node->get('field_event_state')->target_id : FALSE;
 
       $event['title'] = $node->get('title')->value;
-      $event['content']['#markup'] = is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Meeting Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
+      $event['content']['#markup'] = is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Event Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
       if ($teaser != '') {
         $event['content']['#markup'] .= '<div>' . $teaser . '</div>';
       }
