@@ -457,6 +457,9 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       // Get Event state.
       $event_state_id = $node->hasField('field_event_state') ? $node->get('field_event_state')->target_id : FALSE;
 
+      // Get Event granicus link.
+      $event_granicus_link = $node->hasField('field_granicus_link') ? $node->get('field_granicus_link')->view()[0]["#text"] : FALSE;
+
       // Get event time start and end.
       $event_date_time = '<strong>Time: </strong> ' . $node->field_event_date->start_date->format('g:i a') . ' to ' . $node->field_event_date->end_date->format('g:i a');
 
@@ -467,6 +470,10 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       }
       $event['content']['#markup'] .= is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Meeting Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
       $event['content']['#markup'] .= '<div>' . $event_date_time . '</div>';
+
+      if ($event_granicus_link != '') {
+        $event['content']['#markup'] .= '<div><strong>' . $node->get('field_granicus_link')->view()['#title'] . ': </strong>' . $event_granicus_link . '</div>';
+      }
 
       if ($event_files != '') {
         $event['content']['#markup'] .= '<div>' . $event_files . '</div>';
@@ -525,6 +532,9 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
         }
       }
 
+      // Get Event granicus link.
+      $event_granicus_link = $node->hasField('field_granicus_link') ? $node->get('field_granicus_link')->view()[0]["#text"] : FALSE;
+
       // Get Event state.
       $event_state_id = $node->hasField('field_event_state') ? $node->get('field_event_state')->target_id : FALSE;
 
@@ -532,6 +542,9 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       $event['content']['#markup'] = is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Meeting Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
       if ($teaser != '') {
         $event['content']['#markup'] .= '<div>' . $teaser . '</div>';
+      }
+      if ($event_granicus_link != '') {
+        $event['content']['#markup'] .= '<div><strong>' . $node->get('field_granicus_link')->view()['#title'] . ': </strong>' . $event_granicus_link . '</div>';
       }
       if ($event_files != '') {
         $event['content']['#markup'] .= '<div>' . $event_files . '</div>';
