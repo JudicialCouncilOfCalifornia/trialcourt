@@ -211,6 +211,162 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
 }
 
 /**
+ * Node: Facilities preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): void {
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $basic_page = Node::load($node->id());
+  $variables['node'] = $node;
+  $field_schedule_render_array = $node->field_schedule->view('default');
+  if ($field_schedule_render_array['#items'] && !$field_schedule_render_array['#items']->isEmpty()) {
+    $schedule_content = render($field_schedule_render_array[0]['#text']);
+  }
+  $completion_date = $node->get('field_completion_date')->date ? $node->get('field_completion_date')->date->format('F j, Y') : '';
+  $occupancy_date = $node->get('field_occupancy_date')->date ? $node->get('field_occupancy_date')->date->format('F j, Y') : '';
+  $ceqa = $node->field_ceqa->view('default');
+  $ceqa_content = '';
+  if (isset($ceqa['#items']) && !$ceqa['#items']->isEmpty()) {
+    $ceqa_content = render($ceqa[0]['#text']);
+  }
+
+  $summary = $node->field_summary->view('default');
+  if ($summary['#items'] && !$summary['#items']->isEmpty()) {
+    $summary_content = render($summary[0]['#text']);
+  }
+
+  if (isset($variables['node']) && $node->hasField('field_design_build_entity')) {
+    $design_build_entity = $node->get('field_design_build_entity')->value;
+  }
+
+  if (isset($variables['node']) && $node->hasField('field_initial_funding_year')) {
+    $initial_funding_year = $node->get('field_initial_funding_year')->value;
+  }
+
+  $agency_manager = $node->hasField('field_agency_manager') ? $node->get('field_agency_manager')->target_id : FALSE;
+  $agency = $node->hasField('field_agency') ? $node->get('field_agency')->target_id : FALSE;
+  $contractor = $node->hasField('field_general_contractor') ? $node->get('field_general_contractor')->target_id : FALSE;
+  $criteria_architect = $node->hasField('field_criteria_architect') ? $node->get('field_criteria_architect')->target_id : FALSE;
+  $managed_by = $node->hasField('field_managed_by') ? $node->get('field_managed_by')->target_id : FALSE;
+  $county = $node->hasField('field_facility_county') ? $node->get('field_facility_county')->target_id : FALSE;
+  $field_award_rendered = '';
+
+  if ($node->hasField('field_award')) {
+    $renderer = \Drupal::service('renderer');
+    $field_award_rendered = $renderer->renderRoot($variables['content']['field_award']);
+  }
+
+  $details = [
+    'project_information' => [
+      'Gross Square Footage' => $node->field_gross_square_footage->value,
+      'Total Courtrooms' => $node->field_total_courtrooms->value,
+      'Current Authorized Project Budget' => $node->field_budget->value,
+      'Architectural/Engineering Firm'  => $node->field_architectural_engineering_->value,
+      'General Contractor' => $node->field_general_contractor->value,
+      'Fund' => $node->field_fund->value,
+      'Completion Date' => $completion_date,
+      'Design-Build Entity' => $design_build_entity,
+      'Initial Funding Year' => $initial_funding_year,
+      'Occupancy Date' => $occupancy_date,
+      'Construction Manager At Risk' => $agency_manager && $taxonomy_manager->load($agency_manager) ? $taxonomy_manager->load($agency_manager)->get('name')->value : '',
+      'Construction Management Agency' => $agency && $taxonomy_manager->load($agency) ? $taxonomy_manager->load($agency)->get('name')->value : '',
+      'General Contractor' => $contractor && $taxonomy_manager->load($contractor) ? $taxonomy_manager->load($contractor)->get('name')->value : '',
+      'Criteria Architect' => $criteria_architect && $taxonomy_manager->load($criteria_architect) ? $taxonomy_manager->load($criteria_architect)->get('name')->value : '',
+      'Managed By' => $managed_by && $taxonomy_manager->load($managed_by) ? $taxonomy_manager->load($managed_by)->get('name')->value : '',
+    ],
+    'schedule' => $schedule_content,
+    'ceqa' => $ceqa_content,
+    'summary' => $summary_content,
+    'status' => $node->field_project_status->value == 'inprogress' ? 'In-Progress' : 'Completed',
+    'hero_title' => $node->field_hero_title,
+    'county' => $county && $taxonomy_manager->load($county) ? $taxonomy_manager->load($county)->get('name')->value : '',
+  ];
+  $projectimages = [];
+  foreach ($node->field_media_file_multiple as $media_file) {
+    if (!empty($media_file->target_id)) {
+      $media = Media::load($media_file->target_id);
+      if ($media && $media->field_media_image->entity) {
+        $uri = $media->field_media_image->entity->getFileUri();
+        $media_url = file_create_url($uri);
+      }
+      if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
+        $caption_value = $media->get('field_media_caption')->value;
+        $citation_value = $media->get('field_media_citation')->value;
+        $caption = $caption_value !== NULL ? strip_tags($caption_value) : '';
+        $citation = $citation_value !== NULL ? strip_tags($citation_value) : '';
+      }
+      $projectimages[] = [
+        'url' => $media_url,
+        'caption' => $caption,
+        'citation' => $citation,
+      ];
+    }
+  }
+  $variables['projectimages'] = $projectimages;
+
+  if ($basic_page->hasField('field_media')) {
+    $hero_image = $basic_page->get('field_media');
+    $media = Media::load($hero_image->target_id);
+    if ($media && $media->field_media_image) {
+      $uri = $media->field_media_image->entity->getFileUri();
+      $image_url = file_create_url($uri);
+      $variables['imageurl'] = $image_url;
+      if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
+        $caption_value = $media->get('field_media_caption')->value;
+        $citation_value = $media->get('field_media_citation')->value;
+        $caption = $caption_value !== NULL ? strip_tags($caption_value) : '';
+        $citation = $citation_value !== NULL ? strip_tags($citation_value) : '';
+        $variables['hero_caption'] = $caption;
+        $variables['hero_citation'] = $citation;
+      }
+    }
+  }
+
+  if (!empty($details['summary'])) {
+    $elements[] = "<h2>Project Info</h2>";
+    $elements[] = $details['summary'];
+    $elements[] = "<br />";
+    $elements[] = "<hr />";
+    $elements[] = "<br />";
+  }
+
+  if (!empty($node->body->value)) {
+    $elements[] = "<h2>Background</h2>";
+    $elements[] = $node->body->value;
+    $elements[] = "<br />";
+    $elements[] = "<hr />";
+    $elements[] = "<br />";
+  }
+
+  if (!empty($details['schedule'])) {
+    $elements[] = "<h2>Schedule</h2>";
+    $elements[] = $details['schedule'];
+    $elements[] = "<br />";
+    $elements[] = "<hr />";
+    $elements[] = "<br />";
+  }
+
+  if (!empty($field_award_rendered)) {
+    $elements[] = "<h2>Awards & Recognition</h2>";
+    $elements[] = $field_award_rendered;
+    $elements[] = "<br />";
+  }
+  if (!empty($projectimages)) {
+    $elements[] = "<h2>Project Images</h2>";
+  }
+  foreach ($elements as $element) {
+    $body[]['#text'] = $element;
+  }
+  $variables['content']['body'] = $body;
+  $variables['details'] = $details;
+}
+
+/**
  * Node: Alerts preprocess.
  *
  * @param array $variables

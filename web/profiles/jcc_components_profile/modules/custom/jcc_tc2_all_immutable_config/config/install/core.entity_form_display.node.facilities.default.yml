@@ -1,0 +1,452 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.facilities.body
+    - field.field.node.facilities.field_agency
+    - field.field.node.facilities.field_agency_manager
+    - field.field.node.facilities.field_architectural_engineering_
+    - field.field.node.facilities.field_award
+    - field.field.node.facilities.field_budget
+    - field.field.node.facilities.field_ceqa
+    - field.field.node.facilities.field_completion_date
+    - field.field.node.facilities.field_consortium_partners
+    - field.field.node.facilities.field_county
+    - field.field.node.facilities.field_criteria_architect
+    - field.field.node.facilities.field_design_build_entity
+    - field.field.node.facilities.field_facility_county
+    - field.field.node.facilities.field_fund
+    - field.field.node.facilities.field_general_contractor
+    - field.field.node.facilities.field_gross_square_footage
+    - field.field.node.facilities.field_hero_title
+    - field.field.node.facilities.field_initial_funding_year
+    - field.field.node.facilities.field_managed_by
+    - field.field.node.facilities.field_media
+    - field.field.node.facilities.field_media_file_multiple
+    - field.field.node.facilities.field_occupancy_date
+    - field.field.node.facilities.field_planning_study
+    - field.field.node.facilities.field_project_advisory_group
+    - field.field.node.facilities.field_project_company
+    - field.field.node.facilities.field_project_delivery_method
+    - field.field.node.facilities.field_project_financing
+    - field.field.node.facilities.field_project_status
+    - field.field.node.facilities.field_schedule
+    - field.field.node.facilities.field_summary
+    - field.field.node.facilities.field_total_capital_project_cost
+    - field.field.node.facilities.field_total_courtrooms
+    - node.type.facilities
+  module:
+    - content_moderation
+    - datetime
+    - field_group
+    - media_library
+    - path
+    - scheduler
+    - scheduler_content_moderation_integration
+    - shs
+    - text
+third_party_settings:
+  field_group:
+    group_details:
+      children:
+        - field_gross_square_footage
+        - field_initial_funding_year
+        - field_architectural_engineering_
+        - field_fund
+        - field_budget
+        - field_agency_manager
+        - field_agency
+        - field_general_contractor
+        - field_criteria_architect
+        - field_managed_by
+        - field_design_build_entity
+        - field_occupancy_date
+        - field_total_courtrooms
+        - field_completion_date
+        - field_planning_study
+        - field_project_company
+        - field_consortium_partners
+        - field_project_financing
+        - field_total_capital_project_cost
+        - field_project_delivery_method
+      label: Details
+      region: content
+      parent_name: ''
+      weight: 18
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+id: node.facilities.default
+targetEntityType: node
+bundle: facilities
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 19
+    region: content
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+  created:
+    type: datetime_timestamp
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_agency:
+    type: entity_reference_autocomplete
+    weight: 35
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_agency_manager:
+    type: entity_reference_autocomplete
+    weight: 34
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_architectural_engineering_:
+    type: entity_reference_autocomplete
+    weight: 30
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_award:
+    type: options_shs
+    weight: 25
+    region: content
+    settings:
+      display_node_count: false
+      create_new_items: false
+      create_new_levels: false
+      force_deepest: true
+    third_party_settings: {  }
+  field_budget:
+    type: string_textfield
+    weight: 33
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_ceqa:
+    type: text_textarea_with_summary
+    weight: 22
+    region: content
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+  field_completion_date:
+    type: string_textfield
+    weight: 42
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_consortium_partners:
+    type: text_textarea
+    weight: 45
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_criteria_architect:
+    type: entity_reference_autocomplete
+    weight: 37
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_design_build_entity:
+    type: text_textarea_with_summary
+    weight: 39
+    region: content
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+  field_facility_county:
+    type: entity_reference_autocomplete
+    weight: 17
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_fund:
+    type: string_textfield
+    weight: 32
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_general_contractor:
+    type: entity_reference_autocomplete
+    weight: 36
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_gross_square_footage:
+    type: string_textfield
+    weight: 28
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_hero_title:
+    type: text_textarea
+    weight: 16
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_initial_funding_year:
+    type: string_textfield
+    weight: 29
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_managed_by:
+    type: entity_reference_autocomplete
+    weight: 38
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_media:
+    type: entity_reference_autocomplete
+    weight: 14
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_media_file_multiple:
+    type: media_library_widget
+    weight: 23
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_occupancy_date:
+    type: datetime_default
+    weight: 40
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_planning_study:
+    type: text_textarea
+    weight: 43
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_project_advisory_group:
+    type: text_textarea
+    weight: 24
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_project_company:
+    type: text_textarea
+    weight: 44
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_project_delivery_method:
+    type: text_textarea
+    weight: 48
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_project_financing:
+    type: text_textarea
+    weight: 46
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_project_status:
+    type: options_select
+    weight: 15
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_schedule:
+    type: text_textarea
+    weight: 20
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_summary:
+    type: text_textarea_with_summary
+    weight: 21
+    region: content
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+  field_total_capital_project_cost:
+    type: text_textarea
+    weight: 47
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_total_courtrooms:
+    type: string_textfield
+    weight: 41
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 1
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 12
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    weight: 4
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  publish_on:
+    type: datetime_timestamp_no_default
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  publish_state:
+    type: scheduler_moderation
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 13
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    weight: 5
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 2
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  unpublish_on:
+    type: datetime_timestamp_no_default
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  unpublish_state:
+    type: scheduler_moderation
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  url_redirects:
+    weight: 11
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_county: true

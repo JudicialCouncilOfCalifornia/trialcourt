@@ -1,0 +1,299 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.facilities.body
+    - field.field.node.facilities.field_agency
+    - field.field.node.facilities.field_agency_manager
+    - field.field.node.facilities.field_architectural_engineering_
+    - field.field.node.facilities.field_award
+    - field.field.node.facilities.field_budget
+    - field.field.node.facilities.field_ceqa
+    - field.field.node.facilities.field_completion_date
+    - field.field.node.facilities.field_consortium_partners
+    - field.field.node.facilities.field_county
+    - field.field.node.facilities.field_criteria_architect
+    - field.field.node.facilities.field_design_build_entity
+    - field.field.node.facilities.field_facility_county
+    - field.field.node.facilities.field_fund
+    - field.field.node.facilities.field_general_contractor
+    - field.field.node.facilities.field_gross_square_footage
+    - field.field.node.facilities.field_hero_title
+    - field.field.node.facilities.field_initial_funding_year
+    - field.field.node.facilities.field_managed_by
+    - field.field.node.facilities.field_media
+    - field.field.node.facilities.field_media_file_multiple
+    - field.field.node.facilities.field_occupancy_date
+    - field.field.node.facilities.field_planning_study
+    - field.field.node.facilities.field_project_advisory_group
+    - field.field.node.facilities.field_project_company
+    - field.field.node.facilities.field_project_delivery_method
+    - field.field.node.facilities.field_project_financing
+    - field.field.node.facilities.field_project_status
+    - field.field.node.facilities.field_schedule
+    - field.field.node.facilities.field_summary
+    - field.field.node.facilities.field_total_capital_project_cost
+    - field.field.node.facilities.field_total_courtrooms
+    - node.type.facilities
+  module:
+    - cshs
+    - datetime
+    - options
+    - text
+    - user
+id: node.facilities.default
+targetEntityType: node
+bundle: facilities
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_agency:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_agency_manager:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_architectural_engineering_:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  field_award:
+    type: cshs_group_by_root
+    label: hidden
+    settings:
+      linked: false
+      reverse: false
+      sort: none
+      depth: 0
+      last_child: false
+    third_party_settings: {  }
+    weight: 125
+    region: content
+  field_budget:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_ceqa:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 116
+    region: content
+  field_completion_date:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 128
+    region: content
+  field_consortium_partners:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 131
+    region: content
+  field_criteria_architect:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 121
+    region: content
+  field_design_build_entity:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 124
+    region: content
+  field_facility_county:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 135
+    region: content
+  field_fund:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  field_general_contractor:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 119
+    region: content
+  field_gross_square_footage:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 127
+    region: content
+  field_hero_title:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 134
+    region: content
+  field_initial_funding_year:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 109
+    region: content
+  field_managed_by:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 122
+    region: content
+  field_media:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 115
+    region: content
+  field_media_file_multiple:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 111
+    region: content
+  field_occupancy_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 110
+    region: content
+  field_planning_study:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 118
+    region: content
+  field_project_advisory_group:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 120
+    region: content
+  field_project_company:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 130
+    region: content
+  field_project_delivery_method:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 132
+    region: content
+  field_project_financing:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 133
+    region: content
+  field_project_status:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 112
+    region: content
+  field_schedule:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 113
+    region: content
+  field_summary:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 123
+    region: content
+  field_total_capital_project_cost:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 129
+    region: content
+  field_total_courtrooms:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 126
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_county: true
+  langcode: true
+  search_api_excerpt: true
