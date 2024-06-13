@@ -235,11 +235,6 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     $ceqa_content = render($ceqa[0]['#text']);
   }
 
-  $summary = $node->field_summary->view('default');
-  if ($summary['#items'] && !$summary['#items']->isEmpty()) {
-    $summary_content = render($summary[0]['#text']);
-  }
-
   if (isset($variables['node']) && $node->hasField('field_design_build_entity')) {
     $design_build_entity = $node->get('field_design_build_entity')->value;
   }
@@ -281,7 +276,6 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     ],
     'schedule' => $schedule_content,
     'ceqa' => $ceqa_content,
-    'summary' => $summary_content,
     'status' => $node->field_project_status->value == 'inprogress' ? 'In-Progress' : 'Completed',
     'hero_title' => $node->field_hero_title,
     'county' => $county && $taxonomy_manager->load($county) ? $taxonomy_manager->load($county)->get('name')->value : '',
@@ -326,10 +320,9 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       }
     }
   }
-
-  if (!empty($details['summary'])) {
+  if (!empty($node->body->summary)) {
     $elements[] = "<h2>Project Info</h2>";
-    $elements[] = $details['summary'];
+    $elements[] = $node->body->summary;
     $elements[] = "<br />";
     $elements[] = "<hr />";
     $elements[] = "<br />";
