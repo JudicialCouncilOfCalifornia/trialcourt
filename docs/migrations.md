@@ -56,6 +56,8 @@ You should see import progress.
 - `drush mim --update [migration]` - Update an imported migration if data changes.
 - `drush mst [migration] && drush mrs [migration]` - First STOP and then RESET status of a stuck migration.
 
+Import options used by drush from Migrate Tools: https://www.drush.org/11.x/commands/migrate_import/
+
 ### Drupal UI (Beta)
 
  - Navigate to “Structure > Migrations” https://stage-jcc-tc.pantheonsite.io/admin/structure/migrate

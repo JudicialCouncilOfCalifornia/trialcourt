@@ -797,10 +797,30 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
     }
   }
 
+  // Citings.
+  $citings = [];
+  if ($node->get('field_media_file_multiple')->getValue()) {
+    foreach ($node->get('field_media_file_multiple')->getValue() as $citing) {
+      $media = Media::load($citing['target_id']);
+      $file = File::load($media->get('field_media_file')->target_id);
+      if ($file) {
+        $citing_title = $media->get('field_media_text')->value;
+        if (is_null($citing_title)) {
+          $citing_title = $media->get('name')->value;
+        }
+        $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
+        $citings[] = [
+          'text' => ['#markup' => '<a href="' . $file_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
+        ];
+      }
+    }
+  }
+
   $opinion = [
     'details' => $case_number && $opinion_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
     'remote_files' => $remote_files,
     'related_cases' => $related_cases_urls ? implode(' ', $related_cases_urls) : '',
+    'citings' => $citings,
   ];
 
   $variables['opinion'] = $opinion;
