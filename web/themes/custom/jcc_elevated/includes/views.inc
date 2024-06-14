@@ -781,6 +781,7 @@ function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
  * Implements hook_preprocess_views_view() for published opinions listing block.
  */
 function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
+  $client = \Drupal::httpClient();
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
@@ -801,7 +802,6 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     $title = $node->get('title')->value;
 
     // Remote file locations.
-    $client = \Drupal::httpClient();
     $remote_files = [];
     $file_url_base = 'https://courts.ca.gov/opinions/';
     if ($type == 'Unpublished') {
