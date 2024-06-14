@@ -1075,3 +1075,20 @@ function jcc_tc2_all_immutable_config_update_9006(): void {
 
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * COURTS-12-facilities Programatically delete fields .
+ */
+function jcc_tc2_all_immutable_config_update_9007(): void {
+  $delete_fields = ['field_summary', 'field_county'];
+  foreach ($delete_fields as $field_name) {
+    $field = FieldConfig::loadByName('node', 'facilities', $field_name);
+    if ($field) {
+      $field->delete();
+    }
+  }
+  $field_storage = FieldStorageConfig::loadByName('node', 'field_summary');
+  if ($field_storage) {
+    $field_storage->delete();
+  }
+}
