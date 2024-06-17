@@ -885,6 +885,7 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
   $opinion_source = $node->get('field_opinion_source')->target_id ? Term::load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
   $review_granted = $node->get('field_review_granted')->value;
+  $download_aria = t('Download or view opinion document');
 
   // Remote file locations.
   $client = \Drupal::httpClient();
@@ -907,51 +908,46 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   $pdf_case = $case_number . '.PDF';
   $pdf_url = $url . $pdf_case;
   try {
-    $request = $client->get($pdf_url);
-    $pdf_status = $request->getStatusCode();
+    $client->head($pdf_url)->getStatusCode();
+    $remote_files[] = [
+      'url' => $pdf_url,
+      'file_type' => 'PDF',
+      'aria_label' => $download_aria . ' ' . $pdf_case,
+    ];
   }
   catch (RequestException $e) {
     $message = $e->getMessage();
     \Drupal::logger('opinion')->warning($message);
   }
-  if ($pdf_status == 200) {
+
+  // DOCX or DOC.
+  $doc_type = 'DOCX';
+  $docx_case = $case_number . '.' . $doc_type;
+  $docx_url = $url . $docx_case;
+  try {
+    $client->head($docx_url)->getStatusCode();
     $remote_files[] = [
-      'url' => $pdf_url,
-      'file_type' => 'PDF',
-      'aria_label' => t('Download or view') . ' ' . $pdf_case,
+      'url' => $docx_url,
+      'file_type' => 'DOCX',
+      'aria_label' => $download_aria . ' ' . $docx_case,
     ];
   }
-  // DOCX or DOC.
-  $docx_status = NULL;
-  $doc_status = NULL;
-  $docx_case = $case_number . '.DOCX';
-  $docx_url = $url . $docx_case;
-  $doc_case = $case_number . '.DOC';
-  $doc_url = $url . $doc_case;
-  try {
-    if ($client->get($docx_url)) {
-      $request = $client->get($docx_url);
-      $docx_status = $request->getStatusCode();
-    }
-  }
   catch (RequestException) {
+    $doc_type = 'DOC';
+    $doc_case = $case_number . '.' . $doc_type;
+    $doc_url = $url . $doc_case;
     try {
-      if ($client->get($doc_url)) {
-        $request = $client->get($doc_url);
-        $doc_status = $request->getStatusCode();
-      }
+      $client->head($doc_url)->getStatusCode();
+      $remote_files[] = [
+        'url' => $doc_url,
+        'file_type' => 'DOC',
+        'aria_label' => $download_aria . ' ' . $doc_case,
+      ];
     }
     catch (RequestException $e) {
       $message = $e->getMessage();
       \Drupal::logger('opinion')->warning($message);
     }
-  }
-  if ($docx_status == 200 || $doc_status == 200) {
-    $remote_files[] = [
-      'url' => $docx_status == 200 ? $docx_url : $doc_url,
-      'file_type' => $docx_status == 200 ? 'DOCX' : 'DOC',
-      'aria_label' => t('Download or view opinion document') . ' ' . $doc_case ? $doc_case : $docx_case,
-    ];
   }
 
   // Related cases.

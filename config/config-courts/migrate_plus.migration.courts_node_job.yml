@@ -12,11 +12,12 @@ migration_tags:
   - job
 migration_group: courts
 label: 'Courts: Import Job Postings'
+description: 'Scheduled migrations of HREMS job postings.'
 source:
   plugin: url
   data_fetcher_plugin: http
   data_parser_plugin: xml
-  urls: 'https://live-jcc-courts.pantheonsite.io/sites/default/files/courts/default/upload/JCCJobOpening.xml'
+  urls: https://live-jcc-courts.pantheonsite.io/sites/default/files/courts/default/upload/JCCJobOpening.xml
   item_selector: /root/jcc_apl_tao
   fields:
     -
