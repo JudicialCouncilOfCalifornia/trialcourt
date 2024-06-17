@@ -651,6 +651,7 @@ function jcc_elevated_preprocess_views_view__facilities_awards_and_recognition__
     if (!in_array($child->id(), $all_parent_ids)) {
       $child_name = $child->getName();
       $misc_awards .= "<p>{$child_name} ";
+      $node_titles = get_node_titles_by_term($child->id());
       if (!empty($node_titles)) {
         $misc_awards .= ": " . implode(", ", $node_titles);
       }
@@ -682,7 +683,7 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
     $node = $row['#node'];
     $detail_list_data = [
       'details' => array_filter([
-        $node->get('field_county')->value,
+        $node->get('field_facility_county')->value,
       ]),
     ];
     $status = $node->get('field_project_status')->value == 'inprogress' ? 'In-Progress' : 'Completed';

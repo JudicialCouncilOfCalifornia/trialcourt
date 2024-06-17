@@ -211,15 +211,7 @@ process:
   body/format:
     plugin: default_value
     default_value: body
-  field_summary/value:
-    -
-      plugin: media_replace_file_link
-      source: field_summary
-    -
-      plugin: prefix_relative_links
-  field_summary/format:
-    plugin: default_value
-    default_value: full_html
+  body/summary: field_summary
   field_schedule/value:
     -
       plugin: media_replace_file_link
@@ -228,7 +220,7 @@ process:
       plugin: prefix_relative_links
   field_schedule/format:
     plugin: default_value
-    default_value: body  
+    default_value: minimal  
   field_ceqa/value:
     -
       plugin: media_replace_file_link
@@ -365,6 +357,7 @@ process:
     - 
       plugin: callback
       callable: trim
+      source: field_award
     -
       plugin: skip_on_empty
       method: process
