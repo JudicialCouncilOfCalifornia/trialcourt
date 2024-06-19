@@ -584,7 +584,7 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   $rfp_status = $node->get('field_rfp_status')->getValue();
   if (isset($rfp_status[0])) {
     $rfp_status = [
-      'brow' => $node->get('field_rfp_status')->getFieldDefinition()->getLabel(),
+      'brow' => t('Status'),
       'heading' => $node->get('field_rfp_status')->first()->view('full'),
       'text' => FALSE,
     ];
@@ -594,7 +594,7 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   $rfp_topic = $node->get('field_rfp_topic')->getValue();
   if (isset($rfp_topic[0])) {
     $rfp_topic = [
-      'brow' => $node->get('field_rfp_topic')->getFieldDefinition()->getLabel(),
+      'brow' => t('Topic'),
       'heading' => $node->get('field_rfp_topic')->first()->view('full'),
       'text' => FALSE,
     ];

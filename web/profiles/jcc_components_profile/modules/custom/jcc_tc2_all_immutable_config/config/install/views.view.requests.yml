@@ -20,7 +20,7 @@ dependencies:
     - text
     - user
 id: requests
-label: 'Requests (RFP)'
+label: 'Solicitation Requests'
 module: views
 description: ''
 tag: ''
@@ -465,7 +465,7 @@ display:
           field: field_rfp_end_date
           relationship: none
           group_type: group
-          admin_label: 'Request end date (Year)'
+          admin_label: 'Solicitation request end date (Year)'
           plugin_id: field
           label: ''
           exclude: true
@@ -729,7 +729,7 @@ display:
           exposed: true
           expose:
             operator_id: field_rfp_type_value_op
-            label: 'Request type'
+            label: 'Solicitation type'
             description: ''
             use_operator: false
             operator: field_rfp_type_value_op
@@ -921,11 +921,11 @@ display:
         - 'config:field.storage.node.field_rfp_type'
   requests_admin_active:
     id: requests_admin_active
-    display_title: 'Active Requests admin page'
+    display_title: 'Active Solicitations admin page'
     display_plugin: page
     position: 3
     display_options:
-      title: Requests
+      title: 'Active solicitation requests'
       fields:
         node_bulk_form:
           id: node_bulk_form
@@ -1241,7 +1241,7 @@ display:
           field: field_rfp_end_date
           relationship: none
           group_type: group
-          admin_label: 'Request end date (Year)'
+          admin_label: 'Solicitation request end date (Year)'
           plugin_id: field
           label: Year
           exclude: false
@@ -1525,7 +1525,7 @@ display:
           exposed: true
           expose:
             operator_id: field_rfp_type_value_op
-            label: 'Request type'
+            label: 'Solicitation request type'
             description: ''
             use_operator: false
             operator: field_rfp_type_value_op
@@ -1731,22 +1731,29 @@ display:
           row_class: ''
           default_row_class: true
           columns:
+            node_bulk_form: node_bulk_form
             title: title
             field_rfp_number: field_rfp_number
             field_rfp_status: field_rfp_status
             field_rfp_type: field_rfp_type
             field_rfp_end_date_1: field_rfp_end_date_1
+            operations: operations
           default: '-1'
           info:
+            node_bulk_form:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
             title:
-              sortable: false
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
             field_rfp_number:
-              sortable: false
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
@@ -1760,15 +1767,20 @@ display:
               empty_column: false
               responsive: ''
             field_rfp_type:
-              sortable: false
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
             field_rfp_end_date_1:
-              sortable: false
-              default_sort_order: asc
+              sortable: true
+              default_sort_order: desc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            operations:
               align: ''
               separator: ''
               empty_column: false
@@ -1817,11 +1829,11 @@ display:
         - 'config:field.storage.node.field_rfp_type'
   requests_admin_archived:
     id: requests_admin_archived
-    display_title: 'Archived Requests admin page'
+    display_title: 'Archived Solicitation requests admin page'
     display_plugin: page
     position: 4
     display_options:
-      title: 'Requests: Archived'
+      title: 'Archived solicitation requests'
       fields:
         node_bulk_form:
           id: node_bulk_form
@@ -2137,7 +2149,7 @@ display:
           field: field_rfp_end_date
           relationship: none
           group_type: group
-          admin_label: 'Request end date (Year)'
+          admin_label: 'Solicitation request end date (Year)'
           plugin_id: field
           label: Year
           exclude: false
@@ -2412,7 +2424,7 @@ display:
           exposed: true
           expose:
             operator_id: field_rfp_type_value_op
-            label: 'Request type'
+            label: 'Solicitation request type'
             description: ''
             use_operator: false
             operator: field_rfp_type_value_op
@@ -2564,22 +2576,29 @@ display:
           row_class: ''
           default_row_class: true
           columns:
+            node_bulk_form: node_bulk_form
             title: title
             field_rfp_number: field_rfp_number
             field_rfp_status: field_rfp_status
             field_rfp_type: field_rfp_type
             field_rfp_end_date_1: field_rfp_end_date_1
+            operations: operations
           default: '-1'
           info:
+            node_bulk_form:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
             title:
-              sortable: false
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
             field_rfp_number:
-              sortable: false
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
@@ -2600,8 +2619,13 @@ display:
               empty_column: false
               responsive: ''
             field_rfp_end_date_1:
-              sortable: false
-              default_sort_order: asc
+              sortable: true
+              default_sort_order: desc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            operations:
               align: ''
               separator: ''
               empty_column: false
@@ -2650,7 +2674,7 @@ display:
         - 'config:field.storage.node.field_rfp_type'
   requests_grouped_archived:
     id: requests_grouped_archived
-    display_title: 'Archived Request group'
+    display_title: 'Archived Solicitations group'
     display_plugin: block
     position: 2
     display_options:
@@ -2897,7 +2921,7 @@ display:
           field: field_rfp_end_date
           relationship: none
           group_type: group
-          admin_label: 'Request end date (Year)'
+          admin_label: 'Solicitation request end date (Year)'
           plugin_id: field
           label: ''
           exclude: true
@@ -3070,7 +3094,7 @@ display:
           exposed: true
           expose:
             operator_id: field_rfp_type_value_op
-            label: 'Request type'
+            label: 'Solicitation request type'
             description: ''
             use_operator: false
             operator: field_rfp_type_value_op
@@ -3247,7 +3271,7 @@ display:
         filter_groups: false
       display_description: ''
       display_extenders: {  }
-      block_description: 'Requests archived group'
+      block_description: 'Solicitation requests archived group'
       allow:
         items_per_page: false
     cache_metadata:
@@ -3265,7 +3289,7 @@ display:
         - 'config:field.storage.node.field_rfp_type'
   requests_listing_active:
     id: requests_listing_active
-    display_title: 'Active Request listing'
+    display_title: 'Active Solicitation request listing'
     display_plugin: block
     position: 1
     display_options:
@@ -3363,7 +3387,7 @@ display:
           exposed: true
           expose:
             operator_id: field_rfp_type_value_op
-            label: 'Request type'
+            label: 'Solicitation request type'
             description: ''
             use_operator: false
             operator: field_rfp_type_value_op
@@ -3522,7 +3546,7 @@ display:
         filter_groups: false
       display_description: ''
       display_extenders: {  }
-      block_description: 'Requests active listing'
+      block_description: 'Solicitation requests active listing'
       allow:
         items_per_page: false
     cache_metadata:
@@ -3543,7 +3567,7 @@ display:
         - 'config:field.storage.node.field_rfp_type'
   requests_listing_archived:
     id: requests_listing_archived
-    display_title: 'Archived Request listing'
+    display_title: 'Archived Solicitation request listing'
     display_plugin: block
     position: 2
     display_options:
@@ -3641,7 +3665,7 @@ display:
           exposed: true
           expose:
             operator_id: field_rfp_type_value_op
-            label: 'Request type'
+            label: 'Solicitation request type'
             description: ''
             use_operator: false
             operator: field_rfp_type_value_op
@@ -3810,7 +3834,7 @@ display:
         filter_groups: false
       display_description: ''
       display_extenders: {  }
-      block_description: 'Requests archived listing'
+      block_description: 'Solicitation requests archived listing'
       allow:
         items_per_page: false
     cache_metadata:

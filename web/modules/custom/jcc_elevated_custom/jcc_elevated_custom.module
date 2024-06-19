@@ -306,18 +306,21 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view, $display_id, a
         $year_options = array_reverse(range($start_year, date("Y", $time3)));
       }
 
-      if ($year_options) {
+      if (!empty($year_options)) {
         foreach ($year_options as $index => $year) {
-          $filters[$field_name]['group_info']['group_items'][$index] = [
-            'title' => (string) $year,
-            'operator' => "between",
-            'value' => [
-              'min' => "$year-01-01 00:00:00",
-              'max' => "$year-12-31 23:59:59",
-              'value' => "",
-              'type' => "date",
-            ],
-          ];
+          if (is_numeric($year)) {
+            $filters[$field_name]['group_info']['group_items'][$index] = [
+              'title' => (string) $year,
+              'operator' => "between",
+              'value' => [
+                'min' => "$year-01-01 00:00:00",
+                'max' => "$year-12-31 23:59:59",
+                'value' => "",
+                'type' => "date",
+              ],
+            ];
+          }
+
         }
 
         $filters[$field_name]['group_info']['default_group'] = array_key_first($year_options);
