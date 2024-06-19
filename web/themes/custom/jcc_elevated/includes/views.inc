@@ -796,9 +796,11 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
   $opinions = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
-    $type = Term::load($node->get('field_opinion_type')->target_id) ? Term::load($node->get('field_opinion_type')->target_id)->get('name')->value : '';
+    $type = Term::load($node->get('field_opinion_type')->target_id) ? Term::load($node->get('field_opinion_type')->target_id)
+      ->get('name')->value : '';
     $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
-    $case_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
+    $case_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)
+      ->get('name')->value : '';
     $review_granted = $node->get('field_review_granted')->value;
     $title = $node->get('title')->value;
     $download_aria = t('Download or view opinion document');
@@ -829,8 +831,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
         'file_type' => 'PDF',
         'aria_label' => $download_aria . ' ' . $pdf_case,
       ];
-    }
-    catch (RequestException $e) {
+    } catch (RequestException $e) {
       $message = $e->getMessage();
       \Drupal::logger('opinion')->warning($message);
     }
@@ -846,8 +847,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
         'file_type' => 'DOCX',
         'aria_label' => $download_aria . ' ' . $docx_case,
       ];
-    }
-    catch (RequestException) {
+    } catch (RequestException) {
       $doc_type = 'DOC';
       $doc_case = $case_number . '.' . $doc_type;
       $doc_url = $url . $doc_case;
@@ -858,8 +858,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
           'file_type' => 'DOC',
           'aria_label' => $download_aria . ' ' . $doc_case,
         ];
-      }
-      catch (RequestException $e) {
+      } catch (RequestException $e) {
         $message = $e->getMessage();
         \Drupal::logger('opinion')->warning($message);
       }
@@ -897,7 +896,8 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     if ($citing_archive) {
       $citing_node_id = reset($citing_archive);
       $citing_node = Node::load($citing_node_id);
-      foreach ($citing_node->get('field_media_file_multiple')->getValue() as $citing) {
+      foreach ($citing_node->get('field_media_file_multiple')
+                 ->getValue() as $citing) {
         $media = Media::load($citing['target_id']);
         $file = File::load($media->get('field_media_file')->target_id);
         if ($file) {
@@ -905,7 +905,8 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
           if (is_null($citing_title)) {
             $citing_title = $media->get('name')->value;
           }
-          $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
+          $file_url = \Drupal::service('file_url_generator')
+            ->generateAbsoluteString($file->get('uri')->value);
           $citings[] = [
             'text' => ['#markup' => '<a href="' . $file_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
           ];
@@ -931,6 +932,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
   }
 
   $variables['opinions'] = $opinions;
+}
 
 /**
  * Implements hook_preprocess_views_view() for requests_listing_archived block.
@@ -1137,7 +1139,7 @@ function jcc_elevated_preprocess_views_view__requests__requests_rfp_listing(&$va
             ->first()
             ->view('teaser') : '',
           'last_updated' => t('Last updated:') . ' ' . \Drupal::service('date.formatter')
-            ->format($request->getChangedTime(), 'm_d_y'),
+              ->format($request->getChangedTime(), 'm_d_y'),
         ];
         foreach ($items as $key => $value) {
           if (!empty($value)) {
@@ -1387,3 +1389,4 @@ function __jcc_accms_link_builder($case_number) {
 
   return $accms_url;
 }
+
