@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Link;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Url;
@@ -498,6 +499,22 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
     $variables['rfp_type'] = $node->get('field_rfp_type')->first()->view('full');
   }
 
+  // Determine if request is archived.
+  $archived = FALSE;
+  $rfp_status = $node->get('field_rfp_status')->getValue();
+  if (isset($rfp_status[0])) {
+    $archived = $rfp_status[0]['value'] == 'archived';
+  }
+
+  $archived_year = FALSE;
+  $rfp_end_date = $node->get('field_rfp_end_date')->getValue();
+  if ($archived && isset($rfp_end_date[0])) {
+    $date_formatter = \Drupal::service('date.formatter');
+    $date_time = new DrupalDateTime($rfp_end_date[0]['value'], new \DateTimeZone('UTC'));
+    $timestamp = $date_time->getTimestamp();
+    $archived_year = $date_formatter->format($timestamp, 'custom', 'Y', NULL, NULL);
+  }
+
   //
   // Create an array for our important dates.
   $rfp_dates = [];
@@ -514,7 +531,7 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
 
   // Grab our additional dates and add to our array.
   $rfp_important_dates = $node->get('field_rfp_important_dates')->referencedEntities();
-  if (isset($rfp_important_dates[0])) {
+  if (!$archived && isset($rfp_important_dates[0])) {
     foreach ($rfp_important_dates as $date) {
       $rfp_dates[] = [
         'brow' => $date->get('field_heading')->first()->view('full'),
@@ -528,7 +545,7 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   $rfp_end_date = $node->get('field_rfp_end_date')->getValue();
   if (isset($rfp_end_date[0])) {
     $rfp_end_date = [
-      'brow' => t('Deadline'),
+      'brow' => $archived ? t('Archived') : t('Deadline'),
       'heading' => $node->get('field_rfp_end_date')->first()->view('full'),
     ];
     $rfp_dates[] = $rfp_end_date;
@@ -582,7 +599,9 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   $rfp_blurb_box = [];
 
   $rfp_status = $node->get('field_rfp_status')->getValue();
+  $archived = FALSE;
   if (isset($rfp_status[0])) {
+    $archived = $rfp_status[0]['value'] == 'archived';
     $rfp_status = [
       'brow' => t('Status'),
       'heading' => $node->get('field_rfp_status')->first()->view('full'),
@@ -604,8 +623,8 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   $rfp_end_date = $node->get('field_rfp_end_date')->getValue();
   if (isset($rfp_end_date[0])) {
     $rfp_end_date = [
-      'brow' => t('Deadline'),
-      'heading' => $node->get('field_rfp_end_date')->first()->view('full'),
+      'brow' => $archived ? t('Archived') : t('Deadline'),
+      'heading' => $archived ? $archived_year : $node->get('field_rfp_end_date')->first()->view('full'),
       'text' => FALSE,
     ];
     $rfp_blurb_box[] = $rfp_end_date;
@@ -614,7 +633,7 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   $rfp_number = $node->get('field_rfp_number')->getValue();
   if (isset($rfp_number[0])) {
     $rfp_number = [
-      'brow' => $node->get('field_rfp_number')->getFieldDefinition()->getLabel(),
+      'brow' => t('ID#'),
       'heading' => $node->get('field_rfp_number')->first()->view('full'),
       'text' => FALSE,
     ];

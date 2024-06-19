@@ -186,19 +186,22 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
 
     case 'node_request_form':
     case 'node_request_edit_form':
-      $form['body']['widget'][0]['summary']['#required'] = TRUE;
+      $form['body']['widget'][0]['summary']['#required'] = FALSE;
       $form['body']['widget'][0]['summary']['#title'] = t('Summary/Teaser text');
       $form['body']['widget'][0]['summary']['#description'] = t('This summary will populate the header on full page display, and the text on teasers.');
+      $form['field_rfp_number']['widget'][0]['value']['#required'] = TRUE;
       $form['field_rfp_status']['widget']['#required'] = TRUE;
       $form['field_rfp_type']['widget']['#required'] = TRUE;
       break;
   }
+
   if (strpos($form_id, 'node_form') === 0) {
     // Get the node type from the form ID.
     $node_type = substr($form_id, strlen('node_form_'));
     // Check if the user is not an administrator.
     if (!\Drupal::currentUser()->hasPermission('administer site configuration')) {
-      // Replace 'your_field_machine_name' with the machine name of the field you want to restrict access to.
+      // Replace 'your_field_machine_name' with the machine name of the field
+      // you want to restrict access to.
       if (isset($form['field_e'][$node_type]['#access'])) {
         $form['field_e'][$node_type]['#access'] = FALSE;
       }

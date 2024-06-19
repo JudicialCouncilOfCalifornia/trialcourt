@@ -493,22 +493,14 @@ function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
  * Implements hook_preprocess_HOOK() for Requests(RPF) archived items listing.
  */
 function jcc_elevated_preprocess_views_view__requests__requests_listing_archived(&$variables): void {
-  jcc_elevated_preprocess_views_view__requests__requests_listing_active($variables);
-}
-
-/**
- * Implements hook_preprocess_HOOK() for Requests(RPF) archived items listing.
- */
-function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived(&$variables): void {
+  // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   if (isset($variables['rows'][0]['#rows'])) {
     foreach ($variables['rows'] as $group) {
-      $list_label = trim($group['#title']);
-      $variables['processed_rows'][$list_label]['list_label'] = $list_label;
-      foreach ($group['#rows'] as $delta => $item) {
+      foreach ($group['#rows'] as $item) {
         $request = $item['#row']->_entity;
 
         $brow = [];
@@ -531,6 +523,31 @@ function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived
           }
         }
 
+        $variables['processed_rows'][] = [
+          'brow' => $brow,
+          'title' => $request->label(),
+          'url' => $request->toUrl(),
+        ];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for Requests(RPF) archived items listing.
+ */
+function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived(&$variables): void {
+  __jcc_view_results_exposed_filter_init($variables);
+
+  // Process the results for the search api view.
+  $variables['processed_rows'] = [];
+  if (isset($variables['rows'][0]['#rows'])) {
+    foreach ($variables['rows'] as $group) {
+      $list_label = trim($group['#title']);
+      $variables['processed_rows'][$list_label]['list_label'] = $list_label;
+      foreach ($group['#rows'] as $delta => $item) {
+        $request = $item['#row']->_entity;
+        $brow = [];
         $variables['processed_rows'][$list_label]['items'][$delta] = [
           'brow' => $brow,
           'title' => $request->label(),
