@@ -14,8 +14,14 @@ class JccElevatedCustomRequestController {
    * Redirect from base request admin route to view the admin display.
    */
   public function redirectToActiveRequestsAdmin(): RedirectResponse {
-    $url = Url::fromRoute('view.requests.requests_admin_active', [], ['absolute' => TRUE]);
-    return new RedirectResponse($url->toString());
+    $route_provider = \Drupal::service('router.route_provider');
+    $exists = count($route_provider->getRoutesByNames(['view.requests.requests_admin_active'])) === 1;
+    if ($exists) {
+      $url = Url::fromRoute('view.requests.requests_admin_active', [], ['absolute' => TRUE]);
+      return new RedirectResponse($url->toString());
+    }
+
+    return new RedirectResponse('/');
   }
 
 }
