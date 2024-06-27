@@ -2,10 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.media.container_100_percent
-    - core.entity_view_mode.media.container_25_percent
-    - core.entity_view_mode.media.container_50_percent
-    - core.entity_view_mode.media.container_75_percent
     - core.entity_view_mode.media.full
   module:
     - emptyparagraphkiller
@@ -23,6 +19,7 @@ filters:
     provider: emptyparagraphkiller
     status: true
     weight: 0
+    settings: {  }
   filter_html:
     id: filter_html
     provider: filter
@@ -72,6 +69,7 @@ filters:
       glossify_taxonomy_case_sensitivity: '1'
       glossify_taxonomy_first_only: '1'
       glossify_taxonomy_type: tooltips
+      glossify_taxonomy_tooltip_truncate: '0'
       glossify_taxonomy_vocabs: ''
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
   linkit:
@@ -89,10 +87,6 @@ filters:
     settings:
       default_view_mode: default
       allowed_view_modes:
-        container_100_percent: container_100_percent
-        container_25_percent: container_25_percent
-        container_50_percent: container_50_percent
-        container_75_percent: container_75_percent
         full: full
       allowed_media_types:
         boxcast_stream: boxcast_stream
@@ -102,6 +96,12 @@ filters:
   tooltip:
     id: tooltip
     provider: tooltip
+    status: true
+    weight: 0
+    settings: {  }
+  filter_align:
+    id: filter_align
+    provider: filter
     status: true
     weight: 0
     settings: {  }
