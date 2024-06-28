@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_rule_index_section_content
+    - node.type.roc_rule
+    - paragraphs.paragraphs_type.rule_section
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: paragraph.rule_section.field_rule_index_section_content
+field_name: field_rule_index_section_content
+entity_type: paragraph
+bundle: rule_section
+label: 'Section content'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'bert:node'
+  handler_settings:
+    target_bundles:
+      roc_rule: roc_rule
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
