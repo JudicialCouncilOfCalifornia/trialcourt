@@ -58,6 +58,19 @@ function jcc_components_preprocess_form_element(array &$variables) {
 }
 
 /**
+ * Implements hook_preprocess_input().
+ */
+function jcc_components_preprocess_input(array &$variables) {
+  if (isset($variables['element']['#form_id']) && $variables['element']['#form_id'] == 'openid_connect_login_form') {
+    // OpenID's placement setting to show/hide Drupal login context.
+    $user_login_display = \Drupal::config('openid_connect.settings')->get('user_login_display');
+    if ($user_login_display) {
+      $variables['user_login_display'] = $user_login_display;
+    }
+  }
+}
+
+/**
  * Attaches form id to all form elements.
  *
  * @param array $form
@@ -109,10 +122,6 @@ function jcc_components_form_views_exposed_form_alter(&$form, FormStateInterface
 
   if ($view->id() == 'arbitrators') {
     $termID = $view->args[0];
-    $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($termID);
-    if ($term) {
-      $term_name = $term->getName();
-    }
 
     if ($termID == 'Civil-ADR-Provider') {
       $form['adr_process']['#states'] = [
@@ -136,7 +145,6 @@ function jcc_components_form_views_exposed_form_alter(&$form, FormStateInterface
     }
   }
 }
-
 
 /**
  * Validate search parameters for tentative rulings.

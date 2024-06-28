@@ -74,9 +74,16 @@ function jcc_elevated_preprocess_views_view__news__sticky_list(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK() for news listing.
+ * Implements hook_preprocess_HOOK() for news listing block.
  */
-function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
+function jcc_elevated_preprocess_views_view__news__list_block(&$variables) {
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
+
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
   // Translation via TMGMT breaks dates where translators entered invalid date
   // values in date fields. if date is invalid clear it before template renders.
   foreach ($variables['rows'][0]['#rows'] as $row) {
@@ -86,8 +93,14 @@ function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
       $node->field_date->value = '';
     }
   }
-  // Remove captcha.
-  unset($variables['exposed']['captcha']);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for news listing.
+ */
+function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
+  // Reuse news block list as common preprocess.
+  jcc_elevated_preprocess_views_view__news__list_block($variables);
 }
 
 /**
@@ -285,6 +298,14 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
  * Implements hook_preprocess_views_view() for search listing page.
  */
 function jcc_elevated_preprocess_views_view__search__search(&$variables) {
+  $render = \Drupal::service('renderer');
+  $view = $variables['view'];
+
+  // Get the searched term for setting in the title override.
+  $searched_term = $view->getExposedInput();
+  $variables['searched_term'] = !empty($searched_term['search']) ? Xss::filter($searched_term['search']) : NULL;
+  $variables['title'] = $view->getTitle();
+
   // Personalized no results message.
   $variables['no_results_heading'] = 'We are unable to find a result for your search.';
   if (theme_get_setting('no_search_results_heading')) {
@@ -300,17 +321,6 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
     return;
   }
 
-  $render = \Drupal::service('renderer');
-  $view = $variables['view'];
-
-  // Set the item count for setting in the title override.
-  $variables['count'] = count($view->result);
-
-  // Get the searched term for setting in the title override.
-  $searched_term = $view->getExposedInput();
-  $variables['searched_term'] = !empty($searched_term['search']) ? Xss::filter($searched_term['search']) : NULL;
-  $variables['title'] = $view->getTitle();
-
   // Remove the captcha from the search.
   unset($variables['exposed']['captcha']);
 
@@ -320,7 +330,7 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
   // Process the results for the search api view.
   foreach ($variables['rows'][0]['#rows'] as $index => $item) {
     // We have to manipulate the excerpt a little to render the html.
-    $excerpt = $item['#row']->_item->getExcerpt() ?? t('No excerpt available.')->render();
+    $excerpt = $item['#row']->_item->getExcerpt() ?? t('No preview is available for this search result. Click for more information.')->render();
     $text = [
       '#prefix' => '<p>',
       '#markup' => Html::decodeEntities($excerpt),
@@ -348,6 +358,9 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
       }
     }
   }
+
+  // Count summary for the current page of results.
+  $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
 }
 
 /**
@@ -363,9 +376,11 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
     $node = $row['#row']->_entity;
     $media = $node->get('field_media')->target_id ? Media::load($node->get('field_media')->target_id) : '';
     $name = $node->get('title')->value ? $node->get('title')->value : '';
+    $title = '';
     if ($title_tid = $node->get('field_job_title')->target_id) {
       $title = Term::load($title_tid) ? Term::load($title_tid)->get('name')->value : '';
     }
+    $division = '';
     if ($division_tid = $node->get('field_division')->target_id) {
       $division = Term::load($division_tid) ? Term::load($division_tid)->get('name')->value : '';
     }
