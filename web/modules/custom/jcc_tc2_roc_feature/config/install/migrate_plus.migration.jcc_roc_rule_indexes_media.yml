@@ -1,0 +1,57 @@
+langcode: en
+status: true
+dependencies: {  }
+id: jcc_roc_rule_indexes_media
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: jcc_rules_of_court
+label: 'JCC: Rules of Court: Rule indexes: Media'
+source:
+  plugin: csv
+  path: modules/custom/jcc_tc2_roc_feature/data/jcc_roc_rule_indexes_media.csv
+  delimiter: ','
+  header_offset: 0
+  ids:
+    - field_roc_rule_index_id
+  fields:
+    -
+      name: field_roc_rule_index_id
+      label: 'Index ID'
+      selector: field_roc_rule_index_id
+    -
+      name: media_label
+      label: 'Media title'
+      selector: media_label
+    -
+      name: file_url
+      label: 'Media file url'
+      selector: file_url
+    -
+      name: file_name
+      label: 'File name'
+      selector: file_name
+process:
+  field_roc_rule_index_id: field_roc_rule_index_id
+  name: media_label
+  field_media_file:
+    plugin: migration_lookup
+    migration: jcc_roc_rule_indexes_files
+    source: field_roc_rule_index_id
+  field_category:
+    -
+      plugin: default_value
+      default_value: 'Rules of Court'
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      value_key: name
+      bundle_key: vid
+      bundle: media_file_category
+destination:
+  plugin: 'entity:media'
+  default_bundle: file
+migration_dependencies:
+  required:
+    - jcc_roc_rule_indexes_files

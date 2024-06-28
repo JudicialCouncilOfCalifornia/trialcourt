@@ -22,7 +22,7 @@ use Drupal\views\ViewExecutable;
 /**
  * Implements hook_page_attachments().
  */
-function jcc_custom_page_attachments(array &$attachments) {
+function jcc_custom_page_attachments(array &$attachments): void {
   $attachments['#attached']['library'][] = 'jcc_custom/fontawesome';
   $attachments['#attached']['library'][] = 'jcc_custom/tableadapt';
   $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
@@ -31,6 +31,11 @@ function jcc_custom_page_attachments(array &$attachments) {
     $attachments['#attached']['library'][] = 'jcc_custom/forms';
     $attachments['#attached']['library'][] = 'jcc_custom/feedbacksurvey';
     $attachments['#attached']['library'][] = 'jcc_custom/gin-elevated';
+  }
+  if ($is_admin) {
+    // Override the layout paragraphs styling.
+    // 2.0 styling is drab and hard to use.
+    $attachments['#attached']['library'][] = 'jcc_custom/admin_layout_paragraphs_edit_override';
   }
 }
 
@@ -198,7 +203,8 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
     $node_type = substr($form_id, strlen('node_form_'));
     // Check if the user is not an administrator.
     if (!\Drupal::currentUser()->hasPermission('administer site configuration')) {
-      // Replace 'your_field_machine_name' with the machine name of the field you want to restrict access to.
+      // Replace 'your_field_machine_name' with the machine name of the field
+      // you want to restrict access to.
       if (isset($form['field_e'][$node_type]['#access'])) {
         $form['field_e'][$node_type]['#access'] = FALSE;
       }

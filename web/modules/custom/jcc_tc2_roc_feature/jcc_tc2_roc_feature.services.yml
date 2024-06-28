@@ -1,0 +1,14 @@
+services:
+  jcc_tc2_roc_feature.rule.service:
+    class: Drupal\jcc_tc2_roc_feature\Service\JccRocRuleService
+    arguments: [ '@entity_type.manager', '@state', '@string_translation', '@module_handler', '@file_system' ]
+
+  jcc_tc2_roc_feature.rule_link.service:
+    class: Drupal\jcc_tc2_roc_feature\Service\JccRocRuleLinkService
+    arguments: [ '@string_translation', '@jcc_tc2_roc_feature.rule.service' ]
+
+  jcc_tc2_roc_feature.roc_event_subscriber:
+    class: Drupal\jcc_tc2_roc_feature\EventSubscriber\JccRocEventSubscriber
+    arguments: ['@entity_type.manager', '@module_handler']
+    tags:
+      - { name: event_subscriber }

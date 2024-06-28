@@ -1,0 +1,57 @@
+langcode: en
+status: true
+dependencies: {  }
+id: jcc_roc_rule_indexes_sections
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: jcc_rules_of_court
+label: 'JCC: Rules of Court: Rule indexes: Sections'
+source:
+  plugin: csv
+  path: modules/custom/jcc_tc2_roc_feature/data/jcc_roc_rule_indexes_sections.csv
+  delimiter: ','
+  header_offset: 0
+  ids:
+    - id
+    - field_roc_rule_index_id
+    - parent_entity_id
+  fields:
+    -
+      name: id
+      label: 'Section: ID'
+      selector: id
+    -
+      name: field_roc_rule_index_id
+      label: 'Section: Rule indexes Parent ID'
+      selector: field_roc_rule_index_id
+    -
+      name: field_rule_index_section_label
+      label: 'Section: label'
+      selector: field_rule_index_section_label
+    -
+      name: parent_section_by_label
+      label: 'Section: Parent section label'
+      selector: parent_section_by_label
+    -
+      name: parent_entity_id
+      label: 'Section: Parent Section ID'
+      selector: parent_entity_id
+    -
+      name: field_rule_index_section_content
+      label: 'Subsection: Referenced subsection content'
+      selector: field_rule_index_section_content
+process:
+  id: id
+  field_rule_index_section_label: field_rule_index_section_label
+  field_rule_index_section_content:
+    -
+      plugin: jcc_explode_lookup
+      source: field_rule_index_section_content
+destination:
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: rule_section
+migration_dependencies:
+  required:
+    - jcc_roc_rules

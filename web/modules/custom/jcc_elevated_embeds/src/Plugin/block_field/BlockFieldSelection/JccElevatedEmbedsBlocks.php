@@ -81,7 +81,7 @@ class JccElevatedEmbedsBlocks extends BlockFieldSelectionBase {
    * {@inheritdoc}
    */
   private function getOverrideBlockList($flat = FALSE) {
-    return _jcc_allowed_content_stream_blocks_override($flat);
+    return jcc_elevated_embeds_jcc_allowed_content_stream_blocks_override($flat);
   }
 
 }
