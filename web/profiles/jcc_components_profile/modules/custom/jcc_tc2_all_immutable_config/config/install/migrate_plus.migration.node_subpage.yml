@@ -41,6 +41,10 @@ source:
       name: accordions
       label: Accordions
       selector: accordions
+    -
+      name: tabs
+      label: Tabs
+      selector: tabs
   ids:
     src_unique_id:
       type: string
@@ -81,8 +85,8 @@ process:
         target_id: '0'
         target_revision_id: '1'
     - plugin: skip_on_empty
-      method: process
-      message: 'No components to add to node.'
+      method: row
+      message: 'No hero component to add to node.'
   bodies:
     - plugin: explode
       delimiter: ','
@@ -97,8 +101,8 @@ process:
         target_id: '0'
         target_revision_id: '1'
     - plugin: skip_on_empty
-      method: process
-      message: 'No components to add to node.'
+      method: row
+      message: 'No body components to add to node.'
   accordions:
     - plugin: explode
       delimiter: ','
@@ -113,14 +117,31 @@ process:
         target_id: '0'
         target_revision_id: '1'
     - plugin: skip_on_empty
-      method: process
-      message: 'No components to add to node.'
+      method: row
+      message: 'No accordions to add to node.'
+  tabs:
+    - plugin: explode
+      delimiter: ','
+      source: tabs
+    - plugin: callback
+      callable: trim
+    - plugin: multiple_values
+    - plugin: migration_lookup
+      migration: paragraphs_tabs
+    - plugin: sub_process
+      process:
+        target_id: '0'
+        target_revision_id: '1'
+    - plugin: skip_on_empty
+      method: row
+      message: 'No tabs to add to node.'
   field_components:
     - plugin: merge
       source:
         - '@hero'
         - '@bodies'
         - '@accordions'
+        - '@tabs'
 destination:
   plugin: 'entity:node'
   default_bundle: subpage
@@ -130,3 +151,4 @@ migration_dependencies:
     - paragraphs_hero_hangover
     - paragraphs_body
     - paragraphs_accordion
+    - paragraphs_tabs

@@ -1,15 +1,15 @@
 langcode: en
 status: true
 dependencies: {  }
-id: paragraphs_body
+id: paragraphs_tab
 class: null
 field_plugin_method: null
 cck_plugin_method: null
 migration_tags:
   - paragraphs
-  - body
+  - tab
 migration_group: jcc2
-label: 'Paragraphs: Import body component'
+label: 'Paragraphs: Import tab subcomponents'
 source:
   plugin: url
   data_fetcher_plugin: http
@@ -22,6 +22,10 @@ source:
       label: 'Unique ID'
       selector: id
     -
+      name: custom_id
+      label: 'Custom ID (Optional)'
+      selector: custom_id
+    -
       name: heading
       label: Heading
       selector: heading
@@ -33,14 +37,15 @@ source:
     id:
       type: string
 process:
+  field_id: custom_id
   field_heading: heading
-  field_text/value:
+  field_content/value:
     plugin: get
     source: text
-  field_text/format:
+  field_content/format:
     plugin: default_value
     default_value: body
 destination:
   plugin: 'entity_reference_revisions:paragraph'
-  default_bundle: body
+  default_bundle: tab
 migration_dependencies: null
