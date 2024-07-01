@@ -1,0 +1,185 @@
+@media screen and (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+html {
+  scroll-padding-top: 79px;
+}
+
+/* Rule index styles */
+.roc__rule-index__content.box {
+  padding-block: 3rem 5rem;
+}
+.roc__rule-index__content ul.list__container {
+  list-style-type: none;
+}
+.roc__rule-index__content.box > .container > ul.list__container {
+  padding-inline: 0;
+}
+.roc__rule-index__content.box >.stack > * + * {
+  margin-block-start: 3rem;
+}
+
+/* Nav links styling */
+.roc-rule-toc__nav-links {
+  color: var(--color-primary);
+  position: sticky;
+  top: 0;
+}
+@media print {
+  .roc-rule-toc__nav-links {
+    display: none;
+  }
+}
+body.toolbar-tray-open.toolbar-horizontal .roc-rule-toc__nav-links {
+  top: 39px;
+}
+body.toolbar-tray-open.toolbar-horizontal .roc-rule-toc__nav-links {
+  top: 79px;
+}
+.roc-rule-toc__nav-links.upper-links {
+  background: var(--color-primary-light-xxx);
+  padding-block: var(--s-1);
+}
+.roc-rule-toc__nav-links ul {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.roc-rule-toc__nav-links ul li {
+  font-size: var(--s-1);
+  display: inline-block;
+}
+.roc-rule-toc__nav-links ul li + li {
+  padding-inline-start: var(--gap);
+  border-inline-start: 1px solid var(--color-base);
+}
+.roc-rule-toc__nav-links li.align-right {
+  border-inline-start: 0 solid var(--color-primary);
+  margin-inline-start: auto;
+}
+.roc-rule-toc__nav-links li.align-right + li.align-right {
+  border-inline-start: 1px solid var(--color-base);
+  margin-inline-start: var(--s-1);
+}
+.roc-rule-toc__nav-links .item__align-right {
+  border-inline-start: none;
+  margin-inline-start: auto;
+}
+
+/* Nav links Mobile styling */
+.roc-rule-toc__nav-links ul.roc-document-list.wrapping {
+  flex-direction: column;
+  align-content: flex-start;
+  align-items: flex-start;
+  gap: .5rem;
+}
+.roc-rule-toc__nav-links ul.roc-document-list.wrapping li.item__align-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-inline-start: auto;
+  width: 100%;
+}
+.roc-rule-toc__nav-links ul.roc-document-list.wrapping li + li {
+  margin-inline-start: 0;
+  padding-inline-start: 0;
+  border-inline-start: none;
+}
+
+/* Individual Rule styles */
+.roc__rule__content.box{
+  padding-block: 3rem 5rem;
+}
+div:is(.jcc-rulesformatting) p:is(.itemList, .itemlist) {
+  margin-inline-start: 7rem;
+}
+
+.jcc-rulesformatting.stack>* {
+  inline-size: auto;
+}
+
+/* Rules of Court block listing */
+#block-views-block-jcc-roc-views-block-1 ul.list__container,
+#block-jccrulesofcourtlisting ul.list__container {
+  padding-inline: 0;
+}
+#block-views-block-jcc-roc-views-block-1 li.list__item + li.list__item,
+#block-jccrulesofcourtlisting li.list__item + li.list__item {
+  margin-block-start: .35rem;
+}
+#block-views-block-jcc-roc-views-block-1 .views-field-field-roc-rule-media,
+#block-jccrulesofcourtlisting .views-field-field-roc-rule-media {
+  padding-inline-start: .5rem;
+  margin-inline-start: .25rem;
+  border-inline-start: 1px solid var(--color-black);
+}
+#block-views-block-jcc-roc-views-block-1 .views-field-field-roc-rule-index-list-note,
+#block-jccrulesofcourtlisting .views-field-field-roc-rule-index-list-note {
+  padding-inline-start: .25rem;
+}
+.roc-rule-index-list__item + .roc-document-list__item {
+  margin-block-start: 0;
+}
+.roc-rule-index-list__item > *:not(.roc-rule-index-list__item__link) {
+  border-inline-start: 2px solid var(--color-base);
+  margin-inline-start: var(--s-3);
+  padding-inline-start: var(--s-3);
+}
+.roc-rule-index-list__item__pdf-link {
+  font-size: var(--s-2);
+}
+.layout-content .section__content.box .section__content.box .section__main ul.roc-rule-index-list {
+  margin-inline-start: -1.5rem;
+}
+
+@media print {
+  body  {
+    font-size: 1rem !important;
+    line-height: normal !important;
+  }
+
+  .container {
+    max-inline-size: 6.5in !important;
+    max-width: 6.5in !important;
+    margin: 0 !important;
+  }
+
+  .drawer,
+  .roc-rule-toc__nav-links,
+  .hangover__top-hangover-content {
+    display: none !important;
+  }
+
+  .hangover.hangover--with-share .box {
+    margin-block: 0 !important;
+    padding-block: 0 !important;
+  }
+
+  h1 {
+    font-size: 1.5rem !important;
+    line-height: normal !important;
+  }
+
+  .roc__rule__content.box {
+    padding-block: 1rem 3rem !important;
+  }
+
+  p  {
+    font-size: 16px;
+    line-height: normal !important;
+  }
+
+  @page {
+    margin-top: .75in !important;
+    margin-right: 1in !important;
+    margin-bottom: .75in !important;
+    margin-left: .5in !important;
+  }
+  @page :first {
+    margin-top: .5in !important;
+  }
+}
