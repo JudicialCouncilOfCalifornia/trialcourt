@@ -1,0 +1,164 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_tc2_roc_feature module functionality.
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+
+// Include all files from the inc directory.
+$includes_path = dirname(__FILE__) . '/inc/*.inc';
+foreach (glob($includes_path) as $filename) {
+  require_once dirname(__FILE__) . '/inc/' . basename($filename);
+}
+
+/**
+ * Implements hook_config_ignore_settings_alter().
+ */
+function jcc_tc2_roc_feature_config_ignore_settings_alter(array &$settings) {
+  // Ignore any config that exists in this module's config/install.
+  $module_handler = \Drupal::service('module_handler');
+  $module_path = $module_handler->getModule('jcc_tc2_roc_feature')->getPath();
+  $paths[] = "${module_path}/config/install";
+
+  foreach ($paths as $path) {
+    $config = scandir($path);
+    foreach ($config as $item) {
+      $name = str_replace('.yml', '', $item);
+      if (strpos($name, '.') !== 0 && !in_array($name, $settings)) {
+        $settings[] = $name;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function jcc_tc2_roc_feature_theme($existing, $type, $theme, $path): array {
+  return [
+    'node__roc_rule_index' => [
+      'base hook' => 'node',
+    ],
+    'node__roc_rule_index__teaser' => [
+      'base hook' => 'node',
+    ],
+    'node__roc_rule' => [
+      'base hook' => 'node',
+    ],
+    'paragraph__rule_section__default' => [
+      'base hook' => 'paragraph',
+    ],
+    'paragraph__rule_section__preview' => [
+      'base hook' => 'paragraph',
+    ],
+    'paragraph__rule_section__full' => [
+      'base hook' => 'paragraph',
+    ],
+    'field__node__field_roc_rule_index_sections__roc_rule_index' => [
+      'base hook' => 'field',
+    ],
+    'field__node__body__roc_rule' => [
+      'base hook' => 'field',
+    ],
+    'field__paragraph__field_rule_index_section_content__rule_section' => [
+      'base hook' => 'field',
+    ],
+    'in_page_nav' => [
+      'base hook' => 'item_list',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function jcc_tc2_roc_feature_entity_extra_field_info(): array {
+  $extra = [];
+
+  $extra['node']['roc_rule_index']['display']['in_page_nav'] = [
+    'label' => t('Rule Index: Navigation'),
+    'description' => t('Field for rendering the in-page navigation links on a rule index.'),
+    'weight' => -99,
+    'visible' => FALSE,
+  ];
+
+  $extra['node']['roc_rule']['display']['in_page_nav'] = [
+    'label' => t('Rule: Navigation'),
+    'description' => t('Field for rendering the in-page navigation links on a rule.'),
+    'weight' => -99,
+    'visible' => FALSE,
+  ];
+
+  return $extra;
+}
+
+/**
+ * Returns true if the current route is an add/edit route.
+ *
+ * @return bool
+ *   Returns true for edit routes.
+ */
+function jcc_tc2_roc_feature_is_edit_route(): bool {
+  $route_match = Drupal::routeMatch();
+  $route_name = $route_match->getRouteName();
+  $is_edit_route = FALSE;
+
+  $routes = [
+    'entity.node.edit_form',
+    'node.add',
+    'layout_paragraphs.builder.formatter',
+    'layout_paragraphs.builder.edit_item',
+    'layout_paragraphs.builder.insert',
+    'layout_paragraphs.builder.choose_component',
+  ];
+
+  // Check if an edit route.
+  if (in_array($route_name, $routes)) {
+    $is_edit_route = TRUE;
+  }
+
+  // Check the theme the current route renders in.
+  $current_rendered_theme = Drupal::service('theme.negotiator')->determineActiveTheme($route_match);
+  $admin_theme = Drupal::config('system.theme')->get('admin');
+  $admin_theme_name = Drupal::service('theme_handler')->getName($admin_theme);
+  if ($current_rendered_theme == $admin_theme_name) {
+    $is_edit_route = TRUE;
+  }
+
+  return $is_edit_route;
+}
+
+/**
+ * Implements hook_entity_bundle_field_info_alter().
+ */
+function jcc_tc2_roc_feature_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle): void {
+  if ($entity_type->id() == 'node') {
+    if ($bundle == 'roc_rule') {
+      if (!empty($fields['field_roc_rule_id'])) {
+        $fields['field_roc_rule_id']->addConstraint('JccRocRuleUniqueIdConstraint');
+      }
+    }
+
+    if ($bundle == 'roc_rule_index') {
+      if (!empty($fields['field_roc_rule_index_id'])) {
+        $fields['field_roc_rule_index_id']->addConstraint('JccRocRuleUniqueIdConstraint');
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function jcc_tc2_roc_feature_page_attachments(&$page): void {
+  $is_admin = Drupal::service('router.admin_context')->isAdminRoute();
+  if ($is_admin) {
+    $page['#attached']['library'][] = 'jcc_tc2_roc_feature/jcc-roc-admin-custom';
+  }
+
+  if (!$is_admin) {
+    $page['#attached']['library'][] = 'jcc_tc2_roc_feature/jcc-roc-custom';
+  }
+}

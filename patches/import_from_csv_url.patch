@@ -1,0 +1,63 @@
+diff --git a/src/Plugin/migrate/source/CSV.php b/src/Plugin/migrate/source/CSV.php
+index af5a97a..31cb8b8 100644
+--- a/src/Plugin/migrate/source/CSV.php
++++ b/src/Plugin/migrate/source/CSV.php
+@@ -101,8 +101,8 @@ class CSV extends SourcePluginBase implements ConfigurableInterface {
+     $this->setConfiguration($configuration);
+
+     // Path is required.
+-    if (empty($this->configuration['path'])) {
+-      throw new \InvalidArgumentException('You must declare the "path" to the source CSV file in your source settings.');
++    if (empty($this->configuration['path']) && empty($this->configuration['url'])) {
++      throw new \InvalidArgumentException('You must declare the "path" or "url" to the source CSV file in your source settings.');
+     }
+     // IDs are required.
+     if (empty($this->configuration['ids']) || !is_array($this->configuration['ids'])) {
+@@ -274,14 +274,43 @@ class CSV extends SourcePluginBase implements ConfigurableInterface {
+    *   The reader.
+    */
+   protected function createReader() {
+-    if (!file_exists($this->configuration['path'])) {
+-      throw new \RuntimeException(sprintf('File "%s" was not found.', $this->configuration['path']));
++    $path = $this->configuration['path'];
++    // File specified by URL? Grab it.
++    if ($url = $this->configuration['url'] ?? NULL) {
++      $path = $this->downloadFile($url);
+     }
+-    $csv = fopen($this->configuration['path'], 'r');
++    if (!file_exists($path)) {
++      throw new \RuntimeException(sprintf('File "%s" was not found.', $path));
++    }
++    $csv = fopen($path, 'r');
+     if (!$csv) {
+-      throw new \RuntimeException(sprintf('File "%s" could not be opened.', $this->configuration['path']));
++      throw new \RuntimeException(sprintf('File "%s" could not be opened.', $path));
+     }
+     return Reader::createFromStream($csv);
+   }
+
++  /**
++   * Pull in a file from a URL.
++   *
++   * @param string $url
++   *   The URL to the CSV.
++   *
++   * @return string
++   *   The temporary file path.
++   */
++  protected function downloadFile($url) {
++    // Retrieve data from URL.
++    $data = file_get_contents($url);
++    if ($data === FALSE) {
++      throw new \RuntimeException("Unable to retrieve data from '{$url}'.");
++    }
++    // Save data to temporary dir.
++    $path = "temporary://" . basename($url);
++    $file = \Drupal::service('file.repository')->writeData($data, $path, \Drupal\Core\File\FileSystemInterface::EXISTS_REPLACE);
++    if ($file === FALSE) {
++      throw new \RuntimeException("Unable to save file to '{$path}'.");
++    }
++    return $file->getFileUri();
++  }
++
+ }

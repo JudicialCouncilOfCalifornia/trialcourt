@@ -1,0 +1,39 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.search_result
+    - field.field.node.roc_rule.body
+    - field.field.node.roc_rule.field_roc_rule_id
+    - field.field.node.roc_rule.field_roc_rule_parent_index
+    - node.type.roc_rule
+  module:
+    - entity_print
+    - user
+third_party_settings:
+  entity_print:
+    pdf_label: 'View PDF'
+id: node.roc_rule.search_result
+targetEntityType: node
+bundle: roc_rule
+mode: search_result
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  search_api_excerpt:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  body: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_roc_rule_id: true
+  field_roc_rule_parent_index: true
+  in_page_nav: true
+  langcode: true

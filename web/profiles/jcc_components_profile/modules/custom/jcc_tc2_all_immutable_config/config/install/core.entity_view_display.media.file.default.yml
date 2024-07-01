@@ -6,10 +6,12 @@ dependencies:
     - field.field.media.file.field_document_type
     - field.field.media.file.field_matters_served
     - field.field.media.file.field_media_file
+    - field.field.media.file.field_media_text
     - field.field.media.file.field_tags
     - media.type.file
   module:
     - media_entity_download
+    - text
 id: media.file.default
 targetEntityType: media
 bundle: file
@@ -27,6 +29,13 @@ content:
       disposition: inline
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_media_text:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
     region: content
 hidden:
   created: true
