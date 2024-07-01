@@ -5,7 +5,28 @@
  * Preprocess and functions for paragraphs.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\file\Entity\File;
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function jcc_elevated_preprocess_media(&$variables) {
+  $media = $variables['media'];
+
+  if ($media->bundle() == 'image') {
+    $view_mode = $variables['view_mode'];
+    $alignment = $variables['attributes']['class'][0];
+
+    $img_classes = [
+      'image',
+      Html::getClass('image__' . $view_mode),
+      Html::getClass($alignment),
+    ];
+
+    $variables['content']['field_media_image'][0]['#item_attributes']['class'][] = implode(' ', $img_classes);
+  }
+}
 
 /**
  * Implements hook_preprocess_HOOK().
