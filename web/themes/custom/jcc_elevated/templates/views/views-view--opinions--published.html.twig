@@ -1,0 +1,120 @@
+{#
+/**
+ * @file
+ * Default theme implementation for main view template.
+ *
+ * Available variables:
+ * - attributes: Remaining HTML attributes for the element.
+ * - css_name: A CSS-safe version of the view name.
+ * - css_class: The user-specified classes names, if any.
+ * - header: The optional header.
+ * - footer: The optional footer.
+ * - rows: The results of the view query, if any.
+ * - empty: The content to display if there are no rows.
+ * - pager: The optional pager next/prev links to display.
+ * - exposed: Exposed widget form/info to display.
+ * - feed_icons: Optional feed icons to display.
+ * - more: An optional link to the next page of results.
+ * - title: Title of the view, only used when displaying in the admin preview.
+ * - title_prefix: Additional output populated by modules, intended to be
+ *   displayed in front of the view title.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the view title.
+ * - attachment_before: An optional attachment view to be displayed before the
+ *   view content.
+ * - attachment_after: An optional attachment view to be displayed after the
+ *   view content.
+ * - dom_id: Unique id for every view being printed to give unique class for
+ *   JavaScript.
+ *
+ * @see template_preprocess_views_view()
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library("jcc_storybook/InlineForm") }}
+{{ attach_library("jcc_storybook/ViewResults") }}
+{{ attach_library("jcc_storybook/ResultExcerpt") }}
+{% block styles %}{% endblock %}
+
+{%
+  set classes = [
+  dom_id ? 'js-view-dom-id-' ~ dom_id,
+]
+%}
+
+{% set items = [] %}
+{% for opinion in opinions %}
+  {% set notation %}
+    {{ opinion.source ? opinion.source : '(Select court)' }}
+    {{ opinion.type ? ' • ' ~ opinion.type : '' }}
+    {{ opinion.review_granted ? ' • Review Granted' : '' }}
+  {% endset %}
+
+  {% set content %}
+    {% if opinion.remote_files %}
+      <div style="margin-block-end: var(--s0)">
+        {% for remote_file in opinion.remote_files %}
+          {% include "@atoms/Button/Button.twig" with {
+            variant: loop.index == 1 ?'primary' : 'secondary',
+            size: 'small',
+            label: remote_file.file_type,
+            href: remote_file.url,
+            aria_label: remote_file.aria_label,
+          } %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if opinion.related_cases %}
+      <p>Related Cases: {{ opinion.related_cases|raw }}</p>
+    {% endif %}
+
+    {% if opinion.citings %}
+      <p>Web Page Citings:</p>
+      {% include "@molecules/List/List.twig" with {
+        variant: 'ul',
+        items: opinion.citings|raw,
+      } %}
+    {% endif %}
+  {% endset %}
+
+  {% set item = {
+    brow: {
+      primary: opinion.case_number,
+      secondary: opinion.posted,
+      notation: notation,
+    },
+    title: opinion.title.text,
+    url: opinion.title.url,
+    aria_label: 'View case details for ' ~ opinion.title.text,
+    content: content,
+  } %}
+
+  {% set items = items|merge([item]) %}
+{% endfor %}
+
+{% block page_header %}{% endblock %}
+
+<div{{ attributes.addClass(classes) }}>
+  {% include "@organisms/ViewResults/ViewResults.twig" with {
+    variant: 'default',
+    view_name: id,
+    view_display: display_id,
+    header: header,
+    header_sidebar: '',
+    header_direction_results: 'sidebar-row',
+    form: exposed|render,
+    form_in_sidebar: true,
+    list_type: 'ul',
+    list_type_divider: '',
+    rows: items,
+    sidebar: '',
+    sidebar_direction_results: 'sidebar-row',
+    pager: pager|render,
+    items_per_page: '',
+    footer: '',
+    footer_sidebar: '',
+    sidebar_direction_footer: 'sidebar-row',
+  } %}
+</div>
