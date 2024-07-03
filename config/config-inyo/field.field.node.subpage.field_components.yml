@@ -1,4 +1,3 @@
-uuid: c55fda3d-fec3-4554-bafa-dad48000327e
 langcode: en
 status: true
 dependencies:
@@ -9,12 +8,15 @@ dependencies:
     - paragraphs.paragraphs_type.action_list
     - paragraphs.paragraphs_type.body
     - paragraphs.paragraphs_type.cards
+    - paragraphs.paragraphs_type.embed_script
     - paragraphs.paragraphs_type.hero
     - paragraphs.paragraphs_type.hero_banner
     - paragraphs.paragraphs_type.hero_hangover
     - paragraphs.paragraphs_type.iframe
+    - paragraphs.paragraphs_type.messenger_signup
     - paragraphs.paragraphs_type.section
     - paragraphs.paragraphs_type.steps
+    - paragraphs.paragraphs_type.tabs
     - paragraphs.paragraphs_type.views_reference
     - paragraphs.paragraphs_type.webform
   module:
@@ -23,8 +25,6 @@ dependencies:
 third_party_settings:
   tmgmt_content:
     excluded: false
-_core:
-  default_config_hash: A-Vbc9M7ae30hg2yY5ZtZ3CcXIIYEkAIMhHPnSkhHio
 id: node.subpage.field_components
 field_name: field_components
 entity_type: node
@@ -51,6 +51,9 @@ settings:
       steps: steps
       views_reference: views_reference
       webform: webform
+      embed_script: embed_script
+      messenger_signup: messenger_signup
+      tabs: tabs
     negate: 0
     target_bundles_drag_drop:
       accordion:
@@ -68,9 +71,15 @@ settings:
       alert:
         weight: -39
         enabled: false
+      attachment:
+        weight: 34
+        enabled: false
       body:
         weight: -38
         enabled: true
+      button:
+        weight: 36
+        enabled: false
       card:
         weight: -37
         enabled: false
@@ -80,6 +89,12 @@ settings:
       content_stream:
         weight: -35
         enabled: false
+      date_information:
+        weight: 40
+        enabled: false
+      embed_script:
+        weight: 41
+        enabled: true
       hero:
         weight: -34
         enabled: true
@@ -98,6 +113,15 @@ settings:
       iframe:
         weight: -29
         enabled: true
+      information:
+        weight: 48
+        enabled: false
+      messenger_signup:
+        weight: 44
+        enabled: true
+      read_more:
+        weight: 50
+        enabled: false
       section:
         weight: -28
         enabled: true
@@ -106,6 +130,12 @@ settings:
         enabled: false
       steps:
         weight: -26
+        enabled: true
+      tab:
+        weight: 56
+        enabled: false
+      tabs:
+        weight: 57
         enabled: true
       text_share:
         weight: -25
