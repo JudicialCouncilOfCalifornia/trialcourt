@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_roc_rule_id
+    - node.type.roc_rule
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.roc_rule.field_roc_rule_id
+field_name: field_roc_rule_id
+entity_type: node
+bundle: roc_rule
+label: 'Rule ID'
+description: 'Set the ID for this rule. It must be unique and not used on any other rule. The format should be of "ruleX__XXX". For example "Rule 2.3" would be <code>rule2__3</code> and "Rule 10.345" would be would be <code>rule10__345</code>. This ID is used as part in generating the complete URL for this rule.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

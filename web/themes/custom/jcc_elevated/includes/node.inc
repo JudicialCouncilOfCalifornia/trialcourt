@@ -14,6 +14,7 @@ use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -280,7 +281,7 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node): void {
     }
     if ($media->get('field_media_file_multiple')->target_id) {
       $file = File::load($media->get('field_media_file_multiple')->target_id);
-      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
       // Profile doc as download link, else general docs.
       if ($doc_type && $doc_type == 'Profile') {
         $variables['profile_download'] = [
@@ -690,4 +691,133 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
     }
 
   }
+}
+
+/**
+ * Node: Opinion preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void {
+  $type = Term::load($node->get('field_opinion_type')->target_id) ? Term::load($node->get('field_opinion_type')->target_id)->get('name')->value : '';
+  $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
+  $opinion_source = $node->get('field_opinion_source')->target_id ? Term::load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
+  $review_granted = $node->get('field_review_granted')->value;
+  $download_aria = t('Download or view opinion document');
+
+  // Remote file locations.
+  $client = \Drupal::httpClient();
+  $remote_files = [];
+  $file_url_base = 'https://courts.ca.gov/opinions/';
+  if ($type == 'Unpublished') {
+    $url = $file_url_base . 'nonpub/';
+    if ($review_granted) {
+      $url = $file_url_base . 'revnppub/';
+    }
+  }
+  else {
+    $url = $file_url_base . 'documents/';
+    if ($review_granted) {
+      $url = $file_url_base . 'revpub/';
+    }
+  }
+
+  // PDF.
+  $pdf_case = $case_number . '.PDF';
+  $pdf_url = $url . $pdf_case;
+  try {
+    $client->head($pdf_url)->getStatusCode();
+    $remote_files[] = [
+      'url' => $pdf_url,
+      'file_type' => 'PDF',
+      'aria_label' => $download_aria . ' ' . $pdf_case,
+    ];
+  }
+  catch (RequestException $e) {
+    $message = $e->getMessage();
+    \Drupal::logger('opinion')->warning($message);
+  }
+
+  // DOCX or DOC.
+  $doc_type = 'DOCX';
+  $docx_case = $case_number . '.' . $doc_type;
+  $docx_url = $url . $docx_case;
+  try {
+    $client->head($docx_url)->getStatusCode();
+    $remote_files[] = [
+      'url' => $docx_url,
+      'file_type' => 'DOCX',
+      'aria_label' => $download_aria . ' ' . $docx_case,
+    ];
+  }
+  catch (RequestException) {
+    $doc_type = 'DOC';
+    $doc_case = $case_number . '.' . $doc_type;
+    $doc_url = $url . $doc_case;
+    try {
+      $client->head($doc_url)->getStatusCode();
+      $remote_files[] = [
+        'url' => $doc_url,
+        'file_type' => 'DOC',
+        'aria_label' => $download_aria . ' ' . $doc_case,
+      ];
+    }
+    catch (RequestException $e) {
+      $message = $e->getMessage();
+      \Drupal::logger('opinion')->warning($message);
+    }
+  }
+
+  // Related cases.
+  $related_cases_urls = [];
+  $related_cases = $node->get('field_related_cases_plain')->value;
+  if ($related_cases) {
+    // If space delimited by accident or from migration.
+    if (strpos($related_cases, ' ')) {
+      $related_cases = preg_split('/\s+/', $related_cases);
+    }
+    else {
+      // Remove any spaces from comma delimited list.
+      $related_cases = preg_replace('/\s+/', '', $related_cases);
+      // Convert to array.
+      $related_cases = explode(',', $related_cases);
+    }
+    foreach ($related_cases as $related_case) {
+      $accms_url = __jcc_accms_link_builder($related_case);
+      if ($accms_url) {
+        $related_cases_urls[] = '<a href="' . $accms_url . '" arial_label="View related case ' . $related_case . '">' . $related_case . '</a>';
+      }
+    }
+  }
+
+  // Citings.
+  $citings = [];
+  if ($node->get('field_media_file_multiple')->getValue()) {
+    foreach ($node->get('field_media_file_multiple')->getValue() as $citing) {
+      $media = Media::load($citing['target_id']);
+      $file = File::load($media->get('field_media_file')->target_id);
+      if ($file) {
+        $citing_title = $media->get('field_media_text')->value;
+        if (is_null($citing_title)) {
+          $citing_title = $media->get('name')->value;
+        }
+        $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
+        $citings[] = [
+          'text' => ['#markup' => '<a href="' . $file_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
+        ];
+      }
+    }
+  }
+
+  $opinion = [
+    'details' => $case_number && $opinion_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
+    'remote_files' => $remote_files,
+    'related_cases' => $related_cases_urls ? implode(' ', $related_cases_urls) : '',
+    'citings' => $citings,
+  ];
+
+  $variables['opinion'] = $opinion;
 }

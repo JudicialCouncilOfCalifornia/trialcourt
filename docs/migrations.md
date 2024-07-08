@@ -56,6 +56,8 @@ You should see import progress.
 - `drush mim --update [migration]` - Update an imported migration if data changes.
 - `drush mst [migration] && drush mrs [migration]` - First STOP and then RESET status of a stuck migration.
 
+Import options used by drush from Migrate Tools: https://www.drush.org/11.x/commands/migrate_import/
+
 ### Drupal UI (Beta)
 
  - Navigate to “Structure > Migrations” https://stage-jcc-tc.pantheonsite.io/admin/structure/migrate
@@ -216,6 +218,7 @@ How to create additional migration profiles through configuration files for [Mig
          </details>
 
 Documentation:
+ - [Migration 101](https://drupalmigrate.org/)
  - [Migrate API](https://www.drupal.org/docs/drupal-apis/migrate-api)
    - [Migrate Examples](https://www.drupal.org/docs/drupal-apis/migrate-api/migrate-destination-plugins-examples)
  - [Migrate Conditions](https://www.drupal.org/docs/8/api/migrate-api/migrate-process-plugins/migrate-conditions/migrate-conditions-process-plugins) - requires separate module add-on
