@@ -231,6 +231,7 @@ function jcc_elevated_paragraph_steps(array &$variables) {
     foreach ($items as $item) {
       $item = \Drupal::service('entity.repository')->getTranslationFromContext($item, $langcode);
       $variables['steps'][] = [
+        'index' => $item->hasField('field_custom_index') ? $item->get('field_custom_index')->value : '',
         'label' => $item->hasField('field_heading') ? $item->get('field_heading')->first()->value : '',
         'content' => $item->get('field_text')->view('default'),
       ];
@@ -465,4 +466,31 @@ function jcc_elevated_paragraph_attachment(array &$variables): void {
     $variables['new'] = $new ? 'attachment__new' : '';
   }
 
+}
+
+/**
+ * Helper function for tabs paragraphs.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ */
+function jcc_elevated_paragraph_tabs(array &$variables) {
+  $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+  $variant = json_decode($variables['paragraph']->get('field_variant')->value, TRUE);
+  $variables['variant'] = $variant['tabs'] ?: 'dafault';
+
+  // Build the array of tabs.
+  $variables['tabs'] = [];
+  if ($variables['paragraph']->hasField('field_components')) {
+    $items = $variables['paragraph']->get('field_components')->referencedEntities();
+
+    foreach ($items as $item) {
+      $item = \Drupal::service('entity.repository')->getTranslationFromContext($item, $langcode);
+      $variables['tabs'][] = [
+        'label' => $item->hasField('field_heading') ? $item->get('field_heading')->first()->value : '',
+        'content' => $item->get('field_content')->view('default'),
+        'id' => $item->get('field_id')->value,
+      ];
+    }
+  }
 }

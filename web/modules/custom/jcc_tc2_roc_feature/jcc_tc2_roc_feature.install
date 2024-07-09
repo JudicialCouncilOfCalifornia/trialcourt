@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * @file
+ * Updates for roc feature.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function jcc_tc2_roc_feature_install(): void {
+  $modules = [
+    'bert',
+    'draggableviews',
+    'layout_discovery',
+    'layout_paragraphs',
+    'title_length',
+  ];
+
+  \Drupal::service('module_installer')->install($modules);
+
+  \Drupal::service('features.manager')->import(['jcc_tc2_all_immutable_config']);
+
+  node_access_rebuild(TRUE);
+}
+
+/**
+ * Install contrib modules needed for rules of court.
+ */
+function jcc_tc2_roc_feature_update_9001(): void {
+  $modules = [
+    'bert',
+    'draggableviews',
+    'layout_discovery',
+    'layout_paragraphs',
+    'title_length',
+  ];
+
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Feature import. Update the immutable to bring any general changes.
+ */
+function jcc_tc2_roc_feature_update_9002(): void {
+  \Drupal::service('features.manager')->import(['jcc_tc2_all_immutable_config']);
+
+  node_access_rebuild(TRUE);
+}
+
+/**
+ * Feature import. Import the ROC feature.
+ */
+function jcc_tc2_roc_feature_update_9003(): void {
+  \Drupal::service('features.manager')->import(['jcc_tc2_roc_feature']);
+
+  node_access_rebuild(TRUE);
+}

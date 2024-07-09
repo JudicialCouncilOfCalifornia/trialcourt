@@ -14,6 +14,7 @@ dependencies:
     - media.type.publication
     - media.type.remote_video
     - node.type.alert
+    - node.type.arbitrator
     - node.type.custom_email
     - node.type.document
     - node.type.job
@@ -21,6 +22,8 @@ dependencies:
     - node.type.landing_page
     - node.type.location
     - node.type.news
+    - node.type.opinion
+    - node.type.remote_hearings
     - node.type.subpage
     - node.type.tentative_ruling
     - taxonomy.vocabulary.case_type
@@ -69,6 +72,7 @@ dependencies:
     - redirect
     - role_delegation
     - scheduler
+    - sitemap
     - system
     - taxonomy
     - toolbar
@@ -83,6 +87,7 @@ is_admin: null
 permissions:
   - 'Manage Messaging center'
   - 'access administration pages'
+  - 'access content'
   - 'access content overview'
   - 'access contextual links'
   - 'access entity usage statistics'
@@ -122,6 +127,7 @@ permissions:
   - 'bypass pages password protection'
   - 'change own username'
   - 'create alert content'
+  - 'create arbitrator content'
   - 'create boxcast_stream media'
   - 'create content translations'
   - 'create custom_email content'
@@ -134,7 +140,9 @@ permissions:
   - 'create location content'
   - 'create media'
   - 'create news content'
+  - 'create opinion content'
   - 'create publication media'
+  - 'create remote_hearings content'
   - 'create remote_video media'
   - 'create subpage content'
   - 'create terms in case_type'
@@ -159,6 +167,7 @@ permissions:
   - 'delete alert revisions'
   - 'delete all revisions'
   - 'delete any alert content'
+  - 'delete any arbitrator content'
   - 'delete any boxcast_stream media'
   - 'delete any custom_email content'
   - 'delete any document content'
@@ -171,11 +180,14 @@ permissions:
   - 'delete any location content'
   - 'delete any media'
   - 'delete any news content'
+  - 'delete any opinion content'
   - 'delete any publication media'
+  - 'delete any remote_hearings content'
   - 'delete any remote_video media'
   - 'delete any subpage content'
   - 'delete any tentative_ruling content'
   - 'delete any webform'
+  - 'delete arbitrator revisions'
   - 'delete content translations'
   - 'delete custom_email revisions'
   - 'delete document revisions'
@@ -185,8 +197,10 @@ permissions:
   - 'delete location revisions'
   - 'delete media'
   - 'delete news revisions'
+  - 'delete opinion revisions'
   - 'delete orphan revisions'
   - 'delete own alert content'
+  - 'delete own arbitrator content'
   - 'delete own boxcast_stream media'
   - 'delete own custom_email content'
   - 'delete own document content'
@@ -197,12 +211,15 @@ permissions:
   - 'delete own landing_page content'
   - 'delete own location content'
   - 'delete own news content'
+  - 'delete own opinion content'
   - 'delete own publication media'
+  - 'delete own remote_hearings content'
   - 'delete own remote_video media'
   - 'delete own subpage content'
   - 'delete own tentative_ruling content'
   - 'delete own webform'
   - 'delete own webform submission'
+  - 'delete remote_hearings revisions'
   - 'delete subpage revisions'
   - 'delete tentative_ruling revisions'
   - 'delete terms in case_type'
@@ -224,6 +241,7 @@ permissions:
   - 'delete token'
   - 'delete xlsx mapping'
   - 'edit any alert content'
+  - 'edit any arbitrator content'
   - 'edit any boxcast_stream media'
   - 'edit any custom_email content'
   - 'edit any document content'
@@ -234,13 +252,16 @@ permissions:
   - 'edit any landing_page content'
   - 'edit any location content'
   - 'edit any news content'
+  - 'edit any opinion content'
   - 'edit any publication media'
+  - 'edit any remote_hearings content'
   - 'edit any remote_video media'
   - 'edit any subpage content'
   - 'edit any tentative_ruling content'
   - 'edit any webform'
   - 'edit any webform submission'
   - 'edit own alert content'
+  - 'edit own arbitrator content'
   - 'edit own boxcast_stream media'
   - 'edit own custom_email content'
   - 'edit own document content'
@@ -251,7 +272,9 @@ permissions:
   - 'edit own landing_page content'
   - 'edit own location content'
   - 'edit own news content'
+  - 'edit own opinion content'
   - 'edit own publication media'
+  - 'edit own remote_hearings content'
   - 'edit own remote_video media'
   - 'edit own subpage content'
   - 'edit own tentative_ruling content'
@@ -286,6 +309,7 @@ permissions:
   - 'renew token'
   - 'revert alert revisions'
   - 'revert all revisions'
+  - 'revert arbitrator revisions'
   - 'revert custom_email revisions'
   - 'revert document revisions'
   - 'revert job revisions'
@@ -293,6 +317,7 @@ permissions:
   - 'revert landing_page revisions'
   - 'revert location revisions'
   - 'revert news revisions'
+  - 'revert opinion revisions'
   - 'revert subpage revisions'
   - 'revert tentative_ruling revisions'
   - 'schedule publishing of nodes'
@@ -340,6 +365,7 @@ permissions:
   - 'view all media revisions'
   - 'view any unpublished content'
   - 'view any webform submission'
+  - 'view arbitrator revisions'
   - 'view custom_email revisions'
   - 'view document revisions'
   - 'view job revisions'
@@ -348,9 +374,11 @@ permissions:
   - 'view latest version'
   - 'view location revisions'
   - 'view news revisions'
+  - 'view opinion revisions'
   - 'view own unpublished content'
   - 'view own unpublished media'
   - 'view own webform submission'
+  - 'view remote_hearings revisions'
   - 'view scheduled content'
   - 'view subpage revisions'
   - 'view tentative_ruling revisions'

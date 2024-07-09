@@ -11,9 +11,12 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -74,9 +77,16 @@ function jcc_elevated_preprocess_views_view__news__sticky_list(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK() for news listing.
+ * Implements hook_preprocess_HOOK() for news listing block.
  */
-function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
+function jcc_elevated_preprocess_views_view__news__list_block(&$variables) {
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
+
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
   // Translation via TMGMT breaks dates where translators entered invalid date
   // values in date fields. if date is invalid clear it before template renders.
   foreach ($variables['rows'][0]['#rows'] as $row) {
@@ -86,8 +96,14 @@ function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
       $node->field_date->value = '';
     }
   }
-  // Remove captcha.
-  unset($variables['exposed']['captcha']);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for news listing.
+ */
+function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
+  // Reuse news block list as common preprocess.
+  jcc_elevated_preprocess_views_view__news__list_block($variables);
 }
 
 /**
@@ -285,6 +301,14 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
  * Implements hook_preprocess_views_view() for search listing page.
  */
 function jcc_elevated_preprocess_views_view__search__search(&$variables) {
+  $render = \Drupal::service('renderer');
+  $view = $variables['view'];
+
+  // Get the searched term for setting in the title override.
+  $searched_term = $view->getExposedInput();
+  $variables['searched_term'] = !empty($searched_term['search']) ? Xss::filter($searched_term['search']) : NULL;
+  $variables['title'] = $view->getTitle();
+
   // Personalized no results message.
   $variables['no_results_heading'] = 'We are unable to find a result for your search.';
   if (theme_get_setting('no_search_results_heading')) {
@@ -300,17 +324,6 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
     return;
   }
 
-  $render = \Drupal::service('renderer');
-  $view = $variables['view'];
-
-  // Set the item count for setting in the title override.
-  $variables['count'] = count($view->result);
-
-  // Get the searched term for setting in the title override.
-  $searched_term = $view->getExposedInput();
-  $variables['searched_term'] = !empty($searched_term['search']) ? Xss::filter($searched_term['search']) : NULL;
-  $variables['title'] = $view->getTitle();
-
   // Remove the captcha from the search.
   unset($variables['exposed']['captcha']);
 
@@ -320,7 +333,7 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
   // Process the results for the search api view.
   foreach ($variables['rows'][0]['#rows'] as $index => $item) {
     // We have to manipulate the excerpt a little to render the html.
-    $excerpt = $item['#row']->_item->getExcerpt() ?? t('No excerpt available.')->render();
+    $excerpt = $item['#row']->_item->getExcerpt() ?? t('No preview is available for this search result. Click for more information.')->render();
     $text = [
       '#prefix' => '<p>',
       '#markup' => Html::decodeEntities($excerpt),
@@ -348,6 +361,9 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
       }
     }
   }
+
+  // Count summary for the current page of results.
+  $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
 }
 
 /**
@@ -363,9 +379,11 @@ function jcc_elevated_preprocess_views_view__justices_judges__current(&$variable
     $node = $row['#row']->_entity;
     $media = $node->get('field_media')->target_id ? Media::load($node->get('field_media')->target_id) : '';
     $name = $node->get('title')->value ? $node->get('title')->value : '';
+    $title = '';
     if ($title_tid = $node->get('field_job_title')->target_id) {
       $title = Term::load($title_tid) ? Term::load($title_tid)->get('name')->value : '';
     }
+    $division = '';
     if ($division_tid = $node->get('field_division')->target_id) {
       $division = Term::load($division_tid) ? Term::load($division_tid)->get('name')->value : '';
     }
@@ -482,7 +500,7 @@ function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_views_view() for job search listing page.
+ * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
   // Reuse current jobs search block as common preprocess.
@@ -490,7 +508,244 @@ function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK() for Requests(RPF) active items listing.
+ * Implements hook_preprocess_views_view() for published opinions listing block.
+ */
+function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
+  $client = \Drupal::httpClient();
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
+
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $opinions = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $node = $row['#node'];
+    $type = Term::load($node->get('field_opinion_type')->target_id) ? Term::load($node->get('field_opinion_type')->target_id)->get('name')->value : '';
+    $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
+    $case_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
+    $review_granted = $node->get('field_review_granted')->value;
+    $title = $node->get('title')->value;
+    $download_aria = t('Download or view opinion document');
+
+    // Remote file locations.
+    $remote_files = [];
+    $file_url_base = 'https://courts.ca.gov/opinions/';
+    if ($type == 'Unpublished') {
+      $url = $file_url_base . 'nonpub/';
+      if ($review_granted) {
+        $url = $file_url_base . 'revnppub/';
+      }
+    }
+    else {
+      $url = $file_url_base . 'documents/';
+      if ($review_granted) {
+        $url = $file_url_base . 'revpub/';
+      }
+    }
+
+    // PDF.
+    $pdf_case = $case_number . '.PDF';
+    $pdf_url = $url . $pdf_case;
+    try {
+      $client->head($pdf_url)->getStatusCode();
+      $remote_files[] = [
+        'url' => $pdf_url,
+        'file_type' => 'PDF',
+        'aria_label' => $download_aria . ' ' . $pdf_case,
+      ];
+    }
+    catch (RequestException $e) {
+      $message = $e->getMessage();
+      \Drupal::logger('opinion')->warning($message);
+    }
+
+    // DOCX or DOC.
+    $doc_type = 'DOCX';
+    $docx_case = $case_number . '.' . $doc_type;
+    $docx_url = $url . $docx_case;
+    try {
+      $client->head($docx_url)->getStatusCode();
+      $remote_files[] = [
+        'url' => $docx_url,
+        'file_type' => 'DOCX',
+        'aria_label' => $download_aria . ' ' . $docx_case,
+      ];
+    }
+    catch (RequestException) {
+      $doc_type = 'DOC';
+      $doc_case = $case_number . '.' . $doc_type;
+      $doc_url = $url . $doc_case;
+      try {
+        $client->head($doc_url)->getStatusCode();
+        $remote_files[] = [
+          'url' => $doc_url,
+          'file_type' => 'DOC',
+          'aria_label' => $download_aria . ' ' . $doc_case,
+        ];
+      }
+      catch (RequestException $e) {
+        $message = $e->getMessage();
+        \Drupal::logger('opinion')->warning($message);
+      }
+    }
+
+    // Related cases.
+    $related_cases_urls = [];
+    $related_cases = $node->get('field_related_cases_plain')->value;
+    if ($related_cases) {
+      // If space delimited by accident or from migration.
+      if (strpos($related_cases, ' ')) {
+        $related_cases = preg_split('/\s+/', $related_cases);
+      }
+      else {
+        // Remove any spaces from comma delimited list.
+        $related_cases = preg_replace('/\s+/', '', $related_cases);
+        // Convert to array.
+        $related_cases = explode(',', $related_cases);
+      }
+      foreach ($related_cases as $related_case) {
+        $accms_url = __jcc_accms_link_builder($related_case);
+        if ($accms_url) {
+          $related_cases_urls[] = '<a href="' . $accms_url . '" arial_label="View related case details from  ' . $related_case . '">' . $related_case . '</a>';
+        }
+      }
+    }
+
+    // Citings.
+    $citings = [];
+    $query = \Drupal::entityQuery('node');
+    $query->condition('status', 1);
+    $query->condition('title', $title, 'CONTAINS');
+    $query->exists('field_media_file_multiple');
+    $citing_archive = $query->execute();
+    if ($citing_archive) {
+      $citing_node_id = reset($citing_archive);
+      $citing_node = Node::load($citing_node_id);
+      foreach ($citing_node->get('field_media_file_multiple')->getValue() as $citing) {
+        $media = Media::load($citing['target_id']);
+        $file = File::load($media->get('field_media_file')->target_id);
+        if ($file) {
+          $citing_title = $media->get('field_media_text')->value;
+          if (is_null($citing_title)) {
+            $citing_title = $media->get('name')->value;
+          }
+          $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
+          $citings[] = [
+            'text' => ['#markup' => '<a href="' . $file_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
+          ];
+        }
+      }
+    }
+
+    $opinion = [
+      'type' => $type,
+      'case_number' => t('Case:') . ' ' . $case_number ? $case_number : t('Unspecified'),
+      'posted' => $node->get('field_date')->value ? $node->get('field_date')->date->format('F j, Y') : '',
+      'source' => $case_source,
+      'review_granted' => $review_granted,
+      'title' => [
+        'text' => $title ?? '',
+        'url' => $case_number && $case_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
+      ],
+      'remote_files' => $remote_files,
+      'related_cases' => $related_cases_urls ? implode(' ', $related_cases_urls) : '',
+      'citings' => $citings,
+    ];
+    $opinions[] = $opinion;
+  }
+
+  $variables['opinions'] = $opinions;
+}
+
+/**
+ * Implements hook_preprocess_views_view() for unpublished opinions listing block.
+ */
+function jcc_elevated_preprocess_views_view__opinions__unpublished(&$variables) {
+  // Reuse current published opinions search block as common preprocess.
+  jcc_elevated_preprocess_views_view__opinions__published($variables);
+}
+
+/**
+ * Implements hook_preprocess_views_view() for published opinions citings archive search block.
+ */
+function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variables) {
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
+
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $opinions = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $node = $row['#node'];
+    $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
+    $case_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
+
+    // Citings.
+    $citings = [];
+    if ($node->get('field_media_file_multiple')->getValue()) {
+      foreach ($node->get('field_media_file_multiple')->getValue() as $citing) {
+        $media = Media::load($citing['target_id']);
+        $file = File::load($media->get('field_media_file')->target_id);
+        if ($file) {
+          $citing_title = $media->get('field_media_text')->value;
+          if (is_null($citing_title)) {
+            $citing_title = $media->get('name')->value;
+          }
+          $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
+          $citings[] = [
+            'text' => ['#markup' => '<a href="' . $file_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
+          ];
+        }
+      }
+    }
+
+    $opinion = [
+      'case_number' => t('Case:') . ' ' . $case_number ? $case_number : t('Unspecified'),
+      'posted' => $node->get('field_date')->value ? $node->get('field_date')->date->format('F j, Y') : '',
+      'year' => $node->get('field_date')->value ? $node->get('field_date')->date->format('Y') : '',
+      'source' => $case_source,
+      'title' => [
+        'text' => $node->get('title')->value ?? '',
+        'url' => $case_number && $case_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
+      ],
+      'citings' => $citings,
+    ];
+
+    $opinions[] = $opinion;
+  }
+
+  // Group opinions by year.
+  $grouped_opinions = [];
+  foreach ($opinions as $item) {
+    if ($item['posted']) {
+      $year = $item['year'];
+      $grouped_opinions[$year][] = $item;
+    }
+  }
+
+  $variables['opinions'] = $grouped_opinions;
+}
+
+/**
+ * Implements hook_preprocess_views_view() for published opinions listing page.
+ */
+function jcc_elevated_preprocess_views_view__opinions__all_page(&$variables) {
+  // Reuse current published opinions search block as common preprocess.
+  jcc_elevated_preprocess_views_view__opinions__published($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for Requests(RPF) listing.
  */
 function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&$variables): void {
   // Customize filter UI.
@@ -796,4 +1051,67 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   if (isset($form['actions']['reset'])) {
     $form['actions']['reset']['#attributes']['class'][] = 'button button--secondary button--normal';
   }
+}
+
+/**
+ * Helper function to map case numbers to ACCMS dist ids.
+ */
+function __jcc_accms_link_builder($case_number) {
+  // Exclude any trailing opinion revision code.
+  $case_number = $string = substr($case_number, 0, 7);
+  // Court id is first character from case number.
+  $court_id = substr($case_number, 0, 1);
+
+  if ($court_id) {
+    // Map court code with ACCMS dist id.
+    switch ($court_id) {
+      case 'S':
+        $accms_dist_id = '0';
+        break;
+
+      case 'A':
+        $accms_dist_id = '1';
+        break;
+
+      case 'B':
+        $accms_dist_id = '2';
+        break;
+
+      case 'C':
+        $accms_dist_id = '3';
+        break;
+
+      case 'D':
+        $accms_dist_id = '41';
+        break;
+
+      case 'E':
+        $accms_dist_id = '42';
+        break;
+
+      case 'F':
+        $accms_dist_id = '43';
+        break;
+
+      case 'G':
+        $accms_dist_id = '5';
+        break;
+
+      case 'H':
+        $accms_dist_id = '6';
+        break;
+    }
+
+    // Assemble ACCMS lookup URL.
+    $accms_url = '';
+    $accms_dist_query = 'https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=';
+    if ($accms_dist_id) {
+      $accms_url = $accms_dist_query . $accms_dist_id . '&search=number&useSession=0&query_caseNumber=' . $case_number;
+    }
+    elseif ($court_id == 'S') {
+      $accms_url = $accms_dist_query . '0&search=number&useSession=0&query_caseNumber=' . $case_number;
+    }
+  }
+
+  return $accms_url;
 }
