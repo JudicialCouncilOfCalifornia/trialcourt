@@ -34,6 +34,15 @@ function jcc_tc2_roc_feature_preprocess_node(array &$variables): void {
     if (isset($variables['content']['field_roc_rule_revised_date'][0]['#text'])) {
       $variables['content']['field_roc_rule_revised_date'][0]['#text'] = t('Current as of') . ' ' . $variables['content']['field_roc_rule_revised_date'][0]['#text'];
     }
+
+    // Change the media link to go directly to the file and not the media item.
+    if (isset($variables['content']['field_roc_rule_media'][0]['#url'])) {
+      if (isset($variables['content']['field_roc_rule_media'][0]['#options']['entity'])) {
+        $roc_rule_service = \Drupal::service('jcc_tc2_roc_feature.rule.service');
+        $file = $roc_rule_service->getMediaDocumentFile($variables['content']['field_roc_rule_media'][0]['#options']['entity']);
+        $variables['content']['field_roc_rule_media'][0]['#url'] = Url::fromUserInput($file->createFileUrl());
+      }
+    }
   }
 }
 

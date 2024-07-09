@@ -36,10 +36,10 @@ class JccRocEventSubscriber implements EventSubscriberInterface {
       // Add each query item as a path argument.
       foreach ($query as $key => $value) {
         if ($key == 'title') {
-          $value = '/' . Xss::filter($value);
+          $path .= '/' . Xss::filter($value);
         }
         if ($key == 'linkid') {
-          $value = '/' . Xss::filter($value);
+          $path .= '/' . Xss::filter($value);
         }
       }
 
