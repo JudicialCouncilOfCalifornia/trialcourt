@@ -82,7 +82,9 @@
 
 {% set tabs_elems = {} %}
 
-{% set tabs_elems = tabs_elems|merge({'meetings': {'label':'Meetings','content': content.meetings_tab}}) %}
+{% if hide_meetings_tab != 1 %}
+  {% set tabs_elems = tabs_elems|merge({'meetings': {'label':'Meetings','content': content.meetings_tab}}) %}
+{% endif %}
 
 {% if content.field_members[0] is not empty %}
   {% set tabs_elems = tabs_elems|merge({'members': {'label':'Members','content': content.field_members}}) %}

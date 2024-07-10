@@ -222,15 +222,20 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
  */
 function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node) {
   // Meetings tab.
-  $events = views_embed_view('advisory_body_events', 'block_1', $node->id());
-  $variables['content']['meetings_tab']['0']['#markup'] = \Drupal::service('renderer')->renderRoot($events);
+  if ($node->hasField('field_hide_meetings_tab')) {
+    $variables['hide_meetings_tab'] = $node->get('field_hide_meetings_tab')->first()->getValue()['value'];
+  }
+  if (!$variables['hide_meetings_tab']) {
+    $events = views_embed_view('advisory_body_events', 'block_1', $node->id());
+    $variables['content']['meetings_tab']['0']['#markup'] = \Drupal::service('renderer')->renderRoot($events);
 
-  $past_events = Views::getView('advisory_body_events');
-  $past_events->setDisplay('page_1');
-  $past_events->setArguments([$node->id()]);
-  $past_events->execute();
-  if (count($past_events->result) > 0) {
-    $variables['content']['meetings_tab']['1']['#markup'] = '<div><h3>Past Meetings</h3><a class="button button--text button--normal icon--arrow" href="/past-meetings/' . $node->id() . '">View ' . $node->getTitle() . ' Past meetings</a></div>';
+    $past_events = Views::getView('advisory_body_events');
+    $past_events->setDisplay('page_1');
+    $past_events->setArguments([$node->id()]);
+    $past_events->execute();
+    if (count($past_events->result) > 0) {
+      $variables['content']['meetings_tab']['1']['#markup'] = '<div><h3>Past Meetings</h3><a class="button button--text button--normal icon--arrow" href="/past-meetings/' . $node->id() . '">View ' . $node->getTitle() . ' Past meetings</a></div>';
+    }
   }
 
   // About tab.
