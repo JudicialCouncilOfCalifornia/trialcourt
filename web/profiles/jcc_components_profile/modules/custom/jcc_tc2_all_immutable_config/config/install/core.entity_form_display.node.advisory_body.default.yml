@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.advisory_body.field_contact_info
     - field.field.node.advisory_body.field_date_established
     - field.field.node.advisory_body.field_date_note
+    - field.field.node.advisory_body.field_hide_meetings_tab
     - field.field.node.advisory_body.field_members
     - field.field.node.advisory_body.field_news_reports
     - field.field.node.advisory_body.field_related_links
@@ -34,7 +35,7 @@ third_party_settings:
       label: Tabs
       region: content
       parent_name: group_advisory_body_tabs
-      weight: 19
+      weight: 20
       format_type: tab
       format_settings:
         classes: ''
@@ -50,7 +51,7 @@ third_party_settings:
       label: Date
       region: content
       parent_name: group_basic_info
-      weight: 17
+      weight: 18
       format_type: fieldset
       format_settings:
         classes: ''
@@ -60,6 +61,7 @@ third_party_settings:
         required_fields: true
     group_advisory_body_tabs:
       children:
+        - field_hide_meetings_tab
         - group_basic_info
         - group_sidebar
         - group_tabs
@@ -83,7 +85,7 @@ third_party_settings:
       label: 'Basic info'
       region: content
       parent_name: group_advisory_body_tabs
-      weight: 17
+      weight: 18
       format_type: tab
       format_settings:
         classes: ''
@@ -99,7 +101,7 @@ third_party_settings:
       label: Sidebar
       region: content
       parent_name: group_advisory_body_tabs
-      weight: 18
+      weight: 19
       format_type: tab
       format_settings:
         classes: ''
@@ -164,6 +166,13 @@ content:
     settings:
       rows: 5
       placeholder: ''
+    third_party_settings: {  }
+  field_hide_meetings_tab:
+    type: boolean_checkbox
+    weight: 17
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   field_members:
     type: text_textarea
