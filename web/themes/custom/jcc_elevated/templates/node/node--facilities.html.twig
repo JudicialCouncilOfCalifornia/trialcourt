@@ -1,0 +1,144 @@
+{{ attach_library("jcc_storybook/Brow") }}
+{{ attach_library("jcc_storybook/HeroHangover") }}
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/Body") }}
+{{ attach_library("jcc_storybook/Card") }}
+{{ attach_library("jcc_storybook/List") }}
+{{ attach_library("jcc_storybook/Pill") }}
+
+  {#{% block layout %}#}
+  {% if imageurl is not empty %}
+    {% set imageTag %}
+    <img src={{imageurl}} />
+    {% endset %} 
+  {% endif %}
+ 
+ {% set mediacontent = imageTag is not empty ? imageTag : '' %} 
+ {% set hangover_content %}  
+    {% include "@molecules/Card/Card.twig" with {
+      variant: "media-right",
+      aspect: [],
+      clickable_card: false,
+      background: null,
+      media: mediacontent,
+       media_caption: {
+            show: hero_caption or hero_citation ? true,
+            text: hero_caption,
+            citation: hero_citation,
+            overlay: true,
+          },         
+             
+    } %} 
+  {% endset %} 
+
+ {% include "@molecules/HeroHangover/HeroHangover.twig" with {
+      hangover_hide_compact: false,
+      hangover_offset: 22,
+      background: 'striped-base-light-xx',
+      brow: {
+        variant: 'default_with_date',
+        part_one: details.county,        
+      },
+      heading: details.hero_title.value,
+      news_header: true,      
+      hangover_content: hangover_content,
+      text: ''  
+    } %}
+
+ {% set items = [] %} 
+  {% for key,value in details.project_information %}
+    {% if value is not empty %}
+      {% set item = {
+        label: key,
+        text: value,
+      } %}
+      {% set items = items|merge([item]) %}
+    {% endif %}
+  {% endfor %}
+ 
+  {% set projectdetails %}   
+    {% include "@molecules/List/List.twig" with {
+      variant: 'none',
+      items: items,
+    } %}
+    <div class="cluster"> 
+    {% include "@atoms/Pill/Pill.twig" with {
+      variant: 'default',
+      label: details['status'],
+      url: ''
+    } %} 
+    </div>
+   {% endset %} 
+ 
+{% set detailscard %}
+  {% include "@molecules/Card/Card.twig" with {
+          variant: "bordered",
+          aspect: [],
+          clickable_card: false,
+          background: null  ,
+          text: projectdetails,
+          button_data:[],
+          heading: 'DETAILS'        
+        }
+  %} 
+{% endset %} 
+{% set bodycontent %}
+     {% for item in content.body %}
+  {{ item['#text'] | raw }}  
+{% endfor %}
+{% endset %}
+
+    {% set allcontent %}       
+          {% include "@molecules/Body/Body.twig" with {
+          variant: "default",
+          heading: "",
+          lead: "",
+          content: bodycontent,
+          subheading: '',
+          aside: detailscard
+          } %}   
+
+  {# START OF PROJECT IMAGES HERE #}
+  {% if projectimages is not empty %}
+<p> Click on an image below to see in full size </p>
+<div class="container">
+<div class="grid grid-demo" style="--grid-min-width: 30ch;">
+{% for image in projectimages %}  
+ {% if image.url %}
+    {% set project_image %}   
+    <a href="{{ image.url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ image.alt }}" aria-label="Click to view larger image">
+    <img src="{{ image.url }}"></a>
+    {% endset %}
+ {% endif %}
+         {% include "@molecules/Card/Card.twig" with {
+          variant: "media-right",
+          aspect: [],
+          clickable_card: false,
+          background: null,
+          media:  project_image | raw,
+          heading: '',
+          button_data:[],
+          text: '',  
+         media_caption: {
+            show: image.caption or image.citation ? true,
+            text: image.caption ~ image.citation ~ media_caption.show,
+            citation: image.citation,
+            overlay: true,
+          },         
+        } %}
+        {% endfor %}
+</div>
+</div>   
+{% endif %}
+{# END OF PROJECT IMAGES HERE #}
+{% endset %}
+</div>
+  
+ {% block section %}
+        {% include "@organisms/Section/Section.twig" with {
+          sub_component_layout: 'stack',
+          sub_component_data: allcontent,
+          }      
+        %}
+
+  {% endblock %}
