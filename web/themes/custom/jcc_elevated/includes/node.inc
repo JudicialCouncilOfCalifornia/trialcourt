@@ -222,8 +222,11 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
  */
 function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node) {
   // Meetings tab.
-  if ($node->hasField('field_hide_meetings_tab')) {
+  if ($node->hasField('field_hide_meetings_tab') && !empty($node->get('field_hide_meetings_tab')->first())) {
     $variables['hide_meetings_tab'] = $node->get('field_hide_meetings_tab')->first()->getValue()['value'];
+  }
+  else {
+    $variables['hide_meetings_tab'] = 0;
   }
   if (!$variables['hide_meetings_tab']) {
     $events = views_embed_view('advisory_body_events', 'block_1', $node->id());
