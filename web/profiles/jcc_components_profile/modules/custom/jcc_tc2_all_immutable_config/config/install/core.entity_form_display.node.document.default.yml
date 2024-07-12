@@ -4,13 +4,12 @@ dependencies:
   config:
     - field.field.node.document.field_media
     - node.type.document
-    - workflows.workflow.editorial
   module:
-    - content_moderation
     - media_library
     - path
     - scheduler
     - scheduler_content_moderation_integration
+    - workflow_buttons
 id: node.document.default
 targetEntityType: node
 bundle: document
@@ -37,10 +36,11 @@ content:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
-    type: moderation_state_default
+    type: workflow_buttons
     weight: 16
     region: content
-    settings: {  }
+    settings:
+      show_current_state: true
     third_party_settings: {  }
   path:
     type: path
