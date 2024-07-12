@@ -475,7 +475,10 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       $event_granicus_link = $node->hasField('field_granicus_link') ? $node->get('field_granicus_link')->view()[0]["#text"] : FALSE;
 
       // Get event time start and end.
-      $event_date_time = '<strong>Time: </strong> ' . $node->field_event_date->start_date->format('g:i a') . ' to ' . $node->field_event_date->end_date->format('g:i a');
+      $temp_start_date = $node->field_event_date->start_date->format('Y-m-d H:i:s');
+      $start_date = new DateTimeImmutable($temp_start_date, new DateTimeZone("UTC"));
+
+      $event_date_time = '<strong>Time: </strong> ' . $start_date->format('g:i a') . ' to ' . $node->field_event_date->end_date->format('g:i a');
 
       // Populating the event object.
       $event['title'] = $node->field_event_date->start_date->format('F j, Y');
