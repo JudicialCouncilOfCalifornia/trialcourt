@@ -5,14 +5,12 @@ dependencies:
     - field.field.node.event.body
     - field.field.node.event.field_content_reference
     - field.field.node.event.field_event_date
-    - field.field.node.event.field_event_date_range
     - field.field.node.event.field_event_files
     - field.field.node.event.field_event_state
     - field.field.node.event.field_granicus_link
     - node.type.event
   module:
     - datetime_range
-    - datetime_range_timezone
     - user
 id: node.event.default
 targetEntityType: node
@@ -36,16 +34,6 @@ content:
       separator: '-'
     third_party_settings: {  }
     weight: 4
-    region: content
-  field_event_date_range:
-    type: daterange_timezone
-    label: above
-    settings:
-      separator: '-'
-      format_type: medium
-      display_timezone: true
-    third_party_settings: {  }
-    weight: 5
     region: content
   field_event_files:
     type: entity_reference_entity_view
