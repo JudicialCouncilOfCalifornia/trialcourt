@@ -477,9 +477,18 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
 
       // Get event time start and end.
       $temp_start_date = $node->field_event_date->start_date->format('Y-m-d H:i:s');
-      $start_date = new DateTimeImmutable($temp_start_date, new DateTimeZone("UTC"));
+      $temp_end_date = $node->field_event_date->end_date->format('Y-m-d H:i:s');
 
-      $event_date_time = '<strong>Time: </strong> ' . $start_date->format('g:i a') . ' to ' . $node->field_event_date->end_date->format('g:i a');
+      // Having to hardcode the timezone into the date.
+      $s_date = new DateTime($temp_start_date, new DateTimeZone('UTC'));
+      $s_date->setTimeZone(new DateTimeZone("America/Los_Angeles"));
+      $start_date = $s_date->format('g:i a');
+
+      $e_date = new DateTime($temp_end_date, new DateTimeZone('UTC'));
+      $e_date->setTimeZone(new DateTimeZone("America/Los_Angeles"));
+      $end_date = $e_date->format('g:i a');
+
+      $event_date_time = '<strong>Time: </strong> ' . $start_date . ' to ' . $end_date;
 
       // Populating the event object.
       $event['title'] = $node->field_event_date->start_date->format('F j, Y');
@@ -505,8 +514,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
 /**
  * Implements hook_preprocess_views_view() for events listing block.
  */
-function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$variables)
-{
+function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$variables) {
   $render = \Drupal::service('renderer');
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
@@ -579,7 +587,8 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
   $parent_advisory_body = \Drupal::entityTypeManager()->getStorage('node')->load($advisory_body_id);
   if ($parent_advisory_body) {
     $variables['view_title'] = $parent_advisory_body->getTitle() . ' past meetings';
-  } else {
+  }
+  else {
     $variables['view_title'] = '';
   }
 }
