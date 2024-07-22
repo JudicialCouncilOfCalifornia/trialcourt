@@ -5,12 +5,14 @@
  * Contains jcc_custom.module.
  */
 
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\editor\Entity\Editor;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Element\ManagedFile;
@@ -191,12 +193,48 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
 
     case 'node_request_form':
     case 'node_request_edit_form':
-      $form['body']['widget'][0]['summary']['#required'] = FALSE;
-      $form['body']['widget'][0]['summary']['#title'] = t('Summary/Teaser text');
-      $form['body']['widget'][0]['summary']['#description'] = t('This summary will populate the header on full page display, and the text on teasers.');
-      $form['field_rfp_number']['widget'][0]['value']['#required'] = TRUE;
-      $form['field_rfp_status']['widget']['#required'] = TRUE;
-      $form['field_rfp_type']['widget']['#required'] = TRUE;
+      // If the module that adds functionality to solicitations is no active,
+      // then disable the ability to create nodes by disabling the form.
+      $moduleHandler = \Drupal::service('module_handler');
+      if (!$moduleHandler->moduleExists('jcc_elevated_rfp_solicitations')) {
+        // Set all form items to false access.
+        foreach (Element::children($form) as $name) {
+          $form[$name]['#access'] = FALSE;
+        }
+        // Alert the viewer that this node type cannot be created.
+        $form['content_information'] = [
+          '#markup' => t('Content of this type is not allowed to be created on this site. Please contact an administrator for more information.'),
+        ];
+      }
+      break;
+
+    case 'paragraphs_library_item_edit_form':
+    case 'paragraphs_library_item_edit_form_1':
+      $type = \Drupal::request()->get('type');
+      $isNew = $form_state->getFormObject()->getEntity()->isNew();
+      $form['paragraphs']['widget']['#title'] = t('Preset item');
+
+      // If new/add form and no type is set by the URL, Block the page/form.
+      if (!$type && $isNew) {
+        $form['paragraphs']['#access'] = FALSE;
+        $form['label']['#access'] = FALSE;
+        $form['revision_log']['#access'] = FALSE;
+        $form['actions']['#access'] = FALSE;
+        $form['notice']['#markup'] = t('This form is blocked because a type is not defined in the URL');
+      }
+
+      // If new/add form and type is set by the URL, limit the options to the
+      // type that is set in the URL. If the type is not correct, this also acts
+      // as a way to prevent non-allowed types to be added.
+      if ($type && $isNew) {
+        foreach ($form['paragraphs']['widget']['add_more'] as $key => $item) {
+          if (str_starts_with($key, 'add_more_button_') && $key != 'add_more_button_' . $type) {
+            unset($form['paragraphs']['widget']['add_more'][$key]);
+            unset($form['paragraphs']['widget']['add_more']['operations']['#links'][$key]);
+          }
+        }
+      }
+
       break;
   }
 
@@ -211,22 +249,6 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
         $form['field_e'][$node_type]['#access'] = FALSE;
       }
     }
-  }
-}
-
-/**
- * Implements hook__field_group_form_process_build_alter().
- */
-function jcc_custom_field_group_form_process_build_alter(array &$element, FormStateInterface $form_state, &$complete_form): void {
-  $form_id = $element['#form_id'] ?? '';
-  switch ($form_id) {
-    case 'node_request_form':
-    case 'node_request_edit_form':
-      $element['group_dates']['#description'] = $element['field_rfp_important_dates']['widget']['#description'];
-      $element['field_rfp_important_dates']['widget']['#description'] = NULL;
-      $element['group_submission_additional_info']['#title'] = t('Sidebar callouts');
-      $element['group_submission_additional_info']['#description'] = t('This content will display in the sidebar section, above the Dates output. The first callout will display with the light blue background and NO Brow text. Additional items will have the dark blue background and will display the Brow text.');
-      break;
   }
 }
 
@@ -858,26 +880,73 @@ function jcc_custom_form_taxonomy_overview_vocabularies_alter(&$form, FormStateI
 }
 
 /**
- * Sets the Request (RFP) type options.
+ * Sets the Solicitation Request (RFP) type options.
  */
 function jcc_custom_request_rfp_type_options(): array {
-  return [
-    'rfp' => t('Request for Proposal'),
-    'rfq' => t('Request for Quote'),
-    'rfi' => t('Request for Information'),
-    'rfo' => t('Request for Offer'),
-    'ifb' => t('Invitation for Bid'),
-  ];
+  $moduleHandler = \Drupal::service('module_handler');
+  if ($moduleHandler->moduleExists('jcc_elevated_rfp_solicitations')) {
+    return jcc_elevated_rfp_solicitations_type_options();
+  }
+
+  return [];
 }
 
 /**
- * Sets the Request (RFP) status options.
+ * Sets the Solicitation Request (RFP) status options.
  */
 function jcc_custom_request_rfp_status_options(): array {
-  return [
-    'open' => t('Open'),
-    'closed' => t('Closed'),
-    'canceled' => t('Canceled'),
-    'archived' => t('Archived'),
-  ];
+  $moduleHandler = \Drupal::service('module_handler');
+  if ($moduleHandler->moduleExists('jcc_elevated_rfp_solicitations')) {
+    return jcc_elevated_rfp_solicitations_status_options();
+  }
+
+  return [];
+}
+
+/**
+ * Sets the Solicitation Request (RFP) status options.
+ */
+function jcc_custom_request_rfp_department_options(): array {
+  $moduleHandler = \Drupal::service('module_handler');
+  if ($moduleHandler->moduleExists('jcc_elevated_rfp_solicitations')) {
+    return jcc_elevated_rfp_solicitations_department_options();
+  }
+
+  return [];
+}
+
+/**
+ * Sets the Solicitation Request (RFP) status options.
+ */
+function jcc_custom_request_rfp_year_options(): array {
+  $moduleHandler = \Drupal::service('module_handler');
+  if ($moduleHandler->moduleExists('jcc_elevated_rfp_solicitations')) {
+    return jcc_elevated_rfp_solicitations_year_options();
+  }
+
+  return [];
+}
+
+/**
+ * Implements hook_menu_links_discovered_alter().
+ */
+function jcc_custom_menu_links_discovered_alter(&$links): void {
+  // Hide the default paragraph library menu link. It's just confusing, and we
+  // won't be relying on the default view. We are going to break the view apart
+  // Into several custom views for each needed library.
+  if (isset($links['paragraphs_library.paragraphs_library_item.collection'])) {
+    unset($links['paragraphs_library.paragraphs_library_item.collection']);
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function jcc_custom_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface &$cacheability): void {
+  // Hide default paragraph library tab that comes with the contrib module. It's
+  // too general, and we will have specific admin pages for specific paragraph
+  // libraries.
+  if (isset($data['tabs'], $data['tabs'][0], $data['tabs'][0]['entity.paragraphs_library_item.collection'])) {
+    unset($data['tabs'][0]['entity.paragraphs_library_item.collection']);
+  }
 }

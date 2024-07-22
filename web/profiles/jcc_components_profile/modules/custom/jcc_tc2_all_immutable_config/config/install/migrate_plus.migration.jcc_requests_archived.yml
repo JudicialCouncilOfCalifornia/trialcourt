@@ -13,7 +13,7 @@ migration_group: jcc_requests_rfps
 label: 'JCC: Requests (RFPs): Archived'
 source:
   plugin: csv
-  path: 'modules/custom/jcc_custom/data/jcc_rfp_archived_content.csv'
+  path: 'modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_archived_content.csv'
   delimiter: ','
   header_offset: 0
   fields:
@@ -38,6 +38,10 @@ source:
       label: 'RFP Type'
       selector: field_rfp_type
     -
+      name: field_rfp_dept_group
+      label: 'RFP Department'
+      selector: field_rfp_dept_group
+    -
       name: body
       label: 'RFP Content'
       selector: body
@@ -53,6 +57,10 @@ source:
       name: field_rfp_end_date
       label: 'RFP End Date'
       selector: field_rfp_end_date
+    -
+      name: field_rfp_year
+      label: 'RFP Associated Year'
+      selector: field_rfp_year
   ids:
     - url
 process:
@@ -69,6 +77,14 @@ process:
       search: ' '
       replace: '_'
   field_rfp_type: field_rfp_type
+  field_rfp_dept_group:
+    -
+      plugin: entity_generate
+      source: field_rfp_dept_group
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: department
+      value_key: name
   body/summary: summary
   body/value:
     -
@@ -97,8 +113,9 @@ process:
     default_value: 'body'
   field_rfp_start_date: field_rfp_start_date
   field_rfp_end_date: field_rfp_end_date
+  field_rfp_year: field_rfp_year
   field_rfp_important_dates: []
-  field_media_file_multiple:
+  field_rfp_attached_media:
     -
       plugin: jcc_request_media_lookup
       migration_id: jcc_requests_archived_media

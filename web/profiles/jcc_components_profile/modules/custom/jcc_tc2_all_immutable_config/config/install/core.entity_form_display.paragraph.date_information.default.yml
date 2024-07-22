@@ -8,7 +8,7 @@ dependencies:
     - paragraphs.paragraphs_type.date_information
   module:
     - allowed_formats
-    - datetime_range
+    - jcc_custom
     - maxlength
     - text
 id: paragraph.date_information.default
@@ -17,14 +17,14 @@ bundle: date_information
 mode: default
 content:
   field_date_range:
-    type: daterange_default
-    weight: 1
+    type:  jcc_elevated_custom_daterange_all_day
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
   field_heading:
     type: string_textfield
-    weight: 2
+    weight: 3
     region: content
     settings:
       size: 60
@@ -32,7 +32,7 @@ content:
     third_party_settings: {  }
   field_text:
     type: text_textarea
-    weight: 3
+    weight: 4
     region: content
     settings:
       rows: 3

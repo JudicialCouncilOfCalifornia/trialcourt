@@ -1,0 +1,20 @@
+jcc_elevated_rfp_solicitations.admin_content_requests_rfps:
+  path: '/admin/content/requests'
+  defaults:
+    _controller: '\Drupal\jcc_elevated_rfp_solicitations\Controller\JccElevatedRfpSolicitationRequestController::redirectToActiveRequestsAdmin'
+    link_id: 'jcc_elevated_rfp_solicitations.admin_content_requests_rfps'
+    _title: 'Solicitation requests'
+  requirements:
+    _role: request_manager+administrator
+  options:
+    _admin_route: true
+
+jcc_elevated_rfp_solicitations.solicitation_request_settings:
+  path: "/admin/config/jcc-elevated/solicitation-requests-customization"
+  defaults:
+    _form: '\Drupal\jcc_elevated_rfp_solicitations\Form\JccElevatedRfpSolicitationsSettingsForm'
+    _title: "JCC Elevated: Solicitation Request Customizations"
+  requirements:
+    _role: request_manager+administrator
+  options:
+    _admin_route: true

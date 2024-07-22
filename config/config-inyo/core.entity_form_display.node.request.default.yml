@@ -4,7 +4,9 @@ dependencies:
   config:
     - field.field.node.request.body
     - field.field.node.request.field_media_file_multiple
+    - field.field.node.request.field_rfp_attached_media
     - field.field.node.request.field_rfp_attachments
+    - field.field.node.request.field_rfp_dept_group
     - field.field.node.request.field_rfp_end_date
     - field.field.node.request.field_rfp_important_dates
     - field.field.node.request.field_rfp_number
@@ -13,7 +15,9 @@ dependencies:
     - field.field.node.request.field_rfp_submission_information
     - field.field.node.request.field_rfp_topic
     - field.field.node.request.field_rfp_type
+    - field.field.node.request.field_rfp_year
     - node.type.request
+    - workflows.workflow.editorial
   module:
     - content_moderation
     - datetime
@@ -62,6 +66,7 @@ third_party_settings:
         required_fields: true
     group_dates:
       children:
+        - field_rfp_year
         - field_rfp_start_date
         - field_rfp_end_date
         - field_rfp_important_dates
@@ -79,8 +84,7 @@ third_party_settings:
         required_fields: true
     group_attachments:
       children:
-        - field_media_file_multiple
-        - field_rfp_attachments
+        - field_rfp_attached_media
       label: Attachments
       region: content
       parent_name: group_t
@@ -114,6 +118,7 @@ third_party_settings:
         - field_rfp_status
         - field_rfp_type
         - field_rfp_topic
+        - field_rfp_dept_group
       label: 'Request information'
       region: content
       parent_name: group_main_content
@@ -146,49 +151,33 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_media_file_multiple:
+  field_rfp_attached_media:
     type: media_library_widget
-    weight: 12
-    region: content
-    settings:
-      media_types:
-        - file
-        - publication
-        - image
-    third_party_settings: {  }
-  field_rfp_attachments:
-    type: paragraphs
     weight: 13
     region: content
     settings:
-      title: Attachment
-      title_plural: Attachments
-      edit_mode: closed_expand_nested
-      closed_mode: summary
-      autocollapse: none
-      closed_mode_threshold: 0
-      add_mode: button
-      form_display_mode: default
-      default_paragraph_type: _none
-      features:
-        add_above: '0'
-        collapse_edit_all: '0'
-        duplicate: '0'
+      media_types: {  }
+    third_party_settings: {  }
+  field_rfp_dept_group:
+    type: options_select
+    weight: 7
+    region: content
+    settings: {  }
     third_party_settings: {  }
   field_rfp_end_date:
     type: datetime_default
-    weight: 9
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
   field_rfp_important_dates:
     type: paragraphs
-    weight: 10
+    weight: 15
     region: content
     settings:
       title: 'Important date'
       title_plural: 'Important dates'
-      edit_mode: closed_expand_nested
+      edit_mode: open
       closed_mode: summary
       autocollapse: none
       closed_mode_threshold: 0
@@ -210,19 +199,19 @@ content:
     third_party_settings: {  }
   field_rfp_start_date:
     type: datetime_default
-    weight: 8
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
   field_rfp_status:
     type: options_select
-    weight: 5
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
   field_rfp_submission_information:
     type: paragraphs
-    weight: 11
+    weight: 5
     region: content
     settings:
       title: 'Submission information'
@@ -241,13 +230,19 @@ content:
     third_party_settings: {  }
   field_rfp_topic:
     type: options_select
-    weight: 7
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
   field_rfp_type:
     type: options_select
-    weight: 6
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_rfp_year:
+    type: options_select
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -259,19 +254,19 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 5
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 7
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 8
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -282,7 +277,7 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 6
+    weight: 5
     region: content
     settings:
       display_label: true
@@ -297,17 +292,19 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 9
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 10
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_media_file_multiple: true
+  field_rfp_attachments: true
   langcode: true
   promote: true
   sticky: true

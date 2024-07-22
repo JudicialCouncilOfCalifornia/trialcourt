@@ -220,7 +220,7 @@ function jcc_elevated_paragraph_accordion(array &$variables) {
  * @param array $variables
  *   The paragraph variables.
  */
-function jcc_elevated_paragraph_steps(array &$variables) {
+function jcc_elevated_paragraph_steps(array &$variables): void {
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $variables['steps'] = [];
 
@@ -231,9 +231,9 @@ function jcc_elevated_paragraph_steps(array &$variables) {
     foreach ($items as $item) {
       $item = \Drupal::service('entity.repository')->getTranslationFromContext($item, $langcode);
       $variables['steps'][] = [
-        'index' => $item->hasField('field_custom_index') ? $item->get('field_custom_index')->value : '',
-        'label' => $item->hasField('field_heading') ? $item->get('field_heading')->first()->value : '',
-        'content' => $item->get('field_text')->view('default'),
+        'index' => $item->hasField('field_custom_index') && $item->get('field_custom_index')->first() ? $item->get('field_custom_index')->value : FALSE,
+        'label' => $item->hasField('field_heading') && $item->get('field_heading')->first() ? $item->get('field_heading')->first()->value : FALSE,
+        'content' => $item->hasField('field_text') && $item->get('field_text')->first() ? $item->get('field_text')->view('default') : FALSE,
       ];
     }
   }

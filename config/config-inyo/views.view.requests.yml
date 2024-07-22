@@ -8,6 +8,7 @@ dependencies:
     - field.storage.node.field_rfp_start_date
     - field.storage.node.field_rfp_status
     - field.storage.node.field_rfp_type
+    - field.storage.node.field_rfp_year
     - node.type.request
     - user.role.administrator
     - user.role.request_manager
@@ -1243,7 +1244,7 @@ display:
           admin_label: 'Solicitation request end date (Year)'
           plugin_id: field
           label: Year
-          exclude: false
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -1288,6 +1289,68 @@ display:
           settings:
             timezone_override: ''
             format_type: html_year
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_rfp_year:
+          id: field_rfp_year
+          table: node__field_rfp_year
+          field: field_rfp_year
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: 'Associated year'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: '{{ field_rfp_end_date_1 }}'
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: list_default
+          settings: {  }
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -1655,31 +1718,27 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: true
-        field_rfp_end_date_value:
-          id: field_rfp_end_date_value
-          table: node__field_rfp_end_date
-          field: field_rfp_end_date_value
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
           relationship: none
           group_type: group
-          admin_label: Year
-          plugin_id: datetime
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
-            type: date
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value: {  }
           group: 1
           exposed: true
           expose:
-            operator_id: field_rfp_end_date_value_op
-            label: Year
+            operator_id: field_rfp_year_value_op
+            label: 'Associated year'
             description: ''
             use_operator: false
-            operator: field_rfp_end_date_value_op
+            operator: field_rfp_year_value_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: field_rfp_end_date_value
+            identifier: field_rfp_year_value
             required: false
             remember: false
             multiple: false
@@ -1695,30 +1754,23 @@ display:
               anonymous: '0'
               tentative_rulings_editor: '0'
               messaging_manager: '0'
+              opinions_editor: '0'
               request_manager: '0'
-            min_placeholder: ''
-            max_placeholder: ''
-            placeholder: 'CCYY-MM-DD HH:MM:SS'
-          is_grouped: true
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
           group_info:
-            label: Year
+            label: ''
             description: ''
-            identifier: field_rfp_end_date_value
+            identifier: ''
             optional: true
             widget: select
             multiple: false
             remember: false
             default_group: All
             default_group_multiple: {  }
-            group_items:
-              1:
-                title: '2001'
-                operator: between
-                value:
-                  min: '2001-01-01 00:00:00'
-                  max: '2001-12-31 23:59:59'
-                  value: ''
-                  type: date
+            group_items: {  }
+          reduce_duplicates: false
       filter_groups:
         operator: AND
         groups:
@@ -1826,9 +1878,10 @@ display:
         - 'config:field.storage.node.field_rfp_number'
         - 'config:field.storage.node.field_rfp_status'
         - 'config:field.storage.node.field_rfp_type'
+        - 'config:field.storage.node.field_rfp_year'
   requests_admin_archived:
     id: requests_admin_archived
-    display_title: 'Archived Solicitation requests admin page'
+    display_title: 'Archived Solicitations admin page'
     display_plugin: page
     position: 4
     display_options:
@@ -2151,7 +2204,7 @@ display:
           admin_label: 'Solicitation request end date (Year)'
           plugin_id: field
           label: Year
-          exclude: false
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -2196,6 +2249,68 @@ display:
           settings:
             timezone_override: ''
             format_type: html_year
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_rfp_year:
+          id: field_rfp_year
+          table: node__field_rfp_year
+          field: field_rfp_year
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: 'Associated year'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: '{{ field_rfp_end_date_1 }}'
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: list_default
+          settings: {  }
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -2500,31 +2615,27 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: true
-        field_rfp_end_date_value:
-          id: field_rfp_end_date_value
-          table: node__field_rfp_end_date
-          field: field_rfp_end_date_value
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
           relationship: none
           group_type: group
-          admin_label: Year
-          plugin_id: datetime
-          operator: between
-          value:
-            min: '2001-01-01 00:00:00'
-            max: '2001-12-31 23:59:59'
-            value: ''
-            type: date
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value: {  }
           group: 1
           exposed: true
           expose:
-            operator_id: field_rfp_end_date_value_op
-            label: Year
+            operator_id: field_rfp_year_value_op
+            label: 'Associated year'
             description: ''
             use_operator: false
-            operator: field_rfp_end_date_value_op
+            operator: field_rfp_year_value_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: field_rfp_end_date_value
+            identifier: field_rfp_year_value
             required: false
             remember: false
             multiple: false
@@ -2540,30 +2651,23 @@ display:
               anonymous: '0'
               tentative_rulings_editor: '0'
               messaging_manager: '0'
+              opinions_editor: '0'
               request_manager: '0'
-            min_placeholder: ''
-            max_placeholder: ''
-            placeholder: 'CCYY-MM-DD HH:MM:SS'
-          is_grouped: true
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
           group_info:
-            label: Year
+            label: ''
             description: ''
-            identifier: field_rfp_end_date_value
+            identifier: ''
             optional: true
             widget: select
             multiple: false
             remember: false
             default_group: All
             default_group_multiple: {  }
-            group_items:
-              1:
-                title: '2001'
-                operator: between
-                value:
-                  min: '2001-01-01 00:00:00'
-                  max: '2001-12-31 23:59:59'
-                  value: ''
-                  type: date
+            group_items: {  }
+          reduce_duplicates: false
       filter_groups:
         operator: AND
         groups:
@@ -2671,621 +2775,7 @@ display:
         - 'config:field.storage.node.field_rfp_number'
         - 'config:field.storage.node.field_rfp_status'
         - 'config:field.storage.node.field_rfp_type'
-  requests_grouped_archived:
-    id: requests_grouped_archived
-    display_title: 'Archived Solicitations group'
-    display_plugin: block
-    position: 2
-    display_options:
-      fields:
-        title:
-          id: title
-          table: node_field_data
-          field: title
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: node
-          entity_field: title
-          plugin_id: field
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            make_link: false
-            absolute: false
-            word_boundary: false
-            ellipsis: false
-            strip_tags: false
-            trim: false
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: true
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-        field_rfp_number:
-          id: field_rfp_number
-          table: node__field_rfp_number
-          field: field_rfp_number
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: field
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-        field_rfp_type:
-          id: field_rfp_type
-          table: node__field_rfp_type
-          field: field_rfp_type
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: field
-          label: ''
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: list_default
-          settings: {  }
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-        field_rfp_end_date:
-          id: field_rfp_end_date
-          table: node__field_rfp_end_date
-          field: field_rfp_end_date
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: field
-          label: ''
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: datetime_default
-          settings:
-            timezone_override: ''
-            format_type: m_d_y
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-        field_rfp_end_date_1:
-          id: field_rfp_end_date_1
-          table: node__field_rfp_end_date
-          field: field_rfp_end_date
-          relationship: none
-          group_type: group
-          admin_label: 'Solicitation request end date (Year)'
-          plugin_id: field
-          label: ''
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: datetime_default
-          settings:
-            timezone_override: ''
-            format_type: html_year
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-      pager:
-        type: full
-        options:
-          offset: 0
-          items_per_page: 10
-          total_pages: null
-          id: 0
-          tags:
-            next: 'Next ›'
-            previous: '‹ Previous'
-            first: '« First'
-            last: 'Last »'
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
-          quantity: 9
-      filters:
-        status:
-          id: status
-          table: node_field_data
-          field: status
-          entity_type: node
-          entity_field: status
-          plugin_id: boolean
-          value: '1'
-          group: 1
-          expose:
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-        type:
-          id: type
-          table: node_field_data
-          field: type
-          entity_type: node
-          entity_field: type
-          plugin_id: bundle
-          value:
-            request: request
-          group: 1
-          expose:
-            operator_limit_selection: false
-            operator_list: {  }
-        combine:
-          id: combine
-          table: views
-          field: combine
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: combine
-          operator: contains
-          value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: combine_op
-            label: 'Search by title/ID'
-            description: ''
-            use_operator: false
-            operator: combine_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: search
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              request_manager: '0'
-            placeholder: ''
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          fields:
-            title: title
-            field_rfp_number: field_rfp_number
-        field_rfp_type_value:
-          id: field_rfp_type_value
-          table: node__field_rfp_type
-          field: field_rfp_type_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: list_field
-          operator: or
-          value: {  }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_rfp_type_value_op
-            label: 'Solicitation request type'
-            description: ''
-            use_operator: false
-            operator: field_rfp_type_value_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_rfp_type_value
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              request_manager: '0'
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          reduce_duplicates: false
-        field_rfp_status_value_1:
-          id: field_rfp_status_value_1
-          table: node__field_rfp_status
-          field: field_rfp_status_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: list_field
-          operator: or
-          value:
-            archived: archived
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          reduce_duplicates: true
-        field_rfp_end_date_value:
-          id: field_rfp_end_date_value
-          table: node__field_rfp_end_date
-          field: field_rfp_end_date_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: datetime
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
-            type: date
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_rfp_end_date_value_op
-            label: Year
-            description: ''
-            use_operator: false
-            operator: field_rfp_end_date_value_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_rfp_end_date_value
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              request_manager: '0'
-            min_placeholder: ''
-            max_placeholder: ''
-            placeholder: ''
-          is_grouped: true
-          group_info:
-            label: Year
-            description: ''
-            identifier: field_rfp_end_date_value
-            optional: false
-            widget: select
-            multiple: false
-            remember: false
-            default_group: '1'
-            default_group_multiple: {  }
-            group_items:
-              1:
-                title: '2001'
-                operator: between
-                value:
-                  min: '2001-01-01 00:00:00'
-                  max: '2001-12-31 23:59:59'
-                  value: ''
-                  type: date
-      filter_groups:
-        operator: AND
-        groups:
-          1: AND
-      style:
-        type: html_list
-        options:
-          grouping:
-            -
-              field: field_rfp_end_date_1
-              rendered: true
-              rendered_strip: true
-          row_class: ''
-          default_row_class: true
-          type: ul
-          wrapper_class: item-list
-          class: ''
-      row:
-        type: fields
-        options:
-          default_field_elements: true
-          inline:
-            title: title
-            field_rfp_number: field_rfp_number
-          separator: ' | '
-          hide_empty: true
-      defaults:
-        pager: false
-        style: false
-        row: false
-        fields: false
-        filters: false
-        filter_groups: false
-      display_description: ''
-      display_extenders: {  }
-      block_description: 'Solicitation requests archived group'
-      allow:
-        items_per_page: false
-    cache_metadata:
-      max-age: -1
-      contexts:
-        - 'languages:language_content'
-        - 'languages:language_interface'
-        - url
-        - url.query_args
-        - 'user.node_grants:view'
-        - user.permissions
-      tags:
-        - 'config:field.storage.node.field_rfp_end_date'
-        - 'config:field.storage.node.field_rfp_number'
-        - 'config:field.storage.node.field_rfp_type'
+        - 'config:field.storage.node.field_rfp_year'
   requests_listing_active:
     id: requests_listing_active
     display_title: 'Active Solicitation request listing'
@@ -3408,6 +2898,59 @@ display:
               anonymous: '0'
               tentative_rulings_editor: '0'
               messaging_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_year_value_op
+            label: Year
+            description: ''
+            use_operator: false
+            operator: field_rfp_year_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_year_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              rules_manager: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -3742,31 +3285,27 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: true
-        field_rfp_end_date_value:
-          id: field_rfp_end_date_value
-          table: node__field_rfp_end_date
-          field: field_rfp_end_date_value
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: datetime
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
-            type: date
+          plugin_id: list_field
+          operator: or
+          value: {  }
           group: 1
           exposed: true
           expose:
-            operator_id: field_rfp_end_date_value_op
+            operator_id: field_rfp_year_value_op
             label: Year
             description: ''
             use_operator: false
-            operator: field_rfp_end_date_value_op
+            operator: field_rfp_year_value_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: field_rfp_end_date_value
+            identifier: field_rfp_year_value
             required: false
             remember: false
             multiple: false
@@ -3782,30 +3321,23 @@ display:
               anonymous: '0'
               tentative_rulings_editor: '0'
               messaging_manager: '0'
+              opinions_editor: '0'
               request_manager: '0'
-            min_placeholder: ''
-            max_placeholder: ''
-            placeholder: ''
-          is_grouped: true
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
           group_info:
-            label: Year
+            label: ''
             description: ''
-            identifier: field_rfp_end_date_value
+            identifier: ''
             optional: true
             widget: select
             multiple: false
             remember: false
             default_group: All
             default_group_multiple: {  }
-            group_items:
-              1:
-                title: '2001'
-                operator: between
-                value:
-                  min: '2001-01-01 00:00:00'
-                  max: '2001-12-31 23:59:59'
-                  value: ''
-                  type: date
+            group_items: {  }
+          reduce_duplicates: false
       filter_groups:
         operator: AND
         groups:
