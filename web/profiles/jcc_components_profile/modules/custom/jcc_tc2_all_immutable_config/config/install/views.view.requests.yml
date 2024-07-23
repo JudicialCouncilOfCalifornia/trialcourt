@@ -14,11 +14,13 @@ dependencies:
     - user.role.request_manager
   module:
     - better_exposed_filters
+    - content_moderation
     - datetime
     - node
     - options
     - text
     - user
+    - views_bulk_operations
 id: requests
 label: 'Solicitation Requests'
 module: views
@@ -927,16 +929,15 @@ display:
     display_options:
       title: 'Active solicitation requests'
       fields:
-        node_bulk_form:
-          id: node_bulk_form
-          table: node
-          field: node_bulk_form
+        views_bulk_operations_bulk_form:
+          id: views_bulk_operations_bulk_form
+          table: views
+          field: views_bulk_operations_bulk_form
           relationship: none
           group_type: group
           admin_label: ''
-          entity_type: node
-          plugin_id: node_bulk_form
-          label: ''
+          plugin_id: views_bulk_operations_bulk_form
+          label: Operations
           exclude: false
           alter:
             alter_text: false
@@ -969,7 +970,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: false
+          element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -977,12 +978,22 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
+          batch: true
+          batch_size: 10
+          form_step: true
+          buttons: false
           action_title: Action
-          include_exclude: include
+          clear_on_exposed: true
+          force_selection_info: false
           selected_actions:
-            - node_publish_action
-            - node_save_action
-            - node_unpublish_action
+            0:
+              action_id: 'moderation_state_change:node'
+              preconfiguration:
+                add_confirmation: 0
+            15:
+              action_id: 'entity:save_action:node'
+              preconfiguration:
+                add_confirmation: 0
         title:
           id: title
           table: node_field_data
@@ -1361,6 +1372,69 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+        moderation_state:
+          id: moderation_state
+          table: node_field_data
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: moderation_state_field
+          label: 'Moderation state'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: content_moderation_state
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
         operations:
           id: operations
           table: node
@@ -1493,20 +1567,49 @@ display:
           role:
             administrator: administrator
             request_manager: request_manager
-      filters:
-        status:
-          id: status
-          table: node_field_data
-          field: status
-          entity_type: node
-          entity_field: status
-          plugin_id: boolean
-          value: '1'
-          group: 1
+      sorts:
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: ASC
           expose:
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
+            label: ''
+            field_identifier: ''
+          exposed: false
+        field_rfp_end_date_value:
+          id: field_rfp_end_date_value
+          table: node__field_rfp_end_date
+          field: field_rfp_end_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+        field_rfp_start_date_value:
+          id: field_rfp_start_date_value
+          table: node__field_rfp_start_date
+          field: field_rfp_start_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+      filters:
         type:
           id: type
           table: node_field_data
@@ -1858,6 +1961,7 @@ display:
         style: false
         row: false
         fields: false
+        sorts: false
         filters: false
         filter_groups: false
       use_ajax: false
@@ -1887,16 +1991,15 @@ display:
     display_options:
       title: 'Archived solicitation requests'
       fields:
-        node_bulk_form:
-          id: node_bulk_form
-          table: node
-          field: node_bulk_form
+        views_bulk_operations_bulk_form:
+          id: views_bulk_operations_bulk_form
+          table: views
+          field: views_bulk_operations_bulk_form
           relationship: none
           group_type: group
           admin_label: ''
-          entity_type: node
-          plugin_id: node_bulk_form
-          label: ''
+          plugin_id: views_bulk_operations_bulk_form
+          label: Operations
           exclude: false
           alter:
             alter_text: false
@@ -1929,7 +2032,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: false
+          element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -1937,12 +2040,22 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
+          batch: true
+          batch_size: 10
+          form_step: true
+          buttons: false
           action_title: Action
-          include_exclude: include
+          clear_on_exposed: true
+          force_selection_info: false
           selected_actions:
-            - node_publish_action
-            - node_save_action
-            - node_unpublish_action
+            0:
+              action_id: 'moderation_state_change:node'
+              preconfiguration:
+                add_confirmation: 0
+            15:
+              action_id: 'entity:save_action:node'
+              preconfiguration:
+                add_confirmation: 0
         title:
           id: title
           table: node_field_data
@@ -2321,6 +2434,69 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+        moderation_state:
+          id: moderation_state
+          table: node_field_data
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: moderation_state_field
+          label: 'Moderation state'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: content_moderation_state
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
         operations:
           id: operations
           table: node
@@ -2444,20 +2620,49 @@ display:
           role:
             administrator: administrator
             request_manager: request_manager
-      filters:
-        status:
-          id: status
-          table: node_field_data
-          field: status
-          entity_type: node
-          entity_field: status
-          plugin_id: boolean
-          value: '1'
-          group: 1
+      sorts:
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: DESC
           expose:
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
+            label: ''
+            field_identifier: ''
+          exposed: false
+        field_rfp_end_date_value:
+          id: field_rfp_end_date_value
+          table: node__field_rfp_end_date
+          field: field_rfp_end_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+        field_rfp_start_date_value:
+          id: field_rfp_start_date_value
+          table: node__field_rfp_start_date
+          field: field_rfp_start_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+      filters:
         type:
           id: type
           table: node_field_data
@@ -2755,6 +2960,7 @@ display:
         style: false
         row: false
         fields: false
+        sorts: false
         filters: false
         filter_groups: false
       use_ajax: false
@@ -2782,6 +2988,48 @@ display:
     display_plugin: block
     position: 1
     display_options:
+      sorts:
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+        field_rfp_end_date_value:
+          id: field_rfp_end_date_value
+          table: node__field_rfp_end_date
+          field: field_rfp_end_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+        field_rfp_start_date_value:
+          id: field_rfp_start_date_value
+          table: node__field_rfp_start_date
+          field: field_rfp_start_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
       filters:
         status:
           id: status
@@ -3084,6 +3332,7 @@ display:
       defaults:
         style: false
         row: false
+        sorts: false
         filters: false
         filter_groups: false
       display_description: ''
@@ -3113,6 +3362,48 @@ display:
     display_plugin: block
     position: 2
     display_options:
+      sorts:
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+        field_rfp_end_date_value:
+          id: field_rfp_end_date_value
+          table: node__field_rfp_end_date
+          field: field_rfp_end_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+        field_rfp_start_date_value:
+          id: field_rfp_start_date_value
+          table: node__field_rfp_start_date
+          field: field_rfp_start_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
       filters:
         status:
           id: status
@@ -3361,6 +3652,7 @@ display:
       defaults:
         style: false
         row: false
+        sorts: false
         filters: false
         filter_groups: false
       display_description: ''
