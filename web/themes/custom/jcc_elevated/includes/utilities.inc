@@ -58,8 +58,9 @@ function __jcc_elevated_determine_date_output($date): null|MarkupInterface {
     return NULL;
   }
 
-  [$start_day, $start_time] = explode($date['separator']['#plain_text'], $date['start_date']['#text']);
-  [$end_day, $end_time] = explode($date['separator']['#plain_text'], $date['end_date']['#text']);
+  $separator_item = $date['separator']['#plain_text'] ?? ' - ';
+  [$start_day, $start_time] = explode($separator_item, $date['start_date']['#text']);
+  [$end_day, $end_time] = explode($separator_item, $date['end_date']['#text']);
 
   $same_day = $start_day == $end_day;
   $all_day = $start_time == "12:00 AM" && $end_time == "11:59 PM";
