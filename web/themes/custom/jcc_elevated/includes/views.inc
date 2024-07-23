@@ -10,6 +10,7 @@ use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -431,6 +432,126 @@ function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables
 }
 
 /**
+ * Helper function to get node titles by term ID.
+ */
+function get_node_titles_by_term($term_id) {
+  $query = \Drupal::entityQuery('node')
+    ->condition('status', 1)
+    ->condition('type', 'facilities')
+    ->condition('field_award', $term_id);
+  $nids = $query->execute();
+  $nodes = Node::loadMultiple($nids);
+  $titles = [];
+  foreach ($nodes as $node) {
+    $titles[] = $node->getTitle();
+  }
+  return $titles;
+}
+
+/**
+ * Implements hook_preprocess_views_view() for awards recognition block.
+ */
+function jcc_elevated_preprocess_views_view__facilities_awards_and_recognition__block_1(&$variables) {
+  __jcc_view_results_exposed_filter_init($variables);
+  $parent_children_map = [];
+  $terms_noparent = [];
+  $all_parent_ids = [];
+  foreach ($variables['view']->result as $result) {
+    if (isset($result->_entity) && $result->_entity instanceof Term) {
+      $term = $result->_entity;
+      $parent_tid = $term->get('parent')->target_id;
+      if ($parent_tid) {
+        $parent_children_map[$parent_tid][] = $term;
+        $all_parent_ids[] = $parent_tid;
+      }
+      else {
+        $terms_noparent[] = $term;
+      }
+    }
+  }
+  $items = [];
+
+  foreach ($parent_children_map as $parent_tid => $children) {
+    $parent_term_entity = Term::load($parent_tid);
+    if ($parent_term_entity) {
+      $parent_name = $parent_term_entity->getName();
+      $children_details = '';
+      foreach ($children as $child) {
+        $child_name = $child->getName();
+        $children_details .= "<p>{$child_name} ";
+        $node_titles = get_node_titles_by_term($child->id());
+        if (!empty($node_titles)) {
+          $children_details .= ": " . implode(", ", $node_titles);
+        }
+        $children_details .= "</p>";
+      }
+
+      $items[] = [
+        'label' => $parent_name,
+        'content' => [
+          '#markup' => Markup::create($children_details),
+        ],
+        'id' => $parent_tid,
+      ];
+    }
+  }
+
+  $misc_awards = '';
+  foreach ($terms_noparent as $child) {
+    if (!in_array($child->id(), $all_parent_ids)) {
+      $child_name = $child->getName();
+      $misc_awards .= "<p>{$child_name} ";
+      $node_titles = get_node_titles_by_term($child->id());
+      if (!empty($node_titles)) {
+        $misc_awards .= ": " . implode(", ", $node_titles);
+      }
+      $misc_awards .= "</p>";
+    }
+  }
+
+  if (!empty($misc_awards)) {
+    $items[] = [
+      'label' => t('Miscellaneous'),
+      'content' => [
+        '#markup' => Markup::create($misc_awards),
+      ],
+      'id' => 'awards',
+    ];
+  }
+  $variables['items'] = $items;
+}
+
+/**
+ * Implements hook_preprocess_views_view() for facilities block.
+ */
+function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$variables) {
+  __jcc_view_results_exposed_filter_init($variables);
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $facilities = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $node = $row['#node'];
+    $detail_list_data = [
+      'details' => array_filter([
+        $node->get('field_facility_county')->value,
+      ]),
+    ];
+    $status = $node->get('field_project_status')->value == 'inprogress' ? 'In-Progress' : 'Completed';
+    $county = $node->hasField('field_facility_county') ? $node->get('field_facility_county')->target_id : FALSE;
+    $county_value = $county && $taxonomy_manager->load($county) ? $taxonomy_manager->load($county)->get('name')->value : '';
+    $facility = [
+      'title' => $node->get('title')->value ? $node->get('title')->value : '',
+      'status' => $status ? ['#markup' => Html::decodeEntities('<strong>Status:</strong> ' . $status)] : '',
+      'county' => $county_value ? $county_value : '',
+      'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
+      'detail_list_data' => $detail_list_data,
+    ];
+    $facilities[] = $facility;
+  }
+  $variables['facilities'] = $facilities;
+}
+
+/**
  * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
@@ -796,7 +917,7 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&
             ->first()
             ->view('teaser') : '',
           'last_updated' => t('Last updated:') . ' ' . \Drupal::service('date.formatter')
-              ->format($request->getChangedTime(), 'm_d_y'),
+            ->format($request->getChangedTime(), 'm_d_y'),
         ];
         foreach ($items as $key => $value) {
           if (!empty($value)) {
