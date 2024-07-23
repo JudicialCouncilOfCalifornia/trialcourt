@@ -1,0 +1,79 @@
+diff --git a/core/modules/taxonomy/src/Plugin/views/filter/TaxonomyIndexTid.php b/core/modules/taxonomy/src/Plugin/views/filter/TaxonomyIndexTid.php
+index 7710bae695..edc487ccd2 100644
+--- a/core/modules/taxonomy/src/Plugin/views/filter/TaxonomyIndexTid.php
++++ b/core/modules/taxonomy/src/Plugin/views/filter/TaxonomyIndexTid.php
+@@ -394,7 +394,7 @@ public function adminSummary() {
+     // set up $this->valueOptions for the parent summary
+     $this->valueOptions = [];
+ 
+-    if ($this->value) {
++    if(is_array($this_value)) {
+       $this->value = array_filter($this->value);
+       $terms = Term::loadMultiple($this->value);
+       foreach ($terms as $term) {
+diff --git a/core/modules/views/src/ManyToOneHelper.php b/core/modules/views/src/ManyToOneHelper.php
+index 8b1051105f..0cbd83ea87 100644
+--- a/core/modules/views/src/ManyToOneHelper.php
++++ b/core/modules/views/src/ManyToOneHelper.php
+@@ -282,12 +282,14 @@ public function addFilter() {
+       $add_condition = FALSE;
+     }
+     elseif ($operator == 'or' && empty($options['reduce_duplicates'])) {
+-      if (count($value) > 1) {
+-        $operator = 'IN';
+-      }
+-      else {
+-        $value = is_array($value) ? array_pop($value) : $value;
+-        $operator = '=';
++      if (is_array($value) || $value instanceof Countable) {
++        if (count($value) > 1) {
++          $operator = 'IN';
++        }
++        else {
++          $value = is_array($value) ? array_pop($value) : $value;
++          $operator = '=';
++        }
+       }
+       $add_condition = FALSE;
+     }
+@@ -308,14 +310,16 @@ public function addFilter() {
+       }
+       else {
+         $placeholder = $this->placeholder();
+-        if (count($this->handler->value) > 1) {
+-          $placeholder .= '[]';
++        if (is_array($this->handler->value) || $this->handler->value instanceof Countable) {
++          if (count($this->handler->value) > 1) {
++            $placeholder .= '[]';
+ 
+-          if ($operator == 'IS NULL') {
+-            $this->handler->query->addWhereExpression(0, "$field $operator");
+-          }
+-          else {
+-            $this->handler->query->addWhereExpression(0, "$field $operator($placeholder)", [$placeholder => $value]);
++            if ($operator == 'IS NULL') {
++              $this->handler->query->addWhereExpression(0, "$field $operator");
++            }
++            else {
++              $this->handler->query->addWhereExpression(0, "$field $operator($placeholder)", [$placeholder => $value]);
++            }
+           }
+         }
+         else {
+diff --git a/core/modules/views/src/Plugin/views/filter/ManyToOne.php b/core/modules/views/src/Plugin/views/filter/ManyToOne.php
+index 313cfe0166..031bcb73e5 100644
+--- a/core/modules/views/src/Plugin/views/filter/ManyToOne.php
++++ b/core/modules/views/src/Plugin/views/filter/ManyToOne.php
+@@ -132,8 +132,10 @@ protected function opHelper() {
+     }
+     // Form API returns unchecked options in the form of option_id => 0. This
+     // breaks the generated query for "is all of" filters so we remove them.
+-    $this->value = array_filter($this->value, 'static::arrayFilterZero');
+-    $this->helper->addFilter();
++    if (is_array($this->value)) {
++      $this->value = array_filter($this->value, 'static::arrayFilterZero');
++      $this->helper->addFilter();
++    }
+   }
+ 
+ }
