@@ -1,8 +1,8 @@
-uuid: 7aafb940-b94f-4274-8e6f-75b92fbc6738
+uuid: 78aa53d1-ee7f-4a3b-846d-bd70799d0f4f
 langcode: en
 status: true
 dependencies: {  }
-id: courts_node_opinion_citing
+id: courts_node_opinion_published_archive
 class: null
 field_plugin_method: null
 cck_plugin_method: null
@@ -11,11 +11,12 @@ migration_tags:
   - node
   - opinion
   - published
+  - archive
 migration_group: courts
-label: 'Courts: Import opinion citing from legacy index'
+label: 'Courts: Import published opinions archive from legacy index'
 source:
   plugin: csv
-  url: 'https://www.courts.ca.gov/opinions/links/index.txt'
+  url: 'https://www.courts.ca.gov/opinions/archive/index.txt'
   delimiter: "\t"
   header_offset: null
   fields:
@@ -31,6 +32,9 @@ source:
     -
       name: title
       label: Title
+    -
+      name: strike
+      label: 'Strikethrough as Review Granted'
     -
       name: related
       label: 'Related Cases'
@@ -104,22 +108,19 @@ process:
       to_format: Y-m-d
   field_case_number_plain: case
   field_related_cases_plain: related
-  field_media_file_multiple:
+  field_review_granted:
     -
-      plugin: jcc_attach_opinion_citing
-      source: case
+      plugin: static_map
+      source: strike
+      map:
+        '': 0
+        'N': 0
+        'Y': 1
+      bypass: true
+  field_:
     -
-      plugin: explode
-      delimiter: ','
-    -
-      plugin: callback
-      callable: trim
-    -
-      plugin: multiple_values
-    -
-      plugin: skip_on_empty
-      method: process
-      message: 'No media to attach to opinion.'
+      plugin: default_value
+      default_value: 1
 destination:
   plugin: 'entity:node'
   default_bundle: opinion
