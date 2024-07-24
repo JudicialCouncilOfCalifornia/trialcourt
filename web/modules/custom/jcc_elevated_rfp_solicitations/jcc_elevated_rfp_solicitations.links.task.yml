@@ -10,18 +10,45 @@ jcc_elevated_rfp_solicitations.admin_content_requests_rfps_active:
   route_name: view.requests.requests_admin_active
   parent_id: jcc_elevated_rfp_solicitations.admin_content_requests_rfps
   base_route: view.requests.requests_admin_active
-  weight: 97
+  weight: 90
 
 jcc_elevated_rfp_solicitations.admin_content_requests_rfps_archived:
   title: 'Archived'
   route_name: view.requests.requests_admin_archived
   parent_id: jcc_elevated_rfp_solicitations.admin_content_requests_rfps
   base_route: view.requests.requests_admin_archived
-  weight: 98
+  weight: 91
 
 jcc_elevated_rfp_solicitations.admin_content_requests_callouts_library:
   title: 'Solicitation callout library'
   route_name: view.solicitations_callout_library.rfp_solicitation_preset_callouts
   parent_id: jcc_elevated_rfp_solicitations.admin_content_requests_rfps
   base_route: view.solicitations_callout_library.rfp_solicitation_preset_callouts
+  weight: 92
+
+jcc_elevated_rfp_solicitations.admin_view_rfp_solicitation_settings:
+  title: 'Edit settings'
+  route_name: 'jcc_elevated_rfp_solicitations.solicitation_request_settings'
+  parent_id: jcc_elevated_rfp_solicitations.admin_content_requests_rfps
+  options:
+    attributes:
+      target: '_blank'
+  weight: 93
+
+jcc_elevated_rfp_solicitations.admin_view_rfp_solicitation_topics:
+  title: 'View topics'
+  route_name: jcc_elevated_rfp_solicitations.admin_content_rfp_topics_listing
+  parent_id: jcc_elevated_rfp_solicitations.admin_content_requests_rfps
+  options:
+    attributes:
+      target: '_blank'
+  weight: 95
+
+jcc_elevated_rfp_solicitations.admin_view_rfp_solicitation_dept_group_org:
+  title: 'View related department/groups list'
+  route_name: jcc_elevated_rfp_solicitations.admin_content_rfp_dep_group_org_listing
+  parent_id: jcc_elevated_rfp_solicitations.admin_content_requests_rfps
+  options:
+    attributes:
+      target: '_blank'
   weight: 99

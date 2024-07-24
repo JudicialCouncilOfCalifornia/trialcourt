@@ -335,6 +335,7 @@ function jcc_elevated_rfp_solicitations_field_widget_paragraphs_form_alter(&$ele
   if ($element['#paragraph_type'] == 'from_library') {
     if ($field->getName() == 'field_rfp_submission_information') {
       $element['top']['type']['label']['#markup'] = "<strong>Preset Callout</strong>";
+      $element['top']['actions']['dropdown_actions']['library_to_paragraph']['#value'] = t('Customize this callout');
       if (isset($element['subform'])) {
         $element['subform']['field_reusable_paragraph']['widget']['#open'] = TRUE;
       }
