@@ -13,6 +13,7 @@ use Drupal\file\Entity\File;
  */
 function jcc_elevated_preprocess_media(&$variables) {
   $media = $variables['media'];
+  $attribute_classes = $variables['attributes']['class'];
 
   if ($media->bundle() == 'image') {
     $view_mode = $variables['view_mode'];
@@ -23,7 +24,7 @@ function jcc_elevated_preprocess_media(&$variables) {
       Html::getClass('image__' . $view_mode),
       Html::getClass($alignment),
     ];
-
+    $variables['edit_media'] = !in_array('contextual-region', $attribute_classes);
     $variables['content']['field_media_image'][0]['#item_attributes']['class'][] = implode(' ', $img_classes);
   }
 }
