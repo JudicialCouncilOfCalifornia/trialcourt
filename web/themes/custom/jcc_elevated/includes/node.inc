@@ -15,7 +15,6 @@ use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
-use GuzzleHttp\Exception\RequestException;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -873,63 +872,25 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   // Remote file locations.
   $client = \Drupal::httpClient();
   $remote_files = [];
-  $file_url_base = 'https://courts.ca.gov/opinions/';
-  if ($type == 'Unpublished') {
-    $url = $file_url_base . 'nonpub/';
-    if ($review_granted) {
-      $url = $file_url_base . 'revnppub/';
-    }
-  }
-  else {
-    $url = $file_url_base . 'documents/';
-    if ($review_granted) {
-      $url = $file_url_base . 'revpub/';
-    }
-  }
 
   // PDF.
-  $pdf_case = $case_number . '.PDF';
-  $pdf_url = $url . $pdf_case;
-  try {
-    $client->head($pdf_url)->getStatusCode();
-    $remote_files[] = [
-      'url' => $pdf_url,
-      'file_type' => 'PDF',
-      'aria_label' => $download_aria . ' ' . $pdf_case,
-    ];
-  }
-  catch (RequestException $e) {
-    $message = $e->getMessage();
-    \Drupal::logger('opinion')->warning($message);
+  $pdf_type = 'PDF';
+  $pdf = __jcc_opinion_file_links_builder($type, $review_granted, $client, $pdf_type, $download_aria, $case_number);
+  if ($pdf) {
+    $remote_files[] = $pdf;
   }
 
   // DOCX or DOC.
   $doc_type = 'DOCX';
-  $docx_case = $case_number . '.' . $doc_type;
-  $docx_url = $url . $docx_case;
-  try {
-    $client->head($docx_url)->getStatusCode();
-    $remote_files[] = [
-      'url' => $docx_url,
-      'file_type' => 'DOCX',
-      'aria_label' => $download_aria . ' ' . $docx_case,
-    ];
+  $doc = __jcc_opinion_file_links_builder($type, $review_granted, $client, $doc_type, $download_aria, $case_number);
+  if ($doc) {
+    $remote_files[] = $doc;
   }
-  catch (RequestException) {
+  else {
     $doc_type = 'DOC';
-    $doc_case = $case_number . '.' . $doc_type;
-    $doc_url = $url . $doc_case;
-    try {
-      $client->head($doc_url)->getStatusCode();
-      $remote_files[] = [
-        'url' => $doc_url,
-        'file_type' => 'DOC',
-        'aria_label' => $download_aria . ' ' . $doc_case,
-      ];
-    }
-    catch (RequestException $e) {
-      $message = $e->getMessage();
-      \Drupal::logger('opinion')->warning($message);
+    $doc = __jcc_opinion_file_links_builder($type, $review_granted, $client, $doc_type, $download_aria, $case_number);
+    if ($doc) {
+      $remote_files[] = $doc;
     }
   }
 

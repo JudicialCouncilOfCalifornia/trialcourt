@@ -45,9 +45,12 @@
 
 {% set items = [] %}
 {% for opinion in opinions %}
+  {# Type label override if provided, for example 'Published - Extended Post' as 'Published' #}
+  {% set type = type ? type : opinion.type %}
+
   {% set notation %}
     {{ opinion.source ? opinion.source : '(Select court)' }}
-    {{ opinion.type ? ' • ' ~ opinion.type : '' }}
+    {{ type ? ' • ' ~ type ~ ' Opinion' : '' }}
     {{ opinion.review_granted ? ' • Review Granted' : '' }}
   {% endset %}
 
