@@ -13,31 +13,62 @@ source:
   plugin: url
   data_fetcher_plugin: http
   data_parser_plugin: json
-  urls: files/santaclara/default/upload
-  item_selector: '*'
+  urls: files/santaclara/default/upload/
   fields:
-    - name: Location
-      label: 'Location'
-    - name: CaseType
-      label: 'Case Type'
-    - name: DepartmentID
-      label: 'Department ID'
-    - name: Subject
-      label: 'Subject'
-    - name: URL
-      label: 'URL'
-    - name: AccessCode
-      label: 'Access Code'
-    - name: ConferenceID
-      label: 'Conference ID'
-    - name: ConferenceNumber
-      label: 'Conference Number'
-    - name: MeetingStartTime
-      label: 'Meeting Start Time'
-    - name: MeetingEndTime
-      label: 'Meeting End Time'
+    -
+      name: subject
+      label: 'subject'
+      selector: subject
+    -
+      name: field_department_id
+      label: 'field_department_id'
+      selector: am_Location
+    -
+      name: field_am_access_code
+      label: 'field_am_access_code'
+      selector: am_ConferenceId
+    -
+      name: field_am_conference_id
+      label: 'field_am_conference_id'
+      selector: am_ConferenceId
+    -
+      name: field_am_conference_number
+      label: 'field_am_conference_number'
+      selector: am_ConferenceNumber
+    -
+      name: field_am_meeting_start_time
+      label: 'field_am_meeting_start_time'
+      selector: am_StartDate
+    -
+      name: field_am_meeting_end_time
+      label: 'field_am_meeting_end_time'
+      selector: am_EnDate
+    -
+      name: field_am_meeting_url
+      label: 'field_am_meeting_url'
+      selector: am_Url
+    -
+      name: field_pm_access_code
+      label: 'field_pm_access_code'
+      selector: pm_ConferenceId
+    -
+      name: field_pm_conference_id
+      label: 'field_pm_conference_id'
+      selector: pm_ConferenceId
+    -
+      name: field_pm_conference_number
+      label: 'field_pm_conference_number'
+      selector: pm_ConferenceNumber
+    -
+      name: field_pm_meeting_start_time
+      label: 'field_pm_meeting_start_time'
+      selector: pm_StartDate
+    -
+      name: field_pm_meeting_url
+      label: 'field_pm_meeting_url'
+      selector: pm_Url
   ids:
-    Location:
+    subject:
       type: string
 destination:
   plugin: entity:node
@@ -45,56 +76,20 @@ destination:
 process:
   type:
     plugin: default_value
-    default_value: remote_hearing
-  title: Location
-  field_case_type: CaseType
-  field_department_id: DepartmentID
-  field_am_access_code:
-    plugin: RemoteHearing
-    source: AccessCode
-    direction: am
-  field_am_conference_id:
-    plugin: RemoteHearing
-    source: ConferenceID
-    direction: am
-  field_am_conference_number:
-    plugin: RemoteHearing
-    source: ConferenceNumber
-    direction: am
-  field_am_meeting_start_time:
-    plugin: RemoteHearing
-    source: MeetingStartTime
-    direction: am
-  field_am_meeting_end_time:
-    plugin: RemoteHearing
-    source: MeetingEndTime
-    direction: am
-  field_am_meeting_url:
-    plugin: RemoteHearing
-    source: URL
-    direction: am
-  field_pm_access_code:
-    plugin: RemoteHearing
-    source: AccessCode
-    direction: pm
-  field_pm_conference_id:
-    plugin: RemoteHearing
-    source: ConferenceID
-    direction: pm
-  field_pm_conference_number:
-    plugin: RemoteHearing
-    source: ConferenceNumber
-    direction: pm
-  field_pm_meeting_start_time:
-    plugin: RemoteHearing
-    source: MeetingStartTime
-    direction: pm
-  field_pm_meeting_end_time:
-    plugin: RemoteHearing
-    source: MeetingEndTime
-    direction: pm
-  field_pm_meeting_url:
-    plugin: RemoteHearing
-    source: URL
-    direction: pm
+    default_value: remote_hearings
+  title: subject
+  field_department_id: field_department_id
+  field_am_access_code: field_am_access_code
+  field_am_conference_id: field_am_conference_id
+  field_am_conference_number: field_am_conference_number
+  field_am_meeting_start_time: field_am_meeting_start_time
+  field_am_meeting_end_time: field_am_meeting_end_time
+  field_am_meeting_url: field_am_meeting_url
+  field_pm_conference_id: field_pm_conference_id
+  field_pm_conference_number: field_pm_conference_number
+  field_pm_meeting_start_time: field_pm_meeting_start_time
+  field_pm_meeting_url: field_pm_meeting_url
+  uid:
+    plugin: default_value
+    default_value: 0
 migration_dependencies: {  }
