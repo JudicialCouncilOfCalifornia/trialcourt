@@ -158,15 +158,15 @@ display:
             field_identifier: ''
           exposed: false
           granularity: second
-        field_case_number_plain_value:
-          id: field_case_number_plain_value
-          table: node__field_case_number_plain
-          field: field_case_number_plain_value
+        field_weight_value:
+          id: field_weight_value
+          table: node__field_weight
+          field: field_weight_value
           relationship: none
           group_type: group
           admin_label: ''
           plugin_id: standard
-          order: DESC
+          order: ASC
           expose:
             label: ''
             field_identifier: ''
@@ -570,6 +570,21 @@ display:
     position: 5
     display_options:
       title: 'All Opinions'
+      sorts:
+        field_date_value:
+          id: field_date_value
+          table: node__field_date
+          field: field_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: second
       filters:
         status:
           id: status
@@ -932,6 +947,7 @@ display:
         title: false
         use_ajax: false
         relationships: false
+        sorts: false
         filters: false
         filter_groups: false
       relationships: {  }
@@ -961,6 +977,21 @@ display:
         type: none
         options:
           offset: 0
+      sorts:
+        field_date_value:
+          id: field_date_value
+          table: node__field_date
+          field: field_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: second
       filters:
         status:
           id: status
@@ -1195,6 +1226,7 @@ display:
         use_ajax: false
         pager: false
         relationships: false
+        sorts: false
         filters: false
         filter_groups: false
       relationships:
@@ -1226,6 +1258,7 @@ display:
     display_plugin: block
     position: 1
     display_options:
+      title: 'Published Opinions'
       empty:
         messages:
           id: messages
@@ -1572,6 +1605,7 @@ display:
           1: AND
       defaults:
         empty: false
+        title: false
         exposed_form: true
         filters: false
         filter_groups: false
@@ -1595,6 +1629,7 @@ display:
     display_plugin: block
     position: 2
     display_options:
+      title: 'Published Opinions - Extended Posts'
       empty:
         messages:
           id: messages
@@ -1605,6 +1640,21 @@ display:
           admin_label: ''
           plugin_id: messages
           empty: true
+      sorts:
+        field_date_value:
+          id: field_date_value
+          table: node__field_date
+          field: field_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: second
       filters:
         status:
           id: status
@@ -1986,7 +2036,9 @@ display:
           1: AND
       defaults:
         empty: false
+        title: false
         exposed_form: true
+        sorts: false
         filters: false
         filter_groups: false
       display_description: ''

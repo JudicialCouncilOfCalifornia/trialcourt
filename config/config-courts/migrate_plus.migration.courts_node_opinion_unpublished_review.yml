@@ -109,6 +109,16 @@ process:
     -
       plugin: default_value
       default_value: 1
+  field_weight:
+    -
+      plugin: substr
+      source: case
+      length: 1
+    -
+      plugin: static_map
+      map:
+        S: -1
+      bypass: true
 destination:
   plugin: 'entity:node'
   default_bundle: opinion
