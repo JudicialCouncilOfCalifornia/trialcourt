@@ -768,7 +768,7 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   if ($node->get('field_rfp_topic')->first()) {
     $rfp_blurb_box[] = [
       'brow' => t('Topic'),
-      'heading' => $node->get('field_rfp_topic')->first()->view('full'),
+      'heading' => $node->get('field_rfp_topic')->view('full'),
       'text' => FALSE,
     ];
   }
