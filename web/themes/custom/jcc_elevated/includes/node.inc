@@ -671,14 +671,14 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   if ($node->get('field_rfp_start_date')->first()) {
     $rfp_dates[] = [
       'brow' => t('Issued date'),
-      'heading' => $node->get('field_rfp_start_date')->first()->view('full'),
+      'heading' => __jcc_elevated_determine_datetime_output($node->get('field_rfp_start_date')->first()->view('full')),
     ];
   }
 
   // Grab our additional dates and add to our array.
   if ($node->get('field_rfp_important_dates')->first()) {
     foreach ($node->get('field_rfp_important_dates')->referencedEntities() as $date) {
-      $heading = __jcc_elevated_determine_date_output($date->get('field_date_range')->first() ? $date->get('field_date_range')->first()->view('full') : NULL);
+      $heading = __jcc_elevated_determine_date_range_output($date->get('field_date_range')->first() ? $date->get('field_date_range')->first()->view('full') : NULL);
       $rfp_dates[] = [
         'brow' => $date->get('field_heading')->first() ? $date->get('field_heading')->first()->view('full') : NULL,
         'heading' => $heading,
@@ -691,7 +691,7 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   if ($node->get('field_rfp_end_date')->first()) {
     $rfp_dates[] = [
       'brow' => $archived ? t('Archived') : t('Deadline'),
-      'heading' => $node->get('field_rfp_end_date')->first()->view('full'),
+      'heading' => __jcc_elevated_determine_datetime_output($node->get('field_rfp_end_date')->first()->view('full')),
     ];
   }
 
@@ -777,7 +777,7 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   if ($node->get('field_rfp_end_date')->first()) {
     $rfp_blurb_box[] = [
       'brow' => $archived ? t('Archived') : t('Deadline'),
-      'heading' => $archived ? $archived_year : $node->get('field_rfp_end_date')->first()->view('full'),
+      'heading' => $archived ? $archived_year : __jcc_elevated_determine_datetime_output($node->get('field_rfp_end_date')->first()->view('full')),
       'text' => FALSE,
     ];
   }

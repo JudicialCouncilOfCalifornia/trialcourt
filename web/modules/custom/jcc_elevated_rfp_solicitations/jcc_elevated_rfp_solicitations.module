@@ -66,69 +66,71 @@ function jcc_elevated_rfp_solicitations_views_pre_view(ViewExecutable $view, $di
        * create a placeholder variable that we will add back later on if group
        * filters are still empty. This should remove some php notices.
        */
-      $items_placeholder = $filters[$field_name]['group_info']['group_items'];
+      if (isset($filters[$field_name])) {
+        $items_placeholder = $filters[$field_name]['group_info']['group_items'];
 
-      $year_options = [];
-      $start_year = 2001;
-      $time1 = strtotime("-2 years", time());
-      $two_years_ago_date = date("Y", $time1);
-      $time2 = strtotime("now", time());
-      $current_year = date("Y", $time2);
-      $time3 = strtotime("-1 year", time());
+        $year_options = [];
+        $start_year = 2001;
+        $time1 = strtotime("-2 years", time());
+        $two_years_ago_date = date("Y", $time1);
+        $time2 = strtotime("now", time());
+        $current_year = date("Y", $time2);
+        $time3 = strtotime("-1 year", time());
 
-      // Alter the Archived Requests Admin view.
-      if ($display_id == 'requests_admin_archived' || $display_id == 'requests_listing_archived') {
+        // Alter the Archived Requests Admin view.
+        if ($display_id == 'requests_admin_archived' || $display_id == 'requests_listing_archived') {
 
-        // Reset the group values.
-        $filters[$field_name]['group_info']['group_items'] = [];
-        $year_options = array_reverse(range($start_year, $current_year));
-      }
-
-      // Alter the Active Requests Admin view.
-      if ($display_id == 'requests_admin_active') {
-
-        // Reset the group values.
-        $filters[$field_name]['group_info']['group_items'] = [];
-        $year_options = array_reverse(range($two_years_ago_date, $current_year));
-      }
-
-      // Alter the Active Requests Admin view.
-      if ($display_id == 'requests_grouped_archived') {
-
-        // Reset the group values.
-        $filters[$field_name]['group_info']['group_items'] = [];
-        $year_options = array_reverse(range($start_year, date("Y", $time3)));
-      }
-
-      if (!empty($year_options)) {
-        foreach ($year_options as $index => $year) {
-          if (is_numeric($year)) {
-            $filters[$field_name]['group_info']['group_items'][$index] = [
-              'title' => (string) $year,
-              'operator' => "between",
-              'value' => [
-                'min' => "$year-01-01 00:00:00",
-                'max' => "$year-12-31 23:59:59",
-                'value' => "",
-                'type' => "date",
-              ],
-            ];
-          }
-
+          // Reset the group values.
+          $filters[$field_name]['group_info']['group_items'] = [];
+          $year_options = array_reverse(range($start_year, $current_year));
         }
 
-        $filters[$field_name]['group_info']['default_group'] = array_key_first($year_options);
+        // Alter the Active Requests Admin view.
+        if ($display_id == 'requests_admin_active') {
+
+          // Reset the group values.
+          $filters[$field_name]['group_info']['group_items'] = [];
+          $year_options = array_reverse(range($two_years_ago_date, $current_year));
+        }
+
+        // Alter the Active Requests Admin view.
+        if ($display_id == 'requests_grouped_archived') {
+
+          // Reset the group values.
+          $filters[$field_name]['group_info']['group_items'] = [];
+          $year_options = array_reverse(range($start_year, date("Y", $time3)));
+        }
+
+        if (!empty($year_options)) {
+          foreach ($year_options as $index => $year) {
+            if (is_numeric($year)) {
+              $filters[$field_name]['group_info']['group_items'][$index] = [
+                'title' => (string) $year,
+                'operator' => "between",
+                'value' => [
+                  'min' => "$year-01-01 00:00:00",
+                  'max' => "$year-12-31 23:59:59",
+                  'value' => "",
+                  'type' => "date",
+                ],
+              ];
+            }
+
+          }
+
+          $filters[$field_name]['group_info']['default_group'] = array_key_first($year_options);
+        }
+
+        // If our group items are still empty, add back placeholder.
+        if (empty($filters[$field_name]['group_info']['group_items'])) {
+          $filters[$field_name]['group_info']['group_items'] = $items_placeholder;
+        }
+
+        $filters[$field_name]['group_info']['default_group_multiple'] = [];
+
+        // Add back our altered filters.
+        $view->display_handler->overrideOption('filters', $filters);
       }
-
-      // If our group items are still empty, add back placeholder.
-      if (empty($filters[$field_name]['group_info']['group_items'])) {
-        $filters[$field_name]['group_info']['group_items'] = $items_placeholder;
-      }
-
-      $filters[$field_name]['group_info']['default_group_multiple'] = [];
-
-      // Add back our altered filters.
-      $view->display_handler->overrideOption('filters', $filters);
     }
   }
 }
@@ -141,6 +143,8 @@ function jcc_elevated_rfp_solicitations_form_alter(&$form, $form_state, $form_id
   switch ($form_id) {
     case 'node_request_form':
     case 'node_request_edit_form':
+      $isNew = $form_state->getFormObject()->getEntity()->isNew();
+
       // Making some edit and UI tweaks to the solicitations requests form.
       $form['body']['widget'][0]['summary']['#required'] = FALSE;
       $form['body']['widget'][0]['summary']['#title'] = t('Summary/Teaser text');
@@ -154,6 +158,20 @@ function jcc_elevated_rfp_solicitations_form_alter(&$form, $form_state, $form_id
       $form['field_rfp_submission_information']['widget']['#title'] = t('Submission/Callout information');
       $form['field_rfp_submission_information']['widget']['add_more']['add_more_button_from_library']['#value'] = t('Add preset callout');
       $form['field_rfp_submission_information']['widget']['add_more']['add_more_button_information']['#value'] = t('Add new callout');
+
+      $form['path']['widget'][0]['#open'] = FALSE;
+
+      $form['revision_log']['widget'][0]['value']['#rows'] = 2;
+      if (!$isNew) {
+        $form['revision_log']['widget'][0]['value']['#required'] = TRUE;
+      }
+
+      $moderation_description = [
+        t('<strong>"Published"</strong> will immediately post the latest version for public viewing.'),
+        t('<strong>"Draft"</strong> will start a new version for continued editing, only accessible by editors/admins and those with the shared token url. The last published version (if one exists) will remain active and visible to the public.'),
+        t('<strong>"Archived"</strong> will disable public viewing for all versions, without deleting content. This is NOT the same as the Status field "Archived".'),
+      ];
+      $form['moderation_state']['widget'][0]['state']['#description'] = '<br/>' . implode('<br/>------------<br/>', $moderation_description);
       break;
 
     case 'media_file_edit_form':
@@ -185,20 +203,20 @@ function jcc_elevated_rfp_solicitations_form_alter(&$form, $form_state, $form_id
             foreach ($form['media'] as $delta => $item) {
               if (is_numeric($delta)) {
 
-                $form['media'][$delta]['fields']['field_category']['#weight'] = 97;
-                $form['media'][$delta]['fields']['field_document_type']['#weight'] = 98;
+                $form['media'][$delta]['fields']['field_category']['#weight'] = 90;
+                $form['media'][$delta]['fields']['field_document_type']['#weight'] = 91;
                 $form['media'][$delta]['fields']['field_tags']['#weight'] = 99;
 
                 // Hide some of the media item fields that we don't worry about.
                 $form['media'][$delta]['fields']['field_matters_served']['#access'] = FALSE;
 
+                // Helper text on name field.
+                $form['media'][$delta]['fields']['name']['widget'][0]['value']['#description'] = t('Please adjust the name so that it will be easier to find for future editing if necessary. It is highly recommended to include the solicitation ID in the name.');
+
                 // Preset the category for this item to be Solicitation related.
                 $tid_for_doc_type = jcc_elevated_get_custom_setting('jcc_elevated.rfp_document_type_term');
-                foreach ($form['media'][$delta]['fields']['field_document_type']['widget'] as $key => $value) {
-                  if (is_numeric($key)) {
-                    $form['media'][$delta]['fields']['field_document_type']['widget'][$key]['target_id']['#default_value'] = $tid_for_doc_type;
-                  }
-                }
+                $form['media'][$delta]['fields']['field_document_type']['widget']['#required'] = TRUE;
+                $form['media'][$delta]['fields']['field_document_type']['widget']['#default_value'] = [$tid_for_doc_type];
 
                 // Preset the category for this item to be Solicitation related.
                 $tid_for_category = jcc_elevated_get_custom_setting('jcc_elevated.rfp_media_category_term');
@@ -209,12 +227,16 @@ function jcc_elevated_rfp_solicitations_form_alter(&$form, $form_state, $form_id
                 }
 
                 // Preset the category for this item to be Solicitation related.
-                $tid_for_tags = '';
+                $tid_for_tags = NULL;
                 foreach ($form['media'][$delta]['fields']['field_tags']['widget'] as $key => $value) {
                   if (is_numeric($key)) {
-                    $form['media'][$delta]['fields']['field_tags']['widget'][$key]['target_id']['#default_value'] = $tid_for_tags;
+                    $form['#process'][0][0]['content']['field_tags']['weight'] = 6;
+                    $form['media'][$delta]['fields']['field_tags']['widget']['target_id']['#default_value'] = $form['media'][$delta]['fields']['field_tags']['widget']['target_id']['#default_value'] ?? $tid_for_tags;
+                    $form['media'][$delta]['fields']['field_tags']['widget']['#weight'] = 99;
+                    $form['media'][$delta]['fields']['field_tags']['widget']['target_id']['#weight'] = 99;
                   }
                 }
+
               }
             }
 
@@ -235,6 +257,8 @@ function jcc_elevated_rfp_solicitations_form_alter(&$form, $form_state, $form_id
           // Alter the media library widget for solicitations media field.
           if ($bundle_and_field_name == 'request:field_media_file_multiple'
             || $bundle_and_field_name == 'request:field_rfp_attached_media') {
+
+            $form['captcha']['#access'] = FALSE;
 
             // Hide the image category and matters service form items. they are
             // not needed for rfp related searches.

@@ -164,7 +164,14 @@ process:
     migration_id: jcc_requests_active_paragraphs_submission_info
     paragraph_type: 'information'
     source: url
+  moderation_state:
+    plugin: default_value
+    default_value: published
 destination:
   plugin: 'entity:node'
   default_bundle: request
-migration_dependencies: null
+migration_dependencies:
+  required:
+    - jcc_requests_active_paragraphs_important_dates
+    - jcc_requests_active_paragraphs_submission_info
+    - jcc_requests_active_media

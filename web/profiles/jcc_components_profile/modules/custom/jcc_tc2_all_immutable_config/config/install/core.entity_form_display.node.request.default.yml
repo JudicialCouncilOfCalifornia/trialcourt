@@ -20,8 +20,8 @@ dependencies:
     - workflows.workflow.editorial
   module:
     - content_moderation
-    - datetime
     - field_group
+    - jcc_custom
     - media_library
     - paragraphs
     - path
@@ -117,8 +117,8 @@ third_party_settings:
         - field_rfp_number
         - field_rfp_status
         - field_rfp_type
-        - field_rfp_topic
         - field_rfp_dept_group
+        - field_rfp_topic
       label: 'Request information'
       region: content
       parent_name: group_main_content
@@ -160,12 +160,12 @@ content:
     third_party_settings: {  }
   field_rfp_dept_group:
     type: options_select
-    weight: 7
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
   field_rfp_end_date:
-    type: datetime_default
+    type: jcc_custom_datetime
     weight: 13
     region: content
     settings: {  }
@@ -198,7 +198,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_rfp_start_date:
-    type: datetime_default
+    type: jcc_custom_datetime
     weight: 12
     region: content
     settings: {  }
@@ -230,7 +230,7 @@ content:
     third_party_settings: {  }
   field_rfp_topic:
     type: options_select
-    weight: 6
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }

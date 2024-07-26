@@ -13,7 +13,7 @@ migration_group: jcc_requests_rfps
 label: 'JCC: Requests (RFPs): Archived: Media'
 source:
   plugin: csv
-  path: 'modules/custom/jcc_elevated_rfp_solicitation/data/jcc_rfp_archived_media.csv'
+  path: 'modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_archived_media.csv'
   delimiter: ','
   header_offset: 0
   fields:
@@ -113,4 +113,6 @@ process:
 destination:
   plugin: 'entity:media'
   default_bundle: file
-migration_dependencies: null
+migration_dependencies:
+  required:
+    - jcc_requests_archived_files

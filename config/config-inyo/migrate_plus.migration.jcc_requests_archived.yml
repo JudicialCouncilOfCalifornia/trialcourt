@@ -121,7 +121,12 @@ process:
       migration_id: jcc_requests_archived_media
       source: url
   field_rfp_submission_information: []
+  moderation_state:
+    plugin: default_value
+    default_value: published
 destination:
   plugin: 'entity:node'
   default_bundle: request
-migration_dependencies: null
+migration_dependencies:
+  required:
+    - jcc_requests_archived_media

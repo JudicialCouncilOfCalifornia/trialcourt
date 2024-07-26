@@ -53,7 +53,7 @@ function __jcc_get_job_locations($node) {
  * @return null|\Drupal\Component\Render\MarkupInterface
  *   Return text.
  */
-function __jcc_elevated_determine_date_output($date): null|MarkupInterface {
+function __jcc_elevated_determine_date_range_output($date): null|MarkupInterface {
   if (!$date) {
     return NULL;
   }
@@ -93,5 +93,38 @@ function __jcc_elevated_determine_date_output($date): null|MarkupInterface {
   }
 
   $separator = $separate ? '<br><small>' . $date['separator']['#plain_text'] . '</small><br>' : '<br>';
-  return Markup::create($date['start_date']['#text'] . $separator . $date['end_date']['#text']);
+  $start_datetime_attr = $date['start_date']['#attributes']['datetime'];
+  $end_datetime_attr = $date['end_date']['#attributes']['datetime'];
+  return Markup::create("<time datetime='$start_datetime_attr'>" . $date['start_date']['#text'] . "</time>" . $separator . "<time datetime='$end_datetime_attr'>" . $date['end_date']['#text'] . "</time>");
+}
+
+/**
+ * Helper to determine how a datetime string should be output.
+ *
+ * @param null|array $datetime
+ *   Array of time theme data.
+ *
+ * @return null|\Drupal\Component\Render\MarkupInterface
+ *   Return text.
+ */
+function __jcc_elevated_determine_datetime_output($datetime): null|MarkupInterface {
+  if (!$datetime) {
+    return NULL;
+  }
+
+  $separator_item = $date['separator']['#plain_text'] ?? ' - ';
+  [$date, $time] = explode($separator_item, $datetime['#text']);
+
+  $all_day = $time == "12:00 AM"||$time == "11:59 PM";
+
+  if (!$all_day) {
+    $datetime['#text'] = $date . '<br><small>' . $time . '</small>';
+  }
+  else {
+    $datetime['#text'] = $date;
+  }
+
+  $datetime_attr = $datetime['#attributes']['datetime'];
+  return Markup::create("<time datetime='$datetime_attr'>" . $datetime['#text'] . "</time>");
+
 }
