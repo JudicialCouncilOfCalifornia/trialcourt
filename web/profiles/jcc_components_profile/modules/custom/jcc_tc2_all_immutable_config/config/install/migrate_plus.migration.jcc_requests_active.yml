@@ -1,0 +1,177 @@
+uuid: 8bf23326-e1e1-4f19-81c3-accab0a736b0
+langcode: en
+status: true
+dependencies: {  }
+id: jcc_requests_active
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - node
+  - requests
+migration_group: jcc_requests_rfps
+label: 'JCC: Requests (RFPs): Active'
+source:
+  plugin: csv
+  path: 'modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_active_content.csv'
+  delimiter: ','
+  header_offset: 0
+  fields:
+    -
+      name: url
+      label: 'Unique ID: Source Url'
+      selector: url
+    -
+      name: title
+      label: 'RFP Title'
+      selector: title
+    -
+      name: field_rfp_number
+      label: 'RFP Number'
+      selector: field_rfp_number
+    -
+      name: field_rfp_status
+      label: 'RFP Status'
+      selector: field_rfp_status
+    -
+      name: field_rfp_type
+      label: 'RFP Type'
+      selector: field_rfp_type
+    -
+      name: field_rfp_dept_group
+      label: 'RFP Department'
+      selector: field_rfp_dept_group
+    -
+      name: body
+      label: 'RFP Content'
+      selector: body
+    -
+      name: summary
+      label: 'RFP Summary'
+      selector: summary
+    -
+      name: field_rfp_start_date
+      label: 'RFP Start Date'
+      selector: field_rfp_start_date
+    -
+      name: field_rfp_end_date
+      label: 'RFP End Date'
+      selector: field_rfp_end_date
+    -
+      name: field_rfp_year
+      label: 'RFP Associated Year'
+      selector: field_rfp_year
+  ids:
+    - url
+process:
+  url_id: url
+  title: title
+  field_rfp_number: field_rfp_number
+  field_rfp_status:
+    -
+      plugin: callback
+      callable: strtolower
+      source: field_rfp_status
+    -
+      plugin: str_replace
+      search: ' '
+      replace: '_'
+  field_rfp_type: field_rfp_type
+  field_rfp_dept_group:
+    -
+      plugin: entity_generate
+      source: field_rfp_dept_group
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: rfp_solicitation_dept_group_org
+      value_key: name
+  body/summary: summary
+  body/value:
+    -
+      plugin: str_replace
+      case_insensitive: true
+      search: '<p style="margin-left:40px">&nbsp;</p>'
+      replace: ''
+      source: body
+    -
+      plugin: str_replace
+      case_insensitive: true
+      search: '&nbsp;'
+      replace: ''
+    -
+      plugin: str_replace
+      case_insensitive: true
+      search: ['<p>&nbsp;</p>', '&nbsp;', '<p></p>', '<p>&nbsp; </p>']
+      replace: ['', '', '', '']
+    -
+      plugin: str_replace
+      case_insensitive: true
+      search: ['&#39;', '&#34;', '&quot;']
+      replace: ["'", '"', '"']
+    -
+      plugin: str_replace
+      case_insensitive: true
+      search: '<img class="filetype-icon" src="/images/icon-pdf.gif" alt="PDF file type icon">'
+      replace: ''
+    -
+      plugin: str_replace
+      case_insensitive: true
+      search: '<img alt="DOC file type icon" src="/images/icon-doc.gif" />'
+      replace: ''
+    -
+      plugin: str_replace
+      case_insensitive: true
+      search: '<img alt="External link icon" src="/images/icon-ext.gif" />'
+      replace: ''
+    -
+      plugin: dom
+      method: import
+      source: body
+    -
+      plugin: dom_remove
+      selector: '//img[contains(@src,"icon-ext.gif")]'
+    -
+      plugin: dom_remove
+      selector: '//img[contains(@class,"filter-image-invalid")]'
+    -
+      plugin: dom_remove
+      selector: '//img[contains(@class,"filetype-icon")]'
+    -
+      plugin: dom_remove
+      selector: '//img[contains(@src,"icon-doc.gif")]'
+    -
+      plugin: dom
+      method: export
+  body/format:
+    plugin: default_value
+    default_value: 'body'
+  field_rfp_start_date: field_rfp_start_date
+  field_rfp_end_date: field_rfp_end_date
+  field_rfp_year: field_rfp_year
+  field_rfp_important_dates:
+    plugin: jcc_request_paragraph_lookup
+    migration_id: jcc_requests_active_paragraphs_important_dates
+    paragraph_type: 'date_information'
+    source: url
+  field_rfp_attached_media:
+    -
+      plugin: jcc_request_media_lookup
+      migration_id: jcc_requests_active_media
+      orderby: 'sourceid3'
+      source: url
+  field_rfp_submission_information:
+    plugin: jcc_request_paragraph_lookup
+    migration_id: jcc_requests_active_paragraphs_submission_info
+    paragraph_type: 'information'
+    source: url
+  moderation_state:
+    plugin: default_value
+    default_value: published
+destination:
+  plugin: 'entity:node'
+  default_bundle: request
+migration_dependencies:
+  required:
+    - jcc_requests_active_paragraphs_important_dates
+    - jcc_requests_active_paragraphs_submission_info
+    - jcc_requests_active_media

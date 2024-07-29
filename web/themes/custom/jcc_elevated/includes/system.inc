@@ -144,3 +144,35 @@ function jcc_elevated_preprocess_input(&$variables) {
 function jcc_elevated_preprocess_textarea(&$variables) {
   $variables['element']['#placeholder'] = '';
 }
+
+/**
+ * Implements hook_preprocess_preprocess_html().
+ */
+function jcc_elevated_preprocess_html(&$variables): void {
+  // Set some variables.
+  $route_match = \Drupal::routeMatch();
+
+  // If the node is a solicitation request node, set the page html title.
+  if ($node = $route_match->getParameter('node')) {
+    if ($node->bundle() == 'request') {
+      $items = [];
+
+      $items['title'] = $node->getTitle();
+
+      $request_number = $node->get('field_rfp_number')->first()->getValue();
+      if (isset($request_number['value'])) {
+        $items['number'] = '#ID ' . $request_number['value'];
+      }
+
+      $request_type = $node->get('field_rfp_type')->first()->view('full');
+      if (isset($request_type['#markup'])) {
+        $items['type'] = $request_type['#markup']->__toString();
+      }
+
+      $site_name = \Drupal::config('system.site')->get('name');
+      $items['site_name'] = $site_name;
+
+      $variables['head_title']['title'] = implode(' | ', $items);
+    }
+  }
+}

@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_rfp_dept_group
+    - node.type.request
+    - taxonomy.vocabulary.rfp_solicitation_dept_group_org
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.request.field_rfp_dept_group
+field_name: field_rfp_dept_group
+entity_type: node
+bundle: request
+label: Department/Group
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      rfp_solicitation_dept_group_org: rfp_solicitation_dept_group_org
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: department
+field_type: entity_reference

@@ -1,0 +1,93 @@
+uuid: d264fd51-4fbe-41ac-b85e-7bef0e9b1d97
+langcode: en
+status: true
+dependencies: {  }
+id: jcc_requests_active_paragraphs_submission_info
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - paragraphs
+  - requests
+migration_group: jcc_requests_rfps
+label: 'JCC: Requests (RFPs): Active: Paragraph submission info'
+source:
+  plugin: csv
+  path: modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_active_paragraphs_submission_info.csv
+  delimiter: ','
+  header_offset: 0
+  fields:
+    -
+      name: id
+      label: 'Unique identifier'
+      selector: id
+    -
+      name: parent_url
+      label: 'Parent RFP Url'
+      selector: parent_url
+    -
+      name: parent_rfp_title
+      label: 'Parent RFP Title'
+      selector: parent_rfp_title
+    -
+      name: rfp_id_of_parent_rfp
+      label: 'Parent RFP ID'
+      selector: rfp_id_of_parent_rfp
+    -
+      name: field_heading
+      label: Heading
+      selector: field_heading
+    -
+      name: field_brow
+      label: Brow
+      selector: field_brow
+    -
+      name: field_text
+      label: 'Note text'
+      selector: field_text
+    -
+      name: field_link_multiple
+      label: Link(s)
+      selector: field_link_multiple
+  ids:
+    - id
+    - parent_url
+process:
+  url_id: id
+  parent_url: parent_url
+  field_heading: field_heading
+  field_brow: field_brow
+  urls_temp:
+    -
+      plugin: skip_on_empty
+      source: field_link_multiple
+      method: process
+      message: 'No links. Skipping.'
+    -
+      plugin: explode
+      delimiter: '::'
+    -
+      plugin: explode
+      delimiter: ','
+    -
+      plugin: default_value
+      default_value: ''
+  field_link_multiple:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: '@urls_temp'
+      message: 'No links. Skipping.'
+    -
+      plugin: sub_process
+      process:
+        uri: '0'
+        title: '1'
+  field_text/value: field_text
+  field_text/format:
+    plugin: default_value
+    default_value: caption
+destination:
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: information
+migration_dependencies: null

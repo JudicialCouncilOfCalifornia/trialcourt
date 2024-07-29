@@ -1,0 +1,440 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_elevated_rfp_solicitations.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_library_info_alter().
+ */
+function jcc_elevated_rfp_solicitations_library_info_alter(array &$libraries, $extension): void {
+  if ($extension === 'smart_date') {
+    if (isset($libraries['smart_date'])) {
+      unset($libraries['smart_date']['css']);
+    }
+    if (isset($libraries['date_only'])) {
+      unset($libraries['date_only']['css']);
+    }
+  }
+}
+
+/**
+ * Implements hook_form_views_exposed_form_alter().
+ */
+function jcc_elevated_rfp_solicitations_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
+  // Set some variables.
+  $view = $form_state->get('view');
+  $name = $view->id();
+  $display = $view->current_display;
+  $view_name_display = $name . ':' . $display;
+
+  if ($view_name_display == 'requests:requests_listing_active') {
+    $form['captcha']['#access'] = FALSE;
+  }
+
+  if ($view_name_display == 'requests:requests_listing_archived') {
+    $form['captcha']['#access'] = FALSE;
+  }
+}
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function jcc_elevated_rfp_solicitations_views_pre_view(ViewExecutable $view, $display_id, array &$args): void {
+
+  // Alter the Requests related views.
+  if ($view->id() == 'requests') {
+
+    if ($display_id == 'requests_admin_active'
+      || $display_id == 'requests_admin_archived'
+      || $display_id == 'requests_listing_archived'
+      || $display_id == 'requests_grouped_archived') {
+
+      $field_name = 'field_rfp_end_date_value';
+
+      // Grab the filter options from the view.
+      $filters = $view->display_handler->getOption('filters');
+
+      /*
+       * We will dynamically create the year groups. For each year that exists
+       * for our publications field_date, generate a grouping filter. Also
+       * create a placeholder variable that we will add back later on if group
+       * filters are still empty. This should remove some php notices.
+       */
+      if (isset($filters[$field_name])) {
+        $items_placeholder = $filters[$field_name]['group_info']['group_items'];
+
+        $year_options = [];
+        $start_year = 2001;
+        $time1 = strtotime("-2 years", time());
+        $two_years_ago_date = date("Y", $time1);
+        $time2 = strtotime("now", time());
+        $current_year = date("Y", $time2);
+        $time3 = strtotime("-1 year", time());
+
+        // Alter the Archived Requests Admin view.
+        if ($display_id == 'requests_admin_archived' || $display_id == 'requests_listing_archived') {
+
+          // Reset the group values.
+          $filters[$field_name]['group_info']['group_items'] = [];
+          $year_options = array_reverse(range($start_year, $current_year));
+        }
+
+        // Alter the Active Requests Admin view.
+        if ($display_id == 'requests_admin_active') {
+
+          // Reset the group values.
+          $filters[$field_name]['group_info']['group_items'] = [];
+          $year_options = array_reverse(range($two_years_ago_date, $current_year));
+        }
+
+        // Alter the Active Requests Admin view.
+        if ($display_id == 'requests_grouped_archived') {
+
+          // Reset the group values.
+          $filters[$field_name]['group_info']['group_items'] = [];
+          $year_options = array_reverse(range($start_year, date("Y", $time3)));
+        }
+
+        if (!empty($year_options)) {
+          foreach ($year_options as $index => $year) {
+            if (is_numeric($year)) {
+              $filters[$field_name]['group_info']['group_items'][$index] = [
+                'title' => (string) $year,
+                'operator' => "between",
+                'value' => [
+                  'min' => "$year-01-01 00:00:00",
+                  'max' => "$year-12-31 23:59:59",
+                  'value' => "",
+                  'type' => "date",
+                ],
+              ];
+            }
+
+          }
+
+          $filters[$field_name]['group_info']['default_group'] = array_key_first($year_options);
+        }
+
+        // If our group items are still empty, add back placeholder.
+        if (empty($filters[$field_name]['group_info']['group_items'])) {
+          $filters[$field_name]['group_info']['group_items'] = $items_placeholder;
+        }
+
+        $filters[$field_name]['group_info']['default_group_multiple'] = [];
+
+        // Add back our altered filters.
+        $view->display_handler->overrideOption('filters', $filters);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_elevated_rfp_solicitations_form_alter(&$form, $form_state, $form_id): void {
+
+  switch ($form_id) {
+    case 'node_request_form':
+    case 'node_request_edit_form':
+      $isNew = $form_state->getFormObject()->getEntity()->isNew();
+
+      // Making some edit and UI tweaks to the solicitations requests form.
+      $form['body']['widget'][0]['summary']['#required'] = FALSE;
+      $form['body']['widget'][0]['summary']['#title'] = t('Summary/Teaser text');
+      $form['body']['widget'][0]['summary']['#description'] = t('This summary will populate the header on full page display, and the text on teasers.');
+      $form['field_rfp_number']['widget'][0]['value']['#required'] = TRUE;
+      $form['field_rfp_number']['widget'][0]['#required'] = TRUE;
+      $form['field_rfp_number']['widget']['#required'] = TRUE;
+      $form['field_rfp_status']['widget']['#required'] = TRUE;
+      $form['field_rfp_type']['widget']['#required'] = TRUE;
+
+      $form['field_rfp_submission_information']['widget']['#title'] = t('Submission/Callout information');
+      $form['field_rfp_submission_information']['widget']['add_more']['add_more_button_from_library']['#value'] = t('Add preset callout');
+      $form['field_rfp_submission_information']['widget']['add_more']['add_more_button_information']['#value'] = t('Add new callout');
+
+      $form['path']['widget'][0]['#open'] = FALSE;
+
+      $form['revision_log']['widget'][0]['value']['#rows'] = 2;
+      if (!$isNew) {
+        $form['revision_log']['widget'][0]['value']['#required'] = TRUE;
+      }
+
+      $moderation_description = [
+        t('<strong>"Published"</strong> will immediately post the latest version for public viewing.'),
+        t('<strong>"Draft"</strong> will start a new version for continued editing, only accessible by editors/admins and those with the shared token url. The last published version (if one exists) will remain active and visible to the public.'),
+        t('<strong>"Archived"</strong> will disable public viewing for all versions, without deleting content. This is NOT the same as the Status field "Archived".'),
+      ];
+      $form['moderation_state']['widget'][0]['state']['#description'] = '<br/>' . implode('<br/>------------<br/>', $moderation_description);
+      break;
+
+    case 'media_file_edit_form':
+      $form['captcha']['#access'] = FALSE;
+      break;
+
+    case 'media_library_add_form_upload':
+    case 'media_library_add_form':
+      $form['captcha']['#access'] = FALSE;
+      $storage = $form_state->getStorage();
+      if (isset($storage['media_library_state'])) {
+        $opener = $storage['media_library_state']->getOpenerParameters();
+        $bundle_and_field_name = $opener['bundle'] . ':' . $opener['field_name'];
+
+        // Alter the media library widget for solicitations media field.
+        if ($bundle_and_field_name == 'request:field_media_file_multiple'
+          || $bundle_and_field_name == 'request:field_rfp_attached_media') {
+
+          $triggering_element = $form_state->getTriggeringElement();
+
+          // If we have a file element, an upload triggering element, and there
+          // is media entity information to work with, continue with altering
+          // the media form for our solicitation files.
+          if ($form_state->hasFileElement()
+              && $triggering_element['#name'] == 'upload_upload_button'
+              && isset($storage['media'])) {
+
+            // It is possible to upload multiple files, so we have to loop.
+            foreach ($form['media'] as $delta => $item) {
+              if (is_numeric($delta)) {
+
+                $form['media'][$delta]['fields']['field_category']['#weight'] = 90;
+                $form['media'][$delta]['fields']['field_document_type']['#weight'] = 91;
+                $form['media'][$delta]['fields']['field_tags']['#weight'] = 99;
+
+                // Hide some of the media item fields that we don't worry about.
+                $form['media'][$delta]['fields']['field_matters_served']['#access'] = FALSE;
+
+                // Helper text on name field.
+                $form['media'][$delta]['fields']['name']['widget'][0]['value']['#description'] = t('Please adjust the name so that it will be easier to find for future editing if necessary. It is highly recommended to include the solicitation ID in the name.');
+
+                // Preset the category for this item to be Solicitation related.
+                $tid_for_doc_type = jcc_elevated_get_custom_setting('jcc_elevated.rfp_document_type_term');
+                $form['media'][$delta]['fields']['field_document_type']['widget']['#required'] = TRUE;
+                $form['media'][$delta]['fields']['field_document_type']['widget']['#default_value'] = [$tid_for_doc_type];
+
+                // Preset the category for this item to be Solicitation related.
+                $tid_for_category = jcc_elevated_get_custom_setting('jcc_elevated.rfp_media_category_term');
+                foreach ($form['media'][$delta]['fields']['field_category']['widget'] as $key => $value) {
+                  if (is_numeric($key)) {
+                    $form['media'][$delta]['fields']['field_category']['widget'][$key]['target_id']['#default_value'] = $tid_for_category;
+                  }
+                }
+
+                // Preset the category for this item to be Solicitation related.
+                $tid_for_tags = NULL;
+                foreach ($form['media'][$delta]['fields']['field_tags']['widget'] as $key => $value) {
+                  if (is_numeric($key)) {
+                    $form['#process'][0][0]['content']['field_tags']['weight'] = 6;
+                    $form['media'][$delta]['fields']['field_tags']['widget']['target_id']['#default_value'] = $form['media'][$delta]['fields']['field_tags']['widget']['target_id']['#default_value'] ?? $tid_for_tags;
+                    $form['media'][$delta]['fields']['field_tags']['widget']['#weight'] = 99;
+                    $form['media'][$delta]['fields']['field_tags']['widget']['target_id']['#weight'] = 99;
+                  }
+                }
+
+              }
+            }
+
+          }
+        }
+      }
+      break;
+
+    case 'views_exposed_form':
+      // Alter media library views exposed form for specific type/field combos.
+      if (str_starts_with($form['#id'], 'views-exposed-form-media-library-widget')) {
+
+        $input = $form_state->getUserInput();
+        if ($input && isset($input['media_library_opener_parameters'])) {
+          $opener = $input['media_library_opener_parameters'];
+          $bundle_and_field_name = $opener['bundle'] . ':' . $opener['field_name'];
+
+          // Alter the media library widget for solicitations media field.
+          if ($bundle_and_field_name == 'request:field_media_file_multiple'
+            || $bundle_and_field_name == 'request:field_rfp_attached_media') {
+
+            $form['captcha']['#access'] = FALSE;
+
+            // Hide the image category and matters service form items. they are
+            // not needed for rfp related searches.
+            $form['image_category']['#access'] = FALSE;
+            $form['matters_served']['#access'] = FALSE;
+
+            // Set the default file category to filter the media library to
+            // some term id. Need to code set or allow for state setting to set.
+            $tid_for_category = jcc_elevated_get_custom_setting('jcc_elevated.rfp_media_category_term');
+            $form['file_category']['#default_value'] = $tid_for_category;
+            $input['file_category'] = $tid_for_category;
+            $form_state->setUserInput($input);
+          }
+        }
+      }
+      break;
+
+    case 'paragraphs_library_item_edit_form':
+    case 'paragraphs_library_item_edit_form_1':
+      $type = \Drupal::request()->get('type');
+      $isNew = $form_state->getFormObject()->getEntity()->isNew();
+      $form['paragraphs']['widget']['#title'] = t('Preset item');
+
+      // If new/add form and no type is set by the URL, Block the page/form.
+      if (!$type && $isNew) {
+        $form['paragraphs']['#access'] = FALSE;
+        $form['label']['#access'] = FALSE;
+        $form['revision_log']['#access'] = FALSE;
+        $form['actions']['#access'] = FALSE;
+        $form['notice']['#markup'] = t('This form is blocked because a type is not defined in the URL');
+      }
+
+      // If new/add form and type is set by the URL, limit the options to the
+      // type that is set in the URL.
+      if ($type && $isNew) {
+        foreach ($form['paragraphs']['widget']['add_more'] as $key => $item) {
+          if (str_starts_with($key, 'add_more_button_') && $key != 'add_more_button_' . $type) {
+            unset($form['paragraphs']['widget']['add_more'][$key]);
+          }
+        }
+
+        foreach ($form['paragraphs']['widget']['add_more']['operations']['#links'] as $key => $item) {
+          if (str_starts_with($key, 'add_more_button_') && $key != 'add_more_button_' . $type) {
+            unset($form['paragraphs']['widget']['add_more']['operations']['#links'][$key]);
+          }
+        }
+      }
+
+      break;
+  }
+}
+
+/**
+ * Implements hook_field_group_form_process_build_alter().
+ */
+function jcc_elevated_rfp_solicitations_field_group_form_process_build_alter(array &$element, FormStateInterface $form_state, &$complete_form): void {
+  $form_id = $element['#form_id'] ?? '';
+  switch ($form_id) {
+    case 'node_request_form':
+    case 'node_request_edit_form':
+      $element['group_dates']['#description'] = $element['field_rfp_important_dates']['widget']['#description'];
+      $element['field_rfp_important_dates']['widget']['#description'] = NULL;
+      $element['group_submission_additional_info']['#title'] = t('Sidebar callouts');
+      $element['group_submission_additional_info']['#description'] = t('This content will display in the sidebar section, above the Dates output. The first callout will display with the light blue background and NO Brow text. Additional items will have the dark blue background and will display the Brow text.');
+      break;
+  }
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function jcc_elevated_rfp_solicitations_field_widget_paragraphs_form_alter(&$element, &$form_state, $context): void {
+
+  $field = $context['items']->getFieldDefinition();
+
+  // Remove the option to add a paragraph item to the library from edit form.
+  // We only want to add items directly into the preset library.
+  $element['top']['actions']['dropdown_actions']['promote_to_library']['#access'] = FALSE;
+
+  // Alterations to the date information paragraph form on solicitations.
+  if ($element['#paragraph_type'] == 'date_information') {
+    $element['top']['type']['label']['#access'] = FALSE;
+    if (isset($element['subform'])) {
+      $element['subform']['field_date_range']['widget']['#title'] = NULL;
+      $element['subform']['field_date_range']['widget'][0]['#title'] = NULL;
+      $element['subform']['field_date_range']['widget'][0]['#title_display'] = 'hidden';
+    }
+  }
+
+  // Alterations to the callout information paragraph form on solicitations.
+  if ($element['#paragraph_type'] == 'information') {
+    $element['top']['type']['label']['#markup'] = "<strong>Callout</strong>";
+    if (isset($element['subform'])) {
+      $element['subform']['field_brow']['widget'][0]['#description'] = t("This displays above the heading/label. This will not display for the first item.");
+    }
+  }
+
+  if ($element['#paragraph_type'] == 'from_library') {
+    if ($field->getName() == 'field_rfp_submission_information') {
+      $element['top']['type']['label']['#markup'] = "<strong>Preset Callout</strong>";
+      $element['top']['actions']['dropdown_actions']['library_to_paragraph']['#value'] = t('Customize this callout');
+      if (isset($element['subform'])) {
+        $element['subform']['field_reusable_paragraph']['widget']['#open'] = TRUE;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_menu_local_actions_alter().
+ */
+function jcc_elevated_rfp_solicitations_menu_local_actions_alter(&$local_actions) {
+  // If local actions for solicitation callout items need altering.
+}
+
+/**
+ * Sets the Solicitation Request (RFP) type options.
+ */
+function jcc_elevated_rfp_solicitations_type_options(): array {
+  return [
+    'rfp' => t('Request for Proposal'),
+    'rfq' => t('Request for Quote'),
+    'rfi' => t('Request for Information'),
+    'rfo' => t('Request for Offer'),
+    'rqa' => t('Request for Qualification'),
+    'ifb' => t('Invitation for Bid'),
+  ];
+}
+
+/**
+ * Sets the Solicitation Request (RFP) status options.
+ */
+function jcc_elevated_rfp_solicitations_status_options(): array {
+  return [
+    'open' => t('Open'),
+    'closed' => t('Closed'),
+    'canceled' => t('Canceled'),
+    'awarded' => t('Awarded'),
+    'archived' => t('Archived'),
+  ];
+}
+
+/**
+ * Sets the Solicitation Request (RFP) department options.
+ */
+function jcc_elevated_rfp_solicitations_department_options(): array {
+  return [
+    'general' => t('General'),
+  ];
+}
+
+/**
+ * Sets the Solicitation Request (RFP) department options.
+ */
+function jcc_elevated_rfp_solicitations_year_options(): array {
+  // Get current year and a range of years starting from 2001.
+  $years = range(date("Y", strtotime('+1 years')), 2001);
+  // Set the years as both key and value and return options.
+  return array_combine($years, $years);
+}
+
+/**
+ * Implements hook_preprocess_preprocess_html().
+ */
+function jcc_elevated_rfp_solicitations_preprocess_html(&$variables): void {
+  // Set some variables.
+  $route_match = \Drupal::routeMatch();
+
+  // If the node is a sectioned node, set the page html title to follow the
+  // pattern of "page-title | section-name | site-name".
+  if ($node = $route_match->getParameter('node')) {
+    if ($node->bundle() == 'request') {
+      $site_name = \Drupal::config('system.site')->get('name');
+      $request_type = $node->get('field_rfp_type')->first()->view('full');
+      $type = $request_type['#markup']->__toString();
+      $variables['head_title']['title'] = Markup::create($node->getTitle() . ' | ' . $type . ' | ' . $site_name);
+    }
+  }
+}

@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Link;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Url;
@@ -629,7 +630,7 @@ function jcc_elevated_should_alert_display($alert_node, $current_page, $is_front
 }
 
 /**
- * Node: Request (RFP) preprocess.
+ * Node: Solicitation Request (RFP) preprocess.
  *
  * Display: Full page/Default.
  *
@@ -638,6 +639,8 @@ function jcc_elevated_should_alert_display($alert_node, $current_page, $is_front
  * @param Drupal\node\NodeInterface $node
  *   The node.
  *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  * @throws \Drupal\Core\TypedData\Exception\MissingDataException
  */
 function jcc_elevated_node_request(array &$variables, NodeInterface $node): void {
@@ -647,48 +650,49 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   $formatter = \Drupal::service('date.formatter');
   $renderer = \Drupal::service('renderer');
 
-  //
   // Get the full text of out type.
-  $variables['rfp_type'] = FALSE;
-  $rfp_type = $node->get('field_rfp_type')->getValue();
-  if (isset($rfp_type[0])) {
-    $variables['rfp_type'] = $node->get('field_rfp_type')->first()->view('full');
+  $variables['rfp_type'] = $node->get('field_rfp_type')->first() ? $node->get('field_rfp_type')->first()->view('full') : FALSE;
+
+  // Determine if request is archived.
+  $archived = $node->get('field_rfp_status')->first() && $node->get('field_rfp_status')->first()->getValue()['value'] == 'archived';
+
+  // Get the archived year, if archived.
+  $archived_year = FALSE;
+  $rfp_end_date = $node->get('field_rfp_end_date')->first() ? $node->get('field_rfp_end_date')->first()->getValue() : FALSE;
+  if ($archived && isset($rfp_end_date)) {
+    $date_time = new DrupalDateTime($rfp_end_date['value'], new \DateTimeZone('UTC'));
+    $archived_year = \Drupal::service('date.formatter')->format($date_time->getTimestamp(), 'custom', 'Y', NULL, NULL);
   }
 
-  //
   // Create an array for our important dates.
   $rfp_dates = [];
 
   // Grab our start date and add to our array.
-  $rfp_start_date = $node->get('field_rfp_start_date')->getValue();
-  if (isset($rfp_start_date[0])) {
-    $rfp_start_date = [
+  if ($node->get('field_rfp_start_date')->first()) {
+    $rfp_dates[] = [
       'brow' => t('Issued date'),
-      'heading' => $node->get('field_rfp_start_date')->first()->view('full'),
+      'heading' => __jcc_elevated_determine_datetime_output($node->get('field_rfp_start_date')->first()->view('full')),
     ];
-    $rfp_dates[] = $rfp_start_date;
   }
 
   // Grab our additional dates and add to our array.
-  $rfp_important_dates = $node->get('field_rfp_important_dates')->referencedEntities();
-  if (isset($rfp_important_dates[0])) {
-    foreach ($rfp_important_dates as $date) {
+  if ($node->get('field_rfp_important_dates')->first()) {
+    foreach ($node->get('field_rfp_important_dates')->referencedEntities() as $date) {
+      $heading = __jcc_elevated_determine_date_range_output($date->get('field_date_range')->first() ? $date->get('field_date_range')->first()->view('full') : NULL);
       $rfp_dates[] = [
-        'brow' => $date->get('field_heading')->first()->view('full'),
-        'heading' => $date->get('field_date_range')->first()->view('full'),
-        'text' => $date->get('field_text')->first()->view('full'),
+        'brow' => $date->get('field_heading')->first() ? $date->get('field_heading')->first()->view('full') : NULL,
+        'heading' => $heading,
+        'text' => $date->get('field_text')->first() ? $date->get('field_text')->first()->view('full') : NULL,
       ];
     }
   }
 
   // Grab our end date and add to our array.
-  $rfp_end_date = $node->get('field_rfp_end_date')->getValue();
-  if (isset($rfp_end_date[0])) {
-    $rfp_end_date = [
-      'brow' => t('Deadline'),
-      'heading' => $node->get('field_rfp_end_date')->first()->view('full'),
+  if ($node->get('field_rfp_end_date')->first()) {
+    $rfp_dates[] = [
+      'brow' => $archived ? t('Archived') : t('Deadline'),
+      'heading' => __jcc_elevated_determine_datetime_output($node->get('field_rfp_end_date')->first()->view('full')),
     ];
-    $rfp_dates[] = $rfp_end_date;
   }
 
   $variables['rfp_dates'] = $rfp_dates;
@@ -697,32 +701,46 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   // Grab our submission info and create our arrays.
   $variables['rfp_first_submission_info'] = [];
   $variables['rfp_submission_info'] = [];
+  $rfp_submission_info = [];
   $rfp_submission_information = $node->get('field_rfp_submission_information')->referencedEntities();
   if (isset($rfp_submission_information[0])) {
     foreach ($rfp_submission_information as $sub_info) {
-      $links = [];
-      foreach ($sub_info->get('field_link_multiple')->getValue() as $link) {
 
-        if (!empty($link['options']['attributes']['mailto_subject'])) {
-          $link['options']['query']['subject'] = $link['options']['attributes']['mailto_subject'];
-          unset($link['options']['attributes']['mailto_subject']);
-        }
-        if (!empty($link['options']['attributes']['mailto_body'])) {
-          $link['options']['query']['body'] = $link['options']['attributes']['mailto_body'];
-          unset($link['options']['attributes']['mailto_body']);
-        }
+      // If callout is an information type, set to our paragraph variable.
+      $paragraph = $sub_info->bundle() == 'information' ? $sub_info : FALSE;
 
-        $links[] = [
-          'url' => Url::fromUri($link['uri'], $link['options']),
-          'title' => !empty($link['title']) ? $link['title'] : $link['uri'],
+      // If the callout is a preset, set the preset reference to our paragraph.
+      if ($sub_info->bundle() == 'from_library') {
+        $preset_reference = $sub_info->get('field_reusable_paragraph')->referencedEntities();
+        $preset_paragraph = $preset_reference[0] ? $preset_reference[0]->get('paragraphs')->referencedEntities() : FALSE;
+        if ($preset_paragraph[0] && $preset_paragraph[0]->bundle() == 'information') {
+          $paragraph = $preset_paragraph[0];
+        }
+      }
+
+      if ($paragraph) {
+        $links = [];
+        foreach ($paragraph->get('field_link_multiple')->getValue() as $link) {
+          if (!empty($link['options']['attributes']['mailto_subject'])) {
+            $link['options']['query']['subject'] = $link['options']['attributes']['mailto_subject'];
+            unset($link['options']['attributes']['mailto_subject']);
+          }
+          if (!empty($link['options']['attributes']['mailto_body'])) {
+            $link['options']['query']['body'] = $link['options']['attributes']['mailto_body'];
+            unset($link['options']['attributes']['mailto_body']);
+          }
+          $links[] = [
+            'url' => Url::fromUri($link['uri'], $link['options']),
+            'title' => !empty($link['title']) ? $link['title'] : $link['uri'],
+          ];
+        }
+        $rfp_submission_info[] = [
+          'brow' => $paragraph->get('field_brow')->first() ? $paragraph->get('field_brow')->first()->view('full') : NULL,
+          'heading' => $paragraph->get('field_heading')->first() ? $paragraph->get('field_heading')->first()->view('full') : NULL,
+          'text' => $paragraph->get('field_text')->first() ? $paragraph->get('field_text')->first()->view('full') : NULL,
+          'links' => !empty($links) ? $links : NULL,
         ];
       }
-      $rfp_submission_info[] = [
-        'brow' => $sub_info->get('field_brow')->first() ? $sub_info->get('field_brow')->first()->view('full') : NULL,
-        'heading' => $sub_info->get('field_heading')->first() ? $sub_info->get('field_heading')->first()->view('full') : NULL,
-        'text' => $sub_info->get('field_text')->first() ? $sub_info->get('field_text')->first()->view('full') : NULL,
-        'links' => !empty($links) ? $links : NULL,
-      ];
     }
   }
 
@@ -734,61 +752,54 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
     $variables['rfp_submission_info'] = !empty($rfp_submission_info) ? $rfp_submission_info : [];
   }
 
-  //
   // Create our BlurbBox data.
   $rfp_blurb_box = [];
 
-  $rfp_status = $node->get('field_rfp_status')->getValue();
-  if (isset($rfp_status[0])) {
-    $rfp_status = [
-      'brow' => $node->get('field_rfp_status')->getFieldDefinition()->getLabel(),
+  // Build our status item.
+  if ($node->get('field_rfp_status')->first()) {
+    $rfp_blurb_box[] = [
+      'brow' => t('Status'),
       'heading' => $node->get('field_rfp_status')->first()->view('full'),
       'text' => FALSE,
     ];
-    $rfp_blurb_box[] = $rfp_status;
   }
 
-  $rfp_topic = $node->get('field_rfp_topic')->getValue();
-  if (isset($rfp_topic[0])) {
-    $rfp_topic = [
-      'brow' => $node->get('field_rfp_topic')->getFieldDefinition()->getLabel(),
-      'heading' => $node->get('field_rfp_topic')->first()->view('full'),
+  // Build our topic item.
+  if ($node->get('field_rfp_topic')->first()) {
+    $rfp_blurb_box[] = [
+      'brow' => t('Topic'),
+      'heading' => $node->get('field_rfp_topic')->view('full'),
       'text' => FALSE,
     ];
-    $rfp_blurb_box[] = $rfp_topic;
   }
 
-  $rfp_end_date = $node->get('field_rfp_end_date')->getValue();
-  if (isset($rfp_end_date[0])) {
-    $rfp_end_date = [
-      'brow' => t('Deadline'),
-      'heading' => $node->get('field_rfp_end_date')->first()->view('full'),
+  // Build our end date item.
+  if ($node->get('field_rfp_end_date')->first()) {
+    $rfp_blurb_box[] = [
+      'brow' => $archived ? t('Archived') : t('Deadline'),
+      'heading' => $archived ? $archived_year : __jcc_elevated_determine_datetime_output($node->get('field_rfp_end_date')->first()->view('full')),
       'text' => FALSE,
     ];
-    $rfp_blurb_box[] = $rfp_end_date;
   }
 
-  $rfp_number = $node->get('field_rfp_number')->getValue();
-  if (isset($rfp_number[0])) {
-    $rfp_number = [
-      'brow' => $node->get('field_rfp_number')->getFieldDefinition()->getLabel(),
+  // Build our number item.
+  if ($node->get('field_rfp_number')->first()) {
+    $rfp_blurb_box[] = [
+      'brow' => t('ID#'),
       'heading' => $node->get('field_rfp_number')->first()->view('full'),
       'text' => FALSE,
     ];
-    $rfp_blurb_box[] = $rfp_number;
   }
 
   $variables['rfp_blurb_box_data'] = $rfp_blurb_box;
 
-  //
   // Build our attachments list from multiple media field.
   $variables['attachments_list'] = [];
   $items = [];
-  if ($node->hasField('field_media_file_multiple')) {
+  if ($node->hasField('field_rfp_attached_media')) {
     $current = Drupal::time()->getCurrentTime();
     $offset = 2592000;
-
-    $rfp_attachments = $node->get('field_media_file_multiple')->getValue();
+    $rfp_attachments = $node->get('field_rfp_attached_media')->getValue();
     foreach ($rfp_attachments as $delta => $media_target) {
       $media = $media_target['target_id'] ? $media_manager->load($media_target['target_id']) : FALSE;
       if ($media) {
@@ -818,9 +829,11 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
             '#suffix' => '</em>',
           ];
         }
+
         $items[$delta] = [
           '#prefix' => $new ? '<div class="attachment__label attachment__new">' : '<div class="attachment__label">',
-          '#markup' => Link::fromTextAndUrl($label, $url)->toString() . $renderer->render($status),
+          '#markup' => Link::fromTextAndUrl($label, $url)
+            ->toString() . $renderer->render($status),
           '#suffix' => '</div>',
           '#wrapper_attributes' => ['class' => 'list__item'],
         ];

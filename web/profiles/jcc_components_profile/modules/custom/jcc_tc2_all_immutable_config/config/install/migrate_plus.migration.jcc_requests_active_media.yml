@@ -1,0 +1,106 @@
+uuid: 63f27488-f022-429b-8a91-6b9dd0293b22
+langcode: en
+status: true
+dependencies: {  }
+id: jcc_requests_active_media
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - node
+  - requests
+migration_group: jcc_requests_rfps
+label: 'JCC: Requests (RFPs): Active: Media'
+source:
+  plugin: csv
+  path: 'modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_active_media.csv'
+  delimiter: ','
+  header_offset: 0
+  fields:
+    -
+      name: parent_url
+      label: 'Parent URL'
+      selector: parent_url
+    -
+      name: parent_rfp_title
+      label: 'Parent RFP Title'
+      selector: parent_rfp_title
+    -
+      name: file_url
+      label: 'File url: Unique ID'
+      selector: file_url
+    -
+      name: file_basename
+      label: 'File basename'
+      selector: file_basename
+    -
+      name: file_media_base_name
+      label: 'Media file base name'
+      selector: file_media_base_name
+    -
+      name: media_label
+      label: 'Media label'
+      selector: media_label
+    -
+      name: field_tags
+      label: 'Field: Tags'
+      selector: field_tags
+    -
+      name: field_document_type
+      label: 'Field: Document Type'
+      selector: field_document_type
+    -
+      name: field_category
+      label: 'Field: Category'
+      selector: field_category
+    -
+      name: delta
+      label: 'Media item delta'
+      selector: delta
+  ids:
+    - file_url
+    - parent_url
+    - delta
+process:
+  parent_url: parent_url
+  parent_rfp_title: parent_rfp_title
+  file_url: file_url
+  type:
+    plugin: default_value
+    default_value: file
+  name: file_media_base_name
+  field_media_file/target_id:
+    -
+      plugin: migration_lookup
+      migration: jcc_requests_active_files
+      source: file_url
+    -
+      plugin: skip_on_empty
+      method: row
+  field_category:
+    plugin: entity_generate
+    entity_type: taxonomy_term
+    value_key: name
+    bundle_key: vid
+    bundle: media_file_category
+    source: field_category
+  field_document_type:
+    plugin: entity_generate
+    entity_type: taxonomy_term
+    value_key: name
+    bundle_key: vid
+    bundle: document_type
+    source: field_document_type
+  field_tags:
+    plugin: entity_generate
+    entity_type: taxonomy_term
+    value_key: name
+    bundle_key: vid
+    bundle: tags
+    source: field_tags
+destination:
+  plugin: 'entity:media'
+  default_bundle: file
+migration_dependencies:
+  required:
+    - jcc_requests_active_files

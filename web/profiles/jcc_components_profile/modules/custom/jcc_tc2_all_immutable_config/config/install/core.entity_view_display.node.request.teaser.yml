@@ -5,7 +5,9 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - field.field.node.request.body
     - field.field.node.request.field_media_file_multiple
+    - field.field.node.request.field_rfp_attached_media
     - field.field.node.request.field_rfp_attachments
+    - field.field.node.request.field_rfp_dept_group
     - field.field.node.request.field_rfp_end_date
     - field.field.node.request.field_rfp_important_dates
     - field.field.node.request.field_rfp_number
@@ -14,6 +16,7 @@ dependencies:
     - field.field.node.request.field_rfp_submission_information
     - field.field.node.request.field_rfp_topic
     - field.field.node.request.field_rfp_type
+    - field.field.node.request.field_rfp_year
     - node.type.request
   module:
     - datetime
@@ -32,6 +35,11 @@ content:
       trim_length: 300
     third_party_settings: {  }
     weight: 3
+    region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
     region: content
   field_rfp_end_date:
     type: datetime_default
@@ -78,10 +86,13 @@ hidden:
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
   field_media_file_multiple: true
+  field_rfp_attached_media: true
   field_rfp_attachments: true
+  field_rfp_dept_group: true
   field_rfp_important_dates: true
   field_rfp_submission_information: true
   field_rfp_topic: true
+  field_rfp_year: true
   langcode: true
   links: true
   search_api_excerpt: true
