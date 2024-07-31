@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - filter.format.body
     - filter.format.minimal
     - filter.format.snippet
     - media.type.file
@@ -32,6 +31,7 @@ dependencies:
     - system
     - taxonomy
     - toolbar
+    - userprotect
 id: request_manager
 label: 'Solicitation request manager'
 weight: 0
@@ -52,12 +52,15 @@ permissions:
   - 'access taxonomy overview'
   - 'access toolbar'
   - 'access_unpublished node request'
+  - 'access_unpublished taxonomy_term rfp_solicitation_dept_group_org'
+  - 'access_unpublished taxonomy_term rfp_solicitation_topics'
   - 'change own username'
   - 'create file media'
   - 'create media'
   - 'create request content'
   - 'create terms in rfp_solicitation_dept_group_org'
   - 'create terms in rfp_solicitation_topics'
+  - 'delete all revisions'
   - 'delete any file'
   - 'delete any file media'
   - 'delete any request content'
@@ -78,6 +81,7 @@ permissions:
   - 'rebuild cache access'
   - 'renew token'
   - 'replace files'
+  - 'revert all revisions'
   - 'revert file media revisions'
   - 'revert request revisions'
   - 'schedule publishing of nodes'
@@ -89,9 +93,13 @@ permissions:
   - 'use editorial transition create_new_draft'
   - 'use editorial transition publish'
   - 'use search_api_autocomplete for search'
-  - 'use text format body'
   - 'use text format minimal'
   - 'use text format snippet'
+  - userprotect.account.edit
+  - userprotect.mail.edit
+  - userprotect.pass.edit
+  - 'view all revisions'
+  - 'view any unpublished content'
   - 'view file media revisions'
   - 'view latest version'
   - 'view media'

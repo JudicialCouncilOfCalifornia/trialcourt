@@ -88,6 +88,9 @@ process:
   body/summary: summary
   body/value:
     -
+      plugin: jcc_solicitations_media_replace_file_link
+      source: body
+    -
       plugin: str_replace
       case_insensitive: true
       search: '<p>&nbsp;</p>'
@@ -95,7 +98,6 @@ process:
     -
       plugin: str_replace
       case_insensitive: true
-      source: body
       search: '<img class="filetype-icon" src="/images/icon-pdf.gif" alt="PDF file type icon">'
       replace: ''
     -
@@ -108,6 +110,24 @@ process:
       case_insensitive: true
       search: '<img alt="DOC file type icon" src="/images/icon-doc.gif" />'
       replace: ''
+    -
+      plugin: dom
+      method: import
+    -
+      plugin: dom_remove
+      selector: '//img[contains(@src,"icon-ext.gif")]'
+    -
+      plugin: dom_remove
+      selector: '//img[contains(@class,"filter-image-invalid")]'
+    -
+      plugin: dom_remove
+      selector: '//img[contains(@class,"filetype-icon")]'
+    -
+      plugin: dom_remove
+      selector: '//img[contains(@src,"icon-doc.gif")]'
+    -
+      plugin: dom
+      method: export
   body/format:
     plugin: default_value
     default_value: 'body'
@@ -127,6 +147,4 @@ process:
 destination:
   plugin: 'entity:node'
   default_bundle: request
-migration_dependencies:
-  required:
-    - jcc_requests_archived_media
+migration_dependencies: null

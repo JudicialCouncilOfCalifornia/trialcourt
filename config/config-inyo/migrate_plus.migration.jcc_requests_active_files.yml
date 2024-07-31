@@ -13,7 +13,7 @@ migration_group: jcc_requests_rfps
 label: 'JCC: Requests (RFPs): Active: Files'
 source:
   plugin: csv
-  path: 'modules/custom/jcc_elevated_rfp_solicitation/data/jcc_rfp_active_files.csv'
+  path: 'modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_active_files.csv'
   delimiter: ','
   header_offset: 0
   fields:
@@ -67,14 +67,7 @@ process:
     -
       plugin: callback
       callable: basename
-      source: file_url
-    -
-      plugin: str_replace
-      search: ' '
-      replace: '-'
-    -
-      plugin: callback
-      callable: strtolower
+      source: file_basename
     -
       plugin: skip_on_empty
       method: row
@@ -99,6 +92,7 @@ process:
         - '@pseudo_destination_path'
       file_exists: rename
       move: false
+  description: file_media_base_name
 destination:
   plugin: 'entity:file'
 migration_dependencies: null
