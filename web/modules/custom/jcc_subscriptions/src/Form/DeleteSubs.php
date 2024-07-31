@@ -16,7 +16,7 @@ use SendGrid\Email;
 /**
  * Deletes all groups from user.
  */
-class ManageSubs extends FormBase {
+class DeleteSubs extends FormBase {
 
   /**
    * Temp store.
@@ -47,17 +47,17 @@ class ManageSubs extends FormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'manage_subs_form';
+    return 'delete_subs_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, string $member_email = '', string $access_key = '') {
+  public function buildForm(array $form, FormStateInterface $form_state, string $member_id = '', string $access_key = '') {
 
     $emma_config = self::config('webform_myemma.settings');
     $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
-    $user = $emma->get_member_detail_by_email($member_email);
+    $member_email = $member_id;
 
     $store = $this->tempstore->get('jcc_subscriptions');
     $token_value = $store->get('member_email_' . $member_email);
@@ -89,45 +89,23 @@ class ManageSubs extends FormBase {
       ];
     }
     else {
-      // Getting groups from myemma / only keeping ones with naming convention.
-      $myemma_groups = $emma->list_groups();
-      $form_groups = [];
-      foreach ($myemma_groups as $group) {
-        if (strpos($group->group_name, 'Newsroom mailing') !== FALSE
-          && stripos($group->group_name, 'internal-only') == FALSE) {
-          $form_groups[$group->member_group_id] =
-            str_replace('Newsroom mailing ', '', $group->group_name);
-        }
-      }
-
-      // Creating list of groups form myEmma.
-      $form['myemma_groups'] = [
-        '#type' => 'checkboxes',
-        '#options' => $form_groups,
-        '#title' => $this->t('Manage subscriptions:'),
-      ];
-
-      // Populating default values.
-      if (!isset($user->error)) {
-        // pre-populate active categories.
-        $emma_user_id = $user->member_id;
-        $user_groups_object = $emma->list_member_groups($emma_user_id);
-        $user_groups = [];
-        foreach ($user_groups_object as $group_objects) {
-          array_push($user_groups, $group_objects->member_group_id);
-        }
-        $form['myemma_groups']['#default_value'] = $user_groups;
-      }
-
-      $form['email'] = [
+      $form['user_email'] = [
         '#type' => 'value',
         '#value' => $member_email,
+      ];
+
+      $form['invalid_message'] = [
+        '#prefix' => '<h2>',
+        '#suffix' => '</h2>',
+        '#markup' => t('Manage preferences'),
+        '#weight' => -100,
+        '#value' => true,
       ];
 
       $form['actions']['#type'] = 'actions';
       $form['actions']['submit'] = [
         '#type' => 'submit',
-        '#value' => $this->t('Save'),
+        '#value' => $this->t('Unsubscribe from all communications'),
         '#button_type' => 'primary',
       ];
     }
@@ -139,32 +117,16 @@ class ManageSubs extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     if ($form_state->hasValue('invalid')){
-      jcc_subscriptions_send_email_from_error_management($form_state->cleanValues()->getValues()['user_email']);
+      jcc_subscriptions_send_email_from_error($form_state->cleanValues()->getValues()['user_email']);
       $this->messenger()->addStatus($this->t('An email has been sent to ' . $form_state->cleanValues()->getValues()['user_email']));
     } else {
-      $member_email = $form['email']['#value'];
-      $emma_config = self::config('webform_myemma.settings');
+      $emma_config = \Drupal::config('webform_myemma.settings');
       $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
-
-      $user_req = $emma->get_member_detail_by_email($member_email);
+      $user_req = $emma->get_member_detail_by_email($form_state->cleanValues()->getValues()['user_email']);
       $user_emma_id = $user_req->member_id;
-      // Create / Update user.
-      $fields = [
-        'first_name' => $member_email,
-      ];
-      $groups = [];
-      $groups_to_remove = [];
-      foreach ($form_state->cleanValues()->getValues()['myemma_groups'] as $key => $val) {
-        if ($val !== 0) {
-          $groups[] = $val;
-        }
-        else {
-          $groups_to_remove[] = $key;
-        }
-      }
-      $emma->import_single_member($member_email, $fields, $groups);
-      // Need an extra call to account for groups to remove.
-      $emma->remove_member_from_groups($user_emma_id, $groups_to_remove);
+
+      $emma->remove_member_from_all_groups($user_emma_id);
+      $this->messenger()->addStatus($this->t('<div class="jcc-text-section-aside__container jcc-text-section-aside-secondary__container"><div class="body"><br><br><p>' . $form_state->cleanValues()->getValues()['user_email'] . ' ' . $this->t('has been removed from all communications.') . '</p><br><br></div></div>'));
     }
   }
 
@@ -181,8 +143,8 @@ class ManageSubs extends FormBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function access(AccountInterface $account, string $member_email = '', string $access_key = '') {
-    return AccessResult::allowedIf($access_key != '' && $member_email != '');
+  public function access(AccountInterface $account, string $member_id = '', string $access_key = '') {
+    return AccessResult::allowedIf($access_key != '' && $member_id != '');
   }
 
 }
@@ -193,7 +155,7 @@ class ManageSubs extends FormBase {
  * @param string $to_email
  *   Member email.
  */
-function jcc_subscriptions_send_email_from_error_management(string $to_email = '') {
+function jcc_subscriptions_send_email_from_error(string $to_email = '') {
   global $base_url;
 
   $tempstore = \Drupal::service('tempstore.shared');

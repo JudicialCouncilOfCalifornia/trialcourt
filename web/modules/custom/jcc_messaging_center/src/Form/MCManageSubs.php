@@ -58,13 +58,30 @@ class MCManageSubs extends FormBase {
     $token_value = $store->get('member_email_' . $member_email);
 
     if (!($token_value == $access_key)){
-      $form['temp1'] = [
+      $form['invalid_message'] = [
         '#prefix' => '<h2>',
         '#suffix' => '</h2>',
-        '#markup' => t('This link is expired, we sent you a new email'),
+        '#markup' => t('This link is expired or invalid.'),
         '#weight' => -100,
+        '#value' => true,
       ];
-      jcc_messaging_center_send_email_from_error_management($member_email);
+
+      $form['invalid'] = array(
+        '#type' => 'hidden',
+        '#value' => true,
+      );
+
+      $form['user_email'] = [
+        '#type' => 'hidden',
+        '#value' => $member_email,
+      ];
+
+      $form['actions']['#type'] = 'actions';
+      $form['actions']['submit'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Get a new link'),
+        '#button_type' => 'primary',
+      ];
     } else {
       $vid = 'user_groups';
       $user_groups_raw = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
@@ -122,15 +139,19 @@ class MCManageSubs extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $user_email = $form_state->cleanValues()->getValues()['user_email'];
-    $user_groups = $form_state->cleanValues()->getValues()['user_groups'];
-    $user = user_load_by_mail($user_email);
+    if ($form_state->hasValue('invalid')){
+      jcc_messaging_center_send_email_from_error_management($form_state->cleanValues()->getValues()['user_email']);
+      $this->messenger()->addStatus($this->t('An email has been sent to ' . $form_state->cleanValues()->getValues()['user_email']));
+    } else {
+      $user_email = $form_state->cleanValues()->getValues()['user_email'];
+      $user_groups = $form_state->cleanValues()->getValues()['user_groups'];
+      $user = user_load_by_mail($user_email);
 
-    $user->set('field_jcc_messaging_center_group', $user_groups);
-    $user->save();
+      $user->set('field_jcc_messaging_center_group', $user_groups);
+      $user->save();
 
-    $this->messenger()->addStatus($this->t('Your preferences have been updated.'));
-
+      $this->messenger()->addStatus($this->t('Your preferences have been updated.'));
+    }
   }
 
   /**
@@ -219,7 +240,7 @@ function jcc_messaging_center_send_email_from_error_management(string $to_email 
       );
 
     try {
-      \Drupal::logger('sendgrid_message')->notice('firing send event to ' . $to_email);
+      \Drupal::logger('sendgrid_message')->notice('(Manage subs) firing send event to ' . $to_email);
       $sendGridResponse = $sendgrid->send($email);
 
       if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
