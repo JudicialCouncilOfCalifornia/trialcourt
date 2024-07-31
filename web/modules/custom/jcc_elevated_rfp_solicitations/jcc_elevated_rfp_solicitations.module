@@ -252,7 +252,9 @@ function jcc_elevated_rfp_solicitations_form_alter(&$form, $form_state, $form_id
         $input = $form_state->getUserInput();
         if ($input && isset($input['media_library_opener_parameters'])) {
           $opener = $input['media_library_opener_parameters'];
-          $bundle_and_field_name = $opener['bundle'] . ':' . $opener['field_name'];
+          $bundle = isset($opener['bundle']) ? $opener['bundle'] : 'NOTDEFINED';
+          $field_name = isset($opener['field_name']) ? $opener['field_name'] : 'NOTDEFINED';
+          $bundle_and_field_name = $bundle . ':' . $field_name;
 
           // Alter the media library widget for solicitations media field.
           if ($bundle_and_field_name == 'request:field_media_file_multiple'
