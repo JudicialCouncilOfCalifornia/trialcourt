@@ -67,14 +67,7 @@ process:
     -
       plugin: callback
       callable: basename
-      source: file_url
-    -
-      plugin: str_replace
-      search: ' '
-      replace: '-'
-    -
-      plugin: callback
-      callable: strtolower
+      source: file_basename
     -
       plugin: skip_on_empty
       method: row
@@ -99,6 +92,7 @@ process:
         - '@pseudo_destination_path'
       file_exists: rename
       move: false
+  description: file_media_base_name
 destination:
   plugin: 'entity:file'
 migration_dependencies: null

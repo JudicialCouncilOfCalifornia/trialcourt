@@ -67,7 +67,12 @@ process:
   type:
     plugin: default_value
     default_value: file
-  name: file_media_base_name
+  name:
+    plugin: str_replace
+    case_insensitive: true
+    search: ['.pdf', '.docx', '.doc', '.txt']
+    replace: ['', '', '', '']
+    source: file_basename
   field_media_file/target_id:
     -
       plugin: migration_lookup
@@ -76,6 +81,7 @@ process:
     -
       plugin: skip_on_empty
       method: row
+  field_media_file/description: file_media_base_name
   field_category:
     plugin: entity_generate
     entity_type: taxonomy_term
@@ -113,6 +119,4 @@ process:
 destination:
   plugin: 'entity:media'
   default_bundle: file
-migration_dependencies:
-  required:
-    - jcc_requests_archived_files
+migration_dependencies: null
