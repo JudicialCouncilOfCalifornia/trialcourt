@@ -1252,6 +1252,22 @@ display:
             administrator: administrator
             rules_manager: rules_manager
       sorts:
+        weight:
+          id: weight
+          table: draggableviews_structure
+          field: weight
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: draggable_views_sort_default
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          draggable_views_reference: 'jcc_roc_views:roc_rule_index_sorting'
+          draggable_views_null_order: after
+          draggable_views_pass_arguments: false
         title:
           id: title
           table: node_field_data
@@ -2004,9 +2020,10 @@ display:
           default_row_class: true
           columns:
             title: title
-            field_rule_index_listing_note: field_rule_index_listing_note
-            status: status
             draggableviews: draggableviews
+            field_roc_rule_index_id: field_roc_rule_index_id
+            field_roc_rule_index_list_note: title
+            status: status
           default: '-1'
           info:
             title:
@@ -2016,7 +2033,19 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-            field_rule_index_listing_note:
+            draggableviews:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_roc_rule_index_id:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ' | '
+              empty_column: false
+              responsive: ''
+            field_roc_rule_index_list_note:
               sortable: false
               default_sort_order: asc
               align: ''
@@ -2026,11 +2055,6 @@ display:
             status:
               sortable: false
               default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            draggableviews:
               align: ''
               separator: ''
               empty_column: false

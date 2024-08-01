@@ -1,12 +1,13 @@
 <?php
 
-namespace Drupal\jcc_messaging_center\Controller;
+namespace Drupal\jcc_messaging_center\Form;
 
+use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
 
 use SendGrid\Client as SClient;
 use SendGrid\Exception;
@@ -15,7 +16,7 @@ use SendGrid\Email;
 /**
  * Deletes all groups from user.
  */
-class MCDeleteAllSubs extends ControllerBase {
+class MCDeleteSubs extends FormBase {
 
   /**
    * Temp store.
@@ -43,35 +44,84 @@ class MCDeleteAllSubs extends ControllerBase {
   }
 
   /**
-   * Returns a render-able array.
+   * {@inheritdoc}
    */
-  public function content(string $member_email = '', string $access_key = '') {
+  public function getFormId() {
+    return 'delete_subs_form';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state, string $member_email = '', string $access_key = '') {
     $store = $this->tempstore->get('jcc_messaging_center');
     $token_value = $store->get('member_email_' . $member_email);
-    $build = [];
 
     if (!($token_value == $access_key)){
-      $build = [
-        '#markup' => '
-        <div class="jcc-text-section-aside__container jcc-text-section-aside-secondary__container">
-            <div class="body">
-                <br><br><p>This link is expired, we sent you a new email</p><br><br>
-            </div>
-        </div>',
-        ];
-      jcc_messaging_center_send_email_from_error_unsubscribe($member_email);
+      $form['invalid_message'] = [
+        '#prefix' => '<h2>',
+        '#suffix' => '</h2>',
+        '#markup' => t('This link is expired or invalid.'),
+        '#weight' => -100,
+        '#value' => true,
+      ];
+
+      $form['invalid'] = array(
+        '#type' => 'hidden',
+        '#value' => true,
+      );
+
+      $form['user_email'] = [
+        '#type' => 'hidden',
+        '#value' => $member_email,
+      ];
+
+      $form['actions']['#type'] = 'actions';
+      $form['actions']['submit'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Get a new link'),
+        '#button_type' => 'primary',
+      ];
     } else {
-      $build = [
-        '#markup' => '
-        <div class="jcc-text-section-aside__container jcc-text-section-aside-secondary__container">
-            <div class="body">
-                <br><br><p><a class="usa-button usa-button--primary" href="/messaging-center/' . $member_email . '/delete-all/confirmed/' . $access_key . '">' . $this->t("Unsubscribe from all communications") . '</a></p><br><br>
-            </div>
-        </div>',
+
+      $form['title_header'] = [
+        '#prefix' => '<h2>',
+        '#suffix' => '</h2>',
+        '#markup' => t('Delete all subscriptions'),
+        '#weight' => -100,
+      ];
+
+      $form['user_email'] = [
+        '#type' => 'hidden',
+        '#value' => $member_email,
+      ];
+
+      $form['actions']['#type'] = 'actions';
+      $form['actions']['submit'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Unsubscribe'),
+        '#button_type' => 'primary',
       ];
     }
+    return $form;
+  }
 
-    return $build;
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    if ($form_state->hasValue('invalid')){
+      jcc_messaging_center_send_email_from_error($form_state->cleanValues()->getValues()['user_email']);
+      $this->messenger()->addStatus($this->t('An email has been sent to ' . $form_state->cleanValues()->getValues()['user_email']));
+    } else {
+      $user_email = $form_state->cleanValues()->getValues()['user_email'];
+      $user = user_load_by_mail($user_email);
+
+      $user->set('field_jcc_messaging_center_group', []);
+      $user->save();
+
+      $this->messenger()->addStatus($this->t('Your preferences have been updated.'));
+    }
   }
 
   /**
@@ -90,6 +140,7 @@ class MCDeleteAllSubs extends ControllerBase {
   public function access(AccountInterface $account, string $member_email = '', string $access_key = '') {
     return AccessResult::allowedIf($access_key != '' && $member_email != '');
   }
+
 }
 
 /**
@@ -98,7 +149,7 @@ class MCDeleteAllSubs extends ControllerBase {
  * @param string $member_email
  *   Member email.
  */
-function jcc_messaging_center_send_email_from_error_unsubscribe(string $to_email = '') {
+function jcc_messaging_center_send_email_from_error(string $to_email = '') {
   global $base_url;
 
   //Creating new token in tempshare
@@ -153,7 +204,7 @@ function jcc_messaging_center_send_email_from_error_unsubscribe(string $to_email
       );
 
     try {
-      \Drupal::logger('sendgrid_message')->notice('firing send event to ' . $to_email);
+      \Drupal::logger('sendgrid_message')->notice('(Delete subs) firing send event to ' . $to_email);
       $sendGridResponse = $sendgrid->send($email);
 
       if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
