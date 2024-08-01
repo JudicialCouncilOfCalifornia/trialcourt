@@ -2,16 +2,6 @@
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/Button") }}
 
-{# Background image #}
-{% set background_url = '' %}
-{% if paragraph.field_media is not empty %}
-  {% if bckg_img_url is not null %}
-    {% set background_url = bckg_img_url %}
-  {% else %}
-    {% set background_url = file_url(paragraph.field_media.entity.field_media_image.entity.fileuri) %}
-  {% endif %}
-{% endif %}
-
 {# Button Data #}
 {% set button_data = [] %}
 {% if paragraph.field_link is not empty %}
@@ -32,11 +22,11 @@
 {% include "@organisms/Section/Section.twig" with {
   variant: paragraph.field_section_background.get(0).value|default('default'),
   brow_data: brow_data,
-  heading: content.field_heading|render,
-  text: content.field_lead|render,
+  heading: content.field_heading.0 ? content.field_heading|render : '',
+  text: content.field_lead.0 ? content.field_lead|render : '',
   sub_component_data: content.field_components|render,
   button_data: button_data,
-  background_image_url: background_url,
+  background_image_url: background_image_url,
   first_component: paragraph.field_toggle.get(0).value|default('false'),
   align_items: paragraph.field_alignment.get(0).value|default(false),
   gap: paragraph.field_gap_size.get(0).value|default(false),

@@ -9,6 +9,7 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\media\Entity\Media;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
@@ -220,7 +221,7 @@ function jcc_elevated_paragraph_accordion(array &$variables) {
  * @param array $variables
  *   The paragraph variables.
  */
-function jcc_elevated_paragraph_steps(array &$variables) {
+function jcc_elevated_paragraph_steps(array &$variables): void {
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $variables['steps'] = [];
 
@@ -231,9 +232,9 @@ function jcc_elevated_paragraph_steps(array &$variables) {
     foreach ($items as $item) {
       $item = \Drupal::service('entity.repository')->getTranslationFromContext($item, $langcode);
       $variables['steps'][] = [
-        'index' => $item->hasField('field_custom_index') ? $item->get('field_custom_index')->value : '',
-        'label' => $item->hasField('field_heading') ? $item->get('field_heading')->first()->value : '',
-        'content' => $item->get('field_text')->view('default'),
+        'index' => $item->hasField('field_custom_index') && $item->get('field_custom_index')->first() ? $item->get('field_custom_index')->value : FALSE,
+        'label' => $item->hasField('field_heading') && $item->get('field_heading')->first() ? $item->get('field_heading')->first()->value : FALSE,
+        'content' => $item->hasField('field_text') && $item->get('field_text')->first() ? $item->get('field_text')->view('default') : FALSE,
       ];
     }
   }
@@ -352,14 +353,12 @@ function jcc_elevated_paragraph_hero_banner(array &$variables, ParagraphInterfac
  *   The paragraph.
  */
 function jcc_elevated_paragraph_section(array &$variables, ParagraphInterface $paragraph) {
-  $variables['bckg_img_url'] = NULL;
-
-  if (isset($paragraph->get('field_media')[0]) && $paragraph->get('field_media')[0]->entity) {
-    foreach ($paragraph->get('field_media') as $media) {
+  if ($paragraph->get('field_media')->target_id) {
+    $media = $paragraph->get('field_media')->target_id ? Media::load($paragraph->get('field_media')->target_id) : FALSE;
+    if ($media && $media->field_media_image) {
       $cover_image = $media->get('field_media_image')[0]->entity->getFileUri();
-      $image_url = ImageStyle::load('container_100_percent')
-        ->buildUrl($cover_image);
-      $variables['bckg_img_url'] = $image_url ?? NULL;
+      $image_url = ImageStyle::load('container_100_percent')->buildUrl($cover_image);
+      $variables['background_image_url'] = $image_url ?? NULL;
     }
   }
 }

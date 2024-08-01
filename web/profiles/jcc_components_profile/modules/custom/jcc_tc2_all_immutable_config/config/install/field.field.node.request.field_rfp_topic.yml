@@ -4,7 +4,7 @@ dependencies:
   config:
     - field.storage.node.field_rfp_topic
     - node.type.request
-    - taxonomy.vocabulary.topics
+    - taxonomy.vocabulary.rfp_solicitation_topics
   module:
     - tmgmt_content
 third_party_settings:
@@ -14,7 +14,7 @@ id: node.request.field_rfp_topic
 field_name: field_rfp_topic
 entity_type: node
 bundle: request
-label: 'Request topic'
+label: 'Topic'
 description: ''
 required: false
 translatable: true
@@ -24,10 +24,10 @@ settings:
   handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      topics: topics
+      rfp_solicitation_topics: rfp_solicitation_topics
     sort:
       field: name
       direction: asc
     auto_create: false
-    auto_create_bundle: ''
+    auto_create_bundle: rfp_solicitation_topics
 field_type: entity_reference

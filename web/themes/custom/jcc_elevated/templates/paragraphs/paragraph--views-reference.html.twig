@@ -1,6 +1,7 @@
 <div class="container">
-  <h2>{{ content.field_heading }}</h2>
-
+  {% if content.field_heading.0 %}
+    <h2>{{ content.field_heading }}</h2>
+  {% endif %}
   {{ content|without('field_heading') }}
 </div>
 

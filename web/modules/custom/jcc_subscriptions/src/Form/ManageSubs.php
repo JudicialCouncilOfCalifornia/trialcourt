@@ -63,13 +63,30 @@ class ManageSubs extends FormBase {
     $token_value = $store->get('member_email_' . $member_email);
 
     if (!($token_value == $access_key)) {
-      $form['temp1'] = [
+      $form['invalid_message'] = [
         '#prefix' => '<h2>',
         '#suffix' => '</h2>',
-        '#markup' => t('This link is expired, we sent you a new email'),
+        '#markup' => t('This link is expired or invalid.'),
         '#weight' => -100,
+        '#value' => true,
       ];
-      jcc_subscriptions_send_email_from_error_management($member_email);
+
+      $form['invalid'] = array(
+        '#type' => 'hidden',
+        '#value' => true,
+      );
+
+      $form['user_email'] = [
+        '#type' => 'hidden',
+        '#value' => $member_email,
+      ];
+
+      $form['actions']['#type'] = 'actions';
+      $form['actions']['submit'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Get a new link'),
+        '#button_type' => 'primary',
+      ];
     }
     else {
       // Getting groups from myemma / only keeping ones with naming convention.
@@ -121,29 +138,34 @@ class ManageSubs extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $member_email = $form['email']['#value'];
-    $emma_config = self::config('webform_myemma.settings');
-    $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
+    if ($form_state->hasValue('invalid')){
+      jcc_subscriptions_send_email_from_error_management($form_state->cleanValues()->getValues()['user_email']);
+      $this->messenger()->addStatus($this->t('An email has been sent to ' . $form_state->cleanValues()->getValues()['user_email']));
+    } else {
+      $member_email = $form['email']['#value'];
+      $emma_config = self::config('webform_myemma.settings');
+      $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));
 
-    $user_req = $emma->get_member_detail_by_email($member_email);
-    $user_emma_id = $user_req->member_id;
-    // Create / Update user.
-    $fields = [
-      'first_name' => $member_email,
-    ];
-    $groups = [];
-    $groups_to_remove = [];
-    foreach ($form_state->cleanValues()->getValues()['myemma_groups'] as $key => $val) {
-      if ($val !== 0) {
-        $groups[] = $val;
+      $user_req = $emma->get_member_detail_by_email($member_email);
+      $user_emma_id = $user_req->member_id;
+      // Create / Update user.
+      $fields = [
+        'first_name' => $member_email,
+      ];
+      $groups = [];
+      $groups_to_remove = [];
+      foreach ($form_state->cleanValues()->getValues()['myemma_groups'] as $key => $val) {
+        if ($val !== 0) {
+          $groups[] = $val;
+        }
+        else {
+          $groups_to_remove[] = $key;
+        }
       }
-      else {
-        $groups_to_remove[] = $key;
-      }
+      $emma->import_single_member($member_email, $fields, $groups);
+      // Need an extra call to account for groups to remove.
+      $emma->remove_member_from_groups($user_emma_id, $groups_to_remove);
     }
-    $emma->import_single_member($member_email, $fields, $groups);
-    // Need an extra call to account for groups to remove.
-    $emma->remove_member_from_groups($user_emma_id, $groups_to_remove);
   }
 
   /**
@@ -238,7 +260,7 @@ function jcc_subscriptions_send_email_from_error_management(string $to_email = '
     // Send an email using the template stored in SendGrid.
     try {
       $sendGridResponse = $sendgrid->send($email);
-
+      \Drupal::logger('sendgrid_message')->notice('(Manage subs) firing send event to ' . $to_email);
       if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
         \Drupal::messenger()->addMessage(t('Email successfully sent'));
       }

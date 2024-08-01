@@ -1,4 +1,3 @@
-uuid: 8d1b512b-92e5-441d-b823-2c9e168de74a
 langcode: en
 status: true
 dependencies:
@@ -9,16 +8,24 @@ dependencies:
     - field.storage.node.field_rfp_start_date
     - field.storage.node.field_rfp_status
     - field.storage.node.field_rfp_type
+    - field.storage.node.field_rfp_year
     - node.type.request
+    - taxonomy.vocabulary.rfp_solicitation_dept_group_org
+    - taxonomy.vocabulary.rfp_solicitation_topics
+    - user.role.administrator
+    - user.role.request_manager
   module:
     - better_exposed_filters
+    - content_moderation
     - datetime
     - node
     - options
+    - taxonomy
     - text
     - user
+    - views_bulk_operations
 id: requests
-label: 'Requests (RFP)'
+label: 'Solicitation Requests'
 module: views
 description: ''
 tag: ''
@@ -457,11 +464,75 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+        field_rfp_end_date_1:
+          id: field_rfp_end_date_1
+          table: node__field_rfp_end_date
+          field: field_rfp_end_date
+          relationship: none
+          group_type: group
+          admin_label: 'Solicitation request end date (Year)'
+          plugin_id: field
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_default
+          settings:
+            timezone_override: ''
+            format_type: html_year
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
       pager:
         type: full
         options:
           offset: 0
-          items_per_page: 10
+          items_per_page: 12
           total_pages: null
           id: 0
           tags:
@@ -482,7 +553,7 @@ display:
         type: bef
         options:
           submit_button: Search
-          reset_button: true
+          reset_button: false
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
           expose_sort_order: true
@@ -492,8 +563,8 @@ display:
           text_input_required_format: snippet
           bef:
             general:
-              autosubmit: false
-              autosubmit_exclude_textfield: false
+              autosubmit: true
+              autosubmit_exclude_textfield: true
               autosubmit_textfield_delay: 500
               autosubmit_hide: false
               input_required: false
@@ -516,10 +587,10 @@ display:
                     filter_rewrite_values: ''
                   collapsible: false
                   is_secondary: false
-              field_rfp_status_value:
+              field_rfp_end_date_value:
                 plugin_id: default
                 advanced:
-                  sort_options: false
+                  placeholder_text: ''
                   rewrite:
                     filter_rewrite_values: ''
                   collapsible: false
@@ -531,8 +602,33 @@ display:
       cache:
         type: tag
         options: {  }
-      empty: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: true
+          content: 'No results match your search criteria. Please try a different search.'
+          tokenize: false
       sorts:
+        field_rfp_end_date_value:
+          id: field_rfp_end_date_value
+          table: node__field_rfp_end_date
+          field: field_rfp_end_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
         field_rfp_start_date_value:
           id: field_rfp_start_date_value
           table: node__field_rfp_start_date
@@ -541,12 +637,12 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: datetime
-          order: ASC
+          order: DESC
           expose:
             label: ''
             field_identifier: ''
           exposed: false
-          granularity: second
+          granularity: year
       arguments: {  }
       filters:
         status:
@@ -638,7 +734,7 @@ display:
           exposed: true
           expose:
             operator_id: field_rfp_type_value_op
-            label: 'Request type'
+            label: 'Solicitation type'
             description: ''
             use_operator: false
             operator: field_rfp_type_value_op
@@ -683,7 +779,10 @@ display:
           admin_label: ''
           plugin_id: list_field
           operator: or
-          value: {  }
+          value:
+            open: open
+            closed: closed
+            canceled: canceled
           group: 1
           exposed: true
           expose:
@@ -695,6 +794,912 @@ display:
             operator_limit_selection: false
             operator_list: {  }
             identifier: field_rfp_status_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        field_rfp_status_value_1:
+          id: field_rfp_status_value_1
+          table: node__field_rfp_status
+          field: field_rfp_status_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: not
+          value:
+            archived: archived
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: true
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      style:
+        type: html_list
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          type: ul
+          wrapper_class: item-list
+          class: ''
+      row:
+        type: fields
+        options:
+          default_field_elements: true
+          inline: {  }
+          separator: ''
+          hide_empty: false
+      query:
+        type: views_query
+        options:
+          query_comment: ''
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_tags: {  }
+      relationships: {  }
+      use_ajax: true
+      header:
+        result:
+          id: result
+          table: views
+          field: result
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: result
+          empty: false
+          content: 'Displaying @start - @end of @total'
+      footer: {  }
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:field.storage.node.body'
+        - 'config:field.storage.node.field_rfp_end_date'
+        - 'config:field.storage.node.field_rfp_number'
+        - 'config:field.storage.node.field_rfp_start_date'
+        - 'config:field.storage.node.field_rfp_status'
+        - 'config:field.storage.node.field_rfp_type'
+  requests_admin_active:
+    id: requests_admin_active
+    display_title: 'Active Solicitations admin page'
+    display_plugin: page
+    position: 3
+    display_options:
+      title: 'Active solicitation requests'
+      fields:
+        views_bulk_operations_bulk_form:
+          id: views_bulk_operations_bulk_form
+          table: views
+          field: views_bulk_operations_bulk_form
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: views_bulk_operations_bulk_form
+          label: Operations
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          batch: true
+          batch_size: 10
+          form_step: true
+          buttons: false
+          action_title: Action
+          clear_on_exposed: true
+          force_selection_info: false
+          selected_actions:
+            0:
+              action_id: 'moderation_state_change:node'
+              preconfiguration:
+                add_confirmation: 0
+            15:
+              action_id: 'entity:save_action:node'
+              preconfiguration:
+                add_confirmation: 0
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: field
+          label: Title
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_rfp_number:
+          id: field_rfp_number
+          table: node__field_rfp_number
+          field: field_rfp_number
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: 'RFP ID'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_rfp_status:
+          id: field_rfp_status
+          table: node__field_rfp_status
+          field: field_rfp_status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: Status
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: list_default
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_rfp_type:
+          id: field_rfp_type
+          table: node__field_rfp_type
+          field: field_rfp_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: Type
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: list_default
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_rfp_end_date_1:
+          id: field_rfp_end_date_1
+          table: node__field_rfp_end_date
+          field: field_rfp_end_date
+          relationship: none
+          group_type: group
+          admin_label: 'Solicitation request end date (Year)'
+          plugin_id: field
+          label: Year
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_default
+          settings:
+            timezone_override: ''
+            format_type: html_year
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_rfp_year:
+          id: field_rfp_year
+          table: node__field_rfp_year
+          field: field_rfp_year
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: 'Associated year'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: '{{ field_rfp_end_date_1 }}'
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: list_default
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        moderation_state:
+          id: moderation_state
+          table: node_field_data
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: moderation_state_field
+          label: 'Moderation state'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: content_moderation_state
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        operations:
+          id: operations
+          table: node
+          field: operations
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: entity_operations
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          destination: true
+      pager:
+        type: full
+        options:
+          offset: 0
+          items_per_page: 50
+          total_pages: null
+          id: 0
+          tags:
+            next: ››
+            previous: ‹‹
+            first: '« First'
+            last: 'Last »'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          quantity: 9
+      exposed_form:
+        type: bef
+        options:
+          submit_button: Search
+          reset_button: true
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: snippet
+          bef:
+            general:
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+              reset_button_always_show: false
+            filter:
+              field_rfp_number_value:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  is_secondary: false
+              field_rfp_type_value:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+              field_rfp_status_value:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+              field_rfp_end_date_value:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+      access:
+        type: role
+        options:
+          role:
+            administrator: administrator
+            request_manager: request_manager
+      sorts:
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+        field_rfp_end_date_value:
+          id: field_rfp_end_date_value
+          table: node__field_rfp_end_date
+          field: field_rfp_end_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+        field_rfp_start_date_value:
+          id: field_rfp_start_date_value
+          table: node__field_rfp_start_date
+          field: field_rfp_start_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+      filters:
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            request: request
+          group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        combine:
+          id: combine
+          table: views
+          field: combine
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: combine
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: combine_op
+            label: 'Search by title/ID'
+            description: ''
+            use_operator: false
+            operator: combine_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: search
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          fields:
+            title: title
+            field_rfp_number: field_rfp_number
+        field_rfp_type_value:
+          id: field_rfp_type_value
+          table: node__field_rfp_type
+          field: field_rfp_type_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_type_value_op
+            label: 'Solicitation request type'
+            description: ''
+            use_operator: false
+            operator: field_rfp_type_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_type_value
             required: false
             remember: false
             multiple: false
@@ -724,6 +1729,2013 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
+        field_rfp_status_value:
+          id: field_rfp_status_value
+          table: node__field_rfp_status
+          field: field_rfp_status_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value:
+            open: open
+            closed: closed
+            canceled: canceled
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_status_value_op
+            label: Status
+            description: ''
+            use_operator: false
+            operator: field_rfp_status_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_status_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+            reduce: true
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        field_rfp_status_value_1:
+          id: field_rfp_status_value_1
+          table: node__field_rfp_status
+          field: field_rfp_status_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: not
+          value:
+            archived: archived
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: true
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_year_value_op
+            label: 'Associated year'
+            description: ''
+            use_operator: false
+            operator: field_rfp_year_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_year_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        field_rfp_topic_target_id:
+          id: field_rfp_topic_target_id
+          table: node__field_rfp_topic
+          field: field_rfp_topic_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_topic_target_id_op
+            label: Topic
+            description: ''
+            use_operator: false
+            operator: field_rfp_topic_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_topic_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: true
+          vid: rfp_solicitation_topics
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+          save_lineage: false
+          force_deepest: false
+          parent: null
+          level_labels: ''
+          hierarchy_depth: 0
+          required_depth: 0
+          none_label: '- Please select -'
+        field_rfp_dept_group_target_id:
+          id: field_rfp_dept_group_target_id
+          table: node__field_rfp_dept_group
+          field: field_rfp_dept_group_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_dept_group_target_id_op
+            label: Department/Group
+            description: ''
+            use_operator: false
+            operator: field_rfp_dept_group_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_dept_group_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: true
+          vid: rfp_solicitation_dept_group_org
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+          save_lineage: false
+          force_deepest: false
+          parent: null
+          level_labels: ''
+          hierarchy_depth: 0
+          required_depth: 0
+          none_label: '- Please select -'
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      style:
+        type: table
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          columns:
+            views_bulk_operations_bulk_form: views_bulk_operations_bulk_form
+            title: title
+            field_rfp_number: field_rfp_number
+            field_rfp_status: field_rfp_status
+            field_rfp_type: field_rfp_type
+            field_rfp_end_date_1: field_rfp_end_date_1
+            field_rfp_year: field_rfp_year
+            moderation_state: moderation_state
+            operations: operations
+          default: '-1'
+          info:
+            views_bulk_operations_bulk_form:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            title:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_rfp_number:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_rfp_status:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_rfp_type:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_rfp_end_date_1:
+              sortable: true
+              default_sort_order: desc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_rfp_year:
+              sortable: true
+              default_sort_order: desc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            moderation_state:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            operations:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          override: true
+          sticky: false
+          summary: ''
+          empty_table: false
+          caption: ''
+          description: ''
+      row:
+        type: fields
+        options:
+          default_field_elements: true
+          inline: {  }
+          separator: ''
+          hide_empty: false
+      defaults:
+        access: false
+        title: false
+        use_ajax: false
+        pager: false
+        exposed_form: false
+        style: false
+        row: false
+        fields: false
+        sorts: false
+        filters: false
+        filter_groups: false
+      use_ajax: false
+      display_description: ''
+      display_extenders: {  }
+      path: admin/content/requests/active
+    cache_metadata:
+      max-age: 0
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
+        - 'user.node_grants:view'
+        - user.roles
+      tags:
+        - 'config:field.storage.node.field_rfp_end_date'
+        - 'config:field.storage.node.field_rfp_number'
+        - 'config:field.storage.node.field_rfp_status'
+        - 'config:field.storage.node.field_rfp_type'
+        - 'config:field.storage.node.field_rfp_year'
+  requests_admin_archived:
+    id: requests_admin_archived
+    display_title: 'Archived Solicitations admin page'
+    display_plugin: page
+    position: 4
+    display_options:
+      title: 'Archived solicitation requests'
+      fields:
+        views_bulk_operations_bulk_form:
+          id: views_bulk_operations_bulk_form
+          table: views
+          field: views_bulk_operations_bulk_form
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: views_bulk_operations_bulk_form
+          label: Operations
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          batch: true
+          batch_size: 10
+          form_step: true
+          buttons: false
+          action_title: Action
+          clear_on_exposed: true
+          force_selection_info: false
+          selected_actions:
+            0:
+              action_id: 'moderation_state_change:node'
+              preconfiguration:
+                add_confirmation: 0
+            15:
+              action_id: 'entity:save_action:node'
+              preconfiguration:
+                add_confirmation: 0
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: field
+          label: Title
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_rfp_number:
+          id: field_rfp_number
+          table: node__field_rfp_number
+          field: field_rfp_number
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: 'RFP ID'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_rfp_status:
+          id: field_rfp_status
+          table: node__field_rfp_status
+          field: field_rfp_status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: Status
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: list_default
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_rfp_type:
+          id: field_rfp_type
+          table: node__field_rfp_type
+          field: field_rfp_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: Type
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: list_default
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_rfp_end_date_1:
+          id: field_rfp_end_date_1
+          table: node__field_rfp_end_date
+          field: field_rfp_end_date
+          relationship: none
+          group_type: group
+          admin_label: 'Solicitation request end date (Year)'
+          plugin_id: field
+          label: Year
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_default
+          settings:
+            timezone_override: ''
+            format_type: html_year
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_rfp_year:
+          id: field_rfp_year
+          table: node__field_rfp_year
+          field: field_rfp_year
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: 'Associated year'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: '{{ field_rfp_end_date_1 }}'
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: list_default
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        moderation_state:
+          id: moderation_state
+          table: node_field_data
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: moderation_state_field
+          label: 'Moderation state'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: content_moderation_state
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        operations:
+          id: operations
+          table: node
+          field: operations
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: entity_operations
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          destination: true
+      pager:
+        type: full
+        options:
+          offset: 0
+          items_per_page: 50
+          total_pages: null
+          id: 0
+          tags:
+            next: ››
+            previous: ‹‹
+            first: '« First'
+            last: 'Last »'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          quantity: 9
+      exposed_form:
+        type: bef
+        options:
+          submit_button: Search
+          reset_button: true
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: snippet
+          bef:
+            general:
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+              reset_button_always_show: false
+            filter:
+              field_rfp_number_value:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  is_secondary: false
+              field_rfp_type_value:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+              field_rfp_end_date_value:
+                plugin_id: default
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+      access:
+        type: role
+        options:
+          role:
+            administrator: administrator
+            request_manager: request_manager
+      sorts:
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+        field_rfp_end_date_value:
+          id: field_rfp_end_date_value
+          table: node__field_rfp_end_date
+          field: field_rfp_end_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+        field_rfp_start_date_value:
+          id: field_rfp_start_date_value
+          table: node__field_rfp_start_date
+          field: field_rfp_start_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+      filters:
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            request: request
+          group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        combine:
+          id: combine
+          table: views
+          field: combine
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: combine
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: combine_op
+            label: 'Search by title/ID'
+            description: ''
+            use_operator: false
+            operator: combine_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: search
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          fields:
+            title: title
+            field_rfp_number: field_rfp_number
+        field_rfp_type_value:
+          id: field_rfp_type_value
+          table: node__field_rfp_type
+          field: field_rfp_type_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_type_value_op
+            label: 'Solicitation request type'
+            description: ''
+            use_operator: false
+            operator: field_rfp_type_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_type_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        field_rfp_status_value_1:
+          id: field_rfp_status_value_1
+          table: node__field_rfp_status
+          field: field_rfp_status_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value:
+            archived: archived
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: true
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_year_value_op
+            label: 'Associated year'
+            description: ''
+            use_operator: false
+            operator: field_rfp_year_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_year_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        field_rfp_topic_target_id:
+          id: field_rfp_topic_target_id
+          table: node__field_rfp_topic
+          field: field_rfp_topic_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_topic_target_id_op
+            label: Topic
+            description: ''
+            use_operator: false
+            operator: field_rfp_topic_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_topic_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: true
+          vid: rfp_solicitation_topics
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+          save_lineage: false
+          force_deepest: false
+          parent: null
+          level_labels: ''
+          hierarchy_depth: 0
+          required_depth: 0
+          none_label: '- Please select -'
+        field_rfp_dept_group_target_id:
+          id: field_rfp_dept_group_target_id
+          table: node__field_rfp_dept_group
+          field: field_rfp_dept_group_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_dept_group_target_id_op
+            label: Department/Group
+            description: ''
+            use_operator: false
+            operator: field_rfp_dept_group_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_dept_group_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: true
+          vid: rfp_solicitation_dept_group_org
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+          save_lineage: false
+          force_deepest: false
+          parent: null
+          level_labels: ''
+          hierarchy_depth: 0
+          required_depth: 0
+          none_label: '- Please select -'
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      style:
+        type: table
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          columns:
+            views_bulk_operations_bulk_form: views_bulk_operations_bulk_form
+            title: title
+            field_rfp_number: field_rfp_number
+            field_rfp_status: field_rfp_status
+            field_rfp_type: field_rfp_type
+            field_rfp_end_date_1: field_rfp_end_date_1
+            field_rfp_year: field_rfp_year
+            moderation_state: moderation_state
+            operations: operations
+          default: '-1'
+          info:
+            views_bulk_operations_bulk_form:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            title:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_rfp_number:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_rfp_status:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_rfp_type:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_rfp_end_date_1:
+              sortable: true
+              default_sort_order: desc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_rfp_year:
+              sortable: true
+              default_sort_order: desc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            moderation_state:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            operations:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          override: true
+          sticky: false
+          summary: ''
+          empty_table: false
+          caption: ''
+          description: ''
+      row:
+        type: fields
+        options:
+          default_field_elements: true
+          inline: {  }
+          separator: ''
+          hide_empty: false
+      defaults:
+        access: false
+        title: false
+        use_ajax: false
+        pager: false
+        exposed_form: false
+        style: false
+        row: false
+        fields: false
+        sorts: false
+        filters: false
+        filter_groups: false
+      use_ajax: false
+      display_description: ''
+      display_extenders: {  }
+      path: admin/content/requests/archived
+    cache_metadata:
+      max-age: 0
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
+        - 'user.node_grants:view'
+        - user.roles
+      tags:
+        - 'config:field.storage.node.field_rfp_end_date'
+        - 'config:field.storage.node.field_rfp_number'
+        - 'config:field.storage.node.field_rfp_status'
+        - 'config:field.storage.node.field_rfp_type'
+        - 'config:field.storage.node.field_rfp_year'
+  requests_listing_active:
+    id: requests_listing_active
+    display_title: 'Active Solicitation request listing'
+    display_plugin: block
+    position: 1
+    display_options:
+      sorts:
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+        field_rfp_end_date_value:
+          id: field_rfp_end_date_value
+          table: node__field_rfp_end_date
+          field: field_rfp_end_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+        field_rfp_start_date_value:
+          id: field_rfp_start_date_value
+          table: node__field_rfp_start_date
+          field: field_rfp_start_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            request: request
+          group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        combine:
+          id: combine
+          table: views
+          field: combine
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: combine
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: combine_op
+            label: 'Search by title/ID'
+            description: ''
+            use_operator: false
+            operator: combine_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: search
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          fields:
+            title: title
+            field_rfp_number: field_rfp_number
+        field_rfp_type_value:
+          id: field_rfp_type_value
+          table: node__field_rfp_type
+          field: field_rfp_type_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_type_value_op
+            label: 'Solicitation request type'
+            description: ''
+            use_operator: false
+            operator: field_rfp_type_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_type_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        field_rfp_dept_group_target_id:
+          id: field_rfp_dept_group_target_id
+          table: node__field_rfp_dept_group
+          field: field_rfp_dept_group_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_dept_group_target_id_op
+            label: Department/Group
+            description: ''
+            use_operator: false
+            operator: field_rfp_dept_group_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_dept_group_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: true
+          vid: rfp_solicitation_dept_group_org
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+          save_lineage: false
+          force_deepest: false
+          parent: null
+          level_labels: ''
+          hierarchy_depth: 0
+          required_depth: 0
+          none_label: '- Please select -'
+        field_rfp_topic_target_id:
+          id: field_rfp_topic_target_id
+          table: node__field_rfp_topic
+          field: field_rfp_topic_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_topic_target_id_op
+            label: Topic
+            description: ''
+            use_operator: false
+            operator: field_rfp_topic_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_topic_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: true
+          vid: rfp_solicitation_topics
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+          save_lineage: false
+          force_deepest: false
+          parent: null
+          level_labels: ''
+          hierarchy_depth: 0
+          required_depth: 0
+          none_label: '- Please select -'
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_year_value_op
+            label: Year
+            description: ''
+            use_operator: false
+            operator: field_rfp_year_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_year_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        field_rfp_status_value:
+          id: field_rfp_status_value
+          table: node__field_rfp_status
+          field: field_rfp_status_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value:
+            all: all
+            open: open
+            closed: closed
+            canceled: canceled
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_status_value_op
+            label: Status
+            description: ''
+            use_operator: false
+            operator: field_rfp_status_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_status_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+            reduce: true
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        field_rfp_status_value_1:
+          id: field_rfp_status_value_1
+          table: node__field_rfp_status
+          field: field_rfp_status_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: not
+          value:
+            archived: archived
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: true
       filter_groups:
         operator: AND
         groups:
@@ -731,9 +3743,9 @@ display:
       style:
         type: html_list
         options:
+          grouping: {  }
           row_class: ''
           default_row_class: true
-          uses_fields: false
           type: ul
           wrapper_class: item-list
           class: ''
@@ -744,19 +3756,17 @@ display:
           inline: {  }
           separator: ''
           hide_empty: false
-      query:
-        type: views_query
-        options:
-          query_comment: ''
-          disable_sql_rewrite: false
-          distinct: false
-          replica: false
-          query_tags: {  }
-      relationships: {  }
-      use_ajax: true
-      header: {  }
-      footer: {  }
+      defaults:
+        style: false
+        row: false
+        sorts: false
+        filters: false
+        filter_groups: false
+      display_description: ''
       display_extenders: {  }
+      block_description: 'Solicitation requests active listing'
+      allow:
+        items_per_page: false
     cache_metadata:
       max-age: -1
       contexts:
@@ -764,6 +3774,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
@@ -773,14 +3784,310 @@ display:
         - 'config:field.storage.node.field_rfp_start_date'
         - 'config:field.storage.node.field_rfp_status'
         - 'config:field.storage.node.field_rfp_type'
-  requests_rfp_listing:
-    id: requests_rfp_listing
-    display_title: 'Request (RFP) listing'
+  requests_listing_archived:
+    id: requests_listing_archived
+    display_title: 'Archived Solicitation request listing'
     display_plugin: block
-    position: 1
+    position: 2
     display_options:
+      sorts:
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+        field_rfp_end_date_value:
+          id: field_rfp_end_date_value
+          table: node__field_rfp_end_date
+          field: field_rfp_end_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+        field_rfp_start_date_value:
+          id: field_rfp_start_date_value
+          table: node__field_rfp_start_date
+          field: field_rfp_start_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: year
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            request: request
+          group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        combine:
+          id: combine
+          table: views
+          field: combine
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: combine
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: combine_op
+            label: 'search by title/ID'
+            description: ''
+            use_operator: false
+            operator: combine_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: search
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          fields:
+            title: title
+            field_rfp_number: field_rfp_number
+        field_rfp_type_value:
+          id: field_rfp_type_value
+          table: node__field_rfp_type
+          field: field_rfp_type_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_type_value_op
+            label: 'Solicitation request type'
+            description: ''
+            use_operator: false
+            operator: field_rfp_type_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_type_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        field_rfp_status_value_1:
+          id: field_rfp_status_value_1
+          table: node__field_rfp_status
+          field: field_rfp_status_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value:
+            archived: archived
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: true
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_rfp_year_value_op
+            label: Year
+            description: ''
+            use_operator: false
+            operator: field_rfp_year_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_rfp_year_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              rules_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      style:
+        type: html_list
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          type: ul
+          wrapper_class: item-list
+          class: ''
+      row:
+        type: fields
+        options:
+          default_field_elements: true
+          inline: {  }
+          separator: ''
+          hide_empty: false
+      defaults:
+        style: false
+        row: false
+        sorts: false
+        filters: false
+        filter_groups: false
       display_description: ''
       display_extenders: {  }
+      block_description: 'Solicitation requests archived listing'
+      allow:
+        items_per_page: false
     cache_metadata:
       max-age: -1
       contexts:
