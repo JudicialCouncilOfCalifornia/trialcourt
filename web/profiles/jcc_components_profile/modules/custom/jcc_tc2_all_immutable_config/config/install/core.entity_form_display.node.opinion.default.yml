@@ -5,21 +5,19 @@ dependencies:
     - field.field.node.opinion.field_case_number_plain
     - field.field.node.opinion.field_date
     - field.field.node.opinion.field_media_file_multiple
-    - field.field.node.opinion.field_opinion_citings
     - field.field.node.opinion.field_opinion_source
     - field.field.node.opinion.field_opinion_type
     - field.field.node.opinion.field_related_cases_plain
     - field.field.node.opinion.field_review_granted
     - node.type.opinion
-    - workflows.workflow.editorial
   module:
-    - content_moderation
     - datetime
     - maxlength
     - media_library
     - path
     - scheduler
     - scheduler_content_moderation_integration
+    - workflow_buttons
 id: node.opinion.default
 targetEntityType: node
 bundle: opinion
@@ -94,10 +92,11 @@ content:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
-    type: moderation_state_default
+    type: workflow_buttons
     weight: 20
     region: content
-    settings: {  }
+    settings:
+      show_current_state: true
     third_party_settings: {  }
   path:
     type: path
