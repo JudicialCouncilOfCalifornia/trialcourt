@@ -69,7 +69,6 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
   }
 
   $division_tid = $media->hasField('field_division') ? $media->get('field_division')->target_id : FALSE;
-  $topic_tid = $media->hasField('field_topic') ? $media->get('field_topic')->target_id : FALSE;
   $case_tid = $media->hasField('field_case_type') ? $media->get('field_case_type')->target_id : FALSE;
   $document_tid = $media->hasField('field_document_type') ? $media->get('field_document_type')->target_id : FALSE;
   $category_tid = $media->hasField('field_publication_category') ? $media->get('field_publication_category')->target_id : FALSE;
