@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.storage.node.field_rfp_submission_information
     - node.type.request
+    - paragraphs.paragraphs_type.from_library
     - paragraphs.paragraphs_type.information
   module:
     - entity_reference_revisions
@@ -15,7 +16,7 @@ id: node.request.field_rfp_submission_information
 field_name: field_rfp_submission_information
 entity_type: node
 bundle: request
-label: 'Request submission information'
+label: 'Solicitation submission/callout information'
 description: ''
 required: false
 translatable: true
@@ -26,87 +27,103 @@ settings:
   handler_settings:
     target_bundles:
       information: information
+      from_library: from_library
     negate: 0
     target_bundles_drag_drop:
       accordion:
-        weight: 28
+        weight: -65
         enabled: false
       accordion_item:
-        weight: 29
+        weight: -64
         enabled: false
       action_list:
-        weight: 30
+        weight: -63
         enabled: false
       action_list_item:
-        weight: 31
+        weight: -62
         enabled: false
       alert:
-        weight: 32
+        weight: -61
         enabled: false
       attachment:
-        weight: 33
+        weight: -60
         enabled: false
       body:
-        weight: 34
+        weight: -59
         enabled: false
       button:
-        weight: 35
+        weight: -58
         enabled: false
       card:
-        weight: 36
+        weight: -57
         enabled: false
       cards:
-        weight: 37
+        weight: -56
         enabled: false
       content_stream:
-        weight: 38
+        weight: -55
         enabled: false
       date_information:
-        weight: 39
+        weight: -54
         enabled: false
+      embed_script:
+        weight: -48
+        enabled: false
+      from_library:
+        weight: -45
+        enabled: true
       hero:
-        weight: 40
+        weight: -53
         enabled: false
       hero_banner:
-        weight: 41
+        weight: -52
         enabled: false
       hero_hangover:
-        weight: 42
+        weight: -51
         enabled: false
       hours:
-        weight: 43
+        weight: -50
         enabled: false
       icon_link:
-        weight: 44
+        weight: -49
         enabled: false
       iframe:
-        weight: 45
+        weight: -47
         enabled: false
       information:
-        weight: 46
+        weight: -46
         enabled: true
       messenger_signup:
-        weight: 47
+        weight: -44
         enabled: false
       read_more:
-        weight: 48
+        weight: -43
+        enabled: false
+      rule_section:
+        weight: -36
         enabled: false
       section:
-        weight: 49
+        weight: -42
         enabled: false
       step:
-        weight: 50
+        weight: -41
         enabled: false
       steps:
-        weight: 51
+        weight: -40
+        enabled: false
+      tab:
+        weight: -35
+        enabled: false
+      tabs:
+        weight: -34
         enabled: false
       text_share:
-        weight: 52
+        weight: -39
         enabled: false
       views_reference:
-        weight: 53
+        weight: -38
         enabled: false
       webform:
-        weight: 54
+        weight: -37
         enabled: false
 field_type: entity_reference_revisions

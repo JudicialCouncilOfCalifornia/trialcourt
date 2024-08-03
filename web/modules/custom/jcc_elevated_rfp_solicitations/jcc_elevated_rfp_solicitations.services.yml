@@ -1,0 +1,9 @@
+services:
+  jcc_elevated_rfp_solicitations.route_subscriber:
+    class: Drupal\jcc_elevated_rfp_solicitations\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  jcc_elevated_rfp_solicitations.media_replace_file_link:
+    class: Drupal\jcc_elevated_rfp_solicitations\Services\JccSolicitationMediaReplaceFileLinkService
+    arguments: ['@entity_type.manager', '@file.usage', '@pathauto.alias_cleaner']
