@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_elevated_rfp_solicitations.install.
+ */
+
+use Drupal\Core\Database\Database;
+
+/**
+ * Adds a delta source column to the archived solicitation media migration.
+ */
+function jcc_elevated_rfp_solicitations_update_9001(&$sandbox): void {
+  $schema = Database::getConnection()->schema();
+
+  $spec = [
+    'type' => 'varchar',
+    'description' => "Delta information",
+    'length' => 255,
+    'not null' => FALSE,
+  ];
+
+  $table = 'migrate_map_jcc_requests_archived_media';
+  $field = 'sourceid3';
+
+  if (!$schema->fieldExists($table, $field)) {
+    $schema->addField($table, $field, $spec);
+  }
+}
