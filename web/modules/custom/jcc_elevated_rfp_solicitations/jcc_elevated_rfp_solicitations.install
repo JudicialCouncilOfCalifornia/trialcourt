@@ -23,7 +23,7 @@ function jcc_elevated_rfp_solicitations_update_9001(&$sandbox): void {
   $table = 'migrate_map_jcc_requests_archived_media';
   $field = 'sourceid3';
 
-  if (!$schema->fieldExists($table, $field)) {
+  if ($schema->tableExists($table) && !$schema->fieldExists($table, $field)) {
     $schema->addField($table, $field, $spec);
   }
 }
