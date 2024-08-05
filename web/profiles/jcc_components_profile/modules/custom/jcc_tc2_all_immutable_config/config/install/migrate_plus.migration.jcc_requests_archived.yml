@@ -10,7 +10,7 @@ migration_tags:
   - node
   - requests
 migration_group: jcc_requests_rfps
-label: 'JCC: Requests (RFPs): Archived'
+label: 'JCC: Solicitation requests: Archived'
 source:
   plugin: csv
   path: 'modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_archived_content.csv'
@@ -139,11 +139,15 @@ process:
     -
       plugin: jcc_request_media_lookup
       migration_id: jcc_requests_archived_media
+      orderby: 'sourceid3'
       source: url
   field_rfp_submission_information: []
   moderation_state:
     plugin: default_value
     default_value: published
+  uid:
+    plugin: default_value
+    default_value: 1
 destination:
   plugin: 'entity:node'
   default_bundle: request

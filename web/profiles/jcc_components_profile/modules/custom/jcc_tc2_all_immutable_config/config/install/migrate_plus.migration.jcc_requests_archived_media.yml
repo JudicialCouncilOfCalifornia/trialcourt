@@ -10,7 +10,7 @@ migration_tags:
   - media
   - requests
 migration_group: jcc_requests_rfps
-label: 'JCC: Requests (RFPs): Archived: Media'
+label: 'JCC: Solicitation requests: Archived: Media'
 source:
   plugin: csv
   path: 'modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_archived_media.csv'
@@ -57,9 +57,14 @@ source:
       name: field_category
       label: 'Field: Category'
       selector: field_category
+    -
+      name: delta
+      label: 'Media item delta'
+      selector: delta
   ids:
     - file_url
     - parent_url
+    - delta
 process:
   parent_url: parent_url
   parent_rfp_title: parent_rfp_title

@@ -10,7 +10,7 @@ migration_tags:
   - node
   - requests
 migration_group: jcc_requests_rfps
-label: 'JCC: Requests (RFPs): Active'
+label: 'JCC: Solicitation requests: Active'
 source:
   plugin: csv
   path: 'modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_active_content.csv'
@@ -168,6 +168,9 @@ process:
   moderation_state:
     plugin: default_value
     default_value: published
+  uid:
+    plugin: default_value
+    default_value: 1
 destination:
   plugin: 'entity:node'
   default_bundle: request

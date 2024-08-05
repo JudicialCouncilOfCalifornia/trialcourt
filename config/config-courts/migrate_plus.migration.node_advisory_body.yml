@@ -1,0 +1,174 @@
+uuid: 56dc2659-15bd-49d8-a627-bf81f50ad084
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: DETWfrp-GWfk6QZgRvifM087QzgNvOw9Ge24FpxLaMQ
+id: node_advisory_body
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - courts
+  - node
+  - advisory_body
+migration_group: courts
+label: 'Courts: Import Advisory body'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  fields:
+    -
+      name: src_unique_id
+      label: 'Unique ID'
+      selector: id
+    -
+      name: url
+      label: Url
+      selector: id
+    -
+      name: title
+      label: Title
+      selector: title
+    -
+      name: body
+      label: Body
+      selector: body
+    -
+      name: field_subcommittees
+      label: Subcommittees
+      selector: field_subcommittees
+    -
+      name: field_members
+      label: Members
+      selector: field_members
+    -
+      name: field_about
+      label: About
+      selector: field_about
+    -
+      name: field_news_reports
+      label: 'News reports'
+      selector: field_news_reports
+    -
+      name: field_advisory_body_type
+      label: 'Advisory body type'
+      selector: field_advisory_body_type
+    -
+      name: field_date_note
+      label: 'Date note'
+      selector: field_date_note
+    -
+      name: field_related_links
+      label: 'Related links'
+      selector: field_related_links
+    -
+      name: field_date_established
+      label: 'Date established'
+      selector: field_date_established
+    -
+      name: field_contact_info
+      label: 'Contact info'
+      selector: field_contact_info
+  ids:
+    src_unique_id:
+      type: string
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  title:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: TITLE
+  path/pathauto:
+    plugin: default_value
+    default_value: 1
+  body/value:
+    -
+      plugin: media_replace_file_link
+      source: body
+    -
+      plugin: prefix_relative_links
+  body/format:
+    plugin: default_value
+    default_value: body
+  field_subcommittees/value:
+    -
+      plugin: media_replace_file_link
+      source: field_subcommittees
+    -
+      plugin: prefix_relative_links
+  field_subcommittees/format:
+    plugin: default_value
+    default_value: body
+  field_members/value:
+    -
+      plugin: media_replace_file_link
+      source: field_members
+    -
+      plugin: prefix_relative_links
+  field_members/format:
+    plugin: default_value
+    default_value: body
+  field_about/value:
+    -
+      plugin: media_replace_file_link
+      source: field_about
+    -
+      plugin: prefix_relative_links
+  field_about/format:
+    plugin: default_value
+    default_value: body
+  field_news_reports/value:
+    -
+      plugin: media_replace_file_link
+      source: field_news_reports
+    -
+      plugin: prefix_relative_links
+  field_news_reports/format:
+    plugin: default_value
+    default_value: body
+  field_advisory_body_type:
+    -
+      plugin: explode
+      source: field_advisory_body_type
+      delimiter: ','
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: advisory_body_type
+      value_key: name
+      ignore_case: true
+  field_date_note/value:
+    -
+      plugin: media_replace_file_link
+      source: field_date_note
+    -
+      plugin: prefix_relative_links
+  field_date_note/format:
+    plugin: default_value
+    default_value: body
+  field_related_links/value:
+    - plugin: media_replace_file_link
+      source: field_related_links
+    - plugin: prefix_relative_links
+  field_related_links/format:
+    plugin: default_value
+    default_value: body
+  field_date_established/value:
+    - plugin: format_date
+      source: field_date_established
+      from_format: 'F j, Y'
+      to_format: 'Y-m-d'
+destination:
+  plugin: 'entity:node'
+  default_bundle: advisory_body
+migration_dependencies: null

@@ -14,14 +14,18 @@
  */
 #}
 
+{{ attach_library("jcc_storybook/Brow") }}
 {{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/List") }}
 {{ attach_library("jcc_storybook/AssetBundle") }}
 {{ attach_library("jcc_storybook/Button") }}
-{{ attach_library("jcc_storybook/Icons") }}
+{{ attach_library("jcc_storybook/Icon") }}
+{{ attach_library("jcc_storybook/Pill") }}
+{{ attach_library("jcc_storybook/Pills") }}
 
 {% set details %}
+  <div class="container">
   {% set items = [] %}
   {% for key,value in publication.details %}
     {% if value is not empty %}
@@ -38,6 +42,22 @@
       items: items,
     } %}
   {% endif %}
+
+  {% if publication.topics %}
+    {% set pills %}
+      {% for topic in publication.topics %}
+        {% include "@atoms/Pill/Pill.twig" with {
+          variant: 'default',
+          label: topic.label,
+        } %}
+      {% endfor %}
+    {% endset %}
+    {% include "@molecules/Pills/Pills.twig" with {
+      variant: 'default',
+      items: [pills],
+    } %}
+  {% endif %}
+  </div>
 {% endset %}
 
 {% set asset %}
@@ -80,6 +100,11 @@
   background: 'striped-base-light-xx',
   heading: name,
   media: false,
+  brow: {
+    variant: 'default',
+    part_one: publication.category,
+    part_two: publication.date,
+  },
   attributes: create_attribute()
 } %}
 

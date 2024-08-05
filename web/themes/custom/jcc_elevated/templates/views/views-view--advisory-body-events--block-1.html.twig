@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Theme override for main view template.
+ * Default theme implementation for main view template.
  *
  * Available variables:
  * - attributes: Remaining HTML attributes for the element.
@@ -25,46 +25,41 @@
  * - attachment_after: An optional attachment view to be displayed after the
  *   view content.
  * - dom_id: Unique id for every view being printed to give unique class for
- *   Javascript.
+ *   JavaScript.
  *
  * @see template_preprocess_views_view()
+ *
+ * @ingroup themeable
  */
 #}
-{%
-  set classes = [
-    dom_id ? 'js-view-dom-id-' ~ dom_id,
-  ]
-%}
+
+{{ attach_library("jcc_storybook/ViewResults") }}
+{{ attach_library("jcc_storybook/ResultExcerpt") }}
 
 <div{{ attributes.addClass(classes) }}>
-  {{ title_prefix }}
-  {{ title }}
-  {{ title_suffix }}
 
-  {% if header %}
-    <header>
-      {{ header }}
-    </header>
-  {% endif %}
+  {% include "@organisms/ViewResults/ViewResults.twig" with {
+    variant: 'default',
+    top_margin: false,
+    view_name: id,
+    view_display: display_id,
+    header: '',
+    header_sidebar: '',
+    header_direction_results: 'sidebar-row',
+    form_in_sidebar: false,
+    list_type: 'ul',
+    list_type_divider: '',
+    list_divider_skip_first: true,
+    rows: events,
+    sidebar: '',
+    sidebar_direction_results: 'sidebar-row',
+    pager: pager|render,
+    items_per_page: '',
+    footer: '',
+    footer_sidebar: '',
+    sidebar_direction_footer: 'sidebar-row',
+    no_results_msg: no_results_msg,
+    no_top_margin: true,
+  } %}
 
-  {{ exposed }}
-  {{ attachment_before }}
-
-  {% if rows -%}
-    {{ rows }}
-  {% elseif empty -%}
-    {{ empty }}
-  {% endif %}
-  {{ pager }}
-
-  {{ attachment_after }}
-  {{ more }}
-
-  {% if footer %}
-    <footer>
-      {{ footer }}
-    </footer>
-  {% endif %}
-
-  {{ feed_icons }}
 </div>
