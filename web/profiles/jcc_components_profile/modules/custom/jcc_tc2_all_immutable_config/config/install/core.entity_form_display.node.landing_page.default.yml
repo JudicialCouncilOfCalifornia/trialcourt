@@ -8,7 +8,7 @@ dependencies:
     - workflows.workflow.editorial
   module:
     - content_moderation
-    - paragraphs
+    - default_paragraphs
     - path
     - scheduler
     - scheduler_content_moderation_integration
@@ -24,16 +24,86 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_components:
-    type: entity_reference_paragraphs
+    type: default_paragraphs
     weight: 1
     region: content
     settings:
       title: Component
       title_plural: Components
-      edit_mode: preview
-      add_mode: dropdown
+      closed_mode: preview
+      autocollapse: none
+      add_mode: select
       form_display_mode: default
-      default_paragraph_type: hero
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: 0
+      default_paragraph_types:
+        accordion:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+        action_list:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+        body:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+        cards:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+        content_stream:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+        hero:
+          value: '1'
+          edit_mode: closed
+          weight: '0'
+        hero_banner:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+        hero_hangover:
+          value: '1'
+          edit_mode: closed
+          weight: '0'
+        section:
+          value: '1'
+          edit_mode: closed
+          weight: '0'
+        iframe:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+        steps:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+        views_reference:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+        webform:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+        embed_script:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+        messenger_signup:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+        tabs:
+          edit_mode: closed
+          weight: '0'
+          value: 0
+      edit_mode: closed
     third_party_settings: {  }
   langcode:
     type: language_select
