@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.opinion.field_opinion_type
     - field.field.node.opinion.field_related_cases_plain
     - field.field.node.opinion.field_review_granted
+    - field.field.node.opinion.field_weight
     - node.type.opinion
     - workflows.workflow.editorial
   module:
@@ -20,6 +21,7 @@ dependencies:
     - path
     - scheduler
     - scheduler_content_moderation_integration
+    - weight
 id: node.opinion.default
 targetEntityType: node
 bundle: opinion
@@ -86,6 +88,12 @@ content:
     settings:
       display_label: true
     third_party_settings: {  }
+  field_weight:
+    type: weight_selector
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   langcode:
     type: language_select
     weight: 9
@@ -124,9 +132,14 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  scheduler_settings:
+    weight: 21
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 21
+    weight: 22
     region: content
     settings:
       display_label: true

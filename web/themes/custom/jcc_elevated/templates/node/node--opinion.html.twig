@@ -90,13 +90,19 @@
 } %}
 
 {% set content %}
+  {% set type = node.field_opinion_type.entity.name.value %}
+  {% if node.field_opinion_type.entity.name.value == 'Published - Extended Post' %}
+    {#  Simply display opinion type as 'Published' #}
+    {% set type = 'Published' %}
+  {% endif %}
+
   <div class="stack">
     <div class="asset-bundle__details">
       {% if node.field_opinion_source.value %}
         <span>{{ node.field_opinion_source.entity.name.value }}</span>
       {% endif %}
       {% if node.field_opinion_type.value %}
-        <span>{{ node.field_opinion_type.entity.name.value }} Opinion</span>
+        <span>{{ type }} Opinion</span>
       {% endif %}
       {% if node.field_review_granted.value %}
         <span>Review Granted</span>
