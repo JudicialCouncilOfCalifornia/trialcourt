@@ -110,17 +110,37 @@ function jcc_custom_editor_js_settings_alter(&$settings) {
  * Implements hook_form_alter().
  */
 function jcc_custom_form_alter(&$form, $form_state, $form_id) {
+  $theme = \Drupal::config('system.theme')->get('default');
+
   // The body field on these content types is only used for migration of
   // content and temporary display on the initial site build. Editors should
   // not have access.
   // The field will only render if there are no components added by paragraph
   // reference. See respective node templates.
   switch ($form_id) {
+    case 'node_landing_page_edit_form':
+    case 'node_landing_page_form':
     case 'node_subpage_edit_form':
     case 'node_subpage_form':
       $user = \Drupal::currentUser();
-      $access = $user->hasPermission('access migration body');
-      $form['body']['#access'] = $access;
+
+      // Restrict body field access.
+      if ($form_id == 'node_subpage_form' || $form_id == 'node_subpage_edit_form') {
+        $access = $user->hasPermission('access migration body');
+        $form['body']['#access'] = $access;
+      }
+
+      // Suppress component preload based on theme when creating new node.
+      // Requires 'Default Paragraph' enabled with all default selected.
+      if ($form_id == 'node_landing_page_form' || $form_id == 'node_subpage_form') {
+        if ($theme == 'jcc_elevated') {
+          unset($form['field_components']['widget'][0]);
+        }
+        else {
+          unset($form['field_components']['widget'][1]);
+          unset($form['field_components']['widget'][2]);
+        }
+      }
       break;
 
     case 'node_news_edit_form':
