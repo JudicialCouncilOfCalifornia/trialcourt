@@ -122,7 +122,6 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
     case 'node_subpage_edit_form':
     case 'node_subpage_form':
       $user = \Drupal::currentUser();
-
       // Restrict body field access.
       if ($form_id == 'node_subpage_form' || $form_id == 'node_subpage_edit_form') {
         $access = $user->hasPermission('access migration body');
@@ -140,6 +139,14 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
           unset($form['field_components']['widget'][2]);
         }
       }
+
+      // Suppress components that are usable to elevated sites only.
+      if ($theme != 'jcc_elevated') {
+        unset($form['field_components']['widget']["add_more"]['add_more_select']['#options']['hero_hangover']);
+        unset($form['field_components']['widget']["add_more"]['add_more_select']['#options']['section']);
+        unset($form['field_components']['widget']["add_more"]['add_more_select']['#options']['tabs']);
+      }
+
       break;
 
     case 'node_news_edit_form':
