@@ -2,21 +2,110 @@ langcode: en
 status: true
 dependencies:
   config:
+    - filter.format.minimal
+    - filter.format.snippet
+    - media.type.file
     - node.type.request
+    - taxonomy.vocabulary.rfp_solicitation_dept_group_org
+    - taxonomy.vocabulary.rfp_solicitation_topics
+    - workflows.workflow.editorial
   module:
+    - access_unpublished
+    - captcha
+    - content_moderation
+    - entity_browser
+    - entity_usage
+    - environment_indicator
+    - file
+    - file_replace
+    - filter
+    - media
+    - media_file_delete
+    - media_revisions_ui
     - node
     - paragraphs
+    - rebuild_cache_access
+    - scheduler
+    - search_api_autocomplete
+    - sitemap
+    - system
+    - taxonomy
+    - toolbar
+    - userprotect
 id: request_manager
-label: 'Request manager'
+label: 'Solicitation request manager'
 weight: 0
 is_admin: null
 permissions:
+  - 'access administration pages'
+  - 'access content'
+  - 'access content overview'
+  - 'access entity usage statistics'
+  - 'access environment indicator'
+  - 'access files overview'
+  - 'access media overview'
+  - 'access media_entity_browser entity browser pages'
+  - 'access media_entity_browser_modal entity browser pages'
+  - 'access paragraphs_library_items entity browser pages'
+  - 'access site in maintenance mode'
+  - 'access sitemap'
+  - 'access taxonomy overview'
+  - 'access toolbar'
+  - 'access_unpublished node request'
+  - 'access_unpublished taxonomy_term rfp_solicitation_dept_group_org'
+  - 'access_unpublished taxonomy_term rfp_solicitation_topics'
+  - 'change own username'
+  - 'create file media'
+  - 'create media'
   - 'create request content'
+  - 'create terms in rfp_solicitation_dept_group_org'
+  - 'create terms in rfp_solicitation_topics'
+  - 'delete all revisions'
+  - 'delete any file'
+  - 'delete any file media'
   - 'delete any request content'
+  - 'delete file media revisions'
+  - 'delete media'
+  - 'delete own file media'
   - 'delete own request content'
   - 'delete request revisions'
+  - 'delete terms in rfp_solicitation_dept_group_org'
+  - 'delete terms in rfp_solicitation_topics'
+  - 'delete token'
+  - 'edit any file media'
   - 'edit any request content'
+  - 'edit own file media'
   - 'edit own request content'
+  - 'edit terms in rfp_solicitation_dept_group_org'
+  - 'edit terms in rfp_solicitation_topics'
+  - 'rebuild cache access'
+  - 'renew token'
+  - 'replace files'
+  - 'revert all revisions'
+  - 'revert file media revisions'
   - 'revert request revisions'
+  - 'schedule publishing of nodes'
+  - 'skip CAPTCHA'
+  - 'update media'
+  - 'use editorial transition archive'
+  - 'use editorial transition archived_draft'
+  - 'use editorial transition archived_published'
+  - 'use editorial transition create_new_draft'
+  - 'use editorial transition publish'
+  - 'use search_api_autocomplete for search'
+  - 'use text format minimal'
+  - 'use text format snippet'
+  - userprotect.account.edit
+  - userprotect.mail.edit
+  - userprotect.pass.edit
+  - 'view all revisions'
+  - 'view any unpublished content'
+  - 'view file media revisions'
+  - 'view latest version'
+  - 'view media'
+  - 'view own unpublished content'
+  - 'view own unpublished media'
   - 'view request revisions'
+  - 'view scheduled content'
+  - 'view the administration theme'
   - 'view unpublished paragraphs'

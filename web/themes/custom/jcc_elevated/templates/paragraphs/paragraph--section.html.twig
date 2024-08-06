@@ -22,8 +22,8 @@
 {% include "@organisms/Section/Section.twig" with {
   variant: paragraph.field_section_background.get(0).value|default('default'),
   brow_data: brow_data,
-  heading: content.field_heading|render,
-  text: content.field_lead|render,
+  heading: content.field_heading.0 ? content.field_heading|render : '',
+  text: content.field_lead.0 ? content.field_lead|render : '',
   sub_component_data: content.field_components|render,
   button_data: button_data,
   background_image_url: background_image_url,

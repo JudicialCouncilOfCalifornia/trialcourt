@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - entity_browser.browser.paragraphs_library_items
+    - field.field.paragraph.from_library.field_reusable_paragraph
+    - paragraphs.paragraphs_type.from_library
+  module:
+    - entity_browser
+id: paragraph.from_library.default
+targetEntityType: paragraph
+bundle: from_library
+mode: default
+content:
+  field_reusable_paragraph:
+    type: entity_browser_entity_reference
+    weight: 1
+    region: content
+    settings:
+      entity_browser: paragraphs_library_items
+      field_widget_display: label
+      field_widget_edit: false
+      field_widget_remove: true
+      field_widget_replace: false
+      open: false
+      field_widget_display_settings: {  }
+      selection_mode: selection_append
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

@@ -1,10 +1,18 @@
-uuid: cb03675f-138a-4748-9553-437e9e7be5d9
+uuid: 58ccf692-6764-482c-8824-a56fd47842b4
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_date
     - node.type.news
+    - user.role.administrator
+    - user.role.author
+    - user.role.contributor
+    - user.role.editor
+    - user.role.manager
+    - user.role.messaging_manager
+    - user.role.tentative_rulings_editor
+    - user.role.translator
   module:
     - datetime
     - node
@@ -355,9 +363,17 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       access:
-        type: perm
+        type: role
         options:
-          perm: 'access content overview'
+          role:
+            author: author
+            editor: editor
+            manager: manager
+            contributor: contributor
+            translator: translator
+            administrator: administrator
+            tentative_rulings_editor: tentative_rulings_editor
+            messaging_manager: messaging_manager
       cache:
         type: none
         options: {  }
@@ -473,7 +489,7 @@ display:
         - 'languages:language_interface'
         - url.query_args
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags:
         - 'config:field.storage.node.field_date'
   page_1:
@@ -505,6 +521,6 @@ display:
         - 'languages:language_interface'
         - url.query_args
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags:
         - 'config:field.storage.node.field_date'
