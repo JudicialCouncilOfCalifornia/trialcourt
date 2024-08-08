@@ -3,6 +3,7 @@
 namespace Drupal\jcc_elevated_rfp_solicitations\Services;
 
 use Drupal\Core\Link;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Url;
 
 /**
@@ -16,10 +17,11 @@ class JccSolicitationMediaReplaceFileLinkService {
   /**
    * Constructs a new CustomService object.
    */
-  public function __construct($entity_type_manager, $file_usage, $pathauto_alias_cleaner) {
+  public function __construct($entity_type_manager, $file_usage, $pathauto_alias_cleaner, LoggerChannelFactoryInterface $factory) {
     $this->entityTypeManager = $entity_type_manager;
     $this->fileUsage = $file_usage;
     $this->pathAutoAliasCleaner = $pathauto_alias_cleaner;
+    $this->loggerFactory = $factory;
   }
 
   /**
@@ -32,8 +34,11 @@ class JccSolicitationMediaReplaceFileLinkService {
    *   The updated string.
    */
   public function replace($value) {
+
+    $mb_converted_value = mb_convert_encoding($value, 'HTML-ENTITIES', 'UTF-8');
+
     $dom = new \DomDocument();
-    $dom->loadHTML($value);
+    $dom->loadHTML($mb_converted_value);
 
     foreach ($dom->getElementsByTagName('a') as $item) {
       // The original link string that will be replaced.
@@ -48,8 +53,17 @@ class JccSolicitationMediaReplaceFileLinkService {
       $file_types = explode(', ', 'pdf, zip, doc, docx, xls, xlsx, ppt, pptx');
 
       if (in_array($extension, $file_types)) {
+        $value = $this->cleanString($value);
+        $text = $this->cleanString($text);
         $replace = $this->mediaLink($path, $text, $original, $extension);
+        $replace = $this->cleanString($replace);
+        $original = $this->cleanString($original);
         $value = str_replace($original, $replace, $value);
+
+        if (!str_contains($value, $replace)) {
+          $message = t('A link failed to be replaced: @original', ['@original' => $original]);
+          $this->loggerFactory->get('jcc_solicitation_migration')->notice($message);
+        }
       }
     }
 
@@ -111,13 +125,57 @@ class JccSolicitationMediaReplaceFileLinkService {
    * @return object|null
    *   The media object or null.
    */
-  public function getMedia($path, $extension) {
+  public function getMedia($path, $extension): ?object {
     $media = NULL;
+    $filename = $this->getFileNameFromPath($path, $extension);
+
+    if ($filename) {
+      $file = $this->entityTypeManager
+        ->getStorage('file')
+        ->loadByProperties(['filename' => $filename]);
+
+      // We only return the first media item that references this file.
+      // There should only be one anyway.
+      if (!empty($file)) {
+        $file = array_shift($file);
+        $usage = $this->fileUsage->listUsage($file);
+        if (!empty($usage['file']['media'])) {
+          $media_id_keys = array_keys($usage['file']['media']);
+          $media_id = array_shift($media_id_keys);
+          $media = is_numeric($media_id) ? $this->entityTypeManager->getStorage('media')->load($media_id) : NULL;
+        }
+      }
+    }
+
+    return $media;
+  }
+
+  /**
+   * Get file name from path.
+   *
+   * @param string $path
+   *   The path with the file name to search for.
+   * @param string $extension
+   *   The original extension.
+   *
+   * @return string|bool
+   *   The string or false.
+   */
+  public function getFileNameFromPath($path, $extension): bool|string {
+    if (empty(($path))) {
+      return FALSE;
+    }
+
+    if (empty(($extension))) {
+      return FALSE;
+    }
 
     // We need to remove the extension from the path, for further processing.
     $file_types = explode(', ', '.pdf, .zip, .docx, .docx, .xls, .pptx, .ppt');
+
     // We remove file type at end.
     $filename = str_replace($file_types, "", $path);
+
     // We remove prefix path item.
     $filename = str_replace("/documents/", "", $filename);
 
@@ -126,25 +184,27 @@ class JccSolicitationMediaReplaceFileLinkService {
     $filename = $this->pathAutoAliasCleaner->cleanString($filename);
 
     // We rebuild the base filename with the extension.
-    $filename = "$filename.$extension";
+    return "$filename.$extension";
+  }
 
-    $file = $this->entityTypeManager
-      ->getStorage('file')
-      ->loadByProperties(['filename' => $filename]);
+  /**
+   * Helper function to help try to clean up a string.
+   *
+   * @param string $value
+   *   String to clean of html entities.
+   *
+   * @return string
+   *   Return cleaned string.
+   */
+  public function cleanString($value): string {
 
-    // We only return the first media item that references this file.
-    // There should only be one anyway.
-    if (!empty($file)) {
-      $file = array_shift($file);
-      $usage = $this->fileUsage->listUsage($file);
-      if (!empty($usage['file']['media'])) {
-        $media_id_keys = array_keys($usage['file']['media']);
-        $media_id = array_shift($media_id_keys);
-        $media = is_numeric($media_id) ? $this->entityTypeManager->getStorage('media')->load($media_id) : NULL;
-      }
-    }
+    $string = htmlentities($value, NULL, 'utf-8');
 
-    return $media;
+    $value = str_replace("&nbsp;", " ", $string);
+    $value = str_replace('&amp;', "&", $value);
+    $value = str_replace('&ndash;', "–", $value);
+
+    return html_entity_decode($value);
   }
 
 }
