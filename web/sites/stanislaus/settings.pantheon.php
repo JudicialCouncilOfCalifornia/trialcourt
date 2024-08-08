@@ -211,3 +211,11 @@ if (defined('PANTHEON_ENVIRONMENT')) {
 
   $settings['cache']['bins']['form'] = 'cache.backend.database'; // Use the database for forms
 }
+
+/**
+ * Increase memory.
+ */
+
+if (defined('PANTHEON_ENVIRONMENT')) {
+  ini_set('memory_limit', '2048M');
+}
