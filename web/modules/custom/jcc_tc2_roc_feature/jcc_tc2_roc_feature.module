@@ -5,7 +5,13 @@
  * Contains jcc_tc2_roc_feature module functionality.
  */
 
+use Drupal\access_unpublished\AccessUnpublished;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultAllowed;
+use Drupal\Core\Access\AccessResultNeutral;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Session\AccountInterface;
 
 // Include all files from the inc directory.
 $includes_path = dirname(__FILE__) . '/inc/*.inc';
@@ -161,4 +167,53 @@ function jcc_tc2_roc_feature_page_attachments(&$page): void {
   if (!$is_admin) {
     $page['#attached']['library'][] = 'jcc_tc2_roc_feature/jcc-roc-custom';
   }
+}
+
+/**
+ * Implements hook_entity_access().
+ *
+ * This function is a copy of access_unpublished_entity_access(), with our own
+ * way of checking if the user is anonymous, and it is a rule related node type.
+ */
+function jcc_tc2_roc_feature_entity_access(EntityInterface $entity, $operation, AccountInterface $account): AccessResultNeutral|AccessResultAllowed {
+
+  /** @var \Drupal\access_unpublished\TokenGetter $tokenGetter */
+  $tokenGetter = \Drupal::service('access_unpublished.token_getter');
+  $bundle = $entity->getEntityType()->hasKey('bundle') ? $entity->bundle() : '';
+  $config = \Drupal::config('access_unpublished.settings');
+
+  $result = AccessResult::neutral()
+    ->addCacheContexts(['url.query_args:' . $config->get('hash_key')])
+    ->cachePerPermissions()
+    ->addCacheableDependency($config)
+    ->addCacheableDependency($entity);
+
+  $type_is_roc = $bundle == 'roc_rule' || $bundle == 'roc_rule_index';
+
+  if ($operation == 'view' &&
+    $type_is_roc &&
+    ($token = $tokenGetter->getToken()) &&
+    AccessUnpublished::applicableEntityType($entity->getEntityType()) &&
+    empty($account->getRoles(TRUE)) &&
+    !$entity->isPublished()) {
+
+    $tokens = \Drupal::entityTypeManager()->getStorage('access_token')
+      ->loadByProperties([
+        'entity_type' => $entity->getEntityType()->id(),
+        'entity_id' => $entity->id(),
+        'value' => $token,
+      ]);
+
+    if (!empty($tokens)) {
+      $tokenEntity = reset($tokens);
+      $result->addCacheableDependency($tokenEntity);
+      if (!$tokenEntity->isExpired()) {
+        $result = AccessResult::allowed()
+          ->setCacheMaxAge($tokenEntity->get('expire')->value - \Drupal::time()->getRequestTime())
+          ->inheritCacheability($result);
+      }
+    }
+  }
+
+  return $result;
 }
