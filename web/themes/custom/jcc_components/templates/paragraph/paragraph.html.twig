@@ -40,6 +40,7 @@
 #}
 
 {% set custom_class = ['usa-paragraph-default'] %}
+{% set cache = {'#cache': {'max-age': 0}} %}
 
 {% block paragraph %}
   {% block content %}
@@ -51,8 +52,9 @@
           lead: paragraph.field_lead.value ? content.field_lead,
         },
         content: content|without('field_heading', 'field_lead'),
-        }
-      } 
+        },
+      cache: cache,
+      }
     %}
   {% endblock content %}
 {% endblock paragraph %}
