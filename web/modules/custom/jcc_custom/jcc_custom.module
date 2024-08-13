@@ -986,14 +986,13 @@ function jcc_custom_menu_local_tasks_alter(&$data, $route_name, RefinableCacheab
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
-  $clear_message = "<strong>" . t('Press "Clear" in the popup to clear out the date and time.') . "</strong>";
-
   // Make sure the "publish on" date has the time widget enabled and helpful
   // descriptions are set.
   if (isset($form['publish_on'])) {
-    $form['publish_on']['widget'][0]['value']['#date_date_element'] = 'datetime-local';
-    $description = $form['publish_on']['widget'][0]['value']['#description'];
-    $form['publish_on']['widget'][0]['value']['#description'] = $description . ' ' . $clear_message;
+    $form['publish_on']['widget'][0]['value']['#date_time_element'] = 'time';
+    $form['publish_on']['widget'][0]['value']['#date_date_element'] = 'date';
+    $form['publish_on']['widget'][0]['value']['#date_time_format'] = 'H:i';
+    $form['publish_on']['widget'][0]['value']['#date_increment'] = '60';
   }
   if (isset($form['publish_state'])) {
     $form['publish_state']['widget'][0]['#description'] = t('When the "Publish on" time hits, the latest revision of this page will change to the state defined here.');
@@ -1002,9 +1001,10 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
   // Make sure the "unpublish on" date has the time widget enabled and helpful
   // descriptions are set.
   if (isset($form['unpublish_on'])) {
-    $form['unpublish_on']['widget'][0]['value']['#date_date_element'] = 'datetime-local';
-    $description = $form['unpublish_on']['widget'][0]['value']['#description'];
-    $form['unpublish_on']['widget'][0]['value']['#description'] = $description . ' ' . $clear_message;
+    $form['unpublish_on']['widget'][0]['value']['#date_time_element'] = 'time';
+    $form['unpublish_on']['widget'][0]['value']['#date_date_element'] = 'date';
+    $form['publish_on']['widget'][0]['value']['#date_time_format'] = 'H:i';
+    $form['publish_on']['widget'][0]['value']['#date_increment'] = '60';
   }
   if (isset($form['unpublish_state'])) {
     $form['unpublish_state']['widget'][0]['#description'] = t('When the "Unpublish on" time hits, this page will change to the state defined here.');
