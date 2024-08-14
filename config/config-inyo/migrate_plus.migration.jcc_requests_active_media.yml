@@ -10,7 +10,7 @@ migration_tags:
   - node
   - requests
 migration_group: jcc_requests_rfps
-label: 'JCC: Requests (RFPs): Active: Media'
+label: 'JCC: Solicitation requests: Active: Media'
 source:
   plugin: csv
   path: 'modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_active_media.csv'
@@ -61,10 +61,16 @@ source:
     - file_url
     - parent_url
     - delta
+  constants:
+    PROXY_BYPASS: 'https://intense-anchorage-92873-2170464d26cd.herokuapp.com/'
 process:
   parent_url: parent_url
   parent_rfp_title: parent_rfp_title
-  file_url: file_url
+  file_url:
+    plugin: concat
+    source:
+      - constants/PROXY_BYPASS
+      - file_url
   type:
     plugin: default_value
     default_value: file

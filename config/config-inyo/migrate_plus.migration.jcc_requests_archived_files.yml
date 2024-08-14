@@ -10,7 +10,7 @@ migration_tags:
   - files
   - requests
 migration_group: jcc_requests_rfps
-label: 'JCC: Requests (RFPs): Archived: Files'
+label: 'JCC: Solicitation requests: Archived: Files'
 source:
   plugin: csv
   path: 'modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_archived_files.csv'
@@ -62,11 +62,17 @@ source:
     - parent_url
   constants:
     DRUPAL_FILE_DIRECTORY: 'public://documents/'
+    PROXY_BYPASS: 'https://intense-anchorage-92873-2170464d26cd.herokuapp.com/'
 process:
   pseudo_decoded_url:
-    plugin: callback
-    callable: urldecode
-    source: file_url
+    -
+      plugin: concat
+      source:
+        - constants/PROXY_BYPASS
+        - file_url
+    -
+      plugin: callback
+      callable: urldecode
   pseudo_destination_filename:
     -
       plugin: callback
