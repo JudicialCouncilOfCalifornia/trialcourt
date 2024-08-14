@@ -241,3 +241,104 @@ function jcc_elevated_custom_link_to_file_submit(&$form, $form_state): void {
     }
   }
 }
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function jcc_elevated_custom_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
+
+  // Revision log changes.
+  if (isset($form['revision_log'])) {
+    $form['revision_log']['widget'][0]['value']['#rows'] = 2;
+  }
+
+  // Order some items.
+  if (isset($form['options'])) {
+    $form['options']['#weight'] = 75;
+  }
+
+  if (isset($form['path'])) {
+    $form['path']['#weight'] = 80;
+    $form['path']['widget'][0]['#weight'] = 1;
+    $form['path']['widget'][0]['#open'] = FALSE;
+  }
+
+  if (isset($form['scheduler_settings'])) {
+    $form['scheduler_settings']['#weight'] = 85;
+  }
+
+  if (isset($form['search_api_exclude'])) {
+    $form['search_api_exclude']['#weight'] = 90;
+  }
+
+  if (isset($form['xmlsitemap'])) {
+    $form['xmlsitemap']['#weight'] = 95;
+  }
+
+  if (isset($form['author'])) {
+    $form['author']['#weight'] = 99;
+  }
+
+  if (isset($form['publish_on'])) {
+    $form['publish_on']['#weight'] = 1;
+  }
+
+  if (isset($form['publish_state'])) {
+    $form['publish_state']['#weight'] = 2;
+  }
+
+  if (isset($form['unpublish_on'])) {
+    $form['unpublish_on']['#weight'] = 3;
+  }
+
+  if (isset($form['unpublish_state'])) {
+    $form['unpublish_state']['#weight'] = 4;
+  }
+}
+
+/**
+ * Implements hook_field_group_form_process().
+ */
+function jcc_elevated_custom_field_group_form_process(array &$element, &$group, &$complete_form): void {
+
+  // Order some items.
+  if (isset($complete_form['options'])) {
+    $complete_form['options']['#weight'] = 75;
+  }
+
+  if (isset($complete_form['path'])) {
+    $complete_form['path']['#weight'] = 80;
+  }
+
+  if (isset($complete_form['scheduler_settings'])) {
+    $complete_form['scheduler_settings']['#weight'] = 85;
+  }
+
+  if (isset($complete_form['search_api_exclude'])) {
+    $complete_form['search_api_exclude']['#weight'] = 90;
+  }
+
+  if (isset($complete_form['xmlsitemap'])) {
+    $complete_form['xmlsitemap']['#weight'] = 95;
+  }
+
+  if (isset($complete_form['author'])) {
+    $complete_form['author']['#weight'] = 99;
+  }
+
+  if (isset($complete_form['publish_on'])) {
+    $complete_form['publish_on']['#weight'] = 2;
+  }
+
+  if (isset($complete_form['publish_state'])) {
+    $complete_form['publish_state']['#weight'] = 3;
+  }
+
+  if (isset($complete_form['unpublish_on'])) {
+    $complete_form['unpublish_on']['#weight'] = 4;
+  }
+
+  if (isset($complete_form['unpublish_state'])) {
+    $complete_form['unpublish_state']['#weight'] = 5;
+  }
+}

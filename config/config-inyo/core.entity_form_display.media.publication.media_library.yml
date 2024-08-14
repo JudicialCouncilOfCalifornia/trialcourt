@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_form_mode.media.media_library
     - field.field.media.publication.field_case_type
+    - field.field.media.publication.field_code
     - field.field.media.publication.field_date
     - field.field.media.publication.field_division
     - field.field.media.publication.field_document_type
@@ -24,6 +25,7 @@ dependencies:
     - field.field.media.publication.field_media_file_tagalog
     - field.field.media.publication.field_media_file_vietnamese
     - field.field.media.publication.field_media_text
+    - field.field.media.publication.field_publication_category
     - field.field.media.publication.field_topic
     - media.type.publication
 _core:
@@ -33,6 +35,12 @@ targetEntityType: media
 bundle: publication
 mode: media_library
 content:
+  directory:
+    type: options_select
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   translation:
     weight: 10
     settings: {  }
@@ -41,6 +49,7 @@ content:
 hidden:
   created: true
   field_case_type: true
+  field_code: true
   field_date: true
   field_division: true
   field_document_type: true
@@ -60,10 +69,15 @@ hidden:
   field_media_file_tagalog: true
   field_media_file_vietnamese: true
   field_media_text: true
+  field_publication_category: true
   field_topic: true
   langcode: true
   name: true
   path: true
+  publish_on: true
+  publish_state: true
   replace_file: true
   status: true
   uid: true
+  unpublish_on: true
+  unpublish_state: true
