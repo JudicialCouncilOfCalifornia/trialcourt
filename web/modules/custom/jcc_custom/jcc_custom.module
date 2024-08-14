@@ -1062,42 +1062,6 @@ function jcc_custom_request_rfp_status_options(): array {
   ];
 }
 
-
-/**
- * Implements hook_entity_update().
- */
-function jcc_custom_entity_update(\Drupal\Core\Entity\EntityInterface $entity) {
-  // Similar logic as in hook_entity_insert().
-  if ($entity->getEntityTypeId() === 'menu_link_content' && $entity->getMenuName() === 'main') {
-    //kint($entity);
-    if ($entity->getParentId() === 'menu_link_content:451') {
-      add_term_to_vocabulary($entity->getTitle(), 'divisions');
-    }
-  }
-}
-
-/**
- * Adds a term to a specified vocabulary.
- *
- * @param string $name
- *   The name of the term.
- * @param string $vocabulary_id
- *   The machine name of the vocabulary.
- */
-function add_term_to_vocabulary($name, $vocabulary_id) {
-  $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
-    'name' => $name,
-    'vid' => $vocabulary_id,
-  ]);
-
-  if (empty($terms)) {
-    $term = \Drupal\taxonomy\Entity\Term::create([
-      'vid' => $vocabulary_id,
-      'name' => $name,
-    ]);
-    $term->save();
-  }
-
 /**
  * Implements hook_form_BASE_FORM_ID_alter().
  */
