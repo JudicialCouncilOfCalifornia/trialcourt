@@ -973,8 +973,8 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
   if (isset($form['unpublish_on'])) {
     $form['unpublish_on']['widget'][0]['value']['#date_time_element'] = 'time';
     $form['unpublish_on']['widget'][0]['value']['#date_date_element'] = 'date';
-    $form['publish_on']['widget'][0]['value']['#date_time_format'] = 'H:i';
-    $form['publish_on']['widget'][0]['value']['#date_increment'] = '60';
+    $form['unpublish_on']['widget'][0]['value']['#date_time_format'] = 'H:i';
+    $form['unpublish_on']['widget'][0]['value']['#date_increment'] = '60';
   }
   if (isset($form['unpublish_state'])) {
     $form['unpublish_state']['widget'][0]['#description'] = t('When the "Unpublish on" time hits, this page will change to the state defined here.');
