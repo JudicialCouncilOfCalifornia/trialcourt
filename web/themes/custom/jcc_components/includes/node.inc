@@ -10,6 +10,8 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\media\Entity\Media;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Render\Markup;
+use Drupal\Component\Utility\Html;
+
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -60,7 +62,12 @@ function jcc_components_preprocess_node(&$variables) {
       }
     }
   }
+ 
+  buildServiceMarkup($variables);
 }
+
+
+
 
 /**
  * Node: Alert preprocess.
@@ -221,6 +228,10 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
  *   The node object.
  */
 function jcc_components_node_location(array &$variables, NodeInterface $node) {
+  // Breadcrumbs.
+  $variables['breadcrumb'] = \Drupal::service('breadcrumb')
+    ->build(\Drupal::routeMatch())
+    ->toRenderable();
   // Format the hours content in a format the PL template can receive.
   if (!empty($node->field_components)) {
     $components = $node->field_components->referencedEntities();

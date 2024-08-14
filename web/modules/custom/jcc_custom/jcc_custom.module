@@ -5,14 +5,12 @@
  * Contains jcc_custom.module.
  */
 
-use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\editor\Entity\Editor;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Element\ManagedFile;
@@ -20,25 +18,23 @@ use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
+use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\menu_link_content\MenuLinkContentInterface;
+
 
 /**
  * Implements hook_page_attachments().
  */
-function jcc_custom_page_attachments(array &$attachments): void {
+function jcc_custom_page_attachments(array &$attachments) {
   $attachments['#attached']['library'][] = 'jcc_custom/fontawesome';
   $attachments['#attached']['library'][] = 'jcc_custom/tableadapt';
+  $attachments['#attached']['library'][] = 'jcc_custom/forms';
   $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
   if (!$is_admin) {
     $attachments['#attached']['library'][] = 'jcc_custom/filelink';
     $attachments['#attached']['library'][] = 'jcc_custom/forms';
     $attachments['#attached']['library'][] = 'jcc_custom/feedbacksurvey';
     $attachments['#attached']['library'][] = 'jcc_custom/gin-elevated';
-  }
-  if ($is_admin) {
-    // Override the layout paragraphs styling.
-    // 2.0 styling is drab and hard to use.
-    $attachments['#attached']['library'][] = 'jcc_custom/admin_layout_paragraphs_edit_override';
-    $attachments['#attached']['library'][] = 'jcc_custom/gin-admin-elevated';
   }
 }
 
@@ -224,69 +220,115 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
 
     case 'node_request_form':
     case 'node_request_edit_form':
-      // If the module that adds functionality to solicitations is no active,
-      // then disable the ability to create nodes by disabling the form.
-      $moduleHandler = \Drupal::service('module_handler');
-      if (!$moduleHandler->moduleExists('jcc_elevated_rfp_solicitations')) {
-        // Set all form items to false access.
-        foreach (Element::children($form) as $name) {
-          $form[$name]['#access'] = FALSE;
-        }
-        // Alert the viewer that this node type cannot be created.
-        $form['content_information'] = [
-          '#markup' => t('Content of this type is not allowed to be created on this site. Please contact an administrator for more information.'),
-        ];
-      }
+      $form['body']['widget'][0]['summary']['#required'] = TRUE;
+      $form['body']['widget'][0]['summary']['#title'] = t('Summary/Teaser text');
+      $form['body']['widget'][0]['summary']['#description'] = t('This summary will populate the header on full page display, and the text on teasers.');
+      $form['field_rfp_status']['widget']['#required'] = TRUE;
+      $form['field_rfp_type']['widget']['#required'] = TRUE;
       break;
 
-    case 'paragraphs_library_item_edit_form':
-    case 'paragraphs_library_item_edit_form_1':
-      $type = \Drupal::request()->get('type');
-      $isNew = $form_state->getFormObject()->getEntity()->isNew();
-      $form['paragraphs']['widget']['#title'] = t('Preset item');
-
-      // If new/add form and no type is set by the URL, Block the page/form.
-      if (!$type && $isNew) {
-        $form['paragraphs']['#access'] = FALSE;
-        $form['label']['#access'] = FALSE;
-        $form['revision_log']['#access'] = FALSE;
-        $form['actions']['#access'] = FALSE;
-        $form['notice']['#markup'] = t('This form is blocked because a type is not defined in the URL');
-      }
-
-      // If new/add form and type is set by the URL, limit the options to the
-      // type that is set in the URL. If the type is not correct, this also acts
-      // as a way to prevent non-allowed types to be added.
-      if ($type && $isNew) {
-        foreach ($form['paragraphs']['widget']['add_more'] as $key => $item) {
-          if (str_starts_with($key, 'add_more_button_') && $key != 'add_more_button_' . $type) {
-            unset($form['paragraphs']['widget']['add_more'][$key]);
-            unset($form['paragraphs']['widget']['add_more']['operations']['#links'][$key]);
+    case 'node_location_edit_form':  
+            // Check if the form contains the 'field_add_services' field.
+            if (isset($form['field_add_services']['widget'])) {
+              // Iterate through each service
+              foreach ($form['field_add_services']['widget'] as $service_index => $service_widget) {
+                  if (isset($service_widget['subform']['field_location_service_hours']['widget']) && is_array($service_widget['subform']['field_location_service_hours']['widget'])) {
+                      // Iterate through each 'field_location_service_hours' entry
+                      foreach ($service_widget['subform']['field_location_service_hours']['widget'] as $hour_index => $hour_widget) {
+                          if (is_numeric($hour_index)) {
+                              // Construct the selector path for the current field in the form
+                              $key_service_hour_type = 'select[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_service_hour_type]"]';
+                              // Construct the selector path for the current field in the form
+                              $key_service_days_type = ':input[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_weekdays_mon_fri][value]"]';
+                              // Set the #states for 'field_others' based on 'field_service_hour_type'
+                              $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['field_others']['#states'] = [
+                                  'visible' => [
+                                      $key_service_hour_type => ['value' => 'others']
+                                  ],
+                                  'invisible' => [
+                                      'or' => [
+                                          [$key_service_hour_type => ['value' => 'phone']],
+                                          [$key_service_hour_type => ['value' => 'in_person']],
+                                          [$key_service_hour_type => ['value' => 'dropbox']],
+                                          [$key_service_hour_type => ['value' => 'live_chat']]
+                                      ]
+                                  ]
+                              ];
+                              $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['field_service_days']['#states']= [
+                                'visible' => [
+                                  $key_service_days_type => ['checked' => false],
+                                ],
+                                  'invisible' => [
+                                    $key_service_days_type => ['checked' => true],
+                                  ],
+                              ]; 
+                          
+                          }
+                      }
+                  }
+              }
           }
+        break;
+
+    if (strpos($form_id, 'node_form') === 0) {
+      // Get the node type from the form ID.
+      $node_type = substr($form_id, strlen('node_form_'));
+      // Check if the user is not an administrator.
+      if (!\Drupal::currentUser()->hasPermission('administer site configuration')) {
+        // Replace 'your_field_machine_name' with the machine name of the field you want to restrict access to.
+        if (isset($form['field_e'][$node_type]['#access'])) {
+          $form['field_e'][$node_type]['#access'] = FALSE;
         }
-      }
-
-      break;
-  }
-
-  if (strpos($form_id, 'node_form') === 0) {
-    // Get the node type from the form ID.
-    $node_type = substr($form_id, strlen('node_form_'));
-    // Check if the user is not an administrator.
-    if (!\Drupal::currentUser()->hasPermission('administer site configuration')) {
-      // Replace 'your_field_machine_name' with the machine name of the field
-      // you want to restrict access to.
-      if (isset($form['field_e'][$node_type]['#access'])) {
-        $form['field_e'][$node_type]['#access'] = FALSE;
       }
     }
   }
 }
 
 /**
+ * AJAX callback to show/hide the service hours fields based on the checkbox state.
+ */
+function service_hour_visibility_toggle_fields(array &$form, FormStateInterface $form_state) {
+  $triggering_element = $form_state->getTriggeringElement();
+  $is_checked = $triggering_element ? $triggering_element['#value'] : $form_state->getValue(['field_service_hour_same_as_business_hour', 0, 'value']);
+
+  // Traverse through all 'add_service' paragraph items to hide/show 'service hours'.
+  if (isset($form['field_add_service']['widget'])) {
+    foreach ($form['field_add_service']['widget'] as &$paragraph) {
+      if (is_numeric($paragraph['#delta'])) {
+        if ($is_checked) {
+          $paragraph['subform']['field_service_hours']['#access'] = FALSE;
+        } else {
+          $paragraph['subform']['field_service_hours']['#access'] = TRUE;
+        }
+      }
+    }
+  }
+
+  return $form['field_add_service'];
+}
+
+/**
+ * Implements hook__field_group_form_process_build_alter().
+ */
+function jcc_custom_field_group_form_process_build_alter(array &$element, FormStateInterface $form_state, &$complete_form): void {
+  $form_id = $element['#form_id'] ?? '';
+  switch ($form_id) {
+    case 'node_request_form':
+    case 'node_request_edit_form':
+      $element['group_dates']['#description'] = $element['field_rfp_important_dates']['widget']['#description'];
+      $element['field_rfp_important_dates']['widget']['#description'] = NULL;
+      $element['group_submission_additional_info']['#title'] = t('Sidebar callouts');
+      $element['group_submission_additional_info']['#description'] = t('This content will display in the sidebar section, above the Dates output. The first callout will display with the light blue background and NO Brow text. Additional items will have the dark blue background and will display the Brow text.');
+      break;
+  }
+}
+
+
+/**
  * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
  */
 function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
+
   $theme = \Drupal::config('system.theme')->get('default');
   // If elevated theme is not in use by all sites.
   if ($theme == 'jcc_elevated') {
@@ -348,6 +390,13 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
   }
 }
 
+function jcc_custom_form_validate(&$form, $form_state, $form_id){
+  switch($form_id){
+    case 'node_location_edit_form':  
+      //kint($form_state);
+      break;
+  }
+}
 /**
  * Implements hook_preprocess_views_view() for global use.
  */
@@ -712,9 +761,36 @@ function jcc_custom_field_widget_entity_reference_paragraphs_form_alter(&$elemen
           [$key => ['value' => (string) 'stack']],
         ],
       ];
+
     }
   }
+
 }
+
+function jcc_custom_paragraph_field_state(&$element, $field_name, $state_key, array $conditions) {
+  if (!isset($element['subform'][$field_name])) {
+    \Drupal::logger('jcc_custom')->warning('Field @field_name not found in subform.', ['@field_name' => $field_name]);
+    return;
+  }
+
+  $variation_field = $element['subform']['field_service_days'];
+
+  // Construct variation input name to use it in #states.
+  $variation_input_name = array_shift($variation_field['widget']['#parents']);
+  $variation_input_name .= '[' . implode('][', $variation_field['widget']['#parents']) . ']';
+
+  // Log the constructed input name for debugging purposes.
+  \Drupal::logger('jcc_custom')->debug('Constructed input name for states: @input_name', ['@input_name' => $variation_input_name]);
+
+  // Log the state application.
+  \Drupal::logger('jcc_custom')->info('Applied @state_key state to @field_name based on conditions: @conditions', [
+    '@state_key' => $state_key,
+    '@field_name' => $field_name,
+    '@conditions' => json_encode($conditions),
+  ]);
+}
+
+
 
 /**
  * Helper function to build a storybook compatible menu tree.
@@ -750,25 +826,77 @@ function jcc_custom_is_elevated_site(): bool {
  * Overriding the selection handler for redirect entity type.
  */
 function jcc_custom_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
-  /** @var \Drupal\Core\Entity\EntityForm $form_object */
-  if ($form_state->getBuildInfo()['form_id'] == 'redirect_redirect_form') {
-    $form_object = $form_state->getFormObject();
-
-    if ($form_object instanceof EntityForm) {
-      $entity = $form_object->getEntity();
-      if ($entity->getEntityTypeId() == 'redirect') {
-        if (isset($context['widget'])) {
-          $type = get_class($context['widget']);
-          if (in_array($type, ['Drupal\linkit_field\Plugin\Field\FieldWidget\LinkitWidget',
-            'Drupal\link\Plugin\Field\FieldWidget\LinkWidget',
-          ])) {
-            $element['uri']['#selection_handler'] = 'jcc_custom:node';
+  // Handle specific form alterations for the Redirect form.
+  if ($form_state->getBuildInfo()['form_id'] === 'redirect_redirect_form') {
+      $form_object = $form_state->getFormObject();
+      if ($form_object instanceof EntityForm && $form_object->getEntity()->getEntityTypeId() === 'redirect') {
+          if (isset($context['widget'])) {
+              $type = get_class($context['widget']);
+              if (in_array($type, ['Drupal\linkit_field\Plugin\Field\FieldWidget\LinkitWidget', 'Drupal\link\Plugin\Field\FieldWidget\LinkWidget'])) {
+                  $element['uri']['#selection_handler'] = 'jcc_custom:node';
+              }
           }
-        }
+      }
+  }
+
+  // Apply changes specific to 'location' node type.
+  if ($context['items']->getEntity()->getEntityTypeId() === 'node' && $context['items']->getEntity()->bundle() === 'location') {
+      switch ($context['items']->getFieldDefinition()->getName()) {
+          case 'field_building_hours':
+          case 'field_building_hours_to':
+              $element['value']['#date_date_element'] = 'none';
+              break;
+      }     
+  }
+
+  // Apply changes specific to 'services' and 'service_hours' paragraph types.
+  if ($context['items']->getEntity()->getEntityTypeId() === 'paragraph') {
+      $bundle = $context['items']->getEntity()->bundle();
+      $fields_to_alter = ['field_service_hours_from', 'field_service_hours_to'];
+      if ($bundle === 'services' || ($bundle === 'service_hours' && in_array($context['items']->getFieldDefinition()->getName(), $fields_to_alter))) {
+          $element['value']['#date_date_element'] = 'none';
       }
     }
+}
 
+
+function print_child_menu_items($menu_link_content_id) {
+  // Load the parent menu item by its entity ID.
+  $storage = \Drupal::entityTypeManager()->getStorage('menu_link_content');
+  $parent_menu_item = $storage->load($menu_link_content_id);
+
+  if (!$parent_menu_item instanceof MenuLinkContentInterface) {
+    // The parent menu item was not found or is not a valid menu link content entity.
+    print "Parent menu link content entity not found or invalid.";
+    return;
   }
+
+  // Get the UUID of the parent menu item.
+  $parent_uuid = $parent_menu_item->get('uuid')->value;
+
+  // Load all menu link content entities in the same menu.
+  $menu_name = $parent_menu_item->getMenuName();
+  $menu_items = $storage->loadByProperties(['menu_name' => $menu_name]);
+
+  // Filter and print the child items.
+  $child_found = false;
+  foreach ($menu_items as $menu_item) {
+    if ($menu_item->getParentId() === "menu_link_content:$parent_uuid") {
+      //kint($menu_item->getUrlObject()->toString());
+     // print $menu_item->getTitle() . "\n";
+      $child_found = true;
+      $child_items[] = $menu_item->getTitle();
+      $menu_item_data[] = [
+        'title' => $menu_item->getTitle(),
+        'link' => $menu_item->getUrlObject()->toString()
+      ];
+    }
+  }
+
+  if (!$child_found) {
+    print "No child menu items found for the given parent menu item.";
+  }
+  return($menu_item_data);
 }
 
 /**
@@ -911,76 +1039,64 @@ function jcc_custom_form_taxonomy_overview_vocabularies_alter(&$form, FormStateI
 }
 
 /**
- * Sets the Solicitation Request (RFP) type options.
+ * Sets the Request (RFP) type options.
  */
 function jcc_custom_request_rfp_type_options(): array {
-  $moduleHandler = \Drupal::service('module_handler');
-  if ($moduleHandler->moduleExists('jcc_elevated_rfp_solicitations')) {
-    return jcc_elevated_rfp_solicitations_type_options();
-  }
-
-  return [];
+  return [
+    'rfp' => t('Request for Proposal'),
+    'rfq' => t('Request for Quote'),
+    'rfi' => t('Request for Information'),
+    'rfo' => t('Request for Offer'),
+    'ifb' => t('Invitation for Bid'),
+  ];
 }
 
 /**
- * Sets the Solicitation Request (RFP) status options.
+ * Sets the Request (RFP) status options.
  */
 function jcc_custom_request_rfp_status_options(): array {
-  $moduleHandler = \Drupal::service('module_handler');
-  if ($moduleHandler->moduleExists('jcc_elevated_rfp_solicitations')) {
-    return jcc_elevated_rfp_solicitations_status_options();
-  }
-
-  return [];
+  return [
+    1 => t('Open'),
+    0 => t('Closed'),
+    2 => t('Canceled'),
+  ];
 }
 
-/**
- * Sets the Solicitation Request (RFP) status options.
- */
-function jcc_custom_request_rfp_department_options(): array {
-  $moduleHandler = \Drupal::service('module_handler');
-  if ($moduleHandler->moduleExists('jcc_elevated_rfp_solicitations')) {
-    return jcc_elevated_rfp_solicitations_department_options();
-  }
-
-  return [];
-}
 
 /**
- * Sets the Solicitation Request (RFP) status options.
+ * Implements hook_entity_update().
  */
-function jcc_custom_request_rfp_year_options(): array {
-  $moduleHandler = \Drupal::service('module_handler');
-  if ($moduleHandler->moduleExists('jcc_elevated_rfp_solicitations')) {
-    return jcc_elevated_rfp_solicitations_year_options();
-  }
-
-  return [];
-}
-
-/**
- * Implements hook_menu_links_discovered_alter().
- */
-function jcc_custom_menu_links_discovered_alter(&$links): void {
-  // Hide the default paragraph library menu link. It's just confusing, and we
-  // won't be relying on the default view. We are going to break the view apart
-  // Into several custom views for each needed library.
-  if (isset($links['paragraphs_library.paragraphs_library_item.collection'])) {
-    unset($links['paragraphs_library.paragraphs_library_item.collection']);
+function jcc_custom_entity_update(\Drupal\Core\Entity\EntityInterface $entity) {
+  // Similar logic as in hook_entity_insert().
+  if ($entity->getEntityTypeId() === 'menu_link_content' && $entity->getMenuName() === 'main') {
+    //kint($entity);
+    if ($entity->getParentId() === 'menu_link_content:451') {
+      add_term_to_vocabulary($entity->getTitle(), 'divisions');
+    }
   }
 }
 
 /**
- * Implements hook_menu_local_tasks_alter().
+ * Adds a term to a specified vocabulary.
+ *
+ * @param string $name
+ *   The name of the term.
+ * @param string $vocabulary_id
+ *   The machine name of the vocabulary.
  */
-function jcc_custom_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface &$cacheability): void {
-  // Hide default paragraph library tab that comes with the contrib module. It's
-  // too general, and we will have specific admin pages for specific paragraph
-  // libraries.
-  if (isset($data['tabs'], $data['tabs'][0], $data['tabs'][0]['entity.paragraphs_library_item.collection'])) {
-    unset($data['tabs'][0]['entity.paragraphs_library_item.collection']);
+function add_term_to_vocabulary($name, $vocabulary_id) {
+  $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
+    'name' => $name,
+    'vid' => $vocabulary_id,
+  ]);
+
+  if (empty($terms)) {
+    $term = \Drupal\taxonomy\Entity\Term::create([
+      'vid' => $vocabulary_id,
+      'name' => $name,
+    ]);
+    $term->save();
   }
-}
 
 /**
  * Implements hook_form_BASE_FORM_ID_alter().
@@ -1010,3 +1126,4 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
     $form['unpublish_state']['widget'][0]['#description'] = t('When the "Unpublish on" time hits, this page will change to the state defined here.');
   }
 }
+
