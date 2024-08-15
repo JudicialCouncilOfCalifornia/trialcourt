@@ -1,0 +1,56 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.advisory_body.body
+    - field.field.node.advisory_body.field_about
+    - field.field.node.advisory_body.field_advisory_body_type
+    - field.field.node.advisory_body.field_contact_info
+    - field.field.node.advisory_body.field_date_established
+    - field.field.node.advisory_body.field_date_note
+    - field.field.node.advisory_body.field_hide_meetings_tab
+    - field.field.node.advisory_body.field_members
+    - field.field.node.advisory_body.field_news_reports
+    - field.field.node.advisory_body.field_related_links
+    - field.field.node.advisory_body.field_subcommittees
+    - field.field.node.advisory_body.field_updates_resources
+    - node.type.advisory_body
+  module:
+    - text
+    - user
+id: node.advisory_body.teaser
+targetEntityType: node
+bundle: advisory_body
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_about: true
+  field_advisory_body_type: true
+  field_contact_info: true
+  field_date_established: true
+  field_date_note: true
+  field_hide_meetings_tab: true
+  field_members: true
+  field_news_reports: true
+  field_related_links: true
+  field_subcommittees: true
+  field_updates_resources: true
+  langcode: true
+  search_api_excerpt: true
