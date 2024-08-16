@@ -220,7 +220,6 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
  * @param Drupal\node\NodeInterface $node
  *   The node.
  */
-
 function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node) {
   // Meetings tab.
   if ($node->hasField('field_hide_meetings_tab') && !empty($node->get('field_hide_meetings_tab')->first())) {
@@ -908,29 +907,11 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   $download_aria = t('Download or view opinion document');
 
   // Remote file locations.
-  $client = \Drupal::httpClient();
   $remote_files = [];
-
   // PDF.
-  $pdf_type = 'PDF';
-  $pdf = __jcc_opinion_file_links_builder($type, $review_granted, $client, $pdf_type, $download_aria, $case_number);
-  if ($pdf) {
-    $remote_files[] = $pdf;
-  }
-
-  // DOCX or DOC.
-  $doc_type = 'DOCX';
-  $doc = __jcc_opinion_file_links_builder($type, $review_granted, $client, $doc_type, $download_aria, $case_number);
-  if ($doc) {
-    $remote_files[] = $doc;
-  }
-  else {
-    $doc_type = 'DOC';
-    $doc = __jcc_opinion_file_links_builder($type, $review_granted, $client, $doc_type, $download_aria, $case_number);
-    if ($doc) {
-      $remote_files[] = $doc;
-    }
-  }
+  $remote_files[] = __jcc_opinion_file_links_builder($type, $review_granted, 'PDF', $download_aria, $case_number);
+  // DOCX.
+  $remote_files[] = __jcc_opinion_file_links_builder($type, $review_granted, 'DOCX', $download_aria, $case_number);
 
   // Related cases.
   $related_cases_urls = [];

@@ -8,7 +8,6 @@
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\taxonomy\Entity\Term;
-use GuzzleHttp\Exception\RequestException;
 
 /**
  * Helper function to load language labels.
@@ -196,7 +195,7 @@ function __jcc_accms_link_builder($case_number) {
 /**
  * Helper function to create links to remote opinion files.
  */
-function __jcc_opinion_file_links_builder($type, $review_granted, $client, $file_type, $aria, $case) {
+function __jcc_opinion_file_links_builder($type, $review_granted, $file_type, $aria, $case) {
   // Current URL patterns.
   $base = 'https://courts.ca.gov/opinions/';
   $pub_path = 'documents/';
@@ -225,41 +224,23 @@ function __jcc_opinion_file_links_builder($type, $review_granted, $client, $file
       }
   }
 
-  // Check if remote file exists.
-  $url = $base . $path . $case . '.' . $file_type;
+  // Construct aria label.
   $aria_label = $aria . ' ' . $case;
-  try {
-    $client->head($url)->getStatusCode();
-    $response = $client->head($url)->getStatusCode();
+
+  // Construct link.
+  // If remote file for longer/extended post not found, try '/documents' path.
+  if ($type == 'Published - Extended Post') {
+    $url = $base . $pub_path . $case . '.' . $file_type;
   }
-  catch (RequestException $e) {
-    // If remote file for longer/extended post not found, try '/documents' path.
-    if ($type == 'Published - Extended Post') {
-      $url = $base . $pub_path . $case . '.' . $file_type;
-      try {
-        $client->head($url)->getStatusCode();
-        $response = $client->head($url)->getStatusCode();
-      }
-      catch (RequestException $e) {
-        $message = $e->getMessage();
-        \Drupal::logger('opinion')->warning($message);
-      }
-    }
-    else {
-      $message = $e->getMessage();
-      \Drupal::logger('opinion')->warning($message);
-    }
+  else {
+    $url = $base . $path . $case . '.' . $file_type;
   }
 
-  // If remote file exists, setup data structure for component links.
-  $link = FALSE;
-  if ($response == 200) {
-    $link = [
-      'url' => $url,
-      'file_type' => $file_type,
-      'aria_label' => $aria_label,
-    ];
-  }
+  $link = [
+    'url' => $url,
+    'file_type' => $file_type,
+    'aria_label' => $aria_label,
+  ];
 
   return $link;
 }
