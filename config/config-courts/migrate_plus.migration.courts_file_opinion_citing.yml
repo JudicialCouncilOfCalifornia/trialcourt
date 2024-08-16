@@ -15,7 +15,7 @@ migration_group: courts
 label: 'Courts: Import opinion citing files'
 source:
   plugin: csv
-  url: 'https://www.courts.ca.gov/opinions/links/filelist.txt'
+  url: 'https://intense-anchorage-92873-2170464d26cd.herokuapp.com/https://www.courts.ca.gov/opinions/links/filelist.txt'
   delimiter: "\t"
   header_offset: null
   fields:
@@ -26,12 +26,14 @@ source:
     - name
   constants:
     DRUPAL_FILE_DIRECTORY: 'public://opinions/citing/'
-    CITING_FILE_URL: 'https://courts.ca.gov/opinions/links/'
+    PROXY_BYPASS: 'https://intense-anchorage-92873-2170464d26cd.herokuapp.com/'
+    CITING_FILE_URL: 'https://www.courts.ca.gov/opinions/links/'
 process:
   pseudo_decoded_url:
     -
       plugin: concat
       source:
+        - constants/PROXY_BYPASS
         - constants/CITING_FILE_URL
         - name
   pseudo_destination_path:
