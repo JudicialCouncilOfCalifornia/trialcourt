@@ -7,13 +7,17 @@ dependencies:
     - field.field.node.news.field_byline
     - field.field.node.news.field_components
     - field.field.node.news.field_date
+    - field.field.node.news.field_media
+    - field.field.node.news.field_media_file_multiple
     - field.field.node.news.field_news_type
+    - field.field.node.news.field_node_reference
     - node.type.news
     - workflows.workflow.editorial
   module:
     - allowed_formats
     - content_moderation
     - datetime
+    - media_library
     - paragraphs
     - path
     - scheduler
@@ -71,11 +75,38 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_media:
+    type: entity_reference_autocomplete
+    weight: 23
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_media_file_multiple:
+    type: media_library_widget
+    weight: 21
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
   field_news_type:
     type: options_select
     weight: 0
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_node_reference:
+    type: entity_reference_autocomplete
+    weight: 22
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   langcode:
     type: language_select
@@ -92,7 +123,7 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 13
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -105,18 +136,18 @@ content:
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 15
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 14
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }
   scheduler_settings:
-    weight: 12
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -159,13 +190,13 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 17
+    weight: 16
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 16
+    weight: 17
     region: content
     settings: {  }
     third_party_settings: {  }
