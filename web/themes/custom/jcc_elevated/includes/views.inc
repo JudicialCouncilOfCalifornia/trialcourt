@@ -793,7 +793,6 @@ function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
  * Implements hook_preprocess_views_view() for published opinions listing block.
  */
 function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
-  $client = \Drupal::httpClient();
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
@@ -814,25 +813,12 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     $title = $node->get('title')->value;
     $download_aria = t('Download or view opinion document');
 
-    // Remote file locations.
+    // Remote file links - both must be valid.
     $remote_files = [];
-
-    // PDF.
-    $pdf_type = 'PDF';
-    $pdf = __jcc_opinion_file_links_builder($type, $review_granted, $client, $pdf_type, $download_aria, $case_number);
-    if ($pdf) {
+    $pdf = __jcc_opinion_file_links_builder($type, $review_granted, 'PDF', $download_aria, $case_number);
+    $doc = __jcc_opinion_file_links_builder($type, $review_granted, 'DOCX', $download_aria, $case_number);
+    if ($pdf && $doc) {
       $remote_files[] = $pdf;
-    }
-
-    // DOCX or DOC.
-    $doc_type = 'DOCX';
-    $doc = __jcc_opinion_file_links_builder($type, $review_granted, $client, $doc_type, $download_aria, $case_number);
-    if ($doc) {
-      $remote_files[] = $doc;
-    }
-    else {
-      $doc_type = 'DOC';
-      $doc = __jcc_opinion_file_links_builder($type, $review_granted, $client, $doc_type, $download_aria, $case_number);
       if ($doc) {
         $remote_files[] = $doc;
       }

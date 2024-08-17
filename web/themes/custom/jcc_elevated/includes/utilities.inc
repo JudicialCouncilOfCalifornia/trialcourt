@@ -143,38 +143,47 @@ function __jcc_accms_link_builder($case_number) {
     // Map court code with ACCMS dist id.
     switch ($court_id) {
       case 'S':
+        // Supreme Court.
         $accms_dist_id = '0';
         break;
 
       case 'A':
+        // 1st District Court of Appeal.
         $accms_dist_id = '1';
         break;
 
       case 'B':
+        // 2nd District Court of Appeal.
         $accms_dist_id = '2';
         break;
 
       case 'C':
+        // Third District Court of Appeal.
         $accms_dist_id = '3';
         break;
 
       case 'D':
+        // Fourth District Court of Appeal, Division 1.
         $accms_dist_id = '41';
         break;
 
       case 'E':
+        // Fourth District Court of Appeal, Division 2.
         $accms_dist_id = '42';
         break;
 
-      case 'F':
+      case 'G':
+        // Fourth District Court of Appeal, Division 3.
         $accms_dist_id = '43';
         break;
 
-      case 'G':
+      case 'F':
+        // Fifth District Court of Appeal.
         $accms_dist_id = '5';
         break;
 
       case 'H':
+        // Sixth District Court of Appeal.
         $accms_dist_id = '6';
         break;
     }
@@ -196,9 +205,9 @@ function __jcc_accms_link_builder($case_number) {
 /**
  * Helper function to create links to remote opinion files.
  */
-function __jcc_opinion_file_links_builder($type, $review_granted, $client, $file_type, $aria, $case) {
+function __jcc_opinion_file_links_builder($type, $review_granted, $file_type, $aria, $case) {
   // Current URL patterns.
-  $base = 'https://courts.ca.gov/opinions/';
+  $base = 'https://www.courts.ca.gov/opinions/';
   $pub_path = 'documents/';
   $pub_ext_path = 'archive/';
   $pub_rev_path = 'revpub/';
@@ -225,39 +234,36 @@ function __jcc_opinion_file_links_builder($type, $review_granted, $client, $file
       }
   }
 
-  // Check if remote file exists.
+  // File URL.
   $url = $base . $path . $case . '.' . $file_type;
-  $aria_label = $aria . ' ' . $case;
-  try {
-    $client->head($url)->getStatusCode();
-    $response = $client->head($url)->getStatusCode();
-  }
-  catch (RequestException $e) {
-    // If remote file for longer/extended post not found, try '/documents' path.
-    if ($type == 'Published - Extended Post') {
-      $url = $base . $pub_path . $case . '.' . $file_type;
+
+  // Check if DOCX vs DOC.
+  $doc_response = NULL;
+  if ($file_type == 'DOCX') {
+    $client = \Drupal::httpClient();
+    $proxy_pass = 'https://intense-anchorage-92873-2170464d26cd.herokuapp.com/';
+    try {
+      $doc_response = $client->head($proxy_pass . $url)->getStatusCode();
+    }
+    catch (RequestException $e) {
+      $file_type = 'DOC';
+      $url = $base . $path . $case . '.' . $file_type;
       try {
-        $client->head($url)->getStatusCode();
-        $response = $client->head($url)->getStatusCode();
+        $doc_response = $client->head($proxy_pass . $url)->getStatusCode();
       }
       catch (RequestException $e) {
-        $message = $e->getMessage();
-        \Drupal::logger('opinion')->warning($message);
+        \Drupal::logger('opinion')->warning($e->getMessage());
       }
-    }
-    else {
-      $message = $e->getMessage();
-      \Drupal::logger('opinion')->warning($message);
     }
   }
 
-  // If remote file exists, setup data structure for component links.
+  // Build link.
   $link = FALSE;
-  if ($response == 200) {
+  if ($file_type == 'PDF' || $doc_response == 200) {
     $link = [
       'url' => $url,
       'file_type' => $file_type,
-      'aria_label' => $aria_label,
+      'aria_label' => $aria . ' ' . $case,
     ];
   }
 
