@@ -92,8 +92,9 @@
 {% set content %}
   {% set type = node.field_opinion_type.entity.name.value %}
   {% if node.field_opinion_type.entity.name.value == 'Published - Extended Post' %}
-    {#  Simply display opinion type as 'Published' #}
-    {% set type = 'Published' %}
+    {% set type = 'Published Opinion - Extended Post' %}
+  {% else %}
+    {% set type = node.field_opinion_type.entity.name.value ~ ' Opinion' %}
   {% endif %}
 
   <div class="stack">
@@ -102,7 +103,7 @@
         <span>{{ node.field_opinion_source.entity.name.value }}</span>
       {% endif %}
       {% if node.field_opinion_type.value %}
-        <span>{{ type }} Opinion</span>
+        <span>{{ type }}</span>
       {% endif %}
       {% if node.field_review_granted.value %}
         <span>Review Granted</span>

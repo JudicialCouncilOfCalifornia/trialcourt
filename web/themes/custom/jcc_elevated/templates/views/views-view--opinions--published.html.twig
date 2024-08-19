@@ -35,6 +35,8 @@
 {{ attach_library("jcc_storybook/InlineForm") }}
 {{ attach_library("jcc_storybook/ViewResults") }}
 {{ attach_library("jcc_storybook/ResultExcerpt") }}
+{{ attach_library("jcc_storybook/ReadMore") }}
+{{ attach_library("jcc_elevated/opinionlinksbuilder") }}
 {% block styles %}{% endblock %}
 
 {%
@@ -55,19 +57,16 @@
   {% endset %}
 
   {% set content %}
-    {% if opinion.remote_files %}
-      <div style="margin-block-end: var(--s0)">
-        {% for remote_file in opinion.remote_files %}
-          {% include "@atoms/Button/Button.twig" with {
-            variant: loop.index == 1 ?'primary' : 'secondary',
-            size: 'small',
-            label: remote_file.file_type,
-            href: remote_file.url,
-            aria_label: remote_file.aria_label,
-          } %}
-        {% endfor %}
-      </div>
-    {% endif %}
+    {% set throbber %}
+      <img class="throbber" src="/core/misc/throbber-active.gif" alt="Loading opinion document links for {{ opinion.case_number }}" />
+    {% endset %}
+    <div class="opinion--read-more">
+      {% include "@molecules/ReadMore/ReadMore.twig" with {
+        variant: 'text',
+        heading: 'View or download opinion'|t,
+        content: throbber,
+      } %}
+    </div>
 
     {% if opinion.related_cases %}
       <p>Related Cases: {{ opinion.related_cases|raw }}</p>
