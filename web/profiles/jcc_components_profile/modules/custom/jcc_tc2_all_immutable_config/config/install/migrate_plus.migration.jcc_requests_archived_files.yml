@@ -62,11 +62,17 @@ source:
     - parent_url
   constants:
     DRUPAL_FILE_DIRECTORY: 'public://documents/'
+    PROXY_BYPASS: 'https://intense-anchorage-92873-2170464d26cd.herokuapp.com/'
 process:
   pseudo_decoded_url:
-    plugin: callback
-    callable: urldecode
-    source: file_url
+    -
+      plugin: concat
+      source:
+        - constants/PROXY_BYPASS
+        - file_url
+    -
+      plugin: callback
+      callable: urldecode
   pseudo_destination_filename:
     -
       plugin: callback
