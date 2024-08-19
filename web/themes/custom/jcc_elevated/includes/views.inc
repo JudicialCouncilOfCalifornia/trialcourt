@@ -15,6 +15,7 @@ use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
 
@@ -517,17 +518,29 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
   $render = \Drupal::service('renderer');
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $node_manager = $entity_type_manager->getStorage('node');
 
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
-  // Items per page filter.
-  $variables['items_per_page'] = $variables['exposed']['items_per_page'];
-  $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
-  foreach ($variables['items_per_page']['#options'] as $key => $value) {
-    $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
+  // Get our URL argument from the view args.
+  $advisory_body_id = $variables['view']->args[0];
+  $parent_advisory_body = $node_manager->load($advisory_body_id);
+
+  // Check if we are dealing with an advisory body.
+  if (!$parent_advisory_body instanceof NodeInterface || !$parent_advisory_body->getType() == 'advisory_body') {
+    $parent_advisory_body = FALSE;
   }
-  unset($variables['items_per_page']['#title']);
+
+  // Items per page filter.
+  $variables['items_per_page'] = $parent_advisory_body ? $variables['exposed']['items_per_page'] : FALSE;
+  if ($parent_advisory_body) {
+    $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+    foreach ($variables['items_per_page']['#options'] as $key => $value) {
+      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
+    }
+    unset($variables['items_per_page']['#title']);
+  }
   unset($variables['exposed']['items_per_page']);
 
   foreach ($variables['rows'] as $key => $group) {
@@ -582,14 +595,12 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       $variables['events'][$key]['items'][] = $event;
     }
   }
-  $advisory_body_id = $variables['view']->args[0];
-  $parent_advisory_body = \Drupal::entityTypeManager()->getStorage('node')->load($advisory_body_id);
-  if ($parent_advisory_body) {
-    $variables['view_title'] = $parent_advisory_body->getTitle() . ' past meetings';
-  }
-  else {
-    $variables['view_title'] = '';
-  }
+
+  $variables['exposed'] = $parent_advisory_body ? $variables['exposed'] : [];
+
+  // If we have an advisory body in the URL context, adjust the title.
+  $variables['view_title'] = $parent_advisory_body ? t('@title past meetings', ['@title' => $parent_advisory_body->getTitle()])->__toString() : t('Past meetings')->__toString();
+  $variables['view_brow'] = $parent_advisory_body ? t('Advisory Committee') : NULL;
 }
 
 /**
