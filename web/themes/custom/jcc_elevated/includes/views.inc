@@ -822,18 +822,6 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     $case_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
     $review_granted = $node->get('field_review_granted')->value;
     $title = $node->get('title')->value;
-    $download_aria = t('Download or view opinion document');
-
-    // Remote file links - $doc must be valid to display anything.
-    $remote_files = [];
-    $pdf = __jcc_opinion_file_links_builder($type, $review_granted, 'PDF', $download_aria, $case_number);
-    $doc = __jcc_opinion_file_links_builder($type, $review_granted, 'DOCX', $download_aria, $case_number);
-    if ($pdf && $doc) {
-      $remote_files[] = $pdf;
-      if ($doc) {
-        $remote_files[] = $doc;
-      }
-    }
 
     // Related cases.
     $related_cases_urls = [];
@@ -893,7 +881,6 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
         'text' => $title ?? '',
         'url' => $case_number && $case_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
       ],
-      'remote_files' => $remote_files,
       'related_cases' => $related_cases_urls ? implode(' ', $related_cases_urls) : '',
       'citings' => $citings,
     ];
