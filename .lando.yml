@@ -91,7 +91,7 @@ tooling:
   multisite:
     description: "lando multisite [new] - no other steps required"
     cmd:
-      - database: scripts/dbcreate.sh -i
+      - database: /bin/sh -c "/app/scripts/dbcreate.sh" -i
       - appserver: scripts/install.sh
   node:
     service: node-cli

@@ -50,6 +50,7 @@ $sites['uat.courts.ca.gov'] = 'courts';
 $sites['www.courts.ca.gov'] = 'courts';
 $sites['courts.ca.gov'] = 'courts';
 $sites['beta.courts.ca.gov'] = 'courts';
+$sites['preview.courts.ca.gov'] = 'courts';
 
 // = 'jcart';
 $sites['develop.jcart.courts.ca.gov'] = 'deprep';

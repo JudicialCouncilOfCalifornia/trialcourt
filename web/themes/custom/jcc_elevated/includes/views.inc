@@ -17,7 +17,6 @@ use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
-use GuzzleHttp\Exception\RequestException;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -817,63 +816,25 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
 
     // Remote file locations.
     $remote_files = [];
-    $file_url_base = 'https://courts.ca.gov/opinions/';
-    if ($type == 'Unpublished') {
-      $url = $file_url_base . 'nonpub/';
-      if ($review_granted) {
-        $url = $file_url_base . 'revnppub/';
-      }
-    }
-    else {
-      $url = $file_url_base . 'documents/';
-      if ($review_granted) {
-        $url = $file_url_base . 'revpub/';
-      }
-    }
 
     // PDF.
-    $pdf_case = $case_number . '.PDF';
-    $pdf_url = $url . $pdf_case;
-    try {
-      $client->head($pdf_url)->getStatusCode();
-      $remote_files[] = [
-        'url' => $pdf_url,
-        'file_type' => 'PDF',
-        'aria_label' => $download_aria . ' ' . $pdf_case,
-      ];
-    }
-    catch (RequestException $e) {
-      $message = $e->getMessage();
-      \Drupal::logger('opinion')->warning($message);
+    $pdf_type = 'PDF';
+    $pdf = __jcc_opinion_file_links_builder($type, $review_granted, $client, $pdf_type, $download_aria, $case_number);
+    if ($pdf) {
+      $remote_files[] = $pdf;
     }
 
     // DOCX or DOC.
     $doc_type = 'DOCX';
-    $docx_case = $case_number . '.' . $doc_type;
-    $docx_url = $url . $docx_case;
-    try {
-      $client->head($docx_url)->getStatusCode();
-      $remote_files[] = [
-        'url' => $docx_url,
-        'file_type' => 'DOCX',
-        'aria_label' => $download_aria . ' ' . $docx_case,
-      ];
+    $doc = __jcc_opinion_file_links_builder($type, $review_granted, $client, $doc_type, $download_aria, $case_number);
+    if ($doc) {
+      $remote_files[] = $doc;
     }
-    catch (RequestException) {
+    else {
       $doc_type = 'DOC';
-      $doc_case = $case_number . '.' . $doc_type;
-      $doc_url = $url . $doc_case;
-      try {
-        $client->head($doc_url)->getStatusCode();
-        $remote_files[] = [
-          'url' => $doc_url,
-          'file_type' => 'DOC',
-          'aria_label' => $download_aria . ' ' . $doc_case,
-        ];
-      }
-      catch (RequestException $e) {
-        $message = $e->getMessage();
-        \Drupal::logger('opinion')->warning($message);
+      $doc = __jcc_opinion_file_links_builder($type, $review_granted, $client, $doc_type, $download_aria, $case_number);
+      if ($doc) {
+        $remote_files[] = $doc;
       }
     }
 
@@ -943,6 +904,14 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
   }
 
   $variables['opinions'] = $opinions;
+}
+
+/**
+ * Implements hook_preprocess_views_view() for unpublished opinions listing block.
+ */
+function jcc_elevated_preprocess_views_view__opinions__published_extended(&$variables) {
+  // Reuse current published opinions search block as common preprocess.
+  jcc_elevated_preprocess_views_view__opinions__published($variables);
 }
 
 /**
@@ -1336,67 +1305,4 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   if (isset($form['actions']['reset'])) {
     $form['actions']['reset']['#attributes']['class'][] = 'button button--secondary button--normal';
   }
-}
-
-/**
- * Helper function to map case numbers to ACCMS dist ids.
- */
-function __jcc_accms_link_builder($case_number) {
-  // Exclude any trailing opinion revision code.
-  $case_number = $string = substr($case_number, 0, 7);
-  // Court id is first character from case number.
-  $court_id = substr($case_number, 0, 1);
-
-  if ($court_id) {
-    // Map court code with ACCMS dist id.
-    switch ($court_id) {
-      case 'S':
-        $accms_dist_id = '0';
-        break;
-
-      case 'A':
-        $accms_dist_id = '1';
-        break;
-
-      case 'B':
-        $accms_dist_id = '2';
-        break;
-
-      case 'C':
-        $accms_dist_id = '3';
-        break;
-
-      case 'D':
-        $accms_dist_id = '41';
-        break;
-
-      case 'E':
-        $accms_dist_id = '42';
-        break;
-
-      case 'F':
-        $accms_dist_id = '43';
-        break;
-
-      case 'G':
-        $accms_dist_id = '5';
-        break;
-
-      case 'H':
-        $accms_dist_id = '6';
-        break;
-    }
-
-    // Assemble ACCMS lookup URL.
-    $accms_url = '';
-    $accms_dist_query = 'https://appellatecases.courtinfo.ca.gov/search/searchResults.cfm?dist=';
-    if ($accms_dist_id) {
-      $accms_url = $accms_dist_query . $accms_dist_id . '&search=number&useSession=0&query_caseNumber=' . $case_number;
-    }
-    elseif ($court_id == 'S') {
-      $accms_url = $accms_dist_query . '0&search=number&useSession=0&query_caseNumber=' . $case_number;
-    }
-  }
-
-  return $accms_url;
 }
