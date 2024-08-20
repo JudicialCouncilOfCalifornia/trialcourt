@@ -834,7 +834,9 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   $items = [];
   if ($node->hasField('field_rfp_attached_media')) {
     $current = Drupal::time()->getCurrentTime();
-    $offset = 2592000;
+
+    // 15 day offset for New/Updated label to display.
+    $offset = 86400 * 15;
     $rfp_attachments = $node->get('field_rfp_attached_media')->getValue();
     foreach ($rfp_attachments as $delta => $media_target) {
       $media = $media_target['target_id'] ? $media_manager->load($media_target['target_id']) : FALSE;
