@@ -241,16 +241,15 @@ function __jcc_opinion_file_links_builder($type, $review_granted, $file_type, $a
   $doc_response = NULL;
   if ($file_type == 'DOCX') {
     $client = \Drupal::httpClient();
-    $proxy_pass = 'https://intense-anchorage-92873-2170464d26cd.herokuapp.com/';
     try {
-      $doc_response = $client->head($proxy_pass . $url)->getStatusCode();
+      $doc_response = $client->head($url)->getStatusCode();
     }
     catch (RequestException $e) {
       // If DOCX not found, try DOC.
       $file_type = 'DOC';
       $url = $base . $path . $case . '.' . $file_type;
       try {
-        $doc_response = $client->head($proxy_pass . $url)->getStatusCode();
+        $doc_response = $client->head($url)->getStatusCode();
       }
       catch (RequestException $e) {
         // If extended posts not found under /archive try /documents.
@@ -258,13 +257,13 @@ function __jcc_opinion_file_links_builder($type, $review_granted, $file_type, $a
           $file_type = 'DOCX';
           $url = $base . $pub_path . $case . '.' . $file_type;
           try {
-            $doc_response = $client->head($proxy_pass . $url)->getStatusCode();
+            $doc_response = $client->head($url)->getStatusCode();
           }
           catch (RequestException $e) {
             $file_type = 'DOC';
             $url = $base . $pub_path . $case . '.' . $file_type;
             try {
-              $doc_response = $client->head($proxy_pass . $url)->getStatusCode();
+              $doc_response = $client->head($url)->getStatusCode();
             }
             catch (RequestException $e) {
               \Drupal::logger('opinion')->warning($e->getMessage());
