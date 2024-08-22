@@ -1,0 +1,86 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.service_hours.field_others
+    - field.field.paragraph.service_hours.field_service_days
+    - field.field.paragraph.service_hours.field_service_hour_type
+    - field.field.paragraph.service_hours.field_service_hours_from
+    - field.field.paragraph.service_hours.field_service_hours_same_as_busi
+    - field.field.paragraph.service_hours.field_service_hours_to
+    - field.field.paragraph.service_hours.field_weekdays_mon_fri
+    - paragraphs.paragraphs_type.service_hours
+  module:
+    - datetime
+    - field_group
+third_party_settings:
+  field_group:
+    group_hours:
+      children:
+        - field_service_hours_from
+        - field_service_hours_to
+      label: Hours
+      region: content
+      parent_name: ''
+      weight: 5
+      format_type: fieldset
+      format_settings:
+        classes: service_hours
+        show_empty_fields: false
+        id: ''
+        description: ''
+        required_fields: true
+id: paragraph.service_hours.default
+targetEntityType: paragraph
+bundle: service_hours
+mode: default
+content:
+  field_others:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_service_days:
+    type: options_buttons
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_service_hour_type:
+    type: options_select
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_service_hours_from:
+    type: datetime_default
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_service_hours_same_as_busi:
+    type: boolean_checkbox
+    weight: 1
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_service_hours_to:
+    type: datetime_default
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_weekdays_mon_fri:
+    type: boolean_checkbox
+    weight: 3
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

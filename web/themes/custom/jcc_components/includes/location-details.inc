@@ -51,7 +51,7 @@ function getFormattedDate($raw_time) {
       $date = new \DateTime($raw_time, new \DateTimeZone('UTC'));
       $date->setTimezone(new \DateTimeZone($default_timezone));  // Adjust timezone to match site's configuration
       $formatted_time = $date->format('g:ia');
-      $formatted_time = str_replace(['am','pm'],[' a.m' , ' p.m'] ,$formatted_time );
+      $formatted_time = str_replace(['am','pm'],[' a.m.' , ' p.m.'] ,$formatted_time );
       return $formatted_time;  // Adjust format as needed
 }
 
@@ -110,9 +110,9 @@ function extractServiceDetails($paragraph) {
  * Create link from url value
  */
 function createLink($appointment_link){
-  $appointment_link['url']    =  $appointment_link['0']['uri'];
-  $appointment_link['title']  = $appointment_link['0']['title'] ? $appointment_link['0']['title'] : 'Schedule an Appointment';
   if(isset($appointment_link['url'] ) && isset($appointment_link['url'] )){
+    $appointment_link['url']    =  $appointment_link['0']['uri'];
+    $appointment_link['title']  = $appointment_link['0']['title'] ? $appointment_link['0']['title'] : 'Schedule an Appointment';
     return '<a href ="'. $appointment_link['title'].'">'. $appointment_link['title'] .'</a>';
   }
 }
@@ -132,6 +132,7 @@ function getServiceHours($paragraph , $variables) {
           if (isset($hourEntity->get('field_service_hours_same_as_busi')->value) && $hourEntity->get('field_service_hours_same_as_busi')->value == 1) {
               // Business hours are the same as building hours
               $hour_details = [
+                  'mon-fri' => 1,
                   'days' => "Monday - Friday",
                   'from' => $variables['building_hours']['building_starting_hours'],
                   'to' => $variables['building_hours']['building_closing_hours'],
@@ -143,6 +144,7 @@ function getServiceHours($paragraph , $variables) {
               if ($hourEntity->get('field_weekdays_mon_fri')->value == 1) {
                   // Handle the case when Monday to Friday is checked but not same as building hours
                   $hour_details = [
+                      'mon-fri' => 1,
                       'days' => "Monday - Friday",
                       'from' => $hourEntity->hasField('field_service_hours_from') ? getFormattedDate($hourEntity->get('field_service_hours_from')->value) : '',
                       'to' => $hourEntity->hasField('field_service_hours_to') ? getFormattedDate($hourEntity->get('field_service_hours_to')->value) : '',
@@ -160,6 +162,7 @@ function getServiceHours($paragraph , $variables) {
                   $day_range = dayRange($days); // Convert day array to a range string
 
                   $hour_details = [
+                      'mon-fri' => 0,
                       'days' => $day_range,
                       'from' => $hourEntity->hasField('field_service_hours_from') ? getFormattedDate($hourEntity->get('field_service_hours_from')->value) : '',
                       'to' => $hourEntity->hasField('field_service_hours_to') ? getFormattedDate($hourEntity->get('field_service_hours_to')->value) : '',
@@ -202,8 +205,6 @@ function buildBodyContent($services, $variables) {
     $content .= '<b>Email</b>:'.$space_one. Markup::create($services['email']) . "<br />";
   }
   
-
-
   $previous_hour_type = "";
   $is_first_row = true; // Initialize the first row flag
   $content .= '<div class="hours">';
@@ -223,25 +224,23 @@ function buildBodyContent($services, $variables) {
 }
 
 // Helper function to format hour rows based on the type of hours and repetition status
-function formatHourRow($hour, $previous_hour_type, &$is_first_row ,$appointment) {
+function formatHourRow($hour, $previous_hour_type, $is_first_row ,$appointment) {
   $row_content = '';
   $type = '<div class="flex-item">' . ucwords(str_replace('_', ' ', $hour['type'])) . ":" . '</div>';
   $appointment_string = '<br />'.$appointment ;
   $time_span = '<div class="flex-item">' . $hour['days'] . "&nbsp" . $hour['from'] . " - " . $hour['to'].$appointment_string .'</div>';
- 
-  if ($hour['mon_fri'] != 1 && $hour['is_repeated'] == false && $previous_hour_type != $hour['type']) {
+  if ( $hour['mon-fri'] != 1 && $hour['is_repeated'] == false && $previous_hour_type != $hour['type']) {
       $appointment_col = ($hour['type'] == "phone")? $appointment : "";
-      $row_content .= '<div class="hour-row">' . $label . $type . $time_span .'</div>';
-  } else if ($hour['mon_fri'] != 1 && $hour['is_repeated'] == true) {
+      $row_content .= '<div class="hour-row">' . $type . $time_span .'</div>';
+  } else if ($hour['mon-fri']!= 1 && $hour['is_repeated'] == true) {
       // Modified for when hours are repeated
       $appointment_col = ($hour['type'] == "phone")? $appointment : "";
-      $row_content .= '<div class="hour-row">' . $label . $type . $time_span . '</div>';
-  } else if ($hour['mon_fri'] == 1) {
+      $row_content .= '<div class="hour-row">' . $type . $time_span . '</div>';
+  } else if ($hour['mon-fri']== 1) {
       // Special formatting for Monday-Friday hours if treated differently
       $appointment_col = ($hour['type'] == "phone")? $appointment : "";
-      $row_content .= '<div class="hour-row">' . $label . $type . $time_span  . '</div>';
+      $row_content .= '<div class="hour-row">' . $type . $time_span  . '</div>';
   }
-
   return $row_content;
 }
 
