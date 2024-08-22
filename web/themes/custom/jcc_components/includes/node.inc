@@ -60,6 +60,11 @@ function jcc_components_preprocess_node(&$variables) {
       }
     }
   }
+  // logic for location page variables
+  if ($node->getType() == 'location') {
+     $variables['#attached']['library'][] = 'jcc_components/location-page';
+     buildServiceMarkup($variables ,$node);
+   }
 }
 
 /**
