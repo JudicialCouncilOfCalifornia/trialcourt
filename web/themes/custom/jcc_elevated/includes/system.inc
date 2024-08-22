@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_preprocess_views_view().
@@ -150,29 +151,50 @@ function jcc_elevated_preprocess_textarea(&$variables) {
  */
 function jcc_elevated_preprocess_html(&$variables): void {
   // Set some variables.
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $node_manager = $entity_type_manager->getStorage('node');
   $route_match = \Drupal::routeMatch();
+  $current_route_name = \Drupal::service('current_route_match')->getRouteName();
 
   // If the node is a solicitation request node, set the page html title.
   if ($node = $route_match->getParameter('node')) {
-    if ($node->bundle() == 'request') {
-      $items = [];
+    if ($node instanceof NodeInterface) {
 
-      $items['title'] = $node->getTitle();
+      if ($node->bundle() == 'request') {
+        $items = [];
 
-      $request_number = $node->get('field_rfp_number')->first()->getValue();
-      if (isset($request_number['value'])) {
-        $items['number'] = '#ID ' . $request_number['value'];
+        $items['title'] = $node->getTitle();
+
+        $request_number = $node->get('field_rfp_number')->first()->getValue();
+        if (isset($request_number['value'])) {
+          $items['number'] = '#ID ' . $request_number['value'];
+        }
+
+        $request_type = $node->get('field_rfp_type')->first()->view('full');
+        if (isset($request_type['#markup'])) {
+          $items['type'] = $request_type['#markup']->__toString();
+        }
+
+        $site_name = \Drupal::config('system.site')->get('name');
+        $items['site_name'] = $site_name;
+
+        $variables['head_title']['title'] = implode(' | ', $items);
       }
 
-      $request_type = $node->get('field_rfp_type')->first()->view('full');
-      if (isset($request_type['#markup'])) {
-        $items['type'] = $request_type['#markup']->__toString();
+    }
+  }
+
+  // Adjust the browser tab title for past meetings.
+  if ($current_route_name == 'view.advisory_body_events.page_1') {
+    // Set our default title.
+    $variables['head_title']['title'] = t('Past meetings | California Courts');
+
+    // Check if we get a node in the argument and it is an advisory body.
+    if ($nid = $route_match->getParameter('node')) {
+      $node = is_numeric($node) ? $node_manager->load($nid) : FALSE;
+      if ($node instanceof NodeInterface && $node->getType() == 'advisory_body') {
+        $variables['head_title']['title'] = t('Past meetings | @title  | California Courts', ['@title' => $node->label()]);
       }
-
-      $site_name = \Drupal::config('system.site')->get('name');
-      $items['site_name'] = $site_name;
-
-      $variables['head_title']['title'] = implode(' | ', $items);
     }
   }
 }

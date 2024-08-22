@@ -220,7 +220,6 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
  * @param Drupal\node\NodeInterface $node
  *   The node.
  */
-
 function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node) {
   // Meetings tab.
   if ($node->hasField('field_hide_meetings_tab') && !empty($node->get('field_hide_meetings_tab')->first())) {
@@ -835,7 +834,9 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   $items = [];
   if ($node->hasField('field_rfp_attached_media')) {
     $current = Drupal::time()->getCurrentTime();
-    $offset = 2592000;
+
+    // 15 day offset for New/Updated label to display.
+    $offset = 86400 * 15;
     $rfp_attachments = $node->get('field_rfp_attached_media')->getValue();
     foreach ($rfp_attachments as $delta => $media_target) {
       $media = $media_target['target_id'] ? $media_manager->load($media_target['target_id']) : FALSE;
@@ -907,26 +908,12 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   $review_granted = $node->get('field_review_granted')->value;
   $download_aria = t('Download or view opinion document');
 
-  // Remote file locations.
-  $client = \Drupal::httpClient();
+  // Remote file links - $doc must be valid to display anything.
   $remote_files = [];
-
-  // PDF.
-  $pdf_type = 'PDF';
-  $pdf = __jcc_opinion_file_links_builder($type, $review_granted, $client, $pdf_type, $download_aria, $case_number);
-  if ($pdf) {
+  $pdf = __jcc_opinion_file_links_builder($type, $review_granted, 'PDF', $download_aria, $case_number);
+  $doc = __jcc_opinion_file_links_builder($type, $review_granted, 'DOCX', $download_aria, $case_number);
+  if ($pdf && $doc) {
     $remote_files[] = $pdf;
-  }
-
-  // DOCX or DOC.
-  $doc_type = 'DOCX';
-  $doc = __jcc_opinion_file_links_builder($type, $review_granted, $client, $doc_type, $download_aria, $case_number);
-  if ($doc) {
-    $remote_files[] = $doc;
-  }
-  else {
-    $doc_type = 'DOC';
-    $doc = __jcc_opinion_file_links_builder($type, $review_granted, $client, $doc_type, $download_aria, $case_number);
     if ($doc) {
       $remote_files[] = $doc;
     }

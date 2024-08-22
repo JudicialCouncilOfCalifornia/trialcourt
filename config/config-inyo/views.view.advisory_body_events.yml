@@ -3,8 +3,10 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.advisory_body_events
+    - core.entity_view_mode.node.teaser
     - field.storage.node.field_event_date
     - field.storage.node.field_granicus_link
+    - node.type.advisory_body
     - node.type.event
     - taxonomy.vocabulary.event_state
   module:
@@ -343,46 +345,7 @@ display:
             field_identifier: ''
           exposed: false
           granularity: second
-      arguments:
-        nid:
-          id: nid
-          table: node_field_data
-          field: nid
-          relationship: field_content_reference
-          group_type: group
-          admin_label: ''
-          entity_type: node
-          entity_field: nid
-          plugin_id: node_nid
-          default_action: default
-          exception:
-            value: all
-            title_enable: false
-            title: All
-          title_enable: false
-          title: ''
-          default_argument_type: query_parameter
-          default_argument_options:
-            query_param: adv
-            fallback: ''
-            multiple: and
-          default_argument_skip_url: false
-          summary_options:
-            base_path: ''
-            count: true
-            override: false
-            items_per_page: 25
-          summary:
-            sort_order: asc
-            number_of_records: 0
-            format: default_summary
-          specify_validation: false
-          validate:
-            type: none
-            fail: 'not found'
-          validate_options: {  }
-          break_phrase: false
-          not: false
+      arguments: {  }
       filters:
         status:
           id: status
@@ -526,7 +489,6 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - url
         - 'user.node_grants:view'
         - user.permissions
       tags:
@@ -1027,7 +989,7 @@ display:
             group_items: {  }
           reduce_duplicates: false
           vid: event_state
-          type: cshs
+          type: select
           hierarchy: false
           limit: true
           error_message: true
@@ -1125,6 +1087,72 @@ display:
     display_plugin: page
     position: 2
     display_options:
+      fields:
+        field_event_date_1:
+          id: field_event_date_1
+          table: node__field_event_date
+          field: field_event_date
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: daterange_custom
+          settings:
+            timezone_override: America/Los_Angeles
+            date_format: 'Y'
+            separator: '-'
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
       pager:
         type: full
         options:
@@ -1179,35 +1207,40 @@ display:
                 advanced:
                   placeholder_text: ''
                   collapsible: false
+                  collapsible_disable_automatic_open: false
                   is_secondary: false
                 options_show_only_used: false
                 options_show_only_used_filtered: false
                 options_hide_when_empty: false
+                options_show_items_count: false
+              field_event_state_target_id:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: 0
               field_event_date_value:
                 plugin_id: bef_datepicker
                 advanced:
                   placeholder_text: ''
                   collapsible: false
+                  collapsible_disable_automatic_open: false
                   is_secondary: false
-              field_event_date_end_value_1:
+              field_event_date_value_1:
                 plugin_id: bef_datepicker
                 advanced:
                   placeholder_text: ''
                   collapsible: false
+                  collapsible_disable_automatic_open: false
                   is_secondary: false
-              field_event_state_target_id:
-                plugin_id: bef
-                advanced:
-                  rewrite:
-                    filter_rewrite_values: ''
-                  collapsible: false
-                  is_secondary: false
-                select_all_none: false
-                select_all_none_nested: false
-                display_inline: false
-                options_show_only_used: false
-                options_show_only_used_filtered: false
-                options_hide_when_empty: false
       empty:
         area:
           id: area
@@ -1236,10 +1269,10 @@ display:
           default_action: default
           exception:
             value: all
-            title_enable: false
-            title: All
-          title_enable: false
-          title: ''
+            title_enable: true
+            title: 'Past meetings'
+          title_enable: true
+          title: '{{ arguments.nid }} | Past meetings'
           default_argument_type: raw
           default_argument_options:
             index: 0
@@ -1254,11 +1287,16 @@ display:
             sort_order: asc
             number_of_records: 0
             format: default_summary
-          specify_validation: false
+          specify_validation: true
           validate:
-            type: none
-            fail: 'not found'
-          validate_options: {  }
+            type: 'entity:node'
+            fail: empty
+          validate_options:
+            bundles:
+              advisory_body: advisory_body
+            access: true
+            operation: view
+            multiple: 0
           break_phrase: false
           not: false
       filters:
@@ -1372,7 +1410,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: string
-          operator: '='
+          operator: contains
           value: ''
           group: 1
           exposed: true
@@ -1414,6 +1452,69 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        field_event_state_target_id:
+          id: field_event_state_target_id
+          table: node__field_event_state
+          field: field_event_state_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_event_state_target_id_op
+            label: 'Event type'
+            description: ''
+            use_operator: false
+            operator: field_event_state_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_event_state_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              request_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: event_state
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+          save_lineage: false
+          force_deepest: false
+          parent: null
+          level_labels: ''
+          hierarchy_depth: 0
+          required_depth: 0
+          none_label: '- Please select -'
         field_event_date_value:
           id: field_event_date_value
           table: node__field_event_date
@@ -1422,7 +1523,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: datetime
-          operator: '='
+          operator: '>='
           value:
             min: ''
             max: ''
@@ -1455,6 +1556,7 @@ display:
               tentative_rulings_editor: '0'
               messaging_manager: '0'
               request_manager: '0'
+              advisory_body_manager: '0'
             min_placeholder: ''
             max_placeholder: ''
             placeholder: ''
@@ -1470,15 +1572,15 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-        field_event_date_end_value_1:
-          id: field_event_date_end_value_1
+        field_event_date_value_1:
+          id: field_event_date_value_1
           table: node__field_event_date
-          field: field_event_date_end_value
+          field: field_event_date_value
           relationship: none
           group_type: group
           admin_label: ''
           plugin_id: datetime
-          operator: '='
+          operator: '<='
           value:
             min: ''
             max: ''
@@ -1487,14 +1589,14 @@ display:
           group: 1
           exposed: true
           expose:
-            operator_id: field_event_date_end_value_1_op
+            operator_id: field_event_date_value_1_op
             label: 'End date'
             description: ''
             use_operator: false
-            operator: field_event_date_end_value_1_op
+            operator: field_event_date_value_1_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: field_event_date_end_value_1
+            identifier: field_event_date_value_1
             required: false
             remember: false
             multiple: false
@@ -1511,6 +1613,7 @@ display:
               tentative_rulings_editor: '0'
               messaging_manager: '0'
               request_manager: '0'
+              advisory_body_manager: '0'
             min_placeholder: ''
             max_placeholder: ''
             placeholder: ''
@@ -1530,16 +1633,46 @@ display:
         operator: AND
         groups:
           1: AND
+      style:
+        type: default
+        options:
+          grouping:
+            -
+              field: field_event_date_1
+              rendered: true
+              rendered_strip: false
+          row_class: ''
+          default_row_class: true
+          uses_fields: true
+      row:
+        type: 'entity:node'
+        options:
+          view_mode: teaser
       defaults:
         empty: false
         pager: false
         exposed_form: false
+        style: false
+        row: false
+        fields: false
         arguments: false
         filters: false
         filter_groups: false
+        header: false
       display_description: ''
+      header:
+        result:
+          id: result
+          table: views
+          field: result
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: result
+          empty: false
+          content: 'Displaying @start - @end of @total'
       display_extenders: {  }
-      path: past-meetings/%
+      path: past-meetings/%node
     cache_metadata:
       max-age: -1
       contexts:
@@ -1547,8 +1680,8 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
         - 'config:field.storage.node.field_event_date'
-        - 'config:field.storage.node.field_granicus_link'
