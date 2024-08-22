@@ -39,6 +39,7 @@ function jcc_custom_page_attachments(array &$attachments): void {
     // 2.0 styling is drab and hard to use.
     $attachments['#attached']['library'][] = 'jcc_custom/admin_layout_paragraphs_edit_override';
     $attachments['#attached']['library'][] = 'jcc_custom/gin-admin-elevated';
+    $attachments['#attached']['library'][] = 'jcc_custom/location_form';
   }
 }
 
@@ -261,12 +262,9 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
                 }
             }
         }
-
       }
-          // Add custom validation handler to the form
+    // Add custom validation handler to the form
     $form['#validate'][] = 'jcc_custom_form_validate';
-    // Prevent redirect for debugging
-    //$form['actions']['submit']['#submit'][] = 'jcc_custom_node_form_submit';
       break;
   }
 

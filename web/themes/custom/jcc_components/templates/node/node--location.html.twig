@@ -83,6 +83,7 @@
   {% set matters = matters|merge(item) %}
 {% endfor %}
 
+
 {# set the lead content address and phone to be used in hero section #}
 {% set lead_content %}
   <div class="jcc-location__location jcc-small">
@@ -112,6 +113,16 @@
 {% endfor %}
 
 
+
+{% if content.field_services_overview %}
+  {% set service_overview = content.field_services_overview %}
+{% endif %}
+
+{% if content.field_case_served_overview %}
+  {% set case_served_overview =  content.field_case_served_overview['0']['#context']['value'] %}
+{% endif %}
+
+
 {# set variable to be used in content section #}
 {% set main_content = {
     entries: [
@@ -125,6 +136,7 @@
         {
             type: 'section',
             heading: "Case Served",
+            content: case_served_overview|raw ,
             width: "partial",
             name: "location_details",
             sub_sections: [
@@ -138,6 +150,7 @@
             type: 'section',
             width: "partial",
             heading: "Services",
+            content: service_overview,
             name: "location_details",
             services:add_services 
         },
@@ -150,10 +163,10 @@
         {
             type: 'section',
             location: {
-                address: "400 County Center, Redwood City, CA 94063",
+                address: address,
                 phone: {
-                  text: "(510) 690-2700",
-                  url: "tel:510-690-2700",
+                  text: phone,
+                  url: phone_url,
                 },
                 map: {
                   html: content.field_geolocation.0

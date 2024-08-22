@@ -200,11 +200,14 @@ function buildBodyContent($services, $variables) {
   $content = '';
   // Display static building hours and phone number information.
   $space_one = "&nbsp;";
-  $content .= "<b>Phone Number: </b>" . $services['phone_number'] . "<br />";
+  $content .= '<div class ="service-info">';
+  $content .= '<div class="flex-item"><b>Phone Number:</b></div>' . '<div class="flex-item">'. $services['phone_number'] . '</div>';
+  $content .= '</div>';
+  $content .= '<div class ="service-info">';
   if(isset($services['email']) && $services['email'] != ""){
-    $content .= '<b>Email</b>:'.$space_one. Markup::create($services['email']) . "<br />";
+    $content .= '<div class="flex-item"><b>Email:</b></div>' . '<div class="flex-item">'. $services['email'] . '</div>';
   }
-  
+  $content .= '</div>';
   $previous_hour_type = "";
   $is_first_row = true; // Initialize the first row flag
   $content .= '<div class="hours">';
