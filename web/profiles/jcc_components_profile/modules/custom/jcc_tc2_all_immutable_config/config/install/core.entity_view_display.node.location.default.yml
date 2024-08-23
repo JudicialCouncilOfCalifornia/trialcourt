@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.location.field_brow
     - field.field.node.location.field_building_hours_from
     - field.field.node.location.field_building_hours_to
+    - field.field.node.location.field_case_served_overview
     - field.field.node.location.field_cases_served
     - field.field.node.location.field_components
     - field.field.node.location.field_geolocation
@@ -16,6 +17,7 @@ dependencies:
     - field.field.node.location.field_location_type
     - field.field.node.location.field_matters_served
     - field.field.node.location.field_phone
+    - field.field.node.location.field_services_overview
     - field.field.node.location.field_weight
     - filter.format.plain_text
     - node.type.location
@@ -88,6 +90,13 @@ content:
       format_type: friendly_short
     third_party_settings: {  }
     weight: 12
+    region: content
+  field_case_served_overview:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 18
     region: content
   field_cases_served:
     type: entity_reference_label
@@ -659,6 +668,13 @@ content:
       title: ''
     third_party_settings: {  }
     weight: 3
+    region: content
+  field_services_overview:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 17
     region: content
   field_weight:
     type: default_weight

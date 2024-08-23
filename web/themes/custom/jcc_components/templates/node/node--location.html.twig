@@ -71,6 +71,8 @@
  */
 #}
 {{ attach_library('jcc_components/location-page') }} 
+
+{{ kint(content.body)}}
 {# get the version of page to be rendered: new or legacy #}
 {% set version = content.field_location_page_version[0]['#markup']  %}
 
@@ -203,6 +205,13 @@
       classes: []
     }
   } %}
+  {% include "@molecules/location/location.twig" with {
+    location: {
+      container: 'container',
+      additional: content.body,
+      classes: []
+    }
+  } %}
 {% elseif version == 'New' %}
   {# render hero section #}
   {% include '@molecules/hero/hero.twig' with {
@@ -221,13 +230,20 @@
         layout: "location-details"
       }
   } %}
-  {# render content section #}
+  {# render new layout for location details #}
   {% include '@molecules/location-details/location-details.twig' with {
     location_details: {
       main: main_content ,
       aside: aside_content,
       }
   } %}
-
+ {# Adds old location detail body #}
+  {% include "@molecules/location/location.twig" with {
+    location: {
+      container: 'container',
+      additional: content.body,
+      classes: []
+    }
+  } %}
 {% endif %}
 

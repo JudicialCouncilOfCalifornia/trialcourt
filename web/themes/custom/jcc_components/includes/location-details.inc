@@ -98,7 +98,7 @@ function extractServiceDetails($paragraph) {
       'email' => $paragraph->hasField('field_service_email_address') ? Html::escape($paragraph->get('field_service_email_address')->value) : '',
       'fax' => $paragraph->hasField('field_service_fax_number') ? Html::escape($paragraph->get('field_service_fax_number')->value) : '',
       'additional_info' => $paragraph->hasField('field_additional_information') ? Html::escape($paragraph->get('field_additional_information')->value) : '',
-      'service_appointment' =>  $paragraph->hasField('field_additional_information') ? createLink($paragraph->get('field_service_appointment')->getValue()) : '',
+      'service_appointment' =>  $paragraph->hasField('field_service_appointment') ? createLink($paragraph->get('field_service_appointment')->getValue()) : '',
       'categories' => $paragraph->hasField('field_service_category') ? array_map(function($term_reference) {
           return Html::escape($term_reference->getName());
       }, $paragraph->get('field_service_category')->referencedEntities()) : []
@@ -110,9 +110,9 @@ function extractServiceDetails($paragraph) {
  * Create link from url value
  */
 function createLink($appointment_link){
-  if(isset($appointment_link['url'] ) && isset($appointment_link['url'] )){
+  if(!empty($appointment_link )){
     $appointment_link['url']    =  $appointment_link['0']['uri'];
-    $appointment_link['title']  = $appointment_link['0']['title'] ? $appointment_link['0']['title'] : 'Schedule an Appointment';
+    $appointment_link['title']  = $appointment_link['0']['title'] != "" ? $appointment_link['0']['title'] : 'Schedule an Appointment';
     return '<a href ="'. $appointment_link['title'].'">'. $appointment_link['title'] .'</a>';
   }
 }
@@ -230,18 +230,15 @@ function buildBodyContent($services, $variables) {
 function formatHourRow($hour, $previous_hour_type, $is_first_row ,$appointment) {
   $row_content = '';
   $type = '<div class="flex-item">' . ucwords(str_replace('_', ' ', $hour['type'])) . ":" . '</div>';
-  $appointment_string = '<br />'.$appointment ;
+  $appointment_string = ( in_array($hour['type'],['in_person']) && $hour['is_repeated'] == false)?'<br />'.$appointment:'' ;
   $time_span = '<div class="flex-item">' . $hour['days'] . "&nbsp" . $hour['from'] . " - " . $hour['to'].$appointment_string .'</div>';
   if ( $hour['mon-fri'] != 1 && $hour['is_repeated'] == false && $previous_hour_type != $hour['type']) {
-      $appointment_col = ($hour['type'] == "phone")? $appointment : "";
       $row_content .= '<div class="hour-row">' . $type . $time_span .'</div>';
   } else if ($hour['mon-fri']!= 1 && $hour['is_repeated'] == true) {
       // Modified for when hours are repeated
-      $appointment_col = ($hour['type'] == "phone")? $appointment : "";
       $row_content .= '<div class="hour-row">' . $type . $time_span . '</div>';
-  } else if ($hour['mon-fri']== 1) {
+  } else if ($hour['mon-fri']== 1 ) {
       // Special formatting for Monday-Friday hours if treated differently
-      $appointment_col = ($hour['type'] == "phone")? $appointment : "";
       $row_content .= '<div class="hour-row">' . $type . $time_span  . '</div>';
   }
   return $row_content;
