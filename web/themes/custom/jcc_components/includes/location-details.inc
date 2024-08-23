@@ -208,6 +208,11 @@ function buildBodyContent($services, $variables) {
     $content .= '<div class="flex-item"><b>Email:</b></div>' . '<div class="flex-item">'. $services['email'] . '</div>';
   }
   $content .= '</div>';
+  $content .= '<div class ="service-info">';
+  if(isset($services['fax']) && $services['fax'] != ""){
+    $content .= '<div class="flex-item"><b>Fax:</b></div>' . '<div class="flex-item">'. $services['fax'] . '</div>';
+  }
+  $content .= '</div>';
   $previous_hour_type = "";
   $is_first_row = true; // Initialize the first row flag
   $content .= '<div class="hours">';
@@ -221,8 +226,10 @@ function buildBodyContent($services, $variables) {
   }
 
   $content .= '</div>';
-  // Uncomment to always display additional information at the end
-  // $content .= "<b>Additional Info:</b> " . $services['additional_info'] . "<br />";
+  $content .= '<div class ="service-info">';
+  if(isset($services['additional_info']) && $services['additional_info'] != ""){
+    $content .= '<div class="flex-item additional_info">'. $services['additional_info'] . '</div>';
+  }
   return $content;
 }
 
@@ -231,7 +238,7 @@ function formatHourRow($hour, $previous_hour_type, $is_first_row ,$appointment) 
   $row_content = '';
   $type = '<div class="flex-item">' . ucwords(str_replace('_', ' ', $hour['type'])) . ":" . '</div>';
   $appointment_string = ( in_array($hour['type'],['in_person']) && $hour['is_repeated'] == false)?'<br />'.$appointment:'' ;
-  $time_span = '<div class="flex-item">' . $hour['days'] . "&nbsp" . $hour['from'] . " - " . $hour['to'].$appointment_string .'</div>';
+  $time_span = '<div class="flex-item">' . $hour['days'] . "&nbsp" . $hour['from'] . "-" . $hour['to'].$appointment_string .'</div>';
   if ( $hour['mon-fri'] != 1 && $hour['is_repeated'] == false && $previous_hour_type != $hour['type']) {
       $row_content .= '<div class="hour-row">' . $type . $time_span .'</div>';
   } else if ($hour['mon-fri']!= 1 && $hour['is_repeated'] == true) {

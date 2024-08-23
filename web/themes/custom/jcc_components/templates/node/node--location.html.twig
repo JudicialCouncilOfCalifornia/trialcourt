@@ -181,7 +181,7 @@
 
 
 
-{% if version == 'Legacy' or version == '_none' %}
+{% if version == 'Legacy' or version == '' or version is null %}
   {% include "@molecules/location/location.twig" with {
     location: {
       container: 'container',
