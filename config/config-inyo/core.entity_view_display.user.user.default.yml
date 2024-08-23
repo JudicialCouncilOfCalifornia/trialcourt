@@ -1,20 +1,30 @@
-uuid: b02bc5c3-2875-46c7-ae82-98975673e388
+uuid: 08f82296-3547-4bd2-8973-acd7851d3fa1
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.user.user.field_group
     - field.field.user.user.field_jcc_messaging_center_group
     - field.field.user.user.field_last_password_reset
     - field.field.user.user.field_password_expiration
+    - field.field.user.user.field_pending_expire_sent
   module:
     - user
 _core:
-  default_config_hash: xf_knn0sXhztHiSMw1r477I_l1n6Wx3p2Mn_7VsgHPo
+  default_config_hash: S0DW5JBeMUxP-82TbbtlNEJU9XhK3vYzcavucVBQIY8
 id: user.user.default
 targetEntityType: user
 bundle: user
 mode: default
 content:
+  field_group:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 51
+    region: content
   field_jcc_messaging_center_group:
     type: entity_reference_label
     label: above
@@ -39,5 +49,6 @@ hidden:
   entity_print_view_word_docx: true
   field_last_password_reset: true
   field_password_expiration: true
+  field_pending_expire_sent: true
   langcode: true
   search_api_excerpt: true

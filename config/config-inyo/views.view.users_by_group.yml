@@ -1,11 +1,11 @@
-uuid: a9480077-cc76-4308-b3b2-fd2394364241
+uuid: a275e54a-7318-4971-8a74-f56833ad793c
 langcode: en
 status: true
 dependencies:
   module:
     - user
 _core:
-  default_config_hash: UGxyf-Eo2MRF8AknrSVUGCNkRVIw024UiRumhbc4wNA
+  default_config_hash: KGEhUM4Fx5AgVpgwhGm_jq2gJG0-mOt6l5OsQzIzxHE
 id: users_by_group
 label: 'Users by group'
 module: views
@@ -231,8 +231,9 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       access:
-        type: none
-        options: {  }
+        type: perm
+        options:
+          perm: 'access user profiles'
       cache:
         type: tag
         options: {  }
@@ -272,7 +273,7 @@ display:
             type: none
             fail: 'not found'
           validate_options: {  }
-          break_phrase: true
+          break_phrase: false
           not: false
       filters:
         status:
@@ -320,4 +321,5 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - user.permissions
       tags: {  }

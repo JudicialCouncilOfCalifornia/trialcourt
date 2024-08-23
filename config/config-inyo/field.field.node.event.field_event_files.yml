@@ -1,0 +1,36 @@
+uuid: a3f6aa6d-c665-475b-bfab-4073ffa22d73
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_files
+    - media.type.file
+    - node.type.event
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: 4h-lvP6s4nfQTwkkday9o9vpNx4nId0JrjxIF4XawwM
+id: node.event.field_event_files
+field_name: field_event_files
+entity_type: node
+bundle: event
+label: 'Event files'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      file: file
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

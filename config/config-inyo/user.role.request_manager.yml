@@ -1,7 +1,9 @@
+uuid: 52163c6f-6ffc-44e4-85e8-af0a348789de
 langcode: en
 status: true
 dependencies:
   config:
+    - filter.format.body
     - filter.format.minimal
     - filter.format.snippet
     - media.type.file
@@ -27,11 +29,12 @@ dependencies:
     - rebuild_cache_access
     - scheduler
     - search_api_autocomplete
-    - sitemap
     - system
     - taxonomy
     - toolbar
     - userprotect
+_core:
+  default_config_hash: MfcPfFfFd_7aG8Tn87Wf-599WfP6el9VGC0VqgwTjg8
 id: request_manager
 label: 'Solicitation request manager'
 weight: 0
@@ -93,6 +96,7 @@ permissions:
   - 'use editorial transition create_new_draft'
   - 'use editorial transition publish'
   - 'use search_api_autocomplete for search'
+  - 'use text format body'
   - 'use text format minimal'
   - 'use text format snippet'
   - userprotect.account.edit

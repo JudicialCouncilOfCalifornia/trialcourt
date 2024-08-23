@@ -1,0 +1,36 @@
+uuid: 54eb5b2e-5bd4-40f4-b578-20a05dcaea47
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_criteria_architect
+    - node.type.facilities
+    - taxonomy.vocabulary.agency
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: rbYVGv3pOyfZ-_tjDeZDG5v-WxX23_UUe5VurcXAUew
+id: node.facilities.field_criteria_architect
+field_name: field_criteria_architect
+entity_type: node
+bundle: facilities
+label: 'Criteria Architect'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      agency: agency
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,3 +1,4 @@
+uuid: 437e9796-865a-475f-888a-5db7abb70437
 langcode: en
 status: true
 dependencies:
@@ -5,24 +6,34 @@ dependencies:
     - field.field.media.image.field_category
     - field.field.media.image.field_matters_served
     - field.field.media.image.field_media_caption
+    - field.field.media.image.field_media_citation
     - field.field.media.image.field_media_image
     - field.field.media.image.field_tags
-    - image.style.large
+    - image.style.max_650x650
     - media.type.image
   module:
     - svg_image
     - text
+_core:
+  default_config_hash: 69z7M1poavlFVpavcwgPC0UIoslZlq3YrA8W2ztgQhs
 id: media.image.default
 targetEntityType: media
 bundle: image
 mode: default
 content:
+  field_media_citation:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
   field_media_image:
     type: image
     label: visually_hidden
     settings:
       image_link: ''
-      image_style: large
+      image_style: max_650x650
       svg_attributes:
         width: null
         height: null
@@ -40,6 +51,7 @@ hidden:
   field_category: true
   field_matters_served: true
   field_media_caption: true
+  field_media_citation: true
   field_tags: true
   langcode: true
   name: true

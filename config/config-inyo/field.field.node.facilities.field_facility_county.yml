@@ -1,0 +1,36 @@
+uuid: 3db55a4b-2832-4b0e-bf63-d42720fb2c91
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_facility_county
+    - node.type.facilities
+    - taxonomy.vocabulary.county
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: IjZXWdt7gj71iAUfkA9RBOeCJFkkWEqZZq0I_0vUemY
+id: node.facilities.field_facility_county
+field_name: field_facility_county
+entity_type: node
+bundle: facilities
+label: County
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      county: county
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

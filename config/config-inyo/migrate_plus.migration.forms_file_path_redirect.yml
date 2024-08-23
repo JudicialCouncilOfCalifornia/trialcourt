@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: d60a9sC2eSWJGJJUHZPBLi1DIqmKO9OeT6ljzMfd9dA
+  default_config_hash: oSrLxX5_LFAo5jrnm-Jv36yqR2ptthfqHIPHAkH9SJU
 id: forms_file_path_redirect
 class: null
 field_plugin_method: null
@@ -34,7 +34,7 @@ source:
       type: string
   constants:
     uri_prefix: 'internal:'
-    document_path: documents/
+    document_path: /system/files/
     status_code: 301
 process:
   pseudo_base_path:
@@ -49,6 +49,15 @@ process:
     -
       plugin: callback
       callable: urldecode
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: str_replace
+      search:
+        - ' '
+      replace:
+        - '-'
     -
       plugin: skip_on_empty
       method: process
@@ -71,7 +80,6 @@ process:
     plugin: concat
     source:
       - constants/uri_prefix
-      - '@pseudo_base_path'
       - constants/document_path
       - '@pseudo_destination_filename'
   status_code: constants/status_code

@@ -12,10 +12,8 @@ dependencies:
     - field.field.node.news.field_news_type
     - field.field.node.news.field_node_reference
     - node.type.news
-    - workflows.workflow.editorial
   module:
     - allowed_formats
-    - content_moderation
     - datetime
     - media_library
     - paragraphs
@@ -23,8 +21,9 @@ dependencies:
     - scheduler
     - scheduler_content_moderation_integration
     - text
+    - workflow_buttons
 _core:
-  default_config_hash: NYpt37ynYEBrd9hoP49bi20NKTfvPlzLsnxd-9tGFuA
+  default_config_hash: 6N6q2lPvnh_ErVV1_4VoNEEUdFgVPUWFefpgQKN98lU
 id: node.news.default
 targetEntityType: node
 bundle: news
@@ -116,10 +115,11 @@ content:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
-    type: moderation_state_default
+    type: workflow_buttons
     weight: 20
     region: content
-    settings: {  }
+    settings:
+      show_current_state: true
     third_party_settings: {  }
   path:
     type: path

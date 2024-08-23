@@ -1,6 +1,9 @@
+uuid: e4513336-b6c1-4c74-9f41-7821c1a21ab2
 langcode: en
 status: true
 dependencies: {  }
+_core:
+  default_config_hash: A16EqHJWvkXOA2a87DCiMuehTWpz5sihToR-Q20JJuY
 id: node_subpage
 class: null
 field_plugin_method: null
@@ -72,71 +75,96 @@ process:
     plugin: default_value
     default_value: full_html
   hero:
-    - plugin: explode
+    -
+      plugin: explode
       delimiter: ','
       source: title
-    - plugin: callback
+    -
+      plugin: callback
       callable: trim
-    - plugin: multiple_values
-    - plugin: migration_lookup
+    -
+      plugin: multiple_values
+    -
+      plugin: migration_lookup
       migration: paragraphs_hero_hangover
-    - plugin: sub_process
+    -
+      plugin: sub_process
       process:
         target_id: '0'
         target_revision_id: '1'
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       method: row
       message: 'No hero component to add to node.'
   bodies:
-    - plugin: explode
+    -
+      plugin: explode
       delimiter: ','
       source: bodies
-    - plugin: callback
+    -
+      plugin: callback
       callable: trim
-    - plugin: multiple_values
-    - plugin: migration_lookup
+    -
+      plugin: multiple_values
+    -
+      plugin: migration_lookup
       migration: paragraphs_body
-    - plugin: sub_process
+    -
+      plugin: sub_process
       process:
         target_id: '0'
         target_revision_id: '1'
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       method: row
       message: 'No body components to add to node.'
   accordions:
-    - plugin: explode
+    -
+      plugin: explode
       delimiter: ','
       source: accordions
-    - plugin: callback
+    -
+      plugin: callback
       callable: trim
-    - plugin: multiple_values
-    - plugin: migration_lookup
+    -
+      plugin: multiple_values
+    -
+      plugin: migration_lookup
       migration: paragraphs_accordion
-    - plugin: sub_process
+    -
+      plugin: sub_process
       process:
         target_id: '0'
         target_revision_id: '1'
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       method: row
       message: 'No accordions to add to node.'
   tabs:
-    - plugin: explode
+    -
+      plugin: explode
       delimiter: ','
       source: tabs
-    - plugin: callback
+    -
+      plugin: callback
       callable: trim
-    - plugin: multiple_values
-    - plugin: migration_lookup
+    -
+      plugin: multiple_values
+    -
+      plugin: migration_lookup
       migration: paragraphs_tabs
-    - plugin: sub_process
+    -
+      plugin: sub_process
       process:
         target_id: '0'
         target_revision_id: '1'
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       method: row
       message: 'No tabs to add to node.'
   field_components:
-    - plugin: merge
+    -
+      plugin: merge
       source:
         - '@hero'
         - '@bodies'

@@ -1,0 +1,36 @@
+uuid: 6a2928e9-b4e8-4c87-bed5-770f7930a7a3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_code
+    - media.type.publication
+    - taxonomy.vocabulary.code
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: '-ojZMER74SNLXPJlDq3a2RpOj1vr1_B_PZ6SadIGKik'
+id: media.publication.field_code
+field_name: field_code
+entity_type: media
+bundle: publication
+label: Code
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      code: code
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

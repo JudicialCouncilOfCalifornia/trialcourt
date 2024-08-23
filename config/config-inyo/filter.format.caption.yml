@@ -1,9 +1,13 @@
+uuid: 07fd8b26-e0f2-4c3d-91e6-18501be63f0d
 langcode: en
 status: true
 dependencies:
   module:
+    - emptyparagraphkiller
     - glossify_taxonomy
     - linkit
+_core:
+  default_config_hash: TJ23B2S13AtAPqRUCojdy-0dDjO5QmkXTaZd36wf-FM
 name: Caption
 format: caption
 weight: -6
@@ -20,7 +24,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <a href hreflang title data-entity-substitution data-entity-type data-entity-uuid> <u> <s>'
+      allowed_html: '<em> <strong> <a href hreflang title data-entity-substitution data-entity-type data-entity-uuid data-link-*> <u> <s> <p dir>'
       filter_html_help: true
       filter_html_nofollow: false
   filter_htmlcorrector:
@@ -54,3 +58,9 @@ filters:
     weight: 0
     settings:
       title: true
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
+    status: true
+    weight: 0
+    settings: {  }

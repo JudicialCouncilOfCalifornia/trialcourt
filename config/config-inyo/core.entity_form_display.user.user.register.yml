@@ -1,12 +1,14 @@
-uuid: 80baaafc-7c06-4e8e-bacf-6bb47c460012
+uuid: 11bc046b-39d1-4fcb-bae2-8ded8fbeb108
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_form_mode.user.register
+    - field.field.user.user.field_group
     - field.field.user.user.field_jcc_messaging_center_group
     - field.field.user.user.field_last_password_reset
     - field.field.user.user.field_password_expiration
+    - field.field.user.user.field_pending_expire_sent
   module:
     - user
 _core:
@@ -29,8 +31,10 @@ content:
     third_party_settings: {  }
 hidden:
   contact: true
+  field_group: true
   field_last_password_reset: true
   field_password_expiration: true
+  field_pending_expire_sent: true
   langcode: true
   language: true
   path: true

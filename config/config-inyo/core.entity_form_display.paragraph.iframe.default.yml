@@ -5,12 +5,13 @@ dependencies:
   config:
     - field.field.paragraph.iframe.field_aspect_ratio
     - field.field.paragraph.iframe.field_link
+    - field.field.paragraph.iframe.field_manual_height
     - field.field.paragraph.iframe.field_use_iframe_resizer
     - paragraphs.paragraphs_type.iframe
   module:
     - link
 _core:
-  default_config_hash: 5jZOIsXtrKA7f-qIddWIhyfoUCCWmRdnHdu97hybjYc
+  default_config_hash: CY5EaEA7Jp9hIUGl2hTEBKGHOL5wY5WJu8fMKl31EfU
 id: paragraph.iframe.default
 targetEntityType: paragraph
 bundle: iframe
@@ -29,6 +30,14 @@ content:
     settings:
       placeholder_url: ''
       placeholder_title: ''
+    third_party_settings: {  }
+  field_manual_height:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_use_iframe_resizer:
     type: boolean_checkbox
