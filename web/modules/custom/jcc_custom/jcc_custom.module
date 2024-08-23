@@ -263,8 +263,6 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
             }
         }
       }
-    // Add custom validation handler to the form
-    $form['#validate'][] = 'jcc_custom_form_validate';
       break;
   }
 
@@ -329,49 +327,7 @@ function processServiceHours(&$form, $form_state ,$service_index, $hour_index, $
         $key_service_hour_buisness_same => ['checked' => true]
     ]
   ];
-  //kint($additional_arguments['hour_index'])
-  $additional_values = $form_state->get('additional_arguments') ?? [];
-  // Store additional arguments for validation
-  $additional_values[] = ['service_index' => $service_index, 'hour_index' => $hour_index];
-  $form_state->set('additional_arguments', $additional_values);
 }
-
-/**
- * Custom validation handler.
- */
-function jcc_custom_form_validate(&$form, &$form_state) {
-  $additional_arguments = $form_state->get('additional_arguments');
-  //kint($additional_arguments);
-
-  if ($additional_arguments) {
-    foreach ($additional_arguments as $item) {
-      // Retrieve values from the form state
-      $service_days_type = $form_state->getValue(['field_add_services', $item['service_index'], 'subform', 'field_location_service_hours', $item['hour_index'], 'subform', 'field_weekdays_mon_fri', 'value']);
-      $service_days = $form_state->getValue(['field_add_services', $item['service_index'], 'subform', 'field_location_service_hours', $item['hour_index'], 'subform', 'field_service_days']);
-      //kint($service_day);
-      if ($service_days_type == 0 && $service_days == null) { // Check if service days type is not selected
-          // Set an error if the required field is empty
-           // Set an error for the form element with a key of "title".
-           //subform-field-location-service-hours-1-subform-field-service-days
-      $error_key = 'edit-field-add-services-'.$item['service_index'].'-subform-field-location-service-hours-'. $item['hour_index'] .'-subform-field-service-days';
-      //kint($error_key[0]);
-      //$error_key ="alpha";
-      $form_state->setErrorByName(
-        'field_add_services[' . $item['service_index'] . '][subform][field_location_service_hours][' . $item['hour_index'] . '][subform][field_service_days]',
-        t('Service days are required. <a href="#@error_key">Please fix this field</a>', ['@error_key' => $error_key], ['context' => 'markup'])
-      );     
-      }
-    }
-  }
-}
-
-/**
- * Custom submit handler to prevent redirect for debugging.
- */
-function jcc_custom_node_form_submit(&$form, &$form_state) {
-  $form_state->setRedirect(FALSE); // Prevent redirection for debugging purposes
-}
-
 
 /**
  * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
