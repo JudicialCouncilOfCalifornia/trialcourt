@@ -6,15 +6,14 @@ dependencies:
     - field.field.node.roc_rule.field_roc_rule_id
     - field.field.node.roc_rule.field_roc_rule_parent_index
     - node.type.roc_rule
-    - workflows.workflow.roc_editorial
   module:
     - allowed_formats
-    - content_moderation
     - maxlength
     - path
     - scheduler
     - scheduler_content_moderation_integration
     - text
+    - workflow_buttons
 id: node.roc_rule.default
 targetEntityType: node
 bundle: roc_rule
@@ -55,10 +54,11 @@ content:
     settings: {  }
     third_party_settings: {  }
   moderation_state:
-    type: moderation_state_default
+    type: workflow_buttons
     weight: 5
     region: content
-    settings: {  }
+    settings:
+      show_current_state: true
     third_party_settings: {  }
   path:
     type: path
