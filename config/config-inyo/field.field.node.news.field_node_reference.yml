@@ -1,0 +1,35 @@
+uuid: ff37aeb4-47ab-4498-95d2-c1a23040f92c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_node_reference
+    - node.type.news
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: TU8QAcqDtXtYihOYekj9S2_AW9VIco2qKOQimIfZnEY
+id: node.news.field_node_reference
+field_name: field_node_reference
+entity_type: node
+bundle: news
+label: 'Related News'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      news: news
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

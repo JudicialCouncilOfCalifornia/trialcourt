@@ -12,10 +12,8 @@ dependencies:
     - field.field.node.location.field_phone
     - field.field.node.location.field_weight
     - node.type.location
-    - workflows.workflow.editorial
   module:
     - address
-    - content_moderation
     - geolocation
     - paragraphs
     - path
@@ -24,8 +22,9 @@ dependencies:
     - telephone
     - text
     - weight
+    - workflow_buttons
 _core:
-  default_config_hash: 1d_UWqzqrs8jEe3pDrCpB8oae63fhbCq5HLOdkpt1W8
+  default_config_hash: UlnHONECObgsOfbTQc9eY8IqKOS3HTJqB6UWKZXnJco
 id: node.location.default
 targetEntityType: node
 bundle: location
@@ -108,10 +107,11 @@ content:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
-    type: moderation_state_default
+    type: workflow_buttons
     weight: 23
     region: content
-    settings: {  }
+    settings:
+      show_current_state: true
     third_party_settings: {  }
   path:
     type: path

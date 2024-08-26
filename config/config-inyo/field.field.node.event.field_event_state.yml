@@ -1,0 +1,36 @@
+uuid: aa2b9387-2aa0-414c-a450-ab57e211b75c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_state
+    - node.type.event
+    - taxonomy.vocabulary.event_state
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+_core:
+  default_config_hash: poTxhPmkStC6JyPNMJWrlkTZbwxeeuooa1x7p33Xb5g
+id: node.event.field_event_state
+field_name: field_event_state
+entity_type: node
+bundle: event
+label: 'Event type'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      event_state: event_state
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -2,6 +2,8 @@ uuid: 40fcd2f2-dad4-444a-9c01-edaf2fc0eb7f
 langcode: en
 status: true
 dependencies: {  }
+_core:
+  default_config_hash: wNuD0xJIkUwQzXv72vk-sYALCq9rTqBwrJODPE6klr4
 id: jcc_requests_active_paragraphs_important_dates
 class: null
 field_plugin_method: null
@@ -10,10 +12,10 @@ migration_tags:
   - paragraphs
   - requests
 migration_group: jcc_requests_rfps
-label: 'JCC: Requests (RFPs): Active: Paragraph important dates'
+label: 'JCC: Solicitation requests: Active: Paragraphs: Important dates'
 source:
   plugin: csv
-  path: modules/custom/jcc_elevated_rfp_solicitation/data/jcc_rfp_active_paragraphs_important_dates.csv
+  path: modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_active_paragraphs_important_dates.csv
   delimiter: ','
   header_offset: 0
   fields:
@@ -58,12 +60,12 @@ process:
   field_heading: field_heading
   field_date_range/value:
     plugin: format_date
-    from_format: 'Y-m-d'
+    from_format: Y-m-d
     to_format: 'Y-m-d\TH:i:s'
     source: field_date_range_start
   field_date_range/end_value:
     plugin: format_date
-    from_format: 'Y-m-d'
+    from_format: Y-m-d
     to_format: 'Y-m-d\TH:i:s'
     source: field_date_range_end
   field_text/value: field_text

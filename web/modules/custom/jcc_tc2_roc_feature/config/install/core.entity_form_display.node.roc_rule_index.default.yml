@@ -9,10 +9,8 @@ dependencies:
     - field.field.node.roc_rule_index.field_roc_rule_media
     - field.field.node.roc_rule_index.field_roc_rule_revised_date
     - node.type.roc_rule_index
-    - workflows.workflow.roc_editorial
   module:
     - allowed_formats
-    - content_moderation
     - datetime
     - field_group
     - layout_paragraphs
@@ -22,6 +20,7 @@ dependencies:
     - scheduler
     - scheduler_content_moderation_integration
     - text
+    - workflow_buttons
 third_party_settings:
   field_group:
     group_tabs:
@@ -170,10 +169,11 @@ content:
     settings: {  }
     third_party_settings: {  }
   moderation_state:
-    type: moderation_state_default
+    type: workflow_buttons
     weight: 4
     region: content
-    settings: {  }
+    settings:
+      show_current_state: true
     third_party_settings: {  }
   path:
     type: path

@@ -1,9 +1,11 @@
+uuid: 9ab6b2e0-9848-4dd9-8449-6753895d5a58
 langcode: en
 status: true
 dependencies:
   config:
     - field.field.paragraph.hero_hangover.field_background
     - field.field.paragraph.hero_hangover.field_brow
+    - field.field.paragraph.hero_hangover.field_hangover_blurb
     - field.field.paragraph.hero_hangover.field_heading
     - field.field.paragraph.hero_hangover.field_lead
     - field.field.paragraph.hero_hangover.field_media
@@ -13,6 +15,8 @@ dependencies:
   module:
     - options
     - text
+_core:
+  default_config_hash: Ig-Zad1L6e_GvVukuQarI5bz40BeVfZWX3X6yy766dk
 id: paragraph.hero_hangover.default
 targetEntityType: paragraph
 bundle: hero_hangover
@@ -32,6 +36,13 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_hangover_blurb:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
     region: content
   field_heading:
     type: string

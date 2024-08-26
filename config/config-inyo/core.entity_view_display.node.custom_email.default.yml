@@ -1,9 +1,10 @@
-uuid: c3a83628-3c1d-4533-bc83-77be731312f1
+uuid: 68ae5dcc-b140-4a3f-9424-1abbfd4f53cb
 langcode: en
 status: true
 dependencies:
   config:
     - field.field.node.custom_email.body
+    - field.field.node.custom_email.field_email_footer
     - field.field.node.custom_email.field_messenger_link
     - node.type.custom_email
   module:
@@ -11,7 +12,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: 0AyUQZ4PIB1PYD2Pze8rHQlcxrVRoqW7P9UwbmyKLNk
+  default_config_hash: eCBW4gZ8ygdHYvU7cOww7oAaO-VQiD15u3DPrXcVpFg
 id: node.custom_email.default
 targetEntityType: node
 bundle: custom_email
@@ -23,6 +24,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 101
+    region: content
+  field_email_footer:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 104
     region: content
   field_messenger_link:
     type: link
