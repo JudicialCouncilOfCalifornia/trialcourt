@@ -200,19 +200,24 @@ function buildBodyContent($services, $variables) {
   $content = '';
   // Display static building hours and phone number information.
   $space_one = "&nbsp;";
-  $content .= '<div class ="service-info">';
-  $content .= '<div class="flex-item"><b>Phone Number:</b></div>' . '<div class="flex-item">'. $services['phone_number'] . '</div>';
-  $content .= '</div>';
-  $content .= '<div class ="service-info">';
+  if(isset($services['phone']) && $services['emai'] != ""){
+    $content .= '<div class ="service-info">';
+    $content .= '<div class="flex-item"><b>Phone Number:</b></div>' . '<div class="flex-item">'. $services['phone_number'] . '</div>';
+    $content .= '</div>';
+  }
+
   if(isset($services['email']) && $services['email'] != ""){
-    $content .= '<div class="flex-item"><b>Email:</b></div>' . '<div class="flex-item">'. $services['email'] . '</div>';
+    $content .= '<div class ="service-info">';
+    $content .= '<div class="flex-item"><b> Email:</b></a></div>'.'<a href="mailto:'.$services['email'].'"'.' class="mailto" data-extlink="">'. $services['email'] .'</a>'. '</div>';
+    $content .= '</div>';
   }
-  $content .= '</div>';
-  $content .= '<div class ="service-info">';
+
   if(isset($services['fax']) && $services['fax'] != ""){
+    $content .= '<div class ="service-info">';
     $content .= '<div class="flex-item"><b>Fax:</b></div>' . '<div class="flex-item">'. $services['fax'] . '</div>';
+    $content .= '</div>';
   }
-  $content .= '</div>';
+
   $previous_hour_type = "";
   $is_first_row = true; // Initialize the first row flag
   $content .= '<div class="hours">';
@@ -253,37 +258,37 @@ function formatHourRow($hour, $previous_hour_type, $is_first_row ,$appointment) 
 
 
 function dayRange($days){
-// Example array of selected days, as retrieved from the field.
-$selected_days =$days; // This can be dynamic.
+  // Example array of selected days, as retrieved from the field.
+  $selected_days =$days; // This can be dynamic.
 
-// Define the order of the days.
-$day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  // Define the order of the days.
+  $day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-// Sort the selected days according to the defined order.
-usort($selected_days, function($a, $b) use ($day_order) {
-  return array_search($a, $day_order) - array_search($b, $day_order);
-});
+  // Sort the selected days according to the defined order.
+  usort($selected_days, function($a, $b) use ($day_order) {
+    return array_search($a, $day_order) - array_search($b, $day_order);
+  });
 
-// Group consecutive days.
-$grouped_days = [];
-$group_start = $selected_days[0];
-$prev_day = array_search($group_start, $day_order);
+  // Group consecutive days.
+  $grouped_days = [];
+  $group_start = $selected_days[0];
+  $prev_day = array_search($group_start, $day_order);
 
-foreach ($selected_days as $i => $day) {
-  $current_day = array_search($day, $day_order);
-  if ($current_day !== $prev_day + 1 && $i !== 0) {
-    $grouped_days[] = $group_start . ($group_start !== $selected_days[$i - 1] ? " - " . $selected_days[$i - 1] : "");
-    $group_start = $day;
+  foreach ($selected_days as $i => $day) {
+    $current_day = array_search($day, $day_order);
+    if ($current_day !== $prev_day + 1 && $i !== 0) {
+      $grouped_days[] = $group_start . ($group_start !== $selected_days[$i - 1] ? " - " . $selected_days[$i - 1] : "");
+      $group_start = $day;
+    }
+    $prev_day = $current_day;
   }
-  $prev_day = $current_day;
-}
 
-// Add the last group.
-$grouped_days[] = $group_start . ($group_start !== end($selected_days) ? " - " . end($selected_days) : "");
+  // Add the last group.
+  $grouped_days[] = $group_start . ($group_start !== end($selected_days) ? " - " . end($selected_days) : "");
 
-// Join the groups into a final string.
-$formatted_days = implode(', ', $grouped_days);
+  // Join the groups into a final string.
+  $formatted_days = implode(', ', $grouped_days);
 
-// Output the result.
-return $formatted_days; // Outputs: "Monday - Wednesday"
+  // Output the result.
+  return $formatted_days; // Outputs: "Monday - Wednesday"
 }
