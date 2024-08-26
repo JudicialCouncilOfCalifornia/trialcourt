@@ -261,8 +261,9 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $basic_page = Node::load($node->id());
   $variables['node'] = $node;
+  $schedule_content = '';
   $field_schedule_render_array = $node->field_schedule->view('default');
-  if ($field_schedule_render_array['#items'] && !$field_schedule_render_array['#items']->isEmpty()) {
+  if (isset($field_schedule_render_array['#items']) && !$field_schedule_render_array['#items']->isEmpty()) {
     $schedule_content = render($field_schedule_render_array[0]['#text']);
   }
   $completion_date = $node->get('field_completion_date')->date ? $node->get('field_completion_date')->date->format('F j, Y') : '';
