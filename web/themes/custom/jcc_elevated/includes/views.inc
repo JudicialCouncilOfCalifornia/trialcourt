@@ -720,6 +720,7 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
     ];
     $facilities[] = $facility;
   }
+  usort($facilities, fn($a, $b) => $a['county'] <=> $b['county']);
   $variables['facilities'] = $facilities;
 }
 

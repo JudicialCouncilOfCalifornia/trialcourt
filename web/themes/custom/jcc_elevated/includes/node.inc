@@ -265,7 +265,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   if ($field_schedule_render_array['#items'] && !$field_schedule_render_array['#items']->isEmpty()) {
     $schedule_content = render($field_schedule_render_array[0]['#text']);
   }
-  $completion_date = $node->get('field_completion_date')->date ? $node->get('field_completion_date')->date->format('F j, Y') : '';
+  $completion_date = $node->get('field_completion_date')->value ?? '';
   $occupancy_date = $node->get('field_occupancy_date')->date ? $node->get('field_occupancy_date')->date->format('F j, Y') : '';
   $ceqa = $node->field_ceqa->view('default');
   $ceqa_content = '';
@@ -369,6 +369,14 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   if (!empty($node->body->value)) {
     $elements[] = "<h2>Background</h2>";
     $elements[] = $node->body->value;
+    $elements[] = "<br />";
+    $elements[] = "<hr />";
+    $elements[] = "<br />";
+  }
+
+  if (!empty($details['ceqa'])) {
+    $elements[] = "<h2>CEQA</h2>";
+    $elements[] = $details['ceqa'];
     $elements[] = "<br />";
     $elements[] = "<hr />";
     $elements[] = "<br />";
