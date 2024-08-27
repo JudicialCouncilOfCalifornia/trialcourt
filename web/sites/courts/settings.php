@@ -177,6 +177,13 @@ else {
   $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-courts-sandbox-1';
 }
 
+// Redirect home page to old courts.ca.gov
+if (PHP_SAPI <> 'cli' && $_SERVER['REQUEST_URI'] == '/') {
+  // Redirect
+  header("Location: " . 'https://www.courts.ca.gov', TRUE,301);
+  exit();
+}
+
 /**
  * Load local development override configuration, if available.
  *
