@@ -52,6 +52,20 @@
     display: flex;
     column-gap: 5px;
     padding-left:2rem;
+    width:max-content;
+}
+
+/* Media Query for Mobile Devices */
+@media (max-width: 480px) {
+    .hour-row {
+        padding-left:5px;
+    }
+    .jcc-body__aside-bar {
+        display:none;
+    }
+    .jcc-hero--layout-location-details {
+        margin-bottom: 0px;
+    }
 }
 
 .jcc-location__location-tags{
@@ -71,4 +85,10 @@
     font-style: italic;
     line-height: 1.5;
     letter-spacing: 0.09px;
+}
+/* override for location container for new details page.*/
+@media (min-width: 64em) {
+    .jcc-location--container .jcc-location__container {
+        padding-left: 1rem;
+    }
 }

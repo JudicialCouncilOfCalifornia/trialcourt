@@ -13,6 +13,7 @@ dependencies:
     - field.field.paragraph.services.field_services_link
     - paragraphs.paragraphs_type.services
   module:
+    - autocomplete_deluxe
     - field_group
     - link
     - paragraphs
@@ -93,10 +94,21 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
   field_service_category:
-    type: options_select
+    type: autocomplete_deluxe
     weight: 1
     region: content
-    settings: {  }
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
   field_service_email_address:
     type: email_default
