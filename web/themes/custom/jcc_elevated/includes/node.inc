@@ -262,7 +262,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $basic_page = Node::load($node->id());
   $variables['node'] = $node;
   $field_schedule_render_array = $node->field_schedule->view('default');
-  if ($field_schedule_render_array['#items'] && !$field_schedule_render_array['#items']->isEmpty()) {
+  if (isset($field_schedule_render_array['#items']) && !$field_schedule_render_array['#items']->isEmpty()) {
     $schedule_content = render($field_schedule_render_array[0]['#text']);
   }
   $completion_date = $node->get('field_completion_date')->value ?? '';
@@ -320,10 +320,13 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     'county' => $county && $taxonomy_manager->load($county) ? $taxonomy_manager->load($county)->get('name')->value : '',
   ];
   $projectimages = [];
+  $caption = '';
+  $citation = '';
+  $media_url = '';
   foreach ($node->field_media_file_multiple as $media_file) {
     if (!empty($media_file->target_id)) {
       $media = Media::load($media_file->target_id);
-      if ($media && $media->field_media_image->entity) {
+      if ($media && !$media->field_media_image->isEmpty() && $media->field_media_image->entity) {
         $uri = $media->field_media_image->entity->getFileUri();
         $media_url = file_create_url($uri);
       }
