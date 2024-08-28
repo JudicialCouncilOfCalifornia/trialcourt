@@ -312,9 +312,16 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       'General Contractor' => $contractor && $taxonomy_manager->load($contractor) ? $taxonomy_manager->load($contractor)->get('name')->value : '',
       'Criteria Architect' => $criteria_architect && $taxonomy_manager->load($criteria_architect) ? $taxonomy_manager->load($criteria_architect)->get('name')->value : '',
       'Managed By' => $managed_by && $taxonomy_manager->load($managed_by) ? $taxonomy_manager->load($managed_by)->get('name')->value : '',
+      'Project Company' => $node->field_project_company->value,
+      'Project Delivery method' => $node->field_project_delivery_method->value,
+      'Consortium Partners' => $node->field_consortium_partners->value,
+      'Project Financing' => $node->field_project_financing->value,
+      'Total Capital Project Cost' => $node->field_total_capital_project_cost->value,
     ],
     'schedule' => $schedule_content,
     'ceqa' => $ceqa_content,
+    'planning_study' => $node->field_planning_study->value,
+    'project_advisory_group' => $node->field_project_advisory_group->value,
     'status' => $node->field_project_status->value == 'inprogress' ? 'In-Progress' : 'Completed',
     'hero_title' => $node->field_hero_title,
     'county' => $county && $taxonomy_manager->load($county) ? $taxonomy_manager->load($county)->get('name')->value : '',
@@ -389,6 +396,22 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   if (!empty($details['schedule'])) {
     $elements[] = "<h2>Schedule</h2>";
     $elements[] = $details['schedule'];
+    $elements[] = "<br />";
+    $elements[] = "<hr />";
+    $elements[] = "<br />";
+  }
+
+  if (!empty($details['planning_study'])) {
+    $elements[] = "<h2>Planning Study</h2>";
+    $elements[] = $details['planning_study'];
+    $elements[] = "<br />";
+    $elements[] = "<hr />";
+    $elements[] = "<br />";
+  }
+
+  if (!empty($details['project_advisory_group'])) {
+    $elements[] = "<h2>Project Advisory Group</h2>";
+    $elements[] = $details['project_advisory_group'];
     $elements[] = "<br />";
     $elements[] = "<hr />";
     $elements[] = "<br />";
