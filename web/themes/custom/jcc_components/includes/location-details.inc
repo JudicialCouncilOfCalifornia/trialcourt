@@ -38,7 +38,6 @@ function buildServiceMarkup(&$variables ,$node) {
       $variables['case_category_terms'] = array_map(function($term_reference) {
           return $term_reference->getName();
       },$node->get('field_cases_served')->referencedEntities());
-      //kint($variables['case_category_terms']) ;
   }
   processAddServices($node, $variables);
 }
@@ -83,7 +82,6 @@ function processAddServices($node, &$variables) {
           $add_services[] = createServiceCard($services ,$variables);
       }
   }
-  //kint($services);
 
   $variables['add_services'] = [
       'items' => $add_services,
@@ -92,8 +90,19 @@ function processAddServices($node, &$variables) {
 }
 
 function extractServiceDetails($paragraph) {
+  //check if service name has link associated to it.
+  if($paragraph->hasField('field_services_link')){
+    $service_link  = $paragraph->get('field_services_link')->getValue()['0']['uri'];
+    // add check if string contains internal
+    $service_link = substr($service_link ,strlen('internal:'));
+  }
+  if(isset($service_link)){
+    $service_name = '<a href ="'.htmlspecialchars($service_link).'">'. ucfirst($paragraph->get('field_service_name')->value).'</a>';
+  }else{
+    $service_name  = ucfirst($paragraph->get('field_service_name')->value);
+  }
   $services = [
-      'name' => ucfirst($paragraph->get('field_service_name')->value),
+      'name' => $service_name,
       'phone_number' => $paragraph->hasField('field_service_phone_number') ? Html::escape($paragraph->get('field_service_phone_number')->value) : '',
       'email' => $paragraph->hasField('field_service_email_address') ? Html::escape($paragraph->get('field_service_email_address')->value) : '',
       'fax' => $paragraph->hasField('field_service_fax_number') ? Html::escape($paragraph->get('field_service_fax_number')->value) : '',
