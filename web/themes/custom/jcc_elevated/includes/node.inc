@@ -287,6 +287,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $criteria_architect = $node->hasField('field_criteria_architect') ? $node->get('field_criteria_architect')->target_id : FALSE;
   $managed_by = $node->hasField('field_managed_by') ? $node->get('field_managed_by')->target_id : FALSE;
   $county = $node->hasField('field_facility_county') ? $node->get('field_facility_county')->target_id : FALSE;
+  $architectural_firm = $node->hasField('field_architectural_engineering_') ? $node->get('field_architectural_engineering_')->target_id : FALSE;
   $field_award_rendered = '';
 
   if ($node->hasField('field_award')) {
@@ -299,7 +300,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       'Gross Square Footage' => $node->field_gross_square_footage->value,
       'Total Courtrooms' => $node->field_total_courtrooms->value,
       'Current Authorized Project Budget' => $node->field_budget->value,
-      'Architectural/Engineering Firm'  => $node->field_architectural_engineering_->value,
+      'Architectural/Engineering Firm'  => $architectural_firm && $taxonomy_manager->load($architectural_firm) ? $taxonomy_manager->load($architectural_firm)->get('name')->value : '',
       'General Contractor' => $node->field_general_contractor->value,
       'Fund' => $node->field_fund->value,
       'Completion Date' => $completion_date,
