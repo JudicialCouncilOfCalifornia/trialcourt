@@ -544,7 +544,15 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
   unset($variables['exposed']['items_per_page']);
 
   foreach ($variables['rows'] as $key => $group) {
-    $variables['events'][$key]['list_label'] = $group['#title'];
+    // Process date range year for grouping label.
+    // Remove markup and line breaks.
+    $list_label = preg_replace('/\R+/', ' ', strip_tags($group['#title']));
+    // If date range detected, set end date year as label.
+    if (($position = strpos($list_label, '-')) !== FALSE) {
+      $list_label = substr($list_label, $position + 1);
+    }
+    $variables['events'][$key]['list_label'] = $list_label;
+    // Past events for the year.
     foreach ($group['#rows'] as $row) {
       $node = $row['#node'];
       $event = [];
