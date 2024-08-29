@@ -15,7 +15,8 @@ function jcc_elevated_preprocess_media(&$variables) {
   $media = $variables['media'];
   if ($media->bundle() == 'image') {
     $view_mode = $variables['view_mode'];
-    $alignment = $variables['attributes']['class'][0];
+    $align_value = $variables['attributes']['class'][0] ?? '';
+    $alignment = $align_value;
 
     $img_classes = [
       'image',
