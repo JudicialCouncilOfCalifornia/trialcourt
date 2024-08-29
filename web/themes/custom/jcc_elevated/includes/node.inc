@@ -325,7 +325,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $node_manager = $entity_type_manager->getStorage('node');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
-  $media_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $media_manager = $entity_type_manager->getStorage('media');
 
   $basic_page = $node_manager->load($node->id());
   $variables['node'] = $node;
