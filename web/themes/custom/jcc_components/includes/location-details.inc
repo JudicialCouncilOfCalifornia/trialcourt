@@ -145,6 +145,10 @@ function get_service_hours($paragraph, $variables) {
       $is_repeated = ($hourEntity->get('field_service_hour_type')->value === $previous_hour_type);
       $hour_type = $hourEntity->get('field_service_hour_type')->value != "others" ? $hourEntity->get('field_service_hour_type')->value :
           $hourEntity->get('field_others')->value;
+      $is_type_others = $hourEntity->get('field_service_hour_type')->value == "others" ? TRUE : FALSE;
+      if ($is_type_others) {
+        $others_field_value = $hour_type;
+      }
       if (isset($hourEntity->get('field_service_hours_same_as_busi')->value) && $hourEntity->get('field_service_hours_same_as_busi')->value == 1) {
         // Business hours are the same as building hours.
         $hour_details = [
@@ -154,6 +158,8 @@ function get_service_hours($paragraph, $variables) {
           'to' => $variables['building_hours']['building_closing_hours'],
           'type' => $hour_type ,
           'is_repeated' => $is_repeated,
+          'is_others' => $is_type_others,
+          '$others_field_value' => $others_field_value,
         ];
       }
       else {
@@ -168,6 +174,8 @@ function get_service_hours($paragraph, $variables) {
             'to' => $hourEntity->hasField('field_service_hours_to') ? get_formatted_date($hourEntity->get('field_service_hours_to')->value) : '',
             'type' => $hour_type,
             'is_repeated' => $is_repeated,
+            'is_others' => $is_type_others,
+            '$others_field_value' => $others_field_value,
           ];
         }
         else {
@@ -188,6 +196,8 @@ function get_service_hours($paragraph, $variables) {
             'to' => $hourEntity->hasField('field_service_hours_to') ? get_formatted_date($hourEntity->get('field_service_hours_to')->value) : '',
             'type' => $hourEntity->get('field_service_hour_type')->value,
             'is_repeated' => $is_repeated,
+            'is_others' => $is_type_others,
+            '$others_field_value' => $others_field_value,
           ];
         }
       }
@@ -267,7 +277,9 @@ function build_body_content($services, $variables) {
 function format_hour_row($hour, $previous_hour_type, $is_first_row, $appointment) {
   $row_content = '';
   $type = '<div class="flex-item">' . ucwords(str_replace('_', ' ', $hour['type'])) . ":" . '</div>';
-  $appointment_string = (in_array($hour['type'], ['in_person']) && $hour['is_repeated'] == FALSE) ? '<br />' . $appointment : '';
+  $allowed_value_appointment = ['in_person'];
+  $allowed_value_appointment[] = $hour['$others_field_value'];
+  $appointment_string = (in_array($hour['type'], $allowed_value_appointment) && $hour['is_repeated'] == FALSE) ? '<br />' . $appointment : '';
   $time_span = '<div class="flex-item">' . $hour['days'] . "&nbsp" . $hour['from'] . "-" . $hour['to'] . $appointment_string . '</div>';
   if ($hour['mon-fri'] != 1 && $hour['is_repeated'] == FALSE && $previous_hour_type != $hour['type']) {
     $row_content .= '<div class="hour-row">' . $type . $time_span . '</div>';
