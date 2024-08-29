@@ -1,0 +1,29 @@
+From 163fb2c137bb335529139a6c143f15d7cf0b25db Mon Sep 17 00:00:00 2001
+From: Mark Dorison <25804-markdorison@users.noreply.drupalcode.org>
+Date: Thu, 29 Dec 2022 19:01:57 -0500
+Subject: [PATCH] Issue #3293275 by markdorison, 3li: PHP 8.1 Deprecated
+ function: trim(): Passing null to parameter #1
+
+---
+ src/EventSubscriber/ProxySubscriber.php | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/EventSubscriber/ProxySubscriber.php b/src/EventSubscriber/ProxySubscriber.php
+index 6202ab3..dc68fe7 100644
+--- a/src/EventSubscriber/ProxySubscriber.php
++++ b/src/EventSubscriber/ProxySubscriber.php
+@@ -141,8 +141,9 @@ class ProxySubscriber implements EventSubscriberInterface {
+     // Note if the origin server files location is different. This
+     // must be the exact path for the remote site's public file
+     // system path, and defaults to the local public file system path.
+-    $remote_file_dir = trim($config->get('origin_dir'));
+-    if (!$remote_file_dir) {
++    $origin_dir = $config->get('origin_dir') ?? '';
++    $remote_file_dir = trim($origin_dir);
++    if (!empty($remote_file_dir)) {
+       $remote_file_dir = $file_dir;
+     }
+ 
+-- 
+GitLab
+

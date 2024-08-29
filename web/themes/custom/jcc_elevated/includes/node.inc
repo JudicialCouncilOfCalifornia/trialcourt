@@ -10,12 +10,12 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Link;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Url;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\views\Views;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -220,32 +220,96 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
  * @param Drupal\node\NodeInterface $node
  *   The node.
  */
-function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node) {
-  // Meetings tab.
+function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node): void {
+  $renderer = \Drupal::service('renderer');
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $node_manager = $entity_type_manager->getStorage('node');
+
+  // Determine if we hide or show the meeting tab by checkbox field check.
+  $variables['hide_meetings_tab'] = 0;
   if ($node->hasField('field_hide_meetings_tab') && !empty($node->get('field_hide_meetings_tab')->first())) {
     $variables['hide_meetings_tab'] = $node->get('field_hide_meetings_tab')->first()->getValue()['value'];
   }
-  else {
-    $variables['hide_meetings_tab'] = 0;
-  }
-  if (!$variables['hide_meetings_tab']) {
-    $events = views_embed_view('advisory_body_events', 'block_1', $node->id());
-    $variables['content']['meetings_tab']['0']['#markup'] = \Drupal::service('renderer')->renderRoot($events);
 
-    $past_events = Views::getView('advisory_body_events');
-    $past_events->setDisplay('page_1');
-    $past_events->setArguments([$node->id()]);
-    $past_events->execute();
-    if (count($past_events->result) > 0) {
-      $variables['content']['meetings_tab']['1']['#markup'] = '<div><h3>Past Meetings</h3><a class="button button--text button--normal icon--arrow" href="/past-meetings/' . $node->id() . '">View ' . $node->getTitle() . ' Past meetings</a></div>';
+  // Build the meetings tab if we are to show it.
+  if (!$variables['hide_meetings_tab']) {
+
+    // Wrap the content of this tab section in a container.
+    $variables['content']['meetings_tab']['events'] = [
+      '#type' => "container",
+      '#attributes' => ['class' => 'field field-active-meetings'],
+    ];
+
+    // Add the rendered advisory body events view block into the meetings tab.
+    $events_list = views_embed_view('advisory_body_events', 'block_1', $node->id());
+    $rendered_events_list = $renderer->renderRoot($events_list);
+    $variables['content']['meetings_tab']['events']['active_list']['#markup'] = $rendered_events_list;
+
+    // Query to see if there are any upcoming events for this advisory node.
+    // We only have to check for 1 item, so we limit range and just return the
+    // count. This is much faster than using a view and avoids all the php
+    // warnings.
+    $now = new DrupalDateTime('now');
+    $query = $node_manager->getQuery();
+    $upcoming_events = $query
+      ->accessCheck(TRUE)
+      ->condition('type', 'event')
+      ->condition('status', 1)
+      ->condition('field_content_reference', $node->id(), '=')
+      ->condition('field_event_date', $now->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '>=')
+      ->range(0, 1)
+      ->count()
+      ->execute();
+
+    // Add a link to the advisory_body_events past meetings page in the tab.
+    if ($upcoming_events) {
+
+      // Wrap the content of this tab section in a container.
+      $variables['content']['meetings_tab']['past_meetings'] = [
+        '#type' => "container",
+        '#attributes' => ['class' => 'field field-past-meetings'],
+      ];
+
+      // Generate the heading.
+      $variables['content']['meetings_tab']['past_meetings']['heading'] = [
+        '#type' => "html_tag",
+        '#tag' => 'h3',
+        '#value' => t('Past Meetings'),
+      ];
+
+      // Generate the link.
+      $options = ['attributes' => ['class' => 'button button--text button--normal icon--arrow']];
+      $variables['content']['meetings_tab']['past_meetings']['link_to_past_meetings'] = [
+        '#type' => "link",
+        '#title' => t('@title Past meetings', ['@title' => $node->getTitle()])->render(),
+        '#url' => Url::fromUserInput('/past-meetings/' . $node->id(), $options),
+      ];
     }
   }
 
   // About tab.
   if ($variables['elements']['field_date_established']) {
-    $variables['content']['about_tab']['0']['#markup'] = '<div><h3>Date established</h3><div>' . $variables['elements']['field_date_established'][0]['#text'] . '</div><div>' . $variables['elements']['field_date_note'][0]['#text'] . '</div></div>';
+
+    // Wrap the content of this tab in a container.
+    $variables['content']['about_tab']['date_established'] = [
+      '#type' => "container",
+      '#attributes' => ['class' => 'field field-date-established'],
+    ];
+
+    // Generate the heading.
+    $variables['content']['about_tab']['date_established']['heading'] = [
+      '#type' => "html_tag",
+      '#tag' => 'h3',
+      '#value' => $variables['content']['field_date_established']['#title'],
+    ];
+
+    // Move the fields into the tab.
+    $variables['content']['about_tab']['date_established']['date'] = $variables['content']['field_date_established'];
+    $variables['content']['about_tab']['date_established']['note'] = $variables['content']['field_date_note'];
   }
-  $variables['content']['about_tab']['1'] = $variables['elements']['field_about'];
+
+  // Move the About field into the about tab, after established date content.
+  $variables['content']['about_tab']['about'] = $variables['elements']['field_about'];
 }
 
 /**
@@ -257,20 +321,27 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
  *   The node.
  */
 function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): void {
+  $renderer = \Drupal::service('renderer');
   $entity_type_manager = \Drupal::service('entity_type.manager');
+  $node_manager = $entity_type_manager->getStorage('node');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
-  $basic_page = Node::load($node->id());
+  $media_manager = $entity_type_manager->getStorage('taxonomy_term');
+
+  $basic_page = $node_manager->load($node->id());
   $variables['node'] = $node;
+  $schedule_content = '';
   $field_schedule_render_array = $node->field_schedule->view('default');
-  if ($field_schedule_render_array['#items'] && !$field_schedule_render_array['#items']->isEmpty()) {
-    $schedule_content = render($field_schedule_render_array[0]['#text']);
+  if (isset($field_schedule_render_array['#items']) && !$field_schedule_render_array['#items']->isEmpty()) {
+    $to_render = ['#markup' => $field_schedule_render_array[0]['#text']];
+    $schedule_content = $renderer->render($to_render);
   }
   $completion_date = $node->get('field_completion_date')->date ? $node->get('field_completion_date')->date->format('F j, Y') : '';
   $occupancy_date = $node->get('field_occupancy_date')->date ? $node->get('field_occupancy_date')->date->format('F j, Y') : '';
   $ceqa = $node->field_ceqa->view('default');
   $ceqa_content = '';
   if (isset($ceqa['#items']) && !$ceqa['#items']->isEmpty()) {
-    $ceqa_content = render($ceqa[0]['#text']);
+    $to_render = ['#markup' => $ceqa[0]['#text']];
+    $ceqa_content = $renderer->render($to_render);
   }
 
   if (isset($variables['node']) && $node->hasField('field_design_build_entity')) {
@@ -290,7 +361,6 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $field_award_rendered = '';
 
   if ($node->hasField('field_award')) {
-    $renderer = \Drupal::service('renderer');
     $field_award_rendered = $renderer->renderRoot($variables['content']['field_award']);
   }
 
@@ -321,7 +391,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $projectimages = [];
   foreach ($node->field_media_file_multiple as $media_file) {
     if (!empty($media_file->target_id)) {
-      $media = Media::load($media_file->target_id);
+      $media = $media_manager->load($media_file->target_id);
       if ($media && $media->field_media_image->entity) {
         $uri = $media->field_media_image->entity->getFileUri();
         $media_url = file_create_url($uri);
@@ -343,7 +413,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
 
   if ($basic_page->hasField('field_media')) {
     $hero_image = $basic_page->get('field_media');
-    $media = Media::load($hero_image->target_id);
+    $media = $media_manager->load($hero_image->target_id);
     if ($media && $media->field_media_image) {
       $uri = $media->field_media_image->entity->getFileUri();
       $image_url = file_create_url($uri);
@@ -406,6 +476,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
  *   The node.
  */
 function jcc_elevated_node_alert(array &$variables, NodeInterface $node): void {
+
   // Prepend alert label directly to the body content so that it renders inline.
   $label = '<strong>' . $node->label() . '</strong>';
   $variables['content']['body'][0]['#text'] = $label . ', ' . $variables['content']['body'][0]['#text'];
