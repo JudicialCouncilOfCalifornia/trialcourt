@@ -371,7 +371,6 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       'Total Courtrooms' => $node->field_total_courtrooms->value,
       'Current Authorized Project Budget' => $node->field_budget->value,
       'Architectural/Engineering Firm'  => $architectural_firm && $taxonomy_manager->load($architectural_firm) ? $taxonomy_manager->load($architectural_firm)->get('name')->value : '',
-      'General Contractor' => $node->field_general_contractor->value,
       'Fund' => $node->field_fund->value,
       'Completion Date' => $completion_date,
       'Design-Build Entity' => $design_build_entity,
