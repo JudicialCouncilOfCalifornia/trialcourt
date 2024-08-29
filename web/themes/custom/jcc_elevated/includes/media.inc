@@ -15,14 +15,18 @@ function jcc_elevated_preprocess_media(&$variables) {
   $media = $variables['media'];
   if ($media->bundle() == 'image') {
     $view_mode = $variables['view_mode'];
-    $align_value = $variables['attributes']['class'][0] ?? '';
-    $alignment = $align_value;
+
+    $alignment = '';
+    if (isset($variables['attributes']['class'])) {
+      $alignment = $variables['attributes']['class'][0] ?? '';
+    }
 
     $img_classes = [
       'image',
       Html::getClass('image__' . $view_mode),
       Html::getClass($alignment),
     ];
+
     $variables['content']['field_media_image'][0]['#item_attributes']['class'][] = implode(' ', $img_classes);
   }
 }
