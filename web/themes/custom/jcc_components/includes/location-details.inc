@@ -5,276 +5,299 @@
  * Preprocess and functions for alert content type and component.
  */
 
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Menu\MenuTreeParameters;
-use Drupal\media\Entity\Media;
-use Drupal\node\NodeInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Render\Markup;
 
 /**
- * helper function location page template variable.
+ * Helper function location page template variable.
  */
-function buildServiceMarkup(&$variables ,$node) {
+function build_service_markup(&$variables, $node) {
   $variables['public_transportation'] = [
-      'parking' => getFieldLink($node, 'field_parking_link'),
-      'transportation' => getFieldLink($node, 'field_public_transportation_link'),
+    'parking' => get_field_link($node, 'field_parking_link'),
+    'transportation' => get_field_link($node, 'field_public_transportation_link'),
   ];
 
   if ($node->hasField('field_building_hours_from') && $node->hasField('field_building_hours_to')) {
-    $default_timezone =  \Drupal::config('system.date')->get('timezone.default');
-    $date = (new DateTime($node->get('field_building_hours_from')->value,new \DateTimeZone('UTC')));
+    $default_timezone = \Drupal::config('system.date')->get('timezone.default');
+    $date = (new DateTime($node->get('field_building_hours_from')->value, new \DateTimeZone('UTC')));
     $date->setTimeZone(new \DateTimeZone($default_timezone));
-   
-    $building_hours_from = getFormattedDate($node->get('field_building_hours_from')->value);
-    $building_hours_to = getFormattedDate($node->get('field_building_hours_to')->value);
+
+    $building_hours_from = get_formatted_date($node->get('field_building_hours_from')->value);
+    $building_hours_to = get_formatted_date($node->get('field_building_hours_to')->value);
     $variables['building_hours'] = [
-          'building_starting_hours' => $building_hours_from ,
-          'building_closing_hours' => $building_hours_to ,
-      ];
+      'building_starting_hours' => $building_hours_from,
+      'building_closing_hours' => $building_hours_to ,
+    ];
   }
 
   if ($node->hasField('field_cases_served')) {
-      $variables['case_category_terms'] = array_map(function($term_reference) {
-          return $term_reference->getName();
-      },$node->get('field_cases_served')->referencedEntities());
+    $variables['case_category_terms'] = array_map(function ($term_reference) {
+        return $term_reference->getName();
+    }, $node->get('field_cases_served')->referencedEntities());
   }
-  processAddServices($node, $variables);
+  process_add_services($node, $variables);
 }
 
 /**
  * Helper function for rendering time in site default time zone.
  */
-function getFormattedDate($raw_time) {
-      $default_timezone =  \Drupal::config('system.date')->get('timezone.default');
-      $date = new \DateTime($raw_time, new \DateTimeZone('UTC'));
-      $date->setTimezone(new \DateTimeZone($default_timezone));  // Adjust timezone to match site's configuration
-      $formatted_time = $date->format('g:ia');
-      $formatted_time = str_replace(['am','pm'],[' a.m.' , ' p.m.'] ,$formatted_time );
-      return $formatted_time;  // Adjust format as needed
+function get_formatted_date($raw_time) {
+  $default_timezone = \Drupal::config('system.date')->get('timezone.default');
+  $date = new \DateTime($raw_time, new \DateTimeZone('UTC'));
+  // Adjust timezone to match site's configuration.
+  $date->setTimezone(new \DateTimeZone($default_timezone));
+  $formatted_time = $date->format('g:ia');
+  $formatted_time = str_replace(['am', 'pm'], [' a.m.', ' p.m.'], $formatted_time);
+  // Adjust format as needed.
+  return $formatted_time;
 }
 
-function getFieldLink($node, $fieldName) {
+/**
+ * Helper function to get link from field name.
+ */
+function get_field_link($node, $fieldName) {
   if ($node->hasField($fieldName) && !$node->get($fieldName)->isEmpty()) {
-      $fieldValue = $node->get($fieldName)->first()->getValue();
-      return [
-          'url' => $fieldValue['uri'],
-          'title' => $fieldValue['title'],
-      ];
+    $fieldValue = $node->get($fieldName)->first()->getValue();
+    return [
+      'url' => $fieldValue['uri'],
+      'title' => $fieldValue['title'],
+    ];
   }
   return [];
 }
 
 /**
- * Add Service variable
+ * Add Service variable.
  * */
-function processAddServices($node, &$variables) {
+function process_add_services($node, &$variables) {
   if (!$node->hasField('field_add_services')) {
-      return;
+    return;
   }
 
   $add_services = [];
   foreach ($node->get('field_add_services') as $paragraph_reference) {
-      if ($paragraph_reference->entity) {
-          $paragraph = $paragraph_reference->entity;
-          $services = extractServiceDetails($paragraph);
-          $services['hours'] = getServiceHours($paragraph ,$variables);
-          $add_services[] = createServiceCard($services ,$variables);
-      }
+    if ($paragraph_reference->entity) {
+      $paragraph = $paragraph_reference->entity;
+      $services = extract_service_details($paragraph);
+      $services['hours'] = get_service_hours($paragraph, $variables);
+      $add_services[] = create_service_card($services, $variables);
+    }
   }
 
   $variables['add_services'] = [
-      'items' => $add_services,
-      'num_cols' => 1
+    'items' => $add_services,
+    'num_cols' => 1,
   ];
 }
 
-function extractServiceDetails($paragraph) {
-  //check if service name has link associated to it.
-  if($paragraph->hasField('field_services_link')){
-    $service_link  = $paragraph->get('field_services_link')->getValue()['0']['uri'];
-    // add check if string contains internal
-    $service_link = substr($service_link ,strlen('internal:'));
+/**
+ * Getting the service details field values.
+ */
+function extract_service_details($paragraph) {
+  // Check if service name has link associated to it.
+  if ($paragraph->hasField('field_services_link')) {
+    $service_link = $paragraph->get('field_services_link')->getValue()['0']['uri'];
+    // Add check if string contains internal.
+    $service_link = substr($service_link, strlen('internal:'));
   }
-  if(isset($service_link)){
-    $service_name = '<a href ="'.htmlspecialchars($service_link).'">'. ucfirst($paragraph->get('field_service_name')->value).'</a>';
-  }else{
-    $service_name  = ucfirst($paragraph->get('field_service_name')->value);
+  if (isset($service_link)) {
+    $service_name = '<a href ="' . htmlspecialchars($service_link) . '">' . ucfirst($paragraph->get('field_service_name')->value) . '</a>';
+  }
+  else {
+    $service_name = ucfirst($paragraph->get('field_service_name')->value);
   }
   $services = [
-      'name' => $service_name,
-      'phone_number' => $paragraph->hasField('field_service_phone_number') ? Html::escape($paragraph->get('field_service_phone_number')->value) : '',
-      'email' => $paragraph->hasField('field_service_email_address') ? Html::escape($paragraph->get('field_service_email_address')->value) : '',
-      'fax' => $paragraph->hasField('field_service_fax_number') ? Html::escape($paragraph->get('field_service_fax_number')->value) : '',
-      'additional_info' => $paragraph->hasField('field_additional_information') ? Html::escape($paragraph->get('field_additional_information')->value) : '',
-      'service_appointment' =>  $paragraph->hasField('field_service_appointment') ? createLink($paragraph->get('field_service_appointment')->getValue()) : '',
-      'categories' => $paragraph->hasField('field_service_category') ? array_map(function($term_reference) {
+    'name' => $service_name,
+    'phone_number' => $paragraph->hasField('field_service_phone_number') ? Html::escape($paragraph->get('field_service_phone_number')->value) : '',
+    'email' => $paragraph->hasField('field_service_email_address') ? Html::escape($paragraph->get('field_service_email_address')->value) : '',
+    'fax' => $paragraph->hasField('field_service_fax_number') ? Html::escape($paragraph->get('field_service_fax_number')->value) : '',
+    'additional_info' => $paragraph->hasField('field_additional_information') ? Html::escape($paragraph->get('field_additional_information')->value) : '',
+    'service_appointment' => $paragraph->hasField('field_service_appointment') ? create_link($paragraph->get('field_service_appointment')->getValue()) : '',
+    'categories' => $paragraph->hasField('field_service_category') ? array_map(function ($term_reference) {
           return Html::escape($term_reference->getName());
-      }, $paragraph->get('field_service_category')->referencedEntities()) : []
+    }, $paragraph->get('field_service_category')->referencedEntities()) : [],
   ];
   return $services;
 }
 
 /**
- * Create link from url value
+ * Create link from url field.
  */
-function createLink($appointment_link){
-  if(!empty($appointment_link )){
-    $appointment_link['url']    =  $appointment_link['0']['uri'];
-    $appointment_link['title']  = $appointment_link['0']['title'] != "" ? $appointment_link['0']['title'] : 'Schedule an Appointment';
-    return '<a href ="'. $appointment_link['title'].'">'. $appointment_link['title'] .'</a>';
+function create_link($appointment_link) {
+  if (!empty($appointment_link)) {
+    $appointment_link['url']   = $appointment_link['0']['uri'];
+    $appointment_link['title'] = $appointment_link['0']['title'] != "" ? $appointment_link['0']['title'] : 'Schedule an Appointment';
+    return '<a href ="' . $appointment_link['title'] . '">' . $appointment_link['title'] . '</a>';
   }
 }
 
 /**
  * Extracts and formats service hours from a paragraph entity.
  */
-function getServiceHours($paragraph , $variables) {
-  $all_hours = []; // Array to hold all hours details
-  $previous_hour_type = ''; // To track the last processed hour type for detecting repetitions
+function get_service_hours($paragraph, $variables) {
+  // Array to hold all hours details.
+  $all_hours = [];
+  // To track the last processed hour type for detecting repetitions.
+  $previous_hour_type = '';
 
   if ($paragraph->hasField('field_location_service_hours')) {
-      foreach ($paragraph->get('field_location_service_hours')->referencedEntities() as $hourEntity) {
-          $is_repeated = ($hourEntity->get('field_service_hour_type')->value === $previous_hour_type);
-          $hour_type = $hourEntity->get('field_service_hour_type')->value !="others" ? $hourEntity->get('field_service_hour_type')->value:
+    foreach ($paragraph->get('field_location_service_hours')->referencedEntities() as $hourEntity) {
+      $is_repeated = ($hourEntity->get('field_service_hour_type')->value === $previous_hour_type);
+      $hour_type = $hourEntity->get('field_service_hour_type')->value != "others" ? $hourEntity->get('field_service_hour_type')->value :
           $hourEntity->get('field_others')->value;
-          if (isset($hourEntity->get('field_service_hours_same_as_busi')->value) && $hourEntity->get('field_service_hours_same_as_busi')->value == 1) {
-              // Business hours are the same as building hours
-              $hour_details = [
-                  'mon-fri' => 1,
-                  'days' => "Monday - Friday",
-                  'from' => $variables['building_hours']['building_starting_hours'],
-                  'to' => $variables['building_hours']['building_closing_hours'],
-                  'type' => $hour_type ,
-                  'is_repeated' => $is_repeated,
-              ];
-          } else {
-              // Specific service hours or Monday - Friday option
-              if ($hourEntity->get('field_weekdays_mon_fri')->value == 1) {
-                  // Handle the case when Monday to Friday is checked but not same as building hours
-                  $hour_details = [
-                      'mon-fri' => 1,
-                      'days' => "Monday - Friday",
-                      'from' => $hourEntity->hasField('field_service_hours_from') ? getFormattedDate($hourEntity->get('field_service_hours_from')->value) : '',
-                      'to' => $hourEntity->hasField('field_service_hours_to') ? getFormattedDate($hourEntity->get('field_service_hours_to')->value) : '',
-                      'type' => $hour_type,
-                      'is_repeated' => $is_repeated,
-                  ];
-              } else {
-                  // Specific service days not following the Monday to Friday schedule
-                  $days = [];
-                  if ($hourEntity->hasField('field_service_days')) {
-                      foreach ($hourEntity->get('field_service_days') as $day) {
-                          $days[] = Html::escape(ucwords($day->value));
-                      }
-                  }
-                  $day_range = dayRange($days); // Convert day array to a range string
-
-                  $hour_details = [
-                      'mon-fri' => 0,
-                      'days' => $day_range,
-                      'from' => $hourEntity->hasField('field_service_hours_from') ? getFormattedDate($hourEntity->get('field_service_hours_from')->value) : '',
-                      'to' => $hourEntity->hasField('field_service_hours_to') ? getFormattedDate($hourEntity->get('field_service_hours_to')->value) : '',
-                      'type' => $hourEntity->get('field_service_hour_type')->value,
-                      'is_repeated' => $is_repeated,
-                  ];
-              }
-          }
-
-          $all_hours[] = $hour_details;
-          $previous_hour_type = $hourEntity->get('field_service_hour_type')->value; // Update the last processed hour type
+      if (isset($hourEntity->get('field_service_hours_same_as_busi')->value) && $hourEntity->get('field_service_hours_same_as_busi')->value == 1) {
+        // Business hours are the same as building hours.
+        $hour_details = [
+          'mon-fri' => 1,
+          'days' => "Monday - Friday",
+          'from' => $variables['building_hours']['building_starting_hours'],
+          'to' => $variables['building_hours']['building_closing_hours'],
+          'type' => $hour_type ,
+          'is_repeated' => $is_repeated,
+        ];
       }
+      else {
+        // Specific service hours or Monday - Friday option.
+        if ($hourEntity->get('field_weekdays_mon_fri')->value == 1) {
+          // Handle the case when Monday to Friday is
+          // checked but not same as building hours.
+          $hour_details = [
+            'mon-fri' => 1,
+            'days' => "Monday - Friday",
+            'from' => $hourEntity->hasField('field_service_hours_from') ? get_formatted_date($hourEntity->get('field_service_hours_from')->value) : '',
+            'to' => $hourEntity->hasField('field_service_hours_to') ? get_formatted_date($hourEntity->get('field_service_hours_to')->value) : '',
+            'type' => $hour_type,
+            'is_repeated' => $is_repeated,
+          ];
+        }
+        else {
+          // Specific service days not following the Monday to Friday schedule.
+          $days = [];
+          if ($hourEntity->hasField('field_service_days')) {
+            foreach ($hourEntity->get('field_service_days') as $day) {
+              $days[] = Html::escape(ucwords($day->value));
+            }
+          }
+          // Convert day array to a range string.
+          $day_range = day_range($days);
+
+          $hour_details = [
+            'mon-fri' => 0,
+            'days' => $day_range,
+            'from' => $hourEntity->hasField('field_service_hours_from') ? get_formatted_date($hourEntity->get('field_service_hours_from')->value) : '',
+            'to' => $hourEntity->hasField('field_service_hours_to') ? get_formatted_date($hourEntity->get('field_service_hours_to')->value) : '',
+            'type' => $hourEntity->get('field_service_hour_type')->value,
+            'is_repeated' => $is_repeated,
+          ];
+        }
+      }
+
+      $all_hours[] = $hour_details;
+      // Update the last processed hour type.
+      $previous_hour_type = $hourEntity->get('field_service_hour_type')->value;
+    }
   }
   return $all_hours;
 }
 
-
-
-
-function createServiceCard($services,$variables) {
-  $body_content = buildBodyContent($services ,$variables);
+/**
+ * Create service cards to be used in twig template.
+ */
+function create_service_card($services, $variables) {
+  $body_content = build_body_content($services, $variables);
   return [
-      'style' => 'borderless',
-      'title' => Markup::create($services['name']),
-      'body' => Markup::create($body_content),
-      'link' => [
-          'url' => '#',
-          'text' => 'Learn more',
-          'type' => 'internal'
-      ]
+    'style' => 'borderless',
+    'title' => Markup::create($services['name']),
+    'body' => Markup::create($body_content),
+    'link' => [
+      'url' => '#',
+      'text' => 'Learn more',
+      'type' => 'internal',
+    ],
   ];
 }
 
-function buildBodyContent($services, $variables) {
+/**
+ * Build the content that will be associated with each service.
+ */
+function build_body_content($services, $variables) {
   $content = '';
   // Display static building hours and phone number information.
-  $space_one = "&nbsp;";
-  if(isset($services['phone']) && $services['emai'] != ""){
+  if (isset($services['phone_number']) && $services['phone_number'] != "") {
     $content .= '<div class ="service-info">';
-    $content .= '<div class="flex-item"><b>Phone Number:</b></div>' . '<div class="flex-item">'. $services['phone_number'] . '</div>';
+    $content .= '<div class="flex-item"><b>Phone:</b></div>' . '<div class="flex-item">' . '<a class ="jcc-location-service-phone-link" href="tel:' . $services['phone_number'] . '"' . ' class="mailto" data-extlink="">' . $services['phone_number'] . '</a>' . '</div>';
     $content .= '</div>';
   }
 
-  if(isset($services['email']) && $services['email'] != ""){
+  if (isset($services['email']) && $services['email'] != "") {
     $content .= '<div class ="service-info">';
-    $content .= '<div class="flex-item"><b> Email:</b></a></div>'.'<a href="mailto:'.$services['email'].'"'.' class="mailto" data-extlink="">'. $services['email'] .'</a>'. '</div>';
+    $content .= '<div class="flex-item"><b> Email:</b></a></div>' . '<a href="mailto:' . $services['email'] . '"' . ' class="mailto" data-extlink="">' . $services['email'] . '</a>' . '</div>';
     $content .= '</div>';
   }
 
-  if(isset($services['fax']) && $services['fax'] != ""){
+  if (isset($services['fax']) && $services['fax'] != "") {
     $content .= '<div class ="service-info">';
-    $content .= '<div class="flex-item"><b>Fax:</b></div>' . '<div class="flex-item">'. $services['fax'] . '</div>';
+    $content .= '<div class="flex-item"><b>Fax:</b></div>' . '<div class="flex-item">' . $services['fax'] . '</div>';
     $content .= '</div>';
   }
 
   $previous_hour_type = "";
-  $is_first_row = true; // Initialize the first row flag
+  // Initialize the first row flag.
+  $is_first_row = TRUE;
   $content .= '<div class="hours">';
-  $content.= '<div class="flex-item"><b>Service Hours:</b></div>';
-  $appointment =  Markup::create($services['service_appointment']);
+  $content .= '<div class="flex-item"><b>Service Hours:</b></div>';
   foreach ($services['hours'] as $hour) {
-      // Simplify hour row creation by using a helper function
-      $content .= formatHourRow($hour, $previous_hour_type,$is_first_row ,$services['service_appointment']);
-      $previous_hour_type = $hour['type'];
-      $is_first_row = false;
+    // Simplify hour row creation by using a helper function.
+    $content .= format_hour_row($hour, $previous_hour_type, $is_first_row, $services['service_appointment']);
+    $previous_hour_type = $hour['type'];
+    $is_first_row = FALSE;
   }
 
   $content .= '</div>';
   $content .= '<div class ="service-info">';
-  if(isset($services['additional_info']) && $services['additional_info'] != ""){
-    $content .= '<div class="flex-item additional_info">'. $services['additional_info'] . '</div>';
+  if (isset($services['additional_info']) && $services['additional_info'] != "") {
+    $content .= '<div class="flex-item additional_info">' . $services['additional_info'] . '</div>';
   }
   return $content;
 }
 
-// Helper function to format hour rows based on the type of hours and repetition status
-function formatHourRow($hour, $previous_hour_type, $is_first_row ,$appointment) {
+/**
+ * Format hour rows based on the type of hours and repetition status.
+ */
+function format_hour_row($hour, $previous_hour_type, $is_first_row, $appointment) {
   $row_content = '';
   $type = '<div class="flex-item">' . ucwords(str_replace('_', ' ', $hour['type'])) . ":" . '</div>';
-  $appointment_string = ( in_array($hour['type'],['in_person']) && $hour['is_repeated'] == false)?'<br />'.$appointment:'' ;
-  $time_span = '<div class="flex-item">' . $hour['days'] . "&nbsp" . $hour['from'] . "-" . $hour['to'].$appointment_string .'</div>';
-  if ( $hour['mon-fri'] != 1 && $hour['is_repeated'] == false && $previous_hour_type != $hour['type']) {
-      $row_content .= '<div class="hour-row">' . $type . $time_span .'</div>';
-  } else if ($hour['mon-fri']!= 1 && $hour['is_repeated'] == true) {
-      // Modified for when hours are repeated
-      $row_content .= '<div class="hour-row">' . $type . $time_span . '</div>';
-  } else if ($hour['mon-fri']== 1 ) {
-      // Special formatting for Monday-Friday hours if treated differently
-      $row_content .= '<div class="hour-row">' . $type . $time_span  . '</div>';
+  $appointment_string = (in_array($hour['type'], ['in_person']) && $hour['is_repeated'] == FALSE) ? '<br />' . $appointment : '';
+  $time_span = '<div class="flex-item">' . $hour['days'] . "&nbsp" . $hour['from'] . "-" . $hour['to'] . $appointment_string . '</div>';
+  if ($hour['mon-fri'] != 1 && $hour['is_repeated'] == FALSE && $previous_hour_type != $hour['type']) {
+    $row_content .= '<div class="hour-row">' . $type . $time_span . '</div>';
+  }
+  elseif ($hour['mon-fri'] != 1 && $hour['is_repeated'] == TRUE) {
+    // Modified for when hours are repeated.
+    $row_content .= '<div class="hour-row">' . $type . $time_span . '</div>';
+  }
+  elseif ($hour['mon-fri'] == 1) {
+    // Special formatting for Monday-Friday hours if treated differently.
+    $row_content .= '<div class="hour-row">' . $type . $time_span . '</div>';
   }
   return $row_content;
 }
 
-
-function dayRange($days){
+/**
+ * Function to convert  consecutive day to day range.
+ */
+function day_range($days) {
   // Example array of selected days, as retrieved from the field.
-  $selected_days =$days; // This can be dynamic.
+  // This can be dynamic.
+  $selected_days = $days;
 
   // Define the order of the days.
-  $day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  $day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
+    'Friday', 'Saturday', 'Sunday',
+  ];
 
   // Sort the selected days according to the defined order.
-  usort($selected_days, function($a, $b) use ($day_order) {
+  usort($selected_days, function ($a, $b) use ($day_order) {
     return array_search($a, $day_order) - array_search($b, $day_order);
   });
 
@@ -299,5 +322,6 @@ function dayRange($days){
   $formatted_days = implode(', ', $grouped_days);
 
   // Output the result.
-  return $formatted_days; // Outputs: "Monday - Wednesday"
+  // Outputs: "Monday - Wednesday".
+  return $formatted_days;
 }
