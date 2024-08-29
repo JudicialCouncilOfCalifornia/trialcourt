@@ -217,3 +217,17 @@ function jcc_tc2_roc_feature_entity_access(EntityInterface $entity, $operation, 
 
   return $result;
 }
+
+/**
+ * Helper function to remove &nbsp; fragments from text strings.
+ *
+ * @param string $text
+ *   String to process.
+ *
+ * @return string
+ *   Returns filtered text string.
+ */
+function jcc_tc2_roc_feature_filter_nbsp(string $text): string {
+  // See https://stackoverflow.com/a/50301496.
+  return preg_replace("/([^>])(&nbsp;|\xc2\xa0)/ui", "$1 ", $text);
+}
