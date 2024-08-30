@@ -126,6 +126,7 @@ function jcc_elevated_preprocess_node(&$variables) {
  */
 function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
   $render = \Drupal::service('renderer');
+  $file_url_generator = \Drupal::service('file_url_generator');
   $variables['breadcrumb'] = \Drupal::service('breadcrumb')
     ->build(\Drupal::routeMatch())
     ->toRenderable();
@@ -167,7 +168,7 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
     $media = $card_media->target_id ? Media::load($card_media->target_id) : FALSE;
     if ($media && $media->field_media_image) {
       $uri = $media->field_media_image->entity->getFileUri();
-      $image_url = file_create_url($uri);
+      $image_url = $file_url_generator->generateAbsoluteString($uri);
       $variables['imageurl'] = $image_url;
     }
     if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
@@ -195,7 +196,7 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
     $media = Media::load($media_file->target_id);
     if ($media && $media->field_media_image->entity) {
       $uri = $media->field_media_image->entity->getFileUri();
-      $media_url = file_create_url($uri);
+      $media_url = $file_url_generator->generateAbsoluteString($uri);    
     }
     if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
       $caption_value = $media->get('field_media_caption')->value;
@@ -326,6 +327,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $node_manager = $entity_type_manager->getStorage('node');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $media_manager = $entity_type_manager->getStorage('media');
+  $file_url_generator = \Drupal::service('file_url_generator');
 
   $basic_page = $node_manager->load($node->id());
   $variables['node'] = $node;
@@ -404,7 +406,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       $media = $media_manager->load($media_file->target_id);
       if ($media && $media->field_media_image->entity) {
         $uri = $media->field_media_image->entity->getFileUri();
-        $media_url = file_create_url($uri);
+        $media_url = $file_url_generator->generateAbsoluteString($uri);
       }
       if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
         $caption_value = $media->get('field_media_caption')->value;
@@ -426,7 +428,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     $media = $media_manager->load($hero_image->target_id);
     if ($media && $media->field_media_image) {
       $uri = $media->field_media_image->entity->getFileUri();
-      $image_url = file_create_url($uri);
+      $image_url = $file_url_generator->generateAbsoluteString($uri);
       $variables['imageurl'] = $image_url;
       if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
         $caption_value = $media->get('field_media_caption')->value;
