@@ -261,8 +261,19 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
       ->count()
       ->execute();
 
+    $query_past = $node_manager->getQuery();
+    $past_events = $query_past
+      ->accessCheck(TRUE)
+      ->condition('type', 'event')
+      ->condition('status', 1)
+      ->condition('field_content_reference', $node->id(), '=')
+      ->condition('field_event_date', $now->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '<=')
+      ->range(0, 1)
+      ->count()
+      ->execute();
+
     // Add a link to the advisory_body_events past meetings page in the tab.
-    if ($upcoming_events) {
+    if ($past_events) {
 
       // Wrap the content of this tab section in a container.
       $variables['content']['meetings_tab']['past_meetings'] = [
