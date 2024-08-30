@@ -325,7 +325,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $node_manager = $entity_type_manager->getStorage('node');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
-  $media_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $media_manager = $entity_type_manager->getStorage('media');
 
   $basic_page = $node_manager->load($node->id());
   $variables['node'] = $node;
@@ -335,7 +335,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     $to_render = ['#markup' => $field_schedule_render_array[0]['#text']];
     $schedule_content = $renderer->render($to_render);
   }
-  $completion_date = $node->get('field_completion_date')->date ? $node->get('field_completion_date')->date->format('F j, Y') : '';
+  $completion_date = $node->get('field_completion_date')->value ?? '';
   $occupancy_date = $node->get('field_occupancy_date')->date ? $node->get('field_occupancy_date')->date->format('F j, Y') : '';
   $ceqa = $node->field_ceqa->view('default');
   $ceqa_content = '';
@@ -358,6 +358,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $criteria_architect = $node->hasField('field_criteria_architect') ? $node->get('field_criteria_architect')->target_id : FALSE;
   $managed_by = $node->hasField('field_managed_by') ? $node->get('field_managed_by')->target_id : FALSE;
   $county = $node->hasField('field_facility_county') ? $node->get('field_facility_county')->target_id : FALSE;
+  $architectural_firm = $node->hasField('field_architectural_engineering_') ? $node->get('field_architectural_engineering_')->target_id : FALSE;
   $field_award_rendered = '';
 
   if ($node->hasField('field_award')) {
@@ -369,8 +370,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       'Gross Square Footage' => $node->field_gross_square_footage->value,
       'Total Courtrooms' => $node->field_total_courtrooms->value,
       'Current Authorized Project Budget' => $node->field_budget->value,
-      'Architectural/Engineering Firm'  => $node->field_architectural_engineering_->value,
-      'General Contractor' => $node->field_general_contractor->value,
+      'Architectural/Engineering Firm'  => $architectural_firm && $taxonomy_manager->load($architectural_firm) ? $taxonomy_manager->load($architectural_firm)->get('name')->value : '',
       'Fund' => $node->field_fund->value,
       'Completion Date' => $completion_date,
       'Design-Build Entity' => $design_build_entity,
@@ -381,14 +381,24 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       'General Contractor' => $contractor && $taxonomy_manager->load($contractor) ? $taxonomy_manager->load($contractor)->get('name')->value : '',
       'Criteria Architect' => $criteria_architect && $taxonomy_manager->load($criteria_architect) ? $taxonomy_manager->load($criteria_architect)->get('name')->value : '',
       'Managed By' => $managed_by && $taxonomy_manager->load($managed_by) ? $taxonomy_manager->load($managed_by)->get('name')->value : '',
+      'Project Company' => $node->field_project_company->value,
+      'Project Delivery method' => $node->field_project_delivery_method->value,
+      'Consortium Partners' => $node->field_consortium_partners->value,
+      'Project Financing' => $node->field_project_financing->value,
+      'Total Capital Project Cost' => $node->field_total_capital_project_cost->value,
     ],
     'schedule' => $schedule_content,
     'ceqa' => $ceqa_content,
+    'planning_study' => $node->field_planning_study->value,
+    'project_advisory_group' => $node->field_project_advisory_group->value,
     'status' => $node->field_project_status->value == 'inprogress' ? 'In-Progress' : 'Completed',
     'hero_title' => $node->field_hero_title,
     'county' => $county && $taxonomy_manager->load($county) ? $taxonomy_manager->load($county)->get('name')->value : '',
   ];
   $projectimages = [];
+  $caption = '';
+  $citation = '';
+  $media_url = '';
   foreach ($node->field_media_file_multiple as $media_file) {
     if (!empty($media_file->target_id)) {
       $media = $media_manager->load($media_file->target_id);
@@ -444,9 +454,33 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     $elements[] = "<br />";
   }
 
+  if (!empty($details['ceqa'])) {
+    $elements[] = "<h2>CEQA</h2>";
+    $elements[] = $details['ceqa'];
+    $elements[] = "<br />";
+    $elements[] = "<hr />";
+    $elements[] = "<br />";
+  }
+
   if (!empty($details['schedule'])) {
     $elements[] = "<h2>Schedule</h2>";
     $elements[] = $details['schedule'];
+    $elements[] = "<br />";
+    $elements[] = "<hr />";
+    $elements[] = "<br />";
+  }
+
+  if (!empty($details['planning_study'])) {
+    $elements[] = "<h2>Planning Study</h2>";
+    $elements[] = $details['planning_study'];
+    $elements[] = "<br />";
+    $elements[] = "<hr />";
+    $elements[] = "<br />";
+  }
+
+  if (!empty($details['project_advisory_group'])) {
+    $elements[] = "<h2>Project Advisory Group</h2>";
+    $elements[] = $details['project_advisory_group'];
     $elements[] = "<br />";
     $elements[] = "<hr />";
     $elements[] = "<br />";
