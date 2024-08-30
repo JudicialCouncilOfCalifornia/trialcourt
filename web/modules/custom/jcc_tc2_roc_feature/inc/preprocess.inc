@@ -7,6 +7,7 @@
 
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_preprocess_page().
@@ -19,6 +20,15 @@ function jcc_tc2_roc_feature_preprocess_page(array &$variables): void {
 
   if (!$is_admin) {
     $variables['#attached']['library'][] = 'jcc_tc2_roc_feature/jcc-roc-custom';
+
+    // Determine if page is a rules of court related node.
+    $node = \Drupal::routeMatch()->getParameter('node');
+    if ($node instanceof NodeInterface) {
+      $bundle = $node->bundle();
+      if ($bundle == 'roc_rule' || $bundle == 'roc_rule_index') {
+        $variables['hide_was_this_helpful'] = FALSE;
+      }
+    }
   }
 }
 
@@ -42,6 +52,13 @@ function jcc_tc2_roc_feature_preprocess_node(array &$variables): void {
         $file = $roc_rule_service->getMediaDocumentFile($variables['content']['field_roc_rule_media'][0]['#options']['entity']);
         $variables['content']['field_roc_rule_media'][0]['#url'] = Url::fromUserInput($file->createFileUrl());
       }
+    }
+  }
+
+  if ($node->bundle() == 'roc_rule') {
+    if (isset($variables['content']['body'])) {
+      // Remove all &nbsp; items from the body content.
+      $variables['content']['body'][0]['#text'] = jcc_tc2_roc_feature_filter_nbsp($variables['content']['body'][0]['#text']);
     }
   }
 }
