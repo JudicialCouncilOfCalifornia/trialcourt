@@ -962,10 +962,18 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
     foreach ($rfp_attachments as $delta => $media_target) {
       $media = $media_target['target_id'] ? $media_manager->load($media_target['target_id']) : FALSE;
       if ($media) {
+
         $fid = $media->getSource()->getSourceFieldValue($media);
         $file = $file_manager->load($fid);
         $file_url = $file->createFileUrl();
-        $url = Url::fromUserInput($file_url);
+
+        $options = [
+          'attributes' => [
+            'download' => $file->label(),
+          ],
+        ];
+
+        $url = Url::fromUserInput($file_url, $options);
         $file_field_data = $media->get('field_media_file')->first()->getValue();
         $label = !empty($file_field_data['description']) ? $file_field_data['description'] : $media->label();
 
