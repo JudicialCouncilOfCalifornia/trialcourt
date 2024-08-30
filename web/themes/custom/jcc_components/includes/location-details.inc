@@ -95,17 +95,19 @@ function process_add_services($node, &$variables) {
  */
 function extract_service_details($paragraph) {
   // Check if service name has link associated to it.
-  if ($paragraph->hasField('field_services_link')) {
+  if ($paragraph->hasField('field_services_link') &&  isset($paragraph->get('field_services_link')->getValue()['0'])) {
     $service_link = $paragraph->get('field_services_link')->getValue()['0']['uri'];
     // Add check if string contains internal.
     $service_link = substr($service_link, strlen('internal:'));
   }
-  if (isset($service_link)) {
+
+  if (isset($service_link)  && $service_link != "") {
     $service_name = '<a href ="' . htmlspecialchars($service_link) . '">' . ucfirst($paragraph->get('field_service_name')->value) . '</a>';
   }
   else {
-    $service_name = ucfirst($paragraph->get('field_service_name')->value);
+    $service_name = '<div class = "no-link">' . ucfirst($paragraph->get('field_service_name')->value) . '</div>';
   }
+
   $services = [
     'name' => $service_name,
     'phone_number' => $paragraph->hasField('field_service_phone_number') ? Html::escape($paragraph->get('field_service_phone_number')->value) : '',
@@ -148,6 +150,9 @@ function get_service_hours($paragraph, $variables) {
       $is_type_others = $hourEntity->get('field_service_hour_type')->value == "others" ? TRUE : FALSE;
       if ($is_type_others) {
         $others_field_value = $hour_type;
+      }
+      else {
+        $others_field_value = NULL;
       }
       if (isset($hourEntity->get('field_service_hours_same_as_busi')->value) && $hourEntity->get('field_service_hours_same_as_busi')->value == 1) {
         // Business hours are the same as building hours.
@@ -219,11 +224,6 @@ function create_service_card($services, $variables) {
     'style' => 'borderless',
     'title' => Markup::create($services['name']),
     'body' => Markup::create($body_content),
-    'link' => [
-      'url' => '#',
-      'text' => 'Learn more',
-      'type' => 'internal',
-    ],
   ];
 }
 
