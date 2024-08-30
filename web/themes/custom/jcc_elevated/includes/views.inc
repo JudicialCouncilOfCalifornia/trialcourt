@@ -473,7 +473,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       $event_state_id = $node->hasField('field_event_state') ? $node->get('field_event_state')->target_id : FALSE;
 
       // Get Event granicus link.
-      $event_granicus_link = $node->hasField('field_granicus_link') ? $node->get('field_granicus_link')->view()[0]["#text"] : FALSE;
+      $event_granicus_link = $node->hasField('field_granicus_link') && $node->get('field_granicus_link')->first() ? $node->get('field_granicus_link')->view()[0]["#text"] : FALSE;
 
       // Get event time start and end.
       $temp_start_date = $node->field_event_date->start_date->format('Y-m-d H:i:s');
@@ -489,6 +489,13 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       $end_date = $e_date->format('g:i a');
 
       $event_date_time = '<strong>Time: </strong> ' . $start_date . ' to ' . $end_date;
+
+      if (!isset($event['content'])) {
+        $event['content'] = [
+          '#markup' => '',
+        ];
+      }
+      $event['content']['#markup'] = $event['content']['#markup'] ?? '';
 
       // Populating the event object.
       $event['title'] = $node->field_event_date->start_date->format('F j, Y');
@@ -519,6 +526,8 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $node_manager = $entity_type_manager->getStorage('node');
+  $media_manager = $entity_type_manager->getStorage('media');
+  $file_manager = $entity_type_manager->getStorage('file');
 
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
@@ -569,9 +578,9 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       $event_files = '';
       if ($node->hasField('field_event_files')) {
         foreach ($node->get('field_event_files') as $file) {
-          $media = Media::load($file->target_id);
+          $media = $media_manager->load($file->target_id);
           $fid = $media->field_media_file->target_id;
-          $file = File::load($fid);
+          $file = $file_manager->load($fid);
           if ($file) {
             $url = $file->createFileUrl();
             $event_files .= '<a class="file-download" href="' . $url . '">' . $media->field_media_file->description . '</a> ';
@@ -580,7 +589,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       }
 
       // Get Event granicus link.
-      $event_granicus_link = $node->hasField('field_granicus_link') ? $node->get('field_granicus_link')->view()[0]["#text"] : FALSE;
+      $event_granicus_link = $node->hasField('field_granicus_link') && $node->get('field_granicus_link')->first() ? $node->get('field_granicus_link')->view()[0]["#text"] : FALSE;
 
       // Get Event state.
       $event_state_id = $node->hasField('field_event_state') ? $node->get('field_event_state')->target_id : FALSE;

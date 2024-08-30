@@ -234,10 +234,21 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
   // Build the meetings tab if we are to show it.
   if (!$variables['hide_meetings_tab']) {
 
+    $variables['content']['meetings_tab'] = [
+      '#type' => "container",
+      '#attributes' => [
+        'class' => 'stack',
+        'style' => ' --gap: 0',
+      ],
+    ];
+
     // Wrap the content of this tab section in a container.
     $variables['content']['meetings_tab']['events'] = [
       '#type' => "container",
-      '#attributes' => ['class' => 'field field-active-meetings'],
+      '#attributes' => [
+        'class' => 'field field-active-meetings',
+        'style' => ' --gap: 0',
+      ],
     ];
 
     // Add the rendered advisory body events view block into the meetings tab.
@@ -267,7 +278,10 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
       // Wrap the content of this tab section in a container.
       $variables['content']['meetings_tab']['past_meetings'] = [
         '#type' => "container",
-        '#attributes' => ['class' => 'field field-past-meetings'],
+        '#attributes' => [
+          'class' => 'field field-past-meetings',
+          'style' => ' --gap: var(--s6)',
+        ],
       ];
 
       // Generate the heading.
@@ -297,11 +311,13 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
     ];
 
     // Generate the heading.
-    $variables['content']['about_tab']['date_established']['heading'] = [
-      '#type' => "html_tag",
-      '#tag' => 'h3',
-      '#value' => $variables['content']['field_date_established']['#title'],
-    ];
+    if (isset($variables['content']['field_date_established']['#title'])) {
+      $variables['content']['about_tab']['date_established']['heading'] = [
+        '#type' => "html_tag",
+        '#tag' => 'h3',
+        '#value' => $variables['content']['field_date_established']['#title'],
+      ];
+    }
 
     // Move the fields into the tab.
     $variables['content']['about_tab']['date_established']['date'] = $variables['content']['field_date_established'];
