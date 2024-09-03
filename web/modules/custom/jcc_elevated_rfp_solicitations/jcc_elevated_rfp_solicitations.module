@@ -7,6 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
+use Drupal\node\NodeInterface;
 use Drupal\views\ViewExecutable;
 
 /**
@@ -405,6 +406,8 @@ function jcc_elevated_rfp_solicitations_status_options(): array {
 
 /**
  * Sets the Solicitation Request (RFP) department options.
+ *
+ * DEPRECATED - A taxonomy is used now for the department field.
  */
 function jcc_elevated_rfp_solicitations_department_options(): array {
   return [
@@ -432,11 +435,13 @@ function jcc_elevated_rfp_solicitations_preprocess_html(&$variables): void {
   // If the node is a sectioned node, set the page html title to follow the
   // pattern of "page-title | section-name | site-name".
   if ($node = $route_match->getParameter('node')) {
-    if ($node->bundle() == 'request') {
-      $site_name = \Drupal::config('system.site')->get('name');
-      $request_type = $node->get('field_rfp_type')->first()->view('full');
-      $type = $request_type['#markup']->__toString();
-      $variables['head_title']['title'] = Markup::create($node->getTitle() . ' | ' . $type . ' | ' . $site_name);
+    if ($node instanceof NodeInterface) {
+      if ($node->bundle() == 'request') {
+        $site_name = \Drupal::config('system.site')->get('name');
+        $request_type = $node->get('field_rfp_type')->first()->view('full');
+        $type = $request_type['#markup']->__toString();
+        $variables['head_title']['title'] = Markup::create($node->getTitle() . ' | ' . $type . ' | ' . $site_name);
+      }
     }
   }
 }
