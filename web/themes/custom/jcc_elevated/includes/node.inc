@@ -17,6 +17,16 @@ use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Views;
 
+function jcc_elevated_node_invitations_to_comment(array &$variables, NodeInterface $node) {
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $category = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
+  //dpm($category);
+  //$node = \Drupal\node\Entity\Node::load($nid);
+  //$category_field = $node->get('field_category')->getValue();
+  $sample = $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '';
+  //dpm($sample);
+}
 /**
  * Implements hook_preprocess_HOOK().
  */

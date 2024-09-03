@@ -19,134 +19,39 @@ source:
   urls: ''
   item_selector: entry
   ids:
-    id:
+    id_href:
       type: string
+    field_category:
+      type: string  
   fields:
     -
-      name: id
-      selector: id
+      name: id_href
+      selector: id_href
       label: Id
     -
       name: title
       selector: title
-      label: Title
-    #Change the below code based on the ITC fields?  
+      label: Title    
     -
-      name: field_total_courtrooms
-      selector: field_total_courtrooms
-      label: 'Total Courtrooms'
+      name: field_category
+      selector: field_category
+      label: 'Category'
     -
-      name: field_budget
-      selector: field_budget
-      label: 'Authorized Project Budget'
+      name: field_itc_number
+      selector: field_itc_number
+      label: 'ITC Number' 
     -
-      name: field_fund
-      selector: field_fund
-      label: Fund
-    -
-      name: field_project_status
-      selector: field_project_status
-      label: 'Project Status'
-    -
-      name: field_gross_square_footage
-      selector: field_gross_square_footage
-      label: 'Gross Square Footage'
-    -
-      name: field_initial_funding_year
-      selector: field_initial_funding_year
-      label: 'Initial Funding Year'
-    -
-      name: image
-      label: 'Hero Image'
-      selector: image
+      name: field_status
+      selector: field_status
+      label: 'Status'   
     -
       name: body
-      label: Body
       selector: body
-    -
-      name: field_occupancy_date
-      label: 'Occupancy Date'
-      selector: field_occupancy_date
-    -
-      name: field_completion_date
-      label: 'Completion Date'
-      selector: field_completion_date
-    -
-      name: field_schedule
-      label: Schedule
-      selector: field_schedule
-    -
-      name: field_ceqa
-      label: CEQA
-      selector: field_ceqa
-    -
-      name: field_summary  
-      label: Summary
-      selector: field_summary
+      label: Body
     - 
-      name: field_media_file_multiple
-      label: Project Images
-      selector: field_media_file_multiple 
-    -
-      name: field_architectural_engineering_
-      label: 'Architectural Firm'
-      selector: field_architectural_engineering_
-    -
-      name: field_agency_manager
-      label: 'Construction Manager At Risk'
-      selector: field_agency_manager
-    -
-      name: field_agency
-      label: 'Construction Management Agency'
-      selector: field_agency
-    -
-      name: field_general_contractor
-      label: 'General Contractor'
-      selector: field_general_contractor  
-    -
-      name: field_criteria_architect
-      label: 'Criteria Architect'
-      selector: field_criteria_architect   
-    -
-      name: field_managed_by
-      label: 'Managed By'
-      selector: field_managed_by
-    -
-      name: field_design_build_entity
-      label: 'Design-Build Entity'
-      selector: field_design_build_entity   
-    - 
-      name: field_award
-      label: 'Awards and Recognition'
-      selector: field_award
-    - 
-      name: field_facility_county
-      label: County
-      selector: field_facility_county
-    -
-      name: field_hero_title
-      label: Hero Title
-      selector: field_hero_title
-    -
-      name: field_total_capital_project_cost
-      label: Total Capital Project Cost
-      selector: field_total_capital_project_cost
-    -
-      name: field_project_company
-      label: Project Company
-      selector: field_project_company
-    -
-      name: field_consortium_partners
-      label: Consortium Partners
-      selector: field_consortium_partners
-    -
-      name: field_project_delivery_method
-      label: Project Delivery Method
-      selector: field_project_delivery_method
-    -
-      name: field_project_financing
-      label: Project Financing
-      selector: field_project_financing
+      name: field_file
+      selector: field_file
+      label: File    
 process:
   uid:
     plugin: default_value
@@ -158,225 +63,72 @@ process:
     -
       plugin: default_value
       default_value: TITLE
-  field_total_courtrooms: field_total_courtrooms
-  field_budget: field_budget
-  field_fund: field_fund
-  field_project_status:
+  field_itc_number: field_itc_number
+  field_category:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_category
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: category
+      value_key: name
+      ignore_case: true  
+  field_status:
     -
       plugin: get
-      source: field_project_status
+      source: field_status
     -  
       plugin: default_value
-      default_value: inprogress      
+      default_value: Closed      
     -
       plugin: skip_on_empty
       method: process
-  field_gross_square_footage: field_gross_square_footage
-  field_initial_funding_year: field_initial_funding_year
-  field_completion_date: field_completion_date  
-  field_hero_title: field_hero_title
-  field_total_capital_project_cost: field_total_capital_project_cost
-  field_project_company: field_project_company
-  field_consortium_partners: field_consortium_partners
-  field_project_delivery_method: field_project_delivery_method  
-  field_project_financing: field_project_financing
-  field_media:
-    -
-      plugin: skip_on_empty
-      method: process
-      source: image
-    -
-      plugin: migration_lookup
-      migration: facilities_images
-  field_media_file_multiple:
-    -
-      plugin: skip_on_empty
-      method: process
-      source: field_media_file_multiple    
-    -
-      plugin: explode
-      delimiter: ','
-      source: field_media_file_multiple
-    -
-      plugin: callback
-      callable: trim     
-    -
-      plugin: migration_lookup
-      migration: facilities_images    
   body/value:
-    -
-      plugin: media_replace_file_link
-      source: body
-    -
-      plugin: prefix_relative_links
+    plugin: get
+    source: body
   body/format:
     plugin: default_value
     default_value: body
-  body/summary: field_summary
-  field_schedule/value:
-    -
-      plugin: media_replace_file_link
-      source: field_schedule
-    -
-      plugin: prefix_relative_links
-  field_schedule/format:
-    plugin: default_value
-    default_value: minimal  
-  field_ceqa/value:
-    -
-      plugin: media_replace_file_link
-      source: field_ceqa
-    -
-      plugin: prefix_relative_links
-  field_ceqa/format:
-    plugin: default_value
-    default_value: body
-  field_design_build_entity/value:
-    -
-      plugin: media_replace_file_link
-      source: field_design_build_entity
-    -
-      plugin: prefix_relative_links
-  field_design_build_entity/format:
-    plugin: default_value
-    default_value: body  
-  field_occupancy_date:
-    -
-      plugin: callback
-      callable: strtotime
-      source: field_occupancy_date
-    -
-      plugin: format_date
-      from_format: U
-      to_format: Y-m-d
-  field_general_contractor:
-    -
-      plugin: callback
-      callable: trim
+  field_file:  
     -
       plugin: skip_on_empty
       method: process
-      source: field_general_contractor
-    -        
-      plugin: entity_generate     
-      entity_type: taxonomy_term
-      bundle_key: vid
-      bundle: agency
-      value_key: name
-      ignore_case: true
-  field_facility_county:
+      source: id_href   
     -
-      plugin: callback
-      callable: trim
-    -
-      plugin: skip_on_empty
-      method: process
-      source: field_facility_county
-    -        
-      plugin: entity_generate     
-      entity_type: taxonomy_term
-      bundle_key: vid
-      bundle: county
-      value_key: name
-      ignore_case: true            
-  field_agency_manager:
-    -
-      plugin: callback
-      callable: trim
-    -
-      plugin: skip_on_empty
-      method: process
-      source: field_agency_manager
-    -
-      plugin: entity_generate
-      entity_type: taxonomy_term
-      bundle_key: vid
-      bundle: agency
-      value_key: name
-      ignore_case: true
-  field_architectural_engineering_:
-    -
-      plugin: callback
-      callable: trim
-    -
-      plugin: skip_on_empty
-      method: process
-      source: field_architectural_engineering_
-    -
-      plugin: entity_generate
-      entity_type: taxonomy_term
-      bundle_key: vid
-      bundle: agency
-      value_key: name
-      ignore_case: true
-  field_agency:
-    -
-      plugin: callback
-      callable: trim
-    -
-      plugin: skip_on_empty
-      method: process
-      source: field_agency
-    -
-      plugin: entity_generate
-      entity_type: taxonomy_term
-      bundle_key: vid
-      bundle: agency
-      value_key: name
-      ignore_case: true   
-  field_managed_by:
-    -
-      plugin: callback
-      callable: trim
-    -
-      plugin: skip_on_empty
-      method: process
-      source: field_managed_by
-    -
-      plugin: entity_generate
-      entity_type: taxonomy_term
-      bundle_key: vid
-      bundle: agency
-      value_key: name
-      ignore_case: true    
-  field_criteria_architect:
-    -
-      plugin: callback
-      callable: trim
-    -
-      plugin: skip_on_empty
-      method: process
-      source: field_criteria_architect
-    -
-      plugin: entity_generate
-      entity_type: taxonomy_term
-      bundle_key: vid
-      bundle: agency
-      value_key: name
-      ignore_case: true  
-  field_award:
-    - 
-      plugin: callback
-      callable: trim
-      source: field_award
-    -
-      plugin: skip_on_empty
-      method: process
-      source: field_award    
-    -
-      plugin: explode
-      delimiter: '#'
-      source: field_award
-    -
-      plugin: entity_generate
-      entity_type: taxonomy_term
-      bundle_key: vid
-      bundle: award_body
-      value_key: name
-      ignore_case: true          
+      plugin: migration_lookup
+      migration: itc_media 
+      source: id_href 
+      #-
+    #  plugin: skip_on_empty
+    #  method: process
+    #  source: id_href
+    #-
+    #  plugin: callback
+    #  callable: trim  
+    #- plugin: media_replace_file_link
+    #  source: body_text
+    #- plugin: prefix_relative_links
+  #body/format:
+    #plugin: default_value
+    #default_value: body      
+  #body/value:
+  #  - plugin: sub_process
+  #    source: body_1
+  #    process:
+  #      extracted_description:
+  #        plugin: extract
+  #        source: itc_description
+  #  - plugin: callback
+  #    callable: jcc_elevated_custom_implode_array
+  #    arguments:
+  #      - '@extracted_description'
+  #      - ' ' 
 destination:
   plugin: 'entity:node'
-  default_bundle: itc
+  default_bundle: invitations_to_comment
 migration_dependencies: null
   #optional:
   #  - itc_media    

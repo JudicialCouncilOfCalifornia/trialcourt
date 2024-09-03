@@ -609,6 +609,16 @@ function get_node_titles_by_term($term_id) {
   return $titles;
 }
 
+function jcc_elevated_preprocess_views_view__itc__block_1(&$variables) {
+  dpm("Inside ITC preprocess");
+  dpm($variables);
+  // Check if we are processing the correct field and view.
+  foreach ($variables['view']->result as $result) {
+    dpm("RESULT");
+    dpm($result);
+  }  
+}
+
 /**
  * Implements hook_preprocess_views_view() for awards recognition block.
  */
