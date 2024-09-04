@@ -27,10 +27,6 @@ source:
       label: Url
       selector: url
     -
-      name: body
-      label: Body
-      selector: body
-    -
       name: bodies
       label: 'Bodies (Paragraphs)'
       selector: bodies
@@ -60,7 +56,7 @@ process:
         target_id: '0'
         target_revision_id: '1'
     - plugin: skip_on_empty
-      method: row
+      method: process
       message: 'No body components to add to node.'
   accordions:
     - plugin: explode
@@ -76,7 +72,7 @@ process:
         target_id: '0'
         target_revision_id: '1'
     - plugin: skip_on_empty
-      method: row
+      method: process
       message: 'No accordions to add to node.'
   tabs:
     - plugin: explode
@@ -92,7 +88,7 @@ process:
         target_id: '0'
         target_revision_id: '1'
     - plugin: skip_on_empty
-      method: row
+      method: process
       message: 'No tabs to add to node.'
   field_components:
     - plugin: merge
