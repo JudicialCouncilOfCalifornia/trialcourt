@@ -620,16 +620,6 @@ function get_node_titles_by_term($term_id) {
   return $titles;
 }
 
-function jcc_elevated_preprocess_views_view__itc__block_1(&$variables) {
-  dpm("Inside ITC preprocess");
-  dpm($variables);
-  // Check if we are processing the correct field and view.
-  foreach ($variables['view']->result as $result) {
-    dpm("RESULT");
-    dpm($result);
-  }  
-}
-
 /**
  * Implements hook_preprocess_views_view() for awards recognition block.
  */
@@ -733,6 +723,36 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
   usort($facilities, fn($a, $b) => $a['county'] <=> $b['county']);
   $variables['facilities'] = $facilities;
 }
+
+function jcc_elevated_preprocess_views_view__itc_past_proposals__block_1(&$variables) {
+  __jcc_view_results_exposed_filter_init($variables); 
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $past_proposals = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $result_row = $row['#row'];
+    if (!empty($result_row->_entity) && $result_row->_entity instanceof \Drupal\node\Entity\Node) {
+      $node = $result_row->_entity;
+      $detail_list_data = [
+      'details' => array_filter([
+        $node->get('field_category')->value,
+      ]),
+    ];   
+    $category = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
+    $category_value = $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '';
+    $itc_past_proposal = [
+      'title' => $node->get('title')->value ? $node->get('title')->value : '',      
+      'category' => $category_value ? $category_value : '',
+      /*'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',*/
+      'detail_list_data' => $detail_list_data,
+    ];
+    $past_proposals[] = $itc_past_proposal;
+  }  
+  usort($past_proposals, fn($a, $b) => $a['category'] <=> $b['category']);
+  $variables['past_proposals'] = $past_proposals;
+} 
+}
+
 
 /**
  * Implements hook_preprocess_views_view() for job search listing block.
