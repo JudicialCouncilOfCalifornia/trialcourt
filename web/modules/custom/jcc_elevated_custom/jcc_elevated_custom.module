@@ -358,3 +358,15 @@ function jcc_elevated_custom_field_group_form_process(array &$element, &$group, 
     $complete_form['unpublish_state']['#weight'] = 5;
   }
 }
+
+/**
+ * Implements hook_form_FORMID_alter().
+ */
+function jcc_elevated_custom_form_node_alert_form_alter(&$form, $form_state): void {
+  $form['field_toggle']['widget']['value']['#description'] = t('This enables a closing "X" that will remove the alert from the page');
+  $description = [
+    t('This sets the alert to show ONLY on the website home page.'),
+    t('It does NOT set the alert to display on a section or sub-site "home" page. A specific page must be used for that.'),
+  ];
+  $form['field_switch']['widget']['value']['#description'] = implode(' ', $description);
+}

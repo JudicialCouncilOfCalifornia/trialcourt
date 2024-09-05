@@ -244,10 +244,21 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
   // Build the meetings tab if we are to show it.
   if (!$variables['hide_meetings_tab']) {
 
+    $variables['content']['meetings_tab'] = [
+      '#type' => "container",
+      '#attributes' => [
+        'class' => 'stack',
+        'style' => ' --gap: 0',
+      ],
+    ];
+
     // Wrap the content of this tab section in a container.
     $variables['content']['meetings_tab']['events'] = [
       '#type' => "container",
-      '#attributes' => ['class' => 'field field-active-meetings'],
+      '#attributes' => [
+        'class' => 'field field-active-meetings',
+        'style' => ' --gap: 0',
+      ],
     ];
 
     // Add the rendered advisory body events view block into the meetings tab.
@@ -260,24 +271,28 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
     // count. This is much faster than using a view and avoids all the php
     // warnings.
     $now = new DrupalDateTime('now');
-    $query = $node_manager->getQuery();
-    $upcoming_events = $query
+
+    $query_past = $node_manager->getQuery();
+    $past_events = $query_past
       ->accessCheck(TRUE)
       ->condition('type', 'event')
       ->condition('status', 1)
       ->condition('field_content_reference', $node->id(), '=')
-      ->condition('field_event_date', $now->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '>=')
+      ->condition('field_event_date', $now->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '<=')
       ->range(0, 1)
       ->count()
       ->execute();
 
     // Add a link to the advisory_body_events past meetings page in the tab.
-    if ($upcoming_events) {
+    if ($past_events) {
 
       // Wrap the content of this tab section in a container.
       $variables['content']['meetings_tab']['past_meetings'] = [
         '#type' => "container",
-        '#attributes' => ['class' => 'field field-past-meetings'],
+        '#attributes' => [
+          'class' => 'field field-past-meetings',
+          'style' => ' --gap: var(--s6)',
+        ],
       ];
 
       // Generate the heading.
@@ -307,11 +322,13 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
     ];
 
     // Generate the heading.
-    $variables['content']['about_tab']['date_established']['heading'] = [
-      '#type' => "html_tag",
-      '#tag' => 'h3',
-      '#value' => $variables['content']['field_date_established']['#title'],
-    ];
+    if (isset($variables['content']['field_date_established']['#title'])) {
+      $variables['content']['about_tab']['date_established']['heading'] = [
+        '#type' => "html_tag",
+        '#tag' => 'h3',
+        '#value' => $variables['content']['field_date_established']['#title'],
+      ];
+    }
 
     // Move the fields into the tab.
     $variables['content']['about_tab']['date_established']['date'] = $variables['content']['field_date_established'];
@@ -956,10 +973,18 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
     foreach ($rfp_attachments as $delta => $media_target) {
       $media = $media_target['target_id'] ? $media_manager->load($media_target['target_id']) : FALSE;
       if ($media) {
+
         $fid = $media->getSource()->getSourceFieldValue($media);
         $file = $file_manager->load($fid);
         $file_url = $file->createFileUrl();
-        $url = Url::fromUserInput($file_url);
+
+        $options = [
+          'attributes' => [
+            'download' => $file->label(),
+          ],
+        ];
+
+        $url = Url::fromUserInput($file_url, $options);
         $file_field_data = $media->get('field_media_file')->first()->getValue();
         $label = !empty($file_field_data['description']) ? $file_field_data['description'] : $media->label();
 
