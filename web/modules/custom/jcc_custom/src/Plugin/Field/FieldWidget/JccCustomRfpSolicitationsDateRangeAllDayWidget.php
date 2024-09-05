@@ -9,7 +9,6 @@ use Drupal\datetime\Plugin\Field\FieldType\DateTimeItem;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\datetime_range\Plugin\Field\FieldType\DateRangeItem;
 use Drupal\datetime_range\Plugin\Field\FieldWidget\DateRangeDefaultWidget;
-use Drupal\jcc_elevated_rfp_solicitations\Utility\JccElevatedRfpSolicitationsAllDayHelper;
 
 /**
  * Plugin implementation of the 'daterange_all_day' widget.
@@ -42,22 +41,24 @@ class JccCustomRfpSolicitationsDateRangeAllDayWidget extends DateRangeDefaultWid
     ];
 
     // Add All day checkbox with states api.
+    $all_day_value = !empty($values) ? $this->isAllDay($items->get($delta)) : TRUE;
     $element['settings']['all_day'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('All day'),
       '#weight' => 3,
-      '#default_value' => !empty($values) ? $this->isAllDay($items->get($delta)) : TRUE,
-      '#value' => !empty($values) ? $this->isAllDay($items->get($delta)) : TRUE,
+      '#default_value' => $all_day_value,
+      '#value' => $all_day_value,
       '#parents' => [$items->getName(), $delta, 'all_day'],
     ];
 
     // Add checkbox to enable/disable the end date.
+    $enable_end_date_value = !empty($values) ? !$this->enableEndDate($items->get($delta)) : FALSE;
     $element['settings']['enable_end_date'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable end date'),
       '#weight' => 4,
-      '#default_value' => !empty($values) ? !$this->enableEndDate($items->get($delta)) : FALSE,
-      '#value' => !empty($values) ? !$this->enableEndDate($items->get($delta)) : FALSE,
+      '#default_value' => $enable_end_date_value,
+      '#value' => $enable_end_date_value,
       '#parents' => [$items->getName(), $delta, 'enable_end_date'],
     ];
 
@@ -69,6 +70,28 @@ class JccCustomRfpSolicitationsDateRangeAllDayWidget extends DateRangeDefaultWid
 
     // Set end date as optional.
     $element['end_value']['#required'] = FALSE;
+
+    $element['settings']['help_text'] = [
+      '#type' => 'markup',
+      '#prefix' => '<small class="datetime__help-text">',
+      '#markup' => $this->t("To display a single time, set start and end times to same value."),
+      '#suffix' => '</small>',
+      '#weight' => 5,
+      '#parents' => [$items->getName(), $delta, 'match_times_action'],
+    ];
+
+    // Add action link that sets the end time to match the start time.
+    $element['settings']['match_times_action'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'input',
+      '#value' => $this->t("Click to match end to start time")->render(),
+      '#attributes' => [
+        'class' => 'button--small button datetime__action__match-times',
+        'value' => $this->t("Match end to start time")->render(),
+      ],
+      '#weight' => 6,
+      '#parents' => [$items->getName(), $delta, 'match_times_action'],
+    ];
 
     return $element;
   }
@@ -197,13 +220,18 @@ class JccCustomRfpSolicitationsDateRangeAllDayWidget extends DateRangeDefaultWid
    *
    * @param array|\Drupal\datetime\Plugin\Field\FieldType\DateTimeItem $item
    *   The date range item to check.
+   * @param bool $check_end_time
+   *   Whether to check the date or the time value of the date range item.
    *
    * @return bool
    *   A boolean indicating if a daterange item covers all day or not.
    *
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  private function enableEndDate(array|DateTimeItem $item): bool {
+  private function enableEndDate(array|DateTimeItem $item, $check_end_time = FALSE): bool {
+
+    $format = $check_end_time ? self::TIME_FORMAT : self::DATE_FORMAT;
+
     // Get our start and end times (if exists) from our DateRangeItem.
     if ($item instanceof DateRangeItem) {
       /** @var \Drupal\Core\Datetime\DrupalDateTime $start_date */
@@ -232,11 +260,12 @@ class JccCustomRfpSolicitationsDateRangeAllDayWidget extends DateRangeDefaultWid
     }
 
     $timezone = date_default_timezone_get();
-    $formatted_start = $start_date->format(self::DATE_FORMAT, ['timezone' => $timezone]);
-    $formatted_end = $end_date ? $end_date->format(self::DATE_FORMAT, ['timezone' => $timezone]) : FALSE;
+    $formatted_start = $start_date->format($format, ['timezone' => $timezone]);
+    $formatted_end = $end_date ? $end_date->format($format, ['timezone' => $timezone]) : FALSE;
 
     // If the formatted start and end dates are the same, regardless of time, we
-    // can conclude that this is a single day.
+    // can conclude that this is a single day. If check_end_time is true, then
+    // the time values are checked if they are the same.
     if ($formatted_start == $formatted_end) {
       return TRUE;
     }

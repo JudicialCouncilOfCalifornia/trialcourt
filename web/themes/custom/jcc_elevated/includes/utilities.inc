@@ -60,42 +60,64 @@ function __jcc_elevated_determine_date_range_output($date): null|MarkupInterface
   }
 
   $separator_item = $date['separator']['#plain_text'] ?? ' - ';
-  [$start_day, $start_time] = explode($separator_item, $date['start_date']['#text']);
-  [$end_day, $end_time] = explode($separator_item, $date['end_date']['#text']);
+
+  if (isset($date['start_date'])) {
+    [$start_day, $start_time] = explode($separator_item, $date['start_date']['#text']);
+  }
+
+  if (isset($date['end_date'])) {
+    [$end_day, $end_time] = explode($separator_item, $date['end_date']['#text']);
+  }
+
+  if (isset($date['#text'])) {
+    [$start_day, $start_time] = explode($separator_item, $date['#text']);
+    [$end_day, $end_time] = explode($separator_item, $date['#text']);
+  }
 
   $same_day = $start_day == $end_day;
+  $same_time = $start_time == $end_time;
   $all_day = $start_time == "12:00 AM" && $end_time == "11:59 PM";
+  $separate = FALSE;
 
   if ($same_day && !$all_day) {
     $date['start_date']['#text'] = $start_day;
-    $date['end_date']['#text'] = '<small>' . $start_time . ' - ' . $end_time . '</small>';
-    $separate = FALSE;
+    if ($same_time) {
+      $date['end_date']['#text'] = '<small>' . $start_time . '</small>';
+    }
+    else {
+      $date['end_date']['#text'] = '<small>' . $start_time . ' - ' . $end_time . '</small>';
+    }
   }
   elseif ($same_day && $all_day) {
     $date['start_date']['#text'] = $start_day;
     $date['end_date']['#text'] = FALSE;
-    $separate = FALSE;
   }
   elseif (!$same_day && $all_day) {
+    $separate = TRUE;
     $date['start_date']['#text'] = $start_day;
     $date['end_date']['#text'] = $end_day;
     $date['separator']['#plain_text'] = ' to ';
-    $separate = TRUE;
   }
   elseif (!$same_day && !$all_day) {
+    $separate = TRUE;
     $date['start_date']['#text'] = $start_day . '<br><small>' . $start_time . '</small>';
     $date['end_date']['#text'] = $end_day . '<br><small>' . $end_time . '</small>';
     $date['separator']['#plain_text'] = ' to ';
-    $separate = TRUE;
   }
   else {
-    $date['separator']['#plain_text'] = ' - ';
-    $separate = FALSE;
+    $date['start_date']['#text'] = $start_day;
+    if ($same_time) {
+      $date['end_date']['#text'] = '<small>' . $start_time . '</small>';
+    }
+    else {
+      $date['end_date']['#text'] = '<small>' . $start_time . ' - ' . $end_time . '</small>';
+    }
   }
 
   $separator = $separate ? '<br><small>' . $date['separator']['#plain_text'] . '</small><br>' : '<br>';
   $start_datetime_attr = $date['start_date']['#attributes']['datetime'];
   $end_datetime_attr = $date['end_date']['#attributes']['datetime'];
+
   return Markup::create("<time datetime='$start_datetime_attr'>" . $date['start_date']['#text'] . "</time>" . $separator . "<time datetime='$end_datetime_attr'>" . $date['end_date']['#text'] . "</time>");
 }
 

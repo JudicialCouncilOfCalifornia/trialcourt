@@ -20,6 +20,9 @@
         let timeStartField = $this.find('[name$="[value][time]"]');
         let timeEndField = $this.find('[name$="[end_value][time]"]');
 
+        let matchEndTimeToStartTime = $this.find('.datetime__action__match-times');
+        let matchEndTimeToStartTimeHelpText = $this.find('.datetime__help-text');
+
         let dateStartLabel = dateStartField.parents('.form-datetime-wrapper').find('h4');
         let dateEndLabel = dateEndField.parents('.form-datetime-wrapper').find('h4');
 
@@ -84,11 +87,17 @@
             if (dateEndField.val() !== '') {
               timeEndField.val(timeEnd);
             }
+
+            matchEndTimeToStartTime.hide();
+            matchEndTimeToStartTimeHelpText.hide();
           }
 
           if (!allDayCheckbox.is(':checked')) {
             timeStartField.show();
             timeEndField.show();
+
+            matchEndTimeToStartTime.show();
+            matchEndTimeToStartTimeHelpText.show();
           }
 
           enableEndDateField();
@@ -122,6 +131,10 @@
               timeEndField.val('');
             }
           }
+        });
+
+        matchEndTimeToStartTime.on('click', function () {
+          timeEndField.val(timeStartField.val());
         });
 
       });
