@@ -177,14 +177,6 @@ function jcc_tc2_roc_feature_rule_styles_info(): array {
   ];
 
   $styles[] = [
-    'name' => 'Unordered List',
-    'element' => 'ul',
-    'attributes' => [
-      'class' => 'paragraphlist',
-    ],
-  ];
-
-  $styles[] = [
     'name' => 'Paragraph No List',
     'element' => 'p',
     'attributes' => [
@@ -201,7 +193,15 @@ function jcc_tc2_roc_feature_rule_styles_info(): array {
   ];
 
   $styles[] = [
-    'name' => 'SubItem List',
+    'name' => 'Subparagraph No List',
+    'element' => 'p',
+    'attributes' => [
+      'class' => 'subparagraphnolist',
+    ],
+  ];
+
+  $styles[] = [
+    'name' => 'Item List',
     'element' => 'p',
     'attributes' => [
       'class' => 'itemlist',
@@ -209,10 +209,34 @@ function jcc_tc2_roc_feature_rule_styles_info(): array {
   ];
 
   $styles[] = [
-    'name' => 'Subparagraph No List',
+    'name' => 'Item No List',
     'element' => 'p',
     'attributes' => [
-      'class' => 'subparagraphnolist',
+      'class' => 'itemnolist',
+    ],
+  ];
+
+  $styles[] = [
+    'name' => 'SubItem List',
+    'element' => 'p',
+    'attributes' => [
+      'class' => 'subitemlist',
+    ],
+  ];
+
+  $styles[] = [
+    'name' => 'SubItem No List',
+    'element' => 'p',
+    'attributes' => [
+      'class' => 'subitemnolist',
+    ],
+  ];
+
+  $styles[] = [
+    'name' => 'Unordered List',
+    'element' => 'ul',
+    'attributes' => [
+      'class' => 'paragraphlist',
     ],
   ];
 
@@ -281,5 +305,4 @@ function jcc_tc2_roc_feature_rule_styles_info(): array {
   ];
 
   return $styles;
-
 }

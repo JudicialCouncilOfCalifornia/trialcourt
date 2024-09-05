@@ -343,11 +343,20 @@ function jcc_elevated_rfp_solicitations_field_widget_paragraphs_form_alter(&$ele
 
   // Alterations to the date information paragraph form on solicitations.
   if ($element['#paragraph_type'] == 'date_information') {
+    $element['top']['actions']['actions']['collapse_button']['#access'] = FALSE;
     $element['top']['type']['label']['#access'] = FALSE;
+
+    if (isset($element['top']['actions']['dropdown_actions']['remove_button'])) {
+      $element['top']['actions']['actions']['remove_button'] = $element['top']['actions']['dropdown_actions']['remove_button'];
+      unset($element['top']['actions']['dropdown_actions']['remove_button']);
+    }
+
     if (isset($element['subform'])) {
       $element['subform']['field_date_range']['widget']['#title'] = NULL;
       $element['subform']['field_date_range']['widget'][0]['#title'] = NULL;
       $element['subform']['field_date_range']['widget'][0]['#title_display'] = 'hidden';
+
+      $element['subform']['field_text']['widget'][0]['#rows'] = 2;
     }
   }
 
