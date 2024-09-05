@@ -23,29 +23,9 @@ source:
       label: 'Unique ID'
       selector: url
     -
-      name: url
-      label: Url
-      selector: url
-    -
       name: title
       label: Title
       selector: title
-    -
-      name: body
-      label: Body
-      selector: body
-    -
-      name: bodies
-      label: 'Bodies (Paragraphs)'
-      selector: bodies
-    -
-      name: accordions
-      label: Accordions
-      selector: accordions
-    -
-      name: tabs
-      label: Tabs
-      selector: tabs
   ids:
     src_unique_id:
       type: string
@@ -63,19 +43,10 @@ process:
   path/pathauto:
     plugin: default_value
     default_value: 1
-  body/value:
-    -
-      plugin: media_replace_file_link
-      source: body
-    -
-      plugin: prefix_relative_links
-  body/format:
-    plugin: default_value
-    default_value: full_html
   hero:
     - plugin: explode
       delimiter: ','
-      source: title
+      source: src_unique_id
     - plugin: callback
       callable: trim
     - plugin: multiple_values
@@ -86,70 +57,33 @@ process:
         target_id: '0'
         target_revision_id: '1'
     - plugin: skip_on_empty
-      method: row
+      method: process
       message: 'No hero component to add to node.'
-  bodies:
+  section:
     - plugin: explode
       delimiter: ','
-      source: bodies
+      source: src_unique_id
     - plugin: callback
       callable: trim
     - plugin: multiple_values
     - plugin: migration_lookup
-      migration: courts_programs_body
+      migration: courts_programs_section
     - plugin: sub_process
       process:
         target_id: '0'
         target_revision_id: '1'
     - plugin: skip_on_empty
-      method: row
-      message: 'No body components to add to node.'
-  accordions:
-    - plugin: explode
-      delimiter: ','
-      source: accordions
-    - plugin: callback
-      callable: trim
-    - plugin: multiple_values
-    - plugin: migration_lookup
-      migration: courts_programs_accordion
-    - plugin: sub_process
-      process:
-        target_id: '0'
-        target_revision_id: '1'
-    - plugin: skip_on_empty
-      method: row
-      message: 'No accordions to add to node.'
-  tabs:
-    - plugin: explode
-      delimiter: ','
-      source: tabs
-    - plugin: callback
-      callable: trim
-    - plugin: multiple_values
-    - plugin: migration_lookup
-      migration: courts_programs_tabs
-    - plugin: sub_process
-      process:
-        target_id: '0'
-        target_revision_id: '1'
-    - plugin: skip_on_empty
-      method: row
-      message: 'No tabs to add to node.'
+      method: process
+      message: 'No section component to add to node.'
   field_components:
     - plugin: merge
       source:
         - '@hero'
-        - '@bodies'
-        - '@accordions'
-        - '@tabs'
+        - '@section'
 destination:
   plugin: 'entity:node'
   default_bundle: subpage
 migration_dependencies:
   required:
-    - courts_programs_file
     - courts_programs_hero_hangover
-    - courts_programs_body
-    - courts_programs_accordion
-    - courts_programs_tabs
+    - courts_programs_section

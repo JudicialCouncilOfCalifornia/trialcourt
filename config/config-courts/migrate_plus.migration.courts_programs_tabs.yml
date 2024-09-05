@@ -23,10 +23,6 @@ source:
       label: 'Unique ID'
       selector: id
     -
-      name: heading
-      label: Heading
-      selector: heading
-    -
       name: items
       label: Tabs
       selector: items
@@ -55,7 +51,7 @@ process:
         target_revision_id: '1'
     -
       plugin: skip_on_empty
-      method: row
+      method: process
       message: 'No items to attach to tabs container.'
 destination:
   plugin: 'entity_reference_revisions:paragraph'
