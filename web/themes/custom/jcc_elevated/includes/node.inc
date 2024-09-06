@@ -296,7 +296,7 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
       $options = ['attributes' => ['class' => 'button button--text button--normal icon--arrow']];
       $variables['content']['meetings_tab']['past_meetings']['link_to_past_meetings'] = [
         '#type' => "link",
-        '#title' => t('@title Past meetings', ['@title' => $node->getTitle()])->render(),
+        '#title' => t('@title Past Meetings', ['@title' => $node->getTitle()])->render(),
         '#url' => Url::fromUserInput('/past-meetings/' . $node->id(), $options),
       ];
     }
