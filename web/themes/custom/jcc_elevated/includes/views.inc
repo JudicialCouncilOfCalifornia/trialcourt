@@ -616,7 +616,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
   $variables['exposed'] = $parent_advisory_body ? $variables['exposed'] : [];
 
   // If we have an advisory body in the URL context, adjust the title.
-  $variables['view_title'] = $parent_advisory_body ? t('@title past meetings', ['@title' => $parent_advisory_body->getTitle()])->__toString() : t('Past meetings')->__toString();
+  $variables['view_title'] = $parent_advisory_body ? t('@title Past Meetings', ['@title' => $parent_advisory_body->getTitle()])->__toString() : t('Past Meetings')->__toString();
   $variables['view_brow'] = $parent_advisory_body ? t('Advisory Committee') : NULL;
 }
 
