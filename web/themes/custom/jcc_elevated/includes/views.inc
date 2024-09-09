@@ -741,8 +741,8 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
   $variables['facilities'] = $facilities;
 }
 
-function jcc_elevated_preprocess_views_view__itc_past_proposals__block_1(&$variables) {
-  __jcc_view_results_exposed_filter_init($variables); 
+function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables) {
+  __jcc_view_results_exposed_filter_init($variables);   
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $past_proposals = [];
@@ -750,16 +750,45 @@ function jcc_elevated_preprocess_views_view__itc_past_proposals__block_1(&$varia
     $result_row = $row['#row'];
     if (!empty($result_row->_entity) && $result_row->_entity instanceof \Drupal\node\Entity\Node) {
       $node = $result_row->_entity;
-      $detail_list_data = [
+      /*$detail_list_data = [
       'details' => array_filter([
         $node->get('field_category')->value,
       ]),
-    ];   
+    ];   */
+   
+$media_entities = $node->get('field_file')->referencedEntities();
+if (!empty($media_entities)) {
+    $media_entity = $media_entities[0];
+    if ($media_entity) {
+        $source_field_value = $media_entity->getSource()->getSourceFieldValue($media_entity);
+        $fid = $source_field_value;
+        if ($fid) {           
+            $file_manager = \Drupal::service('entity_type.manager')->getStorage('file');
+            $file = $file_manager->load($fid);
+            if ($file) {
+                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
+            } 
+        } 
+    } 
+} 
+   /* $file_id = $node->get('field_file')->target_id;
+    dpm("FILE ID ---> " .$file_id);
+    //$file = \Drupal\file\Entity\File::load($file_id);
+    $media = Media::load($file_id);
+    dpm("Printing file here###########");
+    
+       $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($media->get('uri')->value);
+      // dpm($file_url . "####" . $node->get('field_itc_number')->value . "***" .  $node->get('title')->value);  
+        //dpm("Trying to print the FILE URL HERE*****");
+        //dpm($file_url); // Debug output, or use the URL as needed*/
     $category = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
     $category_value = $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '';
     $itc_past_proposal = [
       'title' => $node->get('title')->value ? $node->get('title')->value : '',      
       'category' => $category_value ? $category_value : '',
+      'description' => $node->get('body')->value, 
+      'item_number' => $node->get('field_itc_number')->value,
+      'file_url' =>  $file_url ? $file_url: 'xxx',
       /*'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',*/
       'detail_list_data' => $detail_list_data,
     ];
