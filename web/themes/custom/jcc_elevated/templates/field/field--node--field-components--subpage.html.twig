@@ -48,16 +48,14 @@
    */
   #}
   {% set bundle = item.content['#paragraph'].bundle() %}
-  {% if bundle not in ['section', 'cards', 'hero', 'hero_banner', 'hero_hangover', 'messenger_signup'] %}
-    <div class="section">
-      <div class="section__content box">
-        <div class="container stack">
-          <div class="section__main stack">
-            {{ item.content }}
-          </div>
-        </div>
-      </div>
-    </div>
+  {% if bundle not in ['section', 'cards', 'hero', 'hero_banner', 'hero_hangover', 'messenger_signup', 'content_stream'] %}
+    {% include "@organisms/Section/Section.twig" with {
+      variant: 'default',
+      first_component: false,
+      sub_component_layout: 'stack',
+      sub_component_data: [item.content],
+      inner_box_class: true,
+    } %}
   {% else %}
     {{ item.content }}
   {% endif %}

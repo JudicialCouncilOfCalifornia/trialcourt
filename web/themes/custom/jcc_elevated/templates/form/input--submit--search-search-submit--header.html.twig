@@ -10,9 +10,12 @@
  * @see template_preprocess_input()
  */
 #}
-<button{{ attributes }}>
-  <span class="header-search__search-line"></span>
-  <span class="header-search__search-circle">
-  </span><span class="sr-only">Search</span>
-</button>
+{{ attach_library("jcc_storybook/Icon") }}
 
+<button {{ attributes }}>
+  {% include "@atoms/Icon/Icon.twig" with {
+    icon: 'fa-search',
+    icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg'
+  } %}
+  <span class="sr-only">Search</span>
+</button>

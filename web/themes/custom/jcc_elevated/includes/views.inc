@@ -580,7 +580,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
         foreach ($node->get('field_event_files') as $file) {
           $media = $media_manager->load($file->target_id);
           $fid = $media->field_media_file->target_id;
-          $file = $file_manager->load($fid);
+          $file = $fid ? $file_manager->load($fid) : FALSE;
           if ($file) {
             $url = $file->createFileUrl();
             $event_files .= '<a class="file-download" href="' . $url . '">' . $media->field_media_file->description . '</a> ';
@@ -1223,7 +1223,9 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
     // Remove captcha from search form.
     unset($form['captcha']);
     // Apply the form id to the items per page element, so it can be moved out.
-    $form['items_per_page']['#attributes']['form'] = $form['#id'];
+    if (isset($form['items_per_page'])) {
+      $form['items_per_page']['#attributes']['form'] = $form['#id'];
+    }
   }
 
   if (($view->id() == 'publications') && ($view->current_display == 'publications_list')) {

@@ -47,14 +47,22 @@
 #}
 
 {{ attach_library("jcc_storybook/Hat") }}
-{{ attach_library("jcc_storybook/SecondaryNav") }}
+{{ attach_library("jcc_storybook/Icon") }}
 {{ attach_library("jcc_storybook/GlobalBranding") }}
 {{ attach_library("jcc_storybook/SiteBranding") }}
 {{ attach_library("jcc_storybook/Header") }}
 {{ attach_library("jcc_storybook/Footer") }}
+{{ attach_library("jcc_storybook/NavTrigger") }}
 {{ attach_library("jcc_storybook/PrimaryNav") }}
+{{ attach_library("jcc_storybook/PrimaryNavAlternate") }}
+{{ attach_library("jcc_storybook/PrimaryNavMobile") }}
 {{ attach_library("jcc_storybook/SecondaryNav") }}
+{{ attach_library("jcc_storybook/SecondaryNavAlternate") }}
+{{ attach_library("jcc_storybook/MobileNav") }}
+{{ attach_library("jcc_storybook/SectionNav") }}
+{{ attach_library("jcc_storybook/SectionNavMobile") }}
 {{ attach_library("jcc_storybook/SidebarNav") }}
+{{ attach_library("jcc_storybook/FlatNav") }}
 {{ attach_library("jcc_storybook/HeaderSearch") }}
 {{ attach_library("jcc_storybook/Shoe") }}
 {{ attach_library("jcc_storybook/Button") }}
@@ -86,24 +94,61 @@
       sub_label: site_name.second,
     },
     primary_nav_data: {
-      header_search_data: {
-        variant: "default",
-        form: search_form,
-      },
-      header_search_data_duplicate: {
-        variant: "no-toggle",
-        form: search_form_mobile,
-      },
       variant: "default",
       links: main_links,
-      mobile_links: mobile_main_links,
+      icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
     },
     secondary_nav_data: {
       variant: "with-divider",
+      overflowing_variant: "hidden",
       links: featured_links,
+      icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
+    },
+    header_search_data: {
+      variant: "default",
+      form: search_form,
+      icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
+    },
+    nav_trigger_data: {
+      label: "Menu",
+      show_label: false,
+    },
+    mobile_nav_data: {
+      primary_nav_data: {
+        variant: "default",
+        links: mobile_main_links,
+      },
+      secondary_nav_data: {
+        variant: "stacked",
+        overflowing_variant: "",
+        links: featured_links,
+      },
+      search_form: {
+        variant: "no-toggle",
+        form: search_form_mobile,
+        icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
+      },
     },
     translate: translate,
   } %}
+
+  {% if section_navigation %}
+    {% include "@molecules/SectionNav/SectionNav.twig" with {
+      variant: "default",
+      desktop_dropdown_overview_link: false,
+      show_label: true,
+      label: section_navigation.section_heading,
+      label_above: false,
+      display_mobile_version: true,
+      links: section_navigation.links,
+      mobile_links: section_navigation.mobile_links,
+      nav_trigger_data: {
+        label: section_navigation.section_heading,
+        show_label: true,
+      },
+      icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
+    } %}
+  {% endif %}
 
   {% if page.tabs|render %}
     <div class="page__tabs">
@@ -113,27 +158,6 @@
 
   {%  if page.messaging|render %}
     {{ page.messaging }}
-  {% endif %}
-
-  {% if section_navigation %}
-    <div class="jcc-section-navigation">
-      {% if section_navigation.section_heading %}
-        <div class="section box">
-          <div class="container stack">
-            <h2>{{ section_navigation.section_heading }}</h2>
-          </div>
-        </div>
-      {% endif %}
-
-      {# Alternate section contextual nav uses the PrimaryNav alt skin #}
-      {% include "@molecules/PrimaryNav/PrimaryNav.twig" with {
-        variant: "alternate",
-        header_search_data: [],
-        header_search_data_duplicate: [],
-        links: section_navigation.links,
-        mobile_links: section_navigation.mobile_links,
-      } %}
-    </div>
   {% endif %}
 
   {{ breadcrumb }}
@@ -184,6 +208,15 @@
       overflowing_variant: "stack",
       links: footer_links,
     },
+    footer_upper_nav_data: {
+      attributes: create_attribute(),
+      variant: "",
+      overflowing_variant: "stack",
+      links: footer_links,
+    },
+    display_lower_footer: false,
+    footer_lower_nav_data: [],
+    footer_about_content: null,
     attributes: create_attribute(),
   } %}
 
