@@ -166,14 +166,14 @@ function jcc_elevated_preprocess_html(&$variables): void {
         $items['title'] = $node->getTitle();
 
         if ($node->hasField('field_rfp_number')) {
-          $request_number = $node->get('field_rfp_number')->first()->getValue();
+          $request_number = $node->get('field_rfp_number')->first() ? $node->get('field_rfp_number')->first()->getValue() : FALSE;
           if (isset($request_number['value'])) {
             $items['number'] = '#ID ' . $request_number['value'];
           }
         }
 
         if ($node->hasField('field_rfp_type')) {
-          $request_type = $node->get('field_rfp_type')->first()->view('full');
+          $request_type = $node->get('field_rfp_type')->first() ? $node->get('field_rfp_type')->first()->view('full') : FALSE;
           if (isset($request_type['#markup'])) {
             $items['type'] = $request_type['#markup']->__toString();
           }
