@@ -1,21 +1,70 @@
+/*= HELPER STYLES TO FIX STORYBOOK ODDITIES =================================*/
 .primary-nav--alternate {
   display: block;
 }
-
 .primary-nav__item.nav-level-2 {
   z-index: 200;
 }
-
 html.js.no-touchevents .dropbutton--extrasmall .dropbutton__toggle {
   --dropbutton-extrasmall-toggle-size: 23px;
 }
-
 .focal-point-derivative-preview[data-image-style="judge_portrait"] img {
   border-radius: 50%;
   filter: grayscale(100%);
 }
-
 .request__main-content hr {
   margin-block: var(--gap);
   border-block-end: 1px dotted var(--accent-color);
+}
+/* == TWEAKS FOR STORYBOOK 0.56.1 */
+.hat svg.ext {
+  display: none;
+}
+.section-nav__wrapper .section-nav .section-nav__desktop li.section-nav__group:has( a.section-nav__button.is-active ) {
+  background-color: var(--color-primary-light-x);
+  color: white;
+}
+.header-search .header-search__form input {
+  width: 100% !important;
+}
+.nav-tabs .is-collapse-enabled .tabs__trigger,
+.nav-tabs .is-collapse-enabled .nav-tabs__item.is-active {
+  z-index: 1 !important;
+}
+.primary-nav .primary-nav__desktop,
+.section-nav.section-nav--has-label .section-nav__desktop {
+  flex-wrap: wrap;
+}
+.search-toggle input {
+  width: var(--icon-height) !important;
+}
+button.header-search__icon:after {
+  display: none;
+}
+.section-nav__mobile__overview-link {
+  font-weight: 600;
+}
+.section--color-default + .section--color-default > .box {
+  padding-top: 1rem !important;
+}
+hr {
+  margin-block: 1rem 2rem;
+}
+:where(p, ul, ol, h2, h3, h4, h5, h6, blockquote) + h2,
+:where(p, ul, ol, h2, h3, h4, h5, h6, blockquote) + h3,
+:where(p, ul, ol, h2, h3, h4, h5, h6, blockquote) + h4,
+:where(p, ul, ol, h2, h3, h4, h5, h6, blockquote) + h5,
+:where(p, ul, ol, h2, h3, h4, h5, h6, blockquote) + h6,
+:where(ul, ol, blockquote) + p,
+p + a {
+  margin-block-start: var(--gap, 1.5rem) !important;
+}
+.sidebar-nav .nav-trigger--label-direction--right .nav-trigger__label {
+  left: calc(var(--navtrigger-height) + 2.5rem);
+}
+.sidebar-nav {
+  z-index: 3 !important;
+}
+.mobile-nav {
+  position: relative !important;
 }
