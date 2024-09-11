@@ -1,4 +1,4 @@
-uuid: 660806e3-4489-4ed1-99b4-7cdcc13cf320
+#uuid: 660806e3-4489-4ed1-99b4-7cdcc13cf320
 langcode: en
 status: true
 dependencies: {  }
@@ -10,6 +10,7 @@ migration_tags:
   - courts
   - itc
   - file
+  - path
   - redirect
 migration_group: courts
 label: 'ITC: Import Path Redirects'
@@ -33,7 +34,7 @@ source:
       type: string
   constants:
     uri_prefix: 'internal:'
-    document_path: /system/files/itc
+    document_path: /system/files/itc/
     status_code: 301
 process:
   pseudo_base_path:
@@ -49,9 +50,16 @@ process:
       plugin: callback
       callable: urldecode
     -
+      plugin: str_replace
+      search: ' '
+      replace: '-'
+    -
+      plugin: callback
+      callable: strtolower
+    -
       plugin: skip_on_empty
       method: process
-      message: 'Cannot import empty image filename.'
+      message: 'Could not create file from URL.'
   uid:
     plugin: default_value
     default_value: 1

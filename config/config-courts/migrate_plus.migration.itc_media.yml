@@ -37,7 +37,7 @@ source:
     -
       name: media_type
       label: 'Media type'
-      selector: type
+      selector: media_type
 process:
   pseudo_encoded_title:
     plugin: callback
@@ -71,13 +71,10 @@ process:
   field_media_file/description: '@pseudo_encoded_title'
   field_category:
     -
-      plugin: explode
-      source: media_type
-      delimiter: ','
-    -
       plugin: entity_generate
       entity_type: taxonomy_term
       bundle_key: vid
+      source: media_type
       bundle: media_file_category
       value_key: name
       ignore_case: true
