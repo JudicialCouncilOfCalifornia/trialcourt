@@ -70,6 +70,7 @@
  *   in different view modes.
  */
 #}
+{{ attach_library("jcc_storybook/NavTrigger") }}
 {{ attach_library("jcc_storybook/SidebarNav") }}
 {{ attach_library("jcc_storybook/Icon") }}
 
@@ -98,6 +99,11 @@
       {% include "@molecules/SidebarNav/SidebarNav.twig" with {
         menu_heading: sidebar_navigation.menu_heading,
         links: sidebar_navigation.links,
+        nav_trigger_data: {
+          label: sidebar_navigation.menu_heading.title,
+          show_label: false,
+          label_direction: "right",
+        },
       } %}
     {% endif %}
 

@@ -27,6 +27,10 @@ source:
       label: Heading
       selector: heading
     -
+      name: lead
+      label: Lead
+      selector: lead
+    -
       name: items
       label: 'Accordion Items'
       selector: items
@@ -35,6 +39,7 @@ source:
       type: string
 process:
   field_heading: heading
+  field_lead: text
   field_components:
     -
       plugin: explode
@@ -55,7 +60,7 @@ process:
         target_revision_id: '1'
     -
       plugin: skip_on_empty
-      method: row
+      method: process
       message: 'No items to attach to accordion.'
   field_expand_close_all:
     -

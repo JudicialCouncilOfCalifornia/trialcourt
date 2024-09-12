@@ -296,7 +296,7 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
       $options = ['attributes' => ['class' => 'button button--text button--normal icon--arrow']];
       $variables['content']['meetings_tab']['past_meetings']['link_to_past_meetings'] = [
         '#type' => "link",
-        '#title' => t('@title Past meetings', ['@title' => $node->getTitle()])->render(),
+        '#title' => t('@title Past Meetings', ['@title' => $node->getTitle()])->render(),
         '#url' => Url::fromUserInput('/past-meetings/' . $node->id(), $options),
       ];
     }
@@ -455,62 +455,53 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       }
     }
   }
+
   if (!empty($node->body->summary)) {
     $elements[] = "<h2>Project Info</h2>";
     $elements[] = $node->body->summary;
-    $elements[] = "<br />";
     $elements[] = "<hr />";
-    $elements[] = "<br />";
   }
 
   if (!empty($node->body->value)) {
     $elements[] = "<h2>Background</h2>";
     $elements[] = $node->body->value;
-    $elements[] = "<br />";
     $elements[] = "<hr />";
-    $elements[] = "<br />";
   }
 
   if (!empty($details['ceqa'])) {
     $elements[] = "<h2>CEQA</h2>";
     $elements[] = $details['ceqa'];
-    $elements[] = "<br />";
     $elements[] = "<hr />";
-    $elements[] = "<br />";
   }
 
   if (!empty($details['schedule'])) {
     $elements[] = "<h2>Schedule</h2>";
     $elements[] = $details['schedule'];
-    $elements[] = "<br />";
     $elements[] = "<hr />";
-    $elements[] = "<br />";
   }
 
   if (!empty($details['planning_study'])) {
     $elements[] = "<h2>Planning Study</h2>";
     $elements[] = $details['planning_study'];
-    $elements[] = "<br />";
     $elements[] = "<hr />";
-    $elements[] = "<br />";
   }
 
   if (!empty($details['project_advisory_group'])) {
     $elements[] = "<h2>Project Advisory Group</h2>";
     $elements[] = $details['project_advisory_group'];
-    $elements[] = "<br />";
     $elements[] = "<hr />";
-    $elements[] = "<br />";
   }
 
   if (!empty($field_award_rendered)) {
     $elements[] = "<h2>Awards & Recognition</h2>";
     $elements[] = $field_award_rendered;
-    $elements[] = "<br />";
+    $elements[] = "<hr />";
   }
+
   if (!empty($projectimages)) {
     $elements[] = "<h2>Project Images</h2>";
   }
+
   foreach ($elements as $element) {
     $body[]['#text'] = $element;
   }
