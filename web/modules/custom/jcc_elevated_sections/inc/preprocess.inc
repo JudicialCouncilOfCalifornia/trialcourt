@@ -175,7 +175,7 @@ function jcc_elevated_sections_preprocess_page(array &$variables) {
 
                 // Set caches to trigger on landing and subpage changes.
                 $variables['section_navigation'] = [
-                  'section_heading' => $node->id() != $section_homepage->id() ? $section->label() : '',
+                  'section_heading' => $section->label(),
                   'links' => jcc_elevated_sections_build_menu_tree($links, $section_homepage, $section),
                   'mobile_links' => jcc_elevated_sections_build_menu_tree($links, $section_homepage, $section, TRUE),
                 ];

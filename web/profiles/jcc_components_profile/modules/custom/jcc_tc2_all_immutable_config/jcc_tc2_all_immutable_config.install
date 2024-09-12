@@ -1077,3 +1077,13 @@ function jcc_tc2_all_immutable_config_update_9006() {
 
   node_access_rebuild(TRUE);*/
 }
+
+/**
+ * Set uid 1 to all owner-less files in file_managed table.
+ */
+function jcc_tc2_all_immutable_config_update_9007() {
+  \Drupal::database()->update('file_managed')
+    ->fields(['uid' => 1])
+    ->isNull('uid')
+    ->execute();
+}
