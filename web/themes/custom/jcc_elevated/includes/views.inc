@@ -771,22 +771,14 @@ if (!empty($media_entities)) {
         } 
     } 
 } 
-   /* $file_id = $node->get('field_file')->target_id;
-    dpm("FILE ID ---> " .$file_id);
-    //$file = \Drupal\file\Entity\File::load($file_id);
-    $media = Media::load($file_id);
-    dpm("Printing file here###########");
-    
-       $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($media->get('uri')->value);
-      // dpm($file_url . "####" . $node->get('field_itc_number')->value . "***" .  $node->get('title')->value);  
-        //dpm("Trying to print the FILE URL HERE*****");
-        //dpm($file_url); // Debug output, or use the URL as needed*/
-    $category = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
+ $category = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
     $category_value = $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '';
     $itc_past_proposal = [
       'title' => $node->get('title')->value ? $node->get('title')->value : '',      
       'category' => $category_value ? $category_value : '',
-      'description' => $node->get('body')->value, 
+      'description' => [
+        '#markup' => $node->get('body')->value,
+      ],
       'item_number' => $node->get('field_itc_number')->value,
       'file_url' =>  $file_url ? $file_url: 'xxx',
       /*'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',*/
@@ -796,9 +788,12 @@ if (!empty($media_entities)) {
   }  
   usort($past_proposals, fn($a, $b) => $a['category'] <=> $b['category']);
   $variables['past_proposals'] = $past_proposals;
-} 
+}
 }
 
+function jcc_elevated_preprocess_views_view__past_proposals__block_2(&$variables) {
+  jcc_elevated_preprocess_views_view__past_proposals__block_1($variables);
+}
 
 /**
  * Implements hook_preprocess_views_view() for job search listing block.

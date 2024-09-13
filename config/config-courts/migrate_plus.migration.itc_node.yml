@@ -40,10 +40,10 @@ source:
       name: field_itc_number
       selector: field_itc_number
       label: 'ITC Number'
-    -
-      name: field_status
-      selector: field_status
-      label: Status
+   # -
+   #   name: field_status
+   #   selector: field_status
+   #   label: Status
     -
       name: body
       selector: body
@@ -52,6 +52,10 @@ source:
       name: field_file
       selector: field_file
       label: File
+    -
+      name: deadline
+      selector: deadline
+      label: 'Deadline'  
 process:
   uid:
     plugin: default_value
@@ -76,16 +80,16 @@ process:
       bundle: category
       value_key: name
       ignore_case: true
-  field_status:
-    -
-      plugin: get
-      source: field_status
-    -
-      plugin: default_value
-      default_value: Closed
-    -
-      plugin: skip_on_empty
-      method: process
+  #field_status:
+  #  -
+  #    plugin: get
+  #    source: field_status
+  #  -
+  #    plugin: default_value
+  #    default_value: Closed
+  #  -
+  #    plugin: skip_on_empty
+  #    method: process
   body/value:
     plugin: get
     source: body
@@ -101,6 +105,18 @@ process:
       plugin: migration_lookup
       migration: itc_media
       source: id_href
+  field_deadline:
+    -
+      plugin: skip_on_empty
+      method: row
+      source: deadline
+    -
+      plugin: format_date
+      source: deadline
+      from_format: 'F j, Y H:i:s'
+      to_format: 'Y-m-d\TH:i:s'
+      from_timezone: America/Los_Angeles
+      to_timezone: UTC  
 destination:
   plugin: 'entity:node'
   default_bundle: invitations_to_comment
