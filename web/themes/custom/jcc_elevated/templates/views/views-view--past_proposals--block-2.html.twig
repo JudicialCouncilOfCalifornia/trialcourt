@@ -36,9 +36,7 @@
 {% set file_url = proposal.file_url is defined ? proposal.file_url : null %}
  {% set new_title %}
         {% if file_url %}
-            <a href="{{ file_url }}">{{ proposal.title }}</a>
-        {# {% else %}
-            {{ proposal.title }} #}
+            <a href="{{ file_url }}">{{ proposal.title }}</a>        
         {% endif %} 
     {% endset %} 
      {% set item = {
@@ -52,7 +50,8 @@
     detail_list_data: 'aaa',
     item_number: proposal.item_number
    
-   } %} 
+   } %}
+    
  {% set items = items|merge([item]) %}
 {% endfor %} 
 
