@@ -310,7 +310,8 @@ function jcc_elevated_build_header_search_form(bool $mobile_version = FALSE): ar
   }
   $form['search']['#attributes']['name'] = $form['search']['#name'];
   $form['search']['#attributes']['class'] = [];
-  $form['search']['#attributes']['aria-label'] = t('Site search');
+  $form['search']['#attributes']['aria-label'] = t('Search courts.ca.gov');
+  $form['search']['#attributes']['placeholder'] = t('Search courts.ca.gov');
   $form['search']['#attributes']['id'] = $mobile_version ? 'header-search__mobile' : 'header-search';
   unset($form['search']['#attributes']['data-search-api-autocomplete-search']);
   unset($form['search']['#attributes']['data-autocomplete-path']);
