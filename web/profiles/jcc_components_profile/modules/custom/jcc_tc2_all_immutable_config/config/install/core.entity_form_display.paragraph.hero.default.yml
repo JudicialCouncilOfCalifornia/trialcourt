@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.hero.field_aside
+    - field.field.paragraph.hero.field_background
     - field.field.paragraph.hero.field_components
     - field.field.paragraph.hero.field_granicus_view_link_id
     - field.field.paragraph.hero.field_heading
@@ -25,6 +26,7 @@ third_party_settings:
         - field_heading
         - field_lead
         - field_image_media
+        - group_background_color_tint
         - field_granicus_view_link_id
       label: 'Main Content'
       region: content
@@ -84,6 +86,23 @@ third_party_settings:
         description: 'Promote content and features through the Hero as needed. Displays as buttons at the foot of the Hero.'
         required_fields: true
         formatter: closed
+    group_background_color_tint:
+      children:
+        - field_background
+      label: 'Background Color/Tint'
+      region: content
+      parent_name: group_main_content
+      weight: 4
+      format_type: details
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        open: false
+        description: ''
+        required_fields: true
+_core:
+  default_config_hash: NqSduZqOMQQSFmpTFm7JGaHuykUlkpopX9QCHkHD9OY
 id: paragraph.hero.default
 targetEntityType: paragraph
 bundle: hero
@@ -96,6 +115,12 @@ content:
     settings:
       rows: 5
       placeholder: ''
+    third_party_settings: {  }
+  field_background:
+    type: options_buttons
+    weight: 5
+    region: content
+    settings: {  }
     third_party_settings: {  }
   field_components:
     type: entity_reference_paragraphs
@@ -111,7 +136,7 @@ content:
     third_party_settings: {  }
   field_granicus_view_link_id:
     type: number
-    weight: 4
+    weight: 6
     region: content
     settings:
       placeholder: ''
