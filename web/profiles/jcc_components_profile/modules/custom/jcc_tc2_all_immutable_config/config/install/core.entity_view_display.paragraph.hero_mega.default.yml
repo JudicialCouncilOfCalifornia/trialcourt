@@ -1,0 +1,62 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.hero_mega.field_aside
+    - field.field.paragraph.hero_mega.field_heading
+    - field.field.paragraph.hero_mega.field_hero_mega_search
+    - field.field.paragraph.hero_mega.field_image_media
+    - field.field.paragraph.hero_mega.field_lead
+    - paragraphs.paragraphs_type.hero_mega
+  module:
+    - text
+id: paragraph.hero_mega.default
+targetEntityType: paragraph
+bundle: hero_mega
+mode: default
+content:
+  field_aside:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_heading:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_hero_mega_search:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_image_media:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_lead:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true
