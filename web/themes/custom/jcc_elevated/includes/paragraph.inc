@@ -291,10 +291,16 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
       ];
     }
   }
+
   if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
     $cover_image = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
     $image_url = ImageStyle::load('hero_banner')->buildUrl($cover_image);
     $variables['bckg_img_url'] = $image_url;
+  }
+
+  if (!empty($paragraph->get('field_background'))) {
+    $bg_tint = $paragraph->get('field_background')->value;
+    $variables['bg_tint'] = str_replace('solid-', '', $bg_tint);
   }
 
   // Include view embed as lead content.
@@ -311,7 +317,32 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
 }
 
 /**
- * Helper function for hero paragraph.
+ * Helper function for mega hero paragraph.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_elevated_paragraph_hero_mega(array &$variables, ParagraphInterface $paragraph) {
+  if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
+    $cover_image = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
+    $image_url = ImageStyle::load('hero_banner')->buildUrl($cover_image);
+    $variables['bckg_img_url'] = $image_url;
+  }
+
+  if (!empty($paragraph->get('field_background'))) {
+    $bg_tint = $paragraph->get('field_background')->value;
+    $variables['bg_tint'] = str_replace('solid-', '', $bg_tint);
+  }
+
+  if ($paragraph->get('field_hero_mega_search')) {
+    $variables['hero_mega_search_form'] = jcc_elevated_build_header_search_form();
+  }
+}
+
+/**
+ * Helper function for hero banner paragraph.
  *
  * @param array $variables
  *   The paragraph variables.
