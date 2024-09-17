@@ -154,6 +154,7 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
 
       // Suppress components that are usable to elevated sites only.
       if ($theme != 'jcc_elevated') {
+        unset($form['field_components']['widget']['add_more']['add_more_button_hero_mega']);
         unset($form['field_components']['widget']['add_more']['add_more_button_hero_hangover']);
         unset($form['field_components']['widget']['add_more']['add_more_button_section']);
         unset($form['field_components']['widget']['add_more']['add_more_button_tabs']);
@@ -295,6 +296,29 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
+ * Implements hook_field_group_form_process_alter().
+ */
+function jcc_custom_field_group_form_process_alter(array &$element, &$group, &$complete_form) {
+  if (jcc_custom_is_elevated_site()) {
+    switch ($group->group_name) {
+      case 'group_media':
+        if ($group->bundle == 'card') {
+          $element['#description'] = t('Embed an image or remote video. The media will automatically shift top or left positioning if the real estate is large enough. Optionally, you can position the media on the right.');
+        }
+        break;
+
+      case 'group_button':
+        if ($group->bundle == 'card') {
+          $element['#title'] = 'Add Buttons or Entire Card Clickable';
+          $linking_help = t('Setup a link for a button to appear as part of the card content or for the entire card. Use the <strong>Entire Card Clickable</strong> option to make the whole card actionable.\r\n\r\nFor additional buttons if supported, use the <strong>Additional Links</strong> option but be mindful of usability when offering more than two buttons.');
+          $element['#description'] = $linking_help;
+        }
+        break;
+    }
+  }
+}
+
+/**
  * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
  */
 function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
@@ -308,6 +332,18 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         unset($element['subform']['field_subheading']);
         unset($element['subform']['field_link']);
         unset($element['subform']['field_aside']);
+
+        // Attach Card.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-layout';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-card';
+        break;
+
+      case 'hero_mega':
+        // Attach Card.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-layout';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-card';
         break;
 
       case 'hero_banner':
@@ -320,8 +356,15 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
 
         // Attach Card.css for background swatches.
         $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-layout';
         $element['#attached']['library'][] = 'jcc_custom/storybook-card';
-        $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
+        break;
+
+      case 'card':
+        unset($element['subform']['field_brow']);
+        // Elevated only offers left or right media positioning.
+        // Top positioning occurs automatically when insufficient real estate.
+        unset($element['subform']['field_media_alignment']['widget']['#options']['top']);
         break;
 
       case 'hero_hangover':
@@ -338,6 +381,7 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
       case 'hero':
         unset($element['subform']['field_components']);
         unset($element['subform']['field_image_media']);
+        unset($element['subform']['field_background']);
         unset($element['subform']['field_granicus_view_link_id']);
         break;
 
