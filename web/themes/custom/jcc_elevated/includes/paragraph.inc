@@ -147,15 +147,31 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
   if ($paragraph->get('field_media')) {
     $card_media = $paragraph->get('field_media');
     $card_icon = $paragraph->get('field_icon');
-    if ($card_media && $card_media->entity) {
-      $build = \Drupal::entityTypeManager()->getViewBuilder('media')->view($card_media->entity);
-      $caption = $card_media->entity->field_media_caption && $card_media->entity->field_media_caption->value ? $card_media->entity->field_media_caption->value : NULL;
-      $variables['media'] = $build;
-      if ($paragraph->get('field_show_media_caption')->value) {
-        $variables['media_caption'] = [
-          'show' => $paragraph->get('field_show_media_caption')->value,
-          'text' => $caption ? Markup::create($caption) : NULL,
+    if ($card_media && $card_media->target_id) {
+      $media = \Drupal::entityTypeManager()->getStorage('media')->load($card_media->target_id);
+      $image_uri = $media ? $media->get('field_media_image')[0]->entity->getFileUri() : NULL;
+      if ($image_uri) {
+        $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_650x650')->buildUrl($image_uri);
+        $image_alt = $media->get('field_media_image')->alt ? $media->get('field_media_image')->alt : NULL;
+        $caption = $media->get('field_media_caption')->value ? $media->get('field_media_caption')->value : NULL;
+        $citation = $media->get('field_media_citation')->value ? $media->get('field_media_citation')->value : NULL;
+        $variables['image'] = [
+          'url' => $image_url,
+          'alt' => $image_alt,
         ];
+
+        if ($paragraph->get('field_media_alignment')->value && $caption) {
+          $variables['media_alignment'] = $paragraph->get('field_media_alignment')->value;
+        }
+
+        if ($paragraph->get('field_show_media_caption')->value && $caption) {
+          $allowed_tags = ['<strong>', '<em>', '<a>'];
+          $variables['media_caption'] = [
+            'show' => $paragraph->get('field_show_media_caption')->value,
+            'text' => strip_tags($caption, $allowed_tags),
+            'citation' => $citation ? Markup::create(strip_tags($citation, $allowed_tags)) : NULL,
+          ];
+        }
       }
     }
     if ($card_icon && $card_icon->value) {
@@ -326,19 +342,13 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
  */
 function jcc_elevated_paragraph_hero_mega(array &$variables, ParagraphInterface $paragraph) {
   if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
-    $cover_image = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
-    $image_url = ImageStyle::load('hero_banner')->buildUrl($cover_image);
+    $image_uri = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
+    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_650x650')->buildUrl($image_uri);
     $variables['bckg_img_url'] = $image_url;
   }
 
-  if (!empty($paragraph->get('field_background'))) {
-    $bg_tint = $paragraph->get('field_background')->value;
-    $variables['bg_tint'] = str_replace('solid-', '', $bg_tint);
-  }
-
-  if ($paragraph->get('field_hero_mega_search')) {
-    $variables['hero_mega_search_form'] = jcc_elevated_build_header_search_form();
-  }
+  $variables['bg_tint'] = $paragraph->get('field_background')->value ? str_replace('solid-', '', $paragraph->get('field_background')->value) : '';
+  $variables['hero_mega_search_form'] = $paragraph->get('field_hero_mega_search') ? jcc_elevated_build_header_search_form() : '';
 }
 
 /**
