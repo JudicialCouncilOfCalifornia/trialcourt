@@ -23,9 +23,16 @@
   } %}
 {% endif %}
 
+{# Media #}
+{% if image %}
+  {% set media %}
+    <img src="{{ image.url }}" alt="image.alt">
+  {% endset %}
+{% endif %}
+
 {# Media alignment if in use #}
-{% if (variant != 'striped' or variant != 'striped-aligned') %}
-  {% set media_variant = 'media-' ~ paragraph.field_media_alignment.value %}
+{% if ((variant != 'striped' or variant != 'striped-aligned') and media_alignment) %}
+  {% set media_variant = 'media-' ~ media_alignment %}
 {% endif %}
 
 {# Button link if in use #}
