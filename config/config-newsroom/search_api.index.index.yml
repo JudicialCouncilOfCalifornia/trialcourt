@@ -216,6 +216,14 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_tags
+  field_tags_1:
+    label: Tags
+    datasource_id: 'entity:node'
+    property_path: field_tags
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_tags
   field_topics:
     label: Topics
     datasource_id: 'entity:node'
@@ -316,7 +324,7 @@ field_settings:
       module:
         - node
   title_1:
-    label: 'Contact Title'
+    label: 'Contact » Content » Title'
     datasource_id: 'entity:node'
     property_path: 'field_contact:entity:title'
     type: text
@@ -365,6 +373,7 @@ datasource_settings:
 processor_settings:
   add_url: {  }
   aggregated_field: {  }
+  auto_aggregated_fulltext_field: {  }
   content_access:
     weights:
       preprocess_query: -30
@@ -396,7 +405,6 @@ processor_settings:
       field_event_type: taxonomy_term-parent
       field_location_type: taxonomy_term-parent
       field_news_type: taxonomy_term-parent
-      field_person_type: taxonomy_term-parent
       field_subject_matter: taxonomy_term-parent
       field_tags: taxonomy_term-parent
       field_topics: taxonomy_term-parent
@@ -450,6 +458,16 @@ processor_settings:
   language_with_fallback: {  }
   rendered_item: {  }
   reverse_entity_references: {  }
+  solr_boost_more_recent:
+    weights:
+      preprocess_query: 0
+    boosts:
+      created:
+        boost: !!float 5
+        resolution: NOW
+        m: '3.16e-11'
+        a: 0.1
+        b: 0.05
   solr_date_range:
     weights:
       preprocess_index: 0
@@ -457,6 +475,8 @@ processor_settings:
     weights:
       preprocess_index: 0
     boosts:
+      'entity:file':
+        datasource_boost: !!float 1
       'entity:media':
         datasource_boost: !!float 1
       'entity:node':
