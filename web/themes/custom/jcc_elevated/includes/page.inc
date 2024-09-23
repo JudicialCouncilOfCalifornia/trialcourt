@@ -151,12 +151,12 @@ function jcc_elevated_preprocess_page(&$variables) {
   $variables['footer_values'] = [
     'variant' => jcc_elevated_get_custom_settings('jcc_elevated.footer_variant') ?? 'default',
     'display_footer_lower' => $display_footer_lower,
-    'upper_footer_menu' => jcc_elevated_get_menu_array($upper_menu),
-    'lower_footer_menu' => jcc_elevated_get_menu_array($lower_menu),
+    'upper_footer_menu' => !empty($upper_menu) ? jcc_elevated_get_menu_array($upper_menu) : [],
+    'lower_footer_menu' => !empty($lower_menu) ? jcc_elevated_get_menu_array($lower_menu) : [],
     'about_label' => jcc_elevated_get_custom_settings('jcc_elevated.about_header') ?? '',
     'about_content' => $text['value'] ? Markup::create($text['value']) : '',
-    'about_link_label' => jcc_elevated_get_custom_settings('jcc_elevated.about_link_title') ?? NULL,
-    'about_link_href' => jcc_elevated_get_custom_settings('jcc_elevated.about_link_url') ?? NULL,
+    'about_link_label' => jcc_elevated_get_custom_settings('jcc_elevated.about_link_title') ?? FALSE,
+    'about_link_href' => jcc_elevated_get_custom_settings('jcc_elevated.about_link_url') ?? FALSE,
     'social_links' => $social_links,
   ];
 }
