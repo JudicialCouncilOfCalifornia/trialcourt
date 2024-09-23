@@ -142,7 +142,9 @@ function jcc_elevated_preprocess_page(&$variables) {
   }
 
   $upper_menu = jcc_elevated_get_custom_settings('jcc_elevated.upper_footer_menu');
+  $upper_menu = !is_string($upper_menu) ? 'footer' : $upper_menu;
   $lower_menu = jcc_elevated_get_custom_settings('jcc_elevated.lower_footer_menu');
+  $lower_menu = !is_string($lower_menu) ? '' : $lower_menu;
   $text = jcc_elevated_get_custom_settings('jcc_elevated.about_text');
   $display_footer_lower = $lower_menu != '_none_' ?? FALSE;
 
