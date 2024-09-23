@@ -10,6 +10,7 @@ use Drupal\Core\Form\EnforcedResponseException;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\views\Views;
@@ -117,6 +118,45 @@ function jcc_elevated_preprocess_page(&$variables) {
   // to be calculated in a module, like rules of court, with this as a fallback.
   $variables['hide_was_this_helpful'] = $variables['hide_was_this_helpful'] == NULL ? (boolean) theme_get_setting('hide_was_this_helpful') : $variables['hide_was_this_helpful'];
 
+  $social_links = [];
+  $social_link_ids = [
+    'facebook' => 'jcc_elevated.social_links_facebook',
+    'linkedin' => 'jcc_elevated.social_links_linkedin',
+    'rss' => 'jcc_elevated.social_links_rss',
+    'twitter' => 'jcc_elevated.social_links_twitter',
+    'youtube' => 'jcc_elevated.social_links_youtube',
+  ];
+
+  $frontpage_path = \Drupal::urlGenerator()->generateFromRoute('<front>', [], ['absolute' => TRUE]);
+
+  foreach ($social_link_ids as $name => $id) {
+    $url_value = jcc_elevated_get_custom_settings($id);
+    if (!empty($url_value)) {
+      $social_links[$name] = [
+        'text' => ucfirst($name),
+        'url' => jcc_elevated_get_custom_settings($id),
+        'icon' => 'fa-' . $name,
+        'icon_path' => $frontpage_path . 'themes/contrib/jcc_storybook/src/assets/icons.svg',
+      ];
+    }
+  }
+
+  $upper_menu = jcc_elevated_get_custom_settings('jcc_elevated.upper_footer_menu');
+  $lower_menu = jcc_elevated_get_custom_settings('jcc_elevated.lower_footer_menu');
+  $text = jcc_elevated_get_custom_settings('jcc_elevated.about_text');
+  $display_footer_lower = $lower_menu != '_none_' ?? FALSE;
+
+  $variables['footer_values'] = [
+    'variant' => jcc_elevated_get_custom_settings('jcc_elevated.footer_variant') ?? 'default',
+    'display_footer_lower' => $display_footer_lower,
+    'upper_footer_menu' => jcc_elevated_get_menu_array($upper_menu),
+    'lower_footer_menu' => jcc_elevated_get_menu_array($lower_menu),
+    'about_label' => jcc_elevated_get_custom_settings('jcc_elevated.about_header') ?? '',
+    'about_content' => $text['value'] ? Markup::create($text['value']) : '',
+    'about_link_label' => jcc_elevated_get_custom_settings('jcc_elevated.about_link_title') ?? NULL,
+    'about_link_href' => jcc_elevated_get_custom_settings('jcc_elevated.about_link_url') ?? NULL,
+    'social_links' => $social_links,
+  ];
 }
 
 /**
