@@ -163,7 +163,7 @@ class JccElevatedCustomFooterAdminForm extends FormBase {
       '#type' => 'text_format',
       '#title' => $this
         ->t('Text'),
-      '#default_value' => $state['about_text']['value'],
+      '#default_value' => $state['about_text']['value'] ?? '',
       '#default_format' => 'full_html',
     ];
 

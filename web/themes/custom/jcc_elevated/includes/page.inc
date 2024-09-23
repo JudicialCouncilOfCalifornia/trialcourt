@@ -23,6 +23,7 @@ use Drupal\views\Views;
 function jcc_elevated_preprocess_page(&$variables) {
   // Check if front page.
   $is_front = \Drupal::service('path.matcher')->isFrontPage();
+  $state = \Drupal::state();
 
   // Determine if page is a node.
   $is_node = FALSE;
@@ -130,33 +131,35 @@ function jcc_elevated_preprocess_page(&$variables) {
   $frontpage_path = \Drupal::urlGenerator()->generateFromRoute('<front>', [], ['absolute' => TRUE]);
 
   foreach ($social_link_ids as $name => $id) {
-    $url_value = jcc_elevated_get_custom_settings($id);
+    $url_value = $state->get($id, NULL);
     if (!empty($url_value)) {
       $social_links[$name] = [
         'text' => ucfirst($name),
-        'url' => jcc_elevated_get_custom_settings($id),
+        'url' => $url_value,
         'icon' => 'fa-' . $name,
         'icon_path' => $frontpage_path . 'themes/contrib/jcc_storybook/src/assets/icons.svg',
       ];
     }
   }
 
-  $upper_menu = jcc_elevated_get_custom_settings('jcc_elevated.upper_footer_menu');
-  $upper_menu = !is_string($upper_menu) ? 'footer' : $upper_menu;
-  $lower_menu = jcc_elevated_get_custom_settings('jcc_elevated.lower_footer_menu');
-  $lower_menu = !is_string($lower_menu) ? '' : $lower_menu;
-  $text = jcc_elevated_get_custom_settings('jcc_elevated.about_text');
+  $variant = $state->get('jcc_elevated.footer_variant', 'default');
+  $upper_menu = $state->get('jcc_elevated.upper_footer_menu', 'footer');
+  $lower_menu = $state->get('jcc_elevated.lower_footer_menu', '');
+  $about_header = $state->get('jcc_elevated.about_header', '');
+  $about_text = $state->get('jcc_elevated.about_text', ['value' => '', 'format' => 'snippet']);
+  $about_link_label = $state->get('jcc_elevated.about_link_label', FALSE);
+  $about_link_url = $state->get('jcc_elevated.about_link_url', FALSE);
   $display_footer_lower = $lower_menu != '_none_' ?? FALSE;
 
   $variables['footer_values'] = [
-    'variant' => jcc_elevated_get_custom_settings('jcc_elevated.footer_variant') ?? 'default',
+    'variant' => $variant,
     'display_footer_lower' => $display_footer_lower,
-    'upper_footer_menu' => jcc_elevated_get_menu_array($upper_menu),
-    'lower_footer_menu' => jcc_elevated_get_menu_array($lower_menu),
-    'about_label' => jcc_elevated_get_custom_settings('jcc_elevated.about_header') ?? '',
-    'about_content' => $text['value'] ? Markup::create($text['value']) : '',
-    'about_link_label' => jcc_elevated_get_custom_settings('jcc_elevated.about_link_title') ?? NULL,
-    'about_link_href' => jcc_elevated_get_custom_settings('jcc_elevated.about_link_url') ?? NULL,
+    'upper_footer_menu' => !empty($upper_menu) ? jcc_elevated_get_menu_array($upper_menu) : [],
+    'lower_footer_menu' => !empty($lower_menu) ? jcc_elevated_get_menu_array($lower_menu) : [],
+    'about_label' => $about_header,
+    'about_content' => isset($about_text['value']) ? Markup::create($about_text['value']) : '',
+    'about_link_label' => $about_link_label,
+    'about_link_href' => $about_link_url,
     'social_links' => $social_links,
   ];
 }
