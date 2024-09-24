@@ -194,6 +194,18 @@
     </footer>
   {% endif %}
 
+  {% set footer_about_link = [] %}
+
+  {% if footer_values.about_link_label is not empty %}
+    {% set footer_about_link = {
+      variant: "text",
+      size: "normal",
+      label: footer_values.about_link_label,
+      aria_label: footer_values.about_link_label,
+      href: footer_values.about_link_href,
+    } %}
+  {% endif %}
+
   {% include "@organisms/Footer/Footer.twig" with {
     variant: footer_values.variant,
     site_branding_data: {
@@ -225,13 +237,7 @@
     footer_about_content: {
       label: footer_values.about_label,
       content: footer_values.about_content,
-      link: {
-        variant : "text",
-        size : "normal",
-        label: footer_values.about_link_label,
-        aria_label: footer_values.about_link_label,
-        href: footer_values.about_link_href,
-      },
+      link: footer_about_link,
     },
     footer_social_link: footer_values.social_links,
     attributes: create_attribute(),
