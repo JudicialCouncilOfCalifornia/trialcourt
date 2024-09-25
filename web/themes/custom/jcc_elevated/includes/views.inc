@@ -255,7 +255,7 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
       }
     }
 
-    $text = ['#markup' => Html::decodeEntities($description)];
+    $text = ['#markup' => Html::decodeEntities($description)];    
     $url = $media->toUrl();
     if ($media_files['media_file_multiple']['file']) {
       $url = Url::fromUri($media_files['media_file_multiple']['file']->createFileUrl(FALSE));
@@ -748,6 +748,7 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $grouped_proposals = [];
+  $file_url = '';
   foreach ($variables['rows'] as $index => $row1) {
     $list_label = preg_replace('/\R+/', ' ', strip_tags($row1['#title']));
     if (!isset($grouped_proposals[$list_label])) {
@@ -758,21 +759,24 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
     }
     foreach ($row1['#rows'] as $row) {
       $result_row = $row['#row'];
-      if (!empty($result_row->_entity) && $result_row->_entity instanceof Node) {
+      if (!empty($result_row->_entity) && $result_row->_entity instanceof Node) {        
         $node = $result_row->_entity;
         $media_entities = $node->get('field_file')->referencedEntities();
         if (!empty($media_entities)) {
           $media_entity = $media_entities[0];
           if ($media_entity) {
             $source_field_value = $media_entity->getSource()->getSourceFieldValue($media_entity);
-            $fid = $source_field_value;
-            if ($fid) {
+            $fid = $source_field_value;          
+            if ($fid !== null) {
               $file_manager = \Drupal::service('entity_type.manager')->getStorage('file');
               $file = $file_manager->load($fid);              
-              if ($file && $file instanceof File) {                
-                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());              
+             if ($file && $file instanceof File) {   
+              $file_uri = $file->getFileUri();
+             if (!empty($file_uri)) {            
+                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_uri); 
+              }                
               } 
-            }
+            } 
           }
         }
         $brow = [];
@@ -799,11 +803,12 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         }
         $category = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
         $category_value = $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '';
-        $brow['primary'] = $category_value;
+        $brow['primary'] = $category_value;        
+        $url = !empty($file_url) ? Url::fromUri($file_url) : null; 
         $button_data = [
           'label' => t('Download PDF'),
-          'href' => $file_url,
-        ];
+          'href' => $url,  
+        ];        
         $deadline_value = $node->field_deadline->value;
         if (!empty($deadline_value)) {
           $formatted_deadline = \Drupal::service('date.formatter')->format(
@@ -840,7 +845,7 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
     usort($grouped_proposals, function($a, $b) {      
       return $a['items'][0]['category'] <=> $b['items'][0]['category'];
   });
-    $variables['grouped_proposals'] = $grouped_proposals;
+  $variables['grouped_proposals'] = $grouped_proposals;
   }
 }
 
