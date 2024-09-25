@@ -784,10 +784,10 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
             $fid = $source_field_value;
             if ($fid) {
               $file_manager = \Drupal::service('entity_type.manager')->getStorage('file');
-              $file = $file_manager->load($fid);
-              if ($file) {
-                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
-              }
+              $file = $file_manager->load($fid);              
+              if ($file && $file instanceof File) {                
+                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());              
+              } 
             }
           }
         }
@@ -852,8 +852,10 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
       if (count($grouped_proposals[$list_label]['items']) >= 1) {
         $grouped_proposals[$list_label]['list_label'] = $list_label;
       }
-    }
-    usort($grouped_proposals, fn($a, $b) => $a['category'] <=> $b['category']);
+    }    
+    usort($grouped_proposals, function($a, $b) {      
+      return $a['items'][0]['category'] <=> $b['items'][0]['category'];
+  });
     $variables['grouped_proposals'] = $grouped_proposals;
   }
 }

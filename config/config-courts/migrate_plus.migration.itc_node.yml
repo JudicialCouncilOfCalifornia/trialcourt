@@ -40,10 +40,6 @@ source:
       name: field_itc_number
       selector: field_itc_number
       label: 'ITC Number'
-   # -
-   #   name: field_status
-   #   selector: field_status
-   #   label: Status
     -
       name: body
       selector: body
@@ -75,21 +71,12 @@ process:
       source: field_category
     -
       plugin: entity_generate
+      source: field_category
       entity_type: taxonomy_term
       bundle_key: vid
       bundle: category
       value_key: name
       ignore_case: true
-  #field_status:
-  #  -
-  #    plugin: get
-  #    source: field_status
-  #  -
-  #    plugin: default_value
-  #    default_value: Closed
-  #  -
-  #    plugin: skip_on_empty
-  #    method: process
   body/value:
     plugin: get
     source: body
