@@ -730,7 +730,7 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
  */
 function generate_itc_webform_url($item_number, $formatted_deadline, $title) {
   $base_path = '/itc-webform';
-  $webform_subpage_url = Url::fromRoute($base_path, [
+  $webform_subpage_url = Url::fromUserInput($base_path, [
     'query' => [
       'proposal' => htmlspecialchars($item_number, ENT_QUOTES, 'UTF-8'),
       'deadline' => htmlspecialchars($formatted_deadline, ENT_QUOTES, 'UTF-8'),
@@ -751,8 +751,9 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
   $file_url = '';
   foreach ($variables['rows'] as $index => $row1) {
     $list_label = preg_replace('/\R+/', ' ', strip_tags($row1['#title']));
-    if (!isset($grouped_proposals[$list_label])) {
-      $grouped_proposals[$list_label] = [
+    $safe_list_label = rawurlencode($list_label);
+    if (!isset($grouped_proposals[$safe_list_label])) {
+      $grouped_proposals[$safe_list_label] = [
         'list_label' => '',
         'items' => [],
       ];
@@ -765,8 +766,9 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         if (!empty($media_entities)) {
           $media_entity = $media_entities[0];
           if ($media_entity) {
-            $source_field_value = $media_entity->getSource()->getSourceFieldValue($media_entity);
-            $fid = $source_field_value;          
+            //$source_field_value = $media_entity->getSource()->getSourceFieldValue($media_entity);
+            //$fid = $source_field_value;   
+            $fid = $media_entity->id();        
             if ($fid !== null) {
               $file_manager = \Drupal::service('entity_type.manager')->getStorage('file');
               $file = $file_manager->load($fid);              
@@ -774,6 +776,7 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
               $file_uri = $file->getFileUri();
              if (!empty($file_uri)) {            
                 $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_uri); 
+                //dpm($file_url . "***" . $node->get('title')->value . "###" . $node->id());
               }                
               } 
             } 
@@ -837,9 +840,9 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         'button_data' => $button_data,
       ];
       }
-      $grouped_proposals[$list_label]['items'][] = $itc_past_proposal;
-      if (count($grouped_proposals[$list_label]['items']) >= 1) {
-        $grouped_proposals[$list_label]['list_label'] = $list_label;
+      $grouped_proposals[$safe_list_label]['items'][] = $itc_past_proposal;
+      if (count($grouped_proposals[$safe_list_label]['items']) >= 1) {
+        $grouped_proposals[$safe_list_label]['list_label'] = $list_label;
       }
     }    
     usort($grouped_proposals, function($a, $b) {      
