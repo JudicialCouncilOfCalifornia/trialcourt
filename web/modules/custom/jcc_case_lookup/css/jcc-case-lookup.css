@@ -1,17 +1,18 @@
 .case-search-field-modal {
   display: block !important;
   position: absolute;
-  top: 2.5rem;
+  top: 3rem;
   width: 100%;
   max-width: 50ch !important;
   background-color: #faf3d1 !important;
   padding: 1rem;
   color: #000;
+  z-index: 9999;
 }
 
-.case-search__listing {
-  display: none;
-  margin-top: 0.5rem;
+.case-search-field-modal .jcc-docket-link .button::after,
+.search__message--item .jcc-docket-link .button::after {
+  content: unset;
 }
 
 .search__message--item {
@@ -43,43 +44,37 @@
   max-width: 88ex;
 }
 
-/* BEGIN Adjust error message if Pro theme */
+/* BEGIN embed block */
+.case-search__listing {
+  display: none;
+  margin-top: 0.5rem;
+}
+
+/* Adjust error message if Pro theme */
 #query-case-number .usa-alert__wrapper--error {
   display: none;
 }
-
 #query-case-number .usa-alert--error {
   background-color: #f4e3db;
   border-color: #d54309;
 }
-
 #query-case-number .usa-alert__heading {
   float: none;
   font-weight: bold;
 }
-/* END */
 
 .query-case-number__input {
   display: inline-block !important;
   margin-bottom: 0.5rem;
 }
+/* END */
 
-.lookup-case__trigger {
-  display: inline !important;
-  position: relative !important;
-  top: unset !important;
-  right: unset !important;
-  width: auto !important;
-  min-width: auto !important;
-  box-shadow: none !important;
-  cursor: pointer;
+/* BEGIN Courtyard library adjustments */
+.usa-search .case-search-field-modal {
+  top: 2.5rem;
 }
 
-.lookup-case__trigger:after {
-  display: none !important;
+.usa-search .case-search-field-modal .jcc-docket-link {
+  color: #005EA2;
 }
-
-.lookup-case__trigger:hover, .lookup-case__trigger:focus {
-  background-color: transparent !important;
-}
-
+/* END */
