@@ -730,11 +730,11 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
  */
 function generate_itc_webform_url($item_number, $formatted_deadline, $title) {
   $base_path = '/itc-webform';
-  $webform_subpage_url = Url::fromUserInput($base_path, [
+  $webform_subpage_url = Url::fromRoute($base_path, [
     'query' => [
       'proposal' => htmlspecialchars($item_number, ENT_QUOTES, 'UTF-8'),
       'deadline' => htmlspecialchars($formatted_deadline, ENT_QUOTES, 'UTF-8'),
-      'title' => htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
+      'title' => rawurlencode(htmlspecialchars($title, ENT_QUOTES, 'UTF-8')),
     ],
   ])->setAbsolute()->toString();
   return $webform_subpage_url;
