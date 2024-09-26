@@ -765,6 +765,8 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $grouped_proposals = [];
   $file_url = '';
+  $url1 = '';
+  $file_uri1 = '';
   foreach ($variables['rows'] as $index => $row1) {
     $list_label = preg_replace('/\R+/', ' ', strip_tags($row1['#title']));
     $safe_list_label = rawurlencode($list_label);
@@ -777,27 +779,21 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
     foreach ($row1['#rows'] as $row) {
       $result_row = $row['#row'];
       if (!empty($result_row->_entity) && $result_row->_entity instanceof Node) {        
-        $node = $result_row->_entity;
+        $node = $result_row->_entity;       
         $media_entities = $node->get('field_file')->referencedEntities();        
         if (!empty($media_entities)) {
           $media_entity = $media_entities[0];
-          if ($media_entity) {               
+          if ($media_entity) {                    
             $file_ids = $media_entity->get('field_media_file')->getValue(); 
             if (!empty($file_ids)) {
                 $file_id = $file_ids[0]['target_id']; 
                 $file = File::load($file_id);               
                 if ($file) {
-                    $file_uri = $file->getFileUri();                    
-                }              
-           /* $fid = $media_entity->id();    
-            $media = Media::load($fid);
-            $file_ids = $media->get('field_media_file')->getValue();  
-            if (!empty($file_ids)) {
-              $file_id = $file_ids[0]['target_id']; 
-              $file = File::load($file_id);
-              $file_uri = $file->getFileUri();*/
+                    $file_uri = $file->getFileUri();
+                    //$url1 = $file->createFileUrl();                                     
+                }                        
               if (!empty($file_uri)) {            
-                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_uri);                 
+                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_uri);                          
               }
           } 
         }
@@ -827,10 +823,9 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         $category = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
         $category_value = $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '';
         $brow['primary'] = $category_value;        
-        $url = !empty($file_url) ? Url::fromUri($file_url) : null;        
-        $button_data = [
+       $button_data = [
           'label' => t('Download PDF'),
-          'href' => $url,  
+          'href' => $file_url,  
         ];        
         $deadline_value = $node->field_deadline->value;
         if (!empty($deadline_value)) {
@@ -855,9 +850,8 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
           '#markup' => $body,
          ],
         'item_number' => $node->get('field_itc_number')->value,
-        'file_url' => $file_url ? $file_url : '',
-        'detail_list_data' => $detail_list_data,
-        'button_data' => $button_data,
+        'file_url' => $file_url ? $file_url : '',        
+       'button_data' => $button_data,
       ];
       }
       $grouped_proposals[$safe_list_label]['items'][] = $itc_past_proposal;
