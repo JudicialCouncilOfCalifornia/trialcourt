@@ -144,11 +144,14 @@ function jcc_elevated_preprocess_page(&$variables) {
 
   $variant = $state->get('jcc_elevated.footer_variant', 'default');
   $upper_menu = $state->get('jcc_elevated.upper_footer_menu', 'footer');
-  $lower_menu = $state->get('jcc_elevated.lower_footer_menu', '');
+  $lower_menu = $state->get('jcc_elevated.lower_footer_menu', '_none_');
   $about_header = $state->get('jcc_elevated.about_header', '');
-  $about_text = $state->get('jcc_elevated.about_text', ['value' => '', 'format' => 'snippet']);
-  $about_link_label = $state->get('jcc_elevated.about_link_label', FALSE);
-  $about_link_url = $state->get('jcc_elevated.about_link_url', FALSE);
+  $about_text = $state->get('jcc_elevated.about_text', [
+    'value' => '',
+    'format' => 'snippet',
+  ]);
+  $about_link_label = $state->get('jcc_elevated.about_link_label', '');
+  $about_link_url = $state->get('jcc_elevated.about_link_url', '');
   $display_footer_lower = $lower_menu != '_none_' ?? FALSE;
 
   $variables['footer_values'] = [
