@@ -748,9 +748,8 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $grouped_proposals = [];
-  $file_url = '';
-  $url1 = '';
-  $file_uri1 = '';
+  $file_url = '';  
+  $file_uri = '';
   foreach ($variables['rows'] as $index => $row1) {
     $list_label = preg_replace('/\R+/', ' ', strip_tags($row1['#title']));
     $safe_list_label = rawurlencode($list_label);
