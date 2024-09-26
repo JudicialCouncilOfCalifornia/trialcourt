@@ -65,14 +65,29 @@
         return districtCode;
       }
 
+      function linkBuilder(caseNumber, format) {
+        caseNumber = caseNumber.toUpperCase();
+        // Set district code for case search URL.
+        let casePrefix = caseNumber[0].charAt(0);
+        let district = getDistrictCode(casePrefix);
+        // Build URL.
+        let url = caseLookupUrl + '/search/searchResults.cfm?dist=' + district + '&search=number&useSession=0&query_caseNumber=' + caseNumber;
+
+        if (format === 'url') {
+          return url;
+        }
+        else {
+          return '<a class="jcc-docket-link" href="' + url + '" aria-label="Look up case ' + caseNumber + ' from the California Courts website in a new browser window." target="_blank">' + caseNumber + '</a>';
+        }
+      }
+
       // Case search triggers.
       function caseSearchTriggers(caseNumbers, type) {
         let cases = [];
         let triggerBlock;
 
         jQuery.each(caseNumbers, function(index, item) {
-          item = item.toUpperCase();
-          let link = '<button type="button" class="jcc-button--unstyled button button--text button--normal lookup-case__trigger lookup-case--' + type + '" data-case="' + item + '" aria-label="Look up case ' + item + ' from the California Courts website in a new browser window.">' + item + '</button>';
+          let link = linkBuilder(item);
           let isLastElement = index === caseNumbers.length -1;
           if (type === 'list') {
             link = '<li class="jcc-list__item">' + link + '</li>';
@@ -100,22 +115,7 @@
         return triggerBlock;
       }
 
-      // Set case number in hidden form and submit redirected query.
-      function caseQuery(trigger) {
-        let query = $(trigger).attr('data-case');
-        if (query) {
-          // Set district for case search URL.
-          const casePrefix = query[0].charAt(0);
-          let district = getDistrictCode(casePrefix);
-          $('#searchFormNumber').attr('action', caseLookupUrl + '/search/searchResults.cfm?dist=' + district + '&search=number');
-          $('#query_caseNumber').val(query);
-          $('form[name="searchFormNumber"]').submit();
-          // Remove form re-submit blocker esp for non-elevated sites.
-          $('#searchFormNumber').removeAttr('data-drupal-form-submit-last');
-        }
-      }
-
-      // Submit function.
+      // Docket search embed functions.
       function blockViewSubmit(event) {
         let typedQuery = $('.query-case-number__input').val();
         let submittedCases = detectCases(typedQuery);
@@ -127,14 +127,7 @@
 
           if (submittedCases.length === 1) {
             $(caseListing).hide();
-            // Display helper when multiple case numbers.
-            let casePrefix = submittedCases[0].charAt(0);
-            let district = getDistrictCode(casePrefix);
-            $('#searchFormNumber').attr('action', caseLookupUrl + '/search/searchResults.cfm?dist=' + district + '&search=number');
-            $('#query_caseNumber').val(submittedCases);
-            $('form[name="searchFormNumber"]').submit();
-            // Remove form re-submit blocker esp for non-elevated sites.
-            $('#searchFormNumber').removeAttr('data-drupal-form-submit-last');
+            window.open(linkBuilder(submittedCases[0], 'url'));
           } else {
             $(caseListing).show();
             // Insert/Update listing.
@@ -159,19 +152,8 @@
         }
       }
 
+
       $(document).ready(function() {
-        // BEGIN Load hidden ACCMS lookup form onto page if global search field exists.
-        if ($(globalSearchField).length && $('#searchFormNumber').length === 0) {
-          const searchForm = '<form class="sr-only" aria-hidden="true" name="searchFormNumber" id="searchFormNumber" method="post" action="' + caseLookupUrl + '" target="_blank">' +
-            '<input type="text" name="query_caseNumber" id="query_caseNumber" />' +
-            '<input type="checkbox" name="bot_check_1" id="bot_check_1" value="Y" checked>' +
-            '<input type="checkbox" name="bot_check_6" id="bot_check_6" value="Y">' +
-            '</form>';
-
-          $('body').append(searchForm);
-        }
-        // END.
-
         // BEGIN Global search field integration.
         $(globalSearchField).on('keyup', function() {
           let typedQuery = $(globalSearchField).val();
@@ -219,21 +201,18 @@
             '</p>' +
             '</div>';
 
+          // Docket search site suggestion message.
           $(caseSearchBlock).insertAfter(searchPageFieldContainer);
 
+          // Docket search assist block.
           if (searchString) {
             const searchResultsIntegration = '<p>' + caseSearchTriggers(searchString, 'page') + '</p>';
             $('.search__message--item').prepend(searchResultsIntegration);
-
-            // Results page form submission event handler.
-            $(document).on('click', '.lookup-case--page', function () {
-              caseQuery(this);
-            });
           }
         }
         // END.
 
-        // BEGIN Custom block view form submit handler.
+        // BEGIN Custom block embed functions.
         if ($('#query-case-number').length > 0) {
           // Submit button handler.
           $('#query-case-number__submit').on('click keypress', function (e) {
