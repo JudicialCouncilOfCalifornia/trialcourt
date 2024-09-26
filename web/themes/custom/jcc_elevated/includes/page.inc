@@ -117,7 +117,7 @@ function jcc_elevated_preprocess_page(&$variables) {
   // Feedback widget visibility.
   // We first check if a value is already defined. This allows for this setting
   // to be calculated in a module, like rules of court, with this as a fallback.
-  $variables['hide_was_this_helpful'] = $variables['hide_was_this_helpful'] == NULL ? (boolean) theme_get_setting('hide_was_this_helpful') : $variables['hide_was_this_helpful'];
+  $variables['hide_was_this_helpful'] = !isset($variables['hide_was_this_helpful']) || $variables['hide_was_this_helpful'] == NULL ? (boolean) theme_get_setting('hide_was_this_helpful') : $variables['hide_was_this_helpful'];
 
   $social_links = [];
   $social_link_ids = [
