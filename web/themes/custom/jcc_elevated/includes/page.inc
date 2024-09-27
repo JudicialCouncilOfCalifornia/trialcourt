@@ -150,7 +150,7 @@ function jcc_elevated_preprocess_page(&$variables) {
     'value' => '',
     'format' => 'snippet',
   ]);
-  $about_link_label = $state->get('jcc_elevated.about_link_label', '');
+  $about_link_label = $state->get('jcc_elevated.about_link_title', '');
   $about_link_url = $state->get('jcc_elevated.about_link_url', '');
   $display_footer_lower = $lower_menu != '_none_' ?? FALSE;
 
