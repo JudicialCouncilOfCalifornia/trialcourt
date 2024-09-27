@@ -9,11 +9,8 @@ dependencies:
     - paragraphs.paragraphs_type.body
     - paragraphs.paragraphs_type.cards
     - paragraphs.paragraphs_type.component_group
-    - paragraphs.paragraphs_type.content_stream
-    - paragraphs.paragraphs_type.data_visualization_embed
     - paragraphs.paragraphs_type.hours
     - paragraphs.paragraphs_type.iframe
-    - paragraphs.paragraphs_type.section
     - paragraphs.paragraphs_type.steps
     - paragraphs.paragraphs_type.tabs
     - paragraphs.paragraphs_type.text_share
@@ -25,11 +22,11 @@ dependencies:
 third_party_settings:
   tmgmt_content:
     excluded: false
-id: paragraph.section.field_components
+id: paragraph.component_group.field_components
 field_name: field_components
 entity_type: paragraph
-bundle: section
-label: Content
+bundle: component_group
+label: 'Component Group'
 description: ''
 required: false
 translatable: true
@@ -39,7 +36,6 @@ settings:
   handler: 'default:paragraph'
   handler_settings:
     target_bundles:
-      component_group: component_group
       accordion: accordion
       action_list: action_list
       alert: alert
@@ -48,122 +44,112 @@ settings:
       hours: hours
       iframe: iframe
       steps: steps
+      tabs: tabs
       text_share: text_share
       views_reference: views_reference
       webform: webform
-      data_visualization_embed: data_visualization_embed
-      tabs: tabs
     negate: 0
     target_bundles_drag_drop:
       accordion:
-        weight: -68
+        weight: 35
         enabled: true
       accordion_item:
-        weight: -67
+        weight: 36
         enabled: false
       action_list:
-        weight: -66
+        weight: 37
         enabled: true
       action_list_item:
-        weight: -65
-        enabled: false
-      alert:
-        weight: -64
-        enabled: true
-      attachment:
         weight: 38
         enabled: false
-      body:
-        weight: -63
+      alert:
+        weight: 39
         enabled: true
-      button:
+      attachment:
         weight: 40
         enabled: false
+      body:
+        weight: 41
+        enabled: true
+      button:
+        weight: 42
+        enabled: false
       card:
-        weight: -62
+        weight: 43
         enabled: false
       cards:
-        weight: -61
-        enabled: true
-      component_group:
-        weight: -69
-        enabled: true
-      content_stream:
-        weight: -60
-        enabled: false
-      date_information:
-        weight: -45
-        enabled: false
-      embed_script:
-        weight: -44
-        enabled: false
-      from_library:
-        weight: -43
-        enabled: false
-      data_visualization_embed:
         weight: 44
         enabled: true
-      date_information:
+      component_group:
         weight: 45
         enabled: false
-      embed_script:
+      content_stream:
         weight: 46
         enabled: false
-      from_library:
+      date_information:
         weight: 47
         enabled: false
+      embed_script:
+        weight: 48
+        enabled: false
+      from_library:
+        weight: 49
+        enabled: false
       hero:
-        weight: -59
+        weight: 50
         enabled: false
       hero_banner:
-        weight: -58
+        weight: 51
         enabled: false
       hero_hangover:
-        weight: -56
+        weight: 52
         enabled: false
       hero_mega:
-        weight: -42
+        weight: 53
         enabled: false
       hours:
-        weight: -57
+        weight: 54
         enabled: true
       icon_link:
-        weight: -55
-        enabled: false
-      iframe:
-        weight: -54
-        enabled: true
-      information:
-        weight: 54
-        enabled: false
-      messenger_signup:
         weight: 55
         enabled: false
-      read_more:
+      iframe:
         weight: 56
+        enabled: true
+      information:
+        weight: 57
+        enabled: false
+      messenger_signup:
+        weight: 58
+        enabled: false
+      read_more:
+        weight: 59
+        enabled: false
+      rule_section:
+        weight: 60
         enabled: false
       section:
-        weight: -53
+        weight: 61
         enabled: false
       step:
-        weight: -52
+        weight: 62
         enabled: false
       steps:
-        weight: -51
+        weight: 63
         enabled: true
       tab:
-        weight: -41
+        weight: 64
         enabled: false
       tabs:
-        weight: -39
+        weight: 65
         enabled: true
       text_share:
-        weight: -50
+        weight: 66
         enabled: true
       views_reference:
-        weight: -49
+        weight: 67
         enabled: true
       webform:
-        weight: -47
+        weight: 68
         enabled: true
 field_type: entity_reference_revisions
