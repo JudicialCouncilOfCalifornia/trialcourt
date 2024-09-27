@@ -956,46 +956,56 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
       if ($media) {
 
         $fid = $media->getSource()->getSourceFieldValue($media);
-        $file = $file_manager->load($fid);
-        $file_url = $file->createFileUrl();
+        if ($fid) {
+          $file = $file_manager->load($fid);
+          $file_url = $file->createFileUrl();
+          $mimetype = $file->getMimeType();
 
-        $options = [
-          'attributes' => [
-            'download' => $file->label(),
-          ],
-        ];
+          $options = [];
 
-        $url = Url::fromUserInput($file_url, $options);
-        $file_field_data = $media->get('field_media_file')->first()->getValue();
-        $label = !empty($file_field_data['description']) ? $file_field_data['description'] : $media->label();
+          // Only apply download to Excel files. Pdfs and docs will display or
+          // download based on users browser settings.
+          if ($mimetype == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            $options = [
+              'attributes' => [
+                'download' => $file->label(),
+              ],
+            ];
+          }
 
-        // If last updated date of media item is within 30 days, and not a new
-        // item, set update TRUE.
-        $update = $current - $media->getChangedTime() <= $offset;
-        $new = $current - $media->getCreatedTime() <= $offset;
-        $status = FALSE;
-        if ($new) {
-          $status = [
-            '#prefix' => '<em class="attachment__new-label">',
-            '#markup' => t('New'),
-            '#suffix' => '</em>',
+          $url = Url::fromUserInput($file_url, $options);
+          $file_field_data = $media->get('field_media_file')
+            ->first()
+            ->getValue();
+          $label = !empty($file_field_data['description']) ? $file_field_data['description'] : $media->label();
+
+          // If last updated date of media item is within 30 days, and not a new
+          // item, set update TRUE.
+          $update = $current - $media->getChangedTime() <= $offset;
+          $new = $current - $media->getCreatedTime() <= $offset;
+          $status = FALSE;
+          if ($new) {
+            $status = [
+              '#prefix' => '<em class="attachment__new-label">',
+              '#markup' => t('New'),
+              '#suffix' => '</em>',
+            ];
+          }
+          if ($update and !$new) {
+            $status = [
+              '#prefix' => '<em class="attachment__recent-updated-date">',
+              '#markup' => t('Revised:') . ' ' . $formatter->format($media->getChangedTime(), 'm_d_y'),
+              '#suffix' => '</em>',
+            ];
+          }
+
+          $items[$delta] = [
+            '#prefix' => $new ? '<div class="attachment__label attachment__new">' : '<div class="attachment__label">',
+            '#markup' => Link::fromTextAndUrl($label, $url)->toString() . $renderer->render($status),
+            '#suffix' => '</div>',
+            '#wrapper_attributes' => ['class' => 'list__item'],
           ];
         }
-        if ($update and !$new) {
-          $status = [
-            '#prefix' => '<em class="attachment__recent-updated-date">',
-            '#markup' => t('Revised:') . ' ' . $formatter->format($media->getChangedTime(), 'm_d_y'),
-            '#suffix' => '</em>',
-          ];
-        }
-
-        $items[$delta] = [
-          '#prefix' => $new ? '<div class="attachment__label attachment__new">' : '<div class="attachment__label">',
-          '#markup' => Link::fromTextAndUrl($label, $url)
-            ->toString() . $renderer->render($status),
-          '#suffix' => '</div>',
-          '#wrapper_attributes' => ['class' => 'list__item'],
-        ];
       }
     }
 
