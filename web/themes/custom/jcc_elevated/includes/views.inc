@@ -788,8 +788,7 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
                 $file_id = $file_ids[0]['target_id']; 
                 $file = File::load($file_id);               
                 if ($file) {
-                    $file_uri = $file->getFileUri();
-                    //$url1 = $file->createFileUrl();                                     
+                    $file_uri = $file->getFileUri();                                            
                 }                        
               if (!empty($file_uri)) {            
                 $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_uri);                          
