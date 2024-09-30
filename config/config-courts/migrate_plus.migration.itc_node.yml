@@ -93,11 +93,14 @@ process:
       migration: itc_media
       source: id_href
   field_deadline:
+    #-
+    #  plugin: skip_on_empty
+    #  method: row
+    #  source: deadline
     -
-      plugin: skip_on_empty
-      method: row
-      source: deadline
-    -
+      plugin: default_value
+      default_value: ''
+    -    
       plugin: format_date
       source: deadline
       from_format: 'F j, Y H:i:s'

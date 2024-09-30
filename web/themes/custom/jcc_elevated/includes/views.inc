@@ -800,15 +800,11 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
           }
         }
         else {
-          $body = $node->get('body')->value;
+          $body = $node->get('body')->value;          
         }
         $category = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
         $category_value = $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '';
-        $brow['primary'] = $category_value;        
-       $button_data = [
-          'label' => t('Download PDF'),
-          'href' => $file_url,  
-        ];        
+        $brow['primary'] = $category_value;         
         $deadline_value = $node->field_deadline->value;
         if (!empty($deadline_value)) {
           $formatted_deadline = \Drupal::service('date.formatter')->format(
@@ -818,6 +814,9 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
           );
           $formatted_value = t('Deadline:') . ' ' . $formatted_deadline;
           $brow['notation'] = $formatted_value;
+        } else {
+          $deadline = '';
+          $brow['notation'] = '';
         }
 
         $itc_past_proposal = [
@@ -833,8 +832,13 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
          ],
         'item_number' => $node->get('field_itc_number')->value,
         'file_url' => $file_url ? $file_url : '',        
-       'button_data' => $button_data,
       ];
+      if (!empty($file_url)) {
+        $itc_past_proposal['button_data'] = [
+          'label' => t('Download PDF'),
+          'href' => $file_url,
+        ];
+      }
       }
       $grouped_proposals[$safe_list_label]['items'][] = $itc_past_proposal;
       if (count($grouped_proposals[$safe_list_label]['items']) >= 1) {
