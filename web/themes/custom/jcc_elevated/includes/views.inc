@@ -447,12 +447,11 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       $node = $row['#node'];
       $event = [];
 
-      // Get teaser.
+      // Get full body content.
       $teaser = $node->get('body') ?? '';
       if ($teaser) {
-        $teaser = $node->get('body')->view('teaser');
+        $teaser = $node->get('body')->view('advisory_body_events');
         $teaser = strval($render->render($teaser));
-        $teaser = strip_tags($teaser);
       }
 
       // Get files.
@@ -566,12 +565,11 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       $node = $row['#node'];
       $event = [];
 
-      // Get teaser.
+      // Get full body content.
       $teaser = $node->get('body') ?? '';
       if ($teaser) {
-        $teaser = $node->get('body')->view('teaser');
+        $teaser = $node->get('body')->view('advisory_body_events');
         $teaser = strval($render->render($teaser));
-        $teaser = strip_tags($teaser);
       }
 
       // Get files.
