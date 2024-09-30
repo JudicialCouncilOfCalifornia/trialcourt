@@ -10,6 +10,7 @@ use Drupal\Core\Form\EnforcedResponseException;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\views\Views;
@@ -22,6 +23,7 @@ use Drupal\views\Views;
 function jcc_elevated_preprocess_page(&$variables) {
   // Check if front page.
   $is_front = \Drupal::service('path.matcher')->isFrontPage();
+  $state = \Drupal::state();
 
   // Determine if page is a node.
   $is_node = FALSE;
@@ -115,8 +117,54 @@ function jcc_elevated_preprocess_page(&$variables) {
   // Feedback widget visibility.
   // We first check if a value is already defined. This allows for this setting
   // to be calculated in a module, like rules of court, with this as a fallback.
-  $variables['hide_was_this_helpful'] = $variables['hide_was_this_helpful'] == NULL ? (boolean) theme_get_setting('hide_was_this_helpful') : $variables['hide_was_this_helpful'];
+  $variables['hide_was_this_helpful'] = !isset($variables['hide_was_this_helpful']) || $variables['hide_was_this_helpful'] == NULL ? (boolean) theme_get_setting('hide_was_this_helpful') : $variables['hide_was_this_helpful'];
 
+  $social_links = [];
+  $social_link_ids = [
+    'facebook' => 'jcc_elevated.social_links_facebook',
+    'linkedin' => 'jcc_elevated.social_links_linkedin',
+    'rss' => 'jcc_elevated.social_links_rss',
+    'twitter' => 'jcc_elevated.social_links_twitter',
+    'youtube' => 'jcc_elevated.social_links_youtube',
+  ];
+
+  $frontpage_path = \Drupal::urlGenerator()->generateFromRoute('<front>', [], ['absolute' => TRUE]);
+
+  foreach ($social_link_ids as $name => $id) {
+    $url_value = $state->get($id, NULL);
+    if (!empty($url_value)) {
+      $social_links[$name] = [
+        'text' => ucfirst($name),
+        'url' => $url_value,
+        'icon' => 'fa-' . $name,
+        'icon_path' => $frontpage_path . 'themes/contrib/jcc_storybook/src/assets/icons.svg',
+      ];
+    }
+  }
+
+  $variant = $state->get('jcc_elevated.footer_variant', 'default');
+  $upper_menu = $state->get('jcc_elevated.upper_footer_menu', 'footer');
+  $lower_menu = $state->get('jcc_elevated.lower_footer_menu', '_none_');
+  $about_header = $state->get('jcc_elevated.about_header', '');
+  $about_text = $state->get('jcc_elevated.about_text', [
+    'value' => '',
+    'format' => 'snippet',
+  ]);
+  $about_link_label = $state->get('jcc_elevated.about_link_title', '');
+  $about_link_url = $state->get('jcc_elevated.about_link_url', '');
+  $display_footer_lower = $lower_menu != '_none_' ?? FALSE;
+
+  $variables['footer_values'] = [
+    'variant' => $variant,
+    'display_footer_lower' => $display_footer_lower,
+    'upper_footer_menu' => !empty($upper_menu) ? jcc_elevated_get_menu_array($upper_menu) : [],
+    'lower_footer_menu' => !empty($lower_menu) ? jcc_elevated_get_menu_array($lower_menu) : [],
+    'about_label' => $about_header,
+    'about_content' => isset($about_text['value']) ? Markup::create($about_text['value']) : '',
+    'about_link_label' => $about_link_label,
+    'about_link_href' => $about_link_url,
+    'social_links' => $social_links,
+  ];
 }
 
 /**
