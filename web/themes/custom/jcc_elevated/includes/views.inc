@@ -750,7 +750,7 @@ function generate_itc_webform_url($item_number, $formatted_deadline, $title) {
     'query' => [
       'proposal' => htmlspecialchars($item_number, ENT_QUOTES, 'UTF-8'),
       'deadline' => htmlspecialchars($formatted_deadline, ENT_QUOTES, 'UTF-8'),
-      'title' => rawurlencode(htmlspecialchars($title, ENT_QUOTES, 'UTF-8')),
+      'title' => htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
     ],
   ])->setAbsolute()->toString();
   return $webform_subpage_url;
