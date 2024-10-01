@@ -843,15 +843,14 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     $download_aria = t('Download or view opinion document');
 
     // Remote file links - $doc must be valid to display anything.
-    $remote_files = [];
-    $pdf = __jcc_opinion_file_links_builder($type, $review_granted, 'PDF', $download_aria, $case_number);
-    $doc = __jcc_opinion_file_links_builder($type, $review_granted, 'DOCX', $download_aria, $case_number);
-    if ($pdf && $doc) {
-      $remote_files[] = $pdf;
-      if ($doc) {
-        $remote_files[] = $doc;
-      }
-    }
+    $remote_files = [
+      __jcc_opinion_file_links_builder($type, $review_granted, 'PDF', $download_aria, $case_number),
+      [
+        'url' => $node->toUrl()->setAbsolute()->toString(),
+        'file_type' => 'Other Formats',
+        'aria_label' => 'View ' . $case_number . ' opinion posting for other formats',
+      ],
+    ];
 
     // Related cases.
     $related_cases_urls = [];
