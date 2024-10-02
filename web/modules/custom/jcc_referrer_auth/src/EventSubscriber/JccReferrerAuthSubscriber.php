@@ -131,6 +131,9 @@ class JccReferrerAuthSubscriber implements EventSubscriberInterface {
       return;
     }
 
+    // Prevent any page from getting cached.
+    $this->pageCacheKillSwitch->trigger();
+
     // Allow access if the referrer is trusted.
     if ($this->tempStore->get('valid_user')) {
       return;
