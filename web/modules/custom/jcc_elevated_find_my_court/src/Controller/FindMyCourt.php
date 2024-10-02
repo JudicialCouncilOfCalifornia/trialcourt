@@ -18,7 +18,7 @@ class FindMyCourt extends ControllerBase {
   public function findMyCourt() {
     return [
       '#type' => 'inline_template',
-      '#template' => '<div class="section__content box"><div class="container stack"><iframe src="{{ url }}" id="iframe-ftrc" class="iframe-ftrc" title="County courthouses found by zip code or city" style="height: 2390.37px;width:100%;"></iframe></div></div>',
+      '#template' => '<pre>test: {{zip}}</pre><div class="section__content box"><div class="container stack"><iframe src="{{ url }}" id="iframe-ftrc" class="iframe-ftrc" title="County courthouses found by zip code or city" style="height: 2390.37px;width:100%;"></iframe></div></div>',
       '#context' => [
         'url' => 'modules/custom/jcc_elevated_find_my_court/src/ftrc/index.html?query=94117',
       ],
