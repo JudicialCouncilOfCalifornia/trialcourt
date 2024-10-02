@@ -1022,6 +1022,9 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&
   if ($variables['exposed']['items_per_page']) {
     $variables['items_per_page'] = $variables['exposed']['items_per_page'];
     $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+    // Reset the #action var - it is actually set to another display.
+    $current_path = \Drupal::service('path.current')->getPath();
+    $variables['exposed']['#action'] = $current_path;
     foreach ($variables['items_per_page']['#options'] as $key => $value) {
       $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
     }
@@ -1119,6 +1122,9 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
   if ($variables['exposed']['items_per_page']) {
     $variables['items_per_page'] = $variables['exposed']['items_per_page'];
     $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+    // Reset the #action var - it is actually set to another display.
+    $current_path = \Drupal::service('path.current')->getPath();
+    $variables['exposed']['#action'] = $current_path;
     foreach ($variables['items_per_page']['#options'] as $key => $value) {
       $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
     }
