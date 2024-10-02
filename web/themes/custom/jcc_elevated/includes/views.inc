@@ -541,17 +541,6 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
     $parent_advisory_body = FALSE;
   }
 
-  // Items per page filter.
-  $variables['items_per_page'] = $parent_advisory_body ? $variables['exposed']['items_per_page'] : FALSE;
-  if ($parent_advisory_body) {
-    $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
-    foreach ($variables['items_per_page']['#options'] as $key => $value) {
-      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
-    }
-    unset($variables['items_per_page']['#title']);
-  }
-  unset($variables['exposed']['items_per_page']);
-
   foreach ($variables['rows'] as $key => $group) {
     // Process date range year for grouping label.
     // Remove markup and line breaks.
@@ -605,9 +594,6 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       if ($event_files != '') {
         $event['content']['#markup'] .= '<div>' . $event_files . '</div>';
       }
-
-      // Count summary for the current page of results.
-      $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
 
       $variables['events'][$key]['items'][] = $event;
     }
@@ -842,7 +828,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     $title = $node->get('title')->value;
     $download_aria = t('Download or view opinion document');
 
-    // Remote file links - $doc must be valid to display anything.
+    // Remote file links.
     $remote_files = [
       __jcc_opinion_file_links_builder($type, $review_granted, 'PDF', $download_aria, $case_number),
       [
@@ -1281,7 +1267,7 @@ function jcc_elevated_validate_date(string $date, string $format = 'Y-m-d'): boo
 }
 
 /**
- * Helper function to apply exposed filter UI customizations.
+ * Helper function to apply common exposed filter view customizations.
  */
 function __jcc_view_results_exposed_filter_init(&$variables) {
   $form = &$variables['exposed'];
@@ -1321,4 +1307,21 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   if (isset($form['actions']['reset'])) {
     $form['actions']['reset']['#attributes']['class'][] = 'button button--secondary button--normal';
   }
+
+  // Items per page filter.
+  if ($variables['rows'][0]['#rows'] && $variables['exposed']['items_per_page']) {
+    $variables['items_per_page'] = $variables['exposed']['items_per_page'];
+    if ($variables['exposed']['#id']) {
+      $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+      foreach ($variables['items_per_page']['#options'] as $key => $value) {
+        $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' per page';
+      }
+      unset($variables['items_per_page']['#title']);
+      unset($variables['exposed']['items_per_page']);
+    }
+  }
+
+  // Count summary for the current page of results.
+  // Suppress duplicate summary with empty header in ViewsResults twig.
+  $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
 }
