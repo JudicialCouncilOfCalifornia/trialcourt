@@ -137,7 +137,6 @@ class JccReferrerAuthSubscriber implements EventSubscriberInterface {
     }
     else {
       $referrer = $this->requestStack->getCurrentRequest()->server->get('HTTP_REFERER');
-      dump($referrer);
       $needles = [
         'lndo.site',
         'courts.ca.gov',
