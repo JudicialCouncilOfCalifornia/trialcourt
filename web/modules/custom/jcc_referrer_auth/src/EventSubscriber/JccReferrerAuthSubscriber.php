@@ -132,12 +132,18 @@ class JccReferrerAuthSubscriber implements EventSubscriberInterface {
     }
 
     // Allow access if the referrer is trusted.
-    $referrer = $this->requestStack->getCurrentRequest()->server->get('HTTP_REFERER');
     if ($this->tempStore->get('valid_user')) {
       return;
     }
     else {
-      $needles = ['lndo.site', 'courts.ca.gov', 'jud.ca.gov'];
+      $referrer = $this->requestStack->getCurrentRequest()->server->get('HTTP_REFERER');
+      dump($referrer);
+      $needles = [
+        'lndo.site',
+        'courts.ca.gov',
+        'jud.ca.gov',
+        'live-jcc-courts.pantheonsite.io',
+      ];
       if (array_reduce($needles, fn($a, $n) => $a || str_contains($referrer, $n), FALSE)) {
         $this->tempStore->set('valid_user', TRUE);
         return;
