@@ -43,9 +43,8 @@
 ]
 %}
 
-{% set header %}
+{% set content_header %}
   <div class="cluster">
-    <h2>{{ 'Job Search'|t }}</h2>
     <div>{{ jobs.count_summary }}</div>
   </div>
 {% endset %}
@@ -81,9 +80,10 @@
     variant: 'default',
     view_name: id,
     view_display: display_id,
-    header: header,
+    header: '',
     header_sidebar: '',
     header_direction_results: 'sidebar-row',
+    content_header: header,
     form: exposed|render,
     form_in_sidebar: true,
     list_type: 'ul',
