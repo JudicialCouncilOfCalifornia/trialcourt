@@ -748,7 +748,7 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $grouped_proposals = [];
-  $file_url = '';  
+  $file_url = '';
   $file_uri = '';
   foreach ($variables['rows'] as $index => $row1) {
     $list_label = preg_replace('/\R+/', ' ', strip_tags($row1['#title']));
@@ -761,25 +761,25 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
     }
     foreach ($row1['#rows'] as $row) {
       $result_row = $row['#row'];
-      if (!empty($result_row->_entity) && $result_row->_entity instanceof Node) {        
-        $node = $result_row->_entity;       
-        $media_entities = $node->get('field_file')->referencedEntities();        
+      if (!empty($result_row->_entity) && $result_row->_entity instanceof Node) {
+        $node = $result_row->_entity;
+        $media_entities = $node->get('field_file')->referencedEntities();
         if (!empty($media_entities)) {
           $media_entity = $media_entities[0];
-          if ($media_entity) {                    
-            $file_ids = $media_entity->get('field_media_file')->getValue(); 
+          if ($media_entity) {
+            $file_ids = $media_entity->get('field_media_file')->getValue();
             if (!empty($file_ids)) {
                 $file_id = $file_ids[0]['target_id']; 
-                $file = File::load($file_id);               
+                $file = File::load($file_id);
                 if ($file) {
-                    $file_uri = $file->getFileUri();                                            
-                }                        
-              if (!empty($file_uri)) {            
-                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_uri);                          
+                    $file_uri = $file->getFileUri();
+                }
+              if (!empty($file_uri)) {
+                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_uri);
               }
-          } 
-        }
-      }                    
+            } 
+          }
+        }                       
         $brow = [];
         if ($node->hasField('field_deadline') && !$node->field_deadline->isEmpty()) {
           $deadline = strtotime($node->field_deadline->value);
@@ -800,11 +800,11 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
           }
         }
         else {
-          $body = $node->get('body')->value;          
+          $body = $node->get('body')->value;
         }
         $category = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
         $category_value = $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '';
-        $brow['primary'] = $category_value;         
+        $brow['primary'] = $category_value;
         $deadline_value = $node->field_deadline->value;
         if (!empty($deadline_value)) {
           $formatted_deadline = \Drupal::service('date.formatter')->format(
@@ -829,9 +829,9 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         'category' => $category_value ? $category_value : '',
         'content' => [
           '#markup' => $body,
-         ],
+        ],
         'item_number' => $node->get('field_itc_number')->value,
-        'file_url' => $file_url ? $file_url : '',        
+        'file_url' => $file_url ? $file_url : '',
       ];
       if (!empty($file_url)) {
         $itc_past_proposal['button_data'] = [
@@ -844,8 +844,8 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
       if (count($grouped_proposals[$safe_list_label]['items']) >= 1) {
         $grouped_proposals[$safe_list_label]['list_label'] = $list_label;
       }
-    }    
-    usort($grouped_proposals, function($a, $b) {      
+    }
+    usort($grouped_proposals, function($a, $b) {
       return $a['items'][0]['category'] <=> $b['items'][0]['category'];
   });
   $variables['grouped_proposals'] = $grouped_proposals;
