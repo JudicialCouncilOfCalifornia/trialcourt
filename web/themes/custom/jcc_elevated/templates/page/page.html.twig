@@ -194,8 +194,20 @@
     </footer>
   {% endif %}
 
+  {% set footer_about_link = [] %}
+
+  {% if footer_values.about_link_href is not empty %}
+    {% set footer_about_link = {
+      variant: "text",
+      size: "normal",
+      label: footer_values.about_link_label,
+      aria_label: footer_values.about_link_label,
+      href: footer_values.about_link_href,
+    } %}
+  {% endif %}
+
   {% include "@organisms/Footer/Footer.twig" with {
-    variant: "default",
+    variant: footer_values.variant,
     site_branding_data: {
       variant: "default",
       logo: logo.url,
@@ -205,19 +217,29 @@
     },
     secondary_nav_data: {
       attributes: create_attribute(),
-      variant: "",
+      variant: "default",
       overflowing_variant: "stack",
       links: footer_links,
     },
     footer_upper_nav_data: {
       attributes: create_attribute(),
-      variant: "",
+      variant: footer_values.display_footer_lower ? "with-divider" : "default",
       overflowing_variant: "stack",
-      links: footer_links,
+      links: footer_values.upper_footer_menu,
     },
-    display_lower_footer: false,
-    footer_lower_nav_data: [],
-    footer_about_content: null,
+    footer_lower_nav_data: {
+      attributes: create_attribute(),
+      variant: "default",
+      overflowing_variant: "stack",
+      links: footer_values.lower_footer_menu,
+    },
+    display_footer_lower: footer_values.display_footer_lower,
+    footer_about_content: {
+      label: footer_values.about_label,
+      content: footer_values.about_content,
+      link: footer_about_link,
+    },
+    footer_social_link: footer_values.social_links,
     attributes: create_attribute(),
   } %}
 
