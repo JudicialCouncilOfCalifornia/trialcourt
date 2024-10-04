@@ -109,9 +109,37 @@ function jcc_custom_editor_js_settings_alter(&$settings) {
 }
 
 /**
+ * Implements hook_node_prepare_form().
+ */
+function jcc_custom_node_prepare_form($node, $form_id, $form) {
+  $theme = \Drupal::config('system.theme')->get('default');
+  // Set default elevated components programmatically.
+  if ($theme == 'jcc_elevated') {
+    switch ($node->getType()) {
+      case 'landing_page':
+      case 'subpage':
+        if ($node->isNew() === TRUE) {
+          $components_field = $node->get('field_components');
+          $entity = 'paragraph';
+
+          // Preload hero.
+          $hero = Drupal::service('entity_type.manager')->getStorage($entity)->create(['type' => 'hero_hangover']);
+          $components_field->appendItem($hero);
+          // Preload layout section.
+          $section = Drupal::service('entity_type.manager')->getStorage($entity)->create(['type' => 'section']);
+          $components_field->appendItem($section);
+        }
+        break;
+    }
+  }
+}
+
+/**
  * Implements hook_form_alter().
  */
 function jcc_custom_form_alter(&$form, $form_state, $form_id) {
+  $theme = \Drupal::config('system.theme')->get('default');
+
   // The body field on these content types is only used for migration of
   // content and temporary display on the initial site build. Editors should
   // not have access.
@@ -131,11 +159,25 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
   }
 
   switch ($form_id) {
+    case 'node_landing_page_edit_form':
+    case 'node_landing_page_form':
     case 'node_subpage_edit_form':
     case 'node_subpage_form':
       $user = \Drupal::currentUser();
       $access = $user->hasPermission('access migration body');
       $form['body']['#access'] = $access;
+
+      // Suppress components that are usable to elevated sites only.
+      if ($theme != 'jcc_elevated') {
+        unset($form['field_components']['widget']['add_more']['add_more_button_hero_mega']);
+        unset($form['field_components']['widget']['add_more']['add_more_button_hero_hangover']);
+        unset($form['field_components']['widget']['add_more']['add_more_button_section']);
+        unset($form['field_components']['widget']['add_more']['add_more_button_tabs']);
+      }
+      else {
+        unset($form['field_components']['widget']["add_more"]['add_more_button_content_stream']);
+      }
+
       break;
 
     case 'node_news_edit_form':
@@ -251,7 +293,6 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
         }
       }
       break;
-
     case 'node_location_edit_form': 
       if (isset($form['field_add_services']['widget'])) {
         foreach ($form['field_add_services']['widget'] as $service_index => $service_widget) {
@@ -265,8 +306,90 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
         }
       }
       break;
-  }
+}
 
+/**
+ * helper function for node location form for hide and show fields.
+ */
+
+function processServiceHours(&$form, $form_state ,$service_index, $hour_index, $service_widget, $hour_widget) {
+  // Construct selector paths
+  $key_service_hour_type = 'select[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_service_hour_type]"]';
+  $key_service_days_type = ':input[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_weekdays_mon_fri][value]"]';
+  $key_service_hour_buisness_same = ':input[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_service_hours_same_as_busi][value]"]';
+  //$key_service_hour_buisness_same = ':input[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_service_hours_same_as_busi][value]"]';
+
+  // Configure #states for 'field_others'
+  $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['field_others']['#states'] = [
+      'visible' => [
+          $key_service_hour_type => ['value' => 'others']
+      ],
+      'invisible' => [
+          'or' => [
+              [$key_service_hour_type => ['value' => 'phone']],
+              [$key_service_hour_type => ['value' => 'in_person']],
+              [$key_service_hour_type => ['value' => 'dropbox']],
+              [$key_service_hour_type => ['value' => 'live_chat']]
+          ]
+      ]
+  ];
+
+  // Configure visibility of service days
+  $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['field_service_days']['#states'] = [
+      'visible' => [
+          $key_service_days_type => ['checked' => false],
+      ],
+      'invisible' => [
+          $key_service_days_type => ['checked' => true],
+      ],
+  ];
+
+  // Control visibility and required state of 'field_service_hours_from' and 'field_service_hours_to'
+  // Set the #states for the 'group-hours' field group
+  $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['group_hours']['#states'] = [
+    'visible' => [
+        'or' => [
+            [$key_service_hour_buisness_same => ['checked' => false]]
+        ]
+    ],
+    'invisible' => [
+        $key_service_hour_buisness_same => ['checked' => true]
+    ]
+  ];
+
+  $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['group_days']['#states'] = [
+    'visible' => [
+        'or' => [
+            [$key_service_hour_buisness_same => ['checked' => false]]
+        ]
+    ],
+    'invisible' => [
+        $key_service_hour_buisness_same => ['checked' => true]
+    ]
+  ];
+}
+
+/**
+ * Implements hook_field_group_form_process_alter().
+ */
+function jcc_custom_field_group_form_process_alter(array &$element, &$group, &$complete_form) {
+  if (jcc_custom_is_elevated_site()) {
+    switch ($group->group_name) {
+      case 'group_media':
+        if ($group->bundle == 'card') {
+          $element['#description'] = t('Embed an image or remote video. The media will automatically shift top or left positioning if the real estate is large enough. Optionally, you can position the media on the right.');
+        }
+        break;
+
+      case 'group_button':
+        if ($group->bundle == 'card') {
+          $element['#title'] = 'Add Buttons or Entire Card Clickable';
+          $linking_help = t('Setup a link for a button to appear as part of the card content or for the entire card. Use the <strong>Entire Card Clickable</strong> option to make the whole card actionable.\r\n\r\nFor additional buttons if supported, use the <strong>Additional Links</strong> option but be mindful of usability when offering more than two buttons.');
+          $element['#description'] = $linking_help;
+        }
+        break;
+    }
+  }
 }
 
 /**
@@ -344,6 +467,18 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         unset($element['subform']['field_subheading']);
         unset($element['subform']['field_link']);
         unset($element['subform']['field_aside']);
+
+        // Attach Card.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-layout';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-card';
+        break;
+
+      case 'hero_mega':
+        // Attach Card.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-layout';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-card';
         break;
 
       case 'hero_banner':
@@ -356,8 +491,15 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
 
         // Attach Card.css for background swatches.
         $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-layout';
         $element['#attached']['library'][] = 'jcc_custom/storybook-card';
-        $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
+        break;
+
+      case 'card':
+        unset($element['subform']['field_brow']);
+        // Elevated only offers left or right media positioning.
+        // Top positioning occurs automatically when insufficient real estate.
+        unset($element['subform']['field_media_alignment']['widget']['#options']['top']);
         break;
 
       case 'hero_hangover':
@@ -374,6 +516,7 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
       case 'hero':
         unset($element['subform']['field_components']);
         unset($element['subform']['field_image_media']);
+        unset($element['subform']['field_background']);
         unset($element['subform']['field_granicus_view_link_id']);
         break;
 
@@ -619,11 +762,18 @@ function jcc_custom_background_options_bundle(FieldStorageConfig $definition, Co
  */
 function jcc_custom_section_background_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
   return [
-    "default" => '<span class="section field--select section--color-default">Default</span>',
-    "primary-dark-xx" => '<span class="section field--select section--color-primary-dark-xx">Primary (Dark)</span>',
-    "primary-dark-xx-stripe" => '<span class="section field--select section--color-primary-dark-xx-stripe">Primary (Dark/Striped)</span>',
-    "warm-dark-xx" => '<span class="section field--select section--color-warm-dark-xx">Warm (Dark)</span>',
-    "warm-dark-x" => '<span class="section field--select section--color-warm-dark-x">Warm</span>',
+    "base-light-xxx" => '<span class="cluster"><span>Base Lightest</span><span class="section swatch swatch--color-base-light-xxx">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
+    "base-dark-x" => '<span class="cluster"><span>Base Darker</span><span class="section swatch swatch--color-base-dark-x">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
+    "base-dark-xxx" => '<span class="cluster"><span>Base Darkest</span><span class="section swatch swatch--color-base-dark-xxx">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
+    "accent-warm-light-xxxx" => '<span class="cluster"><span>Accent Warm Lightest</span><span class="section swatch swatch--color-accent-warm-light-xxxx">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
+    "accent-warm-dark-x" => '<span class="cluster"><span>Accent Warm Dark</span><span class="section swatch swatch--color-accent-warm-dark-x">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
+    "red" => '<span class="cluster"><span>Accent Warm Darker</span><span class="section swatch swatch--color-red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
+    "brown" => '<span class="cluster"><span>Accent Warm Darkest</span><span class="section swatch swatch--color-brown">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
+    "primary-light-xxx" => '<span class="cluster"><span>Primary Lightest</span><span class="section swatch swatch--color-primary-light-xxx">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
+    "primary-light-x" => '<span class="cluster"><span>Primary Vivid</span><span class="section swatch swatch--color-primary-light-x">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
+    "primary-dark-x" => '<span class="cluster"><span>Primary Dark</span><span class="section swatch swatch--color-primary-dark-x">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
+    "secondary" => '<span class="cluster"><span>Secondary</span><span class="section swatch swatch--color-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
+    "secondary-dark-xx" => '<span class="cluster"><span>Secondary Dark</span><span class="section swatch swatch--color-secondary-dark-xx">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
   ];
 }
 
@@ -821,7 +971,7 @@ function jcc_custom_field_widget_form_alter(&$element, FormStateInterface $form_
         case 'field_building_hours_to':
             $element['value']['#date_date_element'] = 'none';
             break;
-    }     
+    }
   }
   // Apply changes specific to 'services' and 'service_hours' paragraph types.
   if ($context['items']->getEntity()->getEntityTypeId() === 'paragraph') {
@@ -993,7 +1143,10 @@ function jcc_custom_request_rfp_status_options(): array {
     return jcc_elevated_rfp_solicitations_status_options();
   }
 
-  return [];
+  return [
+    'open' => t('Open'),
+    'archived' => t('Archived'),
+  ];
 }
 
 /**

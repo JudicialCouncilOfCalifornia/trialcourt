@@ -1,0 +1,32 @@
+{{ attach_library("jcc_storybook/Icon") }}
+{{ attach_library("jcc_storybook/Hero") }}
+{{ attach_library("jcc_storybook/Card") }}
+{{ attach_library("jcc_storybook/HeaderSearch") }}
+
+{% set text %}
+  {{ content.field_lead ? content.field_lead.0 : '' }}
+
+  {% if hero_mega_search_form %}
+    {% include "@molecules/HeaderSearch/HeaderSearch.twig" with {
+      variant: 'no-toggle',
+      bg_transparent: true,
+      form: hero_mega_search_form,
+    } %}
+  {% endif %}
+{% endset %}
+
+{% include "@molecules/Hero/Hero.twig" with {
+  variant: 'mega',
+  content_justify: 'left',
+  bg_tint: bg_tint ? bg_tint : 'base-dark-x',
+  background_image_url: file_url(bckg_img_url),
+  card_data: {
+    attributes: create_attribute(),
+    variant: 'default',
+    first_component: true,
+    media: false,
+    heading: paragraph.field_heading.value,
+    text: text,
+  }
+} %}
+
