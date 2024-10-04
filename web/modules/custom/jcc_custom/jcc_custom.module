@@ -20,6 +20,7 @@ use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
+use Drupal\Core\Database\Query\AlterableInterface;
 
 /**
  * Implements hook_page_attachments().
@@ -39,6 +40,7 @@ function jcc_custom_page_attachments(array &$attachments): void {
     // 2.0 styling is drab and hard to use.
     $attachments['#attached']['library'][] = 'jcc_custom/admin_layout_paragraphs_edit_override';
     $attachments['#attached']['library'][] = 'jcc_custom/gin-admin-elevated';
+    $attachments['#attached']['library'][] = 'jcc_custom/location_form';
   }
 }
 
@@ -115,6 +117,19 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
   // not have access.
   // The field will only render if there are no components added by paragraph
   // reference. See respective node templates.
+  if (strpos($form_id, 'node_form') === 0) {
+    // Get the node type from the form ID.
+    $node_type = substr($form_id, strlen('node_form_'));
+    // Check if the user is not an administrator.
+    if (!\Drupal::currentUser()->hasPermission('administer site configuration')) {
+      // Replace 'your_field_machine_name' with the machine name of the field
+      // you want to restrict access to.
+      if (isset($form['field_e'][$node_type]['#access'])) {
+        $form['field_e'][$node_type]['#access'] = FALSE;
+      }
+    }
+  }
+
   switch ($form_id) {
     case 'node_subpage_edit_form':
     case 'node_subpage_form':
@@ -235,22 +250,84 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
           }
         }
       }
+      break;
 
+    case 'node_location_edit_form': 
+      if (isset($form['field_add_services']['widget'])) {
+        foreach ($form['field_add_services']['widget'] as $service_index => $service_widget) {
+            if (isset($service_widget['subform']['field_location_service_hours']['widget']) && is_array($service_widget['subform']['field_location_service_hours']['widget'])) {
+                foreach ($service_widget['subform']['field_location_service_hours']['widget'] as $hour_index => $hour_widget) {
+                    if (is_numeric($hour_index)) {
+                        processServiceHours($form,$form_state, $service_index, $hour_index, $service_widget, $hour_widget);
+                    }
+                }
+            }
+        }
+      }
       break;
   }
 
-  if (strpos($form_id, 'node_form') === 0) {
-    // Get the node type from the form ID.
-    $node_type = substr($form_id, strlen('node_form_'));
-    // Check if the user is not an administrator.
-    if (!\Drupal::currentUser()->hasPermission('administer site configuration')) {
-      // Replace 'your_field_machine_name' with the machine name of the field
-      // you want to restrict access to.
-      if (isset($form['field_e'][$node_type]['#access'])) {
-        $form['field_e'][$node_type]['#access'] = FALSE;
-      }
-    }
-  }
+}
+
+/**
+ * helper function for node location form for hide and show fields.
+ */
+
+function processServiceHours(&$form, $form_state ,$service_index, $hour_index, $service_widget, $hour_widget) {
+  // Construct selector paths
+  $key_service_hour_type = 'select[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_service_hour_type]"]';
+  $key_service_days_type = ':input[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_weekdays_mon_fri][value]"]';
+  $key_service_hour_buisness_same = ':input[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_service_hours_same_as_busi][value]"]';
+  //$key_service_hour_buisness_same = ':input[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_service_hours_same_as_busi][value]"]';
+
+  // Configure #states for 'field_others'
+  $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['field_others']['#states'] = [
+      'visible' => [
+          $key_service_hour_type => ['value' => 'others']
+      ],
+      'invisible' => [
+          'or' => [
+              [$key_service_hour_type => ['value' => 'phone']],
+              [$key_service_hour_type => ['value' => 'in_person']],
+              [$key_service_hour_type => ['value' => 'dropbox']],
+              [$key_service_hour_type => ['value' => 'live_chat']]
+          ]
+      ]
+  ];
+
+  // Configure visibility of service days
+  $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['field_service_days']['#states'] = [
+      'visible' => [
+          $key_service_days_type => ['checked' => false],
+      ],
+      'invisible' => [
+          $key_service_days_type => ['checked' => true],
+      ],
+  ];
+
+  // Control visibility and required state of 'field_service_hours_from' and 'field_service_hours_to'
+  // Set the #states for the 'group-hours' field group
+  $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['group_hours']['#states'] = [
+    'visible' => [
+        'or' => [
+            [$key_service_hour_buisness_same => ['checked' => false]]
+        ]
+    ],
+    'invisible' => [
+        $key_service_hour_buisness_same => ['checked' => true]
+    ]
+  ];
+
+  $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['group_days']['#states'] = [
+    'visible' => [
+        'or' => [
+            [$key_service_hour_buisness_same => ['checked' => false]]
+        ]
+    ],
+    'invisible' => [
+        $key_service_hour_buisness_same => ['checked' => true]
+    ]
+  ];
 }
 
 /**
@@ -385,7 +462,7 @@ function jcc_custom_views_query_alter(ViewExecutable $view, QueryPluginBase $que
         $query->addWhere(0, 'node__field_date_range.field_date_range_value', $view->args[0], '>=');
         $query->addWhere(0, 'node__field_date_range.field_date_range_end_value', $view->args[1], '<');
       }
-      break;
+      break;    
   }
   // This code is related to the CSV importer.
   if ($view->id() == 'imported_events' && $view->getDisplay()->display['id'] == 'events') {
@@ -723,7 +800,6 @@ function jcc_custom_field_widget_form_alter(&$element, FormStateInterface $form_
   /** @var \Drupal\Core\Entity\EntityForm $form_object */
   if ($form_state->getBuildInfo()['form_id'] == 'redirect_redirect_form') {
     $form_object = $form_state->getFormObject();
-
     if ($form_object instanceof EntityForm) {
       $entity = $form_object->getEntity();
       if ($entity->getEntityTypeId() == 'redirect') {
@@ -737,7 +813,23 @@ function jcc_custom_field_widget_form_alter(&$element, FormStateInterface $form_
         }
       }
     }
-
+  }
+  // Apply changes specific to 'location' node type.
+  if ($context['items']->getEntity()->getEntityTypeId() === 'node' && $context['items']->getEntity()->bundle() === 'location') {
+    switch ($context['items']->getFieldDefinition()->getName()) {
+        case 'field_building_hours_from':
+        case 'field_building_hours_to':
+            $element['value']['#date_date_element'] = 'none';
+            break;
+    }     
+  }
+  // Apply changes specific to 'services' and 'service_hours' paragraph types.
+  if ($context['items']->getEntity()->getEntityTypeId() === 'paragraph') {
+    $bundle = $context['items']->getEntity()->bundle();
+    $fields_to_alter = ['field_service_hours_from', 'field_service_hours_to'];
+    if ($bundle === 'services' || ($bundle === 'service_hours' && in_array($context['items']->getFieldDefinition()->getName(), $fields_to_alter))) {
+        $element['value']['#date_date_element'] = 'none';
+    }
   }
 }
 
@@ -978,5 +1070,131 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
   }
   if (isset($form['unpublish_state'])) {
     $form['unpublish_state']['widget'][0]['#description'] = t('When the "Unpublish on" time hits, this page will change to the state defined here.');
+  }
+}
+/*
+ * Implements hook_preprocess_block().
+ * Hide specific custom blocks and views blocks based on block ID.
+ */
+function jcc_custom_preprocess_block(&$variables) {
+  // Get the block plugin ID (e.g., block_content:UUID or views_block:view_id).
+  $block_plugin_id = $variables['elements']['#configuration']['provider'] . ':' . $variables['elements']['#configuration']['id'];
+  //kint($variables['elements']['#configuration']['provider'] );
+  //kint($variables['elements']['#configuration']['id']);
+ // kint("aditya");
+//kint($block_plugin_id );
+  // Define the block machine names you want to hide.
+  $variables['elements']['#access'] = FALSE;
+  $target_blocks = [
+    'block_content',  // We will match any block that starts with 'block_content'.
+    'views:views_block:location_listing-block_1',
+    'views:views_block:location-block_1'
+  ];
+
+  // Get the current path.
+  $current_path = \Drupal::service('path.current')->getPath();
+
+  // Check if the current path is /locations.
+  if ($current_path === '/locations') {
+    // Check if the block is one of the target blocks.
+    //kint(strpos($block_plugin_id, 'block_content'));
+    $variables['elements']['#access'] = FALSE;
+    //kint($target_blocks);
+    // For block_content, we only check the beginning of the block_plugin_id.
+if (in_array($block_plugin_id, $target_blocks)) {
+     //kint($variables['elements']);
+      // Hide the views blocks.
+  
+      $variables['elements']['#access'] = FALSE;
+    
+    }
+  }
+}
+
+
+/**
+ * Implements hook_block_view_alter().
+ *
+ * This alters the block output based on the configuration.
+ */
+function jcc_custom_block_info_alter(&$block) {
+  // Get the block's machine name (plugin ID).
+  kint("aditya");
+   kint($block);
+}
+
+
+/* function jcc_custom_preprocess_page(&$vars) {
+  kint($vars['page']);
+  unset($vars['page']['content']['hero_location_listing']);
+  unset($vars['page']['content']['views_block__location_listing_block_1']);
+
+  // Get the current path.
+  $current_path = \Drupal::service('path.current')->getPath();
+
+  // Check if the current path is /locations.
+  if ($current_path === '/locations') {}
+  // Remove block from all content that isn't a specific view.
+  $view_id = Drupal::request()->attributes->get('view_id');
+    // Get the module configuration.
+    $config = \Drupal::config('jcc_custom.settings');
+    $county = "napa" ;
+    // Get the cities configuration.
+    $counties = $config->get('counties');
+    $counties_with_new_listing_page = $config->get('counties');
+    $allowed_sites_listing_blocks = ['Ukiah', 'Napa', 'Alpine', 'santa_clara', 'alameda', 'sutter'];
+    //kint( \Drupal::config('system.site')->get('name'));
+    $get_county_name = end(explode(' ', \Drupal::config('system.site')->get('name')));
+     //kint($counties_with_new_listing_page[$get_county_name]);
+     // checkk if county name exist in request uri
+      //kint(\Drupal::request()->getHost());
+
+ } */
+
+  /**
+ * Implements hook_preprocess_page().
+ */
+function jcc_custom_preprocess_page(&$vars) {
+  // Get the current path.
+  $current_path = \Drupal::service('path.current')->getPath();
+
+  // Define the allowed counties for listing blocks.
+  $allowed_sites_listing_blocks = ['Ukiah', 'Napa', 'Alpine', 'santa_clara', 'alameda', 'sutter'];
+  $config = \Drupal::config('jcc_custom.settings');
+  //kint($config);
+  // Get the site name and extract the county name from it.
+  $site_name = \Drupal::config('system.site')->get('name');
+  $site_name_parts = explode(' ', $site_name);
+  $county_name_from_site = end($site_name_parts);
+  //kint($county_name_from_site);
+  // Check if the site name (county) exists in the allowed list and in the request host.
+  if ( strpos(\Drupal::request()->getHost(), strtolower($county_name_from_site)) !== false) {
+    // Get the editable configuration object.
+  $config = \Drupal::configFactory()->getEditable('jcc_custom.settings');
+     $config->set('site_listing_page' ,'new')->save();
+     $vars['site_listing'] = $config->get('site_listing_page');
+     //kint($vars['site_listing']);
+    // Check if the current path is /locations.
+    if ($current_path == '/locations') {
+      // Get the module configuration.
+      $config = \Drupal::config('jcc_custom.settings');
+      //kint($config);
+
+      // Retrieve the configured counties.
+      $counties_with_new_listing_page = $config->get('counties');
+      //kint( $counties_with_new_listing_page);
+      // Check if the county is configured as true.
+      if (!isset($counties_with_new_listing_page[$county_name_from_site]) || $counties_with_new_listing_page[$county_name_from_site]) {
+        // If the county is not configured as true, unset specific blocks.
+        unset($vars['page']['content']['hero_location_listing']);
+        unset($vars['page']['content']['views_block__location_listing_block_1']);
+        
+        // Optional: Log that the block was removed.
+        \Drupal::logger('jcc_custom')->notice('Removed blocks for county: ' . $county_name_from_site);
+      }
+    }
+  } else {
+    // Optional: Log if the site is not in the allowed list.
+    \Drupal::logger('jcc_custom')->notice('Site does not match allowed counties or request: ' . $county_name_from_site);
   }
 }
