@@ -255,7 +255,7 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
       }
     }
 
-    $text = ['#markup' => Html::decodeEntities($description)];
+    $text = ['#markup' => Html::decodeEntities($description)];    
     $url = $media->toUrl();
     if ($media_files['media_file_multiple']['file']) {
       $url = Url::fromUri($media_files['media_file_multiple']['file']->createFileUrl(FALSE));
@@ -726,6 +726,140 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
 }
 
 /**
+ * Generates the webform URL for ITC.
+ */
+function generate_itc_webform_url($item_number, $formatted_deadline, $title) {
+  $base_path = '/itc-webform';
+  $webform_subpage_url = Url::fromUserInput($base_path, [
+    'query' => [
+      'proposal' => htmlspecialchars($item_number, ENT_QUOTES, 'UTF-8'),
+      'deadline' => htmlspecialchars($formatted_deadline, ENT_QUOTES, 'UTF-8'),
+      'title' => htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
+    ],
+  ])->setAbsolute()->toString();
+  return $webform_subpage_url;
+}
+
+/**
+ * Implements hook_preprocess_views_view() for ITC past proposals block.
+ */
+function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables) {
+  __jcc_view_results_exposed_filter_init($variables);
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $grouped_proposals = [];
+  $file_url = '';
+  $file_uri = '';
+  foreach ($variables['rows'] as $index => $row1) {
+    $list_label = preg_replace('/\R+/', ' ', strip_tags($row1['#title']));
+    $safe_list_label = rawurlencode($list_label);
+    if (!isset($grouped_proposals[$safe_list_label])) {
+      $grouped_proposals[$safe_list_label] = [
+        'list_label' => '',
+        'items' => [],
+      ];
+    }
+    foreach ($row1['#rows'] as $row) {
+      $result_row = $row['#row'];
+      if (!empty($result_row->_entity) && $result_row->_entity instanceof Node) {
+        $node = $result_row->_entity;
+        $media_entities = $node->get('field_file')->referencedEntities();
+        if (!empty($media_entities)) {
+          $media_entity = $media_entities[0];
+          if ($media_entity) {
+            $file_ids = $media_entity->get('field_media_file')->getValue();
+            if (!empty($file_ids)) {
+                $file_id = $file_ids[0]['target_id']; 
+                $file = File::load($file_id);
+                if ($file) {
+                    $file_uri = $file->getFileUri();
+                }
+              if (!empty($file_uri)) {
+                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_uri);
+              }
+            } 
+          }
+        }                       
+        $brow = [];
+        if ($node->hasField('field_deadline') && !$node->field_deadline->isEmpty()) {
+          $deadline = strtotime($node->field_deadline->value);
+          $current_time = \Drupal::time()->getCurrentTime();
+          $formatted_deadline = date('F j, Y', $deadline);
+          $item_number = $node->get('field_itc_number')->value;
+          $title = $node->get('title')->value;
+          $brow['secondary'] = $item_number;
+          if ($deadline > $current_time) {
+            $webform_url = generate_itc_webform_url($item_number, $formatted_deadline, $title);
+            $email_address = 'invitations@jud.ca.gov';
+            $url_content = '<a href="' . $webform_url . '">Submit comments online</a> | <a href="mailto:' . $email_address . '">Comment by email</a></p>';
+            $body = $node->get('body')->value;
+            $body .= '<p>' . $url_content . '</p>';
+          }
+          else {
+            $body = $node->get('body')->value;
+          }
+        }
+        else {
+          $body = $node->get('body')->value;
+        }
+        $category = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
+        $category_value = $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '';
+        $brow['primary'] = $category_value;
+        $deadline_value = $node->field_deadline->value;
+        if (!empty($deadline_value)) {
+          $formatted_deadline = \Drupal::service('date.formatter')->format(
+            strtotime($deadline_value),
+            'custom',
+            'F j, Y'
+          );
+          $formatted_value = t('Deadline:') . ' ' . $formatted_deadline;
+          $brow['notation'] = $formatted_value;
+        } else {
+          $deadline = '';
+          $brow['notation'] = '';
+        }
+
+        $itc_past_proposal = [
+          'brow' => [
+            'primary' => $brow['primary'] ?? '',
+            'secondary' => $brow['secondary'] ?? '',
+            'notation' => $brow['notation'] ?? '',
+          ],
+        'title' => $node->get('title')->value ? $node->get('title')->value : '',
+        'category' => $category_value ? $category_value : '',
+        'content' => [
+          '#markup' => $body,
+        ],
+        'item_number' => $node->get('field_itc_number')->value,
+        'file_url' => $file_url ? $file_url : '',
+      ];
+      if (!empty($file_url)) {
+        $itc_past_proposal['button_data'] = [
+          'label' => t('Download PDF'),
+          'href' => $file_url,
+        ];
+      }
+      }
+      $grouped_proposals[$safe_list_label]['items'][] = $itc_past_proposal;
+      if (count($grouped_proposals[$safe_list_label]['items']) >= 1) {
+        $grouped_proposals[$safe_list_label]['list_label'] = $list_label;
+      }
+    }
+    usort($grouped_proposals, function($a, $b) {
+      return $a['items'][0]['category'] <=> $b['items'][0]['category'];
+  });
+  $variables['grouped_proposals'] = $grouped_proposals;
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view() for ITC active proposals.
+ */
+function jcc_elevated_preprocess_views_view__past_proposals__block_2(&$variables) {
+  jcc_elevated_preprocess_views_view__past_proposals__block_1($variables);
+}
+
+/**
  * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
@@ -1065,7 +1199,7 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&
         $variables['processed_rows'][] = [
           'brow' => $brow,
           'title' => $request->label(),
-          'url' => $request->toUrl(),
+          'url' => $request->toUrl(),    
           'content' => $request->get('body')->first() ? $request->get('body')
             ->first()
             ->view('teaser') : '',

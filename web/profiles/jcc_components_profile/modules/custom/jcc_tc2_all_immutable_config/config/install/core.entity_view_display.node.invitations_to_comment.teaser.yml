@@ -1,0 +1,42 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.invitations_to_comment.body
+    - field.field.node.invitations_to_comment.field_category
+    - field.field.node.invitations_to_comment.field_deadline
+    - field.field.node.invitations_to_comment.field_file
+    - field.field.node.invitations_to_comment.field_itc_number
+    - node.type.invitations_to_comment
+  module:
+    - text
+    - user
+id: node.invitations_to_comment.teaser
+targetEntityType: node
+bundle: invitations_to_comment
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_category: true
+  field_deadline: true
+  field_file: true
+  field_itc_number: true
+  langcode: true
+  search_api_excerpt: true
