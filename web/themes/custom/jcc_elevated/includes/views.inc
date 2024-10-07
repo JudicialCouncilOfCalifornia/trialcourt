@@ -255,7 +255,7 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
       }
     }
 
-    $text = ['#markup' => Html::decodeEntities($description)];
+    $text = ['#markup' => Html::decodeEntities($description)];    
     $url = $media->toUrl();
     if ($media_files['media_file_multiple']['file']) {
       $url = Url::fromUri($media_files['media_file_multiple']['file']->createFileUrl(FALSE));
@@ -447,12 +447,11 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       $node = $row['#node'];
       $event = [];
 
-      // Get teaser.
+      // Get full body content.
       $teaser = $node->get('body') ?? '';
       if ($teaser) {
-        $teaser = $node->get('body')->view('teaser');
+        $teaser = $node->get('body')->view('advisory_body_events');
         $teaser = strval($render->render($teaser));
-        $teaser = strip_tags($teaser);
       }
 
       // Get files.
@@ -541,17 +540,6 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
     $parent_advisory_body = FALSE;
   }
 
-  // Items per page filter.
-  $variables['items_per_page'] = $parent_advisory_body ? $variables['exposed']['items_per_page'] : FALSE;
-  if ($parent_advisory_body) {
-    $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
-    foreach ($variables['items_per_page']['#options'] as $key => $value) {
-      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
-    }
-    unset($variables['items_per_page']['#title']);
-  }
-  unset($variables['exposed']['items_per_page']);
-
   foreach ($variables['rows'] as $key => $group) {
     // Process date range year for grouping label.
     // Remove markup and line breaks.
@@ -566,12 +554,11 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       $node = $row['#node'];
       $event = [];
 
-      // Get teaser.
+      // Get full body content.
       $teaser = $node->get('body') ?? '';
       if ($teaser) {
-        $teaser = $node->get('body')->view('teaser');
+        $teaser = $node->get('body')->view('advisory_body_events');
         $teaser = strval($render->render($teaser));
-        $teaser = strip_tags($teaser);
       }
 
       // Get files.
@@ -605,9 +592,6 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       if ($event_files != '') {
         $event['content']['#markup'] .= '<div>' . $event_files . '</div>';
       }
-
-      // Count summary for the current page of results.
-      $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
 
       $variables['events'][$key]['items'][] = $event;
     }
@@ -742,6 +726,140 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
 }
 
 /**
+ * Generates the webform URL for ITC.
+ */
+function generate_itc_webform_url($item_number, $formatted_deadline, $title) {
+  $base_path = '/itc-webform';
+  $webform_subpage_url = Url::fromUserInput($base_path, [
+    'query' => [
+      'proposal' => htmlspecialchars($item_number, ENT_QUOTES, 'UTF-8'),
+      'deadline' => htmlspecialchars($formatted_deadline, ENT_QUOTES, 'UTF-8'),
+      'title' => htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
+    ],
+  ])->setAbsolute()->toString();
+  return $webform_subpage_url;
+}
+
+/**
+ * Implements hook_preprocess_views_view() for ITC past proposals block.
+ */
+function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables) {
+  __jcc_view_results_exposed_filter_init($variables);
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $grouped_proposals = [];
+  $file_url = '';
+  $file_uri = '';
+  foreach ($variables['rows'] as $index => $row1) {
+    $list_label = preg_replace('/\R+/', ' ', strip_tags($row1['#title']));
+    $safe_list_label = rawurlencode($list_label);
+    if (!isset($grouped_proposals[$safe_list_label])) {
+      $grouped_proposals[$safe_list_label] = [
+        'list_label' => '',
+        'items' => [],
+      ];
+    }
+    foreach ($row1['#rows'] as $row) {
+      $result_row = $row['#row'];
+      if (!empty($result_row->_entity) && $result_row->_entity instanceof Node) {
+        $node = $result_row->_entity;
+        $media_entities = $node->get('field_file')->referencedEntities();
+        if (!empty($media_entities)) {
+          $media_entity = $media_entities[0];
+          if ($media_entity) {
+            $file_ids = $media_entity->get('field_media_file')->getValue();
+            if (!empty($file_ids)) {
+                $file_id = $file_ids[0]['target_id']; 
+                $file = File::load($file_id);
+                if ($file) {
+                    $file_uri = $file->getFileUri();
+                }
+              if (!empty($file_uri)) {
+                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_uri);
+              }
+            } 
+          }
+        }                       
+        $brow = [];
+        if ($node->hasField('field_deadline') && !$node->field_deadline->isEmpty()) {
+          $deadline = strtotime($node->field_deadline->value);
+          $current_time = \Drupal::time()->getCurrentTime();
+          $formatted_deadline = date('F j, Y', $deadline);
+          $item_number = $node->get('field_itc_number')->value;
+          $title = $node->get('title')->value;
+          $brow['secondary'] = $item_number;
+          if ($deadline > $current_time) {
+            $webform_url = generate_itc_webform_url($item_number, $formatted_deadline, $title);
+            $email_address = 'invitations@jud.ca.gov';
+            $url_content = '<a href="' . $webform_url . '">Submit comments online</a> | <a href="mailto:' . $email_address . '">Comment by email</a></p>';
+            $body = $node->get('body')->value;
+            $body .= '<p>' . $url_content . '</p>';
+          }
+          else {
+            $body = $node->get('body')->value;
+          }
+        }
+        else {
+          $body = $node->get('body')->value;
+        }
+        $category = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
+        $category_value = $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '';
+        $brow['primary'] = $category_value;
+        $deadline_value = $node->field_deadline->value;
+        if (!empty($deadline_value)) {
+          $formatted_deadline = \Drupal::service('date.formatter')->format(
+            strtotime($deadline_value),
+            'custom',
+            'F j, Y'
+          );
+          $formatted_value = t('Deadline:') . ' ' . $formatted_deadline;
+          $brow['notation'] = $formatted_value;
+        } else {
+          $deadline = '';
+          $brow['notation'] = '';
+        }
+
+        $itc_past_proposal = [
+          'brow' => [
+            'primary' => $brow['primary'] ?? '',
+            'secondary' => $brow['secondary'] ?? '',
+            'notation' => $brow['notation'] ?? '',
+          ],
+        'title' => $node->get('title')->value ? $node->get('title')->value : '',
+        'category' => $category_value ? $category_value : '',
+        'content' => [
+          '#markup' => $body,
+        ],
+        'item_number' => $node->get('field_itc_number')->value,
+        'file_url' => $file_url ? $file_url : '',
+      ];
+      if (!empty($file_url)) {
+        $itc_past_proposal['button_data'] = [
+          'label' => t('Download PDF'),
+          'href' => $file_url,
+        ];
+      }
+      }
+      $grouped_proposals[$safe_list_label]['items'][] = $itc_past_proposal;
+      if (count($grouped_proposals[$safe_list_label]['items']) >= 1) {
+        $grouped_proposals[$safe_list_label]['list_label'] = $list_label;
+      }
+    }
+    usort($grouped_proposals, function($a, $b) {
+      return $a['items'][0]['category'] <=> $b['items'][0]['category'];
+  });
+  $variables['grouped_proposals'] = $grouped_proposals;
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view() for ITC active proposals.
+ */
+function jcc_elevated_preprocess_views_view__past_proposals__block_2(&$variables) {
+  jcc_elevated_preprocess_views_view__past_proposals__block_1($variables);
+}
+
+/**
  * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
@@ -822,8 +940,11 @@ function jcc_elevated_preprocess_views_view__jobs__search_page(&$variables) {
  * Implements hook_preprocess_views_view() for published opinions listing block.
  */
 function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
-  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $node_manager = $entity_type_manager->getStorage('node');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $media_manager = $entity_type_manager->getStorage('media');
+  $file_manager = $entity_type_manager->getStorage('file');
 
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
@@ -835,23 +956,21 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
   $opinions = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
-    $type = Term::load($node->get('field_opinion_type')->target_id) ? Term::load($node->get('field_opinion_type')->target_id)->get('name')->value : '';
+    $type = $node->get('field_opinion_type')->target_id ? $taxonomy_manager->load($node->get('field_opinion_type')->target_id)->get('name')->value : '';
     $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
-    $case_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
+    $opinion_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
     $review_granted = $node->get('field_review_granted')->value;
     $title = $node->get('title')->value;
-    $download_aria = t('Download or view opinion document');
 
-    // Remote file links - $doc must be valid to display anything.
-    $remote_files = [];
-    $pdf = __jcc_opinion_file_links_builder($type, $review_granted, 'PDF', $download_aria, $case_number);
-    $doc = __jcc_opinion_file_links_builder($type, $review_granted, 'DOCX', $download_aria, $case_number);
-    if ($pdf && $doc) {
-      $remote_files[] = $pdf;
-      if ($doc) {
-        $remote_files[] = $doc;
-      }
-    }
+    // Remote file links.
+    $remote_files = [
+      __jcc_opinion_file_links_builder($type, $review_granted, 'PDF', $case_number),
+      [
+        'url' => $node->toUrl()->setAbsolute()->toString(),
+        'file_type' => t('Other Formats'),
+        'aria_label' => t('Go to opinion post for case @case_number to get other document formats', ['@case_number' => $case_number]),
+      ],
+    ];
 
     // Related cases.
     $related_cases_urls = [];
@@ -884,10 +1003,10 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     $citing_archive = $query->execute();
     if ($citing_archive) {
       $citing_node_id = reset($citing_archive);
-      $citing_node = Node::load($citing_node_id);
+      $citing_node = $node_manager->load($citing_node_id);
       foreach ($citing_node->get('field_media_file_multiple')->getValue() as $citing) {
-        $media = Media::load($citing['target_id']);
-        $file = File::load($media->get('field_media_file')->target_id);
+        $media = $media_manager->load($citing['target_id']);
+        $file = $file_manager->load($media->get('field_media_file')->target_id);
         if ($file) {
           $citing_title = $media->get('field_media_text')->value;
           if (is_null($citing_title)) {
@@ -905,11 +1024,11 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
       'type' => $type,
       'case_number' => t('Case:') . ' ' . $case_number ? $case_number : t('Unspecified'),
       'posted' => $node->get('field_date')->value ? $node->get('field_date')->date->format('F j, Y') : '',
-      'source' => $case_source,
+      'source' => $opinion_source,
       'review_granted' => $review_granted,
       'title' => [
         'text' => $title ?? '',
-        'url' => $case_number && $case_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
+        'url' => $case_number && $opinion_source != 'Appellate Division' ? __jcc_accms_link_builder($case_number) : NULL,
       ],
       'remote_files' => $remote_files,
       'related_cases' => $related_cases_urls ? implode(' ', $related_cases_urls) : '',
@@ -1080,7 +1199,7 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&
         $variables['processed_rows'][] = [
           'brow' => $brow,
           'title' => $request->label(),
-          'url' => $request->toUrl(),
+          'url' => $request->toUrl(),    
           'content' => $request->get('body')->first() ? $request->get('body')
             ->first()
             ->view('teaser') : '',
@@ -1282,7 +1401,7 @@ function jcc_elevated_validate_date(string $date, string $format = 'Y-m-d'): boo
 }
 
 /**
- * Helper function to apply exposed filter UI customizations.
+ * Helper function to apply common exposed filter view customizations.
  */
 function __jcc_view_results_exposed_filter_init(&$variables) {
   $form = &$variables['exposed'];
@@ -1322,4 +1441,21 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   if (isset($form['actions']['reset'])) {
     $form['actions']['reset']['#attributes']['class'][] = 'button button--secondary button--normal';
   }
+
+  // Items per page filter.
+  if ($variables['rows'][0]['#rows'] && isset($variables['exposed']['items_per_page'])) {
+    $variables['items_per_page'] = $variables['exposed']['items_per_page'];
+    if ($variables['exposed']['#id']) {
+      $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+      foreach ($variables['items_per_page']['#options'] as $key => $value) {
+        $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' per page';
+      }
+      unset($variables['items_per_page']['#title']);
+      unset($variables['exposed']['items_per_page']);
+    }
+  }
+
+  // Count summary for the current page of results.
+  // Suppress duplicate summary with empty header in ViewsResults twig.
+  $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
 }

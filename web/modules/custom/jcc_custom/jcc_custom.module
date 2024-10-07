@@ -107,20 +107,61 @@ function jcc_custom_editor_js_settings_alter(&$settings) {
 }
 
 /**
+ * Implements hook_node_prepare_form().
+ */
+function jcc_custom_node_prepare_form($node, $form_id, $form) {
+  $theme = \Drupal::config('system.theme')->get('default');
+  // Set default elevated components programmatically.
+  if ($theme == 'jcc_elevated') {
+    switch ($node->getType()) {
+      case 'landing_page':
+      case 'subpage':
+        if ($node->isNew() === TRUE) {
+          $components_field = $node->get('field_components');
+          $entity = 'paragraph';
+
+          // Preload hero.
+          $hero = Drupal::service('entity_type.manager')->getStorage($entity)->create(['type' => 'hero_hangover']);
+          $components_field->appendItem($hero);
+          // Preload layout section.
+          $section = Drupal::service('entity_type.manager')->getStorage($entity)->create(['type' => 'section']);
+          $components_field->appendItem($section);
+        }
+        break;
+    }
+  }
+}
+
+/**
  * Implements hook_form_alter().
  */
 function jcc_custom_form_alter(&$form, $form_state, $form_id) {
+  $theme = \Drupal::config('system.theme')->get('default');
+
   // The body field on these content types is only used for migration of
   // content and temporary display on the initial site build. Editors should
   // not have access.
   // The field will only render if there are no components added by paragraph
   // reference. See respective node templates.
   switch ($form_id) {
+    case 'node_landing_page_edit_form':
+    case 'node_landing_page_form':
     case 'node_subpage_edit_form':
     case 'node_subpage_form':
       $user = \Drupal::currentUser();
       $access = $user->hasPermission('access migration body');
       $form['body']['#access'] = $access;
+
+      // Suppress components that are usable to elevated sites only.
+      if ($theme != 'jcc_elevated') {
+        unset($form['field_components']['widget']['add_more']['add_more_button_hero_hangover']);
+        unset($form['field_components']['widget']['add_more']['add_more_button_section']);
+        unset($form['field_components']['widget']['add_more']['add_more_button_tabs']);
+      }
+      else {
+        unset($form['field_components']['widget']["add_more"]['add_more_button_content_stream']);
+      }
+
       break;
 
     case 'node_news_edit_form':

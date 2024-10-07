@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: opinion_content_type_pattern
+label: 'Opinion Content Type Pattern'
+type: 'canonical_entities:node'
+pattern: '[node:content-type]/[node:field_date:date:custom:Ymd]/[node:field_case_number_plain]'
+selection_criteria:
+  6aa05b17-1e67-45c5-9863-23f9ad2d739b:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      opinion: opinion
+selection_logic: and
+weight: -5
+relationships: {  }

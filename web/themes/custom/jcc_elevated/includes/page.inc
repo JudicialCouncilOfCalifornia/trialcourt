@@ -40,8 +40,8 @@ function jcc_elevated_preprocess_page(&$variables) {
   ];
 
   // Primary navigation and mobile version of links.
-  $variables['main_links'] = jcc_elevated_get_menu_array('main', FALSE);
-  $variables['mobile_main_links'] = jcc_elevated_get_menu_array('main', TRUE);
+  $variables['main_links'] = jcc_elevated_get_menu_array('main', TRUE);
+  $variables['mobile_main_links'] = jcc_elevated_get_menu_array('main', TRUE, TRUE);
 
   // Utility/featured links.
   $variables['featured_links'] = jcc_elevated_get_menu_array('featured-links');
@@ -158,7 +158,7 @@ function jcc_elevated_preprocess_page(&$variables) {
     'variant' => $variant,
     'display_footer_lower' => $display_footer_lower,
     'upper_footer_menu' => !empty($upper_menu) ? jcc_elevated_get_menu_array($upper_menu) : [],
-    'lower_footer_menu' => !empty($lower_menu) ? jcc_elevated_get_menu_array($lower_menu) : [],
+    'lower_footer_menu' => !empty($lower_menu) ? jcc_elevated_get_menu_array($lower_menu, TRUE) : [],
     'about_label' => $about_header,
     'about_content' => isset($about_text['value']) ? Markup::create($about_text['value']) : '',
     'about_link_label' => $about_link_label,
@@ -176,7 +176,7 @@ function jcc_elevated_preprocess_page(&$variables) {
  * @return array
  *   The simple array to pass to component templates.
  */
-function jcc_elevated_get_menu_array(string $menu_name, $add_overview_links = FALSE): array {
+function jcc_elevated_get_menu_array(string $menu_name, bool $expanded = FALSE, $add_overview_links = FALSE): array {
   $menu_tree = \Drupal::menuTree();
   $parameters = new MenuTreeParameters();
   $parameters->onlyEnabledLinks();
@@ -192,7 +192,7 @@ function jcc_elevated_get_menu_array(string $menu_name, $add_overview_links = FA
     ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
   ];
   $tree = $menu_tree->transform($tree, $manipulators);
-  return jcc_elevated_menu_to_array($tree, $menu_name, $add_overview_links);
+  return jcc_elevated_menu_to_array($tree, $menu_name, $add_overview_links, $expanded);
 }
 
 /**
@@ -206,7 +206,7 @@ function jcc_elevated_get_menu_array(string $menu_name, $add_overview_links = FA
  * @return array
  *   An array of links, formatted for a component.
  */
-function jcc_elevated_menu_to_array(array $tree, string $menu_name, bool $add_overview_links = FALSE): array {
+function jcc_elevated_menu_to_array(array $tree, string $menu_name, bool $add_overview_links = FALSE, bool $expanded = FALSE): array {
   $links = [];
 
   foreach ($tree as $element) {
@@ -218,7 +218,7 @@ function jcc_elevated_menu_to_array(array $tree, string $menu_name, bool $add_ov
     // Build the sublinks array.
     $sublinks = [];
     $section_link = [];
-    if ($menu_name == 'main' && $element->depth = 1 && $element->hasChildren && $add_overview_links) {
+    if ($expanded && $element->depth = 1 && $element->hasChildren && $add_overview_links) {
       $sublinks = jcc_elevated_menu_to_array($element->subtree, $menu_name, $add_overview_links);
 
       $section_link = [
@@ -231,7 +231,7 @@ function jcc_elevated_menu_to_array(array $tree, string $menu_name, bool $add_ov
 
       array_unshift($sublinks, $section_link);
     }
-    elseif ($menu_name == 'main' && $element->depth = 1 && $element->hasChildren) {
+    elseif ($expanded && $element->depth = 1 && $element->hasChildren) {
       $sublinks = jcc_elevated_menu_to_array($element->subtree, $menu_name, $add_overview_links);
     }
 

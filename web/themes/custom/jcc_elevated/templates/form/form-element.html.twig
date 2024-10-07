@@ -67,6 +67,18 @@
 {%
  set label_display = 'after'
 %}
+
+{% if name == 'items_per_page' %}
+  {% set custom_wrapper_begin %}
+    <div class="alt-select-style items-per-page">
+      <div>
+  {% endset %}
+  {% set custom_wrapper_end %}
+      </div>
+    </div>
+  {% endset %}
+{% endif %}
+
 <div{{ attributes.addClass(classes) }}>
   {% if label_display in ['before', 'invisible'] %}
     {{ label }}
@@ -79,7 +91,11 @@
       {{ description.content }}
     </div>
   {% endif %}
-  {{ children }}
+
+  {% if custom_wrapper_begin and custom_wrapper_end %}{{ custom_wrapper_begin }}{% endif %}
+    {{ children }}
+  {% if custom_wrapper_begin and custom_wrapper_end%}{{ custom_wrapper_end }}{% endif %}
+
   {% if suffix is not empty %}
     <span class="field-suffix">{{ suffix }}</span>
   {% endif %}

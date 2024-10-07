@@ -154,3 +154,39 @@ function jcc_tc2_roc_feature_preprocess_views_view_fields(&$variables): void {
     }
   }
 }
+
+/**
+ * Implements hook_preprocess_views_view_table().
+ */
+function jcc_tc2_roc_feature_preprocess_views_view_table(&$variables) {
+  $entity_manager = \Drupal::entityTypeManager();
+  $node_manager = $entity_manager->getStorage('node');
+  $moderation_information_service = \Drupal::service('content_moderation.moderation_information');
+
+  $view = $variables['view'];
+  $display = $view->current_display;
+  if ($view->id() == 'jcc_roc_views' && ($display == 'roc_rules_content_admin' || $display == 'roc_rule_index_content_admin')) {
+
+    foreach ($variables['rows'] as $index => $item) {
+      // Grab the entity for the row.
+      $rule_node = $variables['result'][$index]->_entity;
+
+      // Get all the revision Ids for this entity and get the last revision.
+      $revision_ids = $node_manager->revisionIds($rule_node);
+      $last_revision_id = end($revision_ids);
+
+      // Load the entity version of the last revision.
+      $rule_node_last_revision = $node_manager->loadRevision($last_revision_id);
+
+      // Get the current moderation state of the last revision.
+      $state_key = $rule_node_last_revision->get('moderation_state')->value;
+      $workflow = $moderation_information_service->getWorkflowForEntity($rule_node_last_revision);
+      $label = $workflow->getTypePlugin()->getState($state_key)->label();
+
+      // Set the value of the current moderation state of the latest revision of
+      // this rule document.
+      $variables['rows'][$index]['columns']['moderation_state']['content'][0]['field_output']['#markup'] = $label;
+    }
+  }
+
+}
