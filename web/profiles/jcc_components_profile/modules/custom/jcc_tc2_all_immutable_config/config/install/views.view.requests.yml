@@ -1019,6 +1019,20 @@ display:
           content: 'No results found. Please try a different search.'
           tokenize: false
       sorts:
+        field_rfp_start_date_value:
+          id: field_rfp_start_date_value
+          table: node__field_rfp_start_date
+          field: field_rfp_start_date_value
+          relationship: nid
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: second
         field_rfp_year_value:
           id: field_rfp_year_value
           table: node__field_rfp_year
@@ -2544,9 +2558,9 @@ display:
             first: '« First'
             last: 'Last »'
           expose:
-            items_per_page: false
+            items_per_page: true
             items_per_page_label: 'Items per page'
-            items_per_page_options: '12, 24, 48'
+            items_per_page_options: '12, 25, 50, 100'
             items_per_page_options_all: false
             items_per_page_options_all_label: '- All -'
             offset: false
@@ -2556,7 +2570,7 @@ display:
         type: bef
         options:
           submit_button: Apply
-          reset_button: false
+          reset_button: true
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
           expose_sort_order: true
@@ -2575,6 +2589,10 @@ display:
               secondary_label: 'Advanced options'
               secondary_open: false
               reset_button_always_show: false
+            pager:
+              plugin_id: default
+              advanced:
+                is_secondary: false
             filter:
               combine:
                 plugin_id: default
@@ -3585,9 +3603,9 @@ display:
             first: '« First'
             last: 'Last »'
           expose:
-            items_per_page: false
+            items_per_page: true
             items_per_page_label: 'Items per page'
-            items_per_page_options: '12, 24, 48'
+            items_per_page_options: '12, 25, 50, 100'
             items_per_page_options_all: false
             items_per_page_options_all_label: '- All -'
             offset: false
@@ -3597,7 +3615,7 @@ display:
         type: bef
         options:
           submit_button: Apply
-          reset_button: false
+          reset_button: true
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
           expose_sort_order: true
@@ -3616,6 +3634,10 @@ display:
               secondary_label: 'Advanced options'
               secondary_open: false
               reset_button_always_show: false
+            pager:
+              plugin_id: default
+              advanced:
+                is_secondary: false
             filter:
               combine:
                 plugin_id: default
@@ -3629,34 +3651,6 @@ display:
                 options_hide_when_empty: false
                 options_show_items_count: false
               field_rfp_type_value:
-                plugin_id: default
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  is_secondary: false
-                options_show_only_used: false
-                options_show_only_used_filtered: false
-                options_hide_when_empty: false
-                options_show_items_count: 0
-              field_rfp_dept_group_target_id:
-                plugin_id: default
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  is_secondary: false
-                options_show_only_used: false
-                options_show_only_used_filtered: false
-                options_hide_when_empty: false
-                options_show_items_count: 0
-              field_rfp_topic_target_id:
                 plugin_id: default
                 advanced:
                   sort_options: false
@@ -3684,24 +3678,53 @@ display:
                 options_show_only_used_filtered: false
                 options_hide_when_empty: false
                 options_show_items_count: 0
-              field_rfp_status_value:
-                plugin_id: default
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  is_secondary: false
-                options_show_only_used: false
-                options_show_only_used_filtered: false
-                options_hide_when_empty: false
-                options_show_items_count: 0
       access:
         type: perm
         options:
           perm: 'access content'
+      sorts:
+        field_rfp_start_date_value:
+          id: field_rfp_start_date_value
+          table: node__field_rfp_start_date
+          field: field_rfp_start_date_value
+          relationship: nid
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: second
+        field_rfp_year_value:
+          id: field_rfp_year_value
+          table: node__field_rfp_year
+          field: field_rfp_year_value
+          relationship: nid
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: nid
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
       filters:
         status:
           id: status
@@ -4026,6 +4049,7 @@ display:
         style: false
         row: false
         fields: false
+        sorts: false
         filters: false
         filter_groups: false
       use_ajax: true
