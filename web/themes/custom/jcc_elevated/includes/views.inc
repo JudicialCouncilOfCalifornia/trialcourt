@@ -1018,19 +1018,10 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
-  // Items per page filter.
-  if ($variables['exposed']['items_per_page']) {
-    $variables['items_per_page'] = $variables['exposed']['items_per_page'];
-    $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
-    // Reset the #action var - it is actually set to another display.
-    $current_path = \Drupal::service('path.current')->getPath();
-    $variables['exposed']['#action'] = $current_path;
-    foreach ($variables['items_per_page']['#options'] as $key => $value) {
-      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
-    }
-    unset($variables['items_per_page']['#title']);
-    unset($variables['exposed']['items_per_page']);
-  }
+  // Reset our embedded view exposed form to use the current page as the action.
+  // This is necessary because it is not an ajax controlled element, so it
+  // triggers a page refresh to the views default page (which is an admin page).
+  $variables['exposed']['#action'] = \Drupal::request()->getPathInfo();
 
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
@@ -1118,19 +1109,10 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
-  // Items per page filter.
-  if ($variables['exposed']['items_per_page']) {
-    $variables['items_per_page'] = $variables['exposed']['items_per_page'];
-    $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
-    // Reset the #action var - it is actually set to another display.
-    $current_path = \Drupal::service('path.current')->getPath();
-    $variables['exposed']['#action'] = $current_path;
-    foreach ($variables['items_per_page']['#options'] as $key => $value) {
-      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
-    }
-    unset($variables['items_per_page']['#title']);
-    unset($variables['exposed']['items_per_page']);
-  }
+  // Reset our embedded view exposed form to use the current page as the action.
+  // This is necessary because it is not an ajax controlled element, so it
+  // triggers a page refresh to the views default page (which is an admin page).
+  $variables['exposed']['#action'] = \Drupal::request()->getPathInfo();
 
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
@@ -1175,16 +1157,10 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
 function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived(&$variables): void {
   __jcc_view_results_exposed_filter_init($variables);
 
-  // Items per page filter.
-  if ($variables['exposed']['items_per_page']) {
-    $variables['items_per_page'] = $variables['exposed']['items_per_page'];
-    $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
-    foreach ($variables['items_per_page']['#options'] as $key => $value) {
-      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
-    }
-    unset($variables['items_per_page']['#title']);
-    unset($variables['exposed']['items_per_page']);
-  }
+  // Reset our embedded view exposed form to use the current page as the action.
+  // This is necessary because it is not an ajax controlled element, so it
+  // triggers a page refresh to the views default page (which is an admin page).
+  $variables['exposed']['#action'] = \Drupal::request()->getPathInfo();
 
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
@@ -1361,4 +1337,32 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   if (isset($form['actions']['reset'])) {
     $form['actions']['reset']['#attributes']['class'][] = 'button button--secondary button--normal';
   }
+
+  // Items per page filter. All items per page elements need to live outside the
+  // views exposed form.
+  if (isset($variables['rows'][0]['#rows']) && isset($variables['exposed']['items_per_page'])) {
+
+    // Create our new variable for the templates.
+    $variables['items_per_page'] = $variables['exposed']['items_per_page'];
+
+    // Since the items_per_page element is moved outside the form tag, we need
+    // to apply the original form id to the form attribute of the element.
+    if ($variables['exposed']['#id']) {
+      $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+    }
+
+    // Rewrite our items_per_page options to "Show XX per page".
+    foreach ($variables['items_per_page']['#options'] as $key => $value) {
+      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' per page';
+    }
+
+    // Remove the label and remove the item from the exposed form.
+    unset($variables['items_per_page']['#title']);
+    unset($variables['exposed']['items_per_page']);
+  }
+
+  // Count summary for the current page of results.
+  // Suppress duplicate summary with empty header in ViewsResults twig.
+  $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
+
 }
