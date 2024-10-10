@@ -20,10 +20,16 @@
   <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
   {% if multiple %}
   <div>
-    {% endif %}
-    {% for item in items %}
-      {{ item.content }}
-    {% endfor %}
+  {% endif %}   
+     {% for item in items %}   
+       {% if link_url is defined and link_url.uri is not empty %}
+         <a href="{{ link_url.uri }}" > 
+         {{ item.content }}
+         </a>
+       {% else %}
+         {{ item.content }}
+       {% endif %}
+ {% endfor %}    
     {% if multiple %}
   </div>
   {% endif %}
