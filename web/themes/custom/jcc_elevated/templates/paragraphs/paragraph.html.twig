@@ -1,4 +1,9 @@
-<div class="box">
+{% set classes = [
+  'box',
+  paragraph.type.value.0.target_id ? paragraph.type.value.0.target_id : '',
+] %}
+
+<div class="{{ classes|join(' ') }}">
   <div class="container">
     {{ content }}
   </div>
