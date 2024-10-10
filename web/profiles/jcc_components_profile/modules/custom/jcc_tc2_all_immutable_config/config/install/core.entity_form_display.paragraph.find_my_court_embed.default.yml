@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.find_my_court_embed.field_content
+    - field.field.paragraph.find_my_court_embed.field_heading
+    - paragraphs.paragraphs_type.find_my_court_embed
+  module:
+    - text
+id: paragraph.find_my_court_embed.default
+targetEntityType: paragraph
+bundle: find_my_court_embed
+mode: default
+content:
+  field_content:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_heading:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
