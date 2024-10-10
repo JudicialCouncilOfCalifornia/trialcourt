@@ -255,7 +255,7 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
       }
     }
 
-    $text = ['#markup' => Html::decodeEntities($description)];
+    $text = ['#markup' => Html::decodeEntities($description)];    
     $url = $media->toUrl();
     if ($media_files['media_file_multiple']['file']) {
       $url = Url::fromUri($media_files['media_file_multiple']['file']->createFileUrl(FALSE));
@@ -447,12 +447,11 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       $node = $row['#node'];
       $event = [];
 
-      // Get teaser.
+      // Get full body content.
       $teaser = $node->get('body') ?? '';
       if ($teaser) {
-        $teaser = $node->get('body')->view('teaser');
+        $teaser = $node->get('body')->view('advisory_body_events');
         $teaser = strval($render->render($teaser));
-        $teaser = strip_tags($teaser);
       }
 
       // Get files.
@@ -555,12 +554,11 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       $node = $row['#node'];
       $event = [];
 
-      // Get teaser.
+      // Get full body content.
       $teaser = $node->get('body') ?? '';
       if ($teaser) {
-        $teaser = $node->get('body')->view('teaser');
+        $teaser = $node->get('body')->view('advisory_body_events');
         $teaser = strval($render->render($teaser));
-        $teaser = strip_tags($teaser);
       }
 
       // Get files.
@@ -771,17 +769,17 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
           if ($media_entity) {
             $file_ids = $media_entity->get('field_media_file')->getValue();
             if (!empty($file_ids)) {
-              $file_id = $file_ids[0]['target_id'];
-              $file = File::load($file_id);
-              if ($file) {
-                $file_uri = $file->getFileUri();
-              }
+                $file_id = $file_ids[0]['target_id']; 
+                $file = File::load($file_id);
+                if ($file) {
+                    $file_uri = $file->getFileUri();
+                }
               if (!empty($file_uri)) {
                 $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_uri);
               }
-            }
+            } 
           }
-        }
+        }                       
         $brow = [];
         if ($node->hasField('field_deadline') && !$node->field_deadline->isEmpty()) {
           $deadline = strtotime($node->field_deadline->value);
@@ -816,8 +814,7 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
           );
           $formatted_value = t('Deadline:') . ' ' . $formatted_deadline;
           $brow['notation'] = $formatted_value;
-        }
-        else {
+        } else {
           $deadline = '';
           $brow['notation'] = '';
         }
@@ -828,30 +825,30 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
             'secondary' => $brow['secondary'] ?? '',
             'notation' => $brow['notation'] ?? '',
           ],
-          'title' => $node->get('title')->value ? $node->get('title')->value : '',
-          'category' => $category_value ? $category_value : '',
-          'content' => [
-            '#markup' => $body,
-          ],
-          'item_number' => $node->get('field_itc_number')->value,
-          'file_url' => $file_url ? $file_url : '',
+        'title' => $node->get('title')->value ? $node->get('title')->value : '',
+        'category' => $category_value ? $category_value : '',
+        'content' => [
+          '#markup' => $body,
+        ],
+        'item_number' => $node->get('field_itc_number')->value,
+        'file_url' => $file_url ? $file_url : '',
+      ];
+      if (!empty($file_url)) {
+        $itc_past_proposal['button_data'] = [
+          'label' => t('Download PDF'),
+          'href' => $file_url,
         ];
-        if (!empty($file_url)) {
-          $itc_past_proposal['button_data'] = [
-            'label' => t('Download PDF'),
-            'href' => $file_url,
-          ];
-        }
+      }
       }
       $grouped_proposals[$safe_list_label]['items'][] = $itc_past_proposal;
       if (count($grouped_proposals[$safe_list_label]['items']) >= 1) {
         $grouped_proposals[$safe_list_label]['list_label'] = $list_label;
       }
     }
-    usort($grouped_proposals, function ($a, $b) {
+    usort($grouped_proposals, function($a, $b) {
       return $a['items'][0]['category'] <=> $b['items'][0]['category'];
-    });
-    $variables['grouped_proposals'] = $grouped_proposals;
+  });
+  $variables['grouped_proposals'] = $grouped_proposals;
   }
 }
 
@@ -1207,7 +1204,7 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&
         $variables['processed_rows'][] = [
           'brow' => $brow,
           'title' => $request->label(),
-          'url' => $request->toUrl(),
+          'url' => $request->toUrl(),    
           'content' => $request->get('body')->first() ? $request->get('body')
             ->first()
             ->view('teaser') : '',
@@ -1460,31 +1457,20 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
     $form['actions']['reset']['#attributes']['class'][] = 'button button--secondary button--normal';
   }
 
-  // Items per page filter. All items per page elements need to live outside the
-  // views exposed form.
-  if (isset($variables['rows'][0]['#rows']) && isset($variables['exposed']['items_per_page'])) {
-
-    // Create our new variable for the templates.
+  // Items per page filter.
+  if ($variables['rows'][0]['#rows'] && isset($variables['exposed']['items_per_page'])) {
     $variables['items_per_page'] = $variables['exposed']['items_per_page'];
-
-    // Since the items_per_page element is moved outside the form tag, we need
-    // to apply the original form id to the form attribute of the element.
     if ($variables['exposed']['#id']) {
       $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+      foreach ($variables['items_per_page']['#options'] as $key => $value) {
+        $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' per page';
+      }
+      unset($variables['items_per_page']['#title']);
+      unset($variables['exposed']['items_per_page']);
     }
-
-    // Rewrite our items_per_page options to "Show XX per page".
-    foreach ($variables['items_per_page']['#options'] as $key => $value) {
-      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' per page';
-    }
-
-    // Remove the label and remove the item from the exposed form.
-    unset($variables['items_per_page']['#title']);
-    unset($variables['exposed']['items_per_page']);
   }
 
   // Count summary for the current page of results.
   // Suppress duplicate summary with empty header in ViewsResults twig.
   $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
-
 }
