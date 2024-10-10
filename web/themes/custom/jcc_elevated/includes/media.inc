@@ -34,6 +34,23 @@ function jcc_elevated_preprocess_media(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
+function jcc_elevated_preprocess_field(&$variables) {
+  if ($variables['element']['#field_name'] == 'field_media_image') {
+    $media = $variables['element']['#object'];
+    if ($media->hasField('field_link') && !$media->get('field_link')->isEmpty()) {
+      $link_field = $media->get('field_link')->first()->getValue();
+      if (isset($link_field['uri'])) {
+        $variables['link_url'] = [
+          'uri' => $link_field['uri'],
+        ];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
 function jcc_elevated_preprocess_media__publication(&$variables) {
   $media = $variables['media'];
   $entity_type_manager = \Drupal::service('entity_type.manager');
