@@ -22,6 +22,7 @@ dependencies:
   module:
     - entity_reference_facet_link
     - jcc_media_formatter
+    - link
     - text
     - user
 _core:
@@ -51,6 +52,18 @@ content:
     settings:
       link: true
     third_party_settings: {  }
+    weight: 3
+    region: content
+  field_remote_attachment:
+    type: link
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
     weight: 2
     region: content
   field_tags:
@@ -59,14 +72,13 @@ content:
     settings:
       facet: tags
     third_party_settings: {  }
-    weight: 3
+    weight: 4
     region: content
 hidden:
   field_division: true
   field_help_links: true
   field_links: true
   field_metatag: true
-  field_remote_attachment: true
   field_subject_matter: true
   field_topics: true
   field_upload_date: true
