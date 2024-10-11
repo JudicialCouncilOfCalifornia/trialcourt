@@ -316,7 +316,7 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
 
   if (!empty($paragraph->get('field_background'))) {
     $bg_tint = $paragraph->get('field_background')->value;
-    $variables['bg_tint'] = str_replace('solid-', '', $bg_tint);
+    $variables['bg_tint'] = $bg_tint;
   }
 
   // Include view embed as lead content.
@@ -347,7 +347,7 @@ function jcc_elevated_paragraph_hero_mega(array &$variables, ParagraphInterface 
     $variables['bckg_img_url'] = $image_url;
   }
 
-  $variables['bg_tint'] = $paragraph->get('field_background')->value ? str_replace('solid-', '', $paragraph->get('field_background')->value) : '';
+  $variables['bg_tint'] = $paragraph->get('field_background')->value ? $paragraph->get('field_background')->value : '';
   $variables['hero_mega_search_form'] = $paragraph->get('field_hero_mega_search') ? jcc_elevated_build_header_search_form() : '';
 }
 
