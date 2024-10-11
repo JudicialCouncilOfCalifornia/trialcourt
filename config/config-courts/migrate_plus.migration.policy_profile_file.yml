@@ -1,3 +1,4 @@
+uuid: c524c9b1-da67-4746-9dc0-851ef11cb486
 langcode: en
 status: true
 dependencies: {  }
@@ -10,7 +11,7 @@ migration_tags:
   - profile
   - file
 migration_group: courts_policy
-label: 'Profiles: Import files'
+label: 'Profile: Import files'
 source:
   plugin: url
   data_fetcher_plugin: http
@@ -31,11 +32,11 @@ process:
   pseudo_decoded_url:
     plugin: callback
     callable: urldecode
-    source: url
+    source: image
   pseudo_destination_filename:
     -
       plugin: path_from_url
-      source: url
+      source: image
     -
       plugin: callback
       callable: basename
@@ -63,7 +64,7 @@ process:
     -
       plugin: skip_on_empty
       method: process
-      source: url
+      source: image
     -
       plugin: file_copy
       source:

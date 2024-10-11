@@ -1,3 +1,4 @@
+uuid: 0f6bb2d7-a0cc-4d3b-b2e3-915f2f3d577b
 langcode: en
 status: true
 dependencies: {  }
@@ -18,13 +19,13 @@ source:
   urls: ''
   item_selector: entry
   ids:
-    id:
+    image:
       type: string
   fields:
     -
       name: image
       selector: image
-      label: 'Image'
+      label: Image
     -
       name: title
       selector: title
@@ -37,7 +38,7 @@ process:
   pseudo_destination_filename:
     -
       plugin: path_from_url
-      source: url
+      source: image
     -
       plugin: callback
       callable: basename
@@ -76,6 +77,17 @@ process:
       method: process
       message: 'Cannot import empty url.'
   field_media_file/description: '@pseudo_encoded_title'
+  field_category:
+    -
+      plugin: default_value
+      default_value: 'Profile'
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: media_file_category
+      value_key: name
+      ignore_case: true
   uid:
     plugin: default_value
     default_value: 1
@@ -83,6 +95,6 @@ destination:
   plugin: 'entity:media'
   default_bundle: file
 migration_dependencies:
-  required: {}
+  required: {  }
   optional:
     - policy_profile_file
