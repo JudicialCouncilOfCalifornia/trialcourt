@@ -340,6 +340,8 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         break;
 
       case 'hero_mega':
+      case 'hero_hangover':
+      case 'section':
         // Attach Card.css for background swatches.
         $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
         $element['#attached']['library'][] = 'jcc_custom/storybook-layout';
@@ -365,14 +367,6 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         // Elevated only offers left or right media positioning.
         // Top positioning occurs automatically when insufficient real estate.
         unset($element['subform']['field_media_alignment']['widget']['#options']['top']);
-        break;
-
-      case 'hero_hangover':
-      case 'section':
-        // Attach Section.css for background swatches.
-        $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
-        $element['#attached']['library'][] = 'jcc_custom/storybook-section';
-        $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
         break;
     }
   }
@@ -627,18 +621,18 @@ function jcc_custom_background_options_bundle(FieldStorageConfig $definition, Co
  */
 function jcc_custom_section_background_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
   return [
-    "base-light-xxx" => '<span class="cluster"><span>Base Lightest</span><span class="section swatch swatch--color-base-light-xxx">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
-    "base-dark-x" => '<span class="cluster"><span>Base Darker</span><span class="section swatch swatch--color-base-dark-x">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
-    "base-dark-xxx" => '<span class="cluster"><span>Base Darkest</span><span class="section swatch swatch--color-base-dark-xxx">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
-    "accent-warm-light-xxxx" => '<span class="cluster"><span>Accent Warm Lightest</span><span class="section swatch swatch--color-accent-warm-light-xxxx">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
-    "accent-warm-dark-x" => '<span class="cluster"><span>Accent Warm Dark</span><span class="section swatch swatch--color-accent-warm-dark-x">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
-    "red" => '<span class="cluster"><span>Accent Warm Darker</span><span class="section swatch swatch--color-red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
-    "brown" => '<span class="cluster"><span>Accent Warm Darkest</span><span class="section swatch swatch--color-brown">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
-    "primary-light-xxx" => '<span class="cluster"><span>Primary Lightest</span><span class="section swatch swatch--color-primary-light-xxx">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
-    "primary-light-x" => '<span class="cluster"><span>Primary Vivid</span><span class="section swatch swatch--color-primary-light-x">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
-    "primary-dark-x" => '<span class="cluster"><span>Primary Dark</span><span class="section swatch swatch--color-primary-dark-x">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
-    "secondary" => '<span class="cluster"><span>Secondary</span><span class="section swatch swatch--color-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
-    "secondary-dark-xx" => '<span class="cluster"><span>Secondary Dark</span><span class="section swatch swatch--color-secondary-dark-xx">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>',
+    "base-light-xxx" => "<span class=\"cluster\"><span>Base Lightest</span><span class=\"card card--default card--background-base-light-xxx\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "base-dark-x" => "<span class=\"cluster\"><span>Base Darker</span><span class=\"card card--default card--background-base-dark-x\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "base-dark-xxx" => "<span class=\"cluster\"><span>Base Darkest</span><span class=\"card card--default card--background-base-dark-xxx\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "accent-warm-light-xxxx" => "<span class=\"cluster\"><span>Accent Warm Lightest</span><span class=\"card card--default card--background-accent-warm-light-xxxx\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "accent-warm-dark-x" => "<span class=\"cluster\"><span>Accent Warm Dark</span><span class=\"card card--default card--background-accent-warm-dark-x\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "red" => "<span class=\"cluster\"><span>Accent Warm Darker</span><span class=\"card card--default card--background-red\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "brown" => "<span class=\"cluster\"><span>Accent Warm Darkest</span><span class=\"card card--default card--background-brown\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "primary-light-xxx" => "<span class=\"cluster\"><span>Primary Lightest</span><span class=\"card card--default card--background-primary-light-xxx\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "primary-light-x" => "<span class=\"cluster\"><span>Primary Vivid</span><span class=\"card card--default card--background-primary-light-x\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "primary-dark-x" => "<span class=\"cluster\"><span>Primary Dark</span><span class=\"card card--default card--background-primary-dark-x\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "secondary" => "<span class=\"cluster\"><span>Secondary</span><span class=\"card card--default card--background-secondary\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "secondary-dark-x" => "<span class=\"cluster\"><span>Secondary Dark</span><span class=\"card card--default card--background-secondary-dark-x\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
   ];
 }
 
