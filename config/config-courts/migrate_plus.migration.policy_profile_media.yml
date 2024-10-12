@@ -67,7 +67,7 @@ process:
       plugin: substr
       start: 0
       length: 254
-  field_media_file/target_id:
+  field_media_image/target_id:
     -
       plugin: migration_lookup
       migration: policy_profile_file
@@ -76,7 +76,7 @@ process:
       plugin: skip_on_empty
       method: process
       message: 'Cannot import empty url.'
-  field_media_file/description: '@pseudo_encoded_title'
+  field_media_image/description: '@pseudo_encoded_title'
   field_category:
     -
       plugin: default_value
@@ -93,7 +93,7 @@ process:
     default_value: 1
 destination:
   plugin: 'entity:media'
-  default_bundle: file
+  default_bundle: image
 migration_dependencies:
   required: {  }
   optional:
