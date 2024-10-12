@@ -76,7 +76,7 @@ process:
       plugin: skip_on_empty
       method: process
       message: 'Cannot import empty url.'
-  field_media_image/description: '@pseudo_encoded_title'
+  field_media_image/alt: '@pseudo_encoded_title'
   field_category:
     -
       plugin: default_value
@@ -85,7 +85,7 @@ process:
       plugin: entity_generate
       entity_type: taxonomy_term
       bundle_key: vid
-      bundle: media_file_category
+      bundle: media_image_category
       value_key: name
       ignore_case: true
   uid:
