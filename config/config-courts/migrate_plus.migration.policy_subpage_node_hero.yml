@@ -1,0 +1,46 @@
+uuid: 737f4dd9-629d-48dd-86c1-f02b4185778f
+langcode: en
+status: true
+dependencies: {  }
+id: policy_subpage_node_hero
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - policy
+  - subpage
+  - paragraph
+  - hero
+migration_group: courts_policy
+label: 'Policy: Import Subpage Paragraph Hero'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  fields:
+    -
+      name: url
+      label: URL
+      selector: url
+    -
+      name: title
+      label: Title
+      selector: title
+  ids:
+    url:
+      type: string
+process:
+  field_heading:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'No heading to create hero hangover.'
+destination:
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: hero_hangover
+migration_dependencies: null
