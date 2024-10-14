@@ -1,0 +1,30 @@
+uuid: 2dff4bab-732c-4fc8-8ed3-cd7d75801c33
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_location_page_version
+    - node.type.location
+  module:
+    - options
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.location.field_location_page_version
+field_name: field_location_page_version
+entity_type: node
+bundle: location
+label: 'Location Page Version'
+description: 'select the page version . for  location page new version select new.'
+required: true
+translatable: false
+default_value:
+  -
+    value: legacy
+default_value_callback: ''
+settings: 
+  allowed_values:
+    new: 'New'
+    legacy: 'Legacy'
+field_type: list_string
