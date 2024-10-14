@@ -21,6 +21,12 @@ function jcc_elevated_preprocess_media(&$variables) {
       $alignment = $variables['attributes']['class'][0] ?? '';
     }
 
+    if ($media->hasField('field_media_image') && !$media->get('field_media_image')->isEmpty()) {
+      $image_field = $media->get('field_media_image')->entity;
+      if ($image_field && $image_field->getMimeType() == 'image/gif') {
+        unset($variables['content']['field_media_image'][0]['#image_style']);
+      }
+    }
     $img_classes = [
       'image',
       Html::getClass('image__' . $view_mode),
