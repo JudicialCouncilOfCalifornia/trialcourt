@@ -61,6 +61,7 @@ function jcc_components_preprocess_node(&$variables) {
       }
     }
   }
+
   // Logic for location page variables.
   if ($node->getType() == 'location') {
     $variables['#attached']['library'][] = 'jcc_components/location-page';
