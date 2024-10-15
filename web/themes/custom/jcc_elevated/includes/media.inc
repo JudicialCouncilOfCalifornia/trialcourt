@@ -21,6 +21,12 @@ function jcc_elevated_preprocess_media(&$variables) {
       $alignment = $variables['attributes']['class'][0] ?? '';
     }
 
+    if ($media->hasField('field_media_image') && !$media->get('field_media_image')->isEmpty()) {
+      $image_field = $media->get('field_media_image')->entity;
+      if ($image_field && $image_field->getMimeType() == 'image/gif') {
+        unset($variables['content']['field_media_image'][0]['#image_style']);
+      }
+    }
     $img_classes = [
       'image',
       Html::getClass('image__' . $view_mode),
@@ -28,6 +34,23 @@ function jcc_elevated_preprocess_media(&$variables) {
     ];
 
     $variables['content']['field_media_image'][0]['#item_attributes']['class'][] = implode(' ', $img_classes);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function jcc_elevated_preprocess_field(&$variables) {
+  if ($variables['element']['#field_name'] == 'field_media_image') {
+    $media = $variables['element']['#object'];
+    if ($media->hasField('field_image_link') && !$media->get('field_image_link')->isEmpty()) {
+      $link_field = $media->get('field_image_link')->first()->getValue();
+      if (isset($link_field['uri'])) {
+        $variables['link_url'] = [
+          'uri' => $link_field['uri'],
+        ];
+      }
+    }
   }
 }
 
