@@ -1,0 +1,61 @@
+uuid: 2f476aea-6733-4f66-b1eb-9c8eb874b9a0
+langcode: en
+status: true
+dependencies: {  }
+id: policy_subpage_node_redirect
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - policy
+  - subpage
+  - node
+  - redirect
+migration_group: courts_policy
+label: 'Policy: Import Subpage Redirects'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  fields:
+    -
+      name: url
+      label: Url
+      selector: url
+  ids:
+    url:
+      type: string
+  constants:
+    redirect_prefix: 'internal:/node/'
+    uid_admin: 1
+    status_code: 301
+process:
+  temp_nid:
+    plugin: migration_lookup
+    source: url
+    migration: policy_subpage_node
+  redirect_source/path:
+    -
+      plugin: callback
+      callable: urldecode
+      source: url
+    -
+      plugin: path_from_url
+    -
+      plugin: substr
+      start: 1
+  redirect_source/query: {  }
+  redirect_redirect:
+    plugin: concat
+    source:
+      - constants/redirect_prefix
+      - '@temp_nid'
+  uid: constants/uid_admin
+  status_code: constants/status_code
+destination:
+  plugin: 'entity:redirect'
+migration_dependencies:
+  required:
+    - policy_subpage_node

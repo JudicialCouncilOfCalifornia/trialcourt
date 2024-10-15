@@ -1137,6 +1137,11 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
+  // Reset our embedded view exposed form to use the current page as the action.
+  // This is necessary because it is not an ajax controlled element, so it
+  // triggers a page refresh to the views default page (which is an admin page).
+  $variables['exposed']['#action'] = \Drupal::request()->getPathInfo();
+
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   if (isset($variables['rows'][0]['#rows'])) {
@@ -1223,6 +1228,11 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
+  // Reset our embedded view exposed form to use the current page as the action.
+  // This is necessary because it is not an ajax controlled element, so it
+  // triggers a page refresh to the views default page (which is an admin page).
+  $variables['exposed']['#action'] = \Drupal::request()->getPathInfo();
+
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   if (isset($variables['rows'][0]['#rows'])) {
@@ -1265,6 +1275,11 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
  */
 function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived(&$variables): void {
   __jcc_view_results_exposed_filter_init($variables);
+
+  // Reset our embedded view exposed form to use the current page as the action.
+  // This is necessary because it is not an ajax controlled element, so it
+  // triggers a page refresh to the views default page (which is an admin page).
+  $variables['exposed']['#action'] = \Drupal::request()->getPathInfo();
 
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
