@@ -31,7 +31,7 @@
 {% endif %}
 
 {# Media alignment if in use #}
-{% if ((variant != 'striped' or variant != 'striped-aligned') and media_alignment) %}
+{% if media_alignment %}
   {% set media_variant = 'media-' ~ media_alignment %}
 {% endif %}
 
@@ -39,7 +39,7 @@
 {% set button_data = [] %}
 {% if paragraph.field_link.get(0).getUrl() is not empty %}
   {% set href = paragraph.field_link.get(0).getUrl() %}
-  {% if variant == 'striped' and paragraph.field_entire_card_clickable.value %}
+  {% if paragraph.field_entire_card_clickable.value %}
     {% set href = paragraph.field_link.get(0).getUrl().toString() %}
   {% endif %}
   {% set primary_button = {

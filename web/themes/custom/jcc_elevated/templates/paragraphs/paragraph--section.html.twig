@@ -20,6 +20,7 @@
 {% endif %}
 
 {% include "@organisms/Section/Section.twig" with {
+  variant: paragraph.field_section_background.get(0).value|default('default'),
   bg_tint: paragraph.field_section_background.get(0).value|default('default'),
   brow_data: brow_data,
   heading: content.field_heading.0 ? content.field_heading|render : '',
