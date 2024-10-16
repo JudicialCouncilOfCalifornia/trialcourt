@@ -147,33 +147,35 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
   if ($paragraph->get('field_media')) {
     $card_media = $paragraph->get('field_media');
     $card_icon = $paragraph->get('field_icon');
-    if ($card_media && $card_media->target_id) {
-      $media = \Drupal::entityTypeManager()->getStorage('media')->load($card_media->target_id);
-      $image_uri = $media ? $media->get('field_media_image')[0]->entity->getFileUri() : NULL;
-      if ($image_uri) {
-        $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_650x650')->buildUrl($image_uri);
-        $image_alt = $media->get('field_media_image')->alt ? $media->get('field_media_image')->alt : NULL;
-        $caption = $media->get('field_media_caption')->value ? $media->get('field_media_caption')->value : NULL;
-        $citation = $media->get('field_media_citation')->value ? $media->get('field_media_citation')->value : NULL;
-        $variables['image'] = [
-          'url' => $image_url,
-          'alt' => $image_alt,
-        ];
 
-        if ($paragraph->get('field_media_alignment')->value && $caption) {
+    // If Media.
+    if ($card_media && $card_media->entity) {
+      $build = \Drupal::entityTypeManager()->getViewBuilder('media')->view($card_media->entity);
+      if ($build) {
+        // Media render & entity.
+        $variables['media'] = $build;
+        $media = $card_media->entity;
+
+        // Media alignment.
+        if ($paragraph->get('field_media_alignment')->value) {
           $variables['media_alignment'] = $paragraph->get('field_media_alignment')->value;
         }
 
+        // If caption available and display opted.
+        $caption = $media->get('field_media_caption')->value ? $media->get('field_media_caption')->value : NULL;
         if ($paragraph->get('field_show_media_caption')->value && $caption) {
-          $allowed_tags = ['<strong>', '<em>', '<a>'];
+          $citation = $media->field_media_citation && $media->get('field_media_citation')->value ? $media->get('field_media_citation')->value : NULL;
+          $allowed_tags = ['<strong><em><a>'];
           $variables['media_caption'] = [
             'show' => $paragraph->get('field_show_media_caption')->value,
-            'text' => strip_tags($caption, $allowed_tags),
-            'citation' => $citation ? Markup::create(strip_tags($citation, $allowed_tags)) : NULL,
+            'text' => ['#markup' => strip_tags($caption, $allowed_tags)],
+            'citation' => $citation ? ['#markup' => strip_tags($citation, $allowed_tags)] : NULL,
           ];
         }
       }
     }
+
+    // If icon.
     if ($card_icon && $card_icon->value) {
       $variables['card_icon'] = str_replace(
         ['icon-', 'dark-', 'white-'],
@@ -196,7 +198,7 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
       if ($text !== NULL) {
         $text = strip_tags($text, $allowed_tags);
       }
-      $variables['filtered_text'] = Markup::create($text);
+      $variables['filtered_text'] = ['#markup' => $text];
     }
   }
 
