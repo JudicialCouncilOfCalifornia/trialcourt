@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.service_categories.field_body
+    - taxonomy.vocabulary.service_categories
+  module:
+    - text
+id: taxonomy_term.service_categories.default
+targetEntityType: taxonomy_term
+bundle: service_categories
+mode: default
+content:
+  description:
+    type: text_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_body:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  langcode: true
+  search_api_excerpt: true
