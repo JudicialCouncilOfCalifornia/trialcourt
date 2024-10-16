@@ -384,6 +384,30 @@ function jcc_elevated_paragraph_hero_hangover(array &$variables, ParagraphInterf
 }
 
 /**
+ * Helper function for list with menu.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ */
+function jcc_elevated_paragraph_menu_list(array &$variables) {
+  $paragraph = $variables['paragraph'];
+  $link_items = $paragraph->get('field_link_list')->getIterator();
+
+  foreach ($link_items as $item) {
+    $link_entity = $item->get('uri')->getValue();
+    $link_title = $item->get('title')->getValue();
+    if (!empty($link_entity)) {
+      $url = Url::fromUri($link_entity)->toString();
+      $links[] = [
+        'url' => $url,
+        'title' => $link_title,
+      ];
+    }
+  }
+  $variables['link_list'] = $links;
+}
+
+/**
  * Helper function for alert paragraphs.
  *
  * @param array $variables
