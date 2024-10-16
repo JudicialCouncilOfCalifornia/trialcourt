@@ -24,6 +24,10 @@ source:
       name: url
       label: URL
       selector: url
+    -
+      name: group
+      label: Group
+      selector: group
   ids:
     url:
       type: string
@@ -33,6 +37,23 @@ process:
       plugin: migration_lookup
       migration: policy_subpage_node_body
       source: url
+      no_stub: true
+    -
+      plugin: null_as_array
+  pseudo_tabs:
+    -
+      plugin: migration_lookup
+      migration: policy_subpage_node_tabs
+      source: url
+      no_stub: true
+    -
+      plugin: null_as_array
+  pseudo_accordions:
+    -
+      plugin: migration_lookup
+      migration: policy_subpage_node_accordions
+      source: url
+      no_stub: true
     -
       plugin: null_as_array
   field_components:
@@ -40,6 +61,8 @@ process:
       plugin: sub_process
       source:
         - '@pseudo_body'
+        - '@pseudo_tabs'
+        - '@pseudo_accordions'
       process:
         target_id:
           -
