@@ -391,7 +391,7 @@ function jcc_elevated_paragraph_hero_hangover(array &$variables, ParagraphInterf
  */
 function jcc_elevated_paragraph_menu_list(array &$variables) {
   $paragraph = $variables['paragraph'];
-  $link_items = $paragraph->get('field_link_list')->getIterator();
+  $link_items = $paragraph->get('field_menu_list')->getIterator();
 
   foreach ($link_items as $item) {
     $link_entity = $item->get('uri')->getValue();
