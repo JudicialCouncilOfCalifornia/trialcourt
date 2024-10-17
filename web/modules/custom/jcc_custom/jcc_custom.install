@@ -78,33 +78,4 @@ function jcc_custom_update_8002() {
   }
 }
 
-/**
- * Implements hook_update_N().
- * Dynamically updates the counties configuration.
- */
-function jcc_custom_update_9499() {
-  // Get the editable configuration object.
-  $config = \Drupal::configFactory()->getEditable('jcc_custom.settings');
-
-  // Log the current configuration for debugging.
-  \Drupal::logger('my_module')->notice('Current counties: ' . json_encode($config->get('counties')));
-
-  // List of counties to set to TRUE.
-  $county_names = ['ukiah', 'napa', 'alpine', 'santaclara', 'alameda', 'sutter','test'];
-
-  // Prepare an array where each county is set to TRUE.
-  $counties = [];
-  foreach ($county_names as $county) {
-    $counties[$county] = TRUE;
-    \Drupal::logger('my_module')->notice('Processing county: ' . $county . ' set to TRUE.');
-  }
-
-  // Save the updated counties array.
-  $config->set('counties', $counties)->save();
-  $installed_counties = $config->get('counties');
-  print_r($installed_counties);
-  \Drupal::logger('my_module')->notice('Processed counties ' . json_encode($config->get('counties'),true));
-
-}
-
 
