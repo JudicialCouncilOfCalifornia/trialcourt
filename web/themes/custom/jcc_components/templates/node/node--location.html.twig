@@ -181,7 +181,7 @@
 
 
 
-{% if version == 'Legacy' or version == '' or version is null %}
+{% if version == 'legacy' or version == '' or version is null %}
   {% include "@molecules/location/location.twig" with {
     location: {
       container: 'container',
@@ -211,7 +211,7 @@
       classes: []
     }
   } %}
-{% elseif version == 'New' %}
+{% elseif version == 'new' %}
   {# render hero section #}
   {% include '@molecules/hero/hero.twig' with {
       hero: {
