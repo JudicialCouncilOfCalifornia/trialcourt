@@ -71,6 +71,10 @@
  */
 #}
 
+{{ attach_library('jcc_components/location-page') }} 
+{# get the version of page to be rendered: new or legacy #}
+{% set version = content.field_location_page_version[0]['#markup']  %}
+
 {% set matters = [] %}
 
 {% for k, matter in content.field_matters_served if k|first != "#" %}
@@ -80,25 +84,164 @@
   {% set matters = matters|merge(item) %}
 {% endfor %}
 
-{% include "@molecules/location/location.twig" with {
-  location: {
-    container: 'container',
-    title: label,
-    brow: content.field_location_type,
-    address: processed_address|render,
-    map: {
-      html: content.field_geolocation.0,
-    },
-    directions_text: 'Get Directions'|t,
-    phone: {
-      text: content.field_phone.0['#title'],
-      url: content.field_phone.0['#url'].uri
-    },
-    tags_label: 'Matters Served'|t,
-    tags: matters,
-    additional: content.body,
-    hours_label: 'Hours'|t,
-    hours: hours,
-    classes: []
-  }
+
+{# set the lead content address and phone to be used in hero section #}
+{% set lead_content %}
+  <div class="jcc-location__location jcc-small">
+  {% if processed_address  %}
+    {% set address = processed_address|render|replace({'<br>': ' ', '<br />': ' '})|trim %} 
+    {% set address_url = 'https://maps.google.com/?q=' ~ address %}
+    <div class="jcc-location__address jcc-location-hero-link">
+        <a href="{{ address_url}}">{{ address }}</a>
+    </div>
+  {% endif %} 
+
+  {% if content.field_phone %}
+    {% set phone = content.field_phone.0['#title'] %}
+    {% set phone_url = "tel:" ~ content.field_phone.0['#title'] %}
+    <div class="jcc-location-hero-link">
+      <a href="{{ phone_url}}">{{ phone }}</a>
+    </div>
+  {% endif %}
+  </div>
+{% endset %}
+
+{# case catergories tags #}
+{% set cases_served = [] %}
+{% set orignal_array = case_category_terms %}
+{% for key ,value  in orignal_array  %}
+  {% set cases_served  = cases_served|merge([{'text' : value}]) %}
+{% endfor %}
+
+
+
+{% if content.field_services_overview %}
+  {% set service_overview = content.field_services_overview %}
+{% endif %}
+
+{% if content.field_case_served_overview %}
+  {% set case_served_overview =  content.field_case_served_overview['0']['#context']['value'] %}
+{% endif %}
+
+
+{# set variable to be used in content section #}
+{% set main_content = {
+    entries: [
+        {
+            type: 'section',
+            heading: "Building Information",
+            content: "Building hours: Monday - Friday:"~" "~ content.field_building_hours_from.0["#text"]|split(' ', 2)[1] ~ " - " ~ content.field_building_hours_to.0["#text"]|split(' ', 2)[1],
+            width: "partial",
+            name: "location_details",
+        },
+        {
+            type: 'section',
+            heading: "Case Served",
+            content: case_served_overview|raw ,
+            width: "partial",
+            name: "location_details",
+            sub_sections: [
+                {
+                    type: 'sub_section',
+                    tags:cases_served
+                }
+            ]
+        },
+        {
+            type: 'section',
+            width: "partial",
+            heading: "Services",
+            content: service_overview,
+            name: "location_details",
+            services:add_services 
+        },
+    ]
 } %}
+
+{% set aside_content = {
+    title: "",
+    entries: [
+        {
+            type: 'section',
+            location: {
+                address: address,
+                phone: {
+                  text: phone,
+                  url: phone_url,
+                },
+                map: {
+                  html: content.field_geolocation.0
+                },
+                directions_text: "Get Directions"
+            }
+        }
+    ]
+} %}
+
+
+
+
+{% if version == 'Legacy' or version == '' or version is null %}
+  {% include "@molecules/location/location.twig" with {
+    location: {
+      container: 'container',
+      title: label,
+      brow: content.field_location_type,
+      address: processed_address|render,
+      map: {
+        html: content.field_geolocation.0,
+      },
+      directions_text: 'Get Directions'|t,
+      phone: {
+        text: content.field_phone.0['#title'],
+        url: content.field_phone.0['#url'].uri
+      },
+      tags_label: 'Matters Served'|t,
+      tags: matters,
+      additional: content.body,
+      hours_label: 'Hours'|t,
+      hours: hours,
+      classes: []
+    }
+  } %}
+  {% include "@molecules/location/location.twig" with {
+    location: {
+      container: 'container',
+      additional: content.body,
+      classes: []
+    }
+  } %}
+{% elseif version == 'New' %}
+  {# render hero section #}
+  {% include '@molecules/hero/hero.twig' with {
+      hero: {
+        main: {
+          brow:  content.field_brow[0]['#context']['value'],
+          title: label,
+          lead: lead_content
+          },
+        aside:{
+          media:{
+            src: file_url(node.field_image_of_the_courthouse[0].entity.uri.value),
+            alt: node.field_image_of_the_courthouse[0].alt,
+          }
+        },
+        layout: "location-details"
+      }
+  } %}
+  {# render new layout for location details #}
+  {% include '@molecules/location-details/location-details.twig' with {
+    location_details: {
+      main: main_content ,
+      aside: aside_content,
+      }
+  } %}
+ {# Adds old location detail body #}
+  {% include "@molecules/location/location.twig" with {
+    location: {
+      container: 'container',
+      additional: content.body,
+      classes: []
+    }
+  } %}
+{% endif %}
