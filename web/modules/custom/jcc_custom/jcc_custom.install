@@ -1,0 +1,79 @@
+<?php
+
+/**
+ * @file
+ * Install taxonoomy terms for case served and service category.
+ */
+
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
+
+/**
+ * Implements hook_update_N().
+ */
+function jcc_custom_update_8064() {
+  // Vocabulary and terms data.
+  $vocabularies = [
+    'cases_served' => [
+      'name' => 'All Cases Served',
+      'terms' => [
+        'Appeals',
+        'Civil',
+        'Conservatorships',
+        'Criminal',
+        'Domestic Violence',
+        'Unlawful Detainer',
+        'Family Law',
+        'Guardianships',
+        'Juvenile Dependency',
+        'Juvenile Delinquency',
+        'Mental Health',
+        'CARE Court',
+        'Name Change & Gender Affirmation',
+        'Probate',
+        'Restraining Orders',
+        'Small Claims',
+        'Traffic',
+      ],
+    ],
+    'service_categories' => [
+      'name' => 'Service Categories',
+      'terms' => [
+        'Clerk Window (All cases)',
+        'Clerk Window (criminal)',
+        'Clerk Window (civil)',
+        'Clerk Window (Traffic)',
+        'Self-Help',
+      ],
+    ],
+  ];
+
+  foreach ($vocabularies as $vid => $vocabulary_data) {
+    // Check if the vocabulary exists.
+    $vocabulary = Vocabulary::load($vid);
+    if ($vocabulary) {
+      // Add or update terms for the vocabulary.
+      foreach ($vocabulary_data['terms'] as $term_name) {
+        // Check if the term already exists in the vocabulary.
+        $existing_terms = Term::loadMultiple();
+        $term_exists = FALSE;
+        foreach ($existing_terms as $term) {
+          if ($term->get('vid')->value == $vid && $term->getName() == $term_name) {
+            $term_exists = TRUE;
+            break;
+          }
+        }
+
+        if (!$term_exists) {
+          $term = Term::create([
+            'vid' => $vid,
+            'name' => $term_name,
+          ]);
+          $term->save();
+          \Drupal::messenger()->addMessage(t('Created term @name in vocabulary @vid.',
+            ['@name' => $term_name, '@vid' => $vid]));
+        }
+      }
+    }
+  }
+}
