@@ -111,6 +111,10 @@ function jcc_elevated_preprocess_node(&$variables) {
     }
   }
 
+  $variables['open_on_load'] = NULL;
+  if (\Drupal::request()->query->get('tab')) {
+    $variables['open_on_load'] = \Drupal::request()->query->get('tab');
+  }
 }
 
 /**
