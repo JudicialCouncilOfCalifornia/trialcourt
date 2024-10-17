@@ -13,6 +13,7 @@ use Drupal\media\Entity\Media;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
+use Drupal\Component\Utility\UrlHelper;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -392,12 +393,13 @@ function jcc_elevated_paragraph_hero_hangover(array &$variables, ParagraphInterf
 function jcc_elevated_paragraph_menu_list(array &$variables) {
   $paragraph = $variables['paragraph'];
   $link_items = $paragraph->get('field_menu_list')->getIterator();
+  $links = [];
 
   foreach ($link_items as $item) {
     $link_entity = $item->get('uri')->getValue();
     $link_title = $item->get('title')->getValue();
     if (!empty($link_entity)) {
-      $url = Url::fromUri($link_entity)->toString();
+      $url = Url::fromUri($link_entity);
       $links[] = [
         'url' => $url,
         'title' => $link_title,
