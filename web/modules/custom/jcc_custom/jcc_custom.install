@@ -12,10 +12,37 @@ use Drupal\taxonomy\Entity\Vocabulary;
  * Implements hook_update_N().
  */
 function jcc_custom_update_8064() {
+  // Vocabulary data.
+  $vocabularies = [
+    'cases_served' => 'All Cases Served',
+    'service_categories' => 'Service Categories',
+  ];
+
+  foreach ($vocabularies as $vid => $vocabulary_name) {
+    // Check if the vocabulary already exists.
+    $vocabulary = Vocabulary::load($vid);
+    if (!$vocabulary) {
+      // Create the vocabulary if it doesn't exist.
+      $vocabulary = Vocabulary::create([
+        'vid' => $vid,
+        'name' => $vocabulary_name,
+      ]);
+      $vocabulary->save();
+      \Drupal::messenger()->addMessage(t('Created vocabulary @name.', ['@name' => $vocabulary_name]));
+    }
+  }
+}
+
+/**
+ * Implements hook_update_N().
+ * installing term in subsequent hook to ensure
+ * vocabulary is fully registered and available to 
+ * add terms.
+ */
+function jcc_custom_update_8065() {
   // Vocabulary and terms data.
   $vocabularies = [
     'cases_served' => [
-      'name' => 'All Cases Served',
       'terms' => [
         'Appeals',
         'Civil',
@@ -37,7 +64,6 @@ function jcc_custom_update_8064() {
       ],
     ],
     'service_categories' => [
-      'name' => 'Service Categories',
       'terms' => [
         'Clerk Window (All cases)',
         'Clerk Window (criminal)',
@@ -49,29 +75,27 @@ function jcc_custom_update_8064() {
   ];
 
   foreach ($vocabularies as $vid => $vocabulary_data) {
-    // Check if the vocabulary exists.
-    $vocabulary = Vocabulary::load($vid);
+    // Ensure the vocabulary exists before adding terms.
+    $vocabulary = \Drupal\taxonomy\Entity\Vocabulary::load($vid);
     if ($vocabulary) {
-      // Add or update terms for the vocabulary.
       foreach ($vocabulary_data['terms'] as $term_name) {
-        // Check if the term already exists in the vocabulary.
-        $existing_terms = Term::loadMultiple();
-        $term_exists = FALSE;
-        foreach ($existing_terms as $term) {
-          if ($term->get('vid')->value == $vid && $term->getName() == $term_name) {
-            $term_exists = TRUE;
-            break;
-          }
-        }
+        // Check if the term already exists in this vocabulary.
+        $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
+          'vid' => $vid,
+          'name' => $term_name,
+        ]);
 
-        if (!$term_exists) {
+        // If the term doesn't exist, create and save it.
+        if (empty($terms)) {
           $term = Term::create([
             'vid' => $vid,
             'name' => $term_name,
           ]);
           $term->save();
-          \Drupal::messenger()->addMessage(t('Created term @name in vocabulary @vid.',
-            ['@name' => $term_name, '@vid' => $vid]));
+          \Drupal::messenger()->addMessage(t('Created term @name in vocabulary @vid.', [
+            '@name' => $term_name,
+            '@vid' => $vid,
+          ]));
         }
       }
     }
