@@ -505,7 +505,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       $event['content']['#markup'] = '';
 
       if ($check_edit_access) {
-        $event['content']['#markup'] .= '<a href="/node/' . $node->id() . '/edit">(edit this event)</a>';
+        $event['content']['#markup'] .= '<a href="/node/' . $node->id() . '/edit">(edit this event)<br/></a>';
       }
 
       // Populating the event object.
@@ -611,7 +611,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       $check_edit_access = $node->access('update', $user);
 
       if ($check_edit_access) {
-        $event['content']['#markup'] = '<a href="/node/' . $node->id() . '/edit">(edit this event)</a>';
+        $event['content']['#markup'] = '<a href="/node/' . $node->id() . '/edit">(edit this event)<br/></a>';
       }
 
       $event['title'] = $node->get('title')->value;
