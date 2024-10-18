@@ -1,0 +1,87 @@
+uuid: 16baf634-d53a-4d74-bc1a-69bb8144e5f9
+langcode: en
+status: true
+dependencies: {  }
+id: policy_subpage_node_section
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - policy
+  - subpage
+  - paragraph
+  - section
+migration_group: courts_policy
+label: 'Policy: Import Subpage Paragraph Section'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  fields:
+    -
+      name: url
+      label: URL
+      selector: url
+    -
+      name: group
+      label: Group
+      selector: group
+  ids:
+    url:
+      type: string
+process:
+  pseudo_body:
+    -
+      plugin: migration_lookup
+      migration: policy_subpage_node_body
+      source: url
+      no_stub: true
+    -
+      plugin: null_as_array
+  pseudo_tabs:
+    -
+      plugin: migration_lookup
+      migration: policy_subpage_node_tabs
+      source: url
+      no_stub: true
+    -
+      plugin: null_as_array
+  pseudo_accordions:
+    -
+      plugin: migration_lookup
+      migration: policy_subpage_node_accordions
+      source: url
+      no_stub: true
+    -
+      plugin: null_as_array
+  field_components:
+    -
+      plugin: sub_process
+      source:
+        - '@pseudo_body'
+        - '@pseudo_tabs'
+        - '@pseudo_accordions'
+      process:
+        target_id:
+          -
+            plugin: skip_on_empty
+            method: process
+            message: 'Cannot import empty paragraph'
+            source: '0'
+        target_revision_id:
+          -
+            plugin: skip_on_empty
+            method: process
+            message: 'Cannot import empty paragraph'
+            source: '1'
+destination:
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: section
+migration_dependencies:
+  required:
+    - policy_subpage_node_body
+    - policy_subpage_node_tabs
+  optional:
+    - policy_subpage_node_accordions
