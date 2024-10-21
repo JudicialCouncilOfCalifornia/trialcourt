@@ -123,9 +123,9 @@
     {% endif %}
 
     {% if opinion.details %}
-      <p>
-        <a href="{{ opinion.details|raw }}">View case details</a>
-      </p>
+      <div>
+        <a class="button button--text button-large" href="{{ opinion.details|raw }}">View case details</a>
+      </div>
     {% endif %}
 
     {% if opinion.related_cases %}
@@ -139,7 +139,7 @@
         items: opinion.citings|raw,
       } %}
     {% endif %}
-  </div>
+  </p>
 {% endset %}
 
 {% include "@organisms/Section/Section.twig" with {

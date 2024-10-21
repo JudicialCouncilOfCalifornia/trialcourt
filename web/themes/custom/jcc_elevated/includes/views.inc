@@ -954,8 +954,6 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
   $entity_type_manager = \Drupal::entityTypeManager();
   $node_manager = $entity_type_manager->getStorage('node');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
-  $media_manager = $entity_type_manager->getStorage('media');
-  $file_manager = $entity_type_manager->getStorage('file');
 
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
@@ -1006,7 +1004,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     }
 
     // Citings.
-    $citings = [];
+    $citings = NULL;
     $query = \Drupal::entityQuery('node');
     $query->condition('status', 1);
     $query->condition('title', $title, 'CONTAINS');
@@ -1015,20 +1013,8 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     if ($citing_archive) {
       $citing_node_id = reset($citing_archive);
       $citing_node = $node_manager->load($citing_node_id);
-      foreach ($citing_node->get('field_media_file_multiple')->getValue() as $citing) {
-        $media = $media_manager->load($citing['target_id']);
-        $file = $file_manager->load($media->get('field_media_file')->target_id);
-        if ($file) {
-          $citing_title = $media->get('field_media_text')->value;
-          if (is_null($citing_title)) {
-            $citing_title = $media->get('name')->value;
-          }
-          $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
-          $citings[] = [
-            'text' => ['#markup' => '<a href="' . $file_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
-          ];
-        }
-      }
+      $citing_url = $citing_node->toUrl()->toString();
+      $citings = '<a href="' . $citing_url . '">View citings archive for ' . $case_number . '</a>';
     }
 
     $opinion = [
@@ -1052,7 +1038,15 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_views_view() for unpublished opinions listing block.
+ * Implements hook_preprocess_views_view() for published opinions review granted listing block.
+ */
+function jcc_elevated_preprocess_views_view__opinions__published_review_granted(&$variables) {
+  // Reuse current published opinions search block as common preprocess.
+  jcc_elevated_preprocess_views_view__opinions__published($variables);
+}
+
+/**
+ * Implements hook_preprocess_views_view() for extended published opinions listing block.
  */
 function jcc_elevated_preprocess_views_view__opinions__published_extended(&$variables) {
   // Reuse current published opinions search block as common preprocess.
@@ -1063,6 +1057,14 @@ function jcc_elevated_preprocess_views_view__opinions__published_extended(&$vari
  * Implements hook_preprocess_views_view() for unpublished opinions listing block.
  */
 function jcc_elevated_preprocess_views_view__opinions__unpublished(&$variables) {
+  // Reuse current published opinions search block as common preprocess.
+  jcc_elevated_preprocess_views_view__opinions__published($variables);
+}
+
+/**
+ * Implements hook_preprocess_views_view() for unpublished opinions listing review granted block.
+ */
+function jcc_elevated_preprocess_views_view__opinions__unpublished_review_granted(&$variables) {
   // Reuse current published opinions search block as common preprocess.
   jcc_elevated_preprocess_views_view__opinions__published($variables);
 }
