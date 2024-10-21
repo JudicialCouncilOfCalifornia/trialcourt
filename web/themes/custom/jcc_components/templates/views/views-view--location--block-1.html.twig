@@ -1,0 +1,97 @@
+{{ attach_library('jcc_components/location-listing-page') }}
+
+{% set cards = [] %}
+{% set row_count = rows.0['#rows']|length %}
+{% for k, row in rows.0['#rows'] if k|first != "#" %}
+  {% set fields = row['#view'].field %}
+  {% set has_self_help = self_help_flags[k] %}
+  {% set entity = row['#row']._entity %}
+  {% set image = null %}
+
+  {% if entity %}
+    {% set media_src = file_url(entity.field_image_of_the_courthouse[0].entity.uri.value) %}
+    {% set card_style = 'media-top' %}
+
+    {% if media_src %}
+      {% set image_src = media_src %}
+      {% set image_alt = entity.title[0].value %}
+    {% else %}
+      {% set image_src = '/sites/default/files/default_image.png' %}
+      {% set image_alt = 'Default Courthouse Image' %}
+    {% endif %}
+
+    {% set image %}
+      <img src="{{ image_src }}" alt="{{ image_alt }}" />
+    {% endset %}
+  {% endif %}
+
+  {% set court_name %}
+    <h3 class="usa-card__heading">
+      <a href="{{ path('entity.node.canonical', {'node': entity.nid.value}) }}">
+        {{ entity.title.value }}
+      </a>
+    </h3>
+  {% endset %}
+
+  {% set phone %}
+    <div class="jcc-location-hero-link location-listing-page">
+      <a href="tel:{{ entity.field_phone[0].value }}">
+        {{ entity.field_phone[0].value }}
+      </a>
+    </div>
+  {% endset %}
+
+  {% set address %}
+    {{ my_address }}
+    {{ phone }}
+    {% if has_self_help %}
+      <span class="jcc-listing-tag">{{ 'Self-Help Location' }}</span>
+    {% endif %}
+  {% endset %}
+
+  {% set cards = cards|merge([{
+    style: card_style,
+    brow: entity.field_brow[0].value|raw,
+    title: court_name,
+    body: address,
+    media: image,
+  }]) %}
+{% endfor %}
+
+{% set classes = [
+  'jcc-news-listing',
+  dom_id ? 'js-view-dom-id-' ~ dom_id
+]|merge(news_listing.classes|default([])) %}
+
+{% set content %}
+  <article class="jcc-section jcc-section--container jcc-section--spacing-default">
+    <div class="{{ classes|join(' ')|trim }}">
+      <div class="jcc-news-listing__form">
+        <label id="listing_filter_label">Filter</label>
+        {% if exposed %}
+          {{ exposed }}
+        {% endif %}
+      </div>
+
+      <div class="jcc-news-listing__content">
+        <div class="jcc-listing_result">{{ row_count }} locations</div>
+        {% include '@organisms/cards/cards.twig' with {
+          cards: {
+            num_cols: '2-50-50',
+            items: cards,
+          }
+        } %}
+      </div>
+    </div>
+  </article>
+{% endset %}
+
+{% set listing_page_new = drupal_config('jcc_custom.settings', 'enable_new_listing_page') %}
+{% if listing_page_new  %} 
+  {% include '@molecules/section/section.twig' with {
+    section: {
+      content: content,
+    }
+  } %}
+{% endif %}
+
