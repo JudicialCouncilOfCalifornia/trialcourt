@@ -1,0 +1,23 @@
+{{ attach_library("jcc_storybook/DataVisualizationEmbed") }}
+{{ attach_library("jcc_custom/iframeresizer") }}
+
+<div class="container">
+  {% include "@molecules/DataVisualizationEmbed/DataVisualizationEmbed.twig" with {
+    width: paragraph.field_width.value,
+    height: paragraph.field_height.value,
+    mobile_width: paragraph.field_width_mobile.value,
+    mobile_height: paragraph.field_height_mobile.value,
+    url: paragraph.field_link.uri,
+    mobile_url: paragraph.field_mobile_link.uri
+  } %}
+</div>
+
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function() {
+    let iframe = document.getElementsByTagName("iframe")[0];
+    if (iframe) {
+      let iframeID = '#' + document.getElementsByTagName("iframe")[0].id;
+      iFrameResize({lowestElement: true}, iframeID);
+    }
+  });
+</script>
