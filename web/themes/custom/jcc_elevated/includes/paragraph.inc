@@ -196,10 +196,6 @@ function jcc_elevated_paragraph_accordion(array &$variables) {
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $variables['accordion_items'] = [];
 
-  if (\Drupal::request()->query->get('acc')) {
-    $variables['open_on_load'] = \Drupal::request()->query->get('acc');
-  }
-
   // Build the array of accordion items.
   if ($variables['paragraph']->hasField('field_components')) {
     $items = $variables['paragraph']->get('field_components')->referencedEntities();
@@ -477,6 +473,10 @@ function jcc_elevated_paragraph_tabs(array &$variables) {
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $variant = json_decode($variables['paragraph']->get('field_variant')->value, TRUE);
   $variables['variant'] = $variant['tabs'] ?: 'dafault';
+
+  if (\Drupal::request()->query->get('tab')) {
+    $variables['open_on_load'] = \Drupal::request()->query->get('tab');
+  }
 
   // Build the array of tabs.
   $variables['tabs'] = [];
