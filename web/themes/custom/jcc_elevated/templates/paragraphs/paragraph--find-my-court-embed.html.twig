@@ -2,30 +2,37 @@
 {{ attach_library("jcc_storybook/Card") }}
 {{ attach_library("jcc_storybook/Icon") }}
 
+{% set inline_form %}
+  <form class="views-exposed-form bef-exposed-form" onsubmit="this.action = '/find-my-court/' + this.urlarg.value;">
+    <div class="form-item">
+      <input
+        class="form-text"
+        placeholder="Enter a city or a zip code"
+        type="text"
+        value=""
+        name="urlarg"
+        id="urlarg"
+      />
+    </div>
+    <div class="form-actions form-wrapper" id="edit-actions">
+      <button class='button form-submit' type='submit'>
+        <span class='inline-form__submit-line'></span>
+        <span class='inline-form__submit-circle'></span>
+        <span class='sr-only'>Search</span>
+      </button>
+    </div>
+  </form>
+{% endset %}
+
 {% set find_my_court_content %}
   <div class="stack">
     {{ content.field_content.0|render }}
-    <div class="inline-form inline-form--default">
-      <form class="views-exposed-form bef-exposed-form" onsubmit="this.action = '/find-my-court/' + this.urlarg.value;">
-        <div class="form-item">
-          <input
-            class="form-text"
-            placeholder="Enter a city or a zip code"
-            type="text"
-            value=""
-            name="urlarg"
-            id="urlarg"
-          />
-        </div>
-        <div class="form-actions form-wrapper" id="edit-actions">
-          <button class='button form-submit' type='submit'>
-            <span class='inline-form__submit-line'></span>
-            <span class='inline-form__submit-circle'></span>
-            <span class='sr-only'>Search</span>
-          </button>
-        </div>
-      </form>
-    </div>
+    <p></p>
+    {% include "@molecules/InlineForm/InlineForm.twig" with {
+      variant: 'default',
+      submit_color: 'solid-primary-dark-x',
+      form: inline_form
+    } %}
   </div>
 {% endset %}
 

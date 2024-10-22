@@ -46,7 +46,7 @@ class FindMyCourt extends ControllerBase {
           <div class="container stack">
             <div class="inline-form inline-form--default">
               <form class="views-exposed-form bef-exposed-form" onsubmit="this.action = \'/find-my-court/\' + this.urlarg.value;">
-                <div class="form-item">
+                <div class="form-item" style="max-width:400px;">
                   <input
                     class="form-text"
                     placeholder="Enter a city or a zip code"
