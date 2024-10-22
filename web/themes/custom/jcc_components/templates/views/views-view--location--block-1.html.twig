@@ -7,7 +7,6 @@
   {% set has_self_help = self_help_flags[k] %}
   {% set entity = row['#row']._entity %}
   {% set image = null %}
-
   {% if entity %}
     {% set media_src = file_url(entity.field_image_of_the_courthouse[0].entity.uri.value) %}
     {% set card_style = 'media-top' %}
@@ -16,7 +15,7 @@
       {% set image_src = media_src %}
       {% set image_alt = entity.title[0].value %}
     {% else %}
-      {% set image_src = '/sites/default/files/default_image.png' %}
+      {% set image_src = directory ~ "/src/img/default_image.png" %}
       {% set image_alt = 'Default Courthouse Image' %}
     {% endif %}
 
