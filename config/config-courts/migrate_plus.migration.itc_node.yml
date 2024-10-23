@@ -1,0 +1,113 @@
+uuid: 4bf67e1c-bd54-4fa0-9ad4-f89fb123096b
+langcode: en
+status: true
+dependencies: {  }
+id: itc_node
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - courts
+  - node
+  - itc
+migration_group: courts
+label: 'ITC: Import nodes'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  ids:
+    id_href:
+      type: string
+    field_category:
+      type: string
+  fields:
+    -
+      name: id_href
+      selector: id_href
+      label: Id
+    -
+      name: title
+      selector: title
+      label: Title
+    -
+      name: field_category
+      selector: field_category
+      label: Category
+    -
+      name: field_itc_number
+      selector: field_itc_number
+      label: 'ITC Number'
+    -
+      name: body
+      selector: body
+      label: Body
+    -
+      name: field_file
+      selector: field_file
+      label: File
+    -
+      name: deadline
+      selector: deadline
+      label: 'Deadline'  
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  title:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: TITLE
+  field_itc_number: field_itc_number
+  field_category:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_category
+    -
+      plugin: entity_generate
+      source: field_category
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: category
+      value_key: name
+      ignore_case: true
+  body/value:
+    plugin: get
+    source: body
+  body/format:
+    plugin: default_value
+    default_value: body
+  field_file:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: id_href
+    -
+      plugin: migration_lookup
+      migration: itc_media
+      source: id_href
+  field_deadline:
+    #-
+    #  plugin: skip_on_empty
+    #  method: row
+    #  source: deadline
+    -
+      plugin: default_value
+      default_value: ''
+    -    
+      plugin: format_date
+      source: deadline
+      from_format: 'F j, Y H:i:s'
+      to_format: 'Y-m-d\TH:i:s'
+      from_timezone: America/Los_Angeles
+      to_timezone: UTC  
+destination:
+  plugin: 'entity:node'
+  default_bundle: invitations_to_comment
+migration_dependencies: null

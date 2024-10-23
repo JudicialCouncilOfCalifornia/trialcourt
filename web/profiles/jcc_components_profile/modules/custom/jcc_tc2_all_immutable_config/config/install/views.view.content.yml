@@ -9,6 +9,7 @@ dependencies:
     - node.type.document
     - node.type.event
     - node.type.facilities
+    - node.type.invitations_to_comment
     - node.type.job
     - node.type.judge
     - node.type.landing_page
@@ -365,6 +366,60 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+        node_bulk_form:
+          id: node_bulk_form
+          table: node
+          field: node_bulk_form
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: node_bulk_form
+          label: 'Node operations bulk form'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          action_title: Action
+          include_exclude: include
+          selected_actions:
+            - node_delete_action
       pager:
         type: full
         options:
@@ -462,6 +517,7 @@ display:
             document: document
             event: event
             facilities: facilities
+            invitations_to_comment: invitations_to_comment
             job: job
             judge: judge
             landing_page: landing_page
@@ -496,8 +552,10 @@ display:
               anonymous: '0'
               tentative_rulings_editor: '0'
               messaging_manager: '0'
+              facilities: '0'
               opinions_editor: '0'
               request_manager: '0'
+              advisory_body_manager: '0'
             reduce: true
           is_grouped: false
           group_info:
@@ -681,6 +739,7 @@ display:
             document: document
             event: event
             facilities: facilities
+            invitations_to_comment: invitations_to_comment
             job: job
             judge: judge
             landing_page: landing_page

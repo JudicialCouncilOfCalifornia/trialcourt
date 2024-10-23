@@ -564,9 +564,19 @@ role_alias:
     name: Facilities
     allow: 0
   opinions_editor:
-    alias: 'Opinions Editor'
+    alias: 'Opinions editor'
     weight: '0'
-    name: 'Opinions Editor'
+    name: 'Opinions editor'
+    allow: 0
+  itc_manager:
+    alias: 'ITC Manager'
+    name: 'ITC Manager'
+    weight: 0
+    allow: 0
+  advisory_body_manager:
+    alias: 'Advisory body manager'
+    name: 'Advisory body manager'
+    weight: 0
     allow: 0
 role_map:
   author: 1
@@ -581,9 +591,9 @@ role_map:
   tentative_rulings_editor: 10
   messaging_manager: 11
   request_manager: 12
-  rules_manager: 13
   facilities: 13
   opinions_editor: 14
+  itc_manager: 15
 allowed_types:
   alert: 0
   arbitrator: 0
@@ -606,6 +616,7 @@ allowed_types:
   tentative_ruling: 0
   advisory_body: 0
   event: 0
+  invitations_to_comment: 0
 judge:
   anonymous:
     grant_view: '1'
@@ -1000,11 +1011,11 @@ event:
     grant_delete: 0
 remote_hearings:
   anonymous:
-    grant_view: '1'
+    grant_view: 1
     grant_update: 0
     grant_delete: 0
   authenticated:
-    grant_view: '1'
+    grant_view: 1
     grant_update: 0
     grant_delete: 0
   author:
@@ -1065,7 +1076,7 @@ facilities:
     grant_update: 0
     grant_delete: 0
   authenticated:
-    grant_view: '1'
+    grant_view: 1
     grant_update: 0
     grant_delete: 0
   author:
@@ -1122,11 +1133,11 @@ facilities:
     grant_delete: 0
 opinion:
   anonymous:
-    grant_view: '1'
+    grant_view: 1
     grant_update: 0
     grant_delete: 0
   authenticated:
-    grant_view: '1'
+    grant_view: 1
     grant_update: 0
     grant_delete: 0
   author:
@@ -1300,6 +1311,19 @@ roc_rule_index:
     grant_update: 0
     grant_delete: 0
   opinions_editor:
+    grant_view: 0
+    grant_update: 0
+    grant_delete: 0
+invitations_to_comment:
+  anonymous:
+    grant_view: 1
+    grant_update: 0
+    grant_delete: 0
+  authenticated:
+    grant_view: 1
+    grant_update: 0
+    grant_delete: 0
+  author:
     grant_view: 0
     grant_update: 0
     grant_delete: 0
