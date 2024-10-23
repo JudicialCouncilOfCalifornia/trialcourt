@@ -44,26 +44,33 @@ class FindMyCourt extends ControllerBase {
         </div>
         <div class="section box"></div>
           <div class="container stack">
-            <div class="inline-form inline-form--default">
-              <form class="views-exposed-form bef-exposed-form" onsubmit="this.action = \'/find-my-court/\' + this.urlarg.value;">
-                <div class="form-item" style="max-width:400px;">
-                  <input
-                    class="form-text"
-                    placeholder="Enter a city or a zip code"
-                    type="text"
-                    value="@zip"
-                    name="urlarg"
-                    id="urlarg"
-                  />
+            <div class="box">
+              <div class="inline-form inline-form--default" style="max-width:40rem;margin:auto;">
+                <form class="views-exposed-form bef-exposed-form" onsubmit="this.action = \'/find-my-court/\' + this.urlarg.value;">
+                  <div class="form-item">
+                    <input
+                      class="form-text"
+                      placeholder="Enter a city or a zip code"
+                      type="text"
+                      value="@zip"
+                      name="urlarg"
+                      id="urlarg"
+                    />
+                  </div>
+                  <div class="form-actions form-wrapper" id="edit-actions">
+                    <button class=\'button form-submit\' type=\'submit\'>
+                      <span class=\'inline-form__submit-line\'></span>
+                      <span class=\'inline-form__submit-circle\'></span>
+                      <span class=\'sr-only\'>Search</span>
+                    </button>
+                  </div>
+                </form>
+                <div class="description">
+                  <div id="edit-text-field-label--description" class="webform-element-description">
+                    Please enter a 5-digit California zip code (e.g. 92110) or a city name (e.g. Oakland)
+                  </div>
                 </div>
-                <div class="form-actions form-wrapper" id="edit-actions">
-                  <button class=\'button form-submit\' type=\'submit\'>
-                    <span class=\'inline-form__submit-line\'></span>
-                    <span class=\'inline-form__submit-circle\'></span>
-                    <span class=\'sr-only\'>Search</span>
-                  </button>
-                </div>
-              </form>
+              </div>
             </div>
           </div>
           <div class="container stack">
