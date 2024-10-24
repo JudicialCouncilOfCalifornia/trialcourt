@@ -1,16 +1,17 @@
-uuid: c853a597-a15c-4fcd-9765-192ac05f9667
+uuid: c524c9b1-da67-4746-9dc0-851ef11cb486
 langcode: en
 status: true
 dependencies: {  }
-id: policy_file
+id: policy_profile_file
 class: null
 field_plugin_method: null
 cck_plugin_method: null
 migration_tags:
   - policy
+  - profile
   - file
 migration_group: courts_policy
-label: 'Policy: Import Files'
+label: 'Profile: Import Files'
 source:
   plugin: url
   data_fetcher_plugin: http
@@ -18,24 +19,24 @@ source:
   urls: ''
   item_selector: entry
   ids:
-    url:
+    image:
       type: string
   fields:
     -
-      name: url
-      selector: url
+      name: image
+      selector: image
       label: 'Attachment file url'
   constants:
-    DRUPAL_FILE_DIRECTORY: 'public://policy/'
+    DRUPAL_FILE_DIRECTORY: 'public://profiles/'
 process:
   pseudo_decoded_url:
     plugin: callback
     callable: urldecode
-    source: url
+    source: image
   pseudo_destination_filename:
     -
       plugin: path_from_url
-      source: url
+      source: image
     -
       plugin: callback
       callable: basename
@@ -63,7 +64,7 @@ process:
     -
       plugin: skip_on_empty
       method: process
-      source: url
+      source: image
     -
       plugin: file_copy
       source:

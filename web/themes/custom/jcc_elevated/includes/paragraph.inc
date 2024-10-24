@@ -478,6 +478,10 @@ function jcc_elevated_paragraph_tabs(array &$variables) {
   $variant = json_decode($variables['paragraph']->get('field_variant')->value, TRUE);
   $variables['variant'] = $variant['tabs'] ?: 'dafault';
 
+  if (\Drupal::request()->query->get('tab')) {
+    $variables['open_on_load'] = \Drupal::request()->query->get('tab');
+  }
+
   // Build the array of tabs.
   $variables['tabs'] = [];
   if ($variables['paragraph']->hasField('field_components')) {
