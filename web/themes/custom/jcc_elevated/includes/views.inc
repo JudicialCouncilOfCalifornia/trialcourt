@@ -1168,6 +1168,20 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
+  // Items per page filter.
+  if ($variables['exposed']['items_per_page']) {
+    $variables['items_per_page'] = $variables['exposed']['items_per_page'];
+    $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+    // Reset the #action var - it is actually set to another display.
+    $current_path = \Drupal::service('path.current')->getPath();
+    $variables['exposed']['#action'] = $current_path;
+    foreach ($variables['items_per_page']['#options'] as $key => $value) {
+      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
+    }
+    unset($variables['items_per_page']['#title']);
+    unset($variables['exposed']['items_per_page']);
+  }
+
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   if (isset($variables['rows'][0]['#rows'])) {
@@ -1254,6 +1268,20 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
+  // Items per page filter.
+  if ($variables['exposed']['items_per_page']) {
+    $variables['items_per_page'] = $variables['exposed']['items_per_page'];
+    $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+    // Reset the #action var - it is actually set to another display.
+    $current_path = \Drupal::service('path.current')->getPath();
+    $variables['exposed']['#action'] = $current_path;
+    foreach ($variables['items_per_page']['#options'] as $key => $value) {
+      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
+    }
+    unset($variables['items_per_page']['#title']);
+    unset($variables['exposed']['items_per_page']);
+  }
+
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   if (isset($variables['rows'][0]['#rows'])) {
@@ -1296,6 +1324,17 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
  */
 function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived(&$variables): void {
   __jcc_view_results_exposed_filter_init($variables);
+
+  // Items per page filter.
+  if ($variables['exposed']['items_per_page']) {
+    $variables['items_per_page'] = $variables['exposed']['items_per_page'];
+    $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+    foreach ($variables['items_per_page']['#options'] as $key => $value) {
+      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' / page';
+    }
+    unset($variables['items_per_page']['#title']);
+    unset($variables['exposed']['items_per_page']);
+  }
 
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
