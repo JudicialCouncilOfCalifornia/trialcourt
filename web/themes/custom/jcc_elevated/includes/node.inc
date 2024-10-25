@@ -110,7 +110,6 @@ function jcc_elevated_preprocess_node(&$variables) {
       }
     }
   }
-
 }
 
 /**
