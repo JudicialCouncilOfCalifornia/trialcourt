@@ -255,7 +255,7 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
       }
     }
 
-    $text = ['#markup' => Html::decodeEntities($description)];    
+    $text = ['#markup' => Html::decodeEntities($description)];
     $url = $media->toUrl();
     if ($media_files['media_file_multiple']['file']) {
       $url = Url::fromUri($media_files['media_file_multiple']['file']->createFileUrl(FALSE));
@@ -769,17 +769,17 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
           if ($media_entity) {
             $file_ids = $media_entity->get('field_media_file')->getValue();
             if (!empty($file_ids)) {
-                $file_id = $file_ids[0]['target_id']; 
-                $file = File::load($file_id);
-                if ($file) {
-                    $file_uri = $file->getFileUri();
-                }
+              $file_id = $file_ids[0]['target_id'];
+              $file = File::load($file_id);
+              if ($file) {
+                $file_uri = $file->getFileUri();
+              }
               if (!empty($file_uri)) {
                 $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_uri);
               }
-            } 
+            }
           }
-        }                       
+        }
         $brow = [];
         if ($node->hasField('field_deadline') && !$node->field_deadline->isEmpty()) {
           $deadline = strtotime($node->field_deadline->value);
@@ -802,6 +802,8 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         else {
           $body = $node->get('body')->value;
         }
+        $item_number = $node->get('field_itc_number')->value;
+        $brow['secondary'] = $item_number;
         $category = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
         $category_value = $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '';
         $brow['primary'] = $category_value;
@@ -814,9 +816,12 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
           );
           $formatted_value = t('Deadline:') . ' ' . $formatted_deadline;
           $brow['notation'] = $formatted_value;
-        } else {
+          $raw_deadline = strtotime($deadline_value);
+        }
+        else {
           $deadline = '';
           $brow['notation'] = '';
+          $raw_deadline = 0;
         }
 
         $itc_past_proposal = [
@@ -825,30 +830,36 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
             'secondary' => $brow['secondary'] ?? '',
             'notation' => $brow['notation'] ?? '',
           ],
-        'title' => $node->get('title')->value ? $node->get('title')->value : '',
-        'category' => $category_value ? $category_value : '',
-        'content' => [
-          '#markup' => $body,
-        ],
-        'item_number' => $node->get('field_itc_number')->value,
-        'file_url' => $file_url ? $file_url : '',
-      ];
-      if (!empty($file_url)) {
-        $itc_past_proposal['button_data'] = [
-          'label' => t('Download PDF'),
-          'href' => $file_url,
+          'title' => $node->get('title')->value ? $node->get('title')->value : '',
+          'category' => $category_value ? $category_value : '',
+          'content' => [
+            '#markup' => $body,
+          ],
+          'item_number' => $node->get('field_itc_number')->value,
+          'file_url' => $file_url ? $file_url : '',
+          'raw_deadline' => $raw_deadline,
         ];
-      }
+        if (!empty($file_url)) {
+          $itc_past_proposal['button_data'] = [
+            'label' => t('Download PDF'),
+            'href' => $file_url,
+          ];
+        }
       }
       $grouped_proposals[$safe_list_label]['items'][] = $itc_past_proposal;
       if (count($grouped_proposals[$safe_list_label]['items']) >= 1) {
         $grouped_proposals[$safe_list_label]['list_label'] = $list_label;
       }
     }
-    usort($grouped_proposals, function($a, $b) {
+    usort($grouped_proposals, function ($a, $b) {
       return $a['items'][0]['category'] <=> $b['items'][0]['category'];
-  });
-  $variables['grouped_proposals'] = $grouped_proposals;
+    });
+    foreach ($grouped_proposals as &$proposal_group) {
+      usort($proposal_group['items'], function ($a, $b) {
+        return $b['raw_deadline'] <=> $a['raw_deadline'];
+      });
+    }
+    $variables['grouped_proposals'] = $grouped_proposals;
   }
 }
 
@@ -1199,7 +1210,7 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&
         $variables['processed_rows'][] = [
           'brow' => $brow,
           'title' => $request->label(),
-          'url' => $request->toUrl(),    
+          'url' => $request->toUrl(),
           'content' => $request->get('body')->first() ? $request->get('body')
             ->first()
             ->view('teaser') : '',

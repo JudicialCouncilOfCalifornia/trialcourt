@@ -1,17 +1,18 @@
-uuid: 19fff26a-ef41-49a8-889d-b87152160cc2
+uuid: 2fb6d27d-4bda-415a-a5e8-ae5940c213ee
 langcode: en
 status: true
 dependencies: {  }
-id: policy_file_path_redirect
+id: policy_profile_node_redirect
 class: null
 field_plugin_method: null
 cck_plugin_method: null
 migration_tags:
   - policy
-  - file
+  - profile
+  - node
   - redirect
 migration_group: courts_policy
-label: 'Policy: Import Files Redirects'
+label: 'Profile: Import Node Redirects'
 source:
   plugin: url
   data_fetcher_plugin: http
@@ -27,18 +28,14 @@ source:
     url:
       type: string
   constants:
-    uri_prefix: 'internal:'
-    document_path: /media/
+    redirect_prefix: 'internal:/node/'
+    uid_admin: 1
     status_code: 301
 process:
-  pseudo_media_id:
-    -
-      plugin: migration_lookup
-      migration: policy_media_publication
-      source: url
-  uid:
-    plugin: default_value
-    default_value: 1
+  temp_nid:
+    plugin: migration_lookup
+    source: url
+    migration: policy_profile_node
   redirect_source/path:
     -
       plugin: callback
@@ -50,20 +47,15 @@ process:
       plugin: substr
       start: 1
   redirect_source/query: {  }
-  redirect_redirect/uri:
+  redirect_redirect:
     plugin: concat
     source:
-      - constants/uri_prefix
-      - constants/document_path
-      - '@pseudo_media_id'
+      - constants/redirect_prefix
+      - '@temp_nid'
+  uid: constants/uid_admin
   status_code: constants/status_code
-  language:
-    plugin: default_value
-    source: language
-    default_value: en
 destination:
   plugin: 'entity:redirect'
 migration_dependencies:
-  required: {  }
-  optional:
-    - policy_file
+  required:
+    - policy_profile_node

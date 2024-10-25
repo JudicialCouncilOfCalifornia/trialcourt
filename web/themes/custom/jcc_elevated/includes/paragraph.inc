@@ -13,7 +13,6 @@ use Drupal\media\Entity\Media;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewEntityInterface;
-use Drupal\Component\Utility\UrlHelper;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -503,6 +502,10 @@ function jcc_elevated_paragraph_tabs(array &$variables) {
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $variant = json_decode($variables['paragraph']->get('field_variant')->value, TRUE);
   $variables['variant'] = $variant['tabs'] ?: 'dafault';
+
+  if (\Drupal::request()->query->get('tab')) {
+    $variables['open_on_load'] = \Drupal::request()->query->get('tab');
+  }
 
   // Build the array of tabs.
   $variables['tabs'] = [];
