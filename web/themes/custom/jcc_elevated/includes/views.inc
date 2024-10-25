@@ -965,11 +965,13 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
   $opinions = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
+    $post_date = $node->get('field_date_time')->value ? $node->get('field_date_time')->value : '';
     $type = $node->get('field_opinion_type')->target_id ? $taxonomy_manager->load($node->get('field_opinion_type')->target_id)->get('name')->value : '';
     $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
     $opinion_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
     $review_granted = $node->get('field_review_granted')->value;
-    $title = $node->get('title')->value;
+    $title = $node->get('title')->value ? $node->get('title')->value : '';
+    $weight = $node->get('field_weight')->value;
 
     // Remote file links.
     $remote_files = [
@@ -1014,13 +1016,15 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
       $citing_node_id = reset($citing_archive);
       $citing_node = $node_manager->load($citing_node_id);
       $citing_url = $citing_node->toUrl()->toString();
-      $citings = '<a href="' . $citing_url . '">View citings archive for ' . $case_number . '</a>';
+      $citings = '<a href="' . $citing_url . '" aria_label="View citings archive for ' . $case_number . '">View citings archive</a>';
     }
 
     $opinion = [
       'type' => $type,
       'case_number' => t('Case:') . ' ' . $case_number ? $case_number : t('Unspecified'),
-      'posted' => $node->get('field_date')->value ? $node->get('field_date')->date->format('F j, Y') : '',
+      'timestamp' => $post_date ? strtotime($post_date) : '',
+      'grouping' => $post_date ? \Drupal::service('date.formatter')->format(strtotime($post_date), 'custom', 'Ymd') : '',
+      'posted' => $post_date ? \Drupal::service('date.formatter')->format(strtotime($post_date), 'custom', 'F j, Y') : '',
       'source' => $opinion_source,
       'review_granted' => $review_granted,
       'title' => [
@@ -1030,9 +1034,19 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
       'remote_files' => $remote_files,
       'related_cases' => $related_cases_urls ? implode(' ', $related_cases_urls) : '',
       'citings' => $citings,
+      'weight' => $weight,
     ];
     $opinions[] = $opinion;
   }
+
+  // Prioritize Supreme Court opinions (weight) per day.
+  $sort = [];
+  foreach ($opinions as $k => $v) {
+    $sort['grouping'][$k] = $v['grouping'];
+    $sort['weight'][$k] = $v['weight'];
+    $sort['timestamp'][$k] = $v['timestamp'];
+  }
+  array_multisort($sort['grouping'], SORT_DESC, $sort['weight'], SORT_ASC, $sort['timestamp'], SORT_DESC, $opinions);
 
   $variables['opinions'] = $opinions;
 }
@@ -1086,6 +1100,7 @@ function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variabl
   $opinions = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
+    $post_date = $node->get('field_date_time')->value ? $node->get('field_date_time')->value : '';
     $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
     $case_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
 
@@ -1110,8 +1125,8 @@ function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variabl
 
     $opinion = [
       'case_number' => t('Case:') . ' ' . $case_number ? $case_number : t('Unspecified'),
-      'posted' => $node->get('field_date')->value ? $node->get('field_date')->date->format('F j, Y') : '',
-      'year' => $node->get('field_date')->value ? $node->get('field_date')->date->format('Y') : '',
+      'posted' => $post_date ? \Drupal::service('date.formatter')->format(strtotime($post_date), 'custom', 'F j, Y') : '',
+      'year' => $post_date ? \Drupal::service('date.formatter')->format(strtotime($post_date), 'custom', 'Y') : '',
       'source' => $case_source,
       'title' => [
         'text' => $node->get('title')->value ?? '',
@@ -1466,6 +1481,9 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
       unset($variables['items_per_page']['#title']);
       unset($variables['exposed']['items_per_page']);
     }
+  }
+  else {
+    unset($variables['exposed']['items_per_page']);
   }
 
   // Count summary for the current page of results.

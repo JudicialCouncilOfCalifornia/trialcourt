@@ -135,6 +135,47 @@ display:
               secondary_label: 'Advanced options'
               secondary_open: false
               reset_button_always_show: false
+            pager:
+              plugin_id: default
+              advanced:
+                is_secondary: false
+            filter:
+              field_opinion_source_target_id:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: true
+                options_show_only_used_filtered: true
+                options_hide_when_empty: false
+                options_show_items_count: 0
+              field_case_number_plain_value:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
+              title:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
       access:
         type: perm
         options:
@@ -144,10 +185,10 @@ display:
         options: {  }
       empty: {  }
       sorts:
-        field_date_value:
-          id: field_date_value
-          table: node__field_date
-          field: field_date_value
+        field_date_time_value:
+          id: field_date_time_value
+          table: node__field_date_time
+          field: field_date_time_value
           relationship: none
           group_type: group
           admin_label: ''
@@ -158,19 +199,6 @@ display:
             field_identifier: ''
           exposed: false
           granularity: second
-        field_weight_value:
-          id: field_weight_value
-          table: node__field_weight
-          field: field_weight_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: standard
-          order: ASC
-          expose:
-            label: ''
-            field_identifier: ''
-          exposed: false
       arguments: {  }
       filters:
         status:
@@ -581,10 +609,10 @@ display:
     display_options:
       title: 'All Opinions'
       sorts:
-        field_date_value:
-          id: field_date_value
-          table: node__field_date
-          field: field_date_value
+        field_date_time_value:
+          id: field_date_time_value
+          table: node__field_date_time
+          field: field_date_time_value
           relationship: none
           group_type: group
           admin_label: ''
@@ -988,10 +1016,10 @@ display:
         options:
           offset: 0
       sorts:
-        field_date_value:
-          id: field_date_value
-          table: node__field_date
-          field: field_date_value
+        field_date_time_value:
+          id: field_date_time_value
+          table: node__field_date_time
+          field: field_date_time_value
           relationship: none
           group_type: group
           admin_label: ''
@@ -1653,10 +1681,10 @@ display:
           plugin_id: messages
           empty: true
       sorts:
-        field_date_value:
-          id: field_date_value
-          table: node__field_date
-          field: field_date_value
+        field_date_time_value:
+          id: field_date_time_value
+          table: node__field_date_time
+          field: field_date_time_value
           relationship: none
           group_type: group
           admin_label: ''
