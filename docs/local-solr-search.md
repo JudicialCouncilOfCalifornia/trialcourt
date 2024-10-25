@@ -28,9 +28,15 @@ $config['search_api.server.pantheon_solr8']['status'] = true;
 $config['search_api.index.index']['status'] = true;
 ```
 
+3. Run these commands:
+```
+% lando destroy -y
+% lando rebuild -y
+```
+
 ## Disabling Solr Search in your local environment.
 
-Add these lines to web/sites/<SITE>/settings.local.php:
+1. Add these lines to web/sites/<SITE>/settings.local.php:
 ```
 $config['search_api.server.pantheon_solr8']['status'] = FALSE;
 $config['search_api.index.index']['status'] = FALSE;
