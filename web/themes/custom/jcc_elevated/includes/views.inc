@@ -1475,6 +1475,15 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
     $variables['items_per_page'] = $variables['exposed']['items_per_page'];
     if ($variables['exposed']['#id']) {
       $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+
+      // Storybook form submit trigger type.
+      if ($variables['view']->ajaxEnabled()) {
+        $variables['items_per_page']['#attributes']['class'][] = 'storybook-ajax-trigger';
+      }
+      else {
+        $variables['items_per_page']['#attributes']['class'][] = 'storybook-trigger';
+      }
+
       foreach ($variables['items_per_page']['#options'] as $key => $value) {
         $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' per page';
       }
