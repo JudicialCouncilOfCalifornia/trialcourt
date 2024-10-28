@@ -17,6 +17,7 @@ use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\user\Entity\User;
 use Drupal\views\ViewExecutable;
 
 /**
@@ -439,6 +440,14 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
+  // Check if user can add events.
+  $_url = Url::fromRoute('node.add', ['node_type' => 'event']);
+  $userCurrent = \Drupal::currentUser();
+
+  if ($_url->access($userCurrent)) {
+    $variables['header']['#markup'] = '<div><a class="button button--secondary button--normal icon--arrow  " href="/node/add/event">Add event</a></div><div></div>';
+  }
+
   if (count($variables['rows']) == 0) {
     $variables['no_results_msg']['#markup'] = $variables['empty']['area']['#text'];
   }
@@ -489,12 +498,14 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
 
       $event_date_time = '<strong>Time: </strong> ' . $start_date . ' to ' . $end_date;
 
-      if (!isset($event['content'])) {
-        $event['content'] = [
-          '#markup' => '',
-        ];
+      // Check if user has edit permissions for events.
+      $node = Node::load($node->id());
+      $check_edit_access = $node->access('update', $userCurrent);
+      $event['content']['#markup'] = '';
+
+      if ($check_edit_access) {
+        $event['content']['#markup'] .= '<a href="/node/' . $node->id() . '/edit">(edit this event)<br/></a>';
       }
-      $event['content']['#markup'] = $event['content']['#markup'] ?? '';
 
       // Populating the event object.
       $event['title'] = $node->field_event_date->start_date->format('F j, Y');
@@ -581,8 +592,17 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       // Get Event state.
       $event_state_id = $node->hasField('field_event_state') ? $node->get('field_event_state')->target_id : FALSE;
 
+      // Check if user has edit permissions for events.
+      $node = Node::load($node->id());
+      $user = User::load(\Drupal::currentUser()->id());
+      $check_edit_access = $node->access('update', $user);
+
+      if ($check_edit_access) {
+        $event['content']['#markup'] = '<a href="/node/' . $node->id() . '/edit">(edit this event)<br/></a>';
+      }
+
       $event['title'] = $node->get('title')->value;
-      $event['content']['#markup'] = is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Event Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
+      $event['content']['#markup'] .= is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Event Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
       if ($teaser != '') {
         $event['content']['#markup'] .= '<div>' . $teaser . '</div>';
       }
