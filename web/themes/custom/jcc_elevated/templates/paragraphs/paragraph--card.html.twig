@@ -4,9 +4,9 @@
 
 {# Card variant selection set by parent #}
 {% set paragraph_parent = paragraph.getParentEntity() %}
-{% set cards_sub_variant = paragraph_parent.field_sub_variant.value|json_decode|default([]).card %}
-{% if cards_sub_variant == 'cta' %}
-  {% set cards_sub_variant = 'default' %}
+{% set variant = paragraph_parent.field_sub_variant.value|json_decode|default([]).card %}
+{% if variant == 'cta' %}
+  {% set variant = 'default' %}
 {% endif %}
 
 {# Adjust heading hierarchy #}
@@ -15,7 +15,7 @@
 {% endif %}
 
 {# Icon if in use for striped card #}
-{% if (cards_sub_variant == 'striped' or cards_sub_variant == 'striped-aligned') and paragraph.field_icon.value %}
+{% if (variant == 'striped' or variant == 'striped-aligned') and paragraph.field_icon.value %}
   {% set icon_data = {
     icon: card_icon,
     color: false,
@@ -23,16 +23,23 @@
   } %}
 {% endif %}
 
+{# Media #}
+{% if image %}
+  {% set media %}
+    <img src="{{ image.url }}" alt="image.alt">
+  {% endset %}
+{% endif %}
+
 {# Media alignment if in use #}
-{% if cards_sub_variant == 'default' and paragraph.field_media_alignment.value != 'top' %}
-  {% set cards_sub_variant = 'media-' ~ paragraph.field_media_alignment.value %}
+{% if media_alignment %}
+  {% set media_variant = 'media-' ~ media_alignment %}
 {% endif %}
 
 {# Button link if in use #}
 {% set button_data = [] %}
 {% if paragraph.field_link.get(0).getUrl() is not empty %}
   {% set href = paragraph.field_link.get(0).getUrl() %}
-  {% if cards_sub_variant == 'striped' and paragraph.field_entire_card_clickable.value %}
+  {% if paragraph.field_entire_card_clickable.value %}
     {% set href = paragraph.field_link.get(0).getUrl().toString() %}
   {% endif %}
   {% set primary_button = {
@@ -54,11 +61,16 @@
   {% endfor %}
 {% endif %}
 
+{% set card_variants = [
+  variant,
+  media_variant ? 'card--' ~ media_variant : '',
+] %}
+
 {% include "@molecules/Card/Card.twig" with {
-  variant: cards_sub_variant,
-  clickable_card: cards_sub_variant == 'striped' ? paragraph.field_entire_card_clickable.value : null,
-  background: cards_sub_variant == 'striped' or cards_sub_variant == 'striped-aligned' ? paragraph.field_background.value : null,
-  media: cards_sub_variant != 'striped' ? media : false,
+  variant: card_variants|join(' '),
+  clickable_card: paragraph.field_entire_card_clickable.value,
+  background: variant != 'bordered' or variant != 'bordered-center' ? paragraph.field_background.value : null,
+  media: variant != 'striped' ? media : false,
   media_caption: media_caption,
   has_section_heading: has_section_heading,
   heading: content.field_heading.0,

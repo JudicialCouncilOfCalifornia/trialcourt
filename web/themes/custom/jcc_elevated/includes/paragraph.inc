@@ -147,17 +147,35 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
   if ($paragraph->get('field_media')) {
     $card_media = $paragraph->get('field_media');
     $card_icon = $paragraph->get('field_icon');
+
+    // If Media.
     if ($card_media && $card_media->entity) {
       $build = \Drupal::entityTypeManager()->getViewBuilder('media')->view($card_media->entity);
-      $caption = $card_media->entity->field_media_caption && $card_media->entity->field_media_caption->value ? $card_media->entity->field_media_caption->value : NULL;
-      $variables['media'] = $build;
-      if ($paragraph->get('field_show_media_caption')->value) {
-        $variables['media_caption'] = [
-          'show' => $paragraph->get('field_show_media_caption')->value,
-          'text' => $caption ? Markup::create($caption) : NULL,
-        ];
+      if ($build) {
+        // Media render & entity.
+        $variables['media'] = $build;
+        $media = $card_media->entity;
+
+        // Media alignment.
+        if ($paragraph->get('field_media_alignment')->value) {
+          $variables['media_alignment'] = $paragraph->get('field_media_alignment')->value;
+        }
+
+        // If caption available and display opted.
+        $caption = $media->get('field_media_caption')->value ? $media->get('field_media_caption')->value : NULL;
+        if ($paragraph->get('field_show_media_caption')->value && $caption) {
+          $citation = $media->field_media_citation && $media->get('field_media_citation')->value ? $media->get('field_media_citation')->value : NULL;
+          $allowed_tags = ['<strong><em><a>'];
+          $variables['media_caption'] = [
+            'show' => $paragraph->get('field_show_media_caption')->value,
+            'text' => ['#markup' => strip_tags($caption, $allowed_tags)],
+            'citation' => $citation ? ['#markup' => strip_tags($citation, $allowed_tags)] : NULL,
+          ];
+        }
       }
     }
+
+    // If icon.
     if ($card_icon && $card_icon->value) {
       $variables['card_icon'] = str_replace(
         ['icon-', 'dark-', 'white-'],
@@ -180,7 +198,7 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
       if ($text !== NULL) {
         $text = strip_tags($text, $allowed_tags);
       }
-      $variables['filtered_text'] = Markup::create($text);
+      $variables['filtered_text'] = ['#markup' => $text];
     }
   }
 
@@ -291,10 +309,16 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
       ];
     }
   }
+
   if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
     $cover_image = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
     $image_url = ImageStyle::load('hero_banner')->buildUrl($cover_image);
     $variables['bckg_img_url'] = $image_url;
+  }
+
+  if (!empty($paragraph->get('field_background'))) {
+    $bg_tint = $paragraph->get('field_background')->value;
+    $variables['bg_tint'] = $bg_tint;
   }
 
   // Include view embed as lead content.
@@ -311,7 +335,26 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
 }
 
 /**
- * Helper function for hero paragraph.
+ * Helper function for mega hero paragraph.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_elevated_paragraph_hero_mega(array &$variables, ParagraphInterface $paragraph) {
+  if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
+    $image_uri = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
+    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_650x650')->buildUrl($image_uri);
+    $variables['bckg_img_url'] = $image_url;
+  }
+
+  $variables['bg_tint'] = $paragraph->get('field_background')->value ? $paragraph->get('field_background')->value : '';
+  $variables['hero_mega_search_form'] = $paragraph->get('field_hero_mega_search') ? jcc_elevated_build_header_search_form() : '';
+}
+
+/**
+ * Helper function for hero banner paragraph.
  *
  * @param array $variables
  *   The paragraph variables.
