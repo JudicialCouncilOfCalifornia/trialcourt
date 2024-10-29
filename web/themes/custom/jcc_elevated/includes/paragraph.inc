@@ -197,8 +197,8 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
       $text = $paragraph->get('field_text')->value;
       if ($text !== NULL) {
         $text = strip_tags($text, $allowed_tags);
+        $variables['filtered_text'] = ['#markup' => $text];
       }
-      $variables['filtered_text'] = ['#markup' => $text];
     }
   }
 
