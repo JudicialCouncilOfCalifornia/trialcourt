@@ -28,11 +28,11 @@
   {% set media %}
     <img src="{{ image.url }}" alt="image.alt">
   {% endset %}
-{% endif %}
 
-{# Media alignment if in use #}
-{% if media_alignment %}
-  {% set media_variant = 'media-' ~ media_alignment %}
+  {# Media alignment if in use #}
+  {% if media_alignment %}
+    {% set media_variant = 'media-' ~ media_alignment %}
+  {% endif %}
 {% endif %}
 
 {# Button link if in use #}
@@ -67,7 +67,7 @@
 ] %}
 
 {% include "@molecules/Card/Card.twig" with {
-  variant: card_variants|join(' '),
+  variant: variant,
   clickable_card: paragraph.field_entire_card_clickable.value,
   background: variant != 'bordered' or variant != 'bordered-center' ? paragraph.field_background.value : null,
   media: variant != 'striped' ? media : false,
