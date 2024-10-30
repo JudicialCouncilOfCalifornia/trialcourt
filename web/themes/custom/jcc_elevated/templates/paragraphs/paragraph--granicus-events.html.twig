@@ -1,15 +1,14 @@
 {{ attach_library("jcc_storybook/Alert") }}
 {{ attach_library("jcc_storybook/Icon") }}
-
 {% if livecast is not empty %}
   {% set content %}
     <div class="granicus with-sidebar" style="--sidebar-width:26ch; --sidebar-direction:row-reverse">
-      {% if livecast.status == 'starting soon' or livecast.staus == 'live' %}
+      {% if livecast.status == 'live' %}
         <div class="granicus__actions">
           <a class="button button--secondary" href="{{ livecast.url }}" arial_label="View {{ livecast.date }} {{ livecast.title }}">
             Watch live broadcast
           </a>
-          <div class="granicus__captioning">{{ livecast.captioning }}</div>
+          <p class="granicus__captioning">{{ livecast.captioning }}</p>
         </div>
       {% endif %}
       <div class="with-sidebar" style="--sidebar-width:12ch; --sidebar-direction:row">
