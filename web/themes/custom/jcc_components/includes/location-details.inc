@@ -35,6 +35,20 @@ function build_service_markup(&$variables, $node) {
         return $term_reference->getName();
     }, $node->get('field_cases_served')->referencedEntities());
   }
+
+  // Check if the field_others field exists and has a value, and then explode it into an array.
+  $additional_cases_served = [];
+  if ($node->hasField('field_others') && !empty($node->get('field_others')->value)) {
+      $additional_cases_served = explode(",", $node->get('field_others')->value);
+  }
+
+  // Ensure both case_category_terms and additional_cases_served are arrays before merging.
+  $case_category_terms = isset($variables['case_category_terms']) && is_array($variables['case_category_terms']) 
+      ? $variables['case_category_terms'] 
+      : [];
+
+  // Merge case_category_terms and additional_cases_served if both are arrays, otherwise use case_category_terms alone.
+  $variables['case_served'] = array_values(array_merge($case_category_terms, $additional_cases_served));
   process_add_services($node, $variables);
 }
 

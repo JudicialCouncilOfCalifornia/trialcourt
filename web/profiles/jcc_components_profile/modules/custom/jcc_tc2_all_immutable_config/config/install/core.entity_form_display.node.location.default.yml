@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.location.field_add_services
     - field.field.node.location.field_address
     - field.field.node.location.field_brow
+    - field.field.node.location.field_building_hours
     - field.field.node.location.field_building_hours_from
     - field.field.node.location.field_building_hours_to
     - field.field.node.location.field_case_served_overview
@@ -15,7 +16,7 @@ dependencies:
     - field.field.node.location.field_image_of_the_courthouse
     - field.field.node.location.field_location_page_version
     - field.field.node.location.field_location_type
-    - field.field.node.location.field_matters_served
+    - field.field.node.location.field_others
     - field.field.node.location.field_phone
     - field.field.node.location.field_services_overview
     - field.field.node.location.field_weight
@@ -24,7 +25,6 @@ dependencies:
     - workflows.workflow.editorial
   module:
     - address
-    - autocomplete_deluxe
     - content_moderation
     - datetime
     - field_group
@@ -79,7 +79,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 9
+    weight: 10
     region: content
     settings:
       rows: 9
@@ -89,13 +89,13 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 24
+    weight: 25
     region: content
     settings: {  }
     third_party_settings: {  }
   field_add_services:
     type: paragraphs
-    weight: 8
+    weight: 9
     region: content
     settings:
       title: Service
@@ -140,7 +140,7 @@ content:
     third_party_settings: {  }
   field_case_served_overview:
     type: string_textarea
-    weight: 6
+    weight: 7
     region: content
     settings:
       rows: 3
@@ -152,25 +152,14 @@ content:
         maxlength_js_enforce: false
         maxlength_js_truncate_html: false
   field_cases_served:
-    type: autocomplete_deluxe
+    type: options_buttons
     weight: 5
     region: content
-    settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: false
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: false
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    settings: {  }
     third_party_settings: {  }
   field_geolocation:
     type: geolocation_latlng
-    weight: 11
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -190,18 +179,16 @@ content:
     third_party_settings: {  }
   field_location_type:
     type: options_select
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_matters_served:
-    type: entity_reference_autocomplete_tags
-    weight: 4
+  field_others:
+    type: string_textarea
+    weight: 6
     region: content
     settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
+      rows: 5
       placeholder: ''
     third_party_settings: {  }
   field_phone:
@@ -213,7 +200,7 @@ content:
     third_party_settings: {  }
   field_services_overview:
     type: string_textarea
-    weight: 7
+    weight: 8
     region: content
     settings:
       rows: 3
@@ -226,63 +213,63 @@ content:
         maxlength_js_truncate_html: false
   field_weight:
     type: weight_selector
-    weight: 26
+    weight: 27
     region: content
     settings: {  }
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 12
+    weight: 13
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 27
+    weight: 28
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 16
+    weight: 17
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 14
+    weight: 15
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   publish_on:
     type: datetime_timestamp_no_default
-    weight: 18
+    weight: 19
     region: content
     settings: {  }
     third_party_settings: {  }
   publish_state:
     type: scheduler_moderation
-    weight: 19
+    weight: 20
     region: content
     settings: {  }
     third_party_settings: {  }
   scheduler_settings:
-    weight: 17
+    weight: 18
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 23
+    weight: 24
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 15
+    weight: 16
     region: content
     settings:
       display_label: true
@@ -296,13 +283,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 13
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 25
+    weight: 26
     region: content
     settings:
       match_operator: CONTAINS
@@ -312,20 +299,21 @@ content:
     third_party_settings: {  }
   unpublish_on:
     type: datetime_timestamp_no_default
-    weight: 20
+    weight: 21
     region: content
     settings: {  }
     third_party_settings: {  }
   unpublish_state:
     type: scheduler_moderation
-    weight: 21
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  url_redirects:
     weight: 22
     region: content
     settings: {  }
     third_party_settings: {  }
+  url_redirects:
+    weight: 23
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
+  field_building_hours: true
   field_components: true

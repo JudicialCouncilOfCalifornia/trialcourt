@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.location.field_add_services
     - field.field.node.location.field_address
     - field.field.node.location.field_brow
+    - field.field.node.location.field_building_hours
     - field.field.node.location.field_building_hours_from
     - field.field.node.location.field_building_hours_to
     - field.field.node.location.field_case_served_overview
@@ -15,7 +16,7 @@ dependencies:
     - field.field.node.location.field_image_of_the_courthouse
     - field.field.node.location.field_location_page_version
     - field.field.node.location.field_location_type
-    - field.field.node.location.field_matters_served
+    - field.field.node.location.field_others
     - field.field.node.location.field_phone
     - field.field.node.location.field_services_overview
     - field.field.node.location.field_weight
@@ -653,13 +654,12 @@ content:
     third_party_settings: {  }
     weight: 1
     region: content
-  field_matters_served:
-    type: entity_reference_label
+  field_others:
+    type: basic_string
     label: above
-    settings:
-      link: false
+    settings: {  }
     third_party_settings: {  }
-    weight: 5
+    weight: 19
     region: content
   field_phone:
     type: telephone_link
@@ -687,6 +687,7 @@ hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
+  field_building_hours: true
   langcode: true
   links: true
   search_api_excerpt: true
