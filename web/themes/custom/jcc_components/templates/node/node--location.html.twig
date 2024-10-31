@@ -107,12 +107,10 @@
 
 {# case catergories tags #}
 {% set cases_served = [] %}
-{% set orignal_array = case_category_terms %}
+{% set orignal_array = case_served %}
 {% for key ,value  in orignal_array  %}
   {% set cases_served  = cases_served|merge([{'text' : value}]) %}
 {% endfor %}
-
-
 
 {% if content.field_services_overview %}
   {% set service_overview = content.field_services_overview %}
@@ -135,7 +133,7 @@
         },
         {
             type: 'section',
-            heading: "Case Served",
+            heading: "Cases Served",
             content: case_served_overview|raw ,
             width: "partial",
             name: "location_details",
