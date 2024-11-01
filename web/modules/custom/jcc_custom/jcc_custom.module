@@ -348,6 +348,7 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         $element['#attached']['library'][] = 'jcc_custom/storybook-card';
         break;
 
+      case 'card':
       case 'hero_banner':
         unset($element['subform']['field_brow']);
         break;
@@ -360,13 +361,6 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
         $element['#attached']['library'][] = 'jcc_custom/storybook-layout';
         $element['#attached']['library'][] = 'jcc_custom/storybook-card';
-        break;
-
-      case 'card':
-        unset($element['subform']['field_brow']);
-        // Elevated only offers left or right media positioning.
-        // Top positioning occurs automatically when insufficient real estate.
-        unset($element['subform']['field_media_alignment']['widget']['#options']['top']);
         break;
     }
   }

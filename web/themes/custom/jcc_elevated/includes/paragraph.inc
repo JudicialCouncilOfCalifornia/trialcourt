@@ -184,24 +184,17 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
     }
   }
 
-  // Disallows links in text if clickable striped card.
+  // Disallows links in text if clickable card.
   $variables['filtered_text'] = NULL;
-  $parent = $paragraph->getParentEntity();
-  if ($parent && $parent->hasField('field_sub_variant')) {
-    $cards_sub_variant = $parent->get('field_sub_variant')->value;
-    $cards_sub_variant = substr($cards_sub_variant, strpos($cards_sub_variant, ':'));
-    $cards_sub_variant = preg_replace("/[^a-zA-Z0-9]+/", "", $cards_sub_variant);
-    if ($cards_sub_variant == 'striped' && $paragraph->field_entire_card_clickable->value) {
-      // Allowed tags in minimal editor except <a>.
-      $allowed_tags = '<p><em><strong><u><s><sup><sub><ol><li><ul>';
-      $text = $paragraph->get('field_text')->value;
-      if ($text !== NULL) {
-        $text = strip_tags($text, $allowed_tags);
-        $variables['filtered_text'] = ['#markup' => $text];
-      }
+  if ($paragraph->field_entire_card_clickable->value) {
+    // Allowed tags in minimal editor except <a>.
+    $allowed_tags = '<p><em><strong><u><s><sup><sub><ol><li><ul>';
+    $text = $paragraph->get('field_text')->value;
+    if ($text !== NULL) {
+      $text = strip_tags($text, $allowed_tags);
     }
+    $variables['filtered_text'] = Markup::create($text);
   }
-
 }
 
 /**
