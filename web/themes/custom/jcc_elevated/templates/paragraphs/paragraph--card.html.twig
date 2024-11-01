@@ -23,16 +23,12 @@
   } %}
 {% endif %}
 
-{# Media #}
-{% if image %}
-  {% set media %}
-    <img src="{{ image.url }}" alt="image.alt">
-  {% endset %}
-
-  {# Media alignment if in use #}
-  {% if media_alignment %}
-    {% set media_variant = 'media-' ~ media_alignment %}
-  {% endif %}
+{# Media alignment if in use #}
+{% if media and media_alignment %}
+  {% set card_variants = [
+    variant,
+    media ? 'card--media-' ~ media_alignment  : '',
+  ] %}
 {% endif %}
 
 {# Button link if in use #}
@@ -61,19 +57,15 @@
   {% endfor %}
 {% endif %}
 
-{% set card_variants = [
-  variant,
-  media_variant ? 'card--' ~ media_variant : '',
-] %}
-
 {% include "@molecules/Card/Card.twig" with {
-  variant: variant,
+  variant: card_variants ? card_variants|join(' ') : variant,
   clickable_card: paragraph.field_entire_card_clickable.value,
   background: variant != 'bordered' or variant != 'bordered-center' ? paragraph.field_background.value : null,
   media: variant != 'striped' ? media : false,
+  media_align: media_alignment,
   media_caption: media_caption,
   has_section_heading: has_section_heading,
   heading: content.field_heading.0,
-  text: filtered_text ?? content.field_text.0|render,
+  text: content.field_text.0|render,
   button_data: button_data,
 } %}
