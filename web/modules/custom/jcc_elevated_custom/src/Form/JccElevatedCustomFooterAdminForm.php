@@ -80,6 +80,7 @@ class JccElevatedCustomFooterAdminForm extends FormBase {
       'social_links_rss' => $this->state->get('jcc_elevated.social_links_rss'),
       'social_links_twitter' => $this->state->get('jcc_elevated.social_links_twitter'),
       'social_links_youtube' => $this->state->get('jcc_elevated.social_links_youtube'),
+      'social_links_flickr' => $this->state->get('jcc_elevated.social_links_flickr'),
     ];
   }
 
@@ -257,6 +258,15 @@ class JccElevatedCustomFooterAdminForm extends FormBase {
         ->t('YouTube'),
       '#default_value' => $state['social_links_youtube'],
       '#placeholder' => 'https://www.youtube.com/user/[name]',
+      '#group' => 'social',
+    ];
+
+    $form['social_links_flickr'] = [
+      '#type' => 'textfield',
+      '#title' => $this
+        ->t('Flickr'),
+      '#default_value' => $state['social_links_flickr'],
+      '#placeholder' => 'https://www.flickr.com/',
       '#group' => 'social',
     ];
 
