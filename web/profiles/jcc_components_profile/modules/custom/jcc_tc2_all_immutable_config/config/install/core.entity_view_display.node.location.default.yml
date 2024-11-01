@@ -1,3 +1,4 @@
+uuid: 8dddb0ad-712d-4b44-a5c7-0944fd22e3ae
 langcode: en
 status: true
 dependencies:
@@ -10,12 +11,13 @@ dependencies:
     - field.field.node.location.field_building_hours_from
     - field.field.node.location.field_building_hours_to
     - field.field.node.location.field_case_served_overview
+    - field.field.node.location.field_cases_served
     - field.field.node.location.field_components
     - field.field.node.location.field_geolocation
     - field.field.node.location.field_image_of_the_courthouse
     - field.field.node.location.field_location_page_version
     - field.field.node.location.field_location_type
-    - field.field.node.location.field_others
+    - field.field.node.location.field_matters_served
     - field.field.node.location.field_phone
     - field.field.node.location.field_services_overview
     - field.field.node.location.field_weight
@@ -32,6 +34,8 @@ dependencies:
     - text
     - user
     - weight
+_core:
+  default_config_hash: w6HGd84Blcgjftms8p767NlTVBhMoYAypve8Gf-26FE
 id: node.location.default
 targetEntityType: node
 bundle: location
@@ -97,6 +101,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 18
+    region: content
+  field_cases_served:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 13
     region: content
   field_components:
     type: entity_reference_revisions_entity_view
@@ -645,12 +657,13 @@ content:
     third_party_settings: {  }
     weight: 1
     region: content
-  field_others:
-    type: basic_string
+  field_matters_served:
+    type: entity_reference_label
     label: above
-    settings: {  }
+    settings:
+      link: false
     third_party_settings: {  }
-    weight: 19
+    weight: 5
     region: content
   field_phone:
     type: telephone_link
