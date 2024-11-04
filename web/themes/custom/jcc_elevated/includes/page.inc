@@ -126,6 +126,7 @@ function jcc_elevated_preprocess_page(&$variables) {
     'rss' => 'jcc_elevated.social_links_rss',
     'twitter' => 'jcc_elevated.social_links_twitter',
     'youtube' => 'jcc_elevated.social_links_youtube',
+    'flickr' => 'jcc_elevated.social_links_flickr',
   ];
 
   $frontpage_path = \Drupal::urlGenerator()->generateFromRoute('<front>', [], ['absolute' => TRUE]);
