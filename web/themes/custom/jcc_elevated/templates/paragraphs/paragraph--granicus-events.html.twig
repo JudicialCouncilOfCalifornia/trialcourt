@@ -1,17 +1,11 @@
 {{ attach_library("jcc_storybook/Alert") }}
 {{ attach_library("jcc_storybook/Icon") }}
+{{ attach_library("jcc_elevated/granicus-events") }}
+
 {% if livecast is not empty %}
   {% set content %}
-    <div class="granicus with-sidebar" style="--sidebar-width:26ch; --sidebar-direction:row-reverse">
-      {% if livecast.status == 'live' %}
-        <div class="granicus__actions">
-          <a class="button button--secondary" href="{{ livecast.url }}" arial_label="View {{ livecast.date }} {{ livecast.title }}">
-            Watch live broadcast
-          </a>
-          <p class="granicus__captioning">{{ livecast.captioning }}</p>
-        </div>
-      {% endif %}
-      <div class="with-sidebar" style="--sidebar-width:12ch; --sidebar-direction:row">
+    <div class="granicus cluster" style="justify-content:space-between;">
+      <div class="granicus__content cluster">
         <div class="granicus__status">
           <div class="status">
             {{ livecast.status }}
@@ -27,6 +21,14 @@
           </div>
         </div>
       </div>
+      {% if livecast.status == 'live' %}
+        <div class="granicus__actions">
+          <a class="button button--secondary" href="{{ livecast.url }}" arial_label="View {{ livecast.date }} {{ livecast.title }}">
+            Watch live broadcast
+          </a>
+          <p class="granicus__captioning">{{ livecast.captioning }}</p>
+        </div>
+      {% endif %}
     </div>
   {% endset %}
 
