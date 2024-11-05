@@ -1,0 +1,144 @@
+<?php
+
+/**
+ * @file
+ * Contains jcc_blocks.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Element\ManagedFile;
+use Drupal\jcc_bulk_document_importer\Ajax\ManagedFileUploadCompleteEventCommand;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\file\Entity\File;
+
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_bulk_document_importer_form_alter(&$form, &$form_state, $form_id) {
+  if (isset($form_state->getCompleteForm()['#form_id']) && $form_state->getCompleteForm()['#form_id'] == 'jcc_bulk_importer_form') {
+    // Node creation and editing only customizations.
+    if ((isset($form['#theme']['1']) && $form['#theme']['1'] == 'node_form')) {
+      // Suppress format options from certain fields.
+      if (isset($form['field_tagline'])) {
+        $form['field_tagline']['widget']['#after_build'][] = '_allowed_formats_remove_option';
+      }
+      if (isset($form['field_feed_source'])) {
+        $form['field_feed_source']['widget']['#after_build'][] = '_allowed_formats_remove_option';
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function jcc_bulk_document_importer_element_info_alter(array &$info) {
+  $info['managed_file']['#process'][] = 'jcc_bulk_document_importer_managed_file_process';
+}
+
+///**
+// * Custom ajax callback for managed files.
+// *
+// * Overrides \Drupal\file\Element\ManagedFile::uploadAjaxCallback()
+// *
+// * @see \Drupal\file\Element\ManagedFile::uploadAjaxCallback
+// */
+//function jcc_bulk_document_importer_managed_file_ajax_callback(array &$form, FormStateInterface $form_state) {
+//  // Retrieve the original response.
+//  $response = ManagedFile::uploadAjaxCallback($form, $form_state, \Drupal::request());
+//
+//  if ($form_state->getCompleteForm()['#form_id'] == 'jcc_bulk_importer_form') {
+//    $response->addCommand(new ManagedFileUploadCompleteEventCommand());
+//  }
+//  return $response;
+//}
+//
+///**
+// * Custom process callback added to managed_file elements.
+// */
+//function jcc_bulk_document_importer_managed_file_process(array &$element, FormStateInterface $form_state) {
+//  if ($form_state->getCompleteForm()['#form_id'] == 'jcc_bulk_importer_form') {
+//    $element['upload_button']['#ajax']['callback'] = 'jcc_bulk_document_importer_managed_file_ajax_callback';
+//
+//    if (!empty($element['fids']['#value'])) {
+//      foreach ($element['fids']['#value'] as $document_id) {
+//        $element['documents'][$document_id] = [
+//          '#type' => 'fieldset',
+//          '#collapsible' => FALSE,
+//        ];
+//
+//        $file = File::load($document_id);
+//        $fileName = pathinfo( $file->getFilename(), PATHINFO_FILENAME);
+//        $element['documents'][$document_id]['custom_title'] = [
+//          '#type' => 'textfield',
+//          '#default_value' => $fileName,
+//          '#title' => t('Title'),
+//        ];
+//
+//        $element['documents'][$document_id]['custom_verbose_title'] = [
+//          '#type' => 'textarea',
+//          '#title' => t('Verbose title'),
+//          '#description' => t('Optional verbose title to display where needed (e.g. Oral Arguments case document)'),
+//        ];
+//
+//        $element['documents'][$document_id]['filing_date'] = [
+//          '#title' => t('Filing date'),
+//          '#type' => 'date',
+//          '#attributes' => [
+//            'type' => 'date',
+//            'min' => '-12 months',
+//            'max' => '+12 months',
+//          ],
+//          '#default_value' => date("Y-m-d"),
+//          '#date_date_format' => 'Y/m/d',
+//        ];
+//
+//        $element['documents'][$document_id]['doc_id'] = [
+//          '#type' => 'hidden',
+//          '#value' => $document_id,
+//        ];
+//
+//        $element['documents'][$document_id]['category'] = [
+//          '#type' => 'select',
+//          '#options' => get_category_types(),
+//          '#title' => t('Category'),
+//          '#default_value' => NULL,
+//          '#empty_option' => t('- Please Select -'),
+//        ];
+//
+//        $element['documents'][$document_id]['media'] = [
+//          '#type' => 'checkboxes',
+//          '#options' => array(
+//            'only-media'=> 'Only Media',
+//          ),
+//          '#attributes'=> [
+//            'checked' => TRUE,
+//          ],
+//        ];
+//
+//        $element['documents'][$document_id]['file'] = $element['file_' . $document_id];
+//        unset($element['file_' . $document_id]);
+//      }
+//    }
+//    else {
+//      $element['documents'] = [];
+//    }
+//  }
+//
+//  return $element;
+//}
+////
+// function get_category_types() {
+//  $media_categories = [];
+//  $vocabulary_name = 'media_file_category';
+//  $tids = \Drupal::entityQuery('taxonomy_term')
+//            ->condition('vid', $vocabulary_name)
+//            ->sort('weight')
+//            ->execute();
+//  $terms = Term::loadMultiple($tids);
+//  foreach ($terms as $term) {
+//    $media_categories[$term->id()] = $term->getName();
+//  }
+//  asort($media_categories);
+//  return $media_categories;
+//}

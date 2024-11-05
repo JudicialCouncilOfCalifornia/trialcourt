@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * Implements hook_entity_update().
+ *
+ * Sets the 'dynamic_sort_value' field to the value of 'startDate' if it exists;
+ * otherwise, it defaults to the value of 'lastSavedDate'.
+ */
+function jcc_dynamic_sort_entity_update(\Drupal\Core\Entity\EntityInterface $entity) {
+  // Check if the entity type and bundle you need to modify.
+
+  $contentType = 'my_content_type';
+
+
+  $startDate= 'start_date';
+  $lastSavedDate = 'lastSavedDate';
+
+  if ($entity->getEntityTypeId() === 'node' && $entity->bundle() === $contentType) {
+    // Get field values.
+    $startDateRetrieved = $entity->get($startDate)->value;
+    $lastSavedDateRetrieved = $entity->get($lastSavedDate)->value;
+
+    // Set 'dynamic_sort_value' to 'start date' if it exists; otherwise, use 'last save date'.
+    $dynamic_value = !empty($startDateRetrieved) ? $startDateRetrieved : $lastSavedDateRetrieved;
+
+    // Update the computed field value.
+    $entity->set('field_dynamic_sort_value', $dynamic_value);
+    $entity->save();
+  }
+}
