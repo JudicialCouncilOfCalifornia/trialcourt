@@ -1,28 +1,28 @@
+uuid: 2e8493de-a536-4c98-95d9-4ded7dc61eb9
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.paragraph.field_lead
+    - field.storage.paragraph.field_toggle
     - paragraphs.paragraphs_type.granicus_event_setup
   module:
-    - allowed_formats
-    - text
     - tmgmt_content
 third_party_settings:
-  allowed_formats:
-    allowed_formats:
-      - snippet
   tmgmt_content:
     excluded: false
-id: paragraph.granicus_event_setup.field_lead
-field_name: field_lead
+id: paragraph.granicus_event_setup.field_toggle
+field_name: field_toggle
 entity_type: paragraph
 bundle: granicus_event_setup
-label: 'Promotional Text'
+label: 'Always display as a live broadcast?'
 description: ''
 required: false
 translatable: true
-default_value: {  }
+default_value:
+  -
+    value: 0
 default_value_callback: ''
-settings: {  }
-field_type: text_long
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean
