@@ -44,6 +44,10 @@ source:
       name: cast_url
       label: Webcast
       selector: media_url
+    -
+      name: captioning
+      label: 'Live Captions'
+      selector: captioning/link
   ids:
     title:
       type: string
@@ -93,6 +97,16 @@ process:
     -
       plugin: default_value
       default_value: snippet
+  field_link_multiple:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: captioning
+    -
+      plugin: sub_process
+      process:
+        uri: '0'
+        title: '1'
 destination:
   plugin: 'entity:node'
   default_bundle: event

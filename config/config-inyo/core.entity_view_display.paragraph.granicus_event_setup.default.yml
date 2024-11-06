@@ -1,15 +1,12 @@
-uuid: 77ba44c3-ce62-4636-8e0d-731b70401901
 langcode: en
 status: true
 dependencies:
   config:
     - field.field.paragraph.granicus_event_setup.field_event_type
-    - field.field.paragraph.granicus_event_setup.field_id
     - field.field.paragraph.granicus_event_setup.field_lead
-    - field.field.paragraph.granicus_event_setup.field_link_multiple
+    - field.field.paragraph.granicus_event_setup.field_toggle
     - paragraphs.paragraphs_type.granicus_event_setup
   module:
-    - link
     - text
 id: paragraph.granicus_event_setup.default
 targetEntityType: paragraph
@@ -24,14 +21,6 @@ content:
     third_party_settings: {  }
     weight: 0
     region: content
-  field_id:
-    type: string
-    label: visually_hidden
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    weight: 1
-    region: content
   field_lead:
     type: text_default
     label: visually_hidden
@@ -39,15 +28,13 @@ content:
     third_party_settings: {  }
     weight: 2
     region: content
-  field_link_multiple:
-    type: link
-    label: visually_hidden
+  field_toggle:
+    type: boolean
+    label: above
     settings:
-      trim_length: 80
-      url_only: false
-      url_plain: false
-      rel: ''
-      target: ''
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
     third_party_settings: {  }
     weight: 3
     region: content
