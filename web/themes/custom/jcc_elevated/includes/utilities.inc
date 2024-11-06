@@ -227,7 +227,7 @@ function __jcc_accms_link_builder($case_number) {
 /**
  * Helper function to create links to remote opinion files.
  */
-function __jcc_opinion_file_links_builder($type, $review_granted, $file_type, $aria, $case) {
+function __jcc_opinion_file_links_builder($type, $review_granted, $file_type, $case) {
   // Current URL patterns.
   $base = 'https://www.courts.ca.gov/opinions/';
   $pub_path = 'documents/';
@@ -299,10 +299,11 @@ function __jcc_opinion_file_links_builder($type, $review_granted, $file_type, $a
   // Build link.
   $link = NULL;
   if ($file_type == 'PDF' || $doc_response == 200) {
+    $file_context = ['@file_type' => $file_type, '@case' => $case];
     $link = [
       'url' => $url,
       'file_type' => $file_type,
-      'aria_label' => $aria . ' ' . $case,
+      'aria_label' => t('Download or view @file_type for case @case opinion', $file_context),
     ];
   }
 

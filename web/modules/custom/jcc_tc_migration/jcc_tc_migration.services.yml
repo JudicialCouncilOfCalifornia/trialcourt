@@ -6,3 +6,9 @@ services:
 
   jcc_tc_migration.prefix_relative_links:
     class: Drupal\jcc_tc_migration\Services\PrefixRelativeLinks
+
+  jcc_tc_migration.policy_menu_parent_subscriber:
+    class: Drupal\jcc_tc_migration\EventSubscriber\PolicyMenuNodeSaveEventSubscriber
+    arguments: ['@entity_type.manager','@database']
+    tags:
+      - { name: event_subscriber }

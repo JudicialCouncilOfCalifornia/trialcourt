@@ -43,6 +43,12 @@
 ]
 %}
 
+{% set content_header %}
+  <div class="cluster">
+    <div>{{ count_summary }}</div>
+  </div>
+{% endset %}
+
 {% set items = [] %}
 {% for opinion in opinions %}
   {# Type label override if provided, for example 'Published - Extended Post' as 'Published' #}
@@ -90,7 +96,7 @@
     },
     title: opinion.title.text,
     url: opinion.title.url,
-    aria_label: 'View case details for ' ~ opinion.title.text,
+    aria_label: 'View case details for ' ~ opinion.case_number ~ ': ' ~ opinion.title.text,
     content: content,
   } %}
 
@@ -104,9 +110,10 @@
     variant: 'default',
     view_name: id,
     view_display: display_id,
-    header: header,
+    header: '',
     header_sidebar: '',
     header_direction_results: 'sidebar-row',
+    content_header: content_header,
     form: exposed|render,
     form_in_sidebar: true,
     list_type: 'ul',
@@ -115,7 +122,7 @@
     sidebar: '',
     sidebar_direction_results: 'sidebar-row',
     pager: pager|render,
-    items_per_page: '',
+    items_per_page: items_per_page,
     footer: '',
     footer_sidebar: '',
     sidebar_direction_footer: 'sidebar-row',

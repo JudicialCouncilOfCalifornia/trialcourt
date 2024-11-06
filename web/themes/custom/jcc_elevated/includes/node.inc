@@ -110,7 +110,6 @@ function jcc_elevated_preprocess_node(&$variables) {
       }
     }
   }
-
 }
 
 /**
@@ -1033,16 +1032,20 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
  *   The node.
  */
 function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void {
-  $type = Term::load($node->get('field_opinion_type')->target_id) ? Term::load($node->get('field_opinion_type')->target_id)->get('name')->value : '';
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $media_manager = $entity_type_manager->getStorage('media');
+  $file_manager = $entity_type_manager->getStorage('file');
+
+  $type = $node->get('field_opinion_type')->target_id ? $taxonomy_manager->load($node->get('field_opinion_type')->target_id)->get('name')->value : '';
   $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
-  $opinion_source = $node->get('field_opinion_source')->target_id ? Term::load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
+  $opinion_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
   $review_granted = $node->get('field_review_granted')->value;
-  $download_aria = t('Download or view opinion document');
 
   // Remote file links - $doc must be valid to display anything.
   $remote_files = [];
-  $pdf = __jcc_opinion_file_links_builder($type, $review_granted, 'PDF', $download_aria, $case_number);
-  $doc = __jcc_opinion_file_links_builder($type, $review_granted, 'DOCX', $download_aria, $case_number);
+  $pdf = __jcc_opinion_file_links_builder($type, $review_granted, 'PDF', $case_number);
+  $doc = __jcc_opinion_file_links_builder($type, $review_granted, 'DOCX', $case_number);
   if ($pdf && $doc) {
     $remote_files[] = $pdf;
     if ($doc) {
@@ -1076,8 +1079,8 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   $citings = [];
   if ($node->get('field_media_file_multiple')->getValue()) {
     foreach ($node->get('field_media_file_multiple')->getValue() as $citing) {
-      $media = Media::load($citing['target_id']);
-      $file = File::load($media->get('field_media_file')->target_id);
+      $media = $media_manager->load($citing['target_id']);
+      $file = $file_manager->load($media->get('field_media_file')->target_id);
       if ($file) {
         $citing_title = $media->get('field_media_text')->value;
         if (is_null($citing_title)) {

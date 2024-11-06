@@ -1,0 +1,257 @@
+uuid: dc863ee3-0a5d-4c12-99ba-ac14ceeff536
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.news.body
+    - field.field.node.news.field_feed_imported_on
+    - field.field.node.news.field_feed_origin
+    - field.field.node.news.field_feed_source
+    - field.field.node.news.field_images
+    - field.field.node.news.field_links
+    - field.field.node.news.field_news_type
+    - node.type.news
+  module:
+    - feeds_ex
+    - feeds_tamper
+    - node
+third_party_settings:
+  feeds_tamper:
+    tampers:
+      67276ac2-169a-484e-ae0c-1be5ae9d6ad3:
+        allowed_tags: ''
+        uuid: 67276ac2-169a-484e-ae0c-1be5ae9d6ad3
+        plugin: strip_tags
+        source: title
+        weight: 0
+        label: 'Strip tags'
+      ae7162b2-c83f-4f5b-985a-d3ae9d88bda3:
+        allowed_tags: ''
+        uuid: ae7162b2-c83f-4f5b-985a-d3ae9d88bda3
+        plugin: strip_tags
+        source: link
+        weight: 0
+        label: 'Strip tags'
+      a8a8c424-0537-4eb3-a0e6-c14dccf6cc29:
+        find: '/.+?(?=\&url=)/'
+        replace: ''
+        limit: null
+        uuid: a8a8c424-0537-4eb3-a0e6-c14dccf6cc29
+        plugin: find_replace_regex
+        source: link
+        weight: 1
+        label: 'Find replace REGEX : strip bing redirection'
+      d38ec836-9ae4-4843-990d-9b7b9d380090:
+        find: '&url='
+        replace: ''
+        case_sensitive: false
+        word_boundaries: false
+        whole: false
+        uuid: d38ec836-9ae4-4843-990d-9b7b9d380090
+        plugin: find_replace
+        source: link
+        weight: 2
+        label: 'Find replace'
+      efe37332-71c9-422e-978d-8f90ab591936:
+        method: rawurldecode
+        uuid: efe37332-71c9-422e-978d-8f90ab591936
+        plugin: url_decode
+        source: link
+        weight: 3
+        label: 'URL Decode'
+      491f0f23-5d4b-4517-9feb-12b5e5076cf7:
+        find: '/&/'
+        replace: '?'
+        limit: null
+        uuid: 491f0f23-5d4b-4517-9feb-12b5e5076cf7
+        plugin: find_replace_regex
+        source: link
+        weight: 4
+        label: 'Find replace REGEX : Replace first argument & with ?'
+      8295307b-4ec9-4f10-893a-e9f7e4e8db26:
+        text: NewsLink
+        uuid: 8295307b-4ec9-4f10-893a-e9f7e4e8db26
+        plugin: rewrite
+        source: news_type
+        weight: 0
+        label: Rewrite
+      036a06d6-2299-4844-8fa8-6857a6b7c416:
+        find: '/\s-\s.*/'
+        replace: ''
+        limit: null
+        uuid: 036a06d6-2299-4844-8fa8-6857a6b7c416
+        plugin: find_replace_regex
+        source: title
+        weight: 1
+        label: 'Find replace REGEX'
+      41cbd60d-287c-43ce-8eb4-b551aaa1bf0a:
+        find: '/<a[^>]*>(.*?)<\/a>/i'
+        replace: $1
+        limit: null
+        uuid: 41cbd60d-287c-43ce-8eb4-b551aaa1bf0a
+        plugin: find_replace_regex
+        source: description
+        weight: -10
+        label: 'Find replace REGEX'
+      35954429-76f0-47ad-99e1-b56074143196:
+        find: '/<font[^>]*>.*?<\/font>/s'
+        replace: ''
+        limit: null
+        uuid: 35954429-76f0-47ad-99e1-b56074143196
+        plugin: find_replace_regex
+        source: description
+        weight: -9
+        label: 'Find replace REGEX'
+      9c00c02e-f2b8-4c46-9038-5024c5b8ee4b:
+        uuid: 9c00c02e-f2b8-4c46-9038-5024c5b8ee4b
+        plugin: html_entity_decode
+        source: description
+        weight: -8
+        label: 'HTML entity decode'
+_core:
+  default_config_hash: tRpg8rMvydJW3TA4AqfnKjZuq_h1IpE5yi0QcsKPTHw
+label: 'News - Google feed'
+id: news_google_feed
+description: 'Imports news from Google'
+help: ''
+import_period: 3600
+fetcher: http
+fetcher_configuration:
+  auto_detect_feeds: false
+  use_pubsubhubbub: false
+  always_download: false
+  fallback_hub: ''
+  request_timeout: 30
+parser: xml
+parser_configuration:
+  context:
+    value: //item
+  source_encoding:
+    - auto
+  display_errors: false
+  line_limit: 100
+  use_tidy: false
+processor: 'entity:node'
+processor_configuration:
+  values:
+    type: news
+  langcode: en
+  insert_new: 1
+  update_existing: 0
+  update_non_existent: _keep
+  skip_hash_check: false
+  authorize: true
+  revision: false
+  expire: -1
+  owner_feed_author: false
+  owner_id: 0
+custom_sources:
+  title:
+    value: title
+    label: title
+    machine_name: title
+  news_source:
+    value: 'News:Source'
+    label: 'News:Source'
+    machine_name: news_source
+  description:
+    value: description
+    label: description
+    machine_name: description
+  link:
+    value: link
+    label: link
+    machine_name: link
+  pubdate:
+    value: pubDate
+    label: pubDate
+    machine_name: pubdate
+  news_type:
+    value: news_type
+    label: news_type
+    machine_name: news_type
+  news_image:
+    value: 'News:Image'
+    label: 'News:Image'
+    machine_name: news_image
+  custom_entity_id:
+    value: custom_entity_id
+    label: custom_entity_id
+    machine_name: custom_entity_id
+  source_field:
+    label: Source
+    machine_name: source_field
+    value: source
+    raw: false
+    inner: false
+    type: xml
+mappings:
+  -
+    target: title
+    map:
+      value: title
+    settings:
+      language: null
+    unique:
+      value: 1
+  -
+    target: body
+    map:
+      value: description
+      summary: description
+    settings:
+      language: null
+      format: plain_text
+  -
+    target: field_links
+    map:
+      uri: link
+      title: title
+    settings:
+      language: null
+  -
+    target: created
+    map:
+      value: pubdate
+    settings:
+      language: null
+      timezone: UTC
+  -
+    target: field_news_type
+    map:
+      target_id: news_type
+    settings:
+      language: ''
+      reference_by: name
+      autocreate: '1'
+      autocreate_bundle: news_type
+  -
+    target: field_feed_origin
+    map:
+      value: title
+    settings:
+      language: null
+    unique: {  }
+  -
+    target: field_feed_imported_on
+    map:
+      value: pubdate
+    settings:
+      language: null
+      timezone: UTC
+  -
+    target: field_images
+    map:
+      target_id: news_image
+    settings:
+      language: ''
+      reference_by: mid
+      autocreate: '1'
+      autocreate_bundle: image
+  -
+    target: field_feed_source
+    map:
+      value: source_field
+    settings:
+      language: null
+      format: plain_text
