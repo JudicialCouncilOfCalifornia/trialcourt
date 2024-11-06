@@ -10,6 +10,9 @@ use Drupal\File\FileRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\node\Entity\Node;
+use Drupal\feeds\Event\EntityEvent;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Image download management for bing feed imports.
@@ -27,9 +30,10 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
   /**
    * Constructor.
    */
-  public function __construct(RequestStack $request_stack, FileRepository $file_repository) {
+  public function __construct(RequestStack $request_stack, FileRepository $file_repository, EntityTypeManagerInterface $entity_type_manager) {
     $this->request = $request_stack->getCurrentRequest();
     $this->fileRepository = $file_repository;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -40,6 +44,39 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
       $container->get('request_stack'),
       $container->get('file.repository')
     );
+  }
+
+  /**
+   * Modify events after saving imported data from feeds.
+   *
+   * @param \Drupal\feeds\Event\Entity $event
+   *   The Entity Event.
+   */
+  public function postSaveNews(EntityEvent $event) {
+    $node = $event->getEntity();
+    $media_id = $node->get('field_media')->target_id;
+    $media = $this->entityTypeManager->getStorage('media')->load($media_id);
+    if ($media) {
+      $image_url = $media->getName();
+      $title = pathinfo($image_url, PATHINFO_FILENAME);
+      $title = urldecode($title);
+      $data = file_get_contents($image_url);
+      if ($data) {
+        $file = file_save_data($data, 'public://images/' . basename($title), FileSystemInterface::EXISTS_REPLACE);
+
+        if ($file) {
+          $file_id = $file->id();
+          $media->set('field_media_image', ['target_id' => $file_id]);
+          $media->save();
+        }
+      }
+    }
+    if ($node instanceof Node && $node->bundle() === 'news') {
+      if ($node->get('moderation_state')->value !== 'published') {
+        $node->set('moderation_state', 'published');
+        $node->save();
+      }
+    }
   }
 
   /**
@@ -121,6 +158,7 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents() {
     $events = [];
     $events[FeedsEvents::PARSE][] = ['afterParse', FeedsEvents::AFTER];
+    $events[FeedsEvents::PROCESS_ENTITY_POSTSAVE][] = ['postSaveNews', FeedsEvents::AFTER];
     return $events;
   }
 

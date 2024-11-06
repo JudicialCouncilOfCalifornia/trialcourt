@@ -1,0 +1,149 @@
+uuid: 29e6c1ab-80bc-4f8d-b06e-94661fee4503
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.base_field_override.node.news.status
+    - field.field.node.news.body
+    - field.field.node.news.field_byline
+    - field.field.node.news.field_media
+    - field.field.node.news.field_news_type
+    - node.type.news
+  module:
+    - feeds_ex
+    - feeds_tamper
+    - node
+third_party_settings:
+  feeds_tamper:
+    tampers:
+      29ac8476-c7a5-41ac-8fa0-7979d3cf3902:
+        find: 'src="/sites/default/files/newsroom/'
+        replace: 'src="https://newsroom.courts.ca.gov/sites/default/files/newsroom/'
+        case_sensitive: false
+        word_boundaries: false
+        whole: false
+        uuid: 29ac8476-c7a5-41ac-8fa0-7979d3cf3902
+        plugin: find_replace
+        source: body
+        weight: 0
+        label: 'Find replace'
+label: 'News Feed'
+id: news_feed
+description: ''
+help: ''
+import_period: 3600
+fetcher: http
+fetcher_configuration:
+  auto_detect_feeds: false
+  use_pubsubhubbub: false
+  always_download: false
+  fallback_hub: ''
+  request_timeout: 30
+parser: xml
+parser_configuration:
+  context:
+    value: //item
+  source_encoding:
+    - auto
+  display_errors: false
+  line_limit: 100
+  use_tidy: false
+processor: 'entity:node'
+processor_configuration:
+  values:
+    type: news
+  langcode: en
+  insert_new: 1
+  update_existing: 2
+  update_non_existent: _keep
+  skip_hash_check: false
+  authorize: true
+  revision: false
+  expire: -1
+  owner_feed_author: false
+  owner_id: 1
+custom_sources:
+  type:
+    value: type
+    label: type
+    machine_name: type
+  body:
+    value: body
+    label: body
+    machine_name: body
+  teaser:
+    value: teaser
+    label: teaser
+    machine_name: teaser
+  author:
+    value: author
+    label: author
+    machine_name: author
+  pubdate:
+    value: pubDate
+    label: pubDate
+    machine_name: pubdate
+  image:
+    value: image
+    label: image
+    machine_name: image
+  pubstatus:
+    value: pubStatus
+    label: pubStatus
+    machine_name: pubstatus
+  title:
+    value: title
+    label: title
+    machine_name: title
+  tagline:
+    value: tagline
+    label: tagline
+    machine_name: tagline
+mappings:
+  -
+    target: field_news_type
+    map:
+      target_id: type
+    settings:
+      language: ''
+      reference_by: name
+      autocreate: '1'
+      autocreate_bundle: news_type
+  -
+    target: title
+    map:
+      value: title
+    settings:
+      language: null
+    unique:
+      value: 1
+  -
+    target: body
+    map:
+      value: body
+      summary: teaser
+    settings:
+      language: ''
+      format: body
+  -
+    target: status
+    map:
+      value: pubstatus
+    settings:
+      language: null
+  -
+    target: field_byline
+    map:
+      value: tagline
+    settings:
+      language: null
+    unique: {  }
+  -
+    target: field_media
+    map:
+      target_id: image
+    settings:
+      language: ''
+      reference_by: name
+      autocreate: 1
+      autocreate_bundle: image
