@@ -1490,7 +1490,9 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
     unset($variables['items_per_page']['#title']);
     unset($variables['exposed']['items_per_page']);
   }
-
+  if (empty($variables['view']->result)) {
+    unset($variables['exposed']['items_per_page']);
+  }
   // Count summary for the current page of results.
   // Suppress duplicate summary with empty header in ViewsResults twig.
   $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
