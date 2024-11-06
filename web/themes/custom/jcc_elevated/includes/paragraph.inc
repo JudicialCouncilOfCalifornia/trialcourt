@@ -594,12 +594,13 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
             $event_date = $event->get('field_event_date')->start_date->format('m/d/y');
             if ($event_date == $today) {
               $type = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->load($type_id)->name->value;
-              $start_time = strtotime($event->get('field_event_date')->start_date);
+              $start_timestamp = strtotime($event->get('field_event_date')->start_date);
+
               // Optional captioning links with verbiage.
               $captioning = NULL;
-              if (count($event_type->get('field_link_multiple')) > 0) {
+              if (count($event->get('field_link_multiple')) > 0) {
                 $captioning_links = [];
-                foreach ($event_type->get('field_link_multiple') as $caption_language) {
+                foreach ($event->get('field_link_multiple') as $caption_language) {
                   $url = \Drupal::service('file_url_generator')->generate($caption_language->uri);
                   $captioning_links[] = \Drupal::service('link_generator')->generate($caption_language->title, $url);
                 }
@@ -616,43 +617,50 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
 
               // Banner visibility by status.
               $status = NULL;
-              $current_time = date('h:i A');
-              $current_time = strtotime($current_time);
-              $preload_time = $start_time - 3600;
-              $start_buffer = $start_time + 3600;
-              $end_time = strtotime($event->get('field_event_date')->start_date);
-              if ($current_time < $preload_time || $current_time < $start_buffer) {
-                // Display pending 1 hour before scheduled time.
-                $status = 'starting soon';
+              if ($event_type->get('field_toggle')->value == 1) {
+                // If always live broadcast override.
+                $status = 'live';
               }
-              elseif ($current_time > $start_buffer && $current_time < $end_time) {
-                // Default display until scheduled time ends.
-                $status = 'no broadcast';
-              }
+              else {
+                $current_time = date('h:i A');
+                $current_timestamp = strtotime($current_time);
+                $preload_buffer = $start_timestamp - 3600;
+                $start_buffer = $start_timestamp + 3600;
+                $end_timestamp = strtotime($event->get('field_event_date')->end_date);
 
-              // Get Granicus feed status.
-              $granicus_events = [];
-              $import_configs = \Drupal::config('migrate_plus.migration.courts_node_event_granicus');
-              $api = $import_configs->get('source.urls');
-              if ($api) {
-                $request = file_get_contents($api);
-                if ($request) {
-                  $granicus_events = new SimpleXMLElement($request);
-                  $granicus_events = json_encode($granicus_events);
-                  $granicus_events = json_decode($granicus_events, TRUE);
+                if ($current_timestamp < $preload_buffer || $current_timestamp < $start_buffer) {
+                  // Display pending 1 hour before scheduled time.
+                  $status = 'starting soon';
                 }
-              }
-              if ($granicus_events) {
-                // Granicus event status mapping - Stopped or Running.
-                foreach ($granicus_events as $granicus_event) {
-                  if ($granicus_event['type'] == $type) {
-                    $status = $granicus_event['status'];
-                    switch ($granicus_event['status']) {
-                      case 'Running':
-                        $status = 'live';
-                        break;
+                elseif ($current_time > $start_buffer && $current_time < $end_timestamp) {
+                  // Default display until scheduled time ends.
+                  $status = 'no broadcast';
+                }
 
-                      default:
+                // Get Granicus feed status.
+                $granicus_events = [];
+                $import_configs = \Drupal::config('migrate_plus.migration.courts_node_event_granicus');
+                $api = $import_configs->get('source.urls');
+                if ($api) {
+                  $request = file_get_contents($api);
+                  if ($request) {
+                    $granicus_events = new SimpleXMLElement($request);
+                    $granicus_events = json_encode($granicus_events);
+                    $granicus_events = json_decode($granicus_events, TRUE);
+                  }
+                }
+                if ($granicus_events) {
+                  // Granicus event status mapping - Stopped or Running.
+                  foreach ($granicus_events as $granicus_event) {
+                    if ($granicus_event['date'] == $today && $granicus_event['type'] == $type) {
+                      switch ($granicus_event['status']) {
+                        case 'Running':
+                          $status = 'live';
+                          break;
+
+                        default:
+                          $status = 'no broadcast';
+                      }
                     }
                   }
                 }
@@ -663,7 +671,7 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
                 $livecast = [
                   'title' => $type,
                   'date' => $event_date,
-                  'time' => \Drupal::service('date.formatter')->format($start_time, 'custom', 'h:i A'),
+                  'time' => \Drupal::service('date.formatter')->format($start_timestamp, 'custom', 'h:i A'),
                   'promotional' => $event_type->get('field_lead') ? $event_type->get('field_lead')->view('full') : '',
                   'url' => $event->get('field_granicus_link')->first()->value,
                   'captioning' => $captioning,
