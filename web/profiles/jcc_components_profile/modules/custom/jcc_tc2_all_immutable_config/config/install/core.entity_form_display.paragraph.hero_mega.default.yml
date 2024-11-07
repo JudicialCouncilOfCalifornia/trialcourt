@@ -1,0 +1,150 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.hero_mega.field_aside
+    - field.field.paragraph.hero_mega.field_background
+    - field.field.paragraph.hero_mega.field_heading
+    - field.field.paragraph.hero_mega.field_hero_mega_search
+    - field.field.paragraph.hero_mega.field_image_media
+    - field.field.paragraph.hero_mega.field_lead
+    - paragraphs.paragraphs_type.hero_mega
+  module:
+    - field_group
+    - media_library
+    - text
+third_party_settings:
+  field_group:
+    group_content:
+      children:
+        - group_main_content
+        - group_aside
+      label: Content
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        direction: horizontal
+        width_breakpoint: 640
+    group_main_content:
+      children:
+        - field_heading
+        - field_lead
+        - field_image_media
+        - group_background_color
+        - group_widgets
+      label: 'Main Content'
+      region: content
+      parent_name: group_content
+      weight: 10
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+    group_aside:
+      children:
+        - field_aside
+      label: Aside
+      region: content
+      parent_name: group_content
+      weight: 11
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+    group_widgets:
+      children:
+        - field_hero_mega_search
+      label: Widgets
+      region: content
+      parent_name: group_main_content
+      weight: 8
+      format_type: details
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        open: false
+        description: ''
+        required_fields: true
+    group_background_color:
+      children:
+        - field_background
+      label: 'Background Color'
+      region: content
+      parent_name: group_main_content
+      weight: 6
+      format_type: details
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        open: false
+        description: ''
+        required_fields: true
+_core:
+  default_config_hash: DWT1swJxC0jcjn9sEBZgWFPdFNVIzoBEpgxH1MsAvyY
+id: paragraph.hero_mega.default
+targetEntityType: paragraph
+bundle: hero_mega
+mode: default
+content:
+  field_aside:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_background:
+    type: options_buttons
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_heading:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_hero_mega_search:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_image_media:
+    type: media_library_widget
+    weight: 5
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_lead:
+    type: text_textarea
+    weight: 4
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

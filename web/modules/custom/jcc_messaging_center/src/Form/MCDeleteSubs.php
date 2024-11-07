@@ -2,16 +2,15 @@
 
 namespace Drupal\jcc_messaging_center\Form;
 
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
+use Drupal\Core\TempStore\SharedTempStoreFactory;
 use SendGrid\Client as SClient;
-use SendGrid\Exception;
 use SendGrid\Email;
+use SendGrid\Exception;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Deletes all groups from user.
@@ -57,18 +56,18 @@ class MCDeleteSubs extends FormBase {
     $store = $this->tempstore->get('jcc_messaging_center');
     $token_value = $store->get('member_email_' . $member_email);
 
-    if (!($token_value == $access_key)){
+    if (!($token_value == $access_key) && !(\Drupal::currentUser()->isAuthenticated())) {
       $form['invalid_message'] = [
         '#prefix' => '<h2>',
         '#suffix' => '</h2>',
         '#markup' => t('This link is expired or invalid.'),
         '#weight' => -100,
-        '#value' => true,
+        '#value' => TRUE,
       ];
 
       $form['invalid'] = array(
         '#type' => 'hidden',
-        '#value' => true,
+        '#value' => TRUE,
       );
 
       $form['user_email'] = [
@@ -82,8 +81,8 @@ class MCDeleteSubs extends FormBase {
         '#value' => $this->t('Get a new link'),
         '#button_type' => 'primary',
       ];
-    } else {
-
+    }
+    else {
       $form['title_header'] = [
         '#prefix' => '<h2>',
         '#suffix' => '</h2>',
@@ -110,10 +109,11 @@ class MCDeleteSubs extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    if ($form_state->hasValue('invalid')){
+    if ($form_state->hasValue('invalid')) {
       jcc_messaging_center_send_email_from_error($form_state->cleanValues()->getValues()['user_email']);
       $this->messenger()->addStatus($this->t('An email has been sent to ' . $form_state->cleanValues()->getValues()['user_email']));
-    } else {
+    }
+    else {
       $user_email = $form_state->cleanValues()->getValues()['user_email'];
       $user = user_load_by_mail($user_email);
 
@@ -152,8 +152,8 @@ class MCDeleteSubs extends FormBase {
 function jcc_messaging_center_send_email_from_error(string $to_email = '') {
   global $base_url;
 
-  //Creating new token in tempshare
-  $email_key = user_password();
+  // Creating new token in tempshare.
+  $email_key = \Drupal::service('password_generator')->generate();
   $tempstore = \Drupal::service('tempstore.shared');
   $store = $tempstore->get('jcc_messaging_center');
   $store->set('member_email_' . $to_email, $email_key);
@@ -166,11 +166,11 @@ function jcc_messaging_center_send_email_from_error(string $to_email = '') {
     $body = str_replace(
       [
         '%base_url%',
-        '%$email_key%'
+        '%$email_key%',
       ],
       [
         $base_url,
-        $email_key
+        $email_key,
       ],
       '
           <h2>Preferences management</h2>
