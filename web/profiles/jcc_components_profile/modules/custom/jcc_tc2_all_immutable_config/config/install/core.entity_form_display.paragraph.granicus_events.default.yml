@@ -1,0 +1,38 @@
+uuid: b78eba55-ced5-4edb-ac65-e67744dc2fe0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.granicus_events.field_api_url
+    - field.field.paragraph.granicus_events.field_components
+    - paragraphs.paragraphs_type.granicus_events
+  module:
+    - paragraphs
+id: paragraph.granicus_events.default
+targetEntityType: paragraph
+bundle: granicus_events
+mode: default
+content:
+  field_api_url:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_components:
+    type: entity_reference_paragraphs
+    weight: 1
+    region: content
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
