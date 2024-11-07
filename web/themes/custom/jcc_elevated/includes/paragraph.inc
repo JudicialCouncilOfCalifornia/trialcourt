@@ -568,3 +568,103 @@ function jcc_elevated_paragraph_tabs(array &$variables) {
     }
   }
 }
+
+/**
+ * Helper function for Granicus Events paragraphs.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ */
+function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInterface $paragraph) {
+  $event_types = $paragraph->get('field_components')->referencedEntities();
+
+  if ($event_types) {
+    $today = date('m/d/y');
+    $current_time = date('h:i A');
+
+    // Granicus upcoming events feed.
+    $api = $paragraph->get('field_api_url')->value;
+    if ($api) {
+      $response = file_get_contents($api);
+      $granicus_events = json_decode($response, TRUE);
+    }
+
+    $livecast = [];
+    foreach ($event_types as $event_type) {
+      $type_id = $event_type->get('field_event_type')->target_id;
+      $name = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->load($type_id)->name->value;
+      // Location by Granicus encoder name.
+      // Granicus events can shift locations on infrequent occasion.
+      $encoders = explode(',', $event_type->get('field_id')->value);
+      $encoder_name_regex = '/^.*?\([^\d]*(\d+)[^\d]*\).*/';
+
+      if ($name && !empty($encoders) && !empty($granicus_events)) {
+        // Check for scheduled Granicus events by name, encoder, and time.
+        foreach (reset($granicus_events) as $granicus_event) {
+          // Match encoder with location ID in event encoder name.
+          preg_match($encoder_name_regex, $granicus_event['EncoderName'], $granicus_encoder_name_id);
+          // Match setup name to the event name.
+          $event_name = str_contains($granicus_event['Name'], $name);
+
+          // If event matched by name is today and within scheduled timeframe.
+          if ($granicus_event['Date'] == $today && $event_name && in_array($granicus_encoder_name_id[1], $encoders)) {
+            $current_time = strtotime($current_time);
+            $start_time = strtotime($granicus_event['Time']);
+            $duration = (int) $granicus_event['Duration'];
+            $preload_time = $start_time - $current_time;
+            $end_time = $start_time + $duration;
+            $end_time_buffer = $end_time + 1800;
+
+            // Display or hide 1 hour before and after scheduled time.
+            if (($preload_time <= 3600) && ($current_time < $end_time_buffer)) {
+              // Status.
+              $status = $granicus_event['Status'];
+              if ($status == 'Running') {
+                $status = 'live';
+              }
+              else {
+                if ($current_time < $start_time) {
+                  $status = 'starting soon';
+                }
+                else {
+                  $status = 'stopped';
+                }
+              }
+
+              // Optional captioning links with verbiage.
+              $captioning = NULL;
+              if ($event_type->get('field_link_multiple')) {
+                $captioning_links = [];
+                foreach ($event_type->get('field_link_multiple') as $caption_language) {
+                  $url = \Drupal::service('file_url_generator')->generate($caption_language->uri);
+                  $captioning_links[] = \Drupal::service('link_generator')->generate($caption_language->title, $url);
+                }
+                switch (count($captioning_links)) {
+                  case 2:
+                    $captioning_links = implode(' or ', $captioning_links);
+                    break;
+
+                  default:
+                    $captioning_links = $captioning_links[0];
+                }
+                $captioning = ['#markup' => 'View ' . $captioning_links . ' Captions'];
+              }
+
+              $livecast = [
+                'title' => $name,
+                'date' => $granicus_event['Date'],
+                'time' => $granicus_event['Time'],
+                'promotional' => $event_type->get('field_lead') ? $event_type->get('field_lead')->view('full') : '',
+                'url' => $granicus_event['MediaLink'],
+                'captioning' => $captioning,
+                'encoder' => $granicus_encoder_name_id[1],
+                'status' => $status,
+              ];
+            }
+          }
+        }
+      }
+    }
+    $variables['livecast'] = $livecast;
+  }
+}
