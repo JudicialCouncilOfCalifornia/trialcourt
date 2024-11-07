@@ -1,0 +1,40 @@
+{{ attach_library("jcc_storybook/Alert") }}
+{{ attach_library("jcc_storybook/Icon") }}
+
+{% if livecast is not empty %}
+  {% set content %}
+    <div class="granicus with-sidebar" style="--sidebar-width:26ch; --sidebar-direction:row-reverse">
+      {% if livecast.status == 'starting soon' or livecast.staus == 'live' %}
+        <div class="granicus__actions">
+          <a class="button button--secondary" href="{{ livecast.url }}" arial_label="View {{ livecast.date }} {{ livecast.title }}">
+            Watch live broadcast
+          </a>
+          <div class="granicus__captioning">{{ livecast.captioning }}</div>
+        </div>
+      {% endif %}
+      <div class="with-sidebar" style="--sidebar-width:12ch; --sidebar-direction:row">
+        <div class="granicus__status">
+          <div class="status">
+            {{ livecast.status }}
+          </div>
+        </div>
+        <div>
+          <div class="granicus__heading">
+            <strong>{{ livecast.title }}</strong>
+            <span class="notation granicus__time">{{ livecast.time }} PST</span>
+          </div>
+          <div class="granicus__text">
+            {{ livecast.promotional }}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endset %}
+
+  {% include "@molecules/Alert/Alert.twig" with {
+    type: 'status',
+    dismissible: false,
+    content: [content],
+    icon_path: false,
+  } %}
+{% endif %}
