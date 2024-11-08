@@ -576,91 +576,104 @@ function jcc_elevated_paragraph_tabs(array &$variables) {
  *   The paragraph variables.
  */
 function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInterface $paragraph) {
-  $today = date('m/d/y');
-  // Granicus information to query by.
+  // Setup provided by entries per event type.
   $event_types = $paragraph->get('field_components')->referencedEntities();
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
 
-  // If paragraph set to query imported Granicus event scheduled for today.
+  // If setup defined for paragraph.
   if ($event_types) {
+    $today = date('m/d/y');
+    $term_storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
+
+    // Find matching event types specified in setup.
     $livecast = [];
     foreach ($event_types as $event_type) {
       if ($event_type->get('field_event_type')->target_id) {
         $type_id = $event_type->get('field_event_type')->target_id;
-        $node_storage = \Drupal::entityTypeManager()->getStorage('node');
         $imported_events = $node_storage->loadByProperties(['field_event_type' => $type_id]);
 
+        // If matching event types found.
         if ($imported_events) {
           foreach ($imported_events as $event) {
-            $event_date = $event->get('field_event_date')->start_date->format('m/d/y');
-            if ($event_date == $today) {
-              $type = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->load($type_id)->name->value;
+            $type = $term_storage->load($type_id)->name->value;
+            $event_date = $event->get('field_event_date')->start_date ? $event->get('field_event_date')->start_date->format('m/d/y') : '';
+            $scheduled_type = $term_storage->load($event->get('field_event_type')->target_id)->name->value;
+
+            // If matching event is scheduled for today.
+            if ($event_date == $today && $scheduled_type == $type) {
               $start_timestamp = strtotime($event->get('field_event_date')->start_date);
-
-              // Optional captioning links with verbiage.
               $captioning = NULL;
-              if (count($event->get('field_link_multiple')) > 0) {
-                $captioning_links = [];
-                foreach ($event->get('field_link_multiple') as $caption_language) {
-                  $url = \Drupal::service('file_url_generator')->generate($caption_language->uri);
-                  $captioning_links[] = \Drupal::service('link_generator')->generate($caption_language->title, $url);
-                }
-                switch (count($captioning_links)) {
-                  case 2:
-                    $captioning_links = implode(' or ', $captioning_links);
-                    break;
-
-                  default:
-                    $captioning_links = $captioning_links[0];
-                }
-                $captioning = ['#markup' => 'View ' . $captioning_links . ' Captions'];
-              }
 
               // Banner visibility by status.
               $status = NULL;
+              $current_time = date('h:i A');
+              $current_timestamp = strtotime($current_time);
+              $preload_buffer = $start_timestamp - 3600;
+              $start_buffer = $start_timestamp + 3600;
+              $end_timestamp = strtotime($event->get('field_event_date')->end_date);
+
               if ($event_type->get('field_toggle')->value == 1) {
                 // If always live broadcast override.
-                $status = 'live';
+                if ($current_timestamp < $preload_buffer || $current_timestamp < $end_timestamp) {
+                  $status = 'live';
+                }
               }
-              else {
-                $current_time = date('h:i A');
-                $current_timestamp = strtotime($current_time);
-                $preload_buffer = $start_timestamp - 3600;
-                $start_buffer = $start_timestamp + 3600;
-                $end_timestamp = strtotime($event->get('field_event_date')->end_date);
+              elseif ($current_timestamp < $preload_buffer || $current_timestamp < $start_buffer) {
+                // Display pending 1 hour before scheduled time.
+                $status = 'starting soon';
+              }
+              elseif ($current_timestamp > $start_buffer && $current_timestamp < $end_timestamp) {
+                // Default display until scheduled time ends.
+                $status = 'no broadcast';
+              }
 
-                if ($current_timestamp < $preload_buffer || $current_timestamp < $start_buffer) {
-                  // Display pending 1 hour before scheduled time.
-                  $status = 'starting soon';
+              // Granicus real-time updates.
+              $granicus_events = [];
+              $import_configs = \Drupal::config('migrate_plus.migration.courts_node_event_granicus');
+              $api = $import_configs->get('source.urls');
+              if ($api) {
+                $request = file_get_contents($api);
+                if ($request) {
+                  $granicus_events = new SimpleXMLElement($request, LIBXML_NOCDATA);
+                  $granicus_events = json_encode($granicus_events);
+                  $granicus_events = json_decode($granicus_events, TRUE);
+                  $granicus_events = reset($granicus_events);
                 }
-                elseif ($current_time > $start_buffer && $current_time < $end_timestamp) {
-                  // Default display until scheduled time ends.
-                  $status = 'no broadcast';
-                }
-
-                // Get Granicus feed status.
-                $granicus_events = [];
-                $import_configs = \Drupal::config('migrate_plus.migration.courts_node_event_granicus');
-                $api = $import_configs->get('source.urls');
-                if ($api) {
-                  $request = file_get_contents($api);
-                  if ($request) {
-                    $granicus_events = new SimpleXMLElement($request);
-                    $granicus_events = json_encode($granicus_events);
-                    $granicus_events = json_decode($granicus_events, TRUE);
-                  }
-                }
-                if ($granicus_events) {
-                  // Granicus event status mapping - Stopped or Running.
-                  foreach ($granicus_events as $granicus_event) {
-                    if ($granicus_event['date'] == $today && $granicus_event['type'] == $type) {
+              }
+              if ($granicus_events) {
+                foreach ($granicus_events as $granicus_event) {
+                  if ($granicus_event['date'] == $today && $granicus_event['type'] == $type) {
+                    // Live broadcast check.
+                    if ($status != 'live') {
                       switch ($granicus_event['status']) {
                         case 'Running':
                           $status = 'live';
                           break;
+                      }
+                    }
+
+                    // Captioning links which can change at any time.
+                    // Also imported into Drupal event but usage TBD.
+                    if ($granicus_event['captioning']) {
+                      $captioning_links = [];
+                      $captions = explode(';', $granicus_event['captioning']);
+                      foreach ($captions as $caption) {
+                        if ($caption) {
+                          $caption = explode('|', $caption);
+                          $title = $caption[0];
+                          $url = \Drupal::service('file_url_generator')->generate($caption[1]);
+                          $captioning_links[] = \Drupal::service('link_generator')->generate($title, $url);
+                        }
+                      }
+                      switch (count($captioning_links)) {
+                        case 2:
+                          $captioning_links = implode(' or ', $captioning_links);
+                          break;
 
                         default:
-                          $status = 'no broadcast';
+                          $captioning_links = $captioning_links[0];
                       }
+                      $captioning = ['#markup' => 'View ' . $captioning_links . ' Captions'];
                     }
                   }
                 }
