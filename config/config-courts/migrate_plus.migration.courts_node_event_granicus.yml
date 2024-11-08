@@ -29,13 +29,13 @@ source:
       label: Type
       selector: type
     -
-      name: start_datetime
+      name: start_timestamp
       label: 'Start Date & Time'
-      selector: start_datetime
+      selector: start_timestamp
     -
-      name: end_datetime
+      name: end_timestamp
       label: 'Estimated End Date & Time'
-      selector: end_datetime
+      selector: end_timestamp
     -
       name: duration
       label: Duration
@@ -80,13 +80,13 @@ process:
   field_event_date/value:
     -
       plugin: format_date
-      source: start_datetime
+      source: start_timestamp
       from_format: U
       to_format: 'Y-m-d\TH:i:s'
   field_event_date/end_value:
     -
       plugin: format_date
-      source: end_datetime
+      source: end_timestamp
       from_format: U
       to_format: 'Y-m-d\TH:i:s'
   field_granicus_link/value:

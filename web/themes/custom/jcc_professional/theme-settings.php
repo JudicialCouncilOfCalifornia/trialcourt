@@ -177,24 +177,30 @@ function jcc_professional_form_system_theme_settings_alter(&$form, FormStateInte
     '#default_value' => $no_results_msg ? $no_results_msg['value'] : '',
   ];
 
-  // Special header body/feature.
-  $form['special'] = [
+  // Granicus integration.
+  $form['granicus'] = [
     '#type' => 'details',
-    '#title' => t('Special'),
+    '#title' => t('Granicus'),
     '#collapsed'  => TRUE,
   ];
-  $header_body_value = '';
-  $header_body_format = 'full_html';
-  $header_body = theme_get_setting('header_body');
-  if (isset($header_body)) {
-    $header_body_value = $header_body['value'];
-    $header_body_format = $header_body['format'];
-  }
-  $form['special']['header_body'] = [
-    '#type' => 'text_format',
-    '#title' => 'Homepage Header Body',
-    '#description' => t('For inserting special content or features into the homepage header area (e.g. Granicus live cast embed).'),
-    '#default_value' => $header_body_value,
-    '#format' => $header_body_format,
+  $granicus_event_type = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->load(theme_get_setting('granicus_event_type'));
+  $form['granicus']['granicus_event_type'] = [
+    '#type' => 'entity_autocomplete',
+    '#title' => t('Event type tag'),
+    '#target_type' => 'taxonomy_term',
+    '#selection_settings' => [
+      'target_bundles' => ['event_type'],
+    ],
+    '#default_value' => $granicus_event_type,
+  ];
+  $form['granicus']['granicus_events_api'] = [
+    '#type' => 'textfield',
+    '#title' => t('API URL'),
+    '#default_value' => theme_get_setting('granicus_event_details'),
+  ];
+  $form['granicus']['granicus_status_override'] = [
+    '#type'          => 'checkbox',
+    '#title'         => t('Always display as a live broadcast?'),
+    '#default_value' => theme_get_setting('granicus_status_override'),
   ];
 }
