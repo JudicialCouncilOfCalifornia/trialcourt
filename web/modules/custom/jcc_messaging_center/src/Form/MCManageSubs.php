@@ -189,7 +189,7 @@ function jcc_messaging_center_send_email_from_error_management(string $to_email 
   global $base_url;
 
   //Creating new token in tempshare
-  $email_key = user_password();
+  $email_key = \Drupal::service('password_generator')->generate();
   $tempstore = \Drupal::service('tempstore.shared');
   $store = $tempstore->get('jcc_messaging_center');
   $store->set('member_email_' . $to_email, $email_key);

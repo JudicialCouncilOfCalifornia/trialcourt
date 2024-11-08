@@ -2,16 +2,15 @@
 
 namespace Drupal\jcc_subscriptions\Form;
 
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use MarkRoland\Emma\Client;
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
+use Drupal\Core\TempStore\SharedTempStoreFactory;
+use MarkRoland\Emma\Client;
 use SendGrid\Client as SClient;
 use SendGrid\Email;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Deletes all groups from user.
@@ -62,18 +61,18 @@ class ManageSubs extends FormBase {
     $store = $this->tempstore->get('jcc_subscriptions');
     $token_value = $store->get('member_email_' . $member_email);
 
-    if (!($token_value == $access_key)) {
+    if (!($token_value == $access_key) && !(\Drupal::currentUser()->isAuthenticated())) {
       $form['invalid_message'] = [
         '#prefix' => '<h2>',
         '#suffix' => '</h2>',
         '#markup' => t('This link is expired or invalid.'),
         '#weight' => -100,
-        '#value' => true,
+        '#value' => TRUE,
       ];
 
       $form['invalid'] = array(
         '#type' => 'hidden',
-        '#value' => true,
+        '#value' => TRUE,
       );
 
       $form['user_email'] = [
@@ -138,10 +137,11 @@ class ManageSubs extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    if ($form_state->hasValue('invalid')){
+    if ($form_state->hasValue('invalid')) {
       jcc_subscriptions_send_email_from_error_management($form_state->cleanValues()->getValues()['user_email']);
       $this->messenger()->addStatus($this->t('An email has been sent to ' . $form_state->cleanValues()->getValues()['user_email']));
-    } else {
+    }
+    else {
       $member_email = $form['email']['#value'];
       $emma_config = self::config('webform_myemma.settings');
       $emma = new Client($emma_config->get('account_id'), $emma_config->get('public_key'), $emma_config->get('private_key'));

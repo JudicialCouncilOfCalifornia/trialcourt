@@ -3,7 +3,7 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_case_number_plain
-    - field.storage.node.field_date
+    - field.storage.node.field_date_time
     - field.storage.node.field_media_file_multiple
     - field.storage.node.field_opinion_source
     - field.storage.node.field_related_cases_plain
@@ -206,15 +206,15 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_date:
-          id: field_date
-          table: node__field_date
-          field: field_date
+        field_date_time:
+          id: field_date_time
+          table: node__field_date_time
+          field: field_date_time
           relationship: none
           group_type: group
           admin_label: ''
           plugin_id: field
-          label: Date
+          label: 'Hearing Date / Time'
           exclude: false
           alter:
             alter_text: false
@@ -259,7 +259,7 @@ display:
           type: datetime_default
           settings:
             timezone_override: ''
-            format_type: m_d_y
+            format_type: friendly_short
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -1136,7 +1136,7 @@ display:
         - user.roles
       tags:
         - 'config:field.storage.node.field_case_number_plain'
-        - 'config:field.storage.node.field_date'
+        - 'config:field.storage.node.field_date_time'
         - 'config:field.storage.node.field_media_file_multiple'
         - 'config:field.storage.node.field_opinion_source'
         - 'config:field.storage.node.field_related_cases_plain'
@@ -1176,7 +1176,7 @@ display:
         - user.roles
       tags:
         - 'config:field.storage.node.field_case_number_plain'
-        - 'config:field.storage.node.field_date'
+        - 'config:field.storage.node.field_date_time'
         - 'config:field.storage.node.field_media_file_multiple'
         - 'config:field.storage.node.field_opinion_source'
         - 'config:field.storage.node.field_related_cases_plain'

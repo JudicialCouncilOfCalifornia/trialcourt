@@ -724,6 +724,7 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
       'posted' => [
         'label' => t('Posted'),
         'value' => $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '',
+        'value' => $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '',
       ],
     ],
     'custom_apply' => $custom_apply,
