@@ -597,6 +597,8 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       $user = User::load(\Drupal::currentUser()->id());
       $check_edit_access = $node->access('update', $user);
 
+      $event['content']['#markup'] = '';
+
       if ($check_edit_access) {
         $event['content']['#markup'] = '<a href="/node/' . $node->id() . '/edit">(edit this event)<br/></a>';
       }
@@ -1491,7 +1493,7 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   }
 
   // Items per page filter.
-  if ($variables['rows'][0]['#rows'] && isset($variables['exposed']['items_per_page'])) {
+  if (isset($variables['rows'][0]['#rows']) && isset($variables['exposed']['items_per_page'])) {
     $variables['items_per_page'] = $variables['exposed']['items_per_page'];
     if ($variables['exposed']['#id']) {
       $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
