@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.news.field_byline
     - field.field.node.news.field_media
     - field.field.node.news.field_news_type
+    - field.field.node.news.field_origin_url
     - node.type.news
   module:
     - feeds_ex
@@ -99,6 +100,13 @@ custom_sources:
     value: tagline
     label: tagline
     machine_name: tagline
+  link:
+    label: link
+    machine_name: link
+    value: link
+    raw: false
+    inner: false
+    type: xml
 mappings:
   -
     target: field_news_type
@@ -147,3 +155,10 @@ mappings:
       reference_by: name
       autocreate: 1
       autocreate_bundle: image
+  -
+    target: field_origin_url
+    map:
+      uri: link
+      title: ''
+    settings:
+      language: null

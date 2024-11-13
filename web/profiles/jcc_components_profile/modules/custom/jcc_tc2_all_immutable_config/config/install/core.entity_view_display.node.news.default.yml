@@ -10,10 +10,12 @@ dependencies:
     - field.field.node.news.field_media_file_multiple
     - field.field.node.news.field_news_type
     - field.field.node.news.field_node_reference
+    - field.field.node.news.field_origin_url
     - node.type.news
   module:
     - datetime
     - entity_reference_revisions
+    - link
     - text
     - user
 id: node.news.default
@@ -90,6 +92,18 @@ content:
       link: true
     third_party_settings: {  }
     weight: 7
+    region: content
+  field_origin_url:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 8
     region: content
 hidden:
   entity_print_view_epub: true

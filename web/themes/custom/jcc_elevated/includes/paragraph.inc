@@ -82,6 +82,16 @@ function jcc_elevated_paragraph_views_reference(array &$variables, ParagraphInte
 }
 
 /**
+ * Helper function for courts sticky list.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ */
+function jcc_elevated_paragraph_views_reference_news_courts_sticky_list(array &$variables, ViewEntityInterface $view) {
+  jcc_elevated_paragraph_views_reference_news_sticky_list($variables, $view);
+}
+
+/**
  * Helper function for views_reference paragrpahs of type news.
  *
  * @param array $variables
