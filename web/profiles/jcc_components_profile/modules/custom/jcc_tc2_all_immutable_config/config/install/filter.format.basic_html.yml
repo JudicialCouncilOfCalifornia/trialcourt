@@ -9,6 +9,12 @@ name: 'Basic HTML'
 format: basic_html
 weight: -6
 filters:
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
+    status: true
+    weight: 0
+    settings: {  }
   filter_html:
     id: filter_html
     provider: filter
@@ -53,9 +59,3 @@ filters:
       glossify_taxonomy_type: tooltips
       glossify_taxonomy_vocabs: glossary
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
-  emptyparagraphkiller:
-    id: emptyparagraphkiller
-    provider: emptyparagraphkiller
-    status: true
-    weight: 0
-    settings: {  }
