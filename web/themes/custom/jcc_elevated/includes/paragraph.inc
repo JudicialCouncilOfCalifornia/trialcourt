@@ -598,21 +598,20 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
               $status = NULL;
               $current_time = date('h:i A');
               $current_timestamp = strtotime($current_time);
-              $preload_buffer = $start_timestamp - 3600;
-              $start_buffer = $start_timestamp + 3600;
+              $current_to_start = $current_timestamp - $start_timestamp;
               $end_timestamp = strtotime($event->get('field_event_date')->end_date);
 
               if ($event_type->get('field_toggle')->value == 1) {
                 // If always live broadcast override.
-                if ($current_timestamp < $preload_buffer || $current_timestamp < $end_timestamp) {
+                if ($current_timestamp < $start_timestamp || $current_timestamp < $end_timestamp) {
                   $status = 'live';
                 }
               }
-              elseif ($current_timestamp < $preload_buffer || $current_timestamp < $start_buffer) {
-                // Display pending 1 hour before scheduled time.
+              elseif ($current_to_start > -3600  && $current_to_start < 3600) {
+                // Display pending 1 hour before & after scheduled time.
                 $status = 'starting soon';
               }
-              elseif ($current_timestamp > $start_buffer && $current_timestamp < $end_timestamp) {
+              elseif ($current_timestamp >= $start_timestamp && $current_timestamp < $end_timestamp) {
                 // Default display until scheduled time ends.
                 $status = 'no broadcast';
               }
@@ -627,11 +626,10 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
                   $granicus_events = new SimpleXMLElement($request, LIBXML_NOCDATA);
                   $granicus_events = json_encode($granicus_events);
                   $granicus_events = json_decode($granicus_events, TRUE);
-                  $granicus_events = reset($granicus_events);
                 }
               }
               if ($granicus_events) {
-                foreach ($granicus_events as $granicus_event) {
+                foreach ($granicus_events['event'] as $granicus_event) {
                   if ($granicus_event['date'] == $today && $granicus_event['type'] == $type) {
                     // Live broadcast check.
                     if ($status != 'live') {
@@ -669,6 +667,9 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
                 }
               }
 
+              // Media URL since saved as WYSIWYG text.
+              $url = str_replace(['<p>', '</p>'], '', $event->get('field_granicus_link')->first()->value);
+
               // Display banner.
               if ($status) {
                 $livecast = [
@@ -676,7 +677,7 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
                   'date' => $event_date,
                   'time' => \Drupal::service('date.formatter')->format($start_timestamp, 'custom', 'h:i A'),
                   'promotional' => $event_type->get('field_lead') ? $event_type->get('field_lead')->view('full') : '',
-                  'url' => $event->get('field_granicus_link')->first()->value,
+                  'url' => $url,
                   'captioning' => $captioning,
                   'status' => $status,
                 ];
