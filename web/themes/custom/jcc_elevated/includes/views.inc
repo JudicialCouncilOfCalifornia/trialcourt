@@ -506,6 +506,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       if ($check_edit_access) {
         $event['content']['#markup'] .= '<a href="/node/' . $node->id() . '/edit">(edit this event)<br/></a>';
       }
+      $event['content']['#markup'] = $event['content']['#markup'] ?? '';
 
       // Populating the event object.
       $event['title'] = $node->field_event_date->start_date->format('F j, Y');
@@ -772,7 +773,7 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
   $grouped_proposals = [];
   $file_url = '';
   $file_uri = '';
-  foreach ($variables['rows'] as $index => $row1) {
+  foreach ($variables['rows'] as $row1) {
     $list_label = preg_replace('/\R+/', ' ', strip_tags($row1['#title']));
     $safe_list_label = rawurlencode($list_label);
     if (!isset($grouped_proposals[$safe_list_label])) {
@@ -1187,6 +1188,11 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
+  // Reset our embedded view exposed form to use the current page as the action.
+  // This is necessary because it is not an ajax controlled element, so it
+  // triggers a page refresh to the views default page (which is an admin page).
+  $variables['exposed']['#action'] = \Drupal::request()->getPathInfo();
+
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   if (isset($variables['rows'][0]['#rows'])) {
@@ -1273,6 +1279,11 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
+  // Reset our embedded view exposed form to use the current page as the action.
+  // This is necessary because it is not an ajax controlled element, so it
+  // triggers a page refresh to the views default page (which is an admin page).
+  $variables['exposed']['#action'] = \Drupal::request()->getPathInfo();
+
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   if (isset($variables['rows'][0]['#rows'])) {
@@ -1315,6 +1326,11 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
  */
 function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived(&$variables): void {
   __jcc_view_results_exposed_filter_init($variables);
+
+  // Reset our embedded view exposed form to use the current page as the action.
+  // This is necessary because it is not an ajax controlled element, so it
+  // triggers a page refresh to the views default page (which is an admin page).
+  $variables['exposed']['#action'] = \Drupal::request()->getPathInfo();
 
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
@@ -1492,31 +1508,39 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
     $form['actions']['reset']['#attributes']['class'][] = 'button button--secondary button--normal';
   }
 
-  // Items per page filter.
+  // Items per page filter. All items per page elements need to live outside the
+  // views exposed form.
   if (isset($variables['rows'][0]['#rows']) && isset($variables['exposed']['items_per_page'])) {
+
+    // Create our new variable for the templates.
     $variables['items_per_page'] = $variables['exposed']['items_per_page'];
+
+    // Since the items_per_page element is moved outside the form tag, we need
+    // to apply the original form id to the form attribute of the element.
     if ($variables['exposed']['#id']) {
       $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
-
-      // Storybook form submit trigger type.
-      if ($variables['view']->ajaxEnabled()) {
-        $variables['items_per_page']['#attributes']['class'][] = 'storybook-ajax-trigger';
-      }
-      else {
-        $variables['items_per_page']['#attributes']['class'][] = 'storybook-trigger';
-      }
-
-      foreach ($variables['items_per_page']['#options'] as $key => $value) {
-        $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' per page';
-      }
-      unset($variables['items_per_page']['#title']);
-      unset($variables['exposed']['items_per_page']);
     }
+
+    // Storybook form submit trigger type.
+    if ($variables['view']->ajaxEnabled()) {
+      $variables['items_per_page']['#attributes']['class'][] = 'storybook-ajax-trigger';
+    }
+    else {
+      $variables['items_per_page']['#attributes']['class'][] = 'storybook-trigger';
+    }
+
+    // Rewrite our items_per_page options to "Show XX per page".
+    foreach ($variables['items_per_page']['#options'] as $key => $value) {
+      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' per page';
+    }
+
+    // Remove the label and remove the item from the exposed form.
+    unset($variables['items_per_page']['#title']);
+    unset($variables['exposed']['items_per_page']);
   }
   else {
     unset($variables['exposed']['items_per_page']);
   }
-
   // Count summary for the current page of results.
   // Suppress duplicate summary with empty header in ViewsResults twig.
   $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
