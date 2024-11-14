@@ -31,9 +31,10 @@ function build_service_markup(&$variables, $node) {
   }
 
   if ($node->hasField('field_cases_served')) {
-    $variables['case_category_terms'] = array_map(function ($term_reference) {
-        return $term_reference->getName();
-    }, $node->get('field_cases_served')->referencedEntities());
+    $variables['case_category_terms'] = array_filter(array_map(function ($term_reference) {
+      $term_name = $term_reference->getName();
+      return $term_name !== 'All Cases Served at This Location' ? $term_name : null; // Exclude "All Cases Served"
+  }, $node->get('field_cases_served')->referencedEntities()));
   }
 
   // Check if the field_others field exists and has a value, and then explode it into an array.
@@ -115,12 +116,13 @@ function extract_service_details($paragraph) {
     $service_link = substr($service_link, strlen('internal:'));
   }
 
-  if (isset($service_link)  && $service_link != "") {
-    $service_name = '<a href ="' . htmlspecialchars($service_link) . '">' . ucfirst($paragraph->get('field_service_name')->value) . '</a>';
+  if (isset($service_link)  && $service_link != "" && !is_null($paragraph->get('field_service_name')->value)) {
+    $service_display_name  = '<a href ="' . htmlspecialchars($service_link) . '">' . ucfirst($paragraph->get('field_service_name')->value) . '</a>';
   }
-  else {
-    $service_name = '<div class = "no-link">' . ucfirst($paragraph->get('field_service_name')->value) . '</div>';
+  elseif(isset($paragraph->get('field_service_name')->value)) {
+    $service_display_name = '<div class = "no-link">' . ucfirst($paragraph->get('field_service_name')->value) . '</div>';
   }
+  $service_name  = $service_display_name ?? "";
 
   $services = [
     'name' => $service_name,
