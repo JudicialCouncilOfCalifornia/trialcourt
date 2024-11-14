@@ -112,21 +112,20 @@ function jcc_professional_preprocess_page(&$variables) {
           $status = NULL;
           $current_time = date('h:i A');
           $current_timestamp = strtotime($current_time);
-          $preload_buffer = $start_timestamp - 3600;
-          $start_buffer = $start_timestamp + 3600;
+          $current_to_start = $current_timestamp - $start_timestamp;
           $end_timestamp = strtotime($event->get('field_date_range')->end_date);
 
           if (theme_get_setting('granicus_status_override') == 1) {
             // If always live broadcast override.
-            if ($current_timestamp < $preload_buffer || $current_timestamp < $end_timestamp) {
+            if ($current_timestamp < $start_timestamp || $current_timestamp < $end_timestamp) {
               $status = 'live';
             }
           }
-          elseif ($current_timestamp < $preload_buffer || $current_timestamp < $start_buffer) {
-            // Display pending 1 hour before scheduled time.
+          elseif ($current_to_start > -3600  && $current_to_start < 3600) {
+            // Display pending 1 hour before & after scheduled time.
             $status = 'starting soon';
           }
-          elseif ($current_timestamp > $start_buffer && $current_timestamp < $end_timestamp) {
+          elseif ($current_timestamp >= $start_timestamp && $current_timestamp < $end_timestamp) {
             // Default display until scheduled time ends.
             $status = 'no broadcast';
           }
@@ -144,7 +143,7 @@ function jcc_professional_preprocess_page(&$variables) {
           }
 
           if ($granicus_events) {
-            foreach (reset($granicus_events) as $granicus_event) {
+            foreach ($granicus_events['event'] as $granicus_event) {
               if ($granicus_event['date'] == $today && $granicus_event['type'] == $type) {
                 // Live broadcast check.
                 if ($status != 'live') {
