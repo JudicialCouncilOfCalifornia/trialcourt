@@ -193,10 +193,10 @@ function jcc_professional_form_system_theme_settings_alter(&$form, FormStateInte
     ],
     '#default_value' => $granicus_event_type,
   ];
-  $form['granicus']['granicus_events_api'] = [
+  $form['granicus']['granicus_events_feed'] = [
     '#type' => 'textfield',
-    '#title' => t('API URL'),
-    '#default_value' => theme_get_setting('granicus_event_details'),
+    '#title' => t('Upcoming event feed'),
+    '#default_value' => theme_get_setting('granicus_events_feed'),
   ];
   $form['granicus']['granicus_status_override'] = [
     '#type'          => 'checkbox',
