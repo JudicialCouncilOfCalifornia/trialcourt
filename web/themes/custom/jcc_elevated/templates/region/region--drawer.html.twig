@@ -3,20 +3,22 @@
 {{ attach_library("jcc_storybook/Offcanvas") }}
 {{ attach_library("jcc_storybook/Drawer") }}
 
-{% set drawer_content %}
-  {% include '@molecules/Offcanvas/Offcanvas.twig' with {
-    heading: {
-      text: canvas_heading,
-      icon: {
-        name: "fa-thumbs-up",
-        icon_path: "/themes/contrib/jcc_storybook/src/assets/icons.svg",
+{% if not hide_was_this_helpful %}
+  {% set drawer_content %}
+    {% include '@molecules/Offcanvas/Offcanvas.twig' with {
+      heading: {
+        text: canvas_heading,
+        icon: {
+          name: "fa-thumbs-up",
+          icon_path: "/themes/contrib/jcc_storybook/src/assets/icons.svg",
+        },
       },
-    },
-    sub_component_data: content,
-  } %}
+      sub_component_data: content,
+    } %}
 
-  <a href="javascript:void(0);" title="Submit feedback about this page" class="button button--secondary button--small icon--thumbs-up offcanvas__open-button">{{ canvas_heading }}</a>
-{% endset %}
+    <a href="javascript:void(0);" title="Submit feedback about this page" class="button button--secondary button--small icon--thumbs-up offcanvas__open-button">{{ canvas_heading }}</a>
+  {% endset %}
+{% endif %}
 
 {% include '@organisms/Drawer/Drawer.twig' with {
   layout: "stack",
