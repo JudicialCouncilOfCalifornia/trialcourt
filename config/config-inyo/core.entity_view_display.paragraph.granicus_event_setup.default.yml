@@ -1,0 +1,45 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.granicus_event_setup.field_event_type
+    - field.field.paragraph.granicus_event_setup.field_lead
+    - field.field.paragraph.granicus_event_setup.field_toggle
+    - paragraphs.paragraphs_type.granicus_event_setup
+  module:
+    - text
+id: paragraph.granicus_event_setup.default
+targetEntityType: paragraph
+bundle: granicus_event_setup
+mode: default
+content:
+  field_event_type:
+    type: entity_reference_label
+    label: visually_hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_lead:
+    type: text_default
+    label: visually_hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_toggle:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 3
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true
