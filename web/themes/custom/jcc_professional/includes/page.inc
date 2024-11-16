@@ -105,7 +105,12 @@ function jcc_professional_preprocess_page(&$variables) {
           $taxonomy_manager = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
           $type = $taxonomy_manager->load($term_id)->getName() ? $taxonomy_manager->load($term_id)->getName() : '';
           $start_timestamp = strtotime($event->get('field_date_range')->start_date);
-          $url = NULL;
+          // Get Webcast URL from event description.
+          $body = $event->get('body')->value;
+          $pattern = '/\/\/jcc\.granicus\.com\/player\/event\/\d+/';
+          preg_match($pattern, $body, $event_url);
+          $event_url = $event_url ? $event_url[0] : '';
+          // Live captions.
           $captioning = NULL;
 
           // Banner visibility by status.
@@ -132,9 +137,9 @@ function jcc_professional_preprocess_page(&$variables) {
 
           // Granicus real-time updates.
           $granicus_events = [];
-          $api = theme_get_setting('granicus_events_api');
-          if ($api) {
-            $request = file_get_contents($api);
+          $feed = theme_get_setting('granicus_events_feed');
+          if ($feed) {
+            $request = file_get_contents($feed);
             if ($request) {
               $granicus_events = new SimpleXMLElement($request, LIBXML_NOCDATA);
               $granicus_events = json_encode($granicus_events);
@@ -154,8 +159,10 @@ function jcc_professional_preprocess_page(&$variables) {
                   }
                 }
 
-                // Webcast URL until stored with Drupal event.
-                $event_url = $granicus_event['media_url'];
+                // If Webcast URL not found in Drupal event use URL from feed.
+                if (!$event_url) {
+                  $event_url = $granicus_event['media_url'];
+                }
 
                 // Captioning links which can change at any time.
                 // Saved with Newsroom events TBD.

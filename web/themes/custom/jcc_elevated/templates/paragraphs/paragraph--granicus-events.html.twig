@@ -1,7 +1,8 @@
 {{ attach_library("jcc_storybook/Pill") }}
 {{ attach_library("jcc_elevated/granicus-events") }}
 
-{% if livecast is not empty %}
+{% if livecasts is not empty %}
+  {% for livecast in livecasts %}
   <div class="granicus">
     <div class="container">
       <div class="granicus__content cluster" style="justify-content:space-between;">
@@ -33,4 +34,5 @@
       </div>
     </div>
   </div>
+  {% endfor %}
 {% endif %}
