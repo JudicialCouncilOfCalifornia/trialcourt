@@ -12,7 +12,7 @@ migration_tags:
   - event
   - granicus
 migration_group: courts
-label: 'Courts: Import Granicus events - Supreme Court, Judicial Council, COJA'
+label: 'Courts: Import upcoming Granicus events feed'
 source:
   plugin: url
   data_fetcher_plugin: http
@@ -52,9 +52,6 @@ source:
     title:
       type: string
 process:
-  moderation_state:
-    plugin: default_value
-    default_value: published
   uid:
     plugin: default_value
     default_value: 1
@@ -70,8 +67,14 @@ process:
     default_value: 1
   field_event_type:
     -
-      plugin: entity_generate
+      plugin: skip_on_condition
       source: type
+      method: row
+      condition:
+        plugin: not:matches
+        regex: '/Supreme Court Oral Argument|Judicial Council Meeting|Commission on Judicial Appointments/'
+    -
+      plugin: entity_generate
       entity_type: taxonomy_term
       bundle_key: vid
       bundle: event_type
