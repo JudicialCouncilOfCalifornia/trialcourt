@@ -1,0 +1,98 @@
+/* Ensure flexbox is applied to the fieldset wrapper to align children horizontally */
+
+#edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-service-hours-from-wrapper .form__wrapper,
+div#edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-service-hours-from-wrapper,
+div#edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-service-hours-to-wrapper,
+#building-hours-wrapper .fieldset__wrapper{
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Hide fieldset borders */
+#edit-field-add-services-1-subform-field-location-service-hours-0-subform-field-service-hours-from-0,
+#edit-field-add-services-1-subform-field-location-service-hours-0-subform-field-service-hours-to-0,
+#edit-field-building-hours-from-0,#edit-field-building-hours-to-0 {
+  border: none !important;
+  padding: 0;
+  margin: 0;
+}
+
+/* Remove default padding and margin from legend  field_afternoon_hours_from','field_afternoon_hours_to'*/
+#edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-morning-hours-starts-0 > legend,
+#edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-morning-hours-to-0 > legend ,
+#edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-afternoon-hours-from-0 > legend,
+#edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-afternoon-hours-to-0 > legend {
+  padding: 0;
+  margin: 0;
+}
+
+/* Style the input fields */
+input[type="time"] {
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+
+.service_hours > .fieldset__wrapper {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Style the fieldset wrapper to have consistent padding and no border */
+@media screen and (min-width: 48em) {
+  .location-hour-group-label  .fieldset__wrapper ,.form_wrapper, .location-afternoon-hours .fieldset__wrapper ,#edit-group-building-hours.details-wrapper{
+        margin: 0rem !important;
+        padding: 0px;
+        border: none;
+        display:flex;
+    }
+}
+
+/* Make the form visually appealing */
+.form-items-inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+@media screen and (min-width: 48em) {
+    #edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-morning-hours-starts-0 > legend .fieldset__label,
+    #edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-morning-hours-to-0 > legend .fieldset__label, 
+    #edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-afternoon-hours-from-0 > legend .fieldset__label,
+    #edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-afternoon-hours-to-0 > legend .fieldset__label{
+        padding-left: 0rem !important;
+    }
+}
+
+div#edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-service-days {
+    display:flex;
+    gap:1rem;
+}
+
+#edit-field-add-services-widget-0-subform-field-location-service-hours-widget-0-subform-group-morning-hours .fieldset__label,
+#edit-field-add-services-widget-0-subform-field-location-service-hours-widget-0-subform-group-afternoon-hours .fieldset__label{
+    margin-bottom:0rem !important;
+    padding-left:10px !important;
+
+}
+
+.location-hour-group-label .form-item {
+    margin-bottom:0px;
+}
+
+#edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-service-days-wrapper[style*="display: none;"]{
+  height:0;
+  overflow:hidden;
+
+}
+
+#edit-field-add-services-0-subform-field-location-service-hours-0-subform-field-service-days-wrapper{
+  display: block;
+  transition:  visibility 0s, opacity 0.5s linear;
+
+}
