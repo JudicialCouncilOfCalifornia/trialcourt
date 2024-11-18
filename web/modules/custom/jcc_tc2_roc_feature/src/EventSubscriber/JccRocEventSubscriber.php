@@ -32,14 +32,14 @@ class JccRocEventSubscriber implements EventSubscriberInterface {
 
       // Reset the base path to have no ".cfm".
       $path = '/cms/rules/index';
+      $title = Xss::filter($query['title'] ?? '');
+      $linkid = Xss::filter($query['linkid'] ?? '');
 
-      // Add each query item as a path argument.
-      foreach ($query as $key => $value) {
-        if ($key == 'title') {
-          $path .= '/' . Xss::filter($value);
-        }
-        if ($key == 'linkid') {
-          $path .= '/' . Xss::filter($value);
+      if ($title) {
+        $path .= '/' . $title;
+
+        if ($linkid) {
+          $path .= '/' . $linkid;
         }
       }
 
