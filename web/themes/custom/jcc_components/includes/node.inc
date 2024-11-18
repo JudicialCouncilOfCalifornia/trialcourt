@@ -61,10 +61,15 @@ function jcc_components_preprocess_node(&$variables) {
       }
     }
   }
+
+
   // Logic for location page variables.
   if ($node->getType() == 'location') {
     $variables['#attached']['library'][] = 'jcc_components/location-page';
-    build_service_markup($variables, $node);
+    $current_path = \Drupal::request()->getRequestUri();
+    if(\Drupal::service('path.matcher')->matchPath($current_path ,"/location/*")){
+      build_service_markup($variables, $node);
+     }
   }
 }
 
