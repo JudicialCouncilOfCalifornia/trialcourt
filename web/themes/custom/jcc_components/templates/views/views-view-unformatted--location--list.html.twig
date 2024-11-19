@@ -26,20 +26,20 @@
 
 {# Include the locations template with the processed items #}
 {% set listing_page_new = drupal_config('jcc_custom.settings', 'enable_new_listing_page') %}
- {% if listing_page_new  %} 
-  <div class="jcc-hero jcc-hero--layout-full-main ">
-        <div class="jcc-hero__main">
-          {{ drupal_view('location', 'embed_1') }}
-        </div>
-  </div>
-{% else %} 
-   {% include "@organisms/locations/locations.twig" with {
-    locations: {
-      items_pre_rendered: true,
-      items: items
-    }
-  } %}
-{% endif %} 
+ {% if listing_page_new == "new" %} 
+    <div class="jcc-hero jcc-hero--layout-full-main ">
+          <div class="jcc-hero__main">
+            {{ drupal_view('location', 'embed_1') }}
+          </div>
+    </div>
+  {% else %} 
+    {% include "@organisms/locations/locations.twig" with {
+      locations: {
+        items_pre_rendered: true,
+        items: items
+      }
+    } %}
+  {% endif %} 
 
 
 
