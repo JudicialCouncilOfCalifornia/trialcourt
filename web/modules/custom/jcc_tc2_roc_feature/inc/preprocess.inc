@@ -56,9 +56,10 @@ function jcc_tc2_roc_feature_preprocess_node(array &$variables): void {
   }
 
   if ($node->bundle() == 'roc_rule') {
-    if (isset($variables['content']['body'])) {
+    if (isset($variables['content']['body'][0]['#text'])) {
       // Remove all &nbsp; items from the body content.
-      $variables['content']['body'][0]['#text'] = jcc_tc2_roc_feature_filter_nbsp($variables['content']['body'][0]['#text']);
+      $string = is_string($variables['content']['body'][0]['#text']) ? $variables['content']['body'][0]['#text'] : '';
+      $variables['content']['body'][0]['#text'] = jcc_tc2_roc_feature_filter_nbsp($string);
     }
   }
 }
