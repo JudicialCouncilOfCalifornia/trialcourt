@@ -509,7 +509,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       $event['content']['#markup'] = $event['content']['#markup'] ?? '';
 
       // Populating the event object.
-      $event['title'] = $node->field_event_date->start_date->format('F j, Y');
+      $event['title'] = $s_date->format('F j, Y');
       if ($teaser != '') {
         $event['content']['#markup'] .= '<div>' . $teaser . '</div>';
       }
