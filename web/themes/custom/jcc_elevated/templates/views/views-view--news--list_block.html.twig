@@ -51,14 +51,13 @@
       '#format': news.body.format,
   } %}
   {% endif %}
-
   {% set item = {
     brow: {
       primary: news.field_news_type.entity.name.value ? news.field_news_type.entity.name.value : '',
       secondary: news.field_date.value ? news.field_date.value|date('F j, Y') : '',
     },
     title: news.title.value,
-    url: news.id ? path('entity.node.canonical', { 'node': news.id }) : '',
+    url: news.field_origin_url.uri ? news.field_origin_url.uri : news.id ? path('entity.node.canonical', { 'node': news.id }),
     content: content|render,
     attributes: create_attribute(),
   } %}
