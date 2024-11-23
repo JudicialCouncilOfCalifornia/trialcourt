@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.event.field_date_range
     - field.field.node.event.field_event_type
     - field.field.node.event.field_media
+    - field.field.node.event.field_origin_url_plain
     - node.type.event
   module:
     - datetime_range
@@ -71,12 +72,23 @@ content:
     third_party_settings: {  }
     weight: 104
     region: content
+  field_origin_url_plain:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 107
+    region: content
   links:
     settings: {  }
     third_party_settings: {  }
     weight: 100
     region: content
 hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   feeds_item: true
   langcode: true
   search_api_excerpt: true
