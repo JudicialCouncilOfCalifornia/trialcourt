@@ -576,6 +576,10 @@ function jcc_elevated_paragraph_tabs(array &$variables) {
  *   The paragraph variables.
  */
 function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInterface $paragraph) {
+  // Do not cache paragraph preprocess and anonymous page.
+  $variables['elements']['#cache']['max-age'] = '0';
+  \Drupal::service('page_cache_kill_switch')->trigger();
+
   // Setup provided by entries per event type.
   $event_types = $paragraph->get('field_components')->referencedEntities();
   $node_storage = \Drupal::entityTypeManager()->getStorage('node');
