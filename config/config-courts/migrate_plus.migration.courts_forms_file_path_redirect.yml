@@ -30,6 +30,7 @@ source:
     id:
       type: string
   constants:
+    slash: '/'
     uri_scheme: 'internal:'
     document_path: 'forms/'
     status_code: 301
@@ -57,6 +58,17 @@ process:
       plugin: skip_on_empty
       method: process
       message: 'Could not create file from URL.'
+  pseudo_date_prefix:
+    -
+      plugin: default_value
+      default_value: now
+    -
+      plugin: callback
+      callable: strtotime
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m
   uid:
     plugin: default_value
     default_value: 1
@@ -76,7 +88,8 @@ process:
     source:
       - constants/uri_scheme
       - '@pseudo_base_path'
-      - constants/document_path
+      - '@pseudo_date_prefix'
+      - constants/slash
       - '@pseudo_destination_filename'
   status_code: constants/status_code
   language:
