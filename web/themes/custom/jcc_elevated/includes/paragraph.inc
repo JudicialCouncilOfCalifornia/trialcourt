@@ -725,5 +725,7 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
       }
     }
     $variables['livecasts'] = $livecasts;
+
+    $variables['#cache']['max-age'] = 0;
   }
 }
