@@ -107,10 +107,8 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
   // Start with the sticky_list display.
   $sticky_list = $executable ? $executable->setDisplay('sticky_list') : FALSE;
   $display = $executable->executeDisplay();
-  $default_image_url = file_create_url('https://newsroom.courts.ca.gov/sites/default/files/newsroom/styles/crop_16x9/public/news/SupremeCourtSeal2013_webSmall_0.png?itok=uYVD3VCo');
-  // $default_image_url = file_create_url('public://Branch_Seal_black_master.png');
-  $base_url = Url::fromRoute('<front>', [], ['absolute' => TRUE])->toString();
-  // $default_image_url = $base_url . 'themes/contrib/jcc_storybook/src/assets/icons/control.svg'; 
+  $default_image_path = theme_get_setting('news_default_seal');
+  $default_image_url = Url::fromUri('base://' . $default_image_path, ['absolute' => TRUE])->toString();
   if ($sticky_list) {
     $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
     $image_url = NULL;
