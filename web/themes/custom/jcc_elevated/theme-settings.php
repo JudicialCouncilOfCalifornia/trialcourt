@@ -184,4 +184,10 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
     '#title'         => t('Personalized message'),
     '#default_value' => $no_results_msg ? $no_results_msg['value'] : '',
   ];
+  $form['news_default_seal'] = [
+    '#type' => 'textfield',
+    '#title' => t('News Default Seal Path'),
+    '#default_value' => theme_get_setting('news_default_seal'),
+    '#description' => t('Enter the path to the default branch seal image(themes/custom/jcc_elevated/images/news-default-seal.svg).'),
+  ];
 }
