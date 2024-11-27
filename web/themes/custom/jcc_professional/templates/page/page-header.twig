@@ -6,6 +6,9 @@
 
 {# Granicus #}
 {% if livecast is not empty %}
+  {# Disable template cache to not block real time info #}
+  {% set cache = {'#cache': {'max-age': 0}} %}
+
   {% set body %}
     <div class="granicus">
       <div class="granicus__details">
