@@ -634,7 +634,7 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
                 if ($feed) {
                   $request = file_get_contents($feed);
                   if ($request) {
-                    $granicus_events = new SimpleXMLElement($request, LIBXML_NOCDATA);
+                    $granicus_events = simplexml_load_string($request, 'SimpleXMLElement', LIBXML_NOCDATA);
                     $granicus_events = json_encode($granicus_events);
                     $granicus_events = json_decode($granicus_events, TRUE);
                   }
