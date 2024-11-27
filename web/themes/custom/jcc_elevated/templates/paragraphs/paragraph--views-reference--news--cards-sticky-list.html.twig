@@ -41,11 +41,6 @@
 {% endif %}
 
 
-  {% set button_data = {
-    label: 'See all announcements',
-    href: news_url,
-    variant: "primary",
-  } %}
 {% include "@organisms/Cards/Cards.twig" with {
   first_component: false,
   variant: "default",
@@ -53,8 +48,8 @@
   sub_component_layout: "grid",
   measure: 20,
   grid_min_width: 20,
-  heading: "Of Current Interest",
+  heading: '',
   text: "",
-  button_data: button_data,
+  button_data: '',
   sub_component_data: list_items,
 } %}
