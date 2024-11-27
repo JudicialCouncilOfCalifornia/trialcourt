@@ -21,6 +21,10 @@ source:
   item_selector: /events/event
   fields:
     -
+      name: unique_id
+      label: 'Granicus Event ID'
+      selector: id
+    -
       name: title
       label: Title
       selector: name
@@ -49,7 +53,7 @@ source:
       label: 'Live Captions'
       selector: captioning/link
   ids:
-    title:
+    unique_id:
       type: string
 process:
   uid:
