@@ -141,7 +141,7 @@ function jcc_professional_preprocess_page(&$variables) {
           if ($feed) {
             $request = file_get_contents($feed);
             if ($request) {
-              $granicus_events = new SimpleXMLElement($request, LIBXML_NOCDATA);
+              $granicus_events = simplexml_load_string($request, 'SimpleXMLElement', LIBXML_NOCDATA);
               $granicus_events = json_encode($granicus_events);
               $granicus_events = json_decode($granicus_events, TRUE);
             }
@@ -205,6 +205,9 @@ function jcc_professional_preprocess_page(&$variables) {
         }
       }
       $variables['livecast'] = $livecast;
+
+      // Disable template cache to not block real time info.
+      $variables['#cache']['max-age'] = 0;
     }
   }
 }
