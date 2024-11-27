@@ -134,6 +134,7 @@ class JccCustomAnonymousDraftRedirectSubscriber implements EventSubscriberInterf
         $access_unpublished_key = \Drupal::request()->get($config->get('hash_key'));
         if (!$access_unpublished_key) {
           $deny_access = FALSE;
+          $current_moderation_state = NULL;
 
           // Gather some information about the current nodes primary status and
           // moderation state. Primary status (or default status) refers to  if
@@ -144,11 +145,13 @@ class JccCustomAnonymousDraftRedirectSubscriber implements EventSubscriberInterf
           $latest_revision_vid = $node_manager->getLatestRevisionId($node->id());
           $latest_revision = $node_manager->loadRevision($latest_revision_vid);
           $latest_content_moderation_state = $latest_revision->moderation_state->value ?? '';
-          $current_moderation_state = $this->moderationInfo
-            ->getWorkflowForEntity($latest_revision)
-            ->getTypePlugin()
-            ->getState($latest_content_moderation_state)
-            ->id();
+
+          $entity_workflow = $this->moderationInfo->getWorkflowForEntity($latest_revision);
+          if ($entity_workflow) {
+            $current_moderation_state = $entity_workflow->getTypePlugin()
+              ->getState($latest_content_moderation_state)
+              ->id();
+          }
 
           // If the current status of the node is "No published state"...
           if (!$current_status) {
