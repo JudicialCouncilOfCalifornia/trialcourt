@@ -205,6 +205,9 @@ function jcc_professional_preprocess_page(&$variables) {
         }
       }
       $variables['livecast'] = $livecast;
+
+      // Disable template cache to not block real time info.
+      $variables['#cache']['max-age'] = 0;
     }
   }
 }
