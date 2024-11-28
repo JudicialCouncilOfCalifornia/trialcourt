@@ -16,12 +16,12 @@ function jcc_tc2_roc_feature_form_alter(&$form, &$form_state, $form_id): void {
 
     $storage = $form_state->getStorage();
     $bulk_operation = $storage['views_bulk_operations'];
-    if ($bulk_operation['view_id'] == 'jcc_roc_views') {
+    if (isset($bulk_operation['view_id']) && $bulk_operation['view_id'] == 'jcc_roc_views') {
       // Rules index admin.
       if ($bulk_operation['display_id'] == 'roc_rule_index_content_admin') {
         // Set ROC view bulk operation to only use roc editorial workflow.
         if (isset($form['workflow']['#options']['editorial'])) {
-          unset($form['workflow']['#options']['editorial']);
+          // unset($form['workflow']['#options']['editorial']);.
         }
       }
 
@@ -29,7 +29,7 @@ function jcc_tc2_roc_feature_form_alter(&$form, &$form_state, $form_id): void {
       if ($bulk_operation['display_id'] == 'roc_rule_content_admin') {
         // Set ROC view bulk operation to only use roc editorial workflow.
         if (isset($form['workflow']['#options']['editorial'])) {
-          unset($form['workflow']['#options']['editorial']);
+          // unset($form['workflow']['#options']['editorial']);.
         }
       }
     }
