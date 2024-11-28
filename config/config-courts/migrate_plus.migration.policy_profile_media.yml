@@ -1,0 +1,100 @@
+uuid: 0f6bb2d7-a0cc-4d3b-b2e3-915f2f3d577b
+langcode: en
+status: true
+dependencies: {  }
+id: policy_profile_media
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - policy
+  - profile
+  - media
+migration_group: courts_policy
+label: 'Profile: Import Media'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  ids:
+    image:
+      type: string
+  fields:
+    -
+      name: image
+      selector: image
+      label: Image
+    -
+      name: title
+      selector: title
+      label: Title
+process:
+  pseudo_encoded_title:
+    plugin: callback
+    callable: htmlspecialchars_decode
+    source: title
+  pseudo_destination_filename:
+    -
+      plugin: path_from_url
+      source: image
+    -
+      plugin: callback
+      callable: basename
+    -
+      plugin: callback
+      callable: urldecode
+    -
+      plugin: str_replace
+      search: ' '
+      replace: '-'
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'Cannot import empty image filename.'
+  name:
+    -
+      plugin: get
+      source: '@pseudo_encoded_title'
+    -
+      plugin: default_value
+      default_value: '@pseudo_destination_filename'
+    -
+      plugin: substr
+      start: 0
+      length: 254
+  field_media_image/target_id:
+    -
+      plugin: migration_lookup
+      migration: policy_profile_file
+      source: image
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'Cannot import empty url.'
+  field_media_image/alt: '@pseudo_encoded_title'
+  field_category:
+    -
+      plugin: default_value
+      default_value: 'Profile'
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: media_image_category
+      value_key: name
+      ignore_case: true
+  uid:
+    plugin: default_value
+    default_value: 1
+destination:
+  plugin: 'entity:media'
+  default_bundle: image
+migration_dependencies:
+  required: {  }
+  optional:
+    - policy_profile_file

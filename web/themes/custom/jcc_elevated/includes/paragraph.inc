@@ -82,6 +82,16 @@ function jcc_elevated_paragraph_views_reference(array &$variables, ParagraphInte
 }
 
 /**
+ * Helper function for courts sticky list.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ */
+function jcc_elevated_paragraph_views_reference_news_cards_sticky_list(array &$variables, ViewEntityInterface $view) {
+  jcc_elevated_paragraph_views_reference_news_sticky_list($variables, $view);
+}
+
+/**
  * Helper function for views_reference paragrpahs of type news.
  *
  * @param array $variables
@@ -147,17 +157,35 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
   if ($paragraph->get('field_media')) {
     $card_media = $paragraph->get('field_media');
     $card_icon = $paragraph->get('field_icon');
+
+    // If Media.
     if ($card_media && $card_media->entity) {
       $build = \Drupal::entityTypeManager()->getViewBuilder('media')->view($card_media->entity);
-      $caption = $card_media->entity->field_media_caption && $card_media->entity->field_media_caption->value ? $card_media->entity->field_media_caption->value : NULL;
-      $variables['media'] = $build;
-      if ($paragraph->get('field_show_media_caption')->value) {
-        $variables['media_caption'] = [
-          'show' => $paragraph->get('field_show_media_caption')->value,
-          'text' => $caption ? Markup::create($caption) : NULL,
-        ];
+      if ($build) {
+        // Media render & entity.
+        $variables['media'] = $build;
+        $media = $card_media->entity;
+
+        // Media alignment.
+        if ($paragraph->get('field_media_alignment')->value) {
+          $variables['media_alignment'] = $paragraph->get('field_media_alignment')->value;
+        }
+
+        // If caption available and display opted.
+        $caption = $media->get('field_media_caption')->value ? $media->get('field_media_caption')->value : NULL;
+        if ($paragraph->get('field_show_media_caption')->value && $caption) {
+          $citation = $media->field_media_citation && $media->get('field_media_citation')->value ? $media->get('field_media_citation')->value : NULL;
+          $allowed_tags = ['<strong><em><a>'];
+          $variables['media_caption'] = [
+            'show' => $paragraph->get('field_show_media_caption')->value,
+            'text' => ['#markup' => strip_tags($caption, $allowed_tags)],
+            'citation' => $citation ? ['#markup' => strip_tags($citation, $allowed_tags)] : NULL,
+          ];
+        }
       }
     }
+
+    // If icon.
     if ($card_icon && $card_icon->value) {
       $variables['card_icon'] = str_replace(
         ['icon-', 'dark-', 'white-'],
@@ -166,24 +194,17 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
     }
   }
 
-  // Disallows links in text if clickable striped card.
+  // Disallows links in text if clickable card.
   $variables['filtered_text'] = NULL;
-  $parent = $paragraph->getParentEntity();
-  if ($parent && $parent->hasField('field_sub_variant')) {
-    $cards_sub_variant = $parent->get('field_sub_variant')->value;
-    $cards_sub_variant = substr($cards_sub_variant, strpos($cards_sub_variant, ':'));
-    $cards_sub_variant = preg_replace("/[^a-zA-Z0-9]+/", "", $cards_sub_variant);
-    if ($cards_sub_variant == 'striped' && $paragraph->field_entire_card_clickable->value) {
-      // Allowed tags in minimal editor except <a>.
-      $allowed_tags = '<p><em><strong><u><s><sup><sub><ol><li><ul>';
-      $text = $paragraph->get('field_text')->value;
-      if ($text !== NULL) {
-        $text = strip_tags($text, $allowed_tags);
-      }
-      $variables['filtered_text'] = Markup::create($text);
+  if ($paragraph->field_entire_card_clickable->value) {
+    // Allowed tags in minimal editor except <a>.
+    $allowed_tags = '<p><em><strong><u><s><sup><sub><ol><li><ul>';
+    $text = $paragraph->get('field_text')->value;
+    if ($text !== NULL) {
+      $text = strip_tags($text, $allowed_tags);
     }
+    $variables['filtered_text'] = Markup::create($text);
   }
-
 }
 
 /**
@@ -291,10 +312,16 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
       ];
     }
   }
+
   if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
     $cover_image = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
     $image_url = ImageStyle::load('hero_banner')->buildUrl($cover_image);
     $variables['bckg_img_url'] = $image_url;
+  }
+
+  if (!empty($paragraph->get('field_background'))) {
+    $bg_tint = $paragraph->get('field_background')->value;
+    $variables['bg_tint'] = $bg_tint;
   }
 
   // Include view embed as lead content.
@@ -311,7 +338,26 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
 }
 
 /**
- * Helper function for hero paragraph.
+ * Helper function for mega hero paragraph.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ * @param \Drupal\paragraphs\ParagraphInterface $paragraph
+ *   The paragraph.
+ */
+function jcc_elevated_paragraph_hero_mega(array &$variables, ParagraphInterface $paragraph) {
+  if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
+    $image_uri = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
+    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_650x650')->buildUrl($image_uri);
+    $variables['bckg_img_url'] = $image_url;
+  }
+
+  $variables['bg_tint'] = $paragraph->get('field_background')->value ? $paragraph->get('field_background')->value : '';
+  $variables['hero_mega_search_form'] = $paragraph->get('field_hero_mega_search') ? jcc_elevated_build_header_search_form() : '';
+}
+
+/**
+ * Helper function for hero banner paragraph.
  *
  * @param array $variables
  *   The paragraph variables.
@@ -381,6 +427,31 @@ function jcc_elevated_paragraph_hero_hangover(array &$variables, ParagraphInterf
       $variables['card_media'] = $build;
     }
   }
+}
+
+/**
+ * Helper function for list with menu.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ */
+function jcc_elevated_paragraph_menu_list(array &$variables) {
+  $paragraph = $variables['paragraph'];
+  $link_items = $paragraph->get('field_menu_list')->getIterator();
+  $links = [];
+
+  foreach ($link_items as $item) {
+    $link_entity = $item->get('uri')->getValue();
+    $link_title = $item->get('title')->getValue();
+    if (!empty($link_entity)) {
+      $url = Url::fromUri($link_entity);
+      $links[] = [
+        'url' => $url,
+        'title' => $link_title,
+      ];
+    }
+  }
+  $variables['link_list'] = $links;
 }
 
 /**
@@ -477,6 +548,10 @@ function jcc_elevated_paragraph_tabs(array &$variables) {
   $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $variant = json_decode($variables['paragraph']->get('field_variant')->value, TRUE);
   $variables['variant'] = $variant['tabs'] ?: 'dafault';
+
+  if (\Drupal::request()->query->get('tab')) {
+    $variables['open_on_load'] = \Drupal::request()->query->get('tab');
+  }
 
   // Build the array of tabs.
   $variables['tabs'] = [];

@@ -114,11 +114,6 @@ function jcc_elevated_preprocess_page(&$variables) {
       ->toRenderable();
   }
 
-  // Feedback widget visibility.
-  // We first check if a value is already defined. This allows for this setting
-  // to be calculated in a module, like rules of court, with this as a fallback.
-  $variables['hide_was_this_helpful'] = !isset($variables['hide_was_this_helpful']) || $variables['hide_was_this_helpful'] == NULL ? (boolean) theme_get_setting('hide_was_this_helpful') : $variables['hide_was_this_helpful'];
-
   $social_links = [];
   $social_link_ids = [
     'facebook' => 'jcc_elevated.social_links_facebook',
@@ -126,6 +121,7 @@ function jcc_elevated_preprocess_page(&$variables) {
     'rss' => 'jcc_elevated.social_links_rss',
     'twitter' => 'jcc_elevated.social_links_twitter',
     'youtube' => 'jcc_elevated.social_links_youtube',
+    'flickr' => 'jcc_elevated.social_links_flickr',
   ];
 
   $frontpage_path = \Drupal::urlGenerator()->generateFromRoute('<front>', [], ['absolute' => TRUE]);
@@ -310,7 +306,8 @@ function jcc_elevated_build_header_search_form(bool $mobile_version = FALSE): ar
   }
   $form['search']['#attributes']['name'] = $form['search']['#name'];
   $form['search']['#attributes']['class'] = [];
-  $form['search']['#attributes']['aria-label'] = t('Site search');
+  $form['search']['#attributes']['aria-label'] = t('Search courts.ca.gov');
+  $form['search']['#attributes']['placeholder'] = t('Search courts.ca.gov');
   $form['search']['#attributes']['id'] = $mobile_version ? 'header-search__mobile' : 'header-search';
   unset($form['search']['#attributes']['data-search-api-autocomplete-search']);
   unset($form['search']['#attributes']['data-autocomplete-path']);

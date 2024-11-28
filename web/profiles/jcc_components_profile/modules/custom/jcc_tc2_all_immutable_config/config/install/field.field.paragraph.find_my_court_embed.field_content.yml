@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_content
+    - paragraphs.paragraphs_type.find_my_court_embed
+  module:
+    - allowed_formats
+    - text
+    - tmgmt_content
+third_party_settings:
+  allowed_formats:
+    allowed_formats:
+      - snippet
+  tmgmt_content:
+    excluded: false
+id: paragraph.find_my_court_embed.field_content
+field_name: field_content
+entity_type: paragraph
+bundle: find_my_court_embed
+label: Description
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: "<p>Pay traffic violations, access jury information, find a local self-help desk, and much more.</p>\r\n"
+    format: snippet
+default_value_callback: ''
+settings: {  }
+field_type: text_long

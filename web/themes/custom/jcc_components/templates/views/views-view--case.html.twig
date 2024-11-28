@@ -30,6 +30,10 @@
  * @see template_preprocess_views_view()
  */
 #}
+
+{# Disable caching for this entire template #}
+{% set cache = {'#cache': {'max-age': 0}} %}
+
 {%
   set classes = [
     dom_id ? 'js-view-dom-id-' ~ dom_id,
