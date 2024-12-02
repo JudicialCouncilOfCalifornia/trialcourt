@@ -1,54 +1,55 @@
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/TeaserPlusList") }}
-
-{% set variant = paragraph.field_variant.value|json_decode %}
-{% set teaser = {} %}
-{% set list_items = [] %}
-
-{% set row = sticky_list[0] %}
-
-{% if row['#node'] %}
-  {% set id = row['#node'].id() ?? null %}
-  {% set origin_url = row['#node'].field_origin_url.uri ?? null %}
-  {% set url = origin_url ?: (id ? url('entity.node.canonical', { 'node': id }) : '') %}  
-  {% set teaser = {
-    brow_data: {
-      part_one: row['#node'].field_news_type.0.entity.name.value|default(''),
-      part_two: row['#node'].field_date.0.value|date('F j, Y')|default(''),
-    },
-    heading: row['#node'].title()|default(''),
-    href: url['#markup'] ?? url,
-    text: excerpts[0]|default(''),
-  } %}
+{{ attach_library("jcc_storybook/Card") }}
+  
+{% set list_items =  [] %}
+{% if sticky_list is not empty %}
+  {% for i in 0..3 %}
+    {% set row = sticky_list[i] ?? null %}   
+    {% if row and row['#node'].id() %}
+      {% set id = row['#node'].id() %}
+      {% set origin_url = row['#node'].field_origin_url.uri ?? null %}
+      {% set url = origin_url ?: url('entity.node.canonical', { 'node': id }) %}     
+      
+      {% set imageTag %}
+        <img src={{row.imageurl}} />
+      {% endset %} 
+    
+      {% set card %}
+        {% include "@molecules/Card/Card.twig" with {
+          variant: 'default',
+          clickable_card: true,
+          heading: row['#node'].title(),      
+          brow_text: row['#node'].field_date.value|date('F d, Y'),  
+          background: null,
+          aspect: [],   
+          media_link: true, 
+          media: imageTag,
+          button_data: [
+            {
+              label: "Button",
+              href: url,
+              variant: "primary",
+            }      
+          ],
+        } %}     
+      {% endset %}
+    
+      {% set list_items = list_items|merge([card | raw]) %}
+    {% endif %} 
+  {% endfor %}
 {% endif %}
 
-{% for i in 1..3 %}
-  {% set row = sticky_list[i] %}
-  {% set id = row['#node'].id() ?? null %}
-  {% set origin_url = row['#node'].field_origin_url.uri ?? null %}
-  {% set url = origin_url ?: (id ? url('entity.node.canonical', { 'node': id }) : '') %}  
-  {% if row['#node'].id() %}
-    {% set item = {
-      link: {
-        label: row['#node'].title(),
-        href: url['#markup'] ?? url,
-      },
-      footer: row['#node'].field_date.0.value|date('F j, Y'),
-    } %}
-    {% set list_items = list_items|merge([item]) %}
-  {% endif %}
 
-{% endfor %}
-
-{% set button_data = {
-  label: more.use_more_text is not empty ?  more.use_more_text : 'See all news',
-  href: more.link_display is not empty ? more.link_display : news_url,
-  variant: "primary",
-} %}
-
-{% include "@organisms/TeaserPlusList/TeaserPlusList.twig" with {
-  heading: 'Of Current Interest',
-  teaser: teaser,
-  list_items: list_items,
-  button_data: button_data,
+{% include "@organisms/Cards/Cards.twig" with {
+  first_component: false,
+  variant: "default",
+  card_variant: "",
+  sub_component_layout: "grid",
+  measure: 20,
+  grid_min_width: 20,
+  heading: '',
+  text: "",
+  button_data: '',
+  sub_component_data: list_items,
 } %}
