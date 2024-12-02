@@ -509,7 +509,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       $event['content']['#markup'] = $event['content']['#markup'] ?? '';
 
       // Populating the event object.
-      $event['title'] = $node->field_event_date->start_date->format('F j, Y');
+      $event['title'] = $s_date->format('F j, Y');
       if ($teaser != '') {
         $event['content']['#markup'] .= '<div>' . $teaser . '</div>';
       }
@@ -598,8 +598,10 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       $user = User::load(\Drupal::currentUser()->id());
       $check_edit_access = $node->access('update', $user);
 
+      $event['content']['#markup'] = '';
+
       if ($check_edit_access) {
-        $event['content']['#markup'] = '<a href="/node/' . $node->id() . '/edit">(edit this event)<br/></a>';
+        $event['content']['#markup'] .= '<a href="/node/' . $node->id() . '/edit">(edit this event)<br/></a>';
       }
 
       $event['title'] = $node->get('title')->value;
@@ -771,7 +773,7 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
   $grouped_proposals = [];
   $file_url = '';
   $file_uri = '';
-  foreach ($variables['rows'] as $index => $row1) {
+  foreach ($variables['rows'] as $row1) {
     $list_label = preg_replace('/\R+/', ' ', strip_tags($row1['#title']));
     $safe_list_label = rawurlencode($list_label);
     if (!isset($grouped_proposals[$safe_list_label])) {

@@ -1,1277 +1,1656 @@
+priority: 0
+preserve: 1
 grants:
   view: 1
   edit: 1
   delete: 0
-priority: 0
-preserve: 1
-alert:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
+allowed_grant_operations:
+  grant_view: true
+  grant_update: true
+  grant_delete: false
+bundles_roles_grants:
+  advisory_body:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  alert:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  arbitrator:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  case:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  custom_email:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  document:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  event:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
   facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-document:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  importer:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  invitations_to_comment:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  job:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  judge:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  landing_page:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  location:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  news:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  opinion:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  remote_hearings:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  request:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  subpage:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  tentative_ruling:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  roc_rule:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+  roc_rule_index:
+    anonymous:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    authenticated:
+      grant_view: 1
+      grant_update: 0
+      grant_delete: 0
+    administrator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    author:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    legal_files:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    contributor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    translator:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    tentative_rulings_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    messaging_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    facilities:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    opinions_editor:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    request_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    advisory_body_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    itc_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+    rules_manager:
+      grant_view: 0
+      grant_update: 0
+      grant_delete: 0
+grants_tab_availability:
+  advisory_body: false
+  alert: false
+  arbitrator: false
+  case: false
+  custom_email: false
+  document: false
+  event: false
+  facilities: false
+  importer: false
+  invitations_to_comment: false
+  job: false
+  judge: false
+  landing_page: true
+  location: false
+  news: false
+  opinion: false
+  remote_hearings: false
+  request: false
+  subpage: true
+  tentative_ruling: false
+  roc_rule: false
+  roc_rule_index: false
+roles_settings:
   author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-importer:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-landing_page:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-location:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-request:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: '1'
-    grant_update: '1'
-    grant_delete: '1'
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-news:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-subpage:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-role_alias:
-  author:
-    alias: Author
-    weight: '0'
+    display_name: Author
     name: Author
-    allow: 0
+    weight: 0
+    selected: false
   legal_files:
-    alias: 'Legal & Files'
-    weight: '0'
+    display_name: 'Legal & Files'
     name: 'Legal & Files'
-    allow: 0
+    weight: 1
+    selected: false
   editor:
-    alias: Editor
-    weight: '0'
+    display_name: Editor
     name: Editor
-    allow: 0
+    weight: 2
+    selected: false
   manager:
-    alias: Manager
-    weight: '0'
+    display_name: Manager
     name: Manager
-    allow: 0
-  translator:
-    alias: Translator
-    weight: '0'
-    name: Translator
-    allow: 0
-  administrator:
-    alias: Administrator
-    weight: '0'
-    name: Administrator
-    allow: 0
-  anonymous:
-    allow: '1'
-    alias: 'Anonymous user'
-    weight: '0'
-    name: 'Anonymous user'
-  authenticated:
-    allow: '1'
-    alias: 'Authenticated user'
-    weight: '0'
-    name: 'Authenticated user'
+    weight: 3
+    selected: false
   contributor:
-    alias: Contributor
-    weight: '0'
+    display_name: Contributor
     name: Contributor
-    allow: 0
+    weight: 4
+    selected: false
+  translator:
+    display_name: Translator
+    name: Translator
+    weight: 5
+    selected: false
+  administrator:
+    display_name: Administrator
+    name: Administrator
+    weight: 6
+    selected: false
+  anonymous:
+    display_name: 'Anonymous user'
+    name: 'Anonymous user'
+    weight: 7
+    selected: true
+  authenticated:
+    display_name: 'Authenticated user'
+    name: 'Authenticated user'
+    weight: 8
+    selected: true
   tentative_rulings_editor:
-    alias: 'Tentative rulings editor'
-    weight: '0'
+    display_name: 'Tentative rulings editor'
     name: 'Tentative rulings editor'
-    allow: 0
+    weight: 9
+    selected: false
   messaging_manager:
-    alias: 'Messaging manager'
-    weight: '0'
+    display_name: 'Messaging manager'
     name: 'Messaging manager'
-    allow: 0
-  request_manager:
-    alias: 'Solicitation request manager'
-    weight: '0'
-    name: 'Solicitation request manager'
-    allow: 0
-  rules_manager:
-    alias: 'Rules manager'
-    weight: '0'
-    name: 'Rules manager'
-    allow: 0
+    weight: 10
+    selected: false
   facilities:
-    alias: Facilities
-    weight: '0'
+    display_name: Facilities
     name: Facilities
-    allow: 0
+    weight: 11
+    selected: false
   opinions_editor:
-    alias: 'Opinions Editor'
-    weight: '0'
-    name: 'Opinions Editor'
-    allow: 0
-role_map:
-  author: 1
-  legal_files: 2
-  editor: 3
-  manager: 4
+    display_name: 'Opinions editor'
+    name: 'Opinions editor'
+    weight: 12
+    selected: false
+  request_manager:
+    display_name: 'Solicitation request manager'
+    name: 'Solicitation request manager'
+    weight: 13
+    selected: false
+  advisory_body_manager:
+    display_name: 'Advisory body manager'
+    name: 'Advisory body manager'
+    weight: 14
+    selected: false
+  itc_manager:
+    display_name: 'ITC Manager'
+    name: 'ITC Manager'
+    weight: 15
+    selected: false
+  rules_manager:
+    display_name: 'Rules Manager'
+    name: 'Rules Manager'
+    weight: 16
+    selected: false
+map_rid_gid:
+  author: 0
+  legal_files: 1
+  editor: 2
+  manager: 3
+  contributor: 4
   translator: 5
   administrator: 6
   anonymous: 7
   authenticated: 8
-  contributor: 9
-  tentative_rulings_editor: 10
-  messaging_manager: 11
-  request_manager: 12
-  rules_manager: 13
-  facilities: 13
-  opinions_editor: 14
-allowed_types:
-  alert: 0
-  arbitrator: 0
-  case: 0
-  custom_email: 0
-  document: 0
-  facilities: 0
-  importer: 0
-  job: 0
-  judge: 0
-  landing_page: 1
-  location: 0
-  news: 0
-  opinion: 0
-  remote_hearings: 0
-  request: 0
-  roc_rule: 0
-  roc_rule_index: 0
-  subpage: 1
-  tentative_ruling: 0
-judge:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-tentative_ruling:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-custom_email:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-case:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-job:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-arbitrator:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-remote_hearings:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-facilities:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-opinion:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-roc_rule:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: '1'
-    grant_update: '1'
-    grant_delete: '1'
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-roc_rule_index:
-  anonymous:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  authenticated:
-    grant_view: '1'
-    grant_update: 0
-    grant_delete: 0
-  rules_manager:
-    grant_view: '1'
-    grant_update: '1'
-    grant_delete: '1'
-  author:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  legal_files:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  contributor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  translator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  administrator:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  tentative_rulings_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  messaging_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  facilities:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  request_manager:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
-  opinions_editor:
-    grant_view: 0
-    grant_update: 0
-    grant_delete: 0
+  tentative_rulings_editor: 9
+  messaging_manager: 10
+  facilities: 11
+  opinions_editor: 12
+  request_manager: 13
+  advisory_body_manager: 14
+  itc_manager: 15
+  rules_manager: 16
