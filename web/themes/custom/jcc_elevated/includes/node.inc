@@ -519,8 +519,6 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
 function jcc_elevated_node_alert(array &$variables, NodeInterface $node): void {
 
   // Prepend alert label directly to the body content so that it renders inline.
-  $label = '<strong>' . $node->label() . '</strong>';
-  $variables['content']['body'][0]['#text'] = $label . ', ' . $variables['content']['body'][0]['#text'];
   $variables['content']['body'][0]['#format'] = 'restricted_html';
 
   // Set the type/icons.
