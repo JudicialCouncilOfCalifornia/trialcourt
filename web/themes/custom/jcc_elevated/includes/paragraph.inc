@@ -8,6 +8,7 @@
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\media\Entity\Media;
 use Drupal\paragraphs\Entity\Paragraph;
@@ -106,10 +107,29 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
   // Start with the sticky_list display.
   $sticky_list = $executable ? $executable->setDisplay('sticky_list') : FALSE;
   $display = $executable->executeDisplay();
-
+  $default_image_path = theme_get_setting('news_default_seal');
+  $default_image_url = Url::fromUri('base://' . $default_image_path, ['absolute' => TRUE])->toString();
   if ($sticky_list) {
     $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
-    foreach ($variables['sticky_list'] as $sticky_item) {
+    $image_url = NULL;
+    foreach ($variables['sticky_list'] as $index => $sticky_item) {
+      $node = $sticky_item['#node'];
+      $sticky_item['imageurl'] = NULL;
+      if ($node->hasField('field_media') && !$node->get('field_media')->isEmpty()) {
+        $media = $node->get('field_media')->entity;
+        if ($media && $media->hasField('field_media_image') && !$media->get('field_media_image')->isEmpty()) {
+          $file = $media->get('field_media_image')->entity;
+          if ($file instanceof File) {
+            $uri = $file->getFileUri();
+            $image_url = file_create_url($uri);
+          }
+        }
+        $variables['sticky_list'][$index]['imageurl'] = $image_url ?? $default_image_url;
+      }
+      else {
+        $variables['sticky_list'][$index]['imageurl'] = $default_image_url;
+      }
+
       if (!empty($sticky_item['#node']->get('field_components')->getValue()[0]['target_id'])) {
         $paragraph_target_id = $sticky_item['#node']->get('field_components')->getValue()[0]['target_id'];
       }

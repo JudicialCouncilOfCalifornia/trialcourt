@@ -16,17 +16,11 @@ class FindMyCourt extends ControllerBase {
    *   A simple renderable array.
    */
   public function findMyCourt($zip) {
+    if ($zip == '') {
+      $no_zip_class = 'no-zip-code';
+    }
     $output = [
       '#markup' => $this->t('<div>
-        <script type="text/javascript">
-          document.addEventListener("DOMContentLoaded", function() {
-            let iframe = document.getElementsByTagName("iframe")[0];
-            if (iframe) {
-              let iframeID = \'#\' + document.getElementsByTagName("iframe")[0].id;
-              iFrameResize({lowestElement: true}, iframeID);
-            }
-          });
-        </script>
         <div class="hangover hangover--solid-primary-dark-x" style="--hangover-offset: -22ch;">
           <div class="hangover__top">
             <div class="box">
@@ -74,17 +68,27 @@ class FindMyCourt extends ControllerBase {
             </div>
           </div>
           <div class="container stack">
-            <div class="box">
-             <iframe src="/modules/custom/jcc_elevated_find_my_court/src/ftrc/index.html?query=@zip" id="iframe-ftrc" class="iframe-ftrc" title="County courthouses found by zip code or city" style="height: 2390.37px;width:100%;" frameBorder="0"></iframe>
+            <div class="box @no-zip-class">
+             <iframe src="/modules/custom/jcc_elevated_find_my_court/src/ftrc/index.html?query=@zip" id="iframe-ftrc" class="iframe-ftrc" title="County courthouses found by zip code or city" style="height:100vh;width:100%;" frameBorder="0"></iframe>
             </div>
           </div>
          </div>
-        </div>', ['@zip' => $zip]),
+          <script src="/modules/custom/jcc_elevated_find_my_court/src/js/iframeResizerParent.min.js"></script>
+          <script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function() {
+              let iframe = document.getElementsByTagName("iframe")[0];
+              if (iframe) {
+                let iframeID = \'#\' + document.getElementsByTagName("iframe")[0].id;
+                iframeResize({lowestElement: true, license: "GPLv3"}, iframeID);
+              }
+            });
+          </script>
+        </div>', ['@zip' => $zip, '@no-zip-class' => $no_zip_class]),
     ];
 
     $output['#attached']['library'][] = 'jcc_elevated_find_my_court/storybook-inlineform';
     $output['#attached']['library'][] = 'jcc_elevated_find_my_court/storybook-herohangover';
-    $output['#attached']['library'][] = 'jcc_elevated_find_my_court/iframeresizer';
+    $output['#attached']['library'][] = 'jcc_elevated_find_my_court/find-my-court-styling';
     return $output;
   }
 
