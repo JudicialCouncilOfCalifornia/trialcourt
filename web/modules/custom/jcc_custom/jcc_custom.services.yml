@@ -3,3 +3,8 @@ services:
     class: Drupal\jcc_custom\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+  jcc_custom.anonymous_draft_redirect_events_subscriber:
+    class: Drupal\jcc_custom\EventSubscriber\JccCustomAnonymousDraftRedirectSubscriber
+    arguments: ['@entity_type.manager', '@module_handler', '@current_user', '@content_moderation.moderation_information']
+    tags:
+      - { name: event_subscriber }

@@ -177,11 +177,21 @@ else {
   $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-courts-sandbox-1';
 }
 
-// Redirect home page to old courts.ca.gov
-if (PHP_SAPI <> 'cli' && $_SERVER['REQUEST_URI'] == '/') {
-  // Redirect
-  header("Location: " . 'https://www.courts.ca.gov', TRUE,301);
-  exit();
+// Redirect Opinion files to www4
+if (PHP_SAPI <> 'cli') {
+
+  $needles = [
+    'opinions/documents',
+    'opinions/archive',
+    'opinions/revpub',
+    'opinions/nonpub',
+    'opinions/revnppub',
+  ];
+  if (array_reduce($needles, fn($a, $n) => $a || str_contains($_SERVER['REQUEST_URI'], $n), FALSE)) {
+    header("Location: " . 'https://www4.courts.ca.gov' . $_SERVER['REQUEST_URI'], TRUE,301);
+    exit();
+  }
+
 }
 
 /**
