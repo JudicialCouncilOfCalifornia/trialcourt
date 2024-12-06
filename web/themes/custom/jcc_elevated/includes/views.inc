@@ -109,9 +109,10 @@ function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK() for publications listing.
+ * Implements hook_preprocess_HOOK() for alerts.
  */
 function jcc_elevated_preprocess_views_view__alerts__alerts(&$variables) {
+  $variables['attributes']['class'][] = 'stack global-alerts';
   // Hide admin links.
   $variables['title_prefix'] = [];
   $variables['title_suffix'] = [];
