@@ -23,11 +23,12 @@
   } %}
 {% endif %}
 
-{# Media alignment if in use #}
-{% if media and media_alignment %}
+{# Media alignment if media in use by non-striped cards #}
+{# TODO: Set alignment variant in Storybook Card.twig instead #}
+{% if not icon_data and (media and media_alignment) %}
   {% set card_variants = [
     variant,
-    media ? 'card--media-' ~ media_alignment  : '',
+    'card--media-' ~ media_alignment,
   ] %}
 {% endif %}
 
@@ -60,10 +61,11 @@
 {% include "@molecules/Card/Card.twig" with {
   variant: card_variants ? card_variants|join(' ') : variant,
   clickable_card: paragraph.field_entire_card_clickable.value,
-  background: variant != 'bordered' or variant != 'bordered-center' ? paragraph.field_background.value : null,
-  media: variant != 'striped' ? media : false,
+  background: variant != 'bordered' and variant != 'bordered-center' ? paragraph.field_background.value : null,
+  media: variant != 'striped' and variant != 'striped-aligned' ? media : null,
   media_align: media_alignment,
   media_caption: media_caption,
+  icon_data: icon_data,
   has_section_heading: has_section_heading,
   heading: content.field_heading.0,
   text: content.field_text.0|render,
