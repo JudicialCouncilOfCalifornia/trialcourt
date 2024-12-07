@@ -43,40 +43,11 @@ fetcher_configuration:
   request_timeout: 30
 parser: xml
 parser_configuration:
-  sources:
-    type:
-      label: type
-      value: type
-    title:
-      label: title
-      value: title
-    body:
-      label: body
-      value: body
-    teaser:
-      label: teaser
-      value: teaser
-    author:
-      label: author
-      value: author
-    pubdate:
-      label: pubDate
-      value: pubDate
-    image:
-      label: image
-      value: image
-    pubstatus:
-      label: pubStatus
-      value: pubStatus
-    tagline:
-      label: tagline
-      value: tagline
   context:
     value: //item
   source_encoding:
     - auto
   display_errors: false
-  debug_mode: false
   line_limit: 100
   use_tidy: false
 processor: 'entity:node'
@@ -84,13 +55,15 @@ processor_configuration:
   values:
     type: news
   langcode: en
+  insert_new: 1
   update_existing: 2
   update_non_existent: _keep
   skip_hash_check: false
   authorize: true
+  revision: false
   expire: -1
   owner_feed_author: false
-  owner_id: 7
+  owner_id: 1
 custom_sources:
   type:
     value: type
