@@ -107,7 +107,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
   // Start with the sticky_list display.
   $sticky_list = $executable ? $executable->setDisplay('sticky_list') : FALSE;
   $display = $executable->executeDisplay();
-  $default_image_path = theme_get_setting('news_default_seal');
+  $default_image_path = theme_get_setting('news_default_seal') ?? 'themes/custom/jcc_elevated/images/news-default-seal.svg';
   $default_image_url = Url::fromUri('base://' . $default_image_path, ['absolute' => TRUE])->toString();
   if ($sticky_list) {
     $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
@@ -368,7 +368,7 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
 function jcc_elevated_paragraph_hero_mega(array &$variables, ParagraphInterface $paragraph) {
   if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
     $image_uri = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
-    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_650x650')->buildUrl($image_uri);
+    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_2600x2600')->buildUrl($image_uri);
     $variables['bckg_img_url'] = $image_url;
   }
 
