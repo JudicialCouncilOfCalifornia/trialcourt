@@ -212,7 +212,7 @@ function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
         '#type' => 'checkbox',
         '#title' => t('Link media to file when saving'),
         '#required' => FALSE,
-        '#default_value' => FALSE,
+        '#default_value' => TRUE,
       ];
       $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_custom_link_to_file_submit';
     }
