@@ -806,13 +806,16 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         }
         $brow = [];
         if ($node->hasField('field_deadline') && !$node->field_deadline->isEmpty()) {
-          $deadline = strtotime($node->field_deadline->value);
-          $current_time = \Drupal::time()->getCurrentTime();
-          $formatted_deadline = date('F j, Y', $deadline);
+          $deadline = $node->field_deadline->value;
+          $utc_deadline = new DateTime($deadline, new DateTimeZone('UTC'));
+          $desired_timezone = new DateTimeZone('America/Los_Angeles');
+          $utc_deadline->setTimezone($desired_timezone);
+          $current_time = new DateTime('now', $desired_timezone);
+          $formatted_deadline = $utc_deadline->format('F j, Y');
           $item_number = $node->get('field_itc_number')->value;
           $title = $node->get('title')->value;
           $brow['secondary'] = $item_number;
-          if ($deadline > $current_time) {
+          if ($utc_deadline > $current_time) {
             $webform_url = generate_itc_webform_url($item_number, $formatted_deadline, $title);
             $email_address = 'invitations@jud.ca.gov';
             $url_content = '<a href="' . $webform_url . '">Submit comments online</a> | <a href="mailto:' . $email_address . '">Comment by email</a></p>';
@@ -833,14 +836,13 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         $brow['primary'] = $category_value;
         $deadline_value = $node->field_deadline->value;
         if (!empty($deadline_value)) {
-          $formatted_deadline = \Drupal::service('date.formatter')->format(
-            strtotime($deadline_value),
-            'custom',
-            'F j, Y'
-          );
+          $utc_deadline = new DateTime($deadline_value, new DateTimeZone('UTC'));
+          $desired_timezone = new DateTimeZone('America/Los_Angeles');
+          $utc_deadline->setTimezone($desired_timezone);
+          $formatted_deadline = $utc_deadline->format('F j, Y');
           $formatted_value = t('Deadline:') . ' ' . $formatted_deadline;
           $brow['notation'] = $formatted_value;
-          $raw_deadline = strtotime($deadline_value);
+          $raw_deadline = $utc_deadline->getTimestamp();
         }
         else {
           $deadline = '';
