@@ -2,6 +2,7 @@
 /**
  * @file
  * Theme override of a views exposed form.
+ * Custom placement of filters.
  *
  * Available variables:
  * - form: A render element representing the form.
@@ -20,18 +21,19 @@
       <button type="button" class="usa-accordion__button" aria-expanded="false" aria-controls="filters-wrapper">{{ 'Filters'|t }}</button>
     </h4>
     <div id="filters-wrapper" class="usa-accordion__content">
-      <h3 class="jcc-news-listing-form__filters-title">{{ 'Filter by type'|t }}</h3>
-      <div class="jcc-news-listing-form__filters-filter">
-        {{ form.type }}
-      </div>
-
       <h3 class="jcc-news-listing-form__filters-title">{{ 'Filter by date'|t }}</h3>
       <div class="jcc-news-listing-form__filters-filter">
         {{ form.date_start }}
         {{ form.date_end }}
       </div>
 
-      {{ form|without('search', 'date_start', 'date_end', 'type') }}
+      <h3 class="jcc-news-listing-form__filters-title">{{ 'Filter by type'|t }}</h3>
+      <div class="jcc-news-listing-form__filters-filter">
+        {{ form.field_news_type_target_id }}
+      </div>
+
+
+      {{ form|without('search', 'date_start', 'date_end', 'type', 'field_news_type_target_id', 'type') }}
     </div>
   </div>
 </div>
