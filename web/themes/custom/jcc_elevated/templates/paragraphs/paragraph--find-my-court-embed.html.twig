@@ -36,18 +36,19 @@
   </div>
 {% endset %}
 
-
-{% include "@molecules/Card/Card.twig" with {
-  variant: 'striped-aligned',
-  clickable_card: false,
-  background: 'solid-primary-dark-x',
-  aspect: [],
-  media: false,
-  icon_data: {
-    icon : 'fa-map-marker-alt',
-    color : 'accent-warm-light-xx',
-    icon_path: ' '
-  },
-  heading: content.field_heading.0,
-  text: find_my_court_content,
-} %}
+<div class="find-my-court">
+  {% include "@molecules/Card/Card.twig" with {
+    variant: 'striped-aligned',
+    clickable_card: false,
+    background: 'solid-primary-dark-x',
+    aspect: [],
+    media: false,
+    icon_data: {
+      icon : 'fa-map-marker-alt',
+      color : 'accent-warm-light-xx',
+      icon_path: ' '
+    },
+    heading: content.field_heading.0,
+    text: find_my_court_content,
+  } %}
+</div>

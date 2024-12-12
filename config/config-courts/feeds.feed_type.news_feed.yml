@@ -6,6 +6,7 @@ dependencies:
     - core.base_field_override.node.news.status
     - field.field.node.news.body
     - field.field.node.news.field_byline
+    - field.field.node.news.field_date
     - field.field.node.news.field_media
     - field.field.node.news.field_news_type
     - node.type.news
@@ -161,3 +162,10 @@ mappings:
       title: ''
     settings:
       language: null
+  -
+    target: field_date
+    map:
+      value: pubdate
+    settings:
+      language: null
+      timezone: UTC
