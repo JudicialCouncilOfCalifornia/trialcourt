@@ -722,7 +722,8 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
     }
     $variables['livecasts'] = $livecasts;
 
-    // Disable template cache to not block real time info.
+    // Disable paragraph cache to not block real time info.
     $variables['#cache']['max-age'] = 0;
+    \Drupal::service('cache_tags.invalidator')->invalidateTags($paragraph->getCacheTags());
   }
 }
