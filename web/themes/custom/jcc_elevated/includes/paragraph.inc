@@ -107,7 +107,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
   // Start with the sticky_list display.
   $sticky_list = $executable ? $executable->setDisplay('sticky_list') : FALSE;
   $display = $executable->executeDisplay();
-  $default_image_path = theme_get_setting('news_default_seal');
+  $default_image_path = theme_get_setting('news_default_seal') ?? 'themes/custom/jcc_elevated/images/news-default-seal.svg';
   $default_image_url = Url::fromUri('base://' . $default_image_path, ['absolute' => TRUE])->toString();
   if ($sticky_list) {
     $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
@@ -373,7 +373,7 @@ function jcc_elevated_paragraph_hero_mega(array &$variables, ParagraphInterface 
   }
 
   $variables['bg_tint'] = $paragraph->get('field_background')->value ? $paragraph->get('field_background')->value : '';
-  $variables['hero_mega_search_form'] = $paragraph->get('field_hero_mega_search') ? jcc_elevated_build_header_search_form() : '';
+  $variables['hero_mega_search_form'] = $paragraph->get('field_hero_mega_search')->value ? jcc_elevated_build_header_search_form() : '';
 }
 
 /**
