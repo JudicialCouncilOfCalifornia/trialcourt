@@ -138,6 +138,15 @@ function jcc_elevated_preprocess_page(&$variables) {
       $breadcrumb_links[] = Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]);
       $variables['breadcrumb']['#links'] = $breadcrumb_links;
     }
+    elseif ($node->bundle() == 'advisory_body') {
+      // Reset links.
+      $breadcrumb_links = [];
+      $breadcrumb_links[] = Link::createFromRoute(t('Policy & Administration'), 'entity.node.canonical', ['node' => '32035']);
+      $breadcrumb_links[] = Link::createFromRoute(t('The Judicial Council'), 'entity.node.canonical', ['node' => '8']);
+      $breadcrumb_links[] = Link::createFromRoute(t('Advisory Bodies'), 'entity.node.canonical', ['node' => '2942']);
+      $breadcrumb_links[] = Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]);
+      $variables['breadcrumb']['#links'] = $breadcrumb_links;
+    }
     elseif ($node->bundle() == 'news') {
       $config = \Drupal::config('system.site');
       if ($config->get('name') == 'Language Access Services') {
