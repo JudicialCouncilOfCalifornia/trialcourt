@@ -61,14 +61,14 @@ process:
   pseudo_hero:
     -
       plugin: migration_lookup
-      migration: courts_phase3_subpage_hero
+      migration: courts_phase3_subpage_node_hero
       source: url
     -
       plugin: null_as_array
   pseudo_section:
     -
       plugin: migration_lookup
-      migration: courts_phase3_subpage_section
+      migration: courts_phase3_subpage_node_section
       source: url
     -
       plugin: null_as_array
@@ -96,6 +96,6 @@ destination:
   default_bundle: subpage
 migration_dependencies:
   required:
-    - courts_phase3_subpage_hero
-    - courts_phase3_subpage_body
-    - courts_phase3_subpage_section
+    - courts_phase3_subpage_node_hero
+    - courts_phase3_subpage_node_body
+    - courts_phase3_subpage_node_section
