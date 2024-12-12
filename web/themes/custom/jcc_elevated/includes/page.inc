@@ -126,7 +126,7 @@ function jcc_elevated_preprocess_page(&$variables) {
       // Reset links.
       $breadcrumb_links = [];
       $breadcrumb_links[] = Link::createFromRoute(t('Policy & Administration'), 'entity.node.canonical', ['node' => '32035']);
-      $breadcrumb_links[] = Link::createFromRoute(t('Current Solicitations'), 'entity.node.canonical', ['node' => '16340']);
+      $breadcrumb_links[] = Link::createFromRoute(t('Solicitations'), 'entity.node.canonical', ['node' => '16340']);
       $breadcrumb_links[] = Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]);
       $variables['breadcrumb']['#links'] = $breadcrumb_links;
     }
@@ -134,6 +134,7 @@ function jcc_elevated_preprocess_page(&$variables) {
       // Reset links.
       $breadcrumb_links = [];
       $breadcrumb_links[] = Link::createFromRoute(t('Programs & Initiatives'), 'entity.node.canonical', ['node' => '4']);
+      $breadcrumb_links[] = Link::createFromRoute(t('Facilities'), 'entity.node.canonical', ['node' => '2957']);
       $breadcrumb_links[] = Link::createFromRoute(t('Building California Courthouses'), 'entity.node.canonical', ['node' => '12482']);
       $breadcrumb_links[] = Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]);
       $variables['breadcrumb']['#links'] = $breadcrumb_links;
@@ -156,6 +157,21 @@ function jcc_elevated_preprocess_page(&$variables) {
         $breadcrumb_links[] = Link::createFromRoute(t('News & Announcements'), 'entity.node.canonical', ['node' => '85']);
         $breadcrumb_links[] = Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]);
         $variables['breadcrumb']['#links'] = $breadcrumb_links;
+      }
+    }
+    elseif ($node->bundle() == 'judge') {
+      $config = \Drupal::config('system.site');
+      if ($config->get('name') == 'Judicial Branch of California') {
+        // Hardcoded exception.
+        if (in_array($node->id(), ['31350', '31351', '31352'])) {
+          // Reset links.
+          $breadcrumb_links = [];
+          $breadcrumb_links[] = Link::createFromRoute(t('Policy & Administration'), 'entity.node.canonical', ['node' => '32035']);
+          $breadcrumb_links[] = Link::createFromRoute(t('The Judicial Council'), 'entity.node.canonical', ['node' => '8']);
+          $breadcrumb_links[] = Link::createFromRoute(t('Judicial Council Staff'), 'entity.node.canonical', ['node' => '31403']);
+          $breadcrumb_links[] = Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]);
+          $variables['breadcrumb']['#links'] = $breadcrumb_links;
+        }
       }
     }
   }
