@@ -724,5 +724,6 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
 
     // Disable template cache to not block real time info.
     $variables['#cache']['max-age'] = 0;
+    \Drupal::service('page_cache_kill_switch')->trigger();
   }
 }
