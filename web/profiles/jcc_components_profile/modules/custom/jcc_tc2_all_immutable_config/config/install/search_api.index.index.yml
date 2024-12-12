@@ -5,9 +5,6 @@ dependencies:
     - field.storage.node.field_components
     - field.storage.paragraph.field_heading
     - field.storage.paragraph.field_subheading
-    - field.storage.media.field_media_file
-    - field.storage.media.field_media_file_multiple
-    - field.storage.media.field_media_text
     - field.storage.node.body
     - field.storage.paragraph.field_aside
     - field.storage.paragraph.field_hangover_blurb
@@ -18,12 +15,10 @@ dependencies:
   module:
     - search_api_solr
     - paragraphs
-    - file
-    - media
     - node
     - search_api
-    - search_api_exclude
     - search_api_attachments
+    - search_api_exclude
 third_party_settings:
   search_api_solr:
     finalize: false
@@ -70,6 +65,15 @@ third_party_settings:
       specific_languages:
         en: '0'
         es: '0'
+        ar: '0'
+        zh-hans: '0'
+        zh-hant: '0'
+        fil: '0'
+        ko: '0'
+        fa: '0'
+        pa: '0'
+        ru: '0'
+        vi: '0'
       use_universal_collation: false
 id: index
 name: Index
@@ -98,42 +102,6 @@ field_settings:
         - field.storage.paragraph.field_subheading
       module:
         - paragraphs
-  filename:
-    label: 'File » File » Filename'
-    datasource_id: 'entity:media'
-    property_path: 'field_media_file:entity:filename'
-    type: string
-    dependencies:
-      config:
-        - field.storage.media.field_media_file
-      module:
-        - file
-  filename_multiple:
-    label: 'Primary Files » File » Filename'
-    datasource_id: 'entity:media'
-    property_path: 'field_media_file_multiple:entity:filename'
-    type: string
-    dependencies:
-      config:
-        - field.storage.media.field_media_file_multiple
-      module:
-        - file
-  name:
-    label: Name
-    datasource_id: 'entity:media'
-    property_path: name
-    type: text
-    dependencies:
-      module:
-        - media
-  processed:
-    label: 'Description » Processed text'
-    datasource_id: 'entity:media'
-    property_path: 'field_media_text:processed'
-    type: text
-    dependencies:
-      config:
-        - field.storage.media.field_media_text
   processed_1:
     label: 'Body (purpose) » Processed text'
     datasource_id: 'entity:node'
@@ -246,15 +214,6 @@ field_settings:
       module:
         - node
 datasource_settings:
-  'entity:media':
-    bundles:
-      default: false
-      selected:
-        - file
-        - publication
-    languages:
-      default: true
-      selected: {  }
   'entity:node':
     bundles:
       default: true
@@ -323,10 +282,6 @@ processor_settings:
     fields:
       - field_heading
       - field_subheading
-      - filename
-      - filename_multiple
-      - name
-      - processed
       - processed_1
       - processed_2
       - processed_3
