@@ -23,6 +23,7 @@ function jcc_professional_preprocess_page(&$variables) {
   $variables['main_links'] = jcc_components_get_menu_array('main');
   $variables['footer_links'] = jcc_components_get_menu_array('footer');
   $variables['social_links'] = jcc_professional_social_links();
+  $variables['header_body'] = theme_get_setting('header_body');
 
   $variables['hat'] = [
     'title' => [
@@ -208,6 +209,7 @@ function jcc_professional_preprocess_page(&$variables) {
 
       // Disable template cache to not block real time info.
       $variables['#cache']['max-age'] = 0;
+      \Drupal::service('page_cache_kill_switch')->trigger();
     }
   }
 }
