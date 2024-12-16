@@ -373,7 +373,7 @@ function jcc_elevated_paragraph_hero_mega(array &$variables, ParagraphInterface 
   }
 
   $variables['bg_tint'] = $paragraph->get('field_background')->value ? $paragraph->get('field_background')->value : '';
-  $variables['hero_mega_search_form'] = $paragraph->get('field_hero_mega_search') ? jcc_elevated_build_header_search_form() : '';
+  $variables['hero_mega_search_form'] = $paragraph->get('field_hero_mega_search')->value ? jcc_elevated_build_header_search_form() : '';
 }
 
 /**
