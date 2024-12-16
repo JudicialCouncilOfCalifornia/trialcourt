@@ -115,7 +115,7 @@ function __jcc_elevated_determine_date_range_output($date): null|MarkupInterface
   }
 
   $separator = $separate ? '<br><small>' . $date['separator']['#plain_text'] . '</small><br>' : '<br>';
-  $start_datetime_attr = $date['start_date']['#attributes']['datetime'];
+  $start_datetime_attr = $date['start_date']['#attributes']['datetime'] ?? '';
   $end_datetime_attr = $date['end_date']['#attributes']['datetime'];
 
   return Markup::create("<time datetime='$start_datetime_attr'>" . $date['start_date']['#text'] . "</time>" . $separator . "<time datetime='$end_datetime_attr'>" . $date['end_date']['#text'] . "</time>");
