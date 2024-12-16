@@ -2,18 +2,22 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.node.field_components
+    - field.storage.paragraph.field_heading
+    - field.storage.paragraph.field_subheading
     - field.storage.node.body
-    - field.storage.node.field_alert_type
-    - field.storage.node.field_byline
-    - field.storage.node.field_news_type
+    - field.storage.paragraph.field_aside
+    - field.storage.paragraph.field_hangover_blurb
+    - field.storage.paragraph.field_text
+    - field.storage.paragraph.field_lead
     - search_api.server.pantheon_solr8
     - core.entity_view_mode.node.full
   module:
     - search_api_solr
-    - media
-    - file
+    - paragraphs
     - node
     - search_api
+    - search_api_attachments
     - search_api_exclude
 third_party_settings:
   search_api_solr:
@@ -57,83 +61,115 @@ third_party_settings:
     multilingual:
       limit_to_content_language: false
       include_language_independent: true
+      use_language_undefined_as_fallback_language: false
+      specific_languages:
+        en: '0'
+        es: '0'
+        ar: '0'
+        zh-hans: '0'
+        zh-hant: '0'
+        fil: '0'
+        ko: '0'
+        fa: '0'
+        pa: '0'
+        ru: '0'
+        vi: '0'
+      use_universal_collation: false
 id: index
 name: Index
 description: ''
 read_only: false
 field_settings:
-  body:
-    label: Body
+  field_heading:
+    label: 'Components » Paragraph » Heading'
     datasource_id: 'entity:node'
-    property_path: body
+    property_path: 'field_components:entity:field_heading'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_heading
+      module:
+        - paragraphs
+  field_subheading:
+    label: 'Components » Paragraph » Subheading'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_subheading'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_subheading
+      module:
+        - paragraphs
+  processed_1:
+    label: 'Body (purpose) » Processed text'
+    datasource_id: 'entity:node'
+    property_path: 'body:processed'
     type: text
     dependencies:
       config:
         - field.storage.node.body
-  bundle:
-    label: 'Media type'
-    datasource_id: 'entity:media'
-    property_path: bundle
-    type: string
-    dependencies:
-      module:
-        - media
-  field_alert_type:
-    label: 'Alert Type'
+  processed_2:
+    label: 'Components » Paragraph » Aside » Processed text'
     datasource_id: 'entity:node'
-    property_path: field_alert_type
-    type: string
+    property_path: 'field_components:entity:field_aside:processed'
+    type: text
     dependencies:
       config:
-        - field.storage.node.field_alert_type
-  field_byline:
-    label: Byline
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_aside
+      module:
+        - paragraphs
+  processed_3:
+    label: 'Components » Paragraph » Aside » Processed text'
     datasource_id: 'entity:node'
-    property_path: field_byline
-    type: string
+    property_path: 'field_components:entity:field_aside:processed'
+    type: text
     dependencies:
       config:
-        - field.storage.node.field_byline
-  field_news_type:
-    label: 'News Type'
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_aside
+      module:
+        - paragraphs
+  processed_4:
+    label: 'Components » Paragraph » Hangover blurb » Processed text'
     datasource_id: 'entity:node'
-    property_path: field_news_type
-    type: integer
+    property_path: 'field_components:entity:field_hangover_blurb:processed'
+    type: text
     dependencies:
       config:
-        - field.storage.node.field_news_type
-  filename:
-    label: Filename
-    datasource_id: 'entity:file'
-    property_path: filename
-    type: string
-    dependencies:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_hangover_blurb
       module:
-        - file
-  langcode:
-    label: Language
-    datasource_id: 'entity:media'
-    property_path: langcode
-    type: string
+        - paragraphs
+  processed_5:
+    label: 'Components » Paragraph » Text » Processed text'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_text:processed'
+    type: text
     dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_text
       module:
-        - media
-  language_with_fallback:
-    label: 'Language (with fallback)'
-    property_path: language_with_fallback
-    type: string
-  name:
-    label: Name
-    datasource_id: 'entity:media'
-    property_path: name
-    type: string
+        - paragraphs
+  processed_6:
+    label: 'Components » Paragraph » Lead » Processed text'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_lead:processed'
+    type: text
     dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_lead
       module:
-        - media
+        - paragraphs
   rendered_item:
     label: 'Rendered HTML output'
     property_path: rendered_item
     type: text
+    boost: !!float 3
     configuration:
       roles:
         - anonymous
@@ -142,82 +178,139 @@ field_settings:
           file: ''
         'entity:media':
           file: ''
+          publication: ''
         'entity:node':
-          alert: full
-          document: full
-          importer: ''
+          advisory_body: default
+          arbitrator: default
+          document: default
+          event: default
+          facilities: default
+          invitations_to_comment: default
+          job: default
+          judge: default
           landing_page: full
-          news: full
-          subpage: full
-  status:
-    label: Published
-    datasource_id: 'entity:media'
-    property_path: status
-    type: boolean
+          location: default
+          news: default
+          opinion: default
+          request: default
+          roc_rule: default
+          roc_rule_index: default
+          subpage: default
+  summary_processed:
+    label: 'Body (purpose) » Processed summary'
+    datasource_id: 'entity:node'
+    property_path: 'body:summary_processed'
+    type: text
     dependencies:
-      module:
-        - media
-  thumbnail:
-    label: Thumbnail
-    datasource_id: 'entity:media'
-    property_path: thumbnail
-    type: integer
-    dependencies:
-      module:
-        - media
+      config:
+        - field.storage.node.body
   title:
     label: Title
     datasource_id: 'entity:node'
     property_path: title
-    type: string
+    type: text
+    boost: !!float 5
     dependencies:
       module:
         - node
-  type:
-    label: 'Content type'
-    datasource_id: 'entity:node'
-    property_path: type
-    type: string
-    dependencies:
-      module:
-        - node
-  uri:
-    label: URI
-    datasource_id: 'entity:file'
-    property_path: uri
-    type: string
-    dependencies:
-      module:
-        - file
 datasource_settings:
-  'entity:file': {  }
-  'entity:media':
-    bundles:
-      default: false
-      selected:
-        - file
-    languages:
-      default: true
-      selected: {  }
   'entity:node':
     bundles:
       default: true
       selected:
-        - location
+        - alert
+        - case
+        - custom_email
+        - importer
+        - remote_hearings
+        - tentative_ruling
     languages:
       default: true
       selected: {  }
 processor_settings:
-  entity_type: {  }
-  rendered_item: {  }
-  aggregated_field: {  }
   add_url: {  }
+  aggregated_field: {  }
+  auto_aggregated_fulltext_field: {  }
+  double_quote_workaround:
+    weights:
+      postprocess_query: 0
+      preprocess_index: -15
+      preprocess_query: -15
+    all_fields: false
+    fields:
+      - field_heading
+      - field_subheading
+      - filename
+      - filename_multiple
+      - name
+      - processed
+      - processed_1
+      - processed_2
+      - processed_3
+      - processed_4
+      - processed_5
+      - processed_6
+      - rendered_item
+      - summary_processed
+      - title
+    replacement: '|9999999998|'
+  entity_status: {  }
+  entity_type: {  }
+  file_attachments:
+    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
+    number_indexed: 0
+    number_first_bytes: '1 MB'
+    max_filesize: '0'
+    excluded_private: 1
+    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
+  highlight:
+    weights:
+      postprocess_query: 0
+    prefix: '<strong>'
+    suffix: '</strong>'
+    excerpt: true
+    excerpt_always: false
+    excerpt_length: 256
+    exclude_fields: {  }
+    highlight: always
+    highlight_partial: false
+  html_filter:
+    weights:
+      preprocess_index: -15
+      preprocess_query: -15
+    all_fields: false
+    fields:
+      - field_heading
+      - field_subheading
+      - processed_1
+      - processed_2
+      - processed_3
+      - processed_4
+      - processed_5
+      - processed_6
+      - rendered_item
+      - summary_processed
+      - title
+    title: true
+    alt: true
+    tags:
+      b: 2
+      em: 1
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      u: 1
   language_with_fallback: {  }
   node_exclude: {  }
+  rendered_item: {  }
+  solr_boost_more_recent:
+    weights:
+      preprocess_query: 0
+    boosts: {  }
   solr_date_range:
     weights:
       preprocess_index: 0
-  auto_aggregated_fulltext_field: {  }
 tracker_settings:
   default:
     indexing_order: fifo
