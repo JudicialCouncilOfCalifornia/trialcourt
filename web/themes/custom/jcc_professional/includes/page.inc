@@ -206,8 +206,8 @@ function jcc_professional_preprocess_page(&$variables) {
       }
       $variables['livecast'] = $livecast;
 
-      // Disable template cache to not block real time info.
-      $variables['#cache']['max-age'] = 0;
+      // Disable page cache to not block real time Granicus info.
+      \Drupal::service('page_cache_kill_switch')->trigger();
     }
   }
 }

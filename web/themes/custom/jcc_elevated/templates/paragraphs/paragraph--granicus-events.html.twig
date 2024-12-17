@@ -1,38 +1,38 @@
-{{ attach_library("jcc_storybook/Pill") }}
-{{ attach_library("jcc_elevated/granicus-events") }}
-
 {% if livecasts is not empty %}
+  {{ attach_library("jcc_storybook/Pill") }}
+  {{ attach_library("jcc_elevated/granicus-events") }}
+
   {% for livecast in livecasts %}
-  <div class="granicus">
-    <div class="container">
-      <div class="granicus__content cluster" style="justify-content:space-between;">
-        <div class="granicus__main cluster">
-          <div class="granicus__status">
-            {% include "@atoms/Pill/Pill.twig" with {
-              variant: 'rectangle',
-              label: livecast.status,
-            } %}
-          </div>
-          <div class="granicus__body">
-            <div class="granicus__heading">
-              <span class="granicus__title">{{ livecast.title }}</span>
-              <span class="granicus__time">{{ livecast.time }} PST</span>
+    <div class="granicus">
+      <div class="container">
+        <div class="granicus__content cluster" style="justify-content:space-between;">
+          <div class="granicus__main cluster">
+            <div class="granicus__status">
+              {% include "@atoms/Pill/Pill.twig" with {
+                variant: 'rectangle',
+                label: livecast.status,
+              } %}
             </div>
-            <div class="granicus__text">
-              {{ livecast.promotional.0 }}
+            <div class="granicus__body">
+              <div class="granicus__heading">
+                <span class="granicus__title">{{ livecast.title }}</span>
+                <span class="granicus__time">{{ livecast.time }} PST</span>
+              </div>
+              <div class="granicus__text">
+                {{ livecast.promotional.0 }}
+              </div>
             </div>
           </div>
+          {% if livecast.status == 'live' or livecast.status == 'starting soon' %}
+            <div class="granicus__actions">
+              <a class="button button--secondary" href="{{ livecast.url|raw }}" arial_label="View {{ livecast.date }} {{ livecast.title }}">
+                Watch live broadcast
+              </a>
+              <p class="granicus__captioning">{{ livecast.captioning }}</p>
+            </div>
+          {% endif %}
         </div>
-        {% if livecast.status == 'live' or livecast.status == 'starting soon' %}
-          <div class="granicus__actions">
-            <a class="button button--secondary" href="{{ livecast.url|raw }}" arial_label="View {{ livecast.date }} {{ livecast.title }}">
-              Watch live broadcast
-            </a>
-            <p class="granicus__captioning">{{ livecast.captioning }}</p>
-          </div>
-        {% endif %}
       </div>
     </div>
-  </div>
   {% endfor %}
 {% endif %}
