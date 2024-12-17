@@ -205,13 +205,10 @@ function jcc_professional_preprocess_page(&$variables) {
           }
         }
       }
+      $variables['livecast'] = $livecast;
 
-      if (!empty($livecast)) {
-        $variables['livecast'] = $livecast;
-
-        // Disable page cache to not block real time Granicus info.
-        \Drupal::service('page_cache_kill_switch')->trigger();
-      }
+      // Disable page cache to not block real time Granicus info.
+      \Drupal::service('page_cache_kill_switch')->trigger();
     }
   }
 }
