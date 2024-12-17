@@ -720,10 +720,12 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
         }
       }
     }
-    $variables['livecasts'] = $livecasts;
 
-    // Disable paragraph cache to not block real time info.
-    $variables['#cache']['max-age'] = 0;
-    \Drupal::service('cache_tags.invalidator')->invalidateTags($paragraph->getCacheTags());
+    if (!empty($livecasts)) {
+      $variables['livecasts'] = $livecasts;
+
+      // Disable page cache to not block real time Granicus info.
+      \Drupal::service('page_cache_kill_switch')->trigger();
+    }
   }
 }
