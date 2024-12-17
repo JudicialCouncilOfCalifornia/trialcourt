@@ -8,6 +8,7 @@
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\EnforcedResponseException;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Link;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
@@ -107,17 +108,73 @@ function jcc_elevated_preprocess_page(&$variables) {
 
   // Set breadcrumb for landing pages and subpages.
   $variables['breadcrumb'] = FALSE;
-  $types = ['landing_page', 'subpage'];
+  $types = [
+    'landing_page',
+    'subpage',
+    'request',
+    'advisory_body',
+    'facilities',
+    'judge',
+    'news',
+  ];
   if (!$is_front && $is_node && in_array($node->bundle(), $types)) {
     $variables['breadcrumb'] = \Drupal::service('breadcrumb')
       ->build(\Drupal::routeMatch())
       ->toRenderable();
-  }
 
-  // Feedback widget visibility.
-  // We first check if a value is already defined. This allows for this setting
-  // to be calculated in a module, like rules of court, with this as a fallback.
-  $variables['hide_was_this_helpful'] = !isset($variables['hide_was_this_helpful']) || $variables['hide_was_this_helpful'] == NULL ? (boolean) theme_get_setting('hide_was_this_helpful') : $variables['hide_was_this_helpful'];
+    if ($node->bundle() == 'request') {
+      // Reset links.
+      $breadcrumb_links = [];
+      $breadcrumb_links[] = Link::createFromRoute(t('Policy & Administration'), 'entity.node.canonical', ['node' => '32035']);
+      $breadcrumb_links[] = Link::createFromRoute(t('Solicitations'), 'entity.node.canonical', ['node' => '16340']);
+      $breadcrumb_links[] = Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]);
+      $variables['breadcrumb']['#links'] = $breadcrumb_links;
+    }
+    elseif ($node->bundle() == 'facilities') {
+      // Reset links.
+      $breadcrumb_links = [];
+      $breadcrumb_links[] = Link::createFromRoute(t('Programs & Initiatives'), 'entity.node.canonical', ['node' => '4']);
+      $breadcrumb_links[] = Link::createFromRoute(t('Facilities'), 'entity.node.canonical', ['node' => '2957']);
+      $breadcrumb_links[] = Link::createFromRoute(t('Building California Courthouses'), 'entity.node.canonical', ['node' => '12482']);
+      $breadcrumb_links[] = Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]);
+      $variables['breadcrumb']['#links'] = $breadcrumb_links;
+    }
+    elseif ($node->bundle() == 'advisory_body') {
+      // Reset links.
+      $breadcrumb_links = [];
+      $breadcrumb_links[] = Link::createFromRoute(t('Policy & Administration'), 'entity.node.canonical', ['node' => '32035']);
+      $breadcrumb_links[] = Link::createFromRoute(t('The Judicial Council'), 'entity.node.canonical', ['node' => '8']);
+      $breadcrumb_links[] = Link::createFromRoute(t('Advisory Bodies'), 'entity.node.canonical', ['node' => '2942']);
+      $breadcrumb_links[] = Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]);
+      $variables['breadcrumb']['#links'] = $breadcrumb_links;
+    }
+    elseif ($node->bundle() == 'news') {
+      $config = \Drupal::config('system.site');
+      if ($config->get('name') == 'Language Access Services') {
+        // Reset links.
+        $breadcrumb_links = [];
+        $breadcrumb_links[] = Link::createFromRoute(t('About'), 'entity.node.canonical', ['node' => '96']);
+        $breadcrumb_links[] = Link::createFromRoute(t('News & Announcements'), 'entity.node.canonical', ['node' => '85']);
+        $breadcrumb_links[] = Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]);
+        $variables['breadcrumb']['#links'] = $breadcrumb_links;
+      }
+    }
+    elseif ($node->bundle() == 'judge') {
+      $config = \Drupal::config('system.site');
+      if ($config->get('name') == 'Judicial Branch of California') {
+        // Hardcoded exception.
+        if (in_array($node->id(), ['31350', '31351', '31352'])) {
+          // Reset links.
+          $breadcrumb_links = [];
+          $breadcrumb_links[] = Link::createFromRoute(t('Policy & Administration'), 'entity.node.canonical', ['node' => '32035']);
+          $breadcrumb_links[] = Link::createFromRoute(t('The Judicial Council'), 'entity.node.canonical', ['node' => '8']);
+          $breadcrumb_links[] = Link::createFromRoute(t('Judicial Council Staff'), 'entity.node.canonical', ['node' => '31403']);
+          $breadcrumb_links[] = Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]);
+          $variables['breadcrumb']['#links'] = $breadcrumb_links;
+        }
+      }
+    }
+  }
 
   $social_links = [];
   $social_link_ids = [
@@ -126,6 +183,7 @@ function jcc_elevated_preprocess_page(&$variables) {
     'rss' => 'jcc_elevated.social_links_rss',
     'twitter' => 'jcc_elevated.social_links_twitter',
     'youtube' => 'jcc_elevated.social_links_youtube',
+    'flickr' => 'jcc_elevated.social_links_flickr',
   ];
 
   $frontpage_path = \Drupal::urlGenerator()->generateFromRoute('<front>', [], ['absolute' => TRUE]);
@@ -310,7 +368,8 @@ function jcc_elevated_build_header_search_form(bool $mobile_version = FALSE): ar
   }
   $form['search']['#attributes']['name'] = $form['search']['#name'];
   $form['search']['#attributes']['class'] = [];
-  $form['search']['#attributes']['aria-label'] = t('Site search');
+  $form['search']['#attributes']['aria-label'] = t('Search courts.ca.gov');
+  $form['search']['#attributes']['placeholder'] = t('Search courts.ca.gov');
   $form['search']['#attributes']['id'] = $mobile_version ? 'header-search__mobile' : 'header-search';
   unset($form['search']['#attributes']['data-search-api-autocomplete-search']);
   unset($form['search']['#attributes']['data-autocomplete-path']);

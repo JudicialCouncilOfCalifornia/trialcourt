@@ -17,6 +17,7 @@ use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\user\Entity\User;
 use Drupal\views\ViewExecutable;
 
 /**
@@ -108,9 +109,10 @@ function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK() for publications listing.
+ * Implements hook_preprocess_HOOK() for alerts.
  */
 function jcc_elevated_preprocess_views_view__alerts__alerts(&$variables) {
+  $variables['attributes']['class'][] = 'stack global-alerts';
   // Hide admin links.
   $variables['title_prefix'] = [];
   $variables['title_suffix'] = [];
@@ -439,6 +441,14 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
+  // Check if user can add events.
+  $_url = Url::fromRoute('node.add', ['node_type' => 'event']);
+  $userCurrent = \Drupal::currentUser();
+
+  if ($_url->access($userCurrent)) {
+    $variables['header']['#markup'] = '<div><a class="button button--secondary button--normal icon--arrow  " href="/node/add/event">Add event</a></div><div></div>';
+  }
+
   if (count($variables['rows']) == 0) {
     $variables['no_results_msg']['#markup'] = $variables['empty']['area']['#text'];
   }
@@ -489,15 +499,18 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
 
       $event_date_time = '<strong>Time: </strong> ' . $start_date . ' to ' . $end_date;
 
-      if (!isset($event['content'])) {
-        $event['content'] = [
-          '#markup' => '',
-        ];
+      // Check if user has edit permissions for events.
+      $node = Node::load($node->id());
+      $check_edit_access = $node->access('update', $userCurrent);
+      $event['content']['#markup'] = '';
+
+      if ($check_edit_access) {
+        $event['content']['#markup'] .= '<a href="/node/' . $node->id() . '/edit">(edit this event)<br/></a>';
       }
       $event['content']['#markup'] = $event['content']['#markup'] ?? '';
 
       // Populating the event object.
-      $event['title'] = $node->field_event_date->start_date->format('F j, Y');
+      $event['title'] = $s_date->format('F j, Y');
       if ($teaser != '') {
         $event['content']['#markup'] .= '<div>' . $teaser . '</div>';
       }
@@ -581,8 +594,19 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       // Get Event state.
       $event_state_id = $node->hasField('field_event_state') ? $node->get('field_event_state')->target_id : FALSE;
 
+      // Check if user has edit permissions for events.
+      $node = Node::load($node->id());
+      $user = User::load(\Drupal::currentUser()->id());
+      $check_edit_access = $node->access('update', $user);
+
+      $event['content']['#markup'] = '';
+
+      if ($check_edit_access) {
+        $event['content']['#markup'] .= '<a href="/node/' . $node->id() . '/edit">(edit this event)<br/></a>';
+      }
+
       $event['title'] = $node->get('title')->value;
-      $event['content']['#markup'] = is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Event Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
+      $event['content']['#markup'] .= is_numeric($event_state_id) && !empty($taxonomy_manager->load($event_state_id)) ? '<strong>Event Type: </strong>' . $taxonomy_manager->load($event_state_id)->get('name')->value : '';
       if ($teaser != '') {
         $event['content']['#markup'] .= '<div>' . $teaser . '</div>';
       }
@@ -750,7 +774,7 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
   $grouped_proposals = [];
   $file_url = '';
   $file_uri = '';
-  foreach ($variables['rows'] as $index => $row1) {
+  foreach ($variables['rows'] as $row1) {
     $list_label = preg_replace('/\R+/', ' ', strip_tags($row1['#title']));
     $safe_list_label = rawurlencode($list_label);
     if (!isset($grouped_proposals[$safe_list_label])) {
@@ -782,13 +806,16 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         }
         $brow = [];
         if ($node->hasField('field_deadline') && !$node->field_deadline->isEmpty()) {
-          $deadline = strtotime($node->field_deadline->value);
-          $current_time = \Drupal::time()->getCurrentTime();
-          $formatted_deadline = date('F j, Y', $deadline);
+          $deadline = $node->field_deadline->value;
+          $utc_deadline = new DateTime($deadline, new DateTimeZone('UTC'));
+          $desired_timezone = new DateTimeZone('America/Los_Angeles');
+          $utc_deadline->setTimezone($desired_timezone);
+          $current_time = new DateTime('now', $desired_timezone);
+          $formatted_deadline = $utc_deadline->format('F j, Y');
           $item_number = $node->get('field_itc_number')->value;
           $title = $node->get('title')->value;
           $brow['secondary'] = $item_number;
-          if ($deadline > $current_time) {
+          if ($utc_deadline > $current_time) {
             $webform_url = generate_itc_webform_url($item_number, $formatted_deadline, $title);
             $email_address = 'invitations@jud.ca.gov';
             $url_content = '<a href="' . $webform_url . '">Submit comments online</a> | <a href="mailto:' . $email_address . '">Comment by email</a></p>';
@@ -809,14 +836,13 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         $brow['primary'] = $category_value;
         $deadline_value = $node->field_deadline->value;
         if (!empty($deadline_value)) {
-          $formatted_deadline = \Drupal::service('date.formatter')->format(
-            strtotime($deadline_value),
-            'custom',
-            'F j, Y'
-          );
+          $utc_deadline = new DateTime($deadline_value, new DateTimeZone('UTC'));
+          $desired_timezone = new DateTimeZone('America/Los_Angeles');
+          $utc_deadline->setTimezone($desired_timezone);
+          $formatted_deadline = $utc_deadline->format('F j, Y');
           $formatted_value = t('Deadline:') . ' ' . $formatted_deadline;
           $brow['notation'] = $formatted_value;
-          $raw_deadline = strtotime($deadline_value);
+          $raw_deadline = $utc_deadline->getTimestamp();
         }
         else {
           $deadline = '';
@@ -954,8 +980,6 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
   $entity_type_manager = \Drupal::entityTypeManager();
   $node_manager = $entity_type_manager->getStorage('node');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
-  $media_manager = $entity_type_manager->getStorage('media');
-  $file_manager = $entity_type_manager->getStorage('file');
 
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
@@ -967,11 +991,13 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
   $opinions = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
+    $post_date = $node->get('field_date_time')->value ? $node->get('field_date_time')->value : '';
     $type = $node->get('field_opinion_type')->target_id ? $taxonomy_manager->load($node->get('field_opinion_type')->target_id)->get('name')->value : '';
     $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
     $opinion_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
     $review_granted = $node->get('field_review_granted')->value;
-    $title = $node->get('title')->value;
+    $title = $node->get('title')->value ? $node->get('title')->value : '';
+    $weight = $node->get('field_weight')->value;
 
     // Remote file links.
     $remote_files = [
@@ -1006,7 +1032,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     }
 
     // Citings.
-    $citings = [];
+    $citings = NULL;
     $query = \Drupal::entityQuery('node');
     $query->condition('status', 1);
     $query->condition('title', $title, 'CONTAINS');
@@ -1015,26 +1041,16 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     if ($citing_archive) {
       $citing_node_id = reset($citing_archive);
       $citing_node = $node_manager->load($citing_node_id);
-      foreach ($citing_node->get('field_media_file_multiple')->getValue() as $citing) {
-        $media = $media_manager->load($citing['target_id']);
-        $file = $file_manager->load($media->get('field_media_file')->target_id);
-        if ($file) {
-          $citing_title = $media->get('field_media_text')->value;
-          if (is_null($citing_title)) {
-            $citing_title = $media->get('name')->value;
-          }
-          $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
-          $citings[] = [
-            'text' => ['#markup' => '<a href="' . $file_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
-          ];
-        }
-      }
+      $citing_url = $citing_node->toUrl()->toString();
+      $citings = '<a href="' . $citing_url . '" aria_label="View citings archive for ' . $case_number . '">View citings archive</a>';
     }
 
     $opinion = [
       'type' => $type,
       'case_number' => t('Case:') . ' ' . $case_number ? $case_number : t('Unspecified'),
-      'posted' => $node->get('field_date')->value ? $node->get('field_date')->date->format('F j, Y') : '',
+      'timestamp' => $post_date ? strtotime($post_date) : '',
+      'grouping' => $post_date ? \Drupal::service('date.formatter')->format(strtotime($post_date), 'custom', 'Ymd') : '',
+      'posted' => $post_date ? \Drupal::service('date.formatter')->format(strtotime($post_date), 'custom', 'F j, Y') : '',
       'source' => $opinion_source,
       'review_granted' => $review_granted,
       'title' => [
@@ -1044,15 +1060,33 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
       'remote_files' => $remote_files,
       'related_cases' => $related_cases_urls ? implode(' ', $related_cases_urls) : '',
       'citings' => $citings,
+      'weight' => $weight,
     ];
     $opinions[] = $opinion;
   }
+
+  // Prioritize Supreme Court opinions (weight) per day.
+  $sort = [];
+  foreach ($opinions as $k => $v) {
+    $sort['grouping'][$k] = $v['grouping'];
+    $sort['weight'][$k] = $v['weight'];
+    $sort['timestamp'][$k] = $v['timestamp'];
+  }
+  array_multisort($sort['grouping'], SORT_DESC, $sort['weight'], SORT_ASC, $sort['timestamp'], SORT_DESC, $opinions);
 
   $variables['opinions'] = $opinions;
 }
 
 /**
- * Implements hook_preprocess_views_view() for unpublished opinions listing block.
+ * Implements hook_preprocess_views_view() for published opinions review granted listing block.
+ */
+function jcc_elevated_preprocess_views_view__opinions__published_review_granted(&$variables) {
+  // Reuse current published opinions search block as common preprocess.
+  jcc_elevated_preprocess_views_view__opinions__published($variables);
+}
+
+/**
+ * Implements hook_preprocess_views_view() for extended published opinions listing block.
  */
 function jcc_elevated_preprocess_views_view__opinions__published_extended(&$variables) {
   // Reuse current published opinions search block as common preprocess.
@@ -1063,6 +1097,14 @@ function jcc_elevated_preprocess_views_view__opinions__published_extended(&$vari
  * Implements hook_preprocess_views_view() for unpublished opinions listing block.
  */
 function jcc_elevated_preprocess_views_view__opinions__unpublished(&$variables) {
+  // Reuse current published opinions search block as common preprocess.
+  jcc_elevated_preprocess_views_view__opinions__published($variables);
+}
+
+/**
+ * Implements hook_preprocess_views_view() for unpublished opinions listing review granted block.
+ */
+function jcc_elevated_preprocess_views_view__opinions__unpublished_review_granted(&$variables) {
   // Reuse current published opinions search block as common preprocess.
   jcc_elevated_preprocess_views_view__opinions__published($variables);
 }
@@ -1084,6 +1126,7 @@ function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variabl
   $opinions = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $node = $row['#node'];
+    $post_date = $node->get('field_date_time')->value ? $node->get('field_date_time')->value : '';
     $case_number = $node->get('field_case_number_plain')->value ? $node->get('field_case_number_plain')->value : '';
     $case_source = $node->get('field_opinion_source')->target_id ? $taxonomy_manager->load($node->get('field_opinion_source')->target_id)->get('name')->value : '';
 
@@ -1108,8 +1151,8 @@ function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variabl
 
     $opinion = [
       'case_number' => t('Case:') . ' ' . $case_number ? $case_number : t('Unspecified'),
-      'posted' => $node->get('field_date')->value ? $node->get('field_date')->date->format('F j, Y') : '',
-      'year' => $node->get('field_date')->value ? $node->get('field_date')->date->format('Y') : '',
+      'posted' => $post_date ? \Drupal::service('date.formatter')->format(strtotime($post_date), 'custom', 'F j, Y') : '',
+      'year' => $post_date ? \Drupal::service('date.formatter')->format(strtotime($post_date), 'custom', 'Y') : '',
       'source' => $case_source,
       'title' => [
         'text' => $node->get('title')->value ?? '',
@@ -1147,6 +1190,11 @@ function jcc_elevated_preprocess_views_view__opinions__all_page(&$variables) {
 function jcc_elevated_preprocess_views_view__requests__requests_listing_active(&$variables): void {
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
+
+  // Reset our embedded view exposed form to use the current page as the action.
+  // This is necessary because it is not an ajax controlled element, so it
+  // triggers a page refresh to the views default page (which is an admin page).
+  $variables['exposed']['#action'] = \Drupal::request()->getPathInfo();
 
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
@@ -1234,6 +1282,11 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
+  // Reset our embedded view exposed form to use the current page as the action.
+  // This is necessary because it is not an ajax controlled element, so it
+  // triggers a page refresh to the views default page (which is an admin page).
+  $variables['exposed']['#action'] = \Drupal::request()->getPathInfo();
+
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   if (isset($variables['rows'][0]['#rows'])) {
@@ -1276,6 +1329,11 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
  */
 function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived(&$variables): void {
   __jcc_view_results_exposed_filter_init($variables);
+
+  // Reset our embedded view exposed form to use the current page as the action.
+  // This is necessary because it is not an ajax controlled element, so it
+  // triggers a page refresh to the views default page (which is an admin page).
+  $variables['exposed']['#action'] = \Drupal::request()->getPathInfo();
 
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
@@ -1453,19 +1511,31 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
     $form['actions']['reset']['#attributes']['class'][] = 'button button--secondary button--normal';
   }
 
-  // Items per page filter.
-  if ($variables['rows'][0]['#rows'] && isset($variables['exposed']['items_per_page'])) {
+  // Items per page filter. All items per page elements need to live outside the
+  // views exposed form.
+  if (isset($variables['rows'][0]['#rows']) && isset($variables['exposed']['items_per_page'])) {
+
+    // Create our new variable for the templates.
     $variables['items_per_page'] = $variables['exposed']['items_per_page'];
+
+    // Since the items_per_page element is moved outside the form tag, we need
+    // to apply the original form id to the form attribute of the element.
     if ($variables['exposed']['#id']) {
       $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
-      foreach ($variables['items_per_page']['#options'] as $key => $value) {
-        $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' per page';
-      }
-      unset($variables['items_per_page']['#title']);
-      unset($variables['exposed']['items_per_page']);
     }
-  }
 
+    // Rewrite our items_per_page options to "Show XX per page".
+    foreach ($variables['items_per_page']['#options'] as $key => $value) {
+      $variables['items_per_page']['#options'][$key] = 'Show ' . $key . ' per page';
+    }
+
+    // Remove the label and remove the item from the exposed form.
+    unset($variables['items_per_page']['#title']);
+    unset($variables['exposed']['items_per_page']);
+  }
+  if (empty($variables['view']->result)) {
+    unset($variables['exposed']['items_per_page']);
+  }
   // Count summary for the current page of results.
   // Suppress duplicate summary with empty header in ViewsResults twig.
   $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';

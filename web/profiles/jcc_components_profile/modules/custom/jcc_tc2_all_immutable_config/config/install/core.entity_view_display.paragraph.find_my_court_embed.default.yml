@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.find_my_court_embed.field_content
+    - field.field.paragraph.find_my_court_embed.field_heading
+    - paragraphs.paragraphs_type.find_my_court_embed
+  module:
+    - text
+id: paragraph.find_my_court_embed.default
+targetEntityType: paragraph
+bundle: find_my_court_embed
+mode: default
+content:
+  field_content:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_heading:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true

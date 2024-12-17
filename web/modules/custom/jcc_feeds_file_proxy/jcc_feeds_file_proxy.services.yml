@@ -1,6 +1,6 @@
 services:
   jcc_feeds_file_proxy.subscriber:
     class: Drupal\jcc_feeds_file_proxy\EventSubscriber\JCCFeedsFileProxyEventsSubscriber
-    arguments: ['@request_stack', '@file.repository']
+    arguments: ['@request_stack', '@file.repository', '@entity_type.manager']
     tags:
       - {name: event_subscriber}

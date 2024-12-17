@@ -80,11 +80,7 @@
     {% endif %}
 
     {% if opinion.citings %}
-      <p>Web Page Citings:</p>
-      {% include "@molecules/List/List.twig" with {
-        variant: 'ul',
-        items: opinion.citings|raw,
-      } %}
+      <p>{{ opinion.citings|raw }}</p>
     {% endif %}
   {% endset %}
 

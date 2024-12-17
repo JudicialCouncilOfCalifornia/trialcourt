@@ -82,7 +82,7 @@
   brow: {
     variant: "default",
     part_one: node.field_case_number_plain.value,
-    part_two: node.field_date.value ? node.field_date.value|date('F j, Y') : '',
+    part_two: node.field_date_time.value ? node.field_date_time.value|date('F j, Y') : '',
   },
   heading: node.title.value,
   media: false,
@@ -102,13 +102,17 @@
       {% if node.field_opinion_source.value %}
         <span>{{ node.field_opinion_source.entity.name.value }}</span>
       {% endif %}
-      {% if node.field_opinion_type.value %}
+      {% if node.field_opinion_type.value and not opinion.citings %}
         <span>{{ type }}</span>
       {% endif %}
       {% if node.field_review_granted.value %}
         <span>Review Granted</span>
       {% endif %}
+      {% if opinion.citings %}
+        <span>Archived Citings</span>
+      {% endif %}
     </div>
+
     {% if opinion.remote_files %}
       <div>
         {% for remote_file in opinion.remote_files %}
@@ -123,9 +127,9 @@
     {% endif %}
 
     {% if opinion.details %}
-      <p>
-        <a href="{{ opinion.details|raw }}">View case details</a>
-      </p>
+      <div>
+        <a class="button button--text button-large" href="{{ opinion.details|raw }}">View case details</a>
+      </div>
     {% endif %}
 
     {% if opinion.related_cases %}
@@ -134,10 +138,11 @@
 
     {% if opinion.citings %}
       <p>Web Page Citings:</p>
-      {% include "@molecules/List/List.twig" with {
-        variant: 'ul',
-        items: opinion.citings|raw,
-      } %}
+      <ul>
+        {% for link in opinion.citings %}
+          <li>{{ link }}</li>
+        {% endfor %}
+      </ul>
     {% endif %}
   </div>
 {% endset %}

@@ -315,18 +315,18 @@ workflows:
                 - stage
                 - master
                 - /^epic-.*/
-      - cypress:
-          name: cypress-<< matrix.site >>
-          matrix:
-            parameters:
-              site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "sacramento", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "idm", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "sf", "kern", "tuolumne", "santabarbara", "monterey", "sonoma", "partners", "oc", "amdr", "lassen", "sanmateo", "delnorte", "calaveras", "santaclara", "appellate", "plumas", "diversity-toolkit", "shasta", "marin", "courts", "sanbernardino", "solano", "contracosta"]
-          requires:
-            - reset-<< matrix.site >>
-          filters:
-            branches:
-              only:
-                - develop
-                - stage
+      # - cypress:
+      #     name: cypress-<< matrix.site >>
+      #     matrix:
+      #       parameters:
+      #         site: ["colusa", "inyo", "slo2", "sc", "store-front", "tehama", "lake", "kings", "humboldt", "sierra", "tularesuperiorcourt", "mendocino", "alpine", "siskiyou", "mono", "napa", "supremecourt", "madera", "elcondado", "modoc", "eldorado", "trinity", "fresno", "sacramento", "glenn", "yuba", "sutter", "mariposa", "alameda", "butte", "imperial", "idm", "placer", "stanislaus", "sanbenito", "nccourt", "merced", "sf", "kern", "tuolumne", "santabarbara", "monterey", "sonoma", "partners", "oc", "amdr", "lassen", "sanmateo", "delnorte", "calaveras", "santaclara", "appellate", "plumas", "diversity-toolkit", "shasta", "marin", "courts", "sanbernardino", "solano", "contracosta"]
+      #     requires:
+      #       - reset-<< matrix.site >>
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #           - stage
       - deploy_legacy:
           name: deploy_legacy-<< matrix.site >>
           matrix:
@@ -355,17 +355,17 @@ workflows:
                 - stage
                 - master
                 - /^epic-.*/
-      - cypress:
-          matrix:
-            parameters:
-              site: ["newsroom"]
-          requires:
-            - reset_legacy-<< matrix.site >>
-          filters:
-            branches:
-              only:
-                - develop
-                - stage
+      # - cypress:
+      #     matrix:
+      #       parameters:
+      #         site: ["newsroom"]
+      #     requires:
+      #       - reset_legacy-<< matrix.site >>
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #           - stage
 
 experimental:
   notify:

@@ -154,6 +154,7 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
 
       // Suppress components that are usable to elevated sites only.
       if ($theme != 'jcc_elevated') {
+        unset($form['field_components']['widget']['add_more']['add_more_button_hero_mega']);
         unset($form['field_components']['widget']['add_more']['add_more_button_hero_hangover']);
         unset($form['field_components']['widget']['add_more']['add_more_button_section']);
         unset($form['field_components']['widget']['add_more']['add_more_button_tabs']);
@@ -295,6 +296,29 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
+ * Implements hook_field_group_form_process_alter().
+ */
+function jcc_custom_field_group_form_process_alter(array &$element, &$group, &$complete_form) {
+  if (jcc_custom_is_elevated_site()) {
+    switch ($group->group_name) {
+      case 'group_media':
+        if ($group->bundle == 'card') {
+          $element['#description'] = t('Embed an image or remote video. The media will automatically shift top or left positioning if the real estate is large enough. Optionally, you can position the media on the right.');
+        }
+        break;
+
+      case 'group_button':
+        if ($group->bundle == 'card') {
+          $element['#title'] = 'Add Buttons or Entire Card Clickable';
+          $linking_help = t('Setup a link for a button to appear as part of the card content or for the entire card. Use the <strong>Entire Card Clickable</strong> option to make the whole card actionable.\r\n\r\nFor additional buttons if supported, use the <strong>Additional Links</strong> option but be mindful of usability when offering more than two buttons.');
+          $element['#description'] = $linking_help;
+        }
+        break;
+    }
+  }
+}
+
+/**
  * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
  */
 function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
@@ -308,8 +332,23 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
         unset($element['subform']['field_subheading']);
         unset($element['subform']['field_link']);
         unset($element['subform']['field_aside']);
+
+        // Attach Card.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-layout';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-card';
         break;
 
+      case 'hero_mega':
+      case 'hero_hangover':
+      case 'section':
+        // Attach Card.css for background swatches.
+        $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-layout';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-card';
+        break;
+
+      case 'card':
       case 'hero_banner':
         unset($element['subform']['field_brow']);
         break;
@@ -320,16 +359,8 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
 
         // Attach Card.css for background swatches.
         $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
+        $element['#attached']['library'][] = 'jcc_custom/storybook-layout';
         $element['#attached']['library'][] = 'jcc_custom/storybook-card';
-        $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
-        break;
-
-      case 'hero_hangover':
-      case 'section':
-        // Attach Section.css for background swatches.
-        $element['#attached']['library'][] = 'jcc_custom/storybook-scheme-default';
-        $element['#attached']['library'][] = 'jcc_custom/storybook-section';
-        $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
         break;
     }
   }
@@ -338,6 +369,7 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
       case 'hero':
         unset($element['subform']['field_components']);
         unset($element['subform']['field_image_media']);
+        unset($element['subform']['field_background']);
         unset($element['subform']['field_granicus_view_link_id']);
         break;
 
@@ -583,11 +615,19 @@ function jcc_custom_background_options_bundle(FieldStorageConfig $definition, Co
  */
 function jcc_custom_section_background_options_bundle(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable): array {
   return [
-    "default" => '<span class="section field--select section--color-default">Default</span>',
-    "primary-dark-xx" => '<span class="section field--select section--color-primary-dark-xx">Primary (Dark)</span>',
-    "primary-dark-xx-stripe" => '<span class="section field--select section--color-primary-dark-xx-stripe">Primary (Dark/Striped)</span>',
-    "warm-dark-xx" => '<span class="section field--select section--color-warm-dark-xx">Warm (Dark)</span>',
-    "warm-dark-x" => '<span class="section field--select section--color-warm-dark-x">Warm</span>',
+    "base-light-xxx" => "<span class=\"cluster\"><span>Base Lightest</span><span class=\"card card--default card--background-base-light-xxx\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "base-dark-x" => "<span class=\"cluster\"><span>Base Darker</span><span class=\"card card--default card--background-base-dark-x\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "base-dark-xxx" => "<span class=\"cluster\"><span>Base Darkest</span><span class=\"card card--default card--background-base-dark-xxx\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "accent-warm-light-xxxx" => "<span class=\"cluster\"><span>Accent Warm Lightest</span><span class=\"card card--default card--background-accent-warm-light-xxxx\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "accent-warm-dark-x" => "<span class=\"cluster\"><span>Accent Warm Dark</span><span class=\"card card--default card--background-accent-warm-dark-x\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "red" => "<span class=\"cluster\"><span>Accent Warm Darker</span><span class=\"card card--default card--background-red\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "brown" => "<span class=\"cluster\"><span>Accent Warm Darkest</span><span class=\"card card--default card--background-brown\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "primary-light-xxx" => "<span class=\"cluster\"><span>Primary Lightest</span><span class=\"card card--default card--background-primary-light-xxx\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "primary-light-x" => "<span class=\"cluster\"><span>Primary Vivid</span><span class=\"card card--default card--background-primary-light-x\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "primary-dark-x" => "<span class=\"cluster\"><span>Primary Dark</span><span class=\"card card--default card--background-primary-dark-x\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "primary-dark-xxx" => "<span class=\"cluster\"><span>Primary Darkest</span><span class=\"card card--default card--background-primary-dark-xxx\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "secondary" => "<span class=\"cluster\"><span>Secondary</span><span class=\"card card--default card--background-secondary\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
+    "secondary-dark-x" => "<span class=\"cluster\"><span>Secondary Dark</span><span class=\"card card--default card--background-secondary-dark-x\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>",
   ];
 }
 
@@ -942,7 +982,10 @@ function jcc_custom_request_rfp_status_options(): array {
     return jcc_elevated_rfp_solicitations_status_options();
   }
 
-  return [];
+  return [
+    'open' => t('Open'),
+    'archived' => t('Archived'),
+  ];
 }
 
 /**

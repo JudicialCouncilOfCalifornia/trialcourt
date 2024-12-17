@@ -1,0 +1,66 @@
+uuid: ea0f8427-d304-4fa0-b297-f46625638617
+langcode: en
+status: true
+dependencies: {  }
+id: courts_phase3_subpage_node_section
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - courts_phase3
+  - subpage
+  - paragraph
+  - section
+migration_group: courts_phase3
+label: 'Courts Phase 3: Import Subpage Paragraph Section'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  fields:
+    -
+      name: url
+      label: URL
+      selector: url
+    -
+      name: group
+      label: Group
+      selector: group
+  ids:
+    url:
+      type: string
+process:
+  pseudo_body:
+    -
+      plugin: migration_lookup
+      migration: courts_phase3_subpage_node_body
+      source: url
+      no_stub: true
+    -
+      plugin: null_as_array
+  field_components:
+    -
+      plugin: sub_process
+      source:
+        - '@pseudo_body'
+      process:
+        target_id:
+          -
+            plugin: skip_on_empty
+            method: process
+            message: 'Cannot import empty paragraph'
+            source: '0'
+        target_revision_id:
+          -
+            plugin: skip_on_empty
+            method: process
+            message: 'Cannot import empty paragraph'
+            source: '1'
+destination:
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: section
+migration_dependencies:
+  required:
+    - courts_phase3_subpage_node_body

@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.menu_list.field_heading
+    - field.field.paragraph.menu_list.field_menu_list
+    - paragraphs.paragraphs_type.menu_list
+  module:
+    - link
+id: paragraph.menu_list.default
+targetEntityType: paragraph
+bundle: menu_list
+mode: default
+content:
+  field_heading:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_menu_list:
+    type: link_default
+    weight: 1
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
