@@ -723,6 +723,9 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
     $variables['livecasts'] = $livecasts;
 
     // Disable page cache to not block real time Granicus info.
+    // Max age for authenticated users.
+    // Kill switch for anonymous users.
+    $variables['#cache']['max-age'] = 0;
     \Drupal::service('page_cache_kill_switch')->trigger();
   }
 }
