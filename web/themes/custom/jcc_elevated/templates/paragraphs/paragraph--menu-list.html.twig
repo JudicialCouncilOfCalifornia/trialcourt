@@ -1,0 +1,24 @@
+{{ attach_library("jcc_storybook/List") }}
+{{ attach_library("jcc_storybook/Button") }}
+
+{% if link_list is not empty %}
+  {% set button_content = [] %}
+  {% for link in link_list %}
+    {% set button %}
+      {% include "@atoms/Button/Button.twig" with {
+        variant: "text",
+        label: link.title,
+        href: link.url,
+        color: '#005EA2'
+      } %}
+    {% endset %}
+    {% set button_content = button_content|merge([button]) %}
+  {% endfor %}
+{% endif %}
+
+{% include "@molecules/List/List.twig" with {
+  heading: content.field_heading.0|render,
+  withmenu: true,
+  items: button_content,
+  variant: 'ul'
+} %}

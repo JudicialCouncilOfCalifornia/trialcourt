@@ -55,10 +55,11 @@
               {% set content %}
                 {% if opinion.citings %}
                   <p>Web Page Citings:</p>
-                  {% include "@molecules/List/List.twig" with {
-                    variant: 'ul',
-                    items: opinion.citings|raw,
-                  } %}
+                  <ul>
+                    {% for link in opinion.citings %}
+                      <li>{{ link }}</li>
+                    {% endfor %}
+                  </ul>
                 {% endif %}
               {% endset %}
 

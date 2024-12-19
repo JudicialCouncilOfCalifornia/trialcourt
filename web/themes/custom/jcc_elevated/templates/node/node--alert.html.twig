@@ -78,7 +78,7 @@
   {% include "@molecules/Alert/Alert.twig" with {
     type: type|default('info'),
     dismissible: node.field_toggle.get(0).value|default(false),
-    heading: '',
+    heading: node.title.value,
     content: [content.body.0|render],
     icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
   } %}

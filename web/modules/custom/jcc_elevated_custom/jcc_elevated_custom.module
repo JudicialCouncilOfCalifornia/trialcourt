@@ -103,6 +103,7 @@ function _jcc_elevated_custom_keys(): array {
     'jcc_elevated.social_links_rss',
     'jcc_elevated.social_links_twitter',
     'jcc_elevated.social_links_youtube',
+    'jcc_elevated.social_links_flickr',
   ];
 }
 
@@ -381,4 +382,27 @@ function jcc_elevated_custom_form_node_alert_form_alter(&$form, $form_state): vo
     t('It does NOT set the alert to display on a section or sub-site "home" page. A specific page must be used for that.'),
   ];
   $form['field_switch']['widget']['value']['#description'] = implode(' ', $description);
+}
+
+/**
+ * Implements hook_file_download().
+ */
+function jcc_elevated_custom_file_download($uri): array {
+
+  // Set all document files to set the appropriate name when a download link is
+  // clicked. Because of the private file system, the last part of the main url
+  // is used. In private files output, that always ends in /files, which causes
+  // the default name to always be 'files'.
+  $filename = \Drupal::service('file_system')->basename($uri);
+  $mime = \Drupal::service('file.mime_type.guesser')->guess($uri);
+
+  // inline will open in browser. attachment forces direct download. We want to
+  // give browsers the options to display a pdf in window. The users browser
+  // settings will ultimately determine what is allowed.
+  $type = $mime == 'application/pdf' ? 'inline;' : 'attachment;';
+
+  $disposition = $type . ' filename="' . $filename . '"';
+  return [
+    'Content-disposition' => $disposition,
+  ];
 }

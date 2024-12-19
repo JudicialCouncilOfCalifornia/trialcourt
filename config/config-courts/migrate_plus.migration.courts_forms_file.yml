@@ -1,0 +1,76 @@
+uuid: 28dd0de2-529a-42e0-8bd1-27f0040f2432
+langcode: en
+status: true
+dependencies: {  }
+id: courts_forms_file
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - courts_forms
+  - file
+migration_group: courts_forms
+label: 'Courts Forms: File'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  ids:
+    url:
+      type: string
+  fields:
+    -
+      name: url
+      selector: url
+      label: 'Attachment file url'
+  constants:
+    DRUPAL_FILE_DIRECTORY: 'public://forms/'
+process:
+  pseudo_decoded_url:
+    plugin: callback
+    callable: urldecode
+    source: url
+  pseudo_destination_filename:
+    -
+      plugin: path_from_url
+      source: url
+    -
+      plugin: callback
+      callable: basename
+    -
+      plugin: callback
+      callable: urldecode
+    -
+      plugin: str_replace
+      search: ' '
+      replace: '-'
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'Could not create file from URL.'
+  pseudo_destination_path:
+    -
+      plugin: concat
+      source:
+        - constants/DRUPAL_FILE_DIRECTORY
+        - '@pseudo_destination_filename'
+  uri:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: url
+    -
+      plugin: file_copy
+      source:
+        - '@pseudo_decoded_url'
+        - '@pseudo_destination_path'
+      file_exists: rename
+      move: false
+destination:
+  plugin: 'entity:file'
+migration_dependencies: null

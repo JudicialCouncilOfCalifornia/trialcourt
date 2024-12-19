@@ -1,0 +1,6 @@
+services:
+  jcc_referrer_auth.check_access:
+    class: Drupal\jcc_referrer_auth\EventSubscriber\JccReferrerAuthSubscriber
+    arguments: ['@path_alias.manager','@current_user','@path.current','@redirect.destination','@request_stack','@page_cache_kill_switch','@tempstore.private']
+    tags:
+      - {name: event_subscriber}
