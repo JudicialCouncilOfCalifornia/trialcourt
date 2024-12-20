@@ -23,7 +23,6 @@ function jcc_professional_preprocess_page(&$variables) {
   $variables['main_links'] = jcc_components_get_menu_array('main');
   $variables['footer_links'] = jcc_components_get_menu_array('footer');
   $variables['social_links'] = jcc_professional_social_links();
-  $variables['header_body'] = theme_get_setting('header_body');
 
   $variables['hat'] = [
     'title' => [
@@ -75,6 +74,152 @@ function jcc_professional_preprocess_page(&$variables) {
             }
           }
         }
+      }
+    }
+  }
+
+  // Granicus integration.
+  // Setup provided by Drupal theme settings.
+  // - granicus_event_type ... find imported events by taxonomy name.
+  // - granicus_events_api ... accessing real-time Granicus information.
+  // - granicus_status_override ... opt always display as live during timeframe.
+  if (\Drupal::service('path.matcher')->isFrontPage()) {
+    // Find events tagged as granicus_event_type value.
+    $term_id = theme_get_setting('granicus_event_type');
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $imported_events = $term_id ? $node_storage->loadByProperties(['field_event_type' => $term_id]) : '';
+
+    // If matching event type found.
+    if ($imported_events) {
+      $today = date('m/d/y');
+      $term_storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
+
+      $livecast = [];
+      foreach ($imported_events as $event) {
+        $type = $term_storage->load($term_id)->name->value;
+        $event_date = $event->get('field_date_range')->start_date ? $event->get('field_date_range')->start_date->format('m/d/y') : '';
+        $scheduled_type = $term_storage->load($event->get('field_event_type')->target_id)->name->value;
+
+        // If matching event is scheduled for today.
+        if ($event_date == $today && $scheduled_type == $type) {
+          $taxonomy_manager = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
+          $type = $taxonomy_manager->load($term_id)->getName() ? $taxonomy_manager->load($term_id)->getName() : '';
+          $start_timestamp = strtotime($event->get('field_date_range')->start_date);
+          // Get Webcast URL from event description.
+          $body = $event->get('body')->value;
+          $pattern = '/\/\/jcc\.granicus\.com\/player\/event\/\d+/';
+          preg_match($pattern, $body ?? '', $event_url);
+          $event_url = $event_url ? $event_url[0] : '';
+          // Live captions.
+          $captioning = NULL;
+
+          // Banner visibility by status.
+          $status = NULL;
+          $current_time = date('h:i A');
+          $current_timestamp = strtotime($current_time);
+          $current_to_start = $current_timestamp - $start_timestamp;
+          $end_timestamp = strtotime($event->get('field_date_range')->end_date);
+
+          if (theme_get_setting('granicus_status_override') == 1) {
+            // If always live broadcast override.
+            if ($current_timestamp < $start_timestamp || $current_timestamp < $end_timestamp) {
+              $status = 'live';
+            }
+          }
+          elseif ($current_to_start > -3600 && $current_to_start < 3600) {
+            // Display pending 1 hour before & after scheduled time.
+            $status = 'starting soon';
+          }
+          elseif ($current_timestamp >= $start_timestamp && $current_timestamp < $end_timestamp) {
+            // Default display until scheduled time ends.
+            $status = 'no broadcast';
+          }
+
+          // Display banner.
+          if ($status) {
+            // Granicus real-time updates.
+            $granicus_events = [];
+            $feed = theme_get_setting('granicus_events_feed');
+            if ($feed) {
+              $request = file_get_contents($feed);
+              if ($request) {
+                try {
+                  $granicus_events = simplexml_load_string($request, 'SimpleXMLElement', LIBXML_NOCDATA);
+                }
+                catch (Exception $e) {
+                  \Drupal::logger('granicus')->warning($e->getMessage());
+                }
+                if ($granicus_events) {
+                  $granicus_events = json_encode($granicus_events);
+                  $granicus_events = json_decode($granicus_events, TRUE);
+                }
+              }
+            }
+
+            if ($granicus_events) {
+              foreach ($granicus_events['event'] as $granicus_event) {
+                if ($granicus_event['date'] == $today && $granicus_event['type'] == $type) {
+                  // Live broadcast check.
+                  if ($status != 'live') {
+                    switch ($granicus_event['status']) {
+                      case 'Running':
+                        $status = 'live';
+                        break;
+                    }
+                  }
+
+                  // If Webcast URL not found in Drupal event use URL from feed.
+                  if (!$event_url) {
+                    $event_url = $granicus_event['media_url'];
+                  }
+
+                  // Captioning links which can change at any time.
+                  // Saved with Newsroom events TBD.
+                  if ($granicus_event['captioning']) {
+                    $captioning_links = [];
+                    $captions = explode(';', $granicus_event['captioning']);
+                    foreach ($captions as $caption) {
+                      if ($caption) {
+                        $caption = explode('|', $caption);
+                        $title = $caption[0];
+                        $url = \Drupal::service('file_url_generator')->generate($caption[1]);
+                        $captioning_links[] = \Drupal::service('link_generator')->generate($title, $url);
+                      }
+                    }
+                    switch (count($captioning_links)) {
+                      case 2:
+                        $captioning_links = implode(' or ', $captioning_links);
+                        break;
+
+                      default:
+                        $captioning_links = $captioning_links[0];
+                    }
+                    $captioning = ['#markup' => 'View ' . $captioning_links . ' Captions'];
+                  }
+                }
+              }
+            }
+
+            $livecast = [
+              'title' => $type,
+              'date' => $event_date,
+              'time' => \Drupal::service('date.formatter')->format($start_timestamp, 'custom', 'h:i A'),
+              'url' => $event_url,
+              'captioning' => $captioning,
+              'status' => $status,
+            ];
+          }
+        }
+      }
+
+      if ($livecast) {
+        $variables['livecast'] = $livecast;
+
+        // Disable page cache to not block dynamic info.
+        // Max age cache for authenticated users.
+        // Kill cache switch for anonymous users.
+        $variables['#cache']['max-age'] = 0;
+        \Drupal::service('page_cache_kill_switch')->trigger();
       }
     }
   }
