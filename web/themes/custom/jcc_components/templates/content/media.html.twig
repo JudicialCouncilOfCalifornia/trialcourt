@@ -11,32 +11,17 @@
  * @see template_preprocess_media()
  */
 #}
-{#<article{{ attributes }}>#}
-{#  {{ title_suffix.contextual_links }}#}
-{#  <figure>#}
-{#    {% if content['#caption'] %}#}
-{#      <figcaption>{{ content['#caption'] }}</figcaption>#}
-{#    {% else %}#}
-{#      <figcaption>The test media caption</figcaption>#}
-{#    {% endif %}#}
-{#    {% if content %}#}
-{#      {{ content }}#}
-{#    {% endif %}#}
-{#  </figure>#}
-{#</article>#}
-
-
-
 <article{{ attributes }}>
   {{ title_suffix.contextual_links }}
-  <figure class="overlay-caption">
-    {% if content %}
+  <figure class="overlay-container">
+    <div class="image-wrapper">
       {{ content }}
-    {% endif %}
+    </div>
     {% if content['#caption'] %}
-      <figcaption>{{ content['#caption'] }}</figcaption>
+      <figcaption class="overlay-caption">{{ content['#caption'] }}</figcaption>
     {% else %}
-      <figcaption>The test media caption</figcaption>
+      <figcaption class="overlay-caption">The test media caption</figcaption>
     {% endif %}
   </figure>
 </article>
+
