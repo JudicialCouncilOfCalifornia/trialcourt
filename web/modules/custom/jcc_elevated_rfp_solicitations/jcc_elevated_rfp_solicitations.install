@@ -27,3 +27,16 @@ function jcc_elevated_rfp_solicitations_update_9001(&$sandbox): void {
     $schema->addField($table, $field, $spec);
   }
 }
+
+/**
+ * Delete all terms of Topics vocabulary.
+ */
+function jcc_elevated_rfp_solicitations_update_9002() {
+  $terms = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties(['vid' => 'topics']);
+
+  foreach ($terms as $term) {
+    $term->delete();
+  }
+}

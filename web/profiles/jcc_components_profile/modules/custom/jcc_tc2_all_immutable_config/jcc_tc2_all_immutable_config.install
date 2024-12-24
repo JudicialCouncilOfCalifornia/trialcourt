@@ -1087,16 +1087,3 @@ function jcc_tc2_all_immutable_config_update_9007() {
     ->isNull('uid')
     ->execute();
 }
-
-/**
- * Delete all terms of Topics vocabulary. 
- */
-function jcc_tc2_all_immutable_config_update_9008() {
-  $terms = \Drupal::entityTypeManager()
-    ->getStorage('taxonomy_term')
-    ->loadByProperties(['vid' => 'topics']);
-
-  foreach ($terms as $term) {
-    $term->delete();
-  }
-}
