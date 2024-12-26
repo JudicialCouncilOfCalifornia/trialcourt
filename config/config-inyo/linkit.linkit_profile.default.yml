@@ -1,19 +1,16 @@
-uuid: f577ef0c-00a9-43e9-bf90-d1b93d8385b0
 langcode: en
 status: true
 dependencies:
   module:
+    - file
     - node
-_core:
-  default_config_hash: h48ckgywx9HELkCXImpBXrUm_aW1mkDTv6T1FnnpfLU
-id: default
 label: Default
+id: default
 description: 'A default Linkit profile'
 matchers:
   556010a3-e317-48b3-b4ed-854c10f4b950:
-    uuid: 556010a3-e317-48b3-b4ed-854c10f4b950
     id: 'entity:node'
-    weight: 0
+    uuid: 556010a3-e317-48b3-b4ed-854c10f4b950
     settings:
       metadata: 'by [node:author] | [node:created:medium]'
       bundles:
@@ -25,13 +22,30 @@ matchers:
       substitution_type: canonical
       limit: 100
       include_unpublished: false
-  5efca65d-b023-49f8-a2e0-2c2d781d0f9c:
-    uuid: 5efca65d-b023-49f8-a2e0-2c2d781d0f9c
-    id: 'entity:media'
     weight: 0
+  5efca65d-b023-49f8-a2e0-2c2d781d0f9c:
+    id: 'entity:media'
+    uuid: 5efca65d-b023-49f8-a2e0-2c2d781d0f9c
     settings:
       metadata: ''
       bundles: {  }
       group_by_bundle: false
       substitution_type: media
       limit: 100
+    weight: 0
+  8737b76a-37c3-4c33-9da8-60a8f4505bc4:
+    id: 'entity:file'
+    uuid: 8737b76a-37c3-4c33-9da8-60a8f4505bc4
+    settings:
+      metadata: ''
+      bundles: null
+      group_by_bundle: null
+      substitution_type: file
+      limit: 100
+      file_extensions: 'pdf zip doc docx xls xlsx ppt pptx csv, png, gif, jpg, jpeg'
+      file_status: 1
+      images:
+        show_dimensions: false
+        show_thumbnail: false
+        thumbnail_image_style: null
+    weight: 0
