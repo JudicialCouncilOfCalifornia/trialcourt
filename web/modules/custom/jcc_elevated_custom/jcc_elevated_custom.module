@@ -281,7 +281,7 @@ function jcc_elevated_custom_link_to_file_submit(&$form, $form_state): void {
 
         if ($media) {
           if ($media->bundle() == 'publication' || $media->bundle() == 'file' || $media->bundle() == 'image') {
-            if ($media->field_media_file_multiple) {
+            if ($media->field_media_file_multiple->first()) {
               $fid = $media->field_media_file_multiple->first()->target_id;
             } else if ($media->field_media_image) {
               $fid = $media->field_media_image->target_id;
