@@ -186,6 +186,7 @@ if (PHP_SAPI <> 'cli') {
     'opinions/revpub',
     'opinions/nonpub',
     'opinions/revnppub',
+    'opinions/links',
   ];
   if (array_reduce($needles, fn($a, $n) => $a || str_contains($_SERVER['REQUEST_URI'], $n), FALSE)) {
     header("Location: " . 'https://www4.courts.ca.gov' . $_SERVER['REQUEST_URI'], TRUE,301);
