@@ -15,7 +15,7 @@ class FindMyCourt extends ControllerBase {
    * @return array
    *   A simple renderable array.
    */
-  public function findMyCourt($zip) {
+  public function findMyCourtPage($zip): array {
     if ($zip == '') {
       $no_zip_class = 'no-zip-code';
     }

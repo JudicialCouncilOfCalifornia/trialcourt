@@ -329,6 +329,62 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
 }
 
 /**
+ * Node: ITC node preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_invitations_to_comment(array &$variables, NodeInterface $node): void {
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $nodeData = [];
+  if ($node->hasField('field_category') && !$node->get('field_category')->isEmpty()) {
+    $category_term_id = $node->get('field_category')->target_id;
+    $term = $taxonomy_manager->load($category_term_id);
+    $nodeData['category'] = $term ? $term->getName() : '';
+  }
+
+  if ($node->hasField('field_itc_number') && !$node->get('field_itc_number')->isEmpty()) {
+    $nodeData['itc_number'] = $node->get('field_itc_number')->value;
+  }
+
+  if ($node->hasField('body') && !$node->get('body')->isEmpty()) {
+    $nodeData['body'] = $node->body->value;
+  }
+
+  if ($node->hasField('field_deadline') && !$node->get('field_deadline')->isEmpty()) {
+    $deadline = $node->field_deadline->value;
+    $utc_deadline = new DateTime($deadline, new DateTimeZone('UTC'));
+    $utc_deadline->setTimezone(new DateTimeZone('America/Los_Angeles'));
+    $nodeData['deadline'] = $utc_deadline->format('F j, Y');
+  }
+
+  if ($node->hasField('field_file') && !$node->get('field_file')->isEmpty()) {
+    $referenced_media = $node->get('field_file')->referencedEntities();
+    if (!empty($referenced_media)) {
+      $media = $referenced_media[0];
+      if ($media->hasField('field_media_file') && !$media->get('field_media_file')->isEmpty()) {
+        $file = $media->get('field_media_file')->entity;
+        if ($file instanceof File) {
+          $file_url = file_create_url($file->getFileUri());
+          $variables['file_link'] = [
+            '#type' => 'link',
+            '#title' => $file->label(),
+            '#url' => Url::fromUri($file_url),
+            '#attributes' => [
+              'target' => '_blank',
+            ],
+          ];
+        }
+      }
+    }
+    $variables['node'] = $nodeData;
+  }
+}
+
+/**
  * Node: Facilities preprocess.
  *
  * @param array $variables
