@@ -31,12 +31,25 @@ function jcc_elevated_rfp_solicitations_update_9001(&$sandbox): void {
 /**
  * Delete all terms of Topics vocabulary.
  */
-function jcc_elevated_rfp_solicitations_update_9002() {
-  $terms = \Drupal::entityTypeManager()
-    ->getStorage('taxonomy_term')
-    ->loadByProperties(['vid' => 'topics']);
+function jcc_elevated_rfp_solicitations_update_9002(&$sandbox) {
+  if (!isset($sandbox['current'])) {
+    $sandbox['current'] = 0;
+    $sandbox['total'] = 0;
 
-  foreach ($terms as $term) {
-    $term->delete();
+    $term_ids = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->getQuery()
+      ->condition('vid', 'topics')
+      ->execute();
+    $sandbox['term_ids'] = array_values($term_ids);
+    $sandbox['total'] = count($sandbox['term_ids']);
+  }
+  $batch_size = 10;
+  $current_batch = array_slice($sandbox['term_ids'], $sandbox['current'], $batch_size);
+  foreach ($current_batch as $term_id) {
+    $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
+    if ($term) {
+      $term->delete();
+    }
   }
 }
