@@ -29,27 +29,55 @@ function jcc_elevated_rfp_solicitations_update_9001(&$sandbox): void {
 }
 
 /**
- * Delete all terms of Topics vocabulary.
+ * Delete topic terms in batch.
  */
-function jcc_elevated_rfp_solicitations_update_9002(&$sandbox) {
-  if (!isset($sandbox['current'])) {
-    $sandbox['current'] = 0;
-    $sandbox['total'] = 0;
+function delete_topics_terms_in_batch($batch_size) {
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $query = $storage->getQuery()
+    ->condition('vid', 'topics')
+    ->range(0, $batch_size);
 
-    $term_ids = \Drupal::entityTypeManager()
-      ->getStorage('taxonomy_term')
-      ->getQuery()
-      ->condition('vid', 'topics')
-      ->execute();
-    $sandbox['term_ids'] = array_values($term_ids);
-    $sandbox['total'] = count($sandbox['term_ids']);
-  }
-  $batch_size = 10;
-  $current_batch = array_slice($sandbox['term_ids'], $sandbox['current'], $batch_size);
-  foreach ($current_batch as $term_id) {
-    $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
-    if ($term) {
+  $term_ids = $query->execute();
+  if (!empty($term_ids)) {
+    $terms = $storage->loadMultiple($term_ids);
+    foreach ($terms as $term) {
+      \Drupal::messenger()->addMessage('Deleting term: ' . $term->getName());
       $term->delete();
     }
   }
+}
+
+/**
+ * Delete all terms of Topics vocabulary.
+ */
+function jcc_elevated_rfp_solicitations_update_9003() {
+  delete_topics_terms_in_batch(5000);
+}
+
+/**
+ * Delete all terms of Topics vocabulary.
+ */
+function jcc_elevated_rfp_solicitations_update_9004() {
+  delete_topics_terms_in_batch(5000);
+}
+
+/**
+ * Delete all terms of Topics vocabulary.
+ */
+function jcc_elevated_rfp_solicitations_update_9005() {
+  delete_topics_terms_in_batch(5000);
+}
+
+/**
+ * Delete all terms of Topics vocabulary.
+ */
+function jcc_elevated_rfp_solicitations_update_9006() {
+  delete_topics_terms_in_batch(5000);
+}
+
+/**
+ * Delete all terms of Topics vocabulary.
+ */
+function jcc_elevated_rfp_solicitations_update_9007() {
+  delete_topics_terms_in_batch(5000);
 }
