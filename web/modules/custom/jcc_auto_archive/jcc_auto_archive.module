@@ -18,10 +18,10 @@ function jcc_auto_archive_module_help($route_name, \Drupal\Core\Routing\RouteMat
 /**
  * Implements hook_cron().
  */
- function jcc_auto_archive_cron() {
-    \Drupal::logger('jcc_newslinks')->info("awu hitting jcc_auto_archive_cron()");
-    \Drupal::service('jcc_auto_archive.archiver_controller')->autoArchive_cron();
-    \Drupal::logger('jcc_newslinks')->info("awu called service's autoArchive_cron in jcc_auto_archive_cron()");
+function jcc_auto_archive_cron() {
+  \Drupal::logger('jcc_newslinks')->info("awu hitting jcc_auto_archive_cron()");
+  \Drupal::service('jcc_auto_archive.archiver_controller')->autoArchive_cron();
+  \Drupal::logger('jcc_newslinks')->info("awu called service's autoArchive_cron in jcc_auto_archive_cron()");
 }
 
 
