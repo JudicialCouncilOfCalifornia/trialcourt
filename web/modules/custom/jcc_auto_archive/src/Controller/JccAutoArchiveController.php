@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\custom_module\Controller;
+namespace Drupal\jcc_auto_archive\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 
@@ -8,17 +8,24 @@ use Drupal\Core\Controller\ControllerBase;
  * Provides route responses for the JCC auto archive Module.
  */
 class JccAutoArchiveController extends ControllerBase {
-
-
+//
+//  public function __construct() {
+//    \Drupal::logger('jcc_newslinks')->info("awu hitting __construct()");
+//    \Drupal::service('jcc_auto_archive.archiver_controller')->autoArchive_cron();
+//    \Drupal::logger('jcc_newslinks')->info("awu called autoArchive_cron in __construct()");
+//  }
   /**
    * Returns a simple page.
    */
   public function autoArchive_cron() {
 
 
-    \Drupal::service('jcc_auto_archive.archiver_controller')->autoArchive_cron();
+
 
     \Drupal::logger('jcc_newslinks')->info("awu hitting autoArchive_cron()");
+     \Drupal::service('jcc_auto_archive.archiver_controller')->autoArchive_cron();
+    \Drupal::logger('jcc_newslinks')->info("awu called autoArchive_cron in autoArchive_cron");
+
 
     $five_years_ago = strtotime('-5 years');
     $query = \Drupal::entityQuery('node')
