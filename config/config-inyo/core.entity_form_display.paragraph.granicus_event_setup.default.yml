@@ -1,0 +1,61 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.granicus_event_setup.field_event_type
+    - field.field.paragraph.granicus_event_setup.field_lead
+    - field.field.paragraph.granicus_event_setup.field_toggle
+    - paragraphs.paragraphs_type.granicus_event_setup
+  module:
+    - allowed_formats
+    - autocomplete_deluxe
+    - maxlength
+    - text
+id: paragraph.granicus_event_setup.default
+targetEntityType: paragraph
+bundle: granicus_event_setup
+mode: default
+content:
+  field_event_type:
+    type: autocomplete_deluxe
+    weight: 0
+    region: content
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 1
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+  field_lead:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 2
+      placeholder: ''
+    third_party_settings:
+      allowed_formats:
+        hide_help: '1'
+        hide_guidelines: '0'
+      maxlength:
+        maxlength_js: 255
+        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+        maxlength_js_enforce: false
+        maxlength_js_truncate_html: false
+  field_toggle:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
