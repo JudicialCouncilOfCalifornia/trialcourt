@@ -8,8 +8,6 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\editor\Entity\Editor;
-use Drupal\file\Entity\File;
-use Drupal\media\Entity\Media;
 
 // @codingStandardsIgnoreStart
 
@@ -208,13 +206,41 @@ function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
   // by jcc_ckeditor_link if it is enabled.
   if (!\Drupal::service('module_handler')->moduleExists('jcc_ckeditor_link')) {
     if ($form_id == 'editor_link_dialog') {
-      $form['link_to_file'] = [
-        '#type' => 'checkbox',
-        '#title' => t('Link media to file when saving'),
-        '#required' => FALSE,
-        '#default_value' => FALSE,
-      ];
-      $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_custom_link_to_file_submit';
+      // Display link to file option if file entity, publication, or image.
+      $href = $form['href_dirty_check']['#default_value'];
+      if ($href) {
+        switch ($href) {
+          case str_contains($href, '/media/'):
+          case str_contains($href, '/sites/default/files/'):
+          case str_contains($href, '/system/files/'):
+            $display_toggle = TRUE;
+
+            // Display toggle only for specific media types.
+            if (str_contains($href, '/media/')) {
+              $media_id = str_replace('/media/', '', $href);
+              $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
+              if ($media->bundle() != 'publication' && $media->bundle() != 'file' && $media->bundle() != 'image') {
+                $display_toggle = FALSE;
+              }
+            }
+
+            if ($display_toggle) {
+              $link_to_file = NULL;
+              if (str_contains($form['href_dirty_check']['#default_value'], '/media/')) {
+                $link_to_file = FALSE;
+              }
+
+              $form['link_to_file'] = [
+                '#type' => 'checkbox',
+                '#title' => t('Link media to file when saving'),
+                '#required' => FALSE,
+                '#default_value' => $link_to_file ?? TRUE,
+              ];
+              $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_custom_link_to_file_submit';
+              break;
+            }
+        }
+      }
     }
   }
 }
@@ -244,23 +270,66 @@ function jcc_elevated_custom_link_to_file_submit(&$form, $form_state): void {
   // Wrapped in a module check, because this functionality should be controlled
   // by jcc_ckeditor_link if it is enabled.
   if (!\Drupal::service('module_handler')->moduleExists('jcc_ckeditor_link')) {
+    // Convert link HREF when toggling usage between media & media file.
     if ($form_state->getValue('link_to_file') == '1') {
-      if (str_contains($form_state->getValue('href_dirty_check'), '/media/')) {
+      // Link to media file directly.
+      $href = $form_state->getValue('href_dirty_check');
 
-        // Get media entity and retrieve its first file's url.
-        $media_id = str_replace("/media/", "", $form_state->getValue('href_dirty_check'));
-        $media = Media::load($media_id);
+      if ($href && str_contains($href, '/media/')) {
+        $media_id = str_replace('/media/', '', $href);
+        $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
 
-        // If no file then skip the logic.
-        if ($media->field_media_file_multiple) {
-          $fid = $media->field_media_file_multiple->first()->target_id;
-          $file = File::load($fid);
-          $file_url = $file->createFileUrl(TRUE);
+        if ($media) {
+          if ($media->bundle() == 'publication' || $media->bundle() == 'file' || $media->bundle() == 'image') {
+            if ($media->field_media_file_multiple->first()) {
+              $fid = $media->field_media_file_multiple->first()->target_id;
+            } else if ($media->field_media_image) {
+              $fid = $media->field_media_image->target_id;
+            } else {
+              $fid = $media->field_media_file->target_id;
+            }
+
+            if ($fid) {
+              // Populate form state with new url.
+              $file = \Drupal::entityTypeManager()->getStorage('file')->load($fid);
+              $file_url = $file->createFileUrl(TRUE);
+
+              if ($file_url) {
+                $form_state->setValue('href_dirty_check', $file_url);
+                $form_state->setValue('attributes', [
+                  'href' => $file_url,
+                  'data-entity-type' => '',
+                  'data-entity-uuid' => '',
+                  'data-entity-substitution' => '',
+                ]);
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      // Restore/Preserve media URL.
+      // Get file entity by filename "title".
+      // Entity filename property is not what the file is named.
+      // Remove any '_#' revision tagging from file's name for the query.
+      $filename = basename($form_state->getValue('href_dirty_check'));
+      $file_entity_title = preg_replace('/_(.*?)\./', '.', $filename);
+      $files = \Drupal::entityTypeManager()->getStorage('file')->loadByProperties(['filename' => $file_entity_title]);
+
+      // Since entities can have the same title, get media via unique file uri.
+      foreach ($files as $file) {
+        // Get correct file entity with filename in uri.
+        $uri = $file->get('uri')->value;
+        if (str_contains($uri, $filename)) {
+          // Get media id from file usage.
+          $file_usage = \Drupal::service('file.usage')->listUsage($file);
+          $mid = key($file_usage['file']['media']);
 
           // Populate form state with new url.
-          $form_state->setValue('href_dirty_check', $file_url);
+          $form_state->setValue('href_dirty_check', '/media/' . $mid);
           $form_state->setValue('attributes', [
-            'href' => $file_url,
+            'href' => '/media/' . $mid,
             'data-entity-type' => '',
             'data-entity-uuid' => '',
             'data-entity-substitution' => '',
