@@ -5,8 +5,10 @@
  * Generic system element preprocessors.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Implements hook_preprocess_views_view().
@@ -44,12 +46,12 @@ function jcc_elevated_preprocess_pager(&$variables) {
  * Implements hook_preprocess_breadcrumb().
  */
 function jcc_elevated_preprocess_breadcrumb(&$variables) {
+  $add_homepage_to_breadcrumb = TRUE;
 
   // We are creating a variable for the Current Page Title, to allow us to print
   // it after the breadcrumbs loop has run.
   $route_match = \Drupal::routeMatch();
-  $title = \Drupal::service('title_resolver')
-    ->getTitle(\Drupal::request(), $route_match->getRouteObject());
+  $title = \Drupal::service('title_resolver')->getTitle(\Drupal::request(), $route_match->getRouteObject());
   $variables['current_page_title'] = $title;
 
   // Remove items that don't have a url.
@@ -65,8 +67,8 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
     }
   }
 
-  $add_homepage_to_breadcrumb = TRUE;
-
+  // Adjust for site sections.
+  $section_homepage_url = NULL;
   if (function_exists('jcc_get_current_page_section') && $section_id = jcc_get_current_page_section()) {
     // Since this is a section, do not auto add the "Home" item.
     $add_homepage_to_breadcrumb = FALSE;
@@ -77,9 +79,9 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
     $section = $section_service->getSectionInfo($section_id);
     $section_homepage_nid = $section->jcc_section_homepage->target_id;
     $section_homepage_node = $node_manager->load($section_homepage_nid);
-    $url = Url::fromRoute('entity.node.canonical', ['node' => $section_homepage_nid]);
+    $section_homepage_url = Url::fromRoute('entity.node.canonical', ['node' => $section_homepage_nid]);
     $variables['breadcrumb'][0]['text'] = $section_homepage_node->label();
-    $variables['breadcrumb'][0]['url'] = $url->toString();
+    $variables['breadcrumb'][0]['url'] = $section_homepage_url->toString();
 
     // If the last item and first item are essentially the same thing, remove
     // the first item. This only applies for sections because the section home
@@ -105,6 +107,59 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
     }
   }
 
+  // Previous link alternative for pages without navigation structure.
+  $back_label = t('Back to');
+  $entity = NULL;
+  $route_name = $route_match->getRouteName();
+  foreach ($route_match->getParameters() as $parameter) {
+    if ($parameter instanceof EntityInterface) {
+      $entity = $parameter;
+      break;
+    }
+  }
+  if ($entity) {
+    $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
+    $isMenuItem = $menu_link_manager->loadLinksByRoute($route_name, [$entity->getEntityTypeId() => $entity->id()]);
+
+    if (!$isMenuItem) {
+      $add_homepage_to_breadcrumb = FALSE;
+      $variables['breadcrumb'] = [];
+      $referrer_title = t('Previous');
+      $referrer_url = \Drupal::request()->server->get('HTTP_REFERER');
+
+      if ($referrer_url) {
+        $request = Request::create($referrer_url);
+        $url_object = \Drupal::service('path.validator')->getUrlIfValid($request->getRequestUri());
+
+        if ($url_object) {
+          $referrer_params = $url_object->getRouteParameters();
+          if (key($referrer_params) == 'view_id') {
+            $referrer_entity = \Drupal::entityTypeManager()->getStorage('view')->load($referrer_params['view_id']);
+            $referrer_title = $back_label . ' ' . strtolower($referrer_entity->label()) . ' ' . t('management');
+          }
+          else {
+            $referrer_entity = \Drupal::entityTypeManager()->getStorage(key($referrer_params))->load($referrer_params[key($referrer_params)]);
+            $referrer_title = $back_label . ' ' . $referrer_entity->get('title')->value;
+          }
+        }
+      }
+      else {
+        $referrer_title = t('Go to homepage');
+        $referrer_url = '/';
+
+        // If section homepage.
+        if (function_exists('jcc_get_current_page_section') && $section_id = jcc_get_current_page_section() && $section_homepage_url) {
+          $referrer_url = $section_homepage_url;
+        }
+      }
+
+      $variables['breadcrumb'][] = [
+        'text' => '< ' . $referrer_title,
+        'url' => $referrer_url,
+      ];
+    }
+  }
+
   // Add homepage link to start of breadcrumb.
   if ($add_homepage_to_breadcrumb) {
     $url = Url::fromRoute('<front>');
@@ -112,11 +167,6 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
       'text' => t('Home'),
       'url' => $url->toString(),
     ]);
-  }
-
-  // Remove breadcrumb if only 1 item.
-  if (count($variables['breadcrumb']) <= 1) {
-    $variables['breadcrumb'] = [];
   }
 
   // Since we are printing the 'Current Page Title', add the URL cache context.
