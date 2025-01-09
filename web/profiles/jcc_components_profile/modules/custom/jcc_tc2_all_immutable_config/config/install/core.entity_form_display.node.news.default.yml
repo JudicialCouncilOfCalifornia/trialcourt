@@ -10,12 +10,13 @@ dependencies:
     - field.field.node.news.field_media_file_multiple
     - field.field.node.news.field_news_type
     - field.field.node.news.field_node_reference
+    - field.field.node.news.field_origin_url
     - node.type.news
-    - workflows.workflow.editorial
   module:
     - allowed_formats
     - content_moderation
     - datetime
+    - link
     - media_library
     - paragraphs
     - path
@@ -104,6 +105,14 @@ content:
       match_limit: 10
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_origin_url:
+    type: link_default
+    weight: 26
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
     third_party_settings: {  }
   langcode:
     type: language_select

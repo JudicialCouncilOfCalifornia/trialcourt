@@ -109,9 +109,10 @@ function jcc_elevated_preprocess_views_view__news__news_list(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK() for publications listing.
+ * Implements hook_preprocess_HOOK() for alerts.
  */
 function jcc_elevated_preprocess_views_view__alerts__alerts(&$variables) {
+  $variables['attributes']['class'][] = 'stack global-alerts';
   // Hide admin links.
   $variables['title_prefix'] = [];
   $variables['title_suffix'] = [];
@@ -509,7 +510,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$var
       $event['content']['#markup'] = $event['content']['#markup'] ?? '';
 
       // Populating the event object.
-      $event['title'] = $node->field_event_date->start_date->format('F j, Y');
+      $event['title'] = $s_date->format('F j, Y');
       if ($teaser != '') {
         $event['content']['#markup'] .= '<div>' . $teaser . '</div>';
       }
@@ -598,8 +599,10 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
       $user = User::load(\Drupal::currentUser()->id());
       $check_edit_access = $node->access('update', $user);
 
+      $event['content']['#markup'] = '';
+
       if ($check_edit_access) {
-        $event['content']['#markup'] = '<a href="/node/' . $node->id() . '/edit">(edit this event)<br/></a>';
+        $event['content']['#markup'] .= '<a href="/node/' . $node->id() . '/edit">(edit this event)<br/></a>';
       }
 
       $event['title'] = $node->get('title')->value;
@@ -771,7 +774,7 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
   $grouped_proposals = [];
   $file_url = '';
   $file_uri = '';
-  foreach ($variables['rows'] as $index => $row1) {
+  foreach ($variables['rows'] as $row1) {
     $list_label = preg_replace('/\R+/', ' ', strip_tags($row1['#title']));
     $safe_list_label = rawurlencode($list_label);
     if (!isset($grouped_proposals[$safe_list_label])) {
@@ -803,13 +806,16 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         }
         $brow = [];
         if ($node->hasField('field_deadline') && !$node->field_deadline->isEmpty()) {
-          $deadline = strtotime($node->field_deadline->value);
-          $current_time = \Drupal::time()->getCurrentTime();
-          $formatted_deadline = date('F j, Y', $deadline);
+          $deadline = $node->field_deadline->value;
+          $utc_deadline = new DateTime($deadline, new DateTimeZone('UTC'));
+          $desired_timezone = new DateTimeZone('America/Los_Angeles');
+          $utc_deadline->setTimezone($desired_timezone);
+          $current_time = new DateTime('now', $desired_timezone);
+          $formatted_deadline = $utc_deadline->format('F j, Y');
           $item_number = $node->get('field_itc_number')->value;
           $title = $node->get('title')->value;
           $brow['secondary'] = $item_number;
-          if ($deadline > $current_time) {
+          if ($utc_deadline > $current_time) {
             $webform_url = generate_itc_webform_url($item_number, $formatted_deadline, $title);
             $email_address = 'invitations@jud.ca.gov';
             $url_content = '<a href="' . $webform_url . '">Submit comments online</a> | <a href="mailto:' . $email_address . '">Comment by email</a></p>';
@@ -830,14 +836,13 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         $brow['primary'] = $category_value;
         $deadline_value = $node->field_deadline->value;
         if (!empty($deadline_value)) {
-          $formatted_deadline = \Drupal::service('date.formatter')->format(
-            strtotime($deadline_value),
-            'custom',
-            'F j, Y'
-          );
+          $utc_deadline = new DateTime($deadline_value, new DateTimeZone('UTC'));
+          $desired_timezone = new DateTimeZone('America/Los_Angeles');
+          $utc_deadline->setTimezone($desired_timezone);
+          $formatted_deadline = $utc_deadline->format('F j, Y');
           $formatted_value = t('Deadline:') . ' ' . $formatted_deadline;
           $brow['notation'] = $formatted_value;
-          $raw_deadline = strtotime($deadline_value);
+          $raw_deadline = $utc_deadline->getTimestamp();
         }
         else {
           $deadline = '';

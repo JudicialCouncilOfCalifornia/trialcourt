@@ -49,14 +49,15 @@
 
 {% if row['#node'] %}
   {% set id = row['#node'].id() ?? null %}
-  {% set url = id ? url('entity.node.canonical', { 'node': id }) : '' %}
+  {% set origin_url = row['#node'].field_origin_url.uri ?? null %}
+  {% set url = origin_url ?: (id ? url('entity.node.canonical', { 'node': id }) : '') %}  
   {% set teaser = {
     brow_data: {
       part_one: row['#node'].field_news_type.0.entity.name.value|default(''),
       part_two: row['#node'].field_date.0.value|date('F j, Y')|default(''),
     },
     heading: row['#node'].title()|default(''),
-    href: url['#markup'] ?? '',
+    href: url['#markup'] ?? url,
     text: excerpts[0]|default(''),
   } %}
 {% endif %}
@@ -64,12 +65,13 @@
 {% for i in 1..3 %}
   {% set row = sticky_list[i] %}
   {% set id = row['#node'].id() ?? null %}
-  {% set url = id ? url('entity.node.canonical', { 'node': id }) : '' %}
+  {% set origin_url = row['#node'].field_origin_url.uri ?? null %}
+  {% set url = origin_url ?: (id ? url('entity.node.canonical', { 'node': id }) : '') %}  
   {% if row['#node'].id() %}
     {% set item = {
       link: {
         label: row['#node'].title(),
-        href: url['#markup'] ?? '',
+        href: url['#markup'] ?? url,
       },
       footer: row['#node'].field_date.0.value|date('F j, Y'),
     } %}

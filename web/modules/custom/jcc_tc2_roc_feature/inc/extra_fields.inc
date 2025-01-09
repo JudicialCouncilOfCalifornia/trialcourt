@@ -41,21 +41,27 @@ function jcc_tc2_roc_feature_rule_build_in_page_navigation(EntityInterface $enti
   if ($parent_document) {
     $ordered_list_of_subsections = $roc_rule_link_service->getRocRuleIdsFromIndex($parent_document);
     $number_of_subsections = count($ordered_list_of_subsections);
+    $items['previous'] = FALSE;
 
     $a = array_search($entity->id(), $ordered_list_of_subsections);
     $index = array_search($a, array_keys($ordered_list_of_subsections));
     if ($index != 0) {
       $result_prev = array_key_first(array_slice($ordered_list_of_subsections, $index - 1, 1, TRUE));
-      $previous_subsection = $ordered_list_of_subsections[$result_prev];
-      $items['previous'] = $roc_rule_link_service->getLinkToRuleSection($previous_subsection, $parent_document, t('Previous rule'));
+      if ($result_prev) {
+        $previous_subsection = $ordered_list_of_subsections[$result_prev];
+        $items['previous'] = $roc_rule_link_service->getLinkToRuleSection($previous_subsection, $parent_document, t('Previous rule'));
+      }
     }
 
     $items['index_link'] = $roc_rule_link_service->getLinkToRuleIndexToc($parent_document, t('Back to Table of Contents'));
 
+    $items['next'] = FALSE;
     if ($index < $number_of_subsections) {
       $result_next = array_key_first(array_slice($ordered_list_of_subsections, $index + 1, 1, TRUE));
-      $next_subsection = $ordered_list_of_subsections[$result_next];
-      $items['next'] = $roc_rule_link_service->getLinkToRuleSection($next_subsection, $parent_document, t('Next rule'));
+      if ($result_next) {
+        $next_subsection = $ordered_list_of_subsections[$result_next];
+        $items['next'] = $roc_rule_link_service->getLinkToRuleSection($next_subsection, $parent_document, t('Next rule'));
+      }
     }
   }
 
