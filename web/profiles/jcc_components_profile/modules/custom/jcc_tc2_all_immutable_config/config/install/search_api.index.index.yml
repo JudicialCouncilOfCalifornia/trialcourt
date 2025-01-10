@@ -3,13 +3,16 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_components
+    - field.storage.paragraph.field_brow
+    - field.storage.paragraph.field_components
+    - field.storage.paragraph.field_hangover_blurb
     - field.storage.paragraph.field_heading
     - field.storage.paragraph.field_subheading
+    - field.storage.paragraph.field_content
     - field.storage.node.body
     - field.storage.paragraph.field_aside
-    - field.storage.paragraph.field_hangover_blurb
-    - field.storage.paragraph.field_text
     - field.storage.paragraph.field_lead
+    - field.storage.paragraph.field_text
     - search_api.server.pantheon_solr8
     - core.entity_view_mode.node.full
   module:
@@ -80,14 +83,52 @@ name: Index
 description: ''
 read_only: false
 field_settings:
+  field_brow:
+    label: 'Components » Paragraph » Components » Paragraph » Brow'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_components:entity:field_brow'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_brow
+        - field.storage.paragraph.field_components
+      module:
+        - paragraphs
+  field_hangover_blurb:
+    label: 'Components » Paragraph » Components » Paragraph » Hangover blurb'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_components:entity:field_hangover_blurb'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_components
+        - field.storage.paragraph.field_hangover_blurb
+      module:
+        - paragraphs
   field_heading:
     label: 'Components » Paragraph » Heading'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_heading'
     type: text
+    boost: !!float 3
     dependencies:
       config:
         - field.storage.node.field_components
+        - field.storage.paragraph.field_heading
+      module:
+        - paragraphs
+  field_heading_1:
+    label: 'Components » Paragraph » Components » Paragraph » Heading'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_components:entity:field_heading'
+    type: text
+    boost: !!float 2
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_components
         - field.storage.paragraph.field_heading
       module:
         - paragraphs
@@ -96,10 +137,43 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_subheading'
     type: text
+    boost: !!float 2
     dependencies:
       config:
         - field.storage.node.field_components
         - field.storage.paragraph.field_subheading
+      module:
+        - paragraphs
+  field_subheading_1:
+    label: 'Components » Paragraph » Components » Paragraph » Subheading'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_components:entity:field_subheading'
+    type: text
+    boost: !!float 2
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_components
+        - field.storage.paragraph.field_subheading
+      module:
+        - paragraphs
+  node_grants:
+    label: 'Node access information'
+    property_path: search_api_node_grants
+    type: string
+    indexed_locked: true
+    type_locked: true
+    hidden: true
+  processed:
+    label: 'Components » Paragraph » Components » Paragraph » Description » Processed text'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_components:entity:field_content:processed'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_components
+        - field.storage.paragraph.field_content
       module:
         - paragraphs
   processed_1:
@@ -122,14 +196,16 @@ field_settings:
       module:
         - paragraphs
   processed_3:
-    label: 'Components » Paragraph » Aside » Processed text'
+    label: 'Components » Paragraph » Components » Paragraph » Lead » Processed text'
     datasource_id: 'entity:node'
-    property_path: 'field_components:entity:field_aside:processed'
+    property_path: 'field_components:entity:field_components:entity:field_lead:processed'
     type: text
+    boost: !!float 2
     dependencies:
       config:
         - field.storage.node.field_components
-        - field.storage.paragraph.field_aside
+        - field.storage.paragraph.field_components
+        - field.storage.paragraph.field_lead
       module:
         - paragraphs
   processed_4:
@@ -148,6 +224,7 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_text:processed'
     type: text
+    boost: 1.5
     dependencies:
       config:
         - field.storage.node.field_components
@@ -159,10 +236,23 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_lead:processed'
     type: text
+    boost: !!float 3
     dependencies:
       config:
         - field.storage.node.field_components
         - field.storage.paragraph.field_lead
+      module:
+        - paragraphs
+  processed_8:
+    label: 'Components » Paragraph » Components » Paragraph » Text » Processed text'
+    datasource_id: 'entity:node'
+    property_path: 'field_components:entity:field_components:entity:field_text:processed'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_components
+        - field.storage.paragraph.field_components
+        - field.storage.paragraph.field_text
       module:
         - paragraphs
   rendered_item:
@@ -196,6 +286,16 @@ field_settings:
           roc_rule: default
           roc_rule_index: default
           subpage: default
+  status:
+    label: null
+    datasource_id: 'entity:node'
+    property_path: status
+    type: boolean
+    indexed_locked: true
+    type_locked: true
+    dependencies:
+      module:
+        - node
   summary_processed:
     label: 'Body (purpose) » Processed summary'
     datasource_id: 'entity:node'
@@ -210,6 +310,16 @@ field_settings:
     property_path: title
     type: text
     boost: !!float 5
+    dependencies:
+      module:
+        - node
+  uid:
+    label: null
+    datasource_id: 'entity:node'
+    property_path: uid
+    type: integer
+    indexed_locked: true
+    type_locked: true
     dependencies:
       module:
         - node
@@ -231,18 +341,22 @@ processor_settings:
   add_url: {  }
   aggregated_field: {  }
   auto_aggregated_fulltext_field: {  }
+  content_access:
+    weights:
+      preprocess_query: -30
   double_quote_workaround:
     weights:
       postprocess_query: 0
       preprocess_index: -15
       preprocess_query: -15
-    all_fields: false
+    all_fields: true
     fields:
+      - field_brow
+      - field_hangover_blurb
       - field_heading
+      - field_heading_1
       - field_subheading
-      - filename
-      - filename_multiple
-      - name
+      - field_subheading_1
       - processed
       - processed_1
       - processed_2
@@ -250,6 +364,7 @@ processor_settings:
       - processed_4
       - processed_5
       - processed_6
+      - processed_8
       - rendered_item
       - summary_processed
       - title
@@ -273,21 +388,27 @@ processor_settings:
     excerpt_length: 256
     exclude_fields: {  }
     highlight: always
-    highlight_partial: false
+    highlight_partial: true
   html_filter:
     weights:
       preprocess_index: -15
       preprocess_query: -15
-    all_fields: false
+    all_fields: true
     fields:
+      - field_brow
+      - field_hangover_blurb
       - field_heading
+      - field_heading_1
       - field_subheading
+      - field_subheading_1
+      - processed
       - processed_1
       - processed_2
       - processed_3
       - processed_4
       - processed_5
       - processed_6
+      - processed_8
       - rendered_item
       - summary_processed
       - title
@@ -295,12 +416,10 @@ processor_settings:
     alt: true
     tags:
       b: 2
-      em: 1
       h1: 5
       h2: 3
       h3: 2
       strong: 2
-      u: 1
   language_with_fallback: {  }
   node_exclude: {  }
   rendered_item: {  }
