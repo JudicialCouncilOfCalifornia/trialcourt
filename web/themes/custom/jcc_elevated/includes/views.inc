@@ -351,6 +351,24 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
       'url' => $entity->toUrl()->toString(),
     ];
 
+    // Add metadata details based on content type.
+    $entity_type_label = $entity->type->entity->label();
+    $details = [];
+
+    // Display last modified date.
+    $details[] = date('F j, Y', $entity->getCreatedTime());
+
+    // Display content type.
+    if (!in_array($entity_type_label, ['Subpage', 'Landing Page'])) {
+      $details[] = $entity_type_label;
+    }
+
+    if ($details) {
+      $variables['processed_rows'][$index]['detail_list_data'] = [
+        'details' => $details,
+      ];
+    }
+
     // Append section as a notation to search results, if module enabled and
     // section exists.
     $module_handler = \Drupal::service('module_handler');
