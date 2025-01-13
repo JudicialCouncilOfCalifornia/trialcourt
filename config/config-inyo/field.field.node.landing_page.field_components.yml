@@ -9,7 +9,10 @@ dependencies:
     - paragraphs.paragraphs_type.body
     - paragraphs.paragraphs_type.cards
     - paragraphs.paragraphs_type.content_stream
+    - paragraphs.paragraphs_type.data_visualization_embed
     - paragraphs.paragraphs_type.embed_script
+    - paragraphs.paragraphs_type.find_my_court_embed
+    - paragraphs.paragraphs_type.granicus_events
     - paragraphs.paragraphs_type.hero
     - paragraphs.paragraphs_type.hero_banner
     - paragraphs.paragraphs_type.hero_hangover
@@ -56,7 +59,9 @@ settings:
       views_reference: views_reference
       webform: webform
       embed_script: embed_script
+      data_visualization_embed: data_visualization_embed
       messenger_signup: messenger_signup
+      granicus_events: granicus_events
       tabs: tabs
     negate: 0
     target_bundles_drag_drop:
@@ -91,17 +96,26 @@ settings:
         weight: -60
         enabled: true
       content_stream:
-        weight: -59
+        weight: -35
+        enabled: true
+      data_visualization_embed:
+        weight: 44
         enabled: true
       date_information:
         weight: -43
         enabled: false
       embed_script:
-        weight: -42
+        weight: 41
         enabled: true
       from_library:
-        weight: -40
+        weight: 47
         enabled: false
+      granicus_event_setup:
+        weight: 57
+        enabled: false
+      granicus_events:
+        weight: 56
+        enabled: true
       hero:
         weight: -58
         enabled: true
@@ -130,10 +144,10 @@ settings:
         weight: -41
         enabled: true
       read_more:
-        weight: -38
+        weight: 50
         enabled: false
       rule_section:
-        weight: -35
+        weight: 62
         enabled: false
       section:
         weight: -54
@@ -145,7 +159,7 @@ settings:
         weight: -49
         enabled: true
       tab:
-        weight: -37
+        weight: 58
         enabled: false
       tabs:
         weight: -36
