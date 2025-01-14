@@ -352,10 +352,7 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
     ];
 
     // Add metadata details based on content type.
-    $entity_type_label = $entity->bundle();
-    $details = [];
-
-    switch ($entity_type_label) {
+    switch ($entity->bundle()) {
 
       case 'advisory_body':
         $variables['processed_rows'][$index]['brow'] = [
