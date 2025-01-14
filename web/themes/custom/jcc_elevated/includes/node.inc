@@ -461,7 +461,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     ],
     'schedule' => $schedule_content,
     'ceqa' => $ceqa_content,
-    'planning_study' => strip_tags($node->field_planning_study->value),
+    'planning_study' => strip_tags($node->field_planning_study->value ?? ''),
     'project_advisory_group' => $node->field_project_advisory_group->value,
     'status' => $node->field_project_status->value == 'inprogress' ? 'In-Progress' : 'Completed',
     'hero_title' => strip_tags($node->field_hero_title->value),
