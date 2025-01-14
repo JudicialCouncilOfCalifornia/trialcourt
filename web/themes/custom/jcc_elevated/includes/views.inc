@@ -396,7 +396,8 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
 
       case 'request':
         $variables['processed_rows'][$index]['brow'] = [
-          'primary' => $entity?->field_rfp_type?->value,
+          'primary' => 'Solicitation',
+          'secondary' => $entity?->field_rfp_type?->value,
         ];
         break;
 
