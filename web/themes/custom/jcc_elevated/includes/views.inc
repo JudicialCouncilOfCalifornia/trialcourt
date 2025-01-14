@@ -352,21 +352,69 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
     ];
 
     // Add metadata details based on content type.
-    $entity_type_label = $entity->type->entity->label();
+    $entity_type_label = $entity->bundle();
     $details = [];
 
-    // Display last modified date.
-    $details[] = date('F j, Y', $entity->getCreatedTime());
+    switch ($entity_type_label) {
 
-    // Display content type.
-    if (!in_array($entity_type_label, ['Subpage', 'Landing Page'])) {
-      $details[] = $entity_type_label;
-    }
+      case 'advisory_body':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'Advisory Body',
+        ];
+        break;
 
-    if ($details) {
-      $variables['processed_rows'][$index]['detail_list_data'] = [
-        'details' => $details,
-      ];
+      case 'event':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'Event',
+          'secondary' => \Drupal::service('date.formatter')
+            ->format(strtotime($entity?->field_event_date?->value), 'm_d_y'),
+        ];
+        break;
+
+      case 'judge':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'Profile',
+          'secondary' => $entity?->field_person_type?->entity?->label(),
+        ];
+        break;
+
+      case 'landing_page':
+      case 'subpage':
+        break;
+
+      case 'news':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'News',
+          'secondary' => \Drupal::service('date.formatter')
+            ->format(strtotime($entity?->field_date?->value), 'm_d_y'),
+        ];
+        break;
+
+      case 'opinion':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'Opinion',
+          'secondary' => $entity?->field_case_number_plain?->value,
+        ];
+        break;
+
+      case 'request':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => $entity?->field_rfp_type?->value,
+        ];
+        break;
+
+      case 'roc_rule':
+      case 'roc_rule_index':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'Rules of Court',
+        ];
+        break;
+
+      default:
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => $entity->type->entity->label(),
+        ];
+        break;
     }
 
     // Append section as a notation to search results, if module enabled and
