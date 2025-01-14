@@ -12,7 +12,7 @@ migration_tags:
   - courts
   - node
   - events
-migration_group: courts
+migration_group: courts_advisory_body_events
 label: 'Courts: Events'
 source:
   plugin: url
@@ -39,7 +39,7 @@ source:
       selector: end_date
     -
       name: files
-      label: 'Files'
+      label: Files
       selector: files
     -
       name: advisory_body
@@ -71,45 +71,56 @@ process:
     plugin: default_value
     default_value: 1
   field_event_date/value:
-    - plugin: format_date
+    -
+      plugin: format_date
       source: start_date
       from_format: 'F j, Y H:i:s'
       to_format: 'Y-m-d\TH:i:s'
   field_event_date/end_value:
-    - plugin: format_date
+    -
+      plugin: format_date
       source: end_date
       from_format: 'F j, Y H:i:s'
       to_format: 'Y-m-d\TH:i:s'
   field_event_state:
-    - plugin: explode
+    -
+      plugin: explode
       source: event_state
       delimiter: ','
-    - plugin: entity_generate
+    -
+      plugin: entity_generate
       entity_type: taxonomy_term
       bundle_key: vid
       bundle: event_state
       value_key: name
       ignore_case: true
   body/value:
-    - plugin: media_replace_file_link
+    -
+      plugin: media_replace_file_link
       source: event_description
-    - plugin: prefix_relative_links
+    -
+      plugin: prefix_relative_links
   body/format:
     plugin: default_value
     default_value: body
   field_event_files:
-    - plugin: explode
+    -
+      plugin: explode
       source: files
       delimiter: ','
-    - plugin: multiple_values
-    - plugin: migration_lookup
+    -
+      plugin: multiple_values
+    -
+      plugin: migration_lookup
       migration: advisory_body_media
       no_stub: true
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       method: process
       message: 'No media to attach to opinion.'
   field_content_reference:
-    - plugin: migration_lookup
+    -
+      plugin: migration_lookup
       migration: node_advisory_body
       source: advisory_body
 destination:
