@@ -120,7 +120,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
           $file = $media->get('field_media_image')->entity;
           if ($file instanceof File) {
             $uri = $file->getFileUri();
-            $image_url = Drupal::entityTypeManager()->getStorage('image_style')->load('focal_point_max_325x325')->buildUrl($uri);
+            $image_url = Drupal::entityTypeManager()->getStorage('image_style')->load('focal_point_max_650x650')->buildUrl($uri);
           }
         }
         $variables['sticky_list'][$index]['imageurl'] = $image_url ?? $default_image_url;
@@ -345,25 +345,13 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
 
   if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
     $cover_image = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
-    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('focal_point_max_2600x2600')->buildUrl($cover_image);
+    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('container_100_percent')->buildUrl($cover_image);
     $variables['bckg_img_url'] = $image_url;
   }
 
   if (!empty($paragraph->get('field_background'))) {
     $bg_tint = $paragraph->get('field_background')->value;
     $variables['bg_tint'] = $bg_tint;
-  }
-
-  // Include view embed as lead content.
-  if (isset($paragraph->field_granicus_view_link_id->value)) {
-    $variables['#attached']['library'][] = 'jcc_storybook/Iframe';
-    $lead = $paragraph->get('field_lead')->value ?? '';
-    $granicus_view_id = $paragraph->field_granicus_view_link_id->value;
-    $granicus_url = 'https://jcc.granicus.com/ViewPublisher.php?view_id=' . $granicus_view_id;
-    $iframe_title = 'Granicus live cast';
-    $link = '<div class="iframe"><iframe class="iframe--granicus-link" src="' . $granicus_url . '" title="' . $iframe_title . '"></iframe></div>';
-    $custom = $lead . $link;
-    $variables['custom'] = Markup::create($custom);
   }
 }
 
@@ -378,7 +366,7 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
 function jcc_elevated_paragraph_hero_mega(array &$variables, ParagraphInterface $paragraph) {
   if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
     $image_uri = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
-    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('focal_point_max_2600x2600')->buildUrl($image_uri);
+    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('container_100_percent')->buildUrl($image_uri);
     $variables['bckg_img_url'] = $image_url;
   }
 
@@ -449,11 +437,22 @@ function jcc_elevated_paragraph_section(array &$variables, ParagraphInterface $p
  */
 function jcc_elevated_paragraph_hero_hangover(array &$variables, ParagraphInterface $paragraph) {
   if ($paragraph->get('field_media')) {
-    $card_media = $paragraph->get('field_media');
-    if ($card_media && $card_media->entity) {
-      $build = \Drupal::entityTypeManager()
-        ->getViewBuilder('media')
-        ->view($card_media->entity);
+    $card_media = $paragraph->get('field_media')->entity;
+    if ($card_media) {
+      $build = \Drupal::entityTypeManager()->getViewBuilder('media')->view($card_media);
+      if ($card_media->bundle() == 'image') {
+        $image_uri = $card_media->field_media_image->entity->getFileUri();
+        $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('focal_point_max_650x650')->buildUrl($image_uri);
+        $build = [
+          '#type' => 'html_tag',
+          '#tag' => 'img',
+          '#attributes' => [
+            'src' => $image_url,
+            'alt' => $card_media->get('field_media_image')[0]->alt,
+          ],
+        ];
+      }
+
       $variables['card_media'] = $build;
     }
   }
