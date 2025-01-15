@@ -15,8 +15,8 @@
 
 <div class="container">
   {% include "@molecules/DataVisualizationEmbed/DataVisualizationEmbed.twig" with {
-    width: paragraph.field_width.value,
-    height: paragraph.field_height.value,
+    width: paragraph.field_width.value | default(1),
+    height: paragraph.field_height.value | default(1),
     mobile_width: mobile_width,
     mobile_height: mobile_height,
     url: paragraph.field_link.uri,
