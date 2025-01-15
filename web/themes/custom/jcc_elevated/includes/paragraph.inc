@@ -343,18 +343,6 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
     $bg_tint = $paragraph->get('field_background')->value;
     $variables['bg_tint'] = $bg_tint;
   }
-
-  // Include view embed as lead content.
-  if (isset($paragraph->field_granicus_view_link_id->value)) {
-    $variables['#attached']['library'][] = 'jcc_storybook/Iframe';
-    $lead = $paragraph->get('field_lead')->value ?? '';
-    $granicus_view_id = $paragraph->field_granicus_view_link_id->value;
-    $granicus_url = 'https://jcc.granicus.com/ViewPublisher.php?view_id=' . $granicus_view_id;
-    $iframe_title = 'Granicus live cast';
-    $link = '<div class="iframe"><iframe class="iframe--granicus-link" src="' . $granicus_url . '" title="' . $iframe_title . '"></iframe></div>';
-    $custom = $lead . $link;
-    $variables['custom'] = Markup::create($custom);
-  }
 }
 
 /**
