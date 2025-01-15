@@ -366,7 +366,7 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
 function jcc_elevated_paragraph_hero_mega(array &$variables, ParagraphInterface $paragraph) {
   if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
     $image_uri = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
-    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('hero_banner')->buildUrl($image_uri);
+    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_2600x2600')->buildUrl($image_uri);
     $variables['bckg_img_url'] = $image_url;
   }
 
@@ -437,22 +437,11 @@ function jcc_elevated_paragraph_section(array &$variables, ParagraphInterface $p
  */
 function jcc_elevated_paragraph_hero_hangover(array &$variables, ParagraphInterface $paragraph) {
   if ($paragraph->get('field_media')) {
-    $card_media = $paragraph->get('field_media')->entity;
-    if ($card_media) {
-      $build = \Drupal::entityTypeManager()->getViewBuilder('media')->view($card_media);
-      if ($card_media->bundle() == 'image') {
-        $image_uri = $card_media->field_media_image->entity->getFileUri();
-        $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('focal_point_max_650x650')->buildUrl($image_uri);
-        $build = [
-          '#type' => 'html_tag',
-          '#tag' => 'img',
-          '#attributes' => [
-            'src' => $image_url,
-            'alt' => $card_media->get('field_media_image')[0]->alt,
-          ],
-        ];
-      }
-
+    $card_media = $paragraph->get('field_media');
+    if ($card_media && $card_media->entity) {
+      $build = \Drupal::entityTypeManager()
+        ->getViewBuilder('media')
+        ->view($card_media->entity);
       $variables['card_media'] = $build;
     }
   }
