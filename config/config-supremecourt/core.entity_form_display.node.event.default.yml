@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.event.field_date_range
     - field.field.node.event.field_event_type
     - field.field.node.event.field_media
+    - field.field.node.event.field_origin_url_plain
     - node.type.event
   module:
     - datetime_range
@@ -78,6 +79,14 @@ content:
     settings:
       match_operator: CONTAINS
       match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_origin_url_plain:
+    type: string_textfield
+    weight: 26
+    region: content
+    settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }

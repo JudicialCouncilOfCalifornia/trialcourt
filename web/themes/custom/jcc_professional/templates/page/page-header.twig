@@ -1,16 +1,30 @@
-{# Insert special content/feature only for home page - set /admin/appearance/settings/jcc_professional #}
-{% if node.label == 'Home' %}
-  {% set body %}
-    {% if header_body %}
-      {% autoescape false %}{{ header_body.value }}{% endautoescape %}
-    {% endif %}
-  {% endset %}
-{% endif %}
-
 {# Masthead variant setting from or inherited from landing page #}
 {% set variant = node.field_masthead_color.value|default('masthead') %}
 {% if inherited_masthead_color %}
   {% set variant = inherited_masthead_color %}
+{% endif %}
+
+{# Granicus #}
+{% if livecast is not empty %}
+  {% set body %}
+    <div class="granicus">
+      <div class="granicus__details">
+        <span class="granicus__status">{{ livecast.status }}</span>
+        <strong>{{ livecast.title }}</strong>
+        <span class="granicus__start_time">
+          {{ livecast.time }}
+        </span>
+      </div>
+      {% if livecast.status == 'live' or livecast.status == 'starting soon' %}
+        <div class="granicus__actions">
+          <a class="jcc-button--inverse" href="{{ livecast.url }}" arial_label="View {{ livecast.date }} {{ livecast.title }}">
+            Watch live broadcast
+          </a>
+          <p class="granicus__captioning">{{ livecast.captioning }}</p>
+        </div>
+      {% endif %}
+    </div>
+  {% endset %}
 {% endif %}
 
 {% include '@organisms/global/header.twig' with {
@@ -39,3 +53,4 @@
     }
   }
 } %}
+
