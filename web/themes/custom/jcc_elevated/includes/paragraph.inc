@@ -120,7 +120,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
           $file = $media->get('field_media_image')->entity;
           if ($file instanceof File) {
             $uri = $file->getFileUri();
-            $image_url = Drupal::entityTypeManager()->getStorage('image_style')->load('focal_point_max_650x650')->buildUrl($uri);
+            $image_url = Drupal::entityTypeManager()->getStorage('image_style')->load('container_100_percent')->buildUrl($uri);
           }
         }
         $variables['sticky_list'][$index]['imageurl'] = $image_url ?? $default_image_url;
