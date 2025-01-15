@@ -120,7 +120,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
           $file = $media->get('field_media_image')->entity;
           if ($file instanceof File) {
             $uri = $file->getFileUri();
-            $image_url = Drupal::entityTypeManager()->getStorage('image_style')->load('container_100_percent')->buildUrl($uri);
+            $image_url = Drupal::entityTypeManager()->getStorage('image_style')->load('max_650x650')->buildUrl($uri);
           }
         }
         $variables['sticky_list'][$index]['imageurl'] = $image_url ?? $default_image_url;
@@ -345,7 +345,7 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
 
   if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
     $cover_image = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
-    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('container_100_percent')->buildUrl($cover_image);
+    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('hero_banner')->buildUrl($cover_image);
     $variables['bckg_img_url'] = $image_url;
   }
 
@@ -366,7 +366,7 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
 function jcc_elevated_paragraph_hero_mega(array &$variables, ParagraphInterface $paragraph) {
   if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
     $image_uri = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
-    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('container_100_percent')->buildUrl($image_uri);
+    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('hero_banner')->buildUrl($image_uri);
     $variables['bckg_img_url'] = $image_url;
   }
 
