@@ -2,22 +2,17 @@ langcode: en
 status: true
 dependencies:
   config:
-    - search_api.index.dbindex
+    - search_api.index.index
     - views.view.search
   module:
     - views
     - search_api_autocomplete
 id: search
 label: Search
-index_id: dbindex
+index_id: index
 suggester_settings:
-  live_results:
+  server:
     fields: {  }
-    highlight:
-      enabled: false
-      field: ''
-    suggest_keys: false
-    view_modes: {  }
 suggester_weights: {  }
 suggester_limits: {  }
 search_settings:
