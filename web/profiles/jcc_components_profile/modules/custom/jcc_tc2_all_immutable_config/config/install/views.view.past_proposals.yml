@@ -898,15 +898,19 @@ display:
     position: 2
     display_options:
       empty:
-        messages:
-          id: messages
+        area:
+          id: area
           table: views
-          field: messages
+          field: area
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: messages
+          plugin_id: text
           empty: true
+          content:
+            value: 'There are no active proposals at this time.'
+            format: snippet
+          tokenize: false
       filters:
         status:
           id: status
