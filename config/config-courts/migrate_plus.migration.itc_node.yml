@@ -10,7 +10,7 @@ migration_tags:
   - courts
   - node
   - itc
-migration_group: courts
+migration_group: courts_itc
 label: 'ITC: Import nodes'
 source:
   plugin: url
@@ -51,7 +51,7 @@ source:
     -
       name: deadline
       selector: deadline
-      label: 'Deadline'  
+      label: Deadline
 process:
   uid:
     plugin: default_value
@@ -93,20 +93,16 @@ process:
       migration: itc_media
       source: id_href
   field_deadline:
-    #-
-    #  plugin: skip_on_empty
-    #  method: row
-    #  source: deadline
     -
       plugin: default_value
       default_value: ''
-    -    
+    -
       plugin: format_date
       source: deadline
       from_format: 'F j, Y H:i:s'
       to_format: 'Y-m-d\TH:i:s'
       from_timezone: America/Los_Angeles
-      to_timezone: UTC  
+      to_timezone: UTC
 destination:
   plugin: 'entity:node'
   default_bundle: invitations_to_comment
