@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -377,6 +378,23 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
 
       case 'landing_page':
       case 'subpage':
+        $routeName = $entity->toUrl()->getRouteName();
+        $routeParameters = $entity->toUrl()->getRouteParameters();
+        $route = \Drupal::service('router.route_provider')->getRouteByName($routeName);
+        $routeMatch = new RouteMatch($routeName, $route, $routeParameters, $routeParameters);
+        $breadcrumb = \Drupal::service('breadcrumb')->build($routeMatch);
+        $breadcrumb_links = array_slice($breadcrumb->getLinks(), 0, -1);
+
+        if ($breadcrumb_links) {
+          $link_titles = [];
+          foreach ($breadcrumb_links as $link) {
+            $link_titles[] = ucwords($link->getText());
+          }
+          $variables['processed_rows'][$index]['detail_list_data'] = [
+            'details' => $link_titles,
+          ];
+        }
+
         break;
 
       case 'news':
@@ -397,7 +415,7 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
       case 'request':
         $variables['processed_rows'][$index]['brow'] = [
           'primary' => 'Solicitation',
-          'secondary' => $entity?->field_rfp_type?->value,
+          'secondary' => strtoupper($entity?->field_rfp_type?->value ?? ''),
         ];
         break;
 
