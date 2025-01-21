@@ -12,11 +12,11 @@ migration_tags:
   - opinion
   - published
   - archive
-migration_group: courts
+migration_group: courts_opinions
 label: 'Courts: Import published opinions archive from legacy index'
 source:
   plugin: csv
-  url: 'https://www.courts.ca.gov/opinions/archive/index.txt'
+  url: 'https://www4.courts.ca.gov/opinions/archive/index.txt'
   delimiter: "\t"
   header_offset: null
   fields:
@@ -40,6 +40,7 @@ source:
       label: 'Related Cases'
   ids:
     - posted
+    - case
 process:
   status:
     plugin: default_value
