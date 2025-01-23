@@ -87,7 +87,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Brow'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_brow'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     dependencies:
       config:
         - field.storage.node.field_components
@@ -99,7 +99,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Hangover blurb'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_hangover_blurb'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     dependencies:
       config:
         - field.storage.node.field_components
@@ -111,7 +111,7 @@ field_settings:
     label: 'Components » Paragraph » Heading'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_heading'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     boost: !!float 3
     dependencies:
       config:
@@ -123,7 +123,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Heading'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_heading'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     boost: !!float 2
     dependencies:
       config:
@@ -136,7 +136,7 @@ field_settings:
     label: 'Components » Paragraph » Subheading'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_subheading'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     boost: !!float 2
     dependencies:
       config:
@@ -148,7 +148,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Subheading'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_subheading'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     boost: !!float 2
     dependencies:
       config:
@@ -168,7 +168,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Description » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_content:processed'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     dependencies:
       config:
         - field.storage.node.field_components
@@ -180,7 +180,7 @@ field_settings:
     label: 'Body (purpose) » Processed text'
     datasource_id: 'entity:node'
     property_path: 'body:processed'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     dependencies:
       config:
         - field.storage.node.body
@@ -188,7 +188,7 @@ field_settings:
     label: 'Components » Paragraph » Aside » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_aside:processed'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     dependencies:
       config:
         - field.storage.node.field_components
@@ -199,7 +199,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Lead » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_lead:processed'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     boost: !!float 2
     dependencies:
       config:
@@ -212,7 +212,7 @@ field_settings:
     label: 'Components » Paragraph » Hangover blurb » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_hangover_blurb:processed'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     dependencies:
       config:
         - field.storage.node.field_components
@@ -223,7 +223,7 @@ field_settings:
     label: 'Components » Paragraph » Text » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_text:processed'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     boost: 1.5
     dependencies:
       config:
@@ -235,7 +235,7 @@ field_settings:
     label: 'Components » Paragraph » Lead » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_lead:processed'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     boost: !!float 3
     dependencies:
       config:
@@ -247,7 +247,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Text » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_text:processed'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     dependencies:
       config:
         - field.storage.node.field_components
@@ -258,17 +258,12 @@ field_settings:
   rendered_item:
     label: 'Rendered HTML output'
     property_path: rendered_item
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     boost: !!float 3
     configuration:
       roles:
         - anonymous
       view_mode:
-        'entity:file':
-          file: ''
-        'entity:media':
-          file: ''
-          publication: ''
         'entity:node':
           advisory_body: default
           arbitrator: default
@@ -287,7 +282,7 @@ field_settings:
           roc_rule_index: default
           subpage: default
   status:
-    label: null
+    label: status
     datasource_id: 'entity:node'
     property_path: status
     type: boolean
@@ -300,7 +295,7 @@ field_settings:
     label: 'Body (purpose) » Processed summary'
     datasource_id: 'entity:node'
     property_path: 'body:summary_processed'
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     dependencies:
       config:
         - field.storage.node.body
@@ -308,13 +303,13 @@ field_settings:
     label: Title
     datasource_id: 'entity:node'
     property_path: title
-    type: text
+    type: 'solr_text_custom_omit_norms:ngramstring'
     boost: !!float 5
     dependencies:
       module:
         - node
   uid:
-    label: null
+    label: uid
     datasource_id: 'entity:node'
     property_path: uid
     type: integer
@@ -384,7 +379,7 @@ processor_settings:
     prefix: '<strong>'
     suffix: '</strong>'
     excerpt: true
-    excerpt_always: false
+    excerpt_always: true
     excerpt_length: 256
     exclude_fields: {  }
     highlight: always
