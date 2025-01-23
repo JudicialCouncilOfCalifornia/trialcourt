@@ -53,7 +53,7 @@ third_party_settings:
       label: 'Translated Files'
       region: content
       parent_name: ''
-      weight: 7
+      weight: 9
       format_type: details
       format_settings:
         classes: ''
@@ -69,12 +69,28 @@ third_party_settings:
       label: Tags
       region: content
       parent_name: ''
-      weight: 6
+      weight: 8
       format_type: details
       format_settings:
         classes: ''
         id: ''
         open: true
+        description: ''
+        required_fields: true
+    group_primary_file:
+      children:
+        - field_media_file
+        - replace_file
+        - field_media_file_multiple
+      label: 'Primary File'
+      region: content
+      parent_name: ''
+      weight: 5
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
         description: ''
         required_fields: true
 id: media.publication.default
@@ -84,7 +100,7 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 11
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -158,6 +174,13 @@ content:
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
+  field_media_file:
+    type: file_generic
+    weight: 0
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
   field_media_file_arabic:
     type: file_generic
     weight: 16
@@ -188,7 +211,7 @@ content:
     third_party_settings: {  }
   field_media_file_farsi:
     type: file_generic
-    weight: 21
+    weight: 22
     region: content
     settings:
       progress_indicator: throbber
@@ -209,7 +232,7 @@ content:
     third_party_settings: {  }
   field_media_file_multiple:
     type: file_generic
-    weight: 5
+    weight: 2
     region: content
     settings:
       progress_indicator: throbber
@@ -286,7 +309,7 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 8
+    weight: 10
     region: content
     settings:
       include_locked: true
@@ -301,25 +324,30 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 12
+    weight: 14
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  replace_file:
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 13
+    weight: 15
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   translation:
-    weight: 9
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 10
+    weight: 12
     region: content
     settings:
       match_operator: CONTAINS
@@ -329,7 +357,6 @@ content:
     third_party_settings: {  }
 hidden:
   field_code: true
-  field_media_file: true
   publish_on: true
   publish_state: true
   replace_file: true

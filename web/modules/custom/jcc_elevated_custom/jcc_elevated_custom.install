@@ -5,6 +5,8 @@
  * Contains jcc_elevated_custom install and uninstall functionality.
  */
 
+use Drupal\Core\Entity\EntityStorageException;
+
 /**
  * Implements hook_uninstall().
  */
@@ -14,5 +16,29 @@ function jcc_elevated_custom_uninstall() {
   // Delete the state variables related to jcc.
   foreach ($settings as $key) {
     Drupal::state()->delete($key);
+  }
+}
+
+/**
+ * Migrates publication primary file to a single file field.
+ */
+function jcc_elevated_custom_update_9001() {
+  $mids = \Drupal::entityQuery('media')->condition('bundle', 'publication')->accessCheck(FALSE)->execute();
+  $publications = \Drupal::entityTypeManager()->getStorage('media')->loadMultiple($mids);
+  foreach ($publications as $publication) {
+    $current_values = $publication->get('field_media_file_multiple')->getValue();
+    if (!empty($current_values)) {
+      // Move first file to diff field.
+      $publication->set('field_media_file', $current_values[0]);
+      // Remove first file from previous.
+      array_shift($current_values);
+      $publication->set('field_media_file_multiple', $current_values);
+      try {
+        $publication->save();
+      }
+      catch (EntityStorageException $exception) {
+        \Drupal::logger('jcc_elevated_custom')->error('jcc_elevated_update_9001: ' . $exception->getMessage());
+      }
+    }
   }
 }

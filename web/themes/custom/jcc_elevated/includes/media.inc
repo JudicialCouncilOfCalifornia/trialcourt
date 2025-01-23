@@ -6,7 +6,6 @@
  */
 
 use Drupal\Component\Utility\Html;
-use Drupal\file\Entity\File;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -55,35 +54,38 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
       $lang_variant = trim(str_replace(['File', 'file'], '', $field->getFieldDefinition()->getLabel()));
 
       // File management.
-      if ($field->getName() == 'field_media_file_multiple') {
-        // Primary file English variants.
-        foreach ($field as $primary_file) {
-          $file = File::load($primary_file->target_id);
-          if ($file) {
-            $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
-            $file_name_parts = explode('.', $file->getFileName());
-            $file_extension = end($file_name_parts);
-            $documents[] = [
-              'url' => $file_url,
-              'file_type' => strtoupper($file_extension),
-            ];
+      switch ($field->getName()) {
+        case 'field_media_file':
+        case 'field_media_file_multiple':
+          // Primary English files.
+          foreach ($field as $primary_file) {
+            $file = \Drupal::entityTypeManager()->getStorage('file')->load($primary_file->target_id);
+            if ($file) {
+              $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+              $file_name_parts = explode('.', $file->getFileName());
+              $file_extension = end($file_name_parts);
+              $documents[] = [
+                'url' => $file_url,
+                'file_type' => strtoupper($file_extension),
+              ];
+            }
           }
-        }
-      }
-      else {
-        // Filter for translated files.
-        // Match field labels with language set labels.
-        foreach ($lang_label_sets as $label) {
-          if (($lang_variant == $label['label_default']) && $field->target_id) {
-            $file = File::load($field->target_id);
-            $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
-            $languages[] = [
-              'url' => $file_url,
-              'label' => $label['label_in_language'],
-              'label_en' => $label['label_default'],
-            ];
+          break;
+
+        default:
+          // Filter for translated files.
+          // Match field labels with language set labels.
+          foreach ($lang_label_sets as $label) {
+            if (($lang_variant == $label['label_default']) && $field->target_id) {
+              $file = \Drupal::entityTypeManager()->getStorage('file')->load($primary_file->target_id);
+              $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+              $languages[] = [
+                'url' => $file_url,
+                'label' => $label['label_in_language'],
+                'label_en' => $label['label_default'],
+              ];
+            }
           }
-        }
       }
     }
   }
