@@ -4,6 +4,7 @@ namespace Drupal\jcc_auto_archive\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\Entity\Node;
+use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -44,18 +45,36 @@ class JccAutoArchiveController extends ControllerBase {
    */
   public function autoArchive_cron() {
     \Drupal::logger('jcc_auto_archive')->notice("awu auto_archive_cron() got called ");
-    $five_years_ago = strtotime('-5 years');
-    $query = \Drupal::entityQuery('node')
-      ->condition('type', 'news')
+    $config['system.logging']['error_level'] = 'hide';
 
-//      ->condition('field_news_type.entity:taxonomy_term.name', 'News')
+    // $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('node', 'news');
+    // dump($field_definitions['field_news_type']);
+    // Current timestamp.
+    $now = REQUEST_TIME;
+    $four_years_ago = strtotime('-4 years', $now);
+    $five_years_ago = strtotime('-5 years', $now);
 
-      ->condition('created', $five_years_ago, '<')
+    $term_id = \Drupal::entityQuery('taxonomy_term')
+    // Verified.
+      ->condition('vid', 'news_type')
+      ->condition('name', 'News Release')
+      ->execute();
 
-      // Only published content.
-      ->condition('status', 1);
+    if (!empty($term_id)) {
+      // dump($term_id);
+      $query = \Drupal::entityQuery('node')
+        ->condition('type', 'news')
+        ->condition('created', $five_years_ago, '>')
+        ->condition('created', $four_years_ago, '<')
+        ->condition('status', 1)
+        ->condition('field_news_type.target_id', reset($term_id));
+      $nids = $query->execute();
+      // dump($nids);
+    }
+    else {
+      printf("! nids are empty");
+    }
 
-    $nids = $query->execute();
     if (!empty($nids)) {
       $counter = 0;
       foreach ($nids as $nid) {
@@ -68,18 +87,24 @@ class JccAutoArchiveController extends ControllerBase {
         $node = Node::load($nid);
         $node->set('moderation_state', 'archived');
         try {
-          $node->save();
+          //$node->save();
+          \Drupal::logger('jcc_auto_archive')->info("awu saved as archived for " . $nid);
+        }
+        catch (RequestException $e) {
+          \Drupal::logger('search_api_pantheon')->error('Solr Request Failed: @message', ['@message' => $e->getMessage()]);
+          //drupal_set_message(t('Search is temporarily unavailable. Please try again later.'), 'error');
         }
         catch (\Throwable $e) {
           \Drupal::logger('jcc_auto_archive')->notice("awu something bad happened");
         }
-        \Drupal::logger('jcc_auto_archive')->info("awu saved as archived for " . $nid);
       }
     }
     else {
       \Drupal::logger('jcc_auto_archive')->info("awu no news release link found!");
     }
     \Drupal::logger('jcc_auto_archive')->info("awu exiting autoArchive_cron()");
+
+    // $config['system.logging']['error_level'] = 'show';
   }
 
 }
