@@ -51,6 +51,14 @@ function jcc_tc2_roc_feature_preprocess_node(array &$variables): void {
         $roc_rule_service = \Drupal::service('jcc_tc2_roc_feature.rule.service');
         $file = $roc_rule_service->getMediaDocumentFile($variables['content']['field_roc_rule_media'][0]['#options']['entity']);
         $variables['content']['field_roc_rule_media'][0]['#url'] = Url::fromUserInput($file->createFileUrl());
+
+        // Add title and aria_label elements to document links on rule indexes.
+        $text = t('Download or view @file_name', [
+          '@file_name' => $file->getFileName(),
+        ]);
+        $variables['content']['field_roc_rule_media'][0]['#options']['attributes']['id'] = $file->getFileName();
+        $variables['content']['field_roc_rule_media'][0]['#options']['attributes']['title'] = $text;
+        $variables['content']['field_roc_rule_media'][0]['#options']['attributes']['aria_label'] = $text;
       }
     }
   }
@@ -142,7 +150,21 @@ function jcc_tc2_roc_feature_preprocess_views_view_fields(&$variables): void {
     $mime_type = $mime == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ? t('DOC') : t('PDF');
 
     $file_url = $file->createFileUrl();
-    $url = Url::fromUserInput($file_url);
+
+    // Add title and aria_label elements to document links on rule index pages.
+    $text = t('Download or view @file_name', [
+      '@file_name' => $file->getFileName(),
+    ]);
+
+    $options = [
+      'attributes' => [
+        'id' => $file->getFileName(),
+        'title' => $text,
+        'aria_label' => $text,
+      ],
+    ];
+
+    $url = Url::fromUserInput($file_url, $options);
 
     $link_to_file = Link::fromTextAndUrl($mime_type, $url)->toString();
     $variables['fields']['field_roc_rule_media']->content = $link_to_file;

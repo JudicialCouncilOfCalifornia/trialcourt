@@ -15,7 +15,7 @@ class FindMyCourt extends ControllerBase {
    * @return array
    *   A simple renderable array.
    */
-  public function findMyCourt($zip) {
+  public function findMyCourtPage($zip): array {
     if ($zip == '') {
       $no_zip_class = 'no-zip-code';
     }
@@ -28,7 +28,7 @@ class FindMyCourt extends ControllerBase {
                 <div class="hangover__top-content">
                   <div class="stack">
                     <div class="stack">
-                      <h1 class="hangover__title stack__sm-space">Find my court</h1>
+                      <h1 class="hangover__title stack__sm-space">Find Your Court</h1>
                     </div>
                   </div>
                 </div>

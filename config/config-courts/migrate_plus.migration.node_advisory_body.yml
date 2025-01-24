@@ -12,7 +12,7 @@ migration_tags:
   - courts
   - node
   - advisory_body
-migration_group: courts
+migration_group: courts_advisory_body_events
 label: 'Courts: Import Advisory body'
 source:
   plugin: url
@@ -157,17 +157,20 @@ process:
     plugin: default_value
     default_value: body
   field_related_links/value:
-    - plugin: media_replace_file_link
+    -
+      plugin: media_replace_file_link
       source: field_related_links
-    - plugin: prefix_relative_links
+    -
+      plugin: prefix_relative_links
   field_related_links/format:
     plugin: default_value
     default_value: body
   field_date_established/value:
-    - plugin: format_date
+    -
+      plugin: format_date
       source: field_date_established
       from_format: 'F j, Y'
-      to_format: 'Y-m-d'
+      to_format: Y-m-d
 destination:
   plugin: 'entity:node'
   default_bundle: advisory_body

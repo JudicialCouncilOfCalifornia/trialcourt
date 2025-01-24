@@ -164,7 +164,7 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
   if ($basic_page->hasField('field_media')) {
     $card_media = $basic_page->get('field_media');
     $media = $card_media->target_id ? Media::load($card_media->target_id) : FALSE;
-    if ($media && $media->field_media_image) {
+    if ($media && $media->field_media_image && $media->field_media_image->entity) {
       $uri = $media->field_media_image->entity->getFileUri();
       $image_url = file_create_url($uri);
       $variables['imageurl'] = $image_url;
@@ -329,6 +329,62 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
 }
 
 /**
+ * Node: ITC node preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_invitations_to_comment(array &$variables, NodeInterface $node): void {
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $nodeData = [];
+  if ($node->hasField('field_category') && !$node->get('field_category')->isEmpty()) {
+    $category_term_id = $node->get('field_category')->target_id;
+    $term = $taxonomy_manager->load($category_term_id);
+    $nodeData['category'] = $term ? $term->getName() : '';
+  }
+
+  if ($node->hasField('field_itc_number') && !$node->get('field_itc_number')->isEmpty()) {
+    $nodeData['itc_number'] = $node->get('field_itc_number')->value;
+  }
+
+  if ($node->hasField('body') && !$node->get('body')->isEmpty()) {
+    $nodeData['body'] = $node->body->value;
+  }
+
+  if ($node->hasField('field_deadline') && !$node->get('field_deadline')->isEmpty()) {
+    $deadline = $node->field_deadline->value;
+    $utc_deadline = new DateTime($deadline, new DateTimeZone('UTC'));
+    $utc_deadline->setTimezone(new DateTimeZone('America/Los_Angeles'));
+    $nodeData['deadline'] = $utc_deadline->format('F j, Y');
+  }
+
+  if ($node->hasField('field_file') && !$node->get('field_file')->isEmpty()) {
+    $referenced_media = $node->get('field_file')->referencedEntities();
+    if (!empty($referenced_media)) {
+      $media = $referenced_media[0];
+      if ($media->hasField('field_media_file') && !$media->get('field_media_file')->isEmpty()) {
+        $file = $media->get('field_media_file')->entity;
+        if ($file instanceof File) {
+          $file_url = file_create_url($file->getFileUri());
+          $variables['file_link'] = [
+            '#type' => 'link',
+            '#title' => $file->label(),
+            '#url' => Url::fromUri($file_url),
+            '#attributes' => [
+              'target' => '_blank',
+            ],
+          ];
+        }
+      }
+    }
+    $variables['node'] = $nodeData;
+  }
+}
+
+/**
  * Node: Facilities preprocess.
  *
  * @param array $variables
@@ -389,7 +445,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       'Architectural/Engineering Firm'  => $architectural_firm && $taxonomy_manager->load($architectural_firm) ? $taxonomy_manager->load($architectural_firm)->get('name')->value : '',
       'Fund' => $node->field_fund->value,
       'Completion Date' => $completion_date,
-      'Design-Build Entity' => strip_tags($design_build_entity),
+      'Design-Build Entity' => strip_tags($design_build_entity ?? ''),
       'Initial Funding Year' => $initial_funding_year,
       'Occupancy Date' => $occupancy_date,
       'Construction Manager At Risk' => $agency_manager && $taxonomy_manager->load($agency_manager) ? $taxonomy_manager->load($agency_manager)->get('name')->value : '',
@@ -397,15 +453,15 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       'General Contractor' => $contractor && $taxonomy_manager->load($contractor) ? $taxonomy_manager->load($contractor)->get('name')->value : '',
       'Criteria Architect' => $criteria_architect && $taxonomy_manager->load($criteria_architect) ? $taxonomy_manager->load($criteria_architect)->get('name')->value : '',
       'Managed By' => $managed_by && $taxonomy_manager->load($managed_by) ? $taxonomy_manager->load($managed_by)->get('name')->value : '',
-      'Project Company' => strip_tags($node->field_project_company->value),
-      'Project Delivery method' => strip_tags($node->field_project_delivery_method->value),
-      'Consortium Partners' => strip_tags($node->field_consortium_partners->value),
-      'Project Financing' => strip_tags($node->field_project_financing->value),
-      'Total Capital Project Cost' => strip_tags($node->field_total_capital_project_cost->value),
+      'Project Company' => strip_tags($node->field_project_company->value ?? ''),
+      'Project Delivery method' => strip_tags($node->field_project_delivery_method->value ?? ''),
+      'Consortium Partners' => strip_tags($node->field_consortium_partners->value ?? ''),
+      'Project Financing' => strip_tags($node->field_project_financing->value ?? ''),
+      'Total Capital Project Cost' => strip_tags($node->field_total_capital_project_cost->value ?? ''),
     ],
     'schedule' => $schedule_content,
     'ceqa' => $ceqa_content,
-    'planning_study' => strip_tags($node->field_planning_study->value),
+    'planning_study' => strip_tags($node->field_planning_study->value ?? ''),
     'project_advisory_group' => $node->field_project_advisory_group->value,
     'status' => $node->field_project_status->value == 'inprogress' ? 'In-Progress' : 'Completed',
     'hero_title' => strip_tags($node->field_hero_title->value),

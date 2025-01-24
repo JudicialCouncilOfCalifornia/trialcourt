@@ -10,7 +10,7 @@ migration_tags:
   - courts
   - node
   - facilities
-migration_group: courts
+migration_group: courts_facilities
 label: 'Facilities: Import nodes'
 source:
   plugin: url
@@ -79,13 +79,13 @@ source:
       label: CEQA
       selector: field_ceqa
     -
-      name: field_summary  
+      name: field_summary
       label: Summary
       selector: field_summary
-    - 
+    -
       name: field_media_file_multiple
-      label: Project Images
-      selector: field_media_file_multiple 
+      label: 'Project Images'
+      selector: field_media_file_multiple
     -
       name: field_architectural_engineering_
       label: 'Architectural Firm'
@@ -101,11 +101,11 @@ source:
     -
       name: field_general_contractor
       label: 'General Contractor'
-      selector: field_general_contractor  
+      selector: field_general_contractor
     -
       name: field_criteria_architect
       label: 'Criteria Architect'
-      selector: field_criteria_architect   
+      selector: field_criteria_architect
     -
       name: field_managed_by
       label: 'Managed By'
@@ -113,38 +113,38 @@ source:
     -
       name: field_design_build_entity
       label: 'Design-Build Entity'
-      selector: field_design_build_entity   
-    - 
+      selector: field_design_build_entity
+    -
       name: field_award
       label: 'Awards and Recognition'
       selector: field_award
-    - 
+    -
       name: field_facility_county
       label: County
       selector: field_facility_county
     -
       name: field_hero_title
-      label: Hero Title
+      label: 'Hero Title'
       selector: field_hero_title
     -
       name: field_total_capital_project_cost
-      label: Total Capital Project Cost
+      label: 'Total Capital Project Cost'
       selector: field_total_capital_project_cost
     -
       name: field_project_company
-      label: Project Company
+      label: 'Project Company'
       selector: field_project_company
     -
       name: field_consortium_partners
-      label: Consortium Partners
+      label: 'Consortium Partners'
       selector: field_consortium_partners
     -
       name: field_project_delivery_method
-      label: Project Delivery Method
+      label: 'Project Delivery Method'
       selector: field_project_delivery_method
     -
       name: field_project_financing
-      label: Project Financing
+      label: 'Project Financing'
       selector: field_project_financing
 process:
   uid:
@@ -164,20 +164,20 @@ process:
     -
       plugin: get
       source: field_project_status
-    -  
+    -
       plugin: default_value
-      default_value: inprogress      
+      default_value: inprogress
     -
       plugin: skip_on_empty
       method: process
   field_gross_square_footage: field_gross_square_footage
   field_initial_funding_year: field_initial_funding_year
-  field_completion_date: field_completion_date  
+  field_completion_date: field_completion_date
   field_hero_title: field_hero_title
   field_total_capital_project_cost: field_total_capital_project_cost
   field_project_company: field_project_company
   field_consortium_partners: field_consortium_partners
-  field_project_delivery_method: field_project_delivery_method  
+  field_project_delivery_method: field_project_delivery_method
   field_project_financing: field_project_financing
   field_media:
     -
@@ -191,17 +191,17 @@ process:
     -
       plugin: skip_on_empty
       method: process
-      source: field_media_file_multiple    
+      source: field_media_file_multiple
     -
       plugin: explode
       delimiter: ','
       source: field_media_file_multiple
     -
       plugin: callback
-      callable: trim     
+      callable: trim
     -
       plugin: migration_lookup
-      migration: facilities_images    
+      migration: facilities_images
   body/value:
     -
       plugin: media_replace_file_link
@@ -220,7 +220,7 @@ process:
       plugin: prefix_relative_links
   field_schedule/format:
     plugin: default_value
-    default_value: minimal  
+    default_value: minimal
   field_ceqa/value:
     -
       plugin: media_replace_file_link
@@ -238,7 +238,7 @@ process:
       plugin: prefix_relative_links
   field_design_build_entity/format:
     plugin: default_value
-    default_value: body  
+    default_value: body
   field_occupancy_date:
     -
       plugin: callback
@@ -256,8 +256,8 @@ process:
       plugin: skip_on_empty
       method: process
       source: field_general_contractor
-    -        
-      plugin: entity_generate     
+    -
+      plugin: entity_generate
       entity_type: taxonomy_term
       bundle_key: vid
       bundle: agency
@@ -271,13 +271,13 @@ process:
       plugin: skip_on_empty
       method: process
       source: field_facility_county
-    -        
-      plugin: entity_generate     
+    -
+      plugin: entity_generate
       entity_type: taxonomy_term
       bundle_key: vid
       bundle: county
       value_key: name
-      ignore_case: true            
+      ignore_case: true
   field_agency_manager:
     -
       plugin: callback
@@ -322,7 +322,7 @@ process:
       bundle_key: vid
       bundle: agency
       value_key: name
-      ignore_case: true   
+      ignore_case: true
   field_managed_by:
     -
       plugin: callback
@@ -337,7 +337,7 @@ process:
       bundle_key: vid
       bundle: agency
       value_key: name
-      ignore_case: true    
+      ignore_case: true
   field_criteria_architect:
     -
       plugin: callback
@@ -352,16 +352,16 @@ process:
       bundle_key: vid
       bundle: agency
       value_key: name
-      ignore_case: true  
+      ignore_case: true
   field_award:
-    - 
+    -
       plugin: callback
       callable: trim
       source: field_award
     -
       plugin: skip_on_empty
       method: process
-      source: field_award    
+      source: field_award
     -
       plugin: explode
       delimiter: '#'
@@ -372,7 +372,7 @@ process:
       bundle_key: vid
       bundle: award_body
       value_key: name
-      ignore_case: true          
+      ignore_case: true
 destination:
   plugin: 'entity:node'
   default_bundle: facilities

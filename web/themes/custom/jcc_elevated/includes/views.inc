@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -350,6 +351,87 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
       'content' => $render->render($text),
       'url' => $entity->toUrl()->toString(),
     ];
+
+    // Add metadata details based on content type.
+    switch ($entity->bundle()) {
+
+      case 'advisory_body':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'Advisory Body',
+        ];
+        break;
+
+      case 'event':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'Event',
+          'secondary' => \Drupal::service('date.formatter')
+            ->format(strtotime($entity?->field_event_date?->value), 'm_d_y'),
+        ];
+        break;
+
+      case 'judge':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'Profile',
+          'secondary' => $entity?->field_person_type?->entity?->label(),
+        ];
+        break;
+
+      case 'landing_page':
+      case 'subpage':
+        $routeName = $entity->toUrl()->getRouteName();
+        $routeParameters = $entity->toUrl()->getRouteParameters();
+        $route = \Drupal::service('router.route_provider')->getRouteByName($routeName);
+        $routeMatch = new RouteMatch($routeName, $route, $routeParameters, $routeParameters);
+        $breadcrumb = \Drupal::service('breadcrumb')->build($routeMatch);
+        $breadcrumb_links = array_slice($breadcrumb->getLinks(), 0, -1);
+
+        if ($breadcrumb_links) {
+          $link_titles = [];
+          foreach ($breadcrumb_links as $link) {
+            $link_titles[] = ucwords($link->getText());
+          }
+          $variables['processed_rows'][$index]['detail_list_data'] = [
+            'details' => $link_titles,
+          ];
+        }
+
+        break;
+
+      case 'news':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'News',
+          'secondary' => \Drupal::service('date.formatter')
+            ->format(strtotime($entity?->field_date?->value), 'm_d_y'),
+        ];
+        break;
+
+      case 'opinion':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'Opinion',
+          'secondary' => $entity?->field_case_number_plain?->value,
+        ];
+        break;
+
+      case 'request':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'Solicitation',
+          'secondary' => strtoupper($entity?->field_rfp_type?->value ?? ''),
+        ];
+        break;
+
+      case 'roc_rule':
+      case 'roc_rule_index':
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => 'Rules of Court',
+        ];
+        break;
+
+      default:
+        $variables['processed_rows'][$index]['brow'] = [
+          'primary' => $entity->type->entity->label(),
+        ];
+        break;
+    }
 
     // Append section as a notation to search results, if module enabled and
     // section exists.
@@ -806,13 +888,16 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         }
         $brow = [];
         if ($node->hasField('field_deadline') && !$node->field_deadline->isEmpty()) {
-          $deadline = strtotime($node->field_deadline->value);
-          $current_time = \Drupal::time()->getCurrentTime();
-          $formatted_deadline = date('F j, Y', $deadline);
+          $deadline = $node->field_deadline->value;
+          $utc_deadline = new DateTime($deadline, new DateTimeZone('UTC'));
+          $desired_timezone = new DateTimeZone('America/Los_Angeles');
+          $utc_deadline->setTimezone($desired_timezone);
+          $current_time = new DateTime('now', $desired_timezone);
+          $formatted_deadline = $utc_deadline->format('F j, Y');
           $item_number = $node->get('field_itc_number')->value;
           $title = $node->get('title')->value;
           $brow['secondary'] = $item_number;
-          if ($deadline > $current_time) {
+          if ($utc_deadline > $current_time) {
             $webform_url = generate_itc_webform_url($item_number, $formatted_deadline, $title);
             $email_address = 'invitations@jud.ca.gov';
             $url_content = '<a href="' . $webform_url . '">Submit comments online</a> | <a href="mailto:' . $email_address . '">Comment by email</a></p>';
@@ -833,14 +918,13 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
         $brow['primary'] = $category_value;
         $deadline_value = $node->field_deadline->value;
         if (!empty($deadline_value)) {
-          $formatted_deadline = \Drupal::service('date.formatter')->format(
-            strtotime($deadline_value),
-            'custom',
-            'F j, Y'
-          );
+          $utc_deadline = new DateTime($deadline_value, new DateTimeZone('UTC'));
+          $desired_timezone = new DateTimeZone('America/Los_Angeles');
+          $utc_deadline->setTimezone($desired_timezone);
+          $formatted_deadline = $utc_deadline->format('F j, Y');
           $formatted_value = t('Deadline:') . ' ' . $formatted_deadline;
           $brow['notation'] = $formatted_value;
-          $raw_deadline = strtotime($deadline_value);
+          $raw_deadline = $utc_deadline->getTimestamp();
         }
         else {
           $deadline = '';
