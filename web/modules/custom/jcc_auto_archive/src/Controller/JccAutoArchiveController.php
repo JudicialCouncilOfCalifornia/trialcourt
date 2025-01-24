@@ -3,8 +3,8 @@
 namespace Drupal\jcc_auto_archive\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\node\Entity\Node;
-use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -45,57 +45,47 @@ class JccAutoArchiveController extends ControllerBase {
    */
   public function autoArchive_cron() {
     \Drupal::logger('jcc_auto_archive')->notice("awu auto_archive_cron() got called ");
-    $config['system.logging']['error_level'] = 'hide';
-
+    // $config['system.logging']['error_level'] = 'hide';
     // $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('node', 'news');
     // dump($field_definitions['field_news_type']);
-    // Current timestamp.
-    $now = REQUEST_TIME;
-    $four_years_ago = strtotime('-4 years', $now);
-    $five_years_ago = strtotime('-5 years', $now);
-
+    $five_years_ago = strtotime('-5 years', REQUEST_TIME);
     $term_id = \Drupal::entityQuery('taxonomy_term')
-    // Verified.
       ->condition('vid', 'news_type')
       ->condition('name', 'News Release')
       ->execute();
 
     if (!empty($term_id)) {
-      // dump($term_id);
       $query = \Drupal::entityQuery('node')
         ->condition('type', 'news')
-        ->condition('created', $five_years_ago, '>')
-        ->condition('created', $four_years_ago, '<')
+      // Created before 5 years ago.
+        ->condition('created', $five_years_ago, '<')
         ->condition('status', 1)
         ->condition('field_news_type.target_id', reset($term_id));
       $nids = $query->execute();
-      // dump($nids);
     }
     else {
-      printf("! nids are empty");
+      printf("error: the node ids are empty");
     }
 
     if (!empty($nids)) {
-      $counter = 0;
       foreach ($nids as $nid) {
-        if ($counter >= 2) {
-          break;
-        }
-        $counter += 1;
-
-        \Drupal::logger('jcc_auto_archive')->info("awu to change the state of " . $nid);
         $node = Node::load($nid);
         $node->set('moderation_state', 'archived');
         try {
-          //$node->save();
+          $node->save();
           \Drupal::logger('jcc_auto_archive')->info("awu saved as archived for " . $nid);
         }
-        catch (RequestException $e) {
-          \Drupal::logger('search_api_pantheon')->error('Solr Request Failed: @message', ['@message' => $e->getMessage()]);
-          //drupal_set_message(t('Search is temporarily unavailable. Please try again later.'), 'error');
+        catch (EntityStorageException $e) {
+          \Drupal::logger('jcc_auto_archive')->error('Failed to archive Node @nid: @message ese', [
+            '@nid' => $nid,
+            '@message' => $e->getMessage(),
+          ]);
         }
-        catch (\Throwable $e) {
-          \Drupal::logger('jcc_auto_archive')->notice("awu something bad happened");
+        catch (\Exception $e) {
+          \Drupal::logger('jcc_auto_archive')->error('Unexpected error for Node @nid: @message', [
+            '@nid' => $nid,
+            '@message' => $e->getMessage(),
+          ]);
         }
       }
     }
