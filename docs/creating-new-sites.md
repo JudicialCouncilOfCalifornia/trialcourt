@@ -24,10 +24,11 @@ After this runs it will give you instructions to set up the new Drupal instance 
   - Make sure `[name]` will pattern match to the identifying portion of the live url. It should be the same as `[site]` from the `pantheon_new.sh` command above.
     - i.e. www.kings.courts.ca.gov => `kings`
   - You can optionally specify an alternate `[theme]` from the JCC Elevated default, specifically to use JCC Components (jcc_components) for the current trial court themes & features.
+  - If the new site creation failures such as database connection or missing configurations, delete the `web/sites/[name]` and remedy the problem that is reported before re-executing the `multsite` command.
 - For elevated sites:
   - Install the following manually until we can automate or consolidate themes:
     - `lando drush en jcc_elevated_custom -l @local.[site]` - customizations only for elevated sites.
-    - `lando drush en jcc_elevated_embed -l @local.[site]` - embeddable views/features.
+    - `lando drush en jcc_elevated_embeds -l @local.[site]` - embeddable views/features.
     - `lando drush en jcc_elevated_sections -l @local.[site]` - if needed to create content division.
   - Set 'JCC' starter user role as administrator else you won't be able to administer menu structures. The password is noted in the lando multisite dialog else create yourself an admin account.
 - Confirm `web/sites/[site]` setup (extra files and directory seems okay to keep or delete)
@@ -109,10 +110,11 @@ Create Landing Page
 - Configure SendGrid (optional):
   * `/admin/config/system/keys/manage/sendgrid`
   * See JIRA for trial court keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
-  * For all other sites, a new key may be required. See OneNote documentation.
+  * For all other sites, a new key may be required from Azure Portal.
   * Note: site's email address needs to be `no-reply@courtinfo.ca.gov` for SendGrid to work.
-- Setup defaults for Google Tag module: (if available else later done)
-  * `lando drush @local.[site] cim --partial --source=/app/web/modules/contrib/google_tag/config/install/`
+- Setup defaults for Google Tag module:
+  * `/admin/config/system/google-tag`
+  * Add new container using existing or new key from Google.
 - Configure GoogleRecaptcha (optional):
   * `/admin/config/people/captcha/recaptcha`
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
