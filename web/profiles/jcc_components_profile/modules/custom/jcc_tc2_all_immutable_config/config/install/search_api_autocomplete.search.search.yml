@@ -1,28 +1,30 @@
 langcode: en
-status: true
+status: false
 dependencies:
   config:
-    - search_api.index.dbindex
+    - search_api.index.index
     - views.view.search
   module:
     - views
     - search_api_autocomplete
 id: search
 label: Search
-index_id: dbindex
+index_id: index
 suggester_settings:
-  live_results:
+  server:
     fields: {  }
-    highlight:
-      enabled: false
-      field: ''
-    suggest_keys: false
-    view_modes: {  }
-suggester_weights: {  }
+suggester_weights:
+  server: 0
 suggester_limits: {  }
 search_settings:
   'views:search':
     displays:
       default: true
       selected: {  }
-options: {  }
+options:
+  limit: 10
+  min_length: 1
+  show_count: false
+  delay: null
+  submit_button_selector: ':submit'
+  autosubmit: true

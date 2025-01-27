@@ -1,0 +1,37 @@
+uuid: 9234d702-de8a-4fec-806c-fa998b649066
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.granicus_events.field_api_url
+    - field.field.paragraph.granicus_events.field_components
+    - paragraphs.paragraphs_type.granicus_events
+  module:
+    - entity_reference_revisions
+id: paragraph.granicus_events.default
+targetEntityType: paragraph
+bundle: granicus_events
+mode: default
+content:
+  field_api_url:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_components:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true

@@ -177,7 +177,8 @@ else {
   $config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'jcc-courts-sandbox-1';
 }
 
-// Redirect Opinion files to www4
+// Redirect Opinion files to www4.
+// Citing archive files (opinions/links) are imported into Drupal.
 if (PHP_SAPI <> 'cli') {
 
   $needles = [
