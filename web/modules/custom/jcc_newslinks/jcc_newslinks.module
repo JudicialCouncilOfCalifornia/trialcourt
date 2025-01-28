@@ -11,7 +11,7 @@
  * Implements hook_cron().
  *
  * Automatically unpromote NewsLinks after the 4th ranking that
- * are older than 2 weeks.
+ * are older than 2 weeks and deletes old news links.
  */
 function jcc_newslinks_cron() {
   // Default to 0 for 4th item sorting weight.
@@ -20,9 +20,9 @@ function jcc_newslinks_cron() {
   $queryNid = \Drupal::entityQuery('node')
     ->condition('type', 'news')
     ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
-  // Items that only are promoted.
+    // Items that only are promoted.
     ->condition('promote', TRUE)
-  // Get the 4th item; indexed at 0.
+    // Get the 4th item; indexed at 0.
     ->range(3, 1)
     ->sort('field_sorting_weight', 'ASC');
   // Get the nid from the query.
@@ -109,20 +109,45 @@ function jcc_newslinks_cron() {
   $purgeMessage = count($purgeItems) . ' archived newslinks are queued for media purge';
   \Drupal::logger('jcc_newslinks')->notice($purgeMessage);
 
-  // Old newslinks item Purge (Batch of 100 nodes)
-//  $view = Views::getView('newslinks_expiration');
-//  $view->setDisplay('default');
-//  $view->execute();
-//  $view_result = $view->result;
-//
-//  if (!empty($view_result)) {
-//    $storage_handler = \Drupal::entityTypeManager()->getStorage("node");
-//    $nodes_to_delete = [];
-//    foreach ($view->result as $row) {
-//      $nodes_to_delete[] = $row->nid;
-//    }
-//    \Drupal::logger('jcc_newslinks')->notice('Purged newslinks with nids: ' . implode(', ', $nodes_to_delete));
-//    $entities = $storage_handler->loadMultiple($nodes_to_delete);
-//    $storage_handler->delete($entities);
-//  }
+  // Deleting newslinks if they are 3 months old
+  $threeMonthLimit = time() - (3 * 30 * 24 * 60 * 60); // 3 months ago
+
+  // Query to fetch nodes older than 3 months and in specific moderation states (draft, archived)
+  $queryOldNewsLinks = \Drupal::entityQuery('node')
+    ->condition('type', 'news')
+    ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
+    ->condition('created', $threeMonthLimit, '<')
+    ->condition('moderation_state', ['draft', 'archived'], 'IN') // Match multiple moderation states
+    ->range(0, 2000)  // Process 50 nodes per batch
+    ->execute();
+
+  // Log the number of nodes found
+  \Drupal::logger('jcc_newslinks')->notice('Found ' . count($queryOldNewsLinks) . ' old newslinks to delete.');
+
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+  $nodes_to_delete = $node_storage->loadMultiple($queryOldNewsLinks);
+
+  // Log node details before deletion
+  foreach ($nodes_to_delete as $node) {
+    \Drupal::logger('jcc_newslinks')->notice('Attempting to delete node with ID: ' . $node->id() . ' and created date: ' . date('Y-m-d H:i:s', $node->getCreatedTime()));
+  }
+
+// Delete nodes
+  if (!empty($nodes_to_delete)) {
+    try {
+      // Delete nodes
+      $node_storage->delete($nodes_to_delete);
+
+      // Log total number of deleted nodes
+      \Drupal::logger('jcc_newslinks')->notice(count($nodes_to_delete) . ' old newslinks were deleted.');
+
+    } catch (\Exception $e) {
+      // Log errors if deletion fails
+      \Drupal::logger('jcc_newslinks')->error('Error deleting nodes: ' . $e->getMessage());
+    }
+  } else {
+    // Log if no nodes to delete
+    \Drupal::logger('jcc_newslinks')->notice('No nodes to delete.');
+  }
+
 }
