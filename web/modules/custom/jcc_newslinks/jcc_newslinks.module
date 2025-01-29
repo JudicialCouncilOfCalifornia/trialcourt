@@ -117,7 +117,7 @@ function jcc_newslinks_cron() {
     ->condition('type', 'news')
     ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
     ->condition('created', $threeMonthLimit, '<')
-    ->condition('moderation_state', ['draft', 'archived'], 'IN') // Match multiple moderation states
+    ->condition('moderation_state', ['draft', 'archived', 'published', 'Ready for Review'], 'IN') // Match multiple moderation states
     ->range(0, 500)  // Process 500 nodes per batch
     ->execute();
 
