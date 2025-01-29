@@ -56,3 +56,12 @@ function jcc_tc2_roc_feature_update_9003(): void {
 
   node_access_rebuild(TRUE);
 }
+
+/**
+ * Helper function to update table field length.
+ */
+function jcc_tc2_roc_feature_update_9004(): void {
+  if (\Drupal::database()->schema()->fieldExists('event_log_track', 'ref_char')) {
+    \Drupal::database()->query("ALTER TABLE {event_log_track} MODIFY ref_char VARCHAR(512);");
+  }
+}
