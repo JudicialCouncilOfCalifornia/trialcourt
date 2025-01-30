@@ -36,3 +36,33 @@
   max-width: 100%;
 }
 
+
+
+.overlay-caption-customized {
+  display: block;
+  position: absolute;
+  top: 24%;
+  left: 15%;
+  width: 80%;
+  /*bottom: 5%;*/
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+  color: white;
+  text-align: center;
+  padding: 5px;
+  font-size: 1.0vw; /* Use viewport width for scaling text */
+  max-width: 260px; /* Prevent excessive stretching */
+  text-wrap: wrap;
+  z-index: 10;
+}
+
+/* Adjust for smaller screens */
+@media (max-width: 600px) {
+  .overlay-caption-customized {
+    font-size: 3vw; /* Increase text size for readability */
+    width: 90%; /* Allow more space */
+    max-width: none; /* Remove max-width limit */
+    bottom: 10px; /* Adjust position */
+  }
+}
+

@@ -1,27 +1,35 @@
-
 {#
 /**
  * @file
- * Theme override to display a media item.
+ * Custom theme override for media entities.
+ *
+ * This template extends the core `media.html.twig` file and adds
+ * special processing for the media caption field.
  *
  * Available variables:
- * - name: Name of the media.
- * - content: Media content.
- *
- * @see template_preprocess_media()
+ * - attributes: HTML attributes for the wrapper element.
+ * - title_suffix.contextual_links: Render array for contextual links.
+ * - content: The rendered fields of the media entity.
  */
 #}
+
 <article{{ attributes }}>
   {{ title_suffix.contextual_links }}
-  <figure class="overlay-container">
-    <div class="image-wrapper">
-      {{ content }}
-    </div>
-    {% if content['#caption'] %}
-      <figcaption class="overlay-caption">{{ content['#caption'] }}</figcaption>
-    {% else %}
-      <figcaption class="overlay-caption">The test media caption</figcaption>
-    {% endif %}
-  </figure>
-</article>
 
+  {% if content %}
+    <div class="media-content">
+      {{ content }}
+
+      {# Display caption if available, otherwise show a default message #}
+      {% if content.field_media_caption %}
+        <figcaption class="overlay-caption-customized">
+          {{ content.field_media_caption }}
+        </figcaption>
+      {% else %}
+        <figcaption class="overlay-caption-customized">
+          Honorable Elizabeth K. Lee Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem aut cum eum id quos est.
+        </figcaption>
+      {% endif %}
+    </div>
+  {% endif %}
+</article>
