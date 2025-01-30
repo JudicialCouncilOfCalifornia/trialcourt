@@ -52,7 +52,7 @@
   {{ attachment_before }}
 
   {# Fetch the configuration for enable_new_listing_page #}
-  {% set listing_page_new = drupal_config('jcc_custom.settings', 'enable_new_listing_page') %}
+  {% set listing_page_new = config('jcc_custom.settings').get('enable_new_listing_page') %}
 
   {# Render view blocks if the new listing page is enabled #}
   {% if listing_page_new %}
