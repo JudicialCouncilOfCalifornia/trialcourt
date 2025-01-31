@@ -1,0 +1,45 @@
+diff --git a/modules/event_log_track_node/event_log_track_node.module b/modules/event_log_track_node/event_log_track_node.module
+index 67bc6ec..2070ac5 100755
+--- a/modules/event_log_track_node/event_log_track_node.module
++++ b/modules/event_log_track_node/event_log_track_node.module
+@@ -26,11 +26,11 @@ function event_log_track_node_insert($node) {
+     'operation' => 'insert',
+     'description' => t('%type: %title, %status', [
+       '%type' => $node->getType(),
+-      '%title' => $node->getTitle(),
++      '%title' => substr($node->getTitle(),0,255),
+       '%status' => ($node->isPublished()) ? 'Published' : 'Unpublished',
+     ]),
+     'ref_numeric' => $node->id(),
+-    'ref_char' => $node->getTitle(),
++    'ref_char' => substr($node->getTitle(),0,255),
+   ];
+   event_log_track_insert($log);
+ }
+@@ -44,11 +44,11 @@ function event_log_track_node_update($node) {
+     'operation' => 'update',
+     'description' => t('%type: %title, %status', [
+       '%type' => $node->getType(),
+-      '%title' => $node->getTitle(),
++      '%title' => substr($node->getTitle(),0,255),
+       '%status' => ($node->isPublished()) ? 'Published' : 'Unpublished',
+     ]),
+     'ref_numeric' => $node->id(),
+-    'ref_char' => $node->getTitle(),
++    'ref_char' => substr($node->getTitle(),0,255),
+   ];
+   event_log_track_insert($log);
+ }
+@@ -62,10 +62,10 @@ function event_log_track_node_delete($node) {
+     'operation' => 'delete',
+     'description' => t('%type: %title', [
+       '%type' => $node->getType(),
+-      '%title' => $node->getTitle(),
++      '%title' => substr($node->getTitle(),0,255),
+     ]),
+     'ref_numeric' => $node->id(),
+-    'ref_char' => $node->getTitle(),
++    'ref_char' => substr($node->getTitle(),0,255),
+   ];
+   event_log_track_insert($log);
+ }
