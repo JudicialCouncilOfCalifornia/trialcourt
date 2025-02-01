@@ -29,9 +29,7 @@ class RouteSubscriber extends RouteSubscriberBase {
         case 'protected_pages_list':
           $route->setDefault('_controller', '\Drupal\jcc_custom\Controller\ProtectedPagesController::protectedPagesList');
           break;
-        case 'news_release_link_archiving':
-          $route->setDefault('_controller', '\Drupal\jcc_custom\Controller\JccNewsArchiveController::performNewsArchiving');
-          break;
+
         case 'entity.menu.collection':
         case 'entity.menu.edit_form':
         case 'entity.menu.add_link_form':
@@ -43,7 +41,6 @@ class RouteSubscriber extends RouteSubscriberBase {
         case 'entity.menu_link_content.content_translation_add':
         case 'entity.menu_link_content.content_translation_edit':
         case 'entity.menu_link_content.content_translation_delete':
-
           // Restrict menu management toolbar for elevated sites.
           // Translators edit requests under /admin/tmgmt/jobs.
           if (jcc_custom_is_elevated_site()) {
