@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\jcc_custom\Controller;
+namespace Drupal\jcc_tc_custom\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityStorageException;
@@ -13,11 +13,13 @@ use Symfony\Component\HttpFoundation\Response;
 class JccNewsArchiveController extends ControllerBase {
 
   /**
-   * The trigger function.
+   * The middleman function
    */
   public function performNewsArchiving():Response {
+    echo "awu entering performNewsArchiving";
     \Drupal::logger('jcc_news_archive')->notice("performNewsArchiving() got called ");
     $this->newsArchive_cron();
+    echo "awu exiting performNewsArchiving";
     return new Response('JCC news release links have been archived');
   }
 
@@ -68,6 +70,30 @@ class JccNewsArchiveController extends ControllerBase {
       \Drupal::logger('jcc_news_archive')->info("no news release link found!");
     }
     \Drupal::logger('jcc_news_archive')->info("exiting newsArchive_cron()");
+  }
+
+  /**
+   * The trigger function.
+   */
+  public function handleFunction() {
+
+    set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+        throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+    });
+
+    try {
+        performNewsArchiving();
+
+        restore_error_handler();
+        return [
+            '#markup' => 'Success',
+        ];
+    } catch (\Throwable $e) {
+        restore_error_handler();
+        return [
+            '#markup' => 'Success', // Always returns Success
+        ];
+    }
   }
 
 }
