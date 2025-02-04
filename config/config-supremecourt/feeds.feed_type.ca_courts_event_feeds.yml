@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.event.field_date_range
     - field.field.node.event.field_event_type
     - field.field.node.event.field_media
+    - field.field.node.event.field_origin_url_plain
     - node.type.event
   module:
     - feeds_ex
@@ -27,40 +28,11 @@ fetcher_configuration:
   request_timeout: 30
 parser: xml
 parser_configuration:
-  sources:
-    type:
-      label: type
-      value: type
-    title:
-      label: title
-      value: title
-    body:
-      label: body
-      value: body
-    teaser:
-      label: teaser
-      value: teaser
-    tagline:
-      label: tagline
-      value: tagline
-    image:
-      label: image
-      value: image
-    pubstatus:
-      label: pubStatus
-      value: pubStatus
-    startdate:
-      label: startDate
-      value: startDate
-    enddate:
-      label: endDate
-      value: endDate
   context:
     value: //item
   source_encoding:
     - auto
   display_errors: false
-  debug_mode: false
   line_limit: 100
   use_tidy: false
 processor: 'entity:node'
@@ -68,13 +40,15 @@ processor_configuration:
   values:
     type: event
   langcode: en
+  insert_new: 1
   update_existing: 2
   update_non_existent: _keep
   skip_hash_check: false
   authorize: true
+  revision: false
   expire: -1
   owner_feed_author: false
-  owner_id: 7
+  owner_id: 1
 custom_sources:
   type:
     value: type
@@ -112,6 +86,10 @@ custom_sources:
     value: endDate
     label: endDate
     machine_name: enddate
+  originurl:
+    value: link
+    label: 'Origin URL'
+    machine_name: originurl
 mappings:
   -
     target: field_event_type
@@ -121,14 +99,14 @@ mappings:
       language: ''
       reference_by: name
       autocreate: '1'
+      autocreate_bundle: event_type
   -
     target: title
     map:
       value: title
     settings:
       language: null
-    unique:
-      value: '1'
+    unique: {  }
   -
     target: body
     map:
@@ -152,6 +130,7 @@ mappings:
       language: ''
       reference_by: name
       autocreate: '1'
+      autocreate_bundle: image
   -
     target: status
     map:
@@ -166,3 +145,11 @@ mappings:
     settings:
       language: ''
       timezone: UTC
+  -
+    target: field_origin_url_plain
+    map:
+      value: originurl
+    settings:
+      language: null
+    unique:
+      value: 1
