@@ -31,7 +31,9 @@
   dom_id ? 'js-view-dom-id-' ~ dom_id,
 ]
 %}
+{% if grouped_proposals is not empty %}
 <div class="search-filter">{{exposed|render}}</div>
+
 
 {% set accordion_items = [] %}
   {% for group in grouped_proposals %}
@@ -70,7 +72,6 @@
       %}
   {% endfor %}
 
-
   {% include "@molecules/Accordion/Accordion.twig" with {
     variant: 'default',
     open_first: false,
@@ -80,3 +81,6 @@
     lead: "",
     items: accordion_items
   } %}
+{% else %}
+  <div> {{empty|render}} </div>
+{% endif %}    
