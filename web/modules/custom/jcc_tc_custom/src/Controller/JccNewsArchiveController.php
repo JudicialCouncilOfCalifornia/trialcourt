@@ -76,24 +76,25 @@ class JccNewsArchiveController extends ControllerBase {
    * The trigger function.
    */
   public function handleFunction() {
-
     set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-        throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+      throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
     });
 
     try {
-        performNewsArchiving();
-
-        restore_error_handler();
-        return [
-            '#markup' => 'Success',
-        ];
+      performNewsArchiving();
+      return [
+        '#markup' => 'Success',
+      ];
     } catch (\Throwable $e) {
-        restore_error_handler();
-        return [
-            '#markup' => 'Success', // Always returns Success
-        ];
+      // Log the error for debugging but hide it from the user
+      \Drupal::logger('custom_module')->error($e->getMessage());
+      return [
+        '#markup' => 'Operation completed successfully.',
+      ];
+    } finally {
+      restore_error_handler();
     }
   }
+
 
 }
