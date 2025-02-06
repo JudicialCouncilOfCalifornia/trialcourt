@@ -4,11 +4,13 @@ dependencies:
   config:
     - field.field.paragraph.granicus_event_setup.field_event_type
     - field.field.paragraph.granicus_event_setup.field_lead
+    - field.field.paragraph.granicus_event_setup.field_link_multiple
     - field.field.paragraph.granicus_event_setup.field_toggle
     - paragraphs.paragraphs_type.granicus_event_setup
   module:
     - allowed_formats
     - autocomplete_deluxe
+    - link
     - maxlength
     - text
 id: paragraph.granicus_event_setup.default
@@ -49,9 +51,17 @@ content:
         maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
         maxlength_js_enforce: false
         maxlength_js_truncate_html: false
+  field_link_multiple:
+    type: link_default
+    weight: 2
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
   field_toggle:
     type: boolean_checkbox
-    weight: 2
+    weight: 3
     region: content
     settings:
       display_label: true

@@ -193,10 +193,15 @@ function jcc_professional_form_system_theme_settings_alter(&$form, FormStateInte
     ],
     '#default_value' => $granicus_event_type,
   ];
-  $form['granicus']['granicus_events_feed'] = [
+  $form['granicus']['granicus_english_captions'] = [
     '#type' => 'textfield',
-    '#title' => t('Upcoming event feed'),
-    '#default_value' => theme_get_setting('granicus_events_feed'),
+    '#title' => t('English Captions'),
+    '#default_value' => theme_get_setting('granicus_english_captions'),
+  ];
+  $form['granicus']['granicus_spanish_captions'] = [
+    '#type' => 'textfield',
+    '#title' => t('Español Captions'),
+    '#default_value' => theme_get_setting('granicus_spanish_captions'),
   ];
   $form['granicus']['granicus_status_override'] = [
     '#type'          => 'checkbox',

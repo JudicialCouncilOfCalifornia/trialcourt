@@ -235,7 +235,7 @@ function jcc_components_paragraph_views_reference_location_map_list(array &$vari
         'title' => $row['#node']->getTitle(),
         'address' => $row['#node']->field_address,
         'phone' => $row['#node']->field_phone,
-        'location_detail_page_url' =>$row['#node']->toUrl()->toString(),
+        'location_detail_page_url' => $row['#node']->toUrl()->toString(),
       ];
     }
   }
@@ -327,9 +327,16 @@ function _jcc_components_generate_cards($cards, $sub_variants, $column_size) {
     $brow = NULL;
     $is_clickable = NULL;
     $title = !empty($card->field_heading->first()->value) ? $card->field_heading->first()->value : '';
+    $url = NULL;
 
     if (!empty($card->field_link)) {
       $link = $card->field_link->view('default');
+
+      $url = !empty($link[0]) ? $link[0]['#url']->toString() : NULL;
+      // If media entity, check for URL substitution.
+      if ($url && _jcc_components_media_substitute_url($url)) {
+        $url = _jcc_components_media_substitute_url($url);
+      }
     }
 
     if (!empty($card->field_brow) && $card->field_brow->value) {
@@ -446,7 +453,7 @@ function _jcc_components_generate_cards($cards, $sub_variants, $column_size) {
       'extra_content' => $extra,
       'icon' => $icon,
       'link' => [
-        'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
+        'url' => $url,
         'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
         'type' => !empty($link[0]) ? _jcc_components_get_url_type($link[0]['#url']->toString()) : NULL,
       ],
