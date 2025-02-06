@@ -16,10 +16,8 @@ class JccNewsArchiveController extends ControllerBase {
    * The middleman function
    */
   public function performNewsArchiving():Response {
-    echo "awu entering performNewsArchiving";
     \Drupal::logger('jcc_news_archive')->notice("performNewsArchiving() got called ");
     $this->newsArchive_cron();
-    echo "awu exiting performNewsArchiving";
     return new Response('JCC news release links have been archived');
   }
 
@@ -75,9 +73,40 @@ class JccNewsArchiveController extends ControllerBase {
   /**
    * The trigger function.
    */
+//  public function handleFunction() {
+//    set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+//      throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+//    });
+//
+//    try {
+//      performNewsArchiving();
+//      return [
+//        '#markup' => 'Success',
+//      ];
+//    } catch (\Throwable $e) {
+//      // Log the error for debugging but hide it from the user
+//      \Drupal::logger('custom_module')->error($e->getMessage());
+//      return [
+//        '#markup' => 'Operation completed successfully.',
+//      ];
+//    } finally {
+//      restore_error_handler();
+//    }
+//  }
+
   public function handleFunction() {
+    // Suppress warnings and notices
     set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-      throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+      if (!(error_reporting() & $errno)) {
+        // This error code is not included in error_reporting
+        return false;
+      }
+      // Convert only serious errors to exceptions
+      if ($errno === E_ERROR || $errno === E_USER_ERROR) {
+        throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+      }
+      // Suppress warnings/notices
+      return true;
     });
 
     try {
@@ -86,7 +115,7 @@ class JccNewsArchiveController extends ControllerBase {
         '#markup' => 'Success',
       ];
     } catch (\Throwable $e) {
-      // Log the error for debugging but hide it from the user
+      // Log the error but suppress display
       \Drupal::logger('custom_module')->error($e->getMessage());
       return [
         '#markup' => 'Operation completed successfully.',
@@ -95,6 +124,5 @@ class JccNewsArchiveController extends ControllerBase {
       restore_error_handler();
     }
   }
-
 
 }
