@@ -9,7 +9,6 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
-use Drupal\image\Entity\ImageStyle;
 use Drupal\media\Entity\Media;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\paragraphs\ParagraphInterface;
@@ -121,7 +120,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
           $file = $media->get('field_media_image')->entity;
           if ($file instanceof File) {
             $uri = $file->getFileUri();
-            $image_url = file_create_url($uri);
+            $image_url = Drupal::entityTypeManager()->getStorage('image_style')->load('max_650x650')->buildUrl($uri);
           }
         }
         $variables['sticky_list'][$index]['imageurl'] = $image_url ?? $default_image_url;
@@ -175,16 +174,27 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
  */
 function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $paragraph) {
   if ($paragraph->get('field_media')) {
-    $card_media = $paragraph->get('field_media');
+    $card_media = $paragraph->get('field_media')->entity;
     $card_icon = $paragraph->get('field_icon');
 
     // If Media.
-    if ($card_media && $card_media->entity) {
-      $build = \Drupal::entityTypeManager()->getViewBuilder('media')->view($card_media->entity);
+    if ($card_media) {
+      $build = \Drupal::entityTypeManager()->getViewBuilder('media')->view($card_media);
+      if ($card_media->bundle() == 'image') {
+        $image_uri = $card_media->field_media_image->entity->getFileUri();
+        $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('focal_point_max_650x650')->buildUrl($image_uri);
+        $build = [
+          '#type' => 'html_tag',
+          '#tag' => 'img',
+          '#attributes' => [
+            'src' => $image_url,
+            'alt' => $card_media->get('field_media_image')[0]->alt,
+          ],
+        ];
+      }
       if ($build) {
         // Media render & entity.
         $variables['media'] = $build;
-        $media = $card_media->entity;
 
         // Media alignment.
         if ($paragraph->get('field_media_alignment')->value) {
@@ -192,9 +202,9 @@ function jcc_elevated_paragraph_card(array &$variables, ParagraphInterface $para
         }
 
         // If caption available and display opted.
-        $caption = $media->get('field_media_caption')->value ? $media->get('field_media_caption')->value : NULL;
+        $caption = $card_media->get('field_media_caption')->value ? $card_media->get('field_media_caption')->value : NULL;
         if ($paragraph->get('field_show_media_caption')->value && $caption) {
-          $citation = $media->field_media_citation && $media->get('field_media_citation')->value ? $media->get('field_media_citation')->value : NULL;
+          $citation = $card_media->field_media_citation && $card_media->get('field_media_citation')->value ? $card_media->get('field_media_citation')->value : NULL;
           $allowed_tags = ['<strong><em><a>'];
           $variables['media_caption'] = [
             'show' => $paragraph->get('field_show_media_caption')->value,
@@ -335,7 +345,7 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
 
   if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
     $cover_image = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
-    $image_url = ImageStyle::load('hero_banner')->buildUrl($cover_image);
+    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('hero_banner')->buildUrl($cover_image);
     $variables['bckg_img_url'] = $image_url;
   }
 
@@ -411,7 +421,7 @@ function jcc_elevated_paragraph_section(array &$variables, ParagraphInterface $p
     $media = $paragraph->get('field_media')->target_id ? Media::load($paragraph->get('field_media')->target_id) : FALSE;
     if ($media && $media->field_media_image) {
       $cover_image = $media->get('field_media_image')[0]->entity->getFileUri();
-      $image_url = ImageStyle::load('container_100_percent')->buildUrl($cover_image);
+      $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('container_100_percent')->buildUrl($cover_image);
       $variables['background_image_url'] = $image_url ?? NULL;
     }
   }
