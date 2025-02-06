@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\EntityStorageException;
+use Drupal\redirect\Entity\Redirect;
 
 /**
  * Implements hook_uninstall().
@@ -32,6 +33,13 @@ function jcc_elevated_custom_update_9001() {
     foreach ($publications as $publication) {
       $current_values = $publication->get('field_media_file_multiple')->getValue();
       if (!empty($current_values)) {
+        // Storing the current path.
+        $old_file_url = '';
+        $old_file = $publication->get('field_media_file_multiple')->entity;
+        if ($old_file instanceof File) {
+          $old_file_url = file_url_transform_relative(file_create_url($old_file->getFileUri()));
+        }
+
         // Move first file to diff field.
         $publication->set('field_media_file', $current_values[0]);
         // Remove first file from previous.
@@ -39,6 +47,20 @@ function jcc_elevated_custom_update_9001() {
         $publication->set('field_media_file_multiple', $current_values);
         try {
           $publication->save();
+
+          // Need to reload the publication to get the new file path.
+          $reloaded_publication = \Drupal::entityTypeManager()->getStorage('media')->load($publication->id());
+          $new_file = $reloaded_publication->get('field_media_file')->entity;
+          if ($new_file instanceof File) {
+            $new_file_url = file_create_url($new_file->getFileUri());
+
+            $redirect = Redirect::create([
+              'redirect_source' => $old_file_url,
+              'redirect_redirect' => $new_file_url,
+              'status_code' => 301,
+            ]);
+            $redirect->save();
+          }
         }
         catch (EntityStorageException $exception) {
           \Drupal::logger('jcc_elevated_custom')->error('jcc_elevated_update_9001: ' . $exception->getMessage());
