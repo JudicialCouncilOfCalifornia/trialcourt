@@ -953,22 +953,22 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
             'href' => $file_url,
           ];
         }
-      }
-      $grouped_proposals[$safe_list_label]['items'][] = $itc_past_proposal;
-      if (count($grouped_proposals[$safe_list_label]['items']) >= 1) {
-        $grouped_proposals[$safe_list_label]['list_label'] = $list_label;
+        $grouped_proposals[$safe_list_label]['items'][] = $itc_past_proposal;
       }
     }
-    usort($grouped_proposals, function ($a, $b) {
-      return $a['items'][0]['category'] <=> $b['items'][0]['category'];
-    });
-    foreach ($grouped_proposals as &$proposal_group) {
-      usort($proposal_group['items'], function ($a, $b) {
-        return $b['raw_deadline'] <=> $a['raw_deadline'];
-      });
+    if (count($grouped_proposals[$safe_list_label]['items']) >= 1) {
+      $grouped_proposals[$safe_list_label]['list_label'] = $list_label;
     }
-    $variables['grouped_proposals'] = $grouped_proposals;
   }
+  usort($grouped_proposals, function ($a, $b) {
+    return $a['items'][0]['category'] <=> $b['items'][0]['category'];
+  });
+  foreach ($grouped_proposals as &$proposal_group) {
+    usort($proposal_group['items'], function ($a, $b) {
+      return $b['raw_deadline'] <=> $a['raw_deadline'];
+    });
+  }
+  $variables['grouped_proposals'] = $grouped_proposals;
 }
 
 /**
