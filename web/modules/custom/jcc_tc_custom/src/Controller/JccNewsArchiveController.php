@@ -13,16 +13,16 @@ use Symfony\Component\HttpFoundation\Response;
 class JccNewsArchiveController extends ControllerBase {
 
   /**
-   * The middleman function
+   * The middleman function, return a message indicating the execution result
    */
-  public function performNewsArchiving():Response {
-    \Drupal::logger('jcc_news_archive')->notice("performNewsArchiving() got called ");
+  public function performNewsArchivingHelper():Response {
+    \Drupal::logger('jcc_news_archive')->notice("performNewsArchivingHelper() got called ");
     $this->newsArchive_cron();
     return new Response('JCC news release links have been archived');
   }
 
   /**
-   * The cron function.
+   * The cron function, in case we will need factor out this to be a cron job
    */
   public function newsArchive_cron():void {
     \Drupal::logger('jcc_news_archive')->notice("newsArchive_cron() got called ");
@@ -71,30 +71,10 @@ class JccNewsArchiveController extends ControllerBase {
   }
 
   /**
-   * The trigger function.
+   * The trigger function, i.e., the entry point
    */
-//  public function handleFunction() {
-//    set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-//      throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
-//    });
-//
-//    try {
-//      performNewsArchiving();
-//      return [
-//        '#markup' => 'Success',
-//      ];
-//    } catch (\Throwable $e) {
-//      // Log the error for debugging but hide it from the user
-//      \Drupal::logger('custom_module')->error($e->getMessage());
-//      return [
-//        '#markup' => 'Operation completed successfully.',
-//      ];
-//    } finally {
-//      restore_error_handler();
-//    }
-//  }
-
-  public function handleFunction() {
+  public function performNewsArchiving() {
+    \Drupal::logger('jcc_news_archive')->info("entering performNewsArchiving");
     // Suppress warnings and notices
     set_error_handler(function ($errno, $errstr, $errfile, $errline) {
       if (!(error_reporting() & $errno)) {
@@ -110,17 +90,18 @@ class JccNewsArchiveController extends ControllerBase {
     });
 
     try {
-      performNewsArchiving();
+      $this->performNewsArchivingHelper();
       return [
         '#markup' => 'Success',
       ];
     } catch (\Throwable $e) {
       // Log the error but suppress display
-      \Drupal::logger('custom_module')->error($e->getMessage());
+      \Drupal::logger('jcc_news_archive')->error($e->getMessage());
       return [
         '#markup' => 'Operation completed successfully.',
       ];
     } finally {
+      \Drupal::logger('jcc_news_archive')->info("exiting performNewsArchiving");
       restore_error_handler();
     }
   }
