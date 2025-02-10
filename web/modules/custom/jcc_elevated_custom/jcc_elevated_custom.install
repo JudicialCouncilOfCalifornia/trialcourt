@@ -36,7 +36,7 @@ function jcc_elevated_custom_update_9001() {
         // Storing the current path.
         $old_file_url = '';
         $old_file = $publication->get('field_media_file_multiple')->entity;
-        if ($old_file instanceof File) {
+        if ($old_file->getEntityTypeId() === 'file') {
           $old_file_url = file_url_transform_relative(file_create_url($old_file->getFileUri()));
         }
 
@@ -51,7 +51,7 @@ function jcc_elevated_custom_update_9001() {
           // Need to reload the publication to get the new file path.
           $reloaded_publication = \Drupal::entityTypeManager()->getStorage('media')->load($publication->id());
           $new_file = $reloaded_publication->get('field_media_file')->entity;
-          if ($new_file instanceof File) {
+          if ($new_file->getEntityTypeId() === 'file') {
             $new_file_url = file_create_url($new_file->getFileUri());
 
             $redirect = Redirect::create([
