@@ -10,6 +10,7 @@
  * - attributes: HTML attributes for the wrapper element.
  * - title_suffix.contextual_links: Render array for contextual links.
  * - content: The rendered fields of the media entity.
+ * - media: the media entity.
  */
 #}
 
@@ -20,15 +21,10 @@
     <div class="media-content">
       {{ content }}
 
-      {# Display caption if available, otherwise show a default message #}
-      {% if content.field_media_caption %}
-        <figcaption class="overlay-caption-customized">
-          {{ content.field_media_caption }}
-        </figcaption>
-      {% else %}
-        <figcaption class="overlay-caption-customized">
-          Honorable Elizabeth K. Lee Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        </figcaption>
+      {% if media is not null and media.field_media_caption is not null and media.field_media_caption.value is not empty %}
+      <figcaption class="overlay-caption-customized">
+        {{ media.field_media_caption.value|striptags }}
+      </figcaption>
       {% endif %}
     </div>
   {% endif %}
