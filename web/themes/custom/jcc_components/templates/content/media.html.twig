@@ -24,6 +24,9 @@
       {% if media is not null and media.field_media_caption is not null and media.field_media_caption.value is not empty %}
       <figcaption class="overlay-caption-customized">
         {{ media.field_media_caption.value|striptags }}
+        {% if media is not null and media.field_media_citation is not null and media.field_media_citation.value is not empty %}
+          - {{ media.field_media_citation.value|striptags }}
+        {% endif %}
       </figcaption>
       {% endif %}
     </div>
