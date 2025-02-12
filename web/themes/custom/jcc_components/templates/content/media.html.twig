@@ -1,0 +1,34 @@
+{#
+/**
+ * @file
+ * Custom theme override for media entities.
+ *
+ * This template extends the core `media.html.twig` file and adds
+ * special processing for the media caption field.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper element.
+ * - title_suffix.contextual_links: Render array for contextual links.
+ * - content: The rendered fields of the media entity.
+ * - media: the media entity.
+ */
+#}
+
+<article{{ attributes }}>
+  {{ title_suffix.contextual_links }}
+
+  {% if content %}
+    <div class="media-content">
+      {{ content }}
+
+      {% if media is not null and media.field_media_caption is not null and media.field_media_caption.value is not empty %}
+      <figcaption class="overlay-caption-customized">
+        {{ media.field_media_caption.value|striptags }}
+        {% if media is not null and media.field_media_citation is not null and media.field_media_citation.value is not empty %}
+          - {{ media.field_media_citation.value|striptags }}
+        {% endif %}
+      </figcaption>
+      {% endif %}
+    </div>
+  {% endif %}
+</article>
