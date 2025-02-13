@@ -4,9 +4,11 @@ dependencies:
   config:
     - field.field.paragraph.granicus_event_setup.field_event_type
     - field.field.paragraph.granicus_event_setup.field_lead
+    - field.field.paragraph.granicus_event_setup.field_link_multiple
     - field.field.paragraph.granicus_event_setup.field_toggle
     - paragraphs.paragraphs_type.granicus_event_setup
   module:
+    - link
     - text
 id: paragraph.granicus_event_setup.default
 targetEntityType: paragraph
@@ -27,6 +29,18 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 2
+    region: content
+  field_link_multiple:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 4
     region: content
   field_toggle:
     type: boolean
