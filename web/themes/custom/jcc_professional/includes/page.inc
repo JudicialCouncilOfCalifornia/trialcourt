@@ -111,7 +111,7 @@ function jcc_professional_preprocess_page(&$variables) {
           $start_timestamp = strtotime($event->get('field_date_range')->start_date);
           // Get webcast URL from event description.
           $body = $event->get('body')->value;
-          $pattern = '/\/\/jcc\.granicus\.com\/player\/event\/\d+/';
+          $pattern = '/\/\/jcc\.granicus\.com\/(.*)\d+/';
           preg_match($pattern, $body ?? '', $event_url);
           $event_url = $event_url ? $event_url[0] : '';
 
@@ -123,8 +123,8 @@ function jcc_professional_preprocess_page(&$variables) {
           $end_timestamp = strtotime($event->get('field_date_range')->end_date);
 
           if ($current_to_start > -3600 && $current_timestamp < $end_timestamp) {
-            // Display pending 1 hour before & after scheduled time.
-            if (!theme_get_setting('granicus_status_override') == 1 && ($current_to_start > -3600 && $current_to_start < 3600)) {
+            // Display pending 1 hour before scheduled time.
+            if (!theme_get_setting('granicus_status_override') == 1 && ($current_to_start > -3600 && $current_to_start < 0)) {
               $status = 'starting soon';
             }
             else {
@@ -174,12 +174,6 @@ function jcc_professional_preprocess_page(&$variables) {
 
       if ($livecast) {
         $variables['livecast'] = $livecast;
-
-        // Disable page cache to not block dynamic info.
-        // Max age cache for authenticated users.
-        // Kill cache switch for anonymous users.
-        $variables['#cache']['max-age'] = 0;
-        \Drupal::service('page_cache_kill_switch')->trigger();
       }
     }
   }
