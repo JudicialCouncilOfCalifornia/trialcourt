@@ -438,6 +438,67 @@ function jcc_elevated_paragraph_hero_hangover(array &$variables, ParagraphInterf
 }
 
 /**
+ * Helper function for data visualization embed.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ */
+function jcc_elevated_paragraph_data_visualization_embed(array &$variables, ParagraphInterface $paragraph) {
+  $data_media = $paragraph->get('field_data_image');
+  $mobile_data_media = $paragraph->get('field_mobile_data_image');
+  if ($data_media && $data_media->entity) {
+    // Get the image file ID from the media field.
+    $image_media_id = $data_media->target_id;
+    if ($image_media_id) {
+      // Load the media entity.
+      $media = Media::load($image_media_id);
+      if ($media->hasField('field_media_image') && !$media->get('field_media_image')->isEmpty()) {
+        $file_id = $media->get('field_media_image')->target_id;
+
+        // Load the file entity.
+        $file = File::load($file_id);
+
+        if ($file) {
+          $file_url = $file->createFileUrl();
+          $variables['img_data_url'] = $file_url;
+        }
+        else {
+          \Drupal::messenger()->addError('File not found.');
+        }
+      }
+      else {
+        \Drupal::messenger()->addError('Media entity does not have a file field or it is empty.');
+      }
+    }
+  }
+  if ($mobile_data_media && $mobile_data_media->entity) {
+    // Get the image file ID from the media field.
+    $image_media_id = $mobile_data_media->target_id;
+    if ($image_media_id) {
+      // Load the media entity.
+      $media = Media::load($image_media_id);
+      if ($media->hasField('field_media_image') && !$media->get('field_media_image')->isEmpty()) {
+        $file_id = $media->get('field_media_image')->target_id;
+
+        // Load the file entity.
+        $file = File::load($file_id);
+
+        if ($file) {
+          $file_url = $file->createFileUrl();
+          $variables['mobile_img_data_url'] = $file_url;
+        }
+        else {
+          \Drupal::messenger()->addError('File not found.');
+        }
+      }
+      else {
+        \Drupal::messenger()->addError('Media entity does not have a file field or it is empty.');
+      }
+    }
+  }
+}
+
+/**
  * Helper function for list with menu.
  *
  * @param array $variables
