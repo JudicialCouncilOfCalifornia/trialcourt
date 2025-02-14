@@ -9,7 +9,7 @@
     - The Convention I've used is "Judicial Council | [site]" But capitalize the site.
   - **make sure [site] will pattern match to the identifying portion of the live url.**
     - i.e. www.kings.courts.ca.gov => `kings`
-    - If the site name ends up different from the subdomain, add a mapping later to /web/sites/sites.php
+    - If the site name ends up different from the subdomain or has alternate/multiple subdomains, add a mapping to /web/sites/sites.php. Without the mapping, the site will not load 100% correctly due mainly to incorrect paths missing the site name.
       - $sites['www.diffname.courts.ca.gov'] = 'site';
       - $sites['diffname.courts.ca.gov'] = 'site';
 
@@ -24,10 +24,11 @@ After this runs it will give you instructions to set up the new Drupal instance 
   - Make sure `[name]` will pattern match to the identifying portion of the live url. It should be the same as `[site]` from the `pantheon_new.sh` command above.
     - i.e. www.kings.courts.ca.gov => `kings`
   - You can optionally specify an alternate `[theme]` from the JCC Elevated default, specifically to use JCC Components (jcc_components) for the current trial court themes & features.
+  - If the new site creation failures such as database connection or missing configurations, delete the `web/sites/[name]` and remedy the problem that is reported before re-executing the `multsite` command.
 - For elevated sites:
   - Install the following manually until we can automate or consolidate themes:
     - `lando drush en jcc_elevated_custom -l @local.[site]` - customizations only for elevated sites.
-    - `lando drush en jcc_elevated_embed -l @local.[site]` - embeddable views/features.
+    - `lando drush en jcc_elevated_embeds -l @local.[site]` - embeddable views/features.
     - `lando drush en jcc_elevated_sections -l @local.[site]` - if needed to create content division.
   - Set 'JCC' starter user role as administrator else you won't be able to administer menu structures. The password is noted in the lando multisite dialog else create yourself an admin account.
 - Confirm `web/sites/[site]` setup (extra files and directory seems okay to keep or delete)
@@ -109,13 +110,15 @@ Create Landing Page
 - Configure SendGrid (optional):
   * `/admin/config/system/keys/manage/sendgrid`
   * See JIRA for trial court keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
-  * For all other sites, a new key may be required. See OneNote documentation.
+  * For all other sites, a new key may be required from Azure Portal.
   * Note: site's email address needs to be `no-reply@courtinfo.ca.gov` for SendGrid to work.
-- Setup defaults for Google Tag module: (if available else later done)
-  * `lando drush @local.[site] cim --partial --source=/app/web/modules/contrib/google_tag/config/install/`
+- Setup defaults for Google Tag module:
+  * `/admin/config/system/google-tag`
+  * Add new container using existing or new key from Google.
 - Configure GoogleRecaptcha (optional):
   * `/admin/config/people/captcha/recaptcha`
-  * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
+  * See JIRA for trial courts keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
+  * For all other sites, a new or different key may be used.
 - Configure OpenID with Azure Active Directory (optional)
   - `/admin/config/services/openid-connect`
   - See OneNote documentation.
@@ -153,13 +156,14 @@ Create Landing Page
   - `lando drush @local.[site] cex -y`
   - `lando config-ignore` or `scripts/sync_config_ignore.sh`  Make sure this is run before you commit exported config. It will ignore the files that are managed by jcc_tc2_all_immutable_config feature module.
   - NOTE: Some configurations are user managed but cannot be immutable or easily managed by the `config-ignore` script. These settings are still exported as source but ignored at `/admin/config/development/configuration/ignore`.
-
-- Export db from local
-  - `lando drush @local.[site] sql-dump > data/[site]-install.sql`
-  - For elevated sites, modify loading weight in `core.extension.yml` to 100 for:
+  - For elevated sites, modify loading weight in `core.extension.yml` to 100 if needed:
     - jcc_elevated_custom
     - jcc_elevated_embeds
     - jcc_elevated_sections (if installed)
+
+- Export db from local
+  - `lando drush @local.[site] sql-dump > data/[site]-install.sql`
+  - Test DB export with `lando dbim -f data/[site]-install.sql -d [site]`. If `ERROR at line 1: Unknown command '\-'` occurs, eview line 1 and remove `\-` from comment before importing to Pantheon.
 
 - Import the initial database dump to live environment to prepare pantheon for deployment.
 
