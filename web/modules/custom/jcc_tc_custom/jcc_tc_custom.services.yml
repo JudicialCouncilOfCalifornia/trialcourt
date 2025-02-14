@@ -1,0 +1,19 @@
+parameters:
+  twig.config:
+    debug: false
+    auto_reload: true
+    cache: true
+
+# for surppressing the error message that will be otherwise printed on
+# the screen saying  the website encountered an unexpected error. Please try again later.
+# GuzzleHttp\Exception\RequestException: cURL error 3: (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) in GuzzleHttp\Handler\CurlFactory::createRejection()
+#  (line 201 of /app/vendor/guzzlehttp/guzzle/src/Handler/CurlFactory.php).
+services:
+  http_kernel.error_listener:
+    class: Symfony\Component\HttpKernel\EventListener\ErrorListener
+    arguments: ['@logger.channel.default', '@event_dispatcher', '@string_translation', '@request_stack']
+  http_client:
+    class: GuzzleHttp\Client
+    arguments:
+      $config:
+        http_errors: false
