@@ -2,9 +2,11 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.data_visualization_embed.field_data_image
     - field.field.paragraph.data_visualization_embed.field_height
     - field.field.paragraph.data_visualization_embed.field_height_mobile
     - field.field.paragraph.data_visualization_embed.field_link
+    - field.field.paragraph.data_visualization_embed.field_mobile_data_image
     - field.field.paragraph.data_visualization_embed.field_mobile_link
     - field.field.paragraph.data_visualization_embed.field_width
     - field.field.paragraph.data_visualization_embed.field_width_mobile
@@ -16,6 +18,15 @@ targetEntityType: paragraph
 bundle: data_visualization_embed
 mode: default
 content:
+  field_data_image:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 6
+    region: content
   field_height:
     type: string
     label: hidden
@@ -43,6 +54,15 @@ content:
       target: ''
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_mobile_data_image:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 7
     region: content
   field_mobile_link:
     type: link

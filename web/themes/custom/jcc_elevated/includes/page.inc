@@ -12,7 +12,6 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
-use Drupal\node\NodeInterface;
 use Drupal\views\Views;
 
 /**
@@ -25,11 +24,12 @@ function jcc_elevated_preprocess_page(&$variables) {
   $is_front = \Drupal::service('path.matcher')->isFrontPage();
   $state = \Drupal::state();
 
-  // Determine if page is a node.
-  $is_node = FALSE;
-  $node = \Drupal::routeMatch()->getParameter('node');
-  if ($node instanceof NodeInterface) {
-    $is_node = TRUE;
+  // Determine entity type.
+  $entity_type = NULL;
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  $route_name = explode('.', $route_name);
+  if ($route_name[0] == 'entity') {
+    $entity_type = $route_name[1];
   }
 
   $variables['logo'] = theme_get_setting('logo', 'jcc_elevated');
@@ -105,13 +105,21 @@ function jcc_elevated_preprocess_page(&$variables) {
   // Display content only when embed param is 1.  Hide header and footer.
   $variables['embed'] = \Drupal::request()->query->get('embed') == 1;
 
-  // Set breadcrumb for landing pages and subpages.
-  $variables['breadcrumb'] = FALSE;
-  $types = ['landing_page', 'subpage'];
-  if (!$is_front && $is_node && in_array($node->bundle(), $types)) {
-    $variables['breadcrumb'] = \Drupal::service('breadcrumb')
-      ->build(\Drupal::routeMatch())
-      ->toRenderable();
+  // Set breadcrumb or previous link.
+  // See breadcrumb hook for granular conditions.
+  $display_breadcrumb = NULL;
+  if ($entity_type == 'node' || $entity_type == 'media') {
+    $entity = \Drupal::routeMatch()->getParameter($entity_type);
+    if ($entity) {
+      $display_breadcrumb = TRUE;
+    }
+  }
+  $suppress_from = [
+    'roc_rule_index',
+    'roc_rule',
+  ];
+  if ($display_breadcrumb && !$is_front && !in_array($entity->bundle(), $suppress_from)) {
+    $variables['breadcrumb'] = \Drupal::service('breadcrumb')->build(\Drupal::routeMatch())->toRenderable();
   }
 
   $social_links = [];
