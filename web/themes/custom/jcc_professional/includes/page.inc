@@ -97,15 +97,17 @@ function jcc_professional_preprocess_page(&$variables) {
 
     // If matching event type found.
     if ($imported_events) {
-      $current_datetime = new DateTime('now', new DateTimeZone('America/Los_Angeles'));
+      $timezone = new DateTimeZone('America/Los_Angeles');
+      $current_datetime = new DateTime('now', $timezone);
       $today = $current_datetime->format('m/d/y');
       $term_storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
       $node = \Drupal::entityTypeManager()->getStorage('node')->load($variables['node']->id());
 
       $livecast = [];
       foreach ($imported_events as $event) {
+        $event_datetime = new DateTime($event->get('field_date_range')->start_date, $timezone);
+        $event_date = \Drupal::service('date.formatter')->format($event_datetime->getTimestamp(), 'custom', 'm/d/y');
         $type = $term_storage->load($term_id)->name->value;
-        $event_date = $event->get('field_date_range')->start_date ? $event->get('field_date_range')->start_date->format('m/d/y') : '';
         $scheduled_type = $term_storage->load($event->get('field_event_type')->target_id)->name->value;
 
         // If matching event is scheduled for today.
@@ -125,9 +127,6 @@ function jcc_professional_preprocess_page(&$variables) {
           $end_timestamp = strtotime($event->get('field_date_range')->end_date);
 
           if ($current_to_start > -3600 && $current_timestamp < $end_timestamp) {
-            // Clear page cache to allow dynamic updates.
-            \Drupal::service('cache_tags.invalidator')->invalidateTags(['node:' . $node->id()]);
-
             // Display pending 1 hour before scheduled time.
             if (!theme_get_setting('granicus_status_override') == 1 && ($current_to_start > -3600 && $current_to_start < 0)) {
               $status = 'starting soon';
@@ -179,6 +178,12 @@ function jcc_professional_preprocess_page(&$variables) {
 
       if ($livecast) {
         $variables['livecast'] = $livecast;
+
+        // Disable page cache to not block dynamic info.
+        // Max age cache for authenticated users.
+        // Kill cache switch for anonymous users.
+        $variables['#cache']['max-age'] = 0;
+        \Drupal::service('page_cache_kill_switch')->trigger();
       }
     }
   }
