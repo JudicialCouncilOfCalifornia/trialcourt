@@ -97,13 +97,17 @@ function jcc_professional_preprocess_page(&$variables) {
 
     // If matching event type found.
     if ($imported_events) {
-      $today = date('m/d/y');
+      $timezone = new DateTimeZone('America/Los_Angeles');
+      $current_datetime = new DateTime('now', $timezone);
+      $today = $current_datetime->format('m/d/y');
       $term_storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($variables['node']->id());
 
       $livecast = [];
       foreach ($imported_events as $event) {
+        $event_datetime = new DateTime($event->get('field_date_range')->start_date, $timezone);
+        $event_date = \Drupal::service('date.formatter')->format($event_datetime->getTimestamp(), 'custom', 'm/d/y');
         $type = $term_storage->load($term_id)->name->value;
-        $event_date = $event->get('field_date_range')->start_date ? $event->get('field_date_range')->start_date->format('m/d/y') : '';
         $scheduled_type = $term_storage->load($event->get('field_event_type')->target_id)->name->value;
 
         // If matching event is scheduled for today.
@@ -111,7 +115,7 @@ function jcc_professional_preprocess_page(&$variables) {
           $start_timestamp = strtotime($event->get('field_date_range')->start_date);
           // Get webcast URL from event description.
           $body = $event->get('body')->value;
-          $pattern = '/\/\/jcc\.granicus\.com\/player\/event\/\d+/';
+          $pattern = '/\/\/jcc\.granicus\.com\/(.*)\d+/';
           preg_match($pattern, $body ?? '', $event_url);
           $event_url = $event_url ? $event_url[0] : '';
 
@@ -123,8 +127,8 @@ function jcc_professional_preprocess_page(&$variables) {
           $end_timestamp = strtotime($event->get('field_date_range')->end_date);
 
           if ($current_to_start > -3600 && $current_timestamp < $end_timestamp) {
-            // Display pending 1 hour before & after scheduled time.
-            if (!theme_get_setting('granicus_status_override') == 1 && ($current_to_start > -3600 && $current_to_start < 3600)) {
+            // Display pending 1 hour before scheduled time.
+            if (!theme_get_setting('granicus_status_override') == 1 && ($current_to_start > -3600 && $current_to_start < 0)) {
               $status = 'starting soon';
             }
             else {

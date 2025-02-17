@@ -602,7 +602,9 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
 
   // If setup defined for paragraph.
   if ($event_types) {
-    $today = date('m/d/y');
+    $timezone = new DateTimeZone('America/Los_Angeles');
+    $current_datetime = new DateTime('now', $timezone);
+    $today = $current_datetime->format('m/d/y');
     $term_storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
 
     // Find matching event types specified in setup.
@@ -615,8 +617,9 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
         // If matching event types found.
         if ($imported_events) {
           foreach ($imported_events as $event) {
+            $event_datetime = new DateTime($event->get('field_event_date')->start_date, $timezone);
+            $event_date = \Drupal::service('date.formatter')->format($event_datetime->getTimestamp(), 'custom', 'm/d/y');
             $type = $term_storage->load($type_id)->name->value;
-            $event_date = $event->get('field_event_date')->start_date ? $event->get('field_event_date')->start_date->format('m/d/y') : '';
             $scheduled_type = $term_storage->load($event->get('field_event_type')->target_id)->name->value;
 
             // If matching event is scheduled for today.
@@ -631,8 +634,8 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
               $end_timestamp = strtotime($event->get('field_event_date')->end_date);
 
               if ($current_to_start > -3600 && $current_timestamp < $end_timestamp) {
-                // Display pending 1 hour before & after scheduled time.
-                if (!$event_type->get('field_toggle')->value == 1 && ($current_to_start > -3600 && $current_to_start < 3600)) {
+                // Display pending 1 hour before scheduled time.
+                if (!$event_type->get('field_toggle')->value == 1 && $current_to_start > -3600 && $current_to_start < 0) {
                   $status = 'starting soon';
                 }
                 else {
@@ -687,7 +690,7 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
       // Disable page cache to not block dynamic info.
       // Max age cache for authenticated users.
       // Kill cache switch for anonymous users.
-      $variables['#cache']['max-age'] = 0;
+      $variables['elements']['#cache']['max-age'] = '0';
       \Drupal::service('page_cache_kill_switch')->trigger();
     }
   }
