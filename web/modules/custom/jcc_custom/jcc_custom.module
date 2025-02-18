@@ -1093,7 +1093,7 @@ function jcc_custom_node_view_alter(array &$build, NodeInterface $node, EntityVi
                 // Disable page cache to not block dynamic info.
                 // Max age cache for authenticated users.
                 // Kill cache switch for anonymous users.
-                $build['#cache']['max-age'] = 0;
+                \Drupal::entityTypeManager()->getStorage('node')->resetCache([$node->id()]);
                 \Drupal::service('page_cache_kill_switch')->trigger();
               }
               break;
