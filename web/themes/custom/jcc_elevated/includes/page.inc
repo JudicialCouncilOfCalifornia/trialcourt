@@ -177,7 +177,7 @@ function jcc_elevated_preprocess_page(&$variables) {
                 // Disable page cache to not block dynamic info.
                 // Max age cache for authenticated users.
                 // Kill cache switch for anonymous users.
-                $variables['#cache']['max-age'] = 0;
+                $variables['page']['#cache']['max-age'] = 0;
                 \Drupal::service('page_cache_kill_switch')->trigger();
               }
               break;
