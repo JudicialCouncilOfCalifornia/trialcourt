@@ -592,7 +592,9 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
 
   // If setup defined for paragraph.
   if ($event_types) {
-    $today = date('m/d/y');
+    $timezone = new DateTimeZone('America/Los_Angeles');
+    $current_datetime = new DateTime('now', $timezone);
+    $today = $current_datetime->format('m/d/y');
     $term_storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
 
     // Find matching event types specified in setup.
@@ -605,8 +607,9 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
         // If matching event types found.
         if ($imported_events) {
           foreach ($imported_events as $event) {
+            $event_datetime = new DateTime($event->get('field_event_date')->start_date, $timezone);
+            $event_date = \Drupal::service('date.formatter')->format($event_datetime->getTimestamp(), 'custom', 'm/d/y');
             $type = $term_storage->load($type_id)->name->value;
-            $event_date = $event->get('field_event_date')->start_date ? $event->get('field_event_date')->start_date->format('m/d/y') : '';
             $scheduled_type = $term_storage->load($event->get('field_event_type')->target_id)->name->value;
 
             // If matching event is scheduled for today.

@@ -595,6 +595,35 @@ function jcc_elevated_node_alert(array &$variables, NodeInterface $node): void {
 }
 
 /**
+ * Node: Landing Page preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_landing_page(array &$variables, NodeInterface $node): void {
+  $component_items = $node->get('field_components')->referencedEntities();
+
+  foreach ($component_items as $component) {
+    switch ($component->bundle()) {
+      case 'granicus_events':
+        $view_builder = \Drupal::entityTypeManager()->getViewBuilder('paragraph');
+        $render = $view_builder->view($component);
+        $html = \Drupal::service('renderer')->renderPlain($render);
+        if (str_contains($html, 'class="granicus"')) {
+          // Disable page cache to not block dynamic info.
+          // Max age cache for authenticated users.
+          // Kill cache switch for anonymous users.
+          $variables['elements']['#cache']['max-age'] = '0';
+          \Drupal::service('page_cache_kill_switch')->trigger();
+        }
+        break;
+    }
+  }
+}
+
+/**
  * Node: Subpage preprocess.
  *
  * @param array $variables
