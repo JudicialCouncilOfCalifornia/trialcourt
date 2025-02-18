@@ -161,6 +161,31 @@ function jcc_elevated_preprocess_page(&$variables) {
     'about_link_href' => $about_link_url,
     'social_links' => $social_links,
   ];
+
+  if ($is_node) {
+    switch ($node->bundle()) {
+      case 'landing_page':
+        $component_items = $node->get('field_components')->referencedEntities();
+
+        foreach ($component_items as $component) {
+          switch ($component->bundle()) {
+            case 'granicus_events':
+              $view_builder = \Drupal::entityTypeManager()->getViewBuilder('paragraph');
+              $render = $view_builder->view($component);
+              $html = \Drupal::service('renderer')->renderPlain($render);
+              if (str_contains($html, 'class="granicus"')) {
+                // Disable page cache to not block dynamic info.
+                // Max age cache for authenticated users.
+                // Kill cache switch for anonymous users.
+                $variables['#cache']['max-age'] = 0;
+                \Drupal::service('page_cache_kill_switch')->trigger();
+              }
+              break;
+          }
+        }
+        break;
+    }
+  }
 }
 
 /**

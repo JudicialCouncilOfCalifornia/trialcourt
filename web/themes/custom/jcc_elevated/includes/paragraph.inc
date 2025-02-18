@@ -586,7 +586,7 @@ function jcc_elevated_paragraph_tabs(array &$variables) {
 function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInterface $paragraph) {
   // Setup provided by entries per event type.
   // Finds imported events with matching type.
-  // Cache rebuild done with jcc_custom_node_view_alter().
+  // Cache rebuild at page alter hook.
   $event_types = $paragraph->get('field_components')->referencedEntities();
   $node_storage = \Drupal::entityTypeManager()->getStorage('node');
 
