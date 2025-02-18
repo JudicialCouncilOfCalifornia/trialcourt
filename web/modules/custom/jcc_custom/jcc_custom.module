@@ -9,6 +9,7 @@ use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
@@ -17,6 +18,7 @@ use Drupal\editor\Entity\Editor;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Element\ManagedFile;
 use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
+use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
@@ -1063,5 +1065,35 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
   }
   if (isset($form['unpublish_state'])) {
     $form['unpublish_state']['widget'][0]['#description'] = t('When the "Unpublish on" time hits, this page will change to the state defined here.');
+  }
+}
+
+/**
+ * Implements hook_node_view_alter().
+ */
+function jcc_custom_node_view_alter(array &$build, NodeInterface $node, EntityViewDisplayInterface $display) {
+  switch ($node->bundle()) {
+    case 'landing_page':
+      if ($display->getEntityTypeId() == 'entity_view_display') {
+        $component_items = $node->get('field_components')->referencedEntities();
+
+        foreach ($component_items as $component) {
+          switch ($component->bundle()) {
+            case 'granicus_events':
+              $view_builder = \Drupal::entityTypeManager()->getViewBuilder('paragraph');
+              $render = $view_builder->view($component);
+              $html = \Drupal::service('renderer')->renderPlain($render);
+              if (str_contains($html, 'class="granicus"')) {
+                // Disable page cache to not block dynamic info.
+                // Max age cache for authenticated users.
+                // Kill cache switch for anonymous users.
+                \Drupal::entityTypeManager()->getStorage('node')->resetCache([$node->id()]);
+                \Drupal::service('page_cache_kill_switch')->trigger();
+              }
+              break;
+          }
+        }
+      }
+      break;
   }
 }
