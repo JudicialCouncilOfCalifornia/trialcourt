@@ -87,7 +87,6 @@ function jcc_professional_preprocess_page(&$variables) {
   // Granicus integration.
   // Setup provided by Drupal theme settings.
   // - granicus_event_type ... find imported events by taxonomy name.
-  // - granicus_events_api ... accessing real-time Granicus information.
   // - granicus_status_override ... opt always display as live during timeframe.
   if (\Drupal::service('path.matcher')->isFrontPage()) {
     // Find events tagged as granicus_event_type value.
