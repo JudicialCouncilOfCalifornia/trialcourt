@@ -1080,23 +1080,23 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
 function jcc_custom_node_view_alter(array &$build, NodeInterface $node, EntityViewDisplayInterface $display) {
   switch ($node->bundle()) {
     case 'landing_page':
-      if ($display->getEntityTypeId() == 'entity_view_display') {
-        $component_items = $node->get('field_components')->referencedEntities();
-
-        foreach ($component_items as $component) {
+      if ($display->getEntityTypeId()) {
+        $components = $node->get('field_components')->referencedEntities();
+        foreach ($components as $component) {
           switch ($component->bundle()) {
             case 'granicus_events':
-              $view_builder = \Drupal::entityTypeManager()->getViewBuilder('paragraph');
-              $render = $view_builder->view($component);
-              $html = \Drupal::service('renderer')->renderPlain($render);
-              if (str_contains($html, 'class="granicus"')) {
-                // Disable page cache to not block dynamic info.
-                // Max age cache for authenticated users.
-                // Kill cache switch for anonymous users.
-                \Drupal::entityTypeManager()->getStorage('node')->resetCache([$node->id()]);
+              $view = \Drupal::service('entity_type.manager')->getViewBuilder($component->getEntityTypeId())->view($component, 'full');
+              $render = \Drupal::service('renderer')->renderRoot($view);
+              if (str_contains($render, 'class="granicus"')) {
+                // Updates to Paragraph are only cached by editing.
+                // Workaround: Force node cache refresh for dynamic content.
+                // Anonymous also requires cache context trigger.
                 \Drupal::service('page_cache_kill_switch')->trigger();
+                $build['#cache']['max-age'] = 0;
+                if (\Drupal::currentUser()->isAnonymous()) {
+                  $build['#cache']['contexts'][] = 'current-date';
+                }
               }
-              break;
           }
         }
       }
