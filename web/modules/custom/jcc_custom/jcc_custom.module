@@ -1079,18 +1079,15 @@ function jcc_custom_node_view_alter(array &$build, NodeInterface $node, EntityVi
         foreach ($components as $component) {
           switch ($component->bundle()) {
             case 'granicus_events':
-              $view = \Drupal::service('entity_type.manager')->getViewBuilder($component->getEntityTypeId())->view($component, 'full');
-              $render = \Drupal::service('renderer')->renderRoot($view);
-              if (str_contains($render, 'class="granicus"')) {
-                // Updates to Paragraph are only cached by editing.
-                // Workaround: Force node cache refresh for dynamic content.
-                // Anonymous also requires cache context trigger.
-                \Drupal::service('page_cache_kill_switch')->trigger();
-                $build['#cache']['max-age'] = 0;
-                if (\Drupal::currentUser()->isAnonymous()) {
-                  $build['#cache']['contexts'][] = 'current-date';
-                }
+              // Updates to Paragraph are only cached by editing.
+              // Workaround: Force node cache refresh for dynamic content.
+              // Anonymous also requires cache context trigger.
+              \Drupal::service('page_cache_kill_switch')->trigger();
+              $build['#cache']['max-age'] = 0;
+              if (\Drupal::currentUser()->isAnonymous()) {
+                $build['#cache']['contexts'][] = 'current-date';
               }
+              break;
           }
         }
       }
