@@ -19,6 +19,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
+use Drupal\views\ResultRow;
 use Drupal\views\ViewExecutable;
 
 /**
@@ -995,56 +996,67 @@ function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
 
   $jobs = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
-    $node = $row['#node'];
+    if (isset($row['#row']) && $row['#row'] instanceof ResultRow) {
+      $nid = $row['#row']->_entity->id() ?? NULL;
+      if ($nid) {
+        $node = Node::load($nid);
+        if ($node) {
+          // Render deadline date.
+          $deadline = $node->get('unpublish_on')->value ? date('F j, Y', $node->get('unpublish_on')->value) : '';
+          // If no deadline or 12/12/9999.
+          if (!$deadline || $deadline === 'December 12, 9999') {
+            $deadline = t('Open Until Filled');
+          }
+          $teaser = $node->get('body') ?? '';
+          if ($teaser) {
+            if (!empty($node->get('body')->summary)) {
+              $teaser = strip_tags($node->get('body')->summary);
+            }
+            else {
+              $content = $node->body->view('full');
+              if (!empty($content['#items'])) {
+                $body_content = $content['#items']->getValue()[0]['value'];
+                $summary_trim_length = $content[0]['#text_summary_trim_length'] ?? 600;
+                $body_summary = text_summary(strip_tags($body_content), NULL, $summary_trim_length);
+                $teaser = html_entity_decode($body_summary);
+              }
+            }
+          }
+          // Get locations.
+          $locations = __jcc_get_job_locations($node);
 
-    // Render deadline date.
-    $deadline = $node->get('unpublish_on')->value ? date('F j, Y', $node->get('unpublish_on')->value) : '';
-    // If no deadline or 12/12/9999.
-    if (!$deadline || $deadline === 'December 12, 9999') {
-      $deadline = t('Open Until Filled');
+          // Assemble details.
+          $detail_list_data = [
+            'details' => array_filter([
+              $locations ? $locations . ', CA' : '',
+              $node->get('field_is_temporary')->value ? 'Temporary' : 'Regular' . ' Employment',
+            ]),
+          ];
+
+          // Check for a job type id first. This is just here because with dev work
+          // It is possible to have a job node without the field or type declared.
+          $job_type_id = $node->hasField('field_job_type') ? $node->get('field_job_type')->target_id : FALSE;
+          $job = [
+            'id' => $node->get('field_job_id')->value ? 'ID: ' . $node->get('field_job_id')->value : '',
+            'deadline' => $deadline ? ['#markup' => Html::decodeEntities('<strong>Deadline:</strong> ' . $deadline)] : '',
+            'type' => is_numeric($job_type_id) && !empty($taxonomy_manager->load($job_type_id)) ? $taxonomy_manager->load($job_type_id)->get('name')->value : '',
+            'title' => [
+              'text' => $node->get('title')->value ?? '',
+              'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
+            ],
+            'teaser' => $teaser,
+            'detail_list_data' => $detail_list_data,
+          ];
+          $jobs[] = $job;
+        }
+      }
     }
 
-    // Get teaser.
-    $teaser = $node->get('body') ?? '';
-    if ($teaser) {
-      $teaser = $node->get('body')->view('teaser');
-      $teaser = strval($render->render($teaser));
-      $teaser = strip_tags($teaser);
-    }
+    // Count summary for the current page of results.
+    $jobs['count_summary'] = $variables['header']['result']['#markup'] ?? '';
 
-    // Get locations.
-    $locations = __jcc_get_job_locations($node);
-
-    // Assemble details.
-    $detail_list_data = [
-      'details' => array_filter([
-        $locations ? $locations . ', CA' : '',
-        $node->get('field_is_temporary')->value ? 'Temporary' : 'Regular' . ' Employment',
-      ]),
-    ];
-
-    // Check for a job type id first. This is just here because with dev work
-    // It is possible to have a job node without the field or type declared.
-    $job_type_id = $node->hasField('field_job_type') ? $node->get('field_job_type')->target_id : FALSE;
-
-    $job = [
-      'id' => $node->get('field_job_id')->value ? 'ID: ' . $node->get('field_job_id')->value : '',
-      'deadline' => $deadline ? ['#markup' => Html::decodeEntities('<strong>Deadline:</strong> ' . $deadline)] : '',
-      'type' => is_numeric($job_type_id) && !empty($taxonomy_manager->load($job_type_id)) ? $taxonomy_manager->load($job_type_id)->get('name')->value : '',
-      'title' => [
-        'text' => $node->get('title')->value ?? '',
-        'url' => $node->id() ? \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $node->id()) : '',
-      ],
-      'teaser' => $teaser,
-      'detail_list_data' => $detail_list_data,
-    ];
-    $jobs[] = $job;
+    $variables['jobs'] = $jobs;
   }
-
-  // Count summary for the current page of results.
-  $jobs['count_summary'] = $variables['header']['result']['#markup'] ?? '';
-
-  $variables['jobs'] = $jobs;
 }
 
 /**
