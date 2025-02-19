@@ -647,7 +647,7 @@ function jcc_elevated_paragraph_tabs(array &$variables) {
 function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInterface $paragraph) {
   // Setup provided by entries per event type.
   // Finds imported events with matching type.
-  // Same feed URL for importing provides real-time updates.
+  // Cache management handled by jcc_custom_node_view_alter().
   $event_types = $paragraph->get('field_components')->referencedEntities();
   $node_storage = \Drupal::entityTypeManager()->getStorage('node');
 
@@ -737,12 +737,6 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
 
     if ($livecasts) {
       $variables['livecasts'] = $livecasts;
-
-      // Disable page cache to not block dynamic info.
-      // Max age cache for authenticated users.
-      // Kill cache switch for anonymous users.
-      $variables['elements']['#cache']['max-age'] = '0';
-      \Drupal::service('page_cache_kill_switch')->trigger();
     }
   }
 }
