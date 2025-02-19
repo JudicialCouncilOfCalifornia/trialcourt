@@ -87,8 +87,8 @@ function jcc_professional_preprocess_page(&$variables) {
   // Granicus integration.
   // Setup provided by Drupal theme settings.
   // - granicus_event_type ... find imported events by taxonomy name.
-  // - granicus_events_api ... accessing real-time Granicus information.
   // - granicus_status_override ... opt always display as live during timeframe.
+  // Force page cache refresh until better cache controls.
   if (\Drupal::service('path.matcher')->isFrontPage()) {
     // Find events tagged as granicus_event_type value.
     $term_id = theme_get_setting('granicus_event_type');
@@ -178,13 +178,10 @@ function jcc_professional_preprocess_page(&$variables) {
 
       if ($livecast) {
         $variables['livecast'] = $livecast;
-
-        // Disable page cache to not block dynamic info.
-        // Max age cache for authenticated users.
-        // Kill cache switch for anonymous users.
-        $variables['#cache']['max-age'] = 0;
-        \Drupal::service('page_cache_kill_switch')->trigger();
       }
+
+      // Refresh page cache to not block dynamic info.
+      \Drupal::service('page_cache_kill_switch')->trigger();
     }
   }
 }
