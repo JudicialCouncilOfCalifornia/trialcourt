@@ -1117,7 +1117,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     $citings = NULL;
     $query = \Drupal::entityQuery('node');
     $query->condition('status', 1);
-    $query->condition('title', $title, 'CONTAINS');
+    $query->condition('field_case_number_plain', $case_number, 'CONTAINS');
     $query->exists('field_media_file_multiple');
     $citing_archive = $query->execute();
     if ($citing_archive) {
