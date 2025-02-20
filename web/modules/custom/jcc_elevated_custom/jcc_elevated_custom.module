@@ -10,6 +10,7 @@ use Drupal\Core\Site\Settings;
 use Drupal\editor\Entity\Editor;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 // @codingStandardsIgnoreStart
 
@@ -388,6 +389,45 @@ function jcc_elevated_custom_form_node_alert_form_alter(&$form, $form_state): vo
  * Implements hook_file_download().
  */
 function jcc_elevated_custom_file_download($uri): array {
+  $current_user = \Drupal::currentUser();
+  $url = \Drupal::service('file_url_generator')->generateString($uri);
+  $file = Drupal::entityTypeManager()->getStorage('file')->loadByProperties(['uri' => $uri]);
+
+  // Determine file access if user has access to referencing node.
+  // Use media entity to determine where file is referenced.
+  if ($file) {
+    $file = reset($file);
+    $media_usage = \Drupal::service('file.usage')->listUsage($file);
+    if ($media_usage) {
+      $media_id = reset($media_usage['file']['media']);
+      $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
+      if ($media) {
+        $node_usage = \Drupal::service('entity_usage.usage')->listSources($media);
+        if ($node_usage) {
+          $node_id = key($node_usage['node']);
+          $node = \Drupal::entityTypeManager()->getStorage('node')->load($node_id);
+          $has_access = $node->access('view', $current_user);
+          $has_grant = \Drupal::service('node.grant_storage')->access($node, 'view', $current_user)->isAllowed();
+
+// Read this next ... https://drupal.stackexchange.com/questions/294179/why-does-node-access-view-all-nodes-return-true-for-anonymous-users
+// Does gid = uid?
+
+// NodeAccessHelper.php experiments
+//          $nodeaccess_settings = \Drupal::configFactory()->get('nodeaccess.settings');
+//          dpm(\Drupal::service('nodeaccess.helper')->selectedRoleIds($nodeaccess_settings));
+//          $grants = \Drupal::entityTypeManager()->getAccessControlHandler('node')->acquireGrants($node);
+//          foreach ($grants as $grant) {
+//            dpm($grant);
+//          }
+
+          //dpm($current_user->getRoles());
+          if (!$has_access && !$has_grant) {
+            throw new AccessDeniedHttpException();
+          }
+        }
+      }
+    }
+  }
 
   // Set all document files to set the appropriate name when a download link is
   // clicked. Because of the private file system, the last part of the main url
