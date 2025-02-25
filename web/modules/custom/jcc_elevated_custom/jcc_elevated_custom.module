@@ -390,7 +390,6 @@ function jcc_elevated_custom_form_node_alert_form_alter(&$form, $form_state): vo
  */
 function jcc_elevated_custom_file_download($uri): array {
   $current_user = \Drupal::currentUser();
-  $url = \Drupal::service('file_url_generator')->generateString($uri);
   $file = Drupal::entityTypeManager()->getStorage('file')->loadByProperties(['uri' => $uri]);
 
   // Determine file access if user has access to referencing node.
@@ -399,30 +398,28 @@ function jcc_elevated_custom_file_download($uri): array {
     $file = reset($file);
     $media_usage = \Drupal::service('file.usage')->listUsage($file);
     if ($media_usage) {
-      $media_id = reset($media_usage['file']['media']);
+      $media_id = ($media_usage['file']['media']);
+      $media_id = key($media_id);
       $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
       if ($media) {
+        // Determine where the media is being referenced.
+        // Deny access if referenced anywhere restricted.
         $node_usage = \Drupal::service('entity_usage.usage')->listSources($media);
         if ($node_usage) {
-          $node_id = key($node_usage['node']);
-          $node = \Drupal::entityTypeManager()->getStorage('node')->load($node_id);
-          $has_access = $node->access('view', $current_user);
-          $has_grant = \Drupal::service('node.grant_storage')->access($node, 'view', $current_user)->isAllowed();
+          // Check node access using latest revision.
+          foreach (reset($node_usage) as $key=>$revisions) {
+            $node_id = $key;
+            $node = \Drupal::entityTypeManager()->getStorage('node')->load($node_id);
 
-// Read this next ... https://drupal.stackexchange.com/questions/294179/why-does-node-access-view-all-nodes-return-true-for-anonymous-users
-// Does gid = uid?
+            foreach ($revisions as $revision) {
+              if ($revision['source_vid'] == $node->getRevisionId()) {
+                $has_access = $node->access('view', $current_user);
 
-// NodeAccessHelper.php experiments
-//          $nodeaccess_settings = \Drupal::configFactory()->get('nodeaccess.settings');
-//          dpm(\Drupal::service('nodeaccess.helper')->selectedRoleIds($nodeaccess_settings));
-//          $grants = \Drupal::entityTypeManager()->getAccessControlHandler('node')->acquireGrants($node);
-//          foreach ($grants as $grant) {
-//            dpm($grant);
-//          }
-
-          //dpm($current_user->getRoles());
-          if (!$has_access && !$has_grant) {
-            throw new AccessDeniedHttpException();
+                if (!$has_access) {
+                  throw new AccessDeniedHttpException();
+                }
+              }
+            }
           }
         }
       }
