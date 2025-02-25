@@ -2,9 +2,11 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.data_visualization_embed.field_data_image
     - field.field.paragraph.data_visualization_embed.field_height
     - field.field.paragraph.data_visualization_embed.field_height_mobile
     - field.field.paragraph.data_visualization_embed.field_link
+    - field.field.paragraph.data_visualization_embed.field_mobile_data_image
     - field.field.paragraph.data_visualization_embed.field_mobile_link
     - field.field.paragraph.data_visualization_embed.field_width
     - field.field.paragraph.data_visualization_embed.field_width_mobile
@@ -12,17 +14,49 @@ dependencies:
   module:
     - field_group
     - link
+    - media_library
 third_party_settings:
   field_group:
     group_mobile_version:
       children:
-        - field_mobile_link
-        - field_width_mobile
-        - field_height_mobile
+        - field_mobile_data_image
+        - group_mobile_iframe
       label: 'Mobile version'
       region: content
       parent_name: ''
-      weight: 4
+      weight: 5
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        description: ''
+        required_fields: true
+    group_iframe:
+      children:
+        - field_link
+        - field_width
+        - field_height
+      label: Iframe
+      region: content
+      parent_name: ''
+      weight: 2
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        description: ''
+        required_fields: true
+    group_mobile_iframe:
+      children:
+        - field_mobile_link
+        - field_width_mobile
+        - field_height_mobile
+      label: 'Mobile Iframe'
+      region: content
+      parent_name: group_mobile_version
+      weight: 23
       format_type: fieldset
       format_settings:
         classes: ''
@@ -35,6 +69,13 @@ targetEntityType: paragraph
 bundle: data_visualization_embed
 mode: default
 content:
+  field_data_image:
+    type: media_library_widget
+    weight: 1
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
   field_height:
     type: string_textfield
     weight: 2
@@ -45,7 +86,7 @@ content:
     third_party_settings: {  }
   field_height_mobile:
     type: string_textfield
-    weight: 5
+    weight: 23
     region: content
     settings:
       size: 60
@@ -59,9 +100,16 @@ content:
       placeholder_url: ''
       placeholder_title: ''
     third_party_settings: {  }
+  field_mobile_data_image:
+    type: media_library_widget
+    weight: 22
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
   field_mobile_link:
     type: link_default
-    weight: 3
+    weight: 21
     region: content
     settings:
       placeholder_url: ''
@@ -77,7 +125,7 @@ content:
     third_party_settings: {  }
   field_width_mobile:
     type: string_textfield
-    weight: 4
+    weight: 22
     region: content
     settings:
       size: 60

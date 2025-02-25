@@ -9,7 +9,7 @@
     - The Convention I've used is "Judicial Council | [site]" But capitalize the site.
   - **make sure [site] will pattern match to the identifying portion of the live url.**
     - i.e. www.kings.courts.ca.gov => `kings`
-    - If the site name ends up different from the subdomain, add a mapping later to /web/sites/sites.php
+    - If the site name ends up different from the subdomain or has alternate/multiple subdomains, add a mapping to /web/sites/sites.php. Without the mapping, the site will not load 100% correctly due mainly to incorrect paths missing the site name.
       - $sites['www.diffname.courts.ca.gov'] = 'site';
       - $sites['diffname.courts.ca.gov'] = 'site';
 
