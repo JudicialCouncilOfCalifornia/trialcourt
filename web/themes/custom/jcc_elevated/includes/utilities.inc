@@ -7,6 +7,8 @@
 
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Render\Markup;
+use Drupal\linkit\SubstitutionManagerInterface;
+use Drupal\linkit\Utility\LinkitHelper;
 use Drupal\taxonomy\Entity\Term;
 use GuzzleHttp\Exception\RequestException;
 
@@ -308,4 +310,33 @@ function __jcc_opinion_file_links_builder($type, $review_granted, $file_type, $c
   }
 
   return $link;
+}
+
+/**
+ * Helper function for Linkit formatting of media URL.
+ *
+ * @param string $uri
+ *   The Drupal media entity URI. Also supports URL.
+ *
+ * @return string
+ *   Substitute path if provided.
+ */
+function _jcc_elevated_media_substitute_url($uri) {
+  $path = $uri;
+  if (\Drupal::service('module_handler')->moduleExists('linkit')) {
+    $entity = LinkitHelper::getEntityFromUri($uri);
+    if ($entity && $entity->getEntityTypeId() == 'media') {
+      $linkit_profile_storage = \Drupal::service('entity_type.manager')->getStorage('linkit_profile');
+      $linkit_profile = $linkit_profile_storage->load('default');
+      $matcher = $linkit_profile->getMatcherByEntityType('media');
+      if ($matcher) {
+        $substitution_type = $matcher ? $matcher->getConfiguration()['settings']['substitution_type'] : SubstitutionManagerInterface::DEFAULT_SUBSTITUTION;
+        $substitution = \Drupal::service('plugin.manager.linkit.substitution')->createInstance($substitution_type)->getUrl($entity);
+        if ($substitution->getOptions()['path']) {
+          $path = $substitution->getOptions()['path'];
+        }
+      }
+    }
+  }
+  return $path;
 }
