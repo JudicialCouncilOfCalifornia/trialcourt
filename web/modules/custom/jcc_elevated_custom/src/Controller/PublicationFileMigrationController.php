@@ -95,7 +95,7 @@ class PublicationFileMigrationController extends ControllerBase {
     ];
 
     $mids = \Drupal::entityQuery('media')->condition('bundle', 'publication')->accessCheck(FALSE)->execute();
-    $batch_size = 200;
+    $batch_size = 10;
     $batches = array_chunk($mids, $batch_size);
 
     foreach ($batches as $key => $batch) {
