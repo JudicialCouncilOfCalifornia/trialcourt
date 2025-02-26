@@ -41,38 +41,40 @@ class PublicationFileMigrationController extends ControllerBase {
 
     $publications = \Drupal::entityTypeManager()->getStorage('media')->loadMultiple($batch);
     foreach ($publications as $publication) {
-      $current_values = $publication->get('field_media_file_multiple')->getValue();
-      if (!empty($current_values)) {
-        // Storing the current path.
-        $old_file_url = '';
-        $old_file = $publication->get('field_media_file_multiple')->entity;
-        if ($old_file->getEntityTypeId() === 'file') {
-          $old_file_url = file_url_transform_relative(file_create_url($old_file->getFileUri()));
-        }
-
-        // Move first file to diff field.
-        $publication->set('field_media_file', $current_values[0]);
-        // Remove first file from previous.
-        array_shift($current_values);
-        $publication->set('field_media_file_multiple', $current_values);
-        try {
-          $publication->save();
-          // Need to reload the publication to get the new file path.
-          $reloaded_publication = \Drupal::entityTypeManager()->getStorage('media')->load($publication->id());
-          $new_file = $reloaded_publication->get('field_media_file')->entity;
-          if ($new_file->getEntityTypeId() === 'file') {
-            $new_file_url = file_create_url($new_file->getFileUri());
-
-            $redirect = Redirect::create([
-              'redirect_source' => $old_file_url,
-              'redirect_redirect' => $new_file_url,
-              'status_code' => 301,
-            ]);
-            $redirect->save();
+      if (!($publication->get('field_media_file')->getValue())) {
+        $current_values = $publication->get('field_media_file_multiple')->getValue();
+        if (!empty($current_values)) {
+          // Storing the current path.
+          $old_file_url = '';
+          $old_file = $publication->get('field_media_file_multiple')->entity;
+          if ($old_file->getEntityTypeId() === 'file') {
+            $old_file_url = file_url_transform_relative(file_create_url($old_file->getFileUri()));
           }
-        }
-        catch (EntityStorageException $exception) {
-          \Drupal::logger('jcc_elevated_custom')->error('jcc_elevated_update_9001: ' . $exception->getMessage());
+
+          // Move first file to diff field.
+          $publication->set('field_media_file', $current_values[0]);
+          // Remove first file from previous.
+          array_shift($current_values);
+          $publication->set('field_media_file_multiple', $current_values);
+          try {
+            $publication->save();
+            // Need to reload the publication to get the new file path.
+            $reloaded_publication = \Drupal::entityTypeManager()->getStorage('media')->load($publication->id());
+            $new_file = $reloaded_publication->get('field_media_file')->entity;
+            if ($new_file->getEntityTypeId() === 'file') {
+              $new_file_url = file_create_url($new_file->getFileUri());
+
+              $redirect = Redirect::create([
+                'redirect_source' => $old_file_url,
+                'redirect_redirect' => $new_file_url,
+                'status_code' => 301,
+              ]);
+              $redirect->save();
+            }
+          }
+          catch (EntityStorageException $exception) {
+            \Drupal::logger('jcc_elevated_custom')->error('File migration update error: ' . $exception->getMessage());
+          }
         }
       }
     }
