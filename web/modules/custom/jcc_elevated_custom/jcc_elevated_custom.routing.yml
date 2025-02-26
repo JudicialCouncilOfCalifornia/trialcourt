@@ -29,3 +29,19 @@ jcc_elevated_custom.footer_settings:
     _title: "JCC Elevated: Footer Customizations"
   requirements:
     _permission: "administer site configuration"
+
+jcc_elevated_custom.publication_file_migration:
+  path: '/publication_file_migration'
+  defaults:
+    _controller: '\Drupal\jcc_elevated_custom\Controller\PublicationFileMigrationController::migrate'
+    _title: 'Publication file Migration'
+  requirements:
+    _permission: 'access content'
+
+jcc_elevated_custom.publication_file_migration_success:
+  path: '/publication-file-migration-complete'
+  defaults:
+    _controller: '\Drupal\jcc_elevated_custom\Controller\PublicationFileMigrationSuccessController::message'
+    _title: 'Publication file Migration Success'
+  requirements:
+    _permission: 'access content'
