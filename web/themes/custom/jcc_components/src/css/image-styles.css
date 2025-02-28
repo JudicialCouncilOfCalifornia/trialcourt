@@ -1,9 +1,9 @@
 /* Image Styles */
 
-.image__container-25-percent {
-  max-width: 25%;
-  height: auto;
-}
+/*.image__container-25-percent {*/
+/*  max-width: 25%;*/
+/*  height: auto;*/
+/*}*/
 
 .image__container-50-percent {
   max-width: 50%;
@@ -36,3 +36,37 @@
   max-width: 100%;
 }
 
+.media-content {
+  position: relative; /* Needed to anchor absolute positioning */
+  display: inline-block; /* Keeps the image and caption inline */
+}
+
+.image__container-25-percent {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.overlay-caption-customized {
+  position: absolute;
+  bottom: 0; /* Move caption closer to the bottom */
+  margin-bottom: 0; /* efforts for removing any extra spacing between banner and bottom */
+  left: 0; /* Align caption to start from the left edge */
+  width: 100%; /* Make caption full width of the image */
+  background-color: rgba(45, 45, 45, .7); /* in line with partner's site */
+  color: white;
+  text-align: left;
+  text-wrap: auto;
+  padding: 8px 10px;
+  font-size: 0.9em; /*  per Jenny's comment, set it to this value, equal to 14px */
+  z-index: 10;
+
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .overlay-caption-customized {
+    font-size: 1em; /* Make text larger for small screens */
+    padding: 10px; /* Ensure good spacing */
+  }
+}
