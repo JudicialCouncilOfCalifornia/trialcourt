@@ -24,3 +24,9 @@ if (!empty($current_params)) {
     }
   }
 }
+
+
+// fix for tci-1280
+if (!empty($variables['element']['#caption'])) {
+   $variables['content']['#caption'] = $variables['element']['#caption'];
+ }
