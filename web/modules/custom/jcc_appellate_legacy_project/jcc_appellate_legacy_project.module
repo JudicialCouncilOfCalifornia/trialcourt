@@ -25,7 +25,8 @@ function jcc_appellate_legacy_project_preprocess_views_view__justices_appellate_
     $lastname_exp = '/[A-zÀ-ú]+(?=,|$)/';
     preg_match($lastname_exp, $name, $lastname);
     $district = $media->get('jcc_section')->target_id ? Term::load($media->get('jcc_section')->target_id)->get('name')->value : '';
-    $profile = \Drupal::service('path_alias.manager')->getAliasByPath($media->get('field_media_caption')->value);
+    $path = strip_tags($media->get('field_media_caption')->value);
+    $profile = \Drupal::service('path_alias.manager')->getAliasByPath($path);
     if ($profile) {
       $profile = $base_url . $profile;
     }
