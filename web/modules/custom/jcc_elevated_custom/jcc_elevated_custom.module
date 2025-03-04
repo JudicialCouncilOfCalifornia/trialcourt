@@ -10,6 +10,7 @@ use Drupal\Core\Site\Settings;
 use Drupal\editor\Entity\Editor;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Drupal\views\ViewExecutable;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 // @codingStandardsIgnoreStart
@@ -406,20 +407,25 @@ function jcc_elevated_custom_file_download($uri): array {
         // Deny access if referenced anywhere restricted.
         $node_usage = \Drupal::service('entity_usage.usage')->listSources($media);
         if ($node_usage) {
-          // Check node access using latest revision.
-          foreach (reset($node_usage) as $key=>$revisions) {
-            $node_id = $key;
+          // Check node access using the latest revision.
+          $granted = FALSE;
+
+          foreach (reset($node_usage) as $node_id => $revisions) {
             $node = \Drupal::entityTypeManager()->getStorage('node')->load($node_id);
 
             foreach ($revisions as $revision) {
               if ($revision['source_vid'] == $node->getRevisionId()) {
-                $has_access = $node->access('view', $current_user);
-
-                if (!$has_access) {
-                  throw new AccessDeniedHttpException();
+                if ($node->access('view', $current_user)) {
+                  // Stop checking when access is true.
+                  $granted = TRUE;
+                  continue 2;
                 }
               }
             }
+          }
+
+          if (!$granted) {
+            throw new AccessDeniedHttpException();
           }
         }
       }
@@ -442,4 +448,31 @@ function jcc_elevated_custom_file_download($uri): array {
   return [
     'Content-disposition' => $disposition,
   ];
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function jcc_elevated_custom_views_pre_view(ViewExecutable $view) {
+  // Site machine name from config directory
+  $config_dir = Settings::get('config_sync_directory');
+  $pattern = '/(?<=config-)(?s)(.*$)/';
+  preg_match($pattern, $config_dir, $site);
+
+  switch ($site[0]) {
+    case 'cjer':
+      switch ($view->id()) {
+        // Audience based content listing.
+        // By role assignment and metadata.
+        case'restricted_content':
+          if (!$view->args) {
+            // Display tagged content when principal.
+            $current_user = \Drupal::currentUser();
+            if (in_array('principal', $current_user->getRoles())) {
+              $view->setArguments(['principal+everyone']);
+            }
+          }
+          break;
+      }
+  }
 }
