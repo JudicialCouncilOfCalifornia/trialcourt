@@ -1159,7 +1159,15 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   $variables['opinion'] = $opinion;
 }
 
-function jcc_elevated_node_restricted_content(array &$variables, NodeInterface $node): void {
+/**
+ * Node: Course preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_course(array &$variables, NodeInterface $node): void {
   $link = [];
   foreach ($node->get('field_media')->getValue() as $media) {
     $url = _jcc_elevated_media_substitute_url('/media/' . $media['target_id']);
