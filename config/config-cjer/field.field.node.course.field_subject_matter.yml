@@ -1,21 +1,21 @@
-uuid: 03029022-536c-4987-babb-860788d9ed0b
+uuid: 18bcc273-703f-4b0b-964e-935045c1facc
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_category
-    - node.type.restricted_content
-    - taxonomy.vocabulary.topics
+    - field.storage.node.field_subject_matter
+    - node.type.course
+    - taxonomy.vocabulary.subject_matter
   module:
     - tmgmt_content
 third_party_settings:
   tmgmt_content:
     excluded: false
-id: node.restricted_content.field_category
-field_name: field_category
+id: node.course.field_subject_matter
+field_name: field_subject_matter
 entity_type: node
-bundle: restricted_content
-label: Category
+bundle: course
+label: 'Subject Matter'
 description: ''
 required: false
 translatable: true
@@ -25,7 +25,7 @@ settings:
   handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      topics: topics
+      subject_matter: subject_matter
     sort:
       field: name
       direction: asc
