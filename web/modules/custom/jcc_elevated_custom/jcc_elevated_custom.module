@@ -472,7 +472,19 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view) {
               $view->setArguments(['principal+everyone']);
             }
           }
-          break;
+          $display = $view->current_display;
+
+          switch ($display) {
+            case 'block_2':
+              $media = \Drupal::entityTypeManager()->getStorage('view')->load('courses_media')->getExecutable();
+              if ($media) {
+                $media->initDisplay();
+                $media->setDisplay('block_1');
+                $media->execute();
+                $view->result = array_merge($view->result, $media->result);
+              }
+              break;
+          }
       }
   }
 }
