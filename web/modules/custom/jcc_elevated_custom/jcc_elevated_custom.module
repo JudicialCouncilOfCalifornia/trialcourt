@@ -469,7 +469,7 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view) {
             // Display tagged content when principal.
             $current_user = \Drupal::currentUser();
             if (in_array('principal', $current_user->getRoles())) {
-              $view->setArguments(['principal+everyone']);
+              $view->setArguments(['judicial+everyone']);
             }
           }
           $display = $view->current_display;

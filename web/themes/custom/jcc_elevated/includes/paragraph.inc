@@ -62,15 +62,17 @@ function jcc_elevated_paragraph_views_reference(array &$variables, ParagraphInte
   $ref_override = [];
 
   if (!empty($paragraph->field_views_reference)) {
-    $view = $paragraph->field_views_reference->referencedEntities()[0];
-    $reference = $paragraph->field_views_reference->first();
+    if ($paragraph->field_views_reference->referencedEntities()) {
+      $view = $paragraph->field_views_reference->referencedEntities()[0];
+      $reference = $paragraph->field_views_reference->first();
 
-    $value = $reference->getValue();
-    $ref_override = $value['data'] ? unserialize($value['data']) : []; // phpcs:ignore
+      $value = $reference->getValue();
+      $ref_override = $value['data'] ? unserialize($value['data']) : []; // phpcs:ignore
 
-    $target_id = $reference->target_id;
-    $display_id = $reference->display_id;
-    $function = "jcc_elevated_paragraph_views_reference_{$target_id}_{$display_id}";
+      $target_id = $reference->target_id;
+      $display_id = $reference->display_id;
+      $function = "jcc_elevated_paragraph_views_reference_{$target_id}_{$display_id}";
+    }
   }
 
   $variables['more']['use_more_text'] = !empty($ref_override['use_more_text']) ? $ref_override['use_more_text'] : FALSE;
