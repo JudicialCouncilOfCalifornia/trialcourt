@@ -4,15 +4,15 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_category
-    - node.type.restricted_content
+    - node.type.course
     - taxonomy.vocabulary.subject_matter
     - taxonomy.vocabulary.topics
   module:
     - node
     - taxonomy
     - user
-id: restricted_content
-label: Courses
+id: course
+label: course
 module: views
 description: ''
 tag: ''
@@ -25,7 +25,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: Courses
+      title: course
       fields:
         title:
           id: title
@@ -199,7 +199,7 @@ display:
           plugin_id: bundle
           operator: in
           value:
-            restricted_content: restricted_content
+            course: course
           group: 1
           exposed: false
           expose:

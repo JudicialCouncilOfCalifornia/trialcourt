@@ -1421,7 +1421,7 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
 /**
  * Implements hook_preprocess_views_view().
  */
-function jcc_elevated_preprocess_views_view__restricted_content__block_2(&$variables): void {
+function jcc_elevated_preprocess_views_view__course__block_2(&$variables): void {
   if (empty($variables['rows'][0]['#rows'])) {
     return;
   }
@@ -1510,7 +1510,7 @@ function jcc_elevated_preprocess_views_view__restricted_content__block_2(&$varia
 /**
  * Implements hook_preprocess_views_view().
  */
-function jcc_elevated_preprocess_views_view__restricted_content__block_3(&$variables): void {
+function jcc_elevated_preprocess_views_view__course__block_3(&$variables): void {
   if (empty($variables['rows'][0]['#rows'])) {
     return;
   }
