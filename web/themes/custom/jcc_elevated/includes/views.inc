@@ -1419,6 +1419,43 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
 }
 
 /**
+ * Implements hook_preprocess_views_view().
+ */
+function jcc_elevated_preprocess_views_view__restricted_content__block_2(&$variables): void {
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $results = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $entity_result = $row['#row'];
+    $entity_type = $entity_result->_entity->getEntityTypeId();
+    $entity_type_manager = \Drupal::service('entity_type.manager');
+    $taxonomy_type_manager = $entity_type_manager->getStorage('taxonomy_term');
+
+    if ($entity_type == 'node') {
+      $entity = $entity_type_manager->getStorage($entity_type)->load($entity_result->nid);
+      $topic = $taxonomy_type_manager->load($entity->get('field_category')->target_id);
+
+      $results[] = [
+        'title' => $entity->getTItle(),
+        'topic' => $topic ? $topic->get('name')->value : '',
+      ];
+    }
+    elseif ($entity_type == 'media') {
+      $entity = $entity_type_manager->getStorage($entity_type)->load($entity_result->mid);
+      $topic = $taxonomy_type_manager->load($entity->get('field_topic')->target_id);
+      $results[] = [
+        'title' => $entity->getName(),
+        'topic' => $topic ? $topic->get('name')->value : '',
+      ];
+    }
+  }
+
+  $variables['results'] = $results;
+}
+
+/**
  * Implements hook_preprocess_HOOK() for Requests(RPF) archived items listing.
  */
 function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived(&$variables): void {
