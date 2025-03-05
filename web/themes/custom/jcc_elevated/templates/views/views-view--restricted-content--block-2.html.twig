@@ -1,6 +1,11 @@
-<h2>{{ results.0.topic }}</h2>
-<ul>
-  {% for result in results %}
-    <li>{{ result.title }}</li>
+{% for key, subjects in results %}
+  <h2>{{ key }}</h2>
+  {% for key, topics in subjects %}
+    <h3>{{ key }}</h3>
+    <ul>
+      {% for topic in topics %}
+        <li>{{ topic.title }}</li>
+      {% endfor %}
+    </ul>
   {% endfor %}
-</ul>
+{% endfor %}
