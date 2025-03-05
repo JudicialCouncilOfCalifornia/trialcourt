@@ -1447,7 +1447,6 @@ function jcc_elevated_preprocess_views_view__restricted_content__block_2(&$varia
     }
     elseif ($entity_type == 'media') {
       $media = $entity_type_manager->getStorage('media')->load($entity_result->mid);
-      $media_type = $media->bundle();
 
       // Check media access permissions.
       $granted = FALSE;
@@ -1537,7 +1536,6 @@ function jcc_elevated_preprocess_views_view__restricted_content__block_3(&$varia
     }
     elseif ($entity_type == 'media') {
       $media = $entity_type_manager->getStorage('media')->load($entity_result->mid);
-      $media_type = $media->bundle();
 
       // Check media access permissions.
       $granted = FALSE;
