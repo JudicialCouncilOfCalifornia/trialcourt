@@ -477,7 +477,7 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view) {
           switch ($display) {
             case 'block_2':
             case 'block_3':
-              $media = \Drupal::entityTypeManager()->getStorage('view')->load('course_media')->getExecutable();
+              $media = \Drupal::entityTypeManager()->getStorage('view')->load('courses_media')->getExecutable();
               if ($media) {
                 $media->initDisplay();
                 $media->setDisplay('block_1');
