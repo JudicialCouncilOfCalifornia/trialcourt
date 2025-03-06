@@ -10,10 +10,12 @@
     {% set cards = [] %}
     {% set cards %}
       {% for interview in value %}
-        {% if interview.transcript %}
+        {% if interview.transcript is not empty %}
           {% set transcript %}
             {{ link('View Transcript', interview.transcript, { 'aria_label': 'View interview transcript for ' ~ interview.name }) }}
           {% endset %}
+        {% else %}
+          {% set transcript = '' %}
         {% endif %}
 
         {% include "@molecules/Card/Card.twig" with {

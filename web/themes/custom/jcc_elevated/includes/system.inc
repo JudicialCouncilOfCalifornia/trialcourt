@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -139,7 +140,12 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
           }
           else {
             $referrer_entity = \Drupal::entityTypeManager()->getStorage(key($referrer_params))->load($referrer_params[key($referrer_params)]);
-            $referrer_title = $back_label . ' ' . $referrer_entity->get('title')->value;
+            if ($referrer_entity instanceof Term) {
+              $referrer_title = $back_label . ' ' . $referrer_entity->getName();
+            }
+            else {
+              $referrer_title = $back_label . ' ' . $referrer_entity->get('title')->value;
+            }
           }
         }
       }
