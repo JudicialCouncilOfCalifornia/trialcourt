@@ -464,7 +464,7 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view) {
       switch ($view->id()) {
         // Audience based content listing.
         // By role assignment and metadata.
-        case'course':
+        case 'courses':
           if (!$view->args) {
             // Display tagged content when principal.
             $current_user = \Drupal::currentUser();
@@ -477,6 +477,7 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view) {
           switch ($display) {
             case 'block_2':
             case 'block_3':
+              // Merge media results with content.
               $media = \Drupal::entityTypeManager()->getStorage('view')->load('courses_media')->getExecutable();
               if ($media) {
                 $media->initDisplay();
