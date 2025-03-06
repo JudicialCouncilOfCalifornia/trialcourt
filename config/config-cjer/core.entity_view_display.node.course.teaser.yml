@@ -1,0 +1,43 @@
+uuid: 29fb7679-65a8-431b-98df-22218a0c776d
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.course.body
+    - field.field.node.course.field_audience
+    - field.field.node.course.field_category
+    - field.field.node.course.field_media
+    - field.field.node.course.field_subject_matter
+    - node.type.course
+  module:
+    - text
+    - user
+id: node.course.teaser
+targetEntityType: node
+bundle: course
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_audience: true
+  field_category: true
+  field_media: true
+  field_subject_matter: true
+  langcode: true
+  search_api_excerpt: true

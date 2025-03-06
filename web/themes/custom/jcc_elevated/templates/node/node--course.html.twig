@@ -71,72 +71,9 @@
  */
 #}
 
-{{ attach_library("jcc_storybook/HeroHangover") }}
-{{ attach_library("jcc_storybook/Section") }}
-{{ attach_library("jcc_storybook/List") }}
-{{ attach_library("jcc_storybook/Button") }}
+<h1>{{ label }}</h1>
 
-{% set button %}
-  {% if job.details.job_id.value or job.custom_apply.url %}
-    {# Link to HREMs using job ID unless custom. #}
-    {% set apply = 'https://careers.jud.ca.gov/psc/HRPRDCG/EMPLOYEE/HRMS/c/HRS_HRAM_FL.HRS_CG_SEARCH_FL.GBL?Page=HRS_APP_JBPST_FL&Action=U&FOCUS=Applicant&SiteId=1&JobOpeningId=' ~ job.details.job_id.value ~ '&PostingSeq=2' %}
-    {% include "@atoms/Button/Button.twig" with {
-      variant: 'secondary',
-      size: 'normal',
-      label: job.custom_apply.label ? job.custom_apply.label : 'Apply to Job',
-      href: job.custom_apply.url ? job.custom_apply.url : apply,
-    } %}
-  {% endif %}
-{% endset %}
+{{ content.body.0|render }}
 
-{% set details %}
-  <div>
-    {% set items = [] %}
-    {% for key, value in job.details %}
-      {% if value.value is not empty %}
-        {% set item = {
-          label: value.label|raw,
-          text: value.value,
-        } %}
-        {% set items = items|merge([item]) %}
-      {% endif %}
-    {% endfor %}
-    {% include "@molecules/List/List.twig" with {
-      variant: 'none',
-      wider_span: 'true',
-      items: items,
-    } %}
+<p>{{ media_link }}</p>
 
-    {{ button }}
-  </div>
-{% endset %}
-
-{% include "@molecules/HeroHangover/HeroHangover.twig" with {
-  background: 'striped-base-light-xx',
-  heading: node.title.value,
-  media: false,
-  attributes: create_attribute()
-} %}
-
-{% set description %}
-  {% set no_description %}
-    <p>{{ 'Job description to come.'|t }}</p>
-  {% endset %}
-  <div class="job-description">
-    {{ content.body ? content.body : no_description }}
-    {{ button }}
-  </div>
-{% endset %}
-
-{% include "@organisms/Section/Section.twig" with {
-  variant: 'default',
-  sub_component_layout: 'with-sidebar grid',
-  sidebar_direction: 'row',
-  sidebar_width: 39,
-  gap: 's4',
-  sub_component_data: {
-    details,
-    description,
-  },
-  attributes: create_attribute()
-} %}
