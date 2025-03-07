@@ -1,0 +1,14 @@
+<table style="width:100%; margin-block-end:1.5rem;">
+  <tr>
+    <th>SUBJECT</th>
+    <th>TITLE</th>
+    <th>AUDIENCE</th>
+  </tr>
+  {% for course in courses %}
+    <tr>
+      <td>{{ course.subject }}</td>
+      <td>{{ course.title }}</td>
+      <td>{% if course.audience %}{{ course.audience }}{% endif %}</td>
+    </tr>
+  {% endfor %}
+</table>
