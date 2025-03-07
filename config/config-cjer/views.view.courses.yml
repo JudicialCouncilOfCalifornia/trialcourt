@@ -91,10 +91,9 @@ display:
           separator: ', '
           field_api_classes: false
       pager:
-        type: some
+        type: none
         options:
           offset: 0
-          items_per_page: 5
       exposed_form:
         type: basic
         options:
@@ -267,25 +266,9 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-  block_1:
-    id: block_1
-    display_title: Block
-    display_plugin: block
-    position: 1
-    display_options:
-      display_extenders: {  }
-    cache_metadata:
-      max-age: -1
-      contexts:
-        - 'languages:language_content'
-        - 'languages:language_interface'
-        - url
-        - 'user.node_grants:view'
-        - user.permissions
-      tags: {  }
-  block_2:
-    id: block_2
-    display_title: 'Block 2'
+  all_toolkits:
+    id: all_toolkits
+    display_title: 'All Toolkits'
     display_plugin: block
     position: 2
     display_options:
@@ -420,6 +403,7 @@ display:
         fields: false
         filters: false
         filter_groups: false
+      display_description: ''
       display_extenders: {  }
     cache_metadata:
       max-age: -1
@@ -432,9 +416,57 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.field_category'
-  block_3:
-    id: block_3
-    display_title: 'Block 3'
+  courses:
+    id: courses
+    display_title: Courses
+    display_plugin: block
+    position: 1
+    display_options:
+      sorts:
+        field_subject_matter_target_id:
+          id: field_subject_matter_target_id
+          table: node__field_subject_matter
+          field: field_subject_matter_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+      defaults:
+        sorts: false
+      display_description: ''
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  toolkit_by_subject:
+    id: toolkit_by_subject
+    display_title: 'Toolkit by Subject'
     display_plugin: block
     position: 2
     display_options:

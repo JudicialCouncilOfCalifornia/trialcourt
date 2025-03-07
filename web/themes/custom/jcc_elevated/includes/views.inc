@@ -1421,26 +1421,61 @@ function jcc_elevated_preprocess_views_view__requests__requests_listing_archived
 /**
  * Implements hook_preprocess_views_view().
  */
-function jcc_elevated_preprocess_views_view__courses__block_2(&$variables): void {
+function jcc_elevated_preprocess_views_view__courses__courses(&$variables): void {
   if (empty($variables['rows'][0]['#rows'])) {
     return;
   }
+
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_type_manager = $entity_type_manager->getStorage('taxonomy_term');
+
+  $results = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    $entity_result = $row['#row'];
+    $node = $entity_type_manager->getStorage('node')->load($entity_result->nid);
+    $audience = $taxonomy_type_manager->load($node->get('field_audience')->target_id);
+    $subject = $taxonomy_type_manager->load($node->get('field_subject_matter')->target_id);
+    $topic = $taxonomy_type_manager->load($node->get('field_category')->target_id);
+
+    $results[] = [
+      'title' => $node->getTItle(),
+      'material' => $node->getType(),
+      'audience' => $audience ? $audience->get('name')->value : 'Staff',
+      'subject' => $subject ? $subject->get('name')->value : '',
+      'topic' => $topic ? $topic->get('name')->value : '',
+    ];
+  }
+
+  $variables['courses'] = $results;
+}
+
+/**
+ * Implements hook_preprocess_views_view().
+ */
+function jcc_elevated_preprocess_views_view__courses__all_toolkits(&$variables): void {
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_type_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $file_manager = $entity_type_manager->getStorage('file');
 
   $results = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $entity_result = $row['#row'];
     $entity_type = $entity_result->_entity->getEntityTypeId();
-    $entity_type_manager = \Drupal::service('entity_type.manager');
-    $taxonomy_type_manager = $entity_type_manager->getStorage('taxonomy_term');
-    $file_manager = $entity_type_manager->getStorage('file');
 
     if ($entity_type == 'node') {
       $node = $entity_type_manager->getStorage('node')->load($entity_result->nid);
+      $audience = $taxonomy_type_manager->load($node->get('field_audience')->target_id);
       $subject = $taxonomy_type_manager->load($node->get('field_subject_matter')->target_id);
       $topic = $taxonomy_type_manager->load($node->get('field_category')->target_id);
 
       $results[] = [
         'title' => $node->getTItle(),
+        'material' => $node->getType(),
+        'audience' => $audience ? $audience->get('name')->value : 'Staff',
         'subject' => $subject ? $subject->get('name')->value : '',
         'topic' => $topic ? $topic->get('name')->value : '',
       ];
@@ -1483,10 +1518,12 @@ function jcc_elevated_preprocess_views_view__courses__block_2(&$variables): void
       }
 
       if ($granted) {
+        $audience = $taxonomy_type_manager->load($node->get('field_audience')->target_id);
         $subject = $taxonomy_type_manager->load($media->get('field_subject_matter')->target_id);
         $topic = $taxonomy_type_manager->load($media->get('field_topic')->target_id);
         $results[] = [
           'title' => $media->getName(),
+          'audience' => $audience ? $audience->get('name')->value : 'Staff',
           'subject' => $subject ? $subject->get('name')->value : '',
           'topic' => $topic ? $topic->get('name')->value : '',
         ];
@@ -1504,88 +1541,20 @@ function jcc_elevated_preprocess_views_view__courses__block_2(&$variables): void
     }
   }
 
+  $variables['results_unsorted'] = $results;
   $variables['results'] = $results_sorted;
 }
 
 /**
  * Implements hook_preprocess_views_view().
  */
-function jcc_elevated_preprocess_views_view__courses__block_3(&$variables): void {
-  if (empty($variables['rows'][0]['#rows'])) {
-    return;
-  }
-
-  $results = [];
-  foreach ($variables['rows'][0]['#rows'] as $row) {
-    $entity_result = $row['#row'];
-    $entity_type = $entity_result->_entity->getEntityTypeId();
-    $entity_type_manager = \Drupal::service('entity_type.manager');
-    $taxonomy_type_manager = $entity_type_manager->getStorage('taxonomy_term');
-    $file_manager = $entity_type_manager->getStorage('file');
-
-    if ($entity_type == 'node') {
-      $node = $entity_type_manager->getStorage('node')->load($entity_result->nid);
-      $subject = $taxonomy_type_manager->load($node->get('field_subject_matter')->target_id);
-      $topic = $taxonomy_type_manager->load($node->get('field_category')->target_id);
-
-      $results[] = [
-        'title' => $node->getTItle(),
-        'subject' => $subject ? $subject->get('name')->value : '',
-        'topic' => $topic ? $topic->get('name')->value : '',
-      ];
-    }
-    elseif ($entity_type == 'media') {
-      $media = $entity_type_manager->getStorage('media')->load($entity_result->mid);
-
-      // Check media access permissions.
-      $granted = FALSE;
-      $current_user = \Drupal::currentUser();
-      $file = $file_manager->load($media->get('field_media_file_multiple')[0]->target_id);
-      $media_usage = \Drupal::service('file.usage')->listUsage($file);
-      if ($media_usage) {
-        $media_id = ($media_usage['file']['media']);
-        $media_id = key($media_id);
-        $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
-        if ($media) {
-          // Determine where the media is being referenced.
-          // Deny access if referenced anywhere restricted.
-          $node_usage = \Drupal::service('entity_usage.usage')->listSources($media);
-          if ($node_usage) {
-            // Check node access using the latest revision.
-            $granted = FALSE;
-
-            foreach (reset($node_usage) as $node_id => $revisions) {
-              $node = \Drupal::entityTypeManager()->getStorage('node')->load($node_id);
-
-              foreach ($revisions as $revision) {
-                if ($revision['source_vid'] == $node->getRevisionId()) {
-                  if ($node->access('view', $current_user)) {
-                    // Stop checking when access is true.
-                    $granted = TRUE;
-                    continue 2;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      if ($granted) {
-        $subject = $taxonomy_type_manager->load($media->get('field_subject_matter')->target_id);
-        $topic = $taxonomy_type_manager->load($media->get('field_topic')->target_id);
-        $results[] = [
-          'title' => $media->getName(),
-          'subject' => $subject ? $subject->get('name')->value : '',
-          'topic' => $topic ? $topic->get('name')->value : '',
-        ];
-      }
-    }
-  }
+function jcc_elevated_preprocess_views_view__courses__toolkit_by_subject(&$variables): void {
+  // Reuse.
+  jcc_elevated_preprocess_views_view__courses__all_toolkits($variables);
 
   // Results sorted by subject and by topic.
   $results_sorted = [];
-  foreach ($results as $result) {
+  foreach ($variables['results_unsorted'] as $result) {
     if ($result['topic']) {
       $result_topic = $result['topic'];
       $results_sorted[$result_topic][] = $result;
