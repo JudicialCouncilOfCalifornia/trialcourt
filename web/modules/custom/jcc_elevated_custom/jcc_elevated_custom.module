@@ -475,8 +475,8 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view) {
           $display = $view->current_display;
 
           switch ($display) {
-            case 'block_2':
-            case 'block_3':
+            case 'all_toolkits':
+            case 'toolkit_by_subject':
               // Merge media results with content.
               $media = \Drupal::entityTypeManager()->getStorage('view')->load('courses_media')->getExecutable();
               if ($media) {
