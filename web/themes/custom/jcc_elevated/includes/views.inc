@@ -1460,6 +1460,9 @@ function jcc_elevated_preprocess_views_view__courses__all_toolkits(&$variables):
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_type_manager = $entity_type_manager->getStorage('taxonomy_term');
   $file_manager = $entity_type_manager->getStorage('file');
+  $current_user = \Drupal::currentUser();
+  $principal_role = 'principal';
+  $principal_content = ['Judicial', 'Everyone'];
 
   $results = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
@@ -1467,18 +1470,30 @@ function jcc_elevated_preprocess_views_view__courses__all_toolkits(&$variables):
     $entity_type = $entity_result->_entity->getEntityTypeId();
 
     if ($entity_type == 'node') {
+      $display = FALSE;
       $node = $entity_type_manager->getStorage('node')->load($entity_result->nid);
       $audience = $taxonomy_type_manager->load($node->get('field_audience')->target_id);
-      $subject = $taxonomy_type_manager->load($node->get('field_subject_matter')->target_id);
-      $topic = $taxonomy_type_manager->load($node->get('field_category')->target_id);
 
-      $results[] = [
-        'title' => $node->getTItle(),
-        'material' => $node->getType(),
-        'audience' => $audience ? $audience->get('name')->value : 'Staff',
-        'subject' => $subject ? $subject->get('name')->value : '',
-        'topic' => $topic ? $topic->get('name')->value : '',
-      ];
+      if (in_array($principal_role, $current_user->getRoles())) {
+        if ($audience && in_array($audience->get('name')->value, $principal_content)) {
+          $display = TRUE;
+        }
+      }
+      else {
+        $display = TRUE;
+      }
+
+      if ($display) {
+        $subject = $taxonomy_type_manager->load($node->get('field_subject_matter')->target_id);
+        $topic = $taxonomy_type_manager->load($node->get('field_category')->target_id);
+        $results[] = [
+          'title' => $node->getTItle(),
+          'material' => $node->getType(),
+          'audience' => $audience ? $audience->get('name')->value : 'Staff',
+          'subject' => $subject ? $subject->get('name')->value : '',
+          'topic' => $topic ? $topic->get('name')->value : '',
+        ];
+      }
     }
     elseif ($entity_type == 'media') {
       $media = $entity_type_manager->getStorage('media')->load($entity_result->mid);
@@ -1552,12 +1567,14 @@ function jcc_elevated_preprocess_views_view__courses__toolkit_by_subject(&$varia
   // Reuse.
   jcc_elevated_preprocess_views_view__courses__all_toolkits($variables);
 
-  // Results sorted by subject and by topic.
+  // Results sorted by subject.
   $results_sorted = [];
-  foreach ($variables['results_unsorted'] as $result) {
-    if ($result['topic']) {
-      $result_topic = $result['topic'];
-      $results_sorted[$result_topic][] = $result;
+  if ($variables['results_unsorted']) {
+    foreach ($variables['results_unsorted'] as $result) {
+      if ($result['topic']) {
+        $result_topic = $result['topic'];
+        $results_sorted[$result_topic][] = $result;
+      }
     }
   }
 

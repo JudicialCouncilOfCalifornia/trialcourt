@@ -463,15 +463,8 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view) {
     case 'cjer':
       switch ($view->id()) {
         // Audience based content listing.
-        // By role assignment and metadata.
+        // By role assignment and/or metadata.
         case 'courses':
-          if (!$view->args) {
-            // Display tagged content when principal.
-            $current_user = \Drupal::currentUser();
-            if (in_array('principal', $current_user->getRoles())) {
-              $view->setArguments(['judicial+everyone']);
-            }
-          }
           $display = $view->current_display;
 
           switch ($display) {
@@ -485,7 +478,6 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view) {
                 $media->execute();
                 $view->result = array_merge($view->result, $media->result);
               }
-              break;
           }
       }
   }
