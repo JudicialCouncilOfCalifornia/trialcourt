@@ -454,24 +454,17 @@ function jcc_elevated_custom_file_download($uri): array {
  * Implements hook_views_query_alter().
  */
 function jcc_elevated_custom_views_pre_view(ViewExecutable $view) {
+  // Extend view query results as needed.
   // Site machine name from config directory
   $config_dir = Settings::get('config_sync_directory');
   $pattern = '/(?<=config-)(?s)(.*$)/';
   preg_match($pattern, $config_dir, $site);
 
   switch ($site[0]) {
+    // If CJER site.
     case 'cjer':
       switch ($view->id()) {
-        // Audience based content listing.
-        // By role assignment and metadata.
         case 'courses':
-          if (!$view->args) {
-            // Display tagged content when principal.
-            $current_user = \Drupal::currentUser();
-            if (in_array('principal', $current_user->getRoles())) {
-              $view->setArguments(['judicial+everyone']);
-            }
-          }
           $display = $view->current_display;
 
           switch ($display) {
@@ -481,11 +474,10 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view) {
               $media = \Drupal::entityTypeManager()->getStorage('view')->load('courses_media')->getExecutable();
               if ($media) {
                 $media->initDisplay();
-                $media->setDisplay('block_1');
+                $media->setDisplay('documents');
                 $media->execute();
                 $view->result = array_merge($view->result, $media->result);
               }
-              break;
           }
       }
   }
