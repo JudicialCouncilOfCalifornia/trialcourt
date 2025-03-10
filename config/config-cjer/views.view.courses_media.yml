@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.storage.media.field_topic
+    - media.type.file
     - media.type.publication
     - taxonomy.vocabulary.topics
   module:
@@ -140,6 +141,7 @@ display:
           plugin_id: bundle
           operator: in
           value:
+            file: file
             publication: publication
           group: 1
           exposed: false
@@ -244,12 +246,13 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.media.field_topic'
-  block_1:
-    id: block_1
-    display_title: Block
+  documents:
+    id: documents
+    display_title: Documents
     display_plugin: block
     position: 1
     display_options:
+      display_description: ''
       display_extenders: {  }
     cache_metadata:
       max-age: -1
