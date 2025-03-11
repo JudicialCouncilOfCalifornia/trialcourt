@@ -1440,7 +1440,6 @@ function jcc_elevated_preprocess_views_view__courses__courses(&$variables): void
     $audience = $taxonomy_type_manager->load($node->get('field_audience')->target_id);
     $subject = $taxonomy_type_manager->load($node->get('field_subject_matter')->target_id);
     $topic = $taxonomy_type_manager->load($node->get('field_category')->target_id);
-    $display = FALSE;
     if ($node->get('field_audience')->target_id && $is_principal) {
       if ($audience && in_array($audience->get('name')->value, $principal_content)) {
         $results[] = [
@@ -1526,8 +1525,7 @@ function jcc_elevated_preprocess_views_view__courses__all_toolkits(&$variables):
         $media_id = key($media_id);
         $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
         if ($media) {
-          // Determine where the media is being referenced.
-          // Deny access if referenced anywhere restricted.
+          // Inherit permissions from referencing node else allow all.
           $node_usage = \Drupal::service('entity_usage.usage')->listSources($media);
           if ($node_usage) {
             // Check node access using the latest revision.
@@ -1545,12 +1543,15 @@ function jcc_elevated_preprocess_views_view__courses__all_toolkits(&$variables):
               }
             }
           }
+          else {
+            $granted = TRUE;
+          }
         }
       }
 
       if ($granted) {
         $title = $media->getName();
-        $type = $media->getType();
+        $type = $media->bundle();
         $audience = $taxonomy_type_manager->load($media->get('field_audience')->target_id);
         $subject = $media->get('field_subject_matter')->target_id ? $taxonomy_type_manager->load($media->get('field_subject_matter')->target_id) : '';
         $topic = $media->get('field_topic')->target_id ? $taxonomy_type_manager->load($media->get('field_topic')->target_id) : '';
