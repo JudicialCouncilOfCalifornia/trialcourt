@@ -96,7 +96,7 @@
       {% include "@molecules/hero/hero.twig" with {
         hero: {
           layout: 'full-main',
-          background: 'default',
+           background: node.field_promotional_image.0.entity.uri.value ? file_url(node.field_promotional_image.0.entity.uri.value) : 'default',
           main: {
             title: label,
             lead: content.field_byline|render|striptags,
