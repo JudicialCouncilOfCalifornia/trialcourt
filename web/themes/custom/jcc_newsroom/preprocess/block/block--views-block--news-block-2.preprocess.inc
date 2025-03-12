@@ -42,8 +42,25 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
           }
         }
       }
-      elseif (isset($row->_entity->field_images)) {
-        $first_image = _jcc_get_first_image($row->_entity, 'crop_16x9');
+
+      //      new-109
+      //  i deeply doubt if this caused the problem: always the first get grabbed
+      //      elseif (isset($row->_entity->field_images)) {
+      //
+      //        $first_image = _jcc_get_first_image($row->_entity, 'crop_16x9');
+      //        if ($first_image) {
+      //          $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $first_image['url'] . '" alt="' . $first_image['alt'] . '"></a>');
+      //        }
+      //      }
+      elseif (isset($row->_entity->field_promotional_image) && !$row->_entity->field_promotional_image->isEmpty()) {
+        // Use promotional image if available
+        $promotional_image = _jcc_get_first_image($row->_entity, 'field_promotional_image', 'crop_16x9');
+        if ($promotional_image) {
+          $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $promotional_image['url'] . '" alt="' . $promotional_image['alt'] . '"></a>');
+        }
+      } elseif (isset($row->_entity->field_images) && !$row->_entity->field_images->isEmpty()) {
+        // Fallback to first image from field_images
+        $first_image = _jcc_get_first_image($row->_entity, 'field_images', 'crop_16x9');
         if ($first_image) {
           $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $first_image['url'] . '" alt="' . $first_image['alt'] . '"></a>');
         }
