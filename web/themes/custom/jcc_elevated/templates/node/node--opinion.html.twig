@@ -91,9 +91,9 @@
 
 {% set content %}
   {% set type = node.field_opinion_type.entity.name.value %}
-  {% if node.field_opinion_type.entity.name.value == 'Published - Extended Post' %}
+  {% if type == 'Published - Extended Post' %}
     {% set type = 'Published Opinion - Extended Post' %}
-  {% else %}
+  {% elseif type != 'Citings Archive' %}
     {% set type = node.field_opinion_type.entity.name.value ~ ' Opinion' %}
   {% endif %}
 
@@ -102,14 +102,11 @@
       {% if node.field_opinion_source.value %}
         <span>{{ node.field_opinion_source.entity.name.value }}</span>
       {% endif %}
-      {% if node.field_opinion_type.value and not opinion.citings %}
+      {% if node.field_opinion_type.value %}
         <span>{{ type }}</span>
       {% endif %}
       {% if node.field_review_granted.value %}
         <span>Review Granted</span>
-      {% endif %}
-      {% if opinion.citings %}
-        <span>Archived Citings</span>
       {% endif %}
     </div>
 
