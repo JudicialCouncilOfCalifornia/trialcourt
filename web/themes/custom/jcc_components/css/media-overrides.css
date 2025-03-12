@@ -1,0 +1,30 @@
+.overlay-container {
+  display: inline-block;
+  position: relative; /* Establishes a context for the image and caption */
+}
+
+.image-wrapper {
+  display: block;
+  position: relative; /* Ensures that .overlay-caption aligns properly */
+}
+
+.image-wrapper img {
+  display: block; /* Prevents inline spacing below the image */
+  width: 100%; /* Ensure responsiveness if needed */
+  z-index: 1; /* Ensure it stays below the caption */
+}
+
+.overlay-caption {
+  display: block; /* Ensures it takes up its own line within the .image-wrapper */
+  position: relative; /* Makes it flow naturally in the layout */
+  margin-top: -25px; /* Hoist the caption upwards */
+  text-align: center; /* Optional: center the text horizontally */
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background for visibility */
+  color: #fff; /* White text for contrast */
+  padding: 5px 10px; /* Padding for better appearance */
+  border-radius: 3px; /* Optional: Rounded corners */
+  font-size: 0.9rem; /* Adjust font size */
+  max-width: 90%; /* Prevent text overflow */
+
+  z-index: 2; /* Ensure it appears above the image */
+}

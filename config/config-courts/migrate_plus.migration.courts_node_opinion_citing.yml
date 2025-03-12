@@ -10,7 +10,7 @@ migration_tags:
   - courts
   - node
   - opinion
-  - published
+  - citing
 migration_group: courts_opinions
 label: 'Courts: Import opinion citing from legacy index'
 source:
@@ -62,7 +62,7 @@ process:
   field_opinion_type:
     -
       plugin: default_value
-      default_value: Published
+      default_value: 'Citings Archive'
     -
       plugin: entity_generate
       entity_type: taxonomy_term

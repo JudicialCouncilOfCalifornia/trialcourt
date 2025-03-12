@@ -9,7 +9,6 @@ use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
@@ -18,7 +17,6 @@ use Drupal\editor\Entity\Editor;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Element\ManagedFile;
 use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
-use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
@@ -1065,32 +1063,5 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
   }
   if (isset($form['unpublish_state'])) {
     $form['unpublish_state']['widget'][0]['#description'] = t('When the "Unpublish on" time hits, this page will change to the state defined here.');
-  }
-}
-
-/**
- * Implements hook_node_view_alter().
- */
-function jcc_custom_node_view_alter(array &$build, NodeInterface $node, EntityViewDisplayInterface $display) {
-  switch ($node->bundle()) {
-    case 'landing_page':
-      if ($display->getEntityTypeId()) {
-        $components = $node->get('field_components')->referencedEntities();
-        foreach ($components as $component) {
-          switch ($component->bundle()) {
-            case 'granicus_events':
-              // Updates to Paragraph are only cached by editing.
-              // Workaround: Force node cache refresh for dynamic content.
-              // Anonymous also requires cache context trigger.
-              \Drupal::service('page_cache_kill_switch')->trigger();
-              $build['#cache']['max-age'] = 0;
-              if (\Drupal::currentUser()->isAnonymous()) {
-                $build['#cache']['contexts'][] = 'current-date';
-              }
-              break;
-          }
-        }
-      }
-      break;
   }
 }
