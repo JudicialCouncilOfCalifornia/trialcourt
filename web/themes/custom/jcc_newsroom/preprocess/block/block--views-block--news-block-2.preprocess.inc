@@ -13,6 +13,13 @@ use Drupal\file\Entity\File;
  * Implements hook_preprocess_HOOK().
  */
 function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
+
+
+//  \Drupal::logger('my_module')->notice($message);
+//// Logs an error
+  \Drupal::logger('my_module')->error("hitting jcc_newsroom_preprocess_block__views_block__news_block_2");
+
+
   $cards = [];
 
   if (isset($variables['elements']['content']['#view'])) {
@@ -54,11 +61,13 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
       //      }
       elseif (isset($row->_entity->field_promotional_image) && !$row->_entity->field_promotional_image->isEmpty()) {
         // Use promotional image if available
+        \Drupal::logger('newsroom_awu')->error("hitting if jcc_newsroom_preprocess_block__views_block__news_block_2");
         $promotional_image = _jcc_get_first_image($row->_entity, 'field_promotional_image', 'crop_16x9');
         if ($promotional_image) {
           $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $promotional_image['url'] . '" alt="' . $promotional_image['alt'] . '"></a>');
         }
       } elseif (isset($row->_entity->field_images) && !$row->_entity->field_images->isEmpty()) {
+        \Drupal::logger('newsroom_awu')->error("hitting else jcc_newsroom_preprocess_block__views_block__news_block_2");
         // Fallback to first image from field_images
         $first_image = _jcc_get_first_image($row->_entity, 'field_images', 'crop_16x9');
         if ($first_image) {
@@ -100,4 +109,7 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
     'highlight_variant' => "large",
     'cards' => $cards,
   ];
+
+
+  \Drupal::logger('newsroom_awu')->error("exiting jcc_newsroom_preprocess_block__views_block__news_block_2");
 }
