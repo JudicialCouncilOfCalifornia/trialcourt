@@ -169,8 +169,14 @@ Create Landing Page
 
 - Commit changes and deploy to appropriate environment(s) for testing and other pre-launch work. Live (master), is where content creation will happen pre-launch.
   - Environments:
-    - live
-    - stage - production deployment dry run tests
     - develop - deployment integration tests
     - epic-uat - stakeholder/user testing and review
-  - After deploying to develop, merge develop to Dev since Pantheon's Solr, possibly other environment aspects, relies on that instance for initialization. Update this instance manually only as needed.
+    - stage - pre-production/final tests
+    - live - production
+- **Enabling Solr and Redis Pantheon Services:** To properly setup Solr and Redis from Pantheon's dashboard, the master branch at Pantheon for the site that we deploy into must be populated with our `pantheon.yml` configurations.
+  - If Solr and Redis are enabled before our code is deployed, disable the services and, after our code has been deployed to at least `develop`, re-enable them.
+  - If our code has been deployed, try disabling and re-enabling the services.
+  - If setup is still not correct (e.g. Solr version incorrect) especially if the site is already in production, disable the service and modify `pantheon.yml` to apply the correct settings. Because of our multisite deployment process, modify `pantheon.yml` directly from the Pantheon master branch. For example:
+    - `git clone ssh://...` which is available from `Connection Info` view for the site.
+    - Make a temporary change to `pantheon.yml` and push to master.
+    - Revert the change as an edit and commit to master to avoid conflicts with our deployments.
