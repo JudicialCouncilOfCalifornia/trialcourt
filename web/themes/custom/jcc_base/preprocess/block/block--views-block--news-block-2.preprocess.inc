@@ -98,3 +98,50 @@ function _jcc_get_first_image(NodeInterface $node) {
 
   return FALSE;
 }
+
+
+/**
+ * Get an image from a specific field on a node.
+ *
+ * @param NodeInterface $node
+ *   The node entity.
+ * @param string $field_name
+ *   The field name containing the image.
+ * @param string|null $image_style
+ *   The image style to apply (optional).
+ *
+ * @return array|false
+ *   Returns an array with 'url' and 'alt' if an image is found, or FALSE otherwise.
+ */
+function _jcc_get_image_by_field(NodeInterface $node, string $field_name, string $image_style = NULL) {
+  if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+    return FALSE;
+  }
+
+  $image_field = $node->get($field_name)->first();
+  if ($image_field) {
+    // Get the referenced media entity safely
+    $image_entity = $image_field->get('target_id')->entity ?? NULL;
+
+    if ($image_entity && $image_entity->hasField('field_media_image') && !$image_entity->get('field_media_image')->isEmpty()) {
+      $image = $image_entity->get('field_media_image')->first();
+      $uri = $image->entity->getFileUri();
+      $alt = $image->alt ?? '';
+
+      // Apply image style if provided
+      if ($image_style) {
+        $style = \Drupal::entityTypeManager()->getStorage('image_style')->load($image_style);
+        $url = $style ? $style->buildUrl($uri) : file_create_url($uri);
+      } else {
+        $url = file_create_url($uri);
+      }
+
+      return [
+        'url' => $url,
+        'alt' => $alt,
+      ];
+    }
+  }
+
+  return FALSE;
+}

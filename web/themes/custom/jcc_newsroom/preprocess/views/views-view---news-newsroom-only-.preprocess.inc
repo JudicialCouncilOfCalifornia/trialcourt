@@ -74,7 +74,34 @@ function jcc_newsroom_preprocess_views_view__news_newsroom_only_(&$variables) {
 </div>
 TEMPLATE;
 
+//    $first_image = _jcc_get_first_image($node);
+//
+//    $node_link = $node->toUrl();
+//    if (in_array('NewsLink', $news_types)) {
+//      $node_link_first = $node->get('field_links')->first();
+//      if ($node_link_first) {
+//        $node_link = $node_link_first->getValue()['uri'];
+//      }
+//    }
+//
+//    $variables['tiles_list']['tiles'][] = [
+//      'card' => [
+//        'title' => $node->getTitle(),
+//        'excerpt' => render($excerpt),
+//        'url' => $node_link,
+//      ],
+//      'date' => '',
+//      'img' => [
+//        'src' => $first_image['url'] ?? '',
+//        'alt' => $first_image['alt'] ?? '',
+//        'renderer' => 'patternlab',
+//      ],
+//    ];
+
+    $promotional_image = _jcc_get_image_by_field($node, 'field_promotional_image', 'crop_16x9');
     $first_image = _jcc_get_first_image($node);
+
+    $image_to_use = !empty($promotional_image['url']) ? $promotional_image : $first_image;
 
     $node_link = $node->toUrl();
     if (in_array('NewsLink', $news_types)) {
@@ -92,8 +119,8 @@ TEMPLATE;
       ],
       'date' => '',
       'img' => [
-        'src' => $first_image['url'] ?? '',
-        'alt' => $first_image['alt'] ?? '',
+        'src' => $image_to_use['url'] ?? '',
+        'alt' => $image_to_use['alt'] ?? '',
         'renderer' => 'patternlab',
       ],
     ];
