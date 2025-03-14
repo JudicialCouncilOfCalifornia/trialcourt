@@ -16,9 +16,7 @@ class FindMyCourt extends ControllerBase {
    *   A simple renderable array.
    */
   public function findMyCourtPage($zip): array {
-    if ($zip == '') {
-      $no_zip_class = 'no-zip-code';
-    }
+    $no_zip_class = ($zip == '') ? 'no-zip-code' : '';
     $output = [
       '#markup' => $this->t('<div>
         <div class="hangover hangover--solid-primary-dark-x" style="--hangover-offset: -22ch;">
