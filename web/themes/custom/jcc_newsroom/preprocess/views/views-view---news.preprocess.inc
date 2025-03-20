@@ -74,7 +74,10 @@ function jcc_newsroom_preprocess_views_view__news(&$variables) {
 </div>
 TEMPLATE;
 
+    // fix for new-109
+    $promotional_image = _jcc_get_image_by_field($node, 'field_promotional_image', 'crop_16x9');
     $first_image = _jcc_get_first_image($node);
+    $image_to_use = !empty($promotional_image['url']) ? $promotional_image : $first_image;
 
     $node_link = $node->toUrl();
     if (in_array('NewsLink', $news_types)) {
@@ -90,8 +93,8 @@ TEMPLATE;
       ],
       'date' => '',
       'img' => [
-        'src' => $first_image['url'] ?? '',
-        'alt' => $first_image['alt'] ?? '',
+        'src' => $image_to_use['url'] ?? '',
+        'alt' => $image_to_use['alt'] ?? '',
         'renderer' => 'patternlab',
       ],
     ];
