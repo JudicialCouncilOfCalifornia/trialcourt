@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_category
+    - field.storage.node.field_subject_matter
     - node.type.course
     - taxonomy.vocabulary.subject_matter
     - taxonomy.vocabulary.topics
@@ -202,6 +203,7 @@ display:
           replica: false
           query_tags: {  }
       relationships: {  }
+      use_ajax: false
       header: {  }
       footer: {  }
       display_extenders: {  }
@@ -220,10 +222,10 @@ display:
     position: 2
     display_options:
       fields:
-        field_category:
-          id: field_category
-          table: node__field_category
-          field: field_category
+        field_subject_matter:
+          id: field_subject_matter
+          table: node__field_subject_matter
+          field: field_subject_matter
           relationship: none
           group_type: group
           admin_label: ''
@@ -334,24 +336,41 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: taxonomy_index_tid
-          operator: 'not empty'
+          operator: or
           value: {  }
           group: 1
-          exposed: false
+          exposed: true
           expose:
-            operator_id: ''
-            label: ''
+            operator_id: field_subject_matter_target_id_op
+            label: 'Subject Matter (field_subject_matter)'
             description: ''
             use_operator: false
-            operator: ''
+            operator: field_subject_matter_target_id_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: ''
+            identifier: field_subject_matter_target_id
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+              principal: '0'
+              staff: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -367,6 +386,68 @@ display:
             group_items: {  }
           reduce_duplicates: false
           vid: subject_matter
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_category_target_id:
+          id: field_category_target_id
+          table: node__field_category
+          field: field_category_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_category_target_id_op
+            label: 'Category (field_category)'
+            description: ''
+            use_operator: false
+            operator: field_category_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_category_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+              principal: '0'
+              staff: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: topics
           type: select
           hierarchy: false
           limit: true
@@ -387,11 +468,12 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_category'
+        - 'config:field.storage.node.field_subject_matter'
   courses:
     id: courses
     display_title: Courses
