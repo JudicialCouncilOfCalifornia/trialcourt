@@ -3,18 +3,11 @@
     <tr>
       <th>SUBJECT</th>
       <th>TITLE</th>
-      <th>AUDIENCE</th>
     </tr>
     {% for course in results %}
-      {% if course.audience == 'Judicial' %}
-        {% set audience_color = '#6D3308' %}
-      {% elseif course.audience == 'Everyone' %}
-        {% set audience_color = '#228B22' %}
-      {% endif %}
       <tr>
-        <td {% if audience_color %}style="color:{{ audience_color }};"{% endif %}>{{ course.subject }}</td>
-        <td {% if audience_color %}style="color:{{ audience_color }};"{% endif %}>{{ course.title }}</td>
-        <td {% if audience_color %}style="color:{{ audience_color }};"{% endif %}>{% if course.audience %}{{ course.audience }}{% endif %}</td>
+        <td>{{ course.subject }}</td>
+        <td>{{ course.title }}</td>
       </tr>
     {% endfor %}
   </table>

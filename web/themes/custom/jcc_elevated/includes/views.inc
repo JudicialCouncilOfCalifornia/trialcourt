@@ -1473,10 +1473,8 @@ function jcc_elevated_preprocess_views_view__courses__all_toolkits(&$variables):
 
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_type_manager = $entity_type_manager->getStorage('taxonomy_term');
-  $file_manager = $entity_type_manager->getStorage('file');
   $current_user = \Drupal::currentUser();
   $is_principal = in_array('principal', $current_user->getRoles());
-  $principal_content = ['Judicial', 'Everyone'];
 
   $results = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
@@ -1484,98 +1482,39 @@ function jcc_elevated_preprocess_views_view__courses__all_toolkits(&$variables):
     $entity_type = $entity_result->_entity->getEntityTypeId();
 
     if ($entity_type == 'node') {
-      $node = $entity_type_manager->getStorage('node')->load($entity_result->nid);
+      $nid = $entity_result->nid;
+      $node = $entity_type_manager->getStorage('node')->load($nid);
       $title = $node->getTitle();
       $type = $node->getType();
-      $audience = $taxonomy_type_manager->load($node->get('field_audience')->target_id);
-      $subject = $node->get('field_subject_matter')->target_id ? $taxonomy_type_manager->load($node->get('field_subject_matter')->target_id) : '';
-      $topic = $node->get('field_category')->target_id ? $taxonomy_type_manager->load($node->get('field_category')->target_id) : '';
+      if ($type == 'course') {
+        $subject = $node->get('field_subject_matter')->target_id ? $taxonomy_type_manager->load($node->get('field_subject_matter')->target_id) : '';
+        $topic = $node->get('field_category')->target_id ? $taxonomy_type_manager->load($node->get('field_category')->target_id) : '';
 
-      if ($node->get('field_audience')->target_id && $is_principal) {
-        if ($audience && in_array($audience->get('name')->value, $principal_content)) {
-          $results[] = [
-            'title' => $title,
-            'material' => $type,
-            'audience' => $audience->get('name')->value ?? 'Staff',
-            'subject' => $subject ? $subject->get('name')->value : '',
-            'topic' => $topic ? $topic->get('name')->value : '',
-          ];
-        }
-      }
-      elseif (!$is_principal) {
         $results[] = [
+          'nid' => $nid,
+          'entity' => 'node',
           'title' => $title,
           'material' => $type,
-          'audience' => $audience ? $audience->get('name')->value : 'Staff',
           'subject' => $subject ? $subject->get('name')->value : '',
           'topic' => $topic ? $topic->get('name')->value : '',
         ];
       }
     }
     elseif ($entity_type == 'media') {
-      $media = $entity_type_manager->getStorage('media')->load($entity_result->mid);
-
-      // Check media access permissions.
-      $granted = FALSE;
-      $file = $file_manager->load($media->get('field_media_file')->target_id);
-      $current_user = \Drupal::currentUser();
-      $media_usage = \Drupal::service('file.usage')->listUsage($file);
-      if ($media_usage) {
-        $media_id = ($media_usage['file']['media']);
-        $media_id = key($media_id);
-        $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
-        if ($media) {
-          // Inherit permissions from referencing node else allow all.
-          $node_usage = \Drupal::service('entity_usage.usage')->listSources($media);
-          if ($node_usage) {
-            // Check node access using the latest revision.
-            foreach (reset($node_usage) as $node_id => $revisions) {
-              $node = \Drupal::entityTypeManager()->getStorage('node')->load($node_id);
-
-              foreach ($revisions as $revision) {
-                if ($revision['source_vid'] == $node->getRevisionId()) {
-                  if ($node->access('view', $current_user)) {
-                    // Stop checking when access is true.
-                    $granted = TRUE;
-                    continue 2;
-                  }
-                }
-              }
-            }
-          }
-          else {
-            $granted = TRUE;
-          }
-        }
-      }
-
-      if ($granted) {
-        $title = $media->getName();
-        $type = $media->bundle();
-        $audience = $taxonomy_type_manager->load($media->get('field_audience')->target_id);
-        $subject = $media->get('field_subject_matter')->target_id ? $taxonomy_type_manager->load($media->get('field_subject_matter')->target_id) : '';
-        $topic = $media->get('field_topic')->target_id ? $taxonomy_type_manager->load($media->get('field_topic')->target_id) : '';
-        if ($is_principal) {
-          if ($audience && in_array($audience->get('name')->value, $principal_content)) {
-            $results[] = [
-              'title' => $title,
-              'material' => $type,
-              'audience' => $audience ? $audience->get('name')->value : 'Staff',
-              'subject' => $subject ? $subject->get('name')->value : '',
-              'topic' => $topic ? $topic->get('name')->value : '',
-            ];
-          }
-        }
-        else {
-          $results[] = [
-            'title' => $title,
-            'material' => $type,
-            'audience' => $audience ? $audience->get('name')->value : 'Staff',
-            'subject' => $subject ? $subject->get('name')->value : '',
-            'topic' => $topic ? $topic->get('name')->value : '',
-          ];
-        }
-      }
+      $mid = $entity_result->mid;
+      $media = $entity_type_manager->getStorage('media')->load($mid);
+      $title = $media->getName();
+      $type = $media->bundle();
+      $subject = $media->get('field_subject_matter')->target_id ? $taxonomy_type_manager->load($media->get('field_subject_matter')->target_id) : '';
+      $topic = $media->get('field_topic')->target_id ? $taxonomy_type_manager->load($media->get('field_topic')->target_id) : '';
+      $results[] = [
+        'mid' => $mid,
+        'entity' => 'media',
+        'title' => $title,
+        'material' => $type,
+        'subject' => $subject ? $subject->get('name')->value : '',
+        'topic' => $topic ? $topic->get('name')->value : '',
+      ];
     }
   }
 
