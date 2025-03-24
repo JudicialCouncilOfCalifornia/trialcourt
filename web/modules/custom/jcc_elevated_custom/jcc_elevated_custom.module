@@ -463,22 +463,50 @@ function jcc_elevated_custom_views_pre_view(ViewExecutable $view) {
   switch ($site[0]) {
     // If CJER site.
     case 'cjer':
-      switch ($view->id()) {
-        case 'courses':
-          $display = $view->current_display;
+      // Dom ID presence to avoid view duplicate.
+      if ($view->dom_id) {
+        switch ($view->id()) {
+          case 'courses':
+            $display = $view->current_display;
 
-          switch ($display) {
-            case 'all_toolkits':
-            case 'toolkit_by_subject':
-              // Merge media results with content.
-              $media = \Drupal::entityTypeManager()->getStorage('view')->load('courses_media')->getExecutable();
-              if ($media) {
-                $media->initDisplay();
-                $media->setDisplay('documents');
-                $media->execute();
-                $view->result = array_merge($view->result, $media->result);
-              }
-          }
+            switch ($display) {
+              case 'all_toolkits':
+              case 'toolkit_by_subject':
+                // Merge media results with node results.
+                $media_view = \Drupal::entityTypeManager()->getStorage('view')->load('courses_media')->getExecutable();
+                if ($media_view) {
+                  // If user-specified filters.
+                  $node_filters = NULL;
+                  parse_str($_SERVER['QUERY_STRING'], $filters);
+                  if ($filters) {
+                    $node_filters = [];
+                    foreach ($filters as $filter) {
+                      $node_filters[] = strtolower($filter);
+                    }
+                  }
+
+                  // Media view results.
+                  $media_view->initDisplay();
+                  $media_view->setDisplay('documents');
+                  if ($filters) {
+                    $media_view->setArguments($node_filters);
+                  }
+                  $media_view->execute();
+
+                  if ($media_view->result) {
+                    // If no node results, keep view alive for media results.
+                    if (!$view->result) {
+                      $view->execute();
+                    }
+
+                    // Merge media results with node results.
+                    $view->result = array_merge($view->result, $media_view->result);
+                  }
+                }
+                break;
+            }
+            break;
+        }
       }
   }
 }
