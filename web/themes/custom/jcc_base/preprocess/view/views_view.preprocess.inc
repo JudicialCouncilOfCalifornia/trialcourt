@@ -18,6 +18,7 @@ use Drupal\taxonomy\Entity\Term;
  */
 function jcc_base_preprocess_views_view(&$variables) {
   $view = $variables['view'];
+  
   switch ($view->id()) {
     case 'location':
       if ($view->current_display == 'block' || $view->current_display == 'block_1') {
@@ -94,8 +95,56 @@ function jcc_base_preprocess_views_view(&$variables) {
         }
       }
       break;
+
+//      bug fix and monitoring mechanism for new-109
+    case 'news':
+      $rows = &$variables['rows'];
+      $tiles_list = [];
+
+      foreach ($rows as $index => &$row) {
+        // Ensure the entity exists and log available fields.
+        $entity = $row['#view']->result[$index]->_entity ?? NULL;
+
+        if ($entity) {
+          \Drupal::logger('newsroom_debug')->notice('Available fields for Node ID ' . $entity->id() . ': ' . implode(', ', array_keys($entity->getFields())));
+        }
+
+        if ($entity && $entity->hasField('field_promotional_image') && !$entity->get('field_promotional_image')->isEmpty()) {
+          $media_entity = $entity->get('field_promotional_image')->entity;
+
+          if ($media_entity && $media_entity->hasField('field_media_image') && !$media_entity->get('field_media_image')->isEmpty()) {
+            $image = $media_entity->get('field_media_image')->entity->uri->value;
+            \Drupal::logger('newsroom_debug')->notice('Promotional image found for Node ID: ' . $entity->id());
+          } else {
+            \Drupal::logger('newsroom_debug')->notice('No promotional image found inside media entity for Node ID: ' . $entity->id());
+            continue;
+          }
+
+          $title = $entity->label();
+          $link = $entity->toUrl()->toString();
+
+          // Prepare the tiles_list array for Twig rendering.
+          $tiles_list[] = [
+            'title' => $title,
+            'image' => file_create_url($image),
+            'link' => $link,
+          ];
+
+          // Modify the row output to be compatible with the tiles-list.twig template.
+          $row['#theme'] = 'tiles_list';
+          $row['#tiles_list'] = $tiles_list;
+        } else {
+          \Drupal::logger('newsroom_debug')->notice('No promotional image for Node ID: ' . ($entity ? $entity->id() : 'Unknown'));
+        }
+      }
+
+      // Pass tiles_list to the template variables.
+      $variables['tiles_list'] = $tiles_list;
+      break;
+
   }
 }
+
 
 /**
  * Implements hook_preprocess_HOOK().
