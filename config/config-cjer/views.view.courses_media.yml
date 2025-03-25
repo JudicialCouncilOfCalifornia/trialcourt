@@ -241,6 +241,47 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: field_document_type
+          group_type: group
+          admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: string
+          operator: '='
+          value: 'Course Asset'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
         field_subject_matter_target_id:
           id: field_subject_matter_target_id
           table: media__field_subject_matter
@@ -347,7 +388,16 @@ display:
           distinct: false
           replica: false
           query_tags: {  }
-      relationships: {  }
+      relationships:
+        field_document_type:
+          id: field_document_type
+          table: media__field_document_type
+          field: field_document_type
+          relationship: none
+          group_type: group
+          admin_label: 'field_document_type: Taxonomy term'
+          plugin_id: standard
+          required: false
       use_ajax: false
       header: {  }
       footer: {  }
