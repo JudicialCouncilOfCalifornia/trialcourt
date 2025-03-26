@@ -86,7 +86,7 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 11
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -176,14 +176,14 @@ content:
     third_party_settings: {  }
   field_media_file_chinese:
     type: file_generic
-    weight: 19
+    weight: 20
     region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
   field_media_file_chinese_simple:
     type: file_generic
-    weight: 18
+    weight: 19
     region: content
     settings:
       progress_indicator: throbber
@@ -260,14 +260,21 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_publication_category:
-    type: entity_reference_autocomplete
+    type: autocomplete_deluxe
     weight: 2
     region: content
     settings:
       match_operator: CONTAINS
-      match_limit: 10
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
-      placeholder: ''
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
   field_subject_matter:
     type: autocomplete_deluxe
@@ -332,13 +339,13 @@ content:
       display_label: true
     third_party_settings: {  }
   translation:
-    weight: 9
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 10
+    weight: 11
     region: content
     settings:
       match_operator: CONTAINS
