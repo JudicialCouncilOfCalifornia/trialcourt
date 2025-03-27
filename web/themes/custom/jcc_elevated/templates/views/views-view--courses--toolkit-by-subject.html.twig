@@ -1,22 +1,27 @@
-{% if results %}
-  {% for key, topics in results %}
-    <h2 style="margin-block-end:0.5rem;">{{ key }}</h2>
-    <table style="width:100%; margin-block-end:1.5rem;">
-      <tr>
-        <th colspan="2">{{ key }}</th>
-      </tr>
-      <tr>
-        <td style="background-color:#F1F1F1;">TITLE</td>
-        <td style="background-color:#F1F1F1; width:15%;">MATERIAL</td>
-      </tr>
-      {% for topic in topics %}
+{{ exposed|render }}
+
+<div style="margin-block-start:3rem;">
+  {% if results %}
+    {% for key, topics in results %}
+      <h2 style="margin-block-end:0.5rem;">{{ key }}</h2>
+      <table style="width:100%; margin-block-end:1.5rem;">
         <tr>
-          <td>{{ topic.title }}</td>
-          <td>{% if topic.material %}{{ topic.material }}{% endif %}</td>
+          <td style="background-color:#F1F1F1;">TITLE</td>
+          <td style="background-color:#F1F1F1; width:15%;">SUBJECT</td>
+          <td style="background-color:#F1F1F1; width:15%;">MATERIAL</td>
+          <td style="background-color:#E1F1F1; width:5%;">ENTITY</td>
         </tr>
-      {% endfor %}
-    </table>
-  {% endfor %}
-{% else %}
-  <p>No toolkits found with the subject specified or you might not have permission to view.</p>
-{% endif %}
+        {% for topic in topics %}
+          <tr>
+            <td>{{ topic.title }}</td>
+            <td>{{ topic.subject }}</td>
+            <td>{% if topic.material %}{{ topic.material }}{% endif %}</td>
+            <td style="background-color:#F5F5F5">{{ topic.entity }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% endfor %}
+  {% else %}
+    {{ empty }}
+  {% endif %}
+</div>

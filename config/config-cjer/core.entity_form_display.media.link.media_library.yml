@@ -1,0 +1,53 @@
+uuid: eaf26e66-f306-4228-8d76-4e5551e85aad
+langcode: und
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.link.field_media_entity_link
+    - field.field.media.link.field_subject_matter
+    - field.field.media.link.field_topic
+    - media.type.link
+  module:
+    - link
+_core:
+  default_config_hash: QR-fkHbBrBrTmxv8-Y06qKHJT8UYrdiBJ2yJ9Mh8GO8
+id: media.link.media_library
+targetEntityType: media
+bundle: link
+mode: media_library
+content:
+  field_media_entity_link:
+    type: link_default
+    weight: 1
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_subject_matter: true
+  field_topic: true
+  path: true
+  publish_on: true
+  publish_state: true
+  status: true
+  uid: true
+  unpublish_on: true
+  unpublish_state: true

@@ -1473,8 +1473,6 @@ function jcc_elevated_preprocess_views_view__courses__all_toolkits(&$variables):
 
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_type_manager = $entity_type_manager->getStorage('taxonomy_term');
-  $current_user = \Drupal::currentUser();
-  $is_principal = in_array('principal', $current_user->getRoles());
 
   $results = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
@@ -1545,6 +1543,7 @@ function jcc_elevated_preprocess_views_view__courses__toolkit_by_subject(&$varia
 
   // Results sorted by subject.
   $results_sorted = [];
+
   if ($variables['results_unsorted']) {
     foreach ($variables['results_unsorted'] as $result) {
       $result_topic = 'No Category';

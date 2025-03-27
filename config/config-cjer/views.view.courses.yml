@@ -160,7 +160,15 @@ display:
           id: area
           table: views
           field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
           plugin_id: text
+          empty: true
+          content:
+            value: 'No toolkits found with the subject specified or you might not have permission to view.'
+            format: snippet
+          tokenize: false
       sorts:
         title:
           id: title
@@ -361,6 +369,19 @@ display:
             label: ''
             field_identifier: ''
           exposed: false
+        field_category_target_id:
+          id: field_category_target_id
+          table: node__field_category
+          field: field_category_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
         title:
           id: title
           table: node_field_data
@@ -431,8 +452,6 @@ display:
               request_manager: '0'
               advisory_body_manager: '0'
               itc_manager: '0'
-              principal: '0'
-              staff: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -493,8 +512,6 @@ display:
               request_manager: '0'
               advisory_body_manager: '0'
               itc_manager: '0'
-              principal: '0'
-              staff: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -749,24 +766,39 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: taxonomy_index_tid
-          operator: 'not empty'
+          operator: or
           value: {  }
           group: 1
-          exposed: false
+          exposed: true
           expose:
-            operator_id: ''
-            label: ''
+            operator_id: field_category_target_id_op
+            label: 'Category (field_category)'
             description: ''
             use_operator: false
-            operator: ''
+            operator: field_category_target_id_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: ''
+            identifier: field_category_target_id
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -782,7 +814,7 @@ display:
             group_items: {  }
           reduce_duplicates: false
           vid: topics
-          type: textfield
+          type: select
           hierarchy: false
           limit: true
           error_message: true
