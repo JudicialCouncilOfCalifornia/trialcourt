@@ -21,26 +21,19 @@ class JccNewsArchiveController extends ControllerBase {
     return new Response('JCC news release links have been archived');
   }
 
+
   /**
    * The cron function, in case we will need factor out this to be a cron job
    */
   public function newsArchive_cron():void {
     \Drupal::logger('jcc_news_archive')->notice("newsArchive_cron() got called ");
 
-    $term_id = \Drupal::entityQuery('taxonomy_term')
-      ->condition('vid', 'news_type')
-      ->condition('name', 'News Release')
-      ->execute();
-
     $five_years_ago = strtotime('-5 years', REQUEST_TIME);
-    if (!empty($term_id)) {
-      $query = \Drupal::entityQuery('node')
-        ->condition('type', 'news')
-        ->condition('created', $five_years_ago, '<')
-        ->condition('status', 1)
-        ->condition('field_news_type.target_id', reset($term_id));
-      $nids = $query->execute();
-    }
+    $query = \Drupal::entityQuery('node')
+      ->condition('type', ['news', 'news_release', 'feature'], 'IN')
+      ->condition('created', $five_years_ago, '<') // Items older than 5 years
+      ->condition('status', 1); // Only published items
+    $nids = $query->execute();
 
     if (!empty($nids)) {
       foreach ($nids as $nid) {
