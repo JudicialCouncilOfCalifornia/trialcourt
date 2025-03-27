@@ -983,7 +983,6 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_2(&$variables
  * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
-  $render = \Drupal::service('renderer');
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
@@ -1428,36 +1427,19 @@ function jcc_elevated_preprocess_views_view__courses__courses(&$variables): void
 
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_type_manager = $entity_type_manager->getStorage('taxonomy_term');
-  $current_user = \Drupal::currentUser();
-  $is_principal = in_array('principal', $current_user->getRoles());
-  $principal_content = ['Judicial', 'Everyone'];
 
   $results = [];
   foreach ($variables['rows'][0]['#rows'] as $row) {
     $entity_result = $row['#row'];
     $node = $entity_type_manager->getStorage('node')->load($entity_result->nid);
     $title = $node->getTItle();
-    $audience = $taxonomy_type_manager->load($node->get('field_audience')->target_id);
     $subject = $taxonomy_type_manager->load($node->get('field_subject_matter')->target_id);
     $topic = $taxonomy_type_manager->load($node->get('field_category')->target_id);
-    if ($node->get('field_audience')->target_id && $is_principal) {
-      if ($audience && in_array($audience->get('name')->value, $principal_content)) {
-        $results[] = [
-          'title' => $title,
-          'audience' => $audience ? $audience->get('name')->value : 'Staff',
-          'subject' => $subject ? $subject->get('name')->value : '',
-          'topic' => $topic ? $topic->get('name')->value : '',
-        ];
-      }
-    }
-    elseif (!$is_principal) {
-      $results[] = [
-        'title' => $title,
-        'audience' => $audience ? $audience->get('name')->value : 'Staff',
-        'subject' => $subject ? $subject->get('name')->value : '',
-        'topic' => $topic ? $topic->get('name')->value : '',
-      ];
-    }
+    $results[] = [
+      'title' => $title,
+      'subject' => $subject ? $subject->get('name')->value : '',
+      'topic' => $topic ? $topic->get('name')->value : '',
+    ];
   }
 
   $variables['results'] = $results;
