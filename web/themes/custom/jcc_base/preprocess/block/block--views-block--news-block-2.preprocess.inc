@@ -96,5 +96,5 @@ function _jcc_get_first_image(NodeInterface $node) {
       }
     }
   }
-  return NULL;
+  return FALSE;
 }
