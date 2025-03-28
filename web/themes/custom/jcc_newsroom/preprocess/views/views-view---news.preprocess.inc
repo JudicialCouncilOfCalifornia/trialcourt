@@ -74,8 +74,7 @@ function jcc_newsroom_preprocess_views_view__news(&$variables) {
 </div>
 TEMPLATE;
 
-    // Will prefer promotional image if FALSE is passed.
-    $first_image = _jcc_get_first_image($node, FALSE);
+    $first_image = _jcc_get_first_image($node);
 
     $node_link = $node->toUrl();
     if (in_array('NewsLink', $news_types)) {
