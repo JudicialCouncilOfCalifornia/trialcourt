@@ -5,8 +5,8 @@
  * Preprocessors for views.
  */
 
-use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -74,7 +74,8 @@ function jcc_newsroom_preprocess_views_view__news(&$variables) {
 </div>
 TEMPLATE;
 
-    $first_image = _jcc_get_first_image($node);
+    // Will prefer promotional image if FALSE is passed.
+    $first_image = _jcc_get_first_image($node, FALSE);
 
     $node_link = $node->toUrl();
     if (in_array('NewsLink', $news_types)) {
