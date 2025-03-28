@@ -6,12 +6,13 @@
 - `scripts/pantheon_new.sh [site] "[Label]"`
   - i.e. `scripts/pantheon_new.sh kings "Judicial Council | Kings"`
     - Keeping the Label consistently formatted helps to easily identify the site on Pantheon.
-    - The Convention I've used is "Judicial Council | [site]" But capitalize the site.
+    - For trial courts example, "Judicial Council | [site]" but capitalize the site.
   - **make sure [site] will pattern match to the identifying portion of the live url.**
     - i.e. www.kings.courts.ca.gov => `kings`
     - If the site name ends up different from the subdomain or has alternate/multiple subdomains, add a mapping to /web/sites/sites.php. Without the mapping, the site will not load 100% correctly due mainly to incorrect paths missing the site name.
       - $sites['www.diffname.courts.ca.gov'] = 'site';
       - $sites['diffname.courts.ca.gov'] = 'site';
+  - To edit the label if necessary,use `terminus site:label:set <site_name> <label>` available in the latest terminus versions.
 
 This script will create a new Pantheon instance, initialize the Live environment, create multidev environments develop and stage for parallel git workflow and update the tooling files in the repo, required for deploying and managing the new site.
 
@@ -97,13 +98,13 @@ Create Landing Page
   * Hat
     * `/admin/structure/menu/manage/hat`:
     * Supreme Court ... https://supreme.courts.ca.gov
-    * Courts of Appeal ... https://www.courts.ca.gov/courtsofappeal.htm
-    * Superior Courts ... https://www.courts.ca.gov/superiorcourts.htm
-    * Judicial Council ... https://www.courts.ca.gov/policyadmin-jc.htm
+    * Courts of Appeal ... https://appellate.courts.ca.gov/
+    * Superior Courts ... https://courts.ca.gov/courts/superior-courts
+    * Judicial Council ... https://courts.ca.gov/policy-administration/judicial-council
   * Shoe
     * `/admin/structure/menu/manage/shoe`:
-    * Privacy ... https://www.courts.ca.gov/11530.htm?rdeLocaleAttr=en
-    * Terms of Use ... https://www.courts.ca.gov/11529.htm?rdeLocaleAttr=en
+    * Privacy ... https://courts.ca.gov/privacy-statement
+    * Terms of Use ... https://courts.ca.gov/about/terms-use
 - Configure Bing Maps API Key:
   * `/admin/config/system/geocoder/geocoder-provider`
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
