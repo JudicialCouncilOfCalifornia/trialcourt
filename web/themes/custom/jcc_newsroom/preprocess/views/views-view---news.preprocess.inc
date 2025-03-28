@@ -5,8 +5,8 @@
  * Preprocessors for views.
  */
 
-use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_preprocess_HOOK().
