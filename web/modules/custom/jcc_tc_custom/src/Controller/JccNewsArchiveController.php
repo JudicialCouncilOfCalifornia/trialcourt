@@ -30,7 +30,7 @@ class JccNewsArchiveController extends ControllerBase {
 
     $five_years_ago = strtotime('-5 years', REQUEST_TIME);
     $query = \Drupal::entityQuery('node')
-      ->condition('type', ['news', 'news_release', 'feature'], 'IN')
+      ->condition('type', ['news'], 'IN')
       ->condition('created', $five_years_ago, '<') // Items older than 5 years
       ->condition('status', 1); // Only published items
     $nids = $query->execute();
