@@ -6,10 +6,11 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\editor\Entity\Editor;
-use Drupal\file\Entity\File;
-use Drupal\media\Entity\Media;
+use Drupal\media\MediaInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 // @codingStandardsIgnoreStart
 
@@ -208,13 +209,42 @@ function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
   // by jcc_ckeditor_link if it is enabled.
   if (!\Drupal::service('module_handler')->moduleExists('jcc_ckeditor_link')) {
     if ($form_id == 'editor_link_dialog') {
-      $form['link_to_file'] = [
-        '#type' => 'checkbox',
-        '#title' => t('Link media to file when saving'),
-        '#required' => FALSE,
-        '#default_value' => FALSE,
-      ];
-      $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_custom_link_to_file_submit';
+      // Display link to media page option if supported type.
+      if (\Drupal::service('module_handler')->moduleExists('linkit')) {
+        $href = $form['href_dirty_check']['#default_value'];
+        if ($href && str_contains($href, '/media/')) {
+          $linkit_profile_storage = \Drupal::service('entity_type.manager')->getStorage('linkit_profile');
+          $linkit_profile = $linkit_profile_storage->load('default');
+          $matcher = $linkit_profile->getMatcherByEntityType('media');
+          // Relevant if Linkit matcher profile is in use.
+          if ($matcher) {
+            $matcher_config = $matcher->getConfiguration();
+            $substitution_type = $matcher_config['settings']['substitution_type'];
+
+            // Option to link page if currently linked to file by default.
+            if ($matcher_config && ($substitution_type == 'media')) {
+              $media_id = str_replace('/media/', '', $href);
+              $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
+              $supported = ['publication', 'file'];
+
+              if ($media && in_array($media->bundle(), $supported)) {
+                $link_attributes = $form_state->getStorage();
+                if (!$link_attributes['link_element']['data-entity-substitution']) {
+                  $link_to_file = TRUE;
+                }
+
+                $form['link_to_file'] = [
+                  '#type' => 'checkbox',
+                  '#title' => t('Link to media page'),
+                  '#required' => FALSE,
+                  '#default_value' => $link_to_file ?? FALSE,
+                ];
+                $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_custom_link_to_file_submit';
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -244,29 +274,19 @@ function jcc_elevated_custom_link_to_file_submit(&$form, $form_state): void {
   // Wrapped in a module check, because this functionality should be controlled
   // by jcc_ckeditor_link if it is enabled.
   if (!\Drupal::service('module_handler')->moduleExists('jcc_ckeditor_link')) {
+    // Toggle URL substitution in the link attributes.
+    // Abides to default currently set in Linkit matcher.
     if ($form_state->getValue('link_to_file') == '1') {
-      if (str_contains($form_state->getValue('href_dirty_check'), '/media/')) {
-
-        // Get media entity and retrieve its first file's url.
-        $media_id = str_replace("/media/", "", $form_state->getValue('href_dirty_check'));
-        $media = Media::load($media_id);
-
-        // If no file then skip the logic.
-        if ($media->field_media_file_multiple) {
-          $fid = $media->field_media_file_multiple->first()->target_id;
-          $file = File::load($fid);
-          $file_url = $file->createFileUrl(TRUE);
-
-          // Populate form state with new url.
-          $form_state->setValue('href_dirty_check', $file_url);
-          $form_state->setValue('attributes', [
-            'href' => $file_url,
-            'data-entity-type' => '',
-            'data-entity-uuid' => '',
-            'data-entity-substitution' => '',
-          ]);
-        }
-      }
+      // Remove URL substitution to link to page.
+      $form_state->setValue('attributes', [
+        'data-entity-substitution' => '',
+      ]);
+    }
+    else {
+      // Restore URL substitution to link to file.
+      $form_state->setValue('attributes', [
+        'data-entity-substitution' => 'media',
+      ]);
     }
   }
 }
@@ -388,6 +408,13 @@ function jcc_elevated_custom_form_node_alert_form_alter(&$form, $form_state): vo
  * Implements hook_file_download().
  */
 function jcc_elevated_custom_file_download($uri): array {
+  // Do not allow file viewing if authenticated access only.
+  switch (__jcc_site_name()) {
+    // If CJER officers site.
+    case 'cjer-judicial':
+      __jcc_restrict_to_authenticated();
+      break;
+  }
 
   // Set all document files to set the appropriate name when a download link is
   // clicked. Because of the private file system, the last part of the main url
@@ -405,4 +432,39 @@ function jcc_elevated_custom_file_download($uri): array {
   return [
     'Content-disposition' => $disposition,
   ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function jcc_elevated_custom_media_access(MediaInterface $media, $op, AccountInterface $account) {
+  // Do not allow media page viewing if authenticated access only.
+  switch (__jcc_site_name()) {
+    // If CJER officers site.
+    case 'cjer-judicial':
+      __jcc_restrict_to_authenticated();
+      break;
+  }
+}
+
+/**
+ * Helper function return site machine name.
+ */
+function __jcc_site_name() {
+  $config_dir = Settings::get('config_sync_directory');
+  $pattern = '/(?<=config-)(?s)(.*$)/';
+  preg_match($pattern, $config_dir, $site);
+
+  return $site[0];
+}
+
+/**
+ * Helper function to deny access if not authenticated.
+ */
+function __jcc_restrict_to_authenticated() {
+  $current_user = \Drupal::currentUser();
+  $user_roles = $current_user->getRoles();
+  if (!in_array('authenticated', $user_roles)) {
+    return throw new AccessDeniedHttpException();
+  }
 }
