@@ -125,6 +125,8 @@ $sites['racialjustice-toolkit.courts.ca.gov'] = 'diversity-toolkit';
 // = 'plumas';
 $sites['www.plumascourt.ca.gov'] = 'plumas';
 $sites['plumascourt.ca.gov'] = 'plumas';
+// = 'cjer-judicial';
+$sites['cjerjudicial.courts.ca.gov'] = 'cjer-judicial';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in
