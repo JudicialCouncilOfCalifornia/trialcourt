@@ -153,14 +153,15 @@ Create Landing Page
   - NOTES:  Initial deploy fails because of missing dev modules that are in the split configuration. This is due to db dump of local which has these modules enabled, trying to run on an env that doesn't have those modules.
   - `lando drush @local.[site] pmu devel masquerade stage_file_proxy features_ui twig_xdebug`
 
-- Export config & setup .gitignore
+- For elevated sites, enable and modify loading weight in `core.extension.yml` to 100 after exporting configs:
+  - jcc_elevated_custom
+  - jcc_elevated_embeds
+  - jcc_elevated_sections (if needed)
+
+- Export configs & setup .gitignore
   - `lando drush @local.[site] cex -y`
   - `lando config-ignore` or `scripts/sync_config_ignore.sh`  Make sure this is run before you commit exported config. It will ignore the files that are managed by jcc_tc2_all_immutable_config feature module.
   - NOTE: Some configurations are user managed but cannot be immutable or easily managed by the `config-ignore` script. These settings are still exported as source but ignored at `/admin/config/development/configuration/ignore`.
-  - For elevated sites, modify loading weight in `core.extension.yml` to 100 if needed:
-    - jcc_elevated_custom
-    - jcc_elevated_embeds
-    - jcc_elevated_sections (if installed)
 
 - Export db from local
   - `lando drush @local.[site] sql-dump > data/[site]-install.sql`
