@@ -77,13 +77,15 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
           // Match field labels with language set labels.
           foreach ($lang_label_sets as $label) {
             if (($lang_variant == $label['label_default']) && $field->target_id) {
-              $file = \Drupal::entityTypeManager()->getStorage('file')->load($primary_file->target_id);
-              $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
-              $languages[] = [
-                'url' => $file_url,
-                'label' => $label['label_in_language'],
-                'label_en' => $label['label_default'],
-              ];
+              $file = \Drupal::entityTypeManager()->getStorage('file')->load($field->target_id);
+              if ($file) {
+                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+                $languages[] = [
+                  'url' => $file_url,
+                  'label' => $label['label_in_language'],
+                  'label_en' => $label['label_default'],
+                ];
+              }
             }
           }
       }

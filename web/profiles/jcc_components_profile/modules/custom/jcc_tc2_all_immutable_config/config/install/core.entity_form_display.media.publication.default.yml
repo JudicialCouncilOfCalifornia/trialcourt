@@ -64,8 +64,8 @@ third_party_settings:
     group_tags:
       children:
         - field_division
-        - field_topic
         - field_case_type
+        - field_topic
       label: Tags
       region: content
       parent_name: ''
@@ -111,21 +111,10 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_case_type:
-    type: autocomplete_deluxe
-    weight: 8
+    type: options_select
+    weight: 7
     region: content
-    settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: false
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: false
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    settings: {  }
     third_party_settings: {  }
   field_date:
     type: datetime_default
@@ -134,38 +123,16 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_division:
-    type: autocomplete_deluxe
+    type: options_select
     weight: 6
     region: content
-    settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: false
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: false
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    settings: {  }
     third_party_settings: {  }
   field_document_type:
-    type: autocomplete_deluxe
+    type: options_select
     weight: 1
     region: content
-    settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: false
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: false
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    settings: {  }
     third_party_settings: {  }
   field_east_armenian_file:
     type: file_generic
@@ -281,18 +248,25 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_publication_category:
-    type: entity_reference_autocomplete
+    type: autocomplete_deluxe
     weight: 2
     region: content
     settings:
       match_operator: CONTAINS
-      match_limit: 10
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
       size: 60
-      placeholder: ''
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
   field_topic:
     type: autocomplete_deluxe
-    weight: 7
+    weight: 8
     region: content
     settings:
       match_operator: CONTAINS
@@ -359,6 +333,5 @@ hidden:
   field_code: true
   publish_on: true
   publish_state: true
-  replace_file: true
   unpublish_on: true
   unpublish_state: true
