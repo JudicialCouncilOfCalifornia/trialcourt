@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
+use Drupal\media\Entity\Media;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\HttpFoundation\Request;
@@ -136,11 +137,11 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
           $referrer_params = $url_object->getRouteParameters();
           if (key($referrer_params) == 'view_id') {
             $referrer_entity = \Drupal::entityTypeManager()->getStorage('view')->load($referrer_params['view_id']);
-            $referrer_title = $back_label . ' ' . strtolower($referrer_entity->label()) . ' ' . t('management');
+            $referrer_title = $back_label . ' ' . $referrer_entity->label() . ' ' . t('management');
           }
           else {
             $referrer_entity = \Drupal::entityTypeManager()->getStorage(key($referrer_params))->load($referrer_params[key($referrer_params)]);
-            if ($referrer_entity instanceof Term) {
+            if ($referrer_entity instanceof Term || $referrer_entity instanceof Media) {
               $referrer_title = $back_label . ' ' . $referrer_entity->getName();
             }
             else {
