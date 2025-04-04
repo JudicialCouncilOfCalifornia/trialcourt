@@ -118,7 +118,7 @@ function jcc_ckeditor_link_form_editor_link_dialog_alter(&$form, FormStateInterf
       '#type' => 'checkbox',
       '#title' => t('Link media to file when saving'),
       '#required'  => FALSE,
-      '#default_value' => $url_field['media_link_to_file'] ?? FALSE,
+      '#default_value' => $url_field['media_link_to_file'] ?? TRUE,
       '#states' => [
         'visible' => [
           'select[name="link_type"]' => ['value' => 'media_link'],
