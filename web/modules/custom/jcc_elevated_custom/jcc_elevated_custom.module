@@ -205,45 +205,196 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
  * Implements hook_form_alter().
  */
 function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
-  // Wrapped in a module check, because this functionality should be controlled
-  // by jcc_ckeditor_link if it is enabled.
+  // Enhancements for Linkit if JCC CKEditor is not in use.
   if (!\Drupal::service('module_handler')->moduleExists('jcc_ckeditor_link')) {
     if ($form_id == 'editor_link_dialog') {
-      // Display link to media page option if supported type.
       if (\Drupal::service('module_handler')->moduleExists('linkit')) {
-        $href = $form['href_dirty_check']['#default_value'];
-        if ($href && str_contains($href, '/media/')) {
-          $linkit_profile_storage = \Drupal::service('entity_type.manager')->getStorage('linkit_profile');
-          $linkit_profile = $linkit_profile_storage->load('default');
-          $matcher = $linkit_profile->getMatcherByEntityType('media');
-          // Relevant if Linkit matcher profile is in use.
-          if ($matcher) {
-            $matcher_config = $matcher->getConfiguration();
-            $substitution_type = $matcher_config['settings']['substitution_type'];
+        // Display linking option if supported type.
+        $supported = ['publication', 'file'];
+        $deprecated_link_to_file_label = t('Link media to file when saving');
+        $deprecated_link_to_file_desc = t('This publication is missing a primary file which can occur for older publications, so the media page will be linked by default. Use this option to link directly to the alternate file, if valid path');
+        $href = !empty($form['href_dirty_check']['#default_value']) ? $form['href_dirty_check']['#default_value'] : NULL;
+        $is_media_exp = '/\/media\/(\d+)$/';
+        if ($href && preg_match($is_media_exp, $href)) {
+          $media_id = str_replace('/media/', '', $href);
+          $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
 
-            // Option to link page if currently linked to file by default.
-            if ($matcher_config && ($substitution_type == 'media')) {
-              $media_id = str_replace('/media/', '', $href);
-              $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
-              $supported = ['publication', 'file'];
+          if ($media && $media->get('field_media_file')->target_id) {
+            $linkit_profile_storage = \Drupal::service('entity_type.manager')->getStorage('linkit_profile');
+            $linkit_profile = $linkit_profile_storage->load('default');
+            $matcher = $linkit_profile->getMatcherByEntityType('media');
+            // Relevant if Linkit matcher profile is in use.
+            if ($matcher) {
+              $matcher_config = $matcher->getConfiguration();
+              $substitution_type = $matcher_config['settings']['substitution_type'];
 
-              if ($media && in_array($media->bundle(), $supported)) {
-                $link_attributes = $form_state->getStorage();
-                if (!$link_attributes['link_element']['data-entity-substitution']) {
-                  $link_to_file = TRUE;
+              // Option to link page if currently linked to file by default.
+              if ($matcher_config && ($substitution_type == 'media')) {
+                if ($media && in_array($media->bundle(), $supported)) {
+                  $link_attributes = $form_state->getStorage();
+                  if (!$link_attributes['link_element']['data-entity-substitution']) {
+                    $link_to_page = TRUE;
+                  }
+
+                  $form['link_to_page'] = [
+                    '#type' => 'checkbox',
+                    '#title' => t('Link to media page when saving if valid path (e.g. /media/1234)'),
+                    '#description' => t('Use this option if you do not want to link to media file directly.'),
+                    '#required' => FALSE,
+                    '#default_value' => $link_to_page ?? FALSE,
+                  ];
+                  $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_custom_link_to_file_submit';
                 }
-
-                $form['link_to_file'] = [
-                  '#type' => 'checkbox',
-                  '#title' => t('Link to media page'),
-                  '#required' => FALSE,
-                  '#default_value' => $link_to_file ?? FALSE,
-                ];
-                $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_custom_link_to_file_submit';
               }
             }
           }
+          elseif ($media && $media->get('field_media_file_multiple')->target_id) {
+            // Compatibility for older publications missing required single file field.
+            $form['link_to_file'] = [
+              '#type' => 'checkbox',
+              '#title' => $deprecated_link_to_file_label,
+              '#description' => $deprecated_link_to_file_desc,
+              '#required' => FALSE,
+              '#default_value' => FALSE,
+            ];
+            $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_deprecated_link_to_file_submit';
+          }
         }
+        else {
+          // Compatibility for older publications missing required single file field.
+          $entity_type_manager = \Drupal::service('entity_type.manager');
+          $path_parts = pathinfo($href);
+          $file = $entity_type_manager->getStorage('file')->loadByProperties(['filename' => $path_parts['basename']]);
+
+          if ($file) {
+            $fid = array_shift($file)->fid->value;
+            $media = $entity_type_manager->getStorage('media')->loadByProperties(['field_media_file_multiple' => [$fid]]);
+            $media = array_shift($media);
+
+            if ($media && $media->bundle() == 'publication') {
+              $form['link_to_file'] = [
+                '#type' => 'checkbox',
+                '#title' => $deprecated_link_to_file_label,
+                '#description' => $deprecated_link_to_file_desc,
+                '#required' => FALSE,
+                '#default_value' => TRUE,
+              ];
+              $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_deprecated_link_to_file_submit';
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Custom callback for linkit modal window.
+ */
+function jcc_elevated_custom_link_to_file_submit(&$form, $form_state): void {
+  // Wrapped in a module check, because this functionality should be controlled
+  // by jcc_ckeditor_link if it is enabled.
+  if (!\Drupal::service('module_handler')->moduleExists('jcc_ckeditor_link')) {
+    // Toggle URL substitution in the link attributes.
+    // Abides to default currently set in Linkit matcher.
+    $href = $form_state->getValue('attributes')['href'];
+    $is_media_exp = '/\/media\/(\d+)$/';
+    if (preg_match($is_media_exp, $href)) {
+      // Get media entity and retrieve its first file's url.
+      $media_id = str_replace('/media/', '', $href);
+      $entity_type_manager = \Drupal::service('entity_type.manager');
+      $media = $entity_type_manager->getStorage('media')->load($media_id);
+
+      if ($form_state->getValue('link_to_page') == '1') {
+        // Remove media attributes including url substitution.
+        $form_state->setValue('attributes', [
+          'href' => $href,
+          'data-entity-substitution' => '',
+          'data-entity-bundle' => '',
+          'data-entity-type' => '',
+          'data-entity-uuid' => '',
+        ]);
+      } else {
+        // Restore/reset media attributes as needed.
+        $form_state->setValue('attributes', [
+          'href' => $href,
+          'data-entity-substitution' => 'media',
+          'data-entity-bundle' => $media->bundle(),
+          'data-entity-type' => 'media',
+          'data-entity-uuid' => $media->uuid(),
+          'target' => '_blank',
+        ]);
+      }
+    }
+    else {
+      // If no longer media, remove attributes.
+      $form_state->setValue('attributes', [
+        'href' => $href,
+        'data-entity-substitution' => '',
+        'data-entity-bundle' => '',
+        'data-entity-type' => '',
+        'data-entity-uuid' => '',
+      ]);
+    }
+  }
+}
+
+/**
+ * Deprecated custom callback for linkit modal window.
+ */
+function jcc_elevated_deprecated_link_to_file_submit(&$form, $form_state): void {
+  // Wrapped in a module check, because this functionality should be controlled
+  // by jcc_ckeditor_link if it is enabled.
+  if (!\Drupal::service('module_handler')->moduleExists('jcc_ckeditor_link')) {
+    $entity_type_manager = \Drupal::service('entity_type.manager');
+    $href = $form['href_dirty_check']['#default_value'];
+    if ($form_state->getValue('link_to_file') == '1') {
+      if (str_contains($href, '/media/')) {
+        // Get media entity and retrieve its first file's url.
+        $media_id = str_replace('/media/', '', $form_state->getValue('href_dirty_check'));
+        $media = $entity_type_manager->getStorage('media')->load($media_id);
+
+        // If no file then skip the logic.
+        if ($media->get('field_media_file_multiple')) {
+          $fid = $media->field_media_file_multiple->first()->target_id;
+          $file = $entity_type_manager->getStorage('file')->load($fid);
+          $file_url = $file->createFileUrl(TRUE);
+
+          // Populate form state with new url.
+          $form_state->setValue('href_dirty_check', $file_url);
+          $form_state->setValue('attributes', [
+            'href' => $file_url,
+          ]);
+        }
+        else {
+          $form_state->setValue('href_dirty_check', $href);
+          $form_state->setValue('attributes', [
+            'href' => $href,
+          ]);
+        }
+      }
+    }
+    else {
+      // Use media URL.
+      $path_parts = pathinfo($href);
+      $file = $entity_type_manager->getStorage('file')->loadByProperties(['filename' => $path_parts['basename']]);
+      if ($file) {
+        $fid = array_shift($file)->fid->value;
+        $media = $entity_type_manager->getStorage('media')->loadByProperties(['field_media_file_multiple' => [$fid]]);
+        if ($media) {
+          $media = array_shift($media);
+          $media_url = '/media/' . $media->id();
+          $form_state->setValue('href_dirty_check', $media_url);
+          $form_state->setValue('attributes', [
+            'href' => $media_url,
+          ]);
+        }
+      }
+      else {
+        $form_state->setValue('href_dirty_check', $href);
+        $form_state->setValue('attributes', [
+          'href' => $href,
+        ]);
       }
     }
   }
@@ -263,30 +414,6 @@ function jcc_elevated_custom_preprocess_views_view_table(&$variables): void {
         $view->addHandler('publication_manager', 'field', 'node_field_data', 'jcc_section', [], NULL);
         $view->save();
       }
-    }
-  }
-}
-
-/**
- * Custom callback for linkit modal window.
- */
-function jcc_elevated_custom_link_to_file_submit(&$form, $form_state): void {
-  // Wrapped in a module check, because this functionality should be controlled
-  // by jcc_ckeditor_link if it is enabled.
-  if (!\Drupal::service('module_handler')->moduleExists('jcc_ckeditor_link')) {
-    // Toggle URL substitution in the link attributes.
-    // Abides to default currently set in Linkit matcher.
-    if ($form_state->getValue('link_to_file') == '1') {
-      // Remove URL substitution to link to page.
-      $form_state->setValue('attributes', [
-        'data-entity-substitution' => '',
-      ]);
-    }
-    else {
-      // Restore URL substitution to link to file.
-      $form_state->setValue('attributes', [
-        'data-entity-substitution' => 'media',
-      ]);
     }
   }
 }
