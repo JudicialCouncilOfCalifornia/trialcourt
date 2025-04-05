@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\media\Entity\Media;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\HttpFoundation\Request;
@@ -122,6 +123,8 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
   if ($entity) {
     $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
     $isMenuItem = $menu_link_manager->loadLinksByRoute($route_name, [$entity->getEntityTypeId() => $entity->id()]);
+    $default_title = t('Go to home page');
+    $default_url = '/';
 
     if (!$isMenuItem) {
       $add_homepage_to_breadcrumb = FALSE;
@@ -144,15 +147,19 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
             if ($referrer_entity instanceof Term || $referrer_entity instanceof Media) {
               $referrer_title = $back_label . ' ' . $referrer_entity->getName();
             }
-            else {
+            elseif ($referrer_entity instanceof Node) {
               $referrer_title = $back_label . ' ' . $referrer_entity->get('title')->value;
+            }
+            else {
+              $referrer_title = $default_title;
+              $referrer_url = $default_url;
             }
           }
         }
       }
       else {
-        $referrer_title = t('Go to homepage');
-        $referrer_url = '/';
+        $referrer_title = $default_title;
+        $referrer_url = $default_url;
 
         // If section homepage.
         if (function_exists('jcc_get_current_page_section') && $section_id = jcc_get_current_page_section() && $section_homepage_url) {
