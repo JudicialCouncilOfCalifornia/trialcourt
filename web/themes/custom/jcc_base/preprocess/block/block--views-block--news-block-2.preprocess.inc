@@ -79,22 +79,22 @@ function jcc_base_preprocess_block__views_block__news_block_2(&$variables) {
  *   or FALSE if no image is found.
  */
 function _jcc_get_first_image(NodeInterface $node) {
-  $node_images = $node->get('field_images')->first();
-  if (!empty($node_images->entity) && $node_images->entity->hasField('field_media_image')) {
-    $node_image = $node_images->entity->get('field_media_image');
-
-    if ($node_image) {
-      $uri = $node_image->first()->entity->getFileUri();
-      $style = \Drupal::entityTypeManager()->getStorage('image_style')->load('crop_16x9');
-      $image_url = $style->buildUrl($uri);
-      $image_alt = $node_image->first()->alt;
-
-      return [
-        'url' => $image_url,
-        'alt' => $image_alt,
-      ];
+  $fields = ['field_promotion_image', 'field_images'];
+  foreach ($fields as $field_name) {
+    if ($node->hasField($field_name) && !$node->get($field_name)->isEmpty()) {
+      $media_entity = $node->get($field_name)->first()->entity;
+      if ($media_entity && $media_entity->hasField('field_media_image')) {
+        $media_image = $media_entity->get('field_media_image');
+        if (!$media_image->isEmpty() &&  $media_image->first()->entity) {
+          $uri = $media_image->first()->entity->getFileUri();
+          $style = \Drupal::entityTypeManager()->getStorage('image_style')->load('crop_16x9');
+          return [
+            'url' => $style ? $style->buildUrl($uri) : file_create_url($uri),
+            'alt' => $media_image->first()->alt ?? '',
+          ];
+        }
+      }
     }
   }
-
   return FALSE;
 }
