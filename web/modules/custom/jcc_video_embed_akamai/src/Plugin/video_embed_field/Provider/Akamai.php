@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\jcc_video_embed\Plugin\video_embed_field\Provider;
+namespace Drupal\jcc_video_embed_akamai\Plugin\video_embed_field\Provider;
 
 use Drupal\video_embed_field\ProviderPluginBase;
 
@@ -44,23 +44,10 @@ class Akamai extends ProviderPluginBase {
         'controls' => 'controls',
         'autoplay' => $autoplay ? 'autoplay' : NULL,
       ],
-      '#attached' => [
-        'html_head' => [
-          [
-            [
-              '#type' => 'html_tag',
-              '#tag' => 'source',
-              '#attributes' => [
-                'src' => $this->getInput(),
-                'type' => 'video/mp4',
-              ],
-            ],
-            'akamai_video_source',
-          ],
-        ],
-      ],
+      '#children' => '<source src="' . $this->getInput() . '" type="video/mp4">',
     ];
   }
+  
 
   /**
    * {@inheritdoc}
@@ -77,6 +64,7 @@ class Akamai extends ProviderPluginBase {
  * {@inheritdoc}
  */
 public static function getIdFromInput($input) {
+  dpm("Inside getId from input");
   // Return the full URL since Akamai uses direct MP4 links.
   return filter_var($input, FILTER_VALIDATE_URL) ? $input : FALSE;
 }

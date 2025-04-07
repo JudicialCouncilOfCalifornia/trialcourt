@@ -53,6 +53,9 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
   // it after the breadcrumbs loop has run.
   $route_match = \Drupal::routeMatch();
   $title = \Drupal::service('title_resolver')->getTitle(\Drupal::request(), $route_match->getRouteObject());
+  if (empty($title)) {
+  $title = '***';
+}
   $variables['current_page_title'] = $title;
 
   // Remove items that don't have a url.
