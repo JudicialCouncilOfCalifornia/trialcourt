@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * Implements hook_entity_update().
+ *
+ * Sets the 'dynamic_sort_value' field to the value of 'startDate' if it exists;
+ * otherwise, it defaults to the value of 'lastSavedDate'.
+ */
+function jcc_dynamic_sort_entity_update(\Drupal\Core\Entity\EntityInterface $entity) {
+  // Define the content type and fields to be used.
+  $contentType = 'my_content_type';
+  $startDate = 'start_date';
+  $lastSavedDate = 'lastSavedDate';
+
+  \Drupal::logger('dynamic_sort')->debug('Entity update triggered for entity ID: @id of type: @type', [
+    '@id' => $entity->id(),
+    '@type' => $entity->getEntityTypeId(),
+  ]);
+
+  if ($entity->getEntityTypeId() === 'node' && $entity->bundle() === $contentType) {
+    \Drupal::logger('dynamic_sort')->debug('Processing node of content type: @bundle', [
+      '@bundle' => $entity->bundle(),
+    ]);
+
+    // Retrieve field values.
+    $startDateRetrieved = $entity->get($startDate)->value;
+    $lastSavedDateRetrieved = $entity->get($lastSavedDate)->value;
+
+    \Drupal::logger('dynamic_sort')->debug('Retrieved start_date: @start_date', [
+      '@start_date' => $startDateRetrieved,
+    ]);
+    \Drupal::logger('dynamic_sort')->debug('Retrieved lastSavedDate: @last_saved_date', [
+      '@last_saved_date' => $lastSavedDateRetrieved,
+    ]);
+
+    // Determine the dynamic value.
+    $dynamic_value = !empty($startDateRetrieved) ? $startDateRetrieved : $lastSavedDateRetrieved;
+
+    \Drupal::logger('dynamic_sort')->debug('Determined dynamic_sort_value: @value', [
+      '@value' => $dynamic_value,
+    ]);
+
+    // Update and save the computed field.
+    try {
+      $entity->set('field_dynamic_sort_value', $dynamic_value);
+      $entity->save();
+      \Drupal::logger('dynamic_sort')->info('Updated field_dynamic_sort_value for node ID: @nid with value: @value', [
+        '@nid' => $entity->id(),
+        '@value' => $dynamic_value,
+      ]);
+    }
+    catch (\Exception $e) {
+      \Drupal::logger('dynamic_sort')->error('Failed to update field_dynamic_sort_value for node ID: @nid. Error: @error', [
+        '@nid' => $entity->id(),
+        '@error' => $e->getMessage(),
+      ]);
+    }
+  }
+  else {
+    \Drupal::logger('dynamic_sort')->debug('Entity is not a node of type @type; skipping.', [
+      '@type' => $contentType,
+    ]);
+  }
+}
