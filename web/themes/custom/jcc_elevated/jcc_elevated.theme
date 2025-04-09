@@ -11,35 +11,29 @@ foreach (glob($includes_path) as $filename) {
   require_once dirname(__FILE__) . '/includes/' . basename($filename);
 }
 
-
-/*function jcc_elevated_preprocess_media__akamai_audio(array &$variables) {
-  //dpm("Inside akamai media preprocess here");
-    $media = $variables['media'];
-    if (!$media->get('field_url')->isEmpty()) {
-      $link = $media->get('field_url')->first();
-      $uri = $link->get('uri')->getString();
-  
-      if (!empty($uri)) {        
-        $variables['akamai_audio_src'] = \Drupal::service('file_url_generator')->transformRelative($uri);
-      }
+/**
+ * Preprocess for Akamai Video audio type.
+ */
+function jcc_elevated_preprocess_media__akamai_audio(array &$variables) {
+  $media = $variables['media'];
+  if (!$media->get('field_audio_url')->isEmpty()) {
+    $link = $media->get('field_audio_url')->first();
+    $uri = $link->get('uri')->getString();
+    if (!empty($uri)) {
+      $variables['akamai_audio_src'] = \Drupal::service('file_url_generator')->transformRelative($uri);
     }
-}*/
+  }
+}
 
-//works only when the custom oembed providers are deleted in the GUI
-/*function jcc_elevated_oembed_providers_alter(array &$providers) {
-  dpm("##########################################");
-  dpm($providers);
-  $providers[] = [
-    'provider_name' => 'Akamai',
-    'provider_url' => 'http://jccav.akamaized.net/',
-    'endpoints' => [
-      [
-        'schemes' => [
-         'http://jccav.akamaized.net/001A57/cjer/podcast/*'
-        ],
-        'url' => 'http://jccav.akamaized.net/001A57/cjer/podcast/oembed.{format}',
-        'discovery' => 'true',
-      ],
-    ],
-  ];
-}*/
+/**
+ * Preprocess for Akamai Video media type.
+ */
+function jcc_elevated_preprocess_media__akamai_video(array &$variables) {
+  $media = $variables['media'];
+  if (!$media->get('field_media_video_embed_field')->isEmpty()) {
+    $url = $media->get('field_media_video_embed_field')->value;  
+    if (!empty($url)) {
+      $variables['akamai_video_src'] = $url;
+    }
+  }
+}

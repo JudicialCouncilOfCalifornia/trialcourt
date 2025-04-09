@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.akamai_audio.field_audio_url
+    - field.field.media.akamai_audio.field_media_audio_file
+    - media.type.akamai_audio
+id: media.akamai_audio.media_library
+targetEntityType: media
+bundle: akamai_audio
+mode: media_library
+content:
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_audio_url: true
+  field_media_audio_file: true
+  langcode: true
+  path: true
+  publish_on: true
+  publish_state: true
+  replace_file: true
+  scheduler_settings: true
+  status: true
+  uid: true
+  unpublish_on: true
+  unpublish_state: true

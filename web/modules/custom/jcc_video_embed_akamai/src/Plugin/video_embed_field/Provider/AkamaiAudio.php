@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\jcc_video_embed_wistia_akamai\Plugin\video_embed_field\Provider;
+namespace Drupal\jcc_video_embed_akamai\Plugin\video_embed_field\Provider;
 
 use Drupal\video_embed_field\ProviderPluginBase;
 
@@ -18,28 +18,16 @@ class AkamaiAudio extends ProviderPluginBase {
    * {@inheritdoc}
    */
   public function renderEmbedCode($width, $height, $autoplay) {
+    dpm($this->getInput());
     return [
       '#type' => 'html_tag',
       '#tag' => 'audio',
       '#attributes' => [
         'controls' => 'controls',
         'autoplay' => $autoplay ? 'autoplay' : NULL,
+        'style' => 'width:100%;',
       ],
-      '#attached' => [
-        'html_head' => [
-          [
-            [
-              '#type' => 'html_tag',
-              '#tag' => 'source',
-              '#attributes' => [
-                'src' => $this->getInput(),
-                'type' => 'audio/mpeg',
-              ],
-            ],
-            'akamai_audio_source',
-          ],
-        ],
-      ],
+      '#markup' => '<source src="' . $this->getInput() . '" type="audio/mpeg">',
     ];
   }
 
@@ -47,6 +35,7 @@ class AkamaiAudio extends ProviderPluginBase {
    * {@inheritdoc}
    */
   public static function getIdFromInput($input) {
+    // Validate if the input is a valid URL, as Akamai provides direct audio URLs
     return filter_var($input, FILTER_VALIDATE_URL) ? $input : FALSE;
   }
 
@@ -54,6 +43,6 @@ class AkamaiAudio extends ProviderPluginBase {
    * {@inheritdoc}
    */
   public function getRemoteThumbnailUrl() {
-    return NULL; // No thumbnail for audio.
+    return NULL;
   }
 }
