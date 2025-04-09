@@ -904,8 +904,8 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
             $url_content = '<a href="' . $webform_url . '">Submit comments online</a> | <a href="mailto:' . $email_address . '">Comment by email</a></p>';
             $body = $node->get('body')->value;
             $body .= '<p>' . $url_content . '</p>';
-            $active = TRUE;
-            $variables['active'] = $active;
+            $active_itc = TRUE;
+            $variables['active_itc'] = $active_itc;
           }
           else {
             $body = $node->get('body')->value;
