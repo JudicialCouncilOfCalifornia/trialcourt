@@ -18,7 +18,6 @@ class AkamaiAudio extends ProviderPluginBase {
    * {@inheritdoc}
    */
   public function renderEmbedCode($width, $height, $autoplay) {
-    dpm($this->getInput());
     return [
       '#type' => 'html_tag',
       '#tag' => 'audio',
@@ -35,7 +34,7 @@ class AkamaiAudio extends ProviderPluginBase {
    * {@inheritdoc}
    */
   public static function getIdFromInput($input) {
-    // Validate if the input is a valid URL, as Akamai provides direct audio URLs
+    // Validate if the input is a valid URL, Akamai provides direct audio URLs.
     return filter_var($input, FILTER_VALIDATE_URL) ? $input : FALSE;
   }
 
@@ -45,4 +44,5 @@ class AkamaiAudio extends ProviderPluginBase {
   public function getRemoteThumbnailUrl() {
     return NULL;
   }
+
 }
