@@ -6,12 +6,13 @@
 - `scripts/pantheon_new.sh [site] "[Label]"`
   - i.e. `scripts/pantheon_new.sh kings "Judicial Council | Kings"`
     - Keeping the Label consistently formatted helps to easily identify the site on Pantheon.
-    - The Convention I've used is "Judicial Council | [site]" But capitalize the site.
+    - For trial courts example, "Judicial Council | [site]" but capitalize the site.
   - **make sure [site] will pattern match to the identifying portion of the live url.**
     - i.e. www.kings.courts.ca.gov => `kings`
     - If the site name ends up different from the subdomain or has alternate/multiple subdomains, add a mapping to /web/sites/sites.php. Without the mapping, the site will not load 100% correctly due mainly to incorrect paths missing the site name.
       - $sites['www.diffname.courts.ca.gov'] = 'site';
       - $sites['diffname.courts.ca.gov'] = 'site';
+  - To edit the label if necessary,use `terminus site:label:set <site_name> <label>` available in the latest terminus versions.
 
 This script will create a new Pantheon instance, initialize the Live environment, create multidev environments develop and stage for parallel git workflow and update the tooling files in the repo, required for deploying and managing the new site.
 
@@ -97,13 +98,13 @@ Create Landing Page
   * Hat
     * `/admin/structure/menu/manage/hat`:
     * Supreme Court ... https://supreme.courts.ca.gov
-    * Courts of Appeal ... https://www.courts.ca.gov/courtsofappeal.htm
-    * Superior Courts ... https://www.courts.ca.gov/superiorcourts.htm
-    * Judicial Council ... https://www.courts.ca.gov/policyadmin-jc.htm
+    * Courts of Appeal ... https://appellate.courts.ca.gov/
+    * Superior Courts ... https://courts.ca.gov/courts/superior-courts
+    * Judicial Council ... https://courts.ca.gov/policy-administration/judicial-council
   * Shoe
     * `/admin/structure/menu/manage/shoe`:
-    * Privacy ... https://www.courts.ca.gov/11530.htm?rdeLocaleAttr=en
-    * Terms of Use ... https://www.courts.ca.gov/11529.htm?rdeLocaleAttr=en
+    * Privacy ... https://courts.ca.gov/privacy-statement
+    * Terms of Use ... https://courts.ca.gov/about/terms-use
 - Configure Bing Maps API Key:
   * `/admin/config/system/geocoder/geocoder-provider`
   * See JIRA for keys [ticket TCI-664](https://judasdg.atlassian.net/browse/TCI-664)
@@ -152,14 +153,15 @@ Create Landing Page
   - NOTES:  Initial deploy fails because of missing dev modules that are in the split configuration. This is due to db dump of local which has these modules enabled, trying to run on an env that doesn't have those modules.
   - `lando drush @local.[site] pmu devel masquerade stage_file_proxy features_ui twig_xdebug`
 
-- Export config & setup .gitignore
+- For elevated sites, enable and modify loading weight in `core.extension.yml` to 100 after exporting configs:
+  - jcc_elevated_custom
+  - jcc_elevated_embeds
+  - jcc_elevated_sections (if needed)
+
+- Export configs & setup .gitignore
   - `lando drush @local.[site] cex -y`
   - `lando config-ignore` or `scripts/sync_config_ignore.sh`  Make sure this is run before you commit exported config. It will ignore the files that are managed by jcc_tc2_all_immutable_config feature module.
   - NOTE: Some configurations are user managed but cannot be immutable or easily managed by the `config-ignore` script. These settings are still exported as source but ignored at `/admin/config/development/configuration/ignore`.
-  - For elevated sites, modify loading weight in `core.extension.yml` to 100 if needed:
-    - jcc_elevated_custom
-    - jcc_elevated_embeds
-    - jcc_elevated_sections (if installed)
 
 - Export db from local
   - `lando drush @local.[site] sql-dump > data/[site]-install.sql`
