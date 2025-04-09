@@ -1,0 +1,6 @@
+services:
+  dynamic_sort.search_request_subscriber:
+    class: Drupal\jcc_dynamic_sort\EventSubscriber\SearchRequestSubscriber
+    arguments: ['@logger.factory']
+    tags:
+      - { name: event_subscriber }
