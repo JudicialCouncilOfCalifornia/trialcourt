@@ -167,8 +167,8 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
   ];
 
   // Block Web search engine indexing.
-  $bsefi_label = t('Block search engines from indexing');
-  $bsefi_desc = t('Prevents any content, node and media, from appearing in Web search results. The option does not prevent search engines from crawling this site.');
+  $bsefi_label = t('Block Web search engine indexing');
+  $bsefi_desc = t('Prevents any content - node and media - from appearing in Web search results. To prevent search engines from crawling this site, <a href="/admin/config/search/robotstxt">adjust the instructions</a> for the site\'s robots.txt.');
   $bsefi_disabled = t('Not availabile when r4032login module is installed');
   if (!\Drupal::service('module_handler')->moduleExists('r4032login')) {
     $form['global']['block_search_engine_indexing'] = [
