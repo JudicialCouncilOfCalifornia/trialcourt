@@ -10,3 +10,29 @@ $includes_path = dirname(__FILE__) . '/includes/*.inc';
 foreach (glob($includes_path) as $filename) {
   require_once dirname(__FILE__) . '/includes/' . basename($filename);
 }
+
+/**
+ * Preprocess for Akamai audio type.
+ */
+function jcc_elevated_preprocess_media__test_akamai_audio(array &$variables) {
+  $media = $variables['media'];
+  if (!$media->get('field_media_video_embed_field')->isEmpty()) {
+    $url = $media->get('field_media_video_embed_field')->value;  
+    if (!empty($url)) {
+      $variables['akamai_media_src'] = $url;
+    }
+  }
+}
+
+/**
+ * Preprocess for Akamai Video media type.
+ */
+function jcc_elevated_preprocess_media__akamai_video(array &$variables) {
+  $media = $variables['media'];
+  if (!$media->get('field_media_video_embed_field')->isEmpty()) {
+    $url = $media->get('field_media_video_embed_field')->value;  
+    if (!empty($url)) {
+      $variables['akamai_media_src'] = $url;
+    }
+  }
+}
