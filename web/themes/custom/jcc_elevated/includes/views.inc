@@ -311,7 +311,9 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
 
   // Get the searched term for setting in the title override.
   $searched_term = $view->getExposedInput();
-  $variables['searched_term'] = !empty($searched_term['search']) ? Xss::filter($searched_term['search']) : NULL;
+  $variables['searched_term'] =
+    !empty($searched_term['search']) && !is_array($searched_term['search'])
+      ? Xss::filter($searched_term['search']) : NULL;
   $variables['title'] = $view->getTitle();
 
   // Personalized no results message.
@@ -450,6 +452,31 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
 
   // Count summary for the current page of results.
   $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
+
+  // Sidebar facets.
+  foreach (
+    [
+      'content',
+      'advisory_body_type',
+      'department',
+      'event_state',
+      'event_type',
+      'project_status',
+      'county',
+      'office',
+      'job_location',
+      'job_type',
+      'news_type',
+      'opinion_type',
+      'source',
+      'person_type',
+      'department_group',
+      'topic',
+      'category',
+    ] as $facet) {
+    $facet_build = \Drupal::service('plugin.manager.block')->createInstance('facet_block:' . $facet, []);
+    $variables['facets'][] = $facet_build->build();
+  }
 }
 
 /**
@@ -983,7 +1010,6 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_2(&$variables
  * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
-  $render = \Drupal::service('renderer');
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
@@ -1033,8 +1059,10 @@ function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
             ]),
           ];
 
-          // Check for a job type id first. This is just here because with dev work
-          // It is possible to have a job node without the field or type declared.
+          // Check for a job type id first.
+          // This is just here because with dev work.
+          // It's possible to have a job node without,
+          // the field or type declared.
           $job_type_id = $node->hasField('field_job_type') ? $node->get('field_job_type')->target_id : FALSE;
           $job = [
             'id' => $node->get('field_job_id')->value ? 'ID: ' . $node->get('field_job_id')->value : '',

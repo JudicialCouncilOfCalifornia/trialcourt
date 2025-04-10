@@ -82,6 +82,12 @@
     } %}
   {% endset %}
 
+  {% set facet_build %}
+    {% for facet in facets %}
+      {{ facet }}
+    {% endfor %}
+  {% endset %}
+
   <div class="box">
   {% include "@organisms/ViewResults/ViewResults.twig" with {
     variant: 'search_results',
@@ -89,20 +95,20 @@
     view_display: display_id,
     header: header,
     header_sidebar: '',
-    header_direction_results: 'sidebar-row-reverse',
+    header_direction_results: 'sidebar-row',
     form: exposed_form,
     form_in_sidebar: false,
     list_type: 'ol',
     list_type_divider: true,
     rows: processed_rows,
     no_results_msg: no_results_msg,
-    sidebar: '',
-    sidebar_direction_results: 'sidebar-row-reverse',
+    sidebar: facet_build,
+    sidebar_direction_results: 'sidebar-row',
     pager: pager|render,
     items_per_page: exposed.items_per_page|render,
     footer: '',
     footer_sidebar: '',
-    sidebar_direction_footer: 'sidebar-row-reverse',
+    sidebar_direction_footer: 'sidebar-row',
   } %}
   </div>
 </div>
