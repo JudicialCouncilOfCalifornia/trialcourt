@@ -1010,7 +1010,6 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_2(&$variables
  * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
-  $render = \Drupal::service('renderer');
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
