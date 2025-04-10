@@ -9,7 +9,7 @@ use Drupal\video_embed_field\ProviderPluginBase;
  *
  * @VideoEmbedProvider(
  *   id = "akamai_video",
- *   title = @Translation("Akamai")
+ *   title = @Translation("Akamai Video")
  * )
  */
 class AkamaiVideo extends ProviderPluginBase {
@@ -58,7 +58,11 @@ class AkamaiVideo extends ProviderPluginBase {
    * {@inheritdoc}
    */
   public static function getIdFromInput($input) {
-    return filter_var($input, FILTER_VALIDATE_URL) ? $input : FALSE;
+    if (filter_var($input, FILTER_VALIDATE_URL) && preg_match('/\.mp4$/', $input)) {
+      return $input;
+    }
+    return FALSE;
+    //return filter_var($input, FILTER_VALIDATE_URL) ? $input : FALSE;
   }
 
 }

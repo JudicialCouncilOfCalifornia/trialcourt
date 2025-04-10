@@ -34,8 +34,11 @@ class AkamaiAudio extends ProviderPluginBase {
    * {@inheritdoc}
    */
   public static function getIdFromInput($input) {
-    // Validate if the input is a valid URL, Akamai provides direct audio URLs.
-    return filter_var($input, FILTER_VALIDATE_URL) ? $input : FALSE;
+    // Only allow URLs ending in .mp3 to avoid conflicting with video.
+    if (filter_var($input, FILTER_VALIDATE_URL) && preg_match('/\.mp3$/i', $input)) {
+      return $input;
+    }
+    return FALSE;
   }
 
   /**

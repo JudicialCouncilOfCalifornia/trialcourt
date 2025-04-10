@@ -12,15 +12,14 @@ foreach (glob($includes_path) as $filename) {
 }
 
 /**
- * Preprocess for Akamai Video audio type.
+ * Preprocess for Akamai audio type.
  */
-function jcc_elevated_preprocess_media__akamai_audio(array &$variables) {
+function jcc_elevated_preprocess_media__test_akamai_audio(array &$variables) {
   $media = $variables['media'];
-  if (!$media->get('field_audio_url')->isEmpty()) {
-    $link = $media->get('field_audio_url')->first();
-    $uri = $link->get('uri')->getString();
-    if (!empty($uri)) {
-      $variables['akamai_audio_src'] = \Drupal::service('file_url_generator')->transformRelative($uri);
+  if (!$media->get('field_media_video_embed_field')->isEmpty()) {
+    $url = $media->get('field_media_video_embed_field')->value;  
+    if (!empty($url)) {
+      $variables['akamai_media_src'] = $url;
     }
   }
 }
@@ -33,7 +32,7 @@ function jcc_elevated_preprocess_media__akamai_video(array &$variables) {
   if (!$media->get('field_media_video_embed_field')->isEmpty()) {
     $url = $media->get('field_media_video_embed_field')->value;  
     if (!empty($url)) {
-      $variables['akamai_video_src'] = $url;
+      $variables['akamai_media_src'] = $url;
     }
   }
 }
