@@ -2,7 +2,9 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.node.field_advisory_body_type
     - field.storage.node.body
+    - field.storage.node.field_category
     - field.storage.node.field_components
     - field.storage.paragraph.field_aside
     - field.storage.paragraph.field_brow
@@ -13,6 +15,20 @@ dependencies:
     - field.storage.paragraph.field_lead
     - field.storage.paragraph.field_subheading
     - field.storage.paragraph.field_text
+    - field.storage.node.field_facility_county
+    - field.storage.node.field_department
+    - field.storage.node.field_rfp_dept_group
+    - field.storage.node.field_event_state
+    - field.storage.node.field_event_type
+    - field.storage.node.field_job_location
+    - field.storage.node.field_news_type
+    - field.storage.node.field_office
+    - field.storage.node.field_person_type
+    - field.storage.node.field_project_status
+    - field.storage.node.field_opinion_source
+    - field.storage.node.field_rfp_topic
+    - field.storage.node.field_job_type
+    - field.storage.node.field_opinion_type
     - search_api.server.pantheon_solr8
     - core.entity_view_mode.node.full
   module:
@@ -83,6 +99,14 @@ name: Index
 description: ''
 read_only: false
 field_settings:
+  field_advisory_body_type:
+    label: 'Advisory body type'
+    datasource_id: 'entity:node'
+    property_path: field_advisory_body_type
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_advisory_body_type
   field_brow:
     label: 'Components » Paragraph » Components » Paragraph » Brow'
     datasource_id: 'entity:node'
@@ -95,6 +119,46 @@ field_settings:
         - field.storage.paragraph.field_components
       module:
         - paragraphs
+  field_category:
+    label: Category
+    datasource_id: 'entity:node'
+    property_path: field_category
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_category
+  field_department:
+    label: Department
+    datasource_id: 'entity:node'
+    property_path: field_department
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_department
+  field_event_state:
+    label: 'Event state'
+    datasource_id: 'entity:node'
+    property_path: field_event_state
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_event_state
+  field_event_type:
+    label: 'Event type'
+    datasource_id: 'entity:node'
+    property_path: field_event_type
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_event_type
+  field_facility_county:
+    label: County
+    datasource_id: 'entity:node'
+    property_path: field_facility_county
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_facility_county
   field_hangover_blurb:
     label: 'Components » Paragraph » Components » Paragraph » Hangover blurb'
     datasource_id: 'entity:node'
@@ -132,6 +196,86 @@ field_settings:
         - field.storage.paragraph.field_heading
       module:
         - paragraphs
+  field_job_location:
+    label: Location
+    datasource_id: 'entity:node'
+    property_path: field_job_location
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_job_location
+  field_job_type:
+    label: Type
+    datasource_id: 'entity:node'
+    property_path: field_job_type
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_job_type
+  field_news_type:
+    label: 'News Type'
+    datasource_id: 'entity:node'
+    property_path: field_news_type
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_news_type
+  field_office:
+    label: Office
+    datasource_id: 'entity:node'
+    property_path: field_office
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_office
+  field_opinion_source:
+    label: Source
+    datasource_id: 'entity:node'
+    property_path: field_opinion_source
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_opinion_source
+  field_opinion_type:
+    label: Type
+    datasource_id: 'entity:node'
+    property_path: field_opinion_type
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_opinion_type
+  field_person_type:
+    label: 'Person Type'
+    datasource_id: 'entity:node'
+    property_path: field_person_type
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_person_type
+  field_project_status:
+    label: 'Project Status'
+    datasource_id: 'entity:node'
+    property_path: field_project_status
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_project_status
+  field_rfp_dept_group:
+    label: Department/Group
+    datasource_id: 'entity:node'
+    property_path: field_rfp_dept_group
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_rfp_dept_group
+  field_rfp_topic:
+    label: Topic
+    datasource_id: 'entity:node'
+    property_path: field_rfp_topic
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_rfp_topic
   field_subheading:
     label: 'Components » Paragraph » Subheading'
     datasource_id: 'entity:node'
@@ -308,6 +452,14 @@ field_settings:
     dependencies:
       module:
         - node
+  type:
+    label: 'Content type'
+    datasource_id: 'entity:node'
+    property_path: type
+    type: string
+    dependencies:
+      module:
+        - node
   uid:
     label: uid
     datasource_id: 'entity:node'
@@ -394,6 +546,7 @@ processor_settings:
       - field_hangover_blurb
       - field_heading
       - field_heading_1
+      - field_project_status
       - field_subheading
       - field_subheading_1
       - processed
@@ -407,6 +560,7 @@ processor_settings:
       - rendered_item
       - summary_processed
       - title
+      - type
     title: true
     alt: true
     tags:

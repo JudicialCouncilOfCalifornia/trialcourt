@@ -1,0 +1,48 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - search_api.index.index
+    - views.view.search
+  module:
+    - search_api
+id: summary
+name: Summary
+facet_source_id: 'search_api:views_page__search__search'
+processor_configs:
+  reset_facets:
+    processor_id: reset_facets
+    weights:
+      build: '30'
+    settings:
+      link_text: Reset
+  show_count:
+    processor_id: show_count
+    weights:
+      build: '5'
+    settings: {  }
+facets:
+  advisory_body_type:
+    checked: true
+    label: 'Advisory body type'
+    separator: ', '
+    show_count: false
+    weight: 0
+  content:
+    checked: true
+    label: Content
+    separator: ', '
+    show_count: false
+    weight: 0
+  department:
+    checked: true
+    label: Department
+    separator: ', '
+    show_count: false
+    weight: 0
+  event_state:
+    checked: true
+    label: 'Event state'
+    separator: ', '
+    show_count: false
+    weight: 0
