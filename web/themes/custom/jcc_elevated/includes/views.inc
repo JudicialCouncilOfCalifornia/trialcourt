@@ -311,7 +311,9 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
 
   // Get the searched term for setting in the title override.
   $searched_term = $view->getExposedInput();
-  $variables['searched_term'] = !empty($searched_term['search']) ? Xss::filter($searched_term['search']) : NULL;
+  $variables['searched_term'] =
+    !empty($searched_term['search']) && !is_array($searched_term['search'])
+      ? Xss::filter($searched_term['search']) : NULL;
   $variables['title'] = $view->getTitle();
 
   // Personalized no results message.
@@ -450,6 +452,31 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
 
   // Count summary for the current page of results.
   $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
+
+  // Sidebar facets.
+  foreach (
+    [
+      'content',
+      'advisory_body_type',
+      'event_state',
+      'event_type',
+      'project_status',
+      'county',
+      'job_type',
+      'office',
+      'job_location',
+      'department',
+      'news_type',
+      'opinion_type',
+      'source',
+      'person_type',
+      'department_group',
+      'topic',
+      'category',
+    ] as $facet) {
+    $facet_build = \Drupal::service('plugin.manager.block')->createInstance('facet_block:' . $facet, []);
+    $variables['facets'][] = $facet_build->build();
+  }
 }
 
 /**
@@ -985,7 +1012,6 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_2(&$variables
  * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
-  $render = \Drupal::service('renderer');
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
