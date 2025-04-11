@@ -1067,6 +1067,9 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
 }
 
 
+/**
+ * Implements hook_form_alter().
+ */
 function jcc_custom_form_webform_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   //  tci-1277 fix
   if ($form_id === 'webform_settings_confirmation_form') {
@@ -1075,3 +1078,4 @@ function jcc_custom_form_webform_form_alter(&$form, \Drupal\Core\Form\FormStateI
     }
   }
 }
+
