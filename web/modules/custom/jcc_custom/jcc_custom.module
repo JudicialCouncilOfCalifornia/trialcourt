@@ -282,6 +282,12 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       }
 
       break;
+
+    case 'media_publication_add_form':
+    case 'media_publication_edit_form':
+      // Collapse publication primary file variants field by default.
+      $form['field_media_file_multiple']['widget']['#open'] = FALSE;
+      break;
   }
 
   if (strpos($form_id, 'node_form') === 0) {
@@ -1120,4 +1126,16 @@ function jcc_custom_tokens($type, $tokens, array $data, array $options, Bubbleab
     }
   }
   return $replacements;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_custom_form_webform_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // tci-1277 fix.
+  if ($form_id === 'webform_settings_confirmation_form') {
+    if (isset($form['confirmation_type']['confirmation_type']['#options'])) {
+      $form['confirmation_type']['confirmation_type']['#default_value'] = 'inline';
+    }
+  }
 }
