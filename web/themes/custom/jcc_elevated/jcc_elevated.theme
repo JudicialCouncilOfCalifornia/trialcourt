@@ -14,7 +14,7 @@ foreach (glob($includes_path) as $filename) {
 /**
  * Preprocess for Akamai audio type.
  */
-function jcc_elevated_preprocess_media__test_akamai_audio(array &$variables) {
+function jcc_elevated_preprocess_media__akamai_audio(array &$variables) {
   $media = $variables['media'];
   if (!$media->get('field_media_video_embed_field')->isEmpty()) {
     $url = $media->get('field_media_video_embed_field')->value;  
