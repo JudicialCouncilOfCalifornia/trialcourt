@@ -1065,3 +1065,14 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
     $form['unpublish_state']['widget'][0]['#description'] = t('When the "Unpublish on" time hits, this page will change to the state defined here.');
   }
 }
+
+
+function jcc_custom_form_webform_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  //  tci-1277 fix
+  if ($form_id === 'webform_settings_confirmation_form') {
+    if (isset($form['confirmation_type']['confirmation_type']['#options'])) {
+      unset($form['confirmation_type']['confirmation_type']['#options']['none']);
+      $form['confirmation_type']['confirmation_type']['#default_value'] = 'inline';
+    }
+  }
+}
