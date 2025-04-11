@@ -183,7 +183,7 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
       '#type'          => 'checkbox',
       '#title'         => $bsefi_label,
       '#default_value' => theme_get_setting('block_search_engine_indexing'),
-      '#description'   => '<p><strong>' . $bsefi_disabled . '</strong></p>' . $bsefi_desc . '</p>',
+      '#description'   => '<p><strong>' . $bsefi_disabled . '</strong></p><p>' . $bsefi_desc . '</p>',
       '#attributes'      => ['disabled' => 'disabled'],
     ];
   }
