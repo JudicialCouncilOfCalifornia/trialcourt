@@ -1133,7 +1133,6 @@ function jcc_custom_tokens($type, $tokens, array $data, array $options, Bubbleab
 function jcc_custom_form_webform_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   if ($form_id === 'webform_settings_confirmation_form') {
     if (isset($form['confirmation_type']['confirmation_type']['#options'])) {
-      unset($form['confirmation_type']['confirmation_type']['#options']['none']);
       $form['confirmation_type']['confirmation_type']['#default_value'] = 'inline';
     }
   }
