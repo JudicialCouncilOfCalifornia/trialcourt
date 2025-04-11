@@ -12,6 +12,7 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\Element;
 use Drupal\editor\Entity\Editor;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -1064,4 +1065,59 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
   if (isset($form['unpublish_state'])) {
     $form['unpublish_state']['widget'][0]['#description'] = t('When the "Unpublish on" time hits, this page will change to the state defined here.');
   }
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function jcc_custom_token_info() {
+  $type = [
+    'name' => t('JCC Custom'),
+    'description' => t('JCC Custom Tokens.'),
+  ];
+  $jcc['node-component-summary'] = [
+    'name' => t("Node Component Summary"),
+    'description' => t('Summary snippet of the paragraph component field.'),
+  ];
+
+  return [
+    'types' => ['jcc' => $type],
+    'tokens' => ['jcc' => $jcc],
+  ];
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function jcc_custom_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  $replacements = [];
+  if ($type == 'jcc' && isset($data['node']) && !empty($data['node'])) {
+    $node = $data['node'];
+
+    if (in_array($node->bundle(), ['landing_page', 'subpage'])) {
+
+      /** @var \Drupal\Core\Render\RendererInterface $renderer */
+      $renderer = \Drupal::service('renderer');
+
+      foreach ($tokens as $name => $original) {
+        switch ($name) {
+          case 'node-component-summary':
+            $field_components_view = $node->field_components->view('default');
+            $summary = $renderer->renderRoot($field_components_view);
+            $summary = strip_tags($summary);
+            $summary = str_replace(
+              ['&amp;', 'Expand all', 'Close all'],
+              ['&', '', ''],
+              $summary);
+            $summary = str_replace($node->getTitle(), '', $summary);
+            $summary = preg_replace('/\s+/', ' ', $summary);
+            $summary = trim($summary);
+            $summary = preg_replace('/\s+?(\S+)?$/', '', substr($summary, 0, 300));
+            $replacements[$original] = $summary;
+            break;
+        }
+      }
+    }
+  }
+  return $replacements;
 }
