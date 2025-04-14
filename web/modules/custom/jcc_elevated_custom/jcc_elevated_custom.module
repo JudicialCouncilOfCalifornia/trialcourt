@@ -6,10 +6,13 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\editor\Entity\Editor;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Drupal\media\MediaInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 // @codingStandardsIgnoreStart
 
@@ -388,6 +391,13 @@ function jcc_elevated_custom_form_node_alert_form_alter(&$form, $form_state): vo
  * Implements hook_file_download().
  */
 function jcc_elevated_custom_file_download($uri): array {
+  // Do not allow file viewing if authenticated access only.
+  switch (__jcc_site_name()) {
+    // If CJER officers site.
+    case 'cjer-judicial':
+      __jcc_restrict_to_authenticated();
+      break;
+  }
 
   // Set all document files to set the appropriate name when a download link is
   // clicked. Because of the private file system, the last part of the main url
@@ -395,6 +405,35 @@ function jcc_elevated_custom_file_download($uri): array {
   // the default name to always be 'files'.
   $filename = \Drupal::service('file_system')->basename($uri);
   $mime = \Drupal::service('file.mime_type.guesser')->guess($uri);
+
+  // Render HTML content only if uploaded into supported directory.
+  $scheme = \Drupal::service('stream_wrapper_manager')->getScheme($uri);
+  $html_dir_regex = '/\/\/html\//';
+  if ($scheme == 'private' && preg_match($html_dir_regex, $uri)) {
+    // Allow CSS & JS to render.
+    $file_ext_regex = '/([\w]{2,4})(?|$)/';
+    preg_match($file_ext_regex, $uri, $file_ext);
+    switch ($file_ext[0]) {
+      case 'css':
+        return [
+          'Content-Type' => 'text/css',
+        ];
+      case 'js':
+        return [
+          'Content-Type' => 'text/javascript',
+        ];
+    }
+
+    // Render HTML pages rather download.
+    $mime = \Drupal::service('file.mime_type.guesser')->guess($uri);
+    switch ($mime) {
+      case 'text/html':
+        $filename = \Drupal::service('file_system')->basename($uri);
+        return [
+          'Content-disposition' => 'inline; filename="' . $filename . '"',
+        ];
+    }
+  }
 
   // inline will open in browser. attachment forces direct download. We want to
   // give browsers the options to display a pdf in window. The users browser
@@ -405,4 +444,39 @@ function jcc_elevated_custom_file_download($uri): array {
   return [
     'Content-disposition' => $disposition,
   ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function jcc_elevated_custom_media_access(MediaInterface $media, $op, AccountInterface $account) {
+  // Do not allow media page viewing if authenticated access only.
+  switch (__jcc_site_name()) {
+    // If CJER officers site.
+    case 'cjer-judicial':
+      __jcc_restrict_to_authenticated();
+      break;
+  }
+}
+
+/**
+ * Helper function return site machine name.
+ */
+function __jcc_site_name() {
+  $config_dir = Settings::get('config_sync_directory');
+  $pattern = '/(?<=config-)(?s)(.*$)/';
+  preg_match($pattern, $config_dir, $site);
+
+  return $site[0];
+}
+
+/**
+ * Helper function to deny access if not authenticated.
+ */
+function __jcc_restrict_to_authenticated() {
+  $current_user = \Drupal::currentUser();
+  $user_roles = $current_user->getRoles();
+  if (!in_array('authenticated', $user_roles)) {
+    return throw new AccessDeniedHttpException();
+  }
 }
