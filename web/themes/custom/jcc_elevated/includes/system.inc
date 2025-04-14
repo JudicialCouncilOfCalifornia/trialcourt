@@ -115,11 +115,14 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
   // Ignores external referrers to keep handling/context simple.
   $domain_exp = '/^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/';
   $referrer_url = \Drupal::request()->headers->get('referer');
-  preg_match($domain_exp, $referrer_url, $referrer_domain);
-  $current_domain = \Drupal::request()->getHost();
+  $referrer_domain = NULL;
+  if ($referrer_url) {
+    preg_match($domain_exp, $referrer_url, $referrer_domain);
+  }
 
   $entity = NULL;
-  if ($referrer_domain[1] == $current_domain) {
+  // Check only for local entities.
+  if ($referrer_domain && $referrer_domain[1] == \Drupal::request()->getHost()) {
     foreach ($route_match->getParameters() as $parameter) {
       if ($parameter instanceof EntityInterface) {
         $entity = $parameter;
@@ -161,8 +164,11 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
         if ($referrer_entity instanceof View) {
           $referrer_title = $referrer_title . ' ' . $referrer_entity->label() . ' ' . t('management');
         }
-        elseif (($entity instanceof Term || $entity instanceof Media) && $referrer_not_self) {
+        elseif ($entity instanceof Term && $referrer_not_self) {
           $referrer_title = $referrer_title . ' ' . $referrer_entity->getName();
+        }
+        elseif ($entity instanceof Media && $referrer_not_self) {
+          $referrer_title = $referrer_title . ' ' . $referrer_entity->getTitle();
         }
         elseif ($entity instanceof Node && $referrer_not_self) {
           // New nodes missing referrer info on create until page refresh.
