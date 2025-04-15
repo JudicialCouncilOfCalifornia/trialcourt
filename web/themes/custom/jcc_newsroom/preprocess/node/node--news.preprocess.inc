@@ -14,9 +14,24 @@ use Drupal\media\Entity\Media;
  * Theme and preprocess functions for nodes.
  */
 
-$helper_path = DRUPAL_ROOT . '/themes/custom/jcc_base/includes/helper.inc';
-if (file_exists($helper_path)) {
-  require_once $helper_path;
+/**
+ * A utility function currently only used here
+ * Builds a valid internal URL using inference
+ *
+ * @param string $base
+ *   The base path (e.g., 'news').
+ * @param string $page
+ *   The page part (e.g., 'abc').
+ *
+ * @return string
+ *   A properly formed internal URL string, like '/news/abc'.
+ */
+function build_internal_url_using_inference($base, $page) {
+  $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
+  $host = $_SERVER['HTTP_HOST'];
+  $current_url = $scheme . "://" . $host;
+  $path = '/'. trim($base, '/') . '/' . trim($page, '/');
+  return Url::fromUri($current_url . $path)->toString();
 }
 
 /**
@@ -63,18 +78,29 @@ function jcc_newsroom_preprocess_node__news(&$variables, $hook) {
     }
   }
 
-  // NEW-35.
+  // NEW-35 ensure the links be correct
   if (!empty($variables['content']['field_topics'])) {
-    $custom_url_map = build_custom_url_map();
-    $url = "internal:/search";
+    $label_or_title_to_url_mapping = [];
+    $raw_path_map = [
+      "Supreme Court" => "supreme-court",
+      "Courts of Appeal" => "courts-of-appeal",
+      "Superior Courts" => "supreme-court",
+      "Judicial Council" => "judicial-council",
+      "Chief Justice" => "chief-justice",
+    ];
+    foreach ($raw_path_map as $title => $path) {
+      $label_or_title_to_url_mapping[$title] = build_internal_url_using_inference("news", $path);
+    }
+
+    $url = "internal:/search" ;
     foreach ($variables['content']['field_topics']['#items'] as $delta => $item) {
       if (!empty($variables['content']['field_topics']) && is_array($variables['content']['field_topics'])) {
-        foreach ($variables['content']['field_topics'] as &$field_item) {
+        foreach ($variables['content']['field_topics'] as  &$field_item) {
           if (is_array($field_item) && isset($field_item['#url'])) {
             $title = $field_item['#title'];
             if ($field_item['#url'] instanceof Url) {
-              if ($custom_url_map[$title]) {
-                $url = $custom_url_map[$title];
+              if($label_or_title_to_url_mapping[$title]){
+                $url = $label_or_title_to_url_mapping[$title];
               }
               $field_item['#url'] = Url::fromUri($url);
             }
