@@ -5,14 +5,8 @@
  * Generic system element preprocessors.
  */
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
-use Drupal\media\Entity\Media;
-use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\taxonomy\Entity\Term;
-use Drupal\views\Entity\View;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Implements hook_preprocess_views_view().
@@ -50,7 +44,6 @@ function jcc_elevated_preprocess_pager(&$variables) {
  * Implements hook_preprocess_breadcrumb().
  */
 function jcc_elevated_preprocess_breadcrumb(&$variables) {
-  $add_homepage_to_breadcrumb = TRUE;
 
   // We are creating a variable for the Current Page Title, to allow us to print
   // it after the breadcrumbs loop has run.
@@ -70,6 +63,8 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
       }
     }
   }
+
+  $add_homepage_to_breadcrumb = TRUE;
 
   // Adjust for site sections.
   $section_homepage_url = NULL;
@@ -111,99 +106,6 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
     }
   }
 
-  // Previous link alternative for pages without navigation structure.
-  // Ignores external referrers to keep handling/context simple.
-  $domain_exp = '/^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/';
-  $referrer_url = \Drupal::request()->headers->get('referer');
-  $referrer_domain = NULL;
-  if ($referrer_url) {
-    preg_match($domain_exp, $referrer_url, $referrer_domain);
-  }
-
-  $entity = NULL;
-  // Check only for local entities.
-  if ($referrer_domain && $referrer_domain[1] == \Drupal::request()->getHost()) {
-    foreach ($route_match->getParameters() as $parameter) {
-      if ($parameter instanceof EntityInterface) {
-        $entity = $parameter;
-        break;
-      }
-    }
-  }
-
-  $route_name = $route_match->getRouteName();
-  $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
-  $isMenuItem = $entity ? $menu_link_manager->loadLinksByRoute($route_name, [$entity->getEntityTypeId() => $entity->id()]) : NULL;
-
-  if (!$isMenuItem) {
-    $add_homepage_to_breadcrumb = FALSE;
-    $variables['breadcrumb'] = [];
-    $default_title = t('Go to the homepage');
-    $default_url = '/';
-    $referrer_title = t('Back to');
-    $referrer_url = \Drupal::request()->server->get('HTTP_REFERER');
-
-    if ($referrer_url) {
-      $request = Request::create($referrer_url);
-      $url_object = \Drupal::service('path.validator')->getUrlIfValid($request->getRequestUri());
-
-      if ($url_object) {
-        // Get name of referring local page else link to home.
-        $referrer_params = $url_object->getRouteParameters();
-        $referrer_entity_type = key($referrer_params);
-        $referrer_entity_param = key($referrer_params);
-        if (key($referrer_params) == 'view_id') {
-          $referrer_entity_type = 'view';
-          $referrer_entity_param = 'view_id';
-        }
-        $referrer_entity = \Drupal::entityTypeManager()->getStorage($referrer_entity_type)->load($referrer_params[$referrer_entity_param]);
-        $current_route_params = \Drupal::routeMatch()->getParameters();
-        $current_entity = reset($current_route_params);
-        $current_entity = reset($current_entity);
-        $referrer_not_self = $referrer_entity->uuid() != $current_entity->uuid();
-        if ($referrer_entity instanceof View) {
-          $referrer_title = $referrer_title . ' ' . $referrer_entity->label() . ' ' . t('management');
-        }
-        elseif ($entity instanceof Term && $referrer_not_self) {
-          $referrer_title = $referrer_title . ' ' . $referrer_entity->getName();
-        }
-        elseif ($entity instanceof Media && $referrer_not_self) {
-          $referrer_title = $referrer_title . ' ' . $referrer_entity->getTitle();
-        }
-        elseif ($entity instanceof Node && $referrer_not_self) {
-          // New nodes missing referrer info on create until page refresh.
-          // Set to content management page when no referrer info or redirect.
-          $node_title = $referrer_entity->getEntityTypeId() != 'node_type' ? $referrer_entity->getTitle() : 'Content management';
-          $referrer_title = $referrer_title . ' ' . $node_title;
-          $referrer_url = $referrer_entity->getEntityTypeId() != 'node_type' ? $referrer_url : '/admin/content';
-        }
-        else {
-          $referrer_title = $default_title;
-          $referrer_url = $default_url;
-
-          // If section homepage.
-          if (function_exists('jcc_get_current_page_section') && $section_id = jcc_get_current_page_section() && $section_homepage_url) {
-            $referrer_url = $section_homepage_url;
-          }
-        }
-      }
-    }
-    else {
-      $referrer_title = $default_title;
-      $referrer_url = $default_url;
-
-      // If section homepage.
-      if (function_exists('jcc_get_current_page_section') && $section_id = jcc_get_current_page_section() && $section_homepage_url) {
-        $referrer_url = $section_homepage_url;
-      }
-    }
-
-    $variables['breadcrumb'][] = [
-      'text' => '< ' . $referrer_title,
-      'url' => $referrer_url,
-    ];
-  }
-
   // Add homepage link to start of breadcrumb.
   if ($add_homepage_to_breadcrumb) {
     $url = Url::fromRoute('<front>');
@@ -211,6 +113,11 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
       'text' => t('Home'),
       'url' => $url->toString(),
     ]);
+  }
+
+  // Remove breadcrumb if only 1 item.
+  if (count($variables['breadcrumb']) <= 1) {
+    $variables['breadcrumb'] = [];
   }
 
   // Since we are printing the 'Current Page Title', add the URL cache context.
