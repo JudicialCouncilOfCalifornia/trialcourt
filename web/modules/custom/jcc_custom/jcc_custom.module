@@ -282,6 +282,12 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       }
 
       break;
+
+    case 'media_publication_add_form':
+    case 'media_publication_edit_form':
+      // Collapse publication primary file variants field by default.
+      $form['field_media_file_multiple']['widget']['#open'] = FALSE;
+      break;
   }
 
   if (strpos($form_id, 'node_form') === 0) {
