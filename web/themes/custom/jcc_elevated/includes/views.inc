@@ -904,6 +904,8 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
             $url_content = '<a href="' . $webform_url . '">Submit comments online</a> | <a href="mailto:' . $email_address . '">Comment by email</a></p>';
             $body = $node->get('body')->value;
             $body .= '<p>' . $url_content . '</p>';
+            $active_itc = TRUE;
+            $variables['active_itc'] = $active_itc;
           }
           else {
             $body = $node->get('body')->value;
@@ -1033,8 +1035,9 @@ function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
             ]),
           ];
 
-          // Check for a job type id first. This is just here because with dev work
-          // It is possible to have a job node without the field or type declared.
+          // Check for a job type id first. This is just here because
+          // with dev work. It is possible to have a job node without
+          // the field or type declared.
           $job_type_id = $node->hasField('field_job_type') ? $node->get('field_job_type')->target_id : FALSE;
           $job = [
             'id' => $node->get('field_job_id')->value ? 'ID: ' . $node->get('field_job_id')->value : '',
