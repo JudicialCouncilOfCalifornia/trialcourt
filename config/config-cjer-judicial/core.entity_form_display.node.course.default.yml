@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.course.body
+    - field.field.node.course.field_about
     - field.field.node.course.field_audience
     - field.field.node.course.field_components
     - field.field.node.course.field_course_number
@@ -33,11 +34,11 @@ third_party_settings:
   field_group:
     group_sections:
       children:
-        - group_catalog_info
+        - group_details
         - group_media
         - group_about
         - group_materials
-        - group_education_credit
+        - group_credit
         - group_schedule
       label: Sections
       region: content
@@ -50,7 +51,7 @@ third_party_settings:
         id: ''
         direction: horizontal
         width_breakpoint: 640
-    group_catalog_info:
+    group_details:
       children:
         - field_course_number
         - field_course_type
@@ -58,7 +59,7 @@ third_party_settings:
         - field_delivery_method
         - group_duration
         - field_date
-      label: 'Catalog Info'
+      label: Details
       region: content
       parent_name: group_sections
       weight: 20
@@ -137,7 +138,7 @@ third_party_settings:
         - field_time_unit
       label: Duration
       region: content
-      parent_name: group_catalog_info
+      parent_name: group_details
       weight: 7
       format_type: fieldset
       format_settings:
@@ -149,6 +150,7 @@ third_party_settings:
     group_media:
       children:
         - field_media
+        - field_about
       label: Media
       region: content
       parent_name: group_sections
@@ -168,7 +170,7 @@ third_party_settings:
       label: Registration
       region: content
       parent_name: group_schedule
-      weight: 3
+      weight: 4
       format_type: details
       format_settings:
         classes: ''
@@ -183,7 +185,7 @@ third_party_settings:
       label: Calendar
       region: content
       parent_name: group_schedule
-      weight: 4
+      weight: 5
       format_type: details
       format_settings:
         classes: ''
@@ -212,6 +214,14 @@ content:
     weight: 5
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_about:
+    type: text_textarea
+    weight: 23
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
     third_party_settings: {  }
   field_audience:
     type: autocomplete_deluxe
@@ -247,11 +257,11 @@ content:
     weight: 3
     region: content
     settings:
-      size: 6
+      size: 5
       placeholder: ''
     third_party_settings:
       maxlength:
-        maxlength_js: 6
+        maxlength_js: 5
         maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
   field_course_type:
     type: options_select
@@ -298,16 +308,12 @@ content:
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
   field_duration:
-    type: string_textfield
-    weight: 9
+    type: number
+    weight: 26
     region: content
     settings:
-      size: 3
       placeholder: ''
-    third_party_settings:
-      maxlength:
-        maxlength_js: 3
-        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+    third_party_settings: {  }
   field_education_credit_freeform:
     type: text_textarea
     weight: 25
@@ -339,13 +345,13 @@ content:
     third_party_settings: {  }
   field_time_unit:
     type: options_select
-    weight: 11
+    weight: 27
     region: content
     settings: {  }
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 3
+    weight: 2
     region: content
     settings:
       include_locked: true

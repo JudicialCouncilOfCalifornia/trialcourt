@@ -628,9 +628,6 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node): void {
   foreach ($node->field_media_file_multiple as $media_file) {
     $media = Media::load($media_file->target_id);
     $media_name = $media->name->value;
-    if ($media->get('field_document_type')->target_id) {
-      $doc_type = Term::load($media->get('field_document_type')->target_id) ? Term::load($media->get('field_document_type')->target_id)->get('name')->value : '';
-    }
     if ($media->get('field_media_file_multiple')->target_id) {
       $file = File::load($media->get('field_media_file_multiple')->target_id);
       $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
@@ -1150,4 +1147,137 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   ];
 
   $variables['opinion'] = $opinion;
+}
+
+/**
+ * Node: Course preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_course(array &$variables, NodeInterface $node): void {
+  $term_storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
+  $renderer = \Drupal::service('renderer');
+
+  // BEGIN: Sidebar.
+  $sidebar_content = [];
+
+  // Action.
+  $action = [
+    '#markup' => '<a class="button button--secondary button--normal" href="#">Register</a>',
+  ];
+  $sidebar_content[] = [
+    'heading' => $renderer->render($action),
+    'weight' => 0,
+  ];
+
+  // Details.
+  foreach ($node->getFields() as $field) {
+    switch ($field->getName()) {
+      case 'field_date':
+        if ($field->value) {
+          $sidebar_content[] = [
+            'brow' => $field->getFieldDefinition()->getLabel(),
+            'heading' => $field->date->format('F j, Y'),
+            'weight' => 1,
+          ];
+        }
+        break;
+
+      case 'field_course_number':
+        if ($field->value) {
+          $sidebar_content[] = [
+            'brow' => $field->getFieldDefinition()->getLabel(),
+            'heading' => $field->value,
+            'weight' => 2,
+          ];
+        }
+        break;
+
+      case 'field_duration':
+        if ($field->value) {
+          $duration = $field->value;
+          $time_unit = $node->get('field_time_unit')->value;
+          if ($duration > 3) {
+            $time_unit = $time_unit . 's';
+          }
+          $sidebar_content[] = [
+            'brow' => $field->getFieldDefinition()->getLabel(),
+            'heading' => $duration . ' ' . $time_unit,
+            'weight' => 3,
+          ];
+        }
+        break;
+
+      case 'field_audience':
+      case 'field_delivery_method':
+        if (count($field) > 0) {
+          $weight = 0;
+          $label = $field->getFieldDefinition()->getLabel();
+          $terms = [];
+          foreach ($field as $term) {
+            if ($term->target_id) {
+              $terms[] = $term_storage->load($term->target_id)->name->value;
+            }
+          }
+          switch ($label) {
+            case 'Audience':
+            case 'Delivery Method':
+              $weight = 4;
+              break;
+          }
+          $sidebar_content[] = [
+            'brow' => $label,
+            'heading' => implode(', ', $terms),
+            'weight' => $weight,
+          ];
+        }
+        break;
+    }
+  }
+  // Sort by weight.
+  usort($sidebar_content, fn($a, $b) => $a['weight'] <=> $b['weight']);
+
+  // Schedule.
+  $schedule = [];
+  $timezone = new DateTimeZone('America/Los_Angeles');
+  foreach ($node->get('field_components')->referencedEntities() as $event) {
+    $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
+    $event_date = NULL;
+    // Event date.
+    if ($start_date) {
+      $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
+      $event_date = $start_date ? $start_date->format('F j, Y') : NULL;
+      if ($end_date && ($start_date->format('F j, Y') != $end_date->format('F j, Y'))) {
+        $start = $start_date->format('F j');
+        if ($start_date->format('Y') != $end_date->format('Y')) {
+          $start = $start_date->format('F j, Y');
+        }
+        $end = $end_date->format('j, Y');
+        if ($start_date->format('F') != $end_date->format('F')) {
+          $end = $end_date->format('F j, Y');
+        }
+        $event_date = $start . ' to ' . $end;
+      }
+    }
+    // Event notation.
+    $notation = strip_tags($event->get('field_text')->value, 'strong, em');
+    $notation = substr($notation, 0, 24);
+    $schedule[] = [
+      '#prefix' => '<p>',
+      '#markup' => '<strong>' . $event_date . '</strong><br>' . $event->get('field_heading')->value . ' (' . $notation . ')',
+      '#suffix' => '</p>',
+    ];
+  }
+  if ($schedule) {
+    $sidebar_content[] = [
+      'brow' => t('Future Dates'),
+      'heading' => $renderer->render($schedule),
+    ];
+  }
+
+  $variables['sidebar_content'] = $sidebar_content;
+  // END.
 }

@@ -1,10 +1,15 @@
-uuid: 4db74f17-fc86-4c86-a50c-521612e3d8fd
+uuid: be84ba3b-ac63-4909-a704-1f7dfc089ee4
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_duration
     - node.type.course
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
 id: node.course.field_duration
 field_name: field_duration
 entity_type: node
@@ -15,5 +20,9 @@ required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings: {  }
-field_type: string
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.course.body
+    - field.field.node.course.field_about
     - field.field.node.course.field_audience
     - field.field.node.course.field_components
     - field.field.node.course.field_course_number
@@ -37,6 +38,18 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 101
+    region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
+  field_about:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 116
     region: content
   field_audience:
     type: entity_reference_label
@@ -101,12 +114,13 @@ content:
     weight: 104
     region: content
   field_duration:
-    type: string
+    type: number_integer
     label: above
     settings:
-      link_to_entity: false
+      thousand_separator: ''
+      prefix_suffix: true
     third_party_settings: {  }
-    weight: 109
+    weight: 117
     region: content
   field_education_credit_freeform:
     type: text_default
