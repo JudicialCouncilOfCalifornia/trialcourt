@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * Hooks and functions for the JCC Video Embed module.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function jcc_video_embed_akamai_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.jcc_video_embed_akamai':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('JCC Video Embed for Akamai') . '</p>';
+      return $output;
+
+    default:
+  }
+}
