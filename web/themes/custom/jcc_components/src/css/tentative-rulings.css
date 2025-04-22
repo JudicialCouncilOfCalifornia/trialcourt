@@ -30,3 +30,36 @@
   width: 100%;
   max-width: 800px;
 }
+
+/* below are fixings for tci-1305 */
+.jcc-iframe {
+  position: relative;
+  width: 900px;
+  height: 700px; /* adjust based on remaining content */
+  overflow: hidden;
+}
+
+.jcc-iframe--square {
+  position: relative;
+  width: 900px;
+  height: 700px; /* adjust based on remaining content */
+  overflow: hidden;
+}
+
+.jcc-iframe iframe {
+  position: absolute;
+  top: -220px;   /* increase this to push .border-rightTop off-screen */
+  left: -5px;    /* hides left content*/
+  width: 1600px;
+  height: 1100px;
+  border: none;
+}
+
+.jcc-iframe--square iframe {
+  position: absolute;
+  top: -220px;   /* increase this to push .border-rightTop off-screen */
+  left: -5px;    /* hides left content*/
+  width: 1600px;
+  height: 1100px;
+  border: none;
+}
