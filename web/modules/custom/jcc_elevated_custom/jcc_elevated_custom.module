@@ -556,6 +556,35 @@ function jcc_elevated_custom_file_download($uri): array {
   $filename = \Drupal::service('file_system')->basename($uri);
   $mime = \Drupal::service('file.mime_type.guesser')->guess($uri);
 
+  // Render HTML content only if uploaded into supported directory.
+  $scheme = \Drupal::service('stream_wrapper_manager')->getScheme($uri);
+  $html_dir_regex = '/\/\/html\//';
+  if ($scheme == 'private' && preg_match($html_dir_regex, $uri)) {
+    // Allow CSS & JS to render.
+    $file_ext_regex = '/([\w]{2,4})(?|$)/';
+    preg_match($file_ext_regex, $uri, $file_ext);
+    switch ($file_ext[0]) {
+      case 'css':
+        return [
+          'Content-Type' => 'text/css',
+        ];
+      case 'js':
+        return [
+          'Content-Type' => 'text/javascript',
+        ];
+    }
+
+    // Render HTML pages rather download.
+    $mime = \Drupal::service('file.mime_type.guesser')->guess($uri);
+    switch ($mime) {
+      case 'text/html':
+        $filename = \Drupal::service('file_system')->basename($uri);
+        return [
+          'Content-disposition' => 'inline; filename="' . $filename . '"',
+        ];
+    }
+  }
+
   // inline will open in browser. attachment forces direct download. We want to
   // give browsers the options to display a pdf in window. The users browser
   // settings will ultimately determine what is allowed.
