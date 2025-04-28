@@ -321,7 +321,7 @@ function __jcc_opinion_file_links_builder($type, $review_granted, $file_type, $c
  * @return string
  *   Substitute path if provided.
  */
-function _jcc_elevated_media_substitute_url($uri) {
+function __jcc_media_substitute_url($uri) {
   $path = $uri;
   if (\Drupal::service('module_handler')->moduleExists('linkit')) {
     $entity = LinkitHelper::getEntityFromUri($uri);
