@@ -1,0 +1,77 @@
+#uuid: 2781b17f-899e-4dd3-8d8f-ba351913d638
+langcode: en
+status: true
+dependencies: {  }
+id: cjer_nonsecured_files
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - cjer
+migration_group: cjer
+label: 'CJER: Import file'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  ids:
+    doc:
+      type: string
+  fields:
+    - name: page
+      selector: page
+      label: 'Page'
+    - name: doc
+      selector: doc
+      label: 'Doc'   
+  constants:
+    DRUPAL_FILE_DIRECTORY: 'public://documents/'
+process:
+  pseudo_decoded_url:
+    plugin: callback
+    callable: urldecode
+    source: doc
+  pseudo_destination_filename:
+    -
+      plugin: path_from_url
+      source: doc
+    -
+      plugin: callback
+      callable: basename
+    -
+      plugin: callback
+      callable: urldecode
+    -
+      plugin: str_replace
+      search: ' '
+      replace: '-'
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'Cannot import empty image filename.'
+  pseudo_destination_path:
+    -
+      plugin: concat
+      source:
+        - constants/DRUPAL_FILE_DIRECTORY
+        - '@pseudo_destination_filename'
+  uri:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: doc
+    -
+      plugin: file_copy
+      source:
+        - '@pseudo_decoded_url'
+        - '@pseudo_destination_path'
+      file_exists: rename
+      move: false
+destination:
+  plugin: 'entity:file'
+migration_dependencies: null
