@@ -32,7 +32,9 @@
 ]
 %}
 {% if grouped_proposals is not empty %}
-<div class="search-filter">{{exposed|render}}</div>
+{% if not active_itc %}
+  <div class="search-filter">{{exposed|render}}</div>
+{% endif %}
 
 
 {% set accordion_items = [] %}

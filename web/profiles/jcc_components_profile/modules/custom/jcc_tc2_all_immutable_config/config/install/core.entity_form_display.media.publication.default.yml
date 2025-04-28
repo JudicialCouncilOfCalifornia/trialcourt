@@ -54,7 +54,7 @@ third_party_settings:
       label: 'Translated Files'
       region: content
       parent_name: ''
-      weight: 7
+      weight: 9
       format_type: details
       format_settings:
         classes: ''
@@ -68,15 +68,32 @@ third_party_settings:
         - field_subject_matter
         - field_topic
         - field_case_type
+        - field_topic
       label: Tags
       region: content
       parent_name: ''
-      weight: 6
+      weight: 8
       format_type: details
       format_settings:
         classes: ''
         id: ''
         open: true
+        description: ''
+        required_fields: true
+    group_primary_file:
+      children:
+        - field_media_file
+        - replace_file
+        - field_media_file_multiple
+      label: 'Primary File'
+      region: content
+      parent_name: ''
+      weight: 5
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
         description: ''
         required_fields: true
 id: media.publication.default
@@ -86,7 +103,7 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 12
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -97,21 +114,10 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_case_type:
-    type: autocomplete_deluxe
-    weight: 9
+    type: options_select
+    weight: 7
     region: content
-    settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: false
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: false
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    settings: {  }
     third_party_settings: {  }
   field_date:
     type: datetime_default
@@ -120,42 +126,27 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_division:
-    type: autocomplete_deluxe
+    type: options_select
     weight: 6
     region: content
-    settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: false
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: false
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    settings: {  }
     third_party_settings: {  }
   field_document_type:
-    type: autocomplete_deluxe
+    type: options_select
     weight: 1
     region: content
-    settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: false
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: false
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    settings: {  }
     third_party_settings: {  }
   field_east_armenian_file:
     type: file_generic
-    weight: 21
+    weight: 20
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_media_file:
+    type: file_generic
+    weight: 0
     region: content
     settings:
       progress_indicator: throbber
@@ -211,7 +202,7 @@ content:
     third_party_settings: {  }
   field_media_file_multiple:
     type: file_generic
-    weight: 5
+    weight: 2
     region: content
     settings:
       progress_indicator: throbber
@@ -312,7 +303,7 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 8
+    weight: 10
     region: content
     settings:
       include_locked: true
@@ -327,25 +318,30 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 13
+    weight: 14
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  replace_file:
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 14
+    weight: 15
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 11
+    weight: 12
     region: content
     settings:
       match_operator: CONTAINS
@@ -355,9 +351,7 @@ content:
     third_party_settings: {  }
 hidden:
   field_code: true
-  field_media_file: true
   publish_on: true
   publish_state: true
-  replace_file: true
   unpublish_on: true
   unpublish_state: true
