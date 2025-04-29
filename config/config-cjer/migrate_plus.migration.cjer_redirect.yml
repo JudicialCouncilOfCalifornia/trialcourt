@@ -1,8 +1,8 @@
-#uuid: 3846daaf-ac99-45f0-8fca-0ed9e33eca4b
+uuid: 2d039a22-d961-4dac-928b-aede17e4b4b8
 langcode: en
 status: true
 dependencies: {  }
-id: cjer_nonsecured_redirect
+id: cjer_redirect
 class: null
 field_plugin_method: null
 cck_plugin_method: null
@@ -18,7 +18,7 @@ source:
   item_selector: entry
   fields:
     -
-      name: id
+      name: doc
       label: 'Unique ID'
       selector: doc
     -
@@ -26,7 +26,7 @@ source:
       label: 'Page URL'
       selector: page
   ids:
-    id:
+    doc:
       type: string
   constants:
     uri_prefix: 'internal:'
@@ -63,7 +63,7 @@ process:
     -
       plugin: callback
       callable: urldecode
-      source: url
+      source: doc
     -
       plugin: path_from_url
     -
@@ -86,4 +86,4 @@ destination:
 migration_dependencies:
   required: {  }
   optional:
-    - cjer_nonsecured_files
+    - cjer_files
