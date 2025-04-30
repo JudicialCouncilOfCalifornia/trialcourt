@@ -113,6 +113,26 @@ function jcc_elevated_preprocess_node(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $node): void {
+  $node = $variables['node'];
+  $variables['surplus'] = [
+    'Brand' => $node->get('field_brand_manufacturer')->value,
+    'comments' => $node->get('field_comments')->value,
+    'description' => $node->get('field_description')->value,
+    'donateorsell' => $node->get('field_donate_or_sell')->value,
+    'entity' => $node->get('field_entity_')->value,
+    'model' => $node->get('field_model_number')->value,
+    'posted' => $node->get('field_posted')->value,
+    'quantity' => $node->get('field_quantity')->value,
+    'ref_number' => $node->get('field_reference_number')->value,
+    'category' => $node->get('field_surplus_category')->value,
+    'unit' => $node->get('field_unit_measure')->value,
+  ];
+}
+
+/**
  * Node: News preprocess.
  *
  * @param array $variables
