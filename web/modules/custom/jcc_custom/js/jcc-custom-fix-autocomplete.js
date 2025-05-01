@@ -2,40 +2,30 @@
  * @file
  * Form adaptations js file.
  */
+
 (function ($, Drupal) {
+  Drupal.behaviors.loadSelectOptionsIfChrome = {
+    attach: function (context) {
+      const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+      if (!isChrome) {
+        console.log('alexwu Not Chrome. Skipping behavior.');
+        return;
+      }
 
-  'use strict';
+      const $select = $('#edit-addresstest-state-province--2', context);
+      console.log('alexwu Select element found:', $select.length > 0);
 
-  Drupal.behaviors.jccFixAutocomplete = {
-    attach: function (context, settings) {
-      var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-      if (isChrome) {
-        console.log("alex yes it is chrome");
+      if ($select.length && $select.find('option').length <= 1) {
+        console.log('alexwu Select field is empty or has only one option. Proceeding to populate.');
+      } else {
+        if ($select.data('chosen')) {
+          $select.chosen('destroy');
+          console.log('alexwu chosen destroyed.');
+        }
 
-        document.addEventListener("DOMContentLoaded", function () {
-          const observer = new MutationObserver(() => {
-            const addressDropdown = document.querySelector('select[name="address"]');
-            if (addressDropdown) {
-              addressDropdown.removeAttribute("autocomplete");
-              observer.disconnect(); // Stop observing once found
-              console.log("alex addressDropdown treated");
-            } else{
-              console.log("alex addressDropdown not treated");
-            }
-
-            console.log("alex moving to input");
-
-            var addressInput = document.querySelector('input[name="address"]');
-            if (addressInput && addressInput.getAttribute("autocomplete") === "off") {
-              addressInput.removeAttribute("autocomplete");
-              console.log("alex yes autocomplete removed 2");
-            } else {
-              console.log("alex no autocomplete not removed 2");
-            }
-          });
-
-          observer.observe(document.body, { childList: true, subtree: true });
-        });
+        // Reinitialize Chosen
+        $select.chosen();
+        console.log('alexwu chosen reinitialized.');
       }
     }
   };
