@@ -28,6 +28,7 @@ use Drupal\views\ViewExecutable;
 function jcc_custom_page_attachments(array &$attachments): void {
   $attachments['#attached']['library'][] = 'jcc_custom/fontawesome';
   $attachments['#attached']['library'][] = 'jcc_custom/tableadapt';
+  $attachments['#attached']['library'][] = 'jcc_custom/fixautocomplete';
   $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
   if (!$is_admin) {
     $attachments['#attached']['library'][] = 'jcc_custom/filelink';
