@@ -32,14 +32,14 @@
 }
 
 /* below are fixings for tci-1305 */
-.jcc-iframe {
+.jcc-iframe:has(iframe[src*="old.sb-court.org"]) {
   position: relative;
   width: 900px;
   height: 700px; /* adjust based on remaining content */
   overflow: hidden;
 }
 
-.jcc-iframe iframe {
+.jcc-iframe > iframe[src*="old.sb-court.org"] {
   position: absolute;
   top: -200px;   /* increase this to push .border-rightTop off-screen */
   left: -5px;    /* hides left content*/
