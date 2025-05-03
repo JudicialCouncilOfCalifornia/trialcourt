@@ -628,9 +628,6 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node): void {
   foreach ($node->field_media_file_multiple as $media_file) {
     $media = Media::load($media_file->target_id);
     $media_name = $media->name->value;
-    if ($media->get('field_document_type')->target_id) {
-      $doc_type = Term::load($media->get('field_document_type')->target_id) ? Term::load($media->get('field_document_type')->target_id)->get('name')->value : '';
-    }
     if ($media->get('field_media_file_multiple')->target_id) {
       $file = File::load($media->get('field_media_file_multiple')->target_id);
       $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
@@ -1150,4 +1147,219 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   ];
 
   $variables['opinion'] = $opinion;
+}
+
+/**
+ * Node: Course preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_course(array &$variables, NodeInterface $node): void {
+  $term_storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
+  $renderer = \Drupal::service('renderer');
+  $timezone = new DateTimeZone('America/Los_Angeles');
+  $today = new DateTime('now', $timezone);
+  $type_term_id = $node->get('field_course_type')[0]->target_id ? $node->get('field_course_type')->target_id : NULL;
+  $type = $type_term_id ? $term_storage->load($type_term_id)->name->value : NULL;
+  $action = NULL;
+  $today = $today->format('Ymd');
+  $promo_image = NULL;
+
+  // BEGIN: Sidebar.
+  $sidebar_details = [];
+
+  // Promotional Image.
+  if ($node->get('field_image')) {
+    $promo_image_src = $node->get('field_image')->entity->field_media_image->entity->getFileUri();
+    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_650x650')->buildUrl($promo_image_src);
+    if ($image_url) {
+      $promo_image = [
+        '#markup' => '<img src="' . $image_url . '">',
+      ];
+      $sidebar_details[] = [
+        'text' => $promo_image,
+        'weight' => 0,
+      ];
+    }
+  }
+
+  // Details.
+  foreach ($node->getFields() as $field) {
+    switch ($field->getName()) {
+      case 'field_date':
+        if ($field->value) {
+          $sidebar_details[] = [
+            'label' => $field->getFieldDefinition()->getLabel(),
+            'text' => $field->date->format('F j, Y'),
+            'weight' => 1,
+          ];
+        }
+        break;
+
+      case 'field_course_number':
+        if ($field->value) {
+          $sidebar_details[] = [
+            'label' => $field->getFieldDefinition()->getLabel(),
+            'text' => $field->value,
+            'weight' => 2,
+          ];
+        }
+        break;
+
+      case 'field_achievable_credit':
+        if ($field->value) {
+          $achievable_credits = $field->value . ' hr';
+          if ($achievable_credits > 1) {
+            $achievable_credits = $achievable_credits . 's';
+          }
+          $sidebar_details[] = [
+            'label' => $field->getFieldDefinition()->getLabel(),
+            'text' => $achievable_credits,
+            'weight' => 3,
+          ];
+        }
+        break;
+
+      case 'field_specialty_credit':
+      case 'field_audience':
+      case 'field_delivery_method':
+      case 'field_assignment_area':
+      case 'field_topics':
+      case 'field_subtopics':
+        if (count($field) > 0) {
+          $weight = 0;
+          $label = $field->getFieldDefinition()->getLabel();
+          $terms = [];
+          foreach ($field as $term) {
+            if ($term->target_id) {
+              $terms[] = $term_storage->load($term->target_id)->name->value;
+            }
+          }
+          if ($terms) {
+            switch ($label) {
+              case 'Specialty Credit':
+                $weight = 3;
+                break;
+
+              case 'Audience':
+                $weight = 4;
+                break;
+
+              case 'Delivery Method':
+                $weight = 5;
+                break;
+
+              default:
+                $weight = 6;
+            }
+            $sidebar_details[] = [
+              'label' => $label,
+              'text' => implode(', ', $terms),
+              'weight' => $weight,
+            ];
+          }
+        }
+        break;
+    }
+  }
+  if ($sidebar_details) {
+    // Sort by weight.
+    usort($sidebar_details, fn($a, $b) => $a['weight'] <=> $b['weight']);
+  }
+
+  // Schedule & Registration.
+  $schedule = [];
+  if (count($node->get('field_components')) > 0) {
+    foreach ($node->get('field_components')->referencedEntities() as $event) {
+      // Event date.
+      $event_date = NULL;
+      if ($event->get('field_date_range')->start_date) {
+        $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
+        if ($start_date) {
+          $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
+          $event_date = $start_date->format('F j, Y');
+          if ($end_date && ($start_date->format('F j, Y') != $end_date->format('F j, Y'))) {
+            $start = $start_date->format('F j');
+            if ($start_date->format('Y') != $end_date->format('Y')) {
+              $start = $start_date->format('F j, Y');
+            }
+            $end = $end_date->format('j, Y');
+            if ($start_date->format('F') != $end_date->format('F')) {
+              $end = $end_date->format('F j, Y');
+            }
+            $event_date = $start . ' to ' . $end;
+          }
+        }
+      }
+      // Event notation.
+      $notation = $event->get('field_text')->value ? strip_tags($event->get('field_text')->value, 'strong, em') : NULL;
+      $notation = $notation ? '(' . substr($notation, 0 . ')', 24) : NULL;
+      $schedule[] = [
+        'brow' => $event_date,
+        'heading' => $event->get('field_heading')->value . ' ' . $notation,
+      ];
+    }
+  }
+
+  $registration = $node->get('field_custom_link');
+  if (count($registration) > 0) {
+    $registration_state = 'open';
+    $registration_period = $node->get('field_registration_period')->getValue()[0];
+    if ($registration_period) {
+      $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
+      $register_start = $register_start->format('Ymd');
+      $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
+      $register_end = $register_end->format('Ymd');
+      if ($register_start > $today) {
+        $registration_state = 'pending';
+      }
+      elseif ($register_end < $today) {
+        $registration_state = 'closed';
+      }
+    }
+
+    switch ($registration_state) {
+      case 'closed':
+        $action = [
+          '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Closed') . '</p>',
+        ];
+        break;
+
+      case 'open':
+        $register_title = $registration->title ?: t('Register Now');
+        $register_uri = $registration->uri;
+        $action = [
+          '#markup' => '<a class="button button--secondary button--normal" href="' . $register_uri . '">' . $register_title . '</a>',
+        ];
+        break;
+
+      case 'pending':
+        $action = [
+          '#markup' => '<p class="button button--secondary button--normal">' . t('Pending Registration') . '</p>',
+        ];
+        break;
+
+      default:
+        $action = [
+          '#markup' => '<p class="button button--secondary button--normal">' . t('No Registration Required') . '</p>',
+        ];
+    }
+  }
+  elseif ($node->get('field_origin_url')) {
+    $launch_title = t('Launch');
+    $launch_uri = $node->get('field_origin_url')->uri;
+    $action = [
+      '#markup' => '<a class="button button--secondary button--normal" href="' . $launch_uri . '">' . $launch_title . '</a>',
+    ];
+  }
+  // END Sidebar.
+  $variables['course'] = [
+    'type' => $type,
+    'details' => $sidebar_details,
+    'action' => $action ?: $renderer->render($action),
+    'schedule' => $schedule ?: $renderer->render($schedule),
+  ];
 }

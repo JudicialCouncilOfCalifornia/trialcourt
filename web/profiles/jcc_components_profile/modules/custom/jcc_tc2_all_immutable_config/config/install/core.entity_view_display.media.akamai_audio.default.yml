@@ -2,39 +2,25 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.media.akamai_audio.field_audio_url
-    - field.field.media.akamai_audio.field_media_audio_file
+    - field.field.media.akamai_audio.field_media_video_embed_field
     - media.type.akamai_audio
   module:
-    - file
-    - link
+    - video_embed_field
 id: media.akamai_audio.default
 targetEntityType: media
 bundle: akamai_audio
 mode: default
 content:
-  field_audio_url:
-    type: link
-    label: above
-    settings:
-      trim_length: 80
-      url_only: false
-      url_plain: false
-      rel: ''
-      target: ''
-    third_party_settings: {  }
-    weight: 0
-    region: content
-  field_media_audio_file:
-    type: file_audio
+  field_media_video_embed_field:
+    type: video_embed_field_video
     label: visually_hidden
     settings:
-      controls: true
-      autoplay: false
-      loop: false
-      multiple_file_display_type: tags
+      autoplay: true
+      responsive: true
+      width: 854
+      height: 480
     third_party_settings: {  }
-    weight: 1
+    weight: 0
     region: content
 hidden:
   created: true
