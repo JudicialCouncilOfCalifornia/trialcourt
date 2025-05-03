@@ -331,8 +331,17 @@ function jcc_custom_field_group_form_process_alter(array &$element, &$group, &$c
  * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
  */
 function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
-  $theme = \Drupal::config('system.theme')->get('default');
+  switch ($element['#paragraph_type']) {
+    case 'date_information':
+      if ($element['#bundle'] == 'course') {
+        // Repurposing heading for course event location.
+        $element['subform']['field_heading']['widget'][0]['value']['#title'] = t('Location');
+      }
+      break;
+  }
+
   // If elevated theme is not in use by all sites.
+  $theme = \Drupal::config('system.theme')->get('default');
   if ($theme == 'jcc_elevated') {
     $element['#attached']['library'][] = 'jcc_custom/gin-elevated';
 
@@ -1071,6 +1080,12 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
   if (isset($form['unpublish_state'])) {
     $form['unpublish_state']['widget'][0]['#description'] = t('When the "Unpublish on" time hits, this page will change to the state defined here.');
   }
+
+  if ($form['#form_id'] == 'node_course_edit_form') {
+    // Custom link options not needed for course launch button.
+    unset($form['field_custom_link']['widget'][0]['title']);
+    unset($form['field_custom_link']['widget'][0]['options']);
+  }
 }
 
 /**
@@ -1129,9 +1144,9 @@ function jcc_custom_tokens($type, $tokens, array $data, array $options, Bubbleab
 }
 
 /**
- * Implements hook_form_alter().
+ * Implements hook_form_webform_form_alter().
  */
-function jcc_custom_form_webform_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function jcc_custom_form_webform_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // tci-1277 fix.
   if ($form_id === 'webform_settings_confirmation_form') {
     if (isset($form['confirmation_type']['confirmation_type']['#options'])) {

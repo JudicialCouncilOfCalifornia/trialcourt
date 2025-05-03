@@ -169,24 +169,12 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
   // Block Web search engine indexing.
   $bsefi_label = t('Block Web search engine indexing');
   $bsefi_desc = t('Prevents any content - node and media - from appearing in Web search results. To prevent search engines from crawling this site, <a href="/admin/config/search/robotstxt">adjust the instructions</a> for the site\'s robots.txt.');
-  $bsefi_disabled = t('Not availabile when r4032login module is installed');
-  if (!\Drupal::service('module_handler')->moduleExists('r4032login')) {
-    $form['global']['block_search_engine_indexing'] = [
-      '#type'          => 'checkbox',
-      '#title'         => $bsefi_label,
-      '#default_value' => theme_get_setting('block_search_engine_indexing'),
-      '#description'   => $bsefi_desc,
-    ];
-  }
-  else {
-    $form['global']['block_search_engine_indexing'] = [
-      '#type'          => 'checkbox',
-      '#title'         => $bsefi_label,
-      '#default_value' => theme_get_setting('block_search_engine_indexing'),
-      '#description'   => '<p><strong>' . $bsefi_disabled . '</strong></p><p>' . $bsefi_desc . '</p>',
-      '#attributes'      => ['disabled' => 'disabled'],
-    ];
-  }
+  $form['global']['block_search_engine_indexing'] = [
+    '#type'          => 'checkbox',
+    '#title'         => $bsefi_label,
+    '#default_value' => theme_get_setting('block_search_engine_indexing'),
+    '#description'   => $bsefi_desc,
+  ];
 
   $form['global']['news_default_seal'] = [
     '#type' => 'textfield',
