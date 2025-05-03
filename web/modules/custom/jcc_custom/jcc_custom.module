@@ -1081,7 +1081,7 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
     $form['unpublish_state']['widget'][0]['#description'] = t('When the "Unpublish on" time hits, this page will change to the state defined here.');
   }
 
-  if ($form['#form_id'] == 'node_course_edit_form') {
+  if ($form['#form_id'] == 'node_course_form' || $form['#form_id'] == 'node_course_edit_form') {
     // Custom link options not needed for course launch button.
     unset($form['field_custom_link']['widget'][0]['title']);
     unset($form['field_custom_link']['widget'][0]['options']);
