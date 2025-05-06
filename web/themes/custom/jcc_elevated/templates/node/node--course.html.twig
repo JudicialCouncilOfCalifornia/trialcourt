@@ -141,9 +141,19 @@
   {# Main #}
   {% set main %}
     <div class="box stack">
+      {# Video embed placement only. #}
+      {% if course.embed and course.embed.type != 'audio' %}
+        {{ course.embed.media }}
+      {% endif %}
+
       <h2>Overview</h2>
       {% if content.body[0] %}
         {{ content.body }}
+      {% endif %}
+
+      {# Audio embed placement only. #}
+      {% if course.embed and course.embed.type == 'audio' %}
+        {{ course.embed.media }}
       {% endif %}
 
       {% if content.field_related_materials_freeform[0] %}
