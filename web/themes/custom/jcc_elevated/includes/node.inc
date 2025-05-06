@@ -1162,17 +1162,30 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   $renderer = \Drupal::service('renderer');
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
+  $today = $today->format('Ymd');
   $type_term_id = $node->get('field_course_type')[0]->target_id ? $node->get('field_course_type')->target_id : NULL;
   $type = $type_term_id ? $term_storage->load($type_term_id)->name->value : NULL;
   $action = NULL;
-  $today = $today->format('Ymd');
-  $promo_image = NULL;
+  $embed = [];
+
+  // BEGIN: Media.
+  if ($node->get('field_media')) {
+    $media_entity = $node->get('field_media')->entity;
+    $media_type = 'audio';
+    if ($media_entity->bundle->target_id != 'akamai_audio') {
+      $media_type = 'video';
+    }
+    $embed = [
+      'media' => \Drupal::entityTypeManager()->getViewBuilder('media')->view($media_entity),
+      'type' => $media_type,
+    ];
+  }
 
   // BEGIN: Sidebar.
   $sidebar_details = [];
 
   // Promotional Image.
-  if ($node->get('field_image')) {
+  if ($node->get('field_image')->entity->field_media_image->entity) {
     $promo_image_src = $node->get('field_image')->entity->field_media_image->entity->getFileUri();
     $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_650x650')->buildUrl($promo_image_src);
     if ($image_url) {
@@ -1358,6 +1371,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   // END Sidebar.
   $variables['course'] = [
     'type' => $type,
+    'embed' => $embed,
     'details' => $sidebar_details,
     'action' => $action ?: $renderer->render($action),
     'schedule' => $schedule ?: $renderer->render($schedule),
