@@ -1162,14 +1162,14 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   $renderer = \Drupal::service('renderer');
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
-  $today = $today->format('Ymd');
   $type_term_id = $node->get('field_course_type')[0]->target_id ? $node->get('field_course_type')->target_id : NULL;
   $type = $type_term_id ? $term_storage->load($type_term_id)->name->value : NULL;
-  $action = NULL;
   $embed = [];
+  $sidebar_details = [];
+  $action = NULL;
 
-  // BEGIN: Media.
-  if ($node->get('field_media')) {
+  // Media embed.
+  if ($node->get('field_media')->entity) {
     $media_entity = $node->get('field_media')->entity;
     $media_type = 'audio';
     if ($media_entity->bundle->target_id != 'akamai_audio') {
@@ -1180,9 +1180,6 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       'type' => $media_type,
     ];
   }
-
-  // BEGIN: Sidebar.
-  $sidebar_details = [];
 
   // Promotional Image.
   if ($node->get('field_image')->entity->field_media_image->entity) {
@@ -1239,11 +1236,11 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       case 'field_specialty_credit':
       case 'field_audience':
       case 'field_delivery_method':
+      case 'field_event_locations':
       case 'field_assignment_area':
       case 'field_topics':
       case 'field_subtopics':
         if (count($field) > 0) {
-          $weight = 0;
           $label = $field->getFieldDefinition()->getLabel();
           $terms = [];
           foreach ($field as $term) {
@@ -1265,8 +1262,12 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
                 $weight = 5;
                 break;
 
-              default:
+              case 'Locations':
                 $weight = 6;
+                break;
+
+              default:
+                $weight = 7;
             }
             $sidebar_details[] = [
               'label' => $label,
@@ -1285,40 +1286,43 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
 
   // Schedule & Registration.
   $schedule = [];
-  if (count($node->get('field_components')) > 0) {
+  if (count($node->get('field_components')) > 0 && !$embed) {
     foreach ($node->get('field_components')->referencedEntities() as $event) {
-      // Event date.
-      $event_date = NULL;
       if ($event->get('field_date_range')->start_date) {
         $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
-        if ($start_date) {
-          $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
-          $event_date = $start_date->format('F j, Y');
-          if ($end_date && ($start_date->format('F j, Y') != $end_date->format('F j, Y'))) {
-            $start = $start_date->format('F j');
-            if ($start_date->format('Y') != $end_date->format('Y')) {
-              $start = $start_date->format('F j, Y');
+        $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
+
+        if ($start_date && $end_date->format('Ymd') > $today->format('Ymd')) {
+          // Event date.
+          $event_date = NULL;
+          if ($event->get('field_date_range')->start_date) {
+            $event_date = $start_date->format('F j, Y');
+            if ($start_date->format('F j, Y') != $end_date->format('F j, Y')) {
+              $start = $start_date->format('F j');
+              if ($start_date->format('Y') != $end_date->format('Y')) {
+                $start = $start_date->format('F j, Y');
+              }
+              $end = $end_date->format('j, Y');
+              if ($start_date->format('F') != $end_date->format('F')) {
+                $end = $end_date->format('F j, Y');
+              }
+              $event_date = $start . ' to ' . $end;
             }
-            $end = $end_date->format('j, Y');
-            if ($start_date->format('F') != $end_date->format('F')) {
-              $end = $end_date->format('F j, Y');
-            }
-            $event_date = $start . ' to ' . $end;
           }
+          // Event notation.
+          $notation = $event->get('field_text')->value ? strip_tags($event->get('field_text')->value, 'strong, em') : NULL;
+          $notation = $notation ? '(' . substr($notation, 0 . ')', 24) : NULL;
+          $schedule[] = [
+            'brow' => $event_date,
+            'heading' => $event->get('field_heading')->value . ' ' . $notation,
+          ];
         }
       }
-      // Event notation.
-      $notation = $event->get('field_text')->value ? strip_tags($event->get('field_text')->value, 'strong, em') : NULL;
-      $notation = $notation ? '(' . substr($notation, 0 . ')', 24) : NULL;
-      $schedule[] = [
-        'brow' => $event_date,
-        'heading' => $event->get('field_heading')->value . ' ' . $notation,
-      ];
     }
   }
 
   $registration = $node->get('field_custom_link');
-  if (count($registration) > 0) {
+  if (count($registration) > 0 && !$embed) {
     $registration_state = 'open';
     $registration_period = $node->get('field_registration_period')->getValue()[0];
     if ($registration_period) {
@@ -1361,14 +1365,15 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
         ];
     }
   }
-  elseif ($node->get('field_origin_url')) {
+  elseif ($node->get('field_origin_url') && !$embed) {
     $launch_title = t('Launch');
     $launch_uri = $node->get('field_origin_url')->uri;
     $action = [
       '#markup' => '<a class="button button--secondary button--normal" href="' . $launch_uri . '">' . $launch_title . '</a>',
     ];
   }
-  // END Sidebar.
+
+  // Course object.
   $variables['course'] = [
     'type' => $type,
     'embed' => $embed,
