@@ -15,6 +15,7 @@ dependencies:
     - field.field.node.course.field_date
     - field.field.node.course.field_delivery_method
     - field.field.node.course.field_education_credit_freeform
+    - field.field.node.course.field_event_locations
     - field.field.node.course.field_image
     - field.field.node.course.field_is_quick_reference
     - field.field.node.course.field_media
@@ -67,6 +68,7 @@ third_party_settings:
         - field_course_type
         - field_audience
         - field_delivery_method
+        - field_event_locations
         - field_assignment_area
         - field_topics
         - field_subtopics
@@ -260,7 +262,7 @@ content:
     third_party_settings: {  }
   field_assignment_area:
     type: autocomplete_deluxe
-    weight: 11
+    weight: 12
     region: content
     settings:
       match_operator: CONTAINS
@@ -378,6 +380,23 @@ content:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
+  field_event_locations:
+    type: autocomplete_deluxe
+    weight: 11
+    region: content
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
   field_image:
     type: media_library_widget
     weight: 9
@@ -387,7 +406,7 @@ content:
     third_party_settings: {  }
   field_is_quick_reference:
     type: boolean_checkbox
-    weight: 14
+    weight: 15
     region: content
     settings:
       display_label: true
@@ -440,7 +459,7 @@ content:
     third_party_settings: {  }
   field_subtopics:
     type: autocomplete_deluxe
-    weight: 13
+    weight: 14
     region: content
     settings:
       match_operator: CONTAINS
@@ -457,7 +476,7 @@ content:
     third_party_settings: {  }
   field_topics:
     type: autocomplete_deluxe
-    weight: 12
+    weight: 13
     region: content
     settings:
       match_operator: CONTAINS

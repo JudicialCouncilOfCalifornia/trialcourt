@@ -15,6 +15,7 @@ dependencies:
     - field.field.node.course.field_date
     - field.field.node.course.field_delivery_method
     - field.field.node.course.field_education_credit_freeform
+    - field.field.node.course.field_event_locations
     - field.field.node.course.field_image
     - field.field.node.course.field_is_quick_reference
     - field.field.node.course.field_media
@@ -58,7 +59,7 @@ content:
     region: content
   field_achievable_credit:
     type: number_decimal
-    label: above
+    label: hidden
     settings:
       thousand_separator: ''
       decimal_separator: .
@@ -69,7 +70,7 @@ content:
     region: content
   field_alerts:
     type: entity_reference_revisions_entity_view
-    label: above
+    label: hidden
     settings:
       view_mode: default
       link: ''
@@ -78,7 +79,7 @@ content:
     region: content
   field_assignment_area:
     type: entity_reference_label
-    label: above
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }
@@ -111,7 +112,7 @@ content:
     region: content
   field_course_type:
     type: entity_reference_label
-    label: above
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }
@@ -153,9 +154,17 @@ content:
     third_party_settings: {  }
     weight: 108
     region: content
+  field_event_locations:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 127
+    region: content
   field_image:
     type: entity_reference_entity_view
-    label: above
+    label: hidden
     settings:
       view_mode: default
       link: false
@@ -164,7 +173,7 @@ content:
     region: content
   field_is_quick_reference:
     type: boolean
-    label: above
+    label: hidden
     settings:
       format: default
       format_custom_false: ''
@@ -174,7 +183,7 @@ content:
     region: content
   field_media:
     type: entity_reference_label
-    label: visually_hidden
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }
@@ -182,7 +191,7 @@ content:
     region: content
   field_origin_url:
     type: link
-    label: above
+    label: hidden
     settings:
       trim_length: 80
       url_only: false
@@ -211,7 +220,7 @@ content:
     region: content
   field_specialty_credit:
     type: entity_reference_label
-    label: above
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }
@@ -219,7 +228,7 @@ content:
     region: content
   field_subtopics:
     type: entity_reference_label
-    label: above
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }
@@ -227,7 +236,7 @@ content:
     region: content
   field_topics:
     type: entity_reference_label
-    label: above
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }
