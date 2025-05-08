@@ -25,7 +25,14 @@ function jcc_base_preprocess_block__views_block__events_block_2(&$variables) {
       if ($end_date->getTimestamp() >= \Drupal::time()->getCurrentTime()) {
         $event_type = ($row->_entity->field_event_type->target_id ? Term::load($row->_entity->field_event_type->target_id)->get('name')->value : '');
         $title = $row->_entity->title->value;
-        if ($date->format('Y-m-d') === $end_date->format('Y-m-d')) {
+      // Clone so we don't modify original objects
+        $start_date = clone $date;
+        $end_date_cloned = clone $end_date;
+      // Normalize both to midnight (removes time component for comparison)
+        $start_date->setTime(0, 0, 0);
+        $end_date_cloned->setTime(0, 0, 0);
+
+        if ($start_date === $end_date_cloned) {
           $excerpt = $date->format('M j, Y');
         } else {
           $excerpt = $date->format('M j, Y') . ' - ' . $end_date->format('M j, Y');
