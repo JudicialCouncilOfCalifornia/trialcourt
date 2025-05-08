@@ -985,7 +985,6 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_2(&$variables
  * Implements hook_preprocess_views_view() for job search listing block.
  */
 function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
-  $render = \Drupal::service('renderer');
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
@@ -1451,6 +1450,139 @@ function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived
     }
   }
 
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for course cataglog listing.
+ */
+function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
+  $timezone = new DateTimeZone('America/Los_Angeles');
+  $today = new DateTime('now', $timezone);
+
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
+
+  // Process the results for the search api view.
+  $variables['processed_rows'] = [];
+  foreach ($variables['rows'][0]['#rows'] as $item) {
+    // Node details.
+    $node = $item['#row']->_entity;
+    $label = $node->label();
+    $type = $node->get('field_course_type')->referencedEntities() ? $node->get('field_course_type')->referencedEntities()[0]->label() : NULL;
+    $available_delivery_methods = $node->get('field_delivery_method')->referencedEntities() ? $node->get('field_delivery_method')->referencedEntities() : NULL;
+    $delivery_methods = [];
+    if ($available_delivery_methods) {
+      foreach ($available_delivery_methods as $delivery_method) {
+        $delivery_methods[] = $delivery_method->label();
+      }
+      $delivery_methods = implode(', ', $delivery_methods);
+    }
+    $date = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : NULL;
+    $available_locations = $node->get('field_event_locations')->referencedEntities() ? $node->get('field_event_locations')->referencedEntities() : NULL;
+    $locations = [];
+    if ($available_locations) {
+      foreach ($available_locations as $location) {
+        $locations[] = $location->label();
+      }
+      $locations = implode(', ', $locations);
+    }
+
+    // Node action.
+    $action = [];
+    if (count($node->get('field_custom_link')) > 0) {
+      $registration = $node->get('field_custom_link');
+      $registration_state = 'open';
+      $registration_period = $node->get('field_registration_period')->getValue()[0];
+      if ($registration_period) {
+        $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
+        $register_start = $register_start->format('Ymd');
+        $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
+        $register_end = $register_end->format('Ymd');
+        if ($register_start > $today->format('Ymd')) {
+          $registration_state = 'pending';
+        }
+        elseif ($register_end < $today->format('Ymd')) {
+          $registration_state = 'closed';
+        }
+      }
+
+      switch ($registration_state) {
+        case 'closed':
+          $action = [
+            'label' => t('Registration Closed'),
+            'href' => $registration->uri,
+          ];
+          break;
+
+        case 'open':
+          $action = [
+            'label' => t('Register Now'),
+            'href' => $registration->uri,
+          ];
+          break;
+
+        case 'pending':
+          $action = [
+            'label' => t('Pending Registration'),
+            'href' => $registration->uri,
+          ];
+          break;
+
+        default:
+          $action = [
+            'label' => t('Registration Not Required'),
+            'href' => $registration->uri,
+          ];
+      }
+    }
+    elseif ($node->get('field_media')) {
+      $media = $node->get('field_media')->entity;
+      switch ($media->bundle[0]->target_id) {
+        case 'file':
+        case 'publication':
+          $file = \Drupal::entityTypeManager()->getStorage('file')->load($media->get('field_media_file')->target_id);
+          if ($file) {
+            $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+            $extension_exp = '/[^.]*$/';
+            preg_match($extension_exp, $file_url, $extension);
+            $download_label = t('Download');
+            if ($extension) {
+              $download_label = $download_label . ' ' . strtoupper($extension[0]);
+            }
+            $action = [
+              'label' => $download_label,
+              'href' => $file_url,
+            ];
+          }
+          break;
+      }
+    }
+
+    $detail_list_data = [
+      'label' => t('Details'),
+      'details' => array_filter([
+        $type,
+        $delivery_methods,
+        $date,
+        $locations,
+      ]),
+    ];
+
+    $overview_max = 255;
+    $overview = strip_tags($node->get('body')->value);
+    if (strlen($overview) > $overview_max) {
+      $overview = substr($overview, 0, $overview_max);
+      $overview = $overview . '...';
+    }
+
+    $variables['processed_rows'][] = [
+      'title' => $label,
+      'url' => $node->toUrl(),
+      'content' => $overview,
+      'button_data' => $action,
+      'detail_list_data' => $detail_list_data,
+    ];
+  }
 }
 
 /**
