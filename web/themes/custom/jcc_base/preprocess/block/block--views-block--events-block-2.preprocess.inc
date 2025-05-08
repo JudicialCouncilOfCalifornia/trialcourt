@@ -32,7 +32,7 @@ function jcc_base_preprocess_block__views_block__events_block_2(&$variables) {
         $start_date->setTime(0, 0, 0);
         $end_date_cloned->setTime(0, 0, 0);
 
-        if ($start_date === $end_date_cloned) {
+        if ($start_date->getTimestamp() === $end_date_cloned->getTimestamp()) {
           $excerpt = $date->format('M j, Y');
         } else {
           $excerpt = $date->format('M j, Y') . ' - ' . $end_date->format('M j, Y');
