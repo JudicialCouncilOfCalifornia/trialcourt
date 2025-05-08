@@ -22,7 +22,7 @@ function jcc_base_preprocess_block__views_block__events_block_2(&$variables) {
       $date = new DrupalDateTime($row->_entity->field_date_range->value, 'UTC');
       $end_date = new DrupalDateTime($row->_entity->field_date_range->end_value, 'UTC');
 
-      // 🔍 DEBUG: Log original start and end datetime values.
+      // DEBUG: Log original start and end datetime values.
       \Drupal::logger('event_debug')->info('Start: @start, End: @end', [
         '@start' => $date->format('Y-m-d H:i:s'),
         '@end' => $end_date->format('Y-m-d H:i:s'),
@@ -37,7 +37,7 @@ function jcc_base_preprocess_block__views_block__events_block_2(&$variables) {
         $start_date_midnight = clone $date;
         $adjusted_end = clone $end_date;
 
-        // 🛠️ Adjust end date to handle midnight issue
+        // Adjust end date to handle midnight issue
         $adjusted_end->modify('-1 second');
 
         // Normalize both to midnight
