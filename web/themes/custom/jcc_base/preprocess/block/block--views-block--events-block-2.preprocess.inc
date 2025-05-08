@@ -25,17 +25,16 @@ function jcc_base_preprocess_block__views_block__events_block_2(&$variables) {
       if ($end_date->getTimestamp() >= \Drupal::time()->getCurrentTime()) {
         $event_type = ($row->_entity->field_event_type->target_id ? Term::load($row->_entity->field_event_type->target_id)->get('name')->value : '');
         $title = $row->_entity->title->value;
-        $start_date_midnight = clone $date;
-        $adjusted_end = clone $end_date;
-        $adjusted_end->modify('-1 second');
-        $start_date_midnight->setTime(0, 0, 0);
-        $adjusted_end_midnight = clone $adjusted_end;
-        $adjusted_end_midnight->setTime(0, 0, 0);
+        $start_date_midnight = (clone $date)->setTime(0, 0);
+        $adjusted_end_midnight = (clone $end_date)->modify('-1 second')->setTime(0, 0);
+
         if ($start_date_midnight->getTimestamp() === $adjusted_end_midnight->getTimestamp()) {
           $excerpt = $date->format('M j, Y');
-        } else {
+        }
+        else {
           $excerpt = $date->format('M j, Y') . ' - ' . $end_date->format('M j, Y');
         }
+
         $url = Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
 
         $moduleHandler = Drupal::service('module_handler');
