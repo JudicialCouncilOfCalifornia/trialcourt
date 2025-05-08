@@ -21,22 +21,36 @@ function jcc_base_preprocess_block__views_block__events_block_2(&$variables) {
     foreach ($rows as $row) {
       $date = new DrupalDateTime($row->_entity->field_date_range->value, 'UTC');
       $end_date = new DrupalDateTime($row->_entity->field_date_range->end_value, 'UTC');
+
+      // 🔍 DEBUG: Log original start and end datetime values.
+      \Drupal::logger('event_debug')->info('Start: @start, End: @end', [
+        '@start' => $date->format('Y-m-d H:i:s'),
+        '@end' => $end_date->format('Y-m-d H:i:s'),
+      ]);
+
       // Display only current or upcoming events.
       if ($end_date->getTimestamp() >= \Drupal::time()->getCurrentTime()) {
         $event_type = ($row->_entity->field_event_type->target_id ? Term::load($row->_entity->field_event_type->target_id)->get('name')->value : '');
         $title = $row->_entity->title->value;
-      // Clone so we don't modify original objects
-        $start_date = clone $date;
-        $end_date_cloned = clone $end_date;
-      // Normalize both to midnight (removes time component for comparison)
-        $start_date->setTime(0, 0, 0);
-        $end_date_cloned->setTime(0, 0, 0);
 
-        if ($start_date->getTimestamp() === $end_date_cloned->getTimestamp()) {
+        // Clone for safety
+        $start_date_midnight = clone $date;
+        $adjusted_end = clone $end_date;
+
+        // 🛠️ Adjust end date to handle midnight issue
+        $adjusted_end->modify('-1 second');
+
+        // Normalize both to midnight
+        $start_date_midnight->setTime(0, 0, 0);
+        $adjusted_end_midnight = clone $adjusted_end;
+        $adjusted_end_midnight->setTime(0, 0, 0);
+
+        if ($start_date_midnight->getTimestamp() === $adjusted_end_midnight->getTimestamp()) {
           $excerpt = $date->format('M j, Y');
         } else {
           $excerpt = $date->format('M j, Y') . ' - ' . $end_date->format('M j, Y');
         }
+
         $url = Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
 
         $moduleHandler = Drupal::service('module_handler');
