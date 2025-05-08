@@ -1083,7 +1083,8 @@ function jcc_custom_form_node_form_alter(&$form, FormStateInterface $form_state,
 
   if ($form['#form_id'] == 'node_course_form' || $form['#form_id'] == 'node_course_edit_form') {
     // Custom link options not needed for course launch button.
-    unset($form['field_custom_link']['widget'][0]['title']);
+    $form['field_custom_link']['widget'][0]['title']['#title'] = t('Custom registration button label');
+    $form['field_custom_link']['widget'][0]['title']['#description'] = t('Customize the label for the open registration button if needed. Default is <em>Register Now</em>.');
     unset($form['field_custom_link']['widget'][0]['options']);
   }
 }
