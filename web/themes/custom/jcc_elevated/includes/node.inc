@@ -1395,10 +1395,12 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   $variables['course'] = [
     'type' => $type,
     'embed' => $embed,
-    'promo_image' => $promo_image,
-    'action' => $action ?: $renderer->render($action),
-    'details' => $sidebar_details,
-    'schedule' => $schedule ?: $renderer->render($schedule),
+    'sidebar' => [
+      'promo_image' => $promo_image,
+      'action' => $action ?: $renderer->render($action),
+      'details' => $sidebar_details,
+      'schedule' => $schedule ?: $renderer->render($schedule),
+    ],
     'topics' => $topics,
   ];
 }
