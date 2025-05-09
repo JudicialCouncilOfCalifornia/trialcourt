@@ -99,40 +99,40 @@
   {{ content.field_alerts }}
 
   {# Details #}
-  {% if course.details %}
+  {% if course.sidebar %}
     {% set sidebar %}
       {% set sidebar_content = [] %}
-      {% if course.details %}
+
+      {% if course.sidebar.promo_image %}
+        {% set item = {
+          heading: course.sidebar.promo_image,
+        } %}
+        {% set sidebar_content = sidebar_content|merge([item]) %}
+      {% endif %}
+
+      {% if course.action %}
+        {% set item = {
+          heading: course.sidebar.action,
+        } %}
+        {% set sidebar_content = sidebar_content|merge([item]) %}
+      {% endif %}
+
+      {% if course.sidebar.details %}
         {% set details %}
           {% include "@molecules/List/List.twig" with {
             variant: 'none',
             wider_span: 'true',
-            items: course.details,
+            items: course.sidebar.details,
           } %}
         {% endset %}
-
-        {% if course.promo_image %}
-          {% set item = {
-            heading: course.promo_image,
-          } %}
-          {% set sidebar_content = sidebar_content|merge([item]) %}
-        {% endif %}
-
-        {% if course.action %}
-          {% set item = {
-            heading: course.action,
-          } %}
-          {% set sidebar_content = sidebar_content|merge([item]) %}
-        {% endif %}
-
         {% set item = {
           heading: details,
         } %}
         {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
 
-      {% if course.schedule %}
-        {% set sidebar_content = sidebar_content|merge(course.schedule) %}
+      {% if course.sidebar.schedule %}
+        {% set sidebar_content = sidebar_content|merge(course.sidebar.schedule) %}
       {% endif %}
 
       <aside class="request__main-sidebar stack" style="order: 2;">
