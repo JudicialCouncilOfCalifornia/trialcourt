@@ -18,6 +18,7 @@ dependencies:
     - field.field.node.course.field_event_locations
     - field.field.node.course.field_image
     - field.field.node.course.field_is_quick_reference
+    - field.field.node.course.field_lead
     - field.field.node.course.field_media
     - field.field.node.course.field_origin_url
     - field.field.node.course.field_registration_period
@@ -53,7 +54,7 @@ third_party_settings:
       label: Sections
       region: content
       parent_name: ''
-      weight: 1
+      weight: 2
       format_type: tabs
       format_settings:
         classes: ''
@@ -411,6 +412,22 @@ content:
     settings:
       display_label: true
     third_party_settings: {  }
+  field_lead:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings:
+      maxlength:
+        maxlength_js: 510
+        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+        maxlength_js_enforce: false
+        maxlength_js_truncate_html: false
+      allowed_formats:
+        hide_help: '0'
+        hide_guidelines: '0'
   field_media:
     type: media_library_widget
     weight: 6
@@ -493,7 +510,7 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
@@ -541,7 +558,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 4
     region: content
     settings:
       match_operator: CONTAINS
