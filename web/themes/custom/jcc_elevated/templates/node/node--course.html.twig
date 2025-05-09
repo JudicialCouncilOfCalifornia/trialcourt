@@ -77,6 +77,8 @@
 {{ attach_library("jcc_storybook/Icon") }}
 {{ attach_library("jcc_storybook/Alert") }}
 {{ attach_library("jcc_storybook/SidebarList") }}
+{{ attach_library("jcc_storybook/Pill") }}
+{{ attach_library("jcc_storybook/Pills") }}
 {{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/Section") }}
 
@@ -88,6 +90,7 @@
       part_one: course.type,
     },
     heading: label,
+    text: content.field_lead,
     media: false,
     attributes: create_attribute()
   } %}
@@ -96,7 +99,7 @@
   {{ content.field_alerts }}
 
   {# Details #}
-  {% if course.details or course.action or course.schedule %}
+  {% if course.details %}
     {% set sidebar %}
       {% set sidebar_content = [] %}
       {% if course.details %}
@@ -108,15 +111,22 @@
           } %}
         {% endset %}
 
+        {% if course.promo_image %}
+          {% set item = {
+            heading: course.promo_image,
+          } %}
+          {% set sidebar_content = sidebar_content|merge([item]) %}
+        {% endif %}
+
+        {% if course.action %}
+          {% set item = {
+            heading: course.action,
+          } %}
+          {% set sidebar_content = sidebar_content|merge([item]) %}
+        {% endif %}
+
         {% set item = {
           heading: details,
-        } %}
-        {% set sidebar_content = sidebar_content|merge([item]) %}
-      {% endif %}
-
-      {% if course.action %}
-        {% set item = {
-          heading: course.action,
         } %}
         {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
@@ -154,6 +164,40 @@
       {# Audio embed placement only. #}
       {% if course.embed and course.embed.type == 'audio' %}
         {{ course.embed.media }}
+      {% endif %}
+
+      {% if course.topics %}
+        <h3>{{ 'Topics'|t }}</h3>
+        {% set pills_topics %}
+          {% for topic in course.topics %}
+            {% include "@atoms/Pill/Pill.twig" with {
+              variant: 'square',
+              label: topic.label,
+              url: '',
+            } %}
+          {% endfor %}
+        {% endset %}
+        {% include "@molecules/Pills/Pills.twig" with {
+          variant: 'default',
+          items: [pills_topics],
+        } %}
+      {% endif %}
+
+      {% if course.subtopics %}
+        <h3>{{ 'Subtopics'|t }}</h3>
+        {% set pills_subtopics %}
+          {% for subtopic in course.subtopics %}
+            {% include "@atoms/Pill/Pill.twig" with {
+              variant: 'square',
+              label: subtopic.label,
+              url: '',
+            } %}
+          {% endfor %}
+        {% endset %}
+        {% include "@molecules/Pills/Pills.twig" with {
+          variant: 'default',
+          items: [pills_subtopics],
+        } %}
       {% endif %}
 
       {% if content.field_related_materials_freeform[0] %}
