@@ -1166,8 +1166,10 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   $type = $type_term_id ? $term_storage->load($type_term_id)->name->value : NULL;
   $embed = [];
   $sidebar_details = [];
-  $action = NULL;
   $schedule = [];
+  $topics = [];
+  $promo_image = NULL;
+  $action = NULL;
 
   // Media embed or action.
   if ($node->get('field_media')->entity) {
@@ -1238,6 +1240,11 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       $registration = $node->get('field_custom_link');
       if (count($registration) > 0) {
         $registration_state = 'open';
+        $register_uri = $registration->uri;
+        $action = [
+          '#markup' => '<a class="button button--secondary button--normal" href="' . $register_uri . '">' . t('Register Now') . '</a>',
+        ];
+
         $registration_period = $node->get('field_registration_period')->getValue()[0];
         if ($registration_period) {
           $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
@@ -1259,24 +1266,17 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
             ];
             break;
 
-          case 'open':
-            $register_uri = $registration->uri;
-            $action = [
-              '#markup' => '<a class="button button--secondary button--normal" href="' . $register_uri . '">' . t('Register Now') . '</a>',
-            ];
-            break;
-
           case 'pending':
             $action = [
-              '#markup' => '<p class="button button--secondary button--normal">' . t('Pending Registration') . '</p>',
+              '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Pending') . '</p>',
             ];
             break;
-
-          default:
-            $action = [
-              '#markup' => '<p class="button button--secondary button--normal">' . t('No Registration Required') . '</p>',
-            ];
         }
+      }
+      else {
+        $action = [
+          '#markup' => '<p class="button button--secondary button--normal">' . t('No Registration Required') . '</p>',
+        ];
       }
     }
     elseif ($node->get('field_origin_url')) {
@@ -1296,10 +1296,6 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       $promo_image = [
         '#markup' => '<img src="' . $image_url . '">',
       ];
-      $sidebar_details[] = [
-        'text' => $promo_image,
-        'weight' => 0,
-      ];
     }
   }
 
@@ -1311,7 +1307,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           $sidebar_details[] = [
             'label' => $field->getFieldDefinition()->getLabel(),
             'text' => $field->date->format('F j, Y'),
-            'weight' => 4,
+            'weight' => 1,
           ];
         }
         break;
@@ -1321,7 +1317,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           $sidebar_details[] = [
             'label' => $field->getFieldDefinition()->getLabel(),
             'text' => $field->value,
-            'weight' => 5,
+            'weight' => 3,
           ];
         }
         break;
@@ -1335,18 +1331,14 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           $sidebar_details[] = [
             'label' => $field->getFieldDefinition()->getLabel(),
             'text' => $achievable_credits,
-            'weight' => 6,
+            'weight' => 4,
           ];
         }
         break;
 
-      case 'field_specialty_credit':
       case 'field_audience':
-      case 'field_delivery_method':
       case 'field_event_locations':
       case 'field_assignment_area':
-      case 'field_topics':
-      case 'field_subtopics':
         if (count($field) > 0) {
           $label = $field->getFieldDefinition()->getLabel();
           $terms = [];
@@ -1357,39 +1349,38 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           }
           if ($terms) {
             switch ($label) {
-              case 'Assignment Area':
-                $weight = 1;
-                break;
-
-              case 'Topics':
+              case 'Locations':
                 $weight = 2;
                 break;
 
-              case 'Subtopics':
-                $weight = 3;
-                break;
-
-              case 'Specialty Credit':
-                $weight = 7;
-                break;
-
               case 'Audience':
-                $weight = 8;
+                $weight = 5;
                 break;
 
-              case 'Delivery Method':
-                $weight = 9;
+              case 'Assignment Area':
+                $weight = 6;
                 break;
 
-              case 'Locations':
-                $weight = 10;
-                break;
+              default:
+                $weight = 7;
             }
             $sidebar_details[] = [
               'label' => $label,
               'text' => implode(', ', $terms),
               'weight' => $weight,
             ];
+          }
+        }
+        break;
+
+      case 'field_topics':
+        if (count($field) > 0) {
+          foreach ($field as $topic) {
+            if ($topic->target_id) {
+              $topics[] = [
+                'label' => $term_storage->load($topic->target_id)->name->value,
+              ];
+            }
           }
         }
         break;
@@ -1404,8 +1395,10 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   $variables['course'] = [
     'type' => $type,
     'embed' => $embed,
-    'details' => $sidebar_details,
+    'promo_image' => $promo_image,
     'action' => $action ?: $renderer->render($action),
+    'details' => $sidebar_details,
     'schedule' => $schedule ?: $renderer->render($schedule),
+    'topics' => $topics,
   ];
 }
