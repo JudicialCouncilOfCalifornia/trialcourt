@@ -1478,12 +1478,25 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
       $delivery_methods = implode(', ', $delivery_methods);
     }
     $date = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : NULL;
-    $available_locations = $node->get('field_event_locations')->referencedEntities() ? $node->get('field_event_locations')->referencedEntities() : NULL;
+
+    // Locations for upcoming events only.
+    $items = $node->get('field_components');
     $locations = [];
-    if ($available_locations) {
-      foreach ($available_locations as $location) {
-        $locations[] = $location->label();
+    foreach ($items as $item) {
+      $event = $item->entity;
+      if ($event->get('field_date_range')->start_date) {
+        $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
+        $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
+
+        if ($start_date && $end_date->format('Ymd') >= $today->format('Ymd')) {
+          $event_location_id = $event->get('field_event_location')->target_id;
+          if ($event_location_id) {
+            $locations[] = $event->get('field_event_location')->entity->label();
+          }
+        }
       }
+    }
+    if ($locations) {
       $locations = implode(', ', $locations);
     }
 

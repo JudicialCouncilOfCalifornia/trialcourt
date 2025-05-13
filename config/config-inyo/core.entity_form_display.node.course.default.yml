@@ -15,7 +15,6 @@ dependencies:
     - field.field.node.course.field_date
     - field.field.node.course.field_delivery_method
     - field.field.node.course.field_education_credit_freeform
-    - field.field.node.course.field_event_locations
     - field.field.node.course.field_image
     - field.field.node.course.field_is_quick_reference
     - field.field.node.course.field_lead
@@ -380,23 +379,6 @@ content:
     settings:
       rows: 5
       placeholder: ''
-    third_party_settings: {  }
-  field_event_locations:
-    type: autocomplete_deluxe
-    weight: 11
-    region: content
-    settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: false
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: false
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
   field_image:
     type: media_library_widget
