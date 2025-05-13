@@ -110,9 +110,16 @@
         {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
 
-      {% if course.action %}
+      {% if course.sidebar.action %}
         {% set item = {
           heading: course.sidebar.action,
+        } %}
+        {% set sidebar_content = sidebar_content|merge([item]) %}
+      {% endif %}
+
+      {% if course.sidebar.event_today %}
+        {% set item = {
+          brow: course.sidebar.event_today,
         } %}
         {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
@@ -167,7 +174,7 @@
       {% endif %}
 
       {% if course.topics %}
-        <h3>{{ 'Topics'|t }}</h3>
+        <h3>{{ 'Topics & Subtopics'|t }}</h3>
         {% set pills_topics %}
           {% for topic in course.topics %}
             {% include "@atoms/Pill/Pill.twig" with {
