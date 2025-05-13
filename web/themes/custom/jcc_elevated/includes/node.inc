@@ -1436,8 +1436,8 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       'action' => $action ?: $renderer->render($action),
       'event_today' => $event_today,
       'details' => $sidebar_details,
+      'topics' => $topics,
       'schedule' => $schedule,
     ],
-    'topics' => $topics,
   ];
 }
