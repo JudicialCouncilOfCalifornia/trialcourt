@@ -1158,18 +1158,18 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
  *   The node.
  */
 function jcc_elevated_node_course(array &$variables, NodeInterface $node): void {
-  $term_storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
   $renderer = \Drupal::service('renderer');
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
-  $type_term_id = $node->get('field_course_type')[0]->target_id ? $node->get('field_course_type')->target_id : NULL;
-  $type = $type_term_id ? $term_storage->load($type_term_id)->name->value : NULL;
+  $type_term = $node->get('field_course_type')[0]->entity ? $node->get('field_course_type')[0]->entity : NULL;
+  $type = $type_term ? $type_term->label() : NULL;
   $embed = [];
   $sidebar_details = [];
   $schedule = [];
   $topics = [];
   $promo_image = NULL;
   $action = NULL;
+  $event_today = NULL;
 
   // Media embed or action.
   if ($node->get('field_media')->entity) {
@@ -1209,7 +1209,8 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
           $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
 
-          if ($start_date && $end_date->format('Ymd') > $today->format('Ymd')) {
+          // Upcoming events only.
+          if ($start_date && $end_date->format('Ymd') >= $today->format('Ymd')) {
             // Event date.
             $event_date = NULL;
             if ($event->get('field_date_range')->start_date) {
@@ -1226,13 +1227,49 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
                 $event_date = $start . ' to ' . $end;
               }
             }
+
+            // Event location.
+            $location = $event->get('field_event_location')->entity->label();
+
             // Event notation.
             $notation = $event->get('field_text')->value ? strip_tags($event->get('field_text')->value, 'strong, em') : NULL;
-            $notation = $notation ? '(' . substr($notation, 0 . ')', 24) : NULL;
-            $schedule[] = [
-              'brow' => $event_date,
-              'heading' => $event->get('field_heading')->value . ' ' . $notation,
-            ];
+            $notation = preg_replace('/\r|\n/', '', $notation);
+            $notation = $notation ? '(' . $notation . ')' : NULL;
+
+            // Today or future.
+            if ($start_date->format('Ymd') == $today->format('Ymd')) {
+              // If event is today.
+              $event_today = $event_date . ' ' . t('(Event Date)');
+              $start_time = $start_date->format('g:ma');
+              $end_time = $end_date->format('g:ma');
+              $event_time = $start_time;
+              if ($end_time != $start_time) {
+                if ($start_time == '12:05am' && $end_time == '11:05pm') {
+                  $event_time = 'All Day';
+                }
+                else {
+                  $event_time = $start_time . ' to ' . $end_time;
+                }
+              }
+              $sidebar_details[] = [
+                'label' => 'Time',
+                'text' => $event_time,
+                'weight' => 0,
+              ];
+
+              $sidebar_details[] = [
+                'label' => t('Location'),
+                'text' => $location,
+                'weight' => 3,
+              ];
+            }
+            else {
+              // Future events.
+              $schedule[] = [
+                'brow' => $event_date,
+                'heading' => $location . ' ' . $notation,
+              ];
+            }
           }
         }
       }
@@ -1279,7 +1316,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
         ];
       }
     }
-    elseif ($node->get('field_origin_url')) {
+    elseif ($node->get('field_origin_url')->uri) {
       $launch_title = t('Launch');
       $launch_uri = $node->get('field_origin_url')->uri;
       $action = [
@@ -1337,22 +1374,17 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
         break;
 
       case 'field_audience':
-      case 'field_event_locations':
       case 'field_assignment_area':
         if (count($field) > 0) {
           $label = $field->getFieldDefinition()->getLabel();
           $terms = [];
           foreach ($field as $term) {
-            if ($term->target_id) {
-              $terms[] = $term_storage->load($term->target_id)->name->value;
+            if ($term->entity) {
+              $terms[] = $term->entity->label();
             }
           }
           if ($terms) {
             switch ($label) {
-              case 'Locations':
-                $weight = 2;
-                break;
-
               case 'Audience':
                 $weight = 5;
                 break;
@@ -1374,20 +1406,24 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
         break;
 
       case 'field_topics':
+      case 'field_subtopics':
         if (count($field) > 0) {
           foreach ($field as $topic) {
-            if ($topic->target_id) {
+            if ($topic->entity) {
               $topics[] = [
-                'label' => $term_storage->load($topic->target_id)->name->value,
+                'label' => $topic->entity->label(),
               ];
             }
           }
+          // Sort topics & subtopics alphabetically.
+          usort($topics, fn($a, $b) => $a['label'] <=> $b['label']);
         }
         break;
     }
   }
+
+  // Sort by weight.
   if ($sidebar_details) {
-    // Sort by weight.
     usort($sidebar_details, fn($a, $b) => $a['weight'] <=> $b['weight']);
   }
 
@@ -1398,8 +1434,9 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
     'sidebar' => [
       'promo_image' => $promo_image,
       'action' => $action ?: $renderer->render($action),
+      'event_today' => $event_today,
       'details' => $sidebar_details,
-      'schedule' => $schedule ?: $renderer->render($schedule),
+      'schedule' => $schedule,
     ],
     'topics' => $topics,
   ];
