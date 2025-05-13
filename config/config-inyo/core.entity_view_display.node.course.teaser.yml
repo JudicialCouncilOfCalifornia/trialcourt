@@ -1,0 +1,83 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.course.body
+    - field.field.node.course.field_about
+    - field.field.node.course.field_achievable_credit
+    - field.field.node.course.field_alerts
+    - field.field.node.course.field_assignment_area
+    - field.field.node.course.field_audience
+    - field.field.node.course.field_components
+    - field.field.node.course.field_course_number
+    - field.field.node.course.field_course_type
+    - field.field.node.course.field_custom_link
+    - field.field.node.course.field_date
+    - field.field.node.course.field_delivery_method
+    - field.field.node.course.field_education_credit_freeform
+    - field.field.node.course.field_image
+    - field.field.node.course.field_is_quick_reference
+    - field.field.node.course.field_lead
+    - field.field.node.course.field_media
+    - field.field.node.course.field_origin_url
+    - field.field.node.course.field_registration_period
+    - field.field.node.course.field_related_materials_freeform
+    - field.field.node.course.field_specialty_credit
+    - field.field.node.course.field_subtopics
+    - field.field.node.course.field_topics
+    - node.type.course
+  module:
+    - text
+    - user
+id: node.course.teaser
+targetEntityType: node
+bundle: course
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_about: true
+  field_achievable_credit: true
+  field_alerts: true
+  field_assignment_area: true
+  field_audience: true
+  field_components: true
+  field_course_number: true
+  field_course_type: true
+  field_custom_link: true
+  field_date: true
+  field_delivery_method: true
+  field_education_credit_freeform: true
+  field_image: true
+  field_is_quick_reference: true
+  field_lead: true
+  field_media: true
+  field_origin_url: true
+  field_registration_period: true
+  field_related_materials_freeform: true
+  field_specialty_credit: true
+  field_subtopics: true
+  field_topics: true
+  langcode: true
+  search_api_excerpt: true

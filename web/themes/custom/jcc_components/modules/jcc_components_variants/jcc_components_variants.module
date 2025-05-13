@@ -56,6 +56,23 @@ function jcc_components_variants_field_widget_entity_reference_paragraphs_form_a
 }
 
 /**
+ * Implements hook_inline_entity_form_entity_form_alter().
+ */
+function jcc_components_variants_inline_entity_form_entity_form_alter(&$entity_form, &$form_state) {
+  if (!empty($entity_form['field_variant'])) {
+    $variants = jcc_components_variants_preview($entity_form['#bundle']);
+    if (!empty($variants['options'])) {
+      $prefix = [
+        '#type' => "inline_template",
+        '#template' => $variants['prefix'],
+      ];
+      $entity_form['field_variant']['widget']['#prefix'] = \Drupal::service('renderer')->render($prefix);
+      $entity_form['field_variant']['#attached']['library'][] = 'jcc_components_variants/variants';
+    }
+  }
+}
+
+/**
  * Setup variants preview for editing.
  *
  * @param string $type
