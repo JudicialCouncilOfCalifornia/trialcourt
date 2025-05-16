@@ -5,17 +5,18 @@ dependencies:
     - node.type.advisory_body
     - node.type.alert
     - node.type.arbitrator
+    - node.type.course
     - node.type.custom_email
     - node.type.document
     - node.type.event
     - node.type.facilities
+    - node.type.invitations_to_comment
     - node.type.job
     - node.type.judge
     - node.type.landing_page
     - node.type.location
     - node.type.news
     - node.type.remote_hearings
-    - node.type.request
     - node.type.subpage
     - node.type.tentative_ruling
   module:
@@ -513,10 +514,12 @@ display:
             advisory_body: advisory_body
             alert: alert
             arbitrator: arbitrator
+            course: course
             custom_email: custom_email
             document: document
             event: event
             facilities: facilities
+            invitations_to_comment: invitations_to_comment
             job: job
             judge: judge
             landing_page: landing_page
@@ -551,8 +554,10 @@ display:
               anonymous: '0'
               tentative_rulings_editor: '0'
               messaging_manager: '0'
+              facilities: '0'
               opinions_editor: '0'
               request_manager: '0'
+              advisory_body_manager: '0'
             reduce: true
           is_grouped: false
           group_info:
@@ -733,9 +738,11 @@ display:
             advisory_body: advisory_body
             alert: alert
             arbitrator: arbitrator
+            course: course
             document: document
             event: event
             facilities: facilities
+            invitations_to_comment: invitations_to_comment
             job: job
             judge: judge
             landing_page: landing_page
@@ -946,7 +953,7 @@ display:
       show_admin_links: false
       display_extenders: {  }
     cache_metadata:
-      max-age: -1
+      max-age: 0
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -979,7 +986,7 @@ display:
         weight: -10
         menu_name: admin
     cache_metadata:
-      max-age: -1
+      max-age: 0
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'

@@ -628,9 +628,6 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node): void {
   foreach ($node->field_media_file_multiple as $media_file) {
     $media = Media::load($media_file->target_id);
     $media_name = $media->name->value;
-    if ($media->get('field_document_type')->target_id) {
-      $doc_type = Term::load($media->get('field_document_type')->target_id) ? Term::load($media->get('field_document_type')->target_id)->get('name')->value : '';
-    }
     if ($media->get('field_media_file_multiple')->target_id) {
       $file = File::load($media->get('field_media_file_multiple')->target_id);
       $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
@@ -770,7 +767,6 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
       ],
       'posted' => [
         'label' => t('Posted'),
-        'value' => $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '',
         'value' => $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '',
       ],
     ],
@@ -1150,4 +1146,314 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   ];
 
   $variables['opinion'] = $opinion;
+}
+
+/**
+ * Node: Course preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_course(array &$variables, NodeInterface $node): void {
+  $renderer = \Drupal::service('renderer');
+  $timezone = new DateTimeZone('America/Los_Angeles');
+  $today = new DateTime('now', $timezone);
+  $type_term = $node->get('field_course_type')[0]->entity ? $node->get('field_course_type')[0]->entity : NULL;
+  $type = $type_term ? $type_term->label() : NULL;
+  $embed = [];
+  $sidebar_details = [];
+  $topics = [];
+  $schedule = [];
+  $promo_image = NULL;
+  $action = NULL;
+  $event_today = NULL;
+
+  // Media embed or action.
+  if ($node->get('field_media')->entity) {
+    $media = $node->get('field_media')->entity;
+    $media_bundle_id = $media->bundle->target_id;
+    if ($media_bundle_id != 'file' && $media_bundle_id != 'publication') {
+      $media_type = 'video';
+      if ($media_bundle_id == 'akamai_audio') {
+        $media_type = 'audio';
+      }
+      $embed = [
+        'media' => \Drupal::entityTypeManager()->getViewBuilder('media')->view($media),
+        'type' => $media_type,
+      ];
+    }
+    else {
+      $file = \Drupal::entityTypeManager()->getStorage('file')->load($media->get('field_media_file')->target_id);
+      if ($file) {
+        $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+        $extension_exp = '/[^.]*$/';
+        preg_match($extension_exp, $file_url, $extension);
+        $download_label = t('Download');
+        if ($extension) {
+          $download_label = $download_label . ' ' . strtoupper($extension[0]);
+        }
+        $action = [
+          '#markup' => '<a class="button button--secondary button--normal" href="' . $file_url . '">' . $download_label . '</a>',
+        ];
+      }
+    }
+  }
+  else {
+    // Schedule & Registration.
+    if ((!$action && !$embed) && count($node->get('field_components')) > 0) {
+      foreach ($node->get('field_components')->referencedEntities() as $event) {
+        if ($event->get('field_date_range')->start_date) {
+          $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
+          $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
+
+          // Upcoming events only.
+          if ($start_date && $end_date->format('Ymd') >= $today->format('Ymd')) {
+            // Event date.
+            $event_date = NULL;
+            if ($event->get('field_date_range')->start_date) {
+              $event_date = $start_date->format('F j, Y');
+              if ($start_date->format('F j, Y') != $end_date->format('F j, Y')) {
+                $start = $start_date->format('F j');
+                if ($start_date->format('Y') != $end_date->format('Y')) {
+                  $start = $start_date->format('F j, Y');
+                }
+                $end = $end_date->format('j, Y');
+                if ($start_date->format('F') != $end_date->format('F')) {
+                  $end = $end_date->format('F j, Y');
+                }
+                $event_date = $start . ' to ' . $end;
+              }
+            }
+
+            // Event location.
+            $location = $event->get('field_event_location')->entity ? $event->get('field_event_location')->entity->label() : NULL;
+
+            // Event notation.
+            $notation = $event->get('field_text')->value ? strip_tags($event->get('field_text')->value, 'strong, em') : NULL;
+            if ($notation) {
+              $notation = preg_replace('/\r|\n/', '', $notation);
+            }
+
+            // Today or future.
+            if ($start_date->format('Ymd') == $today->format('Ymd') || $today->format('Ymd') >= $end_date->format('Ymd')) {
+              // If event is today.
+              $event_today = $event_date . ' ' . t('(Event Date)');
+              $start_time = $start_date->format('g:ia');
+              $end_time = $end_date->format('g:ia');
+
+              $event_time = $start_time;
+              if ($end_time != $start_time) {
+                if ($start_time == '12:00am' && $end_time == '11:59pm') {
+                  $event_time = 'All Day';
+                }
+                else {
+                  $event_time = $start_time . ' to ' . $end_time;
+                }
+              }
+              $sidebar_details[] = [
+                'label' => 'Time',
+                'text' => $event_time,
+                'weight' => 0,
+              ];
+
+              $sidebar_details[] = [
+                'label' => t('Location'),
+                'text' => $location,
+                'weight' => 3,
+              ];
+            }
+            else {
+              // Future events.
+              $schedule[] = [
+                'brow' => $event_date,
+                'heading' => $location,
+                'text' => $notation,
+              ];
+            }
+          }
+        }
+      }
+
+      $registration = $node->get('field_custom_link');
+      if (count($registration) > 0) {
+        $registration_state = 'open';
+        $register_uri = $registration->uri;
+
+        $registration_period = $node->get('field_registration_period')->getValue()[0];
+        if ($registration_period) {
+          $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
+          $register_start = $register_start->format('Ymd');
+          $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
+          $register_end = $register_end->format('Ymd');
+          if ($register_start > $today->format('Ymd')) {
+            $registration_state = 'pending';
+          }
+          elseif ($register_end < $today->format('Ymd')) {
+            $registration_state = 'closed';
+          }
+        }
+
+        switch ($registration_state) {
+          case 'closed':
+            $action = [
+              '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Closed') . '</p>',
+              '#cache' => [
+                'tags' => ['course_register_state:' . 'nid_' . $node->id() . '_' . 'closed'],
+              ],
+            ];
+            break;
+
+          case 'pending':
+            $action = [
+              '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Pending') . '</p>',
+              '#cache' => [
+                'tags' => ['course_register_state:' . 'nid_' . $node->id() . '_' . 'pending'],
+              ],
+            ];
+            break;
+
+          default:
+            $action = [
+              '#markup' => '<a class="button button--secondary button--normal" href="' . $register_uri . '">' . t('Register Now') . '</a>',
+              '#cache' => [
+                'tags' => ['course_register_state:' . 'nid_' . $node->id() . '_' . 'open'],
+              ],
+            ];
+        }
+      }
+      else {
+        $action = [
+          '#markup' => '<p class="button button--secondary button--normal">' . t('No Registration Required') . '</p>',
+          '#cache' => [
+            'tags' => ['course_register_state:' . 'nid_' . $node->id() . '_' . 'none'],
+          ],
+        ];
+      }
+    }
+    elseif ($node->get('field_origin_url')->uri) {
+      $launch_title = t('Launch');
+      $launch_uri = $node->get('field_origin_url')->uri;
+      $action = [
+        '#markup' => '<a class="button button--secondary button--normal" href="' . $launch_uri . '">' . $launch_title . '</a>',
+      ];
+    }
+  }
+
+  // Promotional Image.
+  if ($node->get('field_image')->entity->field_media_image->entity) {
+    $promo_image_src = $node->get('field_image')->entity->field_media_image->entity->getFileUri();
+    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_650x650')->buildUrl($promo_image_src);
+    if ($image_url) {
+      $promo_image = [
+        '#markup' => '<img src="' . $image_url . '">',
+      ];
+    }
+  }
+
+  // Details.
+  foreach ($node->getFields() as $field) {
+    switch ($field->getName()) {
+      case 'field_date':
+        if ($field->value) {
+          $sidebar_details[] = [
+            'label' => $field->getFieldDefinition()->getLabel(),
+            'text' => $field->date->format('F j, Y'),
+            'weight' => 1,
+          ];
+        }
+        break;
+
+      case 'field_course_number':
+        if ($field->value) {
+          $sidebar_details[] = [
+            'label' => $field->getFieldDefinition()->getLabel(),
+            'text' => $field->value,
+            'weight' => 3,
+          ];
+        }
+        break;
+
+      case 'field_achievable_credit':
+        if ($field->value) {
+          $achievable_credits = $field->value . ' hr';
+          if ($achievable_credits > 1) {
+            $achievable_credits = $achievable_credits . 's';
+          }
+          $sidebar_details[] = [
+            'label' => $field->getFieldDefinition()->getLabel(),
+            'text' => $achievable_credits,
+            'weight' => 4,
+          ];
+        }
+        break;
+
+      case 'field_audience':
+      case 'field_assignment_area':
+        if (count($field) > 0) {
+          $label = $field->getFieldDefinition()->getLabel();
+          $terms = [];
+          foreach ($field as $term) {
+            if ($term->entity) {
+              $terms[] = $term->entity->label();
+            }
+          }
+          if ($terms) {
+            switch ($label) {
+              case 'Audience':
+                $weight = 5;
+                break;
+
+              case 'Assignment Area':
+                $weight = 6;
+                break;
+
+              default:
+                $weight = 7;
+            }
+            $sidebar_details[] = [
+              'label' => $label,
+              'text' => implode(', ', $terms),
+              'weight' => $weight,
+            ];
+          }
+        }
+        break;
+
+      case 'field_topics':
+      case 'field_subtopics':
+        if (count($field) > 0) {
+          foreach ($field as $topic) {
+            if ($topic->entity) {
+              $topics[] = [
+                'label' => $topic->entity->label(),
+              ];
+            }
+          }
+          // Sort topics & subtopics alphabetically.
+          usort($topics, fn($a, $b) => $a['label'] <=> $b['label']);
+        }
+        break;
+    }
+  }
+
+  // Sort by weight.
+  if ($sidebar_details) {
+    usort($sidebar_details, fn($a, $b) => $a['weight'] <=> $b['weight']);
+  }
+
+  // Course object.
+  $variables['course'] = [
+    'type' => $type,
+    'embed' => $embed,
+    'sidebar' => [
+      'promo_image' => $promo_image,
+      'action' => $action ?: $renderer->render($action),
+      'event_today' => $event_today,
+      'details' => $sidebar_details,
+      'topics' => $topics,
+      'schedule' => $schedule,
+    ],
+  ];
 }

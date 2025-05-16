@@ -34,8 +34,10 @@
 #}
 {{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/InlineForm") }}
-{{ attach_library("jcc_storybook/ViewResults") }}
 {{ attach_library("jcc_storybook/ResultExcerpt") }}
+{{ attach_library("jcc_storybook/ViewResults") }}
+{{ attach_library("jcc_storybook/Pill") }}
+{{ attach_library("jcc_storybook/Pills") }}
 
 {%
   set classes = [
@@ -45,35 +47,9 @@
 
 {% set content_header %}
   <div class="cluster">
-    <div>{{ jobs.count_summary }}</div>
+    <div>{{ count_summary }}</div>
   </div>
 {% endset %}
-
-{% set items = [] %}
-{% for job in jobs %}
-  {% set teaser %}
-    <p>{{ job.teaser }}</p>
-  {% endset %}
-
-  {% set item = {
-    brow: {
-      primary: job.id,
-      secondary: job.deadline,
-      notation: job.type,
-    },
-    title: job.title.text,
-    url: job.title.url,
-    content: teaser,
-    detail_list_data: job.detail_list_data,
-  } %}
-  {% set items = items|merge([item]) %}
-{% endfor %}
-
-{% include "@molecules/HeroHangover/HeroHangover.twig" with {
-  heading: 'Job Opportunities'|t,
-  media: false,
-  attributes: create_attribute()
-} %}
 
 <div{{ attributes.addClass(classes) }}>
   {% include "@organisms/ViewResults/ViewResults.twig" with {
@@ -83,16 +59,16 @@
     header: '',
     header_sidebar: '',
     header_direction_results: 'sidebar-row',
-    content_header: header,
+    content_header: content_header,
     form: exposed|render,
     form_in_sidebar: true,
     list_type: 'ul',
     list_type_divider: '',
-    rows: items,
+    rows: processed_rows,
     sidebar: '',
     sidebar_direction_results: 'sidebar-row',
     pager: pager|render,
-    items_per_page: '',
+    items_per_page: items_per_page,
     footer: '',
     footer_sidebar: '',
     sidebar_direction_footer: 'sidebar-row',
