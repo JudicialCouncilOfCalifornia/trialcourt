@@ -768,7 +768,6 @@ function jcc_elevated_node_job(array &$variables, NodeInterface $node): void {
       'posted' => [
         'label' => t('Posted'),
         'value' => $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '',
-        'value' => $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : '',
       ],
     ],
     'custom_apply' => $custom_apply,
@@ -1165,8 +1164,8 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   $type = $type_term ? $type_term->label() : NULL;
   $embed = [];
   $sidebar_details = [];
-  $schedule = [];
   $topics = [];
+  $schedule = [];
   $promo_image = NULL;
   $action = NULL;
   $event_today = NULL;
@@ -1229,22 +1228,24 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
             }
 
             // Event location.
-            $location = $event->get('field_event_location')->entity->label();
+            $location = $event->get('field_event_location')->entity ? $event->get('field_event_location')->entity->label() : NULL;
 
             // Event notation.
             $notation = $event->get('field_text')->value ? strip_tags($event->get('field_text')->value, 'strong, em') : NULL;
-            $notation = preg_replace('/\r|\n/', '', $notation);
-            $notation = $notation ? '(' . $notation . ')' : NULL;
+            if ($notation) {
+              $notation = preg_replace('/\r|\n/', '', $notation);
+            }
 
             // Today or future.
-            if ($start_date->format('Ymd') == $today->format('Ymd')) {
+            if ($start_date->format('Ymd') == $today->format('Ymd') || $today->format('Ymd') >= $end_date->format('Ymd')) {
               // If event is today.
               $event_today = $event_date . ' ' . t('(Event Date)');
-              $start_time = $start_date->format('g:ma');
-              $end_time = $end_date->format('g:ma');
+              $start_time = $start_date->format('g:ia');
+              $end_time = $end_date->format('g:ia');
+
               $event_time = $start_time;
               if ($end_time != $start_time) {
-                if ($start_time == '12:05am' && $end_time == '11:05pm') {
+                if ($start_time == '12:00am' && $end_time == '11:59pm') {
                   $event_time = 'All Day';
                 }
                 else {
@@ -1267,7 +1268,8 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
               // Future events.
               $schedule[] = [
                 'brow' => $event_date,
-                'heading' => $location . ' ' . $notation,
+                'heading' => $location,
+                'text' => $notation,
               ];
             }
           }
@@ -1278,9 +1280,6 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       if (count($registration) > 0) {
         $registration_state = 'open';
         $register_uri = $registration->uri;
-        $action = [
-          '#markup' => '<a class="button button--secondary button--normal" href="' . $register_uri . '">' . t('Register Now') . '</a>',
-        ];
 
         $registration_period = $node->get('field_registration_period')->getValue()[0];
         if ($registration_period) {
@@ -1300,19 +1299,36 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           case 'closed':
             $action = [
               '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Closed') . '</p>',
+              '#cache' => [
+                'tags' => ['course_register_state:' . 'nid_' . $node->id() . '_' . 'closed'],
+              ],
             ];
             break;
 
           case 'pending':
             $action = [
               '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Pending') . '</p>',
+              '#cache' => [
+                'tags' => ['course_register_state:' . 'nid_' . $node->id() . '_' . 'pending'],
+              ],
             ];
             break;
+
+          default:
+            $action = [
+              '#markup' => '<a class="button button--secondary button--normal" href="' . $register_uri . '">' . t('Register Now') . '</a>',
+              '#cache' => [
+                'tags' => ['course_register_state:' . 'nid_' . $node->id() . '_' . 'open'],
+              ],
+            ];
         }
       }
       else {
         $action = [
           '#markup' => '<p class="button button--secondary button--normal">' . t('No Registration Required') . '</p>',
+          '#cache' => [
+            'tags' => ['course_register_state:' . 'nid_' . $node->id() . '_' . 'none'],
+          ],
         ];
       }
     }
