@@ -82,6 +82,8 @@
 {{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/Section") }}
 
+{% set today = 'now'|date('ymd') %}
+
 <article{{ attributes }}>
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
     background: 'base-light-xxx',
@@ -119,26 +121,34 @@
         {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
 
-      {# If event today #}
-      {% if course.sidebar.event_today %}
-        {% set item = {
-          brow: course.sidebar.event_today,
-        } %}
-        {% set sidebar_content = sidebar_content|merge([item]) %}
+      {% set details_content = [] %}
+      {% set today_event = NULL %}
+
+      {# If event and it is today #}
+      {% if course.sidebar.schedule %}
+        {% set today_event = course.sidebar.schedule[0] %}
+        {% if event.date|date('ymd') == today %}
+          {% set event_time = today_event.start_time ~ ' to ' ~ today_event.end_time %}
+          {% if event.start_time == '12:00am' and today_event.end_time == '11:59pm' %}
+            {% set event_time = 'All Day' %}
+          {% endif %}
+          {% set time = {
+            label: 'Time'|t,
+            text: event_time,
+          } %}
+          {% set details_content = details_content|merge([time]) %}
+
+          {% set location = {
+            label: 'Location'|t,
+            text: today_event.location,
+          } %}
+          {% set details_content = details_content|merge([location]) %}
+        {% endif %}
       {% endif %}
 
+      {# Core details #}
       {% if course.sidebar.details %}
-        {% set details %}
-          {% include "@molecules/List/List.twig" with {
-            variant: 'none',
-            wider_span: 'true',
-            items: course.sidebar.details,
-          } %}
-        {% endset %}
-        {% set item = {
-          heading: details,
-        } %}
-        {% set sidebar_content = sidebar_content|merge([item]) %}
+        {% set details_content = details_content|merge(course.sidebar.details) %}
       {% endif %}
 
       {# Topics as pills #}
@@ -155,22 +165,46 @@
 
         {% if topics %}
           {% set pills %}
-            <h4 class="sr-only">Topics</h4>
+            <span class="list__item-label sr-only">Topics</span>
             {% include "@molecules/Pills/Pills.twig" with {
               variant: 'default',
               items: [topics],
             } %}
           {% endset %}
-          {% set item = {
-            heading: pills,
+          {% set pills = {
+            text: pills,
           } %}
-          {% set sidebar_content = sidebar_content|merge([item]) %}
+          {% set details_content = details_content|merge([pills]) %}
         {% endif %}
+      {% endif %}
+
+      {% if details_content %}
+        {% set details %}
+          {% include "@molecules/List/List.twig" with {
+            variant: 'none',
+            wider_span: 'true',
+            items: details_content,
+          } %}
+        {% endset %}
+        {% set item = {
+          brow: today_event ? today_event.date ~ ' (Event Date)'|t : '',
+          heading: details,
+        } %}
+        {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
 
       {# Future events #}
       {% if course.sidebar.schedule %}
-        {% set sidebar_content = sidebar_content|merge(course.sidebar.schedule) %}
+        {% for event in course.sidebar.schedule %}
+          {% if event.date|date('ymd') != today %}
+            {% set item = {
+              brow: event.date,
+              heading: event.location,
+              text: event.notation,
+            } %}
+            {% set sidebar_content = sidebar_content|merge([item]) %}
+          {% endif %}
+        {% endfor %}
       {% endif %}
 
       <aside class="request__main-sidebar stack" style="order: 2;">
@@ -218,7 +252,7 @@
     </div>
   {% endset %}
 
-  <div class="profile">
+  <div class="course">
     {% include "@organisms/Section/Section.twig" with {
       variant: 'default',
       sub_component_layout: 'with-sidebar grid',
