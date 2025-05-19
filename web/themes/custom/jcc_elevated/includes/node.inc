@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Link;
 use Drupal\Core\Menu\MenuTreeParameters;
@@ -1158,6 +1159,7 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
  */
 function jcc_elevated_node_course(array &$variables, NodeInterface $node): void {
   $renderer = \Drupal::service('renderer');
+  $cache = \Drupal::service('cache.page');
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
   $type_term = $node->get('field_course_type')[0]->entity ? $node->get('field_course_type')[0]->entity : NULL;
@@ -1168,7 +1170,6 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   $schedule = [];
   $promo_image = NULL;
   $action = NULL;
-  $event_today = NULL;
 
   // Media embed or action.
   if ($node->get('field_media')->entity) {
@@ -1202,6 +1203,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   }
   else {
     // Schedule & Registration.
+    $cache_registration_id = 'course_registration_state:' . 'nid_' . $node->id();
     if ((!$action && !$embed) && count($node->get('field_components')) > 0) {
       foreach ($node->get('field_components')->referencedEntities() as $event) {
         if ($event->get('field_date_range')->start_date) {
@@ -1236,42 +1238,14 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
               $notation = preg_replace('/\r|\n/', '', $notation);
             }
 
-            // Today or future.
-            if ($start_date->format('Ymd') == $today->format('Ymd') || $today->format('Ymd') >= $end_date->format('Ymd')) {
-              // If event is today.
-              $event_today = $event_date . ' ' . t('(Event Date)');
-              $start_time = $start_date->format('g:ia');
-              $end_time = $end_date->format('g:ia');
-
-              $event_time = $start_time;
-              if ($end_time != $start_time) {
-                if ($start_time == '12:00am' && $end_time == '11:59pm') {
-                  $event_time = 'All Day';
-                }
-                else {
-                  $event_time = $start_time . ' to ' . $end_time;
-                }
-              }
-              $sidebar_details[] = [
-                'label' => 'Time',
-                'text' => $event_time,
-                'weight' => 0,
-              ];
-
-              $sidebar_details[] = [
-                'label' => t('Location'),
-                'text' => $location,
-                'weight' => 3,
-              ];
-            }
-            else {
-              // Future events.
-              $schedule[] = [
-                'brow' => $event_date,
-                'heading' => $location,
-                'text' => $notation,
-              ];
-            }
+            // Schedule.
+            $schedule[] = [
+              'date' => $event_date,
+              'start_time' => $start_date->format('g:ia'),
+              'end_time' => $end_date->format('g:ia'),
+              'location' => $location,
+              'notation' => $notation,
+            ];
           }
         }
       }
@@ -1298,38 +1272,46 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
         switch ($registration_state) {
           case 'closed':
             $action = [
+              '#status' => 'closed',
               '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Closed') . '</p>',
-              '#cache' => [
-                'tags' => ['course_register_state:' . 'nid_' . $node->id() . '_' . 'closed'],
-              ],
             ];
+            if ($cache->get($cache_registration_id)->data['#status'] != 'closed') {
+              $cache->delete($cache_registration_id);
+              $cache->set($cache_registration_id, $action, Cache::PERMANENT);
+            }
             break;
 
           case 'pending':
             $action = [
+              '#status' => 'pending',
               '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Pending') . '</p>',
-              '#cache' => [
-                'tags' => ['course_register_state:' . 'nid_' . $node->id() . '_' . 'pending'],
-              ],
             ];
+            if ($cache->get($cache_registration_id)->data['#status'] != 'pending') {
+              $cache->delete($cache_registration_id);
+              $cache->set($cache_registration_id, $action, Cache::PERMANENT);
+            }
             break;
 
           default:
             $action = [
+              '#status' => 'open',
               '#markup' => '<a class="button button--secondary button--normal" href="' . $register_uri . '">' . t('Register Now') . '</a>',
-              '#cache' => [
-                'tags' => ['course_register_state:' . 'nid_' . $node->id() . '_' . 'open'],
-              ],
             ];
+            if ($cache->get($cache_registration_id)->data['#status'] != 'open') {
+              $cache->delete($cache_registration_id);
+              $cache->set($cache_registration_id, $action, Cache::PERMANENT);
+            }
         }
       }
       else {
         $action = [
+          '#status' => 'none',
           '#markup' => '<p class="button button--secondary button--normal">' . t('No Registration Required') . '</p>',
-          '#cache' => [
-            'tags' => ['course_register_state:' . 'nid_' . $node->id() . '_' . 'none'],
-          ],
         ];
+        if ($cache->get($cache_registration_id)->data['#status'] != 'none') {
+          $cache->delete($cache_registration_id);
+          $cache->set($cache_registration_id, $action, Cache::PERMANENT);
+        }
       }
     }
     elseif ($node->get('field_origin_url')->uri) {
@@ -1338,6 +1320,9 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       $action = [
         '#markup' => '<a class="button button--secondary button--normal" href="' . $launch_uri . '">' . $launch_title . '</a>',
       ];
+      if ($cache->get($cache_registration_id)) {
+        $cache->delete($cache_registration_id);
+      }
     }
   }
 
@@ -1450,7 +1435,6 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
     'sidebar' => [
       'promo_image' => $promo_image,
       'action' => $action ?: $renderer->render($action),
-      'event_today' => $event_today,
       'details' => $sidebar_details,
       'topics' => $topics,
       'schedule' => $schedule,
