@@ -82,7 +82,7 @@
 {{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/Section") }}
 
-{% set today = 'now'|date('ymd') %}
+{% set today = 'now'|date('Ymd') %}
 
 <article{{ attributes }}>
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
@@ -127,9 +127,9 @@
       {# If event and it is today #}
       {% if course.sidebar.schedule %}
         {% set today_event = course.sidebar.schedule[0] %}
-        {% if event.date|date('ymd') == today %}
+        {% if event.start_date|date('ymd') == today and event.end_date|date('ymd') <= today %}
           {% set event_time = today_event.start_time ~ ' to ' ~ today_event.end_time %}
-          {% if event.start_time == '12:00am' and today_event.end_time == '11:59pm' %}
+          {% if today_event.start_time == '12:00am' and today_event.end_time == '11:59pm' %}
             {% set event_time = 'All Day' %}
           {% endif %}
           {% set time = {
@@ -196,7 +196,7 @@
       {# Future events #}
       {% if course.sidebar.schedule %}
         {% for event in course.sidebar.schedule %}
-          {% if event.date|date('ymd') != today %}
+          {% if event.start_date|date('Ymd') > today %}
             {% set item = {
               brow: event.date,
               heading: event.location,

@@ -1241,7 +1241,9 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
             // Schedule.
             $schedule[] = [
               'date' => $event_date,
+              'start_date' => $start_date->format('F j, Y'),
               'start_time' => $start_date->format('g:ia'),
+              'end_date' => $end_date->format('F j, Y'),
               'end_time' => $end_date->format('g:ia'),
               'location' => $location,
               'notation' => $notation,
