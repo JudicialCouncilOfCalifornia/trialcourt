@@ -1162,7 +1162,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   $cache = \Drupal::service('cache.page');
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
-  $type_term = $node->get('field_course_type')[0]->entity ? $node->get('field_course_type')[0]->entity : NULL;
+  $type_term = $node->get('field_course_type')[0] ? $node->get('field_course_type')[0]->entity : NULL;
   $type = $type_term ? $type_term->label() : NULL;
   $embed = [];
   $sidebar_details = [];
@@ -1329,7 +1329,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   }
 
   // Promotional Image.
-  if ($node->get('field_image')->entity->field_media_image->entity) {
+  if ($node->get('field_image')->entity->field_media_image) {
     $promo_image_src = $node->get('field_image')->entity->field_media_image->entity->getFileUri();
     $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_650x650')->buildUrl($promo_image_src);
     if ($image_url) {
