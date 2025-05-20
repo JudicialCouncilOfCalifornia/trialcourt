@@ -127,7 +127,7 @@
       {# If event and it is today #}
       {% if course.sidebar.schedule %}
         {% set today_event = course.sidebar.schedule[0] %}
-        {% if event.start_date|date('ymd') == today and event.end_date|date('ymd') <= today %}
+        {% if today_event.start_date|date('ymd') == today or today_event.end_date|date('ymd') <= today %}
           {% set event_time = today_event.start_time ~ ' to ' ~ today_event.end_time %}
           {% if today_event.start_time == '12:00am' and today_event.end_time == '11:59pm' %}
             {% set event_time = 'All Day' %}
