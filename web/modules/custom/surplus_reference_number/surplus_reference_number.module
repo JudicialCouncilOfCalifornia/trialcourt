@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Creates surplus reference number.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\Entity\Node;
+
+/**
+ * Implements hook_entity_presave().
+ */
+function surplus_reference_number_entity_presave(EntityInterface $entity) {
+  if ($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'surplus_materials') {
+    if ($entity->isNew() && !$entity->get('field_reference_number')->value) {
+      $storage = \Drupal::entityTypeManager()->getStorage('node');
+      $query = $storage->getQuery()
+        ->condition('type', 'surplus_materials')
+        ->exists('field_reference_number')
+        ->sort('field_reference_number', 'DESC')
+        ->range(0, 1);
+      $nids = $query->execute();
+
+      $max_value = 0;
+      if (!empty($nids)) {
+        $last_node = Node::load(reset($nids));
+        if ($last_node) {
+          $max_value = (int) $last_node->get('field_reference_number')->value;
+        }
+      }
+      $entity->set('field_reference_number', $max_value + 1);
+    }
+  }
+}
