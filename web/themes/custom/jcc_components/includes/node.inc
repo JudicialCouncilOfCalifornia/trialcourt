@@ -60,6 +60,14 @@ function jcc_components_preprocess_node(&$variables) {
       }
     }
   }
+  // Logic for location page variables.
+  if ($node->getType() == 'location') {
+    $variables['#attached']['library'][] = 'jcc_components/location-page';
+    $current_path = \Drupal::request()->getRequestUri();
+    if(\Drupal::service('path.matcher')->matchPath($current_path ,"/location/*")){
+      build_service_markup($variables, $node);
+    }
+  }
 }
 
 /**
@@ -73,7 +81,7 @@ function jcc_components_preprocess_node(&$variables) {
 function jcc_components_node_alert(array &$variables, NodeInterface $node) {
   $variables['show_content'] = FALSE;
   // If should only show on front page, check if this is front page.
-  if ($node->field_switch->first()->value) {
+  if ($node->field_switch->value) {
     if (\Drupal::service('path.matcher')->isFrontPage()) {
       $variables['show_content'] = TRUE;
       return;

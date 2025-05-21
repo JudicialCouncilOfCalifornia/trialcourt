@@ -40,6 +40,7 @@ function jcc_custom_page_attachments(array &$attachments): void {
     // 2.0 styling is drab and hard to use.
     $attachments['#attached']['library'][] = 'jcc_custom/admin_layout_paragraphs_edit_override';
     $attachments['#attached']['library'][] = 'jcc_custom/gin-admin-elevated';
+    $attachments['#attached']['library'][] = 'jcc_custom/location_form';
   }
 }
 
@@ -144,6 +145,18 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
   // not have access.
   // The field will only render if there are no components added by paragraph
   // reference. See respective node templates.
+  if (strpos($form_id, 'node_form') === 0) {
+    // Get the node type from the form ID.
+    $node_type = substr($form_id, strlen('node_form_'));
+    // Check if the user is not an administrator.
+    if (!\Drupal::currentUser()->hasPermission('administer site configuration')) {
+      // Replace 'your_field_machine_name' with the machine name of the field
+      // you want to restrict access to.
+      if (isset($form['field_e'][$node_type]['#access'])) {
+        $form['field_e'][$node_type]['#access'] = FALSE;
+      }
+    }
+  }
   switch ($form_id) {
     case 'node_landing_page_edit_form':
     case 'node_landing_page_form':
@@ -288,20 +301,82 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       // Collapse publication primary file variants field by default.
       $form['field_media_file_multiple']['widget']['#open'] = FALSE;
       break;
-  }
 
-  if (strpos($form_id, 'node_form') === 0) {
-    // Get the node type from the form ID.
-    $node_type = substr($form_id, strlen('node_form_'));
-    // Check if the user is not an administrator.
-    if (!\Drupal::currentUser()->hasPermission('administer site configuration')) {
-      // Replace 'your_field_machine_name' with the machine name of the field
-      // you want to restrict access to.
-      if (isset($form['field_e'][$node_type]['#access'])) {
-        $form['field_e'][$node_type]['#access'] = FALSE;
+    case 'node_location_edit_form':
+      if (isset($form['field_add_services']['widget'])) {
+        foreach ($form['field_add_services']['widget'] as $service_index => $service_widget) {
+          if (isset($service_widget['subform']['field_location_service_hours']['widget']) && is_array($service_widget['subform']['field_location_service_hours']['widget'])) {
+            foreach ($service_widget['subform']['field_location_service_hours']['widget'] as $hour_index => $hour_widget) {
+              if (is_numeric($hour_index)) {
+                processServiceHours($form,$form_state, $service_index, $hour_index, $service_widget, $hour_widget);
+              }
+            }
+          }
+        }
       }
-    }
+      break;
   }
+}
+
+/**
+ * helper function for node location form for hide and show fields.
+ */
+
+function processServiceHours(&$form, $form_state ,$service_index, $hour_index, $service_widget, $hour_widget) {
+  // Construct selector paths
+  $key_service_hour_type = 'select[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_service_hour_type]"]';
+  $key_service_days_type = ':input[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_weekdays_mon_fri][value]"]';
+  $key_service_hour_buisness_same = ':input[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_service_hours_same_as_busi][value]"]';
+  //$key_service_hour_buisness_same = ':input[name="field_add_services[' . $service_index . '][subform][field_location_service_hours][' . $hour_index . '][subform][field_service_hours_same_as_busi][value]"]';
+
+  // Configure #states for 'field_others'
+  $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['field_others']['#states'] = [
+    'visible' => [
+      $key_service_hour_type => ['value' => 'others']
+    ],
+    'invisible' => [
+      'or' => [
+        [$key_service_hour_type => ['value' => 'phone']],
+        [$key_service_hour_type => ['value' => 'in_person']],
+        [$key_service_hour_type => ['value' => 'dropbox']],
+        [$key_service_hour_type => ['value' => 'live_chat']]
+      ]
+    ]
+  ];
+
+  // Configure visibility of service days
+  $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['field_service_days']['#states'] = [
+    'visible' => [
+      $key_service_days_type => ['checked' => false],
+    ],
+    'invisible' => [
+      $key_service_days_type => ['checked' => true],
+    ],
+  ];
+
+  // Control visibility and required state of 'field_service_hours_from' and 'field_service_hours_to'
+  // Set the #states for the 'group-hours' field group
+  $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['group_hours']['#states'] = [
+    'visible' => [
+      'or' => [
+        [$key_service_hour_buisness_same => ['checked' => false]]
+      ]
+    ],
+    'invisible' => [
+      $key_service_hour_buisness_same => ['checked' => true]
+    ]
+  ];
+
+  $form['field_add_services']['widget'][$service_index]['subform']['field_location_service_hours']['widget'][$hour_index]['subform']['group_days']['#states'] = [
+    'visible' => [
+      'or' => [
+        [$key_service_hour_buisness_same => ['checked' => false]]
+      ]
+    ],
+    'invisible' => [
+      $key_service_hour_buisness_same => ['checked' => true]
+    ]
+  ];
 }
 
 /**
@@ -835,7 +910,23 @@ function jcc_custom_field_widget_form_alter(&$element, FormStateInterface $form_
         }
       }
     }
-
+  }
+  // Apply changes specific to 'location' node type.
+  if ($context['items']->getEntity()->getEntityTypeId() === 'node' && $context['items']->getEntity()->bundle() === 'location') {
+    switch ($context['items']->getFieldDefinition()->getName()) {
+      case 'field_building_hours_from':
+      case 'field_building_hours_to':
+        $element['value']['#date_date_element'] = 'none';
+        break;
+    }
+  }
+  // Apply changes specific to 'services' and 'service_hours' paragraph types.
+  if ($context['items']->getEntity()->getEntityTypeId() === 'paragraph') {
+    $bundle = $context['items']->getEntity()->bundle();
+    $fields_to_alter = ['field_service_hours_from', 'field_service_hours_to'];
+    if ($bundle === 'services' || ($bundle === 'service_hours' && in_array($context['items']->getFieldDefinition()->getName(), $fields_to_alter))) {
+      $element['value']['#date_date_element'] = 'none';
+    }
   }
 }
 
