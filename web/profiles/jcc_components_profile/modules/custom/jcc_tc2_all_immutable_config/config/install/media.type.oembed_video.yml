@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - oembed_providers.bucket.oembed_video
+  module:
+    - oembed_providers
+    - scheduler
+third_party_settings:
+  scheduler:
+    expand_fieldset: when_required
+    fields_display_mode: vertical_tab
+    publish_enable: false
+    publish_past_date: error
+    publish_past_date_created: false
+    publish_required: false
+    publish_revision: false
+    publish_touch: false
+    show_message_after_update: false
+    unpublish_enable: false
+    unpublish_required: false
+    unpublish_revision: false
+id: oembed_video
+label: 'OEmbed video'
+description: ''
+source: 'oembed:oembed_video'
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_oembed_oembed_video
+  thumbnails_directory: 'public://oembed_thumbnails/[date:custom:Y-m]'
+  providers:
+    - 'Wistia, Inc.'
+field_map: {  }

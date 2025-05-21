@@ -18,12 +18,18 @@ function jcc_components_preprocess_media(&$variables) {
   if ($media->bundle() == 'image') {
     $media = $variables['media'];
     $view_mode = $variables['view_mode'];
-    $alignment = $variables['attributes']['class'][0];
-    $img_classes = [
-      'image',
-      Html::getClass('image__' . $view_mode),
-      Html::getClass($alignment),
-    ];
+    if (!empty($variables['attributes']['class']) && is_array($variables['attributes']['class'])) {
+      $img_classes = [
+        'image',
+        Html::getClass('image__' . $view_mode),
+        Html::getClass($variables['attributes']['class'][0]) // alignment class
+      ];
+    } else {
+      $img_classes = [
+        'image',
+        Html::getClass('image__' . $view_mode)
+      ];
+    }
 
     $variables['content']['field_media_image'][0]['#item_attributes']['class'][] = implode(' ', $img_classes);
 

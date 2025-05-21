@@ -23,33 +23,66 @@
 {{ attach_library("jcc_storybook/Pill") }}
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/BlurbBox") }}
+{{ attach_library("jcc_storybook/Accordion") }}
+{{ attach_library("jcc_elevated/search-filter-itc") }}
 
  {%
   set classes = [
   dom_id ? 'js-view-dom-id-' ~ dom_id,
 ]
 %}
+{% if grouped_proposals is not empty %}
+{% if not active_itc %}
+  <div class="search-filter">{{exposed|render}}</div>
+{% endif %}
 
-<div{{ attributes.addClass(classes) }}>
-  {% include "@organisms/ViewResults/ViewResults.twig" with {
-    variant: 'grouped_view',
-    view_name: id,
-    view_display: display_id,
-    header: '',
-    header_sidebar: '',
-    header_direction_results: 'sidebar-row',
-    form: exposed|render,
-    form_in_sidebar: true,
-    list_type: 'ul',
-    list_type_divider: '',
-    rows: grouped_proposals,
-    sidebar: '',
-    sidebar_direction_results: 'sidebar-row',
-    pager: pager|render,
-    items_per_page: '',
-    footer: '',
-    footer_sidebar: '',
-    sidebar_direction_footer: 'sidebar-row',
-    no_results_msg: empty|render,
+
+{% set accordion_items = [] %}
+  {% for group in grouped_proposals %}
+    {% set list_label = group.list_label %}
+      {% set results %}
+        {% include "@organisms/ViewResults/ViewResults.twig" with {
+           variant: "default",
+           no_top_margin: true,
+           view_name: id,
+           view_display: display_id,
+           header: '',
+           header_sidebar: '',
+           form_in_sidebar: false,
+           list_type: 'ul',
+           list_type_divider: '',
+           list_divider_skip_first: false,
+           list_label: '',
+           rows: group.items,  
+           content_header: '',
+           sidebar: '',
+           pager: pager|render,
+           items_per_page: '',
+           footer: '',
+           footer_sidebar: '',
+           no_results_msg: empty|render,
+           }
+        %}
+      {% endset %}  
+          
+      {% set accordion_items = accordion_items|merge([{
+         id: "accordion-" ~ loop.index,
+         label: list_label,
+         content: results
+      }
+      ])
+      %}
+  {% endfor %}
+
+  {% include "@molecules/Accordion/Accordion.twig" with {
+    variant: 'default',
+    open_first: false,
+    open_on_load: "",
+    expand_button: true,
+    heading: '',
+    lead: "",
+    items: accordion_items
   } %}
-</div>
+{% else %}
+  <div> {{empty|render}} </div>
+{% endif %}    

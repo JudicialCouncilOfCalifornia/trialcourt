@@ -1,0 +1,37 @@
+uuid: e4dbd68a-73ea-46d0-94aa-e5dfe39f3e27
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.from_the_courts
+  module:
+    - node
+    - system
+    - views
+  theme:
+    - jcc_newsroom
+id: views_block__from_the_courts_block_1
+theme: jcc_newsroom
+region: right_sidebar
+weight: -11
+provider: null
+plugin: 'views_block:from_the_courts-block_1'
+settings:
+  id: 'views_block:from_the_courts-block_1'
+  label: ''
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '<front>'
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      landing_page: landing_page

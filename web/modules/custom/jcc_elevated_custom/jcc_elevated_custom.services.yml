@@ -9,3 +9,8 @@ services:
     arguments: ['@entity_type.manager', '@module_handler', '@current_user']
     tags:
       - { name: event_subscriber }
+  jcc_elevated_custom_header_response_subscriber:
+    class: Drupal\jcc_elevated_custom\EventSubscriber\JccElevatedHeaderResponseSubscriber
+    arguments: ['@module_handler']
+    tags:
+      - { name: event_subscriber }

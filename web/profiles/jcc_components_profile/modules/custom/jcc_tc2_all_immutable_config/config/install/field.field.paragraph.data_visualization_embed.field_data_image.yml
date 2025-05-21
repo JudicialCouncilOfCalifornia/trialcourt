@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_data_image
+    - media.type.image
+    - paragraphs.paragraphs_type.data_visualization_embed
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: paragraph.data_visualization_embed.field_data_image
+field_name: field_data_image
+entity_type: paragraph
+bundle: data_visualization_embed
+label: 'Data image'
+description: 'If an image is selected it will be display instead of the iframe.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference

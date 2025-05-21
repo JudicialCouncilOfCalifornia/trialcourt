@@ -134,7 +134,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * Issue: https://github.com/pantheon-systems/drops-8/issues/114
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-  $settings['file_temp_path'] = 'sites/default/files/newsroom/private/tmp';
+  $settings['file_temp_path'] = sys_get_temp_dir();
 }
 
 /**

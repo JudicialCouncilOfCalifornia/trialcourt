@@ -438,6 +438,67 @@ function jcc_elevated_paragraph_hero_hangover(array &$variables, ParagraphInterf
 }
 
 /**
+ * Helper function for data visualization embed.
+ *
+ * @param array $variables
+ *   The paragraph variables.
+ */
+function jcc_elevated_paragraph_data_visualization_embed(array &$variables, ParagraphInterface $paragraph) {
+  $data_media = $paragraph->get('field_data_image');
+  $mobile_data_media = $paragraph->get('field_mobile_data_image');
+  if ($data_media && $data_media->entity) {
+    // Get the image file ID from the media field.
+    $image_media_id = $data_media->target_id;
+    if ($image_media_id) {
+      // Load the media entity.
+      $media = Media::load($image_media_id);
+      if ($media->hasField('field_media_image') && !$media->get('field_media_image')->isEmpty()) {
+        $file_id = $media->get('field_media_image')->target_id;
+
+        // Load the file entity.
+        $file = File::load($file_id);
+
+        if ($file) {
+          $file_url = $file->createFileUrl();
+          $variables['img_data_url'] = $file_url;
+        }
+        else {
+          \Drupal::messenger()->addError('File not found.');
+        }
+      }
+      else {
+        \Drupal::messenger()->addError('Media entity does not have a file field or it is empty.');
+      }
+    }
+  }
+  if ($mobile_data_media && $mobile_data_media->entity) {
+    // Get the image file ID from the media field.
+    $image_media_id = $mobile_data_media->target_id;
+    if ($image_media_id) {
+      // Load the media entity.
+      $media = Media::load($image_media_id);
+      if ($media->hasField('field_media_image') && !$media->get('field_media_image')->isEmpty()) {
+        $file_id = $media->get('field_media_image')->target_id;
+
+        // Load the file entity.
+        $file = File::load($file_id);
+
+        if ($file) {
+          $file_url = $file->createFileUrl();
+          $variables['mobile_img_data_url'] = $file_url;
+        }
+        else {
+          \Drupal::messenger()->addError('File not found.');
+        }
+      }
+      else {
+        \Drupal::messenger()->addError('Media entity does not have a file field or it is empty.');
+      }
+    }
+  }
+}
+
+/**
  * Helper function for list with menu.
  *
  * @param array $variables
@@ -586,13 +647,15 @@ function jcc_elevated_paragraph_tabs(array &$variables) {
 function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInterface $paragraph) {
   // Setup provided by entries per event type.
   // Finds imported events with matching type.
-  // Same feed URL for importing provides real-time updates.
+  // Cache management handled by jcc_custom_node_view_alter().
   $event_types = $paragraph->get('field_components')->referencedEntities();
   $node_storage = \Drupal::entityTypeManager()->getStorage('node');
 
   // If setup defined for paragraph.
   if ($event_types) {
-    $today = date('m/d/y');
+    $timezone = new DateTimeZone('America/Los_Angeles');
+    $current_datetime = new DateTime('now', $timezone);
+    $today = $current_datetime->format('m/d/y');
     $term_storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
 
     // Find matching event types specified in setup.
@@ -605,14 +668,14 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
         // If matching event types found.
         if ($imported_events) {
           foreach ($imported_events as $event) {
+            $event_datetime = new DateTime($event->get('field_event_date')->start_date, $timezone);
+            $event_date = \Drupal::service('date.formatter')->format($event_datetime->getTimestamp(), 'custom', 'm/d/y');
             $type = $term_storage->load($type_id)->name->value;
-            $event_date = $event->get('field_event_date')->start_date ? $event->get('field_event_date')->start_date->format('m/d/y') : '';
             $scheduled_type = $term_storage->load($event->get('field_event_type')->target_id)->name->value;
 
             // If matching event is scheduled for today.
             if ($event_date == $today && $scheduled_type == $type) {
               $start_timestamp = strtotime($event->get('field_event_date')->start_date);
-              $captioning = NULL;
 
               // Banner visibility by status.
               $status = NULL;
@@ -621,78 +684,13 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
               $current_to_start = $current_timestamp - $start_timestamp;
               $end_timestamp = strtotime($event->get('field_event_date')->end_date);
 
-              if ($event_type->get('field_toggle')->value == 1) {
-                // If always live broadcast override.
-                if ($current_to_start > -3600 && $current_timestamp < $end_timestamp) {
-                  $status = 'live';
+              if ($current_to_start > -3600 && $current_timestamp < $end_timestamp) {
+                // Display pending 1 hour before scheduled time.
+                if (!$event_type->get('field_toggle')->value == 1 && $current_to_start > -3600 && $current_to_start < 0) {
+                  $status = 'starting soon';
                 }
-              }
-              elseif ($current_to_start > -3600 && $current_to_start < 3600 && $current_timestamp < $end_timestamp) {
-                // Display pending 1 hour before & after scheduled time.
-                $status = 'starting soon';
-              }
-              elseif ($current_timestamp >= $start_timestamp && $current_timestamp < $end_timestamp) {
-                // Default display until scheduled time ends.
-                $status = 'no broadcast';
-              }
-
-              // Granicus real-time updates.
-              $import_configs = \Drupal::config('migrate_plus.migration.courts_node_event_granicus');
-              if ($import_configs) {
-                $granicus_events = [];
-                $feed = $import_configs->get('source.urls');
-                if ($feed) {
-                  $request = file_get_contents($feed);
-                  if ($request) {
-                    try {
-                      $granicus_events = simplexml_load_string($request, 'SimpleXMLElement', LIBXML_NOCDATA);
-                    }
-                    catch (Exception $e) {
-                      \Drupal::logger('granicus')->warning($e->getMessage());
-                    }
-
-                    if ($granicus_events) {
-                      $granicus_events = json_encode($granicus_events);
-                      $granicus_events = json_decode($granicus_events, TRUE);
-
-                      foreach ($granicus_events['event'] as $granicus_event) {
-                        if ($granicus_event['date'] == $today && $granicus_event['type'] == $type) {
-                          // Live broadcast check.
-                          if ($status != 'live') {
-                            switch ($granicus_event['status']) {
-                              // Can keep banner visible past scheduled time.
-                              case 'Running':
-                                $status = 'live';
-                                break;
-                            }
-                          }
-
-                          // Captioning links.
-                          if ($status && $granicus_event['captioning']) {
-                            $captioning_links = [];
-                            $captions = explode(';', $granicus_event['captioning']);
-                            foreach ($captions as $caption) {
-                              if ($caption) {
-                                $caption = explode('|', $caption);
-                                $title = $caption[0];
-                                $url = \Drupal::service('file_url_generator')->generate($caption[1]);
-                                $captioning_links[] = \Drupal::service('link_generator')->generate($title, $url);
-                              }
-                            }
-                            switch (count($captioning_links)) {
-                              case 2:
-                                $captioning_links = implode(' or ', $captioning_links);
-                                break;
-
-                              default:
-                                $captioning_links = $captioning_links[0];
-                            }
-                            $captioning = ['#markup' => 'View ' . $captioning_links . ' Captions'];
-                          }
-                        }
-                      }
-                    }
-                  }
+                else {
+                  $status = 'live';
                 }
               }
 
@@ -700,6 +698,26 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
               if ($status) {
                 // Media URL saved as WYSIWYG text.
                 $event_url = str_replace(['<p>', '</p>'], '', $event->get('field_granicus_link')->first()->value);
+
+                // Captioning links.
+                $captioning = NULL;
+                $captioning_links = [];
+                foreach ($event_type->get('field_link_multiple') as $caption) {
+                  $title = $caption->get('title')->getValue();
+                  $url = \Drupal::service('file_url_generator')->generate($caption->get('uri')->getValue());
+                  $captioning_links[] = \Drupal::service('link_generator')->generate($title, $url);
+                }
+                if ($captioning_links) {
+                  switch (count($captioning_links)) {
+                    case 2:
+                      $captioning_links = implode(' or ', $captioning_links);
+                      break;
+
+                    default:
+                      $captioning_links = $captioning_links[0];
+                  }
+                  $captioning = ['#markup' => 'View ' . $captioning_links . ' Captions'];
+                }
 
                 $livecasts[] = [
                   'title' => $type,
@@ -719,12 +737,6 @@ function jcc_elevated_paragraph_granicus_events(array &$variables, ParagraphInte
 
     if ($livecasts) {
       $variables['livecasts'] = $livecasts;
-
-      // Disable page cache to not block dynamic info.
-      // Max age cache for authenticated users.
-      // Kill cache switch for anonymous users.
-      $variables['#cache']['max-age'] = 0;
-      \Drupal::service('page_cache_kill_switch')->trigger();
     }
   }
 }

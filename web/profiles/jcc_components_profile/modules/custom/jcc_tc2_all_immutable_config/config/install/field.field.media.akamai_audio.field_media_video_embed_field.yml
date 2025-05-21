@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_video_embed_field
+    - media.type.akamai_audio
+  module:
+    - tmgmt_content
+    - video_embed_field
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: media.akamai_audio.field_media_video_embed_field
+field_name: field_media_video_embed_field
+entity_type: media
+bundle: akamai_audio
+label: 'Video Url'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_providers:
+    akamai_audio: akamai_audio
+    akamai_video: '0'
+    vimeo: '0'
+    youtube: '0'
+    youtube_playlist: '0'
+field_type: video_embed_field

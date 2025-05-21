@@ -166,9 +166,38 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
     '#description'   => t("Show Google translation dropdown in header."),
   ];
 
+  // Block Web search engine indexing.
+  $bsefi_label = t('Block Web search engine indexing');
+  $bsefi_desc = t('Prevents any content - node and media - from appearing in Web search results. To prevent search engines from crawling this site, <a href="/admin/config/search/robotstxt">adjust the instructions</a> for the site\'s robots.txt.');
+  $bsefi_disabled = t('Not availabile when r4032login module is installed');
+  if (!\Drupal::service('module_handler')->moduleExists('r4032login')) {
+    $form['global']['block_search_engine_indexing'] = [
+      '#type'          => 'checkbox',
+      '#title'         => $bsefi_label,
+      '#default_value' => theme_get_setting('block_search_engine_indexing'),
+      '#description'   => $bsefi_desc,
+    ];
+  }
+  else {
+    $form['global']['block_search_engine_indexing'] = [
+      '#type'          => 'checkbox',
+      '#title'         => $bsefi_label,
+      '#default_value' => theme_get_setting('block_search_engine_indexing'),
+      '#description'   => '<p><strong>' . $bsefi_disabled . '</strong></p><p>' . $bsefi_desc . '</p>',
+      '#attributes'      => ['disabled' => 'disabled'],
+    ];
+  }
+
+  $form['global']['news_default_seal'] = [
+    '#type' => 'textfield',
+    '#title' => t('News Default Seal Path'),
+    '#default_value' => theme_get_setting('news_default_seal'),
+    '#description' => t('Enter the path to the default branch seal image(themes/custom/jcc_elevated/images/news-default-seal.svg).'),
+  ];
+
   // BEGIN Edit no search results message.
   $form['global']['no_search_results'] = [
-    '#type' => 'details',
+    '#type' => 'fieldset',
     '#title' => t('No search results message'),
     '#collapsed'  => TRUE,
   ];
@@ -183,11 +212,5 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
     '#format'        => $no_results_msg ? $no_results_msg['format'] : 'snippet',
     '#title'         => t('Personalized message'),
     '#default_value' => $no_results_msg ? $no_results_msg['value'] : '',
-  ];
-  $form['news_default_seal'] = [
-    '#type' => 'textfield',
-    '#title' => t('News Default Seal Path'),
-    '#default_value' => theme_get_setting('news_default_seal'),
-    '#description' => t('Enter the path to the default branch seal image(themes/custom/jcc_elevated/images/news-default-seal.svg).'),
   ];
 }

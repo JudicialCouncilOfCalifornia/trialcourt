@@ -122,6 +122,13 @@ $sites['amador.courts.ca.gov'] = 'amdr';
 $sites['languageaccess.courts.ca.gov'] = 'partners';
 // = 'diversity-toolkit';
 $sites['racialjustice-toolkit.courts.ca.gov'] = 'diversity-toolkit';
+// = 'plumas';
+$sites['www.plumascourt.ca.gov'] = 'plumas';
+$sites['plumascourt.ca.gov'] = 'plumas';
+// = 'cjer-judicial';
+$sites['cjerjudicial.courts.ca.gov'] = 'cjer-judicial';
+// = 'store-front';
+$sites['webservices.courts.ca.gov'] = 'store-front';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in

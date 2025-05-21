@@ -49,7 +49,8 @@
 {% endset %}
 
 {% set items = [] %}
-{% for job in jobs %}
+{% for key, job in jobs %}
+ {% if key != 'count_summary' %}
   {% set teaser %}
     <p>{{ job.teaser }}</p>
   {% endset %}
@@ -66,6 +67,7 @@
     detail_list_data: job.detail_list_data,
   } %}
   {% set items = items|merge([item]) %}
+  {% endif %}
 {% endfor %}
 
 <div{{ attributes.addClass(classes) }}>

@@ -2,16 +2,16 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.node.body
     - field.storage.node.field_components
+    - field.storage.paragraph.field_aside
     - field.storage.paragraph.field_brow
     - field.storage.paragraph.field_components
+    - field.storage.paragraph.field_content
     - field.storage.paragraph.field_hangover_blurb
     - field.storage.paragraph.field_heading
-    - field.storage.paragraph.field_subheading
-    - field.storage.paragraph.field_content
-    - field.storage.node.body
-    - field.storage.paragraph.field_aside
     - field.storage.paragraph.field_lead
+    - field.storage.paragraph.field_subheading
     - field.storage.paragraph.field_text
     - search_api.server.pantheon_solr8
     - core.entity_view_mode.node.full
@@ -87,7 +87,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Brow'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_brow'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     dependencies:
       config:
         - field.storage.node.field_components
@@ -99,7 +99,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Hangover blurb'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_hangover_blurb'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     dependencies:
       config:
         - field.storage.node.field_components
@@ -111,7 +111,7 @@ field_settings:
     label: 'Components » Paragraph » Heading'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_heading'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     boost: !!float 3
     dependencies:
       config:
@@ -123,7 +123,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Heading'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_heading'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     boost: !!float 2
     dependencies:
       config:
@@ -136,7 +136,7 @@ field_settings:
     label: 'Components » Paragraph » Subheading'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_subheading'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     boost: !!float 2
     dependencies:
       config:
@@ -148,7 +148,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Subheading'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_subheading'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     boost: !!float 2
     dependencies:
       config:
@@ -168,7 +168,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Description » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_content:processed'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     dependencies:
       config:
         - field.storage.node.field_components
@@ -180,7 +180,7 @@ field_settings:
     label: 'Body (purpose) » Processed text'
     datasource_id: 'entity:node'
     property_path: 'body:processed'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     dependencies:
       config:
         - field.storage.node.body
@@ -188,7 +188,7 @@ field_settings:
     label: 'Components » Paragraph » Aside » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_aside:processed'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     dependencies:
       config:
         - field.storage.node.field_components
@@ -199,7 +199,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Lead » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_lead:processed'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     boost: !!float 2
     dependencies:
       config:
@@ -212,7 +212,7 @@ field_settings:
     label: 'Components » Paragraph » Hangover blurb » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_hangover_blurb:processed'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     dependencies:
       config:
         - field.storage.node.field_components
@@ -223,7 +223,7 @@ field_settings:
     label: 'Components » Paragraph » Text » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_text:processed'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     boost: 1.5
     dependencies:
       config:
@@ -235,7 +235,7 @@ field_settings:
     label: 'Components » Paragraph » Lead » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_lead:processed'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     boost: !!float 3
     dependencies:
       config:
@@ -247,7 +247,7 @@ field_settings:
     label: 'Components » Paragraph » Components » Paragraph » Text » Processed text'
     datasource_id: 'entity:node'
     property_path: 'field_components:entity:field_components:entity:field_text:processed'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     dependencies:
       config:
         - field.storage.node.field_components
@@ -258,7 +258,7 @@ field_settings:
   rendered_item:
     label: 'Rendered HTML output'
     property_path: rendered_item
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     boost: !!float 3
     configuration:
       roles:
@@ -295,7 +295,7 @@ field_settings:
     label: 'Body (purpose) » Processed summary'
     datasource_id: 'entity:node'
     property_path: 'body:summary_processed'
-    type: 'solr_text_custom_omit_norms:ngramstring'
+    type: text
     dependencies:
       config:
         - field.storage.node.body
