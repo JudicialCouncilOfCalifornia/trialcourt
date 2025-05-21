@@ -10,8 +10,9 @@ dependencies:
     - field.storage.node.field_department
     - field.storage.node.field_division
     - field.storage.node.field_document_type
-    - field.storage.node.field_help_links
+    - field.storage.node.field_event_type
     - field.storage.node.field_images
+    - field.storage.node.field_help_links
     - field.storage.node.field_location_type
     - field.storage.node.field_news_type
     - field.storage.node.field_phone
@@ -71,11 +72,6 @@ third_party_settings:
     multilingual:
       limit_to_content_language: false
       include_language_independent: true
-      use_language_undefined_as_fallback_language: false
-      specific_languages:
-        en: '0'
-        es: '0'
-      use_universal_collation: false
 _core:
   default_config_hash: FWkO54aheX9OhfEOUmpmKI2P1lwiAxYrI5o5kKSO6A4
 id: index
@@ -140,6 +136,14 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_document_type
+  field_event_type:
+    label: 'Event Type'
+    datasource_id: 'entity:node'
+    property_path: field_event_type
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_event_type
   field_help_links:
     label: 'Links to Guides'
     datasource_id: 'entity:node'
@@ -354,7 +358,6 @@ datasource_settings:
     bundles:
       default: true
       selected:
-        - event
         - person
     languages:
       default: true
@@ -362,7 +365,6 @@ datasource_settings:
 processor_settings:
   add_url: {  }
   aggregated_field: {  }
-  auto_aggregated_fulltext_field: {  }
   content_access:
     weights:
       preprocess_query: -30
