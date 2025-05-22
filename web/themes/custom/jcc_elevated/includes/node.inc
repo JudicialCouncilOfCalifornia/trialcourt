@@ -1203,58 +1203,55 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   }
   else {
     // Schedule & Registration.
-    $cache_registration_id = 'course_registration_state:' . 'nid_' . $node->id();
+    $cache_registration_action = 'course_registration_state:' . 'nid_' . $node->id();
     if ((!$action && !$embed) && count($node->get('field_components')) > 0) {
+      // Events.
       foreach ($node->get('field_components')->referencedEntities() as $event) {
         if ($event->get('field_date_range')->start_date) {
           $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
           $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
 
-          // Upcoming events only.
-          if ($start_date && $end_date->format('Ymd') >= $today->format('Ymd')) {
-            // Event date.
-            $event_date = NULL;
-            if ($event->get('field_date_range')->start_date) {
-              $event_date = $start_date->format('F j, Y');
-              if ($start_date->format('F j, Y') != $end_date->format('F j, Y')) {
-                $start = $start_date->format('F j');
-                if ($start_date->format('Y') != $end_date->format('Y')) {
-                  $start = $start_date->format('F j, Y');
-                }
-                $end = $end_date->format('j, Y');
-                if ($start_date->format('F') != $end_date->format('F')) {
-                  $end = $end_date->format('F j, Y');
-                }
-                $event_date = $start . ' to ' . $end;
+          // Event date.
+          $event_date = NULL;
+          if ($event->get('field_date_range')->start_date) {
+            $event_date = $start_date->format('F j, Y');
+            if ($start_date->format('F j, Y') != $end_date->format('F j, Y')) {
+              $start = $start_date->format('F j');
+              if ($start_date->format('Y') != $end_date->format('Y')) {
+                $start = $start_date->format('F j, Y');
               }
+              $end = $end_date->format('j, Y');
+              if ($start_date->format('F') != $end_date->format('F')) {
+                $end = $end_date->format('F j, Y');
+              }
+              $event_date = $start . ' to ' . $end;
             }
-
-            // Event location.
-            $location = $event->get('field_event_location')->entity ? $event->get('field_event_location')->entity->label() : NULL;
-
-            // Event notation.
-            $notation = $event->get('field_text')->value ? strip_tags($event->get('field_text')->value, 'strong, em') : NULL;
-            if ($notation) {
-              $notation = preg_replace('/\r|\n/', '', $notation);
-            }
-
-            // Schedule.
-            $schedule[] = [
-              'date' => $event_date,
-              'start_date' => $start_date->format('F j, Y'),
-              'start_time' => $start_date->format('g:ia'),
-              'end_date' => $end_date->format('F j, Y'),
-              'end_time' => $end_date->format('g:ia'),
-              'location' => $location,
-              'notation' => $notation,
-            ];
           }
+
+          // Event location.
+          $location = $event->get('field_event_location')->entity ? $event->get('field_event_location')->entity->label() : NULL;
+
+          // Event notation.
+          $notation = $event->get('field_text')->value ? strip_tags($event->get('field_text')->value, 'strong, em') : NULL;
+          if ($notation) {
+            $notation = preg_replace('/\r|\n/', '', $notation);
+          }
+
+          // Schedule.
+          $schedule[] = [
+            'date' => $event_date,
+            'start_date' => $start_date->format('F j, Y'),
+            'start_time' => $start_date->format('g:ia'),
+            'end_date' => $end_date->format('F j, Y'),
+            'end_time' => $end_date->format('g:ia'),
+            'location' => $location,
+            'notation' => $notation,
+          ];
         }
       }
 
       $registration = $node->get('field_custom_link');
       if (count($registration) > 0) {
-        $registration_state = 'open';
         $register_uri = $registration->uri;
 
         $registration_period = $node->get('field_registration_period')->getValue()[0];
@@ -1264,67 +1261,57 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
           $register_end = $register_end->format('Ymd');
           if ($register_start > $today->format('Ymd')) {
-            $registration_state = 'pending';
-          }
-          elseif ($register_end < $today->format('Ymd')) {
-            $registration_state = 'closed';
-          }
-        }
-
-        switch ($registration_state) {
-          case 'closed':
-            $action = [
-              '#status' => 'closed',
-              '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Closed') . '</p>',
-            ];
-            if ($cache->get($cache_registration_id)->data['#status'] != 'closed') {
-              $cache->delete($cache_registration_id);
-              $cache->set($cache_registration_id, $action, Cache::PERMANENT);
-            }
-            break;
-
-          case 'pending':
-            $action = [
+            $action_button = [
               '#status' => 'pending',
               '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Pending') . '</p>',
             ];
-            if ($cache->get($cache_registration_id)->data['#status'] != 'pending') {
-              $cache->delete($cache_registration_id);
-              $cache->set($cache_registration_id, $action, Cache::PERMANENT);
+            if ($cache->get($cache_registration_action)->data['#status'] != 'pending') {
+              $cache->set($cache_registration_action, $action_button, Cache::PERMANENT);
             }
-            break;
-
-          default:
-            $action = [
+          }
+          elseif ($register_end < $today->format('Ymd')) {
+            $action_button = [
+              '#status' => 'closed',
+              '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Closed') . '</p>',
+            ];
+            if ($cache->get($cache_registration_action)->data['#status'] != 'closed') {
+              $cache->set($cache_registration_action, $action_button, Cache::PERMANENT);
+            }
+          }
+          else {
+            $action_button = [
               '#status' => 'open',
               '#markup' => '<a class="button button--secondary button--normal" href="' . $register_uri . '">' . t('Register Now') . '</a>',
             ];
-            if ($cache->get($cache_registration_id)->data['#status'] != 'open') {
-              $cache->delete($cache_registration_id);
-              $cache->set($cache_registration_id, $action, Cache::PERMANENT);
+            if ($cache->get($cache_registration_action)->data['#status'] != 'open') {
+              $cache->set($cache_registration_action, $action_button, Cache::PERMANENT);
             }
+          }
         }
-      }
-      else {
+        else {
+          $action_button = [
+            '#status' => 'none',
+            '#markup' => '<p class="button button--secondary button--normal">' . t('No Registration Required') . '</p>',
+          ];
+          if ($cache->get($cache_registration_action)->data['#status'] != 'none') {
+            $cache->set($cache_registration_action, $action_button, Cache::PERMANENT);
+          }
+        }
         $action = [
-          '#status' => 'none',
-          '#markup' => '<p class="button button--secondary button--normal">' . t('No Registration Required') . '</p>',
+          '#markup' => $cache->get($cache_registration_action)->data['#markup'],
         ];
-        if ($cache->get($cache_registration_id)->data['#status'] != 'none') {
-          $cache->delete($cache_registration_id);
-          $cache->set($cache_registration_id, $action, Cache::PERMANENT);
-        }
       }
     }
     elseif ($node->get('field_origin_url')->uri) {
+      $cache->delete($cache_registration_action);
       $launch_title = t('Launch');
       $launch_uri = $node->get('field_origin_url')->uri;
       $action = [
         '#markup' => '<a class="button button--secondary button--normal" href="' . $launch_uri . '">' . $launch_title . '</a>',
       ];
-      if ($cache->get($cache_registration_id)) {
-        $cache->delete($cache_registration_id);
-      }
+    }
+    else {
+      $cache->delete($cache_registration_action);
     }
   }
 

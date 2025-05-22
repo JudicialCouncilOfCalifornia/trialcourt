@@ -226,6 +226,9 @@
       {# Video embed placement only. #}
       {% if course.embed and course.embed.type == 'video' %}
         {{ course.embed.media }}
+        {% if content.field_about %}
+          {{ content.field_about }}
+        {% endif %}
       {% endif %}
 
       <h2>Overview</h2>
@@ -236,6 +239,9 @@
       {# Audio embed placement only. #}
       {% if course.embed and course.embed.type == 'audio' %}
         {{ course.embed.media }}
+        {% if content.field_about %}
+          {{ content.field_about }}
+        {% endif %}
       {% endif %}
 
       {# Related materials #}
