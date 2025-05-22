@@ -8,13 +8,9 @@
 use Drupal\Core\Render\Element;
 
 /**
- * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ * Implements hook_field_widget_single_element_form_alter().
  */
-function jcc_components_variants_field_widget_entity_reference_paragraphs_form_alter(
-  &$element,
-  &$form_state,
-  $context) {
-
+function jcc_components_variants_field_widget_single_element_form_alter(&$element, &$form_state, $context) {
   if (!empty($element['subform']['field_variant'])) {
     $variants = jcc_components_variants_preview($element['#paragraph_type']);
     if (!empty($variants['options'])) {
@@ -26,6 +22,7 @@ function jcc_components_variants_field_widget_entity_reference_paragraphs_form_a
       $element['subform']['#attached']['library'][] = 'jcc_components_variants/variants';
     }
   }
+
   // We set subcomponent variant on the parent component so that it's applied
   // to all instances of the subcomponent. Authors can't mix and match variants
   // at the subcomponent.  i.e. every 'card' under 'cards' must be the same
