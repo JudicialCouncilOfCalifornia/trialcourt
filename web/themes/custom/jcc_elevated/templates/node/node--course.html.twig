@@ -122,28 +122,30 @@
       {% endif %}
 
       {% set details_content = [] %}
-      {% set today_event = NULL %}
+      {% set today_event_date = NULL %}
 
       {# If event and it is today #}
       {% if course.sidebar.schedule %}
-        {% set today_event = course.sidebar.schedule[0] %}
-        {% if today_event.start_date|date('Ymd') <= today and today_event.end_date|date('Ymd') >= today %}
-          {% set event_time = today_event.start_time ~ ' to ' ~ today_event.end_time %}
-          {% if today_event.start_time == '12:00am' and today_event.end_time == '11:59pm' %}
-            {% set event_time = 'All Day' %}
-          {% endif %}
-          {% set time = {
-            label: 'Time'|t,
-            text: event_time,
-          } %}
-          {% set details_content = details_content|merge([time]) %}
+        {% for event in course.sidebar.schedule %}
+          {% if event.event_is_today == 1 %}
+            {% set today_event_date = event.date %}
+            {% if event.time %}
+              {% set time = {
+                label: 'Time'|t,
+                text: event.time,
+              } %}
+              {% set details_content = details_content|merge([time]) %}
+            {% endif %}
 
-          {% set location = {
-            label: 'Location'|t,
-            text: today_event.location,
-          } %}
-          {% set details_content = details_content|merge([location]) %}
-        {% endif %}
+            {% if event.location %}
+              {% set location = {
+                label: 'Location'|t,
+                text: event.location,
+              } %}
+              {% set details_content = details_content|merge([location]) %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
       {% endif %}
 
       {# Core details #}
@@ -187,7 +189,7 @@
           } %}
         {% endset %}
         {% set item = {
-          brow: today_event ? today_event.date ~ ' (Event Date)'|t : '',
+          brow: today_event_date ? today_event_date ~ ' (Event Date)'|t : '',
           heading: details,
         } %}
         {% set sidebar_content = sidebar_content|merge([item]) %}
