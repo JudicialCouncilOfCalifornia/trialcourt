@@ -21,11 +21,22 @@ function jcc_base_preprocess_block__views_block__events_block_2(&$variables) {
     foreach ($rows as $row) {
       $date = new DrupalDateTime($row->_entity->field_date_range->value, 'UTC');
       $end_date = new DrupalDateTime($row->_entity->field_date_range->end_value, 'UTC');
+
       // Display only current or upcoming events.
       if ($end_date->getTimestamp() >= \Drupal::time()->getCurrentTime()) {
         $event_type = ($row->_entity->field_event_type->target_id ? Term::load($row->_entity->field_event_type->target_id)->get('name')->value : '');
         $title = $row->_entity->title->value;
-        $excerpt = $date->format('M j, Y');
+
+        $start_date_only = $date->format('Y-m-d');
+        $end_date_only = $end_date->format('Y-m-d');
+
+        if ($start_date_only === $end_date_only) {
+          $excerpt = $date->format('M j, Y');
+        }
+        else {
+          $excerpt = $date->format('M j, Y') . ' - ' . $end_date->format('M j, Y');
+        }
+
         $url = Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
 
         $moduleHandler = Drupal::service('module_handler');
