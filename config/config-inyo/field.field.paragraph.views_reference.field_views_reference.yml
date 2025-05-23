@@ -4,7 +4,6 @@ dependencies:
   config:
     - field.storage.paragraph.field_views_reference
     - paragraphs.paragraphs_type.views_reference
-    - views.view.alerts
   module:
     - tmgmt_content
     - viewsreference
@@ -19,80 +18,38 @@ label: 'Views Reference'
 description: ''
 required: true
 translatable: false
-default_value:
-  -
-    options:
-      title: 0
-      argument: ''
-    display_id: default
-    argument: null
-    title: 0
-    data: null
+default_value: {  }
 default_value_callback: ''
 settings:
   handler: 'default:view'
   handler_settings:
     target_bundles: null
-    auto_create: 0
+    auto_create: false
   plugin_types:
-    page: page
     block: block
-    default: 0
-    rest_export: 0
-    attachment: 0
-    feed: 0
-    embed: 0
+    page: page
   preselect_views:
+    advisory_body: advisory_body
     arbitrators: arbitrators
     case: case
+    courses: courses
+    facilities_awards_and_recognition: facilities_awards_and_recognition
+    facilities_listing: facilities_listing
     forms: forms
     imported_events: imported_events
     jobs: jobs
-    justices_appellate_legacy_project: justices_appellate_legacy_project
     justices_judges: justices_judges
     location: location
     news: news
     opinions: opinions
+    past_proposals: past_proposals
     publications: publications
     publication_forms: publication_forms
     requests: requests
     tentative_rulings: tentative_rulings
-    alerts: 0
-    block_content: 0
-    content: 0
-    content_recent: 0
-    event_type_legend: 0
-    export_feedback: 0
-    feeds_directory: 0
-    files: 0
-    glossary_terms: 0
-    group_overview: 0
-    jcc_migrate_source_log: 0
-    media: 0
-    media_library: 0
-    media_publications: 0
-    moderated_content: 0
-    news_admin: 0
-    news_types: 0
-    nodeaccess: 0
-    redirect: 0
-    revisions: 0
-    scheduler_scheduled_content: 0
-    search: 0
-    taxonomy_term: 0
-    tmgmt_job_items: 0
-    tmgmt_job_messages: 0
-    tmgmt_job_overview: 0
-    tmgmt_translation_all_job_items: 0
-    users_by_group: 0
-    user_admin_people: 0
-    watchdog: 0
-    webform_submissions: 0
-    who_s_new: 0
-    who_s_online: 0
   enabled_settings:
-    use_more_text: use_more_text
     link_display: link_display
-    argument: argument
+    use_more_text: use_more_text
     title: title
+    argument: argument
 field_type: viewsreference

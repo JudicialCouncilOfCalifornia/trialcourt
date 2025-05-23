@@ -1,0 +1,39 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.event_date.field_date_range
+    - field.field.paragraph.event_date.field_event_location
+    - field.field.paragraph.event_date.field_text
+    - paragraphs.paragraphs_type.event_date
+  module:
+    - jcc_custom
+    - text
+id: paragraph.event_date.default
+targetEntityType: paragraph
+bundle: event_date
+mode: default
+content:
+  field_date_range:
+    type: jcc_custom_daterange_all_day
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_event_location:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_text:
+    type: text_textarea
+    weight: 2
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

@@ -219,7 +219,7 @@ function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
           $media_id = str_replace('/media/', '', $href);
           $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
 
-          if ($media && $media->get('field_media_file')->target_id) {
+          if ($media && in_array($media->bundle(), $supported) && $media->get('field_media_file')->target_id) {
             $linkit_profile_storage = \Drupal::service('entity_type.manager')->getStorage('linkit_profile');
             $linkit_profile = $linkit_profile_storage->load('default');
             $matcher = $linkit_profile->getMatcherByEntityType('media');
@@ -230,25 +230,23 @@ function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
 
               // Option to link page if currently linked to file by default.
               if ($matcher_config && ($substitution_type == 'media')) {
-                if ($media && in_array($media->bundle(), $supported)) {
-                  $link_attributes = $form_state->getStorage();
-                  if (!$link_attributes['link_element']['data-entity-substitution']) {
-                    $link_to_page = TRUE;
-                  }
-
-                  $form['link_to_page'] = [
-                    '#type' => 'checkbox',
-                    '#title' => t('Link file or publication to their media page when saving (e.g. /media/1234)'),
-                    '#description' => t('Use this option if you do not want to link to media file directly.'),
-                    '#required' => FALSE,
-                    '#default_value' => $link_to_page ?? FALSE,
-                  ];
-                  $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_custom_link_to_page_submit';
+                $link_attributes = $form_state->getStorage();
+                if (!$link_attributes['link_element']['data-entity-substitution']) {
+                  $link_to_page = TRUE;
                 }
+
+                $form['link_to_page'] = [
+                  '#type' => 'checkbox',
+                  '#title' => t('Link file or publication to their media page when saving (e.g. /media/1234)'),
+                  '#description' => t('Use this option if you do not want to link to media file directly.'),
+                  '#required' => FALSE,
+                  '#default_value' => $link_to_page ?? FALSE,
+                ];
+                $form['actions']['save_modal']['#submit'][] = 'jcc_elevated_custom_link_to_page_submit';
               }
             }
           }
-          elseif ($media && $media->get('field_media_file_multiple')->target_id) {
+          elseif ($media && in_array($media->bundle(), $supported) && $media->get('field_media_file_multiple')->target_id) {
             // Compatibility for older publications.
             $form['link_to_file'] = [
               '#type' => 'checkbox',
