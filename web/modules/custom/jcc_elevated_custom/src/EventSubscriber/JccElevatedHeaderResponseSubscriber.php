@@ -41,12 +41,7 @@ class JccElevatedHeaderResponseSubscriber implements EventSubscriberInterface {
    */
   public function onResponse(ResponseEvent $event) {
     // Add X-Robots-Tag header response if opted.
-    // Cannot be used with modules using same header response.
-    $module_conflicts = 0;
-    if ($this->moduleHandler->moduleExists('r4032login')) {
-      $module_conflicts = $module_conflicts + 1;
-    }
-    if (theme_get_setting('block_search_engine_indexing') && $module_conflicts == 0) {
+    if (theme_get_setting('block_search_engine_indexing')) {
       $response = $event->getResponse();
       $response->headers->set('X-Robots-Tag', 'none');
       $event->setResponse($response);
