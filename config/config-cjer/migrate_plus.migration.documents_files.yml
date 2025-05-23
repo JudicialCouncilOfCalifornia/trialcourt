@@ -1,0 +1,81 @@
+uuid: 912bca87-2d0f-406f-85ab-87e1975da4c2
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: GtCEi9tFITe83xeuGajVmzjfFEJxpNro_5eCNpO51Tg
+id: advisory_body_files
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - cjer
+  - file
+label: 'Documents: Import files'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  ids:
+    id:
+      type: string
+  fields:
+    -
+      name: id
+      selector: id
+      label: 'Unique Identifier'
+    -
+      name: url
+      selector: id
+      label: 'Attachment file url'
+  constants:
+    DRUPAL_FILE_DIRECTORY: 'public://documents/'
+process:
+  pseudo_decoded_url:
+    plugin: callback
+    callable: urldecode
+    source: url
+  pseudo_destination_filename:
+    -
+      plugin: path_from_url
+      source: url
+    -
+      plugin: callback
+      callable: basename
+    -
+      plugin: callback
+      callable: urldecode
+    -
+      plugin: str_replace
+      search: ' '
+      replace: '-'
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'Cannot import empty image filename.'
+  pseudo_destination_path:
+    -
+      plugin: concat
+      source:
+        - constants/DRUPAL_FILE_DIRECTORY
+        - '@pseudo_destination_filename'
+  uri:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: url
+    -
+      plugin: file_copy
+      source:
+        - '@pseudo_decoded_url'
+        - '@pseudo_destination_path'
+      file_exists: rename
+      move: false
+destination:
+  plugin: 'entity:file'
+migration_dependencies: null
