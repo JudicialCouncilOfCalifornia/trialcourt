@@ -2,11 +2,14 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.user.user.field_court
+    - field.field.user.user.field_full_name
     - field.field.user.user.field_group
     - field.field.user.user.field_jcc_messaging_center_group
     - field.field.user.user.field_last_password_reset
     - field.field.user.user.field_password_expiration
     - field.field.user.user.field_pending_expire_sent
+    - field.field.user.user.field_phone_number
   module:
     - user
 id: user.user.default
@@ -14,6 +17,22 @@ targetEntityType: user
 bundle: user
 mode: default
 content:
+  field_court:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 54
+    region: content
+  field_full_name:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 52
+    region: content
   field_group:
     type: entity_reference_label
     label: above
@@ -29,6 +48,14 @@ content:
       link: true
     third_party_settings: {  }
     weight: 6
+    region: content
+  field_phone_number:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 53
     region: content
   masquerade:
     settings: {  }

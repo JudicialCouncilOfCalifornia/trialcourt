@@ -16,8 +16,10 @@ dependencies:
     - field.field.node.surplus_materials.field_quantity
     - field.field.node.surplus_materials.field_reference_number
     - field.field.node.surplus_materials.field_surplus_category
+    - field.field.node.surplus_materials.field_terms_of_use
     - field.field.node.surplus_materials.field_unit_measure
     - node.type.surplus_materials
+    - workflows.workflow.editorial
   module:
     - address
     - content_moderation
@@ -141,6 +143,13 @@ content:
       match_limit: 10
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_terms_of_use:
+    type: boolean_checkbox
+    weight: 27
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   field_unit_measure:
     type: string_textarea

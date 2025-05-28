@@ -3,11 +3,14 @@ status: true
 dependencies:
   config:
     - core.entity_form_mode.user.register
+    - field.field.user.user.field_court
+    - field.field.user.user.field_full_name
     - field.field.user.user.field_group
     - field.field.user.user.field_jcc_messaging_center_group
     - field.field.user.user.field_last_password_reset
     - field.field.user.user.field_password_expiration
     - field.field.user.user.field_pending_expire_sent
+    - field.field.user.user.field_phone_number
   module:
     - user
 id: user.user.register
@@ -20,11 +23,35 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_court:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_full_name:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_jcc_messaging_center_group:
     type: options_buttons
     weight: 1
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_phone_number:
+    type: string_textfield
+    weight: 4
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
 hidden:
   contact: true
