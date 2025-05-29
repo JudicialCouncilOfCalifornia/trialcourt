@@ -4,10 +4,12 @@ dependencies:
   config:
     - field.field.node.surplus_materials.body
     - field.field.node.surplus_materials.field_address
+    - field.field.node.surplus_materials.field_brand
     - field.field.node.surplus_materials.field_brand_manufacturer
     - field.field.node.surplus_materials.field_comments
     - field.field.node.surplus_materials.field_condition
     - field.field.node.surplus_materials.field_description
+    - field.field.node.surplus_materials.field_disposition
     - field.field.node.surplus_materials.field_donate_or_sell
     - field.field.node.surplus_materials.field_entity_
     - field.field.node.surplus_materials.field_media_file_multiple
@@ -15,13 +17,13 @@ dependencies:
     - field.field.node.surplus_materials.field_posted
     - field.field.node.surplus_materials.field_quantity
     - field.field.node.surplus_materials.field_reference_number
+    - field.field.node.surplus_materials.field_renewal_date
+    - field.field.node.surplus_materials.field_required_forms
     - field.field.node.surplus_materials.field_surplus_category
     - field.field.node.surplus_materials.field_terms_of_use
     - field.field.node.surplus_materials.field_unit_measure
     - node.type.surplus_materials
-    - workflows.workflow.editorial
   module:
-    - address
     - content_moderation
     - datetime
     - path
@@ -47,18 +49,12 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_address:
-    type: address_default
-    weight: 22
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_brand_manufacturer:
-    type: string_textarea
-    weight: 15
+  field_brand:
+    type: string_textfield
+    weight: 32
     region: content
     settings:
-      rows: 5
+      size: 60
       placeholder: ''
     third_party_settings: {  }
   field_comments:
@@ -82,6 +78,14 @@ content:
   field_description:
     type: string_textfield
     weight: 14
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_disposition:
+    type: string_textfield
+    weight: 31
     region: content
     settings:
       size: 60
@@ -134,6 +138,20 @@ content:
     settings:
       placeholder: ''
     third_party_settings: {  }
+  field_renewal_date:
+    type: datetime_default
+    weight: 29
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_required_forms:
+    type: string_textfield
+    weight: 30
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_surplus_category:
     type: entity_reference_autocomplete
     weight: 12
@@ -152,11 +170,13 @@ content:
       display_label: true
     third_party_settings: {  }
   field_unit_measure:
-    type: string_textarea
-    weight: 18
+    type: entity_reference_autocomplete
+    weight: 28
     region: content
     settings:
-      rows: 5
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
       placeholder: ''
     third_party_settings: {  }
   langcode:
@@ -223,6 +243,8 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_address: true
+  field_brand_manufacturer: true
   field_reference_number: true
   publish_on: true
   publish_state: true

@@ -2,22 +2,23 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_description
+    - field.storage.node.field_renewal_date
     - node.type.surplus_materials
   module:
+    - datetime
     - tmgmt_content
 third_party_settings:
   tmgmt_content:
     excluded: false
-id: node.surplus_materials.field_description
-field_name: field_description
+id: node.surplus_materials.field_renewal_date
+field_name: field_renewal_date
 entity_type: node
 bundle: surplus_materials
-label: Description
-description: 'Enter a very brief description of the item here. You can add details in the "More Details" section.'
-required: true
+label: 'Renewal date'
+description: ''
+required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings: {  }
-field_type: string
+field_type: datetime
