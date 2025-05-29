@@ -1,0 +1,43 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_media
+    - media.type.akamai_audio
+    - media.type.akamai_video
+    - media.type.file
+    - media.type.oembed_video
+    - media.type.publication
+    - media.type.remote_video
+    - node.type.course
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.course.field_media
+field_name: field_media
+entity_type: node
+bundle: course
+label: 'Add Media'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      akamai_audio: akamai_audio
+      akamai_video: akamai_video
+      file: file
+      oembed_video: oembed_video
+      publication: publication
+      remote_video: remote_video
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: publication
+field_type: entity_reference
