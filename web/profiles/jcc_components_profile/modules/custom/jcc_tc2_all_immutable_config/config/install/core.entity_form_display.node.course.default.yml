@@ -10,12 +10,14 @@ dependencies:
     - field.field.node.course.field_audience
     - field.field.node.course.field_components
     - field.field.node.course.field_course_number
+    - field.field.node.course.field_course_subtype
     - field.field.node.course.field_course_type
     - field.field.node.course.field_custom_link
     - field.field.node.course.field_date
     - field.field.node.course.field_delivery_method
     - field.field.node.course.field_education_credit_freeform
     - field.field.node.course.field_image
+    - field.field.node.course.field_is_contributed_content
     - field.field.node.course.field_is_quick_reference
     - field.field.node.course.field_lead
     - field.field.node.course.field_media
@@ -66,12 +68,14 @@ third_party_settings:
         - field_course_number
         - field_date
         - field_course_type
+        - field_course_subtype
         - field_audience
         - field_delivery_method
         - field_assignment_area
         - field_topics
         - field_subtopics
         - field_is_quick_reference
+        - field_is_contributed_content
       label: Details
       region: content
       parent_name: group_sections
@@ -163,7 +167,7 @@ third_party_settings:
         show_empty_fields: false
         id: ''
         formatter: closed
-        description: "<p>Select the file, publication, video embed, or audio embed that is available from the media library for this course. Alternatively, you can enter an <strong>Alternative Media URL</strong> to link to any medium instead. However, course medium linking will not be enabled if the <strong>Registration</strong> feature is in use.</p>"
+        description: '<p>Select the file, publication, video embed, or audio embed that is available from the media library for this course. Alternatively, you can enter an <strong>Alternative Media URL</strong> to link to any medium instead. However, course medium linking will not be enabled if the <strong>Registration</strong> feature is in use.</p>'
         required_fields: true
     group_registration:
       children:
@@ -172,7 +176,7 @@ third_party_settings:
       label: Registration
       region: content
       parent_name: group_schedule
-      weight: 7
+      weight: 4
       format_type: details
       format_settings:
         classes: ''
@@ -187,7 +191,7 @@ third_party_settings:
       label: Calendar
       region: content
       parent_name: group_schedule
-      weight: 9
+      weight: 5
       format_type: details
       format_settings:
         classes: ''
@@ -228,7 +232,7 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -242,7 +246,7 @@ content:
     third_party_settings: {  }
   field_achievable_credit:
     type: number
-    weight: 28
+    weight: 29
     region: content
     settings:
       placeholder: ''
@@ -278,7 +282,7 @@ content:
     third_party_settings: {  }
   field_audience:
     type: autocomplete_deluxe
-    weight: 9
+    weight: 10
     region: content
     settings:
       match_operator: CONTAINS
@@ -295,7 +299,7 @@ content:
     third_party_settings: {  }
   field_components:
     type: entity_reference_paragraphs
-    weight: 12
+    weight: 4
     region: content
     settings:
       title: Paragraph
@@ -316,6 +320,23 @@ content:
       maxlength:
         maxlength_js: 5
         maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+  field_course_subtype:
+    type: autocomplete_deluxe
+    weight: 9
+    region: content
+    settings:
+      match_operator: CONTAINS
+      autocomplete_route_name: autocomplete_deluxe.autocomplete
+      size: 60
+      selection_handler: default
+      limit: 10
+      min_length: 0
+      delimiter: ''
+      not_found_message_allow: false
+      not_found_message: 'The term ''@term'' will be added'
+      new_terms: false
+      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
   field_course_type:
     type: autocomplete_deluxe
     weight: 8
@@ -335,7 +356,7 @@ content:
     third_party_settings: {  }
   field_custom_link:
     type: link_email_with_attributes
-    weight: 8
+    weight: 4
     region: content
     settings:
       placeholder_url: ''
@@ -356,7 +377,7 @@ content:
     third_party_settings: {  }
   field_delivery_method:
     type: autocomplete_deluxe
-    weight: 10
+    weight: 11
     region: content
     settings:
       match_operator: CONTAINS
@@ -385,6 +406,13 @@ content:
     region: content
     settings:
       media_types: {  }
+    third_party_settings: {  }
+  field_is_contributed_content:
+    type: boolean_checkbox
+    weight: 16
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   field_is_quick_reference:
     type: boolean_checkbox
@@ -426,7 +454,7 @@ content:
     third_party_settings: {  }
   field_registration_period:
     type: daterange_default
-    weight: 9
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -491,40 +519,40 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 3
+    weight: 4
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 6
+    weight: 7
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 11
+    weight: 12
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 7
+    weight: 8
     region: content
     settings:
       display_label: true
@@ -539,7 +567,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 5
     region: content
     settings:
       match_operator: CONTAINS
@@ -547,8 +575,14 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  unpublish_state:
+    type: options_select
+    weight: 16
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   url_redirects:
-    weight: 9
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -556,4 +590,3 @@ hidden:
   publish_on: true
   publish_state: true
   unpublish_on: true
-  unpublish_state: true
