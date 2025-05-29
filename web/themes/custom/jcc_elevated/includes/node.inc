@@ -16,6 +16,7 @@ use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -117,10 +118,16 @@ function jcc_elevated_preprocess_node(&$variables) {
  */
 function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $node): void {
   $node = $variables['node'];
+  $uid = $node->getOwnerId();
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $category = $node->hasField('field_surplus_category') ? $node->get('field_surplus_category')->target_id : FALSE;
   $entity = $node->hasField('field_entity_') ? $node->get('field_entity_')->target_id : FALSE;
+  if ($user = User::load($uid)) {
+    $full_name = $user->get('field_full_name')->value;
+    $phone = $user->get('field_phone_number')->value;
+    $court = $user->get('field_court')->value;
+  }
   $variables['surplus'] = [
     'Brand' => $node->get('field_brand_manufacturer')->value,
     'Comments' => $node->get('field_comments')->value,
@@ -133,6 +140,7 @@ function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $n
     'Ref #' => $node->get('field_reference_number')->value,
     'Category' => $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '',
     'Unit Measure' => $node->get('field_unit_measure')->value,
+    'Details' => $full_name . ' ' . $phone . ' ' . $court,
   ];
 }
 

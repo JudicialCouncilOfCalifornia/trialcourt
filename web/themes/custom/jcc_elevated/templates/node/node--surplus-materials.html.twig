@@ -1,5 +1,18 @@
-<ul>
-  {% for label, value in surplus %}
-    <li><strong>{{ label }}:</strong> {{ value }}</li>
-  {% endfor %}
-</ul>
+{{ attach_library("jcc_storybook/List") }}
+ {% set items = [] %}
+   {% for key,value in surplus %}
+    {% if value is not empty %}
+     {% set item = {
+      label: key,
+      text: value,
+      }
+     %}
+     {% set items = items|merge([item]) %}
+     {% endif %}
+   {% endfor %}
+{% include "@molecules/List/List.twig" with {
+  variant: 'none',
+  items: items,
+  wider_span: true
+ }
+%}
