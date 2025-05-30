@@ -1,18 +1,58 @@
 {{ attach_library("jcc_storybook/List") }}
- {% set items = [] %}
-   {% for key,value in surplus %}
-    {% if value is not empty %}
-     {% set item = {
-      label: key,
-      text: value,
-      }
-     %}
+{{ attach_library("jcc_elevated/surplus-materials") }}
+{{ attach_library("jcc_storybook/Card") }} 
+
+<div class="container">
+ {% set allcontent %}       
+  {% set items = [] %}
+    {% for key, value in surplus %}
+      {% if value is not empty %}
+        {% set item = {
+          label: key,
+          text: value
+          }
+        %}
      {% set items = items|merge([item]) %}
-     {% endif %}
-   {% endfor %}
-{% include "@molecules/List/List.twig" with {
-  variant: 'none',
-  items: items,
-  wider_span: true
- }
-%}
+      {% endif %}
+    {% endfor %}
+
+  {% include "@molecules/List/List.twig" with {
+    variant: 'none',
+    items: items,
+    wider_span: true,
+    heading: 'Surplus item'
+    } %}
+  {% if media_url is not empty %} 
+  <div class="container surplus-image-grid" >
+  {% for image in media_url %}
+    {% if image.url %}
+     {% set project_image %}
+      <img src="{{ image.url }}">
+    {% endset %}
+    <div class="surplus-image-card">
+      {% include "@molecules/Card/Card.twig" with {
+        variant: "media-right",
+        aspect: [],
+        clickable_card: false,
+        background: null,
+        media: project_image | raw,
+        heading: '',
+        button_data: [],
+        text: ''
+        }
+      %}
+    </div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+{% endset %}
+</div>
+
+{% block section %}
+  {% include "@organisms/Section/Section.twig" with {
+    sub_component_layout: 'switcher',
+    sub_component_data: allcontent,
+    }      
+  %}
+{% endblock %}

@@ -123,11 +123,25 @@ function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $n
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $category = $node->hasField('field_surplus_category') ? $node->get('field_surplus_category')->target_id : FALSE;
   $entity = $node->hasField('field_entity_') ? $node->get('field_entity_')->target_id : FALSE;
+  $media_manager = $entity_type_manager->getStorage('media');
   if ($user = User::load($uid)) {
     $full_name = $user->get('field_full_name')->value;
     $phone = $user->get('field_phone_number')->value;
     $court = $user->get('field_court')->value;
   }
+  $media_url = [];
+  foreach ($node->field_media_file_multiple as $media_file) {
+    if (!empty($media_file->target_id)) {
+      $media = $media_manager->load($media_file->target_id);
+      if ($media && $media->field_media_image->entity) {
+        $uri = $media->field_media_image->entity->getFileUri();
+        $url = file_create_url($uri);
+        $media_url[] = ['url' => $url];
+      }
+    }
+  }
+  $variables['media_url'] = $media_url;
+
   $variables['surplus'] = [
     'Brand' => $node->get('field_brand_manufacturer')->value,
     'Comments' => $node->get('field_comments')->value,
