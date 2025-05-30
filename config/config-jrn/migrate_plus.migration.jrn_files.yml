@@ -1,0 +1,64 @@
+uuid: 9fe77092-bf4f-4d49-849c-9a6065f2372e
+langcode: en
+status: true
+dependencies: {  }
+id: jrn_files
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - files
+migration_group: jrn
+label: Files
+source:
+  plugin: csv
+  path: 'public://jrn-files.csv'
+  header_row_count: 1
+  ids:
+    - url
+  fields:
+    -
+      name: url
+      selector: url
+      label: 'Attachment file url'
+    -
+      name: path
+      selector: path
+      label: Path
+    -
+      name: title
+      selector: title
+      label: Title
+    -
+      name: category
+      selector: category
+      label: Category
+  constants:
+    file_source_uri: 'public://old-jrn'
+    file_dest_uri: 'public://files'
+process:
+  file_source:
+    -
+      plugin: concat
+      source:
+        - constants/file_source_uri
+        - path
+    -
+      plugin: urlencode
+  file_dest:
+    -
+      plugin: concat
+      source:
+        - constants/file_dest_uri
+        - path
+    -
+      plugin: urlencode
+  filename: title
+  uri:
+    plugin: file_copy
+    source:
+      - '@file_source'
+      - '@file_dest'
+destination:
+  plugin: 'entity:file'
+migration_dependencies: null
