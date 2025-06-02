@@ -8,7 +8,7 @@ field_plugin_method: null
 cck_plugin_method: null
 migration_tags:
   - redirect
-migration_group: courts_phase3
+migration_group: jrn
 label: 'Files Redirect'
 source:
   plugin: csv
@@ -34,13 +34,10 @@ source:
       selector: category
       label: Category
   constants:
-    uri_scheme: 'internal:'
-    document_path: system/files/
+    base_scheme: 'internal:'
+    document_path: /system/files/
     status_code: 301
 process:
-  pseudo_base_path:
-    plugin: public_files_dir
-  pseudo_destination_filename: title
   uid:
     plugin: default_value
     default_value: 1
@@ -58,10 +55,9 @@ process:
   redirect_redirect/uri:
     plugin: concat
     source:
-      - constants/uri_scheme
-      - '@pseudo_base_path'
-      - constants/slash
-      - '@pseudo_destination_filename'
+      - constants/base_scheme
+      - constants/document_path
+      - title
   status_code: constants/status_code
   language:
     plugin: default_value
