@@ -4,7 +4,7 @@ dependencies:
   config:
     - field.storage.node.field_components
     - node.type.course
-    - paragraphs.paragraphs_type.date_information
+    - paragraphs.paragraphs_type.event_date
   module:
     - entity_reference_revisions
     - tmgmt_content
@@ -25,7 +25,7 @@ settings:
   handler: 'default:paragraph'
   handler_settings:
     target_bundles:
-      date_information: date_information
+      event_date: event_date
     negate: 0
     target_bundles_drag_drop:
       accordion:
@@ -69,10 +69,13 @@ settings:
         enabled: false
       date_information:
         weight: 52
-        enabled: true
+        enabled: false
       embed_script:
         weight: 53
         enabled: false
+      event_date:
+        weight: 55
+        enabled: true
       find_my_court_embed:
         weight: 54
         enabled: false

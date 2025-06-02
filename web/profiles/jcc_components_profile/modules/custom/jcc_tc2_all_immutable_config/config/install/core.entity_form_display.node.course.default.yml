@@ -15,7 +15,6 @@ dependencies:
     - field.field.node.course.field_date
     - field.field.node.course.field_delivery_method
     - field.field.node.course.field_education_credit_freeform
-    - field.field.node.course.field_event_locations
     - field.field.node.course.field_image
     - field.field.node.course.field_is_quick_reference
     - field.field.node.course.field_lead
@@ -69,7 +68,6 @@ third_party_settings:
         - field_course_type
         - field_audience
         - field_delivery_method
-        - field_event_locations
         - field_assignment_area
         - field_topics
         - field_subtopics
@@ -147,7 +145,7 @@ third_party_settings:
         show_empty_fields: false
         id: ''
         formatter: closed
-        description: ''
+        description: "<p>Add one or more event dates to promote for this course using the <strong>Calendar</strong> feature.</p>\r\n\r\n<p>To allow <strong>Registration</strong>, enter the URL for the registration form when you have at least one event date added.</p>"
         required_fields: true
     group_media:
       children:
@@ -165,7 +163,7 @@ third_party_settings:
         show_empty_fields: false
         id: ''
         formatter: closed
-        description: ''
+        description: "<p>Select the file, publication, video embed, or audio embed that is available from the media library for this course. Alternatively, you can enter an <strong>Alternative Media URL</strong> to link to any medium instead. However, course medium linking will not be enabled if the <strong>Registration</strong> feature is in use.</p>"
         required_fields: true
     group_registration:
       children:
@@ -380,23 +378,6 @@ content:
     settings:
       rows: 5
       placeholder: ''
-    third_party_settings: {  }
-  field_event_locations:
-    type: autocomplete_deluxe
-    weight: 11
-    region: content
-    settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: false
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: false
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
     third_party_settings: {  }
   field_image:
     type: media_library_widget

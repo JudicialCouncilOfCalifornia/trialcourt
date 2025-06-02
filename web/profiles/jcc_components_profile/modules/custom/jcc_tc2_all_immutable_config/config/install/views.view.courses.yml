@@ -13,6 +13,7 @@ dependencies:
     - better_exposed_filters
     - datetime
     - node
+    - paragraphs
     - taxonomy
     - user
 id: courses
@@ -153,48 +154,6 @@ display:
               advanced:
                 is_secondary: false
             filter:
-              field_course_type_target_id:
-                plugin_id: default
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  is_secondary: false
-                options_show_only_used: true
-                options_show_only_used_filtered: false
-                options_hide_when_empty: false
-                options_show_items_count: 0
-              field_audience_target_id:
-                plugin_id: default
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  is_secondary: false
-                options_show_only_used: true
-                options_show_only_used_filtered: false
-                options_hide_when_empty: false
-                options_show_items_count: 0
-              field_event_locations_target_id:
-                plugin_id: default
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  is_secondary: false
-                options_show_only_used: true
-                options_show_only_used_filtered: false
-                options_hide_when_empty: false
-                options_show_items_count: 0
               field_assignment_area_target_id:
                 plugin_id: default
                 advanced:
@@ -206,8 +165,8 @@ display:
                   collapsible_disable_automatic_open: false
                   is_secondary: false
                 options_show_only_used: true
-                options_show_only_used_filtered: false
-                options_hide_when_empty: false
+                options_show_only_used_filtered: true
+                options_hide_when_empty: true
                 options_show_items_count: 0
               field_topics_target_id:
                 plugin_id: default
@@ -220,8 +179,8 @@ display:
                   collapsible_disable_automatic_open: false
                   is_secondary: false
                 options_show_only_used: true
-                options_show_only_used_filtered: false
-                options_hide_when_empty: false
+                options_show_only_used_filtered: true
+                options_hide_when_empty: true
                 options_show_items_count: 0
               field_subtopics_target_id:
                 plugin_id: default
@@ -234,9 +193,51 @@ display:
                   collapsible_disable_automatic_open: false
                   is_secondary: false
                 options_show_only_used: true
-                options_show_only_used_filtered: false
-                options_hide_when_empty: false
+                options_show_only_used_filtered: true
+                options_hide_when_empty: true
                 options_show_items_count: 0
+              field_course_type_target_id:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: true
+                options_show_only_used_filtered: true
+                options_hide_when_empty: true
+                options_show_items_count: 0
+              field_audience_target_id:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: true
+                options_show_only_used_filtered: true
+                options_hide_when_empty: true
+                options_show_items_count: 0
+              field_event_location_target_id:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: true
+                options_show_only_used_filtered: false
+                options_hide_when_empty: true
+                options_show_items_count: 1
               field_is_quick_reference_value:
                 plugin_id: default
                 advanced:
@@ -602,11 +603,11 @@ display:
           hierarchy: false
           limit: true
           error_message: true
-        field_event_locations_target_id:
-          id: field_event_locations_target_id
-          table: node__field_event_locations
-          field: field_event_locations_target_id
-          relationship: none
+        field_event_location_target_id:
+          id: field_event_location_target_id
+          table: paragraph__field_event_location
+          field: field_event_location_target_id
+          relationship: field_components
           group_type: group
           admin_label: ''
           plugin_id: taxonomy_index_tid
@@ -615,14 +616,14 @@ display:
           group: 1
           exposed: true
           expose:
-            operator_id: field_event_locations_target_id_op
-            label: Locations
+            operator_id: field_event_location_target_id_op
+            label: Location
             description: ''
             use_operator: false
-            operator: field_event_locations_target_id_op
+            operator: field_event_location_target_id_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: field_event_locations_target_id
+            identifier: field_event_location_target_id
             required: false
             remember: false
             multiple: false
@@ -731,7 +732,17 @@ display:
           distinct: false
           replica: false
           query_tags: {  }
-      relationships: {  }
+      relationships:
+        field_components:
+          id: field_components
+          table: node__field_components
+          field: field_components
+          relationship: none
+          group_type: group
+          admin_label: 'field_components: Paragraph'
+          plugin_id: standard
+          required: false
+      group_by: true
       header:
         result:
           id: result
