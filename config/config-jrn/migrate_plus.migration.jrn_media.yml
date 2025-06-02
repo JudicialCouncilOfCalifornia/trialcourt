@@ -33,6 +33,10 @@ source:
       name: category
       selector: category
       label: Category
+    -
+      name: filename
+      selector: filename
+      label: Filename
   constants:
     file_source_uri: 'public://old-jrn'
     file_dest_uri: 'public://files'
@@ -40,7 +44,7 @@ process:
   pseudo_encoded_title:
     plugin: callback
     callable: htmlspecialchars_decode
-    source: title
+    source: filename
   name:
     -
       plugin: get
