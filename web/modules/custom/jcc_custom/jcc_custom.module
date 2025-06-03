@@ -1155,3 +1155,14 @@ function jcc_custom_form_webform_form_alter(&$form, FormStateInterface $form_sta
     }
   }
 }
+
+/**
+ * Implements hook_form_node_news_form_alter().
+ */
+function jcc_custom_form_node_news_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // tci-1314 fix.
+  if (isset($form['body'])) {
+    $form['body']['#access'] = TRUE;
+    $form['body']['#attributes']['class'][] = 'visually-hidden';
+  }
+}
