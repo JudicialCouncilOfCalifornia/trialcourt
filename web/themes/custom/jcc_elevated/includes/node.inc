@@ -16,7 +16,6 @@ use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\user\Entity\User;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -122,13 +121,7 @@ function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $n
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $category = $node->hasField('field_surplus_category') ? $node->get('field_surplus_category')->target_id : FALSE;
-  $entity = $node->hasField('field_entity_') ? $node->get('field_entity_')->target_id : FALSE;
   $media_manager = $entity_type_manager->getStorage('media');
-  if ($user = User::load($uid)) {
-    $full_name = $user->get('field_full_name')->value;
-    $phone = $user->get('field_phone_number')->value;
-    $court = $user->get('field_court')->value;
-  }
   $media_url = [];
   foreach ($node->field_media_file_multiple as $media_file) {
     if (!empty($media_file->target_id)) {
@@ -141,20 +134,19 @@ function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $n
     }
   }
   $variables['media_url'] = $media_url;
-
+  /*'Entity' => $category && $taxonomy_manager->load($entity) ? $taxonomy_manager->load($entity)->get('name')->value : '',*/
+  /*'Details' => $full_name . ' ' . $phone . ' ' . $court,*/
   $variables['surplus'] = [
-    'Brand' => $node->get('field_brand_manufacturer')->value,
+    'Brand' => $node->get('field_brand')->value,
     'Comments' => $node->get('field_comments')->value,
     'Description' => $node->get('field_description')->value,
     'Donateorsell' => $node->get('field_donate_or_sell')->value,
-    'Entity' => $category && $taxonomy_manager->load($entity) ? $taxonomy_manager->load($entity)->get('name')->value : '',
     'Model' => $node->get('field_model_number')->value,
     'Posted On' => $node->get('field_posted')->value,
     'Quantity' => $node->get('field_quantity')->value,
     'Ref #' => $node->get('field_reference_number')->value,
     'Category' => $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '',
     'Unit Measure' => $node->get('field_unit_measure')->value,
-    'Details' => $full_name . ' ' . $phone . ' ' . $court,
   ];
 }
 

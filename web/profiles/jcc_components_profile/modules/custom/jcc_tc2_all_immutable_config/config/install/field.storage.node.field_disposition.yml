@@ -3,15 +3,33 @@ status: true
 dependencies:
   module:
     - node
+    - options
 id: node.field_disposition
 field_name: field_disposition
 entity_type: node
-type: string
+type: list_string
 settings:
-  max_length: 255
-  case_sensitive: false
-  is_ascii: false
-module: core
+  allowed_values:
+    -
+      value: Unknown
+      label: Unknown
+    -
+      value: 'Expired; final disposition not reported'
+      label: 'Expired; final disposition not reported'
+    -
+      value: 'Donated to another court'
+      label: 'Donated to another court'
+    -
+      value: 'Sold to another court'
+      label: 'Sold to another court'
+    -
+      value: 'Donated or sold to other govt''s entity'
+      label: 'Donated or sold to other govt''s entity'
+    -
+      value: Other
+      label: Other
+  allowed_values_function: ''
+module: options
 locked: false
 cardinality: 1
 translatable: true
