@@ -36,6 +36,7 @@ source:
   constants:
     base_scheme: 'internal:'
     document_path: /system/files/
+    slash: /
     status_code: 301
 process:
   uid:
@@ -57,6 +58,8 @@ process:
     source:
       - constants/base_scheme
       - constants/document_path
+      - category
+      - constants/slash
       - title
   status_code: constants/status_code
   language:
