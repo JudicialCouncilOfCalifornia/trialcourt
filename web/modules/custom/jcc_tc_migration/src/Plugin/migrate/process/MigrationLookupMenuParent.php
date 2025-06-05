@@ -57,7 +57,7 @@ class MigrationLookupMenuParent extends ProcessPluginBase {
       $uuid = $result->fetchField();
     }
 
-    return 'menu_link_content:' . $uuid;
+    return $uuid ? 'menu_link_content:' . $uuid : NULL;
   }
 
 }
