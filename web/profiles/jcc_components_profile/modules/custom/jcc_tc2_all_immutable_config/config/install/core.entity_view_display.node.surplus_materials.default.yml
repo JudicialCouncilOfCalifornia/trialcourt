@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.surplus_materials.body    
+    - field.field.node.surplus_materials.body
     - field.field.node.surplus_materials.field_brand
     - field.field.node.surplus_materials.field_comments
     - field.field.node.surplus_materials.field_condition
@@ -11,7 +11,8 @@ dependencies:
     - field.field.node.surplus_materials.field_description
     - field.field.node.surplus_materials.field_disposition
     - field.field.node.surplus_materials.field_donate_or_sell
-    - field.field.node.surplus_materials.field_entity    
+    - field.field.node.surplus_materials.field_email_address
+    - field.field.node.surplus_materials.field_entity
     - field.field.node.surplus_materials.field_media_file_multiple
     - field.field.node.surplus_materials.field_model_number
     - field.field.node.surplus_materials.field_posted
@@ -105,6 +106,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 10
+    region: content
+  field_email_address:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 24
     region: content
   field_entity:
     type: list_default
@@ -207,6 +215,6 @@ content:
 hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
-  entity_print_view_word_docx: true  
+  entity_print_view_word_docx: true
   langcode: true
   search_api_excerpt: true

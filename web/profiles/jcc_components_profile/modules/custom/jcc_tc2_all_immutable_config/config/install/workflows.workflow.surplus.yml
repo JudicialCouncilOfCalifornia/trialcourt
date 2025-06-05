@@ -25,11 +25,19 @@ type_settings:
       weight: 1
       published: true
       default_revision: true
+    ready_for_review:
+      label: 'Ready for Review'
+      weight: 3
+      published: false
+      default_revision: true
   transitions:
     archive:
       label: Archive
       from:
+        - archived
+        - draft
         - published
+        - ready_for_review
       to: archived
       weight: 2
     create_new_draft:
@@ -39,11 +47,20 @@ type_settings:
         - published
       to: draft
       weight: 0
+    for_review:
+      label: 'For Review'
+      from:
+        - archived
+        - draft
+        - ready_for_review
+      to: ready_for_review
+      weight: 5
     publish:
       label: Publish
       from:
         - draft
         - published
+        - ready_for_review
       to: published
       weight: 1
     restore:

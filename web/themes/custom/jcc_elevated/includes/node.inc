@@ -134,19 +134,31 @@ function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $n
     }
   }
   $variables['media_url'] = $media_url;
-  /*'Entity' => $category && $taxonomy_manager->load($entity) ? $taxonomy_manager->load($entity)->get('name')->value : '',*/
-  /*'Details' => $full_name . ' ' . $phone . ' ' . $court,*/
+  $posted_raw = $node->get('field_posted')->value;
+  $renewal_raw = $node->get('field_renewal_date')->value;
+  $posted_formatted = '';
+  $renewal_formatted = '';
+  if (!empty($posted_raw)) {
+    $posted_date = new DrupalDateTime($posted_raw);
+    $posted_formatted = $posted_date->format('M d, Y');
+  }
+  if (!empty($renewal_raw)) {
+    $renewal_date = new DrupalDateTime($renewal_raw);
+    $renewal_formatted = $renewal_date->format('M d, Y');
+  }
   $variables['surplus'] = [
     'Brand' => $node->get('field_brand')->value,
     'Comments' => $node->get('field_comments')->value,
     'Description' => $node->get('field_description')->value,
     'Donateorsell' => $node->get('field_donate_or_sell')->value,
     'Model' => $node->get('field_model_number')->value,
-    'Posted On' => $node->get('field_posted')->value,
+    'Posted On' => $posted_formatted,
     'Quantity' => $node->get('field_quantity')->value,
     'Ref #' => $node->get('field_reference_number')->value,
     'Category' => $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '',
     'Unit Measure' => $node->get('field_unit_measure')->value,
+    'Renewal Date' => $renewal_formatted,
+    'Entity' => $node->get('field_entity')->value,
   ];
 }
 

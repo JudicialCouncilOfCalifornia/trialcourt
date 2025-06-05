@@ -2,8 +2,8 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.surplus_materials.body    
-    - field.field.node.surplus_materials.field_brand    
+    - field.field.node.surplus_materials.body
+    - field.field.node.surplus_materials.field_brand
     - field.field.node.surplus_materials.field_comments
     - field.field.node.surplus_materials.field_condition
     - field.field.node.surplus_materials.field_contact_number
@@ -11,7 +11,8 @@ dependencies:
     - field.field.node.surplus_materials.field_description
     - field.field.node.surplus_materials.field_disposition
     - field.field.node.surplus_materials.field_donate_or_sell
-    - field.field.node.surplus_materials.field_entity    
+    - field.field.node.surplus_materials.field_email_address
+    - field.field.node.surplus_materials.field_entity
     - field.field.node.surplus_materials.field_media_file_multiple
     - field.field.node.surplus_materials.field_model_number
     - field.field.node.surplus_materials.field_posted
@@ -27,6 +28,7 @@ dependencies:
   module:
     - content_moderation
     - datetime
+    - media_library
     - path
     - text
 id: node.surplus_materials.default
@@ -52,7 +54,7 @@ content:
     third_party_settings: {  }
   field_brand:
     type: string_textfield
-    weight: 32
+    weight: 19
     region: content
     settings:
       size: 60
@@ -60,7 +62,7 @@ content:
     third_party_settings: {  }
   field_comments:
     type: string_textarea
-    weight: 19
+    weight: 25
     region: content
     settings:
       rows: 5
@@ -68,7 +70,7 @@ content:
     third_party_settings: {  }
   field_condition:
     type: entity_reference_autocomplete
-    weight: 21
+    weight: 23
     region: content
     settings:
       match_operator: CONTAINS
@@ -78,7 +80,7 @@ content:
     third_party_settings: {  }
   field_contact_number:
     type: string_textfield
-    weight: 35
+    weight: 13
     region: content
     settings:
       size: 60
@@ -86,7 +88,7 @@ content:
     third_party_settings: {  }
   field_contact_person:
     type: string_textfield
-    weight: 34
+    weight: 12
     region: content
     settings:
       size: 60
@@ -94,43 +96,42 @@ content:
     third_party_settings: {  }
   field_description:
     type: string_textfield
-    weight: 14
+    weight: 17
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_disposition:
+  field_donate_or_sell:
     type: options_select
-    weight: 33
+    weight: 18
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_donate_or_sell:
-    type: options_select
-    weight: 17
+  field_email_address:
+    type: email_default
+    weight: 14
     region: content
-    settings: {  }
+    settings:
+      placeholder: ''
+      size: 60
     third_party_settings: {  }
   field_entity:
     type: options_select
-    weight: 36
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   field_media_file_multiple:
-    type: entity_reference_autocomplete
+    type: media_library_widget
     weight: 26
     region: content
     settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
+      media_types: {  }
     third_party_settings: {  }
   field_model_number:
     type: string_textfield
-    weight: 37
+    weight: 20
     region: content
     settings:
       size: 60
@@ -138,26 +139,20 @@ content:
     third_party_settings: {  }
   field_posted:
     type: datetime_default
-    weight: 11
+    weight: 16
     region: content
     settings: {  }
     third_party_settings: {  }
   field_quantity:
     type: number
-    weight: 13
+    weight: 21
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-  field_renewal_date:
-    type: datetime_default
-    weight: 29
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   field_required_forms:
     type: string_textfield
-    weight: 30
+    weight: 24
     region: content
     settings:
       size: 60
@@ -165,7 +160,7 @@ content:
     third_party_settings: {  }
   field_surplus_category:
     type: entity_reference_autocomplete
-    weight: 12
+    weight: 15
     region: content
     settings:
       match_operator: CONTAINS
@@ -182,7 +177,7 @@ content:
     third_party_settings: {  }
   field_unit_measure:
     type: entity_reference_autocomplete
-    weight: 28
+    weight: 22
     region: content
     settings:
       match_operator: CONTAINS
@@ -253,8 +248,10 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden:  
+hidden:
+  field_disposition: true
   field_reference_number: true
+  field_renewal_date: true
   publish_on: true
   publish_state: true
   unpublish_on: true

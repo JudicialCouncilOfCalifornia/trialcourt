@@ -3,7 +3,9 @@ status: true
 dependencies:
   config:
     - node.type.surplus_materials
+    - workflows.workflow.surplus
   module:
+    - content_moderation
     - node
 id: surplus_admin
 label: 'Surplus Admin'
@@ -17,4 +19,9 @@ permissions:
   - 'edit any surplus_materials content'
   - 'edit own surplus_materials content'
   - 'revert surplus_materials revisions'
+  - 'use surplus transition create_new_draft'
+  - 'use surplus transition for_review'
+  - 'use surplus transition publish'
+  - 'use surplus transition restore'
+  - 'use surplus transition restore_to_draft'
   - 'view surplus_materials revisions'
