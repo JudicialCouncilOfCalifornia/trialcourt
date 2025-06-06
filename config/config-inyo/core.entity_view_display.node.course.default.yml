@@ -10,12 +10,14 @@ dependencies:
     - field.field.node.course.field_audience
     - field.field.node.course.field_components
     - field.field.node.course.field_course_number
+    - field.field.node.course.field_course_subtype
     - field.field.node.course.field_course_type
     - field.field.node.course.field_custom_link
     - field.field.node.course.field_date
     - field.field.node.course.field_delivery_method
     - field.field.node.course.field_education_credit_freeform
     - field.field.node.course.field_image
+    - field.field.node.course.field_is_contributed_content
     - field.field.node.course.field_is_quick_reference
     - field.field.node.course.field_lead
     - field.field.node.course.field_media
@@ -110,6 +112,14 @@ content:
     third_party_settings: {  }
     weight: 113
     region: content
+  field_course_subtype:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 130
+    region: content
   field_course_type:
     type: entity_reference_label
     label: hidden
@@ -162,6 +172,16 @@ content:
       link: false
     third_party_settings: {  }
     weight: 126
+    region: content
+  field_is_contributed_content:
+    type: boolean
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 129
     region: content
   field_is_quick_reference:
     type: boolean

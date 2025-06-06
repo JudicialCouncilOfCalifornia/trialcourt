@@ -1548,7 +1548,7 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
           ];
       }
     }
-    elseif ($node->get('field_media')) {
+    elseif ($node->get('field_media') && $node->get('field_media')->entity) {
       $media = $node->get('field_media')->entity;
       switch ($media->bundle[0]->target_id) {
         case 'file':
