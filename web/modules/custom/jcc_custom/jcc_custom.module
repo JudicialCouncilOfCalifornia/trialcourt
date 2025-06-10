@@ -137,6 +137,7 @@ function jcc_custom_node_prepare_form($node, $form_id, $form) {
  * Implements hook_form_alter().
  */
 function jcc_custom_form_alter(&$form, $form_state, $form_id) {
+
   $theme = \Drupal::config('system.theme')->get('default');
 
   // The body field on these content types is only used for migration of
@@ -165,7 +166,6 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       else {
         unset($form['field_components']['widget']["add_more"]['add_more_button_content_stream']);
       }
-
       break;
 
     case 'node_news_edit_form':
@@ -174,6 +174,13 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
         unset($form['field_node_reference']);
         unset($form['field_media_file_multiple']);
         unset($form['field_media']);
+
+        // tci-1314 fix.
+        $current_user = \Drupal::currentUser();
+        $is_admin = in_array('administrator', $current_user->getRoles());
+        if (isset($form['body'])) {
+          $form['body']['#access'] = $is_admin;
+        }
       }
       else {
         unset($form['field_components']);
@@ -1153,16 +1160,5 @@ function jcc_custom_form_webform_form_alter(&$form, FormStateInterface $form_sta
     if (isset($form['confirmation_type']['confirmation_type']['#options'])) {
       $form['confirmation_type']['confirmation_type']['#default_value'] = 'inline';
     }
-  }
-}
-
-/**
- * Implements hook_form_node_news_form_alter().
- */
-function jcc_custom_form_node_news_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // tci-1314 fix.
-  if (isset($form['body'])) {
-    $form['body']['#access'] = TRUE;
-    $form['body']['#attributes']['class'][] = 'visually-hidden';
   }
 }
