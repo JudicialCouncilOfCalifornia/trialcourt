@@ -9,6 +9,7 @@ cck_plugin_method: null
 migration_tags:
   - node
   - case
+  - debug
 migration_group: case_management
 label: 'Case: Import Node (Civil)'
 source:
@@ -52,10 +53,10 @@ source:
       label: Department
     -
       name: hearing_date
-      label: 'Hearing_Date_and_Time'
+      label: 'Hearing Date'
     -
       name: hearing_time
-      label: 'Hearing_Date_and_Time'
+      label: 'Hearing Time'
     -
       name: judicial_officer
       label: 'Judicial Officer'
@@ -194,8 +195,14 @@ process:
       ignore_case: true
   path/pathauto:
     plugin: default_value
-    default_value: 1
+    default_value: 0
+  path/alias:
+    plugin: default_value
+    default_value: '/online-services/civil-calendar'
 destination:
   plugin: 'entity:node'
   default_bundle: case
 migration_dependencies: null
+
+
+
