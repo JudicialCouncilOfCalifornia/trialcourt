@@ -37,11 +37,16 @@ source:
     base_scheme: 'internal:'
     document_path: /system/files/
     slash: /
+    dash: '-'
+    langcode: en
     status_code: 301
 process:
   uid:
     plugin: default_value
     default_value: 1
+  pseudo_title:
+    plugin: sanitize_filename
+    source: title
   redirect_source/path:
     -
       plugin: callback
@@ -60,7 +65,7 @@ process:
       - constants/document_path
       - category
       - constants/slash
-      - title
+      - '@pseudo_title'
   status_code: constants/status_code
   language:
     plugin: default_value
