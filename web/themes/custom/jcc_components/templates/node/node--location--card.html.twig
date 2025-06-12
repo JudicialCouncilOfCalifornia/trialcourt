@@ -70,12 +70,22 @@
  *   in different view modes.
  */
 #}
+{{ attach_library('jcc_components/location-listing-page') }}
 <article{{ attributes }}>
 
   {{ title_prefix }}
   {% if not page %}
-    <h6{{ title_attributes }}>
-      {{ label }}
+    {% if path('<current>') == "/locations" or '/home' %}
+      {% set custom_location_card_brow_class = 'card-brow-color' %}
+      {% set custom_location_title_class =  'map-cards' %}
+    {% endif %}
+    <div class="usa-card__brow">
+      <div class="usa-card__brow-color {{custom_location_card_brow_class}}">  {{node.get('field_brow').value}}</div>
+    </div>
+    <h6 class = "usa-card__heading {{custom_location_title_class}}">
+      <a href="{{ path('entity.node.canonical', {'node': node.id()}) }}">
+        {{ node.getTitle() }}
+      </a>
     </h6>
   {% endif %}
   {{ title_suffix }}
@@ -91,7 +101,17 @@
   {% endif %}
 
   <div{{ content_attributes }}>
-    {{ content }}
+    {# Access the address field from the node entity #}
+    {% if node.hasField('field_address') and not node.get('field_address').isEmpty() %}
+      {% set address =node.get('field_address').value.0 %}
+      <div class="address jcc-location__address jcc-location-hero-link">
+        <span class="address-line1">{{ address.address_line1 }}</span>,
+        <span class="locality">{{ address.locality }}</span>,
+        <span class="administrative-area">{{ address.administrative_area }}</span>
+        <span class="postal-code">{{ address.postal_code }}</span><br>
+        <span><a href="tel: {{ node.get('field_phone').value}}"> {{ node.get('field_phone').value}}</a></span>
+      </div>
+    {% endif %}
   </div>
 
 </article>

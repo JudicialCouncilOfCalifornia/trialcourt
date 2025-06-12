@@ -1,0 +1,68 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.service_hours.field_others
+    - field.field.paragraph.service_hours.field_service_days
+    - field.field.paragraph.service_hours.field_service_hour_type
+    - field.field.paragraph.service_hours.field_service_hours_from
+    - field.field.paragraph.service_hours.field_service_hours_to
+    - field.field.paragraph.service_hours.field_weekdays_mon_fri
+    - paragraphs.paragraphs_type.service_hours
+  module:
+    - datetime
+    - options
+id: paragraph.service_hours.default
+targetEntityType: paragraph
+bundle: service_hours
+mode: default
+content:
+  field_service_days:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_service_hour_type:
+    type: list_key
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_service_hours_from:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_service_hours_to:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_weekdays_mon_fri:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_others: true
+  field_service_hours_same_as_busi: true
+  search_api_excerpt: true
