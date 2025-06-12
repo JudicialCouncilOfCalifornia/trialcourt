@@ -47,8 +47,6 @@ class SanitizeFilename extends ProcessPluginBase {
     // Force lowercase to prevent issues on case-insensitive file systems.
     $filename = strtolower($filename);
 
-    echo "$value == $filename\n";
-
     return $filename;
   }
 
