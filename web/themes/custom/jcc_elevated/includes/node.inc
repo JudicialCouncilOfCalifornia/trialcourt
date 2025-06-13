@@ -1215,6 +1215,8 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   $today = new DateTime('now', $timezone);
   $type_term = $node->get('field_course_type')[0] ? $node->get('field_course_type')[0]->entity : NULL;
   $type = $type_term ? $type_term->label() : NULL;
+  $subtype_term = $node->get('field_course_subtype')[0] ? $node->get('field_course_subtype')[0]->entity : NULL;
+  $subtype = $subtype_term ? $subtype_term->label() : NULL;
   $embed = [];
   $sidebar_details = [];
   $topics = [];
@@ -1478,6 +1480,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   // Course object.
   $variables['course'] = [
     'type' => $type,
+    'subtype' => $subtype,
     'embed' => $embed,
     'sidebar' => [
       'promo_image' => $promo_image,
