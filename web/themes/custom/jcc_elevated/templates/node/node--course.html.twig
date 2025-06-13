@@ -210,16 +210,18 @@
         {% endfor %}
       {% endif %}
 
-      <aside class="request__main-sidebar stack" style="order: 2;">
-        <section>
-          {% include "@molecules/SidebarList/SidebarList.twig" with {
-            variant: 'default',
-            heading: 'Course Details',
-            data: sidebar_content,
-            attributes: create_attribute()
-          } %}
-        </section>
-      </aside>
+      {% if sidebar_content %}
+        <aside class="request__main-sidebar stack" style="order: 2;">
+          <section>
+            {% include "@molecules/SidebarList/SidebarList.twig" with {
+              variant: 'default',
+              heading: 'Course Details',
+              data: sidebar_content,
+              attributes: create_attribute()
+            } %}
+          </section>
+        </aside>
+      {% endif %}
     {% endset %}
   {% endif %}
 
