@@ -1215,7 +1215,7 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
  */
 function jcc_elevated_node_course(array &$variables, NodeInterface $node): void {
   $renderer = \Drupal::service('renderer');
-  $cache = \Drupal::service('cache.page');
+  $cache = \Drupal::service('cache.data');
   $cache_registration_action = 'course:registration_state:nid:' . $node->id();
   $cache_schedule = 'course:schedule:nid:' . $node->id();
   $timezone = new DateTimeZone('America/Los_Angeles');
@@ -1380,6 +1380,10 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
         '#markup' => '<a class="button button--secondary button--normal" href="' . $launch_uri . '">' . $launch_title . '</a>',
       ];
     }
+    else {
+      $cache->delete($cache_registration_action);
+      $cache->delete($cache_schedule);
+    }
   }
 
   // Promotional Image.
@@ -1497,6 +1501,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       'schedule' => $cache->get($cache_schedule) ? $cache->get($cache_schedule)->data : NULL,
     ],
   ];
+
   // Exposing custom cache tags during render.
   $variables['#cache']['tags'] = [$cache_registration_action, $cache_schedule];
 }
