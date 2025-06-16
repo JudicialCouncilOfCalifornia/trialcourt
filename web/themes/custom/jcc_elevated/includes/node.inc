@@ -117,7 +117,7 @@ function jcc_elevated_preprocess_node(&$variables) {
  */
 function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $node): void {
   $node = $variables['node'];
-  $uid = $node->getOwnerId();
+  //$uid = $node->getOwnerId();
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $category = $node->hasField('field_surplus_category') ? $node->get('field_surplus_category')->target_id : FALSE;
@@ -146,11 +146,12 @@ function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $n
     $renewal_date = new DrupalDateTime($renewal_raw);
     $renewal_formatted = $renewal_date->format('M d, Y');
   }
+  $variables['title'] = $node->getTitle();
   $variables['surplus'] = [
     'Brand' => $node->get('field_brand')->value,
     'Comments' => $node->get('field_comments')->value,
     'Description' => $node->get('field_description')->value,
-    'Donateorsell' => $node->get('field_donate_or_sell')->value,
+    'Donation or for sale' => $node->get('field_donate_or_sell')->value,
     'Model' => $node->get('field_model_number')->value,
     'Posted On' => $posted_formatted,
     'Quantity' => $node->get('field_quantity')->value,
@@ -159,6 +160,9 @@ function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $n
     'Unit Measure' => $node->get('field_unit_measure')->value,
     'Renewal Date' => $renewal_formatted,
     'Entity' => $node->get('field_entity')->value,
+    'Contact' => $node->get('field_contact_person')->value,
+    'Phone' => $node->get('field_contact_number')->value,
+    'Email' => $node->get('field_email_address')->value,
   ];
 }
 

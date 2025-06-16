@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
@@ -845,6 +846,61 @@ function generate_itc_webform_url($item_number, $formatted_deadline, $title) {
     ],
   ])->setAbsolute()->toString();
   return $webform_subpage_url;
+}
+
+/**
+ * Implements hook_preprocess_views_view() for ITC past proposals block.
+ */
+function jcc_elevated_preprocess_views_view__surplus_listing__block_1(&$variables) {
+  __jcc_view_results_exposed_filter_init($variables);
+  $view = $variables['view'];
+  $account = \Drupal::currentUser();
+  $variables['can_renew'] = $account->hasPermission('renew surplus content');
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+  foreach ($view->result as $index => $row) {
+    /*if (isset($row->_entity)) {
+    $node = $node_storage->load($row->nid);
+    $node = $row->_entity;
+    dpm($node);*/
+    if (!isset($row->nid)) {
+      continue;
+    }
+    $node = $node_storage->load($row->nid);
+    /*dpm($node);
+    dpm("islatest???");
+    dpm($node->isLatestRevision());*/
+    // If content moderation is enabled, try latest revision
+    if ($node instanceof NodeInterface && $node->isLatestRevision()) {
+      $node = $node_storage->loadRevision($node->getRevisionId());
+      /*dpm("Got latest node");
+      dpm($node);*/
+    }
+    if ($node->bundle() !== 'surplus_materials') {
+      continue;
+    }
+    if ($node->hasField('field_posted') && !$node->get('field_posted')->isEmpty()) {
+      $posted_raw = $node->get('field_posted')->value;
+      $posted_date = new DrupalDateTime($posted_raw);
+      $posted_formatted = $posted_date->format('M d, Y');
+    }
+    else {
+      $posted_formatted = '';
+    }
+    //dpm($node->get('field_description')->value);
+    // 'Category' => $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '',
+    $variables['s'][] = [   
+      'nid' => $node->id(),    
+      'title' => $node->label(),
+      'Description' => $node->hasField('field_description') && !$node->get('field_description')->isEmpty()  ? $node->get('field_description')->value: '',
+      'Posted On' => $posted_formatted,
+      'Quantity' => $node->get('field_quantity')->value,
+      'Ref #' => $node->get('field_reference_number')->value,   
+      'Entity' => $node->get('field_entity')->value,
+      'Contact' => $node->get('field_contact_person')->value,
+      'Phone' => $node->get('field_contact_number')->value,
+      'Email' => $node->get('field_email_address')->value
+    ];     
+  }
 }
 
 /**
