@@ -850,6 +850,63 @@ function generate_itc_webform_url($item_number, $formatted_deadline, $title) {
 /**
  * Implements hook_preprocess_views_view() for ITC past proposals block.
  */
+function jcc_elevated_preprocess_views_view__surplus_listing__block_1(&$variables) {
+  __jcc_view_results_exposed_filter_init($variables);
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $view = $variables['view'];
+  $account = \Drupal::currentUser();
+  $variables['can_renew'] = $account->hasPermission('renew surplus content');
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+  foreach ($view->result as $row) {
+    if (!isset($row->nid)) {
+      continue;
+    }
+    $node = $node_storage->load($row->nid);
+    if ($node instanceof NodeInterface && $node->isLatestRevision()) {
+      $node = $node_storage->loadRevision($node->getRevisionId());
+    }
+    if ($node->bundle() !== 'surplus_materials') {
+      continue;
+    }
+    $exposed_input = $view->getExposedInput();
+    $filter_archived = isset($exposed_input['moderation_state_multiple_workflow_filter']) && $exposed_input['moderation_state_multiple_workflow_filter'] === 'archived';
+    if (!$filter_archived) {
+      if ($node->hasField('moderation_state') && $node->get('moderation_state')->value === 'archived') {
+        continue;
+      }
+    }
+    $surplus_category = $node->hasField('field_surplus_category') ? $node->get('field_surplus_category')->target_id : FALSE;
+    $posted_value = $node->get('field_posted')->value;
+    $renewal_value = $node->get('field_renewal_date')->value;
+    if (!empty($posted_value) && !empty($renewal_value)) {
+      $posted_date = new \DateTime($posted_value);
+      $posted_formatted = $posted_date->format('M d, Y');
+      $renewal_date = new \DateTime($renewal_value);
+      $interval = $posted_date->diff($renewal_date);
+      $days_between = $interval->days;
+    }
+
+    $variables['surplus'][] = [
+      'nid' => $node->id(),
+      'title' => $node->label(),
+      'Description' => $node->hasField('field_description') && !$node->get('field_description')->isEmpty() ? $node->get('field_description')->value : '',
+      'Posted On' => $posted_formatted,
+      'Quantity' => $node->get('field_quantity')->value,
+      'Ref #' => $node->get('field_reference_number')->value,
+      'Entity' => $node->get('field_entity')->value,
+      'Contact' => $node->get('field_contact_person')->value,
+      'Phone' => $node->get('field_contact_number')->value,
+      'Email' => $node->get('field_email_address')->value,
+      'Interval' => $days_between,
+      'Category' => $surplus_category && $taxonomy_manager->load($surplus_category) ? $taxonomy_manager->load($surplus_category)->get('name')->value : '',
+    ];
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view() for ITC past proposals block.
+ */
 function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables) {
   __jcc_view_results_exposed_filter_init($variables);
   $entity_type_manager = \Drupal::service('entity_type.manager');

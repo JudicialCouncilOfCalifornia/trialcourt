@@ -1,0 +1,68 @@
+diff --git a/src/Notification.php b/src/Notification.php
+index 767c7a6..b6c00dd 100644
+--- a/src/Notification.php
++++ b/src/Notification.php
+@@ -136,12 +136,18 @@ class Notification implements NotificationInterface {
+         '#template' => $subject,
+         '#context' => $data['params']['context'],
+       ];
+-      $subject = DeprecationHelper::backwardsCompatibleCall(
++      /*$subject = DeprecationHelper::backwardsCompatibleCall(
+         currentVersion: \Drupal::VERSION,
+         deprecatedVersion: '10.3',
+         currentCallable: fn() => $renderer->renderInIsolation($template),
+         deprecatedCallable: fn() => $renderer->renderPlain($template),
+-      );
++      );*/
++      if (method_exists($renderer, 'renderInIsolation')) {
++        $subject = $renderer->renderInIsolation($template);
++      }
++      else {
++        $subject = $renderer->renderPlain($template);
++      }
+       // Remove any newlines from Subject.
+       $subject = trim(str_replace("\n", ' ', $subject));
+       $data['params']['subject'] = $subject;
+@@ -153,12 +159,18 @@ class Notification implements NotificationInterface {
+         '#template' => $message,
+         '#context' => $data['params']['context'],
+       ];
+-      $message = DeprecationHelper::backwardsCompatibleCall(
++      /*$message = DeprecationHelper::backwardsCompatibleCall(
+         currentVersion: \Drupal::VERSION,
+         deprecatedVersion: '10.3',
+         currentCallable: fn() => $renderer->renderInIsolation($template),
+         deprecatedCallable: fn() => $renderer->renderPlain($template),
+-      );
++      );*/
++      if (method_exists($renderer, 'renderInIsolation')) {
++        $message = $renderer->renderInIsolation($template); 
++      } 
++      else {  
++        $message = $renderer->renderPlain($template);
++      }
+       $data['params']['message'] = check_markup($message, $notification->getMessageFormat());
+ 
+       // Figure out who the email should be going to.
+@@ -204,13 +216,18 @@ class Notification implements NotificationInterface {
+         '#template' => $adhoc_emails,
+         '#context' => $data['params']['context'],
+       ];
+-      $adhoc_emails = DeprecationHelper::backwardsCompatibleCall(
++      /*$adhoc_emails = DeprecationHelper::backwardsCompatibleCall(
+         currentVersion: \Drupal::VERSION,
+         deprecatedVersion: '10.3',
+         currentCallable: fn() => $renderer->renderInIsolation($template),
+         deprecatedCallable: fn() => $renderer->renderPlain($template),
+-      );
+-
++      );*/
++      if (method_exists($renderer, 'renderInIsolation')) {
++        $adhoc_emails = $renderer->renderInIsolation($template);
++      }
++      else {  
++        $adhoc_emails = $renderer->renderPlain($template);
++      }
+       // Split Adhoc emails on commas and newlines.
+       $adhoc_emails = array_map('trim', explode(',', preg_replace("/((\r?\n)|(\r\n?))/", ',', $adhoc_emails)));
+       $anonymous_access = $entity->access('view', User::getAnonymousUser());

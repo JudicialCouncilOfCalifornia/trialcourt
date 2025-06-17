@@ -113,6 +113,60 @@ function jcc_elevated_preprocess_node(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $node): void {
+  $node = $variables['node'];
+  //$uid = $node->getOwnerId();
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $category = $node->hasField('field_surplus_category') ? $node->get('field_surplus_category')->target_id : FALSE;
+  $media_manager = $entity_type_manager->getStorage('media');
+  $media_url = [];
+  foreach ($node->field_media_file_multiple as $media_file) {
+    if (!empty($media_file->target_id)) {
+      $media = $media_manager->load($media_file->target_id);
+      if ($media && $media->field_media_image->entity) {
+        $uri = $media->field_media_image->entity->getFileUri();
+        $url = file_create_url($uri);
+        $media_url[] = ['url' => $url];
+      }
+    }
+  }
+  $variables['media_url'] = $media_url;
+  $posted_raw = $node->get('field_posted')->value;
+  $renewal_raw = $node->get('field_renewal_date')->value;
+  $posted_formatted = '';
+  $renewal_formatted = '';
+  if (!empty($posted_raw)) {
+    $posted_date = new DrupalDateTime($posted_raw);
+    $posted_formatted = $posted_date->format('M d, Y');
+  }
+  if (!empty($renewal_raw)) {
+    $renewal_date = new DrupalDateTime($renewal_raw);
+    $renewal_formatted = $renewal_date->format('M d, Y');
+  }
+  $variables['title'] = $node->getTitle();
+  $variables['surplus'] = [
+    'Brand' => $node->get('field_brand')->value,
+    'Comments' => $node->get('field_comments')->value,
+    'Description' => $node->get('field_description')->value,
+    'Donation or for sale' => $node->get('field_donate_or_sell')->value,
+    'Model' => $node->get('field_model_number')->value,
+    'Posted On' => $posted_formatted,
+    'Quantity' => $node->get('field_quantity')->value,
+    'Ref #' => $node->get('field_reference_number')->value,
+    'Category' => $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '',
+    'Unit Measure' => $node->get('field_unit_measure')->value,
+    'Renewal Date' => $renewal_formatted,
+    'Entity' => $node->get('field_entity')->value,
+    'Contact' => $node->get('field_contact_person')->value,
+    'Phone' => $node->get('field_contact_number')->value,
+    'Email' => $node->get('field_email_address')->value,
+  ];
+}
+
+/**
  * Node: News preprocess.
  *
  * @param array $variables

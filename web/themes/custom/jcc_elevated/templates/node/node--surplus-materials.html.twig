@@ -1,0 +1,118 @@
+{{ attach_library("jcc_storybook/List") }}
+{{ attach_library("jcc_elevated/surplus-materials") }}
+{{ attach_library("jcc_storybook/Card") }} 
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/HeroHangover") }}
+{{ attach_library("jcc_storybook/Footer") }}
+{{ attach_library("jcc_storybook/Body") }}
+
+ {% include "@molecules/HeroHangover/HeroHangover.twig" with {
+    hangover_hide_compact: false,
+    hangover_offset: 22,
+    background: 'red',      
+    heading: 'Surplus Materials',
+    news_header: true,    
+    text: ''  
+    }
+  %}   
+  
+  {% set contactinfo %}
+    <div>
+    <h4 class="sidebar-label">Contact Info</h4>
+    {% if surplus['Contact'] %}
+      <b>{{ surplus['Contact'] }}</b><br>
+    {% endif %}
+    {% if surplus['Phone'] %}
+      <p>{{ surplus['Phone'] }}</p>
+    {% endif %}
+    {% if surplus['Email'] %}
+      <a href="mailto:{{ surplus['Email'] }}">{{ surplus['Email'] }}</a>
+    {% endif %}
+  </div>
+  {% endset %}
+
+  {% set details %}    
+  <div class="stack">
+  <span>
+    <h2 class="surplus-heading">Item: {{ title }}</h2>
+    <h3 class="surplus-heading">Ref #: {{ surplus['Ref #'] }} </h3>
+  </span>
+
+  {% set excluded_keys = ['Ref #', 'Entity', 'Email', 'Phone', 'Contact'] %}
+    {% set items = [] %}
+     {% for key, value in surplus %}
+       {% if value is not empty and key  not in excluded_keys  %}     
+         {% set item = {
+           label: key,
+           text: value 
+           }
+         %}
+       {% set items = items|merge([item]) %}
+      {% endif %}
+      {% endfor %}
+
+  {% include "@molecules/List/List.twig" with {
+    variant: 'none',
+    items: items,
+    wider_span: true,
+    heading: '',
+    newline: true
+    } %}
+
+  {% include "@molecules/Card/Card.twig" with {
+      variant: "bordered",
+      aspect: [],
+      clickable_card: false,
+      background: null  ,
+      text: contactinfo,
+      button_data:[],
+      }
+  %}
+   </div>
+  {% endset %}
+
+
+{% set image %}
+<div>
+{% if media_url is not empty %}
+ 
+ {% if media_url is not empty %}
+  <h3 class="surplus-image-title">Item Images</h3>
+  <div class="surplus-image-grid">
+    {% for image in media_url %}
+      {% if image.url %}
+        {% set project_image %}
+          <img src="{{ image.url }}">
+        {% endset %}
+        <div class="surplus-image-card">
+          {% include "@molecules/Card/Card.twig" with {
+            variant: "media-right",
+            aspect: [],
+            clickable_card: false,
+            background: null,
+            media: project_image | raw,
+            heading: '',
+            button_data: [],
+            text: ''
+          } %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endif %}
+</div>
+{% endset %}
+
+ {% include "@organisms/Section/Section.twig" with {
+   variant: 'default',
+   sub_component_layout: 'with-sidebar grid',
+   sidebar_direction: 'row',
+   sidebar_width: "60",
+   sub_component_data: {
+     details,
+     image,
+   },
+    attributes: create_attribute()
+    }
+  %}
