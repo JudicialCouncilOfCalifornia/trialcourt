@@ -4,8 +4,8 @@ dependencies:
   config:
     - field.storage.node.field_unit_measure
     - node.type.surplus_materials
-    - taxonomy.vocabulary.surplus_unit_measure
   module:
+    - options
     - tmgmt_content
 third_party_settings:
   tmgmt_content:
@@ -20,14 +20,5 @@ required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings:
-  handler: 'default:taxonomy_term'
-  handler_settings:
-    target_bundles:
-      surplus_unit_measure: surplus_unit_measure
-    sort:
-      field: name
-      direction: asc
-    auto_create: false
-    auto_create_bundle: ''
-field_type: entity_reference
+settings: {  }
+field_type: list_string

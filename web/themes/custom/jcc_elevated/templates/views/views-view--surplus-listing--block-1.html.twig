@@ -9,8 +9,6 @@
   <p>{{ exposed }}</p>
 <br>
 <br>
-  {# <p> {{rows}} </p> #}
-
  <table>
    <thead>
     <tr>
@@ -20,38 +18,37 @@
       <th>Posted On</th>
       <th>Quantity</th>
       <th>Email</th>
-      {% if  can_renew %}<th>Action
-     
-      </th> {% endif %}
-      <th>Offered By</th>
+      <th>Category</th>
+      {% if  can_renew %}
+        <th>Action</th>
+        <th>Expires in Days </th> {% endif %}
+        <th>Offered By</th>
     </tr>
   </thead> 
   <tbody>
-  {% for surplus in s %}
-  <tr>
-    <td>{{ surplus['Ref #'] }}</td>
-    <td><a href="/node/{{ surplus.nid }}">{{surplus['title']}}</a></td>
-<td>{{ surplus['Description'] }}</td>
-
-<td>{{ surplus['Posted On'] }}</td>
-<td>{{ surplus['Quantity'] }}</td>
-<td>{{ surplus['Email'] }}</td>
-{% if  can_renew %}<td> {# user.hasPermission('renew surplus content') #}
-  <a href="/node/{{ surplus.nid }}/edit" class="button button--text">Edit</a><br>
-  <a href="/renew/{{ surplus.nid }}" class="button button--text">Renew</a><br>
- </td> 
-{% endif %}
-
-
-<td>
-<a href="mailto:{{ surplus['Email'] }}">{{ surplus['Contact'] }}</a><br>
-  {{ surplus['Entity'] }}<br>
-  {{ surplus['Phone'] }}
-</td>
-    </tr>
-  {% endfor %}
+    {% for s in surplus %}
+      <tr>
+        <td>{{ s['Ref #'] }}</td>
+        <td><a href="/node/{{ s.nid }}">{{s['title']}}</a></td>
+        <td>{{ s['Description'] }}</td>
+        <td>{{ s['Posted On'] }}</td>
+        <td>{{ s['Quantity'] }}</td>
+        <td>{{ s['Email'] }}</td>
+        <td>{{ s['Category']}}</td>
+        {% if  can_renew %}
+          <td> 
+            <a href="/node/{{ s.nid }}/edit" class="button button--text">Edit</a><br>
+            <a href="/renew/{{ s.nid }}" class="button button--text">Renew</a><br>
+          </td> 
+          <td>{{ s['Interval'] }}</td>
+        {% endif %}
+        <td>
+          <a href="mailto:{{ s['Email'] }}">{{ s['Contact'] }}</a><br>
+          {{ s['Entity'] }}<br>
+          {{ s['Phone'] }}
+        </td>
+      </tr>
+    {% endfor %}
   </tbody>
-</table> 
-
-
+</table>
 </div>

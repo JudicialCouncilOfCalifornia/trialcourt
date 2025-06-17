@@ -3,8 +3,9 @@
 namespace Drupal\jcc_elevated_custom\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
-use Drupal\node\Entity\Node;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -13,7 +14,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class RenewSurplusController extends ControllerBase {
 
   /**
-    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
@@ -46,7 +49,6 @@ class RenewSurplusController extends ControllerBase {
   public function renew($node) {
     $node_storage = $this->entityTypeManager->getStorage('node');
     $node = $node_storage->load($node);
-    $node = Node::load($node);
     if ($node->bundle() === 'surplus_materials') {
       if ($node->hasField('field_renewal_date')) {
         $current_date = new \DateTime();

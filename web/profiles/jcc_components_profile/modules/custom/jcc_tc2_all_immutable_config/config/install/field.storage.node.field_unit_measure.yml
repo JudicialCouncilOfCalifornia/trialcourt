@@ -3,14 +3,48 @@ status: true
 dependencies:
   module:
     - node
-    - taxonomy
+    - options
 id: node.field_unit_measure
 field_name: field_unit_measure
 entity_type: node
-type: entity_reference
+type: list_string
 settings:
-  target_type: taxonomy_term
-module: core
+  allowed_values:
+    -
+      value: each
+      label: Each
+    -
+      value: set
+      label: Set
+    -
+      value: ream
+      label: Ream
+    -
+      value: case
+      label: Case
+    -
+      value: bag
+      label: Bag
+    -
+      value: dozen
+      label: Dozen
+    -
+      value: carton
+      label: Carton
+    -
+      value: pounds
+      label: Pounds
+    -
+      value: pair
+      label: Pair
+    -
+      value: lot
+      label: Lot
+    -
+      value: other
+      label: 'Other - See Details section'
+  allowed_values_function: ''
+module: options
 locked: false
 cardinality: 1
 translatable: true
