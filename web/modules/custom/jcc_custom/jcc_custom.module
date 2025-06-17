@@ -139,6 +139,7 @@ function jcc_custom_node_prepare_form($node, $form_id, $form) {
 function jcc_custom_form_alter(&$form, $form_state, $form_id) {
 
   $theme = \Drupal::config('system.theme')->get('default');
+  $current_user = \Drupal::currentUser();
 
   // The body field on these content types is only used for migration of
   // content and temporary display on the initial site build. Editors should
@@ -150,8 +151,7 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
     case 'node_landing_page_form':
     case 'node_subpage_edit_form':
     case 'node_subpage_form':
-      $user = \Drupal::currentUser();
-      $access = $user->hasPermission('access migration body');
+      $access = $current_user->hasPermission('access migration body');
       $form['body']['#access'] = $access;
 
       // Suppress components that are usable to elevated sites only.
@@ -176,10 +176,14 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
         unset($form['field_media']);
 
         // tci-1314 fix.
-        $current_user = \Drupal::currentUser();
-        $is_admin = in_array('administrator', $current_user->getRoles());
-        if (isset($form['body'])) {
-          $form['body']['#access'] = $is_admin;
+        if (in_array('administrator', $current_user->getRoles())) {
+          if (isset($form['body'])) {
+            $form['body']['#access'] = TRUE;
+          }
+        } else {
+          if (isset($form['body'])) {
+            $form['body']['#access'] = FALSE;
+          }
         }
       }
       else {
