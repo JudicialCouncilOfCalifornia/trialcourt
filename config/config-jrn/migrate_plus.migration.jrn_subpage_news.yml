@@ -1,0 +1,74 @@
+uuid: b3c0c8d9-b536-47ff-a9d6-429b59039760
+langcode: en
+status: true
+dependencies: {  }
+id: jrn_news
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - jrn
+  - news
+  - node
+migration_group: jrn
+label: 'News: Import node'
+source:
+  plugin: csv
+  path: 'public://jrn-news.csv'
+  header_row_count: 1
+  ids:
+    - page
+  fields:
+    -
+      name: page
+      selector: page
+      label: Page
+    -
+      name: date
+      selector: date
+      label: Date
+    -
+      name: title
+      selector: title
+      label: Title
+    -
+      name: content
+      selector: content
+      label: Content
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  title:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: TITLE
+  path/pathauto:
+    plugin: default_value
+    default_value: 1
+  status:
+    plugin: default_value
+    default_value: 1
+  moderation_state:
+    plugin: default_value
+    default_value: published
+  field_date:
+    -
+      plugin: callback
+      callable: strtotime
+      source: date
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m-d
+  body/value: content
+  body/format:
+    plugin: default_value
+    default_value: body
+destination:
+  plugin: 'entity:node'
+  default_bundle: news
+migration_dependencies: null
