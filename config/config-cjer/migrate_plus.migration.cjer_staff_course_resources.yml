@@ -76,6 +76,10 @@ source:
       label: 'Is Quick Reference?'
       selector: quickref
     -
+      name: media
+      label: 'Media Attachment'
+      selector: media
+    -
       name: media_url
       label: 'Alternative Media URL'
       selector: media_url
@@ -288,7 +292,17 @@ process:
       bundle: specialty_credit
       value_key: name
       ignore_case: true
+  field_media:
+    -
+      plugin: migration_lookup
+      migration: cjer_documents_media
+      source: media
+    -
+      plugin: skip_on_empty
+      method: process
 destination:
   plugin: 'entity:node'
   default_bundle: course
-migration_dependencies: null
+migration_dependencies:
+  optional:
+    - cjer_documents_media
