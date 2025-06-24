@@ -670,10 +670,10 @@ display:
           separator: ', '
           field_api_classes: false
       pager:
-        type: none
+        type: some
         options:
           offset: 0
-          items_per_page: 0
+          items_per_page: 100
       exposed_form:
         type: basic
         options:
@@ -691,7 +691,16 @@ display:
       cache:
         type: tag
         options: {  }
-      empty: {  }
+      empty:
+        messages:
+          id: messages
+          table: views
+          field: messages
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: messages
+          empty: true
       sorts:
         created:
           id: created
@@ -839,10 +848,82 @@ display:
           default_row_class: true
           columns:
             title: title
-          default: title
+            field_reference_number: field_reference_number
+            field_posted: field_posted
+            field_surplus_category: field_surplus_category
+            field_quantity: field_quantity
+            field_description: field_description
+            field_contact_number: field_contact_number
+            field_entity: field_entity
+            field_contact_person: field_contact_person
+            nid: nid
+          default: field_reference_number
           info:
             title:
               sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_reference_number:
+              sortable: true
+              default_sort_order: desc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_posted:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_surplus_category:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_quantity:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_description:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_contact_number:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_entity:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_contact_person:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            nid:
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
@@ -874,6 +955,7 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
         - user
         - 'user.node_grants:view'
         - user.permissions
@@ -899,6 +981,7 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
         - user
         - 'user.node_grants:view'
         - user.permissions

@@ -34,11 +34,11 @@
   {% set details %}    
   <div class="stack">
   <span>
-    <h2 class="surplus-heading">Item: {{ title }}</h2>
+    <h2 class="surplus-heading">{{ title }}</h2>
     <h3 class="surplus-heading">Ref #: {{ surplus['Ref #'] }} </h3>
   </span>
 
-  {% set excluded_keys = ['Ref #', 'Entity', 'Email', 'Phone', 'Contact'] %}
+  {% set excluded_keys = ['Ref #', 'Email', 'Phone', 'Contact'] %}
     {% set items = [] %}
      {% for key, value in surplus %}
        {% if value is not empty and key  not in excluded_keys  %}     

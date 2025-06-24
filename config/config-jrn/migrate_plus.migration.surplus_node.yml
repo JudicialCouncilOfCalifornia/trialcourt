@@ -1,0 +1,186 @@
+uuid: 82f7de44-3dcf-4973-b0c1-f5c8eb3a4fa8
+langcode: en
+status: true
+dependencies: {  }
+id: surplus_node
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - jrn
+  - surplus
+migration_group: jrn_surplus
+label: 'JRN: Import surplus nodes'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  ids:
+    field_reference_number:
+      type: string
+  fields:
+    -
+      name: field_reference_number
+      selector: field_reference_number
+      label: 'Reference Number'
+    -
+      name: field_description
+      selector: field_description
+      label: Description
+    -
+      name: field_quantity
+      selector: field_quantity
+      label: Quantity
+    -
+      name: field_brand
+      selector: field_brand
+      label: Brand
+    -
+      name: field_model_number
+      selector: field_model_number
+      label: 'Model Number'
+    -
+      name: field_unit_measure
+      selector: field_unit_measure
+      label: 'Unit Measure'
+    -
+      name: field_required_forms
+      selector: field_required_forms
+      label: 'Required Forms'
+    -
+      name: field_comments
+      selector: field_comments
+      label: Comments
+    -
+      name: field_entity
+      selector: field_entity
+      label: Entity
+    -
+      name: field_contact_person
+      selector: field_contact_person
+      label: Contact
+    -
+      name: field_disposition
+      selector: field_disposition
+      label: Disposition
+    -
+      name: field_condition
+      selector: field_condition
+      label: Condition
+    -
+      name: field_surplus_category
+      selector: field_surplus_category
+      label: Category
+    -
+      name: field_contact_number
+      selector: field_contact_number
+      label: 'Contact Number'
+    -
+      name: field_email_address
+      selector: field_email_address
+      label: 'Email Address'
+    -
+      name: field_posted
+      selector: field_posted
+      label: 'Posted on'
+    -
+      name: field_renewal_date
+      selector: field_renewal_date
+      label: 'Renewal date'
+    -
+      name: field_donate_or_sell
+      selector: field_donate_or_sell
+      label: 'Donate or sell'
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  title:
+    -
+      plugin: get
+      source: field_description
+    -
+      plugin: default_value
+      default_value: 'Untitled'    
+  status:
+    plugin: default_value
+    default_value: 1 
+  moderation_state:
+    plugin: default_value
+    default_value: published  
+  field_quantity: field_quantity
+  field_reference_number: field_reference_number
+  field_description: field_description
+  field_brand: field_brand
+  field_model_number: field_model_number
+  field_unit_measure: field_unit_measure
+  field_required_forms: field_required_forms
+  field_comments: field_comments
+  field_entity: field_entity
+  field_contact_person: field_contact_person
+  field_disposition: field_disposition
+  field_contact_number: field_contact_number
+  field_email_address:
+    -
+      plugin: callback
+      callable: trim
+      source: field_email_address
+  field_donate_or_sell: field_donate_or_sell
+  field_posted:
+    -
+      plugin: safe_preg_replace
+      source: field_posted
+    -
+      plugin: callback
+      callable: strtotime
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m-d
+  field_renewal_date:
+    -
+      plugin: safe_preg_replace
+      source: field_renewal_date
+    -
+      plugin: callback
+      callable: strtotime
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m-d
+  field_condition:
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_condition
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: condition
+      value_key: name
+      ignore_case: true
+  field_surplus_category:
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_surplus_category
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: surplus_category
+      value_key: name
+      ignore_case: true
+destination:
+  plugin: 'entity:node'
+  default_bundle: surplus_materials
+migration_dependencies: null

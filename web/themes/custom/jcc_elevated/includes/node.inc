@@ -117,10 +117,10 @@ function jcc_elevated_preprocess_node(&$variables) {
  */
 function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $node): void {
   $node = $variables['node'];
-  //$uid = $node->getOwnerId();
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
   $category = $node->hasField('field_surplus_category') ? $node->get('field_surplus_category')->target_id : FALSE;
+  $condition = $node->hasField('field_condition') ? $node->get('field_condition')->target_id : FALSE;
   $media_manager = $entity_type_manager->getStorage('media');
   $media_url = [];
   foreach ($node->field_media_file_multiple as $media_file) {
@@ -148,21 +148,24 @@ function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $n
   }
   $variables['title'] = $node->getTitle();
   $variables['surplus'] = [
-    'Brand' => $node->get('field_brand')->value,
-    'Comments' => $node->get('field_comments')->value,
-    'Description' => $node->get('field_description')->value,
-    'Donation or for sale' => $node->get('field_donate_or_sell')->value,
-    'Model' => $node->get('field_model_number')->value,
-    'Posted On' => $posted_formatted,
-    'Quantity' => $node->get('field_quantity')->value,
+    'Item Description' => $node->get('field_description')->value ?? '',
+    'Posted On' => $posted_formatted ?? '',
+    'Brand/Manufacturer' => $node->get('field_brand')->value ?? '',
+    'Model Number' => $node->get('field_model_number')->value ?? '',
+    'Quantity' => $node->get('field_quantity')->value ?? '',
+    'Donation or Sell?' => $node->get('field_donate_or_sell')->value ?? '',
+    'Unit Measure' => $node->get('field_unit_measure')->value ?? '',
+    'Condition' => $condition && $taxonomy_manager->load($condition) ? $taxonomy_manager->load($condition)->get('name')->value : '',
+    'Required Forms' => $node->get('field_required_forms')->value ?? '',
+    'Comments' => $node->get('field_comments')->value ?? '',
+    'Court' => $node->get('field_entity')->value ?? '',
     'Ref #' => $node->get('field_reference_number')->value,
     'Category' => $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '',
-    'Unit Measure' => $node->get('field_unit_measure')->value,
-    'Renewal Date' => $renewal_formatted,
-    'Entity' => $node->get('field_entity')->value,
-    'Contact' => $node->get('field_contact_person')->value,
-    'Phone' => $node->get('field_contact_number')->value,
-    'Email' => $node->get('field_email_address')->value,
+    'Renewal Date' => $renewal_formatted ?? '',
+    'Contact' => $node->get('field_contact_person')->value ?? '',
+    'Phone' => $node->get('field_contact_number')->value ?? '',
+    'Email' => $node->get('field_email_address')->value ?? '',
+    'Disposition' => $node->get('field_disposition')->value ?? '',
   ];
 }
 
