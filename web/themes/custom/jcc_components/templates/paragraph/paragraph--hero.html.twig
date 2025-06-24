@@ -44,6 +44,11 @@
 {# Force layout to full width if "aside" fields are empty. #}
 {% set no_aside = content.field_subheading.0 is empty and content.field_aside.0 is empty and content.field_link.0 is empty %}
 {% set background = parent_type == 'landing_page' ? 'alt' : 'default' %}
+{# set backrgound style to alt if the page is locations #}
+{% set path = path('<current>') %}
+{% if path('<current>') == "/locations" %}
+  {% set background = 'alt' %}
+{% endif %}
 
 {% include "@molecules/hero/hero.twig" with {
   hero: {
