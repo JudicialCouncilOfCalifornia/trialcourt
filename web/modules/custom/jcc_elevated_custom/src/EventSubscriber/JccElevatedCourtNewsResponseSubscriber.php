@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Class JccElevatedCourtNewsResponseSubscriber.
+ * Class JccElevatedCourtNewsResponseSubscriber alters the response for CNUs.
  */
 class JccElevatedCourtNewsResponseSubscriber implements EventSubscriberInterface {
 
