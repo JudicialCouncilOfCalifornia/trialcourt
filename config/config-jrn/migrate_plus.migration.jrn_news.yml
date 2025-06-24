@@ -20,6 +20,10 @@ source:
     - page
   fields:
     -
+      name: type
+      selector: type
+      label: Type
+    -
       name: page
       selector: page
       label: Page
@@ -64,6 +68,13 @@ process:
       plugin: format_date
       from_format: U
       to_format: Y-m-d
+  field_news_type:
+    plugin: entity_generate
+    source: type
+    entity_type: taxonomy_term
+    bundle_key: vid
+    bundle: news_type
+    value_key: name
   body/value: content
   body/format:
     plugin: default_value
