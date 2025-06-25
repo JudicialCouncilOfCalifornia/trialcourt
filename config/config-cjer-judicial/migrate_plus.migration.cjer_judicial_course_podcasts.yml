@@ -1,0 +1,319 @@
+uuid: 29afe304-8e1c-451f-b4a1-1fd062799d36
+langcode: en
+status: true
+dependencies: {  }
+id: cjer_judicial_course_podcasts
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - cjer
+  - judicial
+  - course
+  - podcasts
+migration_group: cjer
+label: 'CJER Podcasts: Podcasts Courses'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  fields:
+    -
+      name: url
+      label: Url
+      selector: url
+    -
+      name: title
+      label: Title
+      selector: title
+    -
+      name: lead
+      label: Lead
+      selector: lead
+    -
+      name: number
+      label: 'Course Number'
+      selector: number
+    -
+      name: date
+      label: 'Publish Date'
+      selector: date
+    -
+      name: type
+      label: 'Course Type'
+      selector: type
+    -
+      name: subtype
+      label: 'Course Subtype'
+      selector: subtype
+    -
+      name: audience
+      label: Audience
+      selector: audience
+    -
+      name: methods
+      label: Methods
+      selector: methods
+    -
+      name: assignments
+      label: Assignments
+      selector: assignments
+    -
+      name: topics
+      label: Topics
+      selector: topics
+    -
+      name: subtopics
+      label: Subtopics
+      selector: subtopics
+    -
+      name: contributed
+      label: 'Is Contributed Content?'
+      selector: contributed
+    -
+      name: quickref
+      label: 'Is Quick Reference?'
+      selector: quickref
+    -
+      name: media_url
+      label: 'Alternative Media URL'
+      selector: media_url
+    -
+      name: media_about
+      label: 'About Media'
+      selector: media_about
+    -
+      name: overview
+      label: Overview
+      selector: overview
+    -
+      name: materials
+      label: Materials
+      selector: materials
+    -
+      name: credit
+      label: 'Education Credit'
+      selector: credit
+    -
+      name: credit_hours
+      label: 'Earned Hours'
+      selector: credit_hours
+    -
+      name: specialty_credits
+      label: 'Specialty Credits'
+      selector: specialty_credits
+    -
+      name: events
+      label: Events
+      selector: events
+  ids:
+    url:
+      type: string
+process:
+  status:
+    plugin: default_value
+    default_value: true
+  moderation_state:
+    plugin: default_value
+    default_value: published
+  uid:
+    plugin: default_value
+    default_value: 1
+  title:
+    -
+      plugin: get
+      source: title
+    -
+      plugin: default_value
+      default_value: TITLE
+  path/pathauto:
+    plugin: default_value
+    default_value: 1
+  field_lead/format:
+    plugin: default_value
+    default_value: snippet
+  field_lead/value:
+    -
+      plugin: default_value
+      source: lead
+  field_course_number:
+    -
+      plugin: get
+      source: number
+  field_date/value:
+    -
+      plugin: format_date
+      source: date
+      from_format: m/d/Y
+      to_format: Y-m-d
+  field_course_type:
+    -
+      plugin: explode
+      delimiter: ','
+      source: type
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: course_type
+      value_key: name
+      ignore_case: true
+  field_course_subtype:
+    -
+      plugin: explode
+      delimiter: ','
+      source: subtype
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: course_subtype
+      value_key: name
+      ignore_case: true
+  field_audience:
+    -
+      plugin: explode
+      delimiter: ','
+      source: audience
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: audience
+      value_key: name
+      ignore_case: true
+  field_delivery_method:
+    -
+      plugin: explode
+      delimiter: ','
+      source: methods
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: delivery_method
+      value_key: name
+      ignore_case: true
+  field_assignment_area:
+    -
+      plugin: explode
+      delimiter: ','
+      source: assignments
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: assignment_area
+      value_key: name
+      ignore_case: true
+  field_topics:
+    -
+      plugin: explode
+      delimiter: ','
+      source: topics
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: topics
+      value_key: name
+      ignore_case: true
+  field_subtopics:
+    -
+      plugin: explode
+      delimiter: ','
+      source: subtopics
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: subtopics
+      value_key: name
+      ignore_case: true
+  field_is_contributed_content:
+    -
+      plugin: get
+      source: contributed
+      default_value: 0
+  field_is_quick_reference:
+    -
+      plugin: get
+      source: quickref
+      default_value: 0
+  field_about/value:
+    -
+      plugin: get
+      source: media_about
+  field_about/format:
+    -
+      plugin: default_value
+      default_value: minimal
+  field_origin_url/uri:
+    -
+      plugin: get
+      source: media_url
+  body/value:
+    -
+      plugin: get
+      source: overview
+  body/format:
+    -
+      plugin: default_value
+      default_value: body
+  field_related_materials_freeform/value:
+    -
+      plugin: get
+      source: materials
+  field_related_materials_freeform/format:
+    -
+      plugin: default_value
+      default_value: minimal
+  field_education_credit_freeform/value:
+    -
+      plugin: get
+      source: credit
+  field_education_credit_freeform/format:
+    plugin: default_value
+    default_value: minimal
+  field_achievable_credit/value:
+    -
+      plugin: get
+      source: credit_hours
+  field_specialty_credit:
+    -
+      plugin: explode
+      delimiter: ','
+      source: specialty_credits
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: specialty_credit
+      value_key: name
+      ignore_case: true
+  field_components:
+    - plugin: explode
+      delimiter: ','
+      source: events
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: multiple_values
+    -
+      plugin: migration_lookup
+      migration: cjer_staff_course_programs_events
+    -
+      plugin: sub_process
+      process:
+        target_id: '0'
+        target_revision_id: '1'
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'No events to import.'
+destination:
+  plugin: 'entity:node'
+  default_bundle: course
