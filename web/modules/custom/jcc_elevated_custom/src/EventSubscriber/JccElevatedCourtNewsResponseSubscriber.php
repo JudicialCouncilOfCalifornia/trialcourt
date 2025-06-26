@@ -23,12 +23,12 @@ class JccElevatedCourtNewsResponseSubscriber implements EventSubscriberInterface
       if ($node instanceof Node) {
         if ($node->bundle() == 'news') {
           // If the node is a Court News Update, alter the response.
-          if ($node->field_news_type->entity->getName() == 'Court News Update') {
+          if ($node->field_news_type->entity 
+              && $node->field_news_type->entity->getName() == 'Court News Update') {
             $response = new Response();
             $response->setContent($node->get('body')->value);
             $event->setResponse($response);
           }
-
         }
       }
     }
