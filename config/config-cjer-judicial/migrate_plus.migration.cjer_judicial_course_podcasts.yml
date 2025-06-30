@@ -11,8 +11,8 @@ migration_tags:
   - judicial
   - course
   - podcasts
-migration_group: cjer
-label: 'CJER Podcasts: Podcasts Courses'
+migration_group: cjer_judicial
+label: 'CJER Judicial: Podcasts Courses'
 source:
   plugin: url
   data_fetcher_plugin: http
@@ -76,6 +76,10 @@ source:
       name: quickref
       label: 'Is Quick Reference?'
       selector: quickref
+    -
+      name: media
+      label: 'Media URL'
+      selector: media
     -
       name: media_url
       label: 'Alternative Media URL'
@@ -314,6 +318,19 @@ process:
       plugin: skip_on_empty
       method: process
       message: 'No events to import.'
+  field_media:
+    -
+      plugin: migration_lookup
+      migration: podcast_media_judicial
+      source: media
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'No media to attach to opinion.'
 destination:
   plugin: 'entity:node'
   default_bundle: course
+migration_dependencies:
+  optional:
+    - cjer_judicial_course_programs_events
+    - podcast_media_judicial
