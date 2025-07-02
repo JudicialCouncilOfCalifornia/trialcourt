@@ -276,18 +276,6 @@ process:
   field_education_credit_freeform/format:
     plugin: default_value
     default_value: minimal
-  field_media:
-    -
-      plugin: migration_lookup
-      migration: documents_media
-      source: media
-    -
-      plugin: skip_on_empty
-      method: process
-      message: 'No media to attach to opinion.'
-  destination:
-    plugin: 'entity:node'
-    default_bundle: course
   field_achievable_credit/value:
     -
       plugin: get
@@ -304,6 +292,15 @@ process:
       bundle: specialty_credit
       value_key: name
       ignore_case: true
+  field_media:
+    -
+      plugin: migration_lookup
+      migration: documents_media
+      source: media
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'No media to attach.'
 destination:
   plugin: 'entity:node'
   default_bundle: course
