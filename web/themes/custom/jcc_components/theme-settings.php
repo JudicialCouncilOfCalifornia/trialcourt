@@ -108,6 +108,12 @@ function jcc_components_form_system_theme_settings_alter(&$form, FormStateInterf
     '#default_value' => theme_get_setting('facebook'),
     '#placeholder' => 'https://www.facebook.com/[name]/',
   ];
+  $form['social']['threads'] = [
+    '#type' => 'textfield',
+    '#title' => t('Threads'),
+    '#default_value' => theme_get_setting('threads'),
+    '#placeholder' => 'https://www.threads.com/user/[name]',
+  ];
   $form['social']['instagram'] = [
     '#type' => 'textfield',
     '#title' => t('Instagram'),
@@ -144,7 +150,6 @@ function jcc_components_form_system_theme_settings_alter(&$form, FormStateInterf
     '#default_value' => theme_get_setting('youtube'),
     '#placeholder' => 'https://www.youtube.com/user/[name]',
   ];
-
   $form['global'] = [
     '#type' => 'details',
     '#title' => t('Global settings'),

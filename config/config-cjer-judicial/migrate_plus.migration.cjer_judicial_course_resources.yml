@@ -1,18 +1,17 @@
 langcode: en
 status: true
 dependencies: {  }
-id: cjer_staff_course_video_personnel
+id: cjer_judicial_course_resources
 class: null
 field_plugin_method: null
 cck_plugin_method: null
 migration_tags:
   - cjer
-  - staff
+  - judicial
   - course
-  - video
-  - personnel
-migration_group: cjer
-label: 'CJER Staff: Video Courses - Court Personnel'
+  - resources
+migration_group: cjer_judicial
+label: 'CJER Judicial: Course Resources'
 source:
   plugin: url
   data_fetcher_plugin: http
@@ -77,13 +76,13 @@ source:
       label: 'Is Quick Reference?'
       selector: quickref
     -
+      name: media
+      label: 'Media Attachment'
+      selector: media
+    -
       name: media_url
       label: 'Alternative Media URL'
       selector: media_url
-    -
-      name: media
-      label: 'Media URL'
-      selector: media
     -
       name: media_about
       label: 'About Media'
@@ -294,17 +293,12 @@ process:
       value_key: name
       ignore_case: true
   field_media:
-    -
-      plugin: migration_lookup
-      migration: documents_media
-      source: media
-    -
-      plugin: skip_on_empty
-      method: process
-      message: 'No media to attach.'
+    plugin: migration_lookup
+    migration: cjer_judicial_documents_media
+    source: media
 destination:
   plugin: 'entity:node'
   default_bundle: course
 migration_dependencies:
   optional:
-    - documents_media
+    - cjer_judicial_documents_media
