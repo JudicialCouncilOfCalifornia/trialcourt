@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cases_served
+    - node.type.location
+    - taxonomy.vocabulary.cases_served
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: node.location.field_cases_served
+field_name: field_cases_served
+entity_type: node
+bundle: location
+label: 'Cases Served'
+description: 'Cases served at the location.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      cases_served: cases_served
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: case_category
+field_type: entity_reference
