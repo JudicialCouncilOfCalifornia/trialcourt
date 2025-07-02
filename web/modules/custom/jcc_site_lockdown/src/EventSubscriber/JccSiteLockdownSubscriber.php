@@ -119,7 +119,7 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
 
     $this->sendAccessDenied();
     $response = new Response();
-    $response->setStatusCode(Response::HTTP_NO_CONTENT);
+    $response->setStatusCode(Response::HTTP_FORBIDDEN);
     $event->setResponse($response);
   }
 
