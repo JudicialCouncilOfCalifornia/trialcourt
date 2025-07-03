@@ -33,6 +33,7 @@
     {% endfor %}
   {% endset %}
 
+<div style="{{ not loop.first ? 'margin-block-start: var(--s5);' : '' }}">
   {% include "@organisms/ProfileCards/ProfileCards.twig" with {
     variant: 'multiple',
     heading: division != 'Unassigned' ? division : '',
