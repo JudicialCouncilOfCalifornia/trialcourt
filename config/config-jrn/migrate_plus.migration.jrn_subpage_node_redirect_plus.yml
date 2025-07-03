@@ -1,0 +1,62 @@
+uuid: 7afaf598-e4bf-4281-8f98-7370021e64fd
+langcode: en
+status: true
+dependencies: {  }
+id: jrn_subpage_node_redirect_plus
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - jrn
+  - subpage
+  - node
+  - redirect
+migration_group: jrn
+label: 'Subpage: Import Redirects Plus'
+source:
+  plugin: csv
+  path: 'public://jrn-redirects.csv'
+  header_row_count: 1
+  ids:
+    - source
+  fields:
+    -
+      name: source
+      selector: source
+      label: 'Source URL'
+    -
+      name: target
+      selector: target
+      label: 'Target URL'
+  constants:
+    redirect_prefix: 'internal:/node/'
+    uid_admin: 1
+    status_code: 301
+process:
+  temp_nid:
+    plugin: migration_lookup
+    source: target
+    migration: jrn_subpage_node
+  redirect_source/path:
+    -
+      plugin: callback
+      callable: urldecode
+      source: source
+    -
+      plugin: path_from_url
+    -
+      plugin: substr
+      start: 1
+  redirect_source/query: {  }
+  redirect_redirect:
+    plugin: concat
+    source:
+      - constants/redirect_prefix
+      - '@temp_nid'
+  uid: constants/uid_admin
+  status_code: constants/status_code
+destination:
+  plugin: 'entity:redirect'
+migration_dependencies:
+  required:
+    - jrn_subpage_node

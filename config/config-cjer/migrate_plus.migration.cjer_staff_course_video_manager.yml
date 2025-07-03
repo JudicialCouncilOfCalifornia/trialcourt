@@ -81,6 +81,10 @@ source:
       label: 'Alternative Media URL'
       selector: media_url
     -
+      name: media
+      label: 'Media URL'
+      selector: media
+    -
       name: media_about
       label: 'About Media'
       selector: media_about
@@ -289,7 +293,19 @@ process:
       bundle: specialty_credit
       value_key: name
       ignore_case: true
+  field_media:
+    -
+      plugin: migration_lookup
+      migration: documents_media
+      source: media
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'No media to attach.'
 destination:
   plugin: 'entity:node'
   default_bundle: course
-migration_dependencies: null
+migration_dependencies:
+  optional:
+    - documents_media
+
