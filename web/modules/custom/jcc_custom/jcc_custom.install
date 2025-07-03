@@ -2,45 +2,18 @@
 
 /**
  * @file
- * Install taxonoomy terms for case served and service category.
+ * Contains update hooks for taxonomy term creation.
  */
-
-use Drupal\taxonomy\Entity\Term;
-use Drupal\taxonomy\Entity\Vocabulary;
 
 /**
  * Implements hook_update_N().
- */
-function jcc_custom_update_8064() {
-  // Vocabulary data.
-  $vocabularies = [
-    'cases_served' => 'All Cases Served',
-    'service_categories' => 'Service Categories',
-  ];
-
-  foreach ($vocabularies as $vid => $vocabulary_name) {
-    // Check if the vocabulary already exists.
-    $vocabulary = Vocabulary::load($vid);
-    if (!$vocabulary) {
-      // Create the vocabulary if it doesn't exist.
-      $vocabulary = Vocabulary::create([
-        'vid' => $vid,
-        'name' => $vocabulary_name,
-      ]);
-      $vocabulary->save();
-      \Drupal::messenger()->addMessage(t('Created vocabulary @name.', ['@name' => $vocabulary_name]));
-    }
-  }
-}
-
-/**
- * Implements hook_update_N().
- * installing term in subsequent hook to ensure
- * vocabulary is fully registered and available to 
- * add terms.
+ *
+ * Adds taxonomy terms to the cases_served and service_categories vocabularies.
+ * Assumes the vocabularies are already created via configuration (immutable).
+ * Will not run if terms already exist in either vocabulary.
  */
 function jcc_custom_update_8066() {
-  // Vocabulary and terms data.
+  // Define the vocabularies and their associated terms.
   $vocabularies = [
     'cases_served' => [
       'terms' => [
@@ -75,20 +48,35 @@ function jcc_custom_update_8066() {
     ],
   ];
 
-  foreach ($vocabularies as $vid => $vocabulary_data) {
-    // Ensure the vocabulary exists before adding terms.
+  // Only proceed if no terms exist for the vocabularies.
+  $skip = TRUE;
+  foreach ($vocabularies as $vid => $data) {
+    $existing_terms = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadByProperties(['vid' => $vid]);
+    if (empty($existing_terms)) {
+      $skip = FALSE;
+      break;
+    }
+  }
+
+  if ($skip) {
+    \Drupal::messenger()->addMessage('Skipped jcc_custom_update_8066(): terms already exist.');
+    return;
+  }
+
+  // Add missing terms.
+  foreach ($vocabularies as $vid => $data) {
     $vocabulary = \Drupal\taxonomy\Entity\Vocabulary::load($vid);
     if ($vocabulary) {
-      foreach ($vocabulary_data['terms'] as $term_name) {
-        // Check if the term already exists in this vocabulary.
-        $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
+      foreach ($data['terms'] as $term_name) {
+        $existing = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
           'vid' => $vid,
           'name' => $term_name,
         ]);
 
-        // If the term doesn't exist, create and save it.
-        if (empty($terms)) {
-          $term = Term::create([
+        if (empty($existing)) {
+          $term = \Drupal\taxonomy\Entity\Term::create([
             'vid' => $vid,
             'name' => $term_name,
           ]);
