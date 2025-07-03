@@ -22,13 +22,14 @@ dependencies:
     - geolocation
     - geolocation_leaflet
     - node
+    - options
     - paragraphs
     - svg_image
     - taxonomy
     - telephone
     - user
 _core:
-  default_config_hash: jC35mg41foog-4nlDCQdAQUqlu3jKe-tzvpx9cxDPhA
+  default_config_hash: c54Ubxh1nnps3B8lbOi7hm4w15Br5Elm-ql4pu2Q8xg
 id: location
 label: Location
 module: views
@@ -872,7 +873,7 @@ display:
       exposed_form:
         type: bef
         options:
-          submit_button: Search
+          submit_button: Submit
           reset_button: true
           reset_button_label: 'Clear all'
           exposed_sorts_label: 'Sort by'
@@ -993,9 +994,51 @@ display:
           plugin_id: bundle
           value:
             location: location
+          group: 1
           expose:
             operator_limit_selection: false
             operator_list: {  }
+        field_location_page_version_value:
+          id: field_location_page_version_value
+          table: node__field_location_page_version
+          field: field_location_page_version_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value:
+            new: new
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
         langcode:
           id: langcode
           table: node_field_data
@@ -1090,14 +1133,18 @@ display:
             widget: radios
             multiple: false
             remember: false
-            default_group: All
+            default_group: '1'
             default_group_multiple: {  }
             group_items:
               1:
                 title: 'self help'
-                operator: and
+                operator: or
                 value:
                   120: '120'
+                  122: '122'
+                  121: '121'
+                  123: '123'
+                  124: '124'
           reduce_duplicates: false
           vid: service_categories
           type: select
@@ -1206,7 +1253,7 @@ display:
               request_manager: '0'
               advisory_body_manager: '0'
               itc_manager: '0'
-            placeholder: ''
+            placeholder: 'Filter by City'
           is_grouped: false
           group_info:
             label: ''
@@ -1257,7 +1304,7 @@ display:
           group_type: group
           admin_label: 'field_add_services: Paragraph'
           plugin_id: standard
-          required: true
+          required: false
       use_ajax: true
       display_description: ''
       header:
@@ -2768,4 +2815,3 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-      
