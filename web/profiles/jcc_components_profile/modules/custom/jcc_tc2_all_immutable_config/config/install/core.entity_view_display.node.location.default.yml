@@ -3,22 +3,35 @@ status: true
 dependencies:
   config:
     - field.field.node.location.body
+    - field.field.node.location.field_add_services
     - field.field.node.location.field_address
+    - field.field.node.location.field_brow
+    - field.field.node.location.field_building_hours
+    - field.field.node.location.field_building_hours_from
+    - field.field.node.location.field_building_hours_to
+    - field.field.node.location.field_case_served_overview
     - field.field.node.location.field_components
     - field.field.node.location.field_geolocation
+    - field.field.node.location.field_image_of_the_courthouse
+    - field.field.node.location.field_location_page_version
     - field.field.node.location.field_location_type
-    - field.field.node.location.field_matters_served
+    - field.field.node.location.field_others
     - field.field.node.location.field_phone
+    - field.field.node.location.field_services_overview
     - field.field.node.location.field_weight
     - filter.format.plain_text
     - node.type.location
   module:
     - address
+    - datetime
     - entity_reference_revisions
     - geolocation
+    - options
+    - svg_image
     - telephone
     - text
     - user
+    - weight
 id: node.location.default
 targetEntityType: node
 bundle: location
@@ -29,19 +42,61 @@ content:
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    weight: 3
+    weight: 4
     region: content
   content_moderation_control:
     settings: {  }
     third_party_settings: {  }
-    weight: -20
+    weight: 0
+    region: content
+  field_add_services:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 10
     region: content
   field_address:
     type: address_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    weight: 1
+    weight: 2
+    region: content
+  field_brow:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 11
+    region: content
+  field_building_hours_from:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: friendly_short
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_building_hours_to:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: friendly_short
+    third_party_settings: {  }
+    weight: 12
+    region: content
+  field_case_served_overview:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 18
     region: content
   field_components:
     type: entity_reference_revisions_entity_view
@@ -50,13 +105,14 @@ content:
       view_mode: default
       link: ''
     third_party_settings: {  }
-    weight: 5
+    weight: 6
     region: content
   field_geolocation:
     type: geolocation_map
     label: hidden
     settings:
       set_marker: false
+      show_label: false
       common_map: true
       show_delta_label: false
       use_overridden_map_settings: false
@@ -557,7 +613,29 @@ content:
         width: 100%
       data_provider_settings: {  }
     third_party_settings: {  }
-    weight: 6
+    weight: 7
+    region: content
+  field_image_of_the_courthouse:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      svg_attributes:
+        width: null
+        height: null
+      svg_render_as_image: true
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 14
+    region: content
+  field_location_page_version:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 16
     region: content
   field_location_type:
     type: entity_reference_label
@@ -565,15 +643,14 @@ content:
     settings:
       link: false
     third_party_settings: {  }
-    weight: 0
+    weight: 1
     region: content
-  field_matters_served:
-    type: entity_reference_label
+  field_others:
+    type: basic_string
     label: above
-    settings:
-      link: false
+    settings: {  }
     third_party_settings: {  }
-    weight: 4
+    weight: 19
     region: content
   field_phone:
     type: telephone_link
@@ -581,21 +658,28 @@ content:
     settings:
       title: ''
     third_party_settings: {  }
-    weight: 2
+    weight: 3
+    region: content
+  field_services_overview:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 17
     region: content
   field_weight:
-    type: number_integer
+    type: default_weight
     label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
+    settings: {  }
     third_party_settings: {  }
-    weight: 7
+    weight: 8
     region: content
 hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
+  field_building_hours: true
   langcode: true
   links: true
   search_api_excerpt: true
+  
