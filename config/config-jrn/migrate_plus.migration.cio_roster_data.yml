@@ -1,0 +1,92 @@
+uuid: bd566fa5-0892-4165-b7a7-3a6c8a30eca3
+langcode: en
+status: true
+dependencies: {  }
+id: cio_roster_data
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - jrn
+  - surplus
+  - cio_roster
+migration_group: jrn_cio_roster
+label: 'JRN: Import CIO Roster data'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  ids:
+    field_email_address:
+      type: string
+    #field_court:
+    #  type: string
+  fields:
+    -
+      name: field_court
+      selector: field_court
+      label: Court      
+    -
+      name: field_email_address
+      selector: field_email_address
+      label: Email     
+    -
+      name: field_first_name
+      selector: field_first_name
+      label: 'First Name'     
+    -
+      name: field_last_name
+      selector: field_last_name
+      label: 'Last Name'      
+    -
+      name: field_job_title
+      selector: field_job_title
+      label: 'Job Title'
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  title:
+    -
+      plugin: default_value
+      default_value: 'Untitled'
+    -
+      plugin: callback
+      callable: trim
+      source: field_court  
+  status:
+    plugin: default_value
+    default_value: 1
+  moderation_state:
+    plugin: default_value
+    default_value: published
+  field_court: field_court  
+  field_first_name: field_first_name
+  field_last_name: field_last_name
+  field_email_address:
+    -
+      plugin: callback
+      callable: trim
+      source: field_email_address
+  field_job_title:
+    -
+      plugin: callback
+      callable: trim
+      source: field_job_title
+    -
+      plugin: skip_on_empty
+      method: process
+      source: field_job_title
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      bundle_key: vid
+      bundle: cio_roster_job_title
+      value_key: name
+      ignore_case: true
+destination:
+  plugin: 'entity:node'
+  default_bundle: cioroster
+migration_dependencies: null
