@@ -19,11 +19,6 @@ source:
   header_offset: null
   ids:
     - case_number
-    - party_name
-    - department
-    - hearing_date
-    - hearing_time
-    - hearing_type
   fields:
     -
       name: case_number
@@ -96,11 +91,11 @@ process:
       entity_type: taxonomy_term
       ignore_case: true
   pseudo_date_time:
-      plugin: concat
-      source:
-        - hearing_date
-        - hearing_time
-      delimiter: ' '
+    plugin: concat
+    source:
+      - hearing_date
+      - hearing_time
+    delimiter: ' '
   field_hearing_date:
     -
       plugin: skip_on_empty
