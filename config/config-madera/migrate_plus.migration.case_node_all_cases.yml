@@ -26,7 +26,7 @@ source:
     - hearing_type
     - party_type
     - case_number
-    - case_type
+    - case_category
     - location
   fields:
     -
@@ -51,7 +51,7 @@ source:
       name: case_number
       label: 'Case Number'
     -
-      name: case_type
+      name: case_category
       label: 'Case Type'
     -
       name: location
@@ -165,26 +165,15 @@ process:
       bundle_key: vid
       entity_type: taxonomy_term
       ignore_case: true
-  field_case_type:
+  field_case_category:
     -
       plugin: skip_on_empty
-      source: case_type
+      source: case_category
       method: process
       message: 'No case type found.'
     -
       plugin: callback
       callable: trim
-    -
-      plugin: entity_generate
-      bundle: case_type
-      value_key: name
-      bundle_key: vid
-      entity_type: taxonomy_term
-      ignore_case: true
-  field_case_category:
-    -
-      plugin: default_value
-      default_value: "unknown"
     -
       plugin: entity_generate
       bundle: case_category
