@@ -1,8 +1,8 @@
-uuid: 10218c1a-6f01-4d21-a379-4a1996160e7d
+uuid: 10318c1a-7f01-4d21-a369-4a1997170e7d
 langcode: en
 status: true
 dependencies: {  }
-id: case_node_civil_cases
+id: case_node_all_cases
 class: null
 field_plugin_method: null
 cck_plugin_method: null
@@ -11,7 +11,7 @@ migration_tags:
   - case
   - debug
 migration_group: case_management
-label: 'Case: Import Node (Traffic)'
+label: 'Case: Import Node (Civil, Criminal & Traffic Cases)'
 source:
   plugin: csv
   path: sites/default/files/madera/default/calendar/all-case-calendar.csv
@@ -192,12 +192,6 @@ process:
       bundle_key: vid
       entity_type: taxonomy_term
       ignore_case: true
-  path/pathauto:
-    plugin: default_value
-    default_value: 0
-    path/alias:
-      plugin: default_value
-      default_value: '/online-services/traffic-calendar'
 destination:
   plugin: 'entity:node'
   default_bundle: case
