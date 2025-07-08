@@ -93,6 +93,10 @@ source:
       name: field_donate_or_sell
       selector: field_donate_or_sell
       label: 'Donate or sell'
+    -
+      name: field_status
+      selector: field_status
+      label: 'Status'  
 process:
   uid:
     plugin: default_value
@@ -103,13 +107,19 @@ process:
       source: field_description
     -
       plugin: default_value
-      default_value: 'Untitled'    
+      default_value: Untitled
   status:
     plugin: default_value
-    default_value: 1 
+    default_value: 1
   moderation_state:
-    plugin: default_value
-    default_value: published  
+    - plugin: callback
+      callable: strtolower
+      source: field_status  
+    - plugin: static_map      
+      map:
+        published: published
+        archived: archived
+      default_value: archived  
   field_quantity: field_quantity
   field_reference_number: field_reference_number
   field_description: field_description
