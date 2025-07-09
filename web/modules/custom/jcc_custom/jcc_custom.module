@@ -1179,43 +1179,13 @@ function jcc_custom_form_webform_form_alter(&$form, FormStateInterface $form_sta
  */
 function jcc_custom_custom_date_format($value) {
   try {
-    // Trim the input value.
     $value = trim($value);
-
-    // Split the date and time.
-    $parts = explode(' ', $value);
-    $date = $parts[0] ?? '';
-    $time = $parts[1] ?? '00:00';
-
-    // Split the date components.
-    $date_parts = explode('/', $date);
-
-    // Check if we have at least month and day.
-    if (count($date_parts) < 2) {
-      throw new \Exception("Invalid date format");
+    $timestamp = strtotime($value);
+    if ($timestamp === FALSE || $timestamp === -1) {
+      throw new \Exception("Unable to parse date");
     }
-
-    $month = $date_parts[0] ?? '01';
-    $day = $date_parts[1] ?? '01';
-    $year = $date_parts[2] ?? date('Y');
-
-    // Ensure month and day are two digits.
-    $month = str_pad($month, 2, '0', STR_PAD_LEFT);
-    $day = str_pad($day, 2, '0', STR_PAD_LEFT);
-
-    // Ensure year is four digits.
-    if (strlen($year) == 2) {
-      $year = '20' . $year;
-    }
-    elseif (strlen($year) != 4) {
-      $year = date('Y');
-    }
-
-    // Reconstruct the date in Y-m-d H:i format.
-    $formatted = "$year-$month-$day $time";
-
+    $formatted = date('Y-m-d H:i', $timestamp);
     \Drupal::logger('custom_migrations')->notice("Formatted date: $formatted from input: $value");
-
     return $formatted;
   }
   catch (\Exception $e) {

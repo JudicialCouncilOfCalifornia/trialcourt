@@ -18,8 +18,6 @@ source:
   delimiter: ','
   enclosure: '"'
   header_offset: null
-  header_row_count: 1
-  skip_count: 0
   ids:
     - case_number
     - hearing_date_and_time
@@ -115,7 +113,7 @@ process:
   field_hearing_date:
     - plugin: callback
       callable: jcc_custom_custom_date_format
-      source: '@hearing_date_and_time'
+      source: hearing_date_and_time
     - plugin: format_date
       from_format: 'Y-m-d H:i'
       to_format: 'Y-m-d\TH:i:s'
