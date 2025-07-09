@@ -180,7 +180,8 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
           if (isset($form['body'])) {
             $form['body']['#access'] = TRUE;
           }
-        } else {
+        }
+        else {
           if (isset($form['body'])) {
             $form['body']['#access'] = FALSE;
           }
@@ -1164,5 +1165,31 @@ function jcc_custom_form_webform_form_alter(&$form, FormStateInterface $form_sta
     if (isset($form['confirmation_type']['confirmation_type']['#options'])) {
       $form['confirmation_type']['confirmation_type']['#default_value'] = 'inline';
     }
+  }
+}
+
+/**
+ * Custom callback to format date strings.
+ *
+ * @param string $value
+ *   The input date string.
+ *
+ * @return string
+ *   The formatted date string or original value if formatting fails.
+ */
+function jcc_custom_custom_date_format($value) {
+  try {
+    $value = trim($value);
+    $timestamp = strtotime($value);
+    if ($timestamp === FALSE || $timestamp === -1) {
+      throw new \Exception("Unable to parse date");
+    }
+    $formatted = date('Y-m-d H:i', $timestamp);
+    \Drupal::logger('custom_migrations')->notice("Formatted date: $formatted from input: $value");
+    return $formatted;
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('custom_migrations')->error("Error formatting date: " . $e->getMessage() . " for input: $value");
+    return $value;
   }
 }

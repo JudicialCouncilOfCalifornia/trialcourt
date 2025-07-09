@@ -1,0 +1,170 @@
+uuid: 10318c1a-7f01-4d21-a369-4a1997170e7d
+langcode: en
+status: true
+dependencies: {  }
+id: case_node_all_cases
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - node
+  - case
+  - debug
+migration_group: case_management
+label: 'Case: Import Node'
+source:
+  plugin: csv
+  path: sites/default/files/contracosta/default/calendar/all-case-calendar.csv
+  delimiter: ','
+  enclosure: '"'
+  header_offset: null
+  ids:
+    - case_number
+    - hearing_date_and_time
+  fields:
+    -
+      name: party_name
+      label: 'Party_Name'
+    -
+      name: department
+      label: "Department"
+    -
+      name: hearing_date_and_time
+      label: 'Hearing_Date_and_Time'
+    -
+      name: judicial_officer
+      label: 'Judicial_Officer'
+    -
+      name: hearing_type
+      label: 'Hearing_Type'
+    -
+      name: party_type
+      label: 'Party_Type'
+    -
+      name: case_number
+      label: 'Case_Number'
+    -
+      name: case_category
+      label: 'Case_Type'
+    -
+      name: location
+      label: "Location"
+process:
+  field_party_name:
+    -
+      plugin: skip_on_empty
+      source: party_name
+      method: row
+      message: 'No name found.'
+    -
+      plugin: callback
+      callable: trim
+  field_case_number:
+    -
+      plugin: skip_on_empty
+      source: case_number
+      method: row
+      message: 'No case number found.'
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      bundle: case_number
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  title:
+    -
+      plugin: concat
+      source:
+        - '@field_party_name'
+        - case_number
+      delimiter: ' / '
+  field_party_type:
+    -
+      plugin: skip_on_empty
+      source: party_type
+      method: row
+      message: 'No party type found.'
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      bundle: case_party_type
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_department:
+    -
+      plugin: callback
+      source: department
+      callable: trim
+    -
+      plugin: entity_generate
+      bundle: department
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_hearing_date:
+    - plugin: callback
+      callable: jcc_custom_custom_date_format
+      source: hearing_date_and_time
+    - plugin: format_date
+      from_format: 'Y-m-d H:i'
+      to_format: 'Y-m-d\TH:i:s'
+      from_timezone: America/Los_Angeles
+      to_timezone: UTC
+  field_judge:
+    -
+      plugin: callback
+      source: judicial_officer
+      callable: trim
+    -
+      plugin: entity_generate
+      bundle: judge
+      value_key: title
+      bundle_key: type
+      entity_type: node
+      ignore_case: true
+  field_hearing_type:
+    -
+      plugin: skip_on_empty
+      source: hearing_type
+      method: process
+      message: 'No hearing type found.'
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      bundle: hearing_type
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_case_category:
+    -
+      plugin: skip_on_empty
+      source: case_category
+      method: process
+      message: 'No case type found.'
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      bundle: case_category
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+destination:
+  plugin: 'entity:node'
+  default_bundle: case
+migration_dependencies: null
+
