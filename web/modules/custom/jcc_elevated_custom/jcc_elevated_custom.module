@@ -335,11 +335,19 @@ function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
 }
 
 function jcc_elevated_custom_form_node_surplus_materials_edit_form_alter(array &$form, FormStateInterface $form_state) {
-  $node = $form_state->getFormObject()->getEntity();
-  if (!$node->isNew()) {
-    if (isset($form['field_disposition']['widget'])) {
-      $form['field_disposition']['widget']['#required'] = TRUE;
-      $form['field_disposition']['widget']['#default_value'] = '';
+  $form['#validate'][] = 'jcc_elevated_custom_validate_disposition_if_archived';
+  $form['field_disposition']['widget']['#required'] = FALSE;
+  $form['field_disposition']['widget']['#default_value'] = '';
+}
+
+function jcc_elevated_custom_validate_disposition_if_archived(array &$form, FormStateInterface $form_state) {
+  $input = $form_state->getUserInput();
+  $moderation_state = $input['moderation_state'][0]['state'] ?? NULL;
+  if ($moderation_state === 'archived') {
+    $form_state->setValue(['field_disposition', 0, 'value'], '');
+    $disposition = $form_state->getValue(['field_disposition', 0, 'value']);
+    if ($disposition === '') {
+      $form_state->setErrorByName('field_disposition', t('Disposition is required while archiving an item.'));
     }
   }
 }

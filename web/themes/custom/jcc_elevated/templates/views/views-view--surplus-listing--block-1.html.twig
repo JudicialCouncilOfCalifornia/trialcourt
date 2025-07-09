@@ -9,6 +9,7 @@
   <p>{{ exposed }}</p>
 <br>
 <br>
+ {% if surplus is not empty %}
  <table class="surplus-table">
    <thead>
     <tr>
@@ -49,4 +50,7 @@
     {% endfor %}
   </tbody>
 </table>
+{% else %}
+  <p>No surplus items available.</p>
+{% endif %}
 </div>
