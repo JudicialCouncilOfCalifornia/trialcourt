@@ -11,7 +11,7 @@ migration_tags:
   - case
   - debug
 migration_group: case_management
-label: 'Case: Import Node (Civil, Criminal & Traffic Cases)'
+label: 'Case: Import Node'
 source:
   plugin: csv
   path: sites/default/files/madera/default/calendar/all-case-calendar.csv
@@ -112,31 +112,15 @@ process:
       bundle_key: vid
       entity_type: taxonomy_term
       ignore_case: true
-  pseudo_date_time:
-    plugin: concat
-    source:
-        - hearing_date_and_time
-    delimiter: ' '
-#  field_hearing_date:
-#    - plugin: skip_on_empty
-#      source: '@pseudo_date_time'
-#      method: row
-#    - plugin: callback
-#      callable: trim
-#    - plugin: format_date
-#      from_format: 'n/j/Y H:i'
-#      to_format: 'Y-m-d\TH:i:s'
-#      from_timezone: America/Los_Angeles
-#      to_timezone: UTC
-
   field_hearing_date:
     - plugin: callback
-      callable: strtotime
-      source: '@pseudo_date_time'
+      callable: jcc_custom_custom_date_format
+      source: '@hearing_date_and_time'
     - plugin: format_date
-      from_format: U
-      to_format: 'Y-m-d'
-
+      from_format: 'Y-m-d H:i'
+      to_format: 'Y-m-d\TH:i:s'
+      from_timezone: America/Los_Angeles
+      to_timezone: UTC
   field_judge:
     -
       plugin: callback

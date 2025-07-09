@@ -180,7 +180,8 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
           if (isset($form['body'])) {
             $form['body']['#access'] = TRUE;
           }
-        } else {
+        }
+        else {
           if (isset($form['body'])) {
             $form['body']['#access'] = FALSE;
           }
@@ -1164,5 +1165,61 @@ function jcc_custom_form_webform_form_alter(&$form, FormStateInterface $form_sta
     if (isset($form['confirmation_type']['confirmation_type']['#options'])) {
       $form['confirmation_type']['confirmation_type']['#default_value'] = 'inline';
     }
+  }
+}
+
+/**
+ * Custom callback to format date strings.
+ *
+ * @param string $value
+ *   The input date string.
+ *
+ * @return string
+ *   The formatted date string or original value if formatting fails.
+ */
+function jcc_custom_custom_date_format($value) {
+  try {
+    // Trim the input value.
+    $value = trim($value);
+
+    // Split the date and time.
+    $parts = explode(' ', $value);
+    $date = $parts[0] ?? '';
+    $time = $parts[1] ?? '00:00';
+
+    // Split the date components.
+    $date_parts = explode('/', $date);
+
+    // Check if we have at least month and day.
+    if (count($date_parts) < 2) {
+      throw new \Exception("Invalid date format");
+    }
+
+    $month = $date_parts[0] ?? '01';
+    $day = $date_parts[1] ?? '01';
+    $year = $date_parts[2] ?? date('Y');
+
+    // Ensure month and day are two digits.
+    $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+    $day = str_pad($day, 2, '0', STR_PAD_LEFT);
+
+    // Ensure year is four digits.
+    if (strlen($year) == 2) {
+      $year = '20' . $year;
+    }
+    elseif (strlen($year) != 4) {
+      $year = date('Y');
+    }
+
+    // Reconstruct the date in Y-m-d H:i format.
+    $formatted = "$year-$month-$day $time";
+
+    \Drupal::logger('custom_migrations')->notice("Formatted date: $formatted from input: $value");
+
+    return $formatted;
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('custom_migrations')->error("Error formatting date: " . $e->getMessage() . " for input: $value");
+    return $value;
   }
 }
