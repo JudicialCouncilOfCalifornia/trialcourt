@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_service_category
+    - paragraphs.paragraphs_type.services
+    - taxonomy.vocabulary.service_categories
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: paragraph.services.field_service_category
+field_name: field_service_category
+entity_type: paragraph
+bundle: services
+label: 'Service Category'
+description: 'What category best describes the services being provided.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      service_categories: service_categories
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
