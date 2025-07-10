@@ -1,0 +1,92 @@
+<?php
+
+/**
+ * @file
+ * Contains update hooks for taxonomy term creation.
+ */
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adds taxonomy terms to the cases_served and service_categories vocabularies.
+ * Assumes the vocabularies are already created via configuration (immutable).
+ * Will not run if terms already exist in either vocabulary.
+ */
+function jcc_custom_update_8066() {
+  // Define the vocabularies and their associated terms.
+  $vocabularies = [
+    'cases_served' => [
+      'terms' => [
+        'All Cases Served',
+        'Appeals',
+        'Civil',
+        'Conservatorships',
+        'Criminal',
+        'Domestic Violence',
+        'Unlawful Detainer',
+        'Family Law',
+        'Guardianships',
+        'Juvenile Dependency',
+        'Juvenile Delinquency',
+        'Mental Health',
+        'CARE Court',
+        'Name Change & Gender Affirmation',
+        'Probate',
+        'Restraining Orders',
+        'Small Claims',
+        'Traffic',
+      ],
+    ],
+    'service_categories' => [
+      'terms' => [
+        'Clerk Window (All cases)',
+        'Clerk Window (criminal)',
+        'Clerk Window (civil)',
+        'Clerk Window (Traffic)',
+        'Self-Help',
+      ],
+    ],
+  ];
+
+  // Only proceed if no terms exist for the vocabularies.
+  $skip = TRUE;
+  foreach ($vocabularies as $vid => $data) {
+    $existing_terms = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadByProperties(['vid' => $vid]);
+    if (empty($existing_terms)) {
+      $skip = FALSE;
+      break;
+    }
+  }
+
+  if ($skip) {
+    \Drupal::messenger()->addMessage('Skipped jcc_custom_update_8066(): terms already exist.');
+    return;
+  }
+
+  // Add missing terms.
+  foreach ($vocabularies as $vid => $data) {
+    $vocabulary = \Drupal\taxonomy\Entity\Vocabulary::load($vid);
+    if ($vocabulary) {
+      foreach ($data['terms'] as $term_name) {
+        $existing = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
+          'vid' => $vid,
+          'name' => $term_name,
+        ]);
+
+        if (empty($existing)) {
+          $term = \Drupal\taxonomy\Entity\Term::create([
+            'vid' => $vid,
+            'name' => $term_name,
+          ]);
+          $term->save();
+          \Drupal::messenger()->addMessage(t('Created term @name in vocabulary @vid.', [
+            '@name' => $term_name,
+            '@vid' => $vid,
+          ]));
+        }
+      }
+    }
+  }
+}
