@@ -1,0 +1,46 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.location.field_address
+    - field.field.paragraph.location.field_mailing_address
+    - field.field.paragraph.location.field_service_fax_number
+    - field.field.paragraph.location.field_service_phone_number
+    - paragraphs.paragraphs_type.location
+  module:
+    - address
+    - telephone
+id: paragraph.location.default
+targetEntityType: paragraph
+bundle: location
+mode: default
+content:
+  field_address:
+    type: address_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_mailing_address:
+    type: address_default
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_service_fax_number:
+    type: telephone_default
+    weight: 3
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_service_phone_number:
+    type: telephone_default
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
