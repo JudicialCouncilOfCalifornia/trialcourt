@@ -98,7 +98,7 @@ class JccCioFilterForm extends FormBase {
       '#default_value' => $request->get('job_title') ?? '',
     ];
 
-    $location_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $location_storage = $this->entityTypeManager->getStorage('node');
     $location_nodes = $location_storage->loadByProperties(['type' => 'location']);
     $form['filter']['court'] = [
       '#type' => 'select',
