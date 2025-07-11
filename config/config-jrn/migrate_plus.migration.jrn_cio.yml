@@ -1,0 +1,77 @@
+langcode: en
+status: true
+dependencies: {  }
+id: jrn_cio
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - jrn
+  - jcc_cio
+migration_group: jrn
+label: 'JIS: Import CIO'
+source:
+  plugin: csv
+  path: 'public://cio_roster.csv'
+  header_row_count: 1
+  ids:
+    - person_id
+  fields:
+    -
+      name: person_id
+      selector: PERSON_ID
+      label: 'Person ID'
+    -
+      name: court
+      selector: COURT
+      label: 'Court'
+    -
+      name: first_name
+      selector: FIRST_NAME
+      label: 'First Name'
+    -
+      name: last_name
+      selector: LAST_NAME
+      label: 'Last Name'
+    -
+      name: email
+      selector: EMAIL
+      label: Email
+    -
+      name: job_title
+      selector: JOBTITLE
+      label: 'Job Title'
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  status:
+    plugin: default_value
+    default_value: 1
+  person_id: person_id
+  first_name: first_name
+  last_name: last_name
+  court:
+    plugin: entity_generate
+    source: court
+    entity_type: node
+    bundle: location
+    value_key: title
+    bundle_key: type
+    default_values:
+      title: 'Title missing'
+    values:
+      title: 'court'
+  job_title:
+    -
+      plugin: entity_generate
+      bundle: job_title
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+      source: job_title
+  email: email
+destination:
+  plugin: 'entity:jcc_cio'
+migration_dependencies: null

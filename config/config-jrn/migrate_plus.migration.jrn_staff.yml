@@ -1,0 +1,88 @@
+uuid: 5f230199-69a0-4165-b321-b7104cbe6df4
+langcode: en
+status: true
+dependencies: {  }
+id: jrn_staff
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - jrn
+  - jcc_staff
+migration_group: jrn
+label: 'JIS: Import staff'
+source:
+  plugin: csv
+  path: 'public://ps_aoc_web_ph_vw_csv_20250702.txt'
+  header_row_count: 1
+  ids:
+    - person_id
+  fields:
+    -
+      name: person_id
+      selector: EMPLID
+      label: 'Employee ID'
+    -
+      name: last_name
+      selector: LAST_NAME
+      label: 'Last Name'
+    -
+      name: first_name
+      selector: FIRST_NAME
+      label: 'First Name'
+    -
+      name: location_name
+      selector: LOCATION_NAME
+      label: 'Location Name'
+    -
+      name: phone
+      selector: PHONE
+      label: Phone
+    -
+      name: temporary
+      selector: REG_TEMP
+      label: Regular/Temporary
+    -
+      name: department
+      selector: DESCR
+      label: Department
+    -
+      name: email
+      selector: EMAILID
+      label: Email
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  status:
+    plugin: default_value
+    default_value: 1
+  person_id: person_id
+  first_name: first_name
+  last_name: last_name
+  location: location_name
+  phone: phone
+  temporary:
+    -
+      plugin: callback
+      source: temporary
+      callable: trim
+    -
+      plugin: static_map
+      map:
+        'Y': 1
+        'N': 0
+      bypass: true
+  department:
+    -
+      plugin: entity_generate
+      bundle: department
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+      source: department
+  email: email
+destination:
+  plugin: 'entity:jcc_staff'
+migration_dependencies: null
