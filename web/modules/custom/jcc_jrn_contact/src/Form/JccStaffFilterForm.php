@@ -2,13 +2,49 @@
 
 namespace Drupal\jcc_jrn_contact\Form;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Form controller for the jcc staff entity edit forms.
  */
 class JccStaffFilterForm extends FormBase {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The request stack.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  protected $requestStack;
+
+  /**
+   * Class constructor.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager,
+    RequestStack $request_stack) {
+    $this->entityTypeManager = $entity_type_manager;
+    $this->requestStack = $request_stack;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('request_stack')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -21,7 +57,7 @@ class JccStaffFilterForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $request = \Drupal::request();
+    $request = $this->requestStack->getCurrentRequest();
 
     $form['filter'] = [
       '#type' => 'container',
@@ -48,7 +84,7 @@ class JccStaffFilterForm extends FormBase {
       '#default_value' => $request->get('email') ?? '',
     ];
 
-    $terms = \Drupal::entityTypeManager()
+    $terms = $this->entityTypeManager
       ->getStorage('taxonomy_term')
       ->loadTree('department');
     $form['filter']['department'] = [
