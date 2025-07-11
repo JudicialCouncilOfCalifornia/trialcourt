@@ -11,49 +11,49 @@ use Drupal\jcc_jrn_contact\JccStaffInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Defines the jcc staff entity class.
+ * Defines the jcc officer entity class.
  *
  * @ContentEntityType(
- *   id = "jcc_staff",
- *   label = @Translation("Staff"),
- *   label_collection = @Translation("Staff"),
+ *   id = "jcc_officer",
+ *   label = @Translation("Officer"),
+ *   label_collection = @Translation("Officers"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\jcc_jrn_contact\JccStaffListBuilder",
+ *     "list_builder" = "Drupal\jcc_jrn_contact\JccOfficerListBuilder",
  *     "views_data" = "Drupal\views\EntityViewsData",
  *     "form" = {
- *       "add" = "Drupal\jcc_jrn_contact\Form\JccStaffForm",
- *       "edit" = "Drupal\jcc_jrn_contact\Form\JccStaffForm",
+ *       "add" = "Drupal\jcc_jrn_contact\Form\JccOfficerForm",
+ *       "edit" = "Drupal\jcc_jrn_contact\Form\JccOfficerForm",
  *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm"
  *     },
  *     "route_provider" = {
  *       "html" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
  *     }
  *   },
- *   base_table = "jcc_staff",
- *   admin_permission = "access jcc staff overview",
+ *   base_table = "jcc_officer",
+ *   admin_permission = "access jcc officer overview",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "id",
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "add-form" = "/admin/content/jcc-staff/add",
- *     "canonical" = "/jcc-staff/{jcc_staff}",
- *     "edit-form" = "/admin/content/jcc-staff/{jcc_staff}/edit",
- *     "delete-form" = "/admin/content/jcc-staff/{jcc_staff}/delete",
- *     "collection" = "/admin/content/jcc-staff"
+ *     "add-form" = "/admin/content/jcc-officer/add",
+ *     "canonical" = "/jcc-officer/{jcc_officer}",
+ *     "edit-form" = "/admin/content/jcc-officer/{jcc_officer}/edit",
+ *     "delete-form" = "/admin/content/jcc-officer/{jcc_officer}/delete",
+ *     "collection" = "/admin/content/jcc-officer"
  *   },
  * )
  */
-class JccStaff extends ContentEntityBase implements JccStaffInterface {
+class JccOfficer extends ContentEntityBase implements JccStaffInterface {
 
   use EntityChangedTrait;
 
   /**
    * {@inheritdoc}
    *
-   * When a new jcc staff entity is created, set the uid entity reference to
+   * When a new jcc Officer entity is created, set the uid entity reference to
    * the current user as the creator of the entity.
    */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
@@ -143,9 +143,49 @@ class JccStaff extends ContentEntityBase implements JccStaffInterface {
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', TRUE);
 
+    $fields['salutation'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Salutation'))
+      ->setDescription(t('The salutation of the Officer entity.'))
+      ->setSettings([
+        'default_value' => '',
+        'max_length' => 255,
+        'text_processing' => 0,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -5,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => -5,
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
     $fields['first_name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('First Name'))
-      ->setDescription(t('The first name of the Staff entity.'))
+      ->setDescription(t('The first name of the Officer entity.'))
+      ->setSettings([
+        'default_value' => '',
+        'max_length' => 255,
+        'text_processing' => 0,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -5,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => -5,
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['middle_name'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Middle Name'))
+      ->setDescription(t('The middle name of the Officer entity.'))
       ->setSettings([
         'default_value' => '',
         'max_length' => 255,
@@ -165,7 +205,7 @@ class JccStaff extends ContentEntityBase implements JccStaffInterface {
 
     $fields['last_name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Last Name'))
-      ->setDescription(t('The last name of the Staff entity.'))
+      ->setDescription(t('The last name of the Officer entity.'))
       ->setSettings([
         'default_value' => '',
         'max_length' => 255,
@@ -183,75 +223,39 @@ class JccStaff extends ContentEntityBase implements JccStaffInterface {
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['location'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Location'))
-      ->setDescription(t('The location of the Staff entity.'))
-      ->setSettings([
-        'default_value' => '',
-        'max_length' => 255,
-        'text_processing' => 0,
+    $fields['court'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Court'))
+      ->setDescription(t('Court location related to Officer.'))
+      ->setSetting('target_type', 'node')
+      ->setSetting('handler', 'default:node')
+      ->setSetting('handler_settings', [
+        'target_bundles' => ['location' => 'location'],
+        'auto_create' => FALSE,
       ])
+      ->setTranslatable(FALSE)
       ->setDisplayOptions('view', [
-        'label' => 'above',
+        'label' => 'visible',
         'type' => 'string',
-        'weight' => 1,
+        'weight' => 7,
       ])
       ->setDisplayOptions('form', [
-        'type' => 'string_textfield',
-        'weight' => 1,
-      ])
-      ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['phone'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Phone'))
-      ->setDescription(t('The phone of the Staff entity.'))
-      ->setSettings([
-        'default_value' => '',
-        'max_length' => 255,
-        'text_processing' => 0,
-      ])
-      ->setDisplayOptions('view', [
-        'label' => 'above',
-        'type' => 'string',
-        'weight' => 3,
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'string_textfield',
-        'weight' => 3,
-      ])
-      ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['temporary'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Temporary'))
-      ->setDescription(t('A boolean indicating whether the jcc staff is a temp.'))
-      ->setDefaultValue(TRUE)
-      ->setSetting('on_label', 'Enabled')
-      ->setDisplayOptions('form', [
-        'type' => 'boolean_checkbox',
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 7,
         'settings' => [
-          'display_label' => TRUE,
-        ],
-        'weight' => 5,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayOptions('view', [
-        'type' => 'boolean',
-        'label' => 'above',
-        'weight' => 5,
-        'settings' => [
-          'format' => 'enabled-disabled',
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'placeholder' => 'Enter court location name...',
         ],
       ])
-      ->setDisplayConfigurable('view', TRUE);
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayConfigurable('form', FALSE);
 
-    $fields['department'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Department'))
+    $fields['job_title'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Job Title'))
       ->setSetting('target_type', 'taxonomy_term')
       ->setSetting('handler_settings', [
         'target_bundles' => [
-          'department' => 'department',
+          'job_title' => 'job_title',
         ],
       ])
       ->setDisplayOptions('form', [
@@ -283,6 +287,26 @@ class JccStaff extends ContentEntityBase implements JccStaffInterface {
         'label' => 'above',
         'type' => 'email_mailto',
         'weight' => 9,
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['phone'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Phone'))
+      ->setDescription(t('The phone of the Officer entity.'))
+      ->setSettings([
+        'default_value' => '',
+        'max_length' => 255,
+        'text_processing' => 0,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => 3,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => 3,
       ])
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', TRUE);

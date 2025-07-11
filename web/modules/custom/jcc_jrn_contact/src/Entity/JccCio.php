@@ -39,7 +39,7 @@ use Drupal\user\UserInterface;
  *   },
  *   links = {
  *     "add-form" = "/admin/content/jcc-cio/add",
- *     "canonical" = "/jcc_cio/{jcc_cio}",
+ *     "canonical" = "/jcc-cio/{jcc_cio}",
  *     "edit-form" = "/admin/content/jcc-cio/{jcc_cio}/edit",
  *     "delete-form" = "/admin/content/jcc-cio/{jcc_cio}/delete",
  *     "collection" = "/admin/content/jcc-cio"

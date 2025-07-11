@@ -18,6 +18,12 @@ function jcc_jrn_contact_theme() {
     'jcc_cio' => [
       'render element' => 'elements',
     ],
+    'jcc_officer' => [
+      'render element' => 'elements',
+    ],
+    'jcc_ajp' => [
+      'render element' => 'elements',
+    ],
   ];
 }
 
@@ -50,6 +56,40 @@ function template_preprocess_jcc_staff(array &$variables) {
  *   - attributes: HTML attributes for the containing element.
  */
 function template_preprocess_jcc_cio(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Prepares variables for jcc officer templates.
+ *
+ * Default template: jcc-officer.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the jcc officer information and
+ *     any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_jcc_officer(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Prepares variables for jcc ajp templates.
+ *
+ * Default template: jcc-ajp.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the jcc ajp information and
+ *     any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_jcc_ajp(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }

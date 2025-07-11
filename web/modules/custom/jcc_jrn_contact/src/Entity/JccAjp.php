@@ -11,49 +11,49 @@ use Drupal\jcc_jrn_contact\JccStaffInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Defines the jcc staff entity class.
+ * Defines the jcc ajp entity class.
  *
  * @ContentEntityType(
- *   id = "jcc_staff",
- *   label = @Translation("Staff"),
- *   label_collection = @Translation("Staff"),
+ *   id = "jcc_ajp",
+ *   label = @Translation("Temporary Assigned Judge"),
+ *   label_collection = @Translation("Temporary Assigned Judges"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\jcc_jrn_contact\JccStaffListBuilder",
+ *     "list_builder" = "Drupal\jcc_jrn_contact\JccAjpListBuilder",
  *     "views_data" = "Drupal\views\EntityViewsData",
  *     "form" = {
- *       "add" = "Drupal\jcc_jrn_contact\Form\JccStaffForm",
- *       "edit" = "Drupal\jcc_jrn_contact\Form\JccStaffForm",
+ *       "add" = "Drupal\jcc_jrn_contact\Form\JccAjpForm",
+ *       "edit" = "Drupal\jcc_jrn_contact\Form\JccAjpForm",
  *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm"
  *     },
  *     "route_provider" = {
  *       "html" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
  *     }
  *   },
- *   base_table = "jcc_staff",
- *   admin_permission = "access jcc staff overview",
+ *   base_table = "jcc_ajp",
+ *   admin_permission = "access jcc ajp overview",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "id",
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "add-form" = "/admin/content/jcc-staff/add",
- *     "canonical" = "/jcc-staff/{jcc_staff}",
- *     "edit-form" = "/admin/content/jcc-staff/{jcc_staff}/edit",
- *     "delete-form" = "/admin/content/jcc-staff/{jcc_staff}/delete",
- *     "collection" = "/admin/content/jcc-staff"
+ *     "add-form" = "/admin/content/jcc-ajp/add",
+ *     "canonical" = "/jcc-ajp/{jcc_ajp}",
+ *     "edit-form" = "/admin/content/jcc-ajp/{jcc_ajp}/edit",
+ *     "delete-form" = "/admin/content/jcc-ajp/{jcc_ajp}/delete",
+ *     "collection" = "/admin/content/jcc-ajp"
  *   },
  * )
  */
-class JccStaff extends ContentEntityBase implements JccStaffInterface {
+class JccAjp extends ContentEntityBase implements JccStaffInterface {
 
   use EntityChangedTrait;
 
   /**
    * {@inheritdoc}
    *
-   * When a new jcc staff entity is created, set the uid entity reference to
+   * When a new jcc ajp entity is created, set the uid entity reference to
    * the current user as the creator of the entity.
    */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
@@ -143,9 +143,9 @@ class JccStaff extends ContentEntityBase implements JccStaffInterface {
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['first_name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('First Name'))
-      ->setDescription(t('The first name of the Staff entity.'))
+    $fields['name'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Name'))
+      ->setDescription(t('The name of the AJP entity.'))
       ->setSettings([
         'default_value' => '',
         'max_length' => 255,
@@ -162,118 +162,10 @@ class JccStaff extends ContentEntityBase implements JccStaffInterface {
       ])
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', TRUE);
-
-    $fields['last_name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Last Name'))
-      ->setDescription(t('The last name of the Staff entity.'))
-      ->setSettings([
-        'default_value' => '',
-        'max_length' => 255,
-        'text_processing' => 0,
-      ])
-      ->setDisplayOptions('view', [
-        'label' => 'above',
-        'type' => 'string',
-        'weight' => -1,
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'string_textfield',
-        'weight' => -1,
-      ])
-      ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['location'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Location'))
-      ->setDescription(t('The location of the Staff entity.'))
-      ->setSettings([
-        'default_value' => '',
-        'max_length' => 255,
-        'text_processing' => 0,
-      ])
-      ->setDisplayOptions('view', [
-        'label' => 'above',
-        'type' => 'string',
-        'weight' => 1,
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'string_textfield',
-        'weight' => 1,
-      ])
-      ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['phone'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Phone'))
-      ->setDescription(t('The phone of the Staff entity.'))
-      ->setSettings([
-        'default_value' => '',
-        'max_length' => 255,
-        'text_processing' => 0,
-      ])
-      ->setDisplayOptions('view', [
-        'label' => 'above',
-        'type' => 'string',
-        'weight' => 3,
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'string_textfield',
-        'weight' => 3,
-      ])
-      ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['temporary'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Temporary'))
-      ->setDescription(t('A boolean indicating whether the jcc staff is a temp.'))
-      ->setDefaultValue(TRUE)
-      ->setSetting('on_label', 'Enabled')
-      ->setDisplayOptions('form', [
-        'type' => 'boolean_checkbox',
-        'settings' => [
-          'display_label' => TRUE,
-        ],
-        'weight' => 5,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayOptions('view', [
-        'type' => 'boolean',
-        'label' => 'above',
-        'weight' => 5,
-        'settings' => [
-          'format' => 'enabled-disabled',
-        ],
-      ])
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['department'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Department'))
-      ->setSetting('target_type', 'taxonomy_term')
-      ->setSetting('handler_settings', [
-        'target_bundles' => [
-          'department' => 'department',
-        ],
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'entity_reference_autocomplete',
-        'settings' => [
-          'match_operator' => 'CONTAINS',
-          'size' => 60,
-          'placeholder' => '',
-        ],
-        'weight' => 7,
-      ])
-      ->setDisplayOptions('view', [
-        'label' => 'above',
-        'type' => 'entity_reference',
-        'weight' => 7,
-      ])
-      ->setDisplayConfigurable('view', TRUE)
-      ->setDisplayConfigurable('form', FALSE);
 
     $fields['email'] = BaseFieldDefinition::create('email')
       ->setLabel(t("Email"))
-      ->setDescription(t('The email of the staff.'))
+      ->setDescription(t('The email of the ajp.'))
       ->addConstraint('UniqueField', [])
       ->setDisplayOptions('form', [
         'type' => 'email_default',
@@ -285,6 +177,130 @@ class JccStaff extends ContentEntityBase implements JccStaffInterface {
         'weight' => 9,
       ])
       ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['program_status'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Program Status'))
+      ->setDescription(t('Program status of the jcc ajp.'))
+      ->setSettings([
+        'max_length' => 255,
+        'text_processing' => 0,
+        'allowed_values' => [
+          'Deceased' => 'Deceased',
+          'Left Program' => 'Left Program',
+          'Approved' => 'Approved',
+          'On Hold' => 'On Hold',
+          'Not In Program' => 'Not In Program',
+        ],
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'weight' => 11,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'list_default',
+        'weight' => 11,
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['fy'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Fiscal Year'))
+      ->setDescription(t('Fiscal year of the jcc ajp.'))
+      ->setDisplayOptions('form', [
+        'type' => 'number_integer',
+        'weight' => 13,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'number_integer',
+        'weight' => 13,
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['fy_service_days'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Service Days'))
+      ->setDescription(t('Service Days of the jcc ajp.'))
+      ->setDisplayOptions('form', [
+        'type' => 'number_integer',
+        'weight' => 13,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'number_integer',
+        'weight' => 13,
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['fy_pro_bono_days'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Pro Bono Days'))
+      ->setDescription(t('Pro Bono Days of the jcc ajp.'))
+      ->setDisplayOptions('form', [
+        'type' => 'number_integer',
+        'weight' => 13,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'number_integer',
+        'weight' => 13,
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['life_service_days'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Life Service Days'))
+      ->setDescription(t('Life Service Days of the jcc ajp.'))
+      ->setDisplayOptions('form', [
+        'type' => 'number_integer',
+        'weight' => 13,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'number_integer',
+        'weight' => 13,
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['life_pro_bono_days'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Life Pro Bono Days'))
+      ->setDescription(t('Life pro bono days of the jcc ajp.'))
+      ->setDisplayOptions('form', [
+        'type' => 'number_integer',
+        'weight' => 13,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'number_integer',
+        'weight' => 13,
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['jud_exp_end_date'] = BaseFieldDefinition::create('datetime')
+      ->setLabel(t('Judicial Experience End Date'))
+      ->setDescription(t('Judicial Experience End Date.'))
+      ->setRevisionable(TRUE)
+      ->setSettings([
+        'datetime_type' => 'date',
+      ])
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'datetime_default',
+        'settings' => [
+          'format_type' => 'medium',
+        ],
+        'weight' => 15,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'datetime_default',
+        'weight' => 15,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
