@@ -1,0 +1,81 @@
+#uuid: c8412f69-8e49-4060-a235-7244f71ab1cd
+langcode: en
+status: true
+dependencies: {  }
+id: location_primary_paragraph
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - jrn
+  - location_primary
+  - paragraph
+migration_group: jrn_location
+label: 'Location Primary - Import Paragraph'
+source:
+  plugin: csv
+  path: 'public://serranus_addr_csv_sample.txt'
+  #serranus_addr_csv_20250702
+  header_row_count: 1
+  ids:
+    - ENTITY_ID      
+    - LOC_NUM
+  fields:
+    - name: ENTITY_ID
+      selector: ENTITY_ID
+    - name: ADDR_ID
+      selector: ADDR_ID
+    - name: PRINT_MAIL_ADDR
+      selector: PRINT_MAIL_ADDR
+    - name: LOC_NUM
+      selector: LOC_NUM
+    - name: ADDR1
+      selector: ADDR1
+    - name: ADDR2
+      selector: ADDR2
+    - name: CITY
+      selector: CITY
+    - name: STATE
+      selector: STATE
+    - name: ZIPCODE
+      selector: ZIPCODE
+    - name: MAILING_ADDR1
+      selector: MAILING_ADDR1
+    - name: MAILING_ADDR2
+      selector: MAILING_ADDR2
+    - name: MAILING_CITY
+      selector: MAILING_CITY
+    - name: MAILING_STATE
+      selector: MAILING_STATE
+    - name: MAILING_ZIPCODE
+      selector: MAILING_ZIPCODE
+    - name: PHONE
+      selector: PHONE
+    - name: FAX
+      selector: FAX
+    - name: LAST_UPDATED
+      selector: LAST_UPDATED
+process:
+  #unique_id:
+  #  plugin: concat
+  #  delimiter: '-'
+  #  source:
+  #    - ENTITY_ID
+  #    - LOC_NUM  
+  field_address/country_code: 'United States'
+  field_address/address_line1: ADDR1
+  field_address/address_line2: ADDR2
+  field_address/locality: CITY
+  field_address/administrative_area: STATE
+  field_address/postal_code: ZIPCODE
+  field_mailing_address/country_code: 'United States'
+  field_mailing_address/address_line1: MAILING_ADDR1
+  field_mailing_address/address_line2: MAILING_ADDR2
+  field_mailing_address/locality: MAILING_CITY
+  field_mailing_address/administrative_area: MAILING_STATE
+  field_mailing_address/postal_code: MAILING_ZIPCODE        
+  field_service_phone_number: PHONE
+  field_service_fax_number: FAX
+destination:
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: location
