@@ -11,7 +11,7 @@ migration_tags:
   - location_primary
   - paragraph
 migration_group: jrn_location
-label: 'Location Primary - Import Paragraph'
+label: 'JRN Location: Paragraph'
 source:
   plugin: csv
   path: 'public://serranus_addr_csv_sample.txt'
@@ -56,19 +56,23 @@ source:
     - name: LAST_UPDATED
       selector: LAST_UPDATED
 process:
-  #unique_id:
-  #  plugin: concat
-  #  delimiter: '-'
-  #  source:
-  #    - ENTITY_ID
-  #    - LOC_NUM  
-  field_address/country_code: 'United States'
+  unique_id:
+    plugin: concat
+    delimiter: '-'
+    source:
+      - ENTITY_ID
+      - LOC_NUM  
+  field_address/country_code:
+    plugin: default_value
+    default_value: 'US'
   field_address/address_line1: ADDR1
   field_address/address_line2: ADDR2
   field_address/locality: CITY
   field_address/administrative_area: STATE
   field_address/postal_code: ZIPCODE
-  field_mailing_address/country_code: 'United States'
+  field_mailing_address/country_code:
+    plugin: default_value
+    default_value: 'US'
   field_mailing_address/address_line1: MAILING_ADDR1
   field_mailing_address/address_line2: MAILING_ADDR2
   field_mailing_address/locality: MAILING_CITY

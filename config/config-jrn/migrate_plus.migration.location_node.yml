@@ -2,7 +2,7 @@ uuid: 53adb724-12dc-4aa2-8eb7-7ad011d436d6
 langcode: en
 status: true
 dependencies: {  }
-id: location_primary
+id: location_node
 class: null
 field_plugin_method: null
 cck_plugin_method: null
@@ -10,11 +10,11 @@ migration_tags:
   - jrn
   - location
 migration_group: jrn_location
-label: 'JRN Location: Primary'
+label: 'JRN Location: Node'
 source:
   plugin: csv
   path: 'public://serranus_entity_csv_sample.txt'
-  #serranus_entity_csv_20250702
+  #serranus_entity_csv_20250702  
   header_row_count: 1
   ids:
     - ENTITY_ID
@@ -39,6 +39,10 @@ source:
       name: NAME3
       selector: NAME3
       label: Name3
+    -
+      name: LAST_UPDATED
+      selector: LAST_UPDATED
+      label: Last Updated  
 process:
   uid:
     plugin: default_value
@@ -78,9 +82,8 @@ process:
   field_components:
     -
       plugin: sub_process
-      source:
+      source: 
         - '@pseudo_section'
-        #- '@pseudo_section'
       process:
         target_id:
           -

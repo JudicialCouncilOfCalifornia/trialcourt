@@ -11,15 +11,14 @@ migration_tags:
   - location_primary
   - section
 migration_group: jrn_location
-label: 'Location Primary - Import Paragraph Section'
+label: 'JRN Location :Import Section'
 source:
   plugin: csv
   path: 'public://serranus_addr_csv_sample.txt'
-  #serranus_addr_csv_20250702
   header_row_count: 1
   ids:
     - ENTITY_ID
-    #- LOC_NUM 
+    #- LOC_NUM (there is going to be 1 section for each node)
   fields:
     -
       name: ENTITY_ID
@@ -33,7 +32,7 @@ process:
   pseudo_location:
     -
       plugin: migration_lookup 
-      #migration_lookup_multiple??
+      #plugin: migration_lookup_multiple
       migration: location_primary_paragraph
       source: 
         - ENTITY_ID
