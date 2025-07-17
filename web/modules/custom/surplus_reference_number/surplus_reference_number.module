@@ -14,7 +14,10 @@ use Drupal\node\Entity\Node;
 function surplus_reference_number_entity_presave(EntityInterface $entity) {
   // For node creation: generate reference number.
   if ($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'surplus_materials') {
-    if ($entity->isNew() && !$entity->get('field_reference_number')->value) {
+    $original = $entity->original ?? NULL;
+    $existing_ref = $entity->get('field_reference_number')->value;
+    $original_ref = $original ? $original->get('field_reference_number')->value : NULL;
+    if (!$original && empty($existing_ref)) {
       $storage = \Drupal::entityTypeManager()->getStorage('node');
       $query = $storage->getQuery()
         ->condition('type', 'surplus_materials')
@@ -31,6 +34,9 @@ function surplus_reference_number_entity_presave(EntityInterface $entity) {
         }
       }
       $entity->set('field_reference_number', $max_value + 1);
+    }
+    elseif ($original_ref && empty($existing_ref)) {
+      $entity->set('field_reference_number', $original_ref);
     }
     $posted_date_value = $entity->get('field_posted')->value;
     if (empty($posted_date_value)) {
