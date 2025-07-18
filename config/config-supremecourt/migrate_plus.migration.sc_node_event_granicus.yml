@@ -58,6 +58,9 @@ process:
   uid:
     plugin: default_value
     default_value: 1
+  status:
+    plugin: default_value
+    default_value: 1
   title:
     -
       plugin: get
@@ -69,22 +72,26 @@ process:
     plugin: default_value
     default_value: 1
   field_event_type:
-    - 
+    -
       plugin: skip_on_condition
       source: type
       method: row
       condition:
         plugin: not:matches
-        regex: '#Supreme Court Oral Argument|Supreme Court Oral Argument Test#'
-    - 
+        regex: '/Supreme Court Oral Argument|Supreme Court Oral Argument Test/'
+    -
+      plugin: static_map
+      source: type
+      map:
+        'Supreme Court Oral Argument': 'Supreme Court Oral Argument Granicus'
+        'Supreme Court Oral Argument Test': 'Supreme Court Oral Argument Granicus'
+    -
       plugin: entity_lookup
       entity_type: taxonomy_term
       bundle_key: vid
       bundle: event_type
       value_key: name
-      source:
-        plugin: default_value
-        default_value: 'Supreme Court Oral Argument - Granicus'
+
   field_date_range/value:
     -
       plugin: format_date
