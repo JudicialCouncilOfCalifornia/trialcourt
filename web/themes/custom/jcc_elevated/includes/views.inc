@@ -1568,6 +1568,18 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
             ];
           }
           break;
+        case 'oembed_video':
+          $file = $media->get('thumbnail')->entity;
+          $uri = $file->getFileUri();
+
+          $render_array = [
+            '#theme' => 'image',
+            '#uri' => $uri,
+            '#alt' => $file->getFilename(),
+            '#title' => $file->getFilename(),
+          ];
+          $rendered_image = \Drupal::service('renderer')->render($render_array);
+          break;
       }
     }
 
@@ -1739,13 +1751,22 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
     }
   }
 
-  // Add a label to the form.
-  $form['search_label'] = [
-    '#type' => 'html_tag',
-    '#tag' => 'h2',
-    '#value' => t('Search and Filter'),
-    '#weight' => '-99',
-  ];
+  if ($form['#id'] == 'views-exposed-form-courses-catalog'){
+    $form['search_label'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'h2',
+      '#value' => '',
+      '#weight' => '-99',
+    ];
+  } else {
+    // Add a label to the form.
+    $form['search_label'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'h2',
+      '#value' => t('Search and Filter'),
+      '#weight' => '-99',
+    ];
+  }
 
   // Style submit and reset buttons.
   $form['actions']['submit']['#attributes']['class'][] = 'button button--secondary button--normal';
