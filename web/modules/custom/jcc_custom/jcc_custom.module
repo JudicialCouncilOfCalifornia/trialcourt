@@ -1268,7 +1268,7 @@ function jcc_custom_form_webform_form_alter(&$form, FormStateInterface $form_sta
  *   The formatted date string or original value if formatting fails.
  */
 function jcc_custom_custom_date_format($value) {
-  if (empty($value) || $value == 'Hearing_Date_and_Time') {
+  if ($value == 'Hearing_Date_and_Time') {
     return NULL;
   }
   try {
