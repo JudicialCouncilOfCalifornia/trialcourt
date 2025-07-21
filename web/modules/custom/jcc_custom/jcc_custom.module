@@ -315,7 +315,7 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       $form['field_media_file_multiple']['widget']['#open'] = FALSE;
       break;
 
-    case 'node_location_edit_form': 
+    case 'node_location_edit_form':
       if (isset($form['field_add_services']['widget'])) {
         foreach ($form['field_add_services']['widget'] as $service_index => $service_widget) {
             if (isset($service_widget['subform']['field_location_service_hours']['widget']) && is_array($service_widget['subform']['field_location_service_hours']['widget'])) {
@@ -929,7 +929,7 @@ function jcc_custom_field_widget_form_alter(&$element, FormStateInterface $form_
         case 'field_building_hours_to':
             $element['value']['#date_date_element'] = 'none';
             break;
-    }     
+    }
   }
   // Apply changes specific to 'services' and 'service_hours' paragraph types.
   if ($context['items']->getEntity()->getEntityTypeId() === 'paragraph') {
@@ -1268,6 +1268,9 @@ function jcc_custom_form_webform_form_alter(&$form, FormStateInterface $form_sta
  *   The formatted date string or original value if formatting fails.
  */
 function jcc_custom_custom_date_format($value) {
+  if ($value == 'Hearing_Date_and_Time') {
+    return NULL;
+  }
   try {
     $value = trim($value);
     $timestamp = strtotime($value);
