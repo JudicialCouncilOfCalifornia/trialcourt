@@ -17,7 +17,6 @@ source:
   path: sites/default/files/madera/default/calendar/export.csv
   delimiter: ','
   enclosure: '"'
-  header_offset: null
   header_row_count: 1
   ids:
     - case_number
@@ -112,6 +111,9 @@ process:
       entity_type: taxonomy_term
       ignore_case: true
   field_hearing_date:
+    - plugin: skip_on_empty
+      method: process
+      source: hearing_date_and_time
     - plugin: callback
       callable: jcc_custom_custom_date_format
       source: hearing_date_and_time
@@ -150,13 +152,8 @@ process:
       ignore_case: true
   field_case_category:
     -
-      plugin: skip_on_empty
-      source: case_category
-      method: process
-      message: 'No case type found.'
-    -
-      plugin: callback
-      callable: trim
+      plugin: default_value
+      default_value: 'Not Available'
     -
       plugin: entity_generate
       bundle: case_category
