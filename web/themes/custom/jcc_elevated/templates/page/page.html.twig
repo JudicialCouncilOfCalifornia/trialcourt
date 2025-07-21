@@ -170,9 +170,9 @@
   <main role="main">
     <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
 
-    <div class="layout-content">
+   <div class="layout-content">
       {{ page.content }}
-    </div>{# /.layout-content #}
+    </div>
 
     {% if page.sidebar_first %}
       <aside class="layout-sidebar-first" role="complementary">
@@ -258,8 +258,11 @@
     },
     attributes: create_attribute(),
   } %}
-</div>{# /.layout-container #}
+</div>
 
 {% if page.drawer %}
   {{ page.drawer }}
 {% endif %}
+
+
+{#{% include "@jcc_elevated/components/directory.twig" %}#}

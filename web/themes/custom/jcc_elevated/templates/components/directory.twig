@@ -1,0 +1,69 @@
+{{ attach_library("jcc_storybook/Card") }}
+{% set imageTag %}
+  <img style="inline-size: unset;height:250px;" src=" /themes/custom/jcc_elevated/images/jrn-directory.png" alt="JRN Directory image" />
+{% endset %}
+
+
+{% set directoryMarkup %}
+<div class="form-item form-item-textfield--withbutton">
+			 <label class="usa-sr-only" for="header-search">Find Court Executives and Judicial Officers</label>
+      
+			
+      <div class="cluster">
+     
+        <div class="placeholder-container js-form-type-textfield">
+          <input class="usa-input" id="header-search" type="search" name="search" placeholder="Enter a name" />
+          <label for="edit-text-field-label">Enter a name</label>
+        </div>				
+		<a class="button button--secondary" href="#">
+    		<span>Search By Name</span>
+		</a> 
+    	</div>
+		</div>
+   <br />
+<form class="views-exposed-form bef-exposed-form" action="/search" method="get">
+   <div class="form-item form-item-textfield--withbutton">
+   	<label class="usa-sr-only" for="header-search">Find Court Locations/Contacts</label>  
+   
+   <div class="cluster"> 
+   <select class="form-text" type="select">
+        <option value="0">- Select court -</option>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="3">Three</option>
+         
+      </select>
+      <a class="button button--secondary" href="#">
+    		<span>Search Court</span>
+		</a> 
+     </div>
+    </div>
+</form>
+<br />
+
+    <div class="form-item form-item-textfield--withbutton">
+			<label class="usa-sr-only" for="header-search">Find Judicial Council Staff</label>
+			<div class="cluster">
+        <div class="placeholder-container js-form-type-textfield">
+          <input class="usa-input" id="header-search" type="search" name="search" placeholder=" " />
+          <label for="edit-text-field-label">Enter a name</label>
+        </div>				
+		<a class="button button--secondary" href="#">
+    		<span>Search Staff</span>
+		</a> 
+    	</div>
+		</div>
+{% endset %}
+
+ {% include "@molecules/Card/Card.twig" with {
+      variant: "bordered",
+      aspect: [],
+      clickable_card: false,
+      background: null,
+      media: imageTag,
+       
+    heading: "Directory",
+    text: directoryMarkup,
+          
+             
+    } %} 
