@@ -207,9 +207,9 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
       '#type' => 'fieldset',
       '#title' => t('Search Catalog'),
     ];
-    $form['sort_group'] = [
+    $form['assignment_group'] = [
       '#type' => 'fieldset',
-      '#title' => t('Sort'),
+      '#title' => t('Assignment Area'),
     ];
     $form['category_group'] = [
       '#type' => 'fieldset',
@@ -219,20 +219,28 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
       '#type' => 'fieldset',
       '#title' => t('Type'),
     ];
+    $form['special_group'] = [
+      '#type' => 'fieldset',
+      '#title' => t('Special Tags'),
+    ];
+    $form['sort_group'] = [
+      '#type' => 'fieldset',
+      '#title' => t('Sort'),
+    ];
+    $form['special_group']['#attributes']['class'][] = 'collapsible';
 
     // Move fields into their groups
     if (isset($form['combine'])) {
       $form['keyword_group']['combine'] = $form['combine'];
       unset($form['combine']);
     }
-
     if (isset($form['sort_bef_combine'])) {
       $form['sort_group']['sort_bef_combine'] = $form['sort_bef_combine'];
       unset($form['sort_bef_combine']);
     }
-
     if (isset($form['field_assignment_area_target_id'])) {
-      $form['category_group']['field_assignment_area_target_id'] = $form['field_assignment_area_target_id'];
+      $form['assignment_group']['field_assignment_area_target_id'] = $form['field_assignment_area_target_id'];
+      $form['assignment_group']['field_assignment_area_target_id']['#title'] = null;
       unset($form['field_assignment_area_target_id']);
     }
     if (isset($form['field_topics_target_id'])) {
@@ -251,14 +259,20 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
       $form['category_group']['field_event_location_target_id'] = $form['field_event_location_target_id'];
       unset($form['field_event_location_target_id']);
     }
-    if (isset($form['field_is_quick_reference_value'])) {
-      $form['category_group']['field_is_quick_reference_value'] = $form['field_is_quick_reference_value'];
-      unset($form['field_is_quick_reference_value']);
-    }
     if (isset($form['field_course_type_target_id'])) {
       $form['type_group']['field_course_type_target_id'] = $form['field_course_type_target_id'];
       $form['type_group']['#attributes']['class'][] = 'collapsible';
       unset($form['field_course_type_target_id']);
+    }
+    if (isset($form['field_is_quick_reference_value'])) {
+      $form['special_group']['field_is_quick_reference_value'] = $form['field_is_quick_reference_value'];
+      $form['special_group']['field_is_quick_reference_value']['label_display'] = 'after';
+      unset($form['field_is_quick_reference_value']);
+    }
+    if (isset($form['field_is_contributed_content_value'])) {
+      $form['special_group']['field_is_contributed_content_value'] = $form['field_is_contributed_content_value'];
+      $form['special_group']['field_is_contributed_content_value']['label_display'] = 'after';
+      unset($form['field_is_contributed_content_value']);
     }
   }
 }

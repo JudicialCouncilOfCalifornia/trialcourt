@@ -1579,18 +1579,6 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
             ];
           }
           break;
-//        case 'oembed_video':
-//          $file = $media->get('thumbnail')->entity;
-//          $uri = $file->getFileUri();
-//
-//          $render_array = [
-//            '#theme' => 'image',
-//            '#uri' => $uri,
-//            '#alt' => $file->getFilename(),
-//            '#title' => $file->getFilename(),
-//          ];
-//          $rendered_image = \Drupal::service('renderer')->render($render_array);
-//          break;
       }
     }
 
@@ -1611,11 +1599,17 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
       $overview = $overview . '...';
     }
 
+    $published_date = $node->getCreatedTime();
+    $three_months_ago = strtotime('-3 months');
+    if($published_date >= $three_months_ago) {
+      $is_new = true;
+    }
+
     $variables['processed_rows'][] = [
       'title' => $label,
       'url' => $node->toUrl(),
-      'content' => $overview,
-      'is_new' => true,
+//      'content' => $overview,
+      'is_new' => $is_new,
       'button_data' => $action,
       'detail_list_data' => $detail_list_data,
       'raw_pills' => $pills,

@@ -64,9 +64,12 @@
     description_display == 'invisible' ? 'visually-hidden',
   ]
 %}
-{%
- set label_display = 'before'
-%}
+
+{% if label_display is null %}
+  {%
+   set label_display = 'before'
+  %}
+{% endif %}
 
 {% if name == 'items_per_page' %}
   {% set custom_wrapper_begin %}
