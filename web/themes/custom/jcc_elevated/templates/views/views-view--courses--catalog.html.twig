@@ -51,6 +51,42 @@
   </div>
 {% endset %}
 
+{% set pills_array = {} %}
+{% for key, row in processed_rows %}
+  {% if row.raw_pills %}
+    {% for pills in row.raw_pills %}
+
+      {% set processed_pills %}
+        {% for pill in pills %}
+          {% include "@atoms/Pill/Pill.twig" with {
+            variant: 'square',
+            label: pill.label,
+            url: '',
+          } %}
+        {% endfor %}
+      {% endset %}
+
+      {% set processed_pills_list %}
+        {% include "@molecules/Pills/Pills.twig" with {
+          variant: 'default',
+          items: [processed_pills],
+        } %}
+      {% endset %}
+      {% set pills_array = pills_array|merge({(key): processed_pills_list }) %}
+    {% endfor %}
+  {% else %}
+    {% set pills_array = pills_array|merge({(key): null }) %}
+  {% endif %}
+{% endfor %}
+
+{% for key, pills in pills_array %}
+  {% set my_array['foo']['bar'] = 'value' %}
+  {% set my_array = my_array|merge({ 'foo': my_array.foo|merge({ 'bar': 'new_value' }) }) %}
+{% endfor %}
+
+{{ kint(pills_array) }}
+<div>TEST</div>
+
 <div{{ attributes.addClass(classes) }}>
   {% include "@organisms/ViewResults/ViewResults.twig" with {
     variant: 'default',

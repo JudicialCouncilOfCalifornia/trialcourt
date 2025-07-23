@@ -1479,6 +1479,17 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
     }
     $date = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : NULL;
 
+    $topics = $node->get('field_topics');
+    $subtopics = $node->get('field_subtopics');
+    $pills = [];
+
+    foreach ($topics as $topic) {
+      $pills['items'][] = ['variant'=> 'default', 'label' => $topic->entity->label(), 'url' => '#'];
+    }
+    foreach ($subtopics as $subtopic) {
+      $pills['items'][] = ['variant'=> 'default', 'label' => $subtopic->entity->label(), 'url' => '#'];
+    }
+
     // Locations for upcoming events only.
     $items = $node->get('field_components');
     $locations = [];
@@ -1568,18 +1579,18 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
             ];
           }
           break;
-        case 'oembed_video':
-          $file = $media->get('thumbnail')->entity;
-          $uri = $file->getFileUri();
-
-          $render_array = [
-            '#theme' => 'image',
-            '#uri' => $uri,
-            '#alt' => $file->getFilename(),
-            '#title' => $file->getFilename(),
-          ];
-          $rendered_image = \Drupal::service('renderer')->render($render_array);
-          break;
+//        case 'oembed_video':
+//          $file = $media->get('thumbnail')->entity;
+//          $uri = $file->getFileUri();
+//
+//          $render_array = [
+//            '#theme' => 'image',
+//            '#uri' => $uri,
+//            '#alt' => $file->getFilename(),
+//            '#title' => $file->getFilename(),
+//          ];
+//          $rendered_image = \Drupal::service('renderer')->render($render_array);
+//          break;
       }
     }
 
@@ -1604,10 +1615,13 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
       'title' => $label,
       'url' => $node->toUrl(),
       'content' => $overview,
+      'is_new' => true,
       'button_data' => $action,
       'detail_list_data' => $detail_list_data,
+      'raw_pills' => $pills,
     ];
   }
+  dsm($variables['processed_rows'][0]['raw_pills']);
 }
 
 /**
