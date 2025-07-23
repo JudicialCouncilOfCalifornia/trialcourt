@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.node.body
     - node.type.course
     - taxonomy.vocabulary.assignment_area
     - taxonomy.vocabulary.audience
@@ -15,7 +16,10 @@ dependencies:
     - node
     - paragraphs
     - taxonomy
+    - text
     - user
+_core:
+  default_config_hash: LpHwy0F-3sGE2YZGeCwpH9X_MWf9TYJCYy_bVI9GKb8
 id: courses
 label: Courses
 module: views
@@ -95,6 +99,68 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+        body:
+          id: body
+          table: node__body
+          field: body
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: text_default
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
       pager:
         type: full
         options:
@@ -130,9 +196,9 @@ display:
           text_input_required_format: snippet
           bef:
             general:
-              autosubmit: false
+              autosubmit: true
               autosubmit_exclude_textfield: false
-              autosubmit_textfield_delay: 500
+              autosubmit_textfield_delay: 1500
               autosubmit_hide: false
               input_required: false
               allow_secondary: false
@@ -154,6 +220,17 @@ display:
               advanced:
                 is_secondary: false
             filter:
+              combine:
+                plugin_id: default
+                advanced:
+                  placeholder_text: 'Enter keywords'
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
               field_assignment_area_target_id:
                 plugin_id: default
                 advanced:
@@ -196,20 +273,6 @@ display:
                 options_show_only_used_filtered: true
                 options_hide_when_empty: true
                 options_show_items_count: 0
-              field_course_type_target_id:
-                plugin_id: default
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  is_secondary: false
-                options_show_only_used: true
-                options_show_only_used_filtered: true
-                options_hide_when_empty: true
-                options_show_items_count: 0
               field_audience_target_id:
                 plugin_id: default
                 advanced:
@@ -239,7 +302,7 @@ display:
                 options_hide_when_empty: true
                 options_show_items_count: 1
               field_is_quick_reference_value:
-                plugin_id: default
+                plugin_id: bef_single
                 advanced:
                   sort_options: false
                   rewrite:
@@ -248,10 +311,33 @@ display:
                   collapsible: false
                   collapsible_disable_automatic_open: false
                   is_secondary: false
-                options_show_only_used: false
-                options_show_only_used_filtered: false
-                options_hide_when_empty: false
-                options_show_items_count: false
+              field_course_type_target_id:
+                plugin_id: bef
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                options_show_only_used: true
+                options_show_only_used_filtered: true
+                options_hide_when_empty: true
+                options_show_items_count: 1
+              field_is_contributed_content_value:
+                plugin_id: bef_single
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
       access:
         type: perm
         options:
@@ -277,6 +363,63 @@ display:
           granularity: second
       arguments: {  }
       filters:
+        combine:
+          id: combine
+          table: views
+          field: combine
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: combine
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: combine_op
+            label: Keywords
+            description: ''
+            use_operator: false
+            operator: combine_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: combine
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          fields:
+            title: title
+            body: body
         status:
           id: status
           table: node_field_data
@@ -311,7 +454,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: taxonomy_index_tid
-          operator: 'not empty'
+          operator: or
           value: {  }
           group: 1
           exposed: true
@@ -479,66 +622,6 @@ display:
             group_items: {  }
           reduce_duplicates: false
           vid: subtopics
-          type: select
-          hierarchy: false
-          limit: true
-          error_message: true
-        field_course_type_target_id:
-          id: field_course_type_target_id
-          table: node__field_course_type
-          field: field_course_type_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: taxonomy_index_tid
-          operator: or
-          value: {  }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_course_type_target_id_op
-            label: 'Course Type'
-            description: ''
-            use_operator: false
-            operator: field_course_type_target_id_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_course_type_target_id
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              facilities: '0'
-              opinions_editor: '0'
-              request_manager: '0'
-              advisory_body_manager: '0'
-              itc_manager: '0'
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          reduce_duplicates: false
-          vid: course_type
           type: select
           hierarchy: false
           limit: true
@@ -716,6 +799,131 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        field_course_type_target_id:
+          id: field_course_type_target_id
+          table: node__field_course_type
+          field: field_course_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_course_type_target_id_op
+            label: ''
+            description: ''
+            use_operator: false
+            operator: field_course_type_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_course_type_target_id
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: 'Course Type (field_course_type)'
+            description: ''
+            identifier: field_course_type_target_id
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: ''
+                operator: or
+                value: {  }
+              2:
+                title: ''
+                operator: or
+                value: {  }
+              3:
+                title: ''
+                operator: or
+                value: {  }
+          reduce_duplicates: false
+          vid: course_type
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_is_contributed_content_value:
+          id: field_is_contributed_content_value
+          table: node__field_is_contributed_content
+          field: field_is_contributed_content_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: boolean
+          operator: '='
+          value: All
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'By Judges for Judges'
+            description: ''
+            use_operator: false
+            operator: field_is_contributed_content_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_is_contributed_content_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
       filter_groups:
         operator: AND
         groups:
@@ -742,6 +950,7 @@ display:
           admin_label: 'field_components: Paragraph'
           plugin_id: standard
           required: false
+      use_ajax: true
       group_by: true
       header:
         result:
@@ -768,7 +977,8 @@ display:
         - user
         - 'user.node_grants:view'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:field.storage.node.body'
   catalog:
     id: catalog
     display_title: Catalog
@@ -791,4 +1001,5 @@ display:
         - user
         - 'user.node_grants:view'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:field.storage.node.body'
