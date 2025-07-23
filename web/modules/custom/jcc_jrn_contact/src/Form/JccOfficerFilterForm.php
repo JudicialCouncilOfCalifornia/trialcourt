@@ -98,8 +98,8 @@ class JccOfficerFilterForm extends FormBase {
       '#default_value' => $request->get('job_title') ?? '',
     ];
 
-    $location_storage = $this->entityTypeManager->getStorage('node');
-    $location_nodes = $location_storage->loadByProperties(['type' => 'location']);
+    $location_storage = $this->entityTypeManager->getStorage('jcc_court');
+    $location_nodes = $location_storage->loadByProperties(['status' => 1]);
     $form['filter']['court'] = [
       '#type' => 'select',
       '#title' => 'Court',

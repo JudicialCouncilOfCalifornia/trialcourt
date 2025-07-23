@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Form controller for the jcc staff entity edit forms.
  */
-class JccCioFilterForm extends FormBase {
+class JccAddressFilterForm extends FormBase {
 
   /**
    * The entity type manager.
@@ -50,7 +50,7 @@ class JccCioFilterForm extends FormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'jcc_jrn_contact_cio_filter_form';
+    return 'jcc_jrn_contact_address_filter_form';
   }
 
   /**
@@ -66,37 +66,17 @@ class JccCioFilterForm extends FormBase {
       ],
     ];
 
-    $form['filter']['first_name'] = [
-      '#type' => 'textfield',
-      '#title' => 'First Name',
-      '#default_value' => $request->get('first_name') ?? '',
-    ];
-
-    $form['filter']['last_name'] = [
-      '#type' => 'textfield',
-      '#title' => 'Last Name',
-      '#default_value' => $request->get('last_name') ?? '',
-    ];
-
-    $form['filter']['email'] = [
-      '#type' => 'textfield',
-      '#title' => 'Email',
-      '#default_value' => $request->get('email') ?? '',
-    ];
-
-    $terms = $this->entityTypeManager
-      ->getStorage('taxonomy_term')
-      ->loadTree('job_title');
-    $form['filter']['job_title'] = [
-      '#type' => 'select',
-      '#title' => 'Job Title',
-      '#options' => $terms ? array_reduce($terms, function ($carry, $term) {
-        $carry[$term->tid] = $term->name;
-        return $carry;
-      }, []) : [],
-      '#empty_option' => 'All Job Titles',
-      '#default_value' => $request->get('job_title') ?? '',
-    ];
+    foreach ([
+      'addr1', 'addr2', 'city', 'state', 'zip',
+      'mailing_addr1', 'mailing_addr2', 'mailing_city', 'mailing_state', 'mailing_zip',
+      'phone', 'fax',
+    ] as $field) {
+      $form['filter'][$field] = [
+        '#type' => 'textfield',
+        '#title' => ucfirst(str_replace('_', ' ', $field)),
+        '#default_value' => $request->get($field) ?? '',
+      ];
+    }
 
     $location_storage = $this->entityTypeManager->getStorage('jcc_court');
     $location_nodes = $location_storage->loadByProperties(['status' => 1]);
@@ -145,14 +125,14 @@ class JccCioFilterForm extends FormBase {
       }
     }
 
-    $form_state->setRedirect('entity.jcc_cio.collection', $query);
+    $form_state->setRedirect('entity.jcc_address.collection', $query);
   }
 
   /**
    * {@inheritdoc}
    */
   public function resetForm(array $form, FormStateInterface &$form_state) {
-    $form_state->setRedirect('entity.jcc_cio.collection');
+    $form_state->setRedirect('entity.jcc_address.collection');
   }
 
 }
