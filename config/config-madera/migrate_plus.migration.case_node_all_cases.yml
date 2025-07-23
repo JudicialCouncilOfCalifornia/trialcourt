@@ -44,8 +44,11 @@ source:
       name: case_number
       label: 'Case_Number'
     -
-      name: case_category
+      name: case_type
       label: 'Case_Type'
+    -
+      name: case_category
+      label: 'Case_Category'
     -
       name: location
       label: "Location"
@@ -146,6 +149,19 @@ process:
     -
       plugin: entity_generate
       bundle: hearing_type
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_case_type:
+    - plugin: skip_on_empty
+      source: case_type
+      method: process
+      message: 'No case type found.'
+    - plugin: callback
+      callable: trim
+    - plugin: entity_generate
+      bundle: case_type
       value_key: name
       bundle_key: vid
       entity_type: taxonomy_term
