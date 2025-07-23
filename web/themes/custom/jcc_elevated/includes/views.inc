@@ -1621,7 +1621,6 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
       'raw_pills' => $pills,
     ];
   }
-  dsm($variables['processed_rows'][0]['raw_pills']);
 }
 
 /**
