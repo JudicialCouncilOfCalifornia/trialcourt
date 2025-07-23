@@ -14,39 +14,39 @@ use Drupal\user\UserInterface;
  * Defines the jcc cio entity class.
  *
  * @ContentEntityType(
- *   id = "jcc_cio",
- *   label = @Translation("CIO"),
- *   label_collection = @Translation("CIO"),
+ *   id = "jcc_court",
+ *   label = @Translation("Court"),
+ *   label_collection = @Translation("Court"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\jcc_jrn_contact\JccCioListBuilder",
+ *     "list_builder" = "Drupal\jcc_jrn_contact\JccCourtListBuilder",
  *     "views_data" = "Drupal\views\EntityViewsData",
  *     "form" = {
- *       "add" = "Drupal\jcc_jrn_contact\Form\JccCioForm",
- *       "edit" = "Drupal\jcc_jrn_contact\Form\JccCioForm",
+ *       "add" = "Drupal\jcc_jrn_contact\Form\JccCourtForm",
+ *       "edit" = "Drupal\jcc_jrn_contact\Form\JccCourtForm",
  *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm"
  *     },
  *     "route_provider" = {
  *       "html" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
  *     }
  *   },
- *   base_table = "jcc_cio",
- *   admin_permission = "access jcc cio overview",
+ *   base_table = "jcc_court",
+ *   admin_permission = "access jcc court overview",
  *   entity_keys = {
  *     "id" = "id",
- *     "label" = "id",
+ *     "label" = "name_2",
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "add-form" = "/admin/content/jcc-cio/add",
- *     "canonical" = "/jcc-cio/{jcc_cio}",
- *     "edit-form" = "/admin/content/jcc-cio/{jcc_cio}/edit",
- *     "delete-form" = "/admin/content/jcc-cio/{jcc_cio}/delete",
- *     "collection" = "/admin/content/jcc-cio"
+ *     "add-form" = "/admin/content/jcc-court/add",
+ *     "canonical" = "/jcc-court/{jcc_court}",
+ *     "edit-form" = "/admin/content/jcc-court/{jcc_court}/edit",
+ *     "delete-form" = "/admin/content/jcc-court/{jcc_court}/delete",
+ *     "collection" = "/admin/content/jcc-court"
  *   },
  * )
  */
-class JccCio extends ContentEntityBase implements JccStaffInterface {
+class JccCourt extends ContentEntityBase implements JccStaffInterface {
 
   use EntityChangedTrait;
 
@@ -128,9 +128,9 @@ class JccCio extends ContentEntityBase implements JccStaffInterface {
 
     $fields = parent::baseFieldDefinitions($entity_type);
 
-    $fields['person_id'] = BaseFieldDefinition::create('integer')
-      ->setLabel(t('Person ID'))
-      ->setDescription(t('Person ID.'))
+    $fields['entity_id'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Entity ID'))
+      ->setDescription(t('Entity ID.'))
       ->setDisplayOptions('view', [
         'label' => 'above',
         'type' => 'number_integer',
@@ -143,75 +143,12 @@ class JccCio extends ContentEntityBase implements JccStaffInterface {
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['first_name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('First Name'))
-      ->setDescription(t('The first name of the Staff entity.'))
-      ->setSettings([
-        'default_value' => '',
-        'max_length' => 255,
-        'text_processing' => 0,
-      ])
-      ->setDisplayOptions('view', [
-        'label' => 'above',
-        'type' => 'string',
-        'weight' => -5,
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'string_textfield',
-        'weight' => -5,
-      ])
-      ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['last_name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Last Name'))
-      ->setDescription(t('The last name of the Staff entity.'))
-      ->setSettings([
-        'default_value' => '',
-        'max_length' => 255,
-        'text_processing' => 0,
-      ])
-      ->setDisplayOptions('view', [
-        'label' => 'above',
-        'type' => 'string',
-        'weight' => -1,
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'string_textfield',
-        'weight' => -1,
-      ])
-      ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['court'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Court'))
-      ->setDescription(t('Court location related to CIO.'))
-      ->setSetting('target_type', 'jcc_court')
-      ->setSetting('handler', 'default')
-      ->setTranslatable(FALSE)
-      ->setDisplayOptions('view', [
-        'label' => 'visible',
-        'type' => 'string',
-        'weight' => 7,
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'entity_reference_autocomplete',
-        'weight' => 7,
-        'settings' => [
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'placeholder' => 'Enter court location name...',
-        ],
-      ])
-      ->setDisplayConfigurable('view', TRUE)
-      ->setDisplayConfigurable('form', FALSE);
-
-    $fields['job_title'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Job Title'))
+    $fields['court_type'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Court Type'))
       ->setSetting('target_type', 'taxonomy_term')
       ->setSetting('handler_settings', [
         'target_bundles' => [
-          'job_title' => 'job_title',
+          'location_type' => 'location_type',
         ],
       ])
       ->setDisplayOptions('form', [
@@ -231,18 +168,62 @@ class JccCio extends ContentEntityBase implements JccStaffInterface {
       ->setDisplayConfigurable('view', TRUE)
       ->setDisplayConfigurable('form', FALSE);
 
-    $fields['email'] = BaseFieldDefinition::create('email')
-      ->setLabel(t("Email"))
-      ->setDescription(t('The email of the staff.'))
-      ->addConstraint('UniqueField', [])
-      ->setDisplayOptions('form', [
-        'type' => 'email_default',
-        'weight' => 9,
+    $fields['name_1'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Name 1'))
+      ->setDescription(t('Name 1 of the Court entity.'))
+      ->setSettings([
+        'default_value' => '',
+        'max_length' => 255,
+        'text_processing' => 0,
       ])
       ->setDisplayOptions('view', [
         'label' => 'above',
-        'type' => 'email_mailto',
-        'weight' => 9,
+        'type' => 'string',
+        'weight' => -5,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => -5,
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['name_2'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Name 2'))
+      ->setDescription(t('Name 2 of the Court entity.'))
+      ->setSettings([
+        'default_value' => '',
+        'max_length' => 255,
+        'text_processing' => 0,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -1,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => -1,
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['name_3'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Name 3'))
+      ->setDescription(t('Name 3 of the Court entity.'))
+      ->setSettings([
+        'default_value' => '',
+        'max_length' => 255,
+        'text_processing' => 0,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -1,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => -1,
       ])
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', TRUE);

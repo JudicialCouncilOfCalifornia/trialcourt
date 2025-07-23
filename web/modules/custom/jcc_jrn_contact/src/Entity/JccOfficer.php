@@ -226,12 +226,8 @@ class JccOfficer extends ContentEntityBase implements JccStaffInterface {
     $fields['court'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Court'))
       ->setDescription(t('Court location related to Officer.'))
-      ->setSetting('target_type', 'node')
-      ->setSetting('handler', 'default:node')
-      ->setSetting('handler_settings', [
-        'target_bundles' => ['location' => 'location'],
-        'auto_create' => FALSE,
-      ])
+      ->setSetting('target_type', 'jcc_court')
+      ->setSetting('handler', 'default')
       ->setTranslatable(FALSE)
       ->setDisplayOptions('view', [
         'label' => 'visible',

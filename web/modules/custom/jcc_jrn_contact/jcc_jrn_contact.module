@@ -24,6 +24,9 @@ function jcc_jrn_contact_theme() {
     'jcc_ajp' => [
       'render element' => 'elements',
     ],
+    'jcc_court' => [
+      'render element' => 'elements',
+    ],
   ];
 }
 
@@ -90,6 +93,23 @@ function template_preprocess_jcc_officer(array &$variables) {
  *   - attributes: HTML attributes for the containing element.
  */
 function template_preprocess_jcc_ajp(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Prepares variables for jcc court templates.
+ *
+ * Default template: jcc-court.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the jcc court information and
+ *     any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_jcc_court(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
