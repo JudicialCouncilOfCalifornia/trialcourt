@@ -53,16 +53,9 @@ process:
   first_name: first_name
   last_name: last_name
   court:
-    plugin: entity_generate
+    plugin: migration_lookup
+    migration: jrn_court
     source: court
-    entity_type: node
-    bundle: location
-    value_key: title
-    bundle_key: type
-    default_values:
-      title: 'Title missing'
-    values:
-      title: court
   job_title:
     -
       plugin: entity_generate
@@ -75,4 +68,7 @@ process:
   email: email
 destination:
   plugin: 'entity:jcc_cio'
-migration_dependencies: null
+migration_dependencies:
+  required:
+    - jrn_court
+  optional: {  }
