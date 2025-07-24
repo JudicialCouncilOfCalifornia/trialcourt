@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.surplus_materials
+    - workflows.workflow.surplus
+  module:
+    - content_moderation
+    - node
+id: surplus_user
+label: 'Surplus User'
+weight: 4
+is_admin: null
+permissions:
+  - 'create surplus_materials content'
+  - 'delete own surplus_materials content'
+  - 'edit own surplus_materials content'
+  - 'use surplus transition create_new_draft'
+  - 'use surplus transition for_review'

@@ -1,0 +1,56 @@
+{#
+/**
+ * @file
+ * Customized theme implementation for displaying a View as a table.
+ */
+#}
+{{ attach_library("jcc_elevated/surplus-materials") }}
+<div class="surplus-listing-view">
+  <p>{{ exposed }}</p>
+<br>
+<br>
+ {% if surplus is not empty %}
+ <table class="surplus-table">
+   <thead>
+    <tr>
+      <th>Ref #</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Posted On</th>
+      <th>Quantity</th>     
+      <th>Category</th>
+      {% if  can_renew %}
+        <th>Action</th>
+        <th>Expires In Days </th> {% endif %}
+        <th>Offered By</th>
+    </tr>
+  </thead> 
+  <tbody>
+    {% for s in surplus %}
+      <tr>
+        <td>{{ s['Ref #'] }}</td>
+         <td><a href="/node/{{ s.nid }}">{{s['title']}}</a></td>
+        <td>{{ s['Description'] }}</td>
+        <td>{{ s['Posted On'] }}</td>
+        <td>{{ s['Quantity'] }}</td>
+        <td>{{ s['Category']}}</td>
+        {% if  can_renew %}
+          <td> 
+            <a href="/node/{{ s.nid }}/edit" class="button button--text">Edit</a><br>
+            <a href="/renew/{{ s.nid }}" class="button button--text">Renew</a><br>
+          </td> 
+          <td>{{ s['Interval'] }}</td>
+        {% endif %}
+        <td>
+          <a href="mailto:{{ s['Email'] }}">{{ s['Contact'] }}</a><br>
+          {{ s['Entity'] }}<br>
+          {{ s['Phone'] }}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <p>No surplus items available.</p>
+{% endif %}
+</div>
