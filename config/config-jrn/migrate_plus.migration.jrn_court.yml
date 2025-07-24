@@ -1,0 +1,63 @@
+uuid: c98d07d8-e34f-4276-ad2a-b09a0db1e972
+langcode: en
+status: true
+dependencies: {  }
+id: jrn_court
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - jrn
+  - jrn_court
+migration_group: jrn
+label: 'JIS: Import Courts'
+source:
+  plugin: csv
+  path: 'public://serranus_entity_csv_20250702.txt'
+  header_row_count: 1
+  ids:
+    - entity_id
+  fields:
+    -
+      name: entity_id
+      selector: ENTITY_ID
+      label: 'Entity ID'
+    -
+      name: entity_type
+      selector: ENT_TYPE
+      label: 'Entity Type'
+    -
+      name: name1
+      selector: NAME1
+      label: 'Name 1'
+    -
+      name: name2
+      selector: NAME2
+      label: 'Name 2'
+    -
+      name: name3
+      selector: NAME3
+      label: 'Name 3'
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  status:
+    plugin: default_value
+    default_value: 1
+  court_id: entity_id
+  name_1: name1
+  name_2: name2
+  name_3: name3
+  court_type:
+    -
+      plugin: entity_generate
+      bundle: location_type
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+      source: entity_type
+destination:
+  plugin: 'entity:jcc_court'
+migration_dependencies: null
