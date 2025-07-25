@@ -63,7 +63,7 @@ class JccAddressListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function render() {
-    $build['form'] = \Drupal::formBuilder()->getForm('Drupal\jcc_jrn_contact\Form\JccCourtFilterForm');
+    $build['form'] = \Drupal::formBuilder()->getForm('Drupal\jcc_jrn_contact\Form\JccAddressFilterForm');
     $build['table'] = parent::render();
 
     $total = $this->getStorage()
@@ -125,10 +125,11 @@ class JccAddressListBuilder extends EntityListBuilder {
     $query = \Drupal::entityQuery($this->entityTypeId);
     $request = \Drupal::request();
 
-    foreach (['addr1', 'city'] as $field) {
-      if ($value = $request->get($field)) {
-        $query->condition($field, $value, 'CONTAINS');
-      }
+    if ($value = $request->get('keyword')) {
+      $or_group = $query->orConditionGroup()
+        ->condition('addr1', $value, 'CONTAINS')
+        ->condition('city', $value, 'CONTAINS');
+      $query->condition($or_group);
     }
 
     if ($department = $request->get('court')) {

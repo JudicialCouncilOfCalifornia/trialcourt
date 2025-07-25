@@ -140,10 +140,11 @@ class JccAjpListBuilder extends EntityListBuilder {
     $query = \Drupal::entityQuery($this->entityTypeId);
     $request = \Drupal::request();
 
-    foreach (['name', 'email'] as $field) {
-      if ($value = $request->get($field)) {
-        $query->condition($field, $value, 'CONTAINS');
-      }
+    if ($value = $request->get('keyword')) {
+      $or_group = $query->orConditionGroup()
+        ->condition('name', $value, 'CONTAINS')
+        ->condition('email', $value, 'CONTAINS');
+      $query->condition($or_group);
     }
 
     $order = $request->get('order');

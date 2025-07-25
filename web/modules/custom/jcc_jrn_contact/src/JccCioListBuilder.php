@@ -135,10 +135,18 @@ class JccCioListBuilder extends EntityListBuilder {
     $query = \Drupal::entityQuery($this->entityTypeId);
     $request = \Drupal::request();
 
-    foreach (['first_name', 'last_name', 'email', 'court'] as $field) {
+    foreach (['court'] as $field) {
       if ($value = $request->get($field)) {
         $query->condition($field, $value, 'CONTAINS');
       }
+    }
+
+    if ($value = $request->get('keyword')) {
+      $or_group = $query->orConditionGroup()
+        ->condition('first_name', $value, 'CONTAINS')
+        ->condition('last_name', $value, 'CONTAINS')
+        ->condition('email', $value, 'CONTAINS');
+      $query->condition($or_group);
     }
 
     if ($department = $request->get('job_title')) {

@@ -66,6 +66,13 @@ class JccCourtFilterForm extends FormBase {
       ],
     ];
 
+    $form['filter']['keyword'] = [
+      '#type' => 'textfield',
+      '#title' => 'Keyword',
+      '#placeholder' => 'Search by court name',
+      '#default_value' => $request->get('keyword') ?? '',
+    ];
+
     $terms = $this->entityTypeManager
       ->getStorage('taxonomy_term')
       ->loadTree('location_type');
@@ -78,24 +85,6 @@ class JccCourtFilterForm extends FormBase {
       }, []) : [],
       '#empty_option' => 'All Court Types',
       '#default_value' => $request->get('court_type') ?? '',
-    ];
-
-    $form['filter']['name_1'] = [
-      '#type' => 'textfield',
-      '#title' => 'Name 1',
-      '#default_value' => $request->get('name_1') ?? '',
-    ];
-
-    $form['filter']['name_2'] = [
-      '#type' => 'textfield',
-      '#title' => 'Name 2',
-      '#default_value' => $request->get('name_2') ?? '',
-    ];
-
-    $form['filter']['name_3'] = [
-      '#type' => 'textfield',
-      '#title' => 'Name 3',
-      '#default_value' => $request->get('name_3') ?? '',
     ];
 
     $form['actions']['wrapper'] = [
@@ -125,7 +114,7 @@ class JccCourtFilterForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $query = [];
 
-    foreach (['court_type', 'name_1', 'name_2', 'name_3'] as $field) {
+    foreach (['court_type', 'keyword'] as $field) {
       $value = $form_state->getValue($field);
       if ($value) {
         $query[$field] = $value;

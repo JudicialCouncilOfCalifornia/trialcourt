@@ -66,16 +66,11 @@ class JccAjpFilterForm extends FormBase {
       ],
     ];
 
-    $form['filter']['name'] = [
+    $form['filter']['keyword'] = [
       '#type' => 'textfield',
-      '#title' => 'Name',
-      '#default_value' => $request->get('name') ?? '',
-    ];
-
-    $form['filter']['email'] = [
-      '#type' => 'textfield',
-      '#title' => 'Email',
-      '#default_value' => $request->get('email') ?? '',
+      '#title' => 'Keyword',
+      '#placeholder' => 'Search by name or email',
+      '#default_value' => $request->get('keyword') ?? '',
     ];
 
     $form['actions']['wrapper'] = [
@@ -105,7 +100,7 @@ class JccAjpFilterForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $query = [];
 
-    foreach (['name', 'email'] as $field) {
+    foreach (['keyword'] as $field) {
       $value = $form_state->getValue($field);
       if ($value) {
         $query[$field] = $value;

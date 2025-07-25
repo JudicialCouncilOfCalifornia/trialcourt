@@ -130,10 +130,12 @@ class JccCourtListBuilder extends EntityListBuilder {
     $query = \Drupal::entityQuery($this->entityTypeId);
     $request = \Drupal::request();
 
-    foreach (['name_1', 'name_2', 'name_3'] as $field) {
-      if ($value = $request->get($field)) {
-        $query->condition($field, $value, 'CONTAINS');
-      }
+    if ($value = $request->get('keyword')) {
+      $or_group = $query->orConditionGroup()
+        ->condition('name_1', $value, 'CONTAINS')
+        ->condition('name_2', $value, 'CONTAINS')
+        ->condition('name_3', $value, 'CONTAINS');
+      $query->condition($or_group);
     }
 
     if ($department = $request->get('court_type')) {

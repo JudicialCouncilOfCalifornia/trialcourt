@@ -66,17 +66,12 @@ class JccAddressFilterForm extends FormBase {
       ],
     ];
 
-    foreach ([
-      'addr1', 'addr2', 'city', 'state', 'zip',
-      'mailing_addr1', 'mailing_addr2', 'mailing_city', 'mailing_state', 'mailing_zip',
-      'phone', 'fax',
-    ] as $field) {
-      $form['filter'][$field] = [
-        '#type' => 'textfield',
-        '#title' => ucfirst(str_replace('_', ' ', $field)),
-        '#default_value' => $request->get($field) ?? '',
-      ];
-    }
+    $form['filter']['keyword'] = [
+      '#type' => 'textfield',
+      '#title' => 'Keyword',
+      '#placeholder' => 'Search by address or city',
+      '#default_value' => $request->get('keyword') ?? '',
+    ];
 
     $location_storage = $this->entityTypeManager->getStorage('jcc_court');
     $location_nodes = $location_storage->loadByProperties(['status' => 1]);
@@ -118,7 +113,7 @@ class JccAddressFilterForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $query = [];
 
-    foreach (['first_name', 'last_name', 'email', 'job_title', 'court'] as $field) {
+    foreach (['keyword', 'court'] as $field) {
       $value = $form_state->getValue($field);
       if ($value) {
         $query[$field] = $value;

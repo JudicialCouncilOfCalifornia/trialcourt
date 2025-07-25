@@ -66,22 +66,11 @@ class JccOfficerFilterForm extends FormBase {
       ],
     ];
 
-    $form['filter']['first_name'] = [
+    $form['filter']['keyword'] = [
       '#type' => 'textfield',
-      '#title' => 'First Name',
-      '#default_value' => $request->get('first_name') ?? '',
-    ];
-
-    $form['filter']['last_name'] = [
-      '#type' => 'textfield',
-      '#title' => 'Last Name',
-      '#default_value' => $request->get('last_name') ?? '',
-    ];
-
-    $form['filter']['email'] = [
-      '#type' => 'textfield',
-      '#title' => 'Email',
-      '#default_value' => $request->get('email') ?? '',
+      '#title' => 'Keyword',
+      '#placeholder' => 'Search by name or email',
+      '#default_value' => $request->get('keyword') ?? '',
     ];
 
     $terms = $this->entityTypeManager
@@ -138,7 +127,7 @@ class JccOfficerFilterForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $query = [];
 
-    foreach (['first_name', 'last_name', 'email', 'job_title', 'court'] as $field) {
+    foreach (['keyword', 'job_title', 'court'] as $field) {
       $value = $form_state->getValue($field);
       if ($value) {
         $query[$field] = $value;
