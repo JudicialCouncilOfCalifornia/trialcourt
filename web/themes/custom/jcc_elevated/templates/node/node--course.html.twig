@@ -102,7 +102,7 @@
   {{ content.field_alerts }}
 
   {# Details #}
-  {% if course.sidebar %}
+  {% if course.sidebar or course_action or course_schedule %}
     {% set sidebar %}
       {% set sidebar_content = [] %}
 
@@ -115,9 +115,9 @@
       {% endif %}
 
       {# Action if not embedded media #}
-      {% if course.sidebar.action %}
+      {% if course_action %}
         {% set item = {
-          heading: course.sidebar.action,
+          heading: course_action,
         } %}
         {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
@@ -126,8 +126,8 @@
       {% set today_event_date = NULL %}
 
       {# If event and it is today #}
-      {% if course.sidebar.schedule %}
-        {% for event in course.sidebar.schedule %}
+      {% if course_schedule %}
+        {% for event in course_schedule %}
           {% if event.event_is_today == 1 %}
             {% set today_event_date = event.date %}
             {% if event.time %}
@@ -161,7 +161,7 @@
             {% include "@atoms/Pill/Pill.twig" with {
               variant: 'square',
               label: topic.label,
-              url: '',
+              url: topic.url,
             } %}
           {% endfor %}
         {% endset %}
@@ -197,8 +197,8 @@
       {% endif %}
 
       {# Future events #}
-      {% if course.sidebar.schedule %}
-        {% for event in course.sidebar.schedule %}
+      {% if course_schedule %}
+        {% for event in course_schedule %}
           {% if event.start_date|date('Ymd') > today %}
             {% set item = {
               brow: event.date,
@@ -210,16 +210,18 @@
         {% endfor %}
       {% endif %}
 
-      <aside class="request__main-sidebar stack" style="order: 2;">
-        <section>
-          {% include "@molecules/SidebarList/SidebarList.twig" with {
-            variant: 'default',
-            heading: 'Course Details',
-            data: sidebar_content,
-            attributes: create_attribute()
-          } %}
-        </section>
-      </aside>
+      {% if sidebar_content %}
+        <aside class="request__main-sidebar stack" style="order: 2;">
+          <section>
+            {% include "@molecules/SidebarList/SidebarList.twig" with {
+              variant: 'default',
+              heading: 'Course Details',
+              data: sidebar_content,
+              attributes: create_attribute()
+            } %}
+          </section>
+        </aside>
+      {% endif %}
     {% endset %}
   {% endif %}
 
