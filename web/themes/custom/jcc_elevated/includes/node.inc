@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Link;
 use Drupal\Core\Menu\MenuTreeParameters;
@@ -1216,8 +1217,8 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
 function jcc_elevated_node_course(array &$variables, NodeInterface $node): void {
   $renderer = \Drupal::service('renderer');
   $cache = \Drupal::service('cache.data');
-  $cache_registration_action = 'course:registration_state:nid:' . $node->id();
-  $cache_schedule = 'course:schedule:nid:' . $node->id();
+  $cache_action = 'course:action:' . $node->id();
+  $cache_schedule = 'course:schedule:' . $node->id();
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
   $type_term = $node->get('field_course_type')[0] ? $node->get('field_course_type')[0]->entity : NULL;
@@ -1309,6 +1310,13 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
             $notation = preg_replace('/\r|\n/', '', $notation);
           }
 
+          // DEBUG.
+          $state = ' RUNNING';
+          if (time() > 1753413300) {
+            $state = ' STOPPED';
+          }
+          $notation = $state;
+
           // Schedule.
           $schedule[] = [
             'date' => $event_date,
@@ -1319,7 +1327,10 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           ];
         }
       }
-      $variables['course_schedule'] = $schedule;
+      // Cache computed adjustments to custom tag.
+      \Drupal::service('cache_tags.invalidator')->invalidateTags([$cache_schedule]);
+      $cache->set('cache_course_schedule', $schedule, Cache::PERMANENT, [$cache_schedule]);
+      $variables['course_schedule'] = $cache->get('cache_course_schedule') ? $cache->get('cache_course_schedule')->data : NULL;
 
       $registration = $node->get('field_custom_link');
       if (count($registration) > 0) {
@@ -1365,14 +1376,14 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
         '#markup' => '<a class="' . $button_styles . '" href="' . $launch_uri . '">' . $launch_title . '</a>',
       ];
     }
-    else {
-      $cache->delete($cache_registration_action);
-      $cache->delete($cache_schedule);
-    }
   }
 
-  // Action when applicable.
-  $variables['course_action'] = $action;
+  // Cache computed action button to custom tag.
+  \Drupal::service('cache_tags.invalidator')->invalidateTags([$cache_action]);
+  $cache->set('cache_course_action', $action, Cache::PERMANENT, [$cache_action]);
+  $variables['course_action'] = [
+    'action' => $cache->get('cache_course_action') ? $renderer->render($cache->get('cache_course_action')->data) : NULL,
+  ];
 
   // Promotional Image.
   if ($node->get('field_image')->entity) {
@@ -1508,7 +1519,4 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
     'embed' => $embed,
     'sidebar' => $sidebar,
   ];
-
-  // Exposing custom cache tags during render.
-  $variables['#cache']['tags'] = [$cache_registration_action, $cache_schedule];
 }

@@ -9,7 +9,9 @@ use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -1299,5 +1301,38 @@ function jcc_custom_custom_date_format($value) {
   catch (\Exception $e) {
     \Drupal::logger('custom_migrations')->error("Error formatting date: " . $e->getMessage() . " for input: $value");
     return $value;
+  }
+}
+
+/**
+ * Implements hook_entity_view() for node entities.
+ */
+function jcc_custom_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  /*
+   * Set custom cache tags for dynamic/computed variables.
+   * Internal Page Cache must be disabled.
+   */
+  $cache_tags = NULL;
+  switch ($entity->getEntityTypeId()) {
+    case 'node':
+      switch ($entity->bundle()) {
+        case 'course':
+          $cache_tags = [
+            'course:action:' . $entity->id(),
+            'course:schedule:' . $entity->id(),
+          ];
+          break;
+      }
+      break;
+  }
+
+  if ($cache_tags) {
+    // Add custom cache tags to the render array.
+    if (isset($build['#cache']['tags'])) {
+      $build['#cache']['tags'] = array_merge($build['#cache']['tags'], $cache_tags);
+    }
+    else {
+      $build['#cache']['tags'] = $cache_tags;
+    }
   }
 }
