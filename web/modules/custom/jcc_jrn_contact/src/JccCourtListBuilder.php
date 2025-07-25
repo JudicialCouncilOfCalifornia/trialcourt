@@ -83,17 +83,13 @@ class JccCourtListBuilder extends EntityListBuilder {
       'data' => $this->t('Type'),
       'field' => 't.court_type',
     ];
-    $header['name_1'] = [
+    $header['name_2'] = [
       'data' => $this->t('Name'),
-      'field' => 't.name_1',
+      'field' => 't.name_2',
       'sort' => 'asc',
     ];
-    $header['name_2'] = [
-      'data' => $this->t('Name 2'),
-      'field' => 't.name_2',
-    ];
     $header['name_3'] = [
-      'data' => $this->t('Name 3'),
+      'data' => $this->t('Division'),
       'field' => 't.name_3',
     ];
     return $header + parent::buildHeader();
@@ -105,8 +101,7 @@ class JccCourtListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /**  @var \Drupal\jcc_jrn_contact\JccStaffInterface $entity */
     $row['court_type'] = $entity->get('court_type')->entity?->label();
-    $row['name_1'] = $entity->get('name_1')->value;
-    $row['name_2'] = $entity->get('name_2')->value;
+    $row['name_2'] = $entity->toLink();
     $row['name_3'] = $entity->get('name_3')->value;
     return $row + parent::buildRow($entity);
   }
