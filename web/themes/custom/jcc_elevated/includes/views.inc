@@ -1536,6 +1536,17 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
     }
     $date = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : NULL;
 
+    $topics = $node->get('field_topics');
+    $subtopics = $node->get('field_subtopics');
+    $pills = [];
+
+    foreach ($topics as $topic) {
+      $pills['items'][] = ['variant'=> 'default', 'label' => $topic->entity->label(), 'url' => '#'];
+    }
+    foreach ($subtopics as $subtopic) {
+      $pills['items'][] = ['variant'=> 'default', 'label' => $subtopic->entity->label(), 'url' => '#'];
+    }
+
     // Locations for upcoming events only.
     $items = $node->get('field_components');
     $locations = [];
@@ -1645,12 +1656,20 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
       $overview = $overview . '...';
     }
 
+    $published_date = $node->getCreatedTime();
+    $three_months_ago = strtotime('-3 months');
+    if($published_date >= $three_months_ago) {
+      $is_new = true;
+    }
+
     $variables['processed_rows'][] = [
       'title' => $label,
       'url' => $node->toUrl(),
-      'content' => $overview,
+//      'content' => $overview,
+      'is_new' => $is_new,
       'button_data' => $action,
       'detail_list_data' => $detail_list_data,
+      'raw_pills' => $pills,
     ];
   }
 }
@@ -1796,13 +1815,22 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
     }
   }
 
-  // Add a label to the form.
-  $form['search_label'] = [
-    '#type' => 'html_tag',
-    '#tag' => 'h2',
-    '#value' => t('Search and Filter'),
-    '#weight' => '-99',
-  ];
+  if ($form['#id'] == 'views-exposed-form-courses-catalog'){
+    $form['search_label'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'h2',
+      '#value' => '',
+      '#weight' => '-99',
+    ];
+  } else {
+    // Add a label to the form.
+    $form['search_label'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'h2',
+      '#value' => t('Search and Filter'),
+      '#weight' => '-99',
+    ];
+  }
 
   // Style submit and reset buttons.
   $form['actions']['submit']['#attributes']['class'][] = 'button button--secondary button--normal';
