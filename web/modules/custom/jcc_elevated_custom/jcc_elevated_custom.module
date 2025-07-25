@@ -10,6 +10,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\editor\Entity\Editor;
 use Drupal\media\MediaInterface;
+use Drupal\node\NodeInterface;
+use Drupal\workflows\WorkflowInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 // @codingStandardsIgnoreStart
@@ -19,6 +21,52 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 function jcc_elevated_custom_page_attachments(array &$attachments) {
   $attachments['#attached']['library'][] = 'jcc_elevated_custom/edit-media';
+}
+
+function jcc_elevated_custom_cron() {
+  $today = new \DateTimeImmutable();
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+  $nids = $node_storage->getQuery()
+    ->condition('type', 'surplus_materials')
+    ->exists('field_renewal_date')
+    ->accessCheck(FALSE)
+    ->execute();
+
+  if (empty($nids)) {   
+    return;
+  }
+
+  foreach ($nids as $nid) {
+    $node = $node_storage->load($nid);
+    if (!$node instanceof NodeInterface || $node->get('field_renewal_date')->isEmpty()) {
+      continue;
+    }
+    $renewal_date = new \DateTimeImmutable($node->get('field_renewal_date')->value);
+    $current_state = $node->get('moderation_state')->value;    
+    if ($renewal_date < $today && $current_state === 'published') {
+      $workflow = \Drupal::service('content_moderation.moderation_information')->getWorkflowForEntity($node);
+      if ($workflow instanceof WorkflowInterface) {
+        $type_plugin = $workflow->getTypePlugin();
+        $transitions = $type_plugin->getTransitions();
+        foreach ($transitions as $transition) {
+          $to_state = is_object($transition->to()) ? $transition->to()->id() : $transition->to();
+          $from_states = array_map(function ($state) {
+            return is_object($state) ? $state->id() : $state;
+          }, $transition->from());
+          if ($to_state === 'archived' && in_array($current_state, $from_states, TRUE)) {
+            $node->setNewRevision(TRUE);
+            $node->isDefaultRevision(TRUE);
+            $node->setRevisionLogMessage('Auto-archived due to expired renewal date.');
+            $node->set('moderation_state', 'archived');
+            $node->save();          
+            break;
+          }
+        }
+      } else {
+        \Drupal::logger('jcc_elevated')->warning('No workflow found for node @nid', ['@nid' => $node->id()]);
+      }
+    }
+  }
 }
 
 /**
@@ -283,6 +331,39 @@ function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
         }
       }
     }
+  }
+}
+
+function jcc_elevated_custom_form_node_surplus_materials_edit_form_alter(array &$form, FormStateInterface $form_state) {
+  $form['#validate'][] = 'jcc_elevated_custom_validate_disposition_if_archived';
+  $form['field_disposition']['widget']['#required'] = FALSE;
+  $form['field_disposition']['widget']['#default_value'] = '';
+}
+
+function jcc_elevated_custom_validate_disposition_if_archived(array &$form, FormStateInterface $form_state) {
+  $input = $form_state->getUserInput();
+  $moderation_state = $input['moderation_state'][0]['state'] ?? NULL;
+  if ($moderation_state === 'archived') {
+    $form_state->setValue(['field_disposition', 0, 'value'], '');
+    $disposition = $form_state->getValue(['field_disposition', 0, 'value']);
+    if ($disposition === '') {
+      $form_state->setErrorByName('field_disposition', t('Disposition is required while archiving an item.'));
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for the surplus_materials node form.
+ */
+function jcc_elevated_custom_form_node_surplus_materials_form_alter(array &$form, FormStateInterface $form_state) {
+  if (isset($form['field_terms_of_use'])) {
+    $form['field_terms_of_use']['widget']['value']['#title'] = 'I agree to the <a href="/terms-of-use" target="_blank">Terms of Use</a>';
+    //$form['field_terms_of_use']['widget']['#title_display'] = 'invisible';
+  }
+  $node = $form_state->getFormObject()->getEntity();
+  if ($node->isNew()) {
+    unset($form['field_disposition']['widget']['#value']);
+    $form['field_disposition']['widget']['#default_value'] = 'NewListing';
   }
 }
 

@@ -66,7 +66,7 @@ function jcc_components_preprocess_node(&$variables) {
     $current_path = \Drupal::request()->getRequestUri();
     if(\Drupal::service('path.matcher')->matchPath($current_path ,"/location/*")){
       build_service_markup($variables, $node);
-    }
+     }
   }
 }
 

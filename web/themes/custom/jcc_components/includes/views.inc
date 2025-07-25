@@ -16,6 +16,7 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
 use Drupal\Core\Render\Renderer;
 use Drupal\views\Views;
+
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
@@ -98,11 +99,11 @@ function jcc_components_preprocess_views_view(&$variables) {
 
       $view_entity = $row->_entity;
       if ($view_entity->hasField('field_address') && !$view_entity->get('field_address')->isEmpty()) {
-        // Render the field using the 'default' view mode or another configured view mode.
-        $field_render_array = $view_entity->get('field_address')->view('default');
+          // Render the field using the 'default' view mode or another configured view mode.
+          $field_render_array = $view_entity->get('field_address')->view('default');
 
-        // Render the field to a string.
-        $variables['my_address'] = \Drupal::service('renderer')->renderPlain($field_render_array);
+          // Render the field to a string.
+          $variables['my_address'] = \Drupal::service('renderer')->renderPlain($field_render_array);
       }
     }
 
@@ -115,14 +116,14 @@ function jcc_components_preprocess_views_view(&$variables) {
 
 function jcc_components_preprocess_views_view_unformatted(&$variables) {
   $view = $variables['view'];
-  if($view->id() == "location"){
-    $location_page = \Drupal::configFactory()->getEditable('jcc_custom.settings')
+    if($view->id() == "location"){
+      $location_page = \Drupal::configFactory()->getEditable('jcc_custom.settings')
       ->get('new_location_listing_page');
 
-    if($location_page == 1 ){
-      $variables['listing_page'] = "new";
+      if($location_page == 1 ){
+        $variables['listing_page'] = "new";
+      }
     }
-  }
 }
 
 /**
@@ -541,6 +542,7 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
         }
       }
       break;
+      
     case "location":
       if($view->current_display == 'page_1'){
         foreach ($view->result as $key => $row) {
@@ -558,7 +560,7 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
 
         // Loop through the results.
         foreach ($view->result as $index => $row) {
-          $nid = $row->nid; // Ensure this is the correct property for Node ID.
+          $nid = $row->nid; // Ensure this is the correct property for Node ID.  
           // If this Node ID hasn't been added to the unique results, keep it.
           if (!isset($unique_results[$nid])) {
             $unique_results[$nid] = $row;
@@ -567,12 +569,12 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
           else {
             unset($view->result[$index]);
           }
-        }
-        // Reindex the result array after removing duplicates.
+        }     
+       // Reindex the result array after removing duplicates.
         $view->result = array_values($view->result);
 
       }
-      break;
+      break;  
   }
 }
 

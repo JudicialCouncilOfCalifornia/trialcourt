@@ -144,7 +144,7 @@ function jcc_components_form_views_exposed_form_alter(&$form, FormStateInterface
       $form['areas_of_law']['#access'] = FALSE;
     }
   }
-
+  
   // Check if this is the specific view exposed form we are targeting.
   if ($form['#id'] == 'views-exposed-form-location-block-1') {
     // Get the count of nodes that have at least one paragraph with "Self-Help".

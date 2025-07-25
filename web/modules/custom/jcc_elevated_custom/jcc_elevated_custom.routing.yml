@@ -29,3 +29,12 @@ jcc_elevated_custom.footer_settings:
     _title: "JCC Elevated: Footer Customizations"
   requirements:
     _permission: "administer site configuration"
+
+jcc_elevated_custom.renew:
+  path: '/renew/{node}'
+  defaults:
+    _controller: '\Drupal\jcc_elevated_custom\Controller\RenewSurplusController::renew'
+    _title: 'Renew Content'
+  requirements:
+    _permission: 'renew surplus content'
+    node: \d+    

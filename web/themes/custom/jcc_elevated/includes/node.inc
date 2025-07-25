@@ -113,6 +113,63 @@ function jcc_elevated_preprocess_node(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $node): void {
+  $node = $variables['node'];
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+  $category = $node->hasField('field_surplus_category') ? $node->get('field_surplus_category')->target_id : FALSE;
+  $condition = $node->hasField('field_condition') ? $node->get('field_condition')->target_id : FALSE;
+  $media_manager = $entity_type_manager->getStorage('media');
+  $media_url = [];
+  foreach ($node->field_media_file_multiple as $media_file) {
+    if (!empty($media_file->target_id)) {
+      $media = $media_manager->load($media_file->target_id);
+      if ($media && $media->field_media_image->entity) {
+        $uri = $media->field_media_image->entity->getFileUri();
+        $url = file_create_url($uri);
+        $media_url[] = ['url' => $url];
+      }
+    }
+  }
+  $variables['media_url'] = $media_url;
+  $posted_raw = $node->get('field_posted')->value;
+  $renewal_raw = $node->get('field_renewal_date')->value;
+  $posted_formatted = '';
+  $renewal_formatted = '';
+  if (!empty($posted_raw)) {
+    $posted_date = new DrupalDateTime($posted_raw);
+    $posted_formatted = $posted_date->format('M d, Y');
+  }
+  if (!empty($renewal_raw)) {
+    $renewal_date = new DrupalDateTime($renewal_raw);
+    $renewal_formatted = $renewal_date->format('M d, Y');
+  }
+  $variables['title'] = $node->getTitle();
+  $variables['surplus'] = [
+    'Item Description' => $node->get('field_description')->value ?? '',
+    'Posted On' => $posted_formatted ?? '',
+    'Brand/Manufacturer' => $node->get('field_brand')->value ?? '',
+    'Model Number' => $node->get('field_model_number')->value ?? '',
+    'Quantity' => $node->get('field_quantity')->value ?? '',
+    'Donation or Sell?' => $node->get('field_donate_or_sell')->value ?? '',
+    'Unit Measure' => $node->get('field_unit_measure')->value ?? '',
+    'Condition' => $condition && $taxonomy_manager->load($condition) ? $taxonomy_manager->load($condition)->get('name')->value : '',
+    'Required Forms' => $node->get('field_required_forms')->value ?? '',
+    'Comments' => $node->get('field_comments')->value ?? '',
+    'Court' => $node->get('field_entity')->value ?? '',
+    'Ref #' => $node->get('field_reference_number')->value,
+    'Category' => $category && $taxonomy_manager->load($category) ? $taxonomy_manager->load($category)->get('name')->value : '',
+    'Renewal Date' => $renewal_formatted ?? '',
+    'Contact' => $node->get('field_contact_person')->value ?? '',
+    'Phone' => $node->get('field_contact_number')->value ?? '',
+    'Email' => $node->get('field_email_address')->value ?? '',
+    'Disposition' => $node->get('field_disposition')->value ?? '',
+  ];
+}
+
+/**
  * Node: News preprocess.
  *
  * @param array $variables
@@ -1157,22 +1214,16 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
  *   The node.
  */
 function jcc_elevated_node_course(array &$variables, NodeInterface $node): void {
-  $renderer = \Drupal::service('renderer');
-  $cache = \Drupal::service('cache.data');
-  $cache_registration_action = 'course:registration_state:nid:' . $node->id();
-  $cache_schedule = 'course:schedule:nid:' . $node->id();
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
   $type_term = $node->get('field_course_type')[0] ? $node->get('field_course_type')[0]->entity : NULL;
   $type = $type_term ? $type_term->label() : NULL;
   $subtype_term = $node->get('field_course_subtype')[0] ? $node->get('field_course_subtype')[0]->entity : NULL;
   $subtype = $subtype_term ? $subtype_term->label() : NULL;
-  $embed = [];
-  $sidebar_details = [];
-  $topics = [];
-  $schedule = [];
-  $promo_image = NULL;
+  $embed = NULL;
   $action = NULL;
+  $sidebar_details = NULL;
+  $sidebar = NULL;
 
   // Media embed or action.
   if ($node->get('field_media')->entity) {
@@ -1208,6 +1259,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
     // Schedule & Registration.
     if ((!$action && !$embed) && count($node->get('field_components')) > 0) {
       // Events.
+      $schedule = [];
       foreach ($node->get('field_components')->referencedEntities() as $event) {
         if ($event->get('field_date_range')->start_date) {
           $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
@@ -1262,52 +1314,38 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           ];
         }
       }
-      \Drupal::service('cache_tags.invalidator')->invalidateTags([$cache_schedule]);
-      $cache->set($cache_schedule, $schedule);
+      $variables['course_schedule'] = $schedule;
 
       $registration = $node->get('field_custom_link');
       if (count($registration) > 0) {
         $register_uri = $registration->uri;
 
         if (count($node->get('field_registration_period')) > 0) {
-          \Drupal::service('cache_tags.invalidator')->invalidateTags([$cache_registration_action]);
           $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
           $register_start = $register_start->format('Ymd');
           $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
           $register_end = $register_end->format('Ymd');
           if ($register_start > $today->format('Ymd')) {
-            $action_button = [
+            $action = [
               '#status' => 'pending',
               '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Pending') . '</p>',
             ];
-            if (!$cache->get($cache_registration_action) || $cache->get($cache_registration_action)->data['#status'] != 'pending') {
-              $cache->set($cache_registration_action, $action_button);
-            }
           }
           elseif ($register_end < $today->format('Ymd')) {
-            $action_button = [
+            $action = [
               '#status' => 'closed',
               '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Closed') . '</p>',
             ];
-            if (!$cache->get($cache_registration_action) || $cache->get($cache_registration_action)->data['#status'] != 'closed') {
-              $cache->set($cache_registration_action, $action_button);
-            }
           }
           else {
-            $action_button = [
+            $label = $registration->title ? $registration->title : t('Register Now');
+            $action = [
               '#status' => 'open',
-              '#markup' => '<a class="button button--secondary button--normal" href="' . $register_uri . '">' . t('Register Now') . '</a>',
+              '#markup' => '<a class="button button--secondary button--normal" href="' . $register_uri . '">' . $label . '</a>',
             ];
-            if (!$cache->get($cache_registration_action) || $cache->get($cache_registration_action)->data['#status'] != 'open') {
-              $cache->set($cache_registration_action, $action_button);
-            }
           }
-          $action = [
-            '#markup' => $cache->get($cache_registration_action)->data['#markup'],
-          ];
         }
         else {
-          $cache->delete($cache_registration_action);
           $action = [
             '#status' => 'none',
             '#markup' => '<p class="button button--secondary button--normal">' . t('No Registration Required') . '</p>',
@@ -1316,17 +1354,12 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       }
     }
     elseif ($node->get('field_origin_url')->uri) {
-      $cache->delete($cache_registration_action);
       $launch_title = t('Launch');
       $launch_uri = $node->get('field_origin_url')->uri;
       $action = [
         '#markup' => '<a class="button button--secondary button--normal" href="' . $launch_uri . '">' . $launch_title . '</a>',
       ];
-    }
-    else {
-      $cache->delete($cache_registration_action);
-      $cache->delete($cache_schedule);
-    }
+    }    $variables['course_action'] = $action;
   }
 
   // Promotional Image.
@@ -1337,6 +1370,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       $promo_image = [
         '#markup' => '<img src="' . $image_url . '">',
       ];
+      $sidebar['promo_image'] = $promo_image;
     }
   }
 
@@ -1365,8 +1399,15 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
 
       case 'field_achievable_credit':
         if ($field->value) {
-          $achievable_credits = $field->value . ' hr';
-          if ($achievable_credits > 1) {
+          $credit = $field->value;
+          // Remove decimal if zero.
+          $credit_arr = explode('.', $credit);
+          if ($credit_arr[1] == 0) {
+            $credit = $credit_arr[0];
+          }
+          $achievable_credits = $credit . ' hr';
+          // Pluralize if more than 1 hour.
+          if ($field->value > 1) {
             $achievable_credits = $achievable_credits . 's';
           }
           $sidebar_details[] = [
@@ -1414,13 +1455,28 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
         if (count($field) > 0) {
           foreach ($field as $topic) {
             if ($topic->entity) {
+              $term = $topic->entity;
+              // Landing page must be specified if actionable pill.
+              $url = theme_get_setting('landing_course');
+              $domain = 'https://' . \Drupal::request()->getHost();
+              // Add domain if relative path or linkit supplied.
+              if (!str_starts_with($url, $domain)) {
+                $url = $domain . $url;
+              }
+              // Use appropriate parameter to prefilter view.
+              $param = '?field_topics_target_id=' . $term->id();
+              if ($field->getName() == 'field_subtopics') {
+                $param = '?field_subtopics_target_id=' . $term->id();
+              }
               $topics[] = [
-                'label' => $topic->entity->label(),
+                'label' => $term->label(),
+                'url' => $url ? $url . $param : NULL,
               ];
             }
           }
           // Sort topics & subtopics alphabetically.
           usort($topics, fn($a, $b) => $a['label'] <=> $b['label']);
+          $sidebar['topics'] = $topics;
         }
         break;
     }
@@ -1429,22 +1485,14 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   // Sort by weight.
   if ($sidebar_details) {
     usort($sidebar_details, fn($a, $b) => $a['weight'] <=> $b['weight']);
+    $sidebar['details'] = $sidebar_details;
   }
 
-  // Course object.
+  // Processed course information.
   $variables['course'] = [
     'type' => $type,
     'subtype' => $subtype,
     'embed' => $embed,
-    'sidebar' => [
-      'promo_image' => $promo_image,
-      'action' => $action ?: $renderer->render($action),
-      'details' => $sidebar_details,
-      'topics' => $topics,
-      'schedule' => $cache->get($cache_schedule) ? $cache->get($cache_schedule)->data : NULL,
-    ],
+    'sidebar' => $sidebar,
   ];
-
-  // Exposing custom cache tags during render.
-  $variables['#cache']['tags'] = [$cache_registration_action, $cache_schedule];
 }

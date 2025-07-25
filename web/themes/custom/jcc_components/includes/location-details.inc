@@ -34,19 +34,19 @@ function build_service_markup(&$variables, $node) {
     $variables['case_category_terms'] = array_filter(array_map(function ($term_reference) {
       $term_name = $term_reference->getName();
       return $term_name !== 'All Cases Served at This Location' ? $term_name : null; // Exclude "All Cases Served"
-    }, $node->get('field_cases_served')->referencedEntities()));
+  }, $node->get('field_cases_served')->referencedEntities()));
   }
 
   // Check if the field_others field exists and has a value, and then explode it into an array.
   $additional_cases_served = [];
   if ($node->hasField('field_others') && !empty($node->get('field_others')->value)) {
-    $additional_cases_served = explode(",", $node->get('field_others')->value);
+      $additional_cases_served = explode(",", $node->get('field_others')->value);
   }
 
   // Ensure both case_category_terms and additional_cases_served are arrays before merging.
-  $case_category_terms = isset($variables['case_category_terms']) && is_array($variables['case_category_terms'])
-    ? $variables['case_category_terms']
-    : [];
+  $case_category_terms = isset($variables['case_category_terms']) && is_array($variables['case_category_terms']) 
+      ? $variables['case_category_terms'] 
+      : [];
 
   // Merge case_category_terms and additional_cases_served if both are arrays, otherwise use case_category_terms alone.
   $variables['case_served'] = array_values(array_merge($case_category_terms, $additional_cases_served));
@@ -132,7 +132,7 @@ function extract_service_details($paragraph) {
     'additional_info' => $paragraph->hasField('field_additional_information') ? Html::escape($paragraph->get('field_additional_information')->value) : '',
     'service_appointment' => $paragraph->hasField('field_service_appointment') ? create_link($paragraph->get('field_service_appointment')->getValue()) : '',
     'categories' => $paragraph->hasField('field_service_category') ? array_map(function ($term_reference) {
-      return Html::escape($term_reference->getName());
+          return Html::escape($term_reference->getName());
     }, $paragraph->get('field_service_category')->referencedEntities()) : [],
   ];
   return $services;
@@ -162,7 +162,7 @@ function get_service_hours($paragraph, $variables) {
     foreach ($paragraph->get('field_location_service_hours')->referencedEntities() as $hourEntity) {
       $is_repeated = ($hourEntity->get('field_service_hour_type')->value === $previous_hour_type);
       $hour_type = $hourEntity->get('field_service_hour_type')->value != "others" ? $hourEntity->get('field_service_hour_type')->value :
-        $hourEntity->get('field_others')->value;
+          $hourEntity->get('field_others')->value;
       $is_type_others = $hourEntity->get('field_service_hour_type')->value == "others" ? TRUE : FALSE;
       if ($is_type_others) {
         $others_field_value = $hour_type;
