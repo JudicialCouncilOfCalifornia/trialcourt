@@ -1456,21 +1456,22 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           foreach ($field as $topic) {
             if ($topic->entity) {
               $term = $topic->entity;
-              // Landing page must be specified if actionable pill.
+              // Node with catalog view must be specified for actionable pill.
               $url = theme_get_setting('landing_course');
-              $domain = 'https://' . \Drupal::request()->getHost();
-              // Add domain if relative path or linkit supplied.
-              if (!str_starts_with($url, $domain)) {
-                $url = $domain . $url;
-              }
-              // Use appropriate parameter to prefilter view.
-              $param = '?field_topics_target_id=' . $term->id();
-              if ($field->getName() == 'field_subtopics') {
-                $param = '?field_subtopics_target_id=' . $term->id();
+              $catalog_url = NULL;
+              if ($url && str_starts_with($url, '/node')) {
+                $domain = 'https://' . \Drupal::request()->getHost();
+                // Use appropriate parameter to prefilter landing.
+                $param = '?field_topics_target_id=' . $term->id();
+                if ($field->getName() == 'field_subtopics') {
+                  $param = '?field_subtopics_target_id=' . $term->id();
+                }
+
+                $catalog_url = $domain . $url . $param;
               }
               $topics[] = [
                 'label' => $term->label(),
-                'url' => $url ? $url . $param : NULL,
+                'url' => $catalog_url,
               ];
             }
           }
