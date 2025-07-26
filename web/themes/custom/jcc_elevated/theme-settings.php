@@ -234,7 +234,7 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
         '#title' => $bundle['label'],
         // Specify the autocomplete route for Linkit.
         '#autocomplete_route_name' => 'linkit.autocomplete',
-        // Optionally, specify Linkit profile parameters.
+        // Specify Linkit profile parameters.
         '#autocomplete_route_parameters' => [
           'linkit_profile_id' => 'default',
         ],
