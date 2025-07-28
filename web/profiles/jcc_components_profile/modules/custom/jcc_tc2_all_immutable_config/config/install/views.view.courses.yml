@@ -187,7 +187,7 @@ display:
           submit_button: Apply
           reset_button: true
           reset_button_label: Reset
-          exposed_sorts_label: 'Sort by publish date'
+          exposed_sorts_label: 'Sort by'
           expose_sort_order: true
           sort_asc_label: earliest
           sort_desc_label: latest
@@ -208,7 +208,7 @@ display:
               plugin_id: default
               advanced:
                 combine: true
-                combine_rewrite: ''
+                combine_rewrite: "Sort by earliest|Oldest first\r\nSort by latest|Newest first\r\nAlphabetical earliest|A -> Z\r\nAlphabetical latest|Z -> A"
                 reset: false
                 reset_label: ''
                 collapsible: false
@@ -259,20 +259,6 @@ display:
                 options_hide_when_empty: true
                 options_show_items_count: 0
               field_subtopics_target_id:
-                plugin_id: default
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  is_secondary: false
-                options_show_only_used: true
-                options_show_only_used_filtered: true
-                options_hide_when_empty: true
-                options_show_items_count: 0
-              field_audience_target_id:
                 plugin_id: default
                 advanced:
                   sort_options: false
@@ -360,6 +346,21 @@ display:
             field_identifier: field_date_value
           exposed: true
           granularity: second
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: Alphabetical
+            field_identifier: Alphabetical
+          exposed: true
       arguments: {  }
       filters:
         combine:
