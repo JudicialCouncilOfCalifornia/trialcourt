@@ -890,6 +890,7 @@ display:
           admin_label: 'field_components: Paragraph'
           plugin_id: standard
           required: false
+      css_class: no-chosen
       use_ajax: true
       group_by: true
       header:
@@ -905,6 +906,30 @@ display:
           content: 'Displaying @start - @end of @total'
       footer: {  }
       display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
+        - user
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:field.storage.node.body'
+  block_1:
+    id: block_1
+    display_title: 'Catalog pre-filtered'
+    display_plugin: block
+    position: 1
+    display_options:
+      display_description: ''
+      display_extenders: {  }
+      allow:
+        items_per_page: true
     cache_metadata:
       max-age: -1
       contexts:
