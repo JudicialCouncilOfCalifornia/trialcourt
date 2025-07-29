@@ -1,0 +1,79 @@
+{{ attach_library("jcc_storybook/Card") }}
+{{ attach_library('jcc_elevated_embeds/jrn_directory') }}
+
+{% set imageTag %}
+  <img class="dir-image" src=" /modules/custom/jcc_elevated_embeds/assets/jrn-directory.png" alt="JRN Directory image" />  
+{% endset %}
+
+{% set directoryMarkup %}
+<form id="court-search-officer"  action="/admin/content/jcc-officer" method="get"> {# action="/admin/content/jcc-officer" id="court-search-form" class="views-exposed-form bef-exposed-form" #} 
+  <div class="form-item form-item-textfield--withbutton">
+    <label class="usa-sr-only" for="header-search">Find Court Executives and Judicial Officers</label>
+    <div class="cluster">
+      <div class="placeholder-container js-form-type-textfield">
+        <input class="usa-input" id="header-search" type="search" name="keyword" placeholder="Enter a name" />
+        <label for="header-search">Enter a name</label>
+      </div>				
+      <button class="button button--secondary" type="submit">
+        <span>Search By Name</span>
+      </button>
+    </div>
+  </div>
+</form>
+<br />
+
+<form id="search-location" class="views-exposed-form bef-exposed-form">
+  <div class="form-item form-item-textfield--withbutton">
+   	<label class="usa-sr-only" for="header-search">Find Court Locations/Contacts</label>  
+      <div class="cluster"> 
+      <select class="form-text" name="court">
+        <option value="0">- Select court -</option>
+        {% for id, label in content.jcc_court_options %}
+          <option value="{{ id }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button class="button button--secondary" href="#" type="submit"> 
+    		<span>Search Court</span>
+		  </button> 
+      </div>
+  </div>
+</form>
+<br />
+
+<form class="views-exposed-form bef-exposed-form" action="/admin/content/jcc-staff" method="get">
+<div class="form-item form-item-textfield--withbutton">
+	<label class="usa-sr-only" for="header-search">Find Judicial Council Staff</label>
+  	<div class="cluster">
+      <div class="placeholder-container js-form-type-textfield">
+        <input class="usa-input" id="header-search" type="search" name="keyword" placeholder="Enter a name" />
+        <label for="edit-text-field-label">Enter a name</label>
+      </div>				
+		<button class="button button--secondary" href="#" type="submit">
+    		<span>Search Staff</span>
+		</button> 
+    </div>
+</div>
+</form>
+
+{% endset %}
+{% set cardDetails %}
+  <div class="jrn-directory-block">
+    {% include "@molecules/Card/Card.twig" with {
+      variant: "bordered",
+      aspect: [],
+      clickable_card: false,
+      background: null,
+      media: imageTag,
+      heading: "Directory",
+      text: directoryMarkup,
+    } %} 
+  </div>
+{% endset %}
+
+{% include "@organisms/Section/Section.twig" with {
+  variant: 'default',
+  first_component: false,
+  sub_component_layout: 'grid',
+  sub_component_data: cardDetails,
+  inner_box_class: true,
+  }  %}

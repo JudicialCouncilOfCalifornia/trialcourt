@@ -79,7 +79,10 @@ class JccAddressFilterForm extends FormBase {
       '#type' => 'select',
       '#title' => 'Court',
       '#options' => $location_nodes ? array_reduce($location_nodes, function ($carry, $node) {
-        $carry[$node->id()] = $node->label();
+        $name2 = $node->get('name_2')->value ?? '';
+        $name3 = $node->get('name_3')->value ?? '';
+        $full_name = trim($name2 . ' ' . $name3);
+        $carry[$node->id()] = $full_name;
         return $carry;
       }, []) : [],
       '#empty_option' => 'All Courts',
