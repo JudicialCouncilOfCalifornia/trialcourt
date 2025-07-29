@@ -1359,8 +1359,11 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       $action = [
         '#markup' => '<a class="button button--secondary button--normal" href="' . $launch_uri . '">' . $launch_title . '</a>',
       ];
-    }    $variables['course_action'] = $action;
+    }
   }
+
+  // Action when applicable.
+  $variables['course_action'] = $action;
 
   // Promotional Image.
   if ($node->get('field_image')->entity) {

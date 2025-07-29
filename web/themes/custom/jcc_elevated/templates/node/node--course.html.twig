@@ -105,6 +105,7 @@
   {% if course.sidebar or course_action or course_schedule %}
     {% set sidebar %}
       {% set sidebar_content = [] %}
+      {% set subsection = [] %}
 
       {# Promo Image #}
       {% if course.sidebar.promo_image %}
@@ -168,11 +169,13 @@
 
         {% if topics %}
           {% set pills %}
-            <span class="list__item-label sr-only">Topics</span>
-            {% include "@molecules/Pills/Pills.twig" with {
-              variant: 'default',
-              items: [topics],
-            } %}
+            <div class="sidebar-list__item__links stack">
+              <span class="list__item-label sr-only">Topics</span>
+              {% include "@molecules/Pills/Pills.twig" with {
+                variant: 'default',
+                items: [topics],
+              } %}
+            </div>
           {% endset %}
           {% set pills = {
             text: pills,
@@ -191,23 +194,27 @@
         {% endset %}
         {% set item = {
           brow: today_event_date ? today_event_date ~ ' (Event Date)'|t : '',
-          heading: details,
+          text: details,
         } %}
         {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
 
       {# Future events #}
       {% if course_schedule %}
+        {% set events = [] %}
         {% for event in course_schedule %}
           {% if event.start_date|date('Ymd') > today %}
             {% set item = {
               brow: event.date,
-              heading: event.location,
-              text: event.notation,
+              text: event.location,
             } %}
-            {% set sidebar_content = sidebar_content|merge([item]) %}
+            {% set events = events|merge([item]) %}
           {% endif %}
         {% endfor %}
+        {% set subsection = {
+          heading: 'Future Event Dates'|t,
+          data: events,
+        } %}
       {% endif %}
 
       {% if sidebar_content %}
@@ -217,6 +224,7 @@
               variant: 'default',
               heading: 'Course Details',
               data: sidebar_content,
+              subsection: subsection,
               attributes: create_attribute()
             } %}
           </section>
