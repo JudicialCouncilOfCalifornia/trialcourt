@@ -249,7 +249,7 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
   unset($form['date_end']);
 
   // Group filters for catalog view
-  if ($view->id() === 'courses' && $display === 'catalog') {
+  if ($view->id() === 'courses') {
     // Group filters manually into fieldsets
     $form['keyword_group'] = [
       '#type' => 'fieldset',

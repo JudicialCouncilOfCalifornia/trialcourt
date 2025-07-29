@@ -1512,7 +1512,7 @@ function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived
 /**
  * Implements hook_preprocess_HOOK() for course cataglog listing.
  */
-function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
+function jcc_elevated_preprocess_views_view__courses(&$variables) {
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
 
@@ -1815,7 +1815,9 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
     }
   }
 
-  if ($form['#id'] == 'views-exposed-form-courses-catalog'){
+  if ($form['#id'] == 'views-exposed-form-courses-catalog' ||
+    $form['#id'] == 'views-exposed-form-courses-block-1' ||
+    $form['#id'] == 'views-exposed-form-courses-block-2'){
     $form['search_label'] = [
       '#type' => 'html_tag',
       '#tag' => 'h2',

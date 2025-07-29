@@ -9,6 +9,9 @@ dependencies:
     - taxonomy.vocabulary.event_locations
     - taxonomy.vocabulary.subtopics
     - taxonomy.vocabulary.topics
+  content:
+    - 'taxonomy_term:course_type:82d94c08-4d65-4ae0-beaf-65dae8b824c0'
+    - 'taxonomy_term:course_type:ebb462a6-1902-48cb-a4cc-f5d298af83ac'
   module:
     - better_exposed_filters
     - datetime
@@ -822,36 +825,21 @@ display:
           operator: '='
           value: All
           group: 1
-          exposed: true
+          exposed: false
           expose:
             operator_id: ''
-            label: 'By Judges for Judges'
-            description: ''
+            label: 'Is Contributed Content? (field_is_contributed_content)'
+            description: null
             use_operator: false
             operator: field_is_contributed_content_value_op
             operator_limit_selection: false
             operator_list: {  }
             identifier: field_is_contributed_content_value
-            required: false
+            required: true
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              facilities: '0'
-              opinions_editor: '0'
-              request_manager: '0'
-              advisory_body_manager: '0'
-              itc_manager: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -922,10 +910,1054 @@ display:
         - 'config:field.storage.node.body'
   block_1:
     id: block_1
-    display_title: 'Catalog pre-filtered'
+    display_title: 'Catalog - By judges for judges'
     display_plugin: block
     position: 1
     display_options:
+      filters:
+        combine:
+          id: combine
+          table: views
+          field: combine
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: combine
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: combine_op
+            label: Keywords
+            description: ''
+            use_operator: false
+            operator: combine_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: combine
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          fields:
+            title: title
+            body: body
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            course: course
+          group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        field_assignment_area_target_id:
+          id: field_assignment_area_target_id
+          table: node__field_assignment_area
+          field: field_assignment_area_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_assignment_area_target_id_op
+            label: 'Assignment Area'
+            description: ''
+            use_operator: false
+            operator: field_assignment_area_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_assignment_area_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: assignment_area
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_topics_target_id:
+          id: field_topics_target_id
+          table: node__field_topics
+          field: field_topics_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_topics_target_id_op
+            label: Topics
+            description: ''
+            use_operator: false
+            operator: field_topics_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_topics_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: topics
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_subtopics_target_id:
+          id: field_subtopics_target_id
+          table: node__field_subtopics
+          field: field_subtopics_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_subtopics_target_id_op
+            label: Subtopics
+            description: ''
+            use_operator: false
+            operator: field_subtopics_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_subtopics_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: subtopics
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_event_location_target_id:
+          id: field_event_location_target_id
+          table: paragraph__field_event_location
+          field: field_event_location_target_id
+          relationship: field_components
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_event_location_target_id_op
+            label: Location
+            description: ''
+            use_operator: false
+            operator: field_event_location_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_event_location_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: event_locations
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_is_quick_reference_value:
+          id: field_is_quick_reference_value
+          table: node__field_is_quick_reference
+          field: field_is_quick_reference_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: boolean
+          operator: '='
+          value: All
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'Quick Reference'
+            description: ''
+            use_operator: false
+            operator: field_is_quick_reference_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_is_quick_reference_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+          is_grouped: false
+          group_info:
+            label: 'Show quick references only'
+            description: ''
+            identifier: field_is_quick_reference_value
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_course_type_target_id:
+          id: field_course_type_target_id
+          table: node__field_course_type
+          field: field_course_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_course_type_target_id_op
+            label: ''
+            description: ''
+            use_operator: false
+            operator: field_course_type_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_course_type_target_id
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: 'Course Type (field_course_type)'
+            description: ''
+            identifier: field_course_type_target_id
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: ''
+                operator: or
+                value: {  }
+              2:
+                title: ''
+                operator: or
+                value: {  }
+              3:
+                title: ''
+                operator: or
+                value: {  }
+          reduce_duplicates: false
+          vid: course_type
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_is_contributed_content_value:
+          id: field_is_contributed_content_value
+          table: node__field_is_contributed_content
+          field: field_is_contributed_content_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: boolean
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: 'By Judges for Judges'
+            description: ''
+            use_operator: false
+            operator: field_is_contributed_content_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_is_contributed_content_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      defaults:
+        filters: false
+        filter_groups: false
+      display_description: ''
+      display_extenders: {  }
+      allow:
+        items_per_page: true
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
+        - user
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:field.storage.node.body'
+  block_2:
+    id: block_2
+    display_title: 'Catalog - E-learning'
+    display_plugin: block
+    position: 1
+    display_options:
+      filters:
+        combine:
+          id: combine
+          table: views
+          field: combine
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: combine
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: combine_op
+            label: Keywords
+            description: ''
+            use_operator: false
+            operator: combine_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: combine
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          fields:
+            title: title
+            body: body
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            course: course
+          group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        field_assignment_area_target_id:
+          id: field_assignment_area_target_id
+          table: node__field_assignment_area
+          field: field_assignment_area_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_assignment_area_target_id_op
+            label: 'Assignment Area'
+            description: ''
+            use_operator: false
+            operator: field_assignment_area_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_assignment_area_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: assignment_area
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_topics_target_id:
+          id: field_topics_target_id
+          table: node__field_topics
+          field: field_topics_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_topics_target_id_op
+            label: Topics
+            description: ''
+            use_operator: false
+            operator: field_topics_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_topics_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: topics
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_subtopics_target_id:
+          id: field_subtopics_target_id
+          table: node__field_subtopics
+          field: field_subtopics_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_subtopics_target_id_op
+            label: Subtopics
+            description: ''
+            use_operator: false
+            operator: field_subtopics_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_subtopics_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: subtopics
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_event_location_target_id:
+          id: field_event_location_target_id
+          table: paragraph__field_event_location
+          field: field_event_location_target_id
+          relationship: field_components
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_event_location_target_id_op
+            label: Location
+            description: ''
+            use_operator: false
+            operator: field_event_location_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_event_location_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: event_locations
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_is_quick_reference_value:
+          id: field_is_quick_reference_value
+          table: node__field_is_quick_reference
+          field: field_is_quick_reference_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: boolean
+          operator: '='
+          value: All
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'Quick Reference'
+            description: ''
+            use_operator: false
+            operator: field_is_quick_reference_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_is_quick_reference_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+          is_grouped: false
+          group_info:
+            label: 'Show quick references only'
+            description: ''
+            identifier: field_is_quick_reference_value
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_course_type_target_id:
+          id: field_course_type_target_id
+          table: node__field_course_type
+          field: field_course_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value:
+            89: 89
+            42: 42
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_course_type_target_id_op
+            label: ''
+            description: ''
+            use_operator: false
+            operator: field_course_type_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_course_type_target_id
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: 'Course Type (field_course_type)'
+            description: ''
+            identifier: field_course_type_target_id
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: ''
+                operator: or
+                value: {  }
+              2:
+                title: ''
+                operator: or
+                value: {  }
+              3:
+                title: ''
+                operator: or
+                value: {  }
+          reduce_duplicates: false
+          vid: course_type
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_is_contributed_content_value:
+          id: field_is_contributed_content_value
+          table: node__field_is_contributed_content
+          field: field_is_contributed_content_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: boolean
+          operator: '='
+          value: All
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'By Judges for Judges'
+            description: ''
+            use_operator: false
+            operator: field_is_contributed_content_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_is_contributed_content_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      defaults:
+        filters: false
+        filter_groups: false
       display_description: ''
       display_extenders: {  }
       allow:
@@ -950,6 +1982,515 @@ display:
     display_plugin: block
     position: 1
     display_options:
+      filters:
+        combine:
+          id: combine
+          table: views
+          field: combine
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: combine
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: combine_op
+            label: Keywords
+            description: ''
+            use_operator: false
+            operator: combine_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: combine
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          fields:
+            title: title
+            body: body
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            course: course
+          group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        field_assignment_area_target_id:
+          id: field_assignment_area_target_id
+          table: node__field_assignment_area
+          field: field_assignment_area_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_assignment_area_target_id_op
+            label: 'Assignment Area'
+            description: ''
+            use_operator: false
+            operator: field_assignment_area_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_assignment_area_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: assignment_area
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_topics_target_id:
+          id: field_topics_target_id
+          table: node__field_topics
+          field: field_topics_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_topics_target_id_op
+            label: Topics
+            description: ''
+            use_operator: false
+            operator: field_topics_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_topics_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: topics
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_subtopics_target_id:
+          id: field_subtopics_target_id
+          table: node__field_subtopics
+          field: field_subtopics_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_subtopics_target_id_op
+            label: Subtopics
+            description: ''
+            use_operator: false
+            operator: field_subtopics_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_subtopics_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: subtopics
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_event_location_target_id:
+          id: field_event_location_target_id
+          table: paragraph__field_event_location
+          field: field_event_location_target_id
+          relationship: field_components
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_event_location_target_id_op
+            label: Location
+            description: ''
+            use_operator: false
+            operator: field_event_location_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_event_location_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: event_locations
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_is_quick_reference_value:
+          id: field_is_quick_reference_value
+          table: node__field_is_quick_reference
+          field: field_is_quick_reference_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: boolean
+          operator: '='
+          value: All
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'Quick Reference'
+            description: ''
+            use_operator: false
+            operator: field_is_quick_reference_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_is_quick_reference_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+          is_grouped: false
+          group_info:
+            label: 'Show quick references only'
+            description: ''
+            identifier: field_is_quick_reference_value
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_course_type_target_id:
+          id: field_course_type_target_id
+          table: node__field_course_type
+          field: field_course_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_course_type_target_id_op
+            label: ''
+            description: ''
+            use_operator: false
+            operator: field_course_type_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_course_type_target_id
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: 'Course Type (field_course_type)'
+            description: ''
+            identifier: field_course_type_target_id
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: ''
+                operator: or
+                value: {  }
+              2:
+                title: ''
+                operator: or
+                value: {  }
+              3:
+                title: ''
+                operator: or
+                value: {  }
+          reduce_duplicates: false
+          vid: course_type
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_is_contributed_content_value:
+          id: field_is_contributed_content_value
+          table: node__field_is_contributed_content
+          field: field_is_contributed_content_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: boolean
+          operator: '='
+          value: All
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'By Judges for Judges'
+            description: ''
+            use_operator: false
+            operator: field_is_contributed_content_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_is_contributed_content_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      defaults:
+        filters: false
+        filter_groups: false
       display_description: ''
       display_extenders: {  }
       allow:
