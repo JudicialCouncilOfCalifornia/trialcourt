@@ -110,7 +110,7 @@
       {# Promo Image #}
       {% if course.sidebar.promo_image %}
         {% set item = {
-          heading: course.sidebar.promo_image,
+          text: course.sidebar.promo_image,
         } %}
         {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
@@ -118,7 +118,7 @@
       {# Action if not embedded media #}
       {% if course_action %}
         {% set item = {
-          heading: course_action,
+          text: course_action,
         } %}
         {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
@@ -169,7 +169,7 @@
 
         {% if topics %}
           {% set pills %}
-            <div class="sidebar-list__item__links stack">
+            <div class="sidebar-list__item__links">
               <span class="list__item-label sr-only">Topics</span>
               {% include "@molecules/Pills/Pills.twig" with {
                 variant: 'default',
@@ -177,9 +177,6 @@
               } %}
             </div>
           {% endset %}
-          {% set pills = {
-            text: pills,
-          } %}
           {% set details_content = details_content|merge([pills]) %}
         {% endif %}
       {% endif %}
@@ -203,7 +200,7 @@
       {% if course_schedule %}
         {% set events = [] %}
         {% for event in course_schedule %}
-          {% if event.start_date|date('Ymd') > today %}
+          {% if event.date|date('Ymd') > today %}
             {% set item = {
               brow: event.date,
               text: event.location,
@@ -211,10 +208,12 @@
             {% set events = events|merge([item]) %}
           {% endif %}
         {% endfor %}
-        {% set subsection = {
-          heading: 'Future Event Dates'|t,
-          data: events,
-        } %}
+        {% if events %}
+          {% set subsection = {
+            heading: 'Future Event Dates'|t,
+            data: events,
+          } %}
+        {% endif %}
       {% endif %}
 
       {% if sidebar_content %}

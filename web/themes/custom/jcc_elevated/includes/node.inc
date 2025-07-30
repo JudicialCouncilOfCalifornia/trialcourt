@@ -1224,6 +1224,8 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   $action = NULL;
   $sidebar_details = NULL;
   $sidebar = NULL;
+  $button_styles = 'button button--secondary button--normal full-width label-align--center';
+  $button_styles_disabled = $button_styles . ' disabled';
 
   // Media embed or action.
   if ($node->get('field_media')->entity) {
@@ -1250,7 +1252,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           $download_label = $download_label . ' ' . strtoupper($extension[0]);
         }
         $action = [
-          '#markup' => '<a class="button button--secondary button--normal" href="' . $file_url . '">' . $download_label . '</a>',
+          '#markup' => '<a class="' . $button_styles . '" href="' . $file_url . '">' . $download_label . '</a>',
         ];
       }
     }
@@ -1308,7 +1310,6 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
             'date' => $event_date,
             'event_is_today' => $event_is_today,
             'time' => $event_time,
-            'start_date' => $start_date->format('F j, Y'),
             'location' => $location,
             'notation' => $notation,
           ];
@@ -1328,27 +1329,27 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           if ($register_start > $today->format('Ymd')) {
             $action = [
               '#status' => 'pending',
-              '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Pending') . '</p>',
+              '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Pending') . '</div>',
             ];
           }
           elseif ($register_end < $today->format('Ymd')) {
             $action = [
               '#status' => 'closed',
-              '#markup' => '<p class="button button--secondary button--normal">' . t('Registration Closed') . '</p>',
+              '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Closed') . '</div>',
             ];
           }
           else {
             $label = $registration->title ? $registration->title : t('Register Now');
             $action = [
               '#status' => 'open',
-              '#markup' => '<a class="button button--secondary button--normal" href="' . $register_uri . '">' . $label . '</a>',
+              '#markup' => '<a class="' . $button_styles . '" href="' . $register_uri . '">' . $label . '</a>',
             ];
           }
         }
         else {
           $action = [
             '#status' => 'none',
-            '#markup' => '<p class="button button--secondary button--normal">' . t('No Registration Required') . '</p>',
+            '#markup' => '<p class="' . $button_styles_disabled . '">' . t('No Registration Required') . '</p>',
           ];
         }
       }
@@ -1357,7 +1358,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       $launch_title = t('Launch');
       $launch_uri = $node->get('field_origin_url')->uri;
       $action = [
-        '#markup' => '<a class="button button--secondary button--normal" href="' . $launch_uri . '">' . $launch_title . '</a>',
+        '#markup' => '<a class="' . $button_styles . '" href="' . $launch_uri . '">' . $launch_title . '</a>',
       ];
     }
   }
