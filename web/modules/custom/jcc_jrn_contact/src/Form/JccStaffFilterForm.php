@@ -86,10 +86,7 @@ class JccStaffFilterForm extends FormBase {
       '#empty_option' => 'All Departments',
       '#default_value' => $request->get('department') ?? '',
     ];
-dpm("Trying to print request here");
-dpm($request);
-    dpm("Trying to check default value here");
-dpm($request->get('temporary'));
+
     $form['filter']['temporary'] = [
       '#type' => 'checkbox',
       '#title' => 'Temp Hire',
@@ -141,15 +138,12 @@ $form['actions']['wrapper'] = [
 
     foreach (['keyword', 'temporary', 'department'] as $field) {
       $value = $form_state->getValue($field);
-      if ($value !== NULL) {
+      if ($value) {
         $query[$field] = $value;
       }
     }
-   // $form_state->setRebuild(TRUE);
-   dpm("Printing the form state here**************");
-    dpm($form_state);
-    //$form_state->setRedirect('entity.jcc_staff.collection', $query);
-    $form_state->setRedirect('entity.jcc_staff.collection', [], ['query' => $query]);
+
+    $form_state->setRedirect('entity.jcc_staff.collection', $query);
   }
 
   /**
