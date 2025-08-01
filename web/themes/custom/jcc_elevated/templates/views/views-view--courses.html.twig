@@ -51,6 +51,42 @@
   </div>
 {% endset %}
 
+{% set updated_rows = {} %}
+
+{% for key, row in processed_rows %}
+  {% set pills_markup_list = '' %}
+
+  {% if row.raw_pills %}
+    {% for pills in row.raw_pills %}
+      {% set processed_pills %}
+        {% for pill in pills %}
+          {% include "@atoms/Pill/Pill.twig" with {
+            variant: 'square',
+            label: pill.label,
+            url: '',
+          } %}
+        {% endfor %}
+      {% endset %}
+
+      {% set pills_markup_list = {} %}
+{#      Enable following to activate pills#}
+{#      {% set pills_markup_list = pills_markup_list|merge({'items': [processed_pills]}) %}#}
+    {% endfor %}
+  {% endif %}
+
+  {% set updated_row = {
+    'pills': pills_markup_list|default(null),
+    'title': row.title,
+    'is_new': row.is_new,
+    'url': row.url,
+    'content': row.content,
+    'button_data' : row.button_data,
+    'detail_list_data': row.detail_list_data,
+  } %}
+
+  {% set updated_rows = updated_rows|merge({ (key): updated_row }) %}
+{% endfor %}
+
 <div{{ attributes.addClass(classes) }}>
   {% include "@organisms/ViewResults/ViewResults.twig" with {
     variant: 'default',
@@ -64,7 +100,7 @@
     form_in_sidebar: true,
     list_type: 'ul',
     list_type_divider: '',
-    rows: processed_rows,
+    rows: updated_rows,
     sidebar: '',
     sidebar_direction_results: 'sidebar-row',
     pager: pager|render,
