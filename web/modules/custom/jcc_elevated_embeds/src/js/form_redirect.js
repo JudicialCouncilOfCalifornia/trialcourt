@@ -1,15 +1,19 @@
 (function ($, Drupal) {
 
   Drupal.behaviors.emptyKeywordRedirect = {
-     attach: function (context, settings) {
-      $('#court-search-officer', context).once('emptyKeywordRedirect').on('submit', function (e) {
-        const $keywordInput = $(this).find('input[name="keyword"]');
-        const keyword = $keywordInput.val();
-         if (keyword !== undefined && keyword.trim() === '') {
-          e.preventDefault();
-          window.location.href = '/admin/content/jcc-officer';
-        }
-      });
+    attach: function (context) {
+      $(once('emptyKeywordRedirect', '#court-search-officer', context))
+        .on('submit', function (e) {
+          const keyword = $(this).find('input[name="keyword"]').val().trim();
+          if (keyword === '') {
+            e.preventDefault();
+            window.location.href = '/directory/jcc-officer';
+            return;
+          }
+          const target = '/directory/jcc-officer?keyword=' + keyword;
+          e.preventDefault();                 
+          window.location.href = target;      
+        });
     }
   };
      
@@ -23,7 +27,7 @@
           if (courtId && courtId !== '0') {
             window.location.href = '/jcc-court/' + courtId;
           } else { 
-          window.location.href = 'admin/content/jcc-court'; 
+          window.location.href = '/directory/jcc-court'; 
         }
         });
       });

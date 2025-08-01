@@ -42,7 +42,7 @@ use Drupal\user\UserInterface;
  *     "canonical" = "/jcc-address/{jcc_address}",
  *     "edit-form" = "/admin/content/jcc-address/{jcc_address}/edit",
  *     "delete-form" = "/admin/content/jcc-address/{jcc_address}/delete",
- *     "collection" = "/admin/content/jcc-address"
+ *     "collection" = "/directory/jcc-address"
  *   },
  * )
  */

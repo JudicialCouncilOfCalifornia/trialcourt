@@ -1,0 +1,57 @@
+{{ attach_library("jcc_storybook/List") }}
+{{ attach_library("jcc_elevated/surplus-materials") }}
+{{ attach_library("jcc_storybook/Card") }} 
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/HeroHangover") }}
+{{ attach_library("jcc_storybook/Footer") }}
+{{ attach_library("jcc_storybook/Body") }}
+{{attach_library("jcc_jrn_contact/customview") }}
+
+ {% include "@molecules/HeroHangover/HeroHangover.twig" with {
+    hangover_hide_compact: false,
+    hangover_offset: 22,
+    background: 'red',      
+    heading: 'Directory',
+    news_header: true,    
+    text: ''  
+    }
+  %}  
+
+
+{% set details %}    
+  <div class="stack">
+  <span>
+    <h2 class="surplus-heading">{{ title }}</h2>
+    
+  </span>
+  
+<div class="custom-staff-view">
+  <div class="filter-form">
+    {{ form }}
+  </div>
+<br />
+<br />
+  <div class="staff-table">
+    {{ table }}
+  </div>
+
+</div>
+
+{% endset %}
+
+
+
+{% include "@organisms/Section/Section.twig" with {
+   variant: 'default',
+   sub_component_layout: 'with-sidebar grid',
+   sidebar_direction: 'row',
+   sidebar_width: "60",
+   sub_component_data: {
+     details
+   },
+    attributes: create_attribute()
+    }
+  %}
+
+
+

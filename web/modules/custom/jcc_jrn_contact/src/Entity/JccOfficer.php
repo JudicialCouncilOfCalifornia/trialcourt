@@ -42,7 +42,7 @@ use Drupal\user\UserInterface;
  *     "canonical" = "/jcc-officer/{jcc_officer}",
  *     "edit-form" = "/admin/content/jcc-officer/{jcc_officer}/edit",
  *     "delete-form" = "/admin/content/jcc-officer/{jcc_officer}/delete",
- *     "collection" = "/admin/content/jcc-officer"
+ *     "collection" = "/directory/jcc-officer"
  *   },
  * )
  */

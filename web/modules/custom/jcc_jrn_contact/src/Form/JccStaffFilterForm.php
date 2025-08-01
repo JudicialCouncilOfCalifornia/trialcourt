@@ -86,30 +86,49 @@ class JccStaffFilterForm extends FormBase {
       '#empty_option' => 'All Departments',
       '#default_value' => $request->get('department') ?? '',
     ];
-
+dpm("Trying to print request here");
+dpm($request);
+    dpm("Trying to check default value here");
+dpm($request->get('temporary'));
     $form['filter']['temporary'] = [
       '#type' => 'checkbox',
       '#title' => 'Temp Hire',
-      '#default_value' => $request->get('temporary') ?? FALSE,
+      /*'#default_value' => $request->get('temporary') ??  FALSE,*/
+      '#default_value' => $request->get('temporary') ??  FALSE,
+      '#attributes' => [
+    'class' => ['form-checkbox', 'toggle-switch'],
+  ],
+  '#wrapper_attributes' => [
+    'class' => ['toggle-wrapper'],
+  ],
     ];
+
+ //dpm($form['filter']['temporary']);
 
     $form['actions']['wrapper'] = [
       '#type' => 'container',
       '#attributes' => ['class' => ['form-item']],
     ];
-
+$form['actions']['wrapper'] = [
+  '#type' => 'container',
+  '#attributes' => [
+    'class' => ['button-group'],
+  ],
+];
     $form['actions']['wrapper']['submit'] = [
       '#type' => 'submit',
       '#value' => 'Filter',
+      '#attributes' => ['class' => ['sample-button']],
     ];
-
     if ($request->getQueryString()) {
       $form['actions']['wrapper']['reset'] = [
         '#type' => 'submit',
         '#value' => 'Reset',
         '#submit' => ['::resetForm'],
+        '#attributes' => ['class' => ['sample-button']],
       ];
-    }
+      $form['actions']['#attributes']['style'] = 'display: flex; flex-direction: row; gap: 10px;background-color: red !important;';
+   }
 
     return $form;
   }
@@ -122,12 +141,15 @@ class JccStaffFilterForm extends FormBase {
 
     foreach (['keyword', 'temporary', 'department'] as $field) {
       $value = $form_state->getValue($field);
-      if ($value) {
+      if ($value !== NULL) {
         $query[$field] = $value;
       }
     }
-
-    $form_state->setRedirect('entity.jcc_staff.collection', $query);
+   // $form_state->setRebuild(TRUE);
+   dpm("Printing the form state here**************");
+    dpm($form_state);
+    //$form_state->setRedirect('entity.jcc_staff.collection', $query);
+    $form_state->setRedirect('entity.jcc_staff.collection', [], ['query' => $query]);
   }
 
   /**

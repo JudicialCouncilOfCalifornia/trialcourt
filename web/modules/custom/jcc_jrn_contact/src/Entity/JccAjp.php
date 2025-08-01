@@ -42,7 +42,7 @@ use Drupal\user\UserInterface;
  *     "canonical" = "/jcc-ajp/{jcc_ajp}",
  *     "edit-form" = "/admin/content/jcc-ajp/{jcc_ajp}/edit",
  *     "delete-form" = "/admin/content/jcc-ajp/{jcc_ajp}/delete",
- *     "collection" = "/admin/content/jcc-ajp"
+ *     "collection" = "/directory/jcc-ajp"
  *   },
  * )
  */

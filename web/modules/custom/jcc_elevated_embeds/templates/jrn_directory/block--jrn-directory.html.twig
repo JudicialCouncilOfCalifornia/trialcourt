@@ -6,7 +6,7 @@
 {% endset %}
 
 {% set directoryMarkup %}
-<form id="court-search-officer"  action="/admin/content/jcc-officer" method="get"> {# action="/admin/content/jcc-officer" id="court-search-form" class="views-exposed-form bef-exposed-form" #} 
+<form id="court-search-officer" class="views-exposed-form bef-exposed-form" action="/directory/jcc-officer" method="get"> {# action="/admin/content/jcc-officer" id="court-search-form" class="views-exposed-form bef-exposed-form" #} 
   <div class="form-item form-item-textfield--withbutton">
     <label class="usa-sr-only" for="header-search">Find Court Executives and Judicial Officers</label>
     <div class="cluster">
@@ -15,7 +15,7 @@
         <label for="header-search">Enter a name</label>
       </div>				
       <button class="button button--secondary" type="submit">
-        <span>Search By Name</span>
+        <span>Search by Name</span>
       </button>
     </div>
   </div>
@@ -32,7 +32,7 @@
           <option value="{{ id }}">{{ label }}</option>
         {% endfor %}
       </select>
-      <button class="button button--secondary" href="#" type="submit"> 
+      <button class="button button--secondary" type="submit"> 
     		<span>Search Court</span>
 		  </button> 
       </div>
@@ -40,7 +40,7 @@
 </form>
 <br />
 
-<form class="views-exposed-form bef-exposed-form" action="/admin/content/jcc-staff" method="get">
+<form class="views-exposed-form bef-exposed-form" action="/directory/jcc-staff" method="get">
 <div class="form-item form-item-textfield--withbutton">
 	<label class="usa-sr-only" for="header-search">Find Judicial Council Staff</label>
   	<div class="cluster">
@@ -48,7 +48,7 @@
         <input class="usa-input" id="header-search" type="search" name="keyword" placeholder="Enter a name" />
         <label for="edit-text-field-label">Enter a name</label>
       </div>				
-		<button class="button button--secondary" href="#" type="submit">
+		<button class="button button--secondary" type="submit">
     		<span>Search Staff</span>
 		</button> 
     </div>

@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Render\Element;
 
 /**
  * Provides a list controller for the jcc staff entity type.
@@ -63,16 +64,15 @@ class JccStaffListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function render() {
-    $build['form'] = \Drupal::formBuilder()->getForm('Drupal\jcc_jrn_contact\Form\JccStaffFilterForm');
-    $build['table'] = parent::render();
+    $form = \Drupal::formBuilder()->getForm('Drupal\jcc_jrn_contact\Form\JccStaffFilterForm');
+    $table = parent::render();
 
-    $total = $this->getStorage()
-      ->getQuery()
-      ->count()
-      ->execute();
-
-    $build['summary']['#markup'] = $this->t('Total staff: @total', ['@total' => $total]);
-    return $build;
+    return [
+    '#theme' => 'custom_view',
+    '#form' => $form,
+    '#table' => $table,
+    '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
+  ];
   }
 
   /**

@@ -1,0 +1,30 @@
+{{attach_library("jcc_elevated/jobs") }}
+{# {% set id = attributes.id %}
+{% set classes = [
+  'form-check',
+  'form-check-input',
+  'toggle-switch',
+] %}
+
+<div class="toggle-wrapper">
+  <input{{ attributes.addClass(classes) }} />
+  <span class="checkbox-toggle">
+    <span class="checkbox-toggle__inner"></span>
+  </span>
+
+  {% if children is not empty %}
+    {{ children }}
+  {% endif %}
+</div> #}
+<label class="toggle-wrapper">
+  <input
+    type="checkbox"
+    id="edit-temporary"
+    name="temporary"
+    class="form-checkbox toggle-switch"
+      {% if checked %}checked{% endif %}>
+  <span class="checkbox-toggle">
+    <span class="checkbox-toggle__inner"></span>
+  </span>
+</label>
+
