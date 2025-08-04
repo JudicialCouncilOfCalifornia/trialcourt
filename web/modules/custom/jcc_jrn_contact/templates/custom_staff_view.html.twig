@@ -11,7 +11,7 @@
     hangover_hide_compact: false,
     hangover_offset: 22,
     background: 'red',      
-    heading: 'Directory',
+    heading: 'Staff Directory',
     news_header: true,    
     text: ''  
     }
@@ -21,8 +21,7 @@
 {% set details %}    
   <div class="stack">
   <span>
-    <h2 class="surplus-heading">{{ title }}</h2>
-    
+    <h2 class="surplus-heading"></h2>    
   </span>
   
 <div class="custom-staff-view">
@@ -31,16 +30,13 @@
   </div>
 <br />
 <br />
-  <div class="staff-table">
+  <div  class="staff-table">
     {{ table }}
   </div>
-
 </div>
-
 {% endset %}
 
-
-
+<div class="jrn-directory-staff">
 {% include "@organisms/Section/Section.twig" with {
    variant: 'default',
    sub_component_layout: 'with-sidebar grid',
@@ -52,6 +48,6 @@
     attributes: create_attribute()
     }
   %}
-
+</div>
 
 

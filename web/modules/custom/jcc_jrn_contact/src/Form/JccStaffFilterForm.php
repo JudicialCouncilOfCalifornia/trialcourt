@@ -68,8 +68,8 @@ class JccStaffFilterForm extends FormBase {
 
     $form['filter']['keyword'] = [
       '#type' => 'textfield',
-      '#title' => 'Keyword',
-      '#placeholder' => 'Search by name or email',
+      '#title' => 'Judicial Staff',
+      '#placeholder' => '',
       '#default_value' => $request->get('keyword') ?? '',
     ];
 
@@ -90,39 +90,28 @@ class JccStaffFilterForm extends FormBase {
     $form['filter']['temporary'] = [
       '#type' => 'checkbox',
       '#title' => 'Temp Hire',
-      /*'#default_value' => $request->get('temporary') ??  FALSE,*/
-      '#default_value' => $request->get('temporary') ??  FALSE,
-      '#attributes' => [
-    'class' => ['form-checkbox', 'toggle-switch'],
-  ],
-  '#wrapper_attributes' => [
-    'class' => ['toggle-wrapper'],
-  ],
+      '#default_value' => $request->query->get('temporary') ?? FALSE,
     ];
-
- //dpm($form['filter']['temporary']);
 
     $form['actions']['wrapper'] = [
       '#type' => 'container',
       '#attributes' => ['class' => ['form-item']],
     ];
-$form['actions']['wrapper'] = [
-  '#type' => 'container',
-  '#attributes' => [
-    'class' => ['button-group'],
-  ],
+    $form['actions']['wrapper'] = [
+      '#type' => 'container',
+      '#attributes' => [
+      'class' => ['button-group'],
+      ],
 ];
     $form['actions']['wrapper']['submit'] = [
       '#type' => 'submit',
       '#value' => 'Filter',
-      '#attributes' => ['class' => ['sample-button']],
     ];
     if ($request->getQueryString()) {
       $form['actions']['wrapper']['reset'] = [
         '#type' => 'submit',
         '#value' => 'Reset',
         '#submit' => ['::resetForm'],
-        '#attributes' => ['class' => ['sample-button']],
       ];
       $form['actions']['#attributes']['style'] = 'display: flex; flex-direction: row; gap: 10px;background-color: red !important;';
    }

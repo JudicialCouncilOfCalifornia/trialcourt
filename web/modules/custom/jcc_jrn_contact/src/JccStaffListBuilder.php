@@ -60,19 +60,60 @@ class JccStaffListBuilder extends EntityListBuilder {
     );
   }
 
+    /**
+   * {@inheritdoc}
+   */
+  public function getOperations(EntityInterface $entity) {
+    return []; 
+  }
+
   /**
    * {@inheritdoc}
    */
   public function render() {
     $form = \Drupal::formBuilder()->getForm('Drupal\jcc_jrn_contact\Form\JccStaffFilterForm');
     $table = parent::render();
-
+    if (isset($table['table']['#header']['operations'])) {
+      unset($table['table']['#header']['operations']);
+    }
+    if (isset($table['table']['#rows']) && is_array($table['table']['#rows'])) {
+      foreach ($table['table']['#rows'] as &$row) {
+        if (isset($row['operations'])) {
+          unset($row['operations']);
+        }
+      }
+    }
+    /*foreach ($table['table']['#header'] as &$header_cell) {
+        if (is_array($header_cell)) {
+        // Add inline style to each header cell.
+        if (isset($header_cell['style'])) {
+          $header_cell['style'] .= ' background-color: white !important; color: black !important;';
+        }
+        else {
+          $header_cell['style'] = 'background-color: white !important; color: black !important;';
+        }
+      }
+      else {
+        // If header cell is just string, convert to array to add style.
+        $header_cell = [
+          'data' => $header_cell,
+          'style' => 'background-color: white !important; color: black !important;',
+        ];
+      }
+        }
+        $table['table']['#attributes']['class'][] = 'staff-table';
+        $table['table']['#attributes']['style'] = 'background-color: blue !important;';*/
+    $total = $this->getStorage()
+      ->getQuery()
+      ->count()
+      ->execute();
+    $build['summary']['#markup'] = $this->t('Total staff: @total', ['@total' => $total]);
     return [
-    '#theme' => 'custom_view',
-    '#form' => $form,
-    '#table' => $table,
-    '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
-  ];
+      '#theme' => 'custom_staff_view',
+      '#form' => $form,
+      '#table' => $table,
+      '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
+    ];
   }
 
   /**
