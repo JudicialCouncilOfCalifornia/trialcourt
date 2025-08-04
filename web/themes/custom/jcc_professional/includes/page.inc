@@ -105,29 +105,23 @@ function jcc_professional_preprocess_page(&$variables) {
 
       $livecast = [];
       foreach ($imported_events as $event) {
-        $event_datetime = new DateTime($event->get('field_date_range')->start_date, $timezone);
-        $event_date = \Drupal::service('date.formatter')->format($event_datetime->getTimestamp(), 'custom', 'm/d/y');
         $type = $term_storage->load($term_id)->name->value;
         $scheduled_type = $term_storage->load($event->get('field_event_type')->target_id)->name->value;
 
-        // If matching event is scheduled for today.
-        if ($event_date == $today && $scheduled_type == $type) {
-          $start_timestamp = strtotime($event->get('field_date_range')->start_date);
-          // Get webcast URL from event description.
+        $start_timestamp = strtotime($event->get('field_date_range')->start_date);
+        $end_timestamp = strtotime($event->get('field_date_range')->end_date);
+        $current_timestamp = time();
+
+        if ($current_timestamp >= $start_timestamp && $current_timestamp <= $end_timestamp && $scheduled_type == $type) {
           $body = $event->get('body')->value;
           $pattern = '/\/\/jcc\.granicus\.com\/(.*)\d+/';
           preg_match($pattern, $body ?? '', $event_url);
-          $event_url = $event_url ? $event_url[0] : '';
+          $event_url = $event_url ?: $event->get('field_origin_url_plain')->value;
 
-          // Banner visibility by status.
-          $status = NULL;
-          $current_time = date('h:i A');
-          $current_timestamp = strtotime($current_time);
+          // Determine banner status.
           $current_to_start = $current_timestamp - $start_timestamp;
-          $end_timestamp = strtotime($event->get('field_date_range')->end_date);
-
+          $status = NULL;
           if ($current_to_start > -3600 && $current_timestamp < $end_timestamp) {
-            // Display pending 1 hour before scheduled time.
             if (!theme_get_setting('granicus_status_override') == 1 && ($current_to_start > -3600 && $current_to_start < 0)) {
               $status = 'starting soon';
             }
@@ -136,10 +130,8 @@ function jcc_professional_preprocess_page(&$variables) {
             }
           }
 
-          // Display banner.
+          // Show banner if status determined.
           if ($status) {
-            // Captioning links.
-            $captioning = NULL;
             $captioning_links = [];
             $captions = [
               'English' => theme_get_setting('granicus_english_captions'),
@@ -152,21 +144,14 @@ function jcc_professional_preprocess_page(&$variables) {
                 $captioning_links[] = \Drupal::service('link_generator')->generate($title, $url);
               }
             }
+            $captioning = NULL;
             if ($captioning_links) {
-              switch (count($captioning_links)) {
-                case 2:
-                  $captioning_links = implode(' or ', $captioning_links);
-                  break;
-
-                default:
-                  $captioning_links = $captioning_links[0];
-              }
-              $captioning = ['#markup' => 'View ' . $captioning_links . ' Captions'];
+              $captioning = ['#markup' => 'View ' . implode(' or ', $captioning_links) . ' Captions'];
             }
 
             $livecast = [
               'title' => $type,
-              'date' => $event_date,
+              'date' => \Drupal::service('date.formatter')->format($start_timestamp, 'custom', 'm/d/y'),
               'time' => \Drupal::service('date.formatter')->format($start_timestamp, 'custom', 'h:i A'),
               'url' => $event_url,
               'captioning' => $captioning,

@@ -1,19 +1,35 @@
+uuid: 9626114b-e120-42f0-b87d-3efecbb60423
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.node.card
     - core.entity_view_mode.node.teaser
+    - field.storage.node.field_add_services
+    - field.storage.node.field_address
+    - field.storage.node.field_brow
     - field.storage.node.field_geolocation
+    - field.storage.node.field_image_of_the_courthouse
     - field.storage.node.field_phone
+    - field.storage.paragraph.field_service_category
     - node.type.location
+    - taxonomy.vocabulary.cases_served
+    - taxonomy.vocabulary.service_categories
   module:
+    - address
     - better_exposed_filters
+    - entity_reference_revisions
     - geolocation
     - geolocation_leaflet
     - node
+    - options
+    - paragraphs
+    - svg_image
+    - taxonomy
     - telephone
     - user
+_core:
+  default_config_hash: c54Ubxh1nnps3B8lbOi7hm4w15Br5Elm-ql4pu2Q8xg
 id: location
 label: Location
 module: views
@@ -31,26 +47,10 @@ display:
       title: Locations
       fields: {  }
       pager:
-        type: full
+        type: some
         options:
           offset: 0
-          items_per_page: 6
-          total_pages: null
-          id: 0
-          tags:
-            next: 'Next ›'
-            previous: '‹ Previous'
-            first: '« First'
-            last: 'Last »'
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
-          quantity: 9
+          items_per_page: 10
       exposed_form:
         type: bef
         options:
@@ -206,7 +206,7 @@ display:
         options:
           query_comment: ''
           disable_sql_rewrite: false
-          distinct: false
+          distinct: true
           replica: false
           query_tags: {  }
       relationships: {  }
@@ -217,10 +217,1822 @@ display:
       max-age: -1
       contexts:
         - 'languages:language_interface'
-        - url.query_args
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
+  block_1:
+    id: block_1
+    display_title: 'Location listing block'
+    display_plugin: block
+    position: 2
+    display_options:
+      fields:
+        field_geolocation:
+          id: field_geolocation
+          table: node__field_geolocation
+          field: field_geolocation
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: geolocation_field
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: ''
+          type: geolocation_latlng
+          settings: {  }
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_phone:
+          id: field_phone
+          table: node__field_phone
+          field: field_phone
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: telephone_link
+          settings:
+            title: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_address:
+          id: field_address
+          table: node__field_address
+          field: field_address
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: "<div class=\"jcc-location__address jcc-location-hero-link\">\r\n{{ field_address__address_line1 }}\r\n{{ field_address__address_line2 }} ,\r\n{{ field_address__locality }} ,\r\n{{ field_address__administrative_area }} \r\n{{ field_address__postal_code }}\r\n</div>"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: langcode
+          type: address_default
+          settings: {  }
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_brow:
+          id: field_brow
+          table: node__field_brow
+          field: field_brow
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_add_services:
+          id: field_add_services
+          table: node__field_add_services
+          field: field_add_services
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_revisions_entity_view
+          settings:
+            view_mode: default
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        title_1:
+          id: title_1
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        nid:
+          id: nid
+          table: node_field_data
+          field: nid
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_integer
+          settings:
+            thousand_separator: ''
+            prefix_suffix: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_image_of_the_courthouse:
+          id: field_image_of_the_courthouse
+          table: node__field_image_of_the_courthouse
+          field: field_image_of_the_courthouse
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: image
+          settings:
+            image_link: ''
+            image_style: ''
+            svg_attributes:
+              width: null
+              height: null
+            svg_render_as_image: true
+            image_loading:
+              attribute: lazy
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_service_category:
+          id: field_service_category
+          table: paragraph__field_service_category
+          field: field_service_category
+          relationship: field_add_services
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: true
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+      exposed_form:
+        type: bef
+        options:
+          submit_button: Submit
+          reset_button: true
+          reset_button_label: 'Clear all'
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: basic_html
+          bef:
+            general:
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+              reset_button_always_show: false
+            filter:
+              field_service_category_target_id:
+                plugin_id: bef_single
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+              field_cases_served_target_id:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: 0
+              field_brow_value:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
+      arguments:
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: string
+          default_action: ignore
+          exception:
+            value: all
+            title_enable: false
+            title: All
+          title_enable: false
+          title: ''
+          default_argument_type: fixed
+          default_argument_options:
+            argument: ''
+          default_argument_skip_url: false
+          summary_options:
+            base_path: ''
+            count: true
+            override: false
+            items_per_page: 25
+          summary:
+            sort_order: asc
+            number_of_records: 0
+            format: default_summary
+          specify_validation: false
+          validate:
+            type: none
+            fail: 'not found'
+          validate_options: {  }
+          glossary: false
+          limit: 0
+          case: none
+          path_case: none
+          transform_dash: false
+          break_phrase: false
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            location: location
+          group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        field_location_page_version_value:
+          id: field_location_page_version_value
+          table: node__field_location_page_version
+          field: field_location_page_version_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value:
+            new: new
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        langcode:
+          id: langcode
+          table: node_field_data
+          field: langcode
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: langcode
+          plugin_id: language
+          operator: in
+          value:
+            '***LANGUAGE_language_interface***': '***LANGUAGE_language_interface***'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_service_category_target_id:
+          id: field_service_category_target_id
+          table: paragraph__field_service_category
+          field: field_service_category_target_id
+          relationship: field_add_services
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_service_category_target_id_op
+            label: 'Filter by type'
+            description: ''
+            use_operator: false
+            operator: field_service_category_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_service_category_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              demo_region_admin: '0'
+              demo_region_user: '0'
+            reduce: false
+          is_grouped: true
+          group_info:
+            label: 'Self-Help Locations'
+            description: ''
+            identifier: field_service_category_target_id
+            optional: true
+            widget: radios
+            multiple: false
+            remember: false
+            default_group: '1'
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: 'self help'
+                operator: or
+                value:
+                  120: '120'
+                  122: '122'
+                  121: '121'
+                  123: '123'
+                  124: '124'
+          reduce_duplicates: false
+          vid: service_categories
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_cases_served_target_id:
+          id: field_cases_served_target_id
+          table: node__field_cases_served
+          field: field_cases_served_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_cases_served_target_id_op
+            label: 'Filter by Cases Served '
+            description: ''
+            use_operator: false
+            operator: field_cases_served_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_cases_served_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              demo_region_admin: '0'
+              demo_region_user: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: cases_served
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+        field_brow_value:
+          id: field_brow_value
+          table: node__field_brow
+          field: field_brow_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: string
+          operator: '='
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_brow_value_op
+            label: 'Filter by City'
+            description: ''
+            use_operator: false
+            operator: field_brow_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_brow_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+            placeholder: 'Filter by City'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      style:
+        type: default
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+      row:
+        type: fields
+        options:
+          default_field_elements: true
+          inline: {  }
+          separator: ''
+          hide_empty: false
+      defaults:
+        use_ajax: false
+        pager: true
+        exposed_form: false
+        style: false
+        row: false
+        relationships: false
+        fields: false
+        arguments: false
+        filters: false
+        filter_groups: false
+        header: false
+      relationships:
+        field_add_services:
+          id: field_add_services
+          table: node__field_add_services
+          field: field_add_services
+          relationship: none
+          group_type: group
+          admin_label: 'field_add_services: Paragraph'
+          plugin_id: standard
+          required: false
+      use_ajax: true
+      display_description: ''
+      header:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text
+          empty: false
+          content:
+            value: '<a href="/locations">View Location Details</a>'
+            format: basic_html
+          tokenize: false
+      display_extenders: {  }
+      block_description: location_listing_block
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - user
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:field.storage.node.field_add_services'
+        - 'config:field.storage.node.field_address'
+        - 'config:field.storage.node.field_brow'
+        - 'config:field.storage.node.field_geolocation'
+        - 'config:field.storage.node.field_image_of_the_courthouse'
+        - 'config:field.storage.node.field_phone'
+        - 'config:field.storage.paragraph.field_service_category'
+  embed_1:
+    id: embed_1
+    display_title: 'Embed Map For locations'
+    display_plugin: embed
+    position: 5
+    display_options:
+      fields:
+        field_geolocation:
+          id: field_geolocation
+          table: node__field_geolocation
+          field: field_geolocation
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: geolocation_field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: ''
+          type: geolocation_latlng
+          settings: {  }
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+      pager:
+        type: none
+        options:
+          offset: 0
+      sorts: {  }
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            location: location
+          group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      style:
+        type: maps_common
+        options:
+          data_provider_id: geolocation_field_provider
+          geolocation_field: field_geolocation
+          title_field: ''
+          label_field: ''
+          marker_row_number: 0
+          marker_icon_path: ''
+          even_empty: 1
+          centre:
+            client_location:
+              enable: true
+              weight: 0
+              map_center_id: client_location
+            fixed_boundaries:
+              enable: false
+              weight: 0
+              settings:
+                south: ''
+                west: ''
+                north: ''
+                east: ''
+              map_center_id: fixed_boundaries
+            fit_bounds:
+              enable: true
+              weight: 0
+              settings:
+                reset_zoom: false
+                min_zoom: 14
+              map_center_id: fit_bounds
+            fixed_value:
+              enable: false
+              weight: 0
+              settings:
+                location_option_id: fixed_value
+                latitude: null
+                longitude: null
+              map_center_id: location_plugins
+            first_row:
+              enable: false
+              weight: 0
+              settings:
+                location_option_id: first_row
+              map_center_id: location_plugins
+            ipstack:
+              enable: false
+              weight: 0
+              settings:
+                location_option_id: ipstack
+                access_key: ''
+              map_center_id: location_plugins
+          map_provider_id: leaflet
+          map_provider_settings:
+            map_features:
+              leaflet_client_location_indicator:
+                weight: 0
+                enabled: true
+              leaflet_disable_user_interaction:
+                weight: 0
+                enabled: false
+              geolocation_shapes:
+                weight: 0
+                settings:
+                  remove_markers: false
+                  polyline: true
+                  polyline_title: ''
+                  strokeColor: '#FF0000'
+                  strokeOpacity: 0.8
+                  strokeWidth: '2'
+                  polygon: false
+                  polygon_title: ''
+                  fillColor: '#FF0000'
+                  fillOpacity: 0.35
+                enabled: false
+              leaflet_gesture_handling:
+                weight: 0
+                enabled: false
+              leaflet_rotate:
+                weight: 0
+                settings:
+                  display_control: true
+                  bearing: !!float 0
+                enabled: false
+              leaflet_control_attribution:
+                weight: 0
+                settings:
+                  position: bottomright
+                  prefix: Leaflet
+                enabled: true
+              leaflet_control_fullscreen:
+                weight: 0
+                settings:
+                  position: topright
+                enabled: false
+              leaflet_control_geocoder:
+                weight: 0
+                settings:
+                  position: topright
+                  geocoder: photon
+                  settings:
+                    label: Address
+                    description: 'Enter an address to be localized.'
+                enabled: false
+              leaflet_control_locate:
+                weight: 0
+                settings:
+                  position: topright
+                enabled: false
+              leaflet_control_recenter:
+                weight: 0
+                settings:
+                  position: topright
+                enabled: false
+              leaflet_control_scale:
+                weight: 0
+                settings:
+                  position: topright
+                  metric: true
+                  imperial: true
+                enabled: false
+              leaflet_control_layer:
+                weight: 0
+                settings:
+                  position: topright
+                  default_label: Default
+                  tile_layer_providers:
+                    OpenStreetMap:
+                      'OpenStreetMap Mapnik':
+                        checkbox: false
+                        label: ''
+                      'OpenStreetMap BlackAndWhite':
+                        checkbox: false
+                        label: ''
+                      'OpenStreetMap DE':
+                        checkbox: false
+                        label: ''
+                      'OpenStreetMap CH':
+                        checkbox: false
+                        label: ''
+                      'OpenStreetMap France':
+                        checkbox: false
+                        label: ''
+                      'OpenStreetMap HOT':
+                        checkbox: false
+                        label: ''
+                      'OpenStreetMap BZH':
+                        checkbox: false
+                        label: ''
+                    OpenTopoMap:
+                      OpenTopoMap:
+                        checkbox: false
+                        label: ''
+                    Thunderforest:
+                      'Thunderforest OpenCycleMap':
+                        checkbox: false
+                        label: ''
+                      'Thunderforest Transport':
+                        checkbox: false
+                        label: ''
+                      'Thunderforest TransportDark':
+                        checkbox: false
+                        label: ''
+                      'Thunderforest SpinalMap':
+                        checkbox: false
+                        label: ''
+                      'Thunderforest Landscape':
+                        checkbox: false
+                        label: ''
+                      'Thunderforest Outdoors':
+                        checkbox: false
+                        label: ''
+                      'Thunderforest Pioneer':
+                        checkbox: false
+                        label: ''
+                    OpenMapSurfer:
+                      'OpenMapSurfer Roads':
+                        checkbox: false
+                        label: ''
+                      'OpenMapSurfer Grayscale':
+                        checkbox: false
+                        label: ''
+                    Hydda:
+                      'Hydda Full':
+                        checkbox: false
+                        label: ''
+                      'Hydda Base':
+                        checkbox: false
+                        label: ''
+                    MapBox:
+                      MapBox:
+                        checkbox: false
+                        label: ''
+                    Stamen:
+                      'Stamen Toner':
+                        checkbox: false
+                        label: ''
+                      'Stamen TonerBackground':
+                        checkbox: false
+                        label: ''
+                      'Stamen TonerLite':
+                        checkbox: false
+                        label: ''
+                      'Stamen Watercolor':
+                        checkbox: false
+                        label: ''
+                      'Stamen Terrain':
+                        checkbox: false
+                        label: ''
+                      'Stamen TerrainBackground':
+                        checkbox: false
+                        label: ''
+                      'Stamen TopOSMRelief':
+                        checkbox: false
+                        label: ''
+                    Esri:
+                      'Esri WorldStreetMap':
+                        checkbox: false
+                        label: ''
+                      'Esri DeLorme':
+                        checkbox: false
+                        label: ''
+                      'Esri WorldTopoMap':
+                        checkbox: false
+                        label: ''
+                      'Esri WorldImagery':
+                        checkbox: false
+                        label: ''
+                      'Esri WorldTerrain':
+                        checkbox: false
+                        label: ''
+                      'Esri WorldShadedRelief':
+                        checkbox: false
+                        label: ''
+                      'Esri WorldPhysical':
+                        checkbox: false
+                        label: ''
+                      'Esri OceanBasemap':
+                        checkbox: false
+                        label: ''
+                      'Esri NatGeoWorldMap':
+                        checkbox: false
+                        label: ''
+                      'Esri WorldGrayCanvas':
+                        checkbox: false
+                        label: ''
+                    HERE:
+                      'HERE normalDay':
+                        checkbox: false
+                        label: ''
+                      'HERE normalDayCustom':
+                        checkbox: false
+                        label: ''
+                      'HERE normalDayGrey':
+                        checkbox: false
+                        label: ''
+                      'HERE normalDayMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE normalDayGreyMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE normalDayTransit':
+                        checkbox: false
+                        label: ''
+                      'HERE normalDayTransitMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE normalNight':
+                        checkbox: false
+                        label: ''
+                      'HERE normalNightMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE normalNightGrey':
+                        checkbox: false
+                        label: ''
+                      'HERE normalNightGreyMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE normalNightTransit':
+                        checkbox: false
+                        label: ''
+                      'HERE normalNightTransitMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE redcuedDay':
+                        checkbox: false
+                        label: ''
+                      'HERE redcuedNight':
+                        checkbox: false
+                        label: ''
+                      'HERE basicMap':
+                        checkbox: false
+                        label: ''
+                      'HERE mapLabels':
+                        checkbox: false
+                        label: ''
+                      'HERE trafficFlow':
+                        checkbox: false
+                        label: ''
+                      'HERE carnavDayGrey':
+                        checkbox: false
+                        label: ''
+                      'HERE hybridDayMobile':
+                        checkbox: false
+                        label: ''
+                      'HERE hybridDayTransit':
+                        checkbox: false
+                        label: ''
+                      'HERE hybridDayGrey':
+                        checkbox: false
+                        label: ''
+                      'HERE pedestrianDay':
+                        checkbox: false
+                        label: ''
+                      'HERE pedestrianNight':
+                        checkbox: false
+                        label: ''
+                      'HERE satelliteDay':
+                        checkbox: false
+                        label: ''
+                      'HERE terrainDay':
+                        checkbox: false
+                        label: ''
+                      'HERE terrainDayMobile':
+                        checkbox: false
+                        label: ''
+                    FreeMapSK:
+                      FreeMapSK:
+                        checkbox: false
+                        label: ''
+                    MtbMap:
+                      MtbMap:
+                        checkbox: false
+                        label: ''
+                    CartoDB:
+                      'CartoDB Positron':
+                        checkbox: false
+                        label: ''
+                      'CartoDB PositronNoLabels':
+                        checkbox: false
+                        label: ''
+                      'CartoDB PositronOnlyLabels':
+                        checkbox: false
+                        label: ''
+                      'CartoDB DarkMatter':
+                        checkbox: false
+                        label: ''
+                      'CartoDB DarkMatterNoLabels':
+                        checkbox: false
+                        label: ''
+                      'CartoDB DarkMatterOnlyLabels':
+                        checkbox: false
+                        label: ''
+                      'CartoDB Voyager':
+                        checkbox: false
+                        label: ''
+                      'CartoDB VoyagerNoLabels':
+                        checkbox: false
+                        label: ''
+                      'CartoDB VoyagerOnlyLabels':
+                        checkbox: false
+                        label: ''
+                      'CartoDB VoyagerLabelsUnder':
+                        checkbox: false
+                        label: ''
+                    HikeBike:
+                      HikeBike:
+                        checkbox: false
+                        label: ''
+                      'HikeBike HillShading':
+                        checkbox: false
+                        label: ''
+                    BasemapAT:
+                      'BasemapAT basemap':
+                        checkbox: false
+                        label: ''
+                      'BasemapAT grau':
+                        checkbox: false
+                        label: ''
+                      'BasemapAT overlay':
+                        checkbox: false
+                        label: ''
+                      'BasemapAT highdpi':
+                        checkbox: false
+                        label: ''
+                      'BasemapAT orthofoto':
+                        checkbox: false
+                        label: ''
+                    NLS:
+                      NLS:
+                        checkbox: false
+                        label: ''
+                    GeoportailFrance:
+                      'GeoportailFrance parcels':
+                        checkbox: false
+                        label: ''
+                      'GeoportailFrance ignMaps':
+                        checkbox: false
+                        label: ''
+                      'GeoportailFrance maps':
+                        checkbox: false
+                        label: ''
+                      'GeoportailFrance orthos':
+                        checkbox: false
+                        label: ''
+                  tile_providers_options:
+                    Thunderforest:
+                      apikey: ''
+                    MapBox:
+                      accessToken: ''
+                    HERE:
+                      app_id: ''
+                      app_code: ''
+                    GeoportailFrance:
+                      apikey: ''
+                enabled: false
+              leaflet_control_zoom:
+                weight: 0
+                settings:
+                  position: topright
+                enabled: true
+              leaflet_marker_clusterer:
+                weight: 0
+                settings:
+                  cluster_settings:
+                    show_coverage_on_hover: true
+                    zoom_to_bounds_on_click: true
+                  disable_clustering_at_zoom: 0
+                  custom_marker_settings: ''
+                enabled: false
+              leaflet_marker_icon:
+                weight: 0
+                settings:
+                  marker_shadow_path: ''
+                  marker_icon_path: ''
+                  icon_size:
+                    width: null
+                    height: null
+                  icon_anchor:
+                    x: null
+                    'y': null
+                  popup_anchor:
+                    x: 0
+                    'y': 0
+                  shadow_size:
+                    width: null
+                    height: null
+                  shadow_anchor:
+                    x: null
+                    'y': null
+                enabled: false
+              leaflet_marker_popup:
+                weight: 0
+                settings:
+                  info_auto_display: false
+                  max_width: 400
+                  min_width: 250
+                  max_height: 0
+                  auto_pan: true
+                  keep_in_view: false
+                  close_button: true
+                  auto_close: true
+                  close_on_escape_key: true
+                  class_name: ''
+                enabled: true
+              geolocation_marker_scroll_to_id:
+                weight: 0
+                settings:
+                  scroll_target_id: ''
+                enabled: false
+              leaflet_marker_zoom_and_animate:
+                weight: 0
+                settings:
+                  marker_zoom_anchor_id: ''
+                enabled: false
+              leaflet_max_bounds:
+                weight: 0
+                settings:
+                  north: null
+                  south: null
+                  east: null
+                  west: null
+                enabled: false
+              leaflet_custom_tile_layer:
+                weight: 0
+                settings:
+                  tile_layer_url: '//{s}.tile.osm.org/{z}/{x}/{y}.png'
+                  tile_layer_attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+                  tile_layer_subdomains: abc
+                  tile_layer_zoom: 18
+                enabled: false
+              leaflet_tile_layer_overlay:
+                weight: 0
+                settings:
+                  tile_layer_overlay: OpenInfraMap.Power
+                enabled: false
+              leaflet_tile_layer:
+                weight: 0
+                settings:
+                  tile_layer_provider: 'OpenStreetMap Mapnik'
+                  tile_provider_options:
+                    Thunderforest:
+                      apikey: ''
+                    MapBox:
+                      accessToken: ''
+                    HERE:
+                      app_id: ''
+                      app_code: ''
+                    GeoportailFrance:
+                      apikey: ''
+                enabled: false
+              leaflet_wms:
+                weight: 0
+                settings:
+                  url: ''
+                  version: 1.1.1
+                  layers: ''
+                  styles: ''
+                  srs: ''
+                  format: image/jpeg
+                  transparent: false
+                  identify: false
+                enabled: false
+            zoom: '10'
+            height: 400px
+            width: 100%
+            minZoom: '0'
+            maxZoom: '0'
+            maxBounds:
+              north_east_bound:
+                lat: null
+                lng: null
+              south_west_bound:
+                lat: null
+                lng: null
+            crs: EPSG3857
+            preferCanvas: false
+            zoomSnap: 1
+            zoomDelta: 1
+            trackResize: true
+            boxZoom: true
+            doubleClickZoom: true
+            dragging: true
+            zoomAnimation: true
+            zoomAnimationThreshold: 4
+            fadeAnimation: true
+            markerZoomAnimation: true
+            inertia: false
+            inertiaDeceleration: 3000
+            easeLinearity: 0.2
+            worldCopyJump: false
+            maxBoundsViscosity: !!float 0
+            keyboard: true
+            keyboardPanDelta: 80
+            scrollWheelZoom: true
+            wheelDebounceTime: 40
+            wheelPxPerZoomLevel: 60
+            tap: true
+            tapTolerance: 15
+            touchZoom: true
+            bounceAtZoomLimits: true
+      row:
+        type: 'entity:node'
+        options:
+          relationship: none
+          view_mode: card
+      defaults:
+        pager: false
+        style: false
+        row: false
+        fields: false
+        sorts: false
+        filters: false
+        filter_groups: false
+      display_description: ''
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:field.storage.node.field_geolocation'
   list:
     id: list
     display_title: List
@@ -234,7 +2046,6 @@ display:
       max-age: -1
       contexts:
         - 'languages:language_interface'
-        - url.query_args
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }

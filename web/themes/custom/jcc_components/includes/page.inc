@@ -192,6 +192,10 @@ function jcc_components_social_links() {
       'title' => t('Facebook'),
     ],
     [
+      'name' => 'threads',
+      'title' => t('Threads'),
+    ],
+    [
       'name' => 'instagram',
       'title' => t('Instagram'),
     ],

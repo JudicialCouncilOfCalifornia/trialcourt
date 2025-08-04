@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.service_category.field_service_hours_type
+    - field.field.paragraph.service_category.field_service_link
+    - paragraphs.paragraphs_type.service_category
+  module:
+    - text
+id: paragraph.service_category.default
+targetEntityType: paragraph
+bundle: service_category
+mode: default
+content:
+  field_service_hours_type:
+    type: options_select
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_service_link:
+    type: text_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

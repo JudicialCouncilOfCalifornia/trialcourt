@@ -1,0 +1,6 @@
+services:
+  jcc_site_lockdown.check_access:
+    class: Drupal\jcc_site_lockdown\EventSubscriber\JccSiteLockdownSubscriber
+    arguments: ['@path_alias.manager','@current_user','@path.current','@redirect.destination','@request_stack','@page_cache_kill_switch']
+    tags:
+      - {name: event_subscriber}

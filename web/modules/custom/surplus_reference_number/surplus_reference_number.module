@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Creates surplus reference number.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\Entity\Node;
+
+/**
+ * Implements hook_entity_presave().
+ */
+function surplus_reference_number_entity_presave(EntityInterface $entity) {
+  // For node creation: generate reference number.
+  if ($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'surplus_materials') {
+    $original = $entity->original ?? NULL;
+    $existing_ref = $entity->get('field_reference_number')->value;
+    $original_ref = $original ? $original->get('field_reference_number')->value : NULL;
+    if (!$original && empty($existing_ref)) {
+      $storage = \Drupal::entityTypeManager()->getStorage('node');
+      $query = $storage->getQuery()
+        ->condition('type', 'surplus_materials')
+        ->exists('field_reference_number')
+        ->sort('field_reference_number', 'DESC')
+        ->range(0, 1);
+      $nids = $query->execute();
+
+      $max_value = 0;
+      if (!empty($nids)) {
+        $last_node = Node::load(reset($nids));
+        if ($last_node) {
+          $max_value = (int) $last_node->get('field_reference_number')->value;
+        }
+      }
+      $entity->set('field_reference_number', $max_value + 1);
+    }
+    elseif ($original_ref && empty($existing_ref)) {
+      $entity->set('field_reference_number', $original_ref);
+    }
+    $posted_date_value = $entity->get('field_posted')->value;
+    if (empty($posted_date_value)) {
+      $today = new \DateTime('now');
+      $entity->set('field_posted', $today->format('Y-m-d'));
+      $posted_date_value = $today->format('Y-m-d');
+    }
+
+    $renewal_date_value = $entity->get('field_renewal_date')->value;
+    if (empty($renewal_date_value)) {
+      $posted_date = new \DateTime($posted_date_value);
+      $renewal_date = $posted_date->modify('+60 days');
+      $entity->set('field_renewal_date', $renewal_date->format('Y-m-d'));
+    }
+  }
+}
