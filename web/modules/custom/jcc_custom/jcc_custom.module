@@ -5,18 +5,15 @@
  * Contains jcc_custom.module.
  */
 
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Element\ManagedFile;
@@ -24,26 +21,6 @@ use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
-
-/**
- * Implements hook_entity_access().
- */
-function jcc_custom_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
-  switch ($entity->getEntityTypeId()) {
-    case 'paragraph':
-      switch ($entity->bundle()) {
-        case 'embed_script':
-          if ($operation === 'update' && !$account->hasPermission('grant embed script paragraph access')) {
-            return AccessResult::forbidden('You do not have permission to edit script embeds.');
-          }
-          break;
-      }
-      break;
-  }
-
-  // Return neutral if no specific access decision is made.
-  return AccessResult::neutral();
-}
 
 /**
  * Implements hook_page_attachments().
