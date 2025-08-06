@@ -78,6 +78,13 @@ class JccAjpFilterForm extends FormBase {
       '#attributes' => ['class' => ['form-item']],
     ];
 
+     $form['actions']['wrapper'] = [
+      '#type' => 'container',
+      '#attributes' => [
+      'class' => ['button-group'],
+      ],
+  ];
+
     $form['actions']['wrapper']['submit'] = [
       '#type' => 'submit',
       '#value' => 'Filter',

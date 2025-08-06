@@ -46,6 +46,14 @@ function jcc_jrn_contact_theme() {
       ],
       'template' => 'custom_officer_view',
     ],
+    'custom_ajp_view' => [
+      'variables' => [
+        'form' => NULL,
+        'table' => NULL,
+        'summary' => NULL,
+      ],
+      'template' => 'custom_ajp_view',
+    ],
   ];
 }
 
@@ -129,7 +137,75 @@ function template_preprocess_jcc_ajp(array &$variables) {
  *   - attributes: HTML attributes for the containing element.
  */
 function template_preprocess_jcc_court(array &$variables) {
-  foreach (Element::children($variables['elements']) as $key) {
+  $court_entity = \Drupal::routeMatch()->getParameter('jcc_court'); 
+  $court_id = $court_entity instanceof \Drupal\Core\Entity\EntityInterface ? $court_entity->id() : NULL;
+  //dpm($court_id);
+   $name = $court_entity->label();
+    $court_type = '';
+    if (!$court_entity->get('court_type')->isEmpty()) {
+      $court_type_entity = $court_entity->get('court_type')->entity;
+      $court_type = $court_type_entity ? $court_type_entity->label() : '';
+    }
+    $variables['name_and_type'] = $name . ' - ' . $court_type;  
+   //$target_tid = 35;
+  if ($court_id) {  
+    $query = \Drupal::entityTypeManager()->getStorage('jcc_cio')->getQuery();
+    $query->condition('court', $court_id);
+   // $query->condition('job_title', $target_tid);
+    $query->accessCheck(TRUE);
+    $ids = $query->execute();
+
+ if (!empty($ids)) {
+      $cios = \Drupal::entityTypeManager()->getStorage('jcc_cio')->loadMultiple($ids);      
+      $cio_data = [];
+      foreach ($cios as $cio) {
+       if (!$cio->get('job_title')->isEmpty()) {
+          $term = $cio->get('job_title')->entity;
+          if ($term) {
+            $job_title_term = $term->label();
+          }
+        }
+        $cio_data[] = [
+          'person_id' => $cio->get('person_id')->value,          
+          'fname' => $cio->get('first_name')->value,          
+          'lname' => $cio->get('last_name')->value,
+          'email' => $cio->get('email')->value,
+          'court' => $cio->get('court')->value,
+          'job_class' =>   $job_title_term,
+        ];
+      }
+      $variables['cio_data'] = $cio_data;
+    }
+  }
+
+  
+  //ADDRESS
+ if ($court_id) { 
+   $query = \Drupal::entityTypeManager()->getStorage('jcc_address')->getQuery();
+    $query->condition('court', $court_id);
+    $query->accessCheck(TRUE);
+    $ids = $query->execute();
+
+ if (!empty($ids)) {
+      $addrs = \Drupal::entityTypeManager()->getStorage('jcc_address')->loadMultiple($ids);      
+      $addr_data = [];
+      foreach ($addrs as $address) {
+        $addr_data[] = [
+          'addr1' => $address->get('addr1')->value, 
+          'addr2' => $address->get('addr2')->value,  
+          'city' => $address->get('city')->value,      
+          'state' => $address->get('state')->value,
+          'zip' => $address->get('zip')->value,
+          'mailing_addr1' => $address->get('mailing_addr1')->value, 
+          'phone' => $address->get('phone')->value, 
+          'fax' => $address->get('fax')->value, 
+        ];
+      }
+      $variables['address_data'] = $addr_data;
+    }
+  }
+foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
-}
+  
+  }

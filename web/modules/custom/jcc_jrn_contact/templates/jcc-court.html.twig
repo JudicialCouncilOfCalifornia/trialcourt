@@ -1,21 +1,96 @@
-{#
-/**
- * @file
- * Default theme implementation to present a jcc court entity.
- *
- * This template is used when viewing a registered jcc court's page,
- * e.g., /admin/content/jcc-court)/123. 123 being the jcc court's ID.
- *
- * Available variables:
- * - content: A list of content items. Use 'content' to print all content, or
- *   print a subset such as 'content.title'.
- * - attributes: HTML attributes for the container element.
- *
- * @see template_preprocess_jcc_court()
- */
-#}
-<article{{ attributes }}>
-  {% if content %}
-    {{- content -}}
+{{ attach_library("jcc_storybook/List") }}
+{{ attach_library("jcc_elevated/surplus-materials") }}
+{{ attach_library("jcc_storybook/Card") }} 
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/HeroHangover") }}
+{{ attach_library("jcc_storybook/Footer") }}
+{{ attach_library("jcc_storybook/Body") }}
+{{attach_library("jcc_jrn_contact/court-detailed-page") }}
+
+ {% include "@molecules/HeroHangover/HeroHangover.twig" with {
+    hangover_hide_compact: false,
+    hangover_offset: 22,
+    background: 'red',      
+    heading: name_and_type,
+    news_header: true,    
+    text: ''  
+    }
+  %}  
+
+{% set details %} 
+   {% if cio_data is not empty %}
+  {% for item in cio_data %}
+    {% for field, value in item %}
+    <p> {{value}} </p>
+    {% endfor %}
+  {% endfor %}
+{% endif %}
+<br />
+{% if address_data is not empty %}
+  {% set count = 1 %}
+<div>
+  <h3>Main Location:</h3>
+  <br />
+  {% set address = address_data[0] %}
+  <div class="location-row">
+    <div class="location-number">({{ count }})</div>
+    <div class="address-block">
+      <div class="address-left">
+        {{ address.addr1 }}<br>
+        {{ address.city }}, {{ address.state }} {{ address.zip }}
+      </div>
+      <div class="address-right">
+        <div><strong>Phone:</strong> {{ address.phone }}</div>
+        <div><strong>Fax:</strong> {{ address.fax }}</div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  {% if address_data|length > 1 %}
+  <div>
+    <h3>Other Locations:</h3>
+     <br />
+ 
+    {% for address in address_data|slice(1) %}
+      {% set count = count + 1 %}
+      <div class="location-row">
+        <div class="location-number">({{ count }})</div>
+        <div class="address-block">
+          <div class="address-left">
+            {{ address.addr1 }}<br>
+            {{ address.city }}, {{ address.state }} {{ address.zip }}
+          </div>
+          <div class="address-right">
+            <div><strong>Phone:</strong> {{ address.phone }}</div>
+            <div><strong>Fax:</strong> {{ address.fax }}</div>
+          </div>
+        </div>
+      </div>
+    
+    {% endfor %}
+    </div>
   {% endif %}
-</article>
+{% endif %}
+
+  
+   
+{% endset %}
+
+  <div class="jrn-directory-staff">
+{# {% if content %}
+    {{- content -}}
+  {% endif %} #}
+  {% include "@organisms/Section/Section.twig" with {
+    variant: 'default',
+    sub_component_layout: 'with-sidebar grid',
+    sidebar_direction: 'row',
+    sidebar_width: "60",
+    sub_component_data: {
+      details
+    },
+      attributes: create_attribute()
+      }
+    %}
+  </div>
+

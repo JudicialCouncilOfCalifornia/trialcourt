@@ -63,16 +63,35 @@ class JccAjpListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function render() {
-    $build['form'] = \Drupal::formBuilder()->getForm('Drupal\jcc_jrn_contact\Form\JccAjpFilterForm');
-    $build['table'] = parent::render();
+    $form = \Drupal::formBuilder()->getForm('Drupal\jcc_jrn_contact\Form\JccAjpFilterForm');
+    $table = parent::render();
+    if (isset($table['table']['#header']['operations'])) {
+      unset($table['table']['#header']['operations']);
+    }
+    if (isset($table['table']['#rows']) && is_array($table['table']['#rows'])) {
+      foreach ($table['table']['#rows'] as &$row) {
+        if (isset($row['operations'])) {
+          unset($row['operations']);
+        }
+      }
+    }
 
     $total = $this->getStorage()
       ->getQuery()
       ->count()
       ->execute();
 
-    $build['summary']['#markup'] = $this->t('Total Judicial Officers: @total', ['@total' => $total]);
-    return $build;
+     return [
+    '#theme' => 'custom_ajp_view',
+    '#form' => $form,
+    '#table' => $table,
+    '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
+    '#attached' => [
+    'library' => [
+      'jcc_jrn_contact/custom_ajp_view',
+    ],
+    ]
+  ];
   }
 
   /**

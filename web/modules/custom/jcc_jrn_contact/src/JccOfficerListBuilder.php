@@ -63,8 +63,18 @@ class JccOfficerListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function render() {
-    $build['form'] = \Drupal::formBuilder()->getForm('Drupal\jcc_jrn_contact\Form\JccOfficerFilterForm');
-    $build['table'] = parent::render();
+     $form = \Drupal::formBuilder()->getForm('Drupal\jcc_jrn_contact\Form\JccOfficerFilterForm');
+    $table = parent::render();
+    if (isset($table['table']['#header']['operations'])) {
+      unset($table['table']['#header']['operations']);
+    }
+    if (isset($table['table']['#rows']) && is_array($table['table']['#rows'])) {
+      foreach ($table['table']['#rows'] as &$row) {
+        if (isset($row['operations'])) {
+          unset($row['operations']);
+        }
+      }
+    }
 
     $total = $this->getStorage()
       ->getQuery()
@@ -72,7 +82,17 @@ class JccOfficerListBuilder extends EntityListBuilder {
       ->execute();
 
     $build['summary']['#markup'] = $this->t('Total staff: @total', ['@total' => $total]);
-    return $build;
+    return [
+    '#theme' => 'custom_officer_view',
+    '#form' => $form,
+    '#table' => $table,
+    '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
+    '#attached' => [
+    'library' => [
+      'jcc_jrn_contact/custom_officer_view',
+    ],
+    ]
+  ];
   }
 
   /**

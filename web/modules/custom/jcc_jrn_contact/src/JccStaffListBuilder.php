@@ -113,6 +113,11 @@ class JccStaffListBuilder extends EntityListBuilder {
       '#form' => $form,
       '#table' => $table,
       '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
+      '#attached' => [
+        'library' => [
+          'jcc_jrn_contact/custom_staff_view',
+        ],
+      ]
     ];
   }
 

@@ -62,14 +62,14 @@ class JccOfficerFilterForm extends FormBase {
     $form['filter'] = [
       '#type' => 'container',
       '#attributes' => [
-        'class' => ['form--inline', 'clearfix'],
+        'class' => ['form--inline', 'clearfix','officer-container'],
       ],
     ];
 
     $form['filter']['keyword'] = [
       '#type' => 'textfield',
-      '#title' => 'Keyword',
-      '#placeholder' => 'Search by name or email',
+      '#title' => 'Judicial Officer',
+      '#placeholder' => '',
       '#default_value' => $request->get('keyword') ?? '',
     ];
 
@@ -103,6 +103,13 @@ class JccOfficerFilterForm extends FormBase {
     $form['actions']['wrapper'] = [
       '#type' => 'container',
       '#attributes' => ['class' => ['form-item']],
+    ];
+
+    $form['actions']['wrapper'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['button-group'],
+      ],
     ];
 
     $form['actions']['wrapper']['submit'] = [
