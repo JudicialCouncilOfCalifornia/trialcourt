@@ -1,0 +1,19 @@
+{{ attach_library("jcc_storybook/Card") }}
+
+{% set classes = [
+  'box',
+  paragraph.type.value.0.target_id ? paragraph.type.value.0.target_id : '',
+] %}
+
+<div class="{{ classes|join(' ') }}">
+  {% include "@molecules/Card/Card.twig" with {
+    variant: 'default',
+    clickable_card: false,
+    background: paragraph.field_background.value ?? paragraph.field_background.value,
+    aspect: [],
+    media: false,
+    icon_data: false,
+    heading: content.field_heading.0,
+    text: content.field_e,
+  } %}
+</div>
