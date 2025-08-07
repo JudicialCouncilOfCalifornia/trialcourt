@@ -142,11 +142,7 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
   $theme = \Drupal::config('system.theme')->get('default');
   $current_user = \Drupal::currentUser();
 
-  // The body field on these content types is only used for migration of
-  // content and temporary display on the initial site build. Editors should
-  // not have access.
-  // The field will only render if there are no components added by paragraph
-  // reference. See respective node templates.
+  // Granular editing restrictions.
   if (strpos($form_id, 'node_form') === 0) {
     // Get the node type from the form ID.
     $node_type = substr($form_id, strlen('node_form_'));
@@ -422,6 +418,16 @@ function jcc_custom_field_group_form_process_alter(array &$element, &$group, &$c
           $element['#title'] = 'Add Buttons or Entire Card Clickable';
           $linking_help = t('Setup a link for a button to appear as part of the card content or for the entire card. Use the <strong>Entire Card Clickable</strong> option to make the whole card actionable.\r\n\r\nFor additional buttons if supported, use the <strong>Additional Links</strong> option but be mindful of usability when offering more than two buttons.');
           $element['#description'] = $linking_help;
+        }
+        break;
+    }
+  }
+  else {
+    switch ($group->group_name) {
+      case 'group_options':
+        if ($group->bundle == 'embed_script') {
+          // Suppress embed script options fieldset, unset is not supported.
+          $element['#access'] = FALSE;
         }
         break;
     }
