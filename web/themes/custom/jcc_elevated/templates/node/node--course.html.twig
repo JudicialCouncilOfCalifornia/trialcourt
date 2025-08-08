@@ -102,22 +102,23 @@
   {{ content.field_alerts }}
 
   {# Details #}
-  {% if course.sidebar %}
+  {% if course.sidebar or course_action or course_schedule %}
     {% set sidebar %}
       {% set sidebar_content = [] %}
+      {% set subsection = [] %}
 
       {# Promo Image #}
       {% if course.sidebar.promo_image %}
         {% set item = {
-          heading: course.sidebar.promo_image,
+          text: course.sidebar.promo_image,
         } %}
         {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
 
       {# Action if not embedded media #}
-      {% if course.sidebar.action %}
+      {% if course_action %}
         {% set item = {
-          heading: course.sidebar.action,
+          text: course_action,
         } %}
         {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
@@ -126,8 +127,8 @@
       {% set today_event_date = NULL %}
 
       {# If event and it is today #}
-      {% if course.sidebar.schedule %}
-        {% for event in course.sidebar.schedule %}
+      {% if course_schedule %}
+        {% for event in course_schedule %}
           {% if event.event_is_today == 1 %}
             {% set today_event_date = event.date %}
             {% if event.time %}
@@ -161,22 +162,21 @@
             {% include "@atoms/Pill/Pill.twig" with {
               variant: 'square',
               label: topic.label,
-              url: '',
+              url: topic.url,
             } %}
           {% endfor %}
         {% endset %}
 
         {% if topics %}
           {% set pills %}
-            <span class="list__item-label sr-only">Topics</span>
-            {% include "@molecules/Pills/Pills.twig" with {
-              variant: 'default',
-              items: [topics],
-            } %}
+            <div class="sidebar-list__item__links">
+              <span class="list__item-label sr-only">Topics</span>
+              {% include "@molecules/Pills/Pills.twig" with {
+                variant: 'default',
+                items: [topics],
+              } %}
+            </div>
           {% endset %}
-          {% set pills = {
-            text: pills,
-          } %}
           {% set details_content = details_content|merge([pills]) %}
         {% endif %}
       {% endif %}
@@ -191,35 +191,44 @@
         {% endset %}
         {% set item = {
           brow: today_event_date ? today_event_date ~ ' (Event Date)'|t : '',
-          heading: details,
+          text: details,
         } %}
         {% set sidebar_content = sidebar_content|merge([item]) %}
       {% endif %}
 
       {# Future events #}
-      {% if course.sidebar.schedule %}
-        {% for event in course.sidebar.schedule %}
-          {% if event.start_date|date('Ymd') > today %}
+      {% if course_schedule %}
+        {% set events = [] %}
+        {% for event in course_schedule %}
+          {% if event.date|date('Ymd') > today %}
             {% set item = {
               brow: event.date,
-              heading: event.location,
-              text: event.notation,
+              text: event.location,
             } %}
-            {% set sidebar_content = sidebar_content|merge([item]) %}
+            {% set events = events|merge([item]) %}
           {% endif %}
         {% endfor %}
+        {% if events %}
+          {% set subsection = {
+            heading: 'Future Event Dates'|t,
+            data: events,
+          } %}
+        {% endif %}
       {% endif %}
 
-      <aside class="request__main-sidebar stack" style="order: 2;">
-        <section>
-          {% include "@molecules/SidebarList/SidebarList.twig" with {
-            variant: 'default',
-            heading: 'Course Details',
-            data: sidebar_content,
-            attributes: create_attribute()
-          } %}
-        </section>
-      </aside>
+      {% if sidebar_content %}
+        <aside class="request__main-sidebar stack" style="order: 2;">
+          <section>
+            {% include "@molecules/SidebarList/SidebarList.twig" with {
+              variant: 'default',
+              heading: 'Course Details',
+              data: sidebar_content,
+              subsection: subsection,
+              attributes: create_attribute()
+            } %}
+          </section>
+        </aside>
+      {% endif %}
     {% endset %}
   {% endif %}
 
