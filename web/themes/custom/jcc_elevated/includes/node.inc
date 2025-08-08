@@ -1317,33 +1317,35 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       }
       $variables['course_schedule'] = $schedule;
 
-      $registration = $node->get('field_custom_link');
-      if (count($registration) > 0) {
-        $register_uri = $registration->uri;
+      if ($schedule) {
+        $registration = $node->get('field_custom_link');
+        if (count($registration) > 0) {
+          $register_uri = $registration->uri;
 
-        if (count($node->get('field_registration_period')) > 0) {
-          $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
-          $register_start = $register_start->format('Ymd');
-          $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
-          $register_end = $register_end->format('Ymd');
-          if ($register_start > $today->format('Ymd')) {
-            $action = [
-              '#status' => 'pending',
-              '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Pending') . '</div>',
-            ];
-          }
-          elseif ($register_end < $today->format('Ymd')) {
-            $action = [
-              '#status' => 'closed',
-              '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Closed') . '</div>',
-            ];
-          }
-          else {
-            $label = $registration->title ? $registration->title : t('Register Now');
-            $action = [
-              '#status' => 'open',
-              '#markup' => '<a class="' . $button_styles . '" href="' . $register_uri . '">' . $label . '</a>',
-            ];
+          if (count($node->get('field_registration_period')) > 0) {
+            $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
+            $register_start = $register_start->format('Ymd');
+            $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
+            $register_end = $register_end->format('Ymd');
+            if ($register_start > $today->format('Ymd')) {
+              $action = [
+                '#status' => 'pending',
+                '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Pending') . '</div>',
+              ];
+            }
+            elseif ($register_end < $today->format('Ymd')) {
+              $action = [
+                '#status' => 'closed',
+                '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Closed') . '</div>',
+              ];
+            }
+            else {
+              $label = $registration->title ? $registration->title : t('Register Now');
+              $action = [
+                '#status' => 'open',
+                '#markup' => '<a class="' . $button_styles . '" href="' . $register_uri . '">' . $label . '</a>',
+              ];
+            }
           }
         }
         else {
