@@ -1311,11 +1311,11 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           }
 
           // DEBUG.
-          $state = ' RUNNING';
+          $test = 'RUNNING';
           if (time() > 1753413300) {
-            $state = ' STOPPED';
+            $test = 'STOPPED';
           }
-          $notation = $state;
+          $notation = $notation . '**' . $test . '**';
 
           // Schedule.
           $schedule[] = [
@@ -1327,38 +1327,40 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           ];
         }
       }
-      // Cache computed adjustments to custom tag.
+      // Cache computed schedule to custom tag.
       \Drupal::service('cache_tags.invalidator')->invalidateTags([$cache_schedule]);
       $cache->set('cache_course_schedule', $schedule, Cache::PERMANENT, [$cache_schedule]);
       $variables['course_schedule'] = $cache->get('cache_course_schedule') ? $cache->get('cache_course_schedule')->data : NULL;
 
-      $registration = $node->get('field_custom_link');
-      if (count($registration) > 0) {
-        $register_uri = $registration->uri;
+      if ($schedule) {
+        $registration = $node->get('field_custom_link');
+        if (count($registration) > 0) {
+          $register_uri = $registration->uri;
 
-        if (count($node->get('field_registration_period')) > 0) {
-          $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
-          $register_start = $register_start->format('Ymd');
-          $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
-          $register_end = $register_end->format('Ymd');
-          if ($register_start > $today->format('Ymd')) {
-            $action = [
-              '#status' => 'pending',
-              '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Pending') . '</div>',
-            ];
-          }
-          elseif ($register_end < $today->format('Ymd')) {
-            $action = [
-              '#status' => 'closed',
-              '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Closed') . '</div>',
-            ];
-          }
-          else {
-            $label = $registration->title ? $registration->title : t('Register Now');
-            $action = [
-              '#status' => 'open',
-              '#markup' => '<a class="' . $button_styles . '" href="' . $register_uri . '">' . $label . '</a>',
-            ];
+          if (count($node->get('field_registration_period')) > 0) {
+            $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
+            $register_start = $register_start->format('Ymd');
+            $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
+            $register_end = $register_end->format('Ymd');
+            if ($register_start > $today->format('Ymd')) {
+              $action = [
+                '#status' => 'pending',
+                '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Pending') . '</div>',
+              ];
+            }
+            elseif ($register_end < $today->format('Ymd')) {
+              $action = [
+                '#status' => 'closed',
+                '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Closed') . '</div>',
+              ];
+            }
+            else {
+              $label = $registration->title ? $registration->title : t('Register Now');
+              $action = [
+                '#status' => 'open',
+                '#markup' => '<a class="' . $button_styles . '" href="' . $register_uri . '">' . $label . '</a>',
+              ];
+            }
           }
         }
         else {
@@ -1380,9 +1382,8 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
 
   // Cache computed action button to custom tag.
   \Drupal::service('cache_tags.invalidator')->invalidateTags([$cache_action]);
-  $variables['course_action'] = [
-    'action' => $cache->get('cache_course_action') ? $renderer->render($cache->get('cache_course_action')->data) : NULL,
-  ];
+  $cache->set('cache_course_action', $action, Cache::PERMANENT, [$cache_action]);
+  $variables['course_action'] = $cache->get('cache_course_action') ? $renderer->render($cache->get('cache_course_action')->data) : NULL;
 
   // Promotional Image.
   if ($node->get('field_image')->entity) {
