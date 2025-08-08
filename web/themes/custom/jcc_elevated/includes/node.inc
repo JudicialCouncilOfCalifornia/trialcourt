@@ -1380,7 +1380,6 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
 
   // Cache computed action button to custom tag.
   \Drupal::service('cache_tags.invalidator')->invalidateTags([$cache_action]);
-  $cache->set('cache_course_action', $action, Cache::PERMANENT, [$cache_action]);
   $variables['course_action'] = [
     'action' => $cache->get('cache_course_action') ? $renderer->render($cache->get('cache_course_action')->data) : NULL,
   ];
