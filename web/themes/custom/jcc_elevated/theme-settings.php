@@ -201,4 +201,46 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
     '#title'         => t('Personalized message'),
     '#default_value' => $no_results_msg ? $no_results_msg['value'] : '',
   ];
+
+  /*
+   * Default landing page values for feature use.
+   */
+  $form['default_landing_pages'] = [
+    '#type' => 'details',
+    '#title' => t('Content landing pages'),
+    '#description' => t('Select page or specify the path within the information architecture as the default landing for content. Used where applicable such as breadcrumb substitution, course topic tags, etc.'),
+    '#collapsed'  => TRUE,
+  ];
+
+  // Get all node bundles.
+  $bundle_info_service = \Drupal::service('entity_type.bundle.info');
+  $node_bundles = $bundle_info_service->getBundleInfo('node');
+
+  // Create setting per type.
+  foreach ($node_bundles as $bundle) {
+    $content_type = $bundle['label'];
+    $excluded_types = [
+      'Alert',
+      'Custom email',
+      'Importer',
+      'Landing Page',
+      'Subpage',
+    ];
+
+    if (!in_array($content_type, $excluded_types)) {
+      $content_type_field_id = 'landing_' . strtolower($content_type);
+      $form['default_landing_pages'][$content_type_field_id] = [
+        '#type' => 'linkit',
+        '#title' => $bundle['label'],
+        // Specify the autocomplete route for Linkit.
+        '#autocomplete_route_name' => 'linkit.autocomplete',
+        // Specify Linkit profile parameters.
+        '#autocomplete_route_parameters' => [
+          'linkit_profile_id' => 'default',
+        ],
+        '#default_value' => theme_get_setting($content_type_field_id),
+      ];
+    }
+  }
+
 }
