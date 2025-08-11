@@ -330,6 +330,29 @@ class JccOfficer extends ContentEntityBase implements JccStaffInterface {
       ])
       ->setDisplayConfigurable('view', TRUE);
 
+    $fields['address'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Address'))
+      ->setDescription(t('Court address related to Officer.'))
+      ->setSetting('target_type', 'jcc_address')
+      ->setSetting('handler', 'default')
+      ->setTranslatable(FALSE)
+      ->setDisplayOptions('view', [
+        'label' => 'visible',
+        'type' => 'string',
+        'weight' => 7,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 7,
+        'settings' => [
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'placeholder' => 'Enter court address name...',
+        ],
+      ])
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayConfigurable('form', FALSE);
+
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Author'))
       ->setDescription(t('The user ID of the jcc staff author.'))

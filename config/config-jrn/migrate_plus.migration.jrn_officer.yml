@@ -54,6 +54,10 @@ source:
       name: court
       selector: ENTITY_ID
       label: Court
+    -
+      name: address
+      selector: ADDR_ID
+      label: Address
 process:
   uid:
     plugin: default_value
@@ -70,6 +74,7 @@ process:
     plugin: migration_lookup
     migration: jrn_court
     source: court
+    no_stub: true
   job_title:
     -
       plugin: entity_generate
@@ -81,9 +86,15 @@ process:
       source: job_title
   email: email
   phone: phone
+  address:
+    plugin: migration_lookup
+    migration: jrn_address
+    source: address
+    no_stub: true
 destination:
   plugin: 'entity:jcc_officer'
 migration_dependencies:
   required:
     - jrn_court
-  optional: {  }
+  optional:
+    - jrn_address

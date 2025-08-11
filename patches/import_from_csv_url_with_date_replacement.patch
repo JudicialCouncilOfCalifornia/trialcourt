@@ -1,5 +1,5 @@
 diff --git a/src/Plugin/migrate/source/CSV.php b/src/Plugin/migrate/source/CSV.php
-index 68e53cd..5115e55 100644
+index 68e53cd..b787b2a 100644
 --- a/src/Plugin/migrate/source/CSV.php
 +++ b/src/Plugin/migrate/source/CSV.php
 @@ -111,8 +111,8 @@ class CSV extends SourcePluginBase implements ConfigurableInterface {
@@ -13,7 +13,7 @@ index 68e53cd..5115e55 100644
      }
      // IDs are required.
      if (empty($this->configuration['ids']) || !is_array($this->configuration['ids'])) {
-@@ -291,14 +291,49 @@ class CSV extends SourcePluginBase implements ConfigurableInterface {
+@@ -291,14 +291,52 @@ class CSV extends SourcePluginBase implements ConfigurableInterface {
     *   The reader.
     */
    protected function createReader() {
@@ -29,6 +29,9 @@ index 68e53cd..5115e55 100644
 +      $path = str_replace('DATE', date('Ymd'), $path_with_date);
 +      if (!file_exists($path)) {
 +        $path = str_replace('DATE', date('Ymd', strtotime('-1 day')), $path_with_date);
++      }
++      if (!file_exists($path)) {
++        $path = $path_with_date;
 +      }
 +    }
 +    if (!file_exists($path)) {
