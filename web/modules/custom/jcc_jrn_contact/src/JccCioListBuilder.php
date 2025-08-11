@@ -137,7 +137,7 @@ class JccCioListBuilder extends EntityListBuilder {
 
     foreach (['court'] as $field) {
       if ($value = $request->get($field)) {
-        $query->condition($field, $value, 'CONTAINS');
+        $query->condition($field, $value);
       }
     }
 

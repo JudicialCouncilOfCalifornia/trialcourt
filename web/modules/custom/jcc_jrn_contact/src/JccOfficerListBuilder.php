@@ -63,7 +63,7 @@ class JccOfficerListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function render() {
-     $form = \Drupal::formBuilder()->getForm('Drupal\jcc_jrn_contact\Form\JccOfficerFilterForm');
+    $form = \Drupal::formBuilder()->getForm('Drupal\jcc_jrn_contact\Form\JccOfficerFilterForm');
     $table = parent::render();
     if (isset($table['table']['#header']['operations'])) {
       unset($table['table']['#header']['operations']);
@@ -83,16 +83,16 @@ class JccOfficerListBuilder extends EntityListBuilder {
 
     $build['summary']['#markup'] = $this->t('Total staff: @total', ['@total' => $total]);
     return [
-    '#theme' => 'custom_officer_view',
-    '#form' => $form,
-    '#table' => $table,
-    '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
-    '#attached' => [
-    'library' => [
-      'jcc_jrn_contact/custom_officer_view',
-    ],
-    ]
-  ];
+      '#theme' => 'custom_officer_view',
+      '#form' => $form,
+      '#table' => $table,
+      '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
+      '#attached' => [
+        'library' => [
+          'jcc_jrn_contact/custom_officer_view',
+        ],
+      ],
+    ];
   }
 
   /**
@@ -162,7 +162,7 @@ class JccOfficerListBuilder extends EntityListBuilder {
 
     foreach (['court'] as $field) {
       if ($value = $request->get($field)) {
-        $query->condition($field, $value, 'CONTAINS');
+        $query->condition($field, $value);
       }
     }
 
