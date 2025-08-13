@@ -194,17 +194,18 @@ if (empty($settings['file_scan_ignore_directories'])) {
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])
   && $_ENV['PANTHEON_ENVIRONMENT'] != 'live') {
+  
+  $secrets_client = \PantheonSystems\CustomerSecrets\CustomerSecrets::create()->getClient();
+  $client_id = $secrets_client->getSecret('nonprod-azure-app-id');
+  $client_secret = $secrets_client->getSecret('nonprod-azure-app-secret');
+  $tenant_id = $secrets_client->getSecret('nonprod-azure-tenant-id');
 
-  if (function_exists('pantheon_get_secret')) {
-    $client_id = pantheon_get_secret('nonprod-azure-app-id');
-    $client_secret = pantheon_get_secret('nonprod-azure-app-secret');
-    $tenant_id = pantheon_get_secret('nonprod-azure-tenant-id');
-
+  if ($client_id && $client_secret && $tenant_id) {
     if (!empty($client_id) && !empty($client_secret) && !empty($tenant_id)) {
-      $config['openid_connect.settings.windows_aad']['settings']['client_id'] = $client_id;
-      $config['openid_connect.settings.windows_aad']['settings']['client_secret'] = $client_secret;
-      $config['openid_connect.settings.windows_aad']['settings']['authorization_endpoint_wa'] = 'https://login.microsoftonline.com/' . $tenant_id . '/oauth2/authorize';
-      $config['openid_connect.settings.windows_aad']['settings']['token_endpoint_wa'] = 'https://login.microsoftonline.com/' . $tenant_id . '/oauth2/token';
+      $config['openid_connect.settings.windows_aad']['settings']['client_id'] = $client_id->getValue();
+      $config['openid_connect.settings.windows_aad']['settings']['client_secret'] = $client_secret->getValue();
+      $config['openid_connect.settings.windows_aad']['settings']['authorization_endpoint_wa'] = 'https://login.microsoftonline.com/' . $tenant_id->getValue() . '/oauth2/authorize';
+      $config['openid_connect.settings.windows_aad']['settings']['token_endpoint_wa'] = 'https://login.microsoftonline.com/' . $tenant_id->getValue() . '/oauth2/token';
     }
   }
 }
