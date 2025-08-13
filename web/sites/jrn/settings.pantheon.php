@@ -188,3 +188,23 @@ if (empty($settings['file_scan_ignore_directories'])) {
     'bower_components',
   ];
 }
+
+/**
+ * Override the Azure OpenID Credentials for non-production environments.
+ */
+if (isset($_ENV['PANTHEON_ENVIRONMENT'])
+  && $_ENV['PANTHEON_ENVIRONMENT'] != 'live') {
+
+  if (function_exists('pantheon_get_secret')) {
+    $client_id = pantheon_get_secret('nonprod-azure-app-id');
+    $client_secret = pantheon_get_secret('nonprod-azure-app-secret');
+    $tenant_id = pantheon_get_secret('nonprod-azure-tenant-id');
+
+    if (!empty($client_id) && !empty($client_secret) && !empty($tenant_id)) {
+      $settings['openid_connect.settings.windows_aad']['settings']['client_id'] = $client_id;
+      $settings['openid_connect.settings.windows_aad']['settings']['client_secret'] = $client_secret;
+      $settings['openid_connect.settings.windows_aad']['settings']['authorization_endpoint_wa'] = 'https://login.microsoftonline.com/' . $tenant_id . '/oauth2/authorize';
+      $settings['openid_connect.settings.windows_aad']['settings']['token_endpoint_wa'] = 'https://login.microsoftonline.com/' . $tenant_id . '/oauth2/token';
+    }
+  }
+}
