@@ -201,10 +201,10 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])
     $tenant_id = pantheon_get_secret('nonprod-azure-tenant-id');
 
     if (!empty($client_id) && !empty($client_secret) && !empty($tenant_id)) {
-      $settings['openid_connect.settings.windows_aad']['settings']['client_id'] = $client_id;
-      $settings['openid_connect.settings.windows_aad']['settings']['client_secret'] = $client_secret;
-      $settings['openid_connect.settings.windows_aad']['settings']['authorization_endpoint_wa'] = 'https://login.microsoftonline.com/' . $tenant_id . '/oauth2/authorize';
-      $settings['openid_connect.settings.windows_aad']['settings']['token_endpoint_wa'] = 'https://login.microsoftonline.com/' . $tenant_id . '/oauth2/token';
+      $config['openid_connect.settings.windows_aad']['settings']['client_id'] = $client_id;
+      $config['openid_connect.settings.windows_aad']['settings']['client_secret'] = $client_secret;
+      $config['openid_connect.settings.windows_aad']['settings']['authorization_endpoint_wa'] = 'https://login.microsoftonline.com/' . $tenant_id . '/oauth2/authorize';
+      $config['openid_connect.settings.windows_aad']['settings']['token_endpoint_wa'] = 'https://login.microsoftonline.com/' . $tenant_id . '/oauth2/token';
     }
   }
 }
