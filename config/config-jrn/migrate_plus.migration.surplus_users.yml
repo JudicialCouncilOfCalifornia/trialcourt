@@ -1,0 +1,43 @@
+uuid: 122e580c-7ead-4fa4-8419-79f50bb6ed7e
+langcode: en
+status: true
+dependencies: {  }
+id: surplus_users
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - jrn
+  - surplus
+migration_group: jrn_surplus
+label: 'JRN Migrate Surplus users'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  item_selector: entry
+  ids:
+    field_email_address:
+      type: string
+  fields:
+    -
+      name: field_email_address
+      selector: field_email_address
+      label: 'Email Address'
+process:
+  uid:
+    -
+      plugin: callback
+      callable: trim
+      source: field_email_address
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: user_by_email
+      source: field_email_address
+destination:
+  plugin: 'entity:user'
+  default_bundle: user
+migration_dependencies: {  }
