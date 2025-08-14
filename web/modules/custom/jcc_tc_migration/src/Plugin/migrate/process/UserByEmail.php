@@ -59,6 +59,7 @@ class UserByEmail extends ProcessPluginBase {
         'name' => $username,
         'mail' => $email,
         'status' => 1,
+        'roles' => ['editor', 'surplus_user'],
       ]);
       $user->save();
     }
