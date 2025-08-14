@@ -28,6 +28,10 @@ source:
 process:
   uid:
     -
+      plugin: skip_on_empty
+      method: row
+      source: field_email_address
+    -
       plugin: callback
       callable: trim
       source: field_email_address
