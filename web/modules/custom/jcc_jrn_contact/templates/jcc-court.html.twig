@@ -1,0 +1,105 @@
+{{ attach_library("jcc_storybook/List") }}
+{{ attach_library("jcc_elevated/surplus-materials") }}
+{{ attach_library("jcc_storybook/Card") }} 
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/HeroHangover") }}
+{{ attach_library("jcc_storybook/Footer") }}
+{{ attach_library("jcc_storybook/Body") }}
+{{attach_library("jcc_jrn_contact/court-detailed-page") }}
+
+ {% include "@molecules/HeroHangover/HeroHangover.twig" with {
+    hangover_hide_compact: false,
+    hangover_offset: 22,
+    background: 'red',      
+    heading: name_and_type,
+    news_header: true,    
+    text: ''  
+    }
+  %}  
+
+{% set details %}
+<div>
+  <div>
+    <p><strong> Court Administration</strong></p> 
+    {% for item in cio_data %}              
+      <p>Court Information Officer: {{item.fname}} {{item.lname}}</p>
+    {% endfor %}
+    {% for item in judge_data %}              
+      <p>Superior Court Presiding Judge:  {{item.fname}} {{item.mname}} {{item.lname}}</p>
+    {% endfor %}
+    {% for item in exec_officer_data %}              
+      <p>Superior Court - Court Executive Officer: {{item.fname}} {{item.mname}} {{item.lname}}</p>
+    {% endfor %}
+ </div>
+<br />
+
+  <div > {# Start of the location block#}
+  {% if address_data is not empty %}
+    {% set count = 1 %}
+    <div>
+      <h3>Main Location:</h3>
+      <br />
+      {% set address = address_data[0] %}
+      <div class="location-row">
+        <div class="location-number">({{ count }})</div>
+        <div class="address-block">
+          <div class="address-left">
+            {{ address.addr1 }}<br>
+            {{ address.city }}, {{ address.state }} {{ address.zip }}
+          </div>
+          <div class="address-right">
+            <div><strong>Phone:</strong> {{ '(' ~ address.phone|slice(0, 3) ~ ') ' ~ address.phone|slice(3, 3) ~ '-' ~ address.phone|slice(6) }}</div>
+            <div><strong>Fax:</strong> {{ '(' ~ address.fax|slice(0, 3) ~ ') ' ~ address.fax|slice(3, 3) ~ '-' ~ address.fax|slice(6) }}</div>
+          </div>
+        </div>
+      </div>
+      </div>
+  {% endif %}
+  <hr />
+
+  {% if address_data|length > 1 %}
+  <div>
+    <h3>Other Locations:</h3>
+    <br />
+    {% for address in address_data|slice(1) %}
+      {% set count = count + 1 %}
+      <div class="location-row">
+        <div class="location-number">({{ count }})</div>
+        <div class="address-block">
+          <div class="address-left">
+            {{ address.addr1 }}<br>
+            {{ address.city }}, {{ address.state }} {{ address.zip }}
+          </div>
+          <div class="address-right">
+            <div><strong>Phone:</strong> {{ '(' ~ address.phone|slice(0, 3) ~ ') ' ~ address.phone|slice(3, 3) ~ '-' ~ address.phone|slice(6) }}</div>
+            <div><strong>Fax:</strong> {{ '(' ~ address.fax|slice(0, 3) ~ ') ' ~ address.fax|slice(3, 3) ~ '-' ~ address.fax|slice(6) }}</div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+  {% endif %} 
+  <div>
+    <p><strong>Roster: </strong></p>
+  <br />
+    {{ officer_table }}
+  </div>
+  </div>
+{% endset %}
+</div>
+
+  
+  </div>
+  {% include "@organisms/Section/Section.twig" with {
+    variant: 'default',
+    sub_component_layout: 'with-sidebar grid',
+    sidebar_direction: 'row',
+    sidebar_width: "60",
+    sub_component_data: {
+      details
+    },
+      attributes: create_attribute()
+      }
+    %}
+  </div>
+

@@ -13,11 +13,7 @@ migration_tags:
   - file
   - redirect
 migration_group: cjer_judicial
-label: 'Documents: Import Path Redirects'
-authentication:
-  plugin: basic
-  username: bniviere
-  password: 5mbbCTzH9MH
+label: 'Documents: For path redirects rollback from pre-Azure import'
 source:
   plugin: url
   data_fetcher_plugin: http
@@ -33,12 +29,17 @@ source:
       name: url
       label: Url
       selector: id
+    -
+      name: category
+      label: 'Category'
+      selector: category
   ids:
     id:
       type: string
   constants:
     uri_prefix: 'internal:'
     document_path: /system/files/
+    slash: /
     status_code: 301
 process:
   pseudo_base_path:
@@ -81,11 +82,17 @@ process:
       start: 1
   redirect_source/query: {  }
   redirect_redirect/uri:
-    plugin: concat
-    source:
-      - constants/uri_prefix
-      - constants/document_path
-      - '@pseudo_destination_filename'
+    -
+      plugin: concat
+      source:
+        - constants/uri_prefix
+        - constants/document_path
+        - category
+        - constants/slash
+        - '@pseudo_destination_filename'
+    -
+      plugin: callback
+      callable: strtolower
   status_code: constants/status_code
   language:
     plugin: default_value
