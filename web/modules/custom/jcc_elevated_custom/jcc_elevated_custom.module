@@ -280,6 +280,7 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
       $form['category_group']['field_subtopics_target_id'] = $form['field_subtopics_target_id'];
       unset($form['field_subtopics_target_id']);
     }
+
     if (isset($form['field_course_type_target_id'])) {
       $form['type_group'] = [
         '#type' => 'fieldset',
@@ -296,11 +297,15 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
         '#title' => t('Special Tags'),
       ];
       $form['special_group']['#attributes']['class'][] = 'collapsible';
-      $form['special_group']['field_is_quick_reference_value'] = $form['field_is_quick_reference_value'];
-      $form['special_group']['field_is_quick_reference_value']['label_display'] = 'after';
-      unset($form['field_is_quick_reference_value']);
-      $form['special_group']['field_is_contributed_content_value'] = $form['field_is_contributed_content_value'];
-      $form['special_group']['field_is_contributed_content_value']['label_display'] = 'after';
+      if ($form['field_is_quick_reference_value']) {
+        $form['special_group']['field_is_quick_reference_value'] = $form['field_is_quick_reference_value'];
+        $form['special_group']['field_is_quick_reference_value']['label_display'] = 'after';
+        unset($form['field_is_quick_reference_value']);
+      }
+      if ($form['field_is_contributed_content_value']) {
+        $form['special_group']['field_is_contributed_content_value'] = $form['field_is_contributed_content_value'];
+        $form['special_group']['field_is_contributed_content_value']['label_display'] = 'after';
+      }
       unset($form['field_is_contributed_content_value']);
     }
 

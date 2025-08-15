@@ -1541,10 +1541,18 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
     $pills = [];
 
     foreach ($topics as $topic) {
-      $pills['items'][] = ['variant'=> 'default', 'label' => $topic->entity->label(), 'url' => '#'];
+      $pills['items'][] = [
+        'variant' => 'default',
+        'label' => $topic->entity->label(),
+        'url' => '#',
+      ];
     }
     foreach ($subtopics as $subtopic) {
-      $pills['items'][] = ['variant'=> 'default', 'label' => $subtopic->entity->label(), 'url' => '#'];
+      $pills['items'][] = [
+        'variant' => 'default',
+        'label' => $subtopic->entity->label(),
+        'url' => '#',
+      ];
     }
 
     // Locations for upcoming events only.
@@ -1649,23 +1657,26 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
       ]),
     ];
 
+    $overview = NULL;
     $overview_max = 255;
-    $overview = strip_tags($node->get('body')->value);
-    if (strlen($overview) > $overview_max) {
-      $overview = substr($overview, 0, $overview_max);
-      $overview = $overview . '...';
+    if ($node->get('body')->value) {
+      $overview = strip_tags($node->get('body')->value);
+      if (strlen($overview) > $overview_max) {
+        $overview = substr($overview, 0, $overview_max) . '...';
+      }
     }
 
     $published_date = $node->getCreatedTime();
     $three_months_ago = strtotime('-3 months');
-    if($published_date >= $three_months_ago) {
-      $is_new = true;
+    $is_new = NULL;
+    if ($published_date >= $three_months_ago) {
+      $is_new = TRUE;
     }
 
     $variables['processed_rows'][] = [
       'title' => $label,
       'url' => $node->toUrl(),
-//      'content' => $overview,
+      // 'content' => $overview,
       'is_new' => $is_new,
       'button_data' => $action,
       'detail_list_data' => $detail_list_data,
@@ -1817,14 +1828,15 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
 
   if ($form['#id'] == 'views-exposed-form-courses-catalog' ||
     $form['#id'] == 'views-exposed-form-courses-block-1' ||
-    $form['#id'] == 'views-exposed-form-courses-block-2'){
+    $form['#id'] == 'views-exposed-form-courses-block-2') {
     $form['search_label'] = [
       '#type' => 'html_tag',
       '#tag' => 'h2',
       '#value' => '',
       '#weight' => '-99',
     ];
-  } else {
+  }
+  else {
     // Add a label to the form.
     $form['search_label'] = [
       '#type' => 'html_tag',
