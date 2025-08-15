@@ -154,6 +154,9 @@ process:
       delimiter: ','
       source: type
     -
+      plugin: callback
+      callable: trim
+    -
       plugin: entity_generate
       entity_type: taxonomy_term
       bundle_key: vid
@@ -165,6 +168,9 @@ process:
       plugin: explode
       delimiter: ','
       source: subtype
+    -
+      plugin: callback
+      callable: trim
     -
       plugin: entity_generate
       entity_type: taxonomy_term
@@ -178,6 +184,9 @@ process:
       delimiter: ','
       source: audience
     -
+      plugin: callback
+      callable: trim
+    -
       plugin: entity_generate
       entity_type: taxonomy_term
       bundle_key: vid
@@ -189,6 +198,9 @@ process:
       plugin: explode
       delimiter: ','
       source: methods
+    -
+      plugin: callback
+      callable: trim
     -
       plugin: entity_generate
       entity_type: taxonomy_term
@@ -202,6 +214,9 @@ process:
       delimiter: ','
       source: assignments
     -
+      plugin: callback
+      callable: trim
+    -
       plugin: entity_generate
       entity_type: taxonomy_term
       bundle_key: vid
@@ -214,6 +229,9 @@ process:
       delimiter: ','
       source: topics
     -
+      plugin: callback
+      callable: trim
+    -
       plugin: entity_generate
       entity_type: taxonomy_term
       bundle_key: vid
@@ -225,6 +243,9 @@ process:
       plugin: explode
       delimiter: ','
       source: subtopics
+    -
+      plugin: callback
+      callable: trim
     -
       plugin: entity_generate
       entity_type: taxonomy_term
@@ -286,6 +307,9 @@ process:
       plugin: explode
       delimiter: ','
       source: specialty_credits
+    -
+      plugin: callback
+      callable: trim
     -
       plugin: entity_generate
       entity_type: taxonomy_term
