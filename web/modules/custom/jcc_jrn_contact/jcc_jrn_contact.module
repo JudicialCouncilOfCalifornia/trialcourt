@@ -166,6 +166,7 @@ function template_preprocess_jcc_court(array &$variables) {
       'lname' => $entity->get('last_name')->value,
     ];
   };
+
   $cios = $loadEntities('jcc_cio', $court_id);
   $cio_data = [];
   foreach ($cios as $cio) {
@@ -179,20 +180,6 @@ function template_preprocess_jcc_court(array &$variables) {
     $cio_data[] = $item;
   }
   $variables['cio_data'] = $cio_data;
-
-  $judges = $loadEntities('jcc_officer', $court_id, 50);
-  $judge_data = [];
-  foreach ($judges as $j) {
-    $judge_data[] = $extractNameData($j);
-  }
-  $variables['judge_data'] = $judge_data;
-
-  $execs = $loadEntities('jcc_officer', $court_id, 55);
-  $exec_officer_data = [];
-  foreach ($execs as $exec) {
-    $exec_officer_data[] = $extractNameData($exec);
-  }
-  $variables['exec_officer_data'] = $exec_officer_data;
 
   $addresses = $loadEntities('jcc_address', $court_id);
   if (!empty($addresses)) {
@@ -212,10 +199,33 @@ function template_preprocess_jcc_court(array &$variables) {
     $variables['address_data'] = $addr_data;
   }
 
+  $getOfficerDataByJob = function ($court_id, $job_label) use ($entityTypeManager, $loadEntities, $extractNameData) {
+    $term_storage = $entityTypeManager->getStorage('taxonomy_term');
+    $tids = $term_storage->getQuery()
+      ->condition('vid', 'job_title')
+      ->condition('name', $job_label)
+      ->accessCheck(TRUE)
+      ->execute();
+
+    $tid = reset($tids);
+    if (!$tid) {
+      return [];
+    }
+    $officers = $loadEntities('jcc_officer', $court_id, $tid);
+    $data = [];
+    foreach ($officers as $officer) {
+      $data[] = $extractNameData($officer);
+    }
+    return $data;
+  };
+  $variables['judge_data'] = $getOfficerDataByJob($court_id, 'Superior Court Presiding Judge');
+  $variables['exec_officer_data'] = $getOfficerDataByJob($court_id, 'Superior Court - Court Executive Officer');
+
   $officer_query = $entityTypeManager->getStorage('jcc_officer')->getQuery();
   $officer_query->condition('court', $court_id);
-  $officer_query->condition('job_title', [50, 55], 'NOT IN');
   $officer_query->accessCheck(TRUE);
+  $officer_query->sort('last_name', 'ASC');
+  $officer_query->sort('first_name', 'ASC');
   $officer_ids = $officer_query->execute();
   $officers = $entityTypeManager->getStorage('jcc_officer')->loadMultiple($officer_ids);
   $rows = [];
