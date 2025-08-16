@@ -1807,25 +1807,6 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   // Remove captcha.
   unset($form['captcha']);
 
-  // Set the placeholder and Select all text.
-  foreach (Element::children($form) as $id) {
-    $placeholder = $form['#info']['filter-' . $id]['label'] ?? '';
-    $form[$id]['#attributes']['placeholder'] = $placeholder;
-    if (isset($form[$id]['#type']) && $id == 'items_per_page') {
-      // Do nothing.
-    }
-    elseif (isset($form[$id]['#type']) && $form[$id]['#type'] == 'select') {
-      // Set label as 'select all' option label.
-      $form[$id]['#attributes']['placeholder'] = NULL;
-      if ($id != 'jcc_section' && isset($form[$id]['#options']['All'])) {
-        $form[$id]['#options']['All'] = t('- @label -', ['@label' => $placeholder]);
-      }
-      // Visually hide field label for accessibility.
-      // form-element-label.html.twig.
-      $form[$id]['#title_display'] = 'invisible';
-    }
-  }
-
   if ($form['#id'] == 'views-exposed-form-courses-catalog' ||
     $form['#id'] == 'views-exposed-form-courses-block-1' ||
     $form['#id'] == 'views-exposed-form-courses-block-2') {
