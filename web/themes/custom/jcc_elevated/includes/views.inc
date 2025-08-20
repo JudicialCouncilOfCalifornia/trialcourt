@@ -1510,7 +1510,7 @@ function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived
 }
 
 /**
- * Implements hook_preprocess_HOOK() for course cataglog listing.
+ * Implements hook_preprocess_HOOK() for course catalog listing.
  */
 function jcc_elevated_preprocess_views_view__courses(&$variables) {
   $timezone = new DateTimeZone('America/Los_Angeles');
@@ -1673,6 +1673,22 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
       'raw_pills' => $pills,
     ];
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for courses by type listing.
+ */
+function jcc_elevated_preprocess_views_view__courses__by_type(&$variables) {
+  // Reuse all courses catalog.
+  jcc_elevated_preprocess_views_view__courses($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for courses by delivery method listing.
+ */
+function jcc_elevated_preprocess_views_view__courses__by_method(&$variables) {
+  // Reuse all courses catalog.
+  jcc_elevated_preprocess_views_view__courses($variables);
 }
 
 /**
