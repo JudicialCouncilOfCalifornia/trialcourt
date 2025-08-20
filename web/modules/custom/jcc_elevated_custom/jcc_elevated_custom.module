@@ -249,75 +249,38 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
   unset($form['date_end']);
 
   // Group filters for catalog view
-  if ($view->id() === 'courses') {
-    // Group filters manually into fieldsets
-    $form['keyword_group'] = [
-      '#type' => 'fieldset',
-      '#title' => t('Search Catalog'),
-    ];
-    if (isset($form['combine'])) {
-      $form['keyword_group']['combine'] = $form['combine'];
-      unset($form['combine']);
-    }
-
-    if (isset($form['field_assignment_area_target_id'])){
-      $form['assignment_group'] = [
-        '#type' => 'fieldset',
-        '#title' => t('Assignment Area'),
-      ];
-      $form['assignment_group']['field_assignment_area_target_id'] = $form['field_assignment_area_target_id'];
-      $form['assignment_group']['field_assignment_area_target_id']['#title'] = null;
-      unset($form['field_assignment_area_target_id']);
-    }
-
-    if (isset($form['field_topics_target_id']) || isset($form['field_subtopics_target_id'])) {
-      $form['category_group'] = [
-        '#type' => 'fieldset',
-        '#title' => t('Category & Subcategory'),
-      ];
-      $form['category_group']['field_topics_target_id'] = $form['field_topics_target_id'];
-      unset($form['field_topics_target_id']);
-      $form['category_group']['field_subtopics_target_id'] = $form['field_subtopics_target_id'];
-      unset($form['field_subtopics_target_id']);
-    }
-
-    if (isset($form['field_course_type_target_id'])) {
-      $form['type_group'] = [
-        '#type' => 'fieldset',
-        '#title' => t('Type'),
-      ];
-      $form['type_group']['field_course_type_target_id'] = $form['field_course_type_target_id'];
-      $form['type_group']['#attributes']['class'][] = 'collapsible';
-      unset($form['field_course_type_target_id']);
-    }
-
-    if (isset($form['field_is_quick_reference_value']) || isset($form['field_is_contributed_content_value'])) {
-      $form['special_group'] = [
-        '#type' => 'fieldset',
-        '#title' => t('Special Tags'),
-      ];
-      $form['special_group']['#attributes']['class'][] = 'collapsible';
-      if ($form['field_is_quick_reference_value']) {
-        $form['special_group']['field_is_quick_reference_value'] = $form['field_is_quick_reference_value'];
-        $form['special_group']['field_is_quick_reference_value']['label_display'] = 'after';
-        unset($form['field_is_quick_reference_value']);
+  switch ($view->id()) {
+    case 'courses':
+      if (isset($form['field_topics_target_id']) || isset($form['field_subtopics_target_id'])) {
+        $form['category_group'] = [
+          '#type' => 'fieldset',
+          '#title' => t('Topics & Subtopics'),
+          '#weight' => 96,
+        ];
+        $form['category_group']['field_topics_target_id'] = $form['field_topics_target_id'];
+        unset($form['field_topics_target_id']);
+        $form['category_group']['field_subtopics_target_id'] = $form['field_subtopics_target_id'];
+        unset($form['field_subtopics_target_id']);
       }
-      if ($form['field_is_contributed_content_value']) {
-        $form['special_group']['field_is_contributed_content_value'] = $form['field_is_contributed_content_value'];
-        $form['special_group']['field_is_contributed_content_value']['label_display'] = 'after';
+
+      $form['field_course_type_target_id_collapsible']['#weight'] = 97;
+
+      if (isset($form['field_is_quick_reference_value']) || isset($form['field_is_contributed_content_value'])) {
+        $form['special_group'] = [
+          '#type' => 'fieldset',
+          '#title' => t('Special Tags'),
+          '#weight' => 98,
+        ];
+        // $form['special_group']['#attributes']['class'][] = 'collapsible';
+        if ($form['field_is_quick_reference_value']) {
+          $form['special_group']['field_is_quick_reference_value'] = $form['field_is_quick_reference_value'];
+          unset($form['field_is_quick_reference_value']);
+        }
       }
-      unset($form['field_is_contributed_content_value']);
-    }
 
-    $form['sort_group'] = [
-      '#type' => 'fieldset',
-      '#title' => t('Sort'),
-    ];
-    if (isset($form['sort_bef_combine'])) {
-      $form['sort_group']['sort_bef_combine'] = $form['sort_bef_combine'];
-      unset($form['sort_bef_combine']);
-    }
+      $form['sort_bef_combine']['#weight'] = 99;
 
+      break;
   }
 }
 

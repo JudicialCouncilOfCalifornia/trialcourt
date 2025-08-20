@@ -1657,15 +1657,6 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
       ]),
     ];
 
-    $overview = NULL;
-    $overview_max = 255;
-    if ($node->get('body')->value) {
-      $overview = strip_tags($node->get('body')->value);
-      if (strlen($overview) > $overview_max) {
-        $overview = substr($overview, 0, $overview_max) . '...';
-      }
-    }
-
     $published_date = $node->getCreatedTime();
     $three_months_ago = strtotime('-3 months');
     $is_new = NULL;
@@ -1676,7 +1667,6 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
     $variables['processed_rows'][] = [
       'title' => $label,
       'url' => $node->toUrl(),
-      // 'content' => $overview,
       'is_new' => $is_new,
       'button_data' => $action,
       'detail_list_data' => $detail_list_data,
@@ -1807,44 +1797,16 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   // Remove captcha.
   unset($form['captcha']);
 
-  // Set the placeholder and Select all text.
-  foreach (Element::children($form) as $id) {
-    $placeholder = $form['#info']['filter-' . $id]['label'] ?? '';
-    $form[$id]['#attributes']['placeholder'] = $placeholder;
-    if (isset($form[$id]['#type']) && $id == 'items_per_page') {
-      // Do nothing.
-    }
-    elseif (isset($form[$id]['#type']) && $form[$id]['#type'] == 'select') {
-      // Set label as 'select all' option label.
-      $form[$id]['#attributes']['placeholder'] = NULL;
-      if ($id != 'jcc_section' && isset($form[$id]['#options']['All'])) {
-        $form[$id]['#options']['All'] = t('- @label -', ['@label' => $placeholder]);
-      }
-      // Visually hide field label for accessibility.
-      // form-element-label.html.twig.
-      $form[$id]['#title_display'] = 'invisible';
-    }
-  }
-
-  if ($form['#id'] == 'views-exposed-form-courses-catalog' ||
-    $form['#id'] == 'views-exposed-form-courses-block-1' ||
-    $form['#id'] == 'views-exposed-form-courses-block-2') {
-    $form['search_label'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'h2',
-      '#value' => '',
-      '#weight' => '-99',
-    ];
-  }
-  else {
-    // Add a label to the form.
-    $form['search_label'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'h2',
-      '#value' => t('Search and Filter'),
-      '#weight' => '-99',
-    ];
-  }
+  // Add a label to the form.
+  $form['search_label'] = [
+    '#type' => 'html_tag',
+    '#tag' => 'h2',
+    '#value' => t('Search and Filter'),
+    '#attributes' => [
+      'class' => 'sr-only',
+    ],
+    '#weight' => '-99',
+  ];
 
   // Style submit and reset buttons.
   $form['actions']['submit']['#attributes']['class'][] = 'button button--secondary button--normal';
