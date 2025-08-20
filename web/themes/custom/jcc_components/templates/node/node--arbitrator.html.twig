@@ -76,222 +76,64 @@
   {% set components = components|merge([component]) %}
 {% endfor %}
 
-<article>
+{% set body %}
   {% block layout %}
+    {# Display breadcrumb #}
     {{ breadcrumb }}
 
-    <div class="name_header">
-
-      <h2>{{content.field_last_name.0['#context']['value']}},{{content.field_first_name.0['#context']['value']}}</h2>
-    </div>
-
-    <div class="personal_bio">
-      <h2><span>Professional Bio</span></h2>
-      <h3>Contact Information</h3>
-
-      <p class="name_personal_bio">Full Name: {{content.field_last_name.0['#context']['value']}},{{content.field_first_name.0['#context']['value']}}<br>
-        Email: <a href="mailto:{{content.field_email_address.0['#context']['value']}}">{{content.field_email_address.0['#context']['value']}}</a><br>
-        Phone Number: <a href="tel:{{content.field_phone_number.0['#context']['value']}}">{{content.field_phone_number.0['#context']['value']}}</a><br>
-        {% set fax=content.field_fax.0['#context']['value'] %}
-        {% if fax %}
-          Fax:{{content.field_fax.0['#context']['value']}}
-        {%endif%}
-        <br>
-      <div class="address-container">
-        <div class="address-title"></div>
-        {{ content.field_address }}
-      </div>
-      {% if content.field_county.0['#context']['value'] %}
-        <div class="county-container">
-          <p>County: {{ content.field_county.0['#context']['value'] }}</p>
-        </div>
-      {% endif %}
-    </div>
-    <br>
-
-    <div class="general_information arbitrator-content">
-    {% set mediator =content.field_mediator %}
-
-    {% if mediator.0 %}
-      <h3>General Information</h3>
-      <p class="mediator">Mediator: {{content.field_mediator_type.0["#title"]}}</p>
-      </div>
-    {% endif %}
-    {% set sbn=content.field_sbn.0['#markup'] %}
-    {% if sbn != null %}
-      <div class="sbn">
-        <p>SBN:{{sbn}}</p>
-      </div>
-    {%endif%}
-    {% set mi=content.field_mi.0['#context']['value'] %}
-    {% if mi != null %}
-      <div class="sbn">
-        <p>MI:{{mi}}</p>
-      </div>
-    {%endif%}
-    {% set linksArray = content.field_foreign_language %}
-    {% if linksArray.0 %}
-      <div class="arbitrator-links-table">
-        <h3>Foreign language</h3>
-        <table class="arbitrator-table-custom">
-          <tbody>
-          {% for linkData in linksArray %}
-            {% if linkData['#url'] %}
-              <tr>
-                <td>{{ linkData['#title'] }}</td>
-
-              </tr>
-            {% endif %}
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% endif %}
-    {% set linksArray = content.field_language_other %}
-    {% if linksArray %}
-      {% if linksArray.0 %}
-        <div class="links-table">
-          <h3>Other language</h3>
-          <table class="arbitrator-table-custom">
-            <tbody>
-            {% for linkData in linksArray %}
-              {% if linkData.value %}
-                <tr>
-                  <td>{{linkData.value }}</td>
-
-                </tr>
-              {% endif %}
-            {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      {% endif %}
-    {% endif %}
-
-    {% set hourly=content.field_hourly_rate.0['#markup'] %}
-    {% set baseFare=content.field_basic_mediation_fee.0 %}
-    {% set high=content.field_basic_mediation_fee_max.0 %}
-    {% if hourly=='On' %}
-      {% if baseFare != "0" %}
-        {% if high != "0" %}
-          <p>
-            Hourly Rate:
-            {{baseFare}}-{{high}}
-
-
-            / hr</p>
-        {% else  %}
-          <p>
-            Hourly Rate:
-            {{baseFare}}
-            / hr</p>
-        {% endif  %}
-      {% endif  %}
+    {% if components is not empty %}
+      {% include "@templates/news/news-full.twig" with {
+        news_full: {
+          title: node.title.value,
+          type: node.field_news_type.0.entity.name.value,
+          date: content.field_date|render|striptags,
+          byline: content.field_byline,
+          components: components,
+        }
+      } %}
     {% else %}
-      {% if high != 0 %}
-        {% if base!= 0 %}
-          Mediation Fee:
-          {{baseFare}}-{{high}}
-        {% else %}
-          Mediation Fee:{{baseFare}}
-        {%endif%}
-      {%endif%}
-    {%endif%}
-    {% set process=content.field_process %}
-    {% set linksArray =content.field_process %}
-    {% if linksArray.0 %}
-      <div class="links-table">
-        <h3> Process</h3>
-        <table class="arbitrator-table-custom">
-          <tbody>
-          {% for linkData in linksArray %}
-            {% if linkData.value %}
-              <tr>
-                <td>{{linkData.value }}</td>
+      {# Show migrated content in body field if no components added. #}
+      {% include "@molecules/hero/hero.twig" with {
+        hero: {
+          layout: 'full-main',
+          background: 'default',
+          main: {
+            title: label,
+            lead: content.field_byline|render|striptags,
+            brow: node.field_news_type.0.entity.name.value
+          },
+          aside: {},
+          classes: []
+        }
+      } %}
 
-              </tr>
-            {% endif %}
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% endif %}
-    {% set linksArray =content.field_adr_process %}
-    {% if linksArray.0 %}
-      <div class="links-table">
-        <h3>ADR Process</h3>
-        <table class="arbitrator-table-custom">
-          <tbody>
-          {% for linkData in linksArray %}
-            {% if linkData.value %}
-              <tr>
-                <td>{{linkData.value }}</td>
-
-              </tr>
-            {% endif %}
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% endif %}
-
-    {% set linksArray = content.field_subject_matter %}
-    {% if linksArray.0 %}
-      <div class="links-table">
-        <h3>Subject Matter</h3>
-        <table class="arbitrator-table-custom">
-          <tbody>
-          {% for linkData in linksArray %}
-            {% if linkData['#url'] %}
-              <tr>
-                <td>{{ linkData['#title'] }}</td>
-              </tr>
-            {% endif %}
-          {% endfor %}
-          </tbody>
-
-        </table>
-      </div>
-    {% endif %}
-
-    {% set linksArray = content.field_subject_matter_other %}
-    {% if linksArray %}
-      {% if linksArray.0 %}
-        <div class="links-table">
-          <h3>Subject Matter Other</h3>
-          <table class="arbitrator-table-custom">
-            <tbody>
-            {% for linkData in linksArray %}
-              {% if linkData.value %}
-                <tr>
-                  <td>{{ linkData.value }}</td>
-                </tr>
-              {% endif %}
-            {% endfor %}
-            </tbody>
-          </table>
+      {% if content.field_date or content.field_author %}
+        <div class="jcc-about">
+          {% if content.field_author|render %}
+            <span>By {{ content.field_author|render|striptags }}</span>
+          {% endif %}
+          {% if content.field_date %}
+            <span>{{ content.field_date|render|striptags }}</span>
+          {% endif %}
         </div>
       {% endif %}
-    {% endif %}
 
-    {% set linksArray = content.field_areas_of_law %}
-
-    {% if linksArray.0 %}
-      <div class="links-table">
-        <h3>Area of Law</h3>
-        <table class="arbitrator-table-custom">
-          <tbody>
-          {% for linkData in linksArray %}
-            {% if linkData['#url'] %}
-              <tr>
-                <td>{{ linkData['#title'] }}</td>
-
-              </tr>
-            {% endif %}
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
+      {{ content.body }}
     {% endif %}
   {% endblock %}
+{% endset %}
+
+<article{{ attributes }}>
+  <h2>Debug: Content of 'body' variable:</h2>
+  <pre>
+    {{ body|escape }}
+  </pre>
+
+  {% include '@molecules/section/section.twig' with {
+    section: {
+      background: 'default',
+      container: 'container',
+      content: body
+    }
+  } %}
 </article>
