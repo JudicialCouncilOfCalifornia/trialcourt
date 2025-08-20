@@ -14,6 +14,10 @@ function jcc_site_lockdown_openid_connect_userinfo_save(UserInterface $account, 
   // Log the $context for debugging purposes.
   \Drupal::logger('jcc_site_lockdown')->debug('Userinfo context: @context',
     [
-      '@context' => print_r($context, TRUE),
+      '@context' => print_r($context['userinfo'], TRUE),
+    ]);
+  \Drupal::logger('jcc_site_lockdown')->debug('Userdata context: @context',
+    [
+      '@context' => print_r($context['user_data'], TRUE),
     ]);
 }
