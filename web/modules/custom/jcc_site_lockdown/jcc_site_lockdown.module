@@ -4,3 +4,16 @@
  * @file
  * The jcc_site_lockdown module file.
  */
+
+use Drupal\user\UserInterface;
+
+/**
+ * Implements hook_openid_connect_userinfo_save().
+ */
+function jcc_site_lockdown_openid_connect_userinfo_save(UserInterface $account, array $context): void {
+  // Log the $context for debugging purposes.
+  \Drupal::logger('jcc_site_lockdown')->debug('Userinfo context: @context',
+    [
+      '@context' => print_r($context, TRUE),
+    ]);
+}
