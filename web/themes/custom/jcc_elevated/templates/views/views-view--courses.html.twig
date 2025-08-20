@@ -51,6 +51,26 @@
   </div>
 {% endset %}
 
+{% if row.detail_list_data %}
+  {% set detail_list_data %}
+    <div>{{ row.detail_list_data }}</div>
+  {% endset %}
+{% endif %}
+
+{% set updated_rows = {} %}
+
+{% for key, row in processed_rows %}
+  {% set updated_row = {
+    'title': row.title,
+    'is_new': row.is_new,
+    'url': row.url,
+    'button_data' : row.button_data,
+    'detail_list_data': row.detail_list_data,
+  } %}
+
+  {% set updated_rows = updated_rows|merge({ (key): updated_row }) %}
+{% endfor %}
+
 <div{{ attributes.addClass(classes) }}>
   {% include "@organisms/ViewResults/ViewResults.twig" with {
     variant: 'default',
@@ -64,7 +84,7 @@
     form_in_sidebar: true,
     list_type: 'ul',
     list_type_divider: '',
-    rows: processed_rows,
+    rows: updated_rows,
     sidebar: '',
     sidebar_direction_results: 'sidebar-row',
     pager: pager|render,
