@@ -76,7 +76,7 @@
   {% set components = components|merge([component]) %}
 {% endfor %}
 
-<article>
+{% set body %}
   {% block layout %}
     {{ breadcrumb }}
 
@@ -294,4 +294,19 @@
       </div>
     {% endif %}
   {% endblock %}
+{% endset %}
+
+<article{{ attributes }}>
+{#  <h2>Debug: Content of 'body' variable:</h2>#}
+{#  <pre>#}
+{#    {{ body|escape }}#}
+{#  </pre>#}
+
+  {% include '@molecules/section/section.twig' with {
+    section: {
+      background: 'default',
+      container: 'container',
+      content: body
+    }
+  } %}
 </article>
