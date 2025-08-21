@@ -1214,6 +1214,8 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
  *   The node.
  */
 function jcc_elevated_node_course(array &$variables, NodeInterface $node): void {
+  // Invalidate the dynamic page cache for this node, hourly.
+  $variables['#cache']['max-age'] = 3600;
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
   $type_term = $node->get('field_course_type')[0] ? $node->get('field_course_type')[0]->entity : NULL;
