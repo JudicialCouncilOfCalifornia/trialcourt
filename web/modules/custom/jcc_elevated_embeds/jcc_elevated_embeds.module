@@ -42,6 +42,14 @@ function jcc_elevated_embeds_theme($existing, $type, $theme, $path): array {
         'district_info' => [],
       ],
     ],
+    'block__jrn_directory' => [
+      'variables' => [
+        'jcc_court_options' => NULL,
+      ],
+      'template' => 'block--jrn-directory',
+      'base hook' => 'block',
+      'path' => $path . '/templates/jrn_directory',
+    ],
   ];
 }
 
@@ -140,4 +148,11 @@ function jcc_elevated_embeds_jcc_allowed_content_stream_blocks_override($flat = 
  */
 function jcc_elevated_embeds_jcc_elevated_settings_alter(&$settings) {
   // $settings['jcc_elevated.test'] = 'This is a test value';
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function jcc_elevated_embeds_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'jcc_elevated_embeds/form_redirect';
 }
