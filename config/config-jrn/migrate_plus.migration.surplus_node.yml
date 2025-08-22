@@ -96,11 +96,20 @@ source:
     -
       name: field_status
       selector: field_status
-      label: 'Status'  
+      label: Status
 process:
   uid:
-    plugin: default_value
-    default_value: 1
+    -
+      plugin: callback
+      callable: trim
+      source: field_email_address
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: migration_lookup
+      migration: surplus_users
+      source: field_email_address
   title:
     -
       plugin: get
@@ -112,14 +121,16 @@ process:
     plugin: default_value
     default_value: 1
   moderation_state:
-    - plugin: callback
+    -
+      plugin: callback
       callable: strtolower
-      source: field_status  
-    - plugin: static_map      
+      source: field_status
+    -
+      plugin: static_map
       map:
         published: published
         archived: archived
-      default_value: archived  
+      default_value: archived
   field_quantity: field_quantity
   field_reference_number: field_reference_number
   field_description: field_description
@@ -193,4 +204,6 @@ process:
 destination:
   plugin: 'entity:node'
   default_bundle: surplus_materials
-migration_dependencies: null
+migration_dependencies:
+  optional:
+    - surplus_users
