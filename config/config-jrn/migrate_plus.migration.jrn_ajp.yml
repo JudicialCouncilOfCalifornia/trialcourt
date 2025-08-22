@@ -1,0 +1,88 @@
+uuid: 7b27d13a-f8a6-4314-be98-5c772b666069
+langcode: en
+status: true
+dependencies: {  }
+id: jrn_ajp
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - jrn
+  - jcc_ajp
+migration_group: jrn
+label: 'JIS: Import TAJP'
+source:
+  plugin: csv
+  path_with_date: 'public://upload/oracle/serranus_serviceday_csv_DATE.txt'
+  header_row_count: 1
+  ids:
+    - person_id
+  fields:
+    -
+      name: person_id
+      selector: PERSON_ID
+      label: 'Person ID'
+    -
+      name: name
+      selector: PNAME
+      label: Name
+    -
+      name: email
+      selector: EMAIL
+      label: Email
+    -
+      name: program_status
+      selector: PROGRAM_STATUS
+      label: 'Program Status'
+    -
+      name: fy
+      selector: FY
+      label: 'Fiscal Year'
+    -
+      name: fy_service_days
+      selector: FY_SERVICE_DAYS
+      label: 'Fiscal Year Service Days'
+    -
+      name: fy_pro_bono_days
+      selector: FY_PRO_BONO_DAYS
+      label: 'Fiscal Year Pro Bono Days'
+    -
+      name: life_service_days
+      selector: LIFE_SERVICE_DAYS
+      label: 'Lifetime Service Days'
+    -
+      name: life_pro_bono_days
+      selector: LIFE_PRO_BONO_DAYS
+      label: 'Lifetime Pro Bono Days'
+    -
+      name: jud_exp_end_date
+      selector: JUD_EXP_END_DATE
+      label: 'Judicial Experience End Date'
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  status:
+    plugin: default_value
+    default_value: 1
+  person_id: person_id
+  name: name
+  email: email
+  program_status: program_status
+  fy: fy
+  fy_service_days: fy_service_days
+  fy_pro_bono_days: fy_pro_bono_days
+  life_service_days: life_service_days
+  life_pro_bono_days: life_pro_bono_days
+  jud_exp_end_date:
+    -
+      plugin: callback
+      callable: strtotime
+      source: jud_exp_end_date
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m-d
+destination:
+  plugin: 'entity:jcc_ajp'
+migration_dependencies: null

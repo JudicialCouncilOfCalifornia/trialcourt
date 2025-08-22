@@ -1,0 +1,100 @@
+uuid: 3897f696-ecd8-453a-98d1-cff8e95331a2
+langcode: en
+status: true
+dependencies: {  }
+id: jrn_officer
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - jrn
+  - jcc_officer
+migration_group: jrn
+label: 'JIS: Import Officer'
+source:
+  plugin: csv
+  path_with_date: 'public://upload/oracle/serranus_person_csv_DATE.txt'
+  header_row_count: 1
+  ids:
+    - person_id
+  fields:
+    -
+      name: person_id
+      selector: PERSON_ID
+      label: 'Person ID'
+    -
+      name: salutation
+      selector: SALUTATION
+      label: Salutation
+    -
+      name: first_name
+      selector: FNAME
+      label: 'First Name'
+    -
+      name: middle_name
+      selector: MNAME
+      label: 'Middle Name'
+    -
+      name: last_name
+      selector: LNAME
+      label: 'Last Name'
+    -
+      name: job_title
+      selector: JOB_CLASS_DESC
+      label: 'Job Title'
+    -
+      name: email
+      selector: EMAIL
+      label: Email
+    -
+      name: phone
+      selector: PHONENUMBER
+      label: Phone
+    -
+      name: court
+      selector: ENTITY_ID
+      label: Court
+    -
+      name: address
+      selector: ADDR_ID
+      label: Address
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  status:
+    plugin: default_value
+    default_value: 1
+  person_id: person_id
+  salutation: salutation
+  first_name: first_name
+  middle_name: middle_name
+  last_name: last_name
+  court:
+    plugin: migration_lookup
+    migration: jrn_court
+    source: court
+    no_stub: true
+  job_title:
+    -
+      plugin: entity_generate
+      bundle: job_title
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+      source: job_title
+  email: email
+  phone: phone
+  address:
+    plugin: migration_lookup
+    migration: jrn_address
+    source: address
+    no_stub: true
+destination:
+  plugin: 'entity:jcc_officer'
+migration_dependencies:
+  required:
+    - jrn_court
+  optional:
+    - jrn_address

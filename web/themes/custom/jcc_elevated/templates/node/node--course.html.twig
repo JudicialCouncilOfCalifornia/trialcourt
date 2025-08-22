@@ -201,9 +201,17 @@
         {% set events = [] %}
         {% for event in course_schedule %}
           {% if event.date|date('Ymd') > today %}
+            {% set text = event.location %}
+            {% if event.location and event.notation %}
+              {% set text %}
+                {{ event.location }} - {{ event.notation }}
+              {% endset  %}
+            {% elseif event.notation and not event.location %}
+              {% set text = event.notation %}
+            {% endif %}
             {% set item = {
               brow: event.date,
-              text: event.location,
+              text: text,
             } %}
             {% set events = events|merge([item]) %}
           {% endif %}

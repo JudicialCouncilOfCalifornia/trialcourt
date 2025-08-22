@@ -1,0 +1,254 @@
+<?php
+
+/**
+ * @file
+ * Provides a jcc staff entity type.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_theme().
+ */
+function jcc_jrn_contact_theme() {
+  return [
+    'jcc_staff' => [
+      'render element' => 'elements',
+    ],
+    'jcc_cio' => [
+      'render element' => 'elements',
+    ],
+    'jcc_officer' => [
+      'render element' => 'elements',
+    ],
+    'jcc_ajp' => [
+      'render element' => 'elements',
+    ],
+    'jcc_court' => [
+      'render element' => 'elements',
+    ],
+    'jcc_address' => [
+      'render element' => 'elements',
+    ],
+    'custom_staff_view' => [
+      'variables' => [
+        'form' => NULL,
+        'table' => NULL,
+        'summary' => NULL,
+      ],
+      'template' => 'custom_staff_view',
+    ],
+    'custom_officer_view' => [
+      'variables' => [
+        'form' => NULL,
+        'table' => NULL,
+        'summary' => NULL,
+      ],
+      'template' => 'custom_officer_view',
+    ],
+    'custom_ajp_view' => [
+      'variables' => [
+        'form' => NULL,
+        'table' => NULL,
+        'summary' => NULL,
+      ],
+      'template' => 'custom_ajp_view',
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for jcc staff templates.
+ *
+ * Default template: jcc-staff.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the jcc staff information
+ *     and any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_jcc_staff(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Prepares variables for jcc cio templates.
+ *
+ * Default template: jcc-cio.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the jcc cio information and
+ *     any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_jcc_cio(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Prepares variables for jcc officer templates.
+ *
+ * Default template: jcc-officer.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the jcc officer information and
+ *     any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_jcc_officer(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Prepares variables for jcc ajp templates.
+ *
+ * Default template: jcc-ajp.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the jcc ajp information and
+ *     any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_jcc_ajp(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Prepares variables for jcc court templates.
+ *
+ * Default template: jcc-court.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the jcc court information and
+ *     any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_jcc_court(array &$variables) {
+  $entityTypeManager = \Drupal::entityTypeManager();
+  $court_entity = \Drupal::routeMatch()->getParameter('jcc_court');
+  $court_id = $court_entity instanceof EntityInterface ? $court_entity->id() : NULL;
+  $name = $court_entity->label();
+  $court_type = '';
+  if (!$court_entity->get('court_type')->isEmpty()) {
+    $court_type_entity = $court_entity->get('court_type')->entity;
+    $court_type = $court_type_entity ? $court_type_entity->label() : '';
+  }
+  $variables['name_and_type'] = $name . ' - ' . $court_type;
+  $loadEntities = function ($entity_type, $court_id, $job_title = NULL) use ($entityTypeManager) {
+    $query = $entityTypeManager->getStorage($entity_type)->getQuery();
+    $query->condition('court', $court_id);
+    if ($job_title) {
+      $query->condition('job_title', $job_title);
+    }
+    $query->accessCheck(TRUE);
+    $ids = $query->execute();
+    return $entityTypeManager->getStorage($entity_type)->loadMultiple($ids);
+  };
+
+  $extractNameData = function ($entity) {
+    return [
+      'fname' => $entity->get('first_name')->value,
+      'mname' => $entity->hasField('middle_name') ? $entity->get('middle_name')->value : '',
+      'lname' => $entity->get('last_name')->value,
+    ];
+  };
+
+  $cios = $loadEntities('jcc_cio', $court_id);
+  $cio_data = [];
+  foreach ($cios as $cio) {
+    $item = $extractNameData($cio);
+    if (!$cio->get('job_title')->isEmpty()) {
+      $term = $cio->get('job_title')->entity;
+      if ($term) {
+        $item['job_class'] = $term->label();
+      }
+    }
+    $cio_data[] = $item;
+  }
+  $variables['cio_data'] = $cio_data;
+
+  $addresses = $loadEntities('jcc_address', $court_id);
+  if (!empty($addresses)) {
+    $addr_data = [];
+    foreach ($addresses as $address) {
+      $addr_data[] = [
+        'addr1' => $address->get('addr1')->value,
+        'addr2' => $address->get('addr2')->value,
+        'city' => $address->get('city')->value,
+        'state' => $address->get('state')->value,
+        'zip' => $address->get('zip')->value,
+        'mailing_addr1' => $address->get('mailing_addr1')->value,
+        'phone' => $address->get('phone')->value,
+        'fax' => $address->get('fax')->value,
+      ];
+    }
+    $variables['address_data'] = $addr_data;
+  }
+
+  $getOfficerDataByJob = function ($court_id, $job_label) use ($entityTypeManager, $loadEntities, $extractNameData) {
+    $term_storage = $entityTypeManager->getStorage('taxonomy_term');
+    $tids = $term_storage->getQuery()
+      ->condition('vid', 'job_title')
+      ->condition('name', $job_label)
+      ->accessCheck(TRUE)
+      ->execute();
+
+    $tid = reset($tids);
+    if (!$tid) {
+      return [];
+    }
+    $officers = $loadEntities('jcc_officer', $court_id, $tid);
+    $data = [];
+    foreach ($officers as $officer) {
+      $data[] = $extractNameData($officer);
+    }
+    return $data;
+  };
+  $variables['judge_data'] = $getOfficerDataByJob($court_id, 'Superior Court Presiding Judge');
+  $variables['exec_officer_data'] = $getOfficerDataByJob($court_id, 'Superior Court - Court Executive Officer');
+
+  $officer_query = $entityTypeManager->getStorage('jcc_officer')->getQuery();
+  $officer_query->condition('court', $court_id);
+  $officer_query->accessCheck(TRUE);
+  $officer_query->sort('last_name', 'ASC');
+  $officer_query->sort('first_name', 'ASC');
+  $officer_ids = $officer_query->execute();
+  $officers = $entityTypeManager->getStorage('jcc_officer')->loadMultiple($officer_ids);
+  $rows = [];
+  foreach ($officers as $officer) {
+    $name_parts = array_filter([
+      $officer->get('first_name')->value,
+      $officer->get('middle_name')->value,
+      $officer->get('last_name')->value,
+    ]);
+    $full_name = implode(' ', $name_parts);
+    $rows[] = [
+      'data' => [
+        $full_name,
+        $officer->get('job_title')->entity ? $officer->get('job_title')->entity->label() : '',
+        $officer->get('email')->value,
+      ],
+    ];
+  }
+
+  $variables['officer_table'] = [
+    '#type' => 'table',
+    '#header' => ['Name', 'Title', 'Contact'],
+    '#rows' => $rows,
+    '#empty' => t('No officers found.'),
+  ];
+}
