@@ -188,8 +188,9 @@ class JccStaffListBuilder extends EntityListBuilder {
       $query->condition($or_group);
     }
 
-    if ($request->get('temporary')) {
-      $query->condition('temporary', TRUE);
+    $temporary = $request->get('temporary');
+    if ($temporary !== null && $temporary !== '' && $temporary !== 'both') {
+      $query->condition('temporary', (int) $temporary);
     }
 
     if ($department = $request->get('department')) {

@@ -236,10 +236,18 @@ function template_preprocess_jcc_court(array &$variables) {
       $officer->get('last_name')->value,
     ]);
     $full_name = implode(' ', $name_parts);
+    $loc_num = '';
+    if (!$officer->get('address')->isEmpty()) {
+      $address_entity = $officer->get('address')->entity;
+      if ($address_entity) {
+        $loc_num = $address_entity->get('loc_num')->value;
+      }
+    }
     $rows[] = [
       'data' => [
         $full_name,
         $officer->get('job_title')->entity ? $officer->get('job_title')->entity->label() : '',
+        $loc_num,
         $officer->get('email')->value,
       ],
     ];
@@ -247,7 +255,7 @@ function template_preprocess_jcc_court(array &$variables) {
 
   $variables['officer_table'] = [
     '#type' => 'table',
-    '#header' => ['Name', 'Title', 'Contact'],
+    '#header' => ['Name', 'Title', 'Loc', 'Contact'],
     '#rows' => $rows,
     '#empty' => t('No officers found.'),
   ];

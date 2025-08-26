@@ -11,29 +11,46 @@
     hangover_hide_compact: false,
     hangover_offset: 22,
     background: 'red',      
-    heading: 'Staff Directory',
+    heading: 'Directory',
     news_header: true,    
     text: ''  
     }
   %}  
 
-
-{% set details %}    
+{% set details %}
   <div class="stack">
-  <span>
-    <h2 class="surplus-heading"></h2>    
-  </span>
-  
-<div class="custom-staff-view">
-  <div class="filter-form">
-    {{ form }}
+    <span><h2 class="surplus-heading">Search for Judicial Council Staff</h2></span>
+
+    <div class="custom-staff-view">
+      <form{{ form.attributes }}>
+       
+        <div class="filter-form" style="display:flex; gap:10px;">
+        <div>
+         <label class="usa-sr-only" for="header-search">Enter <b>Judicial Council Staff</b> name</label>
+          <div class="form-item">{{ form.filter.keyword }}</div>
+          </div>
+            <div>
+           <label class="usa-sr-only" for="header-search">Department</label>
+          <div class="form-item">{{ form.filter.department }}</div>
+          </div>
+            <div>
+           <label class="usa-sr-only" for="header-search">Temp Hire</label>
+          <div class="form-item">{{ form.filter.temporary }}</div>
+          </div>
+          <br />
+             <br />
+          
+        </div>
+        <br />
+        <div class="form-actions">{{ form.actions }}</div>
+      </form>
+
+   
+      <div class="staff-table"">
+        {{ table }}
+      </div>
+    </div>
   </div>
-<br />
-<br />
-  <div  class="staff-table">
-    {{ table }}
-  </div>
-</div>
 {% endset %}
 
 <div class="jrn-directory-staff">
@@ -42,12 +59,94 @@
    sub_component_layout: 'with-sidebar grid',
    sidebar_direction: 'row',
    sidebar_width: "60",
-   sub_component_data: {
-     details
-   },
+   sub_component_data: 
+   {details
+    },  
     attributes: create_attribute()
     }
   %}
+  </div>
+{# <div class="filter-form" style="display:flex; gap:10px; background-color:yellow;">
+    <div style="display:flex;flex-direction:row;background-color:lightgreen;">
+        <div class="form-item">
+          <label class="usa-sr-only" for="header-search">Enter <b>Judicial Council Staff</b> name</label>
+          {{ sub_component_data.form.filter.keyword }}***
+        </div>
+        <div class="form-item">
+          {{ sub_component_data.form.filter.department }}
+        </div>
+        <div class="form-item">
+          {{ sub_component_data.form.filter.temporary }}
+        </div>
+    </div>
+    <div class="form-actions">
+      {{ sub_component_data.form.actions }}
+    </div> 
+  </div>
+  {{ sub_component_data.form|without('filter','actions') }}
+  
+</div> #}
+
+
+
+
+
+
+
+{#<div class="form-item">
+    {{ form.filter.department }}
+  </div>
+  <div class="form-item">
+    {{ form.filter.temporary }}
+  </div>
+  <div class="form-actions">
+    {{ form.actions }}
+  </div>
+</div> #}
+   {# <div class="filter-form">
+    {{ form }}
+  </div>  #}
+
+{# {% set details %}     
+  <div class="stack">
+  <span>
+    <h2 class="surplus-heading">Search for Judicial Council Staff</h2>    
+  </span>
+  <p>{{ dump(form) }}</p>
+  
+<div class="custom-staff-view">
+
+
+{{ form|without('filter', 'actions') }}
+
+<div class="filter-form">
+  <div style="display:flex;flex-direction:row;background-color:yellow;">
+    <div class="form-item">
+      <label class="usa-sr-only" for="header-search">Enter <b>Judicial Council Staff</b> name</label>
+      {{ form.filter.keyword }}
+    </div>
+
+    <div class="form-item" style="margin-block-start:unset;">
+      <label class="usa-sr-only" for="header-search">Department</label>
+      {{ form.filter.department }}
+    </div>
+
+    <div class="form-item" style="margin-block-start:unset;">
+      <label class="usa-sr-only" for="header-search">Temp Hire</label>
+      {{ form.filter.temporary }}
+    </div>
+
+    <div class="form-actions">
+      {{ form.actions }}
+    </div>
+  </div>
 </div>
 
 
+
+
+  <div  class="staff-table" background-color: lightblue;">
+    {{ table }}
+  </div>
+</div>
+{# {% endset %} #}
