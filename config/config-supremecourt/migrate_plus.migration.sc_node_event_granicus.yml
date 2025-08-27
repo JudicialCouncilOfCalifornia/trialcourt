@@ -77,7 +77,7 @@ process:
       source: type
       method: row
       condition:
-        plugin: not:matches
+        plugin: 'not:matches'
         regex: '/Supreme Court Oral Argument|Supreme Court Oral Argument Test/'
     -
       plugin: static_map
@@ -91,7 +91,6 @@ process:
       bundle_key: vid
       bundle: event_type
       value_key: name
-
   field_date_range/value:
     -
       plugin: format_date
