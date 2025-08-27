@@ -32,44 +32,7 @@
  * @ingroup themeable
  */
 #}
-{{ attach_library("jcc_storybook/HeroHangover") }}
-{{ attach_library("jcc_storybook/InlineForm") }}
-{{ attach_library("jcc_storybook/ResultExcerpt") }}
-{{ attach_library("jcc_storybook/ViewResults") }}
-{{ attach_library("jcc_storybook/Pill") }}
-{{ attach_library("jcc_storybook/Pills") }}
-
-{%
-  set classes = [
-  dom_id ? 'js-view-dom-id-' ~ dom_id,
-]
-%}
-
-{% set content_header %}
-  <div class="cluster">
-    <div>{{ count_summary }}</div>
-  </div>
-{% endset %}
-
-{% if row.detail_list_data %}
-  {% set detail_list_data %}
-    <div>{{ row.detail_list_data }}</div>
-  {% endset %}
-{% endif %}
-
-{% set updated_rows = {} %}
-
-{% for key, row in processed_rows %}
-  {% set updated_row = {
-    'title': row.title,
-    'is_new': row.is_new,
-    'url': row.url,
-    'button_data' : row.button_data,
-    'detail_list_data': row.detail_list_data,
-  } %}
-
-  {% set updated_rows = updated_rows|merge({ (key): updated_row }) %}
-{% endfor %}
+{% extends 'views-view--courses.html.twig' %}
 
 {% block view_results %}
   <div{{ attributes.addClass(classes) }}>
@@ -80,9 +43,9 @@
       header: '',
       header_sidebar: '',
       header_direction_results: 'sidebar-row',
-      content_header: content_header,
+      content_header: '',
       form: exposed|render,
-      form_in_sidebar: true,
+      form_in_sidebar: false,
       list_type: 'ul',
       list_type_divider: '',
       rows: updated_rows,
@@ -93,7 +56,6 @@
       footer: '',
       footer_sidebar: '',
       sidebar_direction_footer: 'sidebar-row',
-      no_results_mg: no_results_msg,
     } %}
   </div>
 {% endblock %}

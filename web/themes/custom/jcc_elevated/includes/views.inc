@@ -325,15 +325,15 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
     $variables['no_results_message'] = ['#markup' => Html::decodeEntities($no_results_msg['value'])];
   }
 
-  if (empty($variables['rows'][0]['#rows'])) {
-    return;
-  }
-
   // Remove the captcha from the search.
   unset($variables['exposed']['captcha']);
 
   // Theme the search button.
   $variables['exposed']['actions']['submit']['#theme_wrappers'][0] = "input__submit__search_search_submit";
+
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
 
   // Process the results for the search api view.
   foreach ($variables['rows'][0]['#rows'] as $index => $item) {
@@ -1519,6 +1519,10 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
   foreach ($variables['rows'][0]['#rows'] as $item) {
@@ -1536,26 +1540,7 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
     }
     $date = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : NULL;
 
-    $topics = $node->get('field_topics');
-    $subtopics = $node->get('field_subtopics');
-    $pills = [];
-
-    foreach ($topics as $topic) {
-      $pills['items'][] = [
-        'variant' => 'default',
-        'label' => $topic->entity->label(),
-        'url' => '#',
-      ];
-    }
-    foreach ($subtopics as $subtopic) {
-      $pills['items'][] = [
-        'variant' => 'default',
-        'label' => $subtopic->entity->label(),
-        'url' => '#',
-      ];
-    }
-
-    // Locations for upcoming events only.
+    // Location for next event date.
     $items = $node->get('field_components');
     $locations = [];
     foreach ($items as $item) {
@@ -1670,7 +1655,6 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
       'is_new' => $is_new,
       'button_data' => $action,
       'detail_list_data' => $detail_list_data,
-      'raw_pills' => $pills,
     ];
   }
 }
@@ -1689,6 +1673,15 @@ function jcc_elevated_preprocess_views_view__courses__by_type(&$variables) {
 function jcc_elevated_preprocess_views_view__courses__by_method(&$variables) {
   // Reuse all courses catalog.
   jcc_elevated_preprocess_views_view__courses($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for promoted courses.
+ */
+function jcc_elevated_preprocess_views_view__courses__promoted(&$variables) {
+  // Reuse all courses catalog.
+  jcc_elevated_preprocess_views_view__courses($variables);
+  $variables['no_results_msg'] = t('No course promotions at this time.');
 }
 
 /**
