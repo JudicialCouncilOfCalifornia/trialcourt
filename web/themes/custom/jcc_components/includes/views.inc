@@ -472,6 +472,23 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
 
     // Sort pages by publication date field.
     uasort($oral_args, function ($a, $b) {
+      // SC-400 we can not assume all nodes each has a field_date value
+      // without safe checking, end users will see subpage error pop up.
+      $dateA = $a->field_date->date ?? NULL;
+      $dateB = $b->field_date->date ?? NULL;
+
+      // If both are missing, consider them equal.
+      if (!$dateA && !$dateB) {
+        return 0;
+      }
+      // Push nodes without a date to the bottom.
+      if (!$dateA) {
+        return 1;
+      }
+      if (!$dateB) {
+        return -1;
+      }
+
       return strnatcmp($b->field_date->date->format('Ymd'), $a->field_date->date->format('Ymd'));
     });
 
@@ -542,7 +559,7 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
         }
       }
       break;
-      
+
     case "location":
       if($view->current_display == 'page_1'){
         foreach ($view->result as $key => $row) {
@@ -560,7 +577,7 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
 
         // Loop through the results.
         foreach ($view->result as $index => $row) {
-          $nid = $row->nid; // Ensure this is the correct property for Node ID.  
+          $nid = $row->nid; // Ensure this is the correct property for Node ID.
           // If this Node ID hasn't been added to the unique results, keep it.
           if (!isset($unique_results[$nid])) {
             $unique_results[$nid] = $row;
@@ -569,12 +586,12 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
           else {
             unset($view->result[$index]);
           }
-        }     
+        }
        // Reindex the result array after removing duplicates.
         $view->result = array_values($view->result);
 
       }
-      break;  
+      break;
   }
 }
 
