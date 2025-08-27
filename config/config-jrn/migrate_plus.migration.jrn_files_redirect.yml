@@ -33,6 +33,10 @@ source:
       name: category
       selector: category
       label: Category
+    -
+      name: filename
+      selector: filename
+      label: Filename
   constants:
     base_scheme: 'internal:'
     document_path: /system/files/
@@ -40,13 +44,36 @@ source:
     dash: '-'
     langcode: en
     status_code: 301
+    pathinfo_extension: PATHINFO_EXTENSION
+    pathinfo_filename: PATHINFO_FILENAME
+    dot: '.'
 process:
   uid:
     plugin: default_value
     default_value: 1
-  pseudo_title:
-    plugin: sanitize_filename
-    source: title
+  pseudo_extension:
+    -
+      plugin: callback
+      callable: pathinfo
+      source: filename
+    -
+      plugin: extract
+      index: 
+        - extension
+    -
+      plugin: callback
+      callable: strtolower
+  pseudo_filename:
+    -
+      plugin: callback
+      callable: pathinfo
+      source: filename
+    -
+      plugin: extract
+      index: 
+        - filename
+    -
+      plugin: sanitize_filename
   redirect_source/path:
     -
       plugin: callback
@@ -65,7 +92,10 @@ process:
       - constants/document_path
       - category
       - constants/slash
-      - '@pseudo_title'
+      - '@pseudo_filename'
+      - '@pseudo_extension'
+      - constants/dot
+      - '@pseudo_extension'
   status_code: constants/status_code
   language:
     plugin: default_value
