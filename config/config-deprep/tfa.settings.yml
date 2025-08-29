@@ -1,6 +1,6 @@
 _core:
   default_config_hash: BP55XPOfnavpw1nspUjrOmau7ZkxMxMVJ5_B-ybJYCs
-enabled: 0
+enabled: false
 required_roles:
   authenticated: authenticated
   administrator: administrator
@@ -26,8 +26,6 @@ validation_plugin_settings:
     recovery_codes_amount: 10
 validation_skip: 3
 encryption: tfa
-trust_cookie_expiration: 2592000
-cookie_name: TFA
 tfa_flood_uid_only: 1
 tfa_flood_window: 300
 tfa_flood_threshold: 6
@@ -39,6 +37,8 @@ mail:
   tfa_disabled_configuration:
     subject: 'Your [site:name] account no longer has two-factor authentication'
     body: "[user:display-name],\r\n\r\nTwo-factor authentication has been disabled on your [site:name] account.\r\n\r\nIf you did not take this action, please contact a site administrator immediately.\r\n\r\n--\r\n[site:name] team"
+trust_cookie_expiration: 2592000
+cookie_name: TFA
 fallback_plugins:
   tfa_totp:
     tfa_recovery_code:
