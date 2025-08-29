@@ -325,15 +325,15 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
     $variables['no_results_message'] = ['#markup' => Html::decodeEntities($no_results_msg['value'])];
   }
 
-  if (empty($variables['rows'][0]['#rows'])) {
-    return;
-  }
-
   // Remove the captcha from the search.
   unset($variables['exposed']['captcha']);
 
   // Theme the search button.
   $variables['exposed']['actions']['submit']['#theme_wrappers'][0] = "input__submit__search_search_submit";
+
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
 
   // Process the results for the search api view.
   foreach ($variables['rows'][0]['#rows'] as $index => $item) {
@@ -1510,14 +1510,18 @@ function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived
 }
 
 /**
- * Implements hook_preprocess_HOOK() for course cataglog listing.
+ * Implements hook_preprocess_HOOK() for course catalog listing.
  */
-function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
+function jcc_elevated_preprocess_views_view__courses(&$variables) {
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
 
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
+
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
 
   // Process the results for the search api view.
   $variables['processed_rows'] = [];
@@ -1536,7 +1540,7 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
     }
     $date = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : NULL;
 
-    // Locations for upcoming events only.
+    // Location for next event date.
     $items = $node->get('field_components');
     $locations = [];
     foreach ($items as $item) {
@@ -1638,21 +1642,46 @@ function jcc_elevated_preprocess_views_view__courses__catalog(&$variables) {
       ]),
     ];
 
-    $overview_max = 255;
-    $overview = strip_tags($node->get('body')->value);
-    if (strlen($overview) > $overview_max) {
-      $overview = substr($overview, 0, $overview_max);
-      $overview = $overview . '...';
+    $published_date = $node->getCreatedTime();
+    $three_months_ago = strtotime('-3 months');
+    $is_new = NULL;
+    if ($published_date >= $three_months_ago) {
+      $is_new = TRUE;
     }
 
     $variables['processed_rows'][] = [
       'title' => $label,
       'url' => $node->toUrl(),
-      'content' => $overview,
+      'is_new' => $is_new,
       'button_data' => $action,
       'detail_list_data' => $detail_list_data,
     ];
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for courses by type listing.
+ */
+function jcc_elevated_preprocess_views_view__courses__by_type(&$variables) {
+  // Reuse all courses catalog.
+  jcc_elevated_preprocess_views_view__courses($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for courses by delivery method listing.
+ */
+function jcc_elevated_preprocess_views_view__courses__by_method(&$variables) {
+  // Reuse all courses catalog.
+  jcc_elevated_preprocess_views_view__courses($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for promoted courses.
+ */
+function jcc_elevated_preprocess_views_view__courses__promoted(&$variables) {
+  // Reuse all courses catalog.
+  jcc_elevated_preprocess_views_view__courses($variables);
+  $variables['no_results_msg'] = t('No course promotions at this time.');
 }
 
 /**
@@ -1777,30 +1806,14 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   // Remove captcha.
   unset($form['captcha']);
 
-  // Set the placeholder and Select all text.
-  foreach (Element::children($form) as $id) {
-    $placeholder = $form['#info']['filter-' . $id]['label'] ?? '';
-    $form[$id]['#attributes']['placeholder'] = $placeholder;
-    if (isset($form[$id]['#type']) && $id == 'items_per_page') {
-      // Do nothing.
-    }
-    elseif (isset($form[$id]['#type']) && $form[$id]['#type'] == 'select') {
-      // Set label as 'select all' option label.
-      $form[$id]['#attributes']['placeholder'] = NULL;
-      if ($id != 'jcc_section' && isset($form[$id]['#options']['All'])) {
-        $form[$id]['#options']['All'] = t('- @label -', ['@label' => $placeholder]);
-      }
-      // Visually hide field label for accessibility.
-      // form-element-label.html.twig.
-      $form[$id]['#title_display'] = 'invisible';
-    }
-  }
-
   // Add a label to the form.
   $form['search_label'] = [
     '#type' => 'html_tag',
     '#tag' => 'h2',
     '#value' => t('Search and Filter'),
+    '#attributes' => [
+      'class' => 'sr-only',
+    ],
     '#weight' => '-99',
   ];
 

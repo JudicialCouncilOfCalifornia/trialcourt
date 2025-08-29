@@ -114,10 +114,10 @@ function build_custom_url_map() {
 /**
  * Rewrite the urls with known mapping.
  *
- * @param $markup
- *   an object whose links need modification
+ * @param string $markup
+ *   An object whose links need modification.
  *
- * @return
+ * @return string
  *   A properly formed object resulting from the url rewriting
  */
 function _rewrite_tag_links($markup) {
@@ -139,10 +139,12 @@ function _rewrite_tag_links($markup) {
   }
 
   // Extract the body content (excluding HTML/head tags)
-  $body = $doc->getElementsByTagName('body')->item(0);
   $new_markup = '';
-  foreach ($body->childNodes as $child) {
-    $new_markup .= $doc->saveHTML($child);
+  $body = $doc->getElementsByTagName('body')->item(0);
+  if ($body) {
+    foreach ($body->childNodes as $child) {
+      $new_markup .= $doc->saveHTML($child);
+    }
   }
   return $new_markup;
 }
