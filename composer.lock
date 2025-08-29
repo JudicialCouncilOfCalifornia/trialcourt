@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3e7585141ce8ceb6212fa8ac594ae04e",
+    "content-hash": "f0b037803b7dfc32297deda623a653b2",
     "packages": [
         {
             "name": "arthurkushman/query-path",
@@ -4895,27 +4895,37 @@
         },
         {
             "name": "drupal/diff",
-            "version": "1.1.0",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/diff.git",
-                "reference": "8.x-1.1"
+                "reference": "8.x-1.6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/diff-8.x-1.1.zip",
-                "reference": "8.x-1.1",
-                "shasum": "b7558b0f431d5945289829946e0beba61bf7ae18"
+                "url": "https://ftp.drupal.org/files/projects/diff-8.x-1.6.zip",
+                "reference": "8.x-1.6",
+                "shasum": "9327c3e71c6b1d83213c2bbc4f3e480daad3cdf0"
             },
             "require": {
                 "drupal/core": "^9.3 || ^10",
                 "mkalkbrenner/php-htmldiff-advanced": "~0.0.8"
             },
+            "require-dev": {
+                "jangregor/phpstan-prophecy": "dev-master",
+                "mglaman/phpstan-drupal": "^1.2.10",
+                "phpstan/extension-installer": "^1.2",
+                "phpstan/phpstan": "^1.11",
+                "phpstan/phpstan-deprecation-rules": "*",
+                "phpstan/phpstan-phpunit": "1.4.x-dev",
+                "phpstan/phpstan-strict-rules": "^1@stable",
+                "previousnext/coding-standard": "^1"
+            },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.1",
-                    "datestamp": "1665437355",
+                    "version": "8.x-1.6",
+                    "datestamp": "1718073506",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -4953,6 +4963,11 @@
                     "role": "Maintainer"
                 },
                 {
+                    "name": "Adam Bramley (acbramley)",
+                    "homepage": "https://www.drupal.org/u/acbramley",
+                    "role": "Maintainer"
+                },
+                {
                     "name": "lhangea",
                     "homepage": "https://www.drupal.org/user/2743803"
                 },
@@ -4980,7 +4995,7 @@
             "description": "Compares two entity revisions",
             "homepage": "https://www.drupal.org/project/diff",
             "support": {
-                "source": "http://cgit.drupalcode.org/diff",
+                "source": "https://git.drupalcode.org/project/diff",
                 "issues": "https://www.drupal.org/project/issues/diff"
             }
         },
@@ -6329,39 +6344,42 @@
         },
         {
             "name": "drupal/facets",
-            "version": "1.8.0",
+            "version": "2.0.7",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/facets.git",
-                "reference": "8.x-1.8"
+                "reference": "2.0.7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/facets-8.x-1.8.zip",
-                "reference": "8.x-1.8",
-                "shasum": "f621b84b59c5315db14a0529df5dfc74ca5bc9de"
+                "url": "https://ftp.drupal.org/files/projects/facets-2.0.7.zip",
+                "reference": "2.0.7",
+                "shasum": "a58ad0c4c3fc2750bf095232a54218ae906852e3"
             },
             "require": {
-                "drupal/core": "^8.8 || ^9"
+                "drupal/core": "^9.3 || ^10.0"
             },
             "conflict": {
                 "drupal/search_api": "<1.14"
             },
             "require-dev": {
-                "drupal/search_api": "~1.14"
+                "drupal/jquery_ui_slider": "~2.0",
+                "drupal/jquery_ui_touch_punch": "~1.1",
+                "drupal/search_api": "^1.28||1.x-dev"
+            },
+            "suggest": {
+                "drupal/jquery_ui_slider": "Required for the 'Facets Range Widget' module to work",
+                "drupal/jquery_ui_touch_punch": "Required for the 'Facets Range Widget' module to work"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.8",
-                    "datestamp": "1620838256",
+                    "version": "2.0.7",
+                    "datestamp": "1709900263",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
                     }
-                },
-                "branch-alias": {
-                    "dev-8.x-1.x": "1.x-dev"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -6382,11 +6400,11 @@
                     "homepage": "https://www.drupal.org/user/124705"
                 },
                 {
-                    "name": "Nick_vh",
+                    "name": "nick_vh",
                     "homepage": "https://www.drupal.org/user/122682"
                 },
                 {
-                    "name": "StryKaizer",
+                    "name": "strykaizer",
                     "homepage": "https://www.drupal.org/user/462700"
                 }
             ],
@@ -11285,26 +11303,26 @@
         },
         {
             "name": "drupal/protected_pages",
-            "version": "1.6.0",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/protected_pages.git",
-                "reference": "8.x-1.6"
+                "reference": "8.x-1.8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/protected_pages-8.x-1.6.zip",
-                "reference": "8.x-1.6",
-                "shasum": "d55172cec155ee08618c2817c9b3d3e1ce8f9f63"
+                "url": "https://ftp.drupal.org/files/projects/protected_pages-8.x-1.8.zip",
+                "reference": "8.x-1.8",
+                "shasum": "c56d1a89e5ee0f16860f065aeafb002436a70021"
             },
             "require": {
-                "drupal/core": "^8.8 || ^9 || ^10"
+                "drupal/core": "^8.8 || ^9 || ^10 || ^11"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.6",
-                    "datestamp": "1681317610",
+                    "version": "8.x-1.8",
+                    "datestamp": "1756314595",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -11316,10 +11334,6 @@
                 "GPL-2.0-or-later"
             ],
             "authors": [
-                {
-                    "name": "markdorison",
-                    "homepage": "https://www.drupal.org/user/346106"
-                },
                 {
                     "name": "oksana-c",
                     "homepage": "https://www.drupal.org/user/2916547"
@@ -13669,35 +13683,43 @@
         },
         {
             "name": "drupal/tfa",
-            "version": "1.2.0",
+            "version": "1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/tfa.git",
-                "reference": "8.x-1.2"
+                "reference": "8.x-1.12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/tfa-8.x-1.2.zip",
-                "reference": "8.x-1.2",
-                "shasum": "055a26fdad48ef8f9fed3ba3bbd0bfe7e5e600b8"
+                "url": "https://ftp.drupal.org/files/projects/tfa-8.x-1.12.zip",
+                "reference": "8.x-1.12",
+                "shasum": "86d59b3937a02551099c1a90cc7716620110fa7b"
             },
             "require": {
                 "chillerlan/php-qrcode": "^1.0.9 || ^2.0 || ^3.2 || ^4.0",
                 "christian-riesen/otp": "^2.1",
-                "drupal/core": "^8 || ^9 || ^10",
+                "drupal/core": "^8 || ^9 || ^10 || ^11",
                 "drupal/encrypt": "~3.0",
+                "paragonie/constant_time_encoding": "^1.0 || ^2.0",
                 "php": ">=7.0"
             },
             "require-dev": {
                 "drupal/encrypt": "*",
                 "drupal/key": "*",
-                "drupal/services": "*"
+                "drupal/services": "*",
+                "drush/drush": "^10 || ^11 || ^12 || ^13",
+                "jangregor/phpstan-prophecy": "^1",
+                "mglaman/phpstan-drupal": "^1.1",
+                "phpstan/extension-installer": "^1.2",
+                "phpstan/phpstan": "^1.9",
+                "phpstan/phpstan-deprecation-rules": "^1.1",
+                "phpstan/phpstan-phpunit": "^1.3"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.2",
-                    "datestamp": "1690225076",
+                    "version": "8.x-1.12",
+                    "datestamp": "1752807547",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
