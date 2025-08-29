@@ -11,14 +11,14 @@
   1. CDN & Varnish dominate cache expiry
     - With IPC disabled, Drupal doesn’t store full page responses.
     - CDN and Varnish serve cached pages until `Cache-Control: max-age` expires.
-    - Even if Drupal calculates per-entity max-age (e.g., via cache metadata), this does not bubble up to override the global `Cache-Control: max-age` set on the full response when Big Pipe is enabled.
+    - Even if Drupal calculates per-entity max-age (e.g., via cache metadata), this does not bubble up to override the global `Cache-Control: max-age` set on the full response.
   2. Dynamic Page Cache still useful
      - DPC ensures render arrays (fragments) are cached and reused inside Drupal.
      - However, CDN and Varnish will not see those fragment TTLs — they only respect the outer page response headers.
   3. Big Pipe interactions
      - Big Pipe breaks pages into placeholders and streams them in later.
-     - This improves perceived performance for users but forces Drupal to send a single, consistent max-age for the whole response.
-     - Node-specific max-age (set in preprocess or cache metadata) does not bubble up to influence CDN/varnish TTL when Big Pipe is active.
+     - This improves perceived performance for users but Drupal sends a single, consistent max-age for the whole response.
+     - Node-specific max-age (set in preprocess or cache metadata) does not bubble up to influence CDN/varnish TTL.
 
 ## Practical Limitation
 
@@ -26,18 +26,20 @@ If you want a node to re-render at a specific interval (e.g., controlled in hook
  - The global Cache-Control: max-age header of the page response.
  - The CDN and Varnish will serve cached pages until that global max-age expires, regardless of per-node cache metadata.
 
-**Result:** The shortest refresh interval is the global max-age — you cannot force per-node TTLs through CDN + Big Pipe.
+**Result:** The shortest refresh interval is the global max-age — you cannot force per-node TTLs through CDN.
 
-**Option:** Disable Big Pipe. Without Big Pipe, the node's max-age will bubble up to the page cache level and the lowest max-age value of all bubbled render arrays will dictate the page max-age for the Cache Control header. Thus, making the page expire at the lower max-age of either the node render array, or the global max-age, for example. If there is anything else rendered on the page with an even lower max-age, that will set the max-age in the CDN.
+max-age bubbling issues are still being debated in core https://www.drupal.org/project/drupal/issues/2352009
 
 ## Summary
 
- - Granular node TTLs don’t reach the CDN with Big Pipe.
+ - Granular node TTLs don’t reach the CDN.
  - All content respects the global page max-age.
  - Workarounds:
    - Manually purge CDN/Varnish when specific content updates.
    - Lower the global max-age (with performance tradeoffs).
    - Use surrogate keys or cache tags with explicit invalidations if supported by your CDN.
+
+None of these workarounds are useful if you're trying to invalidate a sub-component based on max-age, they only work with cache tags or when the component is updated in Drupal.
 
 ## Testing and Debugging Tools
 
