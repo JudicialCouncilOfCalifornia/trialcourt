@@ -73,7 +73,13 @@ process:
       index: 
         - filename
     -
-      plugin: sanitize_filename
+      plugin: service
+      service: transliteration
+      method: transliterate
+    -
+      plugin: service
+      service: pathauto.alias_cleaner
+      method: cleanstring
   redirect_source/path:
     -
       plugin: callback
