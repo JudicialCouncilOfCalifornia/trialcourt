@@ -14,7 +14,7 @@ class JccReferrerAuthController extends ControllerBase {
    */
   public function accessDenied() {
     return [
-      '#markup' => '<div class="container box"><h1>Restricted Area</h1> <p><a href="https://jrn.courts.ca.gov">Log in via JRN</a> to access this site.</p></div>',
+      '#markup' => '<div class="container box"><h1>Restricted Area</h1> <p>For access to the racial justice toolkit, please log into the <a href="https://jrn.courts.ca.gov">Judicial Resources Network</a>.</p></div>',
       '#allowed_tags' => ['div', 'h1', 'p', 'a'],
     ];
   }
