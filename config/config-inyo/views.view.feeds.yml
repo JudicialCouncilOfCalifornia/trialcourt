@@ -196,16 +196,7 @@ display:
       cache:
         type: tag
         options: {  }
-      empty:
-        messages:
-          id: messages
-          table: views
-          field: messages
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: messages
-          empty: true
+      empty: {  }
       sorts:
         field_date_value:
           id: field_date_value
@@ -697,20 +688,10 @@ display:
             - course_type
             - subtopics
             - topics
-      css_class: no-chosen
+      css_class: ''
       use_ajax: false
       group_by: false
-      header:
-        result:
-          id: result
-          table: views
-          field: result
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: result
-          empty: false
-          content: 'Displaying @start - @end of @total'
+      header: {  }
       footer: {  }
       display_extenders: {  }
     cache_metadata:
@@ -1117,9 +1098,10 @@ display:
           separator: ', '
           field_api_classes: false
       pager:
-        type: none
+        type: some
         options:
           offset: 0
+          items_per_page: 10
       sorts:
         field_date_value:
           id: field_date_value
@@ -1148,7 +1130,7 @@ display:
           plugin_id: string
           default_action: empty
           exception:
-            value: all
+            value: All
             title_enable: false
             title: All
           title_enable: false
@@ -1253,38 +1235,27 @@ display:
       style:
         type: rss
         options:
-          grouping:
-            -
-              field: title
-              rendered: true
-              rendered_strip: false
-          description: ''
+          uses_fields: false
+          description: 'RSS feed for promoted courses filtered by single tag'
       row:
-        type: rss_fields
+        type: node_rss
         options:
-          title_field: title
-          link_field: title
-          description_field: body
-          creator_field: uid
-          date_field: field_date
-          guid_field_options:
-            guid_field: uuid
-            guid_field_is_permalink: false
+          relationship: none
+          view_mode: default
       defaults:
         access: true
-        group_by: false
+        group_by: true
         relationships: true
         fields: false
         sorts: false
         arguments: false
         filters: false
         filter_groups: false
-        header: false
-      group_by: false
+        header: true
       display_description: ''
-      header: {  }
       display_extenders: {  }
       path: feeds/courses/promoted/%
+      sitename_title: false
     cache_metadata:
       max-age: -1
       contexts:

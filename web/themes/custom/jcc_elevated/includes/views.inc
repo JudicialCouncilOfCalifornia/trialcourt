@@ -1663,7 +1663,7 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
  * Implements hook_preprocess_HOOK() for courses by type listing.
  */
 function jcc_elevated_preprocess_views_view__courses__by_type(&$variables) {
-  // Reuse all courses catalog.
+  // Reuse courses catalog preprocess.
   jcc_elevated_preprocess_views_view__courses($variables);
 }
 
@@ -1671,7 +1671,7 @@ function jcc_elevated_preprocess_views_view__courses__by_type(&$variables) {
  * Implements hook_preprocess_HOOK() for courses by delivery method listing.
  */
 function jcc_elevated_preprocess_views_view__courses__by_method(&$variables) {
-  // Reuse all courses catalog.
+  // Reuse courses catalog preprocess.
   jcc_elevated_preprocess_views_view__courses($variables);
 }
 
@@ -1679,9 +1679,35 @@ function jcc_elevated_preprocess_views_view__courses__by_method(&$variables) {
  * Implements hook_preprocess_HOOK() for promoted courses.
  */
 function jcc_elevated_preprocess_views_view__courses__promoted(&$variables) {
-  // Reuse all courses catalog.
+  // Reuse courses catalog preprocess.
   jcc_elevated_preprocess_views_view__courses($variables);
+
   $variables['no_results_msg'] = t('No course promotions at this time.');
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for promoted courses feed.
+ */
+function jcc_elevated_preprocess_views_view_row_rss(&$variables) {
+  // The node.
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $node_manager = $entity_type_manager->getStorage('node');
+  $item = $variables['row'];
+  $node = $node_manager->load($item->nid);
+
+  if ($node) {
+    $content_type = $node->type->entity->label();
+
+    switch ($content_type) {
+      case 'Course':
+        // Use body summary, not body default.
+        if ($node->get('body')->summary) {
+          $variables['description'] = $node->get('body')->summary;
+        }
+        break;
+    }
+  }
+
 }
 
 /**
