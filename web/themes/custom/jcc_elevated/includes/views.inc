@@ -1701,6 +1701,7 @@ function jcc_elevated_preprocess_views_view_row_rss(&$variables) {
     switch ($content_type) {
       case 'Course':
         // Use body summary, not body default.
+        $variables['description'] = 'No course summary provided.';
         if ($node->get('body')->summary) {
           $variables['description'] = $node->get('body')->summary;
         }
