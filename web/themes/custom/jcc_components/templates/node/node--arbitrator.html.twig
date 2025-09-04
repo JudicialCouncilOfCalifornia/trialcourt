@@ -72,18 +72,18 @@
 #}
 
 {% set components = [] %}
+
 {% for k, component in content.field_components if k|first != "#" %}
   {% set components = components|merge([component]) %}
 {% endfor %}
 
-<article>
+{% set arbitrator_fname = content.field_last_name.0['#context']['value'] %}
+{% set arbitrator_lname = content.field_first_name.0['#context']['value'] %}
+{% set arbitrator_full_name = arbitrator_lname ~ ', ' ~ arbitrator_fname %}
+
+{% set body %}
   {% block layout %}
     {{ breadcrumb }}
-
-    <div class="name_header">
-
-      <h2>{{content.field_last_name.0['#context']['value']}},{{content.field_first_name.0['#context']['value']}}</h2>
-    </div>
 
     <div class="personal_bio">
       <h2><span>Professional Bio</span></h2>
@@ -139,7 +139,6 @@
             {% if linkData['#url'] %}
               <tr>
                 <td>{{ linkData['#title'] }}</td>
-
               </tr>
             {% endif %}
           {% endfor %}
@@ -158,7 +157,6 @@
               {% if linkData.value %}
                 <tr>
                   <td>{{linkData.value }}</td>
-
                 </tr>
               {% endif %}
             {% endfor %}
@@ -177,8 +175,6 @@
           <p>
             Hourly Rate:
             {{baseFare}}-{{high}}
-
-
             / hr</p>
         {% else  %}
           <p>
@@ -208,7 +204,6 @@
             {% if linkData.value %}
               <tr>
                 <td>{{linkData.value }}</td>
-
               </tr>
             {% endif %}
           {% endfor %}
@@ -226,7 +221,6 @@
             {% if linkData.value %}
               <tr>
                 <td>{{linkData.value }}</td>
-
               </tr>
             {% endif %}
           {% endfor %}
@@ -249,7 +243,6 @@
             {% endif %}
           {% endfor %}
           </tbody>
-
         </table>
       </div>
     {% endif %}
@@ -285,7 +278,6 @@
             {% if linkData['#url'] %}
               <tr>
                 <td>{{ linkData['#title'] }}</td>
-
               </tr>
             {% endif %}
           {% endfor %}
@@ -294,4 +286,27 @@
       </div>
     {% endif %}
   {% endblock %}
+{% endset %}
+
+{% include "@molecules/hero/hero.twig" with {
+  hero: {
+    layout: 'default',
+    background: 'default',
+    main: {
+      title: arbitrator_full_name,
+      lead: content.field_byline|render|striptags,
+      brow: node.field_event_type.0.entity.name.value
+    },
+    classes: []
+  }
+} %}
+
+<article{{ attributes }}>
+  {% include '@molecules/section/section.twig' with {
+    section: {
+      background: 'default',
+      container: 'container',
+      content: body
+    }
+  } %}
 </article>
