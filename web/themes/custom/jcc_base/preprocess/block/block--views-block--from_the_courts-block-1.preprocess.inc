@@ -49,7 +49,7 @@ function jcc_base_preprocess_block__views_block__from_the_courts_block_1(&$varia
     }
   }
 
-  if ($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'] == TRUE) {
+  if (isset($variables['elements']['content']['#view']->display_handler->display['display_options']['use_more'])) {
     $button_text = $variables['elements']['content']['#view']->display_handler->display['display_options']['use_more_text'];
     $button_url = $variables['elements']['content']['#view']->display_handler->display['display_options']['link_url'];
 

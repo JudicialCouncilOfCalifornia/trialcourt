@@ -4,26 +4,27 @@
 {% set row_count = rows.0['#rows']|length %}
 {% for k, row in rows.0['#rows'] if k|first != "#" %}
   {% set fields = row['#view'].field %}
-  {% set has_self_help = self_help_flags[k] %}
+  {% set has_self_help = (self_help_flags[k] is defined) ? self_help_flags[k] : false %}
   {% set entity = row['#row']._entity %}
   {% set image = null %}
+  {% set card_style = 'media-top' %}
   {% if entity %}
-    {% set media_src = file_url(entity.field_image_of_the_courthouse[0].entity.uri.value) %}
-    {% set card_style = 'media-top' %}
+    {# Image src + alt with guards #}
+    {% set media_src = (entity.field_image_of_the_courthouse is defined
+      and entity.field_image_of_the_courthouse|length
+      and entity.field_image_of_the_courthouse[0].entity is not empty)
+      ? file_url(entity.field_image_of_the_courthouse[0].entity.uri.value)
+      : null %}
 
-    {% if media_src %}
-      {% set image_src = media_src %}
-      {% set image_alt = entity.title[0].value %}
-    {% else %}
-      {% set image_src = directory ~ "/src/img/default_image.png" %}
-      {% set image_alt = 'Default Courthouse Image' %}
-    {% endif %}
+    {% set image_src = media_src ?: ((directory is defined) ? (directory ~ '/src/img/default_image.png') : '/themes/custom/jcc_theme/src/img/default_image.png') %}
+    {% set image_alt = entity.title.value|default('Courthouse image') %}
 
     {% set image %}
       <img src="{{ image_src }}" alt="{{ image_alt }}" />
     {% endset %}
   {% endif %}
 
+  {# Title #}
   {% set court_name %}
     <h3 class="usa-card__heading">
       <a href="{{ path('entity.node.canonical', {'node': entity.nid.value}) }}">
@@ -32,25 +33,46 @@
     </h3>
   {% endset %}
 
+  {# Phone (guarded) #}
   {% set phone %}
-    <div class="jcc-location-hero-link location-listing-page">
-      <a href="tel:{{ entity.field_phone[0].value }}">
-        {{ entity.field_phone[0].value }}
-      </a>
-    </div>
+    {% if entity.field_phone is defined and entity.field_phone[0] is not empty %}
+      {% set tel = entity.field_phone[0].value %}
+      <div class="jcc-location-hero-link location-listing-page">
+        <a href="tel:{{ tel }}">{{ tel }}</a>
+      </div>
+    {% endif %}
   {% endset %}
 
+  {# Address + phone + tag (ONE block assigned to `address`) #}
   {% set address %}
-    {{ my_address }}
+    {% set a = (entity.field_address is defined and entity.field_address[0] is not empty) ? entity.field_address[0] : null %}
+
+    {% if a %}
+      <div class="jcc-location__address jcc-location-hero-link">
+        {# Optional brow above the address #}
+        {% if entity.field_brow is defined and entity.field_brow[0] is not empty %}
+          <div>{{ entity.field_brow[0].value|raw }}</div>
+        {% endif %}
+
+        {% if a.address_line1 %}<div>{{ a.address_line1 }}</div>{% endif %}
+        {% if a.address_line2 %}<div>{{ a.address_line2 }}</div>{% endif %}
+        <div>
+          {{ a.locality }}{% if a.administrative_area %}, {{ a.administrative_area }}{% endif %}{% if a.postal_code %} {{ a.postal_code }}{% endif %}
+        </div>
+        <div>United States</div>
+      </div>
+    {% endif %}
+
     {{ phone }}
+
     {% if has_self_help %}
-      <span class="jcc-listing-tag">{{ 'Self-Help Location' }}</span>
+      <span class="jcc-listing-tag">Self-Help Location</span>
     {% endif %}
   {% endset %}
 
   {% set cards = cards|merge([{
     style: card_style,
-    brow: entity.field_brow[0].value|raw,
+    brow: (entity.field_brow is defined and entity.field_brow[0] is not empty) ? entity.field_brow[0].value|raw : '',
     title: court_name,
     body: address,
     media: image,
@@ -86,11 +108,8 @@
 {% endset %}
 
 {% set listing_page_new = drupal_config('jcc_custom.settings', 'enable_new_listing_page') %}
-{% if listing_page_new  %} 
+{% if listing_page_new %}
   {% include '@molecules/section/section.twig' with {
-    section: {
-      content: content,
-    }
+    section: { content: content }
   } %}
 {% endif %}
-
