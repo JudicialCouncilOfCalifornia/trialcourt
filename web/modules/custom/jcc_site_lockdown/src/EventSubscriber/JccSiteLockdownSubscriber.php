@@ -100,7 +100,7 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $editableConfigFactory;
+  protected $configFactory;
 
   /**
    * The module handler service.
@@ -132,8 +132,8 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
    *   The plugin manager.
    * @param \Drupal\openid_connect\OpenIDConnectClaims $claims
    *   The OpenID Connect claims.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $editable_config_factory
-   *   The config factory for editable config.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory for config.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
    */
@@ -148,7 +148,7 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
     OpenIDConnectSession $session,
     OpenIDConnectClientManager $plugin_manager,
     OpenIDConnectClaims $claims,
-    ConfigFactoryInterface $editable_config_factory,
+    ConfigFactoryInterface $config_factory,
     ModuleHandlerInterface $module_handler) {
 
     $this->aliasManager = $aliasManager;
@@ -159,7 +159,7 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
     $this->currentRouteMatch = $current_route_match;
     $this->pageCacheKillSwitch = $pageCacheKillSwitch;
     $this->pluginManager = $plugin_manager;
-    $this->editableConfigFactory = $editable_config_factory;
+    $this->configFactory = $config_factory;
     $this->moduleHandler = $module_handler;
     $this->session = $session;
     $this->claims = $claims;
@@ -232,8 +232,8 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
     $this->session->saveDestination();
     $client_name = 'windows_aad';
 
-    $configuration = $this->editableConfigFactory
-      ->getEditable('openid_connect.settings.' . $client_name)
+    $configuration = $this->configFactory
+      ->get('openid_connect.settings.' . $client_name)
       ->get('settings');
 
     /** @var \Drupal\openid_connect\Plugin\OpenIDConnectClientInterface $client */
