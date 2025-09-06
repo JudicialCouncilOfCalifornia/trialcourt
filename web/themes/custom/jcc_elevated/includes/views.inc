@@ -1571,14 +1571,6 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
     $node = $item['#row']->_entity;
     $label = $node->label();
     $type = $node->get('field_course_type')->referencedEntities() ? $node->get('field_course_type')->referencedEntities()[0]->label() : NULL;
-    $available_delivery_methods = $node->get('field_delivery_method')->referencedEntities() ? $node->get('field_delivery_method')->referencedEntities() : NULL;
-    $delivery_methods = [];
-    if ($available_delivery_methods) {
-      foreach ($available_delivery_methods as $delivery_method) {
-        $delivery_methods[] = $delivery_method->label();
-      }
-      $delivery_methods = implode(', ', $delivery_methods);
-    }
     $date = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : NULL;
 
     // Location for next event date.
@@ -1677,7 +1669,6 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
       'label' => t('Details'),
       'details' => array_filter([
         $type,
-        $delivery_methods,
         $date,
         $locations,
       ]),

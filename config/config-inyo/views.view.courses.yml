@@ -5,6 +5,7 @@ dependencies:
     - field.storage.node.body
     - node.type.course
     - taxonomy.vocabulary.assignment_area
+    - taxonomy.vocabulary.course_subtype
     - taxonomy.vocabulary.course_type
     - taxonomy.vocabulary.subtopics
     - taxonomy.vocabulary.topics
@@ -226,6 +227,20 @@ display:
                 options_show_only_used_filtered: false
                 options_hide_when_empty: false
                 options_show_items_count: false
+              field_course_subtype_target_id:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: true
+                options_show_only_used_filtered: true
+                options_hide_when_empty: true
+                options_show_items_count: 0
               field_assignment_area_target_id:
                 plugin_id: default
                 advanced:
@@ -241,45 +256,37 @@ display:
                 options_hide_when_empty: true
                 options_show_items_count: 0
               field_topics_target_id:
-                plugin_id: default
+                plugin_id: bef
                 advanced:
                   sort_options: false
                   rewrite:
                     filter_rewrite_values: ''
                     filter_rewrite_values_key: false
-                  collapsible: false
+                  collapsible: true
                   collapsible_disable_automatic_open: false
                   is_secondary: false
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
                 options_show_only_used: true
                 options_show_only_used_filtered: true
                 options_hide_when_empty: true
-                options_show_items_count: 0
+                options_show_items_count: 1
               field_subtopics_target_id:
-                plugin_id: default
+                plugin_id: bef
                 advanced:
                   sort_options: false
                   rewrite:
                     filter_rewrite_values: ''
                     filter_rewrite_values_key: false
-                  collapsible: false
+                  collapsible: true
                   collapsible_disable_automatic_open: false
                   is_secondary: false
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
                 options_show_only_used: true
                 options_show_only_used_filtered: true
-                options_hide_when_empty: true
-                options_show_items_count: 0
-              field_event_location_target_id:
-                plugin_id: default
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  is_secondary: false
-                options_show_only_used: true
-                options_show_only_used_filtered: false
                 options_hide_when_empty: true
                 options_show_items_count: 1
               field_course_type_target_id:
@@ -971,6 +978,72 @@ display:
           fields:
             title: title
             body: body
+        field_course_subtype_target_id:
+          id: field_course_subtype_target_id
+          table: node__field_course_subtype
+          field: field_course_subtype_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_course_subtype_target_id_op
+            label: Series
+            description: ''
+            use_operator: false
+            operator: field_course_subtype_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_course_subtype_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+              jrn_legal_opinion_library: '0'
+              surplus_admin: '0'
+              jrn_sourcehr: '0'
+              surplus_user: '0'
+              jrn_tajp: '0'
+              jrn_judicial_officer: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: course_subtype
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
         field_assignment_area_target_id:
           id: field_assignment_area_target_id
           table: node__field_assignment_area
@@ -1054,7 +1127,7 @@ display:
             identifier: field_topics_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               author: '0'
@@ -1120,7 +1193,7 @@ display:
             identifier: field_subtopics_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               author: '0'
@@ -1408,6 +1481,72 @@ display:
             operator: ''
             operator_limit_selection: false
             operator_list: {  }
+        field_course_subtype_target_id:
+          id: field_course_subtype_target_id
+          table: node__field_course_subtype
+          field: field_course_subtype_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_course_subtype_target_id_op
+            label: Series
+            description: ''
+            use_operator: false
+            operator: field_course_subtype_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_course_subtype_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+              jrn_legal_opinion_library: '0'
+              surplus_admin: '0'
+              jrn_sourcehr: '0'
+              surplus_user: '0'
+              jrn_tajp: '0'
+              jrn_judicial_officer: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: course_subtype
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
         field_assignment_area_target_id:
           id: field_assignment_area_target_id
           table: node__field_assignment_area
@@ -1554,7 +1693,7 @@ display:
             identifier: field_topics_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               author: '0'
@@ -1620,7 +1759,7 @@ display:
             identifier: field_subtopics_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               author: '0'
@@ -1849,6 +1988,72 @@ display:
           fields:
             title: title
             body: body
+        field_course_subtype_target_id:
+          id: field_course_subtype_target_id
+          table: node__field_course_subtype
+          field: field_course_subtype_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_course_subtype_target_id_op
+            label: Series
+            description: ''
+            use_operator: false
+            operator: field_course_subtype_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_course_subtype_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+              jrn_legal_opinion_library: '0'
+              surplus_admin: '0'
+              jrn_sourcehr: '0'
+              surplus_user: '0'
+              jrn_tajp: '0'
+              jrn_judicial_officer: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: course_subtype
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
         field_assignment_area_target_id:
           id: field_assignment_area_target_id
           table: node__field_assignment_area
@@ -1932,7 +2137,7 @@ display:
             identifier: field_topics_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               author: '0'
@@ -1998,7 +2203,7 @@ display:
             identifier: field_subtopics_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               author: '0'
