@@ -1556,6 +1556,7 @@ function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived
 function jcc_elevated_preprocess_views_view__courses(&$variables) {
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
+  $past_date_from_now = strtotime('-1 month');
 
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
@@ -1674,10 +1675,10 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
       ]),
     ];
 
-    $published_date = $node->getCreatedTime();
-    $three_months_ago = strtotime('-3 months');
+    // Display course as new up to specified duration.
+    $published_date = (int) $node->getCreatedTime();
     $is_new = NULL;
-    if ($published_date >= $three_months_ago) {
+    if ($published_date >= $past_date_from_now) {
       $is_new = TRUE;
     }
 
