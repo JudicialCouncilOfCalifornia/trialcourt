@@ -71,6 +71,8 @@
   {% set updated_rows = updated_rows|merge({ (key): updated_row }) %}
 {% endfor %}
 
+{# Disable caching for this template #}
+{% set cache = {'#cache': {'max-age': 0}} %}
 {% block view_results %}
   <div{{ attributes.addClass(classes) }}>
     {% include "@organisms/ViewResults/ViewResults.twig" with {
