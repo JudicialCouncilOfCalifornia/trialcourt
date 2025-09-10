@@ -13,6 +13,7 @@ use Drupal\openid_connect\OpenIDConnectClaims;
 use Drupal\openid_connect\OpenIDConnectSession;
 use Drupal\openid_connect\Plugin\OpenIDConnectClientManager;
 use Drupal\path_alias\AliasManager;
+use PantheonSystems\CustomerSecrets\CustomerSecrets;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -198,7 +199,10 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    if ($this->moduleHandler->moduleExists('openid_connect_windows_aad')) {
+    // Check if OpenID Connect is enabled and allowed to redirect to login.
+    $secrets_client = CustomerSecrets::create()->getClient();
+    $disable_auth_redirect = $secrets_client->getSecret('azure-disable-redirect');
+    if ((!$disable_auth_redirect) && $this->moduleHandler->moduleExists('openid_connect_windows_aad')) {
       $event->setResponse($this->redirectToOpenIdLogin());
     }
     else {
