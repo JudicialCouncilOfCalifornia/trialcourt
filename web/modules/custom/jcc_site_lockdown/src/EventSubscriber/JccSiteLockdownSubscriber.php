@@ -9,11 +9,11 @@ use Drupal\Core\Path\CurrentPathStack;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Routing\RedirectDestination;
 use Drupal\Core\Session\AccountProxy;
+use Drupal\Core\State\StateInterface;
 use Drupal\openid_connect\OpenIDConnectClaims;
 use Drupal\openid_connect\OpenIDConnectSession;
 use Drupal\openid_connect\Plugin\OpenIDConnectClientManager;
 use Drupal\path_alias\AliasManager;
-use PantheonSystems\CustomerSecrets\CustomerSecrets;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -111,6 +111,13 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
   protected $moduleHandler;
 
   /**
+   * The state store.
+   *
+   * @var Drupal\Core\State\StateInterface
+   */
+  protected StateInterface $state;
+
+  /**
    * Constructs a new JccReferrerAuthSubscriber.
    *
    * @param \Drupal\path_alias\AliasManager $aliasManager
@@ -137,6 +144,8 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
    *   The config factory for config.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state store.
    */
   public function __construct(
     AliasManager $aliasManager,
@@ -150,7 +159,8 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
     OpenIDConnectClientManager $plugin_manager,
     OpenIDConnectClaims $claims,
     ConfigFactoryInterface $config_factory,
-    ModuleHandlerInterface $module_handler) {
+    ModuleHandlerInterface $module_handler,
+    StateInterface $state) {
 
     $this->aliasManager = $aliasManager;
     $this->currentUser = $currentUser;
@@ -164,6 +174,7 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
     $this->moduleHandler = $module_handler;
     $this->session = $session;
     $this->claims = $claims;
+    $this->state = $state;
   }
 
   /**
@@ -199,9 +210,11 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    // Check if OpenID Connect is enabled and allowed to redirect to login.
-    $secrets_client = CustomerSecrets::create()->getClient();
-    $disable_auth_redirect = $secrets_client->getSecret('azure-disable-redirect');
+    // Check if OpenID Connect Azure Entra is enabled.
+    // By default, redirecting automatically to OpenID login is enabled.
+    // To disable the auto-redirect, set 'azure_disable_redirect' to TRUE.
+    // The command: drush state:set azure_disable_redirect TRUE.
+    $disable_auth_redirect = $this->state->get('azure_disable_redirect', FALSE);
     if ((!$disable_auth_redirect) && $this->moduleHandler->moduleExists('openid_connect_windows_aad')) {
       $event->setResponse($this->redirectToOpenIdLogin());
     }
