@@ -1,56 +1,80 @@
 {{ attach_library("jcc_storybook/List") }}
-{{ attach_library("jcc_elevated/surplus-materials") }}
 {{ attach_library("jcc_storybook/Card") }} 
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/Footer") }}
 {{ attach_library("jcc_storybook/Body") }}
 {{attach_library("jcc_jrn_contact/customview") }}
+{{ attach_library("jcc_storybook/InlineForm") }}
+{{ attach_library("jcc_storybook/ViewResults") }}
+{{ attach_library("jcc_storybook/Table") }}
 
  {% include "@molecules/HeroHangover/HeroHangover.twig" with {
     hangover_hide_compact: false,
     hangover_offset: 22,
     background: 'red',      
-    heading: 'Directory',
+    heading: 'Directory: Judicial Council Staff',
     news_header: true,    
     text: ''  
     }
   %}  
 
-{% set details %}
-  <div class="stack">
-    <span><h2 class="surplus-heading">Search for Judicial Council Staff</h2></span>
+  {%
+    set classes = [
+      dom_id ? 'js-view-dom-id-' ~ dom_id,
+    ]
+  %}
 
-    <div class="custom-staff-view">
-      <form{{ form.attributes }}>
-       
-        <div class="filter-form" style="display:flex; gap:10px;">
-        <div>
-         <label class="usa-sr-only" for="header-search">Enter <b>Judicial Council Staff</b> name</label>
-          <div class="form-item">{{ form.filter.keyword }}</div>
-          </div>
-            <div>
-           <label class="usa-sr-only" for="header-search">Department</label>
-          <div class="form-item">{{ form.filter.department }}</div>
-          </div>
-            <div>
-           <label class="usa-sr-only" for="header-search">Temp Hire</label>
-          <div class="form-item">{{ form.filter.temporary }}</div>
-          </div>
-          <br />
-             <br />
-          
-        </div>
-        <br />
-        <div class="form-actions">{{ form.actions }}</div>
-      </form>
+  {% set details %}
+    <div>
+    <div>
+    <a href="/directory" class="back-to-directory">
+  <  Back to directory
+</a></div>
+    <div style="display:flex;flex-direction: row;gap:20px;">
+    <div{{ attributes.addClass(classes) }}>      
+      {% include "@organisms/ViewResults/ViewResults.twig" with {
+        variant: 'grouped_view',
+        custom_view: true,
+        view_name: id,
+        view_display: display_id,
+        header: '',
+        header_sidebar: '',
+        header_direction_results: 'sidebar-row',
+        content_header: content_header,
+        form: exposed|render,
+        form_in_sidebar: true,
+        list_type: 'ul',
+        list_type_divider: '',
+        sidebar: '',
+        sidebar_direction_results: 'sidebar-row',
+        pager: pager|render,
+        items_per_page: items_per_page,
+        footer: '',
+        footer_sidebar: '',
+        sidebar_direction_footer: 'sidebar-row',
+        }
+      %}
+ </div> 
 
-   
-      <div class="staff-table"">
-        {{ table }}
-      </div>
-    </div>
+  <div class="staff-table">
+    {% if result_count > 0 %}
+      {% set search_term = exposed.filter.keyword['#value'] ?? '' %}
+      {% if search_term %}
+        <span class="results-summary">
+          <h2>Results for: {{ search_term }}</h2>
+          <p style="font-size: 15px; color: #919191;">
+            {{ result_count }} Search Results
+          </p>
+        </span>
+      {% endif %}
+      {{ table }}
+    {% else %}
+      <p>No results found</p>
+    {% endif %}
   </div>
+</div>
+</div> 
 {% endset %}
 
 <div class="jrn-directory-staff">
@@ -58,95 +82,12 @@
    variant: 'default',
    sub_component_layout: 'with-sidebar grid',
    sidebar_direction: 'row',
-   sidebar_width: "60",
+   sidebar_width: "",
    sub_component_data: 
-   {details
+   {
+    details
     },  
     attributes: create_attribute()
     }
   %}
   </div>
-{# <div class="filter-form" style="display:flex; gap:10px; background-color:yellow;">
-    <div style="display:flex;flex-direction:row;background-color:lightgreen;">
-        <div class="form-item">
-          <label class="usa-sr-only" for="header-search">Enter <b>Judicial Council Staff</b> name</label>
-          {{ sub_component_data.form.filter.keyword }}***
-        </div>
-        <div class="form-item">
-          {{ sub_component_data.form.filter.department }}
-        </div>
-        <div class="form-item">
-          {{ sub_component_data.form.filter.temporary }}
-        </div>
-    </div>
-    <div class="form-actions">
-      {{ sub_component_data.form.actions }}
-    </div> 
-  </div>
-  {{ sub_component_data.form|without('filter','actions') }}
-  
-</div> #}
-
-
-
-
-
-
-
-{#<div class="form-item">
-    {{ form.filter.department }}
-  </div>
-  <div class="form-item">
-    {{ form.filter.temporary }}
-  </div>
-  <div class="form-actions">
-    {{ form.actions }}
-  </div>
-</div> #}
-   {# <div class="filter-form">
-    {{ form }}
-  </div>  #}
-
-{# {% set details %}     
-  <div class="stack">
-  <span>
-    <h2 class="surplus-heading">Search for Judicial Council Staff</h2>    
-  </span>
-  <p>{{ dump(form) }}</p>
-  
-<div class="custom-staff-view">
-
-
-{{ form|without('filter', 'actions') }}
-
-<div class="filter-form">
-  <div style="display:flex;flex-direction:row;background-color:yellow;">
-    <div class="form-item">
-      <label class="usa-sr-only" for="header-search">Enter <b>Judicial Council Staff</b> name</label>
-      {{ form.filter.keyword }}
-    </div>
-
-    <div class="form-item" style="margin-block-start:unset;">
-      <label class="usa-sr-only" for="header-search">Department</label>
-      {{ form.filter.department }}
-    </div>
-
-    <div class="form-item" style="margin-block-start:unset;">
-      <label class="usa-sr-only" for="header-search">Temp Hire</label>
-      {{ form.filter.temporary }}
-    </div>
-
-    <div class="form-actions">
-      {{ form.actions }}
-    </div>
-  </div>
-</div>
-
-
-
-
-  <div  class="staff-table" background-color: lightblue;">
-    {{ table }}
-  </div>
-</div>
-{# {% endset %} #}

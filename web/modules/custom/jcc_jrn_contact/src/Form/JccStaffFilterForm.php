@@ -62,15 +62,33 @@ class JccStaffFilterForm extends FormBase {
     $form['filter'] = [
       '#type' => 'container',
       '#attributes' => [
-        'class' => ['form--inline', 'clearfix'],
+        'class' => ['form--inline', 'clearfix', 'views-exposed-form'],
       ],
     ];
 
     $form['filter']['keyword'] = [
       '#type' => 'textfield',
-      '#title' => 'Judicial Staff',
+      '#title' => $this->t('Enter a name'),
+      '#title_display' => 'after',
       '#placeholder' => '',
-      '#default_value' => $request->get('keyword') ?? '',
+      '#default_value' => $request->query->get('keyword') ?? '',
+      '#attributes' => [
+        'class' => ['form-text'],
+        'size' => 30,
+        'maxlength' => 128,
+        'data-drupal-selector' => 'edit-combine',
+        'id' => 'edit-combine--6',
+      ],
+      '#wrapper_attributes' => [
+        'class' => [
+          'placeholder-container',
+          'form-item',
+        ],
+      ],
+      '#prefix' => '<div class="placeholder-container form-item "> 
+                    <h2 class="filter-search-heading">Search</h2>
+                    <div>Enter <b>Judicial Council Staff</b> name</div>',
+      '#suffix' => '</div>',
     ];
 
     $terms = $this->entityTypeManager
@@ -85,47 +103,79 @@ class JccStaffFilterForm extends FormBase {
       }, []) : [],
       '#empty_option' => 'All Departments',
       '#default_value' => $request->get('department') ?? '',
+      '#attributes' => [
+        'class' => [
+          'form-select',
+        ],
+      ],
+      '#wrapper_attributes' => [
+        'class' => [
+          'placeholder-container',
+          'form-item',
+        ],
+      ],
+      '#prefix' => '<div class="placeholder-container form-item js-form-item js-form-type-textfield form-item-combine js-form-item-combine select>
+                    <br />
+                    <h2 class="filter-search-heading">Filter By</h2><div>Department</div>',
+      '#suffix' => '</div>',
     ];
 
     $form['filter']['temporary'] = [
       '#type' => 'select',
+      '#title' => '',
       '#options' => [
-        'both' => 'Both',
-        1 => 'Yes',
-        0  => 'No',
-       ],
-      '#empty_option' => 'Select ', 
-      '#default_value' => $request->query->get('temporary') ?? '',
+        'both' => $this->t('Both'),
+        1 => $this->t('Yes'),
+        0  => $this->t('No'),
+      ],
+      '#empty_option' => 'Temp Hire',
+      '#default_value' => $request->get('temporary') ?? '',
+      '#attributes' => [
+        'class' => ['form-select'],
+      ],
+      '#wrapper_attributes' => [
+        'class' => ['placeholder-container', 'form-item'],
+      ],
+      '#prefix' => '<div class="placeholder-container form-item js-form-item  js-form-type-textfield form-item-combine js-form-item-combine">   
+                    <h2 class="filter-search-heading"></h2>  
+                    <div class="custom-label-above">Temp Hire</div>',
+      '#suffix' => '</div>',
     ];
 
     $form['actions']['wrapper'] = [
       '#type' => 'actions',
       '#attributes' => [
         'class' => ['button-group'],
-        'style' => 'display: flex; gap: 10px;',
+        'style' => 'display: flex; gap: 10px;margin-top:20px;',
       ],
     ];
 
     $form['actions']['wrapper']['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Filter'),
+      '#value' => $this->t('Apply'),
       '#submit' => ['::submitForm'],
+      '#attributes' => [
+        'class' => ['button', 'button--secondary', 'button--normal'],
+        'role' => 'button',
+      ],
     ];
-    
     if ($request->getQueryString()) {
       $form['actions']['wrapper']['reset'] = [
-        '#type' =>'submit',
-        '#value' => 'Test',
+        '#type' => 'submit',
+        '#value' => 'Reset',
+        '#submit' => ['::resetForm'],
         '#title' => $this->t('Reset'),
         /*'#url' => Url::fromRoute('entity.jcc_staff.collection'),*/
         '#attributes' => [
           'class' => ['button', 'button--primary', 'button--normal'],
           'role' => 'button',
         ],
-      ];   
+      ];
     }
-  return $form;
-}
+    $form['filter']['department']['#attributes']['onchange'] = 'this.form.submit()';
+    $form['filter']['temporary']['#attributes']['onchange'] = 'this.form.submit()';
+    return $form;
+  }
 
   /**
    * {@inheritdoc}
@@ -140,14 +190,14 @@ class JccStaffFilterForm extends FormBase {
       }
     }
 
-    $form_state->setRedirect('entity.jcc_staff.collection', [],['query' => $query]);
+    $form_state->setRedirect('entity.jcc_staff.collection', [], ['query' => $query]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function resetForm(array $form, FormStateInterface &$form_state) {
-    $form_state->setRedirect('entity.jcc_staff.collection',[], ['query' => []]);
+    $form_state->setRedirect('entity.jcc_staff.collection', [], ['query' => []]);
     $form_state->setUserInput([]);
   }
 

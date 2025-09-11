@@ -33,9 +33,12 @@ function jcc_jrn_contact_theme() {
     ],
     'custom_staff_view' => [
       'variables' => [
-        'form' => NULL,
+        'exposed' => NULL,
         'table' => NULL,
         'summary' => NULL,
+        'rows' => NULL,
+        'headers' => NULL,
+        'result_count' => 0,
       ],
       'template' => 'custom_staff_view',
     ],
@@ -56,6 +59,21 @@ function jcc_jrn_contact_theme() {
       'template' => 'custom_ajp_view',
     ],
   ];
+}
+
+/**
+ * Prepares variables for displaying results_count.
+ *
+ * Default template: custom_staff_view.html.twig.
+ */
+function jcc_jrn_contact_preprocess_custom_staff_view(array &$variables) {
+  $variables['search_term'] = \Drupal::request()->query->get('keyword') ?? '';
+  if (!empty($variables['rows']) && is_array($variables['rows'])) {
+    $variables['result_count'] = count($variables['rows']);
+  }
+  else {
+    $variables['result_count'] = 0;
+  }
 }
 
 /**

@@ -9,7 +9,6 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Render\Element;
 
 /**
  * Provides a list controller for the jcc staff entity type.
@@ -60,11 +59,11 @@ class JccStaffListBuilder extends EntityListBuilder {
     );
   }
 
-    /**
+  /**
    * {@inheritdoc}
    */
   public function getOperations(EntityInterface $entity) {
-    return []; 
+    return [];
   }
 
   /**
@@ -83,41 +82,57 @@ class JccStaffListBuilder extends EntityListBuilder {
         }
       }
     }
-    /*foreach ($table['table']['#header'] as &$header_cell) {
-        if (is_array($header_cell)) {
-        // Add inline style to each header cell.
-        if (isset($header_cell['style'])) {
-          $header_cell['style'] .= ' background-color: white !important; color: black !important;';
-        }
-        else {
-          $header_cell['style'] = 'background-color: white !important; color: black !important;';
-        }
-      }
-      else {
-        // If header cell is just string, convert to array to add style.
-        $header_cell = [
-          'data' => $header_cell,
-          'style' => 'background-color: white !important; color: black !important;',
-        ];
-      }
-        }
-        $table['table']['#attributes']['class'][] = 'staff-table';
-        $table['table']['#attributes']['style'] = 'background-color: blue !important;';*/
     $total = $this->getStorage()
       ->getQuery()
       ->count()
       ->execute();
     $build['summary']['#markup'] = $this->t('Total staff: @total', ['@total' => $total]);
+
+    $headers = [];
+    if (!empty($table['table']['#header'])) {
+      foreach ($table['table']['#header'] as $key => $info) {
+        if (is_array($info) && isset($info['data'])) {
+          $headers[$key] = (string) $info['data'];
+        }
+        else {
+          $headers[$key] = (string) $info;
+        }
+      }
+    }
+
+    foreach ($table['table']['#rows'] as $row) {
+      $table_rows[] = [
+        'first_name' => $row['first_name'],
+        'last_name' => $row['last_name'],
+        'department' => $row['department'] ?? '',
+        'phone' => $row['contact'] ?? '',
+        'location' => $row['location'] ?? '',
+        'temporary' => $row['temporary'] ?? '',
+      ];
+    }
+
+    if (!empty($table['table']['#rows'])) {
+      foreach ($table['table']['#rows'] as &$row) {
+        foreach ($row as &$cell) {
+          if (empty($cell)) {
+            $cell = ['data' => 'none'];
+          }
+        }
+      }
+    }
+
     return [
       '#theme' => 'custom_staff_view',
-      '#form' => $form,
+      '#exposed' => $form,
+      '#rows' => $table_rows,
+      '#headers' => $headers,
       '#table' => $table,
       '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
       '#attached' => [
         'library' => [
           'jcc_jrn_contact/custom_staff_view',
         ],
-      ]
+      ],
     ];
   }
 
@@ -134,15 +149,24 @@ class JccStaffListBuilder extends EntityListBuilder {
       'field' => 't.last_name',
       'sort' => 'asc',
     ];
-    $header['email'] = [
-      'data' => $this->t('Email'),
-      'field' => 't.email',
+    $header['department'] = [
+      'data' => $this->t('Department'),
+      'field' => 't.department',
     ];
-    $header['temporary'] = $this->t('Temp Hire');
-    $header['department'] = $this->t('Department');
+    $header['phone'] = [
+      'data' => $this->t('Phone and Email'),
+      'field' => 't.phone',
+      'class' => ['contact'],
+    ];
     $header['location'] = [
       'data' => $this->t('Location'),
       'field' => 't.location',
+      'sort' => 'asc',
+    ];
+    $header['temporary'] = [
+      'data' => $this->t('Temp Hire'),
+      'field' => 't.temporary',
+      'sort' => 'asc',
     ];
     return $header + parent::buildHeader();
   }
@@ -154,10 +178,27 @@ class JccStaffListBuilder extends EntityListBuilder {
     /**  @var \Drupal\jcc_jrn_contact\JccStaffInterface $entity */
     $row['first_name'] = $entity->get('first_name')->value;
     $row['last_name'] = $entity->get('last_name')->value;
-    $row['email'] = $entity->get('email')->value;
-    $row['temporary'] = $entity->get('temporary')->value ? $this->t('Yes') : $this->t('No');
     $row['department'] = $entity->get('department')->entity?->label();
+    $phone_raw = preg_replace('/\D+/', '', $entity->get('phone')->value);
+    $phone = '';
+    if (strlen($phone_raw) === 10) {
+      $phone = sprintf('(%s) %s-%s',
+      substr($phone_raw, 0, 3),
+      substr($phone_raw, 3, 3),
+      substr($phone_raw, 6)
+      );
+    }
+    $email_value = $entity->get('email')->value;
+    $email_value = $email_value ? strtolower($email_value) : '';
+    $email = $email_value ? '<a href="mailto:' . $email_value . '" class="test">' . $email_value . '</a>' : '';
+    $row['contact'] = [
+      'data' => [
+        '#markup' => $phone . ($phone && $email ? '<br>' : '') . $email,
+        'class' => ['contact'],
+      ],
+    ];
     $row['location'] = $entity->get('location')->value;
+    $row['temporary'] = $entity->get('temporary')->value ? $this->t('Yes') : $this->t('No');
     return $row + parent::buildRow($entity);
   }
 
@@ -189,7 +230,7 @@ class JccStaffListBuilder extends EntityListBuilder {
     }
 
     $temporary = $request->get('temporary');
-    if ($temporary !== null && $temporary !== '' && $temporary !== 'both') {
+    if ($temporary !== NULL && $temporary !== '' && $temporary !== 'both') {
       $query->condition('temporary', (int) $temporary);
     }
 
