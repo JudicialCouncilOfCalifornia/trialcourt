@@ -82,8 +82,6 @@
 {{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/Section") }}
 
-{% set today = 'now'|date('Ymd') %}
-
 <article{{ attributes }}>
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
     background: 'base-light-xxx',
@@ -200,7 +198,7 @@
       {% if course_schedule %}
         {% set events = [] %}
         {% for event in course_schedule %}
-          {% if event.date|date('Ymd') > today %}
+          {% if event.event_is_today != 1 %}
             {% set text = event.location %}
             {% if event.location and event.notation %}
               {% set text %}
@@ -225,7 +223,7 @@
       {% endif %}
 
       {% if sidebar_content %}
-        <aside class="request__main-sidebar stack" style="order: 2;">
+        <aside>
           <section>
             {% include "@molecules/SidebarList/SidebarList.twig" with {
               variant: 'default',
@@ -242,7 +240,7 @@
 
   {# Main #}
   {% set main %}
-    <div class="box stack">
+    <main>
       {# Video embed placement only. #}
       {% if course.embed and course.embed.type == 'video' %}
         {{ course.embed.media }}
@@ -275,15 +273,15 @@
         <h3>{{ 'Education Credit'|t }}</h3>
         {{ content.field_education_credit_freeform }}
       {% endif %}
-    </div>
+    </main>
   {% endset %}
 
   <div class="course">
     {% include "@organisms/Section/Section.twig" with {
       variant: 'default',
-      sub_component_layout: 'with-sidebar grid',
-      sidebar_direction: 'row',
-      sidebar_width: 39,
+      sub_component_layout: 'with-sidebar',
+      sidebar_direction: 'row-reverse',
+      sidebar_width: 42,
       gap: 's4',
       sub_component_data: {
         sidebar,
