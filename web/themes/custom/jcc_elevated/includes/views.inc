@@ -154,6 +154,47 @@ function jcc_elevated_preprocess_views_view__publication_forms(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for JRN trialcourtoutlet view.
+ */
+function jcc_elevated_preprocess_views_view__trialcourtoutlet__block_1(&$variables) {
+  $render = \Drupal::service('renderer');
+  __jcc_view_results_exposed_filter_init($variables);
+  $variables['processed_rows'] = [];
+  if (!empty($variables['rows'][0]['#rows'])) {
+    foreach ($variables['rows'][0]['#rows'] as $item) {
+      $media = $item['#row']->_entity;
+      $label = $media->label();
+      $url = $media->toUrl();
+      $media_files = [
+        'media_file' => [
+          'file' => $media->get('field_media_file')->referencedEntities()[0] ?: NULL,
+          'language' => t('English'),
+        ],
+      ];
+      $main_file_entity = $media_files['media_file']['file'] ?? NULL;
+      $url = $main_file_entity ? Url::fromUri($main_file_entity->createFileUrl(FALSE), [
+        'attributes' => [
+          'target' => '_blank',
+          'class' => ['download-pdf'],
+        ],
+      ]) : $media->toUrl();
+
+      $button_data = [
+        'label' => t('Download PDF'),
+        'href' => $url,
+      ];
+
+      $variables['processed_rows'][] = [
+        'title' => $label,
+        'url' => $url,
+        'content' => $render->render($text),
+        'button_data' => $button_data,
+      ];
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK() for publications listing.
  */
 function jcc_elevated_preprocess_views_view__publications__publications_list(&$variables) {
@@ -1741,6 +1782,36 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
     // Apply the form id to the items per page element, so it can be moved out.
     if (isset($form['items_per_page'])) {
       $form['items_per_page']['#attributes']['form'] = $form['#id'];
+    }
+  }
+
+  if ($view && $view->id() === 'trialcourtoutlet' && $view->current_display === 'block_1') {
+    if (isset($form['field_tags_target_id'])) {
+      $options = [];
+
+      $terms = \Drupal::entityTypeManager()
+        ->getStorage('taxonomy_term')
+        ->loadTree('media_tags');
+
+      $regions = ["Region 1", "Region 2", "Region 3", "Region 4",
+        "Los Angeles", "San Bernardino", "San Diego", "San Francisco", "San Joaquin",
+        "San Luis Obispo", "San Mateo", "San Benito", "Santa Barbara", "Santa Clara",
+        "Santa Cruz", "Alameda", "Alpine", "Amador", "Butte", "Calaveras", "Colusa",
+        "Contra Costa", "Del Norte", "El Dorado", "Fresno", "Glenn", "Humboldt",
+        "Imperial", "Inyo", "Kern", "Kings", "Lake", "Lassen", "Madera", "Marin",
+        "Mariposa", "Mendocino", "Merced", "Modoc", "Mono", "Monterey", "Napa",
+        "Nevada", "Orange", "Placer", "Plumas", "Riverside", "Sacramento", "Shasta",
+        "Sierra", "Siskiyou", "Solano", "Sonoma", "Stanislaus", "Sutter", "Tehama",
+        "Trinity", "Tulare", "Tuolumne", "Ventura", "Yolo", "Yuba",
+      ];
+
+      foreach ($terms as $term_info) {
+        if (is_array($regions) && in_array($term_info->name, $regions, TRUE)) {
+          $options[$term_info->tid] = $term_info->name;
+        }
+      }
+      $options = ['All' => '- Any -'] + $options;
+      $form['field_tags_target_id']['#options'] = $options;
     }
   }
 
