@@ -32,7 +32,7 @@ function jcc_elevated_custom_cron() {
     ->accessCheck(FALSE)
     ->execute();
 
-  if (empty($nids)) {   
+  if (empty($nids)) {
     return;
   }
 
@@ -42,7 +42,7 @@ function jcc_elevated_custom_cron() {
       continue;
     }
     $renewal_date = new \DateTimeImmutable($node->get('field_renewal_date')->value);
-    $current_state = $node->get('moderation_state')->value;    
+    $current_state = $node->get('moderation_state')->value;
     if ($renewal_date < $today && $current_state === 'published') {
       $workflow = \Drupal::service('content_moderation.moderation_information')->getWorkflowForEntity($node);
       if ($workflow instanceof WorkflowInterface) {
@@ -58,7 +58,7 @@ function jcc_elevated_custom_cron() {
             $node->isDefaultRevision(TRUE);
             $node->setRevisionLogMessage('Auto-archived due to expired renewal date.');
             $node->set('moderation_state', 'archived');
-            $node->save();          
+            $node->save();
             break;
           }
         }
@@ -247,6 +247,43 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
   unset($form['field_news_type_target_id']);
   unset($form['date_start']);
   unset($form['date_end']);
+
+  switch ($view->id()) {
+    case 'courses':
+      // Group topics and subtopics.
+      if (isset($form['field_topics_target_id_collapsible']) || isset($form['field_subtopics_target_id_collapsible'])) {
+        $form['category_group'] = [
+          '#type' => 'fieldset',
+          '#title' => t('Topics & Subtopics'),
+          '#weight' => 96,
+        ];
+        $form['category_group']['field_topics_target_id_collapsible'] = $form['field_topics_target_id_collapsible'];
+        unset($form['field_topics_target_id_collapsible']);
+        $form['category_group']['field_subtopics_target_id_collapsible'] = $form['field_subtopics_target_id_collapsible'];
+        unset($form['field_subtopics_target_id_collapsible']);
+      }
+
+      // Reorder course type position.
+      $form['field_course_type_target_id_collapsible']['#weight'] = 97;
+
+      // Group special tag.
+      if (isset($form['field_is_quick_reference_value'])) {
+        $form['special_group'] = [
+          '#type' => 'fieldset',
+          '#title' => t('Special Tags'),
+          '#weight' => 98,
+        ];
+        if ($form['field_is_quick_reference_value']) {
+          $form['special_group']['field_is_quick_reference_value'] = $form['field_is_quick_reference_value'];
+          unset($form['field_is_quick_reference_value']);
+        }
+      }
+
+      // Position sorting last.
+      $form['sort_bef_combine']['#weight'] = 99;
+
+      break;
+  }
 }
 
 /**

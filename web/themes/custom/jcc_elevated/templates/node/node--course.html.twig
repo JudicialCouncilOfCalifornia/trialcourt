@@ -225,7 +225,7 @@
       {% endif %}
 
       {% if sidebar_content %}
-        <aside class="request__main-sidebar stack" style="order: 2;">
+        <aside>
           <section>
             {% include "@molecules/SidebarList/SidebarList.twig" with {
               variant: 'default',
@@ -242,7 +242,7 @@
 
   {# Main #}
   {% set main %}
-    <div class="box stack">
+    <main>
       {# Video embed placement only. #}
       {% if course.embed and course.embed.type == 'video' %}
         {{ course.embed.media }}
@@ -275,14 +275,14 @@
         <h3>{{ 'Education Credit'|t }}</h3>
         {{ content.field_education_credit_freeform }}
       {% endif %}
-    </div>
+    </main>
   {% endset %}
 
   <div class="course">
     {% include "@organisms/Section/Section.twig" with {
       variant: 'default',
-      sub_component_layout: 'with-sidebar grid',
-      sidebar_direction: 'row',
+      sub_component_layout: 'with-sidebar',
+      sidebar_direction: 'row-reverse',
       sidebar_width: 39,
       gap: 's4',
       sub_component_data: {
