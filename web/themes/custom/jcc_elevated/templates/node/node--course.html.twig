@@ -82,8 +82,6 @@
 {{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/Section") }}
 
-{% set today = 'now'|date('Ymd') %}
-
 <article{{ attributes }}>
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
     background: 'base-light-xxx',
@@ -200,7 +198,7 @@
       {% if course_schedule %}
         {% set events = [] %}
         {% for event in course_schedule %}
-          {% if event.date|date('Ymd') > today %}
+          {% if event.event_is_today != 1 %}
             {% set text = event.location %}
             {% if event.location and event.notation %}
               {% set text %}
