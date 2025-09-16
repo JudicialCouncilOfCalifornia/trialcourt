@@ -108,12 +108,13 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
 
     // Allow access to these specified pages anytime.
     $current_path = $this->aliasManager->getAliasByPath($this->currentPath->getPath());
+    $user_reset_pattern = ['/^/user/reset.*$/'];
     if (in_array($current_path, [
       '/user',
       '/user/login',
       '/system/403',
       '/user/password',
-    ])) {
+    ]) || preg_grep($user_reset_pattern, [$current_path])) {
       return;
     }
 
