@@ -217,10 +217,17 @@
           {% endif %}
         {% endfor %}
         {% if events %}
-          {% set subsection = {
-            heading: 'Future Event Dates'|t,
-            data: events,
-          } %}
+          {% if events|length > 5 %}
+            {% set body_events = {
+              heading: 'Future Event Dates'|t,
+              data: events,
+            } %}
+          {% else %}
+            {% set subsection = {
+              heading: 'Future Event Dates'|t,
+              data: events,
+            } %}
+          {% endif %}
         {% endif %}
       {% endif %}
 
@@ -275,6 +282,19 @@
         <h3>{{ 'Education Credit'|t }}</h3>
         {{ content.field_education_credit_freeform }}
       {% endif %}
+
+      {# Events (Only if more than 5) #}
+      {% if body_events %}
+        <div>
+          <h3>{{ body_events.heading }}</h3>
+          {% for item in body_events.data %}
+            <h4>{{ item.brow }}</h4>
+            <div>{{ item.text }}</div>
+            <br>
+          {% endfor %}
+        </div>
+      {% endif %}
+
     </div>
   {% endset %}
 
