@@ -42,14 +42,6 @@ function jcc_jrn_contact_theme() {
       ],
       'template' => 'custom_staff_view',
     ],
-    'custom_officer_view' => [
-      'variables' => [
-        'form' => NULL,
-        'table' => NULL,
-        'summary' => NULL,
-      ],
-      'template' => 'custom_officer_view',
-    ],
     'custom_ajp_view' => [
       'variables' => [
         'form' => NULL,
@@ -159,13 +151,14 @@ function template_preprocess_jcc_court(array &$variables) {
   $entityTypeManager = \Drupal::entityTypeManager();
   $court_entity = \Drupal::routeMatch()->getParameter('jcc_court');
   $court_id = $court_entity instanceof EntityInterface ? $court_entity->id() : NULL;
-  $name = $court_entity->label();
-  $court_type = '';
-  if (!$court_entity->get('court_type')->isEmpty()) {
-    $court_type_entity = $court_entity->get('court_type')->entity;
-    $court_type = $court_type_entity ? $court_type_entity->label() : '';
+  $name_parts = [];
+  foreach (['name_1', 'name_2', 'name_3'] as $field) {
+    if (!$court_entity->get($field)->isEmpty()) {
+      $name_parts[] = $court_entity->get($field)->value;
+    }
   }
-  $variables['name_and_type'] = $name . ' - ' . $court_type;
+  $full_name = implode(', ', $name_parts);
+  $variables['name_and_type'] = $full_name;
   $loadEntities = function ($entity_type, $court_id, $job_title = NULL) use ($entityTypeManager) {
     $query = $entityTypeManager->getStorage($entity_type)->getQuery();
     $query->condition('court', $court_id);
@@ -212,6 +205,7 @@ function template_preprocess_jcc_court(array &$variables) {
         'mailing_addr1' => $address->get('mailing_addr1')->value,
         'phone' => $address->get('phone')->value,
         'fax' => $address->get('fax')->value,
+        'loc_num' => $address->get('loc_num')->value,
       ];
     }
     $variables['address_data'] = $addr_data;
@@ -246,7 +240,7 @@ function template_preprocess_jcc_court(array &$variables) {
   $officer_query->sort('first_name', 'ASC');
   $officer_ids = $officer_query->execute();
   $officers = $entityTypeManager->getStorage('jcc_officer')->loadMultiple($officer_ids);
-  $rows = [];
+  $grouped_officers = [];
   foreach ($officers as $officer) {
     $name_parts = array_filter([
       $officer->get('first_name')->value,
@@ -261,20 +255,48 @@ function template_preprocess_jcc_court(array &$variables) {
         $loc_num = $address_entity->get('loc_num')->value;
       }
     }
-    $rows[] = [
+    $grouped_officers[$loc_num][] = [
       'data' => [
         $full_name,
         $officer->get('job_title')->entity ? $officer->get('job_title')->entity->label() : '',
-        $loc_num,
         $officer->get('email')->value,
       ],
     ];
   }
 
-  $variables['officer_table'] = [
-    '#type' => 'table',
-    '#header' => ['Name', 'Title', 'Loc', 'Contact'],
-    '#rows' => $rows,
-    '#empty' => t('No officers found.'),
+  $tables_by_location = [];
+  $header = [
+    'name' => [
+      'data' => t('Name'),
+      'field' => 'first_name',
+      'sort' => 'asc',
+    ],
+    'title' => [
+      'data' => t('Title'),
+      'field' => 'job_title',
+    ],
+    'contact' => [
+      'data' => t('Contact'),
+    ],
   ];
+  foreach ($grouped_officers as $loc_num => $rows) {
+    $tables_by_location[$loc_num] = [
+      '#type' => 'table',
+      '#header' => $header,
+      '#rows' => $rows,
+      '#empty' => t('No officers found at this location.'),
+      '#prefix' => '<div class="staff-table">',
+      '#suffix' => '</div>',
+      '#attributes' => [
+        'class' => ['staff-table'],
+      ],
+    ];
+  }
+  $variables['officer_tables'] = $tables_by_location;
+  foreach ($variables['address_data'] as &$addr) {
+    $loc_num = $addr['loc_num'];
+    $addr['officer_table'] = $tables_by_location[$loc_num] ?? [
+      '#markup' => '<p>No officers found at this location.</p>',
+    ];
+  }
 }

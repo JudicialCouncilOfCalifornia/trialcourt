@@ -1,69 +1,35 @@
 (function (Drupal) {
-  Drupal.behaviors.staffTableHighlight = {
-    attach(context) {
-      const tables = context.querySelectorAll('.staff-table table', context);
-      tables.forEach((table) => {
-        const headerRow = table.querySelector('thead tr');
-        if (!headerRow) return;
-
+  
+  Drupal.behaviors.columnHighlightOnSort = {
+     attach: function (context) {
+      once('column-highlight', '.staff-table table', context).forEach(table => {
+        const headers = table.querySelectorAll('thead th');
         const bodyRows = table.querySelectorAll('tbody tr');
-        const colCount = headerRow.children.length;
-
-        for (let col = 0; col < colCount; col++) {
-          const headerCell = headerRow.children[col];
-
-          // Highlight when hovering header cell
-          headerCell.addEventListener('mouseenter', () => {
-            highlightCol(table, col);
-          });
-          headerCell.addEventListener('mouseleave', () => {
-            resetCol(table, col);
+        function highlightActiveColumn() {               
+          headers.forEach(h => h.classList.remove('is-active-highlight'));
+          bodyRows.forEach(row => {
+            Array.from(row.children).forEach(cell => cell.classList.remove('col-highlight-cell'));
           });
 
-          // Highlight when hovering body cell
-          bodyRows.forEach((row) => {
-          
-            const cell = row.children[col];
-            if (!cell) return;
-            cell.addEventListener('mouseenter', () => {
-              highlightCol(table, col);
-            });
-            cell.addEventListener('mouseleave', () => {
-              resetCol(table, col);
-            });
-          });
-        }
-      });
+          const activeTh = table.querySelector('thead th.is-active');
+          if (!activeTh) return;
 
-      function highlightCol(table, col) {
-        const headerRow = table.querySelector('thead tr');
-        const bodyRows = table.querySelectorAll('tbody tr');
-        
-        // Add class to header
-        headerRow.children[col].classList.add('col-highlight-header');
+          const colIndex = Array.from(activeTh.parentNode.children).indexOf(activeTh);
 
-        // Add class to column cells
-        bodyRows.forEach((row) => {
-            if (row.children[col]) {
-            row.children[col].classList.add('col-highlight-cell');
+          activeTh.classList.add('is-active-highlight');
+          bodyRows.forEach(row => {
+            if (row.children[colIndex]) {
+              row.children[colIndex].classList.add('col-highlight-cell');
             }
-        });
-    }
-
-    function resetCol(table, col) {
-    const headerRow = table.querySelector('thead tr');
-    const bodyRows = table.querySelectorAll('tbody tr');
-
-    // Remove class from header
-    headerRow.children[col].classList.remove('col-highlight-header');
-
-    // Remove class from column cells
-    bodyRows.forEach((row) => {
-        if (row.children[col]) {
-        row.children[col].classList.remove('col-highlight-cell');
+          });
         }
-    });
+        highlightActiveColumn();
+        headers.forEach(th => {
+          th.addEventListener('click', () => {
+            setTimeout(highlightActiveColumn, 0); 
+          });
+        });
+      });
     }
-},
-};
+  };  
 })(Drupal);

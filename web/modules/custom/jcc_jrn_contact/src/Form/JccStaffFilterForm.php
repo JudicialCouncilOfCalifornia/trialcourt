@@ -90,7 +90,35 @@ class JccStaffFilterForm extends FormBase {
                     <div>Enter <b>Judicial Council Staff</b> name</div>',
       '#suffix' => '</div>',
     ];
+    $form['filter']['buttons'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['button-group'],
+        'style' => 'gap: 15px;margin-top:10px;margin-top:20px;',
+      ],
+    ];
 
+    $form['filter']['buttons']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Apply'),
+      '#submit' => ['::submitForm'],
+      '#attributes' => [
+        'class' => ['button', 'button--secondary', 'button--normal'],
+        'style' => 'top:20px;',
+      ],
+    ];
+
+    if ($request->getQueryString()) {
+      $form['filter']['buttons']['reset'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Reset'),
+        '#submit' => ['::resetForm'],
+        '#attributes' => [
+          'class' => ['button', 'button--primary', 'button--normal'],
+          'style' => 'top:20px;',
+        ],
+      ];
+    }
     $terms = $this->entityTypeManager
       ->getStorage('taxonomy_term')
       ->loadTree('department');
@@ -136,42 +164,11 @@ class JccStaffFilterForm extends FormBase {
       '#wrapper_attributes' => [
         'class' => ['placeholder-container', 'form-item'],
       ],
-      '#prefix' => '<div class="placeholder-container form-item js-form-item  js-form-type-textfield form-item-combine js-form-item-combine">   
-                    <h2 class="filter-search-heading"></h2>  
-                    <div class="custom-label-above">Temp Hire</div>',
+      '#prefix' => '<div class="placeholder-container form-item js-form-item  js-form-type-textfield form-item-combine js-form-item-combine select">   
+                    <h2 class="filter-search-heading"></h2><div>Temp Hire</div>',
       '#suffix' => '</div>',
     ];
 
-    $form['actions']['wrapper'] = [
-      '#type' => 'actions',
-      '#attributes' => [
-        'class' => ['button-group'],
-        'style' => 'display: flex; gap: 10px;margin-top:20px;',
-      ],
-    ];
-
-    $form['actions']['wrapper']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Apply'),
-      '#submit' => ['::submitForm'],
-      '#attributes' => [
-        'class' => ['button', 'button--secondary', 'button--normal'],
-        'role' => 'button',
-      ],
-    ];
-    if ($request->getQueryString()) {
-      $form['actions']['wrapper']['reset'] = [
-        '#type' => 'submit',
-        '#value' => 'Reset',
-        '#submit' => ['::resetForm'],
-        '#title' => $this->t('Reset'),
-        /*'#url' => Url::fromRoute('entity.jcc_staff.collection'),*/
-        '#attributes' => [
-          'class' => ['button', 'button--primary', 'button--normal'],
-          'role' => 'button',
-        ],
-      ];
-    }
     $form['filter']['department']['#attributes']['onchange'] = 'this.form.submit()';
     $form['filter']['temporary']['#attributes']['onchange'] = 'this.form.submit()';
     return $form;

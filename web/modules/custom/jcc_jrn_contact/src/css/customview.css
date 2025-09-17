@@ -5,20 +5,25 @@
   padding: 15px !important;
 }
 
-.staff-table th.col-highlight-header {
-  background-color: #C05600 !important; 
-  color: #fff !important;            
+.staff-table th.is-active,
+.staff-table td.is-active {
+  background-color: #C05600;
+  color: #fff !important;
 }
+
+
+.staff-table td.is-active {
+  background-color: #cce5ff; 
+}
+.staff-table th a .tablesort {
+  display: none; 
+}
+
 
 .staff-table td.col-highlight-cell {
   background-color: #FCE2C5 !important; 
 }
 
-.staff-table table thead th:hover {
-  background-color: #FCE2C5; 
-  color: white !important;  
-  padding: 15px !important;
-}
 
 .staff-table th.tablesort-asc,
 .staff-table th.tablesort-desc,
@@ -27,10 +32,6 @@
   color: inherit !important;
 }
 
-.staff-table th.col-highlight-header {
-  background-color: #C05600 !important;
-  color: #fff !important;
-}
 .staff-table td.col-highlight-cell {
   background-color: #FCE2C5 !important; 
 }
@@ -64,12 +65,14 @@
   font-style: normal !important;
 }
 
-.jcc-jrn-contact-staff-filter-form .form--inline {
+.jcc-jrn-contact-staff-filter-form .form--inline,
+.jcc-jrn-contact-officer-filter-form .form--inline {
   gap: 0 !important;
   display: unset !important;
 }
 
-.jcc-jrn-contact-staff-filter-form .placeholder-container.form-item:not(.form-item-search) {
+.jcc-jrn-contact-staff-filter-form .placeholder-container.form-item:not(.form-item-search),
+.jcc-jrn-contact-officer-filter-form .placeholder-container.form-item:not(.form-item-search) {
     border: 2px solid black;
     width: 100%;
 }
@@ -79,35 +82,47 @@
   width: 250px !important;
 }
 
-.officer-container {
-  flex-wrap: unset !important;
-}
-
-
 .jcc-jrn-contact-ajp-filter-form {
   display: flex !important;
 }
 
-/*.staff-table th.tablesort--asc a,
-.staff-table th.tablesort--desc a {
-  background-image: none !important;
-  position: relative;
-  padding-right: 20px;
+.staff-table {
+  width: 100%;
+}
+
+.staff-table th a::after {
+  content: "";
+  font-size: 12px;
+  margin-left: 5px;
+  background: url('/themes/custom/jcc_elevated/icons/table_doublearrow.svg') no-repeat center;
+  background-size: contain;
+   display: inline-block;
+  width: 12px;
+  height: 12px;
+}
+
+.staff-table th.is-active[aria-sort="ascending"] a::after {   
+  background: url('/themes/custom/jcc_elevated/icons/up_arrow.svg') no-repeat center;
+  background-size: contain;
+  
+}
+.staff-table th.is-active[aria-sort="descending"] a::after { 
+  background: url('/themes/custom/jcc_elevated/icons/down_arrow.svg') no-repeat center;
+  background-size: contain;
+  
 }
 
 
-.staff-table th.tablesort--asc a::after {
-  content: "▲"; 
-  font-size: 12px;
-  color: #C05600;
-  position: absolute;
-  right: 5px;
+.staff-table th a .tablesort::before,
+.staff-table th a .tablesort::after {
+  display: none !important;
+  content: none !important;
 }
 
-.staff-table th.tablesort--desc a::after {
-  content: "▼";
-  font-size: 12px;
-  color: #C05600;
-  position: absolute;
-  right: 5px;
-}*/
+.staff-table .tablesort {
+  display: none !important;
+}
+
+td.col-highlight-cell {
+  background-color: #FCE2C5 !important;
+}

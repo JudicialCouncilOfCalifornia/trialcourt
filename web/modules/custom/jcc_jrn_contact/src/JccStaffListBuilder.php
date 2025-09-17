@@ -127,7 +127,7 @@ class JccStaffListBuilder extends EntityListBuilder {
       '#rows' => $table_rows,
       '#headers' => $headers,
       '#table' => $table,
-      '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
+      '#summary' => 'Directory: Judicial Council Staff',
       '#attached' => [
         'library' => [
           'jcc_jrn_contact/custom_staff_view',
@@ -143,11 +143,11 @@ class JccStaffListBuilder extends EntityListBuilder {
     $header['first_name'] = [
       'data' => $this->t('First Name'),
       'field' => 't.first_name',
+      'sort' => 'asc',
     ];
     $header['last_name'] = [
       'data' => $this->t('Last Name'),
       'field' => 't.last_name',
-      'sort' => 'asc',
     ];
     $header['department'] = [
       'data' => $this->t('Department'),
@@ -161,12 +161,10 @@ class JccStaffListBuilder extends EntityListBuilder {
     $header['location'] = [
       'data' => $this->t('Location'),
       'field' => 't.location',
-      'sort' => 'asc',
     ];
     $header['temporary'] = [
       'data' => $this->t('Temp Hire'),
       'field' => 't.temporary',
-      'sort' => 'asc',
     ];
     return $header + parent::buildHeader();
   }
@@ -251,14 +249,10 @@ class JccStaffListBuilder extends EntityListBuilder {
           ];
         }
       }
-      if ($header) {
+      if (!empty($header)) {
         $query->tableSort($header);
       }
     }
-    else {
-      $query->sort('last_name', 'asc');
-    }
-
     if ($this->limit) {
       $query->pager($this->limit);
     }
