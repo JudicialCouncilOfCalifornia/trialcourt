@@ -407,10 +407,6 @@ function jcc_elevated_node_invitations_to_comment(array &$variables, NodeInterfa
     $nodeData['itc_number'] = $node->get('field_itc_number')->value;
   }
 
-  if ($node->hasField('body') && !$node->get('body')->isEmpty()) {
-    $nodeData['body'] = $node->body->value;
-  }
-
   if ($node->hasField('field_deadline') && !$node->get('field_deadline')->isEmpty()) {
     $deadline = $node->field_deadline->value;
     $utc_deadline = new DateTime($deadline, new DateTimeZone('UTC'));
@@ -437,8 +433,9 @@ function jcc_elevated_node_invitations_to_comment(array &$variables, NodeInterfa
         }
       }
     }
-    $variables['node'] = $nodeData;
   }
+
+  $variables['node'] = $nodeData;
 }
 
 /**
@@ -1268,23 +1265,14 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
 
           // Event date.
-          $event_date = NULL;
-          if ($event->get('field_date_range')->start_date) {
-            $event_date = $start_date->format('F j, Y');
-            if ($start_date->format('F j, Y') != $end_date->format('F j, Y')) {
-              $start = $start_date->format('F j');
-              if ($start_date->format('Y') != $end_date->format('Y')) {
-                $start = $start_date->format('F j, Y');
-              }
-              $end = $end_date->format('j, Y');
-              if ($start_date->format('F') != $end_date->format('F')) {
-                $end = $end_date->format('F j, Y');
-              }
-              $event_date = $start . ' to ' . $end;
-            }
+          $event_date = $start_date->format('F j, Y');
+          if ($start_date->format('Ymd') != $end_date->format('Ymd')) {
+            $start = $start_date->format('F j');
+            $end = $end_date->format('j, Y');
+            $event_date = $start . ' to ' . $end;
           }
 
-          // Is the event today?
+          // Is the event today or within scheduled range?
           $event_is_today = FALSE;
           if ($start_date->format('Ymd') <= $today->format('Ymd') && $end_date->format('Ymd') >= $today->format('Ymd')) {
             $event_is_today = TRUE;

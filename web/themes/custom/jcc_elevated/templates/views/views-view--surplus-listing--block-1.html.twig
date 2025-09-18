@@ -17,11 +17,11 @@
       <th>Title</th>
       <th>Posted On</th>
       <th>Quantity</th>     
-      <th>Category</th>
-      {% if  can_renew %}
+      <th>Category</th> 
+      <th>Expires In Days </th>    
+        <th>Offered By</th> {% if  can_renew %}
         <th>Action</th>
-        <th>Expires In Days </th> {% endif %}
-        <th>Offered By</th>
+         {% endif %}
     </tr>
   </thead> 
   <tbody>
@@ -32,18 +32,19 @@
         <td>{{ s['Posted On'] }}</td>
         <td>{{ s['Quantity'] }}</td>
         <td>{{ s['Category']}}</td>
-        {% if  can_renew %}
-          <td> 
-            <a href="/node/{{ s.nid }}/edit" class="button button--text">Edit</a><br>
-            <a href="/renew/{{ s.nid }}" class="button button--text">Renew</a><br>
-          </td> 
-          <td>{{ s['Interval'] }}</td>
-        {% endif %}
+        <td>{{ s['Interval'] }}</td>       
         <td>
           <a href="mailto:{{ s['Email'] }}">{{ s['Contact'] }}</a><br>
           {{ s['Entity'] }}<br>
           {{ s['Phone'] }}
         </td>
+         {% if  can_renew %}
+          <td> 
+            <a href="/node/{{ s.nid }}/edit" class="button button--text">Edit</a><br>
+            <a href="/renew/{{ s.nid }}" class="button button--text">Renew</a><br>
+          </td> 
+         
+        {% endif %}
       </tr>
     {% endfor %}
   </tbody>
