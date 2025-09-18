@@ -1321,3 +1321,11 @@ function jcc_custom_robotstxt() {
     'Disallow: /search*search_api_fulltext=*',
   ];
 }
+
+/**
+ * Implements hook_preprocess_views_view_fullcalendar() for global use.
+ */
+function jcc_custom_preprocess_views_view_fullcalendar(array &$variables) {
+  // Add custom CSS.
+  $variables['#attached']['library'][] = 'jcc_custom/custom_fullcalendar_view';
+}
