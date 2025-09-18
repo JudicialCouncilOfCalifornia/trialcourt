@@ -290,6 +290,15 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
  * Implements hook_form_alter().
  */
 function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
+ if ($form_id === 'node_surplus_materials_form') {    
+    $text = \Drupal::config('jcc_elevated_custom.node_help_text')->get('node_help_text');
+    $form['custom_message'] = [
+      '#type' => 'markup',
+      '#markup' => $text,
+      '#weight' => -100,
+    ];
+  }
+  
   // Enhancements for Linkit if JCC CKEditor is not in use.
   if (!\Drupal::service('module_handler')->moduleExists('jcc_ckeditor_link')) {
     if ($form_id == 'editor_link_dialog') {

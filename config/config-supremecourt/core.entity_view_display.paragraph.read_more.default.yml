@@ -1,0 +1,35 @@
+uuid: 33198dcf-acef-47d5-b537-3f894422ba46
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.read_more.field_heading
+    - field.field.paragraph.read_more.field_text
+    - paragraphs.paragraphs_type.read_more
+  module:
+    - text
+id: paragraph.read_more.default
+targetEntityType: paragraph
+bundle: read_more
+mode: default
+content:
+  field_heading:
+    type: string
+    label: visually_hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_text:
+    type: text_default
+    label: visually_hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  search_api_excerpt: true
