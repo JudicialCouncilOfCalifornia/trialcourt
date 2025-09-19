@@ -1273,9 +1273,12 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
 
           // Event date.
           $event_date = $start_date->format('F j, Y');
-          if ($start_date->format('Ymd') != $end_date->format('Ymd')) {
+          if ($end_date->format('Ymd') != $start_date->format('Ymd')) {
             $start = $start_date->format('F j');
             $end = $end_date->format('j, Y');
+            if ($end_date->format('m') != $start_date->format('m')) {
+              $end = $end_date->format('F j, Y');
+            }
             $event_date = $start . ' to ' . $end;
           }
 
