@@ -151,13 +151,17 @@ function template_preprocess_jcc_court(array &$variables) {
   $entityTypeManager = \Drupal::entityTypeManager();
   $court_entity = \Drupal::routeMatch()->getParameter('jcc_court');
   $court_id = $court_entity instanceof EntityInterface ? $court_entity->id() : NULL;
+  $court_type_label = '';
+  if (!$court_entity->get('court_type')->isEmpty()) {
+    $court_type_label = $court_entity->get('court_type')->entity->label();
+  }
   $name_parts = [];
   foreach (['name_1', 'name_2', 'name_3'] as $field) {
     if (!$court_entity->get($field)->isEmpty()) {
       $name_parts[] = $court_entity->get($field)->value;
     }
   }
-  $full_name = implode(', ', $name_parts);
+  $full_name = implode(' ', $name_parts);
   $variables['name_and_type'] = $full_name;
   $loadEntities = function ($entity_type, $court_id, $job_title = NULL) use ($entityTypeManager) {
     $query = $entityTypeManager->getStorage($entity_type)->getQuery();
@@ -167,9 +171,9 @@ function template_preprocess_jcc_court(array &$variables) {
     }
     $query->accessCheck(TRUE);
     $ids = $query->execute();
-    return $entityTypeManager->getStorage($entity_type)->loadMultiple($ids);
+    $results = $entityTypeManager->getStorage($entity_type)->loadMultiple($ids);
+    return $results;
   };
-
   $extractNameData = function ($entity) {
     return [
       'fname' => $entity->get('first_name')->value,
@@ -177,39 +181,6 @@ function template_preprocess_jcc_court(array &$variables) {
       'lname' => $entity->get('last_name')->value,
     ];
   };
-
-  $cios = $loadEntities('jcc_cio', $court_id);
-  $cio_data = [];
-  foreach ($cios as $cio) {
-    $item = $extractNameData($cio);
-    if (!$cio->get('job_title')->isEmpty()) {
-      $term = $cio->get('job_title')->entity;
-      if ($term) {
-        $item['job_class'] = $term->label();
-      }
-    }
-    $cio_data[] = $item;
-  }
-  $variables['cio_data'] = $cio_data;
-
-  $addresses = $loadEntities('jcc_address', $court_id);
-  if (!empty($addresses)) {
-    $addr_data = [];
-    foreach ($addresses as $address) {
-      $addr_data[] = [
-        'addr1' => $address->get('addr1')->value,
-        'addr2' => $address->get('addr2')->value,
-        'city' => $address->get('city')->value,
-        'state' => $address->get('state')->value,
-        'zip' => $address->get('zip')->value,
-        'mailing_addr1' => $address->get('mailing_addr1')->value,
-        'phone' => $address->get('phone')->value,
-        'fax' => $address->get('fax')->value,
-        'loc_num' => $address->get('loc_num')->value,
-      ];
-    }
-    $variables['address_data'] = $addr_data;
-  }
 
   $getOfficerDataByJob = function ($court_id, $job_label) use ($entityTypeManager, $loadEntities, $extractNameData) {
     $term_storage = $entityTypeManager->getStorage('taxonomy_term');
@@ -230,9 +201,118 @@ function template_preprocess_jcc_court(array &$variables) {
     }
     return $data;
   };
-  $variables['judge_data'] = $getOfficerDataByJob($court_id, 'Superior Court Presiding Judge');
-  $variables['exec_officer_data'] = $getOfficerDataByJob($court_id, 'Superior Court - Court Executive Officer');
 
+  // CIO data - For Superior courts.
+  if ($court_type_label !== "Court of Appeal") {
+    $cios = $loadEntities('jcc_cio', $court_id);
+    $cio_data = [];
+    foreach ($cios as $cio) {
+      $item = $extractNameData($cio);
+      if (!$cio->get('job_title')->isEmpty()) {
+        $term = $cio->get('job_title')->entity;
+        if ($term) {
+          $item['job_class'] = $term->label();
+        }
+      }
+      $cio_data[] = $item;
+    }
+    $variables['cio_data'] = $cio_data;
+  }
+
+  $addresses = $loadEntities('jcc_address', $court_id);
+  if (!empty($addresses)) {
+    $addr_data = [];
+    foreach ($addresses as $address) {
+      $addr_data[] = [
+        'addr1' => $address->get('addr1')->value,
+        'addr2' => $address->get('addr2')->value,
+        'city' => $address->get('city')->value,
+        'state' => $address->get('state')->value,
+        'zip' => $address->get('zip')->value,
+        'mailing_addr1' => $address->get('mailing_addr1')->value,
+        'phone' => $address->get('phone')->value,
+        'fax' => $address->get('fax')->value,
+        'loc_num' => $address->get('loc_num')->value,
+      ];
+    }
+    $variables['address_data'] = $addr_data;
+  }
+  else {
+    $district_name = $court_entity->name_2->value ?? '';
+    if ($court_type_label === "Court of Appeal") {
+      $division = $entityTypeManager->getStorage('jcc_court')->getQuery();
+      $division->condition('name_2', $district_name);
+      $division->sort('id', 'ASC');
+      $division->range(0, 1);
+      $first_division_ids = $division->execute();
+
+      if (!empty($first_division_ids)) {
+        $first_division_id = reset($first_division_ids);
+        $variables['appeal_exec_officer'] = $getOfficerDataByJob($first_division_id, 'Court of Appeal - Clerk/Executive Officer');
+
+        // For Appellate CIO data:
+        $cios = $loadEntities('jcc_cio', $first_division_id);
+        $cio_data = [];
+        foreach ($cios as $cio) {
+          $item = $extractNameData($cio);
+          if (!$cio->get('job_title')->isEmpty()) {
+            $term = $cio->get('job_title')->entity;
+            if ($term) {
+              $item['job_class'] = $term->label();
+            }
+          }
+          $cio_data[] = $item;
+        }
+        $variables['cio_data'] = $cio_data;
+
+        $query = $entityTypeManager->getStorage('jcc_address')->getQuery();
+        $query->condition('court', $first_division_id);
+        $query->range(0, 1);
+        $query->accessCheck(TRUE);
+        $address_ids = $query->execute();
+        if (!empty($address_ids)) {
+          $address = $entityTypeManager->getStorage('jcc_address')->load(reset($address_ids));
+          $addr_id = $address->get('addr_id')->value;
+
+          $addr_query = $entityTypeManager->getStorage('jcc_address')->getQuery();
+          $addr_query->condition('addr_id', $addr_id);
+          $addr_query->condition('loc_num', 1);
+          $addr_query->range(0, 1);
+          $addr_query->accessCheck(TRUE);
+          $main_ids = $addr_query->execute();
+          if (!empty($main_ids)) {
+            $main_address = $entityTypeManager->getStorage('jcc_address')->load(reset($main_ids));
+
+            $variables['address_data'] = [
+              [
+                'addr1' => $main_address->get('addr1')->value,
+                'addr2' => $main_address->get('addr2')->value,
+                'city' => $main_address->get('city')->value,
+                'state' => $main_address->get('state')->value,
+                'zip' => $main_address->get('zip')->value,
+                'mailing_addr1' => $main_address->get('mailing_addr1')->value,
+                'mailing_city' => $main_address->get('mailing_city')->value,
+                'mailing_state' => $main_address->get('mailing_state')->value,
+                'mailing_zip' => $main_address->get('mailing_zip')->value,
+                'phone' => $main_address->get('phone')->value,
+                'fax' => $main_address->get('fax')->value,
+                'loc_num' => $main_address->get('loc_num')->value,
+              ],
+            ];
+          }
+        }
+      }
+    }
+  }
+
+  if ($court_type_label === "Court of Appeal") {
+    $presiding_judge = $getOfficerDataByJob($court_id, 'Court of Appeal Presiding Justice');
+    $variables['presiding_judge'] = $presiding_judge;
+  }
+  else {
+    $variables['judge_data'] = $getOfficerDataByJob($court_id, 'Superior Court Presiding Judge');
+    $variables['exec_officer_data'] = $getOfficerDataByJob($court_id, 'Superior Court - Court Executive Officer');
+  }
   $officer_query = $entityTypeManager->getStorage('jcc_officer')->getQuery();
   $officer_query->condition('court', $court_id);
   $officer_query->accessCheck(TRUE);
@@ -280,10 +360,14 @@ function template_preprocess_jcc_court(array &$variables) {
     ],
   ];
   foreach ($grouped_officers as $loc_num => $rows) {
+    $flat_rows = [];
+    foreach ($rows as $row) {
+      $flat_rows[] = $row['data'];
+    }
     $tables_by_location[$loc_num] = [
-      '#type' => 'table',
+      '#theme' => 'table',
       '#header' => $header,
-      '#rows' => $rows,
+      '#rows' => $flat_rows,
       '#empty' => t('No officers found at this location.'),
       '#prefix' => '<div class="staff-table">',
       '#suffix' => '</div>',

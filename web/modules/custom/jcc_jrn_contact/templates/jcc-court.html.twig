@@ -27,6 +27,21 @@
   }]) %}
 {% endfor %}
 
+{% for item in presiding_judge %}
+  {% set courtAdmin = courtAdmin|merge([{
+    label: "Court of Appeal Presiding Justice",
+    text: item.fname ~ ' ' ~ (item.mname ? item.mname ~ ' ' : '') ~ item.lname
+  }]) %}
+{% endfor %}
+
+
+{% for item in appeal_exec_officer %}
+  {% set courtAdmin = courtAdmin|merge([{
+    label: "Court of Appeal - Clerk/Executive officer",
+    text: item.fname ~ ' ' ~ (item.mname ? item.mname ~ ' ' : '') ~ item.lname
+  }]) %}
+{% endfor %}
+
 {% for item in judge_data %}
   {% set courtAdmin = courtAdmin|merge([{
     label: "Superior Court Presiding Judge",
@@ -96,7 +111,7 @@
           } %}
           <br />
         
-          {{ address.officer_table }}
+          {{ address.officer_table|raw }}
         
           <br />
         {% endfor %}
