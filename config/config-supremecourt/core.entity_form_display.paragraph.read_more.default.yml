@@ -1,0 +1,34 @@
+uuid: b03dd81a-11d0-44cf-8ce8-a6e650bcb4bd
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.read_more.field_heading
+    - field.field.paragraph.read_more.field_text
+    - paragraphs.paragraphs_type.read_more
+  module:
+    - text
+id: paragraph.read_more.default
+targetEntityType: paragraph
+bundle: read_more
+mode: default
+content:
+  field_heading:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_text:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

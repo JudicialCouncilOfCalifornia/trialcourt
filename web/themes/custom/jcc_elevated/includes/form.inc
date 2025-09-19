@@ -33,7 +33,23 @@ function jcc_elevated_theme_suggestions_alter(array &$suggestions, array $variab
 }
 
 /**
- * Implements hook_preprocess_block().
+ * Implements hook_preprocess_form().
+ */
+function jcc_elevated_preprocess_container(&$variables) {
+  if (isset($variables['attributes']['id'])) {
+    switch ($variables['attributes']['id']) {
+      case 'edit-actions--4':
+        // If hidden submit actions add no spacing class.
+        if (str_contains($variables['children'], 'data-bef-auto-submit-click="" class="js-hide')) {
+          $variables['attributes']['class'][] = 'no-spacing';
+        }
+        break;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_form().
  */
 function jcc_elevated_preprocess_form(&$variables) {
   if ($variables['attributes']['id'] == 'openid-connect-login-form') {

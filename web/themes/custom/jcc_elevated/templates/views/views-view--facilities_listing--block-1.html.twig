@@ -34,21 +34,21 @@
 
  {% for facility in facilities %}
 
- 
+
      {% set item = {
       brow: {
       primary: facility.county,
       secondary: facility.status,
       notation: '',
-    },    
+    },
     title: facility.title,
     content: '',
-    url: facility.url,        
+    url: facility.url,
     detail_list_data: '',
-   
+
    } %}
  {% set items = items|merge([item]) %}
-{% endfor %} 
+{% endfor %}
 
 
 <div{{ attributes.addClass(classes) }}>
@@ -60,7 +60,7 @@
     header_sidebar: '',
     header_direction_results: 'sidebar-row',
     form: exposed|render,
-    form_in_sidebar: true,
+    form_in_sidebar: false,
     list_type: 'ul',
     list_type_divider: '',
     rows: items,
@@ -71,7 +71,7 @@
     footer: '',
     footer_sidebar: '',
     sidebar_direction_footer: 'sidebar-row',
-  } %}  
+  } %}
 
 
 </div>
