@@ -169,7 +169,7 @@ class JccOfficerListBuilder extends EntityListBuilder {
     $row['email'] = [
       'data' => [
         '#markup' => $email_value,
-        'class' => ['contact'],
+        '#attributes' => ['class' => ['contact']],
       ],
     ];
     $row['job_title'] = $entity->get('job_title')->entity?->label();

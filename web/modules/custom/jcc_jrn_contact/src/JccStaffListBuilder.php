@@ -143,11 +143,11 @@ class JccStaffListBuilder extends EntityListBuilder {
     $header['first_name'] = [
       'data' => $this->t('First Name'),
       'field' => 't.first_name',
+      'sort' => 'asc',
     ];
     $header['last_name'] = [
       'data' => $this->t('Last Name'),
       'field' => 't.last_name',
-      'sort' => 'asc',
     ];
     $header['department'] = [
       'data' => $this->t('Department'),
@@ -156,7 +156,6 @@ class JccStaffListBuilder extends EntityListBuilder {
     $header['phone'] = [
       'data' => $this->t('Phone and Email'),
       'field' => 't.phone',
-      'class' => ['contact'],
     ];
     $header['location'] = [
       'data' => $this->t('Location'),
@@ -177,7 +176,8 @@ class JccStaffListBuilder extends EntityListBuilder {
     $row['first_name'] = $entity->get('first_name')->value;
     $row['last_name'] = $entity->get('last_name')->value;
     $row['department'] = $entity->get('department')->entity?->label();
-    $phone_raw = preg_replace('/\D+/', '', $entity->get('phone')->value);
+    $phone = $entity->get('phone')->value ?? '';
+    $phone_raw = preg_replace('/\D+/', '', $phone);
     $phone = '';
     if (strlen($phone_raw) === 10) {
       $phone = sprintf('(%s) %s-%s',
@@ -189,10 +189,10 @@ class JccStaffListBuilder extends EntityListBuilder {
     $email_value = $entity->get('email')->value;
     $email_value = $email_value ? strtolower($email_value) : '';
     $email = $email_value ? '<a href="mailto:' . $email_value . '" class="test">' . $email_value . '</a>' : '';
-    $row['contact'] = [
+    $row['phone'] = [
       'data' => [
         '#markup' => $phone . ($phone && $email ? '<br>' : '') . $email,
-        'class' => ['contact'],
+        '#attributes' => ['class' => ['contact']],
       ],
     ];
     $row['location'] = $entity->get('location')->value;
