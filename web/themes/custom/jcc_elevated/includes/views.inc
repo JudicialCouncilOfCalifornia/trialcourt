@@ -157,6 +157,7 @@ function jcc_elevated_preprocess_views_view__publication_forms(&$variables) {
  * Implements hook_preprocess_HOOK() for JRN trialcourtoutlet view.
  */
 function jcc_elevated_preprocess_views_view__trialcourtoutlet__block_1(&$variables) {
+  $variables['form_in_sidebar'] = FALSE;
   $render = \Drupal::service('renderer');
   __jcc_view_results_exposed_filter_init($variables);
   $variables['processed_rows'] = [];
@@ -198,6 +199,7 @@ function jcc_elevated_preprocess_views_view__trialcourtoutlet__block_1(&$variabl
  * Implements hook_preprocess_HOOK() for publications listing.
  */
 function jcc_elevated_preprocess_views_view__publications__publications_list(&$variables) {
+  $variables['form_in_sidebar'] = TRUE;
   $render = \Drupal::service('renderer');
 
   // Customize filter UI.
