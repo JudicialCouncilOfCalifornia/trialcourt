@@ -4,6 +4,7 @@ dependencies:
   config:
     - core.entity_form_mode.media.media_library
     - field.field.media.file.field_category
+    - field.field.media.file.field_date
     - field.field.media.file.field_document_type
     - field.field.media.file.field_matters_served
     - field.field.media.file.field_media_file
@@ -96,16 +97,17 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    settings:
-      match_limit: 10
-      match_operator: CONTAINS
-      placeholder: ''
-      size: 60
-    third_party_settings: { }
     weight: 6
     region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
 hidden:
   created: true
+  field_date: true
   field_media_text: true
   langcode: true
   path: true

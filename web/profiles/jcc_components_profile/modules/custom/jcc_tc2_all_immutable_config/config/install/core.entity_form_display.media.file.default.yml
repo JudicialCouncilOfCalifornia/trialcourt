@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.media.file.field_category
+    - field.field.media.file.field_date
     - field.field.media.file.field_document_type
     - field.field.media.file.field_matters_served
     - field.field.media.file.field_media_file
@@ -12,6 +13,7 @@ dependencies:
   module:
     - autocomplete_deluxe
     - cshs
+    - datetime
     - file
     - text
 id: media.file.default
@@ -37,6 +39,12 @@ content:
       hierarchy_depth: 0
       required_depth: 0
       none_label: '- Please select -'
+    third_party_settings: {  }
+  field_date:
+    type: datetime_default
+    weight: 27
+    region: content
+    settings: {  }
     third_party_settings: {  }
   field_document_type:
     type: options_select
@@ -123,14 +131,14 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    settings:
-      match_limit: 10
-      match_operator: CONTAINS
-      placeholder: ''
-      size: 60
-    third_party_settings: { }
     weight: 10
     region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
 hidden:
   created: true
   path: true

@@ -1,4 +1,3 @@
-uuid: 0419ecbb-8d0c-4275-ba7f-bfa454229758
 langcode: en
 status: true
 dependencies:
@@ -27,6 +26,7 @@ third_party_settings:
     finalize: false
     commit_before_finalize: false
     commit_after_finalize: false
+    debug_finalize: false
     highlighter:
       maxAnalyzedChars: 51200
       fragmenter: gap
@@ -53,6 +53,9 @@ third_party_settings:
       maxntp: 2000
       boost: false
       interestingTerms: none
+    term_modifiers:
+      slop: 3
+      fuzzy: 1
     advanced:
       index_prefix: ''
       collection: ''
@@ -60,8 +63,11 @@ third_party_settings:
     multilingual:
       limit_to_content_language: false
       include_language_independent: true
-_core:
-  default_config_hash: JEfzm_96iSKUlHsfFiD4oCilpGhAldhlyNNTF4qYBss
+      use_language_undefined_as_fallback_language: false
+      specific_languages:
+        en: '0'
+        es: '0'
+      use_universal_collation: false
 id: dbindex
 name: 'DB Index'
 description: ''
@@ -201,6 +207,7 @@ field_settings:
     label: 'Rendered HTML output'
     property_path: rendered_item
     type: text
+    boost: !!float 2
     configuration:
       roles:
         - anonymous
@@ -234,6 +241,7 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: title
     type: text
+    boost: !!float 5
     dependencies:
       module:
         - node
@@ -250,65 +258,33 @@ field_settings:
 datasource_settings:
   'entity:node':
     bundles:
-      default: false
+      default: true
       selected:
         - alert
-        - document
-        - landing_page
-        - news
-        - subpage
+        - case
+        - custom_email
+        - importer
+        - remote_hearings
+        - tentative_ruling
     languages:
       default: true
       selected: {  }
 processor_settings:
-  content_access:
-    weights:
-      preprocess_query: -30
-  highlight:
-    weights:
-      postprocess_query: 0
-    prefix: '<strong>'
-    suffix: '</strong>'
-    excerpt: true
-    excerpt_always: false
-    excerpt_length: 256
-    exclude_fields:
-      - rendered_item
-    highlight: always
-    highlight_partial: true
-  tokenizer:
-    weights:
-      preprocess_index: -44
-      preprocess_query: -6
-    all_fields: false
-    fields:
-      - rendered_item
-    spaces: ''
-    ignored: ._-
-    overlap_cjk: 1
-    minimum_word_size: '3'
+  entity_status: {  }
+  language_with_fallback: {  }
   transliteration:
     weights:
-      preprocess_index: -47
+      preprocess_index: -48
       preprocess_query: -15
     all_fields: false
     fields:
       - rendered_item
       - title
-  type_boost:
-    weights:
-      preprocess_index: -50
-    boosts:
-      'entity:node':
-        datasource_boost: !!float 1
-        bundle_boosts:
-          document: !!float 2
-          landing_page: !!float 2
-          news: !!float 3
-          subpage: !!float 2
+  rendered_item: {  }
+  aggregated_field: {  }
   html_filter:
     weights:
-      preprocess_index: -15
+      preprocess_index: -49
       preprocess_query: -15
     all_fields: true
     fields:
@@ -334,9 +310,78 @@ processor_settings:
       h2: 3
       h3: 2
       strong: 2
+  stopwords:
+    weights:
+      preprocess_index: -45
+      preprocess_query: -2
+    all_fields: false
+    fields:
+      - field_aside
+      - field_brow
+      - field_brow_1
+      - field_heading
+      - field_heading_1
+      - field_subheading
+      - name
+      - processed
+      - processed_1
+      - processed_6
+      - processed_7
+      - rendered_item
+      - summary_processed
+      - title
+    stopwords:
+      - a
+      - an
+      - and
+      - are
+      - as
+      - at
+      - be
+      - but
+      - by
+      - for
+      - if
+      - in
+      - into
+      - is
+      - it
+      - 'no'
+      - not
+      - of
+      - 'on'
+      - or
+      - s
+      - such
+      - t
+      - that
+      - the
+      - their
+      - then
+      - there
+      - these
+      - they
+      - this
+      - to
+      - was
+      - will
+      - with
+  add_url: {  }
+  entity_type: {  }
+  type_boost:
+    weights:
+      preprocess_index: -43
+    boosts:
+      'entity:node':
+        datasource_boost: !!float 1
+        bundle_boosts:
+          document: !!float 2
+          landing_page: !!float 2
+          news: !!float 3
+          subpage: !!float 2
   ignorecase:
     weights:
-      preprocess_index: -20
+      preprocess_index: -50
       preprocess_query: -20
     all_fields: true
     fields:
@@ -354,12 +399,13 @@ processor_settings:
       - rendered_item
       - summary_processed
       - title
-  add_url: {  }
-  aggregated_field: {  }
-  entity_type: {  }
+  content_access:
+    weights:
+      preprocess_query: -30
+  custom_value: {  }
   stemmer:
     weights:
-      preprocess_index: -42
+      preprocess_index: -44
       preprocess_query: 0
     all_fields: true
     fields:
@@ -380,9 +426,29 @@ processor_settings:
     exceptions:
       mexican: mexic
       texan: texa
-  rendered_item: {  }
-  language_with_fallback: {  }
-  entity_status: {  }
+  highlight:
+    weights:
+      postprocess_query: 0
+    prefix: '<strong>'
+    suffix: '</strong>'
+    excerpt: true
+    excerpt_always: true
+    excerpt_length: 256
+    exclude_fields:
+      - rendered_item
+    highlight: always
+    highlight_partial: true
+  tokenizer:
+    weights:
+      preprocess_index: -47
+      preprocess_query: -6
+    all_fields: false
+    fields:
+      - rendered_item
+    spaces: ''
+    ignored: ._-
+    overlap_cjk: 1
+    minimum_word_size: '3'
   file_attachments:
     excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
     number_indexed: 0
@@ -391,19 +457,20 @@ processor_settings:
     excluded_private: 1
     excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
   node_exclude: {  }
+  solr_date_range:
+    weights:
+      preprocess_index: 0
+  auto_aggregated_fulltext_field: {  }
   double_quote_workaround:
     weights:
       postprocess_query: 0
-      preprocess_index: -47
+      preprocess_index: -46
       preprocess_query: -15
     all_fields: false
     fields:
       - rendered_item
       - title
     replacement: '|9999999998|'
-  solr_date_range:
-    weights:
-      preprocess_index: 0
 tracker_settings:
   default:
     indexing_order: fifo

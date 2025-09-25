@@ -62,7 +62,7 @@ class JccOfficerFilterForm extends FormBase {
     $form['filter'] = [
       '#type' => 'container',
       '#attributes' => [
-        'class' => ['form--inline', 'clearfix','officer-container'],
+        'class' => ['form--inline', 'clearfix', 'views-exposed-form'],
       ],
     ];
 
@@ -71,60 +71,102 @@ class JccOfficerFilterForm extends FormBase {
       '#title' => 'Judicial Officer',
       '#placeholder' => '',
       '#default_value' => $request->get('keyword') ?? '',
+      '#attributes' => [
+        'class' => ['form-text'],
+        'size' => 30,
+        'maxlength' => 128,
+        'data-drupal-selector' => 'edit-combine',
+        'id' => 'edit-combine--6',
+      ],
+      '#wrapper_attributes' => [
+        'class' => [
+          'placeholder-container',
+          'form-item',
+        ],
+      ],
+      '#prefix' => '<div class="placeholder-container form-item "> 
+                    <h2 class="filter-search-heading">Search</h2>
+                    <div>Enter <b>Court Executives</b> or <b>Judicial Officers</b> name</div>',
+      '#suffix' => '</div>',
     ];
+
+    $form['filter']['buttons'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['button-group'],
+        'style' => 'gap: 15px;margin-top:10px;margin-top:20px;',
+      ],
+    ];
+
+    $form['filter']['buttons']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Apply'),
+      '#submit' => ['::submitForm'],
+      '#attributes' => [
+        'class' => ['button', 'button--secondary', 'button--normal'],
+        'style' => 'top:20px;',
+      ],
+    ];
+
+    if ($request->getQueryString()) {
+      $form['filter']['buttons']['reset'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Reset'),
+        '#submit' => ['::resetForm'],
+        '#attributes' => [
+          'class' => ['button', 'button--primary', 'button--normal'],
+          'style' => 'top:20px;',
+        ],
+      ];
+    }
 
     $terms = $this->entityTypeManager
       ->getStorage('taxonomy_term')
       ->loadTree('job_title');
     $form['filter']['job_title'] = [
       '#type' => 'select',
-      '#title' => 'Job Title',
+      '#title' => '',
       '#options' => $terms ? array_reduce($terms, function ($carry, $term) {
         $carry[$term->tid] = $term->name;
         return $carry;
       }, []) : [],
       '#empty_option' => 'All Job Titles',
       '#default_value' => $request->get('job_title') ?? '',
+      '#attributes' => [
+        'class' => [
+          'form-select',
+        ],
+      ],
+      '#wrapper_attributes' => [
+        'class' => [
+          'placeholder-container',
+          'form-item',
+        ],
+      ],
+      '#prefix' => '<div class="placeholder-container form-item js-form-item js-form-type-textfield form-item-combine js-form-item-combine select>
+                    <br />
+                    <h2 class="filter-search-heading">Filter By</h2><div>Title</div>',
+      '#suffix' => '</div>',
     ];
 
     $location_storage = $this->entityTypeManager->getStorage('jcc_court');
     $location_nodes = $location_storage->loadByProperties(['status' => 1]);
     $form['filter']['court'] = [
       '#type' => 'select',
-      '#title' => 'Court',
+      '#title' => '',
       '#options' => $location_nodes ? array_reduce($location_nodes, function ($carry, $node) {
         $carry[$node->id()] = $node->label();
         return $carry;
       }, []) : [],
       '#empty_option' => 'All Courts',
       '#default_value' => $request->get('court') ?? '',
+      '#prefix' => '<div class="placeholder-container form-item js-form-item  js-form-type-textfield form-item-combine js-form-item-combine select">   
+                    <h2 class="filter-search-heading"></h2><div>County, Court, or District</div>',
+      '#suffix' => '</div>',
     ];
 
-    $form['actions']['wrapper'] = [
-      '#type' => 'container',
-      '#attributes' => ['class' => ['form-item']],
-    ];
-
-    $form['actions']['wrapper'] = [
-      '#type' => 'container',
-      '#attributes' => [
-        'class' => ['button-group'],
-      ],
-    ];
-
-    $form['actions']['wrapper']['submit'] = [
-      '#type' => 'submit',
-      '#value' => 'Filter',
-    ];
-
-    if ($request->getQueryString()) {
-      $form['actions']['wrapper']['reset'] = [
-        '#type' => 'submit',
-        '#value' => 'Reset',
-        '#submit' => ['::resetForm'],
-      ];
-    }
-
+    $form['filter']['job_title']['#attributes']['onchange'] = 'this.form.submit()';
+    $form['filter']['court']['#attributes']['onchange'] = 'this.form.submit()';
     return $form;
   }
 

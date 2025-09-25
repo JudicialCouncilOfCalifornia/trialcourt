@@ -81,15 +81,48 @@ class JccOfficerListBuilder extends EntityListBuilder {
       ->count()
       ->execute();
 
+    $headers = [];
+    if (!empty($table['table']['#header'])) {
+      foreach ($table['table']['#header'] as $key => $info) {
+        if (is_array($info) && isset($info['data'])) {
+          $headers[$key] = (string) $info['data'];
+        }
+        else {
+          $headers[$key] = (string) $info;
+        }
+      }
+    }
+
+    foreach ($table['table']['#rows'] as $row) {
+      $table_rows[] = [
+        'first_name' => $row['first_name'],
+        'last_name' => $row['last_name'],
+        'job_title' => $row['job_title'] ?? '',
+        'email' => $row['email'] ?? '',
+        'court' => $row['court'] ?? '',
+      ];
+    }
+
+    if (!empty($table['table']['#rows'])) {
+      foreach ($table['table']['#rows'] as &$row) {
+        foreach ($row as &$cell) {
+          if (empty($cell)) {
+            $cell = ['data' => 'none'];
+          }
+        }
+      }
+    }
     $build['summary']['#markup'] = $this->t('Total staff: @total', ['@total' => $total]);
     return [
-      '#theme' => 'custom_officer_view',
-      '#form' => $form,
+      '#theme' => 'custom_staff_view',
+      '#exposed' => $form,
+      '#rows' => $table_rows,
+      '#headers' => $headers,
       '#table' => $table,
-      '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
+      '#summary' => 'Directory: Court Executives & Judicial Officers',
       '#attached' => [
         'library' => [
-          'jcc_jrn_contact/custom_officer_view',
+          'jcc_jrn_contact/custom_staff_view',
         ],
       ],
     ];
@@ -99,10 +132,6 @@ class JccOfficerListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['salutation'] = [
-      'data' => $this->t('Salutation'),
-      'field' => 't.salutation',
-    ];
     $header['first_name'] = [
       'data' => $this->t('First Name'),
       'field' => 't.first_name',
@@ -115,6 +144,7 @@ class JccOfficerListBuilder extends EntityListBuilder {
     $header['email'] = [
       'data' => $this->t('Email'),
       'field' => 't.email',
+      'class' => ['contact'],
     ];
     $header['job_title'] = [
       'data' => $this->t('Job Title'),
@@ -132,10 +162,16 @@ class JccOfficerListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     /**  @var \Drupal\jcc_jrn_contact\JccStaffInterface $entity */
-    $row['salutation'] = $entity->get('salutation')->value;
     $row['first_name'] = $entity->get('first_name')->value;
     $row['last_name'] = $entity->get('last_name')->value;
-    $row['email'] = $entity->get('email')->value;
+    $email = $entity->get('email')->value;
+    $email_value = $email ? '<a href="mailto:' . $email . '" class="test">' . $email . '</a>' : '';
+    $row['email'] = [
+      'data' => [
+        '#markup' => $email_value,
+        '#attributes' => ['class' => ['contact']],
+      ],
+    ];
     $row['job_title'] = $entity->get('job_title')->entity?->label();
     $row['court'] = $entity->get('court')->entity?->label();
     return $row + parent::buildRow($entity);

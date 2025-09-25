@@ -1211,6 +1211,13 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
  *   The node.
  */
 function jcc_elevated_node_course(array &$variables, NodeInterface $node): void {
+  // Invalidate the dynamic page cache for this node, hourly.
+  // This will not bubble up to the CDN if Big Pipe is enabled.
+  // Cache Control: max-age={whatever is set globally for performance}
+  // Without Big Pipe this will make the whole page un-cachable in the CDN.
+  // @see /docs/drupal-caching.md
+  $variables['#cache']['max-age'] = 3600;
+
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
   $type_term = $node->get('field_course_type')[0] ? $node->get('field_course_type')[0]->entity : NULL;
@@ -1266,9 +1273,12 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
 
           // Event date.
           $event_date = $start_date->format('F j, Y');
-          if ($start_date->format('Ymd') != $end_date->format('Ymd')) {
+          if ($end_date->format('Ymd') != $start_date->format('Ymd')) {
             $start = $start_date->format('F j');
             $end = $end_date->format('j, Y');
+            if ($end_date->format('m') != $start_date->format('m')) {
+              $end = $end_date->format('F j, Y');
+            }
             $event_date = $start . ' to ' . $end;
           }
 
@@ -1447,28 +1457,69 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       case 'field_topics':
       case 'field_subtopics':
         if (count($field) > 0) {
+          // Node with catalog view must be specified for actionable links.
+          $enable_link = FALSE;
+          $path_catalog = theme_get_setting('landing_course');
+          $path = NULL;
+          if ($path_catalog && str_starts_with($path_catalog, '/node')) {
+            if (\Drupal::service('path_alias.manager')->getAliasByPath($path_catalog)) {
+              $path = \Drupal::service('path_alias.manager')->getAliasByPath($path_catalog);
+            }
+            else {
+              $path = $path_catalog;
+            }
+            $catalog_nid = str_replace('/node/', '', $path_catalog);
+            $entity_type_manager = \Drupal::service('entity_type.manager');
+            $node_manager = $entity_type_manager->getStorage('node');
+            $catalog_node = $node_manager->load($catalog_nid);
+            // Check catalog view reference setup.
+            if ($catalog_node->get('field_components')) {
+              $paragraphs = $catalog_node->get('field_components')->referencedEntities();
+              foreach ($paragraphs as $paragraph) {
+                switch ($paragraph->getType()) {
+                  case 'section':
+                    $subparagraphs = $paragraph->get('field_components')->referencedEntities();
+                    foreach ($subparagraphs as $subparagraph) {
+                      $view_reference = $subparagraph->getType() == 'views_reference';
+                      if ($view_reference) {
+                        $view = $subparagraph->get('field_views_reference');
+                        if ($view->target_id == 'courses' && $view->display_id == 'catalog') {
+                          $enable_link = TRUE;
+                        }
+                      }
+                    }
+                    break;
+
+                  case 'views_reference':
+                    $view = $paragraph->get('field_views_reference');
+                    if ($view->target_id == 'courses' && $view->display_id == 'catalog') {
+                      $enable_link = TRUE;
+                    }
+                    break;
+                }
+              }
+            }
+          }
+
+          // Topic and subtopic objects.
           foreach ($field as $topic) {
             if ($topic->entity) {
               $term = $topic->entity;
-              // Node with catalog view must be specified for actionable pill.
-              $url = theme_get_setting('landing_course');
-              $catalog_url = NULL;
-              if ($url && str_starts_with($url, '/node')) {
-                $domain = 'https://' . \Drupal::request()->getHost();
-                // Use appropriate parameter to prefilter landing.
-                $param = '?field_topics_target_id=' . $term->id();
-                if ($field->getName() == 'field_subtopics') {
-                  $param = '?field_subtopics_target_id=' . $term->id();
-                }
-
-                $catalog_url = $domain . $url . $param;
+              $domain = 'https://' . \Drupal::request()->getHost();
+              // Use appropriate parameter to prefilter landing.
+              $filter = 'field_topics_target_id';
+              if ($field->getName() == 'field_subtopics') {
+                $filter = 'field_subtopics_target_id';
               }
+              $param = '?' . $filter . '[' . $term->id() . ']=' . $term->id();
+
               $topics[] = [
                 'label' => $term->label(),
-                'url' => $catalog_url,
+                'url' => $enable_link ? $domain . $path . $param : NULL,
               ];
             }
           }
+
           // Sort topics & subtopics alphabetically.
           usort($topics, fn($a, $b) => $a['label'] <=> $b['label']);
           $sidebar['topics'] = $topics;
