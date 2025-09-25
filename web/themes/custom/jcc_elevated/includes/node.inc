@@ -407,10 +407,6 @@ function jcc_elevated_node_invitations_to_comment(array &$variables, NodeInterfa
     $nodeData['itc_number'] = $node->get('field_itc_number')->value;
   }
 
-  if ($node->hasField('body') && !$node->get('body')->isEmpty()) {
-    $nodeData['body'] = $node->body->value;
-  }
-
   if ($node->hasField('field_deadline') && !$node->get('field_deadline')->isEmpty()) {
     $deadline = $node->field_deadline->value;
     $utc_deadline = new DateTime($deadline, new DateTimeZone('UTC'));
@@ -437,8 +433,9 @@ function jcc_elevated_node_invitations_to_comment(array &$variables, NodeInterfa
         }
       }
     }
-    $variables['node'] = $nodeData;
   }
+
+  $variables['node'] = $nodeData;
 }
 
 /**
@@ -1275,23 +1272,14 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
           $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
 
           // Event date.
-          $event_date = NULL;
-          if ($event->get('field_date_range')->start_date) {
-            $event_date = $start_date->format('F j, Y');
-            if ($start_date->format('F j, Y') != $end_date->format('F j, Y')) {
-              $start = $start_date->format('F j');
-              if ($start_date->format('Y') != $end_date->format('Y')) {
-                $start = $start_date->format('F j, Y');
-              }
-              $end = $end_date->format('j, Y');
-              if ($start_date->format('F') != $end_date->format('F')) {
-                $end = $end_date->format('F j, Y');
-              }
-              $event_date = $start . ' to ' . $end;
-            }
+          $event_date = $start_date->format('F j, Y');
+          if ($start_date->format('Ymd') != $end_date->format('Ymd')) {
+            $start = $start_date->format('F j');
+            $end = $end_date->format('j, Y');
+            $event_date = $start . ' to ' . $end;
           }
 
-          // Is the event today?
+          // Is the event today or within scheduled range?
           $event_is_today = FALSE;
           if ($start_date->format('Ymd') <= $today->format('Ymd') && $end_date->format('Ymd') >= $today->format('Ymd')) {
             $event_is_today = TRUE;
@@ -1324,33 +1312,35 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
       }
       $variables['course_schedule'] = $schedule;
 
-      $registration = $node->get('field_custom_link');
-      if (count($registration) > 0) {
-        $register_uri = $registration->uri;
+      if ($schedule) {
+        $registration = $node->get('field_custom_link');
+        if (count($registration) > 0) {
+          $register_uri = $registration->uri;
 
-        if (count($node->get('field_registration_period')) > 0) {
-          $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
-          $register_start = $register_start->format('Ymd');
-          $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
-          $register_end = $register_end->format('Ymd');
-          if ($register_start > $today->format('Ymd')) {
-            $action = [
-              '#status' => 'pending',
-              '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Pending') . '</div>',
-            ];
-          }
-          elseif ($register_end < $today->format('Ymd')) {
-            $action = [
-              '#status' => 'closed',
-              '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Closed') . '</div>',
-            ];
-          }
-          else {
-            $label = $registration->title ? $registration->title : t('Register Now');
-            $action = [
-              '#status' => 'open',
-              '#markup' => '<a class="' . $button_styles . '" href="' . $register_uri . '">' . $label . '</a>',
-            ];
+          if (count($node->get('field_registration_period')) > 0) {
+            $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
+            $register_start = $register_start->format('Ymd');
+            $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
+            $register_end = $register_end->format('Ymd');
+            if ($register_start > $today->format('Ymd')) {
+              $action = [
+                '#status' => 'pending',
+                '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Pending') . '</div>',
+              ];
+            }
+            elseif ($register_end < $today->format('Ymd')) {
+              $action = [
+                '#status' => 'closed',
+                '#markup' => '<div class="' . $button_styles_disabled . '">' . t('Registration Closed') . '</div>',
+              ];
+            }
+            else {
+              $label = $registration->title ? $registration->title : t('Register Now');
+              $action = [
+                '#status' => 'open',
+                '#markup' => '<a class="' . $button_styles . '" href="' . $register_uri . '">' . $label . '</a>',
+              ];
+            }
           }
         }
         else {

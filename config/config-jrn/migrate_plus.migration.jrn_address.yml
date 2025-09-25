@@ -1,0 +1,115 @@
+uuid: 70f0ead3-7363-41e7-aa69-35bb47ed1f87
+langcode: en
+status: true
+dependencies: {  }
+id: jrn_address
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - jrn
+  - jrn_address
+migration_group: jrn
+label: 'JIS: Import Addresses'
+source:
+  plugin: csv
+  path_with_date: 'public://upload/oracle/serranus_addr_csv_DATE.txt'
+  header_row_count: 1
+  ids:
+    - addr_id
+  fields:
+    -
+      name: entity_id
+      selector: ENTITY_ID
+      label: 'Entity ID'
+    -
+      name: addr_id
+      selector: ADDR_ID
+      label: 'Address ID'
+    -
+      name: print_mail_addr
+      selector: PRINT_MAIL_ADDR
+      label: 'Print Mail Address'
+    -
+      name: loc_num
+      selector: LOC_NUM
+      label: 'Location Number'
+    -
+      name: addr1
+      selector: ADDR1
+      label: 'Address Line 1'
+    -
+      name: addr2
+      selector: ADDR2
+      label: 'Address Line 2'
+    -
+      name: city
+      selector: CITY
+      label: City
+    -
+      name: state
+      selector: STATE
+      label: State
+    -
+      name: zipcode
+      selector: ZIPCODE
+      label: 'Zip Code'
+    -
+      name: mailing_addr1
+      selector: MAILING_ADDR1
+      label: 'Mailing Address Line 1'
+    -
+      name: mailing_addr2
+      selector: MAILING_ADDR2
+      label: 'Mailing Address Line 2'
+    -
+      name: mailing_city
+      selector: MAILING_CITY
+      label: 'Mailing City'
+    -
+      name: mailing_state
+      selector: MAILING_STATE
+      label: 'Mailing State'
+    -
+      name: mailing_zipcode
+      selector: MAILING_ZIPCODE
+      label: 'Mailing Zip Code'
+    -
+      name: phone
+      selector: PHONE
+      label: Phone
+    -
+      name: fax
+      selector: FAX
+      label: Fax
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  status:
+    plugin: default_value
+    default_value: 1
+  addr_id: addr_id
+  loc_num: loc_num
+  addr1: addr1
+  addr2: addr2
+  city: city
+  state: state
+  zip: zipcode
+  mailing_addr1: mailing_addr1
+  mailing_addr2: mailing_addr2
+  mailing_city: mailing_city
+  mailing_state: mailing_state
+  mailing_zip: mailing_zipcode
+  phone: phone
+  fax: fax
+  court:
+    plugin: migration_lookup
+    migration: jrn_court
+    source: entity_id
+destination:
+  plugin: 'entity:jcc_address'
+migration_dependencies:
+  required:
+    - jrn_court
+  optional: {  }
