@@ -131,8 +131,6 @@ function jcc_elevated_preprocess_views_view__alerts__alerts(&$variables) {
       }
     }
   }
-
-  $variables['#cache']['max-age'] = 0;
 }
 
 /**

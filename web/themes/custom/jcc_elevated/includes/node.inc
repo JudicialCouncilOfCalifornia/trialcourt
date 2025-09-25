@@ -1211,6 +1211,13 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
  *   The node.
  */
 function jcc_elevated_node_course(array &$variables, NodeInterface $node): void {
+  // Invalidate the dynamic page cache for this node, hourly.
+  // This will not bubble up to the CDN if Big Pipe is enabled.
+  // Cache Control: max-age={whatever is set globally for performance}
+  // Without Big Pipe this will make the whole page un-cachable in the CDN.
+  // @see /docs/drupal-caching.md
+  $variables['#cache']['max-age'] = 3600;
+
   $timezone = new DateTimeZone('America/Los_Angeles');
   $today = new DateTime('now', $timezone);
   $type_term = $node->get('field_course_type')[0] ? $node->get('field_course_type')[0]->entity : NULL;
