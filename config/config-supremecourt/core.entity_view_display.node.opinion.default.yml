@@ -1,0 +1,110 @@
+uuid: 80df4036-a809-45df-a8f2-3358cfd847d5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.opinion.field_case_number_plain
+    - field.field.node.opinion.field_date_time
+    - field.field.node.opinion.field_media_file_muliple
+    - field.field.node.opinion.field_opinion_source
+    - field.field.node.opinion.field_opinion_type
+    - field.field.node.opinion.field_related_cases_plain
+    - field.field.node.opinion.field_review_granted
+    - field.field.node.opinion.field_summary
+    - field.field.node.opinion.field_weight
+    - node.type.opinion
+  module:
+    - datetime
+    - text
+    - user
+    - weight
+id: node.opinion.default
+targetEntityType: node
+bundle: opinion
+mode: default
+content:
+  field_case_number_plain:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_date_time:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_media_file_muliple:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_opinion_source:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_opinion_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_related_cases_plain:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_review_granted:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_summary:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_weight:
+    type: default_weight
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  langcode: true
+  search_api_excerpt: true
