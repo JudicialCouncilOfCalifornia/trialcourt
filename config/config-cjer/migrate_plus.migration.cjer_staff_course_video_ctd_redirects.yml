@@ -1,15 +1,19 @@
 langcode: en
 status: true
 dependencies: {  }
-id: node_subpage_path_redirect
+id: cjer_staff_course_video_ctd_redirects
 class: null
 field_plugin_method: null
 cck_plugin_method: null
 migration_tags:
-  - node
-  - subpage
-migration_group: jcc2
-label: 'Subpage: Import Path Redirects'
+  - cjer
+  - staff
+  - course
+  - video
+  - ctd
+  - redirects
+migration_group: cjer
+label: 'CJER Staff: Video Courses - CTD Redirects'
 source:
   plugin: url
   data_fetcher_plugin: http
@@ -38,7 +42,7 @@ source:
 process:
   nid:
     plugin: migration_lookup
-    migration: node_subpage
+    migration: cjer_staff_course_video_ctd
     source: src_unique_id
     no_stub: true
   path:
@@ -69,4 +73,4 @@ destination:
   plugin: 'entity:redirect'
 migration_dependencies:
   required:
-    - node_subpage
+    - cjer_staff_course_video_ctd
