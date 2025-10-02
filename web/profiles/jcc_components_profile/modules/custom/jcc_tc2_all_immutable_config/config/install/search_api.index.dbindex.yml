@@ -2,16 +2,16 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.node.body
     - field.storage.node.field_components
     - field.storage.paragraph.field_aside
     - field.storage.paragraph.field_brow
     - field.storage.paragraph.field_components
     - field.storage.paragraph.field_heading
-    - field.storage.paragraph.field_subheading
-    - field.storage.node.field_media
-    - field.storage.node.body
     - field.storage.paragraph.field_lead
+    - field.storage.paragraph.field_subheading
     - field.storage.paragraph.field_text
+    - field.storage.node.field_media
     - search_api.server.database
   module:
     - search_api_solr
@@ -213,11 +213,24 @@ field_settings:
         - anonymous
       view_mode:
         'entity:node':
-          alert: default
+          advisory_body: ''
+          arbitrator: ''
+          course: ''
           document: default
+          event: ''
+          facilities: ''
+          invitations_to_comment: ''
+          job: ''
+          judge: ''
           landing_page: default
+          location: ''
           news: default
+          opinion: ''
+          request: ''
+          roc_rule: ''
+          roc_rule_index: ''
           subpage: default
+          surplus_materials: ''
   status:
     label: status
     datasource_id: 'entity:node'
@@ -270,17 +283,44 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  entity_status: {  }
-  entity_type: {  }
-  rendered_item: {  }
-  transliteration:
+  add_url: {  }
+  aggregated_field: {  }
+  auto_aggregated_fulltext_field: {  }
+  content_access:
     weights:
-      preprocess_index: -48
+      preprocess_query: -30
+  custom_value: {  }
+  double_quote_workaround:
+    weights:
+      postprocess_query: 0
+      preprocess_index: -46
       preprocess_query: -15
     all_fields: false
     fields:
       - rendered_item
       - title
+    replacement: '|9999999998|'
+  entity_status: {  }
+  entity_type: {  }
+  file_attachments:
+    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
+    number_indexed: 0
+    number_first_bytes: '1 MB'
+    max_filesize: '0'
+    excluded_private: 1
+    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
+  highlight:
+    weights:
+      postprocess_query: 0
+    prefix: '<strong>'
+    suffix: '</strong>'
+    excerpt: true
+    excerpt_always: true
+    excerpt_length: 256
+    exclude_fields:
+      - rendered_item
+    highlight: always
+    highlight_partial: true
   html_filter:
     weights:
       preprocess_index: -49
@@ -309,22 +349,6 @@ processor_settings:
       h2: 3
       h3: 2
       strong: 2
-  tokenizer:
-    weights:
-      preprocess_index: -47
-      preprocess_query: -6
-    all_fields: false
-    fields:
-      - rendered_item
-    spaces: ''
-    ignored: ._-
-    overlap_cjk: 1
-    minimum_word_size: '3'
-  content_access:
-    weights:
-      preprocess_query: -30
-  aggregated_field: {  }
-  add_url: {  }
   ignorecase:
     weights:
       preprocess_index: -50
@@ -345,30 +369,35 @@ processor_settings:
       - rendered_item
       - summary_processed
       - title
-  highlight:
-    weights:
-      postprocess_query: 0
-    prefix: '<strong>'
-    suffix: '</strong>'
-    excerpt: true
-    excerpt_always: true
-    excerpt_length: 256
-    exclude_fields:
-      - rendered_item
-    highlight: always
-    highlight_partial: true
-  type_boost:
-    weights:
-      preprocess_index: -43
-    boosts:
-      'entity:node':
-        datasource_boost: !!float 1
-        bundle_boosts:
-          document: !!float 2
-          landing_page: !!float 2
-          news: !!float 3
-          subpage: !!float 2
   language_with_fallback: {  }
+  node_exclude: {  }
+  rendered_item: {  }
+  solr_date_range:
+    weights:
+      preprocess_index: 0
+  stemmer:
+    weights:
+      preprocess_index: -44
+      preprocess_query: 0
+    all_fields: true
+    fields:
+      - field_aside
+      - field_brow
+      - field_brow_1
+      - field_heading
+      - field_heading_1
+      - field_subheading
+      - name
+      - processed
+      - processed_1
+      - processed_6
+      - processed_7
+      - rendered_item
+      - summary_processed
+      - title
+    exceptions:
+      mexican: mexic
+      texan: texa
   stopwords:
     weights:
       preprocess_index: -45
@@ -425,51 +454,36 @@ processor_settings:
       - was
       - will
       - with
-  stemmer:
+  tokenizer:
     weights:
-      preprocess_index: -44
-      preprocess_query: 0
-    all_fields: true
+      preprocess_index: -47
+      preprocess_query: -6
+    all_fields: false
     fields:
-      - field_aside
-      - field_brow
-      - field_brow_1
-      - field_heading
-      - field_heading_1
-      - field_subheading
-      - name
-      - processed
-      - processed_1
-      - processed_6
-      - processed_7
       - rendered_item
-      - summary_processed
-      - title
-    exceptions:
-      mexican: mexic
-      texan: texa
-  file_attachments:
-    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
-    number_indexed: 0
-    number_first_bytes: '1 MB'
-    max_filesize: '0'
-    excluded_private: 1
-    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
-  node_exclude: {  }
-  solr_date_range:
+    spaces: ''
+    ignored: ._-
+    overlap_cjk: 1
+    minimum_word_size: '3'
+  transliteration:
     weights:
-      preprocess_index: 0
-  double_quote_workaround:
-    weights:
-      postprocess_query: 0
-      preprocess_index: -46
+      preprocess_index: -48
       preprocess_query: -15
     all_fields: false
     fields:
       - rendered_item
       - title
-    replacement: '|9999999998|'
-  auto_aggregated_fulltext_field: {  }
+  type_boost:
+    weights:
+      preprocess_index: -43
+    boosts:
+      'entity:node':
+        datasource_boost: !!float 1
+        bundle_boosts:
+          document: !!float 2
+          landing_page: !!float 2
+          news: !!float 3
+          subpage: !!float 2
 tracker_settings:
   default:
     indexing_order: fifo
