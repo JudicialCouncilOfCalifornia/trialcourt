@@ -40,10 +40,32 @@ source:
   ids:
     - posted
     - case
-    - title
-    - related
-    - summary
 process:
+  field_opinion_source:
+    -
+      plugin: skip_on_condition
+      method: row
+      source: case
+      condition:
+        plugin: not:matches
+        regex: '/^S/'
+    -
+      plugin: substr
+      length: 1
+    -
+      plugin: static_map
+      map:
+        '': ''
+        S: 'Supreme Court'
+      bypass: true
+    -
+      plugin: default_value
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      value_key: name
+      bundle_key: vid
+      bundle: opinion_source
   status:
     plugin: default_value
     default_value: true
@@ -65,26 +87,6 @@ process:
   path/pathauto:
     plugin: default_value
     default_value: 1
-  field_opinion_source:
-    -
-      plugin: substr
-      source: case
-      length: 1
-    -
-      plugin: skip_on_condition
-      method: row
-      condition:
-        plugin: not:matches
-        regex: '/S/'
-    -
-      plugin: default_value
-      default_value: 'Supreme Court'
-    -
-      plugin: entity_generate
-      entity_type: taxonomy_term
-      value_key: name
-      bundle_key: vid
-      bundle: opinion_source
   field_opinion_type:
     -
       plugin: default_value
@@ -101,13 +103,39 @@ process:
       source: posted
       from_format: U
       to_format: 'Y-m-d\TH:i:s'
-  field_case_number_plain: case
-  field_related_cases_plain: related
+  field_case_number_plain:
+    -
+      plugin: get
+      source: case
+    -
+      plugin: skip_on_condition
+      condition: is_null
+      method: process
+      message: 'Case number could not be determined.'
+  field_related_cases_plain:
+    -
+      plugin: get
+      source: related
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'No related cases.'
   field_summary/value:
     -
       plugin: get
       source: summary
+    -
+      plugin: skip_on_condition
+      condition: is_null
+      method: process
+      message: 'No summary.'
   field_summary/format:
+    -
+      plugin: skip_on_condition
+      condition: is_null
+      method: process
+      source: summary
+      message: 'No summary format needed.'
     -
       plugin: default_value
       default_value: minimal
