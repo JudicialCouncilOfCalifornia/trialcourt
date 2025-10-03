@@ -384,3 +384,10 @@ function template_preprocess_jcc_court(array &$variables) {
     ];
   }
 }
+
+/**
+ * Implements hook_page_attachments().
+ */
+function jcc_jrn_contact_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'jcc_jrn_contact/address_jumplink';
+}

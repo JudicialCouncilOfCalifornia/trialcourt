@@ -59,7 +59,7 @@
 {% set details %}
   <div>
     <div>
-      <a href="/directory" class="back-to-directory"><  Back to directory</a>
+      <a href="/directory" class="back-to-directory"><  Back to Directory</a>
     </div>
     <br />
     <div class="courtview">
@@ -77,6 +77,17 @@
           layout: 'grid'
         } %}
       </div>
+      <br /><br />      
+      <div class="address-dropdown">        
+        <select id="address-selector">
+          <option value="">-- Select an address --</option>
+            {% for address in address_data %}
+              <option value="address-{{ loop.index }}">
+              {{ address.addr1 }}, {{ address.city }}
+              </option>
+            {% endfor %}
+        </select>
+      </div>
 
       <br /><br />
 
@@ -84,7 +95,7 @@
       <div class="addresses-wrapper">
         {% for address in address_data %}
           {% set address_text %}
-            <div>
+            <div id="address-{{ loop.index }}" class="address-block">
               <h4>
                 {{ address.addr1 }}, {{ address.city }}, {{ address.state }} {{ address.zip }}
                 {% if loop.first %}<i>(Main Location)</i>{% endif %}

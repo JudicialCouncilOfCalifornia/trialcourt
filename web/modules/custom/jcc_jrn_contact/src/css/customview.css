@@ -54,7 +54,6 @@
 
 .back-to-directory {
   display: inline-block;
-  padding: 8px 16px;
   background-color: none;
   color: #C05600;
   text-decoration: none;
@@ -73,10 +72,19 @@
 
 .jcc-jrn-contact-staff-filter-form .placeholder-container.form-item:not(.form-item-search),
 .jcc-jrn-contact-officer-filter-form .placeholder-container.form-item:not(.form-item-search) {
-    border: 2px solid black;
     width: 100%;
+  border-block-end: unset !important;
 }
 
+.jcc-jrn-contact-staff-filter-form .placeholder-container label 
+.jcc-jrn-contact-officer-filter-form .placeholder-container label {
+  display: none;     
+}
+
+.jcc-jrn-contact-staff-filter-form .views-exposed-form .placeholder-container.form-item input:focus,
+.jcc-jrn-contact-officer-filter-form .views-exposed-form .placeholder-container.form-item input:focus {
+  border: 1px solid #C05600;
+}
 
 .filter-button {
   width: 250px !important;
@@ -125,4 +133,18 @@
 
 td.col-highlight-cell {
   background-color: #FCE2C5 !important;
+}
+
+.back-to-top {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1000;
 }
