@@ -1574,25 +1574,63 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
     $type = $node->get('field_course_type')->referencedEntities() ? $node->get('field_course_type')->referencedEntities()[0]->label() : NULL;
     $date = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : NULL;
 
-    // Location for next event date.
-    $items = $node->get('field_components');
+    // Event information.
+    $events_date_range = NULL;
     $locations = [];
-    foreach ($items as $item) {
-      $event = $item->entity;
-      if ($event->get('field_date_range')->start_date) {
+    $items = $node->get('field_components');
+    if ($items) {
+      // Trim out expired dates.
+      foreach ($items as $key => $value) {
+        $event = $value->entity;
+        $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
+
+        if ($start_date->format('Ymd') <= $today->format('Ymd')) {
+          unset($items[$key]);
+        }
+      }
+
+      // Dates.
+      $start_date_formatted = NULL;
+      $end_date_formatted = NULL;
+      $last_key = array_key_last($items->getValue());
+      $start_range = NULL;
+      foreach ($items as $key => $value) {
+        $event = $value->entity;
         $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
         $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
 
-        if ($start_date && $end_date->format('Ymd') >= $today->format('Ymd')) {
-          $event_location_id = $event->get('field_event_location')->target_id;
-          if ($event_location_id) {
-            $locations[] = $event->get('field_event_location')->entity->label();
+        // Multiple events range vs single event.
+        if (count($items) > 1) {
+          if ($key == 0) {
+            $start_range = $start_date;
+            $start_date_formatted = $start_date->format('M d');
+          }
+          if ($key == $last_key) {
+            // If overlapping years.
+            if ($end_date->format('Y') != $start_range->format('Y')) {
+              $start_date_formatted = $start_range->format('M d, Y');
+            }
+            $end_date_formatted = ' to ' . $end_date->format('M d, Y');
           }
         }
+        else {
+          $start_date_formatted = $start_date->format('M d, Y');
+          if ($end_date->format('Ymd') != $start_date->format('Ymd')) {
+            $start_date_formatted = $start_date->format('M d') . ' to ';
+            $end_date_formatted = $end_date->format('M d, Y');
+          }
+        }
+
+        // Locations.
+        $event_location_id = $event->get('field_event_location')->target_id;
+        if ($event_location_id) {
+          $locations[] = $event->get('field_event_location')->entity->label();
+        }
       }
-    }
-    if ($locations) {
-      $locations = implode(', ', $locations);
+      $events_date_range = $start_date_formatted . $end_date_formatted;
+      if ($locations) {
+        $locations = implode(', ', $locations);
+      }
     }
 
     // Node action.
@@ -1671,6 +1709,7 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
       'details' => array_filter([
         $type,
         $date,
+        $events_date_range,
         $locations,
       ]),
     ];
@@ -1716,6 +1755,14 @@ function jcc_elevated_preprocess_views_view__courses__promoted(&$variables) {
   jcc_elevated_preprocess_views_view__courses($variables);
 
   $variables['no_results_msg'] = t('No course promotions at this time.');
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for course events by any tag listing.
+ */
+function jcc_elevated_preprocess_views_view__courses__events_by_tag(&$variables) {
+  // Reuse courses catalog preprocess.
+  jcc_elevated_preprocess_views_view__courses($variables);
 }
 
 /**
