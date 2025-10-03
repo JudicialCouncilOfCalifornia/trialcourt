@@ -1687,6 +1687,7 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
 
     // Node action.
     $action = [];
+    $btn_size = 'small';
     if (count($node->get('field_custom_link')) > 0) {
       $registration = $node->get('field_custom_link');
       $registration_state = 'open';
@@ -1709,6 +1710,7 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
           $action = [
             'label' => t('Registration Closed'),
             'href' => $registration->uri,
+            'size' => $btn_size,
           ];
           break;
 
@@ -1716,6 +1718,7 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
           $action = [
             'label' => t('Register Now'),
             'href' => $registration->uri,
+            'size' => $btn_size,
           ];
           break;
 
@@ -1723,6 +1726,7 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
           $action = [
             'label' => t('Pending Registration'),
             'href' => $registration->uri,
+            'size' => $btn_size,
           ];
           break;
 
@@ -1730,6 +1734,7 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
           $action = [
             'label' => t('Registration Not Required'),
             'href' => $registration->uri,
+            'size' => $btn_size,
           ];
       }
     }
@@ -1750,6 +1755,7 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
             $action = [
               'label' => $download_label,
               'href' => $file_url,
+              'size' => $btn_size,
             ];
           }
           break;
@@ -1779,8 +1785,34 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
       'is_new' => $is_new,
       'button_data' => $action,
       'detail_list_data' => $detail_list_data,
+      'event_dates' => $events_date_range,
+      'locations' => $locations,
     ];
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for course events by any tag listing.
+ */
+function jcc_elevated_preprocess_views_view__courses__events_by_tag(&$variables) {
+  // Reuse courses catalog preprocess.
+  jcc_elevated_preprocess_views_view__courses($variables);
+
+  // Replace detail_list_data.
+  // For event details context only.
+  $processed_rows = $variables['processed_rows'];
+  $processed_rows_adjusted = [];
+  foreach ($processed_rows as $row) {
+    $row['is_new'] = FALSE;
+    $row['detail_list_data'] = [
+      'details' => array_filter([
+        $row['event_dates'],
+        $row['locations'],
+      ]),
+    ];
+    $processed_rows_adjusted[] = $row;
+  }
+  $variables['processed_rows'] = $processed_rows_adjusted;
 }
 
 /**
@@ -1807,14 +1839,6 @@ function jcc_elevated_preprocess_views_view__courses__promoted(&$variables) {
   jcc_elevated_preprocess_views_view__courses($variables);
 
   $variables['no_results_msg'] = t('No course promotions at this time.');
-}
-
-/**
- * Implements hook_preprocess_HOOK() for course events by any tag listing.
- */
-function jcc_elevated_preprocess_views_view__courses__events_by_tag(&$variables) {
-  // Reuse courses catalog preprocess.
-  jcc_elevated_preprocess_views_view__courses($variables);
 }
 
 /**
