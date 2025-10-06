@@ -1554,10 +1554,6 @@ function jcc_elevated_preprocess_views_view__requests__requests_grouped_archived
  * Implements hook_preprocess_HOOK() for course catalog listing.
  */
 function jcc_elevated_preprocess_views_view__courses(&$variables) {
-  $timezone = new DateTimeZone('America/Los_Angeles');
-  $today = new DateTime('now', $timezone);
-  $past_date_from_now = strtotime('-1 month');
-
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
@@ -1565,131 +1561,25 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
     return;
   }
 
-  // Process the results for the search api view.
-  $variables['processed_rows'] = [];
-  foreach ($variables['rows'][0]['#rows'] as $item) {
-    // Node details.
-    $node = $item['#row']->_entity;
-    $label = $node->label();
-    $type = $node->get('field_course_type')->referencedEntities() ? $node->get('field_course_type')->referencedEntities()[0]->label() : NULL;
-    $date = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : NULL;
+  $set_details = ['show_label', 'type', 'publish_date', 'events', 'is_new'];
+  $variables['processed_rows'] = __jcc_process_course_results($variables['rows'][0]['#rows'], $set_details);
+}
 
-    // Location for next event date.
-    $items = $node->get('field_components');
-    $locations = [];
-    foreach ($items as $item) {
-      $event = $item->entity;
-      if ($event->get('field_date_range')->start_date) {
-        $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
-        $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
+/**
+ * Implements hook_preprocess_HOOK() for course events by any tag listing.
+ *
+ * Pre-render preprocess hook addresses sort aggregation duplicates.
+ */
+function jcc_elevated_preprocess_views_view__courses__events_by_tag(&$variables) {
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
 
-        if ($start_date && $end_date->format('Ymd') >= $today->format('Ymd')) {
-          $event_location_id = $event->get('field_event_location')->target_id;
-          if ($event_location_id) {
-            $locations[] = $event->get('field_event_location')->entity->label();
-          }
-        }
-      }
-    }
-    if ($locations) {
-      $locations = implode(', ', $locations);
-    }
-
-    // Node action.
-    $action = [];
-    if (count($node->get('field_custom_link')) > 0) {
-      $registration = $node->get('field_custom_link');
-      $registration_state = 'open';
-      $registration_period = $node->get('field_registration_period')->getValue()[0];
-      if ($registration_period) {
-        $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
-        $register_start = $register_start->format('Ymd');
-        $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
-        $register_end = $register_end->format('Ymd');
-        if ($register_start > $today->format('Ymd')) {
-          $registration_state = 'pending';
-        }
-        elseif ($register_end < $today->format('Ymd')) {
-          $registration_state = 'closed';
-        }
-      }
-
-      switch ($registration_state) {
-        case 'closed':
-          $action = [
-            'label' => t('Registration Closed'),
-            'href' => $registration->uri,
-          ];
-          break;
-
-        case 'open':
-          $action = [
-            'label' => t('Register Now'),
-            'href' => $registration->uri,
-          ];
-          break;
-
-        case 'pending':
-          $action = [
-            'label' => t('Pending Registration'),
-            'href' => $registration->uri,
-          ];
-          break;
-
-        default:
-          $action = [
-            'label' => t('Registration Not Required'),
-            'href' => $registration->uri,
-          ];
-      }
-    }
-    elseif ($node->get('field_media') && $node->get('field_media')->entity) {
-      $media = $node->get('field_media')->entity;
-      switch ($media->bundle[0]->target_id) {
-        case 'file':
-        case 'publication':
-          $file = \Drupal::entityTypeManager()->getStorage('file')->load($media->get('field_media_file')->target_id);
-          if ($file) {
-            $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
-            $extension_exp = '/[^.]*$/';
-            preg_match($extension_exp, $file_url, $extension);
-            $download_label = t('Download');
-            if ($extension) {
-              $download_label = $download_label . ' ' . strtoupper($extension[0]);
-            }
-            $action = [
-              'label' => $download_label,
-              'href' => $file_url,
-            ];
-          }
-          break;
-      }
-    }
-
-    $detail_list_data = [
-      'label' => t('Details'),
-      'details' => array_filter([
-        $type,
-        $date,
-        $locations,
-      ]),
-    ];
-
-    // Display course as new up to specified duration.
-    $published_date = (int) $node->getCreatedTime();
-    $is_new = NULL;
-    if ($published_date >= $past_date_from_now) {
-      $is_new = TRUE;
-    }
-
-    $variables['processed_rows'][] = [
-      'title' => $label,
-      'url' => $node->toUrl(),
-      'is_new' => $is_new,
-      'button_data' => $action,
-      'detail_list_data' => $detail_list_data,
-    ];
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
   }
+
+  $set_details = ['events'];
+  $variables['processed_rows'] = __jcc_process_course_results($variables['rows'][0]['#rows'], $set_details);
 }
 
 /**
@@ -1748,10 +1638,44 @@ function jcc_elevated_preprocess_views_view_row_rss(&$variables) {
  * Implements hook_views_pre_render().
  */
 function jcc_elevated_views_pre_render(ViewExecutable $view) {
-  if (($view->id() == 'search') && ($view->current_display == 'search')) {
-    // @todo Hide some fields from display on the search page items.
-    // $view->field['search_api_excerpt_1']->options['exclude'] = TRUE;.
-    // $view->field['field_heading_1']->options['exclude'] = TRUE;.
+  $name = $view->id();
+  $display = $view->current_display;
+
+  switch ($name) {
+    case 'search':
+      switch ($display) {
+        case 'search':
+          // @todo Hide some fields from display on the search page items.
+          // $view->field['search_api_excerpt_1']->options['exclude'] = TRUE;.
+          // $view->field['field_heading_1']->options['exclude'] = TRUE;.
+          break;
+      }
+      break;
+
+    case 'courses':
+      switch ($display) {
+        case 'events_by_tag':
+          // Remove duplicate results caused by aggregated sort.
+          // Unable to solve with view configuration for time being.
+          $results = $view->result;
+          $distinct_nodes = [];
+          foreach ($results as $key => $result) {
+            $node = $result->_entity;
+            if ($node) {
+              $node_id = $node->id();
+              if (!in_array($node_id, $distinct_nodes)) {
+                $distinct_nodes[] = $node_id;
+              }
+              else {
+                unset($results[$key]);
+              }
+            }
+          }
+          $view->result = $results;
+          $view->total_rows = count($view->result);
+          break;
+      }
+      break;
   }
 }
 
@@ -1941,4 +1865,201 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   // Count summary for the current page of results.
   // Suppress duplicate summary with empty header in ViewsResults twig.
   $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for course catalog listing.
+ */
+function __jcc_process_course_results($rows, $config) {
+  $timezone = new DateTimeZone('America/Los_Angeles');
+  $today = new DateTime('now', $timezone);
+  $past_date_from_now = strtotime('-1 month');
+  $processed_rows = [];
+  $type = NULL;
+  $date = NULL;
+  $events_date_range = NULL;
+  $locations = NULL;
+  $is_new = NULL;
+
+  // Process the results for the search api view.
+  foreach ($rows as $row) {
+    // Node details.
+    $node = $row['#row']->_entity;
+    $label = $node->label();
+
+    if ($config && in_array('type', $config)) {
+      $type = $node->get('field_course_type')->referencedEntities() ? $node->get('field_course_type')->referencedEntities()[0]->label() : NULL;
+    }
+
+    if ($config && in_array('publish_date', $config)) {
+      $date = $node->get('field_date')->date ? $node->get('field_date')->date->format('F j, Y') : NULL;
+    }
+
+    // Event information.
+    if ($config && in_array('events', $config)) {
+      $events_date_range = NULL;
+      $locations = [];
+      $items = $node->get('field_components');
+      if ($items) {
+        // Trim out expired dates.
+        foreach ($items as $key => $value) {
+          $event = $value->entity;
+          $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
+
+          if ($start_date->format('Ymd') <= $today->format('Ymd')) {
+            unset($items[$key]);
+          }
+        }
+
+        // Dates.
+        $start_date_formatted = NULL;
+        $end_date_formatted = NULL;
+        $last_key = array_key_last($items->getValue());
+        $start_range = NULL;
+        foreach ($items as $key => $value) {
+          $event = $value->entity;
+          $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
+          $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
+
+          // Multiple events range vs single event.
+          if (count($items) > 1) {
+            if ($key == 0) {
+              $start_range = $start_date;
+              $start_date_formatted = $start_date->format('M d');
+            }
+            if ($key == $last_key) {
+              // If overlapping years.
+              if ($end_date->format('Y') != $start_range->format('Y')) {
+                $start_date_formatted = $start_range->format('M d, Y');
+              }
+              $end_date_formatted = ' to ' . $end_date->format('M d, Y');
+            }
+          }
+          else {
+            $start_date_formatted = $start_date->format('M d, Y');
+            if ($end_date->format('Ymd') != $start_date->format('Ymd')) {
+              $start_date_formatted = $start_date->format('M d') . ' to ';
+              $end_date_formatted = $end_date->format('M d, Y');
+            }
+          }
+
+          // Locations.
+          $event_location_id = $event->get('field_event_location')->target_id;
+          if ($event_location_id) {
+            $locations[] = $event->get('field_event_location')->entity->label();
+          }
+        }
+        $events_date_range = $start_date_formatted . $end_date_formatted;
+        if ($locations) {
+          $locations = implode(', ', $locations);
+        }
+      }
+    }
+
+    // Node action.
+    $action = [];
+    $btn_size = 'small';
+    if (count($node->get('field_custom_link')) > 0) {
+      $registration = $node->get('field_custom_link');
+      $registration_state = 'open';
+      $registration_period = $node->get('field_registration_period')->getValue()[0];
+      if ($registration_period) {
+        $register_start = $node->get('field_registration_period')->start_date->setTimezone($timezone);
+        $register_start = $register_start->format('Ymd');
+        $register_end = $node->get('field_registration_period')->end_date->setTimezone($timezone);
+        $register_end = $register_end->format('Ymd');
+        if ($register_start > $today->format('Ymd')) {
+          $registration_state = 'pending';
+        }
+        elseif ($register_end < $today->format('Ymd')) {
+          $registration_state = 'closed';
+        }
+      }
+
+      switch ($registration_state) {
+        case 'closed':
+          $action = [
+            'label' => t('Registration Closed'),
+            'href' => $registration->uri,
+            'size' => $btn_size,
+          ];
+          break;
+
+        case 'open':
+          $action = [
+            'label' => t('Register Now'),
+            'href' => $registration->uri,
+            'size' => $btn_size,
+          ];
+          break;
+
+        case 'pending':
+          $action = [
+            'label' => t('Pending Registration'),
+            'href' => $registration->uri,
+            'size' => $btn_size,
+          ];
+          break;
+
+        default:
+          $action = [
+            'label' => t('Registration Not Required'),
+            'href' => $registration->uri,
+            'size' => $btn_size,
+          ];
+      }
+    }
+    elseif ($node->get('field_media') && $node->get('field_media')->entity) {
+      $media = $node->get('field_media')->entity;
+      switch ($media->bundle[0]->target_id) {
+        case 'file':
+        case 'publication':
+          $file = \Drupal::entityTypeManager()->getStorage('file')->load($media->get('field_media_file')->target_id);
+          if ($file) {
+            $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+            $extension_exp = '/[^.]*$/';
+            preg_match($extension_exp, $file_url, $extension);
+            $download_label = t('Download');
+            if ($extension) {
+              $download_label = $download_label . ' ' . strtoupper($extension[0]);
+            }
+            $action = [
+              'label' => $download_label,
+              'href' => $file_url,
+              'size' => $btn_size,
+            ];
+          }
+          break;
+      }
+    }
+
+    // Display course as new up to specified duration.
+    if ($config && in_array('is_new', $config)) {
+      $published_date = (int) $node->getCreatedTime();
+      $is_new = NULL;
+      if ($published_date >= $past_date_from_now) {
+        $is_new = TRUE;
+      }
+    }
+
+    $detail_list_data = [
+      'label' => $config && in_array('show_label', $config) ? t('Details') : NULL,
+      'details' => array_filter([
+        $type,
+        $date,
+        $events_date_range,
+        $locations,
+      ]),
+    ];
+
+    $processed_rows[] = [
+      'title' => $label,
+      'url' => $node->toUrl(),
+      'is_new' => $is_new,
+      'button_data' => $action,
+      'detail_list_data' => $detail_list_data,
+    ];
+  }
+
+  return $processed_rows;
 }
