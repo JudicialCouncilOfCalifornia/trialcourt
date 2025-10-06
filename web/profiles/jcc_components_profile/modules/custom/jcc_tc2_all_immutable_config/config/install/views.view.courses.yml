@@ -5,6 +5,7 @@ dependencies:
     - field.storage.node.body
     - node.type.course
     - taxonomy.vocabulary.assignment_area
+    - taxonomy.vocabulary.audience
     - taxonomy.vocabulary.course_subtype
     - taxonomy.vocabulary.course_type
     - taxonomy.vocabulary.delivery_method
@@ -2424,6 +2425,85 @@ display:
     display_plugin: block
     position: 4
     display_options:
+      exposed_form:
+        type: bef
+        options:
+          submit_button: Apply
+          reset_button: true
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: earliest
+          sort_desc_label: latest
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: snippet
+          bef:
+            general:
+              autosubmit: true
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 1500
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+              reset_button_always_show: false
+            pager:
+              plugin_id: default
+              advanced:
+                is_secondary: false
+            filter:
+              field_date_range_value:
+                plugin_id: bef_datepicker
+                advanced:
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+              combine:
+                plugin_id: default
+                advanced:
+                  placeholder_text: 'Enter keywords'
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
+              field_assignment_area_target_id:
+                plugin_id: bef
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                options_show_only_used: true
+                options_show_only_used_filtered: true
+                options_hide_when_empty: true
+                options_show_items_count: 1
+              field_audience_target_id:
+                plugin_id: bef
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                options_show_only_used: true
+                options_show_only_used_filtered: true
+                options_hide_when_empty: true
+                options_show_items_count: 1
       sorts:
         field_date_range_value:
           id: field_date_range_value
@@ -2621,6 +2701,69 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        combine:
+          id: combine
+          table: views
+          field: combine
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: combine
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: combine_op
+            label: 'Search for Course'
+            description: ''
+            use_operator: false
+            operator: combine_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: combine
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+              jrn_legal_opinion_library: '0'
+              surplus_admin: '0'
+              jrn_sourcehr: '0'
+              surplus_user: '0'
+              jrn_tajp: '0'
+              jrn_judicial_officer: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          fields:
+            title: title
+            body: body
         field_assignment_area_target_id:
           id: field_assignment_area_target_id
           table: node__field_assignment_area
@@ -2644,7 +2787,7 @@ display:
             identifier: field_assignment_area_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               author: '0'
@@ -2687,11 +2830,78 @@ display:
           hierarchy: false
           limit: true
           error_message: true
+        field_audience_target_id:
+          id: field_audience_target_id
+          table: node__field_audience
+          field: field_audience_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_audience_target_id_op
+            label: Audience
+            description: ''
+            use_operator: false
+            operator: field_audience_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_audience_target_id
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+              jrn_legal_opinion_library: '0'
+              surplus_admin: '0'
+              jrn_sourcehr: '0'
+              surplus_user: '0'
+              jrn_tajp: '0'
+              jrn_judicial_officer: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: audience
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
       filter_groups:
         operator: AND
         groups:
           1: AND
       defaults:
+        exposed_form: false
         group_by: false
         relationships: false
         sorts: false
