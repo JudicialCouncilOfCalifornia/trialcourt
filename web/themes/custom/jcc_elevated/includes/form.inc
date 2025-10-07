@@ -60,3 +60,35 @@ function jcc_elevated_preprocess_form(&$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_preprocess_preprocess_fieldset().
+ */
+function jcc_elevated_preprocess_fieldset(&$variables): void {
+  // Remove empty tag markup if no BEF checkboxes available.
+  $selector_name = $variables['attributes']['data-drupal-selector'];
+  if ($selector_name && $selector_name == 'edit-category-group') {
+    $cleanedMarkup = str_replace(["\r\n", "\r", "\n"], '', $variables['children']);
+    $regex = '/<div(.*?)/';
+    preg_match($regex, $cleanedMarkup, $has_children);
+    if (!$has_children) {
+      $variables['children'] = NULL;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_preprocess_details().
+ */
+function jcc_elevated_preprocess_details(&$variables): void {
+  // Remove empty tag markup if no BEF checkboxes available.
+  $selector_name = $variables['attributes']['data-drupal-selector'];
+  if ($selector_name && str_ends_with($selector_name, '-collapsible')) {
+    $cleanedMarkup = str_replace(["\r\n", "\r", "\n"], '', $variables['children']);
+    $regex = '/<div class=\"form-checkboxes bef-checkboxes\">(.*?)<\/div>/';
+    preg_match($regex, $cleanedMarkup, $has_children);
+    if ($has_children[1] && !trim($has_children[1])) {
+      $variables['children'] = NULL;
+    }
+  }
+}
