@@ -254,13 +254,13 @@ function jcc_elevated_custom_form_views_exposed_form_alter(&$form, FormStateInte
         case 'catalog':
           // Group topics and subtopics.
           if (isset($form['field_topics_target_id_collapsible']) || isset($form['field_subtopics_target_id_collapsible'])) {
-          $form['category_group'] = ['#type' => 'fieldset',
-          '#title' => t('Topics & Subtopics'),
-          '#weight' => 96,];
-          $form['category_group']['field_topics_target_id_collapsible'] = $form['field_topics_target_id_collapsible'];
-          unset($form['field_topics_target_id_collapsible']);
-          $form['category_group']['field_subtopics_target_id_collapsible'] = $form['field_subtopics_target_id_collapsible'];
-          unset($form['field_subtopics_target_id_collapsible']);
+            $form['category_group'] = ['#type' => 'fieldset',
+            '#title' => t('Topics & Subtopics'),
+            '#weight' => 96,];
+            $form['category_group']['field_topics_target_id_collapsible'] = $form['field_topics_target_id_collapsible'];
+            unset($form['field_topics_target_id_collapsible']);
+            $form['category_group']['field_subtopics_target_id_collapsible'] = $form['field_subtopics_target_id_collapsible'];
+            unset($form['field_subtopics_target_id_collapsible']);
           }
 
           // Reorder course type position.
