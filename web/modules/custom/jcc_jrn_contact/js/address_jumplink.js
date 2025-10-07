@@ -2,6 +2,7 @@
   Drupal.behaviors.addressDropdown = {
     attach: function (context, settings) {
       once('addressDropdown', '#address-selector', context).forEach(function (selector) {
+        const backToTopBtn = document.getElementById('back-to-top');
         selector.addEventListener("change", function () {
           const targetId = this.value;
           if (targetId) {
@@ -10,20 +11,23 @@
               el.scrollIntoView({ behavior: "smooth" });
               history.replaceState(null, null, "#" + targetId);
             }
+            if (backToTopBtn) {
+              backToTopBtn.style.display = "block";
+            }
+          } else {
+            if (backToTopBtn) {
+              backToTopBtn.style.display = "none";
+            }
           }
         });
+
+        if (backToTopBtn) {
+          backToTopBtn.addEventListener("click", function () {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            backToTopBtn.style.display = "none";
+          });
+        }
       });
     }
   };
 })(Drupal, once);
-
-(function () {
-  const addressDropdown = document.getElementById('address');
-  const backToTopBtn = document.getElementById('backToTop');
-
-  if (addressDropdown && backToTopBtn) {
-    addressDropdown.addEventListener('change', function() {
-      backToTopBtn.style.display = this.value ? 'block' : 'none';
-    });
-  }
-})();

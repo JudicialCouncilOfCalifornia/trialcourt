@@ -78,6 +78,7 @@
         } %}
       </div>
       <br /><br />      
+      {% if address_data|length > 1 %}     
       <div class="address-dropdown">        
         <select id="address-selector">
           <option value="">-- Select an address --</option>
@@ -88,8 +89,8 @@
             {% endfor %}
         </select>
       </div>
-
       <br /><br />
+      {% endif %}
 
       {# Loop through all addresses #}
       <div class="addresses-wrapper">
@@ -130,13 +131,16 @@
     </div>
   </div>
 {% endset %}
-<div>
-  {% include "@organisms/Section/Section.twig" with {
-    variant: 'default',
-    sub_component_layout: 'with-sidebar grid',
-    sidebar_direction: 'row',
-    sidebar_width: "",
-    sub_component_data: { details },
-    attributes: create_attribute()
-  } %}
-</div>
+  <button id="back-to-top" title="Back to top" class="button button--secondary back-to-top" style="display:none;">
+    Back to top
+  </button>
+  <div>
+    {% include "@organisms/Section/Section.twig" with {
+      variant: 'default',
+      sub_component_layout: 'with-sidebar grid',
+      sidebar_direction: 'row',
+      sidebar_width: "",
+      sub_component_data: { details },
+      attributes: create_attribute()
+    } %}
+  </div>
