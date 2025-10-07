@@ -5,6 +5,7 @@
  * Functions for views processing.
  */
 
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
@@ -1868,7 +1869,18 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK() for course catalog listing.
+ * Helper function to process course content.
+ *
+ * @param array $rows
+ *   The query results to process.
+ * @param array $config
+ *   Optional details to specify based on need.
+ *   show_label ('Details' heading), type, publish_date, events, is_new.
+ *
+ * @return array
+ *   Array for ViewResult component.
+ *
+ * @throws Exception
  */
 function __jcc_process_course_results($rows, $config) {
   $timezone = new DateTimeZone('America/Los_Angeles');
@@ -2014,20 +2026,25 @@ function __jcc_process_course_results($rows, $config) {
       switch ($media->bundle[0]->target_id) {
         case 'file':
         case 'publication':
-          $file = \Drupal::entityTypeManager()->getStorage('file')->load($media->get('field_media_file')->target_id);
-          if ($file) {
-            $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
-            $extension_exp = '/[^.]*$/';
-            preg_match($extension_exp, $file_url, $extension);
-            $download_label = t('Download');
-            if ($extension) {
-              $download_label = $download_label . ' ' . strtoupper($extension[0]);
+          try {
+            $file = \Drupal::entityTypeManager()->getStorage('file')->load($media->get('field_media_file')->target_id);
+            if ($file) {
+              $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+              $extension_exp = '/[^.]*$/';
+              preg_match($extension_exp, $file_url, $extension);
+              $download_label = t('Download');
+              if ($extension) {
+                $download_label = $download_label . ' ' . strtoupper($extension[0]);
+              }
+              $action = [
+                'label' => $download_label,
+                'href' => $file_url,
+                'size' => $btn_size,
+              ];
             }
-            $action = [
-              'label' => $download_label,
-              'href' => $file_url,
-              'size' => $btn_size,
-            ];
+          }
+          catch (PluginNotFoundException $e) {
+            \Drupal::logger('course')->warning($e->getMessage());
           }
           break;
       }
