@@ -68,8 +68,8 @@ class JccOfficerFilterForm extends FormBase {
 
     $form['filter']['keyword'] = [
       '#type' => 'textfield',
-      '#title' => 'Judicial Officer',
-      '#placeholder' => '',
+      '#title' => '',
+      '#placeholder' => 'Judicial Officer',
       '#default_value' => $request->get('keyword') ?? '',
       '#attributes' => [
         'class' => ['form-text'],
@@ -104,7 +104,6 @@ class JccOfficerFilterForm extends FormBase {
       '#submit' => ['::submitForm'],
       '#attributes' => [
         'class' => ['button', 'button--secondary', 'button--normal'],
-        'style' => 'top:20px;',
       ],
     ];
 
@@ -115,7 +114,6 @@ class JccOfficerFilterForm extends FormBase {
         '#submit' => ['::resetForm'],
         '#attributes' => [
           'class' => ['button', 'button--primary', 'button--normal'],
-          'style' => 'top:20px;',
         ],
       ];
     }
@@ -144,7 +142,7 @@ class JccOfficerFilterForm extends FormBase {
         ],
       ],
       '#prefix' => '<div class="placeholder-container form-item js-form-item js-form-type-textfield form-item-combine js-form-item-combine select>
-                    <br />
+                    <br /><br />
                     <h2 class="filter-search-heading">Filter By</h2><div>Title</div>',
       '#suffix' => '</div>',
     ];

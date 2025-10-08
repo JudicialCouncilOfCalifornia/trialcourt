@@ -148,6 +148,14 @@ function template_preprocess_jcc_ajp(array &$variables) {
  *   - attributes: HTML attributes for the containing element.
  */
 function template_preprocess_jcc_court(array &$variables) {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  $variables['show_back_to_top'] = FALSE;
+  if ($route_name === 'entity.jcc_court.canonical') {
+    $variables['show_back_to_top'] = TRUE;
+  }
+  else {
+    $variables['show_back_to_top'] = FALSE;
+  }
   $entityTypeManager = \Drupal::entityTypeManager();
   $court_entity = \Drupal::routeMatch()->getParameter('jcc_court');
   $court_id = $court_entity instanceof EntityInterface ? $court_entity->id() : NULL;
@@ -383,4 +391,11 @@ function template_preprocess_jcc_court(array &$variables) {
       '#markup' => '<p>No officers found at this location.</p>',
     ];
   }
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function jcc_jrn_contact_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'jcc_jrn_contact/address_jumplink';
 }
