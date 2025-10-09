@@ -180,7 +180,7 @@ function jcc_elevated_preprocess_views_view__judicial_council_forms__block_1(&$v
       $media_tag = '';
       $tag_terms = $media->get('field_tags')->referencedEntities();
       if (!empty($tag_terms)) {
-        $media_tag = $terms[0]->label();
+        $media_tag = $tag_terms[0]->label();
       }
       $detail_list_data = [
         'label' => t('Date revised'),
