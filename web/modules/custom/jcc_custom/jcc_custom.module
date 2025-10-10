@@ -583,6 +583,11 @@ function jcc_custom_views_query_alter(ViewExecutable $view, QueryPluginBase $que
         $query->addWhere(0, 'node__field_date_range.field_date_range_end_value', $view->args[1], '<');
       }
       break;
+
+    case 'media_bulk_edit':
+      $query->addWhere('AND', 'node.id', NULL, 'IS NOT NULL');
+      \Drupal::logger('jcc_custom')->info('Applied filter to exclude invalid entities in view: @view', ['@view' => $view->id()]);
+      break;
   }
   // This code is related to the CSV importer.
   if ($view->id() == 'imported_events' && $view->getDisplay()->display['id'] == 'events') {
