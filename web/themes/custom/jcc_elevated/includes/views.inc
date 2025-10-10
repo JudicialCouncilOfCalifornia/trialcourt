@@ -1866,6 +1866,86 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   // Count summary for the current page of results.
   // Suppress duplicate summary with empty header in ViewsResults twig.
   $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
+
+  // View specifics.
+  $view = $variables;
+  $view_id = $view['id'];
+  $display = $view['display_id'];
+  $results = $variables['rows'][0]['#rows'];
+  switch ($view_id) {
+    case 'courses':
+      switch ($display) {
+        case 'catalog':
+          // Group topics and subtopics.
+          if ($form['field_topics_target_id_collapsible'] || ['field_subtopics_target_id_collapsible']) {
+            $topics = $form['field_topics_target_id']['#options'];
+            $subtopics = $form['field_subtopics_target_id']['#options'];
+
+            if ($results && (count($topics) > 0 || count($subtopics) > 0)) {
+              $form['category_group'] = [
+                '#type' => 'fieldset',
+                '#title' => t('Topics & Subtopics'),
+                '#weight' => 96,
+              ];
+            }
+
+            if ($results && count($topics) > 0) {
+              $form['category_group']['field_topics_target_id_collapsible'] = $form['field_topics_target_id_collapsible'];
+              unset($form['field_topics_target_id_collapsible']);
+            }
+            else {
+              unset($form['field_topics_target_id']);
+              unset($form['field_topics_target_id_collapsible']);
+            }
+
+            if ($results && count($subtopics) > 0) {
+              $form['category_group']['field_subtopics_target_id_collapsible'] = $form['field_subtopics_target_id_collapsible'];
+              unset($form['field_subtopics_target_id_collapsible']);
+            }
+            else {
+              unset($form['field_subtopics_target_id']);
+              unset($form['field_subtopics_target_id_collapsible']);
+            }
+          }
+
+          // Reorder course type position.
+          $types = $form['field_course_type_target_id']['#options'];
+          if ($results && count($types) > 0) {
+            $form['field_course_type_target_id_collapsible']['#weight'] = 97;
+          }
+          else {
+            unset($form['field_course_type_target_id']);
+            unset($form['field_course_type_target_id_collapsible']);
+          }
+
+          // Group special tags.
+          if (isset($form['field_is_quick_reference_value'])) {
+            $form['special_group'] = [
+              '#type' => 'fieldset',
+              '#title' => t('Special Tags'),
+              '#weight' => 98,
+            ];
+            if ($form['field_is_quick_reference_value']) {
+              $form['special_group']['field_is_quick_reference_value'] = $form['field_is_quick_reference_value'];
+              unset($form['field_is_quick_reference_value']);
+            }
+          }
+
+          // Position sorting last.
+          $form['sort_bef_combine']['#weight'] = 99;
+
+          break;
+
+        case 'events_by_tag':
+          // Customize date range between filter labels.
+          $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['min']['#title'] = t('Start Date');
+          $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['max']['#title'] = t('End Date');
+
+          break;
+      }
+
+      break;
+  }
 }
 
 /**
