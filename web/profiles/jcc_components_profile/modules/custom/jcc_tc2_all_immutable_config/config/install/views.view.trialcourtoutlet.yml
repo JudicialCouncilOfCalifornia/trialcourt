@@ -6,6 +6,8 @@ dependencies:
     - media.type.file
     - taxonomy.vocabulary.document_type
     - taxonomy.vocabulary.media_tags
+    - user.role.administrator
+    - user.role.jrn_sourcehr
   module:
     - media
     - taxonomy
@@ -137,10 +139,26 @@ display:
           separator: ', '
           field_api_classes: false
       pager:
-        type: none
+        type: full
         options:
           offset: 0
-          items_per_page: null
+          items_per_page: 100
+          total_pages: null
+          id: 0
+          tags:
+            next: 'Next ›'
+            previous: '‹ Previous'
+            first: '« First'
+            last: 'Last »'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          quantity: 9
       exposed_form:
         type: basic
         options:
@@ -152,9 +170,11 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       access:
-        type: perm
+        type: role
         options:
-          perm: 'view media'
+          role:
+            administrator: administrator
+            jrn_sourcehr: jrn_sourcehr
       cache:
         type: tag
         options: {  }
@@ -389,8 +409,9 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
         - user
-        - user.permissions
+        - user.roles
       tags:
         - 'config:field.storage.media.field_category'
   block_1:
@@ -406,7 +427,8 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
         - user
-        - user.permissions
+        - user.roles
       tags:
         - 'config:field.storage.media.field_category'
