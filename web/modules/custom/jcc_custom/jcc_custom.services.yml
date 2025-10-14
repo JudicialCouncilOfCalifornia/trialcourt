@@ -8,3 +8,7 @@ services:
     arguments: ['@entity_type.manager', '@module_handler', '@current_user', '@content_moderation.moderation_information']
     tags:
       - { name: event_subscriber }
+  jcc_custom.views.field.bulk_form_override:
+    class: Drupal\jcc_custom\CoreOverride\views\field\BulkFormOverride
+    tags:
+      - { name: views.field, id: bulk_form }
