@@ -13,7 +13,7 @@
 {% include "@molecules/HeroHangover/HeroHangover.twig" with {
   hangover_hide_compact: false,
   hangover_offset: 22,
-  background: 'red',
+  background: 'brown',
   heading: 'Directory: Court Location(s)',
   news_header: true,
   text: ''
@@ -78,10 +78,13 @@
         } %}
       </div>
       <br /><br />      
+      {% set num_locations = address_data|length %}      
+      {# If more than one address, show dropdown to select specific address #}
       {% if address_data|length > 1 %}     
-      <div class="address-dropdown">        
+      <div class="address-dropdown">  
+      <label for="address-selector">Select to view a specific address ({{num_locations}} locations)</label>      
         <select id="address-selector">
-          <option value="">-- Select an address --</option>
+          <option value="">-- Select --</option>
             {% for address in address_data %}
               <option value="address-{{ loop.index }}">
               {{ address.addr1 }}, {{ address.city }}

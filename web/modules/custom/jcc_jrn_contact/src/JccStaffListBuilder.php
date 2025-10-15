@@ -160,10 +160,6 @@ class JccStaffListBuilder extends EntityListBuilder {
       'data' => $this->t('Location'),
       'field' => 't.location',
     ];
-    $header['temporary'] = [
-      'data' => $this->t('Temp Hire'),
-      'field' => 't.temporary',
-    ];
     return $header + parent::buildHeader();
   }
 
@@ -195,7 +191,6 @@ class JccStaffListBuilder extends EntityListBuilder {
       ],
     ];
     $row['location'] = $entity->get('location')->value;
-    $row['temporary'] = $entity->get('temporary')->value ? $this->t('Yes') : $this->t('No');
     return $row + parent::buildRow($entity);
   }
 

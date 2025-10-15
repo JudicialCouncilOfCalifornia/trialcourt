@@ -68,7 +68,7 @@ class JccAjpFilterForm extends FormBase {
 
     $form['filter']['keyword'] = [
       '#type' => 'textfield',
-      '#title' => 'Keyword',
+      '#title' => '',
       '#placeholder' => 'Search by name or email',
       '#default_value' => $request->get('keyword') ?? '',
     ];
@@ -78,12 +78,12 @@ class JccAjpFilterForm extends FormBase {
       '#attributes' => ['class' => ['form-item']],
     ];
 
-     $form['actions']['wrapper'] = [
+    $form['actions']['wrapper'] = [
       '#type' => 'container',
       '#attributes' => [
-      'class' => ['button-group'],
+        'class' => ['button-group'],
       ],
-  ];
+    ];
 
     $form['actions']['wrapper']['submit'] = [
       '#type' => 'submit',

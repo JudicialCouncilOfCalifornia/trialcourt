@@ -81,17 +81,17 @@ class JccAjpListBuilder extends EntityListBuilder {
       ->count()
       ->execute();
 
-     return [
-    '#theme' => 'custom_ajp_view',
-    '#form' => $form,
-    '#table' => $table,
-    '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
-    '#attached' => [
-    'library' => [
-      'jcc_jrn_contact/custom_ajp_view',
-    ],
-    ]
-  ];
+    return [
+      '#theme' => 'custom_ajp_view',
+      '#form' => $form,
+      '#table' => $table,
+      '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
+      '#attached' => [
+        'library' => [
+          'jcc_jrn_contact/custom_ajp_view',
+        ],
+      ],
+    ];
   }
 
   /**
@@ -103,10 +103,6 @@ class JccAjpListBuilder extends EntityListBuilder {
       'field' => 't.name',
       'sort' => 'asc',
     ];
-    $header['email'] = [
-      'data' => $this->t('Email'),
-      'field' => 't.email',
-    ];
     $header['fy_service_days'] = [
       'data' => $this->t('FY Service Days'),
       'field' => 't.fy_service_days',
@@ -114,14 +110,6 @@ class JccAjpListBuilder extends EntityListBuilder {
     $header['life_service_days'] = [
       'data' => $this->t('Life Service Days'),
       'field' => 't.life_service_days',
-    ];
-    $header['fy_pro_bono_days'] = [
-      'data' => $this->t('FY Pro Bono Days'),
-      'field' => 't.fy_pro_bono_days',
-    ];
-    $header['life_pro_bono_days'] = [
-      'data' => $this->t('Life Pro Bono Days'),
-      'field' => 't.life_pro_bono_days',
     ];
     return $header + parent::buildHeader();
   }
@@ -132,11 +120,8 @@ class JccAjpListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /**  @var \Drupal\jcc_jrn_contact\JccStaffInterface $entity */
     $row['name'] = $entity->get('name')->value;
-    $row['email'] = $entity->get('email')->value;
     $row['fy_service_days'] = $entity->get('fy_service_days')->value;
     $row['life_service_days'] = $entity->get('life_service_days')->value;
-    $row['fy_pro_bono_days'] = $entity->get('fy_pro_bono_days')->value;
-    $row['life_pro_bono_days'] = $entity->get('life_pro_bono_days')->value;
     return $row + parent::buildRow($entity);
   }
 

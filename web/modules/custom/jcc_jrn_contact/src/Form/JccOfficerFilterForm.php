@@ -94,7 +94,7 @@ class JccOfficerFilterForm extends FormBase {
       '#type' => 'container',
       '#attributes' => [
         'class' => ['button-group'],
-        'style' => 'gap: 15px;margin-top:10px;margin-top:20px;',
+        'style' => 'gap: 15px;',
       ],
     ];
 
@@ -141,8 +141,8 @@ class JccOfficerFilterForm extends FormBase {
           'form-item',
         ],
       ],
-      '#prefix' => '<div class="placeholder-container form-item js-form-item js-form-type-textfield form-item-combine js-form-item-combine select>
-                    <br /><br />
+      '#prefix' => '<div class="placeholder-container form-item">
+                    <br />
                     <h2 class="filter-search-heading">Filter By</h2><div>Title</div>',
       '#suffix' => '</div>',
     ];
@@ -158,8 +158,8 @@ class JccOfficerFilterForm extends FormBase {
       }, []) : [],
       '#empty_option' => 'All Courts',
       '#default_value' => $request->get('court') ?? '',
-      '#prefix' => '<div class="placeholder-container form-item js-form-item  js-form-type-textfield form-item-combine js-form-item-combine select">   
-                    <h2 class="filter-search-heading"></h2><div>County, Court, or District</div>',
+      '#prefix' => '<div class="placeholder-container form-item">   
+                    <div>County, Court, or District</div>',
       '#suffix' => '</div>',
     ];
 
