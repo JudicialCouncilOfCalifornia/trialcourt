@@ -153,6 +153,58 @@ function jcc_elevated_preprocess_views_view__publication_forms(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for JRN Judicial Council Forms.
+ */
+function jcc_elevated_preprocess_views_view__judicial_council_forms__block_1(&$variables) {
+  $variables['form_in_sidebar'] = FALSE;
+  __jcc_view_results_exposed_filter_init($variables);
+  $variables['processed_rows'] = [];
+  if (!empty($variables['rows'][0]['#rows'])) {
+    foreach ($variables['rows'][0]['#rows'] as $item) {
+      $media = $item['#row']->_entity;
+      $url = $media->toUrl();
+      $media_files = [
+        'media_file' => [
+          'file' => $media->get('field_media_file')->referencedEntities()[0] ?: NULL,
+          'language' => t('English'),
+        ],
+      ];
+      $main_file_entity = $media_files['media_file']['file'] ?? NULL;
+      $url = $main_file_entity ? Url::fromUri($main_file_entity->createFileUrl(FALSE), [
+        'attributes' => [
+          'target' => '_blank',
+          'class' => ['download-pdf'],
+        ],
+      ]) : $media->toUrl();
+      $date = $media->get('field_date')->getValue()[0]['value'] ?? '';
+      $description = $media->get('field_media_text')->getValue()[0]['value'] ?? '';
+      $media_tag = '';
+      $tag_terms = $media->get('field_tags')->referencedEntities();
+      if (!empty($tag_terms)) {
+        $media_tag = $tag_terms[0]->label();
+      }
+      $detail_list_data = [
+        'label' => t('Date revised'),
+        'details' => array_filter([
+          $date,
+        ]),
+      ];
+      $button_data = [
+        'label' => t('Download PDF'),
+        'href' => $url,
+      ];
+      $variables['processed_rows'][] = [
+        'title' => $media_tag,
+        'url' => $url,
+        'content' => $description,
+        'button_data' => $button_data,
+        'detail_list_data' => $detail_list_data,
+      ];
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK() for JRN trialcourtoutlet view.
  */
 function jcc_elevated_preprocess_views_view__trialcourtoutlet__block_1(&$variables) {
@@ -1871,51 +1923,74 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   $view = $variables;
   $view_id = $view['id'];
   $display = $view['display_id'];
-  $results = $variables['rows'][0]['#rows'];
+  $results = $variables['rows'][0]['#rows'] ?? NULL;
+  $bef_class = 'bef-exposed-form';
+
+  // For Better Expose Filters.
+  // Suppress certain filters if no results or filter options.
+  if (in_array($bef_class, $form['#attributes']['class'])) {
+    $field_suffix = 'field_';
+    foreach ($form as $key => $item) {
+      if (str_starts_with($key, $field_suffix) && $item['#type']) {
+        $field_name = $item['#name'] ?? NULL;
+        if ($field_name) {
+          switch ($item['#type']) {
+            case 'select':
+            case 'checkboxes':
+            case 'radio':
+            case 'details':
+            case 'fieldset':
+              if (!$results) {
+                if ($field_name) {
+                  unset($form[$field_name]);
+                  unset($form[$field_name . '_collapsible']);
+                }
+              }
+              else {
+                $options = $item['#options'] ?? NULL;
+                if (count($options) == 0) {
+                  unset($form[$field_name]);
+                  unset($form[$field_name . '_collapsible']);
+                }
+              }
+              break;
+          }
+        }
+      }
+    }
+  }
+
+  // Customizations specific per view.
   switch ($view_id) {
     case 'courses':
       switch ($display) {
         case 'catalog':
+        case 'by_type':
+        case 'by_method':
           // Group topics and subtopics.
-          if ($form['field_topics_target_id_collapsible'] || ['field_subtopics_target_id_collapsible']) {
-            $topics = $form['field_topics_target_id']['#options'];
-            $subtopics = $form['field_subtopics_target_id']['#options'];
-
-            if ($results && (count($topics) > 0 || count($subtopics) > 0)) {
+          $filter_topics = $form['field_topics_target_id_collapsible'] ?? NULL;
+          $filter_subtopics = $form['field_subtopics_target_id_collapsible'] ?? NULL;
+          if ($filter_topics || $filter_subtopics) {
+            if ($results && ($filter_topics || $filter_subtopics)) {
               $form['category_group'] = [
                 '#type' => 'fieldset',
                 '#title' => t('Topics & Subtopics'),
                 '#weight' => 96,
               ];
             }
-
-            if ($results && count($topics) > 0) {
-              $form['category_group']['field_topics_target_id_collapsible'] = $form['field_topics_target_id_collapsible'];
+            if ($filter_topics) {
+              $form['category_group']['field_topics_target_id_collapsible'] = $filter_topics;
               unset($form['field_topics_target_id_collapsible']);
             }
-            else {
-              unset($form['field_topics_target_id']);
-              unset($form['field_topics_target_id_collapsible']);
-            }
-
-            if ($results && count($subtopics) > 0) {
-              $form['category_group']['field_subtopics_target_id_collapsible'] = $form['field_subtopics_target_id_collapsible'];
-              unset($form['field_subtopics_target_id_collapsible']);
-            }
-            else {
-              unset($form['field_subtopics_target_id']);
+            if ($filter_subtopics) {
+              $form['category_group']['field_subtopics_target_id_collapsible'] = $filter_subtopics;
               unset($form['field_subtopics_target_id_collapsible']);
             }
           }
 
           // Reorder course type position.
-          $types = $form['field_course_type_target_id']['#options'];
-          if ($results && count($types) > 0) {
+          if (isset($form['field_course_type_target_id_collapsible'])) {
             $form['field_course_type_target_id_collapsible']['#weight'] = 97;
-          }
-          else {
-            unset($form['field_course_type_target_id']);
-            unset($form['field_course_type_target_id_collapsible']);
           }
 
           // Group special tags.
@@ -1925,21 +2000,23 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
               '#title' => t('Special Tags'),
               '#weight' => 98,
             ];
-            if ($form['field_is_quick_reference_value']) {
-              $form['special_group']['field_is_quick_reference_value'] = $form['field_is_quick_reference_value'];
-              unset($form['field_is_quick_reference_value']);
-            }
+            $form['special_group']['field_is_quick_reference_value'] = $form['field_is_quick_reference_value'];
+            unset($form['field_is_quick_reference_value']);
           }
 
           // Position sorting last.
-          $form['sort_bef_combine']['#weight'] = 99;
+          if (isset($form['sort_bef_combine'])) {
+            $form['sort_bef_combine']['#weight'] = 99;
+          }
 
           break;
 
         case 'events_by_tag':
           // Customize date range between filter labels.
-          $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['min']['#title'] = t('Start Date');
-          $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['max']['#title'] = t('End Date');
+          if ($form['field_date_range_value_wrapper']) {
+            $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['min']['#title'] = t('Start Date');
+            $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['max']['#title'] = t('End Date');
+          }
 
           break;
       }

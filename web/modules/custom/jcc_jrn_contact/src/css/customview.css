@@ -1,6 +1,6 @@
 
 .staff-table table thead th {
-  background-color: #FCE2C5 ;
+  background-color: #FEF2E4;
   color: black !important;
   padding: 15px !important;
 }
@@ -54,7 +54,6 @@
 
 .back-to-directory {
   display: inline-block;
-  padding: 8px 16px;
   background-color: none;
   color: #C05600;
   text-decoration: none;
@@ -73,10 +72,19 @@
 
 .jcc-jrn-contact-staff-filter-form .placeholder-container.form-item:not(.form-item-search),
 .jcc-jrn-contact-officer-filter-form .placeholder-container.form-item:not(.form-item-search) {
-    border: 2px solid black;
     width: 100%;
+  border-block-end: unset !important;
 }
 
+.jcc-jrn-contact-staff-filter-form .placeholder-container label 
+.jcc-jrn-contact-officer-filter-form .placeholder-container label {
+  display: none;     
+}
+
+.jcc-jrn-contact-staff-filter-form .views-exposed-form .placeholder-container.form-item input:focus,
+.jcc-jrn-contact-officer-filter-form .views-exposed-form .placeholder-container.form-item input:focus {
+  border: 1px solid #C05600;
+}
 
 .filter-button {
   width: 250px !important;
@@ -97,8 +105,8 @@
   background: url('/themes/custom/jcc_elevated/icons/table_doublearrow.svg') no-repeat center;
   background-size: contain;
    display: inline-block;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
 }
 
 .staff-table th.is-active[aria-sort="ascending"] a::after {   
@@ -126,3 +134,4 @@
 td.col-highlight-cell {
   background-color: #FCE2C5 !important;
 }
+
