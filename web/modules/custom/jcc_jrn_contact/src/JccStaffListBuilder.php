@@ -155,7 +155,6 @@ class JccStaffListBuilder extends EntityListBuilder {
     ];
     $header['phone'] = [
       'data' => $this->t('Phone and Email'),
-      'field' => 't.phone',
     ];
     $header['location'] = [
       'data' => $this->t('Location'),
