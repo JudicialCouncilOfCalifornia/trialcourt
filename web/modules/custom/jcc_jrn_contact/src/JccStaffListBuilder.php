@@ -100,6 +100,7 @@ class JccStaffListBuilder extends EntityListBuilder {
       }
     }
 
+    $table_rows = [];
     foreach ($table['table']['#rows'] as $row) {
       $table_rows[] = [
         'first_name' => $row['first_name'],

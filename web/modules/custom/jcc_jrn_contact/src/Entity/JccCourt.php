@@ -31,7 +31,7 @@ use Drupal\user\UserInterface;
  *     }
  *   },
  *   base_table = "jcc_court",
- *   admin_permission = "access jcc court overview",
+ *   admin_permission = "access content",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "name_2",
