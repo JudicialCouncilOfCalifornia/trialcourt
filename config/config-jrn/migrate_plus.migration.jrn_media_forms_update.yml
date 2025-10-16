@@ -1,0 +1,110 @@
+uuid: 86056e7e-708f-441e-8b93-66001be47dba
+langcode: en
+status: true
+dependencies: {  }
+id: jrn_media_forms_update
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - media
+migration_group: jrn
+label: 'Media Update - Forms'
+source:
+  plugin: csv
+  path: 'public://jrn-forms-update.csv'
+  header_row_count: 1
+  ids:
+    - url
+  fields:
+    -
+      name: url
+      selector: url
+      label: 'Attachment file url'
+    -
+      name: path
+      selector: path
+      label: Path
+    -
+      name: title
+      selector: title
+      label: Title
+    -
+      name: category
+      selector: category
+      label: Category
+    -
+      name: filename
+      selector: filename
+      label: Filename
+    -
+      name: form_code
+      selector: form_code
+      label: 'Form Code'
+    -
+      name: form_type
+      selector: form_type
+      label: 'Form Type'
+    -
+      name: date
+      selector: date
+      label: Date
+    -
+      name: description
+      selector: description
+      label: Description
+process:
+  mid:
+    -
+      plugin: migration_lookup
+      migration: jrn_media
+      source: url
+    -
+      plugin: skip_on_empty
+      method: row
+  field_media_text/value: description
+  field_media_text/format:
+    plugin: default_value
+    default_value: caption
+  field_date:
+    -
+      plugin: callback
+      callable: strtotime
+      source: date
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m-d
+  field_matters_served:
+    -
+      plugin: callback
+      callable: trim
+      source: form_type
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      value_key: name
+      bundle_key: vid
+      bundle: matters_served
+  field_tags:
+    -
+      plugin: callback
+      callable: trim
+      source: form_code
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      value_key: name
+      bundle_key: vid
+      bundle: media_tags
+destination:
+  plugin: 'entity:media'
+  overwrite_properties:
+    - field_media_text
+    - field_date
+    - field_matters_served
+    - field_tags
+migration_dependencies:
+  required: {  }
+  optional:
+    - jrn_media
