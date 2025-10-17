@@ -91,6 +91,16 @@ process:
     source: category
   field_document_type:
     -
+      plugin: default_value
+      default_value: 'Legal Opinion'
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      value_key: name
+      bundle_key: vid
+      bundle: document_type
+  field_matters_served:
+    -
       plugin: skip_on_empty
       method: process
       source: statewide
@@ -99,7 +109,7 @@ process:
       entity_type: taxonomy_term
       value_key: name
       bundle_key: vid
-      bundle: document_type
+      bundle: matters_served
   field_tags:
     -
       plugin: explode
@@ -141,6 +151,7 @@ destination:
   overwrite_properties:
     - field_category
     - field_document_type
+    - field_matters_served
     - field_tags
     - field_date
     - field_media_text
