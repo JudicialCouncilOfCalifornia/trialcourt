@@ -1,0 +1,150 @@
+uuid: a0151007-ba6a-475e-83f3-70db367c186e
+langcode: en
+status: true
+dependencies: {  }
+id: jrn_media_legalopinion_update
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - media
+migration_group: jrn
+label: 'Media Update - Legal Opinions'
+source:
+  plugin: csv
+  path: 'public://jrn-legal-opinions.csv'
+  header_row_count: 1
+  ids:
+    - url
+  fields:
+    -
+      name: url
+      selector: url
+      label: 'Attachment file url'
+    -
+      name: path
+      selector: path
+      label: Path
+    -
+      name: title
+      selector: title
+      label: Title
+    -
+      name: category
+      selector: category
+      label: Category
+    -
+      name: filename
+      selector: filename
+      label: Filename
+    -
+      name: topics
+      selector: topics
+      label: Topics
+    -
+      name: statewide
+      selector: statewide
+      label: statewide
+    -
+      name: description_1
+      selector: description_1
+      label: 'Description 1'
+    -
+      name: description_2
+      selector: description_2
+      label: 'Description 2'
+    -
+      name: description_3
+      selector: description_3
+      label: 'Description 3'
+    -
+      name: description_4
+      selector: description_4
+      label: 'Description 4'
+    -
+      name: description_5
+      selector: description_5
+      label: 'Description 5'
+    -
+      name: description_6
+      selector: description_6
+      label: 'Description 6'
+    -
+      name: date
+      selector: date
+      label: Date
+process:
+  mid:
+    -
+      plugin: migration_lookup
+      migration: jrn_media
+      source: url
+    -
+      plugin: skip_on_empty
+      method: row
+  field_category:
+    plugin: entity_generate
+    entity_type: taxonomy_term
+    value_key: name
+    bundle_key: vid
+    bundle: media_file_category
+    source: category
+  field_document_type:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: statewide
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      value_key: name
+      bundle_key: vid
+      bundle: document_type
+  field_tags:
+    -
+      plugin: explode
+      delimiter: '~'
+      source: topics
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      entity_type: taxonomy_term
+      value_key: name
+      bundle_key: vid
+      bundle: media_tags
+  field_date:
+    -
+      plugin: callback
+      callable: strtotime
+      source: date
+    -
+      plugin: format_date
+      from_format: U
+      to_format: Y-m-d
+  field_media_text/value:
+    plugin: concat
+    source:
+      - description_1
+      - description_2
+      - description_3
+      - description_4
+      - description_5
+      - description_6
+    delimiter: '<br /><br />'
+  field_media_text/format:
+    plugin: default_value
+    default_value: caption
+destination:
+  plugin: 'entity:media'
+  overwrite_properties:
+    - field_category
+    - field_document_type
+    - field_tags
+    - field_date
+    - field_media_text
+migration_dependencies:
+  required: {  }
+  optional:
+    - jrn_media
