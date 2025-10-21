@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.media.file.field_category
+    - field.field.media.file.field_date
     - field.field.media.file.field_document_type
     - field.field.media.file.field_matters_served
     - field.field.media.file.field_media_file
@@ -10,6 +11,7 @@ dependencies:
     - field.field.media.file.field_tags
     - media.type.file
   module:
+    - datetime
     - media_entity_download
     - text
 id: media.file.default
@@ -17,6 +19,15 @@ targetEntityType: media
 bundle: file
 mode: default
 content:
+  field_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 2
+    region: content
   field_media_file:
     type: media_entity_download_download_link
     label: visually_hidden

@@ -1,0 +1,12 @@
+--- a/content_lock.module
++++ b/content_lock.module
+@@ -251,7 +251,7 @@
+ 
+   $content_lock = \Drupal::service('content_lock');
+ 
+-  foreach (array_filter($types) as $type => $value) {
++  foreach (array_filter($types ?? []) as $type => $value) {
+     $definition = \Drupal::entityTypeManager()->getDefinition($type);
+     $data['content_lock']['table']['join'][$definition->getDataTable()] = [
+       'left_field' => $definition->getKey('id'),
+       

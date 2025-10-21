@@ -240,7 +240,7 @@
 
   {# Main #}
   {% set main %}
-    <main>
+    <main class="stack">
       {# Video embed placement only. #}
       {% if course.embed and course.embed.type == 'video' %}
         {{ course.embed.media }}
@@ -276,6 +276,9 @@
     </main>
   {% endset %}
 
+
+  {# Disable caching for this template #}
+  {% set cache = {'#cache': {'max-age': 0}} %}
   <div class="course">
     {% include "@organisms/Section/Section.twig" with {
       variant: 'default',

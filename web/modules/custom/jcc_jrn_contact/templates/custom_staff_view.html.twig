@@ -1,39 +1,80 @@
 {{ attach_library("jcc_storybook/List") }}
-{{ attach_library("jcc_elevated/surplus-materials") }}
 {{ attach_library("jcc_storybook/Card") }} 
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/HeroHangover") }}
 {{ attach_library("jcc_storybook/Footer") }}
 {{ attach_library("jcc_storybook/Body") }}
 {{attach_library("jcc_jrn_contact/customview") }}
+{{ attach_library("jcc_storybook/InlineForm") }}
+{{ attach_library("jcc_storybook/ViewResults") }}
+{{ attach_library("jcc_storybook/Table") }}
 
  {% include "@molecules/HeroHangover/HeroHangover.twig" with {
     hangover_hide_compact: false,
     hangover_offset: 22,
     background: 'red',      
-    heading: 'Staff Directory',
+    heading: summary,
     news_header: true,    
     text: ''  
     }
   %}  
 
+  {%
+    set classes = [
+      dom_id ? 'js-view-dom-id-' ~ dom_id,
+    ]
+  %}
 
-{% set details %}    
-  <div class="stack">
-  <span>
-    <h2 class="surplus-heading"></h2>    
-  </span>
-  
-<div class="custom-staff-view">
-  <div class="filter-form">
-    {{ form }}
-  </div>
-<br />
-<br />
-  <div  class="staff-table">
-    {{ table }}
+  {% set details %}
+    <div>
+    <div>
+    <a href="/directory" class="back-to-directory">
+  <  Back to Directory
+</a></div>
+    <div style="display:flex;flex-direction: row;gap:20px;">
+    <div{{ attributes.addClass(classes) }}>      
+      {% include "@organisms/ViewResults/ViewResults.twig" with {
+        variant: 'grouped_view',
+        custom_view: true,
+        view_name: id,
+        view_display: display_id,
+        header: '',
+        header_sidebar: '',
+        header_direction_results: 'sidebar-row',
+        content_header: content_header,
+        form: exposed|render,
+        form_in_sidebar: true,
+        list_type: 'ul',
+        list_type_divider: '',
+        sidebar: '',
+        sidebar_direction_results: 'sidebar-row',
+        pager: pager|render,
+        items_per_page: items_per_page,
+        footer: '',
+        footer_sidebar: '',
+        sidebar_direction_footer: 'sidebar-row',
+        }
+      %}
+ </div> 
+
+  <div class="staff-table">
+    {% if result_count > 0 %}
+      {% set search_term = exposed.filter.keyword['#value'] ?? '' %}
+      {% if search_term %}
+        <span class="results-summary">
+          <h2>Results for: {{ search_term }}</h2>
+          <p style="font-size: 15px; color: #919191;">
+            {{ result_count }} Search Results
+          </p>
+        </span>
+      {% endif %}
+      {{ table }}
+    {% else %}
+      <p>No results found</p>
+    {% endif %}
   </div>
 </div>
+</div> 
 {% endset %}
 
 <div class="jrn-directory-staff">
@@ -41,13 +82,12 @@
    variant: 'default',
    sub_component_layout: 'with-sidebar grid',
    sidebar_direction: 'row',
-   sidebar_width: "60",
-   sub_component_data: {
-     details
-   },
+   sidebar_width: "",
+   sub_component_data: 
+   {
+    details
+    },  
     attributes: create_attribute()
     }
   %}
-</div>
-
-
+  </div>

@@ -131,8 +131,6 @@ function jcc_elevated_preprocess_views_view__alerts__alerts(&$variables) {
       }
     }
   }
-
-  $variables['#cache']['max-age'] = 0;
 }
 
 /**
@@ -154,9 +152,62 @@ function jcc_elevated_preprocess_views_view__publication_forms(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for JRN Judicial Council Forms.
+ */
+function jcc_elevated_preprocess_views_view__judicial_council_forms__block_1(&$variables) {
+  $variables['form_in_sidebar'] = FALSE;
+  __jcc_view_results_exposed_filter_init($variables);
+  $variables['processed_rows'] = [];
+  if (!empty($variables['rows'][0]['#rows'])) {
+    foreach ($variables['rows'][0]['#rows'] as $item) {
+      $media = $item['#row']->_entity;
+      $url = $media->toUrl();
+      $media_files = [
+        'media_file' => [
+          'file' => $media->get('field_media_file')->referencedEntities()[0] ?: NULL,
+          'language' => t('English'),
+        ],
+      ];
+      $main_file_entity = $media_files['media_file']['file'] ?? NULL;
+      $url = $main_file_entity ? Url::fromUri($main_file_entity->createFileUrl(FALSE), [
+        'attributes' => [
+          'target' => '_blank',
+          'class' => ['download-pdf'],
+        ],
+      ]) : $media->toUrl();
+      $date = $media->get('field_date')->getValue()[0]['value'] ?? '';
+      $description = $media->get('field_media_text')->getValue()[0]['value'] ?? '';
+      $media_tag = '';
+      $tag_terms = $media->get('field_tags')->referencedEntities();
+      if (!empty($tag_terms)) {
+        $media_tag = $tag_terms[0]->label();
+      }
+      $detail_list_data = [
+        'label' => t('Date revised'),
+        'details' => array_filter([
+          $date,
+        ]),
+      ];
+      $button_data = [
+        'label' => t('Download PDF'),
+        'href' => $url,
+      ];
+      $variables['processed_rows'][] = [
+        'title' => $media_tag,
+        'url' => $url,
+        'content' => $description,
+        'button_data' => $button_data,
+        'detail_list_data' => $detail_list_data,
+      ];
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK() for JRN trialcourtoutlet view.
  */
 function jcc_elevated_preprocess_views_view__trialcourtoutlet__block_1(&$variables) {
+  $variables['form_in_sidebar'] = FALSE;
   $render = \Drupal::service('renderer');
   __jcc_view_results_exposed_filter_init($variables);
   $variables['processed_rows'] = [];
@@ -198,6 +249,7 @@ function jcc_elevated_preprocess_views_view__trialcourtoutlet__block_1(&$variabl
  * Implements hook_preprocess_HOOK() for publications listing.
  */
 function jcc_elevated_preprocess_views_view__publications__publications_list(&$variables) {
+  $variables['form_in_sidebar'] = TRUE;
   $render = \Drupal::service('renderer');
 
   // Customize filter UI.
