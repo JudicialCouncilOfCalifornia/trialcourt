@@ -53,7 +53,7 @@ source:
       name: location
       label: "Location"
 process:
-  field_origin_migration:
+  field_migration_origin:
     plugin: default_value
     default_value: noncrim
   field_party_name:
@@ -187,7 +187,7 @@ process:
   field_case_category:
     -
       plugin: default_value
-      default_value: 'Not Available'
+      default_value: noncrim
     -
       plugin: entity_generate
       bundle: case_category
@@ -198,4 +198,5 @@ process:
 destination:
   plugin: 'entity:node'
   default_bundle: case
+  update: true
 migration_dependencies: null
