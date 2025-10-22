@@ -1,61 +1,58 @@
-uuid: 19318c1a-7f01-4d2a-a369-4aa997879e7d
+uuid: 297b74be-788e-4e67-ae70-a6d4ecbc5d6d
 langcode: en
 status: true
 dependencies: {  }
-id: case_node_noncrim_cases
+id: case_node_civil_cases
 class: null
 field_plugin_method: null
 cck_plugin_method: null
 migration_tags:
   - node
   - case
-  - debug
 migration_group: case_management
-label: 'Case: Import Non-Criminal Case Nodes'
+label: 'Case: Import Node (All)'
 source:
   plugin: csv
-  path: sites/default/files/stanislaus/default/calendar/export_noncrim.csv
+  path: sites/default/files/stanislaus/default/upload/export.csv
   delimiter: ','
   enclosure: '"'
-  header_row_count: 1
+  header_offset: 0
   ids:
     - case_number
-    - hearing_date_and_time
+    - party_name
+    - party_type
+    - department
+    - hearing_datetime
+    - hearing_type
   fields:
     -
       name: party_name
-      label: 'Party_Name'
+      label: 'Party Name'
     -
       name: department
-      label: "Department"
+      label: Department
     -
-      name: hearing_date_and_time
-      label: 'Hearing_Date_and_Time'
+      name: hearing_datetime
+      label: 'Hearing Date and Time'
     -
       name: judicial_officer
-      label: 'Judicial_Officer'
+      label: 'Judicial Officer'
     -
       name: hearing_type
-      label: 'Hearing_Type'
+      label: 'Hearing Type'
     -
       name: party_type
-      label: 'Party_Type'
+      label: 'Party Type'
     -
       name: case_number
-      label: 'Case_Number'
+      label: 'Case Number'
     -
       name: case_type
-      label: 'Case_Type'
-    -
-      name: case_category
-      label: 'Case_Category'
+      label: 'Case Type'
     -
       name: location
-      label: "Location"
+      label: Location
 process:
-  field_migration_origin:
-    plugin: default_value
-    default_value: noncrim
   field_party_name:
     -
       plugin: skip_on_empty
@@ -105,10 +102,12 @@ process:
       entity_type: taxonomy_term
       ignore_case: true
   field_department:
-    - plugin: callback
+    -
+      plugin: callback
       source: location
       callable: trim
-    - plugin: static_map
+    -
+      plugin: static_map
       map:
         'SB Dept 3': 'Dept. 3 SB-Anacapa'
         'SM Dept 3': 'Dept. 3 SM-Cook'
@@ -118,29 +117,31 @@ process:
         'SB Dept 6': 'Dept. 6 SB-Anacapa'
         'SM Dept 2': 'Dept. 2 SM-Cook'
       bypass: true
-    - plugin: entity_generate
+    -
+      plugin: entity_generate
       bundle: department
       value_key: name
       bundle_key: vid
       entity_type: taxonomy_term
       ignore_case: true
   field_hearing_date:
-    - plugin: skip_on_empty
-      method: process
-      source: hearing_date_and_time
-    - plugin: callback
-      callable: jcc_custom_custom_date_format
-      source: hearing_date_and_time
-    - plugin: format_date
-      from_format: 'Y-m-d H:i'
+    -
+      plugin: skip_on_empty
+      method: row
+      source: hearing_datetime
+    -
+      plugin: format_date
+      from_format: 'Y/m/d H:i:s'
       to_format: 'Y-m-d\TH:i:s'
       from_timezone: America/Los_Angeles
       to_timezone: UTC
   field_judge:
-    - plugin: callback
+    -
+      plugin: callback
       source: judicial_officer
       callable: trim
-    - plugin: static_map
+    -
+      plugin: static_map
       map:
         'Anderle, Thomas P': 'Judge Thomas Anderle'
         'Beebe, Jed': 'Judge Jed Beebe'
@@ -149,7 +150,8 @@ process:
         'Rigali, James F': 'Judge James F. Rigali'
         'Sterne, Colleen K': 'Judge Colleen Sterne'
       bypass: true
-    - plugin: entity_generate
+    -
+      plugin: entity_generate
       bundle: judge
       value_key: title
       bundle_key: type
@@ -172,13 +174,16 @@ process:
       entity_type: taxonomy_term
       ignore_case: true
   field_case_type:
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       source: case_type
       method: process
       message: 'No case type found.'
-    - plugin: callback
+    -
+      plugin: callback
       callable: trim
-    - plugin: entity_generate
+    -
+      plugin: entity_generate
       bundle: case_type
       value_key: name
       bundle_key: vid
@@ -187,7 +192,7 @@ process:
   field_case_category:
     -
       plugin: default_value
-      default_value: noncrim
+      default_value: All
     -
       plugin: entity_generate
       bundle: case_category
@@ -195,8 +200,10 @@ process:
       bundle_key: vid
       entity_type: taxonomy_term
       ignore_case: true
+  path/pathauto:
+    plugin: default_value
+    default_value: 1
 destination:
   plugin: 'entity:node'
   default_bundle: case
-  update: true
 migration_dependencies: null
