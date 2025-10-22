@@ -246,6 +246,104 @@ function jcc_elevated_preprocess_views_view__trialcourtoutlet__block_1(&$variabl
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for JRN legal opinion library view.
+ */
+function jcc_elevated_preprocess_views_view__legal_opinion_library__block_1(&$variables) {
+  $variables['form_in_sidebar'] = FALSE;
+  __jcc_view_results_exposed_filter_init($variables);
+  $variables['processed_rows'] = [];
+  if (!empty($variables['rows'][0]['#rows'])) {
+    foreach ($variables['rows'][0]['#rows'] as $item) {
+      $media = $item['#row']->_entity;
+      $url = $media->toUrl();
+      $description = $media->get('field_media_text')->value ?? '';
+      $date = $media->get('field_date')->getValue()[0]['value'] ?? '';
+      $media_files = [
+        'media_file' => [
+          'file' => $media->get('field_media_file')->referencedEntities()[0] ?: NULL,
+          'language' => t('English'),
+        ],
+      ];
+      $main_file_entity = $media_files['media_file']['file'] ?? NULL;
+      $url = $main_file_entity ? Url::fromUri($main_file_entity->createFileUrl(FALSE), [
+        'attributes' => [
+          'target' => '_blank',
+          'class' => ['download-pdf'],
+        ],
+      ]) : $media->toUrl();
+
+      $button_data = [
+        'label' => t('Download PDF'),
+        'href' => $url,
+      ];
+      $detail_list_data = [
+        'details' => array_filter([
+          $date,
+        ]),
+      ];
+
+      $variables['processed_rows'][] = [
+        'title' => strip_tags($description),
+        'url' => $url,
+        'button_data' => $button_data,
+        'detail_list_data' => $detail_list_data,
+      ];
+    }
+    usort($variables['processed_rows'], function ($a, $b) {
+      $date1 = strtotime($a['detail_list_data']['details'][0] ?? '1970-01-01');
+      $date2 = strtotime($b['detail_list_data']['details'][0] ?? '1970-01-01');
+      return $date1 <=> $date2;
+    });
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for JRN trialcourtoutlet view.
+ */
+function jcc_elevated_preprocess_views_view__legal_opinion_library__block_2(&$variables) {
+  $variables['form_in_sidebar'] = FALSE;
+  __jcc_view_results_exposed_filter_init($variables);
+  $variables['processed_rows'] = [];
+  if (!empty($variables['rows'][0]['#rows'])) {
+    foreach ($variables['rows'][0]['#rows'] as $item) {
+      $media = $item['#row']->_entity;
+      $url = $media->toUrl();
+      $description = $media->get('field_media_text')->value ?? '';
+      $date = $media->get('field_date')->getValue()[0]['value'] ?? '';
+      $media_files = [
+        'media_file' => [
+          'file' => $media->get('field_media_file')->referencedEntities()[0] ?: NULL,
+          'language' => t('English'),
+        ],
+      ];
+      $main_file_entity = $media_files['media_file']['file'] ?? NULL;
+      $url = $main_file_entity ? Url::fromUri($main_file_entity->createFileUrl(FALSE), [
+        'attributes' => [
+          'target' => '_blank',
+          'class' => ['download-pdf'],
+        ],
+      ]) : $media->toUrl();
+      $button_data = [
+        'label' => t('Download PDF'),
+        'href' => $url,
+      ];
+      $detail_list_data = [
+        'details' => array_filter([
+          $date,
+        ]),
+      ];
+
+      $variables['processed_rows'][] = [
+        'title' => strip_tags($description),
+        'url' => $url,
+        'button_data' => $button_data,
+        'detail_list_data' => $detail_list_data,
+      ];
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK() for publications listing.
  */
 function jcc_elevated_preprocess_views_view__publications__publications_list(&$variables) {
@@ -1856,6 +1954,37 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
     }
   }
 
+  if ($view && $view->id() === 'legal_opinion_library' && $view->current_display === 'block_2') {
+    if (isset($form['field_tags_target_id'])) {
+      $terms = \Drupal::entityTypeManager()
+        ->getStorage('taxonomy_term')
+        ->loadTree('media_tags');
+
+      $topics = ['Access to the courts', 'Accommodations', 'Alternative Dispute Resolution (ADR)', 'Alcohol', 'Appeals', 'Appointed counsel',
+        'Bail', 'Campaign-related activities', 'Case management', 'Civil assessments', 'Collections', 'Commissioners',
+        'Court Deposits', 'Court employees', 'Court expenses', 'Court facilities', 'Court Financing', 'Court fundraising',
+        'Court holidays', 'Court hours', 'Court Interpreters', 'Court records', 'Court reporters', 'Court security', 'Court sessions',
+        'Criminal proceedings', 'Criminal Justice Realignment', 'Escheat', 'Electronic recordings', 'Ethics', 'Ex parte', 'Family law',
+        'Filing and filing fees', 'Fines, fees and penalties', 'General Court Administration', 'Grand juries', 'Judges', 'Judges pro tempore',
+        'Judicial elections', 'Juries', 'Juvenile proceedings', 'Media issues', 'Mediators', 'Probate', 'Probation Officers', 'Public Access',
+        'Restitution', 'Riese hearings', 'Rule 10.810', 'Subordinate Judicial Officers (SJOs)', 'Traffic proceedings', 'Vexatious Litigants',
+      ];
+      $options = ['All' => '- Select a Topic -'];
+      foreach ($topics as $term_name) {
+        $terms = \Drupal::entityTypeManager()
+          ->getStorage('taxonomy_term')
+          ->loadByProperties([
+            'name' => $term_name,
+            'vid' => 'media_tags',
+          ]);
+        foreach ($terms as $term) {
+          $options[$term->id()] = $term->getName();
+        }
+      }
+      $form['field_tags_target_id']['#options'] = $options;
+    }
+  }
+
   if ($view && $view->id() === 'trialcourtoutlet' && $view->current_display === 'block_1') {
     if (isset($form['field_tags_target_id'])) {
       $options = [];
@@ -1909,8 +2038,10 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
       }
 
       // Hide if only All/Any option is available.
-      if (count($form[$name]['#options']) <= 1 && isset($form[$name]['#options']['All'])) {
-        $form[$name]['#access'] = FALSE;
+      if (!empty($form[$name]['#options']) && is_array($form[$name]['#options'])) {
+        if (count($form[$name]['#options']) <= 1 && isset($form[$name]['#options']['All'])) {
+          $form[$name]['#access'] = FALSE;
+        }
       }
     }
   }
