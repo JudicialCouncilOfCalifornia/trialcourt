@@ -25,12 +25,13 @@ dependencies:
     - field.field.node.course.field_registration_period
     - field.field.node.course.field_related_materials_freeform
     - field.field.node.course.field_specialty_credit
+    - field.field.node.course.field_subtopics
+    - field.field.node.course.field_topics
     - node.type.course
     - workflows.workflow.editorial
   module:
     - autocomplete_deluxe
     - content_moderation
-    - cshs
     - datetime
     - datetime_range
     - field_group
@@ -39,6 +40,7 @@ dependencies:
     - media_library
     - paragraphs
     - path
+    - term_reference_tree
     - text
 third_party_settings:
   field_group:
@@ -70,9 +72,9 @@ third_party_settings:
         - field_course_subtype
         - field_audience
         - field_delivery_method
-        - field_assignment_area
         - field_is_quick_reference
         - field_is_contributed_content
+        - field_assignment_area
       label: Details
       region: content
       parent_name: group_sections
@@ -261,17 +263,15 @@ content:
       default_paragraph_type: _none
     third_party_settings: {  }
   field_assignment_area:
-    type: cshs
-    weight: 12
+    type: term_reference_tree
+    weight: 14
     region: content
     settings:
-      save_lineage: false
-      force_deepest: false
-      parent: null
-      level_labels: 'Assignment, Topic, Subtopic'
-      hierarchy_depth: 0
-      required_depth: 0
-      none_label: '- No Selection -'
+      start_minimized: true
+      leaves_only: false
+      select_parents: false
+      cascading_selection: 0
+      max_depth: 0
     third_party_settings: {  }
   field_audience:
     type: autocomplete_deluxe
@@ -402,14 +402,14 @@ content:
     third_party_settings: {  }
   field_is_contributed_content:
     type: boolean_checkbox
-    weight: 16
+    weight: 13
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_is_quick_reference:
     type: boolean_checkbox
-    weight: 15
+    weight: 12
     region: content
     settings:
       display_label: true
@@ -546,6 +546,8 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_subtopics: true
+  field_topics: true
   publish_on: true
   publish_state: true
   unpublish_on: true
