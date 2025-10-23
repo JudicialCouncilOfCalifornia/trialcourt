@@ -16,7 +16,7 @@
       }
 
       docReady(function () {
-        const shs = Array.from(document.querySelectorAll('.shs-select'));
+        const shs = Array.from(document.querySelectorAll('.shs-container'));
         if (shs) {
           const labelMaker  = function(){
             let levels = Array.from(document.querySelectorAll('[data-shs-level]'));
@@ -42,7 +42,8 @@
           };
 
           const observeSelectEvents = function() {
-            shs.forEach(select => {
+            let selects = Array.from(document.querySelectorAll('.shs-select'));
+            selects.forEach(select => {
               select.addEventListener('change', function() {
                 setTimeout(function() {
                   labelMaker();
