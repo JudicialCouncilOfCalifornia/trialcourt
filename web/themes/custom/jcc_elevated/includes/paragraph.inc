@@ -371,9 +371,25 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
  */
 function jcc_elevated_paragraph_hero_mega(array &$variables, ParagraphInterface $paragraph) {
   if (!empty($paragraph->get('field_image_media')) && $paragraph->get('field_image_media')->entity != NULL) {
-    $image_uri = $paragraph->get('field_image_media')->entity->field_media_image->entity->getFileUri();
-    $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_2600x2600')->buildUrl($image_uri);
-    $variables['bckg_img_url'] = $image_url;
+    $media_entity = $paragraph->get('field_image_media')->entity;
+    $media_type = MediaType::load($media_entity->bundle());
+
+    // Get the source field name (e.g., 'field_media_image' or 'field_svg_file')
+    $source_field_name = $media_entity->getSource()->getSourceFieldDefinition($media_type)->getName();
+
+    if (!$media_entity->get($source_field_name)->isEmpty()) {
+      $file_entity = $media_entity->get($source_field_name)->entity;
+      $image_uri = $file_entity->getFileUri();
+
+      // Check mime type. Don't apply image style to SVG.
+      if ($file_entity->getMimeType() == 'image/svg+xml') {
+        $image_url = \Drupal::service('file_url_generator')->generateAbsoluteString($image_uri);
+      }
+      else {
+        $image_url = \Drupal::entityTypeManager()->getStorage('image_style')->load('max_2600x2600')->buildUrl($image_uri);
+      }
+      $variables['bckg_img_url'] = $image_url;
+    }
   }
 
   $variables['bg_tint'] = $paragraph->get('field_background')->value ? $paragraph->get('field_background')->value : '';
