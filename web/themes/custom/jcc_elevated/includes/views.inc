@@ -1970,62 +1970,35 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   // Customizations specific per view.
   switch ($view_id) {
     case 'courses':
+      // CSS & JS customizations.
       switch ($display) {
         case 'catalog':
         case 'by_type':
         case 'by_method':
-          // Group topics and subtopics.
-          $filter_topics = $form['field_topics_target_id_collapsible'] ?? NULL;
-          $filter_subtopics = $form['field_subtopics_target_id_collapsible'] ?? NULL;
-          if ($filter_topics || $filter_subtopics) {
-            if ($results && ($filter_topics || $filter_subtopics)) {
-              $form['category_group'] = [
-                '#type' => 'fieldset',
-                '#title' => t('Topics & Subtopics'),
-                '#weight' => 96,
-              ];
-            }
-            if ($filter_topics) {
-              $form['category_group']['field_topics_target_id_collapsible'] = $filter_topics;
-              unset($form['field_topics_target_id_collapsible']);
-            }
-            if ($filter_subtopics) {
-              $form['category_group']['field_subtopics_target_id_collapsible'] = $filter_subtopics;
-              unset($form['field_subtopics_target_id_collapsible']);
-            }
-          }
-
-          // Reorder course type position.
-          if (isset($form['field_course_type_target_id_collapsible'])) {
-            $form['field_course_type_target_id_collapsible']['#weight'] = 97;
-          }
-
-          // Group special tags.
-          if (isset($form['field_is_quick_reference_value'])) {
-            $form['special_group'] = [
-              '#type' => 'fieldset',
-              '#title' => t('Special Tags'),
-              '#weight' => 98,
-            ];
-            $form['special_group']['field_is_quick_reference_value'] = $form['field_is_quick_reference_value'];
-            unset($form['field_is_quick_reference_value']);
-          }
-
-          // Position sorting last.
-          if (isset($form['sort_bef_combine'])) {
-            $form['sort_bef_combine']['#weight'] = 99;
-          }
-
+          $variables['#attached']['library'][] = 'jcc_elevated/courses';
           break;
+      }
 
-        case 'events_by_tag':
-          // Customize date range between filter labels.
-          if ($form['field_date_range_value_wrapper']) {
-            $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['min']['#title'] = t('Start Date');
-            $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['max']['#title'] = t('End Date');
-          }
+      // Group special tags.
+      if (isset($form['field_is_quick_reference_value'])) {
+        $form['special_group'] = [
+          '#type' => 'fieldset',
+          '#title' => t('Special Tags'),
+          '#weight' => 98,
+        ];
+        $form['special_group']['field_is_quick_reference_value'] = $form['field_is_quick_reference_value'];
+        unset($form['field_is_quick_reference_value']);
+      }
 
-          break;
+      // Position sorting last.
+      if (isset($form['sort_bef_combine'])) {
+        $form['sort_bef_combine']['#weight'] = 99;
+      }
+
+      // Customize date range between filter labels.
+      if (isset($form['field_date_range_value_wrapper'])) {
+        $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['min']['#title'] = t('Start Date');
+        $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['max']['#title'] = t('End Date');
       }
 
       break;
