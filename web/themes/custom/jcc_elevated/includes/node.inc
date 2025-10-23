@@ -1423,7 +1423,6 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
         break;
 
       case 'field_audience':
-      case 'field_assignment_area':
         if (count($field) > 0) {
           $label = $field->getFieldDefinition()->getLabel();
           $terms = [];
@@ -1433,18 +1432,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
             }
           }
           if ($terms) {
-            switch ($label) {
-              case 'Audience':
-                $weight = 5;
-                break;
-
-              case 'Assignment Area':
-                $weight = 6;
-                break;
-
-              default:
-                $weight = 7;
-            }
+            $weight = 5;
             $sidebar_details[] = [
               'label' => $label,
               'text' => implode(', ', $terms),
@@ -1454,76 +1442,105 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
         }
         break;
 
-      case 'field_topics':
-      case 'field_subtopics':
-        if (count($field) > 0) {
-          // Node with catalog view must be specified for actionable links.
-          $enable_link = FALSE;
-          $path_catalog = theme_get_setting('landing_course');
-          $path = NULL;
-          if ($path_catalog && str_starts_with($path_catalog, '/node')) {
-            if (\Drupal::service('path_alias.manager')->getAliasByPath($path_catalog)) {
-              $path = \Drupal::service('path_alias.manager')->getAliasByPath($path_catalog);
-            }
-            else {
-              $path = $path_catalog;
-            }
-            $catalog_nid = str_replace('/node/', '', $path_catalog);
-            $entity_type_manager = \Drupal::service('entity_type.manager');
-            $node_manager = $entity_type_manager->getStorage('node');
-            $catalog_node = $node_manager->load($catalog_nid);
-            // Check catalog view reference setup.
-            if ($catalog_node->get('field_components')) {
-              $paragraphs = $catalog_node->get('field_components')->referencedEntities();
-              foreach ($paragraphs as $paragraph) {
-                switch ($paragraph->getType()) {
-                  case 'section':
-                    $subparagraphs = $paragraph->get('field_components')->referencedEntities();
-                    foreach ($subparagraphs as $subparagraph) {
-                      $view_reference = $subparagraph->getType() == 'views_reference';
-                      if ($view_reference) {
-                        $view = $subparagraph->get('field_views_reference');
-                        if ($view->target_id == 'courses' && $view->display_id == 'catalog') {
-                          $enable_link = TRUE;
-                        }
+      case 'field_assignment_area':
+        $assignments = [];
+        $topics = [];
+
+        // Node with catalog view must be specified for actionable links.
+        $enable_link = FALSE;
+        $domain = 'https://' . \Drupal::request()->getHost();
+        $path_catalog = theme_get_setting('landing_course');
+        $path = NULL;
+        if ($path_catalog && str_starts_with($path_catalog, '/node')) {
+          if (\Drupal::service('path_alias.manager')->getAliasByPath($path_catalog)) {
+            $path = \Drupal::service('path_alias.manager')->getAliasByPath($path_catalog);
+          }
+          else {
+            $path = $path_catalog;
+          }
+          $catalog_nid = str_replace('/node/', '', $path_catalog);
+          $entity_type_manager = \Drupal::service('entity_type.manager');
+          $node_manager = $entity_type_manager->getStorage('node');
+          $catalog_node = $node_manager->load($catalog_nid);
+
+          // Check catalog view reference setup.
+          if ($catalog_node->get('field_components')) {
+            $paragraphs = $catalog_node->get('field_components')->referencedEntities();
+            foreach ($paragraphs as $paragraph) {
+              switch ($paragraph->getType()) {
+                case 'section':
+                  $subparagraphs = $paragraph->get('field_components')->referencedEntities();
+                  foreach ($subparagraphs as $subparagraph) {
+                    $view_reference = $subparagraph->getType() == 'views_reference';
+                    if ($view_reference) {
+                      $view = $subparagraph->get('field_views_reference');
+                      if ($view->target_id == 'courses' && $view->display_id == 'catalog') {
+                        $enable_link = TRUE;
                       }
                     }
-                    break;
+                  }
+                  break;
 
-                  case 'views_reference':
-                    $view = $paragraph->get('field_views_reference');
-                    if ($view->target_id == 'courses' && $view->display_id == 'catalog') {
-                      $enable_link = TRUE;
-                    }
-                    break;
-                }
+                case 'views_reference':
+                  $view = $paragraph->get('field_views_reference');
+                  if ($view->target_id == 'courses' && $view->display_id == 'catalog') {
+                    $enable_link = TRUE;
+                  }
+                  break;
               }
             }
           }
+        }
 
-          // Topic and subtopic objects.
-          foreach ($field as $topic) {
-            if ($topic->entity) {
-              $term = $topic->entity;
-              $domain = 'https://' . \Drupal::request()->getHost();
-              // Use appropriate parameter to prefilter landing.
-              $filter = 'field_topics_target_id';
-              if ($field->getName() == 'field_subtopics') {
-                $filter = 'field_subtopics_target_id';
+        // Determine assignments, topics, & subtopics from hierarchy.
+        foreach ($field as $term) {
+          $entity = $term->entity;
+          if ($entity) {
+            $parents = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->loadParents($entity->id());
+
+            // Level 0 terms for assignments.
+            if (!empty($parents)) {
+              foreach ($parents as $parent_id => $parent_term) {
+                $grandparents = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->loadParents($parent_id);
+                if (!empty($grandparents)) {
+                  foreach ($grandparents as $grandparent_term) {
+                    $assignments[] = $grandparent_term->label();
+                  }
+                }
+                else {
+                  $assignments[] = $parent_term->label();
+                }
               }
-              $param = '?' . $filter . '[' . $term->id() . ']=' . $term->id();
 
+              // Display children as topics.
+              $param = '?field_assignment_area_target_id=' . $entity->id();
               $topics[] = [
-                'label' => $term->label(),
+                'label' => $entity->label(),
                 'url' => $enable_link ? $domain . $path . $param : NULL,
               ];
             }
+            else {
+              $assignments[] = $entity->label();
+            }
           }
+        }
 
-          // Sort topics & subtopics alphabetically.
+        if ($assignments) {
+          $weight = 6;
+          $assignments = array_unique($assignments);
+          $sidebar_details[] = [
+            'label' => 'Assignment Areas',
+            'text' => implode(', ', $assignments),
+            'weight' => $weight,
+          ];
+        }
+
+        if ($topics) {
+          // Sort topics alphabetically.
           usort($topics, fn($a, $b) => $a['label'] <=> $b['label']);
           $sidebar['topics'] = $topics;
         }
+
         break;
     }
   }
