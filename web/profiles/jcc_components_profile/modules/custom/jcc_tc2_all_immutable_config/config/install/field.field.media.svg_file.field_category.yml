@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_category
+    - media.type.svg_file
+    - taxonomy.vocabulary.media_image_category
+  module:
+    - tmgmt_content
+third_party_settings:
+  tmgmt_content:
+    excluded: false
+id: media.svg_file.field_category
+field_name: field_category
+entity_type: media
+bundle: svg_file
+label: Category
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      media_image_category: media_image_category
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: media_file_category
+field_type: entity_reference
