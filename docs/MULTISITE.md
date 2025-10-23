@@ -63,8 +63,8 @@ Example `scripts/users.sh` file, (update to add the users and assign the roles y
 
 [ -z $NEW ] && NEW=$1
 
-drush @local.${NEW} ucrt Steph --mail="stephanie@chapterthreellc.com"
-drush @local.${NEW} ucrt Michael --mail="michael@chapterthreellc.com"
+drush @local.${NEW} ucrt Steph --mail="steph.doe@jud.ca.gov"
+drush @local.${NEW} ucrt Michael --mail="michael.doe@jud.ca.gov"
 drush @local.${NEW} urol administrator Steph,Michael
 ```
 ---
