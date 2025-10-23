@@ -1513,7 +1513,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
               }
 
               // Display children as topics.
-              $param = '?field_assignment_area_target_id=' . $entity->id();
+              $param = '?term_node_tid_depth=' . $entity->id();
               $topics[] = [
                 'label' => $entity->label(),
                 'url' => $enable_link ? $domain . $path . $param : NULL,
