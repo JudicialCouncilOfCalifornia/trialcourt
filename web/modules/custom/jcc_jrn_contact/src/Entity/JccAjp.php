@@ -31,7 +31,7 @@ use Drupal\user\UserInterface;
  *     }
  *   },
  *   base_table = "jcc_ajp",
- *   admin_permission = "access jcc ajp overview",
+ *   admin_permission = "access content",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "id",
