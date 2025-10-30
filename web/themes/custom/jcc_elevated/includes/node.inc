@@ -1226,6 +1226,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
   $subtype = $subtype_term ? $subtype_term->label() : NULL;
   $embed = NULL;
   $action = NULL;
+  $topics = [];
   $sidebar_details = NULL;
   $sidebar = NULL;
   $button_styles = 'button button--secondary button--normal full-width label-align--center';
@@ -1265,8 +1266,18 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
     // Schedule & Registration.
     if ((!$action && !$embed) && count($node->get('field_components')) > 0) {
       // Events.
+      $events = $node->get('field_components')->referencedEntities();
+
+      // Trim out expired dates.
+      foreach ($events as $key => $event) {
+        $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
+        if ($today->format('Ymd') > $end_date->format('Ymd')) {
+          unset($events[$key]);
+        }
+      }
+
       $schedule = [];
-      foreach ($node->get('field_components')->referencedEntities() as $event) {
+      foreach ($events as $event) {
         if ($event->get('field_date_range')->start_date) {
           $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
           $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
@@ -1444,7 +1455,6 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
 
       case 'field_assignment_area':
         $assignments = [];
-        $topics = [];
 
         // Node with catalog view must be specified for actionable links.
         $enable_link = FALSE;
@@ -1509,15 +1519,15 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
                 }
                 else {
                   $assignments[] = $parent_term->label();
+
+                  // Display children as topics.
+                  $param = '?term_node_tid_depth=' . $entity->id();
+                  $topics[] = [
+                    'label' => $entity->label(),
+                    'url' => $enable_link ? $domain . $path . $param : NULL,
+                  ];
                 }
               }
-
-              // Display children as topics.
-              $param = '?term_node_tid_depth=' . $entity->id();
-              $topics[] = [
-                'label' => $entity->label(),
-                'url' => $enable_link ? $domain . $path . $param : NULL,
-              ];
             }
             else {
               $assignments[] = $entity->label();
@@ -1534,13 +1544,6 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
             'weight' => $weight,
           ];
         }
-
-        if ($topics) {
-          // Sort topics alphabetically.
-          usort($topics, fn($a, $b) => $a['label'] <=> $b['label']);
-          $sidebar['topics'] = $topics;
-        }
-
         break;
     }
   }
@@ -1551,11 +1554,17 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
     $sidebar['details'] = $sidebar_details;
   }
 
+  // Sort topics alphabetically.
+  if ($topics) {
+    usort($topics, fn($a, $b) => $a['label'] <=> $b['label']);
+  }
+
   // Processed course information.
   $variables['course'] = [
     'type' => $type,
     'subtype' => $subtype,
     'embed' => $embed,
+    'topics' => $topics,
     'sidebar' => $sidebar,
   ];
 }
