@@ -6,10 +6,6 @@ This document should be updated by *YOU*, as necessary as the project evolves.
 Add your author information for historical reference and professional context, as:
  - `Date first edited: NAME (email)`
 
-
-### Authors:
- - 2020-01-10: Calvin Tyndall (calvin@chapterthreellc.com)
-
 ### Project Info:
  [repo]: https://github.com/JudicialCouncilOfCalifornia/trialcourt
  [host]: https://pantheon.io
