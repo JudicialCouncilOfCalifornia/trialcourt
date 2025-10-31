@@ -629,13 +629,6 @@ function jcc_elevated_custom_form_node_alert_form_alter(&$form, $form_state): vo
  * Implements hook_file_download().
  */
 function jcc_elevated_custom_file_download($uri): array {
-  // Do not allow file viewing if authenticated access only.
-  switch (__jcc_site_name()) {
-    // If CJER officers site.
-    case 'cjer-judicial':
-      __jcc_restrict_to_authenticated();
-      break;
-  }
 
   // Set all document files to set the appropriate name when a download link is
   // clicked. Because of the private file system, the last part of the main url
@@ -685,19 +678,6 @@ function jcc_elevated_custom_file_download($uri): array {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_access().
- */
-function jcc_elevated_custom_media_access(MediaInterface $media, $op, AccountInterface $account) {
-  // Do not allow media page viewing if authenticated access only.
-  switch (__jcc_site_name()) {
-    // If CJER officers site.
-    case 'cjer-judicial':
-      __jcc_restrict_to_authenticated();
-      break;
-  }
-}
-
-/**
  * Helper function return site machine name.
  */
 function __jcc_site_name() {
@@ -706,15 +686,4 @@ function __jcc_site_name() {
   preg_match($pattern, $config_dir, $site);
 
   return $site[0];
-}
-
-/**
- * Helper function to deny access if not authenticated.
- */
-function __jcc_restrict_to_authenticated() {
-  $current_user = \Drupal::currentUser();
-  $user_roles = $current_user->getRoles();
-  if (!in_array('authenticated', $user_roles)) {
-    return throw new AccessDeniedHttpException();
-  }
 }
