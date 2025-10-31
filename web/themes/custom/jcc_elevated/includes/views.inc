@@ -971,12 +971,14 @@ function jcc_elevated_preprocess_views_view__surplus_listing__block_1(&$variable
     }
     $surplus_category = $node->hasField('field_surplus_category') ? $node->get('field_surplus_category')->target_id : FALSE;
     $posted_value = $node->get('field_posted')->value;
+    $posted_formatted = (new \DateTime($posted_value))->format('M d, Y');
     $renewal_value = $node->get('field_renewal_date')->value;
-    if (!empty($posted_value) && !empty($renewal_value)) {
-      $posted_date = new \DateTime($posted_value);
-      $posted_formatted = $posted_date->format('M d, Y');
+    $days_between = 0;
+    $interval = 0;
+    if (!empty($posted_value)) {
+      $today = new \DateTime('today');
       $renewal_date = new \DateTime($renewal_value);
-      $interval = $posted_date->diff($renewal_date);
+      $interval = $today->diff($renewal_date);
       $days_between = $interval->days;
     }
 
