@@ -358,10 +358,14 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     if ($media_files['media_file_multiple']['file']) {
       $url = Url::fromUri($media_files['media_file_multiple']['file']->createFileUrl(FALSE));
     }
-
+    $button_url = '';
+    if (!empty($media_files['media_file']['file'])) {
+      $file_entity = $media_files['media_file']['file'];
+      $button_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_entity->getFileUri());
+    }
     $button_data = [
       'label' => t('Download @type', ['@type' => $document_type]),
-      'href' => $url,
+      'href' => $button_url,
     ];
 
     $detail_list_data = [
