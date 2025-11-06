@@ -1,4 +1,3 @@
-uuid: e956b3eb-5604-46b0-961f-187fac57959e
 langcode: en
 status: true
 dependencies:
@@ -6,8 +5,6 @@ dependencies:
     - filter.format.body
   module:
     - ckeditor
-_core:
-  default_config_hash: _wsGkIp2w75bpROUD50nM0Osh5NdxCJnWjLh9r6Uh78
 format: body
 editor: ckeditor
 settings:
@@ -19,21 +16,35 @@ settings:
           items:
             - Bold
             - Italic
+            - Underline
             - Strike
             - Superscript
             - Subscript
-            - BidiLtr
-            - BidiRtl
-            - RemoveFormat
+            - '-'
+            - JustifyLeft
+            - JustifyCenter
+            - JustifyRight
+            - JustifyBlock
+            - '-'
+            - Outdent
+            - Indent
+            - '-'
             - Format
             - Styles
-            - paragraphs_inline_entity_form
+            - '-'
+            - RemoveFormat
+        -
+          name: Clipboard
+          items:
+            - Undo
+            - Redo
         -
           name: Links
           items:
             - DrupalLink
             - DrupalUnlink
             - Anchor
+            - tooltip
         -
           name: Lists
           items:
@@ -47,10 +58,15 @@ settings:
         -
           name: Tools
           items:
+            - paragraphs_inline_entity_form
             - HorizontalRule
             - Table
             - Source
-            - tooltip
+            - Maximize
+        -
+          name: 'Quality Assurance'
+          items:
+            - A11ychecker
   plugins:
     drupallink:
       linkit_enabled: true
