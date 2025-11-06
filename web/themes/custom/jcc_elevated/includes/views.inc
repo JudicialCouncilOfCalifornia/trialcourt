@@ -239,7 +239,6 @@ function jcc_elevated_preprocess_views_view__trialcourtoutlet__block_1(&$variabl
       $variables['processed_rows'][] = [
         'title' => $label,
         'url' => $url,
-        'content' => $render->render($text),
         'button_data' => $button_data,
       ];
     }
