@@ -356,12 +356,10 @@ function template_preprocess_jcc_court(array &$variables) {
   $header = [
     'name' => [
       'data' => t('Name'),
-      'field' => 'first_name',
       'sort' => 'asc',
     ],
     'title' => [
       'data' => t('Title'),
-      'field' => 'job_title',
     ],
     'contact' => [
       'data' => t('Contact'),
@@ -372,6 +370,10 @@ function template_preprocess_jcc_court(array &$variables) {
     foreach ($rows as $row) {
       $flat_rows[] = $row['data'];
     }
+    // Sort based on name.
+    usort($flat_rows, function ($a, $b) {
+      return strcasecmp($a[0], $b[0]);
+    });
     $tables_by_location[$loc_num] = [
       '#theme' => 'table',
       '#header' => $header,

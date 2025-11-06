@@ -153,32 +153,6 @@
         {% set details_content = details_content|merge(course.sidebar.details) %}
       {% endif %}
 
-      {# Topics as pills #}
-      {% if course.sidebar.topics %}
-        {% set topics %}
-          {% for topic in course.sidebar.topics %}
-            {% include "@atoms/Pill/Pill.twig" with {
-              variant: 'square',
-              label: topic.label,
-              url: topic.url,
-            } %}
-          {% endfor %}
-        {% endset %}
-
-        {% if topics %}
-          {% set pills %}
-            <div class="sidebar-list__item__links">
-              <span class="list__item-label sr-only">Topics</span>
-              {% include "@molecules/Pills/Pills.twig" with {
-                variant: 'default',
-                items: [topics],
-              } %}
-            </div>
-          {% endset %}
-          {% set details_content = details_content|merge([pills]) %}
-        {% endif %}
-      {% endif %}
-
       {% if details_content %}
         {% set details %}
           {% include "@molecules/List/List.twig" with {
@@ -272,6 +246,26 @@
       {% if content.field_education_credit_freeform[0] %}
         <h3>{{ 'Education Credit'|t }}</h3>
         {{ content.field_education_credit_freeform }}
+      {% endif %}
+
+      {# Topics as pills #}
+      {% if course.topics %}
+        {% set topics %}
+          {% for topic in course.topics %}
+            {% include "@atoms/Pill/Pill.twig" with {
+              variant: 'square',
+              label: topic.label,
+              url: topic.url,
+            } %}
+          {% endfor %}
+        {% endset %}
+        <h3>{{ 'Topics'|t }}</h3>
+        <div class="sidebar-list__item__links">
+          {% include "@molecules/Pills/Pills.twig" with {
+            variant: 'default',
+            items: [topics],
+          } %}
+        </div>
       {% endif %}
     </main>
   {% endset %}

@@ -12,7 +12,7 @@
  {% include "@molecules/HeroHangover/HeroHangover.twig" with {
     hangover_hide_compact: false,
     hangover_offset: 22,
-    background: 'red',      
+    background: 'brown',      
     heading: summary,
     news_header: true,    
     text: ''  
@@ -70,7 +70,10 @@
       {% endif %}
       {{ table }}
     {% else %}
+     <span class="results-summary">
+      <h2>Results for: {{ search_term }}</h2>
       <p>No results found</p>
+      </span>
     {% endif %}
   </div>
 </div>

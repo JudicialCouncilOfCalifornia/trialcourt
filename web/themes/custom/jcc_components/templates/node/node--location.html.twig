@@ -119,6 +119,26 @@
   {% set case_served_overview =  content.field_case_served_overview['0']['#context']['value'] %}
 {% endif %}
 
+{# Build the content for the 'Building Information' section #}
+{% set building_info_content %}
+  {# First, add the conditional hours string #}
+  {% if content.field_building_hours_from.0 and content.field_building_hours_to.0 %}
+
+    {# Set default days, then check for an override #}
+    {% set days = "Monday - Friday" %}
+    {% if content.field_building_days.0 %}
+      {% set days = content.field_building_days.0['#context']['value'] %}
+    {% endif %}
+
+    <p>
+      Building hours: {{ days }}:
+      {{ content.field_building_hours_from.0["#text"]|split(' ', 2)[1] }} - {{ content.field_building_hours_to.0["#text"]|split(' ', 2)[1] }}
+    </p>
+  {% endif %}
+
+  {# Second, render the new field_building_hours_info (this always shows) #}
+  {{ content.field_building_hours_info }}
+{% endset %}
 
 {# set variable to be used in content section #}
 {% set main_content = {
@@ -126,7 +146,7 @@
     {
       type: 'section',
       heading: "Building Information",
-      content: "Building hours: Monday - Friday:"~" "~ content.field_building_hours_from.0["#text"]|split(' ', 2)[1] ~ " - " ~ content.field_building_hours_to.0["#text"]|split(' ', 2)[1],
+      content: building_info_content,
       width: "partial",
       name: "location_details",
     },

@@ -136,11 +136,11 @@ class JccOfficerListBuilder extends EntityListBuilder {
     $header['first_name'] = [
       'data' => $this->t('First Name'),
       'field' => 't.first_name',
+      'sort' => 'asc',
     ];
     $header['last_name'] = [
       'data' => $this->t('Last Name'),
       'field' => 't.last_name',
-      'sort' => 'asc',
     ];
     $header['email'] = [
       'data' => $this->t('Email'),

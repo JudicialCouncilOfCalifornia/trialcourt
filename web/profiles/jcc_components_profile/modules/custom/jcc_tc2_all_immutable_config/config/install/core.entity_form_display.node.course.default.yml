@@ -40,6 +40,7 @@ dependencies:
     - media_library
     - paragraphs
     - path
+    - term_reference_tree
     - text
 third_party_settings:
   field_group:
@@ -71,11 +72,9 @@ third_party_settings:
         - field_course_subtype
         - field_audience
         - field_delivery_method
-        - field_assignment_area
-        - field_topics
-        - field_subtopics
         - field_is_quick_reference
         - field_is_contributed_content
+        - field_assignment_area
       label: Details
       region: content
       parent_name: group_sections
@@ -264,21 +263,15 @@ content:
       default_paragraph_type: _none
     third_party_settings: {  }
   field_assignment_area:
-    type: autocomplete_deluxe
-    weight: 12
+    type: term_reference_tree
+    weight: 14
     region: content
     settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: false
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: false
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+      start_minimized: true
+      leaves_only: false
+      select_parents: false
+      cascading_selection: 0
+      max_depth: 0
     third_party_settings: {  }
   field_audience:
     type: autocomplete_deluxe
@@ -409,14 +402,14 @@ content:
     third_party_settings: {  }
   field_is_contributed_content:
     type: boolean_checkbox
-    weight: 16
+    weight: 13
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_is_quick_reference:
     type: boolean_checkbox
-    weight: 15
+    weight: 12
     region: content
     settings:
       display_label: true
@@ -469,40 +462,6 @@ content:
   field_specialty_credit:
     type: autocomplete_deluxe
     weight: 30
-    region: content
-    settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: false
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: false
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
-    third_party_settings: {  }
-  field_subtopics:
-    type: autocomplete_deluxe
-    weight: 14
-    region: content
-    settings:
-      match_operator: CONTAINS
-      autocomplete_route_name: autocomplete_deluxe.autocomplete
-      size: 60
-      selection_handler: default
-      limit: 10
-      min_length: 0
-      delimiter: ''
-      not_found_message_allow: false
-      not_found_message: 'The term ''@term'' will be added'
-      new_terms: false
-      no_empty_message: 'No terms could be found. Please type in order to add a new term.'
-    third_party_settings: {  }
-  field_topics:
-    type: autocomplete_deluxe
-    weight: 13
     region: content
     settings:
       match_operator: CONTAINS
@@ -587,6 +546,8 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_subtopics: true
+  field_topics: true
   publish_on: true
   publish_state: true
   unpublish_on: true

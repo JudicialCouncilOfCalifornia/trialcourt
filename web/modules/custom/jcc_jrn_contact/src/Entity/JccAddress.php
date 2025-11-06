@@ -31,7 +31,7 @@ use Drupal\user\UserInterface;
  *     }
  *   },
  *   base_table = "jcc_address",
- *   admin_permission = "access jcc address overview",
+ *   admin_permission = "access content",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "addr1",

@@ -31,7 +31,7 @@ use Drupal\user\UserInterface;
  *     }
  *   },
  *   base_table = "jcc_cio",
- *   admin_permission = "access jcc cio overview",
+ *   admin_permission = "access content",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "id",
