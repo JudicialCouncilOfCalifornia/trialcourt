@@ -1,0 +1,57 @@
+langcode: en
+status: false
+dependencies:
+  config:
+    - core.entity_view_mode.media.container_25_percent
+    - field.field.media.svg_file.field_category
+    - field.field.media.svg_file.field_matters_served
+    - field.field.media.svg_file.field_media_caption
+    - field.field.media.svg_file.field_media_citation
+    - field.field.media.svg_file.field_media_file
+    - field.field.media.svg_file.field_tags
+    - media.type.svg_file
+  module:
+    - svg_formatter
+    - text
+id: media.svg_file.container_25_percent
+targetEntityType: media
+bundle: svg_file
+mode: container_25_percent
+content:
+  field_media_citation:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_media_file:
+    type: svg_formatter
+    label: visually_hidden
+    settings:
+      inline: false
+      sanitize: true
+      apply_dimensions: true
+      width: 100
+      height: 100
+      enable_alt: true
+      alt_string: ''
+      enable_title: true
+      title_string: ''
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_category: true
+  field_matters_served: true
+  field_media_caption: true
+  field_tags: true
+  langcode: true
+  name: true
+  search_api_excerpt: true
+  thumbnail: true
+  uid: true
