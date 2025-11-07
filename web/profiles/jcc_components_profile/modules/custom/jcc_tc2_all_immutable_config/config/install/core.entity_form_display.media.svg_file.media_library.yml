@@ -1,0 +1,94 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.svg_file.field_category
+    - field.field.media.svg_file.field_matters_served
+    - field.field.media.svg_file.field_media_caption
+    - field.field.media.svg_file.field_media_citation
+    - field.field.media.svg_file.field_media_file
+    - field.field.media.svg_file.field_tags
+    - media.type.svg_file
+  module:
+    - cshs
+    - file
+id: media.svg_file.media_library
+targetEntityType: media
+bundle: svg_file
+mode: media_library
+content:
+  field_category:
+    type: cshs
+    weight: 2
+    region: content
+    settings:
+      save_lineage: false
+      force_deepest: false
+      parent: ''
+      level_labels: ''
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
+  field_matters_served:
+    type: cshs
+    weight: 3
+    region: content
+    settings:
+      save_lineage: false
+      force_deepest: false
+      parent: ''
+      level_labels: ''
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
+  field_media_file:
+    type: file_generic
+    weight: 1
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_tags:
+    type: cshs
+    weight: 4
+    region: content
+    settings:
+      save_lineage: false
+      force_deepest: false
+      parent: ''
+      level_labels: ''
+      hierarchy_depth: 0
+      required_depth: 0
+      none_label: '- Please select -'
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 5
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_media_caption: true
+  field_media_citation: true
+  path: true
+  publish_on: true
+  publish_state: true
+  replace_file: true
+  scheduler_settings: true
+  status: true
+  uid: true
+  unpublish_on: true
+  unpublish_state: true

@@ -1,0 +1,202 @@
+uuid: 19318c1a-7f01-4d2a-a369-4aa997879e7d
+langcode: en
+status: true
+dependencies: {  }
+id: case_node_noncrim_cases
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - node
+  - case
+  - debug
+migration_group: case_management
+label: 'Case: Import Non-Criminal Case Nodes'
+source:
+  plugin: csv
+  path: sites/default/files/stanislaus/default/calendar/export_noncrim.csv
+  delimiter: ','
+  enclosure: '"'
+  header_row_count: 1
+  ids:
+    - case_number
+    - hearing_date_and_time
+  fields:
+    -
+      name: party_name
+      label: 'Party_Name'
+    -
+      name: department
+      label: "Department"
+    -
+      name: hearing_date_and_time
+      label: 'Hearing_Date_and_Time'
+    -
+      name: judicial_officer
+      label: 'Judicial_Officer'
+    -
+      name: hearing_type
+      label: 'Hearing_Type'
+    -
+      name: party_type
+      label: 'Party_Type'
+    -
+      name: case_number
+      label: 'Case_Number'
+    -
+      name: case_type
+      label: 'Case_Type'
+    -
+      name: case_category
+      label: 'Case_Category'
+    -
+      name: location
+      label: "Location"
+process:
+  field_migration_origin:
+    plugin: default_value
+    default_value: noncrim
+  field_party_name:
+    -
+      plugin: skip_on_empty
+      source: party_name
+      method: row
+      message: 'No name found.'
+    -
+      plugin: callback
+      callable: trim
+  field_case_number:
+    -
+      plugin: skip_on_empty
+      source: case_number
+      method: row
+      message: 'No case number found.'
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      bundle: case_number
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  title:
+    -
+      plugin: concat
+      source:
+        - '@field_party_name'
+        - case_number
+      delimiter: ' / '
+  field_party_type:
+    -
+      plugin: skip_on_empty
+      source: party_type
+      method: row
+      message: 'No party type found.'
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      bundle: case_party_type
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_department:
+    - plugin: callback
+      source: location
+      callable: trim
+    - plugin: static_map
+      map:
+        'SB Dept 3': 'Dept. 3 SB-Anacapa'
+        'SM Dept 3': 'Dept. 3 SM-Cook'
+        'SB Dept 4': 'Dept. 4 SB-Anacapa'
+        'SM Dept 4': 'Dept. 4 SM-Cook'
+        'SB Dept 5': 'Dept. 5 SB-Anacapa'
+        'SB Dept 6': 'Dept. 6 SB-Anacapa'
+        'SM Dept 2': 'Dept. 2 SM-Cook'
+      bypass: true
+    - plugin: entity_generate
+      bundle: department
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_hearing_date:
+    - plugin: skip_on_empty
+      method: process
+      source: hearing_date_and_time
+    - plugin: callback
+      callable: jcc_custom_custom_date_format
+      source: hearing_date_and_time
+    - plugin: format_date
+      from_format: 'Y-m-d H:i'
+      to_format: 'Y-m-d\TH:i:s'
+      from_timezone: America/Los_Angeles
+      to_timezone: UTC
+  field_judge:
+    - plugin: callback
+      source: judicial_officer
+      callable: trim
+    - plugin: static_map
+      map:
+        'Anderle, Thomas P': 'Judge Thomas Anderle'
+        'Beebe, Jed': 'Judge Jed Beebe'
+        'Geck, Donna D': 'Judge Donna Geck'
+        'Maxwell, Pauline': 'Judge Pauline Maxwell'
+        'Rigali, James F': 'Judge James F. Rigali'
+        'Sterne, Colleen K': 'Judge Colleen Sterne'
+      bypass: true
+    - plugin: entity_generate
+      bundle: judge
+      value_key: title
+      bundle_key: type
+      entity_type: node
+      ignore_case: true
+  field_hearing_type:
+    -
+      plugin: skip_on_empty
+      source: hearing_type
+      method: process
+      message: 'No hearing type found.'
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: entity_generate
+      bundle: hearing_type
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_case_type:
+    - plugin: skip_on_empty
+      source: case_type
+      method: process
+      message: 'No case type found.'
+    - plugin: callback
+      callable: trim
+    - plugin: entity_generate
+      bundle: case_type
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_case_category:
+    -
+      plugin: default_value
+      default_value: noncrim
+    -
+      plugin: entity_generate
+      bundle: case_category
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+destination:
+  plugin: 'entity:node'
+  default_bundle: case
+  update: true
+migration_dependencies: null

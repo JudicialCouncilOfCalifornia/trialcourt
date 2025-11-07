@@ -1265,8 +1265,18 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
     // Schedule & Registration.
     if ((!$action && !$embed) && count($node->get('field_components')) > 0) {
       // Events.
+      $events = $node->get('field_components')->referencedEntities();
+
+      // Trim out expired dates.
+      foreach ($events as $key => $event) {
+        $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
+        if ($today->format('Ymd') > $end_date->format('Ymd')) {
+          unset($events[$key]);
+        }
+      }
+
       $schedule = [];
-      foreach ($node->get('field_components')->referencedEntities() as $event) {
+      foreach ($events as $event) {
         if ($event->get('field_date_range')->start_date) {
           $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
           $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
