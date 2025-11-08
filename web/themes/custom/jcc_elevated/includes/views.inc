@@ -1935,16 +1935,21 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   // Suppress duplicate summary with empty header in ViewsResults twig.
   $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
 
+  // Customize date range between filter labels.
+  if (isset($form['field_date_range_value_wrapper'])) {
+    $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['min']['#title'] = t('Start Date');
+    $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['max']['#title'] = t('End Date');
+  }
+
   // View specifics.
   $view = $variables;
   $view_id = $view['id'];
-  $display = $view['display_id'];
   $results = $variables['rows'][0]['#rows'] ?? NULL;
   $bef_class = 'bef-exposed-form';
 
   // For Better Expose Filters.
   // Suppress certain filters if no results or filter options.
-  if (in_array($bef_class, $form['#attributes']['class'])) {
+  if (isset($form['#attributes']['class']) && in_array($bef_class, $form['#attributes']['class'])) {
     $field_suffix = 'field_';
     foreach ($form as $key => $item) {
       if (str_starts_with($key, $field_suffix) && $item['#type']) {
@@ -1980,14 +1985,7 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   switch ($view_id) {
     case 'courses':
       // CSS & JS customizations.
-      switch ($display) {
-        case 'catalog':
-        case 'by_type':
-        case 'by_method':
-        case 'events_by_tag':
-          $variables['#attached']['library'][] = 'jcc_elevated/courses';
-          break;
-      }
+      $variables['#attached']['library'][] = 'jcc_elevated/courses';
 
       // Group special tags.
       if (isset($form['field_is_quick_reference_value'])) {
@@ -2003,12 +2001,6 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
       // Position sorting last.
       if (isset($form['sort_bef_combine'])) {
         $form['sort_bef_combine']['#weight'] = 99;
-      }
-
-      // Customize date range between filter labels.
-      if (isset($form['field_date_range_value_wrapper'])) {
-        $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['min']['#title'] = t('Start Date');
-        $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['max']['#title'] = t('End Date');
       }
 
       break;

@@ -2676,17 +2676,85 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        field_assignment_area_target_id:
+          id: field_assignment_area_target_id
+          table: node__field_assignment_area
+          field: field_assignment_area_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_assignment_area_target_id_op
+            label: 'Select Assignment'
+            description: ''
+            use_operator: false
+            operator: field_assignment_area_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_assignment_area_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
+              administrator: '0'
+              anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+              jrn_legal_opinion_library: '0'
+              surplus_admin: '0'
+              jrn_sourcehr: '0'
+              surplus_user: '0'
+              jrn_tajp: '0'
+              jrn_judicial_officer: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: assignment_area
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
       filter_groups:
         operator: AND
         groups:
           1: AND
       defaults:
+        use_ajax: false
         pager: false
         exposed_form: false
         sorts: false
         filters: false
         filter_groups: false
         header: false
+      use_ajax: true
       display_description: ''
       header: {  }
       display_extenders: {  }
@@ -2697,6 +2765,8 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
