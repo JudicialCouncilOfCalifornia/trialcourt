@@ -48,7 +48,7 @@
                 setTimeout(function() {
                   labelMaker();
                   observeSelectEvents();
-                }, 1000);
+                }, 500);
               });
             });
           };

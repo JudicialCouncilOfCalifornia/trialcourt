@@ -1936,7 +1936,6 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   // View specifics.
   $view = $variables;
   $view_id = $view['id'];
-  $display = $view['display_id'];
   $results = $variables['rows'][0]['#rows'] ?? NULL;
   $bef_class = 'bef-exposed-form';
 
@@ -1978,14 +1977,7 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   switch ($view_id) {
     case 'courses':
       // CSS & JS customizations.
-      switch ($display) {
-        case 'catalog':
-        case 'by_type':
-        case 'by_method':
-        case 'events_by_tag':
-          $variables['#attached']['library'][] = 'jcc_elevated/courses';
-          break;
-      }
+      $variables['#attached']['library'][] = 'jcc_elevated/courses';
 
       // Group special tags.
       if (isset($form['field_is_quick_reference_value'])) {
