@@ -1620,8 +1620,6 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
 
 /**
  * Implements hook_preprocess_HOOK() for course events by any tag listing.
- *
- * Pre-render preprocess hook addresses sort aggregation duplicates.
  */
 function jcc_elevated_preprocess_views_view__courses__events_by_tag(&$variables) {
   // Customize filter UI.
@@ -1667,13 +1665,6 @@ function jcc_elevated_preprocess_views_view__courses__promoted(&$variables) {
 function jcc_elevated_preprocess_views_view_rss(&$variables) {
   if (!(\Drupal::service('twig')->isDebug())) {
     $variables['view']->getResponse()->headers->set('Content-Type', 'text/xml;charset=UTF-8');
-  }
-
-  if (isset($variables['rows'])) {
-    // Remove duplicate results caused by aggregated sort.
-    // Unable to solve with view configuration for time being.
-    $results = $variables['rows'];
-    $variables['items'] = array_unique($results);
   }
 }
 
