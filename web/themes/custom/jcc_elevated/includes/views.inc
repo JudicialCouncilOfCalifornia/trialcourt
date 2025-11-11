@@ -1625,8 +1625,6 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
 
 /**
  * Implements hook_preprocess_HOOK() for course events by any tag listing.
- *
- * Pre-render preprocess hook addresses sort aggregation duplicates.
  */
 function jcc_elevated_preprocess_views_view__courses__events_by_tag(&$variables) {
   // Customize filter UI.
@@ -1942,7 +1940,7 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
 
   // For Better Expose Filters.
   // Suppress certain filters if no results or filter options.
-  if (in_array($bef_class, $form['#attributes']['class'])) {
+  if (isset($form['#attributes']['class']) && in_array($bef_class, $form['#attributes']['class'])) {
     $field_suffix = 'field_';
     foreach ($form as $key => $item) {
       if (str_starts_with($key, $field_suffix) && $item['#type']) {
