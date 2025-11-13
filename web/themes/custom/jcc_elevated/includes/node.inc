@@ -455,19 +455,41 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
 
   $basic_page = $node_manager->load($node->id());
   $variables['node'] = $node;
-  $schedule_content = '';
-  $field_schedule_render_array = $node->field_schedule->view('default');
-  if (isset($field_schedule_render_array['#items']) && !$field_schedule_render_array['#items']->isEmpty()) {
-    $to_render = ['#markup' => $field_schedule_render_array[0]['#text']];
+
+  // Schedule content.
+  $schedule_content = NULL;
+  if ($node->get('field_schedule')->value) {
+    $to_render = [
+      '#type' => 'processed_text',
+      '#text' => $node->get('field_schedule')->value,
+      '#format' => $node->get('field_schedule')->format,
+    ];
     $schedule_content = $renderer->render($to_render);
   }
+
   $completion_date = $node->get('field_completion_date')->value ?? '';
   $occupancy_date = $node->get('field_occupancy_date')->date ? $node->get('field_occupancy_date')->date->format('F j, Y') : '';
-  $ceqa = $node->field_ceqa->view('default');
-  $ceqa_content = '';
-  if (isset($ceqa['#items']) && !$ceqa['#items']->isEmpty()) {
-    $to_render = ['#markup' => $ceqa[0]['#text']];
-    $ceqa_content = $renderer->render($to_render);
+
+  // CEQA.
+  $ceqa_content = NULL;
+  if ($node->get('field_ceqa')->value) {
+    $cequa_render = [
+      '#type' => 'processed_text',
+      '#text' => $node->get('field_ceqa')->value,
+      '#format' => $node->get('field_ceqa')->format,
+    ];
+    $ceqa_content = $renderer->render($cequa_render);
+  }
+
+  // Advisory Group.
+  $advisory_group_content = NULL;
+  if ($node->get('field_project_advisory_group')->value) {
+    $ag_render = [
+      '#type' => 'processed_text',
+      '#text' => $node->get('field_project_advisory_group')->value,
+      '#format' => $node->get('field_project_advisory_group')->format,
+    ];
+    $advisory_group_content = $renderer->render($ag_render);
   }
 
   if (isset($variables['node']) && $node->hasField('field_design_build_entity')) {
@@ -516,7 +538,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     'schedule' => $schedule_content,
     'ceqa' => $ceqa_content,
     'planning_study' => strip_tags($node->field_planning_study->value ?? ''),
-    'project_advisory_group' => $node->field_project_advisory_group->value,
+    'project_advisory_group' => $advisory_group_content,
     'status' => $node->field_project_status->value == 'inprogress' ? 'In-Progress' : 'Completed',
     'hero_title' => strip_tags($node->field_hero_title->value),
     'county' => $county && $taxonomy_manager->load($county) ? $taxonomy_manager->load($county)->get('name')->value : '',
@@ -571,9 +593,14 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     $elements[] = "<hr />";
   }
 
-  if (!empty($node->body->value)) {
+  if (!empty($node->get('body')->value)) {
+    $body_render = [
+      '#type' => 'processed_text',
+      '#text' => $node->get('body')->value,
+      '#format' => $node->get('body')->format,
+    ];
     $elements[] = "<h2>Background</h2>";
-    $elements[] = $node->body->value;
+    $elements[] = $body_render;
     $elements[] = "<hr />";
   }
 
