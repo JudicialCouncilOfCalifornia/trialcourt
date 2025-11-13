@@ -44,12 +44,14 @@ function surplus_reference_number_entity_presave(EntityInterface $entity) {
       $entity->set('field_posted', $today->format('Y-m-d'));
       $posted_date_value = $today->format('Y-m-d');
     }
-
     $renewal_date_value = $entity->get('field_renewal_date')->value;
     if (empty($renewal_date_value)) {
-      $posted_date = new \DateTime($posted_date_value);
-      $renewal_date = $posted_date->modify('+60 days');
-      $entity->set('field_renewal_date', $renewal_date->format('Y-m-d'));
+      $renewal_date = (new \DateTime($renewal_date_value))->setTime(0, 0);
+      $today = new \DateTime('now');
+      $sixty_days_from_today = (clone $today)->modify('+60 days');
+      $today_midnight = (clone $today)->setTime(0, 0);
+      $sixty_days_midnight = (clone $sixty_days_from_today)->setTime(0, 0);
+      $entity->set('field_renewal_date', $sixty_days_from_today->format('Y-m-d'));
     }
   }
 }

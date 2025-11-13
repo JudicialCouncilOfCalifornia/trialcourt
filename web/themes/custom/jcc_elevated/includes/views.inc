@@ -239,7 +239,6 @@ function jcc_elevated_preprocess_views_view__trialcourtoutlet__block_1(&$variabl
       $variables['processed_rows'][] = [
         'title' => $label,
         'url' => $url,
-        'content' => $render->render($text),
         'button_data' => $button_data,
       ];
     }
@@ -358,7 +357,6 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     if ($media_files['media_file_multiple']['file']) {
       $url = Url::fromUri($media_files['media_file_multiple']['file']->createFileUrl(FALSE));
     }
-
     $button_data = [
       'label' => t('Download @type', ['@type' => $document_type]),
       'href' => $url,
@@ -972,12 +970,14 @@ function jcc_elevated_preprocess_views_view__surplus_listing__block_1(&$variable
     }
     $surplus_category = $node->hasField('field_surplus_category') ? $node->get('field_surplus_category')->target_id : FALSE;
     $posted_value = $node->get('field_posted')->value;
+    $posted_formatted = (new \DateTime($posted_value))->format('M d, Y');
     $renewal_value = $node->get('field_renewal_date')->value;
-    if (!empty($posted_value) && !empty($renewal_value)) {
-      $posted_date = new \DateTime($posted_value);
-      $posted_formatted = $posted_date->format('M d, Y');
+    $days_between = 0;
+    $interval = 0;
+    if (!empty($posted_value)) {
+      $today = new \DateTime('today');
       $renewal_date = new \DateTime($renewal_value);
-      $interval = $posted_date->diff($renewal_date);
+      $interval = $today->diff($renewal_date);
       $days_between = $interval->days;
     }
 
@@ -1620,8 +1620,6 @@ function jcc_elevated_preprocess_views_view__courses(&$variables) {
 
 /**
  * Implements hook_preprocess_HOOK() for course events by any tag listing.
- *
- * Pre-render preprocess hook addresses sort aggregation duplicates.
  */
 function jcc_elevated_preprocess_views_view__courses__events_by_tag(&$variables) {
   // Customize filter UI.
@@ -1662,7 +1660,16 @@ function jcc_elevated_preprocess_views_view__courses__promoted(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK() for promoted courses feed.
+ * Implements hook_preprocess_HOOK() for rss feed.
+ */
+function jcc_elevated_preprocess_views_view_rss(&$variables) {
+  if (!(\Drupal::service('twig')->isDebug())) {
+    $variables['view']->getResponse()->headers->set('Content-Type', 'text/xml;charset=UTF-8');
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for rss feed item.
  */
 function jcc_elevated_preprocess_views_view_row_rss(&$variables) {
   // The node.
@@ -1928,7 +1935,7 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
 
   // For Better Expose Filters.
   // Suppress certain filters if no results or filter options.
-  if (in_array($bef_class, $form['#attributes']['class'])) {
+  if (isset($form['#attributes']['class']) && in_array($bef_class, $form['#attributes']['class'])) {
     $field_suffix = 'field_';
     foreach ($form as $key => $item) {
       if (str_starts_with($key, $field_suffix) && $item['#type']) {
@@ -2046,8 +2053,7 @@ function __jcc_process_course_results($rows, $config) {
   $processed_rows = [];
   $type = NULL;
   $date = NULL;
-  $events_date_range = NULL;
-  $locations = NULL;
+  $events = NULL;
   $is_new = NULL;
 
   // Process the results for the search api view.
@@ -2066,61 +2072,46 @@ function __jcc_process_course_results($rows, $config) {
 
     // Event information.
     if ($config && in_array('events', $config)) {
-      $events_date_range = NULL;
-      $locations = [];
+      $events = [];
       $items = $node->get('field_components');
       if ($items) {
         // Trim out expired dates.
         foreach ($items as $key => $value) {
           $event = $value->entity;
-          $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
-
-          if ($start_date->format('Ymd') <= $today->format('Ymd')) {
+          $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
+          if ($today->format('Ymd') > $end_date->format('Ymd')) {
             unset($items[$key]);
           }
         }
 
-        // Dates.
-        $start_date_formatted = NULL;
-        $end_date_formatted = NULL;
-        $last_key = array_key_last($items->getValue());
-        $start_range = NULL;
-        foreach ($items as $key => $value) {
+        // Dates & locations.
+        foreach ($items as $value) {
           $event = $value->entity;
           $start_date = $event->get('field_date_range')->start_date->setTimezone($timezone);
           $end_date = $event->get('field_date_range')->end_date->setTimezone($timezone);
 
-          // Multiple events range vs single event.
-          if (count($items) > 1) {
-            if ($key == 0) {
-              $start_range = $start_date;
-              $start_date_formatted = $start_date->format('M d');
-            }
-            if ($key == $last_key) {
-              // If overlapping years.
-              if ($end_date->format('Y') != $start_range->format('Y')) {
-                $start_date_formatted = $start_range->format('M d, Y');
-              }
-              $end_date_formatted = ' to ' . $end_date->format('M d, Y');
-            }
+          // Date.
+          $start_date_formatted = $start_date->format('M d, Y');
+          $end_date_formatted = NULL;
+          if ($end_date->format('Ymd') != $start_date->format('Ymd')) {
+            $start_date_formatted = $start_date->format('M d') . ' to ';
+            $end_date_formatted = $end_date->format('M d, Y');
           }
-          else {
-            $start_date_formatted = $start_date->format('M d, Y');
-            if ($end_date->format('Ymd') != $start_date->format('Ymd')) {
-              $start_date_formatted = $start_date->format('M d') . ' to ';
-              $end_date_formatted = $end_date->format('M d, Y');
-            }
+          $event_date = $end_date_formatted ? $start_date_formatted . $end_date_formatted : $start_date_formatted;
+
+          // Location.
+          $event_location = NULL;
+          if ($event->get('field_event_location')->target_id) {
+            $event_location = $event->get('field_event_location')->entity->label();
           }
 
-          // Locations.
-          $event_location_id = $event->get('field_event_location')->target_id;
-          if ($event_location_id) {
-            $locations[] = $event->get('field_event_location')->entity->label();
+          if ($event_date) {
+            $events[] = $event_location ? $event_date . ' — ' . $event_location : $event_date;
           }
         }
-        $events_date_range = $start_date_formatted . $end_date_formatted;
-        if ($locations) {
-          $locations = implode(', ', $locations);
+
+        if ($events) {
+          $events = implode(' | ', $events);
         }
       }
     }
@@ -2221,8 +2212,7 @@ function __jcc_process_course_results($rows, $config) {
       'details' => array_filter([
         $type,
         $date,
-        $events_date_range,
-        $locations,
+        $events,
       ]),
     ];
 

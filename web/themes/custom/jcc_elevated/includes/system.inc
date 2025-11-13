@@ -5,6 +5,7 @@
  * Generic system element preprocessors.
  */
 
+use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
@@ -44,7 +45,6 @@ function jcc_elevated_preprocess_pager(&$variables) {
  * Implements hook_preprocess_breadcrumb().
  */
 function jcc_elevated_preprocess_breadcrumb(&$variables) {
-
   // We are creating a variable for the Current Page Title, to allow us to print
   // it after the breadcrumbs loop has run.
   $route_match = \Drupal::routeMatch();
@@ -52,13 +52,68 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
   $variables['current_page_title'] = $title;
 
   // Remove items that don't have a url.
+  // Typically from URL alias patterns without landing pages.
   $count = count($variables['breadcrumb']);
   if ($count > 0) {
+    $path_alias_manager = \Drupal::service('path_alias.manager');
+    $theme_settings = (\Drupal::config('jcc_elevated.settings')->get());
+    $setting_suffix = 'landing_';
+
     foreach ($variables['breadcrumb'] as $key => $crumb) {
       // If not the last item in the array.
       if ($key != ($count - 1)) {
         if (empty($crumb['url'])) {
+          $landing_breadcrumb = NULL;
+          $landing_url = NULL;
+          $landing_title = NULL;
+          $content_types = [
+            'landing_page',
+            'subpage',
+          ];
+
+          // Remove crumb without url.
           unset($variables['breadcrumb'][$key]);
+
+          // Add landing page crumbs if specified from theme settings.
+          // Replaces entity type pattern alias when proper trail available.
+          $possible_node_type = str_replace(' ', '_', $crumb['text']);
+          foreach ($theme_settings as $theme_key => $item) {
+            if (str_starts_with($theme_key, $setting_suffix) && str_ends_with($theme_key, $possible_node_type) && $item) {
+              $landing_url = $item;
+              if (preg_match('/node\/(\d+)/', $landing_url, $matches)) {
+                // Replace internal URL with alias.
+                $alias = $path_alias_manager->getAliasByPath($item);
+                if ($alias) {
+                  $landing_url = $alias;
+                }
+                // Get breadcrumb for entity type landing page.
+                $node_manager = \Drupal::entityTypeManager()->getStorage('node');
+                $nid = $matches[1];
+                $node = $node_manager->load($nid);
+                if ($node) {
+                  if (in_array($node->bundle(), $content_types)) {
+                    $landing_title = $node->label();
+                    $routeName = $node->toUrl()->getRouteName();
+                    $routeParameters = $node->toUrl()->getRouteParameters();
+                    $route = \Drupal::service('router.route_provider')->getRouteByName($routeName);
+                    $routeMatch = new RouteMatch($routeName, $route, $routeParameters, $routeParameters);
+                    $landing_breadcrumb = \Drupal::service('breadcrumb')->build($routeMatch);
+                  }
+                }
+              }
+            }
+          }
+          if ($landing_breadcrumb) {
+            // Correct URL for landing crumb by replacing it.
+            $links = $landing_breadcrumb->getLinks();
+            array_pop($links);
+            $links[] = [
+              'text' => $landing_title,
+              'url' => $landing_url,
+            ];
+
+            $variables['breadcrumb'] = array_merge($links, $variables['breadcrumb']);
+          }
         }
       }
     }

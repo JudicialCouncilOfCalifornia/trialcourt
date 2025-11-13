@@ -47,7 +47,7 @@
   {% if news.body.0.value %}
     {% set content = {
       '#type': 'processed_text',
-      '#text':  news.body.0.value|length > 250 ? news.body.0.value|slice(0, 250) ~ ' ...' : news.body.0.value,
+      '#text':  news.body.0.value|length > 250 ? news.body.0.value|jcc_extract_body|striptags|slice(0, 250) ~ ' ...' : news.body.0.value,
       '#format': news.body.format,
   } %}
   {% endif %}
