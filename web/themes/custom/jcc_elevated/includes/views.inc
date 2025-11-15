@@ -1900,7 +1900,6 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   // Items per page filter. All items per page elements need to live outside the
   // views exposed form.
   if (isset($variables['rows'][0]['#rows']) && isset($variables['exposed']['items_per_page'])) {
-
     // Create our new variable for the templates.
     $variables['items_per_page'] = $variables['exposed']['items_per_page'];
 
@@ -1919,12 +1918,20 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
     unset($variables['items_per_page']['#title']);
     unset($variables['exposed']['items_per_page']);
   }
+
+  // Suppress items per page if no results.
   if (empty($variables['view']->result)) {
     unset($variables['exposed']['items_per_page']);
   }
-  // Count summary for the current page of results.
+
   // Suppress duplicate summary with empty header in ViewsResults twig.
   $variables['count_summary'] = $variables['header']['result']['#markup'] ?? '';
+
+  // Customize date range between filter labels.
+  if (isset($form['field_date_range_value_wrapper'])) {
+    $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['min']['#title'] = t('Start Date');
+    $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['max']['#title'] = t('End Date');
+  }
 
   // View specifics.
   $view = $variables;
@@ -1975,6 +1982,7 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
         case 'catalog':
         case 'by_type':
         case 'by_method':
+        case 'events_by_tag':
           $variables['#attached']['library'][] = 'jcc_elevated/courses';
           break;
       }
@@ -1993,12 +2001,6 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
       // Position sorting last.
       if (isset($form['sort_bef_combine'])) {
         $form['sort_bef_combine']['#weight'] = 99;
-      }
-
-      // Customize date range between filter labels.
-      if (isset($form['field_date_range_value_wrapper'])) {
-        $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['min']['#title'] = t('Start Date');
-        $form['field_date_range_value_wrapper']['field_date_range_value_wrapper']['field_date_range_value']['max']['#title'] = t('End Date');
       }
 
       break;
