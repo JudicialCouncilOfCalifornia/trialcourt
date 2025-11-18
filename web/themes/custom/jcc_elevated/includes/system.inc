@@ -51,48 +51,40 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
   $title = \Drupal::service('title_resolver')->getTitle(\Drupal::request(), $route_match->getRouteObject());
   $variables['current_page_title'] = $title;
 
-  // Remove items that don't have a url.
-  // Typically from URL alias patterns without landing pages.
+  // Remove action-less crumbs or substitute if optional landing exists.
   $count = count($variables['breadcrumb']);
   if ($count > 0) {
     $path_alias_manager = \Drupal::service('path_alias.manager');
     $theme_settings = (\Drupal::config('jcc_elevated.settings')->get());
-    $setting_suffix = 'landing_';
+    $landing_breadcrumb = NULL;
+    $path = NULL;
+    $content_types = [
+      'landing_page',
+      'subpage',
+    ];
 
     foreach ($variables['breadcrumb'] as $key => $crumb) {
       // If not the last item in the array.
       if ($key != ($count - 1)) {
         if (empty($crumb['url'])) {
-          $landing_breadcrumb = NULL;
-          $landing_url = NULL;
-          $landing_title = NULL;
-          $content_types = [
-            'landing_page',
-            'subpage',
-          ];
-
-          // Remove crumb without url.
+          // Remove items that don't have a url.
+          // Typically from URL alias patterns without landing pages.
           unset($variables['breadcrumb'][$key]);
 
-          // Add landing page crumbs if specified from theme settings.
+          // Add optional landing page crumb if specified from theme settings.
           // Replaces entity type pattern alias when proper trail available.
           $possible_node_type = str_replace(' ', '_', $crumb['text']);
-          foreach ($theme_settings as $theme_key => $item) {
-            if (str_starts_with($theme_key, $setting_suffix) && str_ends_with($theme_key, $possible_node_type) && $item) {
-              $landing_url = $item;
-              if (preg_match('/node\/(\d+)/', $landing_url, $matches)) {
+          foreach ($theme_settings as $theme_key => $value) {
+            if (str_starts_with($theme_key, 'landing_') && str_ends_with($theme_key, '_' . $possible_node_type)) {
+              if (preg_match('/node\/(\d+)/', $value, $matches)) {
                 // Replace internal URL with alias.
-                $alias = $path_alias_manager->getAliasByPath($item);
-                if ($alias) {
-                  $landing_url = $alias;
-                }
+                $path = $path_alias_manager->getAliasByPath($value);
                 // Get breadcrumb for entity type landing page.
                 $node_manager = \Drupal::entityTypeManager()->getStorage('node');
                 $nid = $matches[1];
                 $node = $node_manager->load($nid);
                 if ($node) {
                   if (in_array($node->bundle(), $content_types)) {
-                    $landing_title = $node->label();
                     $routeName = $node->toUrl()->getRouteName();
                     $routeParameters = $node->toUrl()->getRouteParameters();
                     $route = \Drupal::service('router.route_provider')->getRouteByName($routeName);
@@ -103,19 +95,22 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
               }
             }
           }
-          if ($landing_breadcrumb) {
-            // Correct URL for landing crumb by replacing it.
-            $links = $landing_breadcrumb->getLinks();
-            array_pop($links);
-            $links[] = [
-              'text' => $landing_title,
-              'url' => $landing_url,
-            ];
-
-            $variables['breadcrumb'] = array_merge($links, $variables['breadcrumb']);
-          }
         }
       }
+    }
+
+    // Append optional landing crumbs.
+    if ($landing_breadcrumb) {
+      $links = $landing_breadcrumb->getLinks();
+      $new_crumbs = [];
+      foreach ($links as $link) {
+        $url = $link->getUrl();
+        $new_crumbs[] = [
+          'text' => $link->getText(),
+          'url' => $url->getRouteParameters() ? $link->getUrl() : $path,
+        ];
+      }
+      $variables['breadcrumb'] = array_merge($new_crumbs, $variables['breadcrumb']);
     }
   }
 
