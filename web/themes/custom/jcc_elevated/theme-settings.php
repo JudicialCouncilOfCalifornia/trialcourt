@@ -220,41 +220,80 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
   ksort($bundles);
 
   $excluded_content_types = [
-    'Alert',
-    'Custom email',
-    'Importer',
-    'Landing Page',
-    'Subpage',
+    'alert',
+    'arbitrator',
+    'case',
+    'custom_email',
+    'document',
+    'importer',
+    'invitations_to_comment',
+    'landing_page',
+    'remote_hearings',
+    'roc_rule',
+    'roc_rule_index',
+    'subpage',
+    'tentative_ruling',
   ];
 
   $excluded_media_types = [
-    'Akamai Audio',
-    'Akamai Video',
-    'Boxcast Stream',
-    'File',
-    'Image',
-    'OEmbed video',
-    'Remote Video',
-    'Snippet',
+    'akamai_audio',
+    'akamai_video',
+    'boxcast_stream',
+    'file',
+    'image',
+    'oembed_video',
+    'remote_video',
+    'snippet',
+    'svg_file',
   ];
 
   // Create setting per content type.
   foreach ($bundles as $key => $bundle) {
-    $type = $bundle['label'];
+    if (!in_array($key, $excluded_content_types) && !in_array($key, $excluded_media_types)) {
 
-    if (!in_array($type, $excluded_content_types) && !in_array($type, $excluded_media_types)) {
       $type_field_id = 'landing_' . $key;
-      $form['default_landing_pages'][$type_field_id] = [
-        '#type' => 'linkit',
-        '#title' => $bundle['label'],
-        // Specify the autocomplete route for Linkit.
-        '#autocomplete_route_name' => 'linkit.autocomplete',
-        // Specify Linkit profile parameters.
-        '#autocomplete_route_parameters' => [
-          'linkit_profile_id' => 'default',
-        ],
-        '#default_value' => theme_get_setting($type_field_id),
-      ];
+      switch ($key) {
+        case 'opinion':
+          $view = \Drupal::entityTypeManager()->getStorage('view')->load('opinions');
+          $displays = $view->get('display');
+          $excluded_opinion_types = [
+            'default',
+          ];
+
+          foreach ($displays as $type => $display) {
+            if (!in_array($type, $excluded_opinion_types)) {
+              $type_field_id_variant = $type_field_id . '_' . $type;
+              $form['default_landing_pages'][$type_field_id_variant] = _jcc_landingpage_option_generator($bundle['label'] . ': ' . $display['display_title'], $type_field_id_variant);
+            }
+          }
+          break;
+
+        default:
+          $form['default_landing_pages'][$type_field_id] = _jcc_landingpage_option_generator($bundle['label'], $type_field_id);
+      }
+
     }
   }
+}
+
+/**
+ * Helper function to build landing page option field.
+ *
+ * @return array
+ *   Form field setup.
+ */
+function _jcc_landingpage_option_generator(string $title, string $type_field_id) {
+  $form = [
+    '#type' => 'linkit',
+    '#title' => $title,
+    // Specify the autocomplete route for Linkit.
+    '#autocomplete_route_name' => 'linkit.autocomplete',
+    // Specify Linkit profile parameters.
+    '#autocomplete_route_parameters' => [
+      'linkit_profile_id' => 'default',
+    ],
+    '#default_value' => theme_get_setting($type_field_id),
+  ];
+
+  return $form;
 }
