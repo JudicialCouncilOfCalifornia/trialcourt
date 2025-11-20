@@ -51,9 +51,27 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
   $title = \Drupal::service('title_resolver')->getTitle(\Drupal::request(), $route_match->getRouteObject());
   $variables['current_page_title'] = $title;
 
+  // Detect if site sections feature enabled.
+  $section = NULL;
+  $section_machine_name = NULL;
+  if (function_exists('jcc_get_current_page_section') && $section_id = jcc_get_current_page_section()) {
+    $section_service = Drupal::service('jcc_elevated_sections.service');
+    $section = $section_service->getSectionInfo($section_id);
+    $section_machine_name = $section->jcc_section_machine_name->value;
+  }
+
   // Remove action-less crumbs or substitute if optional landing exists.
   $count = count($variables['breadcrumb']);
   if ($count > 0) {
+    // If site section feature enabled.
+    if ($section) {
+      // Remove first element to set site section landing page home context.
+      $variables['breadcrumb'] = array_slice($variables['breadcrumb'], 1);
+      // Recount elements.
+      $count = count($variables['breadcrumb']);
+    }
+
+    // Check if optional landing page applies.
     $path_alias_manager = \Drupal::service('path_alias.manager');
     $theme_settings = (\Drupal::config('jcc_elevated.settings')->get());
     $landing_breadcrumb = NULL;
@@ -62,7 +80,6 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
       'landing_page',
       'subpage',
     ];
-
     foreach ($variables['breadcrumb'] as $key => $crumb) {
       // If not the last item in the array.
       if ($key != ($count - 1)) {
@@ -72,8 +89,24 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
           unset($variables['breadcrumb'][$key]);
 
           // Add optional landing page crumb if specified from theme settings.
-          // Replaces entity type pattern alias when proper trail available.
+          // Replaces entity type pattern alias when proper route is available.
           $possible_node_type = str_replace(' ', '_', $crumb['text']);
+          // Additional logic to determine landing option.
+          switch ($possible_node_type) {
+            case 'bio':
+              // Judges & Justices nodes.
+              $node = \Drupal::routeMatch()->getParameter('node');
+              $possible_node_type = 'bio_current';
+              if ($node->get('field_retirement_date')->value) {
+                $possible_node_type = 'bio_former';
+              }
+              break;
+          }
+          // For site section settings.
+          if ($section_machine_name) {
+            $possible_node_type = $possible_node_type . '__' . $section_machine_name;
+          }
+
           foreach ($theme_settings as $theme_key => $value) {
             if (str_starts_with($theme_key, 'landing_') && str_ends_with($theme_key, '_' . $possible_node_type)) {
               if (preg_match('/node\/(\d+)/', $value, $matches)) {
@@ -99,11 +132,19 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
       }
     }
 
-    // Append optional landing crumbs.
+    // Adjust breadcrumb with landing crumbs.
     if ($landing_breadcrumb) {
-      $links = $landing_breadcrumb->getLinks();
+      $landing_route_links = $landing_breadcrumb->getLinks();
       $new_crumbs = [];
-      foreach ($links as $link) {
+
+      if ($section) {
+        // Trim irrelevant and duplicate elements from landing route.
+        $landing_route_links = array_slice($landing_route_links, 1);
+        $variables['breadcrumb'] = array_slice($variables['breadcrumb'], 1);
+      }
+
+      // Insert landing route.
+      foreach ($landing_route_links as $link) {
         $url = $link->getUrl();
         $new_crumbs[] = [
           'text' => $link->getText(),
@@ -117,20 +158,9 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
   $add_homepage_to_breadcrumb = TRUE;
 
   // Adjust for site sections.
-  $section_homepage_url = NULL;
-  if (function_exists('jcc_get_current_page_section') && $section_id = jcc_get_current_page_section()) {
+  if ($section) {
     // Since this is a section, do not auto add the "Home" item.
     $add_homepage_to_breadcrumb = FALSE;
-
-    // Replace the first item with a link to the section homepage.
-    $node_manager = \Drupal::entityTypeManager()->getStorage('node');
-    $section_service = Drupal::service('jcc_elevated_sections.service');
-    $section = $section_service->getSectionInfo($section_id);
-    $section_homepage_nid = $section->jcc_section_homepage->target_id;
-    $section_homepage_node = $node_manager->load($section_homepage_nid);
-    $section_homepage_url = Url::fromRoute('entity.node.canonical', ['node' => $section_homepage_nid]);
-    $variables['breadcrumb'][0]['text'] = $section_homepage_node->label();
-    $variables['breadcrumb'][0]['url'] = $section_homepage_url->toString();
 
     // If the last item and first item are essentially the same thing, remove
     // the first item. This only applies for sections because the section home
