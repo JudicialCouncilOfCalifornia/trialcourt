@@ -5,6 +5,7 @@ dependencies:
     - field.field.media.file.field_category
     - field.field.media.file.field_date
     - field.field.media.file.field_document_type
+    - field.field.media.file.field_funding
     - field.field.media.file.field_matters_served
     - field.field.media.file.field_media_file
     - field.field.media.file.field_media_text
@@ -51,6 +52,16 @@ content:
     weight: 6
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_funding:
+    type: entity_reference_autocomplete
+    weight: 28
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_matters_served:
     type: cshs
