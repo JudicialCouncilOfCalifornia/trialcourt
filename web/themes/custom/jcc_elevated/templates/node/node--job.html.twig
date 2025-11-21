@@ -125,9 +125,11 @@
   {% endset %}
   <div class="job-description">
     {{ content.body ? content.body : no_description }}
-    <div class="job-description__action">
-      {{ button }}
-    </div>
+    {% if button %}
+      <div class="job-description__action">
+        {{ button }}
+      </div>
+    {% endif %}
   </div>
 {% endset %}
 
