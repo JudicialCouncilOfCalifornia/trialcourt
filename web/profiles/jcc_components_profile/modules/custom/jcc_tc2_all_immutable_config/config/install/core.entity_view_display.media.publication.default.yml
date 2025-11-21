@@ -3,11 +3,13 @@ status: true
 dependencies:
   config:
     - field.field.media.publication.field_case_type
+    - field.field.media.publication.field_category
     - field.field.media.publication.field_code
     - field.field.media.publication.field_date
     - field.field.media.publication.field_division
     - field.field.media.publication.field_document_type
     - field.field.media.publication.field_east_armenian_file
+    - field.field.media.publication.field_matters_served
     - field.field.media.publication.field_media_file
     - field.field.media.publication.field_media_file_arabic
     - field.field.media.publication.field_media_file_cambodian
@@ -24,6 +26,7 @@ dependencies:
     - field.field.media.publication.field_media_file_vietnamese
     - field.field.media.publication.field_media_text
     - field.field.media.publication.field_publication_category
+    - field.field.media.publication.field_tags
     - field.field.media.publication.field_topic
     - media.type.publication
   module:
@@ -42,6 +45,14 @@ content:
       link: true
     third_party_settings: {  }
     weight: 5
+    region: content
+  field_category:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 23
     region: content
   field_date:
     type: datetime_default
@@ -75,6 +86,14 @@ content:
       use_description_as_link_text: true
     third_party_settings: {  }
     weight: 11
+    region: content
+  field_matters_served:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 22
     region: content
   field_media_file:
     type: file_default
@@ -194,6 +213,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 6
+    region: content
+  field_tags:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 21
     region: content
   field_topic:
     type: entity_reference_label
