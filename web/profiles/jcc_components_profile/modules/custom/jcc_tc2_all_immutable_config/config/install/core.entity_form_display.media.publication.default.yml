@@ -3,11 +3,13 @@ status: true
 dependencies:
   config:
     - field.field.media.publication.field_case_type
+    - field.field.media.publication.field_category
     - field.field.media.publication.field_code
     - field.field.media.publication.field_date
     - field.field.media.publication.field_division
     - field.field.media.publication.field_document_type
     - field.field.media.publication.field_east_armenian_file
+    - field.field.media.publication.field_matters_served
     - field.field.media.publication.field_media_file
     - field.field.media.publication.field_media_file_arabic
     - field.field.media.publication.field_media_file_cambodian
@@ -24,6 +26,7 @@ dependencies:
     - field.field.media.publication.field_media_file_vietnamese
     - field.field.media.publication.field_media_text
     - field.field.media.publication.field_publication_category
+    - field.field.media.publication.field_tags
     - field.field.media.publication.field_topic
     - media.type.publication
   module:
@@ -116,6 +119,16 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_category:
+    type: entity_reference_autocomplete
+    weight: 32
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_date:
     type: datetime_default
     weight: 3
@@ -140,6 +153,16 @@ content:
     region: content
     settings:
       progress_indicator: throbber
+    third_party_settings: {  }
+  field_matters_served:
+    type: entity_reference_autocomplete
+    weight: 31
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_media_file:
     type: file_generic
@@ -263,6 +286,16 @@ content:
       not_found_message: 'The term ''@term'' will be added'
       new_terms: false
       no_empty_message: 'No terms could be found. Please type in order to add a new term.'
+    third_party_settings: {  }
+  field_tags:
+    type: entity_reference_autocomplete
+    weight: 30
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_topic:
     type: autocomplete_deluxe

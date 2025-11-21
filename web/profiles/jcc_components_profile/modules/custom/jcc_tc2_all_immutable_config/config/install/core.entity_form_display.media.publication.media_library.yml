@@ -4,11 +4,13 @@ dependencies:
   config:
     - core.entity_form_mode.media.media_library
     - field.field.media.publication.field_case_type
+    - field.field.media.publication.field_category
     - field.field.media.publication.field_code
     - field.field.media.publication.field_date
     - field.field.media.publication.field_division
     - field.field.media.publication.field_document_type
     - field.field.media.publication.field_east_armenian_file
+    - field.field.media.publication.field_matters_served
     - field.field.media.publication.field_media_file
     - field.field.media.publication.field_media_file_arabic
     - field.field.media.publication.field_media_file_cambodian
@@ -25,6 +27,7 @@ dependencies:
     - field.field.media.publication.field_media_file_vietnamese
     - field.field.media.publication.field_media_text
     - field.field.media.publication.field_publication_category
+    - field.field.media.publication.field_tags
     - field.field.media.publication.field_topic
     - media.type.publication
 id: media.publication.media_library
@@ -40,17 +43,19 @@ content:
     third_party_settings: {  }
   translation:
     weight: 10
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
 hidden:
   created: true
   field_case_type: true
+  field_category: true
   field_code: true
   field_date: true
   field_division: true
   field_document_type: true
   field_east_armenian_file: true
+  field_matters_served: true
   field_media_file: true
   field_media_file_arabic: true
   field_media_file_cambodian: true
@@ -67,6 +72,7 @@ hidden:
   field_media_file_vietnamese: true
   field_media_text: true
   field_publication_category: true
+  field_tags: true
   field_topic: true
   langcode: true
   name: true
