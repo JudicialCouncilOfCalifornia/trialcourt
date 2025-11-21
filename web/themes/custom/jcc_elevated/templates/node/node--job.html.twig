@@ -75,6 +75,7 @@
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/List") }}
 {{ attach_library("jcc_storybook/Button") }}
+{{ attach_library("jcc_elevated/jobs") }}
 
 {% set button %}
   {% if job.details.job_id.value or job.custom_apply.url %}
@@ -124,7 +125,9 @@
   {% endset %}
   <div class="job-description">
     {{ content.body ? content.body : no_description }}
-    {{ button }}
+    <div class="job-description__action">
+      {{ button }}
+    </div>
   </div>
 {% endset %}
 
