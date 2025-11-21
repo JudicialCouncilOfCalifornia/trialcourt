@@ -75,6 +75,7 @@
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/List") }}
 {{ attach_library("jcc_storybook/Button") }}
+{{ attach_library("jcc_elevated/jobs") }}
 
 {% set button %}
   {% if job.details.job_id.value or job.custom_apply.url %}
@@ -124,13 +125,17 @@
   {% endset %}
   <div class="job-description">
     {{ content.body ? content.body : no_description }}
-    {{ button }}
+    {% if button %}
+      <div class="job-description__action">
+        {{ button }}
+      </div>
+    {% endif %}
   </div>
 {% endset %}
 
 {% include "@organisms/Section/Section.twig" with {
   variant: 'default',
-  sub_component_layout: 'with-sidebar grid',
+  sub_component_layout: 'with-sidebar',
   sidebar_direction: 'row',
   sidebar_width: 39,
   gap: 's4',
