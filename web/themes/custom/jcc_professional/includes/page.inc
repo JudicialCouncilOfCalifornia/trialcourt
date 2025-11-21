@@ -112,7 +112,8 @@ function jcc_professional_preprocess_page(&$variables) {
         $end_timestamp = strtotime($event->get('field_date_range')->end_date);
         $current_timestamp = time();
 
-        if ($current_timestamp >= $start_timestamp && $current_timestamp <= $end_timestamp && $scheduled_type == $type) {
+        // Allow execution starting 1 hour (3600 seconds) before the event.
+        if ($current_timestamp >= ($start_timestamp - 3600) && $current_timestamp <= $end_timestamp && $scheduled_type == $type) {
           $body = $event->get('body')->value;
           $pattern = '/\/\/jcc\.granicus\.com\/(.*)\d+/';
           preg_match($pattern, $body ?? '', $event_url);

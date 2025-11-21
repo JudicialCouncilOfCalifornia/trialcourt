@@ -17,6 +17,7 @@ function jcc_base_preprocess_block__views_block__events_block_2(&$variables) {
 
   if (isset($variables['elements']['content']['#view'])) {
     $rows = $variables['elements']['content']['#view']->result;
+    $display_timezone = new \DateTimeZone('America/Los_Angeles');
 
     foreach ($rows as $row) {
       $date = new DrupalDateTime($row->_entity->field_date_range->value, 'UTC');
@@ -24,6 +25,8 @@ function jcc_base_preprocess_block__views_block__events_block_2(&$variables) {
 
       // Display only current or upcoming events.
       if ($end_date->getTimestamp() >= \Drupal::time()->getCurrentTime()) {
+        $date->setTimezone($display_timezone);
+        $end_date->setTimezone($display_timezone);
         $event_type = ($row->_entity->field_event_type->target_id ? Term::load($row->_entity->field_event_type->target_id)->get('name')->value : '');
         $title = $row->_entity->title->value;
 
