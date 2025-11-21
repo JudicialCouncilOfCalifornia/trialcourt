@@ -210,49 +210,16 @@ process:
       ignore_case: true
   field_assignment_area:
     -
-      plugin: explode
-      delimiter: ','
-      source: assignments
-    -
-      plugin: callback
-      callable: trim
-    -
-      plugin: entity_generate
-      entity_type: taxonomy_term
+      plugin: entity_lookup
+      value_key: name
       bundle_key: vid
       bundle: assignment_area
-      value_key: name
-      ignore_case: true
-  field_topics:
-    -
-      plugin: explode
-      delimiter: ','
-      source: topics
-    -
-      plugin: callback
-      callable: trim
-    -
-      plugin: entity_generate
       entity_type: taxonomy_term
-      bundle_key: vid
-      bundle: topics
-      value_key: name
       ignore_case: true
-  field_subtopics:
-    -
-      plugin: explode
-      delimiter: ','
-      source: subtopics
-    -
-      plugin: callback
-      callable: trim
-    -
-      plugin: entity_generate
-      entity_type: taxonomy_term
-      bundle_key: vid
-      bundle: subtopics
-      value_key: name
-      ignore_case: true
+      source:
+        - assignments
+        - topics
+        - subtopics
   field_is_contributed_content:
     -
       plugin: get
