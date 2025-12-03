@@ -46,7 +46,10 @@ source:
       name: category
       selector: category
       label: Category
-
+    - 
+      name: title
+      selector: title
+      label: Title
 process:  
   mid:
     -
@@ -100,6 +103,7 @@ process:
       source: year
       from_format: m/d/Y
       to_format: 'Y-m-d' 
+  field_media_text/value: title    
 destination:
   plugin: 'entity:media'
   update_only: true
@@ -113,5 +117,6 @@ destination:
     - field_tags
     - field_date
     - field_source
+    - field_media_text
 migration_dependencies:
   required: {  }
