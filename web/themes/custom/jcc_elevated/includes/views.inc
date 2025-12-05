@@ -614,6 +614,14 @@ function jcc_elevated_preprocess_views_view__justices_judges__former(&$variables
 }
 
 /**
+ * Implements hook_preprocess_HOOK() for justices and judges block view.
+ */
+function jcc_elevated_preprocess_views_view__justices_judges__generic_bio(&$variables) {
+  // Reuse current justices/judges as common preprocess.
+  jcc_elevated_preprocess_views_view__justices_judges__current($variables);
+}
+
+/**
  * Implements hook_preprocess_views_view() for events listing block.
  */
 function jcc_elevated_preprocess_views_view__advisory_body_events__block_1(&$variables) {
