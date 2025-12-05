@@ -21,7 +21,6 @@
         let $currentTable = $(this);
         let $headers = $currentTable.find('thead th');
 
-        $currentTable.wrap('<div class="usa-table-container--scrollable"></div>');
         $currentTable.addClass('usa-table').removeClass('sortable');
 
         $headers.each( function() {
@@ -31,7 +30,6 @@
          if (!excluded_tables.includes($formViewId)) {
            $tableHeader.attr('data-sortable', '');
            $tableHeader.attr('scope', 'col');
-           $tableHeader.attr('role', 'columheader');
            $tableHeader.html($headerMarkup);
          }
         });

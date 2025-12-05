@@ -219,42 +219,140 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
   $bundles = array_merge($node_bundles, $media_bundles);
   ksort($bundles);
 
+  if (\Drupal::service('module_handler')->moduleExists('jcc_elevated_sections')) {
+    // Create landing set per section.
+    $vocab_id = 'jcc_sections';
+    $sections = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocab_id);
+    foreach ($sections as $section) {
+      $section_id = $section->jcc_section_machine_name;
+      $section_name = $section->name;
+
+      $form['default_landing_pages'][$section_id] = [
+        '#type' => 'details',
+        '#title' => $section_name,
+      ];
+
+      $form['default_landing_pages'][$section_id] = array_merge($form['default_landing_pages'][$section_id], __jcc_landingpage_options_set($bundles, $section_id));
+    }
+  }
+  else {
+    // Default single landing set.
+    $form['default_landing_pages'] = array_merge($form['default_landing_pages'], __jcc_landingpage_options_set($bundles, NULL));
+  }
+}
+
+/**
+ * Helper function to build landing page option field.
+ *
+ * @return array
+ *   Form field setup.
+ */
+function __jcc_landingpage_option_generator(string $title, string $type_field_id) {
+  $form = [
+    '#type' => 'linkit',
+    '#title' => $title,
+    // Specify the autocomplete route for Linkit.
+    '#autocomplete_route_name' => 'linkit.autocomplete',
+    // Specify Linkit profile parameters.
+    '#autocomplete_route_parameters' => [
+      'linkit_profile_id' => 'default',
+    ],
+    '#default_value' => theme_get_setting($type_field_id),
+  ];
+
+  return $form;
+}
+
+/**
+ * Helper function to build landing page option field set.
+ *
+ * @return array
+ *   Form fieldset setup.
+ */
+function __jcc_landingpage_options_set($bundles, $section_id) {
   $excluded_content_types = [
-    'Alert',
-    'Custom email',
-    'Importer',
-    'Landing Page',
-    'Subpage',
+    'alert',
+    'arbitrator',
+    'case',
+    'custom_email',
+    'document',
+    'importer',
+    'invitations_to_comment',
+    'landing_page',
+    'remote_hearings',
+    'roc_rule',
+    'roc_rule_index',
+    'subpage',
+    'tentative_ruling',
   ];
 
   $excluded_media_types = [
-    'Akamai Audio',
-    'Akamai Video',
-    'Boxcast Stream',
-    'File',
-    'Image',
-    'OEmbed video',
-    'Remote Video',
-    'Snippet',
+    'akamai_audio',
+    'akamai_video',
+    'boxcast_stream',
+    'file',
+    'image',
+    'oembed_video',
+    'remote_video',
+    'snippet',
+    'svg_file',
   ];
 
   // Create setting per content type.
+  $landingpage_fieldset = [];
   foreach ($bundles as $key => $bundle) {
-    $type = $bundle['label'];
-
-    if (!in_array($type, $excluded_content_types) && !in_array($type, $excluded_media_types)) {
+    if (!in_array($key, $excluded_content_types) && !in_array($key, $excluded_media_types)) {
+      if ($key == 'judge') {
+        $key = 'bio';
+      }
       $type_field_id = 'landing_' . $key;
-      $form['default_landing_pages'][$type_field_id] = [
-        '#type' => 'linkit',
-        '#title' => $bundle['label'],
-        // Specify the autocomplete route for Linkit.
-        '#autocomplete_route_name' => 'linkit.autocomplete',
-        // Specify Linkit profile parameters.
-        '#autocomplete_route_parameters' => [
-          'linkit_profile_id' => 'default',
-        ],
-        '#default_value' => theme_get_setting($type_field_id),
-      ];
+      if ($section_id) {
+        $type_field_id = $type_field_id . '__' . $section_id;
+      }
+
+      // Support view display variants.
+      switch ($key) {
+        case 'opinion':
+        case 'bio':
+          // Option per view display variant.
+          $excluded_displays = [
+            'default',
+          ];
+          $view_names = [];
+          if ($key == 'bio') {
+            $view_names[] = 'justices_judges';
+          }
+          else {
+            $view_names[] = 'opinions';
+          }
+
+          if ($view_names) {
+            foreach ($view_names as $view_name) {
+              $view = \Drupal::entityTypeManager()->getStorage('view')->load($view_name);
+              if ($view) {
+                $displays = $view->get('display');
+
+                foreach ($displays as $display_name => $display) {
+                  if (!in_array($display_name, $excluded_displays)) {
+                    $type_field_id_variant = 'landing_' . $key . '_' . $display_name;
+                    // Tag with section id if in use.
+                    if ($section_id) {
+                      $type_field_id_variant = 'landing_' . $key . '_' . $display_name . '__' . $section_id;
+                    }
+
+                    $landing_option_field = __jcc_landingpage_option_generator($bundle['label'] . ': ' . $display['display_title'], $type_field_id_variant);
+                    $landingpage_fieldset[$type_field_id_variant] = $landing_option_field;
+                  }
+                }
+              }
+            }
+          }
+          break;
+
+        default:
+          $landingpage_fieldset[$type_field_id] = __jcc_landingpage_option_generator($bundle['label'], $type_field_id);
+      }
     }
   }
+  return $landingpage_fieldset;
 }
