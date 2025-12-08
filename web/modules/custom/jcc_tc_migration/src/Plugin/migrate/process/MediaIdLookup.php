@@ -22,14 +22,16 @@ class MediaIdLookup extends ProcessPluginBase {
     if (empty($value)) {
       return NULL;
     }
-    $filename = basename(parse_url($value, PHP_URL_PATH));
+    $filename = $value;
+    \Drupal::logger('filename')->warning('Printing filename here: @filename', ['@filename' => $value]);
+
     if (empty($filename)) {
       \Drupal::logger('media_id_lookup')->warning('Filename could not be extracted from URL: @url', ['@url' => $value]);
       return NULL;
     }
     $file_storage = \Drupal::entityTypeManager()->getStorage('file');
     $query = $file_storage->getQuery();
-    $query->condition('filename', $filename);
+    $query->condition('uri', '%' . $filename, 'LIKE');
     $fids = $query->execute();
     if (empty($fids)) {
       \Drupal::logger('media_id_lookup')->warning('No file entity found with filename: @filename', [
