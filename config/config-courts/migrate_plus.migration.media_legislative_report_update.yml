@@ -39,29 +39,43 @@ source:
       selector: office
       label: Office
     -
-      name: budget_funding
-      selector: budget_funding
+      name: funding
+      selector: funding
       label: Budget Funding
     -
       name: category
       selector: category
       label: Category
-    - 
-      name: title
-      selector: title
-      label: Title
 process:  
+  pseudo_destination_filename:
+    -
+      plugin: path_from_url
+      source: url
+    -
+      plugin: callback
+      callable: basename
+    -
+      plugin: callback
+      callable: urldecode
+    -
+      plugin: str_replace
+      search: ' '
+      replace: '-'
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'Could not create file from URL.'    
   mid:
     -
       plugin: media_id_lookup
-      source: url
+      source: '@pseudo_destination_filename'
     -
       plugin: skip_on_empty
       method: row
   field_category:
-    #-
-    #  plugin: default_value
-    #  default_value: 'Legislative Reports'
     -
       plugin: entity_generate
       source: category
@@ -73,7 +87,7 @@ process:
   field_source:
     - 
       plugin: entity_generate
-      source: budget_funding
+      source: funding
       entity_type: taxonomy_term
       bundle_key: vid
       bundle: source

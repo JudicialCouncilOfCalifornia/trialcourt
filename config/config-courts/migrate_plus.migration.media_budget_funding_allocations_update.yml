@@ -51,60 +51,31 @@ source:
     public: 'public://'
     slash: /
 process:
-  pseudo_filename:
-  -
-    plugin: callback
-    callable: pathinfo
-    source: url
-  -
-    plugin: extract
-    index:
-      - filename
-  -
-    plugin: service
-    service: transliteration
-    method: transliterate
-  -
-    plugin: service
-    service: pathauto.alias_cleaner
-    method: cleanstring    
-  pseudo_extension:
-  -
-    plugin: callback
-    callable: pathinfo
-    source: url
-  -
-    plugin: extract
-    index:
-      - extension  
-  pseudo_subfolder:
-  -
-    plugin: callback
-    callable: pathinfo
-    source: url
-  -
-    plugin: extract
-    index:
-      - dirname
-  - 
-    plugin: explode
-    delimiter: '/'   
-  -
-    plugin: array_pop   
-  pseudo_filename_full:
-  -
-    plugin: concat
-    source:
-      - constants/public
-      - '@pseudo_subfolder'
-      - constants/slash
-      - '@pseudo_filename'
-      - constants/dot
-      - '@pseudo_extension'  
+  pseudo_destination_filename:
+    -
+      plugin: path_from_url
+      source: url
+    -
+      plugin: callback
+      callable: basename
+    -
+      plugin: callback
+      callable: urldecode
+    -
+      plugin: str_replace
+      search: ' '
+      replace: '-'
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'Could not create file from URL.'      
   mid:
     -
       plugin: media_id_lookup
-      source: '@pseudo_filename_full'
+      source: '@pseudo_destination_filename'
     -
       plugin: skip_on_empty
       method: row
