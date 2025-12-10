@@ -275,7 +275,7 @@ display:
         type: basic
         options:
           submit_button: Apply
-          reset_button: false
+          reset_button: true
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
           expose_sort_order: true
@@ -288,7 +288,20 @@ display:
       cache:
         type: tag
         options: {  }
-      empty: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text
+          empty: true
+          content:
+            value: 'No results found'
+            format: snippet
+          tokenize: false
       sorts: {  }
       arguments:
         field_category_target_id:
@@ -490,7 +503,7 @@ display:
           exposed: true
           expose:
             operator_id: field_source_target_id_op
-            label: 'Source (field_source)'
+            label: Funding
             description: ''
             use_operator: false
             operator: field_source_target_id_op
@@ -575,6 +588,7 @@ display:
     display_plugin: block
     position: 1
     display_options:
+      exposed_block: true
       display_extenders: {  }
     cache_metadata:
       max-age: -1

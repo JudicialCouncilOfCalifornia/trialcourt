@@ -7,9 +7,7 @@
   dom_id ? 'js-view-dom-id-' ~ dom_id,
 ]
 %}
-
-<div>{{exposed|render}}</div>
-
+{% if grouped_reports|length > 0 %}
 {% set accordion_items = [] %}
   {% for year, reports in grouped_reports %}  
     {% set results %}
@@ -17,7 +15,7 @@
       <div class="report">
       <ul>
         <li><a href="{{ report.url }}" target="_blank" rel="noopener">
-        {{ report.text }}</a>
+        {{ report.text|striptags|trim  }}</a>
         </li>
       </ul>   
       </div>  
@@ -42,3 +40,6 @@
     lead: "",
     items: accordion_items
   } %}
+  {% else %}  
+    <div>No results found.</div>  
+  {% endif %}
