@@ -991,7 +991,8 @@ function jcc_elevated_preprocess_views_view__surplus_listing__block_1(&$variable
       $today = new \DateTime('today');
       $renewal_date = new \DateTime($renewal_value);
       $interval = $today->diff($renewal_date);
-      $days_between = $interval->days;
+      //$days_between = $interval->days;
+      $days_between = 0;
     }
 
     $variables['surplus'][] = [

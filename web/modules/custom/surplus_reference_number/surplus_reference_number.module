@@ -48,7 +48,7 @@ function surplus_reference_number_entity_presave(EntityInterface $entity) {
     if (empty($renewal_date_value)) {
       $renewal_date = (new \DateTime($renewal_date_value))->setTime(0, 0);
       $today = new \DateTime('now');
-      $sixty_days_from_today = (clone $today)->modify('+60 days');
+      $sixty_days_from_today = (clone $today)->modify('+0 days');
       $today_midnight = (clone $today)->setTime(0, 0);
       $sixty_days_midnight = (clone $sixty_days_from_today)->setTime(0, 0);
       $entity->set('field_renewal_date', $sixty_days_from_today->format('Y-m-d'));
