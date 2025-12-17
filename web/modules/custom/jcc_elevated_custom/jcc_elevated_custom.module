@@ -8,6 +8,7 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\Url;
 use Drupal\editor\Entity\Editor;
 use Drupal\media\MediaInterface;
 use Drupal\node\NodeInterface;
@@ -105,21 +106,15 @@ function jcc_elevated_mail($key, &$message, $params) {
     case 'expiry_warning':      
       $node = $params['node'];
       $url = Url::fromRoute('entity.node.canonical', ['node' => $node->id()], [
-  'absolute' => TRUE,
-])->toString();
-      \Drupal::logger('jcc_elevated')->warning('No workflow found for node @nid', ['@nid' => $node->id()]);
-      $message['subject'] = t('Your content will expire in 5 days');
-      $message['body'][] = t(
-        'The content "@title" will expire on @date.',
-        [
-          '@title' => $node->label(),
-          '@date' => $params['renewal_date'],
-        ]
-      );
-      $message['body'][] = t(
-  'View the content: @url',
-  ['@url' => $url]
-);
+        'absolute' => TRUE,
+      ])->toString();
+      $message['subject'] = t('Your surplus content will expire in 5 days');
+      $message['body'][] = t('The content "@title" will expire on @date.',
+                           [
+                            '@title' => $node->label(),
+                            '@date' => $params['renewal_date'],
+                        ]);
+      $message['body'][] = t('View the content: @url',['@url' => $url]);
       $message['body'][] = t('Please review and renew it if needed.');
       break;
   }
