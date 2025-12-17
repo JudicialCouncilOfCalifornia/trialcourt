@@ -1,0 +1,45 @@
+{{ attach_library("jcc_storybook/List") }}
+{{ attach_library("jcc_storybook/Section") }}
+{{ attach_library("jcc_storybook/Accordion") }}
+
+{%
+  set classes = [
+  dom_id ? 'js-view-dom-id-' ~ dom_id,
+]
+%}
+{% if grouped_reports|length > 0 %}
+{% set accordion_items = [] %}
+  {% for year, reports in grouped_reports %}  
+    {% set results %}
+      {% for report in reports %}
+      <div class="report">
+      <ul>
+        <li><a href="{{ report.url }}" target="_blank" rel="noopener">
+        {{ report.text|striptags|trim  }}</a>
+        </li>
+      </ul>   
+      </div>  
+      {% endfor %}
+    {% endset %}      
+
+    {% set accordion_items = accordion_items|merge([{
+      id: "accordion-" ~ year,
+      label: year,
+      content: results
+    }
+    ])
+    %}
+  {% endfor %}
+
+  {% include "@molecules/Accordion/Accordion.twig" with {
+    variant: 'default',
+    open_first: false,
+    open_on_load: "",
+    expand_button: true,
+    heading: '',
+    lead: "",
+    items: accordion_items
+  } %}
+  {% else %}  
+    <div>No results found.</div>  
+  {% endif %}
