@@ -985,14 +985,12 @@ function jcc_elevated_preprocess_views_view__surplus_listing__block_1(&$variable
     $posted_value = $node->get('field_posted')->value;
     $posted_formatted = (new \DateTime($posted_value))->format('M d, Y');
     $renewal_value = $node->get('field_renewal_date')->value;
-    $days_between = 0;
     $interval = 0;
     if (!empty($posted_value)) {
       $today = new \DateTime('today');
       $renewal_date = new \DateTime($renewal_value);
       $interval = $today->diff($renewal_date);
-      //$days_between = $interval->days;
-      $days_between = 0;
+      $days_between = $interval->days;
     }
 
     $variables['surplus'][] = [
