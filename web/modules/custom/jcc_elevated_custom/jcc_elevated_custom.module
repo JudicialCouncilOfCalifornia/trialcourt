@@ -8,6 +8,7 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\Url;
 use Drupal\editor\Entity\Editor;
 use Drupal\media\MediaInterface;
 use Drupal\node\NodeInterface;
@@ -24,8 +25,14 @@ function jcc_elevated_custom_page_attachments(array &$attachments) {
 }
 
 function jcc_elevated_custom_cron() {
-  $today = new \DateTimeImmutable();
+  $today = (new \DateTimeImmutable('today'))
+  ->setTimezone(new \DateTimeZone(date_default_timezone_get()))
+  ->setTime(0, 0, 0); 
   $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+  $kv = \Drupal::keyValue('feedback_mail_sent');
+  $mail_manager = \Drupal::service('plugin.manager.mail');
+  $langcode = \Drupal::languageManager()->getDefaultLanguage()->getId();
+  
   $nids = $node_storage->getQuery()
     ->condition('type', 'surplus_materials')
     ->exists('field_renewal_date')
@@ -41,7 +48,10 @@ function jcc_elevated_custom_cron() {
     if (!$node instanceof NodeInterface || $node->get('field_renewal_date')->isEmpty()) {
       continue;
     }
-    $renewal_date = new \DateTimeImmutable($node->get('field_renewal_date')->value);
+    $timezone = new \DateTimeZone(date_default_timezone_get());
+    $renewal_date = (new \DateTimeImmutable($node->get('field_renewal_date')->value))
+      ->setTimezone($timezone)
+      ->setTime(0, 0, 0);
     $current_state = $node->get('moderation_state')->value;
     if ($renewal_date < $today && $current_state === 'published') {
       $workflow = \Drupal::service('content_moderation.moderation_information')->getWorkflowForEntity($node);
@@ -66,8 +76,49 @@ function jcc_elevated_custom_cron() {
         \Drupal::logger('jcc_elevated')->warning('No workflow found for node @nid', ['@nid' => $node->id()]);
       }
     }
+
+  $warning_date = $today->modify('+5 days'); 
+  if ($renewal_date == $warning_date && $current_state === 'published') {   
+    $key =  $node->id();
+    if (!$kv->get($key)) {
+      $author = $node->getOwner();
+      if ($author && $author->getEmail()) {
+        $mail_manager->mail(
+          'jcc_elevated',
+          'expiry_warning',
+          $author->getEmail(),
+          $langcode,
+          [
+            'node' => $node,
+            'renewal_date' => $renewal_date->format('F j, Y'),
+          ]
+        );
+        $kv->set($key, \Drupal::time()->getRequestTime());
+      }
+    }
+  }
+ }
+}
+
+function jcc_elevated_mail($key, &$message, $params) {
+  switch ($key) {
+    case 'expiry_warning':      
+      $node = $params['node'];
+      $url = Url::fromRoute('entity.node.canonical', ['node' => $node->id()], [
+        'absolute' => TRUE,
+      ])->toString();
+      $message['subject'] = t('Your surplus content will expire in 5 days');
+      $message['body'][] = t('The content "@title" will expire on @date.',
+                           [
+                            '@title' => $node->label(),
+                            '@date' => $params['renewal_date'],
+                        ]);
+      $message['body'][] = t('View the content: @url',['@url' => $url]);
+      $message['body'][] = t('Please review and renew it if needed.');
+      break;
   }
 }
+
 
 /**
  * Implements hook_ckeditor_css_alter().
@@ -260,6 +311,9 @@ function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
       '#markup' => $text,
       '#weight' => -100,
     ];
+    if (isset($form['title'])) {
+      $form['title']['widget'][0]['value']['#title'] = t('Description');
+    }
   }
 
   // Enhancements for Linkit if JCC CKEditor is not in use.

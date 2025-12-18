@@ -14,10 +14,10 @@
    <thead>
     <tr>
       <th>Ref #</th>
-      <th>Title</th>
       <th>Posted On</th>
-      <th>Quantity</th>     
       <th>Category</th> 
+      <th>Quantity</th> 
+      <th>Description</th>     
       <th>Expires In Days </th>    
         <th>Offered By</th> {% if  can_renew %}
         <th>Action</th>
@@ -28,10 +28,10 @@
     {% for s in surplus %}
       <tr>
         <td>{{ s['Ref #'] }}</td>
-         <td><a href="/node/{{ s.nid }}">{{s['title']}}</a></td>
         <td>{{ s['Posted On'] }}</td>
-        <td>{{ s['Quantity'] }}</td>
         <td>{{ s['Category']}}</td>
+        <td>{{ s['Quantity'] }}</td>
+         <td><a href="/node/{{ s.nid }}">{{s['title']}}</a></td>
         <td>{{ s['Interval'] }}</td>       
         <td>
           <a href="mailto:{{ s['Email'] }}">{{ s['Contact'] }}</a><br>
