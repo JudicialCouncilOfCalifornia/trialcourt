@@ -1,0 +1,16 @@
+{% set current_month = '' %}
+{% for row in rows[0]['#rows'] %}
+  {% set news = row['#node'] %}
+  {% if news.field_date.value %}
+    {% set news_month = news.field_date.value|date('F Y') %}
+    {% if news_month != current_month %}
+      <h3>{{ news_month }}</h3>
+      {% set current_month = news_month %}
+    {% endif %}
+    <p>
+      <a href="{{ path('entity.node.canonical', {'node': news.id}) }}">
+        {{ news.field_date.value|date('F j, Y') }}
+      </a> 
+    </p>
+  {% endif %}
+{% endfor %}
