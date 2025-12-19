@@ -1,3 +1,36 @@
+{{ attach_library("jcc_storybook/ViewResults") }}
+{{ attach_library("jcc_storybook/ResultExcerpt") }}
+
+{%
+  set classes = [
+  dom_id ? 'js-view-dom-id-' ~ dom_id,
+]
+%}
+  
+<div{{ attributes.addClass(classes) }}>
+  {% include "@organisms/ViewResults/ViewResults.twig" with {
+    variant: 'default',
+    view_name: id,
+    view_display: display_id,
+    header: header,
+    header_sidebar: '',
+    header_direction_results: 'sidebar-row',
+    form: exposed|render,
+    form_in_sidebar: true,
+    custom_view: true,
+    list_type: 'ul',
+    list_type_divider: '',
+    rows: '',
+    sidebar: '',
+    sidebar_direction_results: 'sidebar-row',
+    pager: pager|render,
+    items_per_page: '',
+    footer: '',
+    footer_sidebar: '',
+    sidebar_direction_footer: 'sidebar-row',
+  } %}
+</div>
+
 {% set current_month = '' %}
 {% for row in rows[0]['#rows'] %}
   {% set news = row['#node'] %}
