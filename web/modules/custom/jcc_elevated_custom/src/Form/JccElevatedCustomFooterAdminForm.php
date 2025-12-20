@@ -75,6 +75,7 @@ class JccElevatedCustomFooterAdminForm extends FormBase {
       'about_text' => $this->state->get('jcc_elevated.about_text'),
       'about_link_title' => $this->state->get('jcc_elevated.about_link_title'),
       'about_link_url' => $this->state->get('jcc_elevated.about_link_url'),
+      'about_link_aria_label' => $this->state->get('jcc_elevated.about_link_aria_label'),
       'social_links_facebook' => $this->state->get('jcc_elevated.social_links_facebook'),
       'social_links_linkedin' => $this->state->get('jcc_elevated.social_links_linkedin'),
       'social_links_rss' => $this->state->get('jcc_elevated.social_links_rss'),
@@ -199,11 +200,17 @@ class JccElevatedCustomFooterAdminForm extends FormBase {
       ],
     ];
 
+    $form['about']['about_link']['about_link_aria_label'] = [
+      '#title' => $this->t('Link aria label'),
+      '#type' => 'textfield',
+      '#default_value' => $state['about_link_aria_label'] ?? '',
+    ];
+
     // Process the url for an entity or an external URL.
     if (strpos($form['about']['about_link']['about_link_url']['#default_value'], 'entity:') === 0) {
       $value = explode('/', $form['about']['about_link']['about_link_url']['#default_value']);
       $entity_id = end($value);
-      $entity = \Drupal::entityTypeManager()->getStorage($form['about']['about_link']['about_link_url']['#target_type'])->load($entity_id);
+      $entity = $this->entityTypeManager->getStorage($form['about']['about_link']['about_link_url']['#target_type'])->load($entity_id);
       $form['about']['about_link']['about_link_url']['#default_value'] = $entity_id ? $entity : '';
       $form['about']['about_link']['about_link_url']['#process_default_value'] = TRUE;
     }

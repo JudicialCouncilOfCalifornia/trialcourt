@@ -201,7 +201,7 @@
       variant: "text",
       size: "normal",
       label: footer_values.about_link_label,
-      aria_label: footer_values.about_link_label,
+      aria_label: footer_values.about_link_aria_label,
       href: footer_values.about_link_href,
     } %}
   {% endif %}
@@ -215,29 +215,23 @@
       sub_label: site_name.second,
       attributes: create_attribute(),
     },
-    secondary_nav_data: {
-      attributes: create_attribute(),
-      variant: "default",
-      overflowing_variant: "stack",
-      links: footer_links,
-    },
     footer_upper_nav_data: {
       attributes: create_attribute(),
       variant: footer_values.display_footer_lower ? "with-divider" : "default",
       overflowing_variant: "stack",
       links: footer_values.upper_footer_menu,
     },
-    footer_lower_nav_data: {
-      attributes: create_attribute(),
-      variant: "default",
-      overflowing_variant: "stack",
-      links: footer_values.lower_footer_menu,
-    },
     display_footer_lower: footer_values.display_footer_lower,
     footer_about_content: {
       label: footer_values.about_label,
       content: footer_values.about_content,
       link: footer_about_link,
+    },
+    footer_lower_nav_data: {
+      attributes: create_attribute(),
+      variant: "default",
+      overflowing_variant: "stack",
+      links: footer_values.lower_footer_menu,
     },
     footer_social_link: footer_values.social_links,
     attributes: create_attribute(),
