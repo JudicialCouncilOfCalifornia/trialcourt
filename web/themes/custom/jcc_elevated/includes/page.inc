@@ -156,6 +156,7 @@ function jcc_elevated_preprocess_page(&$variables) {
   ]);
   $about_link_label = $state->get('jcc_elevated.about_link_title', '');
   $about_link_url = $state->get('jcc_elevated.about_link_url', '');
+  $about_link_aria_label = $state->get('jcc_elevated.about_link_aria_label', '');
   $display_footer_lower = $lower_menu != '_none_' ?? FALSE;
 
   $variables['footer_values'] = [
@@ -167,6 +168,7 @@ function jcc_elevated_preprocess_page(&$variables) {
     'about_content' => isset($about_text['value']) ? Markup::create($about_text['value']) : '',
     'about_link_label' => $about_link_label,
     'about_link_href' => $about_link_url,
+    'about_link_aria_label' => $about_link_aria_label,
     'social_links' => $social_links,
   ];
 }

@@ -14,13 +14,20 @@
         },
       },
       sub_component_data: content,
+      trigger: {
+        button: {
+          variant: 'secondary',
+          label: canvas_heading,
+          aria_label: "Submit feedback about this page",
+          icon: 'thumbs-up',
+          size: 'small',
+        },
+      },
     } %}
-
-    <a href="javascript:void(0);" title="Submit feedback about this page" class="button button--secondary button--small icon--thumbs-up offcanvas__open-button">{{ canvas_heading }}</a>
   {% endset %}
-{% endif %}
 
-{% include '@organisms/Drawer/Drawer.twig' with {
-  layout: "stack",
-  sub_component_data: drawer_content,
-} %}
+  {% include '@organisms/Drawer/Drawer.twig' with {
+    layout: "stack",
+    sub_component_data: drawer_content,
+  } %}
+{% endif %}

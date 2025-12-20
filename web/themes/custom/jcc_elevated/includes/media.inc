@@ -44,15 +44,45 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
 
+  // Topics.
+  $topic_names = [];
+  if ($media->hasField('field_topic')) {
+    $topic_terms = $media->get('field_topic')->referencedEntities();
+    foreach ($topic_terms as $term) {
+      $topic_names[] = [
+        'label' => $term->getName(),
+      ];
+    }
+  }
+
+  // Details.
+  $details = [];
+  $division_tid = $media->hasField('field_division') ? $media->get('field_division')->target_id : FALSE;
+  $case_tid = $media->hasField('field_case_type') ? $media->get('field_case_type')->target_id : FALSE;
+  $document_tid = $media->hasField('field_document_type') ? $media->get('field_document_type')->target_id : FALSE;
+  $document_type = $document_tid && !empty($taxonomy_manager->load($document_tid)) ? $taxonomy_manager->load($document_tid)->getName() : '';
+  $category_tid = $media->hasField('field_publication_category') ? $media->get('field_publication_category')->target_id : FALSE;
+  if ($division_tid  && !empty($taxonomy_manager->load($division_tid))) {
+    $details[] = [
+      'division' => $taxonomy_manager->load($division_tid)->getName(),
+    ];
+  }
+  if ($case_tid  && !empty($taxonomy_manager->load($case_tid))) {
+    $details[] = [
+      'case_type' => $taxonomy_manager->load($case_tid)->getName(),
+    ];
+  }
+
   // Documents.
   $lang_label_sets = __jcc_language_sets();
   $documents = [];
   $languages = [];
   foreach ($media as $field) {
-    if ($field->getFieldDefinition()->getType() == 'file') {
-      // Get language variant from field label.
-      $lang_variant = trim(str_replace(['File', 'file'], '', $field->getFieldDefinition()->getLabel()));
+    // Get language variant from field label.
+    $lang_variant = trim(str_replace(['File', 'file'], '', $field->getFieldDefinition()->getLabel()));
+    $lang_machine_name = strtolower(str_replace(' ', '_', $lang_variant));
 
+    if ($field->getFieldDefinition()->getType() == 'file') {
       // File management.
       switch ($field->getName()) {
         case 'field_media_file':
@@ -64,9 +94,15 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
               $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
               $file_name_parts = explode('.', $file->getFileName());
               $file_extension = end($file_name_parts);
+              $file_extension = strtoupper($file_extension);
+              $aria_label = t('Download or view @name @type', [
+                '@name' => $media->getName(),
+                '@type' => $document_type,
+              ]);
               $documents[] = [
                 'url' => $file_url,
-                'file_type' => strtoupper($file_extension),
+                'type' => $file_extension,
+                'aria_label' => $aria_label,
               ];
             }
           }
@@ -75,46 +111,34 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
         default:
           // Filter for translated files.
           // Match field labels with language set labels.
-          foreach ($lang_label_sets as $label) {
-            if (($lang_variant == $label['label_default']) && $field->target_id) {
-              $file = \Drupal::entityTypeManager()->getStorage('file')->load($field->target_id);
-              if ($file) {
-                $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
-                $languages[] = [
-                  'url' => $file_url,
-                  'label' => $label['label_in_language'],
-                  'label_en' => $label['label_default'],
-                ];
-              }
+          $lang_key = 'field_' . $lang_machine_name . '_url';
+          if (isset([$lang_label_sets][0][$lang_key]) && $field->target_id) {
+            $labels = [$lang_label_sets][0][$lang_key];
+            $file = \Drupal::entityTypeManager()->getStorage('file')->load($field->target_id);
+            if ($file) {
+              $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
+              $aria_label = t('Download or view @name @type @lang', [
+                '@name' => $media->getName(),
+                '@type' => $document_type,
+                '@lang' => 'in ' . $labels['label_default'],
+              ]);
+              $languages[] = [
+                'url' => $file_url,
+                'label' => $labels['label_in_language'],
+                'label_en' => $labels['label_default'],
+                'aria_label' => $aria_label->render(),
+              ];
             }
           }
       }
     }
   }
 
-  $topic_names = [];
-  if ($media->hasField('field_topic')) {
-    $topic_terms = $media->get('field_topic')->referencedEntities();
-    foreach ($topic_terms as $term) {
-      $topic_names[] = [
-        'label' => $term->getName(),
-      ];
-    }
-  }
-
-  $division_tid = $media->hasField('field_division') ? $media->get('field_division')->target_id : FALSE;
-  $case_tid = $media->hasField('field_case_type') ? $media->get('field_case_type')->target_id : FALSE;
-  $document_tid = $media->hasField('field_document_type') ? $media->get('field_document_type')->target_id : FALSE;
-  $category_tid = $media->hasField('field_publication_category') ? $media->get('field_publication_category')->target_id : FALSE;
-
   $publication = [
-    'details' => [
-      'division' => $division_tid  && !empty($taxonomy_manager->load($division_tid)) ? $taxonomy_manager->load($division_tid)->getName() : '',
-      'case_type' => $case_tid  && !empty($taxonomy_manager->load($case_tid)) ? $taxonomy_manager->load($case_tid)->getName() : '',
-    ],
+    'details' => $details,
     'body' => $media->field_media_text->view('default'),
-    'primary_file_type' => $documents ? $documents[0]['file_type'] : '',
-    'type' => $document_tid && !empty($taxonomy_manager->load($document_tid)) ? $taxonomy_manager->load($document_tid)->getName() : '',
+    'primary_file_type' => $documents ? $documents[0]['type'] : '',
+    'type' => $document_type,
     'documents' => $documents,
     'languages' => $languages,
     'category' => $category_tid  && !empty($taxonomy_manager->load($category_tid)) ? $taxonomy_manager->load($category_tid)->getName() : '',

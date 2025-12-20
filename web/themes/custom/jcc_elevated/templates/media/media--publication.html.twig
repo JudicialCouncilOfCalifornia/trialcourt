@@ -24,58 +24,49 @@
 {{ attach_library("jcc_storybook/Pill") }}
 {{ attach_library("jcc_storybook/Pills") }}
 
-{% set details %}
-  <div class="container">
-  {% set items = [] %}
-  {% for key,value in publication.details %}
-    {% if value is not empty %}
-      {% set item = {
-        label: key,
-        text: value,
-      } %}
-      {% set items = items|merge([item]) %}
-    {% endif %}
-  {% endfor %}
-  {% if items %}
-    {% include "@molecules/List/List.twig" with {
-      variant: 'none',
-      items: items,
-    } %}
-  {% endif %}
-
-  {% if publication.topics %}
-    {% set pills %}
-      {% for topic in publication.topics %}
-        {% include "@atoms/Pill/Pill.twig" with {
-          variant: 'default',
-          label: topic.label,
+{% if publication.details  %}
+  {% set details %}
+    <div class="container">
+    {% set items = [] %}
+    {% for key,value in publication.details %}
+      {% if value is not empty %}
+        {% set item = {
+          label: key,
+          text: value,
         } %}
-      {% endfor %}
-    {% endset %}
-    {% include "@molecules/Pills/Pills.twig" with {
-      variant: 'default',
-      items: [pills],
-    } %}
-  {% endif %}
-  </div>
-{% endset %}
+        {% set items = items|merge([item]) %}
+      {% endif %}
+    {% endfor %}
+    {% if items %}
+      {% include "@molecules/List/List.twig" with {
+        variant: 'none',
+        items: items,
+      } %}
+    {% endif %}
+
+    {% if publication.topics %}
+      {% set pills %}
+        {% for topic in publication.topics %}
+          {% include "@atoms/Pill/Pill.twig" with {
+            variant: 'default',
+            label: topic.label,
+          } %}
+        {% endfor %}
+      {% endset %}
+      {% include "@molecules/Pills/Pills.twig" with {
+        variant: 'default',
+        items: [pills],
+      } %}
+    {% endif %}
+    </div>
+  {% endset %}
+{% endif %}
 
 {% set asset %}
-  {% if publication.documents %}
-    {% set documents = [] %}
-    {% for document in publication.documents %}
-      {% set document = {
-        type: document.file_type,
-        url: document.url,
-      } %}
-      {% set documents = documents|merge([document]) %}
-    {% endfor %}
-  {% endif %}
-
+  {% set languages = [] %}
   {% if publication.languages %}
-    {% set languages = [] %}
     {% for language in publication.languages %}
-      {% set link %}<a href="{{ language.url }}">{{ language.label }}</a> ({{ language.label_en }}){% endset %}
+      {% set link %}<a href="{{ language.url }}" aria-label="{{ language.aria_label }}">{{ language.label }}</a> ({{ language.label_en }}){% endset %}
       {% set language = {
         text: link|raw,
       } %}
@@ -87,7 +78,7 @@
     text: publication.body|render,
     primary_file_type: publication.primary_file_type,
     doc_type: publication.type,
-    assets: documents,
+    assets: publication.documents,
     languages: {
       variant: "ul",
       layout: "grid",
@@ -110,7 +101,7 @@
 
 {% include "@organisms/Section/Section.twig" with {
   variant: 'default',
-  sub_component_layout: 'with-sidebar grid',
+  sub_component_layout: 'with-sidebar',
   sidebar_direction: 'row',
   sidebar_width: 39,
   gap: 's4',

@@ -21,8 +21,7 @@ dependencies:
     - paragraphs.paragraphs_type.section
   module:
     - field_group
-    - link_attributes
-    - maxlength
+    - linkit_attributes
     - media_library
     - paragraphs
     - text
@@ -175,23 +174,27 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_link:
-    type: link_attributes
+    type: linkit_attributes
     weight: 7
     region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
+      linkit_profile: default
+      linkit_auto_link_text: false
       enabled_attributes:
-        id: false
-        name: false
+        mailto_subject: true
+        mailto_body: true
+        id: true
         target: true
         rel: true
         class: true
+        aria-label: true
+        name: false
         accesskey: false
-    third_party_settings:
-      maxlength:
-        maxlength_js: null
-        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+        title: false
+      widget_default_open: expandIfValuesSet
+    third_party_settings: {  }
   field_measure:
     type: number
     weight: 22

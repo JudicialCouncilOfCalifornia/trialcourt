@@ -7,8 +7,7 @@ dependencies:
     - field.field.paragraph.action_list_item.field_text
     - paragraphs.paragraphs_type.action_list_item
   module:
-    - linkit_field
-    - maxlength
+    - linkit_attributes
     - text
 id: paragraph.action_list_item.default
 targetEntityType: paragraph
@@ -24,15 +23,27 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_link:
-    type: linkit_field_linkit
+    type: linkit_attributes
     weight: 2
     region: content
     settings:
+      placeholder_url: ''
+      placeholder_title: ''
       linkit_profile: default
-    third_party_settings:
-      maxlength:
-        maxlength_js: 64
-        maxlength_js_label: 'Content limited to @limit characters, remaining: <strong>@remaining</strong>'
+      linkit_auto_link_text: false
+      enabled_attributes:
+        mailto_subject: true
+        mailto_body: true
+        id: true
+        target: true
+        rel: true
+        class: true
+        aria-label: true
+        name: false
+        accesskey: false
+        title: false
+      widget_default_open: expandIfValuesSet
+    third_party_settings: {  }
   field_text:
     type: text_textarea
     weight: 1

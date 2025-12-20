@@ -373,7 +373,7 @@ function jcc_elevated_custom_form_alter(&$form, $form_state, $form_id): void {
           // Compatibility for older publications.
           $entity_type_manager = \Drupal::service('entity_type.manager');
           $path_parts = pathinfo($href);
-          $file = $entity_type_manager->getStorage('file')->loadByProperties(['filename' => $path_parts['basename']]);
+          $file = $path_parts ? $entity_type_manager->getStorage('file')->loadByProperties(['filename' => $path_parts['basename']]) : NULL;
 
           if ($file) {
             $fid = array_shift($file)->fid->value;
