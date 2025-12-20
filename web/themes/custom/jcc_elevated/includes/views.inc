@@ -209,7 +209,6 @@ function jcc_elevated_preprocess_views_view__judicial_council_forms__block_1(&$v
  */
 function jcc_elevated_preprocess_views_view__trialcourtoutlet__block_1(&$variables) {
   $variables['form_in_sidebar'] = FALSE;
-  $render = \Drupal::service('renderer');
   __jcc_view_results_exposed_filter_init($variables);
   $variables['processed_rows'] = [];
   if (!empty($variables['rows'][0]['#rows'])) {
@@ -277,10 +276,6 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
         'file' => $media->get('field_media_file')->referencedEntities() ? $media->get('field_media_file')->referencedEntities()[0] : NULL,
         'language' => t('English'),
       ],
-      'media_file_multiple' => [
-        'file' => $media->get('field_media_file_multiple')->referencedEntities() ? $media->get('field_media_file_multiple')->referencedEntities()[0] : NULL,
-        'language' => t('English Multiple'),
-      ],
     ];
 
     $language_files = [
@@ -341,8 +336,18 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     $files_for_pills = [];
     foreach ($language_files as $file) {
       if ($file['file']) {
+        $aria_label = t('Download or view @name @type @lang', [
+          '@name' => $media->getName(),
+          '@type' => $document_type,
+          '@lang' => 'in ' . $file['language'],
+        ]);
         $url = Url::fromUri($file['file']->createFileUrl(FALSE));
-        $url->setOptions(['attributes' => ['class' => ['pill__link']]]);
+        $url->setOptions([
+          'attributes' => [
+            'class' => ['pill__link'],
+            'aria_label' => $aria_label,
+          ],
+        ]);
         $pill = [
           '#prefix' => '<div class="pill pill--default">',
           '#markup' => Link::fromTextAndUrl($file['language'], $url)->toString(),
@@ -357,14 +362,16 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
       $button_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_entity->getFileUri());
     }
     $text = ['#markup' => Html::decodeEntities($description)];
-    $url = $media->toUrl();
-    if ($media_files['media_file_multiple']['file']) {
-      $url = Url::fromUri($media_files['media_file_multiple']['file']->createFileUrl(FALSE));
-    }
+    $button_data = NULL;
     if (!empty($button_url)) {
+      $aria_label = t('Download @name @type', [
+        '@name' => $media->getName(),
+        '@type' => $document_type,
+      ]);
       $button_data = [
         'label' => t('Download @type', ['@type' => $document_type]),
         'href' => $button_url,
+        'aria_label' => $aria_label,
       ];
     }
     $detail_list_data = [

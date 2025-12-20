@@ -544,11 +544,13 @@ function jcc_elevated_paragraph_menu_list(array &$variables) {
   foreach ($link_items as $item) {
     $link_entity = $item->get('uri')->getValue();
     $link_title = $item->get('title')->getValue();
+    $link_options = $item->get('options')->getValue();
     if (!empty($link_entity)) {
       $url = Url::fromUri($link_entity);
       $links[] = [
         'url' => $url,
         'title' => $link_title,
+        'aria_label' => $link_options && isset($link_options['attributes']['aria-label']) ? $link_options['attributes']['aria-label'] : NULL,
       ];
     }
   }
@@ -585,6 +587,8 @@ function jcc_elevated_paragraph_action_list(array &$variables) {
       if ($link_element = $action_item->get('field_link')->getValue()) {
         $action_items[$key]['button_data']['href'] = $link_element[0]['uri'];
         $action_items[$key]['button_data']['label'] = $link_element[0]['title'] ?? t('Learn More');
+        $aria_label = $link_element[0]['options']['attributes'] ? $link_element[0]['options']['attributes']['aria-label'] : NULL;
+        $action_items[$key]['button_data']['aria_label'] = $aria_label;
       }
     }
   }
