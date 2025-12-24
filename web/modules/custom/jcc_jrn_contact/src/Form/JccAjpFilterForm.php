@@ -69,7 +69,7 @@ class JccAjpFilterForm extends FormBase {
     $form['filter']['keyword'] = [
       '#type' => 'textfield',
       '#title' => '',
-      '#placeholder' => 'Search by name or email',
+      '#placeholder' => '',
       '#default_value' => $request->get('keyword') ?? '',
     ];
 
@@ -117,7 +117,7 @@ class JccAjpFilterForm extends FormBase {
       }
     }
 
-    $form_state->setRedirect('entity.jcc_ajp.collection', $query);
+    $form_state->setRedirect('entity.jcc_ajp.collection', [], ['query' => $query]);
   }
 
   /**

@@ -75,17 +75,12 @@ class JccAjpListBuilder extends EntityListBuilder {
         }
       }
     }
-
-    $total = $this->getStorage()
-      ->getQuery()
-      ->count()
-      ->execute();
-
+    $result_count = isset($table['table']['#rows']) ? count($table['table']['#rows']) : 0;
     return [
       '#theme' => 'custom_ajp_view',
       '#form' => $form,
       '#table' => $table,
-      '#summary' => $this->t('Total addresses: @total', ['@total' => $total]),
+      '#summary' => $result_count,
       '#attached' => [
         'library' => [
           'jcc_jrn_contact/custom_ajp_view',
