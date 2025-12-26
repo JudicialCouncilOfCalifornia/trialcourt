@@ -2,12 +2,19 @@ langcode: en
 status: true
 dependencies:
   module:
+    - emptyparagraphkiller
     - glossify_taxonomy
     - linkit
 name: Caption
 format: caption
 weight: -6
 filters:
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
+    status: true
+    weight: 0
+    settings: {  }
   filter_autop:
     id: filter_autop
     provider: filter
@@ -20,7 +27,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <a href hreflang title data-entity-substitution data-entity-type data-entity-uuid> <u> <s>'
+      allowed_html: '<em> <strong> <a href hreflang id class aria-label rel data-entity-substitution data-entity-type data-entity-uuid data-link-*> <u> <s> <p dir>'
       filter_html_help: true
       filter_html_nofollow: false
   filter_htmlcorrector:
@@ -42,9 +49,10 @@ filters:
     status: false
     weight: -10
     settings:
-      glossify_taxonomy_case_sensitivity: '1'
-      glossify_taxonomy_first_only: '1'
+      glossify_taxonomy_case_sensitivity: true
+      glossify_taxonomy_first_only: true
       glossify_taxonomy_type: tooltips
+      glossify_taxonomy_tooltip_truncate: false
       glossify_taxonomy_vocabs: ''
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
   linkit:
