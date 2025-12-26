@@ -1,4 +1,3 @@
-uuid: b02cac5d-23b1-4225-a89b-ed61b8e26664
 langcode: en
 status: true
 dependencies:
@@ -14,11 +13,9 @@ dependencies:
     - field.field.paragraph.cards.field_width_minimum
     - paragraphs.paragraphs_type.cards
   module:
-    - link
+    - linkit_attributes
     - paragraphs
     - text
-_core:
-  default_config_hash: '-4WEL0Hg4KdFlohzkSWEyN8UPhIYIkBF4zOIdVR2Abs'
 id: paragraph.cards.default
 targetEntityType: paragraph
 bundle: cards
@@ -69,12 +66,26 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_link:
-    type: link_default
+    type: linkit_attributes
     weight: 7
     region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
+      linkit_profile: default
+      linkit_auto_link_text: false
+      enabled_attributes:
+        id: true
+        rel: true
+        class: true
+        aria-label: true
+        mailto_subject: false
+        mailto_body: false
+        name: false
+        target: false
+        accesskey: false
+        title: false
+      widget_default_open: expandIfValuesSet
     third_party_settings: {  }
   field_sub_variant:
     type: string_textfield
