@@ -587,7 +587,7 @@ function jcc_elevated_paragraph_action_list(array &$variables) {
       if ($link_element = $action_item->get('field_link')->getValue()) {
         $action_items[$key]['button_data']['href'] = $link_element[0]['uri'];
         $action_items[$key]['button_data']['label'] = $link_element[0]['title'] ?? t('Learn More');
-        $aria_label = $link_element[0]['options']['attributes'] ? $link_element[0]['options']['attributes']['aria-label'] : NULL;
+        $aria_label = $link_element[0]['options'] && isset($link_element[0]['options']['attributes']['aria-label']) ? $link_element[0]['options']['attributes']['aria-label'] : NULL;
         $action_items[$key]['button_data']['aria_label'] = $aria_label;
       }
     }
