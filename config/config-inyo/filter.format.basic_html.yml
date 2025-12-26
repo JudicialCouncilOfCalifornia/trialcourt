@@ -1,23 +1,27 @@
-uuid: 7a699b1a-ef35-46a9-ba75-ac021f27945c
 langcode: en
 status: true
 dependencies:
   module:
     - editor
+    - emptyparagraphkiller
     - glossify_taxonomy
-_core:
-  default_config_hash: eu1y5gdR4CpqaWVVvdvpwIPoBgkt-F4s_WJjwqNW6WY
 name: 'Basic HTML'
 format: basic_html
 weight: -6
 filters:
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
+    status: true
+    weight: 0
+    settings: {  }
   filter_html:
     id: filter_html
     provider: filter
     status: true
     weight: -10
     settings:
-      allowed_html: '<a href hreflang> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <p id> <br> <span> <img src alt height width data-entity-type data-entity-uuid data-align data-caption> <i class="">'
+      allowed_html: '<a href hreflang id class aria-label rel data-link-*> <em> <strong> <cite> <blockquote cite dir> <code dir> <ul type dir> <ol start type dir> <li> <dl dir> <dt> <dd> <h2 id dir> <h3 id dir> <h4 id dir> <h5 id dir> <h6 id dir> <p id dir> <br> <span dir> <img src alt height width data-entity-type data-entity-uuid data-align data-caption> <i class="">'
       filter_html_help: false
       filter_html_nofollow: false
   filter_align:
@@ -50,8 +54,9 @@ filters:
     status: true
     weight: -10
     settings:
-      glossify_taxonomy_case_sensitivity: '0'
-      glossify_taxonomy_first_only: '1'
+      glossify_taxonomy_case_sensitivity: false
+      glossify_taxonomy_first_only: true
       glossify_taxonomy_type: tooltips
+      glossify_taxonomy_tooltip_truncate: false
       glossify_taxonomy_vocabs: glossary
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
