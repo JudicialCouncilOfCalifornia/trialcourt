@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @FieldFormatter(
  *   id = "linkit_field_linkit",
- *   label = @Translation("Linkit"),
+ *   label = @Translation("Linkit (JCC)"),
  *   field_types = {
  *     "link"
  *   }

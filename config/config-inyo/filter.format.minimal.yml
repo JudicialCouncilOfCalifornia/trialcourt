@@ -1,4 +1,3 @@
-uuid: 6c783838-c6b2-4296-8d0f-f9cce4fdd2b7
 langcode: en
 status: true
 dependencies:
@@ -7,19 +6,23 @@ dependencies:
     - entity_embed
     - glossify_taxonomy
     - linkit
-_core:
-  default_config_hash: Fsu5GyzmMVJMH6tP5lzrBiQfF7HoEodFi2SXtwoYeKE
 name: Minimal
 format: minimal
 weight: -8
 filters:
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
+    status: true
+    weight: 0
+    settings: {  }
   filter_html:
     id: filter_html
     provider: filter
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <a href hreflang title data-entity-bundle data-entity-substitution data-entity-type data-entity-uuid data-link-*> <u> <s> <sup> <sub> <ol dir> <li> <ul dir> <p dir> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title data-langcode>'
+      allowed_html: '<em> <strong> <a href hreflang id class aria-label rel target data-entity-bundle data-entity-substitution data-entity-type data-entity-uuid data-link-*> <u> <s> <sup> <sub> <ol dir> <li> <ul dir> <p dir> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title data-langcode>'
       filter_html_help: true
       filter_html_nofollow: false
   glossify_taxonomy:
@@ -60,12 +63,6 @@ filters:
     weight: 0
     settings:
       filter_url_length: 72
-  emptyparagraphkiller:
-    id: emptyparagraphkiller
-    provider: emptyparagraphkiller
-    status: true
-    weight: 0
-    settings: {  }
   entity_embed:
     id: entity_embed
     provider: entity_embed

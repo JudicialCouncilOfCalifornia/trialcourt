@@ -1,4 +1,3 @@
-uuid: 83de147d-7c9c-49c1-9b12-5ae1ef6b3575
 langcode: en
 status: true
 dependencies:
@@ -17,14 +16,13 @@ dependencies:
     - field.field.paragraph.section.field_sidebar_direction
     - field.field.paragraph.section.field_sidebar_width
     - field.field.paragraph.section.field_sub_component_layout
+    - field.field.paragraph.section.field_sub_variant_card
     - field.field.paragraph.section.field_toggle
     - paragraphs.paragraphs_type.section
   module:
     - entity_reference_revisions
-    - link
+    - linkit
     - text
-_core:
-  default_config_hash: Tpt8AL7ZSYUWAWX9seKXlVzLVk79Q29avQj_3hl9e1I
 id: paragraph.section.default
 targetEntityType: paragraph
 bundle: section
@@ -63,7 +61,7 @@ content:
     weight: 2
     region: content
   field_link:
-    type: link
+    type: linkit
     label: hidden
     settings:
       trim_length: 80
@@ -71,6 +69,7 @@ content:
       url_plain: false
       rel: ''
       target: ''
+      linkit_profile: default
     third_party_settings: {  }
     weight: 4
     region: content
@@ -87,5 +86,6 @@ hidden:
   field_sidebar_direction: true
   field_sidebar_width: true
   field_sub_component_layout: true
+  field_sub_variant_card: true
   field_toggle: true
   search_api_excerpt: true
