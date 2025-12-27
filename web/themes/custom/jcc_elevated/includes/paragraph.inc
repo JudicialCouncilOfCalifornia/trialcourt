@@ -423,6 +423,7 @@ function jcc_elevated_paragraph_hero_banner(array &$variables, ParagraphInterfac
         'button_data' => [
           'label' => 'Button',
           'href' => Url::fromUri($card->entity->field_link->uri)->toString(),
+          'aria_label' => $card->entity->field_link->options['attributes']['aria-label'],
           'variant' => 'primary',
         ],
       ];
