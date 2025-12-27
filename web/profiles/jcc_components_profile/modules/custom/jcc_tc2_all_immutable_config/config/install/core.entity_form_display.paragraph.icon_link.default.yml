@@ -7,7 +7,7 @@ dependencies:
     - paragraphs.paragraphs_type.icon_link
   module:
     - jcc_courtyard_icons
-    - link
+    - linkit_attributes
 id: paragraph.icon_link.default
 targetEntityType: paragraph
 bundle: icon_link
@@ -20,12 +20,26 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_link:
-    type: link_default
+    type: linkit_attributes
     weight: 1
     region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
+      linkit_profile: default
+      linkit_auto_link_text: false
+      enabled_attributes:
+        id: true
+        rel: true
+        class: true
+        aria-label: true
+        mailto_subject: false
+        mailto_body: false
+        name: false
+        target: false
+        accesskey: false
+        title: false
+      widget_default_open: expandIfValuesSet
     third_party_settings: {  }
   translation:
     weight: 10

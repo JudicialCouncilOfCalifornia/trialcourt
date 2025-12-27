@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.hero.field_aside
+    - field.field.paragraph.hero.field_background
     - field.field.paragraph.hero.field_components
     - field.field.paragraph.hero.field_granicus_view_link_id
     - field.field.paragraph.hero.field_heading
@@ -14,7 +15,7 @@ dependencies:
     - paragraphs.paragraphs_type.hero
   module:
     - entity_reference_revisions
-    - link
+    - linkit
     - text
 id: paragraph.hero.default
 targetEntityType: paragraph
@@ -61,7 +62,7 @@ content:
     weight: 1
     region: content
   field_link:
-    type: link
+    type: linkit
     label: hidden
     settings:
       trim_length: 80
@@ -69,6 +70,7 @@ content:
       url_plain: false
       rel: ''
       target: ''
+      linkit_profile: default
     third_party_settings: {  }
     weight: 4
     region: content
@@ -84,6 +86,7 @@ hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
+  field_background: true
   field_granicus_view_link_id: true
   field_variant: true
   search_api_excerpt: true

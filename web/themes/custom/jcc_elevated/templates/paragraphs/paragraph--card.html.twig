@@ -36,18 +36,19 @@
 {% set button_data = [] %}
 {% if paragraph.field_link.get(0).getUrl() is not empty %}
   {% set href = paragraph.field_link.get(0).getUrl() %}
-
   {# If clickable card #}
   {% if paragraph.field_entire_card_clickable.value %}
     {% set href = paragraph.field_link.get(0).getUrl().toString() %}
-  {% else %}
-    {% set primary_button = {
-      label: paragraph.field_link.title,
-      href: href,
-      variant: 'primary',
-    } %}
-    {% set button_data = button_data|merge([primary_button]) %}
+    {# Aria label is not automated for clickable cards #}
+    {% set aria_label = paragraph.field_link.0.options.attributes["aria-label"] %}
   {% endif %}
+  {% set primary_button = {
+    label: paragraph.field_link.title,
+    href: href,
+    aria_label: aria_label,
+    variant: 'primary',
+  } %}
+  {% set button_data = button_data|merge([primary_button]) %}
 {% endif %}
 
 {# If additional buttons #}
