@@ -83,6 +83,8 @@
   {% set matters = matters|merge(item) %}
 {% endfor %}
 
+{% set directions_action_aria_label = 'Get directions for the ' ~ node.label ~ ' location'|t %}
+
 {# set the lead content address and phone to be used in hero section #}
 {% set lead_content %}
   <div class="jcc-location__location jcc-small">
@@ -90,7 +92,7 @@
       {% set address = processed_address|render|replace({'<br>': ' ', '<br />': ' '})|trim %}
       {% set address_url = 'https://maps.google.com/?q=' ~ address %}
       <div class="jcc-location__address jcc-location-hero-link">
-        <a href="{{ address_url}}">{{ address }}</a>
+        <a href="{{ address_url}}" aria-label="{{ directions_action_aria_label }}">{{ address }}</a>
       </div>
     {% endif %}
 
@@ -157,11 +159,11 @@
       width: "partial",
       name: "location_details",
       sub_sections: [
-      {
-        type: 'sub_section',
-        tags:cases_served
-      }
-    ]
+        {
+          type: 'sub_section',
+          tags:cases_served
+        }
+      ]
     },
     {
       type: 'section',
@@ -180,16 +182,17 @@
     {
       type: 'section',
       location: {
-      address: address,
-      phone: {
-        text: phone,
-        url: phone_url,
-      },
-      map: {
-        html: content.field_geolocation.0
-      },
-      directions_text: "Get Directions"
-    }
+        address: address,
+        phone: {
+          text: phone,
+          url: phone_url,
+        },
+        map: {
+          html: content.field_geolocation.0
+        },
+        directions_text: "Get Directions"|t,
+        directions_action_aria_label: directions_action_aria_label,
+      }
     }
   ]
 } %}
@@ -205,6 +208,7 @@
         html: content.field_geolocation.0,
       },
       directions_text: 'Get Directions'|t,
+      aria_label: directions_action_aria_label,
       phone: {
         text: content.field_phone.0['#title'],
         url: content.field_phone.0['#url'].uri

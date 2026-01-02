@@ -1213,7 +1213,7 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
         }
         $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
         $citings[] = [
-          'text' => ['#markup' => '<a href="' . $file_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
+          'text' => ['#markup' => '<a href="' . $file_url . '" aria-label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
         ];
       }
     }

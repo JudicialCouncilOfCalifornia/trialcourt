@@ -1309,7 +1309,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
       $citing_node_id = reset($citing_archive);
       $citing_node = $node_manager->load($citing_node_id);
       $citing_url = $citing_node->toUrl()->toString();
-      $citings = '<a href="' . $citing_url . '" aria_label="View citings archive for ' . $case_number . '">View citings archive</a>';
+      $citings = '<a href="' . $citing_url . '" aria-label="View citings archive for ' . $case_number . '">View citings archive</a>';
     }
 
     $opinion = [
@@ -1410,7 +1410,7 @@ function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variabl
           }
           $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
           $citings[] = [
-            'text' => ['#markup' => '<a href="' . $file_url . '" aria_label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
+            'text' => ['#markup' => '<a href="' . $file_url . '" aria-label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
           ];
         }
       }
