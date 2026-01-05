@@ -23,7 +23,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <ul type> <ol type start> <li> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary jcc-button--cta-link"> <blockquote class="blockquote blockquote--callout">'
+      allowed_html: '<em> <strong> <ul type> <ol type start> <li> <a href hreflang id class aria-label rel data-entity-substitution data-entity-type data-entity-uuid> <blockquote class="blockquote blockquote--callout">'
       filter_html_help: true
       filter_html_nofollow: false
   filter_htmlcorrector:
@@ -45,9 +45,10 @@ filters:
     status: false
     weight: -10
     settings:
-      glossify_taxonomy_case_sensitivity: '1'
-      glossify_taxonomy_first_only: '1'
+      glossify_taxonomy_case_sensitivity: true
+      glossify_taxonomy_first_only: true
       glossify_taxonomy_type: tooltips
+      glossify_taxonomy_tooltip_truncate: false
       glossify_taxonomy_vocabs: ''
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
   linkit:
