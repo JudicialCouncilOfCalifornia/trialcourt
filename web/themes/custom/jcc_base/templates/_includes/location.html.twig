@@ -43,7 +43,8 @@
     {{- address_line1 ~ " " ~ city ~ " " ~ state ~ " " ~ postal_code -}}
   {% endset %}
   {% include "@jcc_base/_includes/directions-button.html.twig" with {
-    directions_query: directions_query
+    directions_query: directions_query,
+    aria_label: 'Get directions to the ' ~ node.title.value ~ ' event',
   } only %}
 {% endset %}
 
