@@ -13,15 +13,11 @@ migration_group: supremecourt
 label: 'Filed Cases: Live JSON Import'
 source:
   plugin: url
-  data_fetcher_plugin: http
+  data_fetcher_plugin: curl_fetcher
   data_parser_plugin: json
   urls: 'https://appellatecases.courtinfo.ca.gov/jobs/SCSevenDay.json'
   item_selector: /
-  guzzle_options:
-    headers:
-      User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      Accept: 'application/json'
-    version: 1.1
+  
   fields:
     -
       name: src_case_number
@@ -47,14 +43,17 @@ process:
     plugin: default_value
     default_value: filed_cases
   
-  # Standard Title Field
   title: src_case_title
   
-  # Custom Fields
   field_case_number: src_case_number
-  field_case_type: src_case_type
+  field_case_type:
+    plugin: entity_generate
+    source: src_case_type
+    value_key: name
+    bundle: case_type 
+    entity_type: taxonomy_term
+    ignore_case: true
   
-  # Convert "12/29/2025" to "2025-12-29"
   field_case_initiation_date:
     plugin: format_date
     source: src_init_date
