@@ -140,11 +140,12 @@
       {% if content.field_attachments[0] %}
         {# Display first document as primary download #}
         {% set primary_doc = content.field_attachments[0]['#url'] %}
-        <div>
+        <div class="margin-bottom-5">
           {% include "@atoms/buttons/link-button.twig" with {
             link_button: {
               text: 'Download Document',
-              url: primary_doc
+              url: primary_doc,
+              aria_label: 'Download or view the ' ~ node.title.value,
             }
           } only %}
         </div>
@@ -157,7 +158,8 @@
             {% set doc_url = other_doc['#url'] %}
             {% set other_docs = other_docs|merge([{
               url_title: doc_title,
-              url: doc_url
+              url: doc_url,
+              aria_label: 'Download or view the ' ~ doc_title,
             }]) %}
           {% endif %}
         {% endfor %}
@@ -165,7 +167,7 @@
         {% if other_docs|length > 0 %}
           {% include '@molecules/blocks/link-list-simple/link-list-simple.twig' with {
             link_list: {
-              list_icons: true,
+              files_list: true,
               header: 'Related Downloads',
               items: other_docs,
             }
