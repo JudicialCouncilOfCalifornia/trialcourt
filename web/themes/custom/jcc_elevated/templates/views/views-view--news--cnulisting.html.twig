@@ -1,12 +1,15 @@
 {{ attach_library("jcc_storybook/ViewResults") }}
 {{ attach_library("jcc_storybook/ResultExcerpt") }}
+{{ attach_library("jcc_elevated/cnulisting") }}
 
 {%
   set classes = [
   dom_id ? 'js-view-dom-id-' ~ dom_id,
+  'cnulisting'
 ]
 %}
   
+{% set has_results = rows is not empty and rows[0]['#rows'] is not empty %}
 <div{{ attributes.addClass(classes) }}>
   {% include "@organisms/ViewResults/ViewResults.twig" with {
     variant: 'default',
@@ -29,21 +32,31 @@
     footer_sidebar: '',
     sidebar_direction_footer: 'sidebar-row',
   } %}
-</div>
 
-{% set current_month = '' %}
-{% for row in rows[0]['#rows'] %}
-  {% set news = row['#node'] %}
-  {% if news.field_date.value %}
-    {% set news_month = news.field_date.value|date('F Y') %}
-    {% if news_month != current_month %}
-      <h3>{{ news_month }}</h3>
-      {% set current_month = news_month %}
+ {% set search_term = exposed.search['#value'] ?? '' %}
+  {% if has_results %}
+    {% if search_term %}
+      <span class="results-count">
+        Results for: "{{ search_term }}"
+      </span>
     {% endif %}
-    <p>
-      <a href="{{ path('entity.node.canonical', {'node': news.id}) }}">
-        {{ news.field_date.value|date('F j, Y') }}
-      </a> 
-    </p>
-  {% endif %}
-{% endfor %}
+    {% set current_month = '' %}
+    {% for row in rows[0]['#rows'] %}
+      {% set news = row['#node'] %}
+      {% if news.field_date.value %}
+        {% set news_month = news.field_date.value|date('F Y') %}
+        {% if news_month != current_month %}
+          <h3>{{ news_month }}</h3>
+          {% set current_month = news_month %}
+        {% endif %}
+        <p class="cnu">
+          <a href="{{ path('entity.node.canonical', {'node': news.id}) }}">
+            {{ news.field_date.value|date('F j, Y') }}
+          </a> 
+        </p>
+      {% endif %}
+    {% endfor %}
+    {% else %}
+    <div>{{ empty|render }}</div>
+    {% endif %}
+</div>

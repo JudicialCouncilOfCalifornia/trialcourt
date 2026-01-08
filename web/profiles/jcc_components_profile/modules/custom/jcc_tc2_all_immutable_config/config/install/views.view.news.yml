@@ -189,7 +189,7 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
           text_input_required: 'Select any filter and click on Submit to see results'
-          text_input_required_format: null
+          text_input_required_format: snippet
           bef:
             general:
               autosubmit: false
@@ -200,15 +200,41 @@ display:
               allow_secondary: false
               secondary_label: 'Advanced options'
               secondary_open: false
-            sort:
-              plugin_id: default
+              reset_button_always_show: false
             filter:
-              field_news_type_target_id:
+              combine:
                 plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
               field_date_value:
                 plugin_id: default
-              title:
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
+              field_date_value_1:
                 plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                options_show_only_used: false
+                options_show_only_used_filtered: false
+                options_hide_when_empty: false
+                options_show_items_count: false
       access:
         type: perm
         options:
@@ -908,6 +934,20 @@ display:
         type: none
         options:
           offset: 0
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text
+          empty: true
+          content:
+            value: 'No results found.'
+            format: snippet
+          tokenize: false
       filters:
         status:
           id: status
@@ -936,7 +976,7 @@ display:
           exposed: true
           expose:
             operator_id: combine_op
-            label: ''
+            label: 'Search the CNU Archives'
             description: ''
             use_operator: false
             operator: combine_op
@@ -948,10 +988,27 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              editor: '0'
               author: '0'
+              legal_files: '0'
+              editor: '0'
+              manager: '0'
+              contributor: '0'
+              translator: '0'
               administrator: '0'
               anonymous: '0'
+              tentative_rulings_editor: '0'
+              messaging_manager: '0'
+              facilities: '0'
+              opinions_editor: '0'
+              request_manager: '0'
+              advisory_body_manager: '0'
+              itc_manager: '0'
+              jrn_legal_opinion_library: '0'
+              surplus_admin: '0'
+              jrn_sourcehr: '0'
+              surplus_user: '0'
+              jrn_tajp: '0'
+              jrn_judicial_officer: '0'
             placeholder: 'Search title or topic'
           is_grouped: false
           group_info:
@@ -1129,6 +1186,7 @@ display:
         groups:
           1: AND
       defaults:
+        empty: false
         pager: false
         fields: false
         filters: false
