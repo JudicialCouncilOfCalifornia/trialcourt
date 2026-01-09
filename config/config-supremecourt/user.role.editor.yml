@@ -1,7 +1,61 @@
 uuid: 70fd4d29-cd96-43ca-a283-9cf6c54e6456
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  config:
+    - feeds.feed_type.ca_courts_event_feeds
+    - feeds.feed_type.ca_courts_news_feeds
+    - filter.format.aside
+    - filter.format.body
+    - filter.format.minimal
+    - filter.format.restricted_html
+    - media.type.boxcast_stream
+    - media.type.file
+    - media.type.image
+    - media.type.remote_video
+    - node.type.alert
+    - node.type.document
+    - node.type.event
+    - node.type.landing_page
+    - node.type.location
+    - node.type.news
+    - node.type.subpage
+    - taxonomy.vocabulary.department
+    - taxonomy.vocabulary.division
+    - taxonomy.vocabulary.document_type
+    - taxonomy.vocabulary.event_type
+    - taxonomy.vocabulary.glossary
+    - taxonomy.vocabulary.location_type
+    - taxonomy.vocabulary.matters_served
+    - taxonomy.vocabulary.multimedia_type
+    - taxonomy.vocabulary.news_type
+    - taxonomy.vocabulary.person_type
+    - taxonomy.vocabulary.subject_matter
+    - taxonomy.vocabulary.tags
+    - taxonomy.vocabulary.topics
+  module:
+    - content_moderation
+    - content_translation
+    - contextual
+    - editoria11y
+    - entity_browser
+    - environment_indicator
+    - feeds
+    - file_delete
+    - filter
+    - media
+    - menu_admin_per_menu
+    - node
+    - paragraphs
+    - path
+    - rebuild_cache_access
+    - redirect
+    - role_delegation
+    - scheduler
+    - system
+    - toolbar
+    - userprotect
+    - webform
 _core:
   default_config_hash: KumFP-3hEPSI25L1YqN1mEV2RGfsOHIilD_YYUYjokU
 id: editor
@@ -137,6 +191,7 @@ permissions:
   - 'edit own webform submission'
   - 'import ca_courts_event_feeds feeds'
   - 'import ca_courts_news_feeds feeds'
+  - 'manage editoria11y results'
   - 'rebuild cache access'
   - 'revert alert revisions'
   - 'revert all revisions'
@@ -209,6 +264,7 @@ permissions:
   - 'view ca_courts_event_feeds feeds'
   - 'view ca_courts_news_feeds feeds'
   - 'view document revisions'
+  - 'view editoria11y checker'
   - 'view event revisions'
   - 'view faq revisions'
   - 'view job revisions'
