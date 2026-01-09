@@ -13,13 +13,10 @@ migration_group: supremecourt
 label: 'Filed Cases: Live JSON Import'
 source:
   plugin: url
-  data_fetcher_plugin: http
+  data_fetcher_plugin: curl_fetcher
   data_parser_plugin: json
   urls: 'https://appellatecases.courtinfo.ca.gov/jobs/SCSevenDay.json'
   item_selector: /
-  headers:
-    User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-    Accept: 'application/json'
   fields:
     -
       name: src_case_number
@@ -46,7 +43,15 @@ process:
     plugin: default_value
     default_value: filed_cases
   
-  title: src_case_title
+  # Fail-safe: Skip the row if case_title is empty (avoids SQL crash on firewall block)
+  title:
+    -
+      plugin: skip_on_empty
+      method: row
+      source: src_case_title
+    -
+      plugin: get
+      source: src_case_title
   
   field_case_number: src_case_number
   
