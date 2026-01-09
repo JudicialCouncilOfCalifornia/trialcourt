@@ -953,6 +953,74 @@ function generate_itc_webform_url($item_number, $formatted_deadline, $title) {
 }
 
 /**
+ * Implements hook_preprocess_views_view() for legislative reports block.
+ */
+function jcc_elevated_preprocess_views_view__legislative_reports__block_1(&$variables) {
+  __jcc_view_results_exposed_filter_init($variables);
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $view = $variables['view'];
+  $grouped_reports = [];
+  foreach ($view->result as $row) {
+    if (isset($row->_entity)) {
+      $media_entity = $row->_entity;
+      $title = $media_entity->label();
+      $media_text = $media_entity->get('field_media_text')->value ?? '';
+      $leg_date = $media_entity->get('field_date')->value ?? '';
+      $year = '';
+      if (!empty($leg_date)) {
+        $year = substr($leg_date, 0, 4);
+      }
+      $topic = '';
+      if ($media_entity->hasField('field_matters_served') && !$media_entity->get('field_matters_served')->isEmpty()) {
+        $terms = $media_entity->get('field_matters_served')->referencedEntities();
+        if (!empty($terms)) {
+          $topic = $terms[0]->label();
+        }
+      }
+      $office = '';
+      if ($media_entity->hasField('field_tags') && !$media_entity->get('field_tags')->isEmpty()) {
+        $terms = $media_entity->get('field_tags')->referencedEntities();
+        if (!empty($terms)) {
+          $office = $terms[0]->label();
+        }
+      }
+      $file_url = '';
+      if ($media_entity->hasField('field_media_file_multiple') &&
+      !$media_entity->get('field_media_file_multiple')->isEmpty()
+      ) {
+        $file_entity = $media_entity->get('field_media_file_multiple')->entity;
+        if ($file_entity) {
+          $file_url = file_create_url($file_entity->getFileUri());
+        }
+      }
+
+      if (!$file_url && $media_entity->hasField('field_media_file') &&
+      !$media_entity->get('field_media_file')->isEmpty()
+      ) {
+        $file_entity = $media_entity->get('field_media_file')->entity;
+        if ($file_entity) {
+          $file_url = file_create_url($file_entity->getFileUri());
+        }
+      }
+      if (!isset($grouped_reports[$year])) {
+        $grouped_reports[$year] = [];
+      }
+
+      $grouped_reports[$year][] = [
+        'title' => $title,
+        'text' => $media_text,
+        'topic' => $topic,
+        'office' => $office,
+        'leg_date' => $leg_date,
+        'url' => $file_url,
+      ];
+    }
+  }
+  krsort($grouped_reports);
+  $variables['grouped_reports'] = $grouped_reports;
+}
+
+/**
  * Implements hook_preprocess_views_view() for ITC past proposals block.
  */
 function jcc_elevated_preprocess_views_view__surplus_listing__block_1(&$variables) {
