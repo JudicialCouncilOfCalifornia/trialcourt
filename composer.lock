@@ -3350,35 +3350,34 @@
         },
         {
             "name": "drupal/ckeditor_a11ychecker",
-            "version": "3.0.0-alpha4",
+            "version": "dev-1.x",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/ckeditor_a11ychecker.git",
-                "reference": "3.0.0-alpha4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ckeditor_a11ychecker-3.0.0-alpha4.zip",
-                "reference": "3.0.0-alpha4",
-                "shasum": "749fd88bef0ecf2150dc69fca754dcdef9968ae6"
+                "reference": "a2099d09"
             },
             "require": {
-                "drupal/core": "^9.3 || ^10"
+                "drupal/ckeditor": "*",
+                "drupal/ckeditor_balloonpanel": "*",
+                "drupal/core": "^8 || ^9"
             },
             "type": "drupal-module",
             "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
                 "drupal": {
-                    "version": "3.0.0-alpha4",
-                    "datestamp": "1712692196",
+                    "version": "8.x-1.0+10-dev",
+                    "datestamp": "1591740625",
                     "security-coverage": {
                         "status": "not-covered",
-                        "message": "Alpha releases are not covered by Drupal security advisories."
+                        "message": "Dev releases are not covered by Drupal security advisories."
                     }
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
             "license": [
-                "GPL-2.0-or-later"
+                "GPL-2.0+"
             ],
             "authors": [
                 {
@@ -3392,18 +3391,12 @@
                     "role": "Maintainer"
                 },
                 {
-                    "name": "Edmund Dunn (edmund.dunn)",
-                    "homepage": "https://www.drupal.org/u/edmunddunn",
-                    "role": "Maintainer"
+                    "name": "edmund.dunn",
+                    "homepage": "https://www.drupal.org/user/3534438"
                 },
                 {
-                    "name": "RobLoach (robloach)",
-                    "homepage": "https://www.drupal.org/u/robloach",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "RobLoach",
-                    "homepage": "https://www.drupal.org/user/61114"
+                    "name": "pifagor",
+                    "homepage": "https://www.drupal.org/user/2375692"
                 }
             ],
             "description": "Adds the Accessibility Checker plugin to CKEditor.",
@@ -3414,6 +3407,66 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/ckeditor_a11ychecker",
                 "issues": "http://drupal.org/project/issues/ckeditor_a11ychecker"
+            }
+        },
+        {
+            "name": "drupal/ckeditor_balloonpanel",
+            "version": "dev-1.x",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ckeditor_balloonpanel.git",
+                "reference": "8070eaaa"
+            },
+            "require": {
+                "drupal/ckeditor": "*",
+                "drupal/core": "^8 || ^9"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.1+5-dev",
+                    "datestamp": "1595459576",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Dev releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Mauricio Dinarte (dinarcon)",
+                    "homepage": "https://www.drupal.org/u/dinarcon",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Darryl Norris (darol100)",
+                    "homepage": "https://www.drupal.org/u/darol100",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "edmund.dunn",
+                    "homepage": "https://www.drupal.org/user/3534438"
+                },
+                {
+                    "name": "pifagor",
+                    "homepage": "https://www.drupal.org/user/2375692"
+                }
+            ],
+            "description": "Adds the Balloon Panel Plugin plugin to CKEditor.",
+            "homepage": "http://drupal.org/project/ckeditor_balloonpanel",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "http://cgit.drupalcode.org/ckeditor_balloonpanel",
+                "issues": "http://drupal.org/project/issues/ckeditor_balloonpanel"
             }
         },
         {
@@ -25041,7 +25094,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "drupal/block_field": 5,
-        "drupal/ckeditor_a11ychecker": 15,
+        "drupal/ckeditor_a11ychecker": 20,
+        "drupal/ckeditor_balloonpanel": 20,
         "drupal/content_access": 15,
         "drupal/datetime_range_timezone": 15,
         "drupal/dropzonejs": 15,
