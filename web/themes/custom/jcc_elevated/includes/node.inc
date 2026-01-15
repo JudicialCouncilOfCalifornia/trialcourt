@@ -147,13 +147,13 @@ function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $n
     $renewal_formatted = $renewal_date->format('M d, Y');
   }
   $variables['title'] = $node->getTitle();
-  $variables['surplus'] = [
+  $surplus = [
     'Item Description' => $node->get('field_description')->value ?? '',
     'Posted On' => $posted_formatted ?? '',
     'Brand/Manufacturer' => $node->get('field_brand')->value ?? '',
     'Model Number' => $node->get('field_model_number')->value ?? '',
     'Quantity' => $node->get('field_quantity')->value ?? '',
-    'Donation or Sell?' => $node->get('field_donate_or_sell')->value ?? '',
+    'Donate or Sell?' => $node->get('field_donate_or_sell')->value ?? '',
     'Unit Measure' => $node->get('field_unit_measure')->value ?? '',
     'Condition' => $condition && $taxonomy_manager->load($condition) ? $taxonomy_manager->load($condition)->get('name')->value : '',
     'Required Forms' => $node->get('field_required_forms')->value ?? '',
@@ -167,6 +167,17 @@ function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $n
     'Email' => $node->get('field_email_address')->value ?? '',
     'Disposition' => $node->get('field_disposition')->value ?? '',
   ];
+  $excluded = ['Ref #', 'Email', 'Phone', 'Contact'];
+  $variables['reference_number'] = $node->get('field_reference_number')->value;
+  $variables['items'] = [];
+  foreach ($surplus as $key => $value) {
+    if (!empty($value) && !in_array($key, $excluded)) {
+      $variables['items'][] = [
+        'label' => $key,
+        'text'  => $value,
+      ];
+    }
+  }
 }
 
 /**

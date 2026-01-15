@@ -7,7 +7,11 @@ dependencies:
     - paragraphs.paragraphs_type.views_reference
     - views.view.alerts
   module:
+    - tmgmt_content
     - viewsreference
+third_party_settings:
+  tmgmt_content:
+    excluded: false
 _core:
   default_config_hash: 7HLlLQ4H1UMuV_G-TRCORBsJ3biVGMXdJsaiTAC7Amc
 id: paragraph.views_reference.field_views_reference
@@ -20,46 +24,22 @@ required: true
 translatable: false
 default_value:
   -
-    options:
-      title: 0
-      argument: ''
-    display_id: alerts
-    argument: null
-    title: 0
-    data: null
     target_uuid: 532a6438-f876-4995-a71c-089d0389f77d
+    display_id: alerts
+    data: 'a:7:{s:13:"use_more_text";N;s:12:"link_display";N;s:5:"pager";N;s:8:"argument";N;s:5:"limit";N;s:6:"offset";N;s:5:"title";N;}'
 default_value_callback: ''
 settings:
   handler: 'default:view'
   handler_settings:
     target_bundles: null
-    auto_create: 0
+    auto_create: false
   plugin_types:
     block: block
     page: page
-    default: 0
-    attachment: 0
-    feed: 0
   preselect_views:
+    case_files: case_files
     forms: forms
     location: location
     news: news
-    alerts: 0
-    block_content: 0
-    content: 0
-    content_recent: 0
-    event_type_legend: 0
-    files: 0
-    glossary_terms: 0
-    jcc_migrate_source_log: 0
-    media: 0
-    media_library: 0
-    moderated_content: 0
-    redirect: 0
-    scheduler_scheduled_content: 0
-    taxonomy_term: 0
-    user_admin_people: 0
-    watchdog: 0
-    who_s_new: 0
-    who_s_online: 0
+  enabled_settings: {  }
 field_type: viewsreference

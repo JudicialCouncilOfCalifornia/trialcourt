@@ -8,6 +8,7 @@ dependencies:
     - field.field.media.file.field_matters_served
     - field.field.media.file.field_media_file
     - field.field.media.file.field_media_text
+    - field.field.media.file.field_source
     - field.field.media.file.field_tags
     - media.type.file
   module:
@@ -47,6 +48,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 1
+    region: content
+  field_source:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
     region: content
 hidden:
   created: true

@@ -11,7 +11,7 @@
     hangover_hide_compact: false,
     hangover_offset: 22,
     background: 'brown',      
-    heading: 'Temporary Assigned Judges',
+    heading: 'TAJP Status Report',
     news_header: true,    
     text: ''  
     }
@@ -20,18 +20,37 @@
 
 {% set details %}    
   <div class="stack">
-  <span>
-    <h2 class="surplus-heading"></h2>    
-  </span>
   
-  <div class="custom-staff-view">
-    <div class="filter-form">
-      {{ form }}
-    </div>
-  <br />
-  <br />
-    <div  class="staff-table">
-      {{ table }}
+  <div>
+    <a href="/justices-judges/temporary-assigned-judges" class="back-to-directory">
+      <  Back to Temporary Assigned Judges Program
+    </a>
+  </div>
+<div>
+<p>An <a href="/jj/tajp/documents/TAJPJudgeSearch.xlsx">interactive search tool</a> (Excel file) to help courts identify judges in the program for assignments. The report contains information from all assigned judges in the program with their case type experience and every court they are interested in sitting on assignment. This report will be updated on a regular basis as retired judges join/leave the program or make changes to their information. </p>
+</div>
+
+  <label class="usa-sr-only" for="header-search">Search by <b>Name or Email</b></label>  
+    <div>{{form|render}}</div>
+      <div>
+      {% set search_term = form.filter.keyword['#value'] ?? '' %}
+        <div  class="staff-table">     
+        {% if summary > 0 %}   
+         {% if search_term %}
+          <span class="results-summary">
+            <h2>Results for: {{ search_term }}</h2>
+            <p style="font-size: 15px; color: #919191;">
+            {{ summary }} Search Results
+            </p>
+          </span>
+        {% endif %}
+        {{ table }}
+        {% else %}
+        <span class="results-summary">
+          <h2>Results for: {{ search_term }}</h2>
+          <p>No results found</p>
+          </span>
+        {% endif %}   
     </div>
   </div>
 {% endset %}

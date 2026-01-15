@@ -27,7 +27,7 @@ class RelatednewsBlock extends BlockBase implements BlockPluginInterface {
       $block_content = $config['related_news_custom'];
     }
     else {
-      $block_content = $this->t('<p><a href="https://supreme.courts.ca.gov/case-information/oral-arguments">Oral Argument Archive</a><br /><a href="https://jcc.legistar.com/Calendar.aspx">Judicial Council Meeting Archive</a><br /><a href="/sites/default/files/newsroom/2024-05/2025-jc-mtg-dates-only-20240411.pdf">2025 Judicial Council Meeting Calendar</a><br /><a href="https://supreme.courts.ca.gov/sites/default/files/supremecourt/default/2024-08/2025_OralArgumentCalendar_public%20-%20073124.pdf">2025 Supreme Court Oral Argument Calendar</a><br /></p>');
+      $block_content = $this->t('<p><a href="https://supreme.courts.ca.gov/case-information/oral-arguments">Oral Argument Archive</a><br /><a href="https://jcc.legistar.com/Calendar.aspx">Judicial Council Meeting Archive</a><br /><a href="/sites/default/files/newsroom/2025-11/California%20Judicial%20Branch%20Calendar%20for%20Newsroom.png">2026 California Courts Calendar</a><br /><a href="/sites/default/files/newsroom/2025-08/2026_OralArgumentCalendar_public.pdf">2026 Supreme Court Oral Argument Calendar</a><br /></p>');
     }
     return [
       '#markup' => $block_content,
@@ -45,7 +45,7 @@ class RelatednewsBlock extends BlockBase implements BlockPluginInterface {
     $form['related_news_custom'] = [
       '#type' => 'textarea',
       '#title' => $this->t('content'),
-      '#default_value' => isset($config['related_news_custom']) ? $config['related_news_custom'] : '<p><a href="https://supreme.courts.ca.gov/case-information/oral-arguments">Oral Argument Archive</a><br /><a href="https://jcc.legistar.com/Calendar.aspx">Judicial Council Meeting Archive</a><a href="https://supreme.courts.ca.gov/sites/default/files/supremecourt/default/2024-08/2025_OralArgumentCalendar_public%20-%20073124.pdf">2025 Supreme Court Oral Argument Calendar</a><br /></p>\'',
+      '#default_value' => $config['related_news_custom'] ?? '<p><a href="https://supreme.courts.ca.gov/case-information/oral-arguments">Oral Argument Archive</a><br /><a href="https://jcc.legistar.com/Calendar.aspx">Judicial Council Meeting Archive</a><a href="/sites/default/files/newsroom/2025-08/2026_OralArgumentCalendar_public.pdf">2026 Supreme Court Oral Argument Calendar</a><br /></p>\'',
     ];
 
     return $form;

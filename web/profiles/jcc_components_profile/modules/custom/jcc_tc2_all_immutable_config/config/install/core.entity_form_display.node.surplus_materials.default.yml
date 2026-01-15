@@ -30,22 +30,12 @@ dependencies:
     - datetime
     - media_library
     - path
-    - text
+    - scheduler
 id: node.surplus_materials.default
 targetEntityType: node
 bundle: surplus_materials
 mode: default
 content:
-  body:
-    type: text_textarea_with_summary
-    weight: 10
-    region: content
-    settings:
-      rows: 9
-      summary_rows: 3
-      placeholder: ''
-      show_summary: false
-    third_party_settings: {  }
   created:
     type: datetime_timestamp
     weight: 3
@@ -54,7 +44,7 @@ content:
     third_party_settings: {  }
   field_brand:
     type: string_textfield
-    weight: 19
+    weight: 17
     region: content
     settings:
       size: 60
@@ -62,7 +52,7 @@ content:
     third_party_settings: {  }
   field_comments:
     type: string_textarea
-    weight: 25
+    weight: 23
     region: content
     settings:
       rows: 5
@@ -70,7 +60,7 @@ content:
     third_party_settings: {  }
   field_condition:
     type: entity_reference_autocomplete
-    weight: 23
+    weight: 21
     region: content
     settings:
       match_operator: CONTAINS
@@ -80,7 +70,7 @@ content:
     third_party_settings: {  }
   field_contact_number:
     type: string_textfield
-    weight: 13
+    weight: 12
     region: content
     settings:
       size: 60
@@ -88,15 +78,7 @@ content:
     third_party_settings: {  }
   field_contact_person:
     type: string_textfield
-    weight: 12
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_description:
-    type: string_textfield
-    weight: 17
+    weight: 11
     region: content
     settings:
       size: 60
@@ -104,19 +86,19 @@ content:
     third_party_settings: {  }
   field_disposition:
     type: options_select
-    weight: 28
+    weight: 26
     region: content
     settings: {  }
     third_party_settings: {  }
   field_donate_or_sell:
     type: options_select
-    weight: 18
+    weight: 16
     region: content
     settings: {  }
     third_party_settings: {  }
   field_email_address:
     type: email_default
-    weight: 14
+    weight: 13
     region: content
     settings:
       placeholder: ''
@@ -124,20 +106,20 @@ content:
     third_party_settings: {  }
   field_entity:
     type: options_select
-    weight: 11
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
   field_media_file_multiple:
     type: media_library_widget
-    weight: 26
+    weight: 24
     region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
   field_model_number:
     type: string_textfield
-    weight: 20
+    weight: 18
     region: content
     settings:
       size: 60
@@ -145,20 +127,20 @@ content:
     third_party_settings: {  }
   field_posted:
     type: datetime_default
-    weight: 16
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }
   field_quantity:
     type: number
-    weight: 21
+    weight: 19
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_required_forms:
     type: string_textfield
-    weight: 24
+    weight: 22
     region: content
     settings:
       size: 60
@@ -166,7 +148,7 @@ content:
     third_party_settings: {  }
   field_surplus_category:
     type: entity_reference_autocomplete
-    weight: 15
+    weight: 14
     region: content
     settings:
       match_operator: CONTAINS
@@ -176,14 +158,14 @@ content:
     third_party_settings: {  }
   field_terms_of_use:
     type: boolean_checkbox
-    weight: 27
+    weight: 25
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_unit_measure:
     type: options_select
-    weight: 22
+    weight: 20
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -212,6 +194,12 @@ content:
     region: content
     settings:
       display_label: true
+    third_party_settings: {  }
+  publish_on:
+    type: datetime_timestamp_no_default
+    weight: 27
+    region: content
+    settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
@@ -251,9 +239,10 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  body: true
+  field_description: true
   field_reference_number: true
   field_renewal_date: true
-  publish_on: true
   publish_state: true
   unpublish_on: true
   unpublish_state: true
