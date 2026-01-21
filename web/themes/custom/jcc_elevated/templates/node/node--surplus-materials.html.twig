@@ -35,21 +35,8 @@
   <div class="stack">
   <span>
     <h2 class="surplus-heading">{{ title }}</h2>
-    <h3 class="surplus-heading">Ref #: {{ surplus['Ref #'] }} </h3>
+    <h3 class="surplus-heading">Ref #: {{ reference_number }} </h3>
   </span>
-
-  {% set excluded_keys = ['Ref #', 'Email', 'Phone', 'Contact'] %}
-    {% set items = [] %}
-     {% for key, value in surplus %}
-       {% if value is not empty and key  not in excluded_keys  %}     
-         {% set item = {
-           label: key,
-           text: value 
-           }
-         %}
-       {% set items = items|merge([item]) %}
-      {% endif %}
-      {% endfor %}
 
   {% include "@molecules/List/List.twig" with {
     variant: 'none',

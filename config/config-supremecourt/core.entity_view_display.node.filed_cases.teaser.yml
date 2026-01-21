@@ -1,0 +1,31 @@
+uuid: 08151963-8b5f-4e45-bc46-c767f3d9bf23
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.filed_cases.field_case_initiation_date
+    - field.field.node.filed_cases.field_case_number
+    - field.field.node.filed_cases.field_case_type
+    - node.type.filed_cases
+  module:
+    - user
+id: node.filed_cases.teaser
+targetEntityType: node
+bundle: filed_cases
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_case_initiation_date: true
+  field_case_number: true
+  field_case_type: true
+  langcode: true
+  search_api_excerpt: true
