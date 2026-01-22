@@ -5,7 +5,7 @@
 name: tc
 
 # drupal8 | drupal7 | wordpress
-recipe: drupal8
+recipe: drupal9
 
 config:
   # default: web | lightning: docroot
@@ -27,26 +27,20 @@ proxy:
   appserver:
     - "*.lndo.site"
 
-# Additional services and features.
 services:
   appserver:
+    type: php:8.1
     webroot: web
-    # Uncomment below and lando rebuild to enable xdebug.
-    # The old xon/xoff commands no longer work with recent lando versions.
-    # xdebug: true
     config:
       php: xdebug.php.ini
-  # Theme.
+
   node-cli:
-    type: compose
-    services:
-      image: node:13.13.0
-      # Required. See Below
-      command: docker-php-entrypoint apache2-foreground
-      volumes:
-        - .:/app
+    type: node:13
+    build_as_root:
+      - npm install
+
   database:
-    # Create databases for each multisite.
+    type: mariadb:10.6
     run_as_root:
       - /bin/sh -c "/app/scripts/dbcreate.sh"
 
