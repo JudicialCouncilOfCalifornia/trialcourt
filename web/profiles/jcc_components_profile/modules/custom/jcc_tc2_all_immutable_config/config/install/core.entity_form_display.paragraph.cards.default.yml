@@ -13,7 +13,7 @@ dependencies:
     - field.field.paragraph.cards.field_width_minimum
     - paragraphs.paragraphs_type.cards
   module:
-    - link
+    - linkit_attributes
     - paragraphs
     - text
 id: paragraph.cards.default
@@ -66,12 +66,26 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_link:
-    type: link_default
+    type: linkit_attributes
     weight: 7
     region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
+      linkit_profile: default
+      linkit_auto_link_text: false
+      enabled_attributes:
+        id: true
+        rel: true
+        aria-label: true
+        mailto_subject: false
+        mailto_body: false
+        name: false
+        target: false
+        class: false
+        accesskey: false
+        title: false
+      widget_default_open: expandIfValuesSet
     third_party_settings: {  }
   field_sub_variant:
     type: string_textfield

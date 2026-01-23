@@ -108,12 +108,19 @@ function jcc_components_paragraph_action_list(array &$variables, ParagraphInterf
       $link = $item->field_link->view('default');
     }
 
+    $link_options = $item->field_link[0]->options ?: NULL;
+    $aria_label = NULL;
+    if (!empty($link[0]) && $link[0]['#options'] && isset($link_options['attributes']['aria-label'])) {
+      $aria_label = $link[0]['#options']['attributes']['aria-label'];
+    }
+
     $variables['action_items'][] = [
       'title' => $title,
       'body' => $item->field_text->view('default'),
       'link' => [
         'url' => !empty($link[0]) ? $link[0]['#url']->toString() : NULL,
         'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
+        'aria_label' => $aria_label,
       ],
       'classes' => [],
     ];
@@ -137,11 +144,19 @@ function jcc_components_paragraph_hero_banner(array &$variables, ParagraphInterf
     $component = \Drupal::service('entity.repository')->getTranslationFromContext($component, $langcode);
     if (!empty($component->field_icon)) {
       $card_icon = !empty($component->field_icon->view('default')[0]) ? $component->field_icon->view('default')[0] : NULL;
-      // $card_icon = str_replace("-dark", "-white", $card_icon);
+      // Icon.
       $card_icon['#icon_set'] = str_replace("-dark", "-white", $card_icon['#icon_set']);
+      // Link.
+      $link = !empty($component->field_link->view('default')[0]) ? $component->field_link->view('default')[0] : NULL;
+      $link_options = $link['#options'] ?: NULL;
+      $aria_label = NULL;
+      if ($link_options && isset($link_options['attributes']['aria-label'])) {
+        $aria_label = $link_options['attributes']['aria-label'];
+      }
       $variables['content']['icon_links'][] = [
         'icon' => $card_icon,
-        'link' => !empty($component->field_link->view('default')[0]) ? $component->field_link->view('default')[0] : NULL,
+        'link' => $link,
+        'aria_label' => $aria_label,
       ];
     }
   }
@@ -444,6 +459,11 @@ function _jcc_components_generate_cards($cards, $sub_variants, $column_size) {
       }
     }
 
+    $aria_label = NULL;
+    if (!empty($link[0]) && $link[0]['#options'] && $link[0]['#options']['attributes']) {
+      $aria_label = $link[0]['#options']['attributes']['aria-label'];
+    }
+
     $set[] = [
       'is_clickable' => $is_clickable,
       'style' => $sub_variants['card'],
@@ -456,6 +476,7 @@ function _jcc_components_generate_cards($cards, $sub_variants, $column_size) {
         'url' => $url,
         'text' => !empty($link[0]) ? $link[0]['#title'] : NULL,
         'type' => !empty($link[0]) ? _jcc_components_get_url_type($link[0]['#url']->toString()) : NULL,
+        'aria_label' => $aria_label,
       ],
       'classes' => [],
       'bgcolor' => $bgcolor,

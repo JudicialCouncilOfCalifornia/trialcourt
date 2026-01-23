@@ -81,19 +81,20 @@
   {# Include the component template and pass in the structured data. #}
   {% block cards_section %}
     {% include "@organisms/cards/cards.twig" with {
-        cards: {
-          background: variant.cards,
-          num_cols: paragraph.field_columns.value,
-          heading: {
-            title: content.field_heading.0|render,
-            lead: content.field_lead|render
-          },
-          items: cards,
-          link: {
-            url: content.field_link.0['#url']|render,
-            text: paragraph.field_link.0.title,
-          }
+      cards: {
+        background: variant.cards,
+        num_cols: paragraph.field_columns.value,
+        heading: {
+          title: content.field_heading.0|render,
+          lead: content.field_lead|render
+        },
+        items: cards,
+        link: {
+          url: content.field_link.0['#url']|render,
+          text: paragraph.field_link.0.title,
+          aria_label: paragraph.field_link.0.options.attributes['aria-label'],
         }
+      }
     } %}
   {% endblock %}
 {% endif %}

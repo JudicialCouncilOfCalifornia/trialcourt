@@ -17,13 +17,19 @@ name: Aside
 format: aside
 weight: -7
 filters:
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
+    status: true
+    weight: 0
+    settings: {  }
   filter_html:
     id: filter_html
     provider: filter
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <ul type class dir> <ol type start class dir> <li> <blockquote class="blockquote blockquote--callout" dir> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <p class dir> <h4 dir> <a href hreflang data-entity-bundle data-entity-substitution data-entity-type data-entity-uuid title class="jcc-button--primary button button--primary jcc-button--cta-link jcc-button--primary jcc-button--cta-link twitter-library jcc-button--primary jcc-button--cta-link twitter-timeline jcc-button--primary button jcc-button--secondary button button--secondary jcc-button--cta-link button--cta-link button button--text twitter-timeline" data-link-*> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title data-langcode>'
+      allowed_html: '<em> <strong> <ul type class dir> <ol type start class dir> <li> <blockquote class="blockquote blockquote--callout" dir> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <p class dir> <h4 dir> <a href hreflang id aria-label rel data-entity-bundle data-entity-substitution data-entity-type data-entity-uuid class="jcc-button--primary button button--primary jcc-button--cta-link jcc-button--primary jcc-button--cta-link twitter-library jcc-button--primary jcc-button--cta-link twitter-timeline jcc-button--primary button jcc-button--secondary button button--secondary jcc-button--cta-link button--cta-link button button--text twitter-timeline" data-link-*> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title data-langcode>'
       filter_html_help: true
       filter_html_nofollow: false
   glossify_taxonomy:
@@ -44,7 +50,7 @@ filters:
     status: true
     weight: 0
     settings:
-      title: true
+      title: false
   filter_autop:
     id: filter_autop
     provider: filter
@@ -87,10 +93,4 @@ filters:
     provider: entity_embed
     status: true
     weight: 100
-    settings: {  }
-  emptyparagraphkiller:
-    id: emptyparagraphkiller
-    provider: emptyparagraphkiller
-    status: true
-    weight: 0
     settings: {  }

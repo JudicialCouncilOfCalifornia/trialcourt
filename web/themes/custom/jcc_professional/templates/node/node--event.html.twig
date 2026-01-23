@@ -1,10 +1,12 @@
 {% extends 'themes/custom/jcc_components/templates/node/node--event.html.twig' %}
 
   {% block layout %}
-    {% set download %}
-      Add event to your calendar
-      <div class="jcc-links jcc-links__buttons">{{ content.links }}</div>
-    {% endset %}
+    {% if download_support %}
+      {% set download %}
+        <p>{{ 'Add event to your calendar'|t }}</p>
+        <div class="jcc-links jcc-links__buttons">{{ content.links }}</div>
+      {% endset %}
+    {% endif %}
 
     {% include "@molecules/hero/hero.twig" with {
       hero: {

@@ -1,10 +1,14 @@
 {% set custom_css = paragraph.field_custom_classes.value ? ' ' ~ paragraph.field_custom_classes.value : '' %}
 {% set link = content.field_link.0 %}
+{% if link['#options'] and link['#options']['attributes'] and link['#options']['attributes']['aria-label'] %}
+  {% set aria_label = content.field_link.0['#options']['attributes']['aria-label'] %}
+{% endif %}
 
 {% include '@atoms/button/button.twig' with {
   button: {
     text: link['#title'],
     url: link['#url']|render ? link['#url']|render : 'javascript:void(0);',
     style: 'primary' ~ custom_css,
+    aria_label: aria_label,
   }
 } %}
