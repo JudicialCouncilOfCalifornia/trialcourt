@@ -22,6 +22,7 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
 use Drupal\views\ResultRow;
 use Drupal\views\ViewExecutable;
+use Drupal\Core\Datetime\DrupalDateTime;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -967,8 +968,12 @@ function jcc_elevated_preprocess_views_view__legislative_reports__block_1(&$vari
       $media_text = $media_entity->get('field_media_text')->value ?? '';
       $leg_date = $media_entity->get('field_date')->value ?? '';
       $year = '';
+      //$year = 'Unknown'; // Fallback if no date exists
+      //$sort_key = 0;     // Default to 0 so dateless items go to the bottom
       if (!empty($leg_date)) {
         $year = substr($leg_date, 0, 4);
+        /*$month = substr($leg_date, 5, 2);
+        $sort_key = strtotime($leg_date);*/
       }
       $topic = '';
       if ($media_entity->hasField('field_matters_served') && !$media_entity->get('field_matters_served')->isEmpty()) {
@@ -1012,11 +1017,25 @@ function jcc_elevated_preprocess_views_view__legislative_reports__block_1(&$vari
         'topic' => $topic,
         'office' => $office,
         'leg_date' => $leg_date,
+       // 'sort_key' => $sort_key,
         'url' => $file_url,
       ];
     }
   }
   krsort($grouped_reports);
+ /*foreach ($grouped_reports as $year => &$items) {
+ usort($items, function ($a, $b) {
+      // Primary Sort: Date Descending (Oct -> Jan)
+      if ($a['sort_key'] != $b['sort_key']) {
+        return $b['sort_key'] <=> $a['sort_key'];
+      }
+
+      // Secondary Sort (Tie-breaker): If dates are the same, 
+      // sort alphabetically by the text title.
+      return strcmp($a['text'], $b['text']);
+    });
+  }
+  dpm($grouped_reports);*/
   $variables['grouped_reports'] = $grouped_reports;
 }
 
@@ -1858,7 +1877,7 @@ function jcc_elevated_preprocess_views_mini_pager(&$variables) {
  */
 function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $view = $form_state->get('view');
-
+ 
   if (($view->id() == 'search') && ($view->current_display == 'search')) {
     // Remove captcha from search form.
     unset($form['captcha']);
@@ -1933,6 +1952,34 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
     unset($form['captcha']);
     unset($form['field_rfp_end_date_value']['#options']['All']);
   }
+  /*if (($view->id() == 'legislative_reports') && ($view->current_display == 'block_1')) {
+    //dpm("###############################");
+    $field_name = 'media_tags'; // The machine name of your field
+    
+    // 1. Query the database for Term IDs (TIDs) actually used in this field
+    $query = \Drupal::database()->select('node__' . $field_name, 'f');
+  $query = \Drupal::database()->select('media__field_tags', 't');
+    $query->fields('t', ['field_tags_target_id']);
+    
+   
+    $query->join('media_field_data', 'm', 'm.mid = t.entity_id');
+    $query->condition('m.status', 1); 
+    
+    $query->distinct();
+    $used_tids = $query->execute()->fetchCol();
+    dpm($used_tids);
+
+   
+    if (!empty($form[$field_name]['#options'])) {
+      foreach ($form[$field_name]['#options'] as $tid => $label) {
+        // We check if $tid is numeric to avoid unsetting the 'All' option
+        if (is_numeric($tid) && !in_array($tid, $used_tids)) {
+          unset($form[$field_name]['#options'][$tid]);
+        }
+      }
+    }
+  }*/
+  
 }
 
 /**
@@ -1955,6 +2002,7 @@ function jcc_elevated_validate_date(string $date, string $format = 'Y-m-d'): boo
  * Helper function to apply common exposed filter view customizations.
  */
 function __jcc_view_results_exposed_filter_init(&$variables) {
+  dpm("Inside exposed filter init here");
   $form = &$variables['exposed'];
 
   // Remove captcha.
@@ -2017,6 +2065,42 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
   $view = $variables;
   $view_id = $view['id'];
   $results = $variables['rows'][0]['#rows'] ?? NULL;
+  /*if ($view_id === 'legislative_reports') {
+    dpm("Inside legislative reports view here");
+    dpm($form);
+ if (!empty($results) && isset($form['field_tags_target_id'])) {
+  $used_tids = [];
+
+  foreach ($results as $row) {
+    if (!empty($row['#media'])) {
+      $media = $row['#media'];
+
+      if ($media->hasField('field_tags')) {
+        foreach ($media->get('field_tags')->getValue() as $term_ref) {
+          $used_tids[] = $term_ref['target_id'];
+        }
+      }
+    }
+  }
+
+  $used_tids = array_unique($used_tids);
+
+  // Filter exposed options.
+  $options = $form['field_tags_target_id']['#options'];
+ dpm("Printing options here**********");
+  dpm($options);
+
+  foreach ($options as $tid => $label) {
+    if ($tid !== 'All' && !in_array($tid, $used_tids)) {
+      unset($options[$tid]);
+    }
+  }
+  dpm("Printing options here**********");
+  dpm($options);
+
+  $form['field_media_category_target_id']['#options'] = $options;
+}
+}*/
   $bef_class = 'bef-exposed-form';
 
   // For Better Expose Filters.

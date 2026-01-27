@@ -584,9 +584,11 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     $hero_image = $basic_page->get('field_media');
     $media = $media_manager->load($hero_image->target_id);
     if ($media && $media->field_media_image) {
+       $image_item = $media->get('field_media_image')->first();
       $uri = $media->field_media_image->entity->getFileUri();
       $image_url = file_create_url($uri);
-      $variables['imageurl'] = $image_url;
+      $variables['imageurl'] = $image_url;      
+      $variables['alt_text'] = $image_item->alt;      
       if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
         $caption_value = $media->get('field_media_caption')->value;
         $citation_value = $media->get('field_media_citation')->value;

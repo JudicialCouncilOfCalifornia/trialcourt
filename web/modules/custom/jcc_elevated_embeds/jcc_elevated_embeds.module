@@ -1,5 +1,7 @@
 <?php
 
+
+use Drupal\Core\Database\Database;
 /**
  * @file
  * Contains jcc_elevated_embeds module functionality.
@@ -156,3 +158,88 @@ function jcc_elevated_embeds_jcc_elevated_settings_alter(&$settings) {
 function jcc_elevated_embeds_page_attachments(array &$attachments) {
   $attachments['#attached']['library'][] = 'jcc_elevated_embeds/form_redirect';
 }
+
+function jcc_elevated_embeds_form_views_exposed_form_alter(
+  &$form,
+  \Drupal\Core\Form\FormStateInterface $form_state,
+  $form_id
+) {
+  $category_names = ['Legislative Reports', 'Budget Allocations'];
+$category_tids = [];
+
+foreach ($category_names as $name) {
+    $terms = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadByProperties([
+        'name' => $name,
+        'vid' => 'media_file_category', // Replace with your vocabulary machine name
+      ]);
+   
+    foreach ($terms as $term) {
+        $category_tids[] = $term->id();
+    }
+}
+ if (empty($category_tids)) {
+    return; // No categories found, stop processing
+  }
+
+$media_storage = \Drupal::entityTypeManager()->getStorage('media');
+
+if (!empty($category_tids)) {
+  $media_ids = $media_storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('bundle', 'publication') // media type
+    ->condition('status', 1)
+     ->condition('field_media_category.target_id', $category_tids, 'IN')
+    ->execute();
+
+  if (empty($media_ids)) {
+    return; // No media found
+  }
+
+  $medias = $media_storage->loadMultiple($media_ids);
+  dpm("Printing medias here***");
+  dpm($medias);
+/*foreach ($medias as $media) {
+    if ($media->hasField('field_tags') && !$media->get('field_tags')->isEmpty()) {
+        foreach ($media->get('field_tags')->getValue() as $item) {
+            $tag_tids[] = $item['target_id'];
+        }
+    }
+}
+
+$tag_tids = array_unique($tag_tids);
+dpm("Printing tag tids");
+dpm($tag_tids);*/
+}
+}
+
+/*function _jcc_load_context_terms(int $context_tid): array {
+   $options = ['' => t('- Any -')];
+
+  // Get all media tagged with the context term
+  $media_ids = \Drupal::entityQuery('media')
+    ->condition('status', 1)
+    ->condition('field_tags.target_id', $context_tid)
+    ->execute();
+
+  if ($media_ids) {
+    // Get all tags attached to these media items
+    $terms = \Drupal::entityQuery('taxonomy_term')
+      ->condition('vid', 'media_tags') // replace with your vocabulary machine name
+      ->condition('tid', $media_ids, 'IN') // correct mapping
+      ->sort('name')
+      ->execute();
+
+    if ($terms) {
+      $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+      foreach ($term_storage->loadMultiple($terms) as $term) {
+        $options[$term->id()] = $term->getName();
+      }
+    }
+  }
+  dpm("Printing options");
+  dpm($options);
+  return $options;
+}*/
+
