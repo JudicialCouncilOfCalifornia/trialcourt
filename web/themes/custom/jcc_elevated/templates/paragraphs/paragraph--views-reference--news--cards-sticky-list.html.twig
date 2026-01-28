@@ -1,42 +1,39 @@
 {{ attach_library("jcc_storybook/Section") }}
-{{ attach_library("jcc_storybook/TeaserPlusList") }}
 {{ attach_library("jcc_storybook/Card") }}
-  
+
 {% set list_items =  [] %}
 {% if sticky_list is not empty %}
   {% for i in 0..3 %}
-    {% set row = sticky_list[i] ?? null %}   
+    {% set row = sticky_list[i] ?? null %}
     {% if row and row['#node'].id() %}
       {% set id = row['#node'].id() %}
       {% set origin_url = row['#node'].field_origin_url.uri ?? null %}
-      {% set url = origin_url ?: url('entity.node.canonical', { 'node': id }) %}     
-      
+      {% set url = origin_url ?: url('entity.node.canonical', { 'node': id }) %}
+
       {% set imageTag %}
         <img src={{row.imageurl}} />
-      {% endset %} 
-    
+      {% endset %}
+
       {% set card %}
         {% include "@molecules/Card/Card.twig" with {
           variant: 'default',
           clickable_card: true,
-          heading: row['#node'].title(),      
-          brow_text: row['#node'].field_date.value|date('F d, Y'),  
+          heading: row['#node'].title(),
+          brow_text: row['#node'].field_date.value|date('F d, Y'),
           background: null,
-          aspect: [],   
-          media_link: true, 
+          aspect: [],
+          media_link: true,
           media: imageTag,
-          button_data: [
-            {
-              label: "Button",
-              href: url,
-              variant: "primary",
-            }      
-          ],
-        } %}     
+          button_data: [{
+            label: "Button",
+            href: url,
+            variant: "primary",
+          }],
+        } %}
       {% endset %}
-    
+
       {% set list_items = list_items|merge([card | raw]) %}
-    {% endif %} 
+    {% endif %}
   {% endfor %}
 {% endif %}
 

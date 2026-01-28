@@ -39,25 +39,6 @@
  */
 #}
 
-{# Create an items array from referenced accordion items. #}
-{% set items = [] %}
-
-{% for k, item in content.field_components if k|first != "#" %}
-  {% set action_item = {
-    title: item['#paragraph'].field_heading.value,
-    body: {
-      '#type': 'processed_text',
-      '#text': item['#paragraph'].field_text.value,
-      '#format': item['#paragraph'].field_text.format
-    },
-    link: {
-      text: item['#paragraph'].field_link.title,
-      url: item['#paragraph'].field_link.uri
-    }
-  } %}
-  {% set items = items|merge([action_item]) %}
-{% endfor %}
-
 {# Include the component template and pass in the structured data. #}
 {% include "@organisms/action-list/action-list.twig" with {
   action_list: {

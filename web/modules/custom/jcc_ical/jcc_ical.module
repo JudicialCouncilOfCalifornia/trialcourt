@@ -20,12 +20,15 @@ function jcc_ical_node_links_alter(array &$links, NodeInterface $entity, array &
   if (!empty($types[$entity->getType()])) {
     // Generate link for iCal route.
     $url = Url::fromRoute('jcc_ical.content', ['node' => $entity->id()]);
-    $class = ['class' => 'jcc-button--primary usa-button usa-button--primary'];
+    $attributes = [
+      'class' => 'jcc-button--primary usa-button usa-button--primary',
+      'aria-label' => 'Download the ' . $entity->getTitle() . ' event details',
+    ];
 
     $links['node']['#links']['ical'] = [
       'title' => t('Download Event'),
       'url' => $url,
-      'attributes' => $class,
+      'attributes' => $attributes,
     ];
   }
 }

@@ -1,4 +1,3 @@
-uuid: bfb0caf0-e7af-425c-83f9-213e34e96ef7
 langcode: en
 status: true
 dependencies:
@@ -8,10 +7,8 @@ dependencies:
     - field.field.paragraph.action_list_item.field_text
     - paragraphs.paragraphs_type.action_list_item
   module:
-    - linkit_field
+    - linkit
     - text
-_core:
-  default_config_hash: l-9OKYlMS7dq_i_XVqKxsG1h6cnZINWXY7rECgFMNIk
 id: paragraph.action_list_item.default
 targetEntityType: paragraph
 bundle: action_list_item
@@ -26,7 +23,7 @@ content:
     weight: 0
     region: content
   field_link:
-    type: linkit_field_linkit
+    type: linkit
     label: hidden
     settings:
       trim_length: 80
@@ -46,4 +43,7 @@ content:
     weight: 1
     region: content
 hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   search_api_excerpt: true

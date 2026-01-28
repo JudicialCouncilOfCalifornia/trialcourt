@@ -85,10 +85,12 @@
       {{ components }}
     {% else %}
       {# Show migrated content in body field if no components added. #}
-      {% set download %}
-        Add event to your calendar
-        <div class="jcc-links jcc-links__buttons">{{ content.links }}</div>
-      {% endset %}
+      {% if download_support %}
+        {% set download %}
+          <p>{{ 'Add event to your calendar'|t }}</p>
+          <div class="jcc-links jcc-links__buttons">{{ content.links }}</div>
+        {% endset %}
+      {% endif %}
 
       {% include "@molecules/hero/hero.twig" with {
         hero: {

@@ -7,9 +7,9 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\Core\Render\Markup;
 use Drupal\media\Entity\Media;
 use Drupal\node\NodeInterface;
-use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -26,36 +26,37 @@ function jcc_components_preprocess_node(&$variables) {
 
   if ($node->getType() == 'tentative_ruling') {
     $variables['judges_card'] = [];
-    foreach ($node->field_judge as $judge_key => $judge_entity){
+    foreach ($node->field_judge as $judge_key => $judge_entity) {
       $judge = $judge_entity->entity;
       $variables['judges_card'][$judge_key]['body'] = '';
 
-      //rendering judge name field
+      // Rendering judge name field.
       $variables['judges_card'][$judge_key]['title'] = $judge->getTitle();
 
-      //rendering judge department field
-      if ($judge->field_department){
+      // Rendering judge department field.
+      if ($judge->field_department) {
         $judge_department = '';
-        foreach($judge->field_department as $key => $department_term){
+        foreach ($judge->field_department as $key => $department_term) {
           $department_term_value = $department_term->get('entity')->getTarget()->getValue()->label();
-          if($key == 0){
+          if ($key == 0) {
             $judge_department = $department_term_value;
-          } else {
+          }
+          else {
             $judge_department .= ', ' . $department_term_value;
           }
         }
         $variables['judges_card'][$judge_key]['department'] = $judge_department;
       }
 
-      //rendering judge address field
+      // Rendering judge address field.
       $judge_address = $judge->field_address;
       $judge_address_html = $judge_address->first()->address_line1 . ' ' . $judge_address->first()->address_line2;
       $judge_address_html .= '<br/>' . $judge_address->first()->locality . ', ' . $judge_address->first()->administrative_area . ' ' . $judge_address->first()->postal_code;
       $judge_address_html .= '<br/>' . $judge_address->first()->country_code;
       $variables['judges_card'][$judge_key]['body'] = Markup::create($judge_address_html);
 
-      //rendering judge custom_link field
-      if($judge->field_custom_link->first()){
+      // Rendering judge custom_link field.
+      if ($judge->field_custom_link->first()) {
         $variables['judges_card'][$judge_key]['link']['url'] = $judge->field_custom_link->first()->getUrl()->toString();
       }
     }
@@ -64,9 +65,9 @@ function jcc_components_preprocess_node(&$variables) {
   if ($node->getType() == 'location') {
     $variables['#attached']['library'][] = 'jcc_components/location-page';
     $current_path = \Drupal::request()->getRequestUri();
-    if(\Drupal::service('path.matcher')->matchPath($current_path ,"/location/*")){
+    if (\Drupal::service('path.matcher')->matchPath($current_path, "/location/*")) {
       build_service_markup($variables, $node);
-     }
+    }
   }
 }
 
@@ -301,6 +302,12 @@ function jcc_components_node_event(array &$variables, NodeInterface $node) {
   // Ensure date range field timezone.
   $variables['startDate'] = $node->field_date_range->start_date;
   $variables['endDate'] = $node->field_date_range->end_date;
+
+  // If event download support enabled.
+  $variables['download_support'] = FALSE;
+  if (\Drupal::service('module_handler')->moduleExists('jcc_ical')) {
+    $variables['download_support'] = TRUE;
+  }
 }
 
 /**

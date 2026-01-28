@@ -1,4 +1,3 @@
-uuid: 4b96f203-24eb-40b4-af51-ddd47464b8d3
 langcode: en
 status: true
 dependencies:
@@ -7,22 +6,14 @@ dependencies:
     - field.field.paragraph.button.field_link
     - paragraphs.paragraphs_type.button
   module:
-    - link
+    - linkit
 id: paragraph.button.default
 targetEntityType: paragraph
 bundle: button
 mode: default
 content:
-  field_custom_classes:
-    type: string
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    weight: 1
-    region: content
   field_link:
-    type: link
+    type: linkit
     label: above
     settings:
       trim_length: 80
@@ -30,6 +21,7 @@ content:
       url_plain: false
       rel: ''
       target: ''
+      linkit_profile: default
     third_party_settings: {  }
     weight: 0
     region: content
@@ -37,4 +29,5 @@ hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
+  field_custom_classes: true
   search_api_excerpt: true

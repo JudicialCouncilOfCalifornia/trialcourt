@@ -97,6 +97,8 @@
       {{ content.field_office_hours }}
     {% endset %}
 
+  {% set directions_action_aria_label = 'Get directions for the ' ~ node.label ~ ' location'|t %}
+
   <div class="jcc-locations__item">
     {% include '@molecules/blocks/location/location.twig' with {
       location: {
@@ -116,7 +118,8 @@
         hours_label: "Hours",
         hours: content.hours_formatted,
         map: null,
-        directions_title: "Get Directions"
+        directions_title: "Get Directions"|t,
+        directions_action_aria_label: directions_action_aria_label,
       }
     } only %}
     {% endblock %}

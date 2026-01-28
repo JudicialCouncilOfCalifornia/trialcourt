@@ -6,28 +6,35 @@ dependencies:
     - field.field.paragraph.button.field_link
     - paragraphs.paragraphs_type.button
   module:
-    - link
+    - linkit_attributes
 id: paragraph.button.default
 targetEntityType: paragraph
 bundle: button
 mode: default
 content:
-  field_custom_classes:
-    type: string_textfield
-    weight: 1
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_link:
-    type: link_default
+    type: linkit_attributes
     weight: 0
     region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
+      linkit_profile: default
+      linkit_auto_link_text: false
+      enabled_attributes:
+        id: true
+        rel: true
+        aria-label: true
+        mailto_subject: false
+        mailto_body: false
+        name: false
+        target: false
+        class: false
+        accesskey: false
+        title: false
+      widget_default_open: expandIfValuesSet
     third_party_settings: {  }
 hidden:
   created: true
+  field_custom_classes: true
   status: true
