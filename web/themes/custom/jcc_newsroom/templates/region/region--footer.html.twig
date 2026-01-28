@@ -24,9 +24,9 @@
 {% endset %}
 
 {# Add subscription component as footer links block #}
-{% set subscribe_text = 'Subscribe with your email address to receive news and updates' %}
+{% set subscribe_text = 'Subscribe with your email address to receive news and updates'|t %}
 {% if logged_in %}
-  {% set subscribe_text = 'Subscriptions' %}
+  {% set subscribe_text = 'Subscriptions'|t %}
 {% endif %}
 {% set links_custom = footer_base.links %}
 {% set links_custom = links_custom|merge([{
