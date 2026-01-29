@@ -1,9 +1,8 @@
-uuid: 8f5cf512-1162-4682-b0f6-333a545a77d3
 langcode: en
 status: true
-dependencies: {  }
-_core:
-  default_config_hash: UOyUNInvmcwNSguoq-hStLNqGVrBYiCsyd85Ve7ybZA
+dependencies:
+  module:
+    - glossify_taxonomy
 name: 'Restricted HTML'
 format: restricted_html
 weight: -5
@@ -14,7 +13,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<a href hreflang> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id>'
+      allowed_html: '<a href hreflang id aria-label rel> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id>'
       filter_html_help: true
       filter_html_nofollow: false
   filter_autop:
@@ -30,3 +29,15 @@ filters:
     weight: 0
     settings:
       filter_url_length: 72
+  glossify_taxonomy:
+    id: glossify_taxonomy
+    provider: glossify_taxonomy
+    status: false
+    weight: -10
+    settings:
+      glossify_taxonomy_case_sensitivity: true
+      glossify_taxonomy_first_only: true
+      glossify_taxonomy_type: tooltips
+      glossify_taxonomy_tooltip_truncate: false
+      glossify_taxonomy_vocabs: ''
+      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'

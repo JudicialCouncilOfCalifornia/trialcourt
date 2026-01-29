@@ -75,7 +75,7 @@
   {% set download %}
     <div class="jcc-links jcc-links__buttons">
       <a class="jcc-button--primary usa-button usa-button--primary"
-         aria-label="Download or view " ~ label
+         aria-label="Download or view {{ node.field_media.entity.name.value }} document"
          href="{{ file_url(node.field_media.entity.field_media_file.entity.fileuri) }}">View Document</a>
     </div>
   {% endset %}
@@ -97,19 +97,14 @@
 
   {% set body %}
     <div class="usa-prose">
-      {% if content.body %}
-        <h2>{{ content.body['#title'] }}</h2>
-        {{ content.body }}
-      {% endif %}
-
-      <h2>{{ content.field_media['#title'] }}</h2>
+      <h2>{{ 'Document'|t }}</h2>
       {% if node.field_media.entity.field_media_file %}
         {{ node.field_media.entity.name.value }}
         {% if edit_option %}<span class="jcc-metadata jcc-pro-contextual-edit">({{ edit_option }})</span>{% endif %}
         <br>
-        <a aria-label="Download or view {{ node.field_media.entity.name.value }}" href="{{ file_url(node.field_media.entity.field_media_file.entity.fileuri) }}">{{ node.field_media.entity.field_media_file.entity.filename.value }}</a>
+        <a aria-label="Download or view {{ node.field_media.entity.name.value }} document" href="{{ file_url(node.field_media.entity.field_media_file.entity.fileuri) }}">{{ node.field_media.entity.field_media_file.entity.filename.value }}</a>
       {% else %}
-        (No file attached)
+        (No document attached)
       {% endif %}
 
       {% block custom %}{% endblock %}

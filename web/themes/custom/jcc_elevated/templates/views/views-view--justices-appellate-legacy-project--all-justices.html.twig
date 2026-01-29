@@ -3,58 +3,68 @@
 {{ attach_library("jcc_storybook/Section") }}
 {{ attach_library("jcc_storybook/Cards") }}
 
-{% set interviews = [] %}
-{% for key, value in justices %}
-  {% set content %}
-    {% set district = key %}
-    {% set cards = [] %}
-    {% set cards %}
-      {% for interview in value %}
-        {% if interview.transcript is not empty %}
-          {% set transcript %}
-            {{ link('View Transcript', interview.transcript, { 'aria_label': 'View interview transcript for ' ~ interview.name }) }}
-          {% endset %}
-        {% else %}
-          {% set transcript = '' %}
-        {% endif %}
+{% set preferred_order = [
+  'First Appellate District',
+  'Second Appellate District',
+  'Third Appellate District',
+  'Fourth Appellate District',
+  'Fifth Appellate District',
+  'Sixth Appellate District'
+] %}
 
-        {% include "@molecules/Card/Card.twig" with {
-          variant: 'bordered-center',
-          media: interview.video,
-          heading: interview.name,
-          has_section_heading: true,
-          text: transcript,
-          button_data: [
-            {
-              label: 'Profile',
-              href: interview.profile,
-              aria_label: 'View profile for ' ~ interview.name,
-              variant: 'text',
-            }
-          ],
-        } %}
-      {% endfor %}
+{% set interviews = [] %}
+{% for key in preferred_order %}
+  {% if justices[key] is defined %}
+    {% set value = justices[key] %}
+
+    {% set content %}
+      {% set district = key %}
+      {% set cards = [] %}
+      {% set cards %}
+        {% for interview in value %}
+          {% if interview.transcript is not empty %}
+            {% set transcript %}
+              {{ link('View Transcript', interview.transcript, { 'aria_label': 'View interview transcript for ' ~ interview.name }) }}
+            {% endset %}
+          {% else %}
+            {% set transcript = '' %}
+          {% endif %}
+
+          {% include "@molecules/Card/Card.twig" with {
+            variant: 'bordered-center',
+            media: interview.video,
+            heading: interview.name,
+            has_section_heading: true,
+            text: transcript,
+            button_data: [
+              {
+                label: 'Profile',
+                href: interview.profile,
+                aria_label: 'View profile for ' ~ interview.name,
+                variant: 'text',
+              }
+            ],
+          } %}
+        {% endfor %}
+      {% endset %}
+
+      {% include "@organisms/Section/Section.twig" with {
+        variant: 'default',
+        sub_component_layout: 'grid',
+        grid_min_width: 24,
+        sub_component_data: [cards],
+        disable_inner_box: true,
+      } %}
     {% endset %}
 
-    {% include "@organisms/Section/Section.twig" with {
-      variant: 'default',
-      sub_component_layout: 'grid',
-      grid_min_width: 24,
-      sub_component_data: [cards],
-      disable_inner_box: true,
-    } %}
-  {% endset %}
-
-  {% set interviews = interviews|merge([{
-    label: district,
-    content: content,
-  }]) %}
+    {% set interviews = interviews|merge([{
+      label: district,
+      content: content,
+    }]) %}
+  {% endif %}
 {% endfor %}
 
-{% set expand_close_all = false %}
-{% if content.field_expand_close_all[0]['#markup'] == 'On' %}
-  {% set expand_close_all = true %}
-{% endif %}
+{% set expand_close_all = true %}
 
 {% include "@molecules/Accordion/Accordion.twig" with {
   open_first: true,

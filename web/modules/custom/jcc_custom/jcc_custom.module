@@ -324,6 +324,21 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
         }
       }
       break;
+
+    case 'editor_link_dialog':
+      // Customize Editor Advanced Link modal fields.
+      // Reference editor_advanced_link.module file.
+      if (\Drupal::service('module_handler')->moduleExists('editor_advanced_link')) {
+        // Set CSS classes field as readonly to prevent conflicts/misuse.
+        // unset() works too but passing readonly value seems more logical.
+        if ($form['attributes']['class']) {
+          $form['attributes']['class']['#description'] = t('Allowed CSS classes that are applied typically via <b>Styles</b> menu for this text editor profile. These values cannot be modified through this modal.');
+          $form['attributes']['class']['#attributes'] = [
+            'readonly' => 'true',
+          ];
+        }
+      }
+      break;
   }
 }
 

@@ -5,7 +5,6 @@ dependencies:
   module:
     - glossify_taxonomy
     - linkit
-    - media
 _core:
   default_config_hash: pgrN0ZnMDztDsU1SiYd5kkhmIXJP8NfkT2lp3ankDJA
 name: Minimal
@@ -18,7 +17,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <a href hreflang title data-entity-substitution data-entity-type data-entity-uuid> <iframe class longdesc name scrolling src title width height frameborder align>'
+      allowed_html: '<em> <strong> <a href hreflang id class aria-label rel data-entity-substitution data-entity-type data-entity-uuid> <iframe class longdesc name scrolling src title width height frameborder align>'
       filter_html_help: true
       filter_html_nofollow: false
   glossify_taxonomy:
@@ -27,9 +26,10 @@ filters:
     status: false
     weight: -10
     settings:
-      glossify_taxonomy_case_sensitivity: '1'
-      glossify_taxonomy_first_only: '1'
+      glossify_taxonomy_case_sensitivity: true
+      glossify_taxonomy_first_only: true
       glossify_taxonomy_type: tooltips
+      glossify_taxonomy_tooltip_truncate: false
       glossify_taxonomy_vocabs: ''
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
   linkit:

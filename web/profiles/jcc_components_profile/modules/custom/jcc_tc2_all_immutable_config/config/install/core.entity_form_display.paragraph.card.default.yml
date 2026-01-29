@@ -17,8 +17,7 @@ dependencies:
   module:
     - field_group
     - jcc_courtyard_icons
-    - link
-    - linkit_field
+    - linkit_attributes
     - media_library
     - text
 third_party_settings:
@@ -128,19 +127,48 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_link:
-    type: linkit_field_linkit
+    type: linkit_attributes
     weight: 4
     region: content
     settings:
+      placeholder_url: ''
+      placeholder_title: ''
       linkit_profile: default
+      linkit_auto_link_text: false
+      enabled_attributes:
+        id: true
+        rel: true
+        aria-label: true
+        mailto_subject: false
+        mailto_body: false
+        name: false
+        target: false
+        class: false
+        accesskey: false
+        title: false
+      widget_default_open: expandIfValuesSet
     third_party_settings: {  }
   field_link_multiple:
-    type: link_default
+    type: linkit_attributes
     weight: 6
     region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
+      linkit_profile: default
+      linkit_auto_link_text: false
+      enabled_attributes:
+        mailto_subject: false
+        mailto_body: false
+        id: true
+        target: false
+        rel: true
+        class: true
+        aria-label: true
+        name: false
+        accesskey: false
+        title: false
+      widget_default_open: expandIfValuesSet
     third_party_settings: {  }
   field_media:
     type: media_library_widget

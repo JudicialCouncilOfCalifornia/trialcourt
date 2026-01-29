@@ -80,6 +80,8 @@
   {% set matters = matters|merge(item) %}
 {% endfor %}
 
+{% set directions_action_aria_label = 'Get directions for the ' ~ node.label ~ ' location'|t %}
+
 {% include "@molecules/location/location.twig" with {
   location: {
     container: 'no-container',
@@ -90,6 +92,7 @@
       html: content.field_geolocation.0,
     },
     directions_text: 'Get Directions'|t,
+    directions_action_aria_label: directions_action_aria_label,
     phone: {
       text: content.field_phone.0['#title'],
       url: content.field_phone.0['#url'].uri
