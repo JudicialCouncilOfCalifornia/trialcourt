@@ -1,7 +1,7 @@
 {{ attach_library("jcc_storybook/Section") }}
 
 {% include "@organisms/Section/Section.twig" with {
-  heading: content.field_heading,
+  heading: content.field_heading.0 ? content.field_heading|render : '',
   text: content.field_lead,
   sub_component_layout: 'stack',
   sub_component_data: content.field_content_stream|render,
