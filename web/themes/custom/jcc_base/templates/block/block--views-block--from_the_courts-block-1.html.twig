@@ -26,28 +26,9 @@
  */
 #}
 
-{% include '@organisms/sections/cards-with-button/cards-with-button.twig' with {
-  cards_with_button: news_links
-} %}
-
-<div class="jcc-newslinks-cards">
-  {% for card in newslinks_cards %}
-    {% include '@molecules/blocks/card/card.twig' with {
-      card: {
-        brow: card.brow,
-        title: card.title,
-        excerpt: card.excerpt,
-        url: card.url,
-      }
-    } %}
-  {% endfor %}
-
-  <div class="text-align-center">
-    {% if button %}
-      {% include "@atoms/buttons/link-button.twig" with {
-        link_button: button
-      } only %}
-    {% endif %}
-  </div>
+<div class="jcc-page--front-sidebar-item from-the-courts">
+  {% include '@organisms/sections/cards-with-button/cards-with-button.twig' with {
+    cards_with_button: featured_ftc
+  } %}
 </div>
 

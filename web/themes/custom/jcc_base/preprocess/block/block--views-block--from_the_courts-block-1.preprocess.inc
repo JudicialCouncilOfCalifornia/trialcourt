@@ -63,12 +63,12 @@ function jcc_base_preprocess_block__views_block__from_the_courts_block_1(&$varia
     $button = [];
   }
 
-  $variables['news_links'] = [
-    'id' => 'jcc-newslinks-header',
+  $variables['featured_ftc'] = [
     'headergroup' => [
       'title' => htmlspecialchars_decode($header_title),
     ],
+    'highlight_first' => FALSE,
+    'cards' => $cards,
+    'button' => $button,
   ];
-  $variables['newslinks_cards'] = $cards;
-  $variables['button'] = $button;
 }
