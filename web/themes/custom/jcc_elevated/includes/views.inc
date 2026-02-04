@@ -88,6 +88,25 @@ function jcc_elevated_preprocess_views_view__news__list_block(&$variables) {
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
+  $view = $variables['view'];
+  $items_per_page = 0;
+  if ($view->pager && method_exists($view->pager, 'getItemsPerPage')) {
+    $items_per_page = (int) $view->pager->getItemsPerPage();
+  }
+
+  // If items_per_page is 0, the view is effectively unpaged.
+  if ($items_per_page > 0 && isset($view->total_rows)) {
+    $total_pages = (int) ceil($view->total_rows / $items_per_page);
+  }
+  else {
+    $total_pages = 0;
+  }
+
+  if (!($total_pages > 1)) {
+    $variables['view']->pager = '';
+    $variables['pager'] = '';
+  }
+
   if (empty($variables['rows'][0]['#rows'])) {
     return;
   }
