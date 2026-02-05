@@ -964,7 +964,6 @@ function generate_itc_webform_url($item_number, $formatted_deadline, $title) {
  */
 function jcc_elevated_preprocess_views_view__legislative_reports__block_1(&$variables) {
   __jcc_view_results_exposed_filter_init($variables);
-  $entity_type_manager = \Drupal::service('entity_type.manager');
   $view = $variables['view'];
   $grouped_reports = [];
   foreach ($view->result as $row) {
@@ -1024,6 +1023,11 @@ function jcc_elevated_preprocess_views_view__legislative_reports__block_1(&$vari
     }
   }
   krsort($grouped_reports);
+  foreach ($grouped_reports as &$reports) {
+    usort($reports, function ($a, $b) {
+      return strtotime($b['leg_date']) <=> strtotime($a['leg_date']);
+    });
+  }
   $variables['grouped_reports'] = $grouped_reports;
 }
 
@@ -1067,7 +1071,6 @@ function jcc_elevated_preprocess_views_view__surplus_listing__block_1(&$variable
       $interval = $today->diff($renewal_date);
       $days_between = $interval->days;
     }
-
     $variables['surplus'][] = [
       'nid' => $node->id(),
       'title' => $node->label(),
