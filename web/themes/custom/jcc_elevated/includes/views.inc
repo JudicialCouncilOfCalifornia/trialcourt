@@ -964,7 +964,6 @@ function generate_itc_webform_url($item_number, $formatted_deadline, $title) {
  */
 function jcc_elevated_preprocess_views_view__legislative_reports__block_1(&$variables) {
   __jcc_view_results_exposed_filter_init($variables);
-  $entity_type_manager = \Drupal::service('entity_type.manager');
   $view = $variables['view'];
   $grouped_reports = [];
   foreach ($view->result as $row) {
@@ -1994,6 +1993,12 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
     // to apply the original form id to the form attribute of the element.
     if ($variables['exposed']['#id']) {
       $variables['items_per_page']['#attributes']['form'] = $variables['exposed']['#id'];
+
+      $variables['items_per_page']['#label_attributes'] = [
+        'class' => [
+          'sr-only',
+        ],
+      ];
     }
 
     // Rewrite our items_per_page options to "Show XX per page".
@@ -2002,7 +2007,6 @@ function __jcc_view_results_exposed_filter_init(&$variables) {
     }
 
     // Remove the label and remove the item from the exposed form.
-    unset($variables['items_per_page']['#title']);
     unset($variables['exposed']['items_per_page']);
   }
 
