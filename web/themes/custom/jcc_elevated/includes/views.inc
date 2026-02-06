@@ -1042,6 +1042,11 @@ function jcc_elevated_preprocess_views_view__legislative_reports__block_1(&$vari
     }
   }
   krsort($grouped_reports);
+  foreach ($grouped_reports as &$reports) {
+    usort($reports, function ($a, $b) {
+      return strtotime($b['leg_date']) <=> strtotime($a['leg_date']);
+    });
+  }
   $variables['grouped_reports'] = $grouped_reports;
 }
 
@@ -1085,7 +1090,6 @@ function jcc_elevated_preprocess_views_view__surplus_listing__block_1(&$variable
       $interval = $today->diff($renewal_date);
       $days_between = $interval->days;
     }
-
     $variables['surplus'][] = [
       'nid' => $node->id(),
       'title' => $node->label(),
