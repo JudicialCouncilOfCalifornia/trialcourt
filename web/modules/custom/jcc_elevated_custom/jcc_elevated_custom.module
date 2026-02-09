@@ -77,22 +77,24 @@ function jcc_elevated_custom_cron() {
       }
     }
 
-  $warning_date = $today->modify('+5 days'); 
-  if ($renewal_date == $warning_date && $current_state === 'published') {   
-    $key =  $node->id();
+  $renewal_value = $node->get('field_renewal_date')->value;
+  $renewal_date = new \DateTime($renewal_value);
+  $today = new \DateTime('today');
+  $warning_date = (clone $renewal_date)->modify('-5 days');
+  if ($today->format('Y-m-d') === $warning_date->format('Y-m-d') && $current_state === 'published') {
+    $key = $node->id();
     if (!$kv->get($key)) {
-      $author = $node->getOwner();
-      if ($author && $author->getEmail()) {
-        $mail_manager->mail(
-          'jcc_elevated',
-          'expiry_warning',
-          $author->getEmail(),
-          $langcode,
-          [
-            'node' => $node,
-            'renewal_date' => $renewal_date->format('F j, Y'),
-          ]
-        );
+    $author = $node->getOwner();
+    if ($author && $author->getEmail()) {
+      $mail_manager->mail(
+        'jcc_elevated',
+        'expiry_warning',
+        $author->getEmail(),
+        $langcode,
+        [
+          'node' => $node,
+          'renewal_date' => $renewal_date->format('F j, Y'),
+        ]);
         $kv->set($key, \Drupal::time()->getRequestTime());
       }
     }

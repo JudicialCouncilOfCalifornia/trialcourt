@@ -11,6 +11,7 @@ dependencies:
     - field.storage.node.field_reference_number
     - field.storage.node.field_surplus_category
     - taxonomy.vocabulary.surplus_category
+    - workflows.workflow.surplus
   module:
     - content_moderation
     - datetime
@@ -782,51 +783,35 @@ display:
           hierarchy: false
           limit: true
           error_message: true
-        moderation_state_multiple_workflow_filter:
-          id: moderation_state_multiple_workflow_filter
-          table: node
-          field: moderation_state_multiple_workflow_filter
+        moderation_state:
+          id: moderation_state
+          table: node_field_data
+          field: moderation_state
           relationship: none
           group_type: group
           admin_label: ''
           entity_type: node
-          plugin_id: moderation_state_multiple_workflow_filter
-          operator: or
-          value: {  }
+          plugin_id: moderation_state_filter
+          operator: in
+          value:
+            surplus-published: surplus-published
           group: 1
-          exposed: true
+          exposed: false
           expose:
-            operator_id: moderation_state_multiple_workflow_filter_op
-            label: State
+            operator_id: ''
+            label: ''
             description: ''
             use_operator: false
-            operator: moderation_state_multiple_workflow_filter_op
+            operator: ''
             operator_limit_selection: false
             operator_list: {  }
-            identifier: moderation_state_multiple_workflow_filter
+            identifier: ''
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              facilities: '0'
-              opinions_editor: '0'
-              request_manager: '0'
-              advisory_body_manager: '0'
-              itc_manager: '0'
-              surplus_admin: '0'
-              surplus_user: '0'
-            reduce: 0
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -839,7 +824,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          reduce_duplicates: 0
       style:
         type: table
         options:
@@ -968,6 +952,7 @@ display:
         - 'config:field.storage.node.field_quantity'
         - 'config:field.storage.node.field_reference_number'
         - 'config:field.storage.node.field_surplus_category'
+        - 'config:workflow_list'
   block_1:
     id: block_1
     display_title: Block
@@ -994,3 +979,4 @@ display:
         - 'config:field.storage.node.field_quantity'
         - 'config:field.storage.node.field_reference_number'
         - 'config:field.storage.node.field_surplus_category'
+        - 'config:workflow_list'
