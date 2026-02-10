@@ -233,9 +233,12 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
     $card_media = $basic_page->get('field_media');
     $media = $card_media->target_id ? Media::load($card_media->target_id) : FALSE;
     if ($media && $media->field_media_image && $media->field_media_image->entity) {
+      $image_item = $media->get('field_media_image');
       $uri = $media->field_media_image->entity->getFileUri();
       $image_url = file_create_url($uri);
+      $image_alt = !empty($image_item->alt) ? $image_item->alt : '';
       $variables['imageurl'] = $image_url;
+      $variables['imagealt'] = $image_alt;
     }
     if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
       $caption_value = $media->get('field_media_caption')->value;
@@ -558,12 +561,15 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
   $caption = '';
   $citation = '';
   $media_url = '';
+  $image_alt = '';
   foreach ($node->field_media_file_multiple as $media_file) {
     if (!empty($media_file->target_id)) {
       $media = $media_manager->load($media_file->target_id);
       if ($media && $media->field_media_image->entity) {
+        $image_item = $media->get('field_media_image');
         $uri = $media->field_media_image->entity->getFileUri();
         $media_url = file_create_url($uri);
+        $image_alt = !empty($image_item->alt) ? $image_item->alt : '';
       }
       if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
         $caption_value = $media->get('field_media_caption')->value;
@@ -573,6 +579,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       }
       $projectimages[] = [
         'url' => $media_url,
+        'alt' => $image_alt,
         'caption' => $caption,
         'citation' => $citation,
       ];
@@ -584,9 +591,11 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     $hero_image = $basic_page->get('field_media');
     $media = $media_manager->load($hero_image->target_id);
     if ($media && $media->field_media_image) {
+      $image_item = $media->get('field_media_image')->first();
       $uri = $media->field_media_image->entity->getFileUri();
       $image_url = file_create_url($uri);
       $variables['imageurl'] = $image_url;
+      $variables['alt_text'] = $image_item->alt;
       if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
         $caption_value = $media->get('field_media_caption')->value;
         $citation_value = $media->get('field_media_citation')->value;
