@@ -272,10 +272,13 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
       $citation_value = $media->get('field_media_citation')->value;
       $caption = $caption_value !== NULL ? strip_tags($caption_value) : '';
       $citation = $citation_value !== NULL ? strip_tags($citation_value) : '';
+      $image_item = $media->get('field_media_image');
+      $image_alt = !empty($image_item->alt) ? $image_item->alt : '';
       $sidebarimages[] = [
         'caption' => $caption,
         'citation' => $citation,
         'url' => $media_url,
+        'imagealt' => $image_alt,
       ];
     }
   }
