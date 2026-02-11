@@ -1,13 +1,15 @@
 {{ attach_library("jcc_storybook/Iframe") }}
 {{ attach_library("jcc_custom/iframeresizer") }}
 
+{% set title = paragraph.field_iframe_title.value|default('Iframe') %}
+
 <div class="container">
   {% include "@molecules/Iframe/Iframe.twig" with {
     variant: paragraph.field_aspect_ratio.value,
     manual_height: paragraph.field_manual_height.value,
     url: paragraph.field_link.uri,
     ratio: 'square',
-    iframe_title: paragraph.field_iframe_title.value
+    iframe_title: title,
   } %}
 </div>
 

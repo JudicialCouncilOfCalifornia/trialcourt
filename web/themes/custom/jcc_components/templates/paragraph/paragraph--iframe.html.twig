@@ -39,13 +39,15 @@
  */
 #}
 
+{% set title = paragraph.field_iframe_title.value|default('Iframe') %}
+
 {% set iframe %}
   {% include "@organisms/iframe/iframe.twig" with {
     iframe: {
       url: content.field_link.0['#url']|render,
       style: content.field_aspect_ratio['#items'].getString(),
       classes: [],
-      iframe_title: paragraph.field_iframe_title.value,
+      iframe_title: title,
     }
   } %}
 {% endset %}
