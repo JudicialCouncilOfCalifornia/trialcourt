@@ -85,12 +85,12 @@ function jcc_base_preprocess_block__views_block__events_block_2(&$variables) {
     $button = [];
   }
 
-  $variables['events_links'] = [
-    'id' => 'jcc-events-header',
+  $variables['featured_events'] = [
     'headergroup' => [
       'title' => htmlspecialchars_decode($header_title),
     ],
+    'highlight_first' => FALSE,
+    'cards' => $cards,
+    'button' => $button,
   ];
-  $variables['events_cards'] = $cards;
-  $variables['button'] = $button;
 }

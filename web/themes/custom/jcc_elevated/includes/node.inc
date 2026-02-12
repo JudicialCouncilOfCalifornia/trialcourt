@@ -167,6 +167,7 @@ function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $n
     'Email' => $node->get('field_email_address')->value ?? '',
     'Disposition' => $node->get('field_disposition')->value ?? '',
   ];
+  $variables['surplus'] = $surplus;
   $excluded = ['Ref #', 'Email', 'Phone', 'Contact'];
   $variables['reference_number'] = $node->get('field_reference_number')->value;
   $variables['items'] = [];

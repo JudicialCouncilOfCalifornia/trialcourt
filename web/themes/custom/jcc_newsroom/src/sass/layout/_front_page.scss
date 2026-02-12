@@ -82,6 +82,10 @@
   .page__right_sidebar {
     padding-top: 2rem;
 
+    .jcc-page--front-sidebar-item:not(.from-the-courts) {
+      margin-bottom: 4rem;
+    }
+
     h3 {
       font-size: 1.2rem !important;
     }
@@ -95,21 +99,44 @@
       }
     }
 
-    .jcc-card__excerpt {
-      font-size: 1rem;
-    }
-
-    .jcc-cards-with-button {
-      padding: 0;
-    }
-
     .jcc-cards-with-button__container {
       margin-bottom: 2rem;
 
       .jcc-cards-with-button {
+        display: block;
+        padding: 0;
+
         .jcc-cards-with-button__item {
+          display: block;
           border: none;
           padding: 0;
+
+          .jcc-card {
+            margin-bottom: 2rem;
+
+            .jcc-card__brow {
+              margin-bottom: .2rem;
+              font-size: 1.1rem;
+            }
+
+            .jcc-card__title {
+              margin-top: 0;
+              margin-bottom: .2rem;
+              line-height: 1.5;
+
+              a {
+                text-decoration: none;
+
+                &:hover {
+                  text-decoration: underline;
+                }
+              }
+            }
+
+            .jcc-card__excerpt {
+              font-size: 1rem;
+            }
+          }
 
           .jcc-card__img {
             height: 144px;
@@ -126,43 +153,6 @@
       .jcc-cards__highlight + .jcc-cards-with-button {
         margin-bottom: 1rem;
       }
-    }
-
-    #jcc-newslinks-header, #jcc-events-header {
-      margin-bottom: 0;
-    }
-
-    .jcc-newslinks-cards, .jcc-events-cards {
-      margin-bottom: 4rem;
-
-      .jcc-card {
-        margin-bottom: 2rem;
-
-        .jcc-card__brow {
-          margin-bottom: .2rem;
-          font-family: Lora,Georgia,Cambria,Times New Roman,Times,serif;
-          font-style: italic;
-        }
-
-        .jcc-card__title {
-          margin-top: 0;
-          margin-bottom: .2rem;
-          font-family: Lato,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
-          line-height: 1.5;
-
-          a {
-            text-decoration: none;
-
-            &:hover {
-              text-decoration: underline;
-            }
-          }
-        }
-      }
-    }
-
-    .jcc-multimedia--featured {
-      margin-bottom: 4rem;
     }
   }
 }
