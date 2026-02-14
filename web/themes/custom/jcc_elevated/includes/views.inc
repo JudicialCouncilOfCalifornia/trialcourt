@@ -88,6 +88,25 @@ function jcc_elevated_preprocess_views_view__news__list_block(&$variables) {
   // Customize filter UI.
   __jcc_view_results_exposed_filter_init($variables);
 
+  $view = $variables['view'];
+  $items_per_page = 0;
+  if ($view->pager && method_exists($view->pager, 'getItemsPerPage')) {
+    $items_per_page = (int) $view->pager->getItemsPerPage();
+  }
+
+  // If items_per_page is 0, the view is effectively unpaged.
+  if ($items_per_page > 0 && isset($view->total_rows)) {
+    $total_pages = (int) ceil($view->total_rows / $items_per_page);
+  }
+  else {
+    $total_pages = 0;
+  }
+
+  if (!($total_pages > 1)) {
+    $variables['view']->pager = '';
+    $variables['pager'] = '';
+  }
+
   if (empty($variables['rows'][0]['#rows'])) {
     return;
   }
@@ -1023,6 +1042,11 @@ function jcc_elevated_preprocess_views_view__legislative_reports__block_1(&$vari
     }
   }
   krsort($grouped_reports);
+  foreach ($grouped_reports as &$reports) {
+    usort($reports, function ($a, $b) {
+      return strtotime($b['leg_date']) <=> strtotime($a['leg_date']);
+    });
+  }
   $variables['grouped_reports'] = $grouped_reports;
 }
 
@@ -1066,7 +1090,6 @@ function jcc_elevated_preprocess_views_view__surplus_listing__block_1(&$variable
       $interval = $today->diff($renewal_date);
       $days_between = $interval->days;
     }
-
     $variables['surplus'][] = [
       'nid' => $node->id(),
       'title' => $node->label(),
