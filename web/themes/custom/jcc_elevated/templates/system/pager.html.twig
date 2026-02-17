@@ -33,8 +33,7 @@
  */
 #}
 {{ attach_library("jcc_storybook/Pager") }}
-
-{% if items %}
+{% if items and items.pages %}
   {% include "@molecules/Pager/Pager.twig" with {
     variant: 'default',
     icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
