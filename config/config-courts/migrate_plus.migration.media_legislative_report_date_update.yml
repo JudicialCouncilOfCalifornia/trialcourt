@@ -1,0 +1,98 @@
+langcode: en
+status: true
+dependencies: {  }
+id: media_legislative_report_date_update
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - courts_phase3
+  - media
+migration_group: courts_phase3
+label: 'Media date Update - Legislative reports'
+source:
+  plugin: csv
+  path: 'public://reports.csv'
+  header_row_count: 1
+  ids:
+    - url 
+  fields:    
+    -
+      name: title
+      selector: title
+      label: Title
+    -
+      name: url
+      selector: url
+      label: Url
+    -
+      name: year
+      selector: year
+      label: Year
+    -
+      name: topic
+      selector: topic
+      label: Topic
+    -
+      name: office
+      selector: office
+      label: Office
+    -
+      name: funding
+      selector: funding
+      label: Budget Funding
+    -
+      name: category
+      selector: category
+      label: Category
+process:  
+  pseudo_destination_filename:
+    -
+      plugin: path_from_url
+      source: url
+    -
+      plugin: callback
+      callable: basename
+    -
+      plugin: callback
+      callable: urldecode
+    -
+      plugin: str_replace
+      search: ' '
+      replace: '-'
+    -
+      plugin: callback
+      callable: strtolower
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'Could not create file from URL.'    
+  mid:
+    -
+      plugin: media_id_lookup
+      source: '@pseudo_destination_filename'
+    -
+      plugin: skip_on_empty
+      method: row
+  field_date:
+    -
+      plugin: callback
+      source: year
+      callable: strtotime
+    -
+      plugin: format_date
+      from_format: U
+      to_format: 'Y-m-d'
+  field_media_text/value: title  
+destination:
+  plugin: 'entity:media'
+  update_only: true
+  key: mid
+  skip_file_fields: true
+  no_stub: true
+  validate: false
+  overwrite_properties:
+    - field_date
+    - field_media_text/value
+migration_dependencies:
+  required: {  }

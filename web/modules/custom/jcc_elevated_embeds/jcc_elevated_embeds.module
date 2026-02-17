@@ -2,8 +2,10 @@
 
 /**
  * @file
- * Contains jcc_elevated_embeds module functionality.
+ * Contains jcc_elevated_embeds.module.
  */
+
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_theme().
@@ -155,4 +157,68 @@ function jcc_elevated_embeds_jcc_elevated_settings_alter(&$settings) {
  */
 function jcc_elevated_embeds_page_attachments(array &$attachments) {
   $attachments['#attached']['library'][] = 'jcc_elevated_embeds/form_redirect';
+}
+
+/**
+ * Implements hook_form_views_exposed_form_alter().
+ */
+function jcc_elevated_embeds_form_views_exposed_form_alter(&$form,
+  FormStateInterface $form_state,
+  $form_id) {
+  $view = $form_state->get('view');
+  if ($view->id() !== 'legislative_reports' || $view->current_display !== 'block_1') {
+    return;
+  }
+  $category_names = ['Legislative Reports', 'Budget Allocations'];
+  $category_tids = [];
+  foreach ($category_names as $name) {
+    $terms = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadByProperties([
+        'name' => $name,
+        'vid' => 'media_file_category',
+      ]);
+
+    foreach ($terms as $term) {
+      $category_tids[] = $term->id();
+    }
+  }
+  if (empty($category_tids)) {
+    return;
+  }
+  $media_ids = \Drupal::entityQuery('media')
+    ->condition('status', 1)
+    ->condition('field_category.target_id', $category_tids, 'IN')
+    ->execute();
+
+  if (empty($media_ids)) {
+    return;
+  }
+  $tag_tids = [];
+  $media_entities = \Drupal::entityTypeManager()
+    ->getStorage('media')
+    ->loadMultiple($media_ids);
+  foreach ($media_entities as $media) {
+    if ($media->hasField('field_tags') && !$media->get('field_tags')->isEmpty()) {
+      foreach ($media->get('field_tags')->getValue() as $item) {
+        $tag_tids[] = $item['target_id'];
+      }
+    }
+  }
+  $tag_tids = array_unique($tag_tids);
+  if (empty($tag_tids)) {
+    return;
+  }
+  $options = [];
+  $terms = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadMultiple($tag_tids);
+
+  foreach ($terms as $term) {
+    $options[$term->id()] = $term->label();
+  }
+  $form['field_tags_target_id']['#options'] = [
+    'All' => t('- Any -'),
+  ] + $options;
+  $form['field_tags_target_id']['#validated'] = TRUE;
 }

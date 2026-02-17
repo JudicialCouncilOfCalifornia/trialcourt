@@ -460,7 +460,7 @@ function _jcc_components_generate_cards($cards, $sub_variants, $column_size) {
     }
 
     $aria_label = NULL;
-    if (!empty($link[0]) && $link[0]['#options'] && $link[0]['#options']['attributes']) {
+    if (!empty($link[0]) && $link[0]['#options'] && isset($link[0]['#options']['attributes'])) {
       $aria_label = $link[0]['#options']['attributes']['aria-label'];
     }
 
