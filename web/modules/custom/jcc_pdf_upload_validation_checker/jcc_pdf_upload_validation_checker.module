@@ -1,0 +1,109 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for JCC PDF upload validation checker module.
+ *
+ * @DCG
+ * This file is no longer required in Drupal 8.
+ * @see https://www.drupal.org/node/2217931
+ */
+
+use Drupal\file\FileInterface;
+
+/**
+ * Implements hook_file_validate().
+ */
+function jcc_pdf_upload_validation_checker_file_validate(FileInterface $file) {
+  $errors = [];
+  $config = \Drupal::config('jcc_pdf_upload_validation_checker.settings');
+  $pdf_validation_api = $config->get('pdf_validation_api');
+
+  // Only validate PDFs.
+  if ($file->getMimeType() !== 'application/pdf') {
+    return $errors;
+  }
+
+  try {
+    // Resolve real path safely.
+    $file_system = \Drupal::service('file_system');
+    $real_path = $file_system->realpath($file->getFileUri());
+
+    if (!$real_path || !file_exists($real_path)) {
+      throw new \Exception('Temporary file not found.');
+    }
+
+    // Read file and encode.
+    $bytes = file_get_contents($real_path);
+    if ($bytes === FALSE) {
+      throw new \Exception('Unable to read uploaded file.');
+    }
+
+    $base64 = base64_encode($bytes);
+
+    /** @var \GuzzleHttp\ClientInterface $client */
+    $client = \Drupal::httpClient();
+
+    if ($pdf_validation_api == 'PDF audit') {
+      $endpoint = 'https://e3pyeerkgstf2covgz2yjkvj2m0bnqiq.lambda-url.us-east-1.on.aws/validate';
+    }
+    else {
+      $endpoint = '';
+    }
+
+    $response = $client->post($endpoint, [
+      'timeout' => 60,
+      'connect_timeout' => 10,
+      'http_errors' => FALSE,
+      'headers' => [
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+      ],
+      'json' => [
+        'include_raw' => TRUE,
+        'pdf_base64' => $base64,
+      ],
+    ]);
+
+    $status_code = $response->getStatusCode();
+    $body = (string) $response->getBody();
+    $data = json_decode($body, TRUE);
+
+    if ($status_code !== 200) {
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+        'PDF Audit returned status @status: @body',
+        ['@status' => $status_code, '@body' => $body]
+      );
+
+      $errors[] = t('PDF validation service returned an unexpected response.');
+      return $errors;
+    }
+
+    // Adjust this depending on the real API response structure.
+    if (empty($data['passed']) && empty($data['ok'])) {
+      $reason = $data['message'] ?? $data['reason'] ?? 'Accessibility validation failed.';
+      $errors[] = t('PDF failed accessibility validation: @reason', [
+        '@reason' => $reason,
+      ]);
+    }
+
+  }
+  catch (RequestException $e) {
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+      'HTTP request failed: @msg',
+      ['@msg' => $e->getMessage()]
+    );
+
+    $errors[] = t('PDF validation service is currently unavailable.');
+  }
+  catch (\Throwable $e) {
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+      'Unexpected error during PDF validation: @msg',
+      ['@msg' => $e->getMessage()]
+    );
+
+    $errors[] = t('An unexpected error occurred during PDF validation.');
+  }
+
+  return $errors;
+}
