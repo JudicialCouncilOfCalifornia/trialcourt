@@ -99,7 +99,7 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
               $short_filename = (strlen($filename) > 20) ? substr($filename, 0, 20) . '...' : $filename;
               $aria_label = t('Download or view @name @type', [
                 '@name' => $media->getName(),
-                '@type' => $document_type,
+                '@type' => $document_type . ' ' . $short_filename,
               ]);
               $documents[] = [
                 'extension' => $file_extension,
