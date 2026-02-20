@@ -11,10 +11,8 @@
       {% set image = '' %}
       {% if profile.image %}
            {% set image %}
-           {% set media_uri = profile.image.field_media_image.entity.uri.value %}
-           {% if profile.name is not empty %}
-            {% set image_alt = profile.image.field_media_image.alt ?? "" %}
-           {% endif %}
+           {% set media_uri = profile.image.field_media_image.entity.uri.value %}      
+           {% set image_alt = profile.image.field_media_image.alt ?? "" %}    
              <img src="{{ file_url(media_uri|image_style('profile_cards_portrait'))}}"  alt="{{ image_alt }}">
           {% endset %}
       {% endif %}
