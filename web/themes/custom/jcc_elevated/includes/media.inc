@@ -97,9 +97,10 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
               $file_extension = strtoupper($file_extension);
               $filename = $file->getFilename();
               $short_filename = (strlen($filename) > 100) ? substr($filename, 0, 100) . '...' : $filename;
-              $aria_label = t('Download PDF @type', [
+              $aria_label = t('Download @extension @type', [
                 '@name' => $media->getName(),
                 '@type' => $short_filename,
+                '@extension' => $file_extension,
               ]);
               $documents[] = [
                 'extension' => $file_extension,
