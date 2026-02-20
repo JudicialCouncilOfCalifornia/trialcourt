@@ -95,13 +95,18 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
               $file_name_parts = explode('.', $file->getFileName());
               $file_extension = end($file_name_parts);
               $file_extension = strtoupper($file_extension);
-              $aria_label = t('Download or view @name @type', [
+              $filename = $file->getFilename();
+              $short_filename = (strlen($filename) > 100) ? substr($filename, 0, 100) . '...' : $filename;
+              $aria_label = t('Download @extension @type', [
                 '@name' => $media->getName(),
-                '@type' => $document_type,
+                '@type' => $short_filename,
+                '@extension' => $file_extension,
               ]);
               $documents[] = [
+                'extension' => $file_extension,
                 'url' => $file_url,
                 'type' => $file_extension,
+                'document_type' => $document_type,
                 'aria_label' => $aria_label,
               ];
             }
@@ -133,11 +138,10 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
       }
     }
   }
-
   $publication = [
     'details' => $details,
     'body' => $media->field_media_text->view('default'),
-    'primary_file_type' => $documents ? $documents[0]['type'] : '',
+    'primary_file_type' => $documents ? $documents[0]['extension'] : '',
     'type' => $document_type,
     'documents' => $documents,
     'languages' => $languages,
