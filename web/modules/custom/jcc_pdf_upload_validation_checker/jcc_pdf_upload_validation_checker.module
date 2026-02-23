@@ -44,7 +44,7 @@ function jcc_pdf_upload_validation_checker_file_validate(FileInterface $file) {
     /** @var \GuzzleHttp\ClientInterface $client */
     $client = \Drupal::httpClient();
 
-    if ($pdf_validation_api == 'PDF audit') {
+    if ($pdf_validation_api == 'PDF audit' || $pdf_validation_api == '') {
       $endpoint = 'https://e3pyeerkgstf2covgz2yjkvj2m0bnqiq.lambda-url.us-east-1.on.aws/validate';
     }
     else {
