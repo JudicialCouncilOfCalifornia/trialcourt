@@ -3,7 +3,11 @@ langcode: en
 status: true
 dependencies:
   module:
+    - csv_serialization
+    - rest
+    - serialization
     - user
+    - views_data_export
 id: export_users
 label: export_users
 module: views
@@ -549,6 +553,42 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url.query_args
+        - user.permissions
+      tags: {  }
+  data_export_1:
+    id: data_export_1
+    display_title: 'Data export'
+    display_plugin: data_export
+    position: 2
+    display_options:
+      style:
+        type: data_export
+        options:
+          formats:
+            csv: csv
+          csv_settings:
+            delimiter: ','
+            enclosure: '"'
+            escape_char: \
+            strip_tags: true
+            trim: true
+            encoding: utf8
+            utf8_bom: '0'
+            use_serializer_encode_only: false
+      display_extenders: {  }
+      path: admin/exportuser/export.csv
+      filename: users_detail.csv
+      automatic_download: true
+      store_in_public_file_directory: false
+      custom_redirect_path: false
+      redirect_to_display: none
+      include_query_params: false
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - request_format
         - user.permissions
       tags: {  }
   page_1:
