@@ -61,37 +61,11 @@ function jcc_components_preprocess_form_element(array &$variables) {
  * Implements hook_preprocess_input().
  */
 function jcc_components_preprocess_input(array &$variables) {
-  if (isset($variables['element']['#form_id'])) {
-    $form_id = $variables['element']['#form_id'];
-    switch ($form_id) {
-      case 'openid_connect_login_form':
-        // OpenID's placement setting to show/hide Drupal login context.
-        $user_login_display = \Drupal::config('openid_connect.settings')->get('user_login_display');
-        if ($user_login_display) {
-          $variables['user_login_display'] = $user_login_display;
-        }
-        break;
-
-      case 'views_exposed_form':
-        if (isset($variables['attributes']['name'])) {
-          $field_name = $variables['attributes']['name'];
-          switch ($field_name) {
-            case 'date_start':
-              // Ensure id is not a variant.
-              if ($variables['attributes']['id'] != 'edit-date-start') {
-                $variables['attributes']['id'] = 'edit-date-start';
-              }
-              break;
-
-            case 'date_end':
-              // Ensure id is not a variant.
-              if ($variables['attributes']['id'] != 'edit-date-end') {
-                $variables['attributes']['id'] = 'edit-date-end';
-              }
-              break;
-          }
-        }
-        break;
+  if (isset($variables['element']['#form_id']) && $variables['element']['#form_id'] == 'openid_connect_login_form') {
+    // OpenID's placement setting to show/hide Drupal login context.
+    $user_login_display = \Drupal::config('openid_connect.settings')->get('user_login_display');
+    if ($user_login_display) {
+      $variables['user_login_display'] = $user_login_display;
     }
   }
 }
