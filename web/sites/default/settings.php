@@ -277,30 +277,4 @@ if (defined(
       ],
     ],
   ];
-
-  $databases['default']['default'] = [
-    'driver' => 'mysql',
-    'database' => 'ventura',
-    'username' => 'drupal8',
-    'password' => 'drupal8',
-    'host' => 'database',
-    'port' => 3306,
-  ];
-
-  $settings['config_ignore_environment'] = TRUE;
-  $settings['skip_permissions_hardening'] = TRUE;
-}
-
-if (getenv('LANDO_INFO')) {
-  $databases['default']['default'] = [
-    'driver' => 'mysql',
-    'database' => 'ventura',
-    'username' => 'drupal8',
-    'password' => 'drupal8',
-    'host' => 'database',
-    'port' => 3306,
-  ];
-
-  $settings['config_ignore_environment'] = TRUE;
-  $settings['skip_permissions_hardening'] = TRUE;
 }

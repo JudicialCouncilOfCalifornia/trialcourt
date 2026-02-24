@@ -1,13 +1,11 @@
 # Rename this file to .lando.yml to use, or delete if you already have one.
 # Named start.lando.yml to not conflict with projects installed with lando mw install.
 
-
-
 # project_code: cmm, apb_d7, etc.
 name: tc
 
 # drupal8 | drupal7 | wordpress
-recipe: drupal9
+recipe: drupal8
 
 config:
   # default: web | lightning: docroot
@@ -29,43 +27,31 @@ proxy:
   appserver:
     - "*.lndo.site"
 
+# Additional services and features.
 services:
   appserver:
-    type: php:8.1
     webroot: web
+    # Uncomment below and lando rebuild to enable xdebug.
+    # The old xon/xoff commands no longer work with recent lando versions.
+    # xdebug: true
     config:
       php: xdebug.php.ini
-
+  # Theme.
   node-cli:
-    type: node:13
-    build_as_root:
-      - npm install
-
+    type: compose
+    services:
+      image: node:13.13.0
+      # Required. See Below
+      command: docker-php-entrypoint apache2-foreground
+      volumes:
+        - .:/app
   database:
-    type: mariadb:10.6
-    overrides:
-      image: bitnamilegacy/mariadb:10.3.39-debian-11-r5
-    creds:
-      user: drupal8
-      password: drupal8
-      database: ventura
-
-
+    # Create databases for each multisite.
     run_as_root:
       - /bin/sh -c "/app/scripts/dbcreate.sh"
 
-#service: tc_database_1
-#  type: database
-
 # Custom Lando commands
 tooling:
-#  db-query:
-#    service: database
-#    description: "Run SQL queries directly on the DB"
-#    cmd: mysql -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE -e
-  db:
-    service: database
-    cmd: bash
   dbim:
     service: database
     cmd: /app/scripts/dbimport.sh
