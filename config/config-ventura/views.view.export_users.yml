@@ -490,6 +490,23 @@ display:
     display_options:
       display_extenders: {  }
       path: admin/exportuser
+      footer:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: false
+          content: |-
+            <div class="exportuser-actions">
+              <a class="button button--primary" href="/admin/exportuser/export.csv">Export CSV</a>
+              <a class="button" href="/admin/exportuser/export.xlsx">Export Excel</a>
+              <a class="button" href="javascript:history.back()">Go Back</a>
+            </div>
+          format: full_html
     cache_metadata:
       max-age: -1
       contexts:
