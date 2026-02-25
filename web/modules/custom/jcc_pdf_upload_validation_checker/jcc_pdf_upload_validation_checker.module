@@ -45,25 +45,37 @@ function jcc_pdf_upload_validation_checker_file_validate(FileInterface $file) {
     $client = \Drupal::httpClient();
 
     if ($pdf_validation_api == 'PDF audit' || $pdf_validation_api == '') {
-      $endpoint = 'https://e3pyeerkgstf2covgz2yjkvj2m0bnqiq.lambda-url.us-east-1.on.aws/validate';
+      $response = $client->post('https://e3pyeerkgstf2covgz2yjkvj2m0bnqiq.lambda-url.us-east-1.on.aws/validate', [
+        'timeout' => 60,
+        'connect_timeout' => 10,
+        'http_errors' => FALSE,
+        'headers' => [
+          'Content-Type' => 'application/json',
+          'Accept' => 'application/json',
+        ],
+        'json' => [
+          'include_raw' => TRUE,
+          'pdf_base64' => $base64,
+        ],
+      ]);
     }
     else {
-      $endpoint = '';
+      $api_key = $config->get('api_key');
+      $response = $client->post('https://login.equalweb.com/api/v2/docs/audit', [
+        'timeout' => 30,
+        'connect_timeout' => 10,
+        'http_errors' => FALSE,
+        'headers' => [
+          'x-a11y-api-key' => $api_key,
+          'Accept' => 'application/json',
+          'Content-Type' => 'application/json',
+        ],
+        'json' => [
+          'files' => [$base64],
+          'type' => 'audit',
+        ],
+      ]);
     }
-
-    $response = $client->post($endpoint, [
-      'timeout' => 60,
-      'connect_timeout' => 10,
-      'http_errors' => FALSE,
-      'headers' => [
-        'Content-Type' => 'application/json',
-        'Accept' => 'application/json',
-      ],
-      'json' => [
-        'include_raw' => TRUE,
-        'pdf_base64' => $base64,
-      ],
-    ]);
 
     $status_code = $response->getStatusCode();
     $body = (string) $response->getBody();
