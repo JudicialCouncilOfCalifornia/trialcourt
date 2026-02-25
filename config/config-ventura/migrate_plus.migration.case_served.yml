@@ -1,0 +1,53 @@
+uuid: 39328c2a-8f03-4d3a-a369-5aa997872e9e
+langcode: en
+status: true
+dependencies: { }
+
+id: case_served
+label: 'Case Served: Import taxonomy terms into cases_served'
+migration_group: case_management
+migration_tags:
+  - taxonomy
+  - cases_served
+
+source:
+  plugin: csv
+  path: 'sites/default/files/ventura/default/cases_served.csv'
+  delimiter: ','
+  enclosure: '"'
+  header_row_count: 1
+
+  # MUST be a flat array (your error complains about this).
+  ids:
+    - name
+
+process:
+  vid:
+    plugin: default_value
+    default_value: cases_served
+
+  name:
+    plugin: skip_on_empty
+    method: row
+    source: name
+    message: 'Missing term name'
+
+  # Optional columns (safe if missing/blank in CSV)
+  weight:
+    plugin: default_value
+    default_value: 0
+    source: weight
+
+  description/value:
+    plugin: default_value
+    default_value: ''
+    source: description
+
+  langcode:
+    plugin: default_value
+    default_value: en
+
+destination:
+  plugin: 'entity:taxonomy_term'
+
+migration_dependencies: { }
