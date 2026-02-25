@@ -9,25 +9,37 @@
  * @see https://www.drupal.org/node/2217931
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\file\FileInterface;
 
 /**
- * Implements hook_file_validate().
+ * Implements hook_entity_insert().
  */
-function jcc_pdf_upload_validation_checker_file_validate(FileInterface $file) {
+function jcc_pdf_upload_validation_checker_entity_insert(EntityInterface $entity) {
   $errors = [];
   $config = \Drupal::config('jcc_pdf_upload_validation_checker.settings');
   $pdf_validation_api = $config->get('pdf_validation_api');
 
-  // Only validate PDFs.
-  if ($file->getMimeType() !== 'application/pdf') {
-    return $errors;
+  if ($entity->getEntityTypeId() !== 'file') {
+    return;
   }
+
+  if (!$entity instanceof FileInterface) {
+    return;
+  }
+
+  // Only PDFs.
+  if ($entity->getMimeType() !== 'application/pdf') {
+    return;
+  }
+
+  // Set “pending” immediately.
+  $entity->set('field_pdf_audit_status', 'pending');
+  $entity->save();
 
   try {
     // Resolve real path safely.
-    $file_system = \Drupal::service('file_system');
-    $real_path = $file_system->realpath($file->getFileUri());
+    $real_path = $entity->getFileUri();
 
     if (!$real_path || !file_exists($real_path)) {
       throw new \Exception('Temporary file not found.');
@@ -87,8 +99,15 @@ function jcc_pdf_upload_validation_checker_file_validate(FileInterface $file) {
         ['@status' => $status_code, '@body' => $body]
       );
 
+      $entity->set('field_pdf_audit_status', 'fail');
+      $entity->save();
+
       $errors[] = t('PDF validation service returned an unexpected response.');
       return $errors;
+    }
+    else {
+      $entity->set('field_pdf_audit_status', 'pass');
+      $entity->save();
     }
 
     // Adjust this depending on the real API response structure.
@@ -97,6 +116,8 @@ function jcc_pdf_upload_validation_checker_file_validate(FileInterface $file) {
       $errors[] = t('PDF failed accessibility validation: @reason', [
         '@reason' => $reason,
       ]);
+      $entity->set('field_pdf_audit_status', 'fail');
+      $entity->save();
     }
 
   }
@@ -105,6 +126,8 @@ function jcc_pdf_upload_validation_checker_file_validate(FileInterface $file) {
       'HTTP request failed: @msg',
       ['@msg' => $e->getMessage()]
     );
+    $entity->set('field_pdf_audit_status', 'fail');
+    $entity->save();
 
     $errors[] = t('PDF validation service is currently unavailable.');
   }
@@ -114,6 +137,8 @@ function jcc_pdf_upload_validation_checker_file_validate(FileInterface $file) {
       ['@msg' => $e->getMessage()]
     );
 
+    $entity->set('field_pdf_audit_status', 'fail');
+    $entity->save();
     $errors[] = t('An unexpected error occurred during PDF validation.');
   }
 

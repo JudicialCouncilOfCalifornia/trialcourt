@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Install file for JCC PDF upload validation checker module.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Implements hook_install().
+ */
+function jcc_pdf_upload_validation_checker_install() {
+  // Create field storage.
+  FieldStorageConfig::create([
+    'field_name' => 'field_pdf_audit_status',
+    'entity_type' => 'file',
+    'type' => 'list_string',
+    'cardinality' => 1,
+  ])->save();
+
+  // Attach field to file entity.
+  FieldConfig::create([
+    'field_name' => 'field_pdf_audit_status',
+    'entity_type' => 'file',
+    'bundle' => 'file',
+    'label' => 'PDF Audit Status',
+    'settings' => [
+      'allowed_values' => [
+        'pending' => 'Pending',
+        'pass' => 'Pass',
+        'fail' => 'Fail',
+      ],
+    ],
+  ])->save();
+}
