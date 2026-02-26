@@ -1010,19 +1010,18 @@ function jcc_elevated_preprocess_views_view__legislative_reports__block_1(&$vari
         }
       }
       $file_url = '';
-      if ($media_entity->hasField('field_media_file_multiple') &&
-      !$media_entity->get('field_media_file_multiple')->isEmpty()
+      if ($media_entity->hasField('field_media_file') &&
+      !$media_entity->get('field_media_file')->isEmpty()
       ) {
-        $file_entity = $media_entity->get('field_media_file_multiple')->entity;
+        $file_entity = $media_entity->get('field_media_file')->entity;
         if ($file_entity) {
           $file_url = file_create_url($file_entity->getFileUri());
         }
       }
-
-      if (!$file_url && $media_entity->hasField('field_media_file') &&
-      !$media_entity->get('field_media_file')->isEmpty()
+      if (!$file_url && $media_entity->hasField('field_media_file_multiple') &&
+      !$media_entity->get('field_media_file_multiple')->isEmpty()
       ) {
-        $file_entity = $media_entity->get('field_media_file')->entity;
+        $file_entity = $media_entity->get('field_media_file_multiple')->entity;
         if ($file_entity) {
           $file_url = file_create_url($file_entity->getFileUri());
         }
