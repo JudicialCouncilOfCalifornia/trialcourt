@@ -10,137 +10,81 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\file\FileInterface;
 
 /**
  * Implements hook_entity_insert().
  */
 function jcc_pdf_upload_validation_checker_entity_insert(EntityInterface $entity) {
-  $errors = [];
-  $config = \Drupal::config('jcc_pdf_upload_validation_checker.settings');
-  $pdf_validation_api = $config->get('pdf_validation_api');
+  _jcc_pdf_upload_validation_checker_queue($entity);
+}
 
-  if ($entity->getEntityTypeId() !== 'file') {
+/**
+ * Implements hook_entity_update().
+ */
+function jcc_pdf_upload_validation_checker_entity_update(EntityInterface $entity) {
+  _jcc_pdf_upload_validation_checker_queue($entity);
+}
+
+/**
+ * Look for file references on nodes/media and queue PDF files.
+ */
+function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void {
+  $type = $entity->getEntityTypeId();
+  if (!in_array($type, ['node', 'media'], TRUE)) {
     return;
   }
 
-  if (!$entity instanceof FileInterface) {
-    return;
+  $queue = \Drupal::queue('jcc_pdf_upload_validation_checker_pdf_audit');
+
+  // Scan all fields and enqueue any referenced file entities.
+  foreach ($entity->getFieldDefinitions() as $field_name => $def) {
+    if (!$entity->hasField($field_name)) {
+      continue;
+    }
+
+    $field = $entity->get($field_name);
+    if ($field->isEmpty()) {
+      continue;
+    }
+
+    // Only entity references to files.
+    $settings = $def->getSettings();
+    if (($settings['target_type'] ?? NULL) !== 'file') {
+      continue;
+    }
+
+    foreach ($field as $item) {
+      $fid = (int) $item->target_id;
+      if (!$fid) {
+        continue;
+      }
+
+      $file = \Drupal::entityTypeManager()->getStorage('file')->load($fid);
+      if (!$file || $file->getMimeType() !== 'application/pdf') {
+        continue;
+      }
+
+      // Set pending if field exists.
+      if ($file->hasField('field_pdf_audit_status')) {
+        $file->set('field_pdf_audit_status', 'pending');
+        $file->save();
+      }
+
+      // Don’t queue temp files.
+      if ($file->isTemporary()) {
+        continue;
+      }
+
+      // If already processed, don’t requeue.
+      if ($file->hasField('field_pdf_audit_status')) {
+        $status = (string) $file->get('field_pdf_audit_status')->value;
+        if (in_array($status, ['pass', 'fail'], TRUE)) {
+          continue;
+        }
+      }
+
+      $queue->createItem(['fid' => $fid]);
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('Queued PDF audit for fid=@fid', ['@fid' => $fid]);
+    }
   }
-
-  // Only PDFs.
-  if ($entity->getMimeType() !== 'application/pdf') {
-    return;
-  }
-
-  // Set “pending” immediately.
-  $entity->set('field_pdf_audit_status', 'pending');
-  $entity->save();
-
-  try {
-    // Resolve real path safely.
-    $real_path = $entity->getFileUri();
-
-    if (!$real_path || !file_exists($real_path)) {
-      throw new \Exception('Temporary file not found.');
-    }
-
-    // Read file and encode.
-    $bytes = file_get_contents($real_path);
-    if ($bytes === FALSE) {
-      throw new \Exception('Unable to read uploaded file.');
-    }
-
-    $base64 = base64_encode($bytes);
-
-    /** @var \GuzzleHttp\ClientInterface $client */
-    $client = \Drupal::httpClient();
-
-    if ($pdf_validation_api == 'PDF audit' || $pdf_validation_api == '') {
-      $response = $client->post('https://e3pyeerkgstf2covgz2yjkvj2m0bnqiq.lambda-url.us-east-1.on.aws/validate', [
-        'timeout' => 60,
-        'connect_timeout' => 10,
-        'http_errors' => FALSE,
-        'headers' => [
-          'Content-Type' => 'application/json',
-          'Accept' => 'application/json',
-        ],
-        'json' => [
-          'include_raw' => TRUE,
-          'pdf_base64' => $base64,
-        ],
-      ]);
-    }
-    else {
-      $api_key = $config->get('api_key');
-      $response = $client->post('https://login.equalweb.com/api/v2/docs/audit', [
-        'timeout' => 30,
-        'connect_timeout' => 10,
-        'http_errors' => FALSE,
-        'headers' => [
-          'x-a11y-api-key' => $api_key,
-          'Accept' => 'application/json',
-          'Content-Type' => 'application/json',
-        ],
-        'json' => [
-          'files' => [$base64],
-          'type' => 'audit',
-        ],
-      ]);
-    }
-
-    $status_code = $response->getStatusCode();
-    $body = (string) $response->getBody();
-    $data = json_decode($body, TRUE);
-
-    if ($status_code !== 200) {
-      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
-        'PDF Audit returned status @status: @body',
-        ['@status' => $status_code, '@body' => $body]
-      );
-
-      $entity->set('field_pdf_audit_status', 'fail');
-      $entity->save();
-
-      $errors[] = t('PDF validation service returned an unexpected response.');
-      return $errors;
-    }
-    else {
-      $entity->set('field_pdf_audit_status', 'pass');
-      $entity->save();
-    }
-
-    // Adjust this depending on the real API response structure.
-    if (empty($data['passed']) && empty($data['ok'])) {
-      $reason = $data['message'] ?? $data['reason'] ?? 'Accessibility validation failed.';
-      $errors[] = t('PDF failed accessibility validation: @reason', [
-        '@reason' => $reason,
-      ]);
-      $entity->set('field_pdf_audit_status', 'fail');
-      $entity->save();
-    }
-
-  }
-  catch (RequestException $e) {
-    \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
-      'HTTP request failed: @msg',
-      ['@msg' => $e->getMessage()]
-    );
-    $entity->set('field_pdf_audit_status', 'fail');
-    $entity->save();
-
-    $errors[] = t('PDF validation service is currently unavailable.');
-  }
-  catch (\Throwable $e) {
-    \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
-      'Unexpected error during PDF validation: @msg',
-      ['@msg' => $e->getMessage()]
-    );
-
-    $entity->set('field_pdf_audit_status', 'fail');
-    $entity->save();
-    $errors[] = t('An unexpected error occurred during PDF validation.');
-  }
-
-  return $errors;
 }

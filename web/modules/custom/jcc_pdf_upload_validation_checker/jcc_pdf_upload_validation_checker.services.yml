@@ -1,0 +1,5 @@
+services:
+  jcc_pdf_upload_validation_checker.pdf_audit_queue_worker:
+    class: Drupal\jcc_pdf_upload_validation_checker\Plugin\QueueWorker\PdfAuditQueueWorker
+    tags:
+      - { name: queue_worker, title: 'PDF Audit queue', cron: 5 }
