@@ -10,6 +10,8 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\file\FileInterface;
+use Drupal\media\MediaInterface;
 
 /**
  * Implements hook_entity_insert().
@@ -70,7 +72,6 @@ function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void
         $file->save();
       }
 
-      // Don’t queue temp files.
       if ($file->isTemporary()) {
         continue;
       }
@@ -85,6 +86,59 @@ function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void
 
       $queue->createItem(['fid' => $fid]);
       \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('Queued PDF audit for fid=@fid', ['@fid' => $fid]);
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_presave().
+ */
+function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entity): void {
+  if ($entity->getEntityTypeId() !== 'media' || !$entity instanceof MediaInterface) {
+    return;
+  }
+
+  // Only enforce on newly-created media entities.
+  if (!$entity->isNew()) {
+    return;
+  }
+
+  $file_fields = [
+    'field_media_file',
+    'field_media_file_farsi',
+    'field_media_file_arabic',
+    'field_media_file_cambodian',
+    'field_media_file_chinese_simple',
+    'field_media_file_chinese',
+    'field_east_armenian_file',
+    'field_media_file_hmong',
+    'field_media_file_korean',
+    'field_media_file_multiple',
+    'field_media_file_punjabi',
+    'field_media_file_russian',
+    'field_media_file_spanish',
+    'field_media_file_tagalog',
+    'field_media_file_vietnamese',
+  ];
+
+  foreach ($file_fields as $field_name) {
+    if (!$entity->hasField($field_name) || $entity->get($field_name)->isEmpty()) {
+      continue;
+    }
+
+    foreach ($entity->get($field_name) as $item) {
+      $target = $item->entity;
+      if ($target instanceof FileInterface && $target->getMimeType() === 'application/pdf') {
+        // Force unpublished.
+        $entity->set('status', 0);
+
+        // If moderated, also force a non-published moderation state.
+        if ($entity->hasField('moderation_state')) {
+          $entity->set('moderation_state', 'draft');
+        }
+
+        return;
+      }
     }
   }
 }
