@@ -22,7 +22,7 @@ function jcc_ical_node_links_alter(array &$links, NodeInterface $entity, array &
     $url = Url::fromRoute('jcc_ical.content', ['node' => $entity->id()]);
     $attributes = [
       'class' => 'jcc-button--primary usa-button usa-button--primary',
-      'aria-label' => 'Download the ' . $entity->getTitle() . ' event details',
+      'aria-label' => 'Download event details for ' . $entity->getTitle(),
     ];
 
     $links['node']['#links']['ical'] = [
