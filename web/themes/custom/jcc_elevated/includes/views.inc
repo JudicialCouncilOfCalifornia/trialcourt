@@ -383,7 +383,7 @@ function jcc_elevated_preprocess_views_view__publications__publications_list(&$v
     $text = ['#markup' => Html::decodeEntities($description)];
     $button_data = NULL;
     if (!empty($button_url)) {
-      $aria_label = t('Download @name @type', [
+      $aria_label = t('Download @type @name', [
         '@name' => $media->getName(),
         '@type' => $document_type,
       ]);
