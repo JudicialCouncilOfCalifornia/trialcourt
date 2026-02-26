@@ -1,0 +1,51 @@
+field_types:
+  string:
+    allowed: true
+    value_columns: {  }
+  string_long:
+    allowed: true
+    value_columns: {  }
+  text_long:
+    allowed: true
+    value_columns: {  }
+  text_with_summary:
+    allowed: true
+    value_columns:
+      - _value
+      - _summary
+  link:
+    allowed: true
+    value_columns:
+      - _uri
+      - _title
+  heading:
+    allowed: true
+    value_columns:
+      - _text
+allow_all_entities: true
+enable_search_results_cache: true
+search_results_cache_duration: 3600
+entity_types:
+  node:
+    allowed: true
+    bundles:
+      - page
+      - article
+  menu:
+    allowed: true
+    bundles: {  }
+  taxonomy:
+    allowed: true
+    bundles: {  }
+  block_content:
+    allowed: true
+    bundles: {  }
+  paragraph:
+    allowed: true
+    bundles: {  }
+tables_to_skip:
+  - block_content_revision
+  - block_content_field_data
+  - node_revision
+  - paragraphs_item_field_data
+save_as_csv: 1
