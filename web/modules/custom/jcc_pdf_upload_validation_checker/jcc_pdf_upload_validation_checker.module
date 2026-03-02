@@ -142,3 +142,80 @@ function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entit
     }
   }
 }
+
+/**
+ * Implements hook_form_alter().
+ */
+function jcc_pdf_upload_validation_checker_form_alter(&$form, $form_state, $form_id) {
+  $form['#attached']['library'][] = 'jcc_pdf_upload_validation_checker/media_audit_badges';
+  if (
+    $form_id !== 'media_edit_form' &&
+    $form_id !== 'media_add_form' &&
+    !preg_match('/^media_.+_(edit|add)_form$/', $form_id)
+  ) {
+    return;
+  }
+
+  $form_object = $form_state->getFormObject();
+  if (!method_exists($form_object, 'getEntity')) {
+    return;
+  }
+
+  $media = $form_object->getEntity();
+  if (!$media instanceof MediaInterface) {
+    return;
+  }
+
+  $file_fields = [
+    'field_media_file',
+    'field_media_file_farsi',
+    'field_media_file_arabic',
+    'field_media_file_cambodian',
+    'field_media_file_chinese_simple',
+    'field_media_file_chinese',
+    'field_east_armenian_file',
+    'field_media_file_hmong',
+    'field_media_file_korean',
+    'field_media_file_multiple',
+    'field_media_file_punjabi',
+    'field_media_file_russian',
+    'field_media_file_spanish',
+    'field_media_file_tagalog',
+    'field_media_file_vietnamese',
+  ];
+
+  foreach ($file_fields as $field_name) {
+    if (empty($form[$field_name]) || !$media->hasField($field_name) || $media->get($field_name)->isEmpty()) {
+      continue;
+    }
+
+    // Media field items, parallel to form widget deltas.
+    foreach ($media->get($field_name) as $delta => $item) {
+      $file = $item->entity;
+      if (!$file instanceof FileInterface) {
+        continue;
+      }
+
+      // Only PDFs.
+      if ($file->getMimeType() !== 'application/pdf') {
+        continue;
+      }
+
+      // Pull audit status.
+      $status = 'unknown';
+      if ($file->hasField('field_pdf_audit_status')) {
+        $status = (string) $file->get('field_pdf_audit_status')->value ?: 'unknown';
+      }
+
+      $form[$field_name]['widget'][$delta]['jcc_pdf_audit_badge'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#value' => 'Validation status: ' . $status,
+        '#attributes' => [
+          'class' => ['jcc-pdf-audit-badge', "jcc-pdf-audit-badge--{$status}"],
+        ],
+        '#weight' => 50,
+      ];
+    }
+  }
+}

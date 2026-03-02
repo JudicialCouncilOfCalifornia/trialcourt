@@ -12,26 +12,33 @@ use Drupal\field\Entity\FieldStorageConfig;
  * Implements hook_install().
  */
 function jcc_pdf_upload_validation_checker_install() {
-  // Create field storage.
-  FieldStorageConfig::create([
-    'field_name' => 'field_pdf_audit_status',
-    'entity_type' => 'file',
-    'type' => 'list_string',
-    'cardinality' => 1,
-  ])->save();
+  $field_name = 'field_pdf_audit_status';
+  $entity_type = 'file';
+  $bundle = 'file';
 
-  // Attach field to file entity.
-  FieldConfig::create([
-    'field_name' => 'field_pdf_audit_status',
-    'entity_type' => 'file',
-    'bundle' => 'file',
-    'label' => 'PDF Audit Status',
-    'settings' => [
-      'allowed_values' => [
-        'pending' => 'Pending',
-        'pass' => 'Pass',
-        'fail' => 'Fail',
+  if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'type' => 'list_string',
+      'cardinality' => 1,
+      'settings' => [
+        'allowed_values' => [
+          'pending' => 'Pending',
+          'pass' => 'Pass',
+          'fail' => 'Fail',
+        ],
       ],
-    ],
-  ])->save();
+    ])->save();
+  }
+
+  if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
+    FieldConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+      'label' => 'PDF Audit Status',
+      'required' => FALSE,
+    ])->save();
+  }
 }
