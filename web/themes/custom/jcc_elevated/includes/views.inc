@@ -1361,7 +1361,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
       [
         'url' => $node->toUrl()->setAbsolute()->toString(),
         'file_type' => t('Other Formats'),
-        'aria_label' => t('Go to opinion post for case @case_number to get other document formats', ['@case_number' => $case_number]),
+        'aria_label' => t('Other Formats for case @case_number', ['@case_number' => $case_number]),
       ],
     ];
 
