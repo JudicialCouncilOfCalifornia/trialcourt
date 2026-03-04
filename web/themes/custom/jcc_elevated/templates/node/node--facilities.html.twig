@@ -9,7 +9,7 @@
   {#{% block layout %}#}
   {% if imageurl is not empty %}
     {% set imageTag %}
-    <img src={{imageurl}} />
+    <img src={{imageurl}} alt="{{ alt_text|escape }}"/>
     {% endset %} 
   {% endif %}
  
@@ -107,7 +107,7 @@
  {% if image.url %}
     {% set project_image %}   
     <a href="{{ image.url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ image.alt }}" aria-label="Click to view larger image">
-    <img src="{{ image.url }}"></a>
+    <img src="{{ image.url }}" alt="{{ image.alt|escape }}"></a>
     {% endset %}
  {% endif %}
          {% include "@molecules/Card/Card.twig" with {

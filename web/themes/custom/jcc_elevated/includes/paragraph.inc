@@ -116,19 +116,24 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
     foreach ($variables['sticky_list'] as $index => $sticky_item) {
       $node = $sticky_item['#node'];
       $sticky_item['imageurl'] = NULL;
+      $variables['sticky_list'][$index]['imagealt'] = '';
       if ($node->hasField('field_media') && !$node->get('field_media')->isEmpty()) {
         $media = $node->get('field_media')->entity;
         if ($media && $media->hasField('field_media_image') && !$media->get('field_media_image')->isEmpty()) {
-          $file = $media->get('field_media_image')->entity;
+          $image_item = $media->get('field_media_image');
+          $file = $image_item->entity;
           if ($file instanceof File) {
             $uri = $file->getFileUri();
             $image_url = file_create_url($uri);
+            $alt = !empty($image_item->alt) ? $image_item->alt : '';
           }
         }
         $variables['sticky_list'][$index]['imageurl'] = $image_url ?? $default_image_url;
+        $variables['sticky_list'][$index]['imagealt'] = $alt ?? '';
       }
       else {
         $variables['sticky_list'][$index]['imageurl'] = $default_image_url;
+        $variables['sticky_list'][$index]['imagealt'] = '';
       }
 
       if (!empty($sticky_item['#node']->get('field_components')->getValue()[0]['target_id'])) {

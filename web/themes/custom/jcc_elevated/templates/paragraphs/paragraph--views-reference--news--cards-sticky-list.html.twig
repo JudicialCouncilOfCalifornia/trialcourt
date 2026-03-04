@@ -11,7 +11,7 @@
       {% set url = origin_url ?: url('entity.node.canonical', { 'node': id }) %}
 
       {% set imageTag %}
-        <img src={{row.imageurl}} />
+        <img src={{row.imageurl}} alt="{{ row.imagealt|escape }}" />
       {% endset %}
 
       {% set card %}

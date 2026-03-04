@@ -63,15 +63,20 @@
 {% endif %}
 
 {% set asset %}
-  {% set languages = [] %}
   {% if publication.languages %}
+    {% set translations = [] %}
     {% for language in publication.languages %}
       {% set link %}<a href="{{ language.url }}" aria-label="{{ language.aria_label }}">{{ language.label }}</a> ({{ language.label_en }}){% endset %}
       {% set language = {
         text: link|raw,
       } %}
-      {% set languages = languages|merge([language]) %}
+      {% set translations = translations|merge([language]) %}
     {% endfor %}
+    {% set languages = {
+      variant: "ul",
+      layout: "grid",
+      items: translations,
+    } %}
   {% endif %}
 
   {% include "@molecules/AssetBundle/AssetBundle.twig" with {
@@ -79,11 +84,7 @@
     primary_file_type: publication.primary_file_type,
     doc_type: publication.type,
     assets: publication.documents,
-    languages: {
-      variant: "ul",
-      layout: "grid",
-      items: languages,
-    },
+    languages: languages,
   } %}
 {% endset %}
 

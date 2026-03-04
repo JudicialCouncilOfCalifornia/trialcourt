@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.iframe.field_aspect_ratio
+    - field.field.paragraph.iframe.field_iframe_title
     - field.field.paragraph.iframe.field_link
     - field.field.paragraph.iframe.field_manual_height
     - field.field.paragraph.iframe.field_use_iframe_resizer
@@ -16,9 +17,17 @@ mode: default
 content:
   field_aspect_ratio:
     type: options_select
-    weight: 1
+    weight: 2
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_iframe_title:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_link:
     type: link_default
@@ -30,7 +39,7 @@ content:
     third_party_settings: {  }
   field_manual_height:
     type: string_textfield
-    weight: 3
+    weight: 4
     region: content
     settings:
       size: 60
@@ -38,7 +47,7 @@ content:
     third_party_settings: {  }
   field_use_iframe_resizer:
     type: boolean_checkbox
-    weight: 2
+    weight: 3
     region: content
     settings:
       display_label: true

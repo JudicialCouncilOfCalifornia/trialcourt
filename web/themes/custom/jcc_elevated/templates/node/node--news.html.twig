@@ -87,7 +87,7 @@
   {% block layout %}
     {% if imageurl is not empty %}
       {% set imageTag %}
-        <img src={{imageurl}} />
+        <img src={{imageurl}} alt="{{ imagealt|escape }}" />
       {% endset %}
     {% endif %}
 
@@ -136,7 +136,7 @@
         {% if image.url %}
           {% set sidebar_image %}
             {% set media_uri = profile.image.field_media_image.entity.uri.value %}
-            <img src={{image.url}}>
+            <img src={{image.url}} alt="{{ image.imagealt|escape }}" />
           {% endset %}
         {% endif %}
 

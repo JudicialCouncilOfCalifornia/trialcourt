@@ -41,13 +41,16 @@
 
 {% set tiles = [] %}
 {% set variant = paragraph.field_variant.value|json_decode %}
-{% set image_uri = content.field_image_media is not empty ? content.field_image_media.0['#media'].field_media_image.entity.fileuri : NULL %}
-{% set image_title = content.field_image_title is not empty ? content.field_image_title.0|render : NULL %}
-{% set photo_attribution = content.field_photo_attribution is not empty ? content.field_photo_attribution.0|render : NULL %}
-{% if(image_title is not empty and photo_attribution is not empty) %}
-  {% set img_title_photo_attr = image_title ~ " | " ~ photo_attribution %}
-{% else %}
- {% set img_title_photo_attr = image_title is not empty ? image_title : photo_attribution %}
+{% if content.field_image_media is not empty %}
+  {% set image_uri = content.field_image_media.0['#media'].field_media_image.entity.fileuri %}
+  {% set image_alt = content.field_image_media.0['#media'].field_media_image.0.alt %}
+  {% set image_title = content.field_image_title is not empty ? content.field_image_title.0|render : NULL %}
+  {% set photo_attribution = content.field_photo_attribution is not empty ? content.field_photo_attribution.0|render : NULL %}
+  {% if(image_title is not empty and photo_attribution is not empty) %}
+    {% set img_title_photo_attr = image_title ~ " | " ~ photo_attribution %}
+  {% else %}
+   {% set img_title_photo_attr = image_title is not empty ? image_title : photo_attribution %}
+  {% endif %}
 {% endif %}
 
 {% for icon_link in content.icon_links %}
@@ -70,6 +73,7 @@
     images: {
       side: image_uri ? image_uri|image_style('hero_side'),
       banner: image_uri ? image_uri|image_style('hero_banner'),
+      alt: image_alt,
       signature_title: img_title_photo_attr
     },
     title: {
