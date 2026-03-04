@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
+use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 
 /**
@@ -191,7 +192,7 @@ function jcc_pdf_upload_validation_checker_form_alter(&$form, $form_state, $form
       continue;
     }
 
-    // Media field items, parallel to form widget deltas.
+    // Media field items.
     foreach ($media->get($field_name) as $delta => $item) {
       $file = $item->entity;
       if (!$file instanceof FileInterface) {
@@ -248,6 +249,7 @@ function _jcc_pdf_upload_validation_checker_menu_browse(array &$items, string $t
         $item['title'] = Markup::create(
           $item['title'] . ' <span class="unvalidated-pdf-count-menu">' . $count . '</span>'
         );
+        $item['attributes']['title'] = t('@count file(s) did not pass validation.', ['@count' => $count]);
       }
 
       // Ensure the link is treated as HTML.
@@ -257,5 +259,14 @@ function _jcc_pdf_upload_validation_checker_menu_browse(array &$items, string $t
     if (!empty($item['below']) && is_array($item['below'])) {
       _jcc_pdf_upload_validation_checker_menu_browse($item['below'], $target_route);
     }
+  }
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function jcc_pdf_upload_validation_checker_views_pre_render(ViewExecutable $view) {
+  if ($view->id() === 'pdf_validation_overview' && $view->current_display === 'page_1') {
+    $view->element['#attached']['library'][] = 'jcc_pdf_upload_validation_checker/pdf_audit_actions';
   }
 }
