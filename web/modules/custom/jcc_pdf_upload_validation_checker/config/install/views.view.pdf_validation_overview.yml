@@ -9,6 +9,8 @@ dependencies:
     - media
     - options
     - user
+_core:
+  default_config_hash: 2aJWwTDYUNdmEKroRJtePFcuCjBWT3aU5-n7ONGiLOA
 id: pdf_validation_overview
 label: 'PDF validation overview'
 module: views
@@ -487,6 +489,112 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
+        - user.permissions
+      tags:
+        - 'config:field.storage.file.field_pdf_audit_status'
+  block_1:
+    id: block_1
+    display_title: Block
+    display_plugin: block
+    position: 2
+    display_options:
+      filters:
+        filemime:
+          id: filemime
+          table: file_managed
+          field: filemime
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: file
+          entity_field: filemime
+          plugin_id: string
+          operator: '='
+          value: application/pdf
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_pdf_audit_status_value:
+          id: field_pdf_audit_status_value
+          table: file__field_pdf_audit_status
+          field: field_pdf_audit_status_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value:
+            fail: fail
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      defaults:
+        filters: false
+        filter_groups: false
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
         - url.query_args
         - user.permissions
       tags:
