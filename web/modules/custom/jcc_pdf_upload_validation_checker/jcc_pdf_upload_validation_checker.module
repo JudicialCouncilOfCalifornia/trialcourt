@@ -10,8 +10,10 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
+use Drupal\views\Views;
 
 /**
  * Implements hook_entity_insert().
@@ -216,6 +218,44 @@ function jcc_pdf_upload_validation_checker_form_alter(&$form, $form_state, $form
         ],
         '#weight' => 50,
       ];
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_menu().
+ */
+function jcc_pdf_upload_validation_checker_preprocess_menu(array &$variables): void {
+  _jcc_pdf_upload_validation_checker_menu_browse($variables['items'], 'view.pdf_validation_overview.page_1');
+}
+
+/**
+ * Recursively browse menu items and append markup when route matches.
+ */
+function _jcc_pdf_upload_validation_checker_menu_browse(array &$items, string $target_route): void {
+  foreach ($items as &$item) {
+    if (!empty($item['url']) && $item['url']->isRouted() && $item['url']->getRouteName() === $target_route) {
+      $view = Views::getView('pdf_validation_overview');
+
+      if ($view) {
+        $view->setDisplay('block_1');
+        $view->execute();
+
+        $count = $view->total_rows;
+      }
+
+      if ($count != 0) {
+        $item['title'] = Markup::create(
+          $item['title'] . ' <span class="unvalidated-pdf-count-menu">' . $count . '</span>'
+        );
+      }
+
+      // Ensure the link is treated as HTML.
+      $item['localized_options']['html'] = TRUE;
+    }
+
+    if (!empty($item['below']) && is_array($item['below'])) {
+      _jcc_pdf_upload_validation_checker_menu_browse($item['below'], $target_route);
     }
   }
 }
