@@ -6,6 +6,7 @@ dependencies:
     - system.menu.admin
   module:
     - file
+    - jcc_pdf_upload_validation_checker
     - media
     - options
     - user
@@ -135,21 +136,20 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        uri:
-          id: uri
+        jcc_pdf_audit_link:
+          id: jcc_pdf_audit_link
           table: file_managed
-          field: uri
+          field: jcc_pdf_audit_link
           relationship: none
           group_type: group
           admin_label: ''
           entity_type: file
-          entity_field: uri
-          plugin_id: field
-          label: 'Audit results'
+          plugin_id: jcc_pdf_audit_link
+          label: 'Audit details'
           exclude: false
           alter:
-            alter_text: true
-            text: '<a href="{{''https://www.pdfaudit.org/?pdf_url='' ~ file_url(uri__value)}}">Results</a>'
+            alter_text: false
+            text: ''
             make_link: false
             path: ''
             absolute: false
@@ -186,21 +186,6 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          click_sort_column: value
-          type: file_uri
-          settings:
-            link_to_file: false
-            file_download_path: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
         edit_media:
           id: edit_media
           table: media
