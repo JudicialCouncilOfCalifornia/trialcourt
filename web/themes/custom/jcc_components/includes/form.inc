@@ -144,15 +144,15 @@ function jcc_components_form_views_exposed_form_alter(&$form, FormStateInterface
       $form['areas_of_law']['#access'] = FALSE;
     }
   }
-  
+
   // Check if this is the specific view exposed form we are targeting.
   if ($form['#id'] == 'views-exposed-form-location-block-1') {
     // Get the count of nodes that have at least one paragraph with "Self-Help".
-    $self_help_count =jcc_components_get_self_help_location_count();
+    $self_help_count = jcc_components_get_self_help_location_count();
     // Update the label of the "Self-Help Locations" filter with the count.
     if (isset($form['field_service_category_target_id'])) {
       $form['field_service_category_target_id']['#prefix'] = '<div class ="self-help-count">';
-      $form['field_service_category_target_id']['#suffix'] =  '<span class = "self-help-label">'.' ('.$self_help_count. ')' .'</span>'.'</div>';
+      $form['field_service_category_target_id']['#suffix'] = '<span class = "self-help-label">' . ' (' . $self_help_count . ')' . '</span>' . '</div>';
     }
   }
 }
@@ -173,17 +173,16 @@ function jcc_components_tentative_rulings_search_validate(array &$form, FormStat
 }
 
 /**
- * Custom function to get the count of nodes that have paragraphs with "Self-Help".
+ * Node count of paragraphs with "Self-Help".
  *
  * @return int
  *   The count of nodes with at least one "Self-Help" service category.
  */
 function jcc_components_get_self_help_location_count() {
-  // Query to get the nodes of type "location" with paragraphs that contain the "Self-Help" service category.
   $query = \Drupal::entityQuery('node')
     ->condition('type', 'location')
-    ->condition('status', 1) // Ensure the node is published.
-    ->exists('field_add_services'); // Ensure the node has the "Add Service" paragraph.
+    ->condition('status', 1)
+    ->exists('field_add_services');
 
   // Get all node IDs that match this condition.
   $nids = $query->execute();
@@ -192,7 +191,7 @@ function jcc_components_get_self_help_location_count() {
   $self_help_count = 0;
 
   // Load the nodes.
-  $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
+  $nodes = Node::loadMultiple($nids);
 
   foreach ($nodes as $node) {
     // Get the "Add Service" paragraph field.
@@ -208,7 +207,8 @@ function jcc_components_get_self_help_location_count() {
           foreach ($terms as $term) {
             if ($term->getName() == 'Self-Help') {
               $self_help_count++;
-              break 2;  // Stop further checks for this node.
+              // Stop further checks for this node.
+              break 2;
             }
           }
         }
