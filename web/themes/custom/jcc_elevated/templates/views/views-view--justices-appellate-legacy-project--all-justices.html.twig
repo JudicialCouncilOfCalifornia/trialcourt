@@ -24,7 +24,7 @@
         {% for interview in value %}
           {% if interview.transcript is not empty %}
             {% set transcript %}
-              {{ link('View Transcript', interview.transcript, { 'aria_label': 'View interview transcript for ' ~ interview.name }) }}
+              {{ link('View Transcript', interview.transcript, { 'aria_label': 'View transcript for interview of ' ~ interview.name }) }}
             {% endset %}
           {% else %}
             {% set transcript = '' %}
