@@ -1360,8 +1360,8 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
       __jcc_opinion_file_links_builder($type, $review_granted, 'PDF', $case_number),
       [
         'url' => $node->toUrl()->setAbsolute()->toString(),
-        'file_type' => t('Other Formats'),
-        'aria_label' => t('Other Formats for case @case_number', ['@case_number' => $case_number]),
+        'file_type' => t('Other document formats'),
+        'aria_label' => t('Other document formats available for case @case_number', ['@case_number' => $case_number]),
       ],
     ];
 
