@@ -535,6 +535,7 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
           $view_entity = $row->_entity;
           if ($view_entity->hasField('field_judge')) {
             $view->element['#custom_items'][$key]['title'] = $view->field['field_judge']->advancedRender($row)->__toString();
+            $view->element['#custom_items'][$key]['card_title_tag'] = 'h2';
           }
           elseif ($view->field['title']) {
             $view->element['#custom_items'][$key]['title'] = $view->field['title']->advancedRender($row)->__toString();
