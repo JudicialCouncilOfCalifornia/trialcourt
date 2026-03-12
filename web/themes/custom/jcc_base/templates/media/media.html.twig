@@ -30,7 +30,6 @@
 {% set video_title = raw_title|length > 60 ? raw_title|slice(0, 60) ~ '...' : raw_title %}
 {% set video_id = video_url|split('v=')|last|split('/')|last|split('?')|first|split('&')|first %}
 <article{{ attributes.addClass(classes) }} aria-label="{{ name }} media embed">
-  {{ title_suffix.contextual_links }}
   {% if video_url %}
     <div 
       class="video-embed-field-launch-modal" 
@@ -38,6 +37,7 @@
     <img src="{{ thumb_url }}" alt="{{ thumb_alt ?: raw_title }}" />  
     </div>
   {% else %}
+    {{ title_suffix.contextual_links }}
     {{ content }}
   {% endif %}
 </article>
