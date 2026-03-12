@@ -270,3 +270,36 @@ function jcc_pdf_upload_validation_checker_views_pre_render(ViewExecutable $view
     $view->element['#attached']['library'][] = 'jcc_pdf_upload_validation_checker/pdf_audit_actions';
   }
 }
+
+
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
+
+/**
+ * Implements hook_install().
+ */
+function jcc_pdf_upload_validation_checker_install() {
+  $field_name = 'field_pdf_audit_summary';
+  $entity_type = 'file';
+  $bundle = 'file';
+
+  if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'type' => 'string_long',
+      'cardinality' => 1,
+    ])->save();
+  }
+
+  if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
+    FieldConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+      'label' => 'PDF Audit Summary',
+      'description' => 'Readable summary of the PDF accessibility audit result.',
+      'required' => FALSE,
+    ])->save();
+  }
+}

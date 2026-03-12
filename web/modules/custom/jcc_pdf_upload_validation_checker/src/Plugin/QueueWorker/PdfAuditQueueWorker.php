@@ -193,6 +193,8 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
    *   - fid: (int) The file entity ID to validate.
    */
   public function processItem($data): void {
+    $config = $this->config('jcc_pdf_upload_validation_checker.settings');
+
     $fid = (int) ($data['fid'] ?? 0);
     if (!$fid) {
       return;
@@ -225,22 +227,26 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
 
     $base64 = base64_encode($bytes);
 
-    // Hardcoded call to PDFAudit.
-    $response = $this->httpClient->post(
-      'https://e3pyeerkgstf2covgz2yjkvj2m0bnqiq.lambda-url.us-east-1.on.aws/validate',
-      [
-        'timeout' => 60,
-        'connect_timeout' => 10,
-        'http_errors' => FALSE,
-        'headers' => [
-          'Accept' => 'application/json',
-        ],
-        'json' => [
-          'include_raw' => TRUE,
-          'pdf_base64' => $base64,
-        ],
-      ]
-    );
+    if ($config->get('pdf_validation_api') == 'pdf_audit'){
+      $response = $this->httpClient->post(
+        'https://e3pyeerkgstf2covgz2yjkvj2m0bnqiq.lambda-url.us-east-1.on.aws/validate',
+        [
+          'timeout' => 60,
+          'connect_timeout' => 10,
+          'http_errors' => FALSE,
+          'headers' => [
+            'Accept' => 'application/json',
+          ],
+          'json' => [
+            'include_raw' => TRUE,
+            'pdf_base64' => $base64,
+          ],
+        ]
+      );
+    } else {
+      // EqualWeb call
+      // Needs Upload / Audit
+    }
 
     $code = $response->getStatusCode();
     $body = (string) $response->getBody();
