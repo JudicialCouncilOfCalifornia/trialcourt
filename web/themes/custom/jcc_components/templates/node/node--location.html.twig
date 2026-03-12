@@ -221,6 +221,20 @@
       classes: []
     }
   } %}
+
+{% if content.field_building_hours_info is not empty %}
+  <section class="jcc-location__building-hours-info container">
+    <div class="jcc-location__building-hours-info-wrapper">
+      <h3 class="jcc-location__building-hours-info-label">
+        {{ 'Building hours info'|t }}
+      </h3>
+      <div class="jcc-location__building-hours-info-body">
+        {{ content.field_building_hours_info }}
+      </div>
+    </div>
+  </section>
+{% endif %}
+
 {% elseif version == 'New' %}
   {# render hero section #}
   {% include '@molecules/hero/hero.twig' with {

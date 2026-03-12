@@ -6,8 +6,8 @@
  */
 
 use Drupal\Core\Render\Markup;
-use Drupal\media\Entity\Media;
 use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -33,10 +33,10 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
           $promo_media = Media::load($promo_media_id);
           $promo_img_file = File::load($promo_media->field_media_image->target_id);
           if ($promo_img_file) {
+            $promo_image_alt = $promo_media->field_media_image->alt;
             $file_uri = $promo_img_file->getFileUri();
             $img_style = \Drupal::entityTypeManager()->getStorage('image_style')->load('crop_16x9');
             $promo_image_url = _jcc_components_remove_image_protocol($img_style->buildUrl($file_uri));
-            $promo_image_alt = $promo_img_file->alt;
 
             $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $promo_image_url . '" alt="' . $promo_image_alt . '"></a>');
           }

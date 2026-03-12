@@ -36,26 +36,48 @@
  * @see template_preprocess_field()
  */
 #}
-
+{{ attach_library('video_embed_field/colorbox') }}
 {% for item in items %}
-  {% set video_url = item.content['#media'].field_media_video_embed_field.value %}
-  {% set video_title = item.content['#media'].name.value %}
-  {% if video_title|length > 60 %}
-    {% set video_title = video_title|slice(0, 60) ~ '...' %}
-  {% endif %}
-
-  <div class="grid-col-12 tablet:grid-col-3 height-full lightbox__card video" title="{{ video_title }}">
-    {% set alternate %}
-      <a href="{{ video_url }}" target="_blank" aria-label="Alternate player for video: {{ video_title}}">
-        Alternate Player
-      </a>
+  {% set media = item.content['#media'] %}  
+  {% if media %}
+    {% set video_url = media.field_media_video_embed_field.value %}
+    {% set raw_title = media.name.value %}
+    {% set video_id = video_url|split('v=')|last|split('/')|last|split('?')|first|split('&')|first %}
+    {% set video_title = raw_title|length > 60 ? raw_title|slice(0, 60) ~ '...' : raw_title %}    
+    {% set thumb_uri = media.thumbnail.entity.uri.value %}
+    {% set thumb_alt = media.thumbnail.alt ?: raw_title %}    
+    {% set thumb_url = file_url(thumb_uri) %}    
+    {% set thumbnail_html %}
+      {% if thumb_url %}
+        <img src="{{ thumb_url }}" alt="{{ thumb_alt }}" typeof="foaf:Image" />
+      {% endif %}
+    {% endset %}   
+    {% set modal_html %}
+      <div class="video-embed-field-provider-youtube video-embed-field-responsive-video video-embed-field-responsive-modal" style="width:854px;">
+        <iframe width="854" height="480" frameborder="0" allowfullscreen="allowfullscreen" src="https://www.youtube.com/embed/{{ video_id }}?autoplay=1&rel=0"></iframe>
+      </div>
     {% endset %}
-    {% include '@molecules/blocks/card/card.twig' with {
-      card: {
-        title: video_title,
-        excerpt_vid: item.content,
-        footer: alternate,
-      }
-    } %}
-  </div>
+   
+    <div 
+      class="grid-col-12 tablet:grid-col-3 height-full lightbox__card video video-embed-field-launch-modal" 
+      title="{{ raw_title }}"
+      data-video-embed-field-modal="{{ modal_html|e('html_attr') }}"
+      role="button"
+      tabindex="0"
+      style="cursor: pointer;"
+    >
+      {% set alternate %}
+        <a href="{{ video_url }}" target="_blank" aria-label="Alternate player for video: {{ raw_title }}">
+          Alternate Player
+        </a>
+      {% endset %}
+      {% include '@molecules/blocks/card/card.twig' with {
+        card: {
+          title: video_title,
+          excerpt_vid: thumbnail_html,
+          footer: alternate,
+        }
+      } %}
+    </div>
+  {% endif %}
 {% endfor %}
