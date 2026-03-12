@@ -2,9 +2,11 @@
 
 namespace Drupal\jcc_pdf_upload_validation_checker\Plugin\QueueWorker;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -149,13 +151,16 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
    *   The entity type manager service.
    * @param \GuzzleHttp\ClientInterface $httpClient
    *   The HTTP client service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory service.
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private EntityTypeManagerInterface $entityTypeManager,
-    private ClientInterface $httpClient,
+  private EntityTypeManagerInterface $entityTypeManager,
+  private ClientInterface $httpClient,
+  private ConfigFactoryInterface $configFactory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -182,6 +187,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('http_client'),
+      $container->get('config.factory'),
     );
   }
 
@@ -193,7 +199,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
    *   - fid: (int) The file entity ID to validate.
    */
   public function processItem($data): void {
-    $config = $this->config('jcc_pdf_upload_validation_checker.settings');
+    $config = $this->configFactory->get('jcc_pdf_upload_validation_checker.settings');
 
     $fid = (int) ($data['fid'] ?? 0);
     if (!$fid) {
@@ -226,8 +232,9 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
     }
 
     $base64 = base64_encode($bytes);
+    $response = NULL;
 
-    if ($config->get('pdf_validation_api') == 'pdf_audit'){
+    try {
       $response = $this->httpClient->post(
         'https://e3pyeerkgstf2covgz2yjkvj2m0bnqiq.lambda-url.us-east-1.on.aws/validate',
         [
@@ -243,9 +250,30 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
           ],
         ]
       );
-    } else {
-      // EqualWeb call
-      // Needs Upload / Audit
+    }
+    catch (\Throwable $e) {
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+        'PDF audit request failed for fid=@fid: @message',
+        [
+          '@fid' => $fid,
+          '@message' => $e->getMessage(),
+        ]
+      );
+
+      $file->set('field_pdf_audit_status', 'fail');
+      $file->save();
+      return;
+    }
+
+    if (!$response) {
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+        'PDF audit response was empty for fid=@fid',
+        ['@fid' => $fid]
+      );
+
+      $file->set('field_pdf_audit_status', 'fail');
+      $file->save();
+      return;
     }
 
     $code = $response->getStatusCode();
