@@ -12,6 +12,7 @@
  * @ingroup themeable
  */
 #}
+{{ attach_library('video_embed_field/colorbox') }}
 {%
   set classes = [
     'media',
@@ -20,9 +21,23 @@
     view_mode ? 'media--view-mode-' ~ view_mode|clean_class,
   ]
 %}
+{% set media_entity = media %}
+{% set video_url = media_entity.field_media_video_embed_field.value %}
+{% set thumb_alt = media_entity.thumbnail.alt %}
+{% set thumb_uri = media_entity.thumbnail.entity.uri.value %}
+{% set thumb_url = file_url(thumb_uri) %}
+{% set raw_title = media_entity.name.value %}
+{% set video_title = raw_title|length > 60 ? raw_title|slice(0, 60) ~ '...' : raw_title %}
+{% set video_id = video_url|split('v=')|last|split('/')|last|split('?')|first|split('&')|first %}
 <article{{ attributes.addClass(classes) }} aria-label="{{ name }} media embed">
   {{ title_suffix.contextual_links }}
-  {% if content %}
+  {% if video_url %}
+    <div 
+      class="video-embed-field-launch-modal" 
+      data-video-embed-field-modal='<iframe width="854" height="480" src="https://www.youtube.com/embed/{{ video_id }}?autoplay=1" frameborder="0" allowfullscreen></iframe>'>
+    <img src="{{ thumb_url }}" alt="{{ thumb_alt ?: raw_title }}" />  
+    </div>
+  {% else %}
     {{ content }}
   {% endif %}
 </article>
