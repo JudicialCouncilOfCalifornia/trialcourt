@@ -139,7 +139,11 @@
   {% endif %}
 
   {# Second, render the new field_building_hours_info (this always shows) #}
-  {{ content.field_building_hours_info }}
+  {% if node.field_building_hours_info.value is not empty %}
+    <div class="jcc-location__building-hours-info-body">
+      {{ node.field_building_hours_info.value|raw }}
+    </div>
+  {% endif %}
 {% endset %}
 
 {# set variable to be used in content section #}
@@ -226,7 +230,7 @@
   <section class="jcc-location__building-hours-info container">
     <div class="jcc-location__building-hours-info-wrapper">
       <div class="jcc-location__building-hours-info-body">
-        {{ content.field_building_hours_info }}
+        {{ node.field_building_hours_info.value|raw }}
       </div>
     </div>
   </section>
