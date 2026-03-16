@@ -122,10 +122,9 @@ function jcc_elevated_preprocess_media__publication(&$variables) {
             $file = \Drupal::entityTypeManager()->getStorage('file')->load($field->target_id);
             if ($file) {
               $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->uri->value);
-              $aria_label = t('Download or view @name @type @lang', [
-                '@name' => $media->getName(),
+              $aria_label = t('Download @type @lang', [
                 '@type' => $document_type,
-                '@lang' => 'in ' . $labels['label_default'],
+                '@lang' => 'in ' . $labels['label_in_language'] . ' or ' . $labels['label_default'],
               ]);
               $languages[] = [
                 'url' => $file_url,
