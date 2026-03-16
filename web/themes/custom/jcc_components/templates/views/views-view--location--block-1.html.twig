@@ -2,14 +2,15 @@
 
 {% set cards = [] %}
 {% set row_count = rows.0['#rows']|length %}
+
 {% for k, row in rows.0['#rows'] if k|first != "#" %}
   {% set fields = row['#view'].field %}
   {% set has_self_help = (self_help_flags[k] is defined) ? self_help_flags[k] : false %}
   {% set entity = row['#row']._entity %}
   {% set image = null %}
   {% set card_style = 'media-top' %}
+
   {% if entity %}
-    {# Image src + alt with guards #}
     {% set media_src = (entity.field_image_of_the_courthouse is defined
       and entity.field_image_of_the_courthouse|length
       and entity.field_image_of_the_courthouse[0].entity is not empty)
@@ -25,31 +26,34 @@
   {% endif %}
 
   {# Title #}
-  {% set court_name %}
-    <h3 class="usa-card__heading">
+  {% set court_title = entity.title.value|default('')|trim %}
+  {% set court_name = '' %}
+  {% if court_title %}
+    {% set court_name %}
       <a href="{{ path('entity.node.canonical', {'node': entity.nid.value}) }}">
-        {{ entity.title.value }}
+        {{ court_title }}
       </a>
-    </h3>
-  {% endset %}
+    {% endset %}
+  {% endif %}
 
-  {# Phone (guarded) #}
+  {# Phone #}
   {% set phone %}
     {% if entity.field_phone is defined and entity.field_phone[0] is not empty %}
       {% set tel = entity.field_phone[0].value %}
-      <div class="jcc-location-hero-link location-listing-page">
-        <a href="tel:{{ tel }}">{{ tel }}</a>
-      </div>
+      {% if tel %}
+        <div class="jcc-location-hero-link location-listing-page">
+          <a href="tel:{{ tel }}">{{ tel }}</a>
+        </div>
+      {% endif %}
     {% endif %}
   {% endset %}
 
-  {# Address + phone + tag (ONE block assigned to `address`) #}
+  {# Address #}
   {% set address %}
     {% set a = (entity.field_address is defined and entity.field_address[0] is not empty) ? entity.field_address[0] : null %}
 
     {% if a %}
       <div class="jcc-location__address jcc-location-hero-link">
-        {# Optional brow above the address #}
         {% if entity.field_brow is defined and entity.field_brow[0] is not empty %}
           <div>{{ entity.field_brow[0].value|raw }}</div>
         {% endif %}
