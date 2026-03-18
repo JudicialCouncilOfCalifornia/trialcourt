@@ -112,7 +112,13 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
    *   The media entity.
    */
   private function publishMediaIfNeeded(MediaInterface $media): void {
-    // If already published, nothing to do.
+    $storage = \Drupal::entityTypeManager()->getStorage('media');
+    $media = $storage->load($media->id());
+
+    if (!$media) {
+      return;
+    }
+
     $is_published = method_exists($media, 'isPublished')
       ? (bool) $media->isPublished()
       : ((int) $media->get('status')->value === 1);
@@ -128,13 +134,19 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
       $media->set('status', 1);
     }
 
-    // If Content Moderation is enabled on media, also set a published state.
     if ($media->hasField('moderation_state')) {
       $media->set('moderation_state', 'published');
     }
 
-    $mid = $media->id();
-    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('Media @mid was published after pdf passed validation', ['@mid' => $mid]);
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+      'Saving media @mid with status=@status moderation_state=@state',
+      [
+        '@mid' => $media->id(),
+        '@status' => $media->hasField('status') ? $media->get('status')->value : 'none',
+        '@state' => $media->hasField('moderation_state') ? $media->get('moderation_state')->value : 'none',
+      ]
+    );
+
     $media->save();
   }
 
@@ -205,7 +217,6 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
     if (!$fid) {
       return;
     }
-    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('Cron processing PDF validation on fid=@fid', ['@fid' => $fid]);
 
     /** @var \Drupal\file\FileInterface|null $file */
     $file = $this->entityTypeManager->getStorage('file')->load($fid);
@@ -220,6 +231,8 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
     if (!$file->hasField('field_pdf_audit_status')) {
       return;
     }
+
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('Cron processing PDF validation on fid=@fid', ['@fid' => $fid]);
 
     // Read file bytes from URI.
     $uri = $file->getFileUri();
@@ -289,6 +302,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
 
     $file->set('field_pdf_audit_status', 'pass');
     $file->save();
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('PDF fid=@fid passed validation', ['@fid' => $fid]);
 
     foreach ($this->loadMediaReferencingFile($fid) as $media) {
       if ($this->mediaHasAnyFailedFile($media)) {
@@ -297,8 +311,6 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
       }
       $this->publishMediaIfNeeded($media);
     }
-
-    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('PDF fid=@fid passed validation', ['@fid' => $fid]);
   }
-
+  
 }
