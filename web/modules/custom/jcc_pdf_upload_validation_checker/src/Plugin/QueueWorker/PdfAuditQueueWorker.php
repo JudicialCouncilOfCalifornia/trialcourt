@@ -312,5 +312,5 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
       $this->publishMediaIfNeeded($media);
     }
   }
-  
+
 }
