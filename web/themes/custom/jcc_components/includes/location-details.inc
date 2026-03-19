@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
 
 /**
  * Helper function location page template variable.
@@ -26,27 +27,38 @@ function build_service_markup(&$variables, $node) {
     $building_hours_to = get_formatted_date($node->get('field_building_hours_to')->value);
     $variables['building_hours'] = [
       'building_starting_hours' => $building_hours_from,
-      'building_closing_hours' => $building_hours_to ,
+      'building_closing_hours' => $building_hours_to,
     ];
   }
 
   if ($node->hasField('field_cases_served')) {
-    $variables['case_category_terms'] = array_filter(array_map(function ($term_reference) {
+    $variables['case_category_terms'] = array_filter(
+    array_map(function ($term_reference) {
       $term_name = $term_reference->getName();
-      return $term_name !== 'All Cases Served at This Location' ? $term_name : null; // Exclude "All Cases Served"
-  }, $node->get('field_cases_served')->referencedEntities()));
+
+      // Exclude "All Cases Served at This Location".
+      return $term_name !== 'All Cases Served at This Location'
+        ? $term_name
+        : NULL;
+    }, $node->get('field_cases_served')->referencedEntities())
+    );
   }
 
-  // Check if the field_others field exists and has a value, and then explode it into an array.
+  // Check if the field_others field exists and has a value,
+  // and then explode it into an array.
   $additional_cases_served = [];
-  if ($node->hasField('field_others') && !empty($node->get('field_others')->value)) {
-      $additional_cases_served = explode(",", $node->get('field_others')->value);
+  if (
+  $node->hasField('field_others') &&
+  !empty($node->get('field_others')->value)
+  ) {
+    $additional_cases_served = explode(',', $node->get('field_others')->value);
   }
 
   // Ensure both case_category_terms and additional_cases_served are arrays before merging.
-  $case_category_terms = isset($variables['case_category_terms']) && is_array($variables['case_category_terms']) 
-      ? $variables['case_category_terms'] 
-      : [];
+  $case_category_terms = isset($variables['case_category_terms']) &&
+  is_array($variables['case_category_terms'])
+  ? $variables['case_category_terms']
+  : [];
 
   // Merge case_category_terms and additional_cases_served if both are arrays, otherwise use case_category_terms alone.
   $variables['case_served'] = array_values(array_merge($case_category_terms, $additional_cases_served));
@@ -110,31 +122,44 @@ function process_add_services($node, &$variables) {
  */
 function extract_service_details($paragraph) {
   // Check if service name has link associated to it.
-  if ($paragraph->hasField('field_services_link') &&  isset($paragraph->get('field_services_link')->getValue()['0'])) {
-    $service_link = $paragraph->get('field_services_link')->getValue()['0']['uri'];
-    // Add check if string contains internal.
-    $service_link = substr($service_link, strlen('internal:'));
+  $service_link = '';
+  $service_display_name = '';
+
+  if ($paragraph->hasField('field_services_link') && !$paragraph->get('field_services_link')->isEmpty()) {
+    $link_item = $paragraph->get('field_services_link')->first();
+    $uri = $link_item->uri ?? '';
+
+    if (!empty($uri)) {
+      try {
+        $service_link = Url::fromUri($uri)->toString();
+      }
+      catch (\Exception $e) {
+        $service_link = '';
+      }
+    }
   }
 
-  if (isset($service_link)  && $service_link != "" && !is_null($paragraph->get('field_service_name')->value)) {
-    $service_display_name  = '<a href ="' . htmlspecialchars($service_link) . '">' . ucfirst($paragraph->get('field_service_name')->value) . '</a>';
+  $service_name_value = $paragraph->hasField('field_service_name') ? trim((string) $paragraph->get('field_service_name')->value) : '';
+
+  if ($service_name_value !== '' && $service_link !== '') {
+    $service_display_name = '<a href="' . Html::escape($service_link) . '">' . Html::escape($service_name_value) . '</a>';
   }
-  elseif(isset($paragraph->get('field_service_name')->value)) {
-    $service_display_name = '<div class = "no-link">' . ucfirst($paragraph->get('field_service_name')->value) . '</div>';
+  elseif ($service_name_value !== '') {
+    $service_display_name = '<div class="no-link">' . Html::escape($service_name_value) . '</div>';
   }
-  $service_name  = $service_display_name ?? "";
 
   $services = [
-    'name' => $service_name,
+    'name' => $service_display_name,
     'phone_number' => $paragraph->hasField('field_service_phone_number') ? Html::escape($paragraph->get('field_service_phone_number')->value) : '',
     'email' => $paragraph->hasField('field_service_email_address') ? Html::escape($paragraph->get('field_service_email_address')->value) : '',
     'fax' => $paragraph->hasField('field_service_fax_number') ? Html::escape($paragraph->get('field_service_fax_number')->value) : '',
     'additional_info' => $paragraph->hasField('field_additional_information') ? Html::escape($paragraph->get('field_additional_information')->value) : '',
     'service_appointment' => $paragraph->hasField('field_service_appointment') ? create_link($paragraph->get('field_service_appointment')->getValue()) : '',
     'categories' => $paragraph->hasField('field_service_category') ? array_map(function ($term_reference) {
-          return Html::escape($term_reference->getName());
+      return Html::escape($term_reference->getName());
     }, $paragraph->get('field_service_category')->referencedEntities()) : [],
   ];
+
   return $services;
 }
 
@@ -142,11 +167,27 @@ function extract_service_details($paragraph) {
  * Create link from url field.
  */
 function create_link($appointment_link) {
-  if (!empty($appointment_link)) {
-    $appointment_link['url']   = $appointment_link['0']['uri'];
-    $appointment_link['title'] = $appointment_link['0']['title'] != "" ? $appointment_link['0']['title'] : 'Schedule an Appointment';
-    return '<a href ="' . $appointment_link['title'] . '">' . $appointment_link['title'] . '</a>';
+  if (
+    !empty($appointment_link) &&
+    isset($appointment_link[0]['uri'])
+  ) {
+    $uri = $appointment_link[0]['uri'];
+    $title = !empty($appointment_link[0]['title'])
+      ? $appointment_link[0]['title']
+      : 'Schedule an Appointment';
+
+    try {
+      $url = Url::fromUri($uri)->toString();
+
+      return '<a href="' . Html::escape($url) . '">'
+        . Html::escape($title)
+        . '</a>';
+    }
+    catch (\Exception $e) {
+      return Html::escape($title);
+    }
   }
+  return '';
 }
 
 /**
@@ -177,7 +218,7 @@ function get_service_hours($paragraph, $variables) {
           'days' => "Monday - Friday",
           'from' => $variables['building_hours']['building_starting_hours'],
           'to' => $variables['building_hours']['building_closing_hours'],
-          'type' => $hour_type ,
+          'type' => $hour_type,
           'is_repeated' => $is_repeated,
           'is_others' => $is_type_others,
           '$others_field_value' => $others_field_value,
