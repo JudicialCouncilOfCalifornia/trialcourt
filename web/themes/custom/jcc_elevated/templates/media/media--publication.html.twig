@@ -66,7 +66,7 @@
   {% if publication.languages %}
     {% set translations = [] %}
     {% for language in publication.languages %}
-      {% set link %}<a href="{{ language.url }}" aria-label="{{ language.aria_label }}">{{ language.label }}</a> ({{ language.label_en }}){% endset %}
+      {% set link %}<a href="{{ language.url }}" aria-label="{{ language.aria_label }}">{{ language.label_en }}</a> ({{ language.label }}){% endset %}
       {% set language = {
         text: link|raw,
       } %}
