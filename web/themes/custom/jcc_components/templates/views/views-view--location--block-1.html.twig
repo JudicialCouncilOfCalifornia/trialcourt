@@ -25,22 +25,22 @@
   {% endif %}
 
   {# Title #}
-  {% set court_name %}
+    {% set court_name %}
     <h3 class="usa-card__heading">
       <a href="{{ path('entity.node.canonical', {'node': entity.nid.value}) }}">
         {{ entity.title.value }}
       </a>
     </h3>
-  {% endset %}
+    {% endset %}
 
   {# Phone (guarded) #}
   {% set phone %}
     {% if entity.field_phone is defined and entity.field_phone[0] is not empty %}
       {% set tel = entity.field_phone[0].value %}
-      <div class="jcc-location-hero-link location-listing-page">
-        <a href="tel:{{ tel }}">{{ tel }}</a>
-      </div>
-    {% endif %}
+        <div class="jcc-location-hero-link location-listing-page">
+          <a href="tel:{{ tel }}">{{ tel }}</a>
+        </div>
+      {% endif %}
   {% endset %}
 
   {# Address + phone + tag (ONE block assigned to `address`) #}
@@ -70,13 +70,20 @@
     {% endif %}
   {% endset %}
 
-  {% set cards = cards|merge([{
-    style: card_style,
-    brow: (entity.field_brow is defined and entity.field_brow[0] is not empty) ? entity.field_brow[0].value|raw : '',
-    title: court_name,
-    body: address,
-    media: image,
-  }]) %}
+  {% set card = {
+  style: card_style,
+  title: court_name,
+  body: address,
+  media: image,
+} %}
+
+{% if entity.field_brow is defined and entity.field_brow[0] is not empty and entity.field_brow[0].value|trim %}
+  {% set card = card|merge({
+    brow: entity.field_brow[0].value|raw
+  }) %}
+{% endif %}
+
+{% set cards = cards|merge([card]) %}
 {% endfor %}
 
 {% set classes = [
@@ -100,6 +107,7 @@
           cards: {
             num_cols: '2-50-50',
             items: cards,
+            no_container: true,
           }
         } %}
       </div>
