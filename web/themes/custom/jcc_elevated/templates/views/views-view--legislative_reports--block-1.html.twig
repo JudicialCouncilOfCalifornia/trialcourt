@@ -12,23 +12,27 @@
   {% for year, reports in grouped_reports %}  
     {% set results %}
       {% for report in reports %}
-      <div class="report">
-      <ul>
-        <li><a href="{{ report.url }}" target="_blank" rel="noopener">
-        {{ report.text|striptags|trim  }}</a>
-        </li>
-      </ul>   
-      </div>  
+       {% if report.url is defined and report.url is not empty and report.text|striptags|trim is not empty %}      
+        <div class="report">
+        <ul>
+          <li><a href="{{ report.url }}" target="_blank" rel="noopener">
+          {{ report.text|striptags|trim  }}</a>
+          </li>
+        </ul>   
+        </div>  
+      {% endif %}
       {% endfor %}
     {% endset %}      
-
-    {% set accordion_items = accordion_items|merge([{
-      id: "accordion-" ~ year,
-      label: year,
-      content: results
-    }
-    ])
-    %}
+   
+    {% if results|trim is not empty %}
+      {% set accordion_items = accordion_items|merge([{
+        id: "accordion-" ~ year,
+        label: year,
+        content: results
+      }
+      ])
+      %}
+    {% endif %}
   {% endfor %}
 
   {% include "@molecules/Accordion/Accordion.twig" with {
