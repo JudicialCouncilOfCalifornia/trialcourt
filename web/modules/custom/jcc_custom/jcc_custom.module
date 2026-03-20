@@ -1357,3 +1357,162 @@ function jcc_custom_preprocess_paragraph(array &$variables) {
     }
   }
 }
+
+/**
+ * Returns the canonical Cases Served values used by this module.
+ *
+ * These values are used:
+ * - to seed the "cases_served" taxonomy vocabulary when it has no terms;
+ * - as the source of truth for fallback/testing.
+ *
+ * @return string[]
+ *   A flat array of taxonomy term labels.
+ */
+function jcc_custom_get_jcc_custom_cases_served_values() {
+  return [
+    'Appeals',
+    'Civil',
+    'Conservatorships',
+    'Criminal',
+    'Domestic Violence',
+    'Unlawful Detainer',
+    'Family Law',
+    'Guardianships',
+    'Juvenile Dependency',
+    'Mental Health',
+    'Name Change & Gender Affirmation',
+    'Probate',
+    'Restraining Orders',
+    'Small Claims',
+    'Traffic',
+  ];
+}
+
+/**
+ * Ensures that the given Cases Served terms exist in the target vocabulary.
+ *
+ * If a term already exists, it is reused.
+ * If a term does not exist, it is created.
+ *
+ * @param string $vid
+ *   Taxonomy vocabulary machine name.
+ *
+ * @return string[]
+ *   A flat array of term labels that now exist in the vocabulary.
+ */
+function jcc_custom_ensure_cases_served_terms($vid = 'cases_served'): array {
+  $values = jcc_custom_get_jcc_custom_cases_served_values();
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $result = [];
+
+  foreach ($values as $value) {
+    // Try to find an existing term with the same name in this vocabulary.
+    $existing = $storage->loadByProperties([
+      'vid' => $vid,
+      'name' => $value,
+    ]);
+
+    if ($existing) {
+      $term = reset($existing);
+    }
+    else {
+      // Create the missing term.
+      $term = Term::create([
+        'vid' => $vid,
+        'name' => $value,
+      ]);
+      $term->save();
+
+      \Drupal::logger('jcc_custom')->notice(
+        'Created taxonomy term "@term" in vocabulary "@vid".',
+        [
+          '@term' => $value,
+          '@vid' => $vid,
+        ]
+      );
+    }
+
+    $result[] = $term->label();
+  }
+
+  return $result;
+}
+
+/**
+ * Implements hook_preprocess_node().
+ *
+ * Provides a Twig variable named "cases_served" for location nodes.
+ *
+ * Behavior:
+ * - If taxonomy terms already exist in vocabulary "cases_served", use them.
+ * - If no terms exist yet, seed the vocabulary using embedded PHP values,
+ *   then expose those values to Twig.
+ *
+ * Expected Twig usage:
+ *   {% set cases_served_tags = [] %}
+ *   {% set original_array = cases_served %}
+ *   {% for key, value in original_array %}
+ *     {% set cases_served_tags = cases_served_tags|merge([{'text': value}]) %}
+ *   {% endfor %}
+ */
+function jcc_custom_preprocess_node(array &$variables) {
+  $node = $variables['node'] ?? NULL;
+
+  // Only act on Location nodes.
+  if (!$node || $node->bundle() !== 'location') {
+    return;
+  }
+
+  $vid = 'cases_served';
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  try {
+    // Load all terms in the target vocabulary.
+    $terms = $storage->loadByProperties(['vid' => $vid]);
+
+    // If the vocabulary currently has no terms, seed it once.
+    if (!$terms) {
+      \Drupal::logger('jcc_custom')->notice(
+        'No terms found in vocabulary "@vid". Seeding test values now.',
+        ['@vid' => $vid]
+      );
+
+      $variables['cases_served'] = jcc_custom_ensure_cases_served_terms($vid);
+      return;
+    }
+
+    // Sort the term entities alphabetically by label for predictable output.
+    usort($terms, function ($a, $b) {
+      return strcasecmp($a->label(), $b->label());
+    });
+
+    // Convert term entities into a flat array of labels for Twig.
+    $values = [];
+    foreach ($terms as $term) {
+      $values[] = $term->label();
+    }
+
+    $variables['cases_served'] = $values;
+
+    \Drupal::logger('jcc_custom')->notice(
+      'Loaded @count terms from vocabulary "@vid" for node @nid.',
+      [
+        '@count' => count($values),
+        '@vid' => $vid,
+        '@nid' => $node->id(),
+      ]
+    );
+  }
+  catch (\Exception $e) {
+    // Fallback: keep Twig working even if something goes wrong.
+    $variables['cases_served'] = jcc_custom_get_jcc_custom_cases_served_values();
+
+    \Drupal::logger('jcc_custom')->error(
+      'Failed to prepare cases_served for node @nid. Error: @message',
+      [
+        '@nid' => $node ? $node->id() : 'unknown',
+        '@message' => $e->getMessage(),
+      ]
+    );
+  }
+}
