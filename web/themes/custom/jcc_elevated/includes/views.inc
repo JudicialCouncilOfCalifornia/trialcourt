@@ -988,57 +988,61 @@ function jcc_elevated_preprocess_views_view__legislative_reports__block_1(&$vari
   foreach ($view->result as $row) {
     if (isset($row->_entity)) {
       $media_entity = $row->_entity;
-      $title = $media_entity->label();
-      $media_text = $media_entity->get('field_media_text')->value ?? '';
-      $leg_date = $media_entity->get('field_date')->value ?? '';
-      $year = '';
-      if (!empty($leg_date)) {
-        $year = substr($leg_date, 0, 4);
-      }
-      $topic = '';
-      if ($media_entity->hasField('field_matters_served') && !$media_entity->get('field_matters_served')->isEmpty()) {
-        $terms = $media_entity->get('field_matters_served')->referencedEntities();
-        if (!empty($terms)) {
-          $topic = $terms[0]->label();
-        }
-      }
-      $office = '';
-      if ($media_entity->hasField('field_tags') && !$media_entity->get('field_tags')->isEmpty()) {
-        $terms = $media_entity->get('field_tags')->referencedEntities();
-        if (!empty($terms)) {
-          $office = $terms[0]->label();
-        }
-      }
-      $file_url = '';
-      if ($media_entity->hasField('field_media_file_multiple') &&
-      !$media_entity->get('field_media_file_multiple')->isEmpty()
-      ) {
-        $file_entity = $media_entity->get('field_media_file_multiple')->entity;
-        if ($file_entity) {
-          $file_url = file_create_url($file_entity->getFileUri());
-        }
-      }
+      $file_url_generator = \Drupal::service('file_url_generator');
+      $file_entity = NULL;
+      $file = NULL;
 
-      if (!$file_url && $media_entity->hasField('field_media_file') &&
-      !$media_entity->get('field_media_file')->isEmpty()
-      ) {
+      // Expect default file field but also backwards compatible.
+      if ($media_entity->hasField('field_media_file') && !$media_entity->get('field_media_file')->isEmpty()) {
         $file_entity = $media_entity->get('field_media_file')->entity;
         if ($file_entity) {
-          $file_url = file_create_url($file_entity->getFileUri());
+          $file = $file_url_generator->generateAbsoluteString($file_entity->getFileUri());
         }
       }
-      if (!isset($grouped_reports[$year])) {
-        $grouped_reports[$year] = [];
+      elseif ($media_entity->hasField('field_media_file_multiple') && !$media_entity->get('field_media_file_multiple')->isEmpty()) {
+        // In case if older publication.
+        $file_entity = $media_entity->get('field_media_file_multiple')->entity;
+        if ($file_entity) {
+          $file = $file_url_generator->generateAbsoluteString($file_entity->getFileUri());
+        }
       }
 
-      $grouped_reports[$year][] = [
-        'title' => $title,
-        'text' => $media_text,
-        'topic' => $topic,
-        'office' => $office,
-        'leg_date' => $leg_date,
-        'url' => $file_url,
-      ];
+      // Build legislative report item.
+      if ($file) {
+        $title = $media_entity->label();
+        $media_text = $media_entity->get('field_media_text')->value ?? $title . ' file has no description';
+        $leg_date = $media_entity->get('field_date')->value ?? '';
+
+        $year = 'Not categorized by date';
+        if (!empty($leg_date)) {
+          $year = substr($leg_date, 0, 4);
+        }
+
+        $topic = '';
+        if ($media_entity->hasField('field_matters_served') && !$media_entity->get('field_matters_served')->isEmpty()) {
+          $terms = $media_entity->get('field_matters_served')->referencedEntities();
+          if (!empty($terms)) {
+            $topic = $terms[0]->label();
+          }
+        }
+
+        $office = '';
+        if ($media_entity->hasField('field_tags') && !$media_entity->get('field_tags')->isEmpty()) {
+          $terms = $media_entity->get('field_tags')->referencedEntities();
+          if (!empty($terms)) {
+            $office = $terms[0]->label();
+          }
+        }
+
+        $grouped_reports[$year][] = [
+          'title' => $title,
+          'text' => $media_text,
+          'topic' => $topic,
+          'office' => $office,
+          'leg_date' => $leg_date,
+          'url' => __jcc_media_substitute_url($file),
+        ];
+      }
     }
   }
   krsort($grouped_reports);
