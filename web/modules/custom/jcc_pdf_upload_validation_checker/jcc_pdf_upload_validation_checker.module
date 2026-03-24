@@ -10,7 +10,9 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
+use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
 use Drupal\views\ViewExecutable;
@@ -141,23 +143,7 @@ function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entit
     return;
   }
 
-  $file_fields = [
-    'field_media_file',
-    'field_media_file_farsi',
-    'field_media_file_arabic',
-    'field_media_file_cambodian',
-    'field_media_file_chinese_simple',
-    'field_media_file_chinese',
-    'field_east_armenian_file',
-    'field_media_file_hmong',
-    'field_media_file_korean',
-    'field_media_file_multiple',
-    'field_media_file_punjabi',
-    'field_media_file_russian',
-    'field_media_file_spanish',
-    'field_media_file_tagalog',
-    'field_media_file_vietnamese',
-  ];
+  $file_fields = _jcc_pdf_upload_validation_checker_file_fields();
 
   $original = NULL;
   if (!$entity->isNew() && $entity->id()) {
@@ -226,13 +212,10 @@ function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entit
 /**
  * Implements hook_form_alter().
  */
-function jcc_pdf_upload_validation_checker_form_alter(&$form, $form_state, $form_id) {
+function jcc_pdf_upload_validation_checker_form_alter(array &$form, FormStateInterface $form_state, $form_id): void {
   $form['#attached']['library'][] = 'jcc_pdf_upload_validation_checker/media_audit_badges';
-  if (
-    $form_id !== 'media_edit_form' &&
-    $form_id !== 'media_add_form' &&
-    !preg_match('/^media_.+_(edit|add)_form$/', $form_id)
-  ) {
+
+  if (!_jcc_pdf_upload_validation_checker_is_supported_media_form($form_id, $form_state)) {
     return;
   }
 
@@ -246,55 +229,49 @@ function jcc_pdf_upload_validation_checker_form_alter(&$form, $form_state, $form
     return;
   }
 
-  $file_fields = [
-    'field_media_file',
-    'field_media_file_farsi',
-    'field_media_file_arabic',
-    'field_media_file_cambodian',
-    'field_media_file_chinese_simple',
-    'field_media_file_chinese',
-    'field_east_armenian_file',
-    'field_media_file_hmong',
-    'field_media_file_korean',
-    'field_media_file_multiple',
-    'field_media_file_punjabi',
-    'field_media_file_russian',
-    'field_media_file_spanish',
-    'field_media_file_tagalog',
-    'field_media_file_vietnamese',
-  ];
-
-  foreach ($file_fields as $field_name) {
-    if (empty($form[$field_name]) || !$media->hasField($field_name) || $media->get($field_name)->isEmpty()) {
+  foreach (_jcc_pdf_upload_validation_checker_file_fields() as $field_name) {
+    if (empty($form[$field_name]['widget']) || !$media->hasField($field_name)) {
       continue;
     }
 
-    // Media field items.
-    foreach ($media->get($field_name) as $delta => $item) {
-      $file = $item->entity;
+    foreach ($form[$field_name]['widget'] as $delta => &$widget_item) {
+      if (!is_numeric($delta) || !is_array($widget_item)) {
+        continue;
+      }
+
+      $delta = (int) $delta;
+      $file = _jcc_pdf_upload_validation_checker_get_widget_file($form, $form_state, $field_name, $delta);
+
       if (!$file instanceof FileInterface) {
         continue;
       }
 
-      // Only PDFs.
-      if ($file->getMimeType() !== 'application/pdf') {
+      if (!_jcc_pdf_upload_validation_checker_is_pdf($file)) {
         continue;
       }
 
-      // Pull audit status.
       $status = 'unknown';
       if ($file->hasField('field_pdf_audit_status')) {
         $status = (string) $file->get('field_pdf_audit_status')->value ?: 'unknown';
       }
 
-      $form[$field_name]['widget'][$delta]['jcc_pdf_audit_badge'] = [
+      $widget_item['jcc_pdf_audit_badge'] = [
         '#type' => 'html_tag',
-        '#tag' => 'span',
+        '#tag' => 'div',
         '#value' => 'Validation status: ' . $status,
         '#attributes' => [
           'class' => ['jcc-pdf-audit-badge', "jcc-pdf-audit-badge--{$status}"],
         ],
         '#weight' => 50,
+      ];
+
+      $widget_item['jcc_pdf_manual_check'] = [
+        '#type' => 'button',
+        '#value' => t('Manual check PDF'),
+        '#attributes' => [
+          'class' => ['button', 'button--small', 'jcc-pdf-manual-check'],
+        ],
+        '#weight' => 51,
       ];
     }
   }
@@ -374,4 +351,103 @@ function jcc_pdf_upload_validation_checker_preprocess_field(array &$variables): 
       $item['content']['#post_render'][] = 'Drupal\\jcc_pdf_upload_validation_checker\\Render\\BlockedMediaLinkPostRender::replaceBlockedMediaLinks';
     }
   }
+}
+
+/**
+ * Returns the media file fields handled by this module.
+ */
+function _jcc_pdf_upload_validation_checker_file_fields(): array {
+  return [
+    'field_media_file',
+    'field_media_file_farsi',
+    'field_media_file_arabic',
+    'field_media_file_cambodian',
+    'field_media_file_chinese_simple',
+    'field_media_file_chinese',
+    'field_east_armenian_file',
+    'field_media_file_hmong',
+    'field_media_file_korean',
+    'field_media_file_multiple',
+    'field_media_file_punjabi',
+    'field_media_file_russian',
+    'field_media_file_spanish',
+    'field_media_file_tagalog',
+    'field_media_file_vietnamese',
+  ];
+}
+
+/**
+ * Returns the current uploaded file for a widget delta, even before media save.
+ */
+function _jcc_pdf_upload_validation_checker_get_widget_file(array $form, FormStateInterface $form_state, string $field_name, int $delta): ?FileInterface {
+  $values = $form_state->getValue($field_name);
+
+  // Common case after upload on the widget rebuild.
+  if (is_array($values) && isset($values[$delta]['target_id']) && is_numeric($values[$delta]['target_id'])) {
+    $file = File::load((int) $values[$delta]['target_id']);
+    if ($file instanceof FileInterface) {
+      return $file;
+    }
+  }
+
+  // Some widgets store uploaded file IDs differently.
+  if (is_array($values) && isset($values[$delta]['fids']) && is_array($values[$delta]['fids']) && !empty($values[$delta]['fids'][0])) {
+    $file = File::load((int) $values[$delta]['fids'][0]);
+    if ($file instanceof FileInterface) {
+      return $file;
+    }
+  }
+
+  // Fallback for already-saved entity values.
+  $form_object = $form_state->getFormObject();
+  if ($form_object && method_exists($form_object, 'getEntity')) {
+    $media = $form_object->getEntity();
+    if ($media instanceof MediaInterface && $media->hasField($field_name) && isset($media->get($field_name)[$delta])) {
+      $file = $media->get($field_name)[$delta]->entity;
+      if ($file instanceof FileInterface) {
+        return $file;
+      }
+    }
+  }
+
+  return NULL;
+}
+
+/**
+ * Returns TRUE if the file is a PDF.
+ */
+function _jcc_pdf_upload_validation_checker_is_pdf(?FileInterface $file): bool {
+  return $file instanceof FileInterface && $file->getMimeType() === 'application/pdf';
+}
+
+/**
+ * Determines whether this is a media form we want to alter.
+ */
+function _jcc_pdf_upload_validation_checker_is_supported_media_form(string $form_id, FormStateInterface $form_state): bool {
+  // Standard media add/edit forms.
+  if (
+    $form_id === 'media_add_form' ||
+    $form_id === 'media_edit_form' ||
+    $form_id === 'media_library_add_form_upload' ||
+    $form_id === 'views_form_media_library_widget_file' ||
+    preg_match('/^media_.+_(add|edit)_form$/', $form_id)
+  ) {
+    return TRUE;
+  }
+
+  // Media Library modal / embedded add forms.
+  if (str_contains($form_id, 'media_library')) {
+    return TRUE;
+  }
+
+  // Fallback: if the form object edits a media entity, allow it.
+  $form_object = $form_state->getFormObject();
+  if ($form_object && method_exists($form_object, 'getEntity')) {
+    $entity = $form_object->getEntity();
+    if ($entity instanceof MediaInterface) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 }

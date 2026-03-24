@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\file\FileInterface;
+use Drupal\jcc_pdf_upload_validation_checker\PdfAudit\PdfAuditRunner;
 use Drupal\media\MediaInterface;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -170,9 +171,10 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
     array $configuration,
     $plugin_id,
     $plugin_definition,
-  private EntityTypeManagerInterface $entityTypeManager,
-  private ClientInterface $httpClient,
-  private ConfigFactoryInterface $configFactory,
+    private EntityTypeManagerInterface $entityTypeManager,
+    private ClientInterface $httpClient,
+    private ConfigFactoryInterface $configFactory,
+    private PdfAuditRunner $pdfAuditRunner,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -200,6 +202,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
       $container->get('entity_type.manager'),
       $container->get('http_client'),
       $container->get('config.factory'),
+      $container->get('jcc_pdf_upload_validation_checker.pdf_audit_runner'),
     );
   }
 
@@ -235,73 +238,27 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
     \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('Cron processing PDF validation on fid=@fid', ['@fid' => $fid]);
 
     // Read file bytes from URI.
-    $uri = $file->getFileUri();
-    $bytes = @file_get_contents($uri);
-    if ($bytes === FALSE) {
+    $result = $this->pdfAuditRunner->auditFile($file);
+
+    if (empty($result['passed'])) {
       $file->set('field_pdf_audit_status', 'fail');
       $file->save();
-      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('PDF fid=@fid failed validation', ['@fid' => $fid]);
-      return;
-    }
 
-    $base64 = base64_encode($bytes);
-    $response = NULL;
-
-    try {
-      $response = $this->httpClient->post(
-        'https://e3pyeerkgstf2covgz2yjkvj2m0bnqiq.lambda-url.us-east-1.on.aws/validate',
-        [
-          'timeout' => 60,
-          'connect_timeout' => 10,
-          'http_errors' => FALSE,
-          'headers' => [
-            'Accept' => 'application/json',
-          ],
-          'json' => [
-            'include_raw' => TRUE,
-            'pdf_base64' => $base64,
-          ],
-        ]
-      );
-    }
-    catch (\Throwable $e) {
-      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
-        'PDF audit request failed for fid=@fid: @message',
-        [
-          '@fid' => $fid,
-          '@message' => $e->getMessage(),
-        ]
-      );
-
-      $file->set('field_pdf_audit_status', 'fail');
-      $file->save();
-      return;
-    }
-
-    if (!$response) {
-      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
-        'PDF audit response was empty for fid=@fid',
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+        'PDF fid=@fid failed validation',
         ['@fid' => $fid]
       );
-
-      $file->set('field_pdf_audit_status', 'fail');
-      $file->save();
-      return;
-    }
-
-    $code = $response->getStatusCode();
-    $body = (string) $response->getBody();
-    $json = json_decode($body, TRUE) ?: [];
-
-    if ($code !== 200 || (empty($json['ok']) && empty($json['passed']))) {
-      $file->set('field_pdf_audit_status', 'fail');
-      $file->save();
-      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('PDF fid=@fid failed validation', ['@fid' => $fid]);
       return;
     }
 
     $file->set('field_pdf_audit_status', 'pass');
     $file->save();
+
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+      'PDF fid=@fid passed validation',
+      ['@fid' => $fid]
+    );
+
     \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('PDF fid=@fid passed validation', ['@fid' => $fid]);
 
     foreach ($this->loadMediaReferencingFile($fid) as $media) {
