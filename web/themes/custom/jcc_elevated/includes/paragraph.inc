@@ -139,7 +139,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
       if (!empty($sticky_item['#node']->get('field_components')->getValue()[0]['target_id'])) {
         $paragraph_target_id = $sticky_item['#node']->get('field_components')->getValue()[0]['target_id'];
       }
-      if ($sticky_item['#node']->get('body')->isEmpty()) {
+      if ($sticky_item['#node']->get('body')->isEmpty() && $paragraph_target_id) {
         $paragraph = Paragraph::load($paragraph_target_id);
         // Render the text field the same as if it was being rendered in the
         // full default view mode. This helps apply proper text/html filtering.
