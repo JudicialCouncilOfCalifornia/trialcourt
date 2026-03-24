@@ -50,7 +50,7 @@
   {% include directory ~ "/templates/page/page-header.twig" %}
 
   {% set content %}
-    <h2>{{ page.content }}</h2>
+    <p>{{ jcc_error_message|default(page.content) }}</p>
   {% endset %}
 
   {% include "@molecules/hero/hero.twig" with {
@@ -58,7 +58,7 @@
       layout: 'full-main',
       background: header_footer_variant,
       main: {
-        title: "404",
+        title: jcc_error_title|default('404 Page Not Found'),
       },
     }
   } %}
