@@ -3,10 +3,6 @@
 /**
  * @file
  * Primary module hooks for JCC PDF upload validation checker module.
- *
- * @DCG
- * This file is no longer required in Drupal 8.
- * @see https://www.drupal.org/node/2217931
  */
 
 use Drupal\Component\Utility\NestedArray;
@@ -37,7 +33,7 @@ function jcc_pdf_upload_validation_checker_entity_update(EntityInterface $entity
 }
 
 /**
- * Look for file references on nodes/media and queue PDF files.
+ * Look for file references on nodes/media and queue newly attached PDF files.
  */
 function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void {
   $type = $entity->getEntityTypeId();
@@ -48,37 +44,17 @@ function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void
   $queue = \Drupal::queue('jcc_pdf_upload_validation_checker_pdf_audit');
   $file_storage = \Drupal::entityTypeManager()->getStorage('file');
 
-  // Build a map of original file IDs already attached before this save.
-  $original_fids = [];
-
-  if (!$entity->isNew() && method_exists($entity, 'getOriginal') && $entity->getOriginal()) {
-    $original = $entity->getOriginal();
-
-    foreach ($original->getFieldDefinitions() as $field_name => $def) {
-      if (!$original->hasField($field_name)) {
-        continue;
-      }
-
-      $settings = $def->getSettings();
-      if (($settings['target_type'] ?? NULL) !== 'file') {
-        continue;
-      }
-
-      $field = $original->get($field_name);
-      if ($field->isEmpty()) {
-        continue;
-      }
-
-      foreach ($field as $item) {
-        $fid = (int) $item->target_id;
-        if ($fid) {
-          $original_fids[$fid] = TRUE;
-        }
-      }
-    }
+  // Load the unchanged/original entity.
+  $original = NULL;
+  if (!$entity->isNew() && $entity->id()) {
+    $original = \Drupal::entityTypeManager()
+      ->getStorage($type)
+      ->loadUnchanged($entity->id());
   }
 
-  // Scan current fields and only enqueue newly added file references.
+  // Limit processing to the module's tracked file fields when possible.
+  $tracked_fields = _jcc_pdf_upload_validation_checker_file_fields();
+
   foreach ($entity->getFieldDefinitions() as $field_name => $def) {
     if (!$entity->hasField($field_name)) {
       continue;
@@ -89,9 +65,25 @@ function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void
       continue;
     }
 
+    // For media, only process the file fields the module actually manages.
+    if ($type === 'media' && !in_array($field_name, $tracked_fields, TRUE)) {
+      continue;
+    }
+
     $field = $entity->get($field_name);
     if ($field->isEmpty()) {
       continue;
+    }
+
+    // Build original FIDs for this specific field only.
+    $original_fids = [];
+    if ($original && $original->hasField($field_name) && !$original->get($field_name)->isEmpty()) {
+      foreach ($original->get($field_name) as $item) {
+        $fid = (int) $item->target_id;
+        if ($fid) {
+          $original_fids[$fid] = TRUE;
+        }
+      }
     }
 
     foreach ($field as $item) {
@@ -100,7 +92,7 @@ function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void
         continue;
       }
 
-      // Skip files that were already attached before this save.
+      // Skip files that were already attached in this same field.
       if (isset($original_fids[$fid])) {
         continue;
       }
@@ -114,24 +106,32 @@ function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void
         continue;
       }
 
-      // Skip files already fully processed.
-      if ($file->hasField('field_pdf_audit_status')) {
-        $status = (string) $file->get('field_pdf_audit_status')->value;
-        if (in_array($status, ['pass', 'fail'], TRUE)) {
-          continue;
+      // Newly attached/replaced PDFs should become pending
+      // unless they already passed a manual audit.
+      if ($type === 'media' && $file->hasField('field_pdf_audit_status')) {
+        $current_status = (string) $file->get('field_pdf_audit_status')->value;
+
+        if ($current_status !== 'pass' && $current_status !== 'pending') {
+          $file->set('field_pdf_audit_status', 'pending');
+          $file->save();
         }
 
-        $file->set('field_pdf_audit_status', 'pending');
-        $file->save();
+        // Do not re-queue files that already passed manually.
+        if ($current_status === 'pass') {
+          continue;
+        }
       }
 
-      $queue->createItem(['fid' => $fid]);
+      $queue->createItem([
+        'fid' => $fid,
+      ]);
 
       \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-        'Queued PDF audit for new file fid=@fid on @type @id',
+        'Queued PDF audit for newly attached file fid=@fid in field @field on @type @id',
         [
           '@fid' => $fid,
-          '@type' => $entity->getEntityTypeId(),
+          '@field' => $field_name,
+          '@type' => $type,
           '@id' => $entity->id(),
         ]
       );
@@ -184,13 +184,67 @@ function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entit
     sort($current_fids);
     sort($original_fids);
 
-    // No file change in this field.
-    if ($current_fids === $original_fids) {
+    $field_changed = ($current_fids !== $original_fids);
+
+    // Special rule for publication media with multiple files:
+    // all PDFs in field_media_file_multiple must pass to remain publishable.
+    if (
+      $entity->bundle() === 'publication' &&
+      $field_name === 'field_media_file_multiple'
+    ) {
+      $blocking_files = [];
+
+      foreach ($entity->get($field_name) as $item) {
+        $file = $item->entity;
+        if (!$file instanceof FileInterface || $file->getMimeType() !== 'application/pdf') {
+          continue;
+        }
+
+        $status = '';
+        if ($file->hasField('field_pdf_audit_status')) {
+          $status = (string) $file->get('field_pdf_audit_status')->value;
+        }
+
+        if ($status !== 'pass') {
+          $blocking_files[] = sprintf(
+            'fid=%d status=%s',
+            (int) $file->id(),
+            $status !== '' ? $status : 'empty'
+          );
+        }
+      }
+
+      if ($blocking_files) {
+        $entity->set('status', 0);
+
+        if ($entity->hasField('moderation_state')) {
+          $entity->set('moderation_state', 'draft');
+        }
+
+        \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+          'Media @mid unpublished because not all PDFs in @field passed validation: @details',
+          [
+            '@mid' => $entity->id() ?: 'new',
+            '@field' => $field_name,
+            '@details' => implode('; ', $blocking_files),
+          ]
+        );
+
+        return;
+      }
+
+      // If this is publication/field_media_file_multiple and all PDFs passed,
+      // do not let the generic "PDF changed => unpublish" rule below fire.
       continue;
     }
 
-    $has_blocking_pdf = FALSE;
-    $blocking_reasons = [];
+    // If the field changed, any current PDF in that field must already be pass
+    // in order to allow publication.
+    if (!$field_changed) {
+      continue;
+    }
+
+    $blocking_files = [];
 
     foreach ($entity->get($field_name) as $item) {
       $target = $item->entity;
@@ -203,20 +257,16 @@ function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entit
         $status = (string) $target->get('field_pdf_audit_status')->value;
       }
 
-      // Allow already-validated PDFs.
-      if ($status === 'pass') {
-        continue;
+      if ($status !== 'pass') {
+        $blocking_files[] = sprintf(
+          'fid=%d status=%s',
+          (int) $target->id(),
+          $status !== '' ? $status : 'empty'
+        );
       }
-
-      $has_blocking_pdf = TRUE;
-      $blocking_reasons[] = sprintf(
-        'fid=%d status=%s',
-        (int) $target->id(),
-        $status !== '' ? $status : 'empty'
-      );
     }
 
-    if ($has_blocking_pdf) {
+    if ($blocking_files) {
       $entity->set('status', 0);
 
       if ($entity->hasField('moderation_state')) {
@@ -228,7 +278,7 @@ function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entit
         [
           '@mid' => $entity->id() ?: 'new',
           '@field' => $field_name,
-          '@details' => implode('; ', $blocking_reasons),
+          '@details' => implode('; ', $blocking_files),
         ]
       );
 
@@ -500,7 +550,7 @@ function _jcc_pdf_upload_validation_checker_is_supported_media_form(string $form
     return TRUE;
   }
 
-  // Fallback: if the form object edits a media entity, allow it.
+  // If the form object edits a media entity, allow it.
   $form_object = $form_state->getFormObject();
   if ($form_object && method_exists($form_object, 'getEntity')) {
     $entity = $form_object->getEntity();
@@ -528,7 +578,6 @@ function _jcc_pdf_upload_validation_checker_alter_media_library_upload_form(arra
     }
 
     $pdf_found = FALSE;
-    $status = 'unknown';
 
     foreach (Element::children($fields[$field_name]['widget']) as $delta) {
       $widget_item = $fields[$field_name]['widget'][$delta];
@@ -540,10 +589,6 @@ function _jcc_pdf_upload_validation_checker_alter_media_library_upload_form(arra
       }
 
       $pdf_found = TRUE;
-
-      if ($file->hasField('field_pdf_audit_status')) {
-        $status = (string) $file->get('field_pdf_audit_status')->value ?: 'unknown';
-      }
 
       break;
     }
