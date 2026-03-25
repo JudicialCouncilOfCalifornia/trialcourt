@@ -10,6 +10,8 @@
  */
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
@@ -187,26 +189,50 @@ function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entit
       continue;
     }
 
-    // A file changed; only unpublish if one of the current files is a PDF.
+    $has_blocking_pdf = FALSE;
+    $blocking_reasons = [];
+
     foreach ($entity->get($field_name) as $item) {
       $target = $item->entity;
-      if ($target instanceof FileInterface && $target->getMimeType() === 'application/pdf') {
-        $entity->set('status', 0);
-
-        if ($entity->hasField('moderation_state')) {
-          $entity->set('moderation_state', 'draft');
-        }
-
-        \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-          'Media @mid unpublished because PDF changed in field @field',
-          [
-            '@mid' => $entity->id() ?: 'new',
-            '@field' => $field_name,
-          ]
-        );
-
-        return;
+      if (!$target instanceof FileInterface || $target->getMimeType() !== 'application/pdf') {
+        continue;
       }
+
+      $status = '';
+      if ($target->hasField('field_pdf_audit_status')) {
+        $status = (string) $target->get('field_pdf_audit_status')->value;
+      }
+
+      // Allow already-validated PDFs.
+      if ($status === 'pass') {
+        continue;
+      }
+
+      $has_blocking_pdf = TRUE;
+      $blocking_reasons[] = sprintf(
+        'fid=%d status=%s',
+        (int) $target->id(),
+        $status !== '' ? $status : 'empty'
+      );
+    }
+
+    if ($has_blocking_pdf) {
+      $entity->set('status', 0);
+
+      if ($entity->hasField('moderation_state')) {
+        $entity->set('moderation_state', 'draft');
+      }
+
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+        'Media @mid unpublished because changed PDF(s) in field @field are not validated: @details',
+        [
+          '@mid' => $entity->id() ?: 'new',
+          '@field' => $field_name,
+          '@details' => implode('; ', $blocking_reasons),
+        ]
+      );
+
+      return;
     }
   }
 }
@@ -241,9 +267,9 @@ function jcc_pdf_upload_validation_checker_form_alter(array &$form, FormStateInt
       continue;
     }
 
-    foreach (\Drupal\Core\Render\Element::children($form[$field_name]['widget']) as $delta) {
-      if (empty($form[$field_name]['widget'][$delta]['#after_build']) || !in_array('jcc_pdf_upload_validation_checker_media_file_delta_after_build', $form[$field_name]['widget'][$delta]['#after_build'], TRUE)) {
-        $form[$field_name]['widget'][$delta]['#after_build'][] = 'jcc_pdf_upload_validation_checker_media_file_delta_after_build';
+    foreach (Element::children($form[$field_name]['widget']) as $delta) {
+      if (empty($form[$field_name]['widget'][$delta]['#process']) || !in_array('jcc_pdf_upload_validation_checker_media_file_delta_process', $form[$field_name]['widget'][$delta]['#process'], TRUE)) {
+        $form[$field_name]['widget'][$delta]['#process'][] = 'jcc_pdf_upload_validation_checker_media_file_delta_process';
       }
     }
   }
@@ -526,32 +552,18 @@ function _jcc_pdf_upload_validation_checker_alter_media_library_upload_form(arra
       continue;
     }
 
-    $fields[$field_name]['jcc_pdf_manual_check'] = [
-      '#type' => 'container',
-      '#weight' => 51,
-      'badge' => [
-        '#type' => 'html_tag',
-        '#tag' => 'div',
-        '#value' => 'Validation status: ' . $status,
-        '#attributes' => [
-          'class' => ['jcc-pdf-audit-badge', "jcc-pdf-audit-badge--{$status}"],
-        ],
-      ],
-      'button' => [
-        '#type' => 'button',
-        '#value' => t('Manual check PDF'),
-        '#attributes' => [
-          'class' => ['button', 'button--small', 'jcc-pdf-manual-check'],
-        ],
-      ],
-    ];
+    $context_id = $field_name . '-library';
+    $manual_check = _jcc_pdf_upload_validation_checker_build_manual_check($file, $context_id);
+    $manual_check['#weight'] = 51;
+
+    $fields[$field_name]['jcc_pdf_manual_check'] = $manual_check;
   }
 }
 
 /**
- * After-build callback for a single regular media file widget delta.
+ * Process callback for a single regular media file widget delta.
  */
-function jcc_pdf_upload_validation_checker_media_file_delta_after_build(array $element, FormStateInterface $form_state): array {
+function jcc_pdf_upload_validation_checker_media_file_delta_process(array $element, FormStateInterface $form_state, array &$complete_form): array {
   $field_name = $element['#field_name'] ?? NULL;
   $delta = isset($element['#delta']) ? (int) $element['#delta'] : 0;
 
@@ -566,25 +578,172 @@ function jcc_pdf_upload_validation_checker_media_file_delta_after_build(array $e
     return $element;
   }
 
+  $context_id = $field_name . '-' . $delta;
+  $element['jcc_pdf_manual_check'] = _jcc_pdf_upload_validation_checker_build_manual_check($file, $context_id);
+  $element['jcc_pdf_manual_check']['#weight'] = 1000;
+
+  return $element;
+}
+
+/**
+ * Builds the manual PDF audit UI for a single file widget.
+ */
+function _jcc_pdf_upload_validation_checker_build_manual_check(FileInterface $file, string $context_id): array {
   $status = 'unknown';
+
   if ($file->hasField('field_pdf_audit_status')) {
     $status = (string) $file->get('field_pdf_audit_status')->value ?: 'unknown';
   }
 
-  $existing_description = '';
-  if (!empty($element['#description'])) {
-    $existing_description = (string) $element['#description'];
+  $badge_wrapper_id = 'jcc-pdf-audit-badge-' . $context_id;
+  $result_wrapper_id = 'jcc-pdf-audit-result-' . $context_id;
+
+  return [
+    '#type' => 'container',
+    '#attributes' => [
+      'class' => ['jcc-pdf-manual-check-wrapper'],
+    ],
+    'badge' => [
+      '#type' => 'container',
+      '#attributes' => [
+        'id' => $badge_wrapper_id,
+        'class' => [
+          'jcc-pdf-audit-badge',
+          'jcc-pdf-audit-badge--' . $status,
+        ],
+      ],
+      'content' => [
+        '#markup' => 'Validation status: ' . htmlspecialchars($status, ENT_QUOTES, 'UTF-8'),
+      ],
+    ],
+    'button' => [
+      '#type' => 'submit',
+      '#value' => t('PDF Manual check'),
+      '#name' => 'jcc_pdf_manual_check_' . $context_id,
+      '#ajax' => [
+        'callback' => 'jcc_pdf_upload_validation_checker_manual_check_ajax',
+        'event' => 'click',
+        'progress' => [
+          'type' => 'throbber',
+          'message' => t('Running PDF validation...'),
+        ],
+      ],
+      '#submit' => [],
+      '#validate' => [],
+      '#executes_submit_callback' => FALSE,
+      '#limit_validation_errors' => [],
+      '#attributes' => [
+        'class' => ['button', 'button--small', 'jcc-pdf-manual-check'],
+        'formnovalidate' => 'formnovalidate',
+      ],
+      '#jcc_pdf_fid' => (int) $file->id(),
+      '#jcc_badge_wrapper_id' => $badge_wrapper_id,
+      '#jcc_result_wrapper_id' => $result_wrapper_id,
+    ],
+    'result' => [
+      '#type' => 'container',
+      '#attributes' => [
+        'id' => $result_wrapper_id,
+        'class' => ['jcc-pdf-audit-result'],
+      ],
+    ],
+  ];
+}
+
+/**
+ * AJAX callback for the PDF manual check button.
+ */
+function jcc_pdf_upload_validation_checker_manual_check_ajax(array &$form, FormStateInterface $form_state): AjaxResponse {
+  $trigger = $form_state->getTriggeringElement();
+
+  $fid = (int) ($trigger['#jcc_pdf_fid'] ?? 0);
+  $badge_wrapper_id = (string) ($trigger['#jcc_badge_wrapper_id'] ?? '');
+  $result_wrapper_id = (string) ($trigger['#jcc_result_wrapper_id'] ?? '');
+
+  $response = new AjaxResponse();
+
+  if (!$fid || !$badge_wrapper_id || !$result_wrapper_id) {
+    $response->addCommand(new ReplaceCommand(
+      '#' . $result_wrapper_id,
+      '<div id="' . htmlspecialchars($result_wrapper_id, ENT_QUOTES, 'UTF-8') . '" class="jcc-pdf-audit-result messages messages--error">Unable to determine which file to validate.</div>'
+    ));
+    return $response;
   }
 
-  $element['#description'] = Markup::create(
-    $existing_description .
-    '<div class="jcc-pdf-audit-badge jcc-pdf-audit-badge--' . htmlspecialchars($status, ENT_QUOTES, 'UTF-8') . '">' .
-    'Validation status: ' . htmlspecialchars($status, ENT_QUOTES, 'UTF-8') .
-    '</div>' .
-    '<div class="jcc-pdf-manual-check-wrapper" style="margin-top:8px;">' .
-    '<span class="button button--small jcc-pdf-manual-check">PDF Manual check</span>' .
-    '</div>'
-  );
+  $file = File::load($fid);
+  if (!$file instanceof FileInterface) {
+    $response->addCommand(new ReplaceCommand(
+      '#' . $result_wrapper_id,
+      '<div id="' . htmlspecialchars($result_wrapper_id, ENT_QUOTES, 'UTF-8') . '" class="jcc-pdf-audit-result messages messages--error">The file could not be loaded.</div>'
+    ));
+    return $response;
+  }
 
-  return $element;
+  /** @var \Drupal\jcc_pdf_upload_validation_checker\PdfAudit\PdfAuditRunner $runner */
+  $runner = \Drupal::service('jcc_pdf_upload_validation_checker.pdf_audit_runner');
+  $result = $runner->auditFile($file);
+
+  // Normalize displayed status.
+  $status = 'fail';
+  if (!empty($result['passed'])) {
+    $status = 'pass';
+  }
+  elseif (!empty($result['ok'])) {
+    $status = 'fail';
+  }
+
+  // Persist file audit status if the field exists.
+  if ($file->hasField('field_pdf_audit_status')) {
+    $file->set('field_pdf_audit_status', $status);
+    $file->save();
+  }
+
+  $badge_build = [
+    '#type' => 'container',
+    '#attributes' => [
+      'id' => $badge_wrapper_id,
+      'class' => [
+        'jcc-pdf-audit-badge',
+        'jcc-pdf-audit-badge--' . $status,
+      ],
+    ],
+    'content' => [
+      '#markup' => 'Validation status: ' . htmlspecialchars($status, ENT_QUOTES, 'UTF-8'),
+    ],
+  ];
+
+  $summary = !empty($result['summary']) ? (string) $result['summary'] : 'No summary returned.';
+  $errors = !empty($result['errors']) && is_array($result['errors']) ? $result['errors'] : [];
+
+  $items = '';
+  if ($errors) {
+    $items .= '<ul>';
+    foreach ($errors as $error) {
+      $items .= '<li>' . htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8') . '</li>';
+    }
+    $items .= '</ul>';
+  }
+
+  $result_build = [
+    '#type' => 'container',
+    '#attributes' => [
+      'id' => $result_wrapper_id,
+      'class' => [
+        'jcc-pdf-audit-result',
+        !empty($result['passed']) ? 'messages messages--status' : 'messages messages--warning',
+      ],
+    ],
+    'summary' => [
+      '#markup' => '<div><strong>' . htmlspecialchars($summary, ENT_QUOTES, 'UTF-8') . '</strong></div>' . $items,
+    ],
+  ];
+
+  $renderer = \Drupal::service('renderer');
+  $badge_html = $renderer->renderRoot($badge_build);
+  $result_html = $renderer->renderRoot($result_build);
+
+  $response->addCommand(new ReplaceCommand('#' . $badge_wrapper_id, $badge_html));
+  $response->addCommand(new ReplaceCommand('#' . $result_wrapper_id, $result_html));
+
+  return $response;
 }
