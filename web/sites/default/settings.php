@@ -106,7 +106,7 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * @endcode
  */
 
-$settings['config_sync_directory'] = '../config/config-kings';
+$settings['config_sync_directory'] = '../config/config-default';
 $config['config_split.config_split.local']['folder'] = '../config/config-default-local';
 $settings['file_public_path']  = 'sites/default/files/default';
 
@@ -277,30 +277,4 @@ if (defined(
       ],
     ],
   ];
-
-  $databases['default']['default'] = [
-    'driver' => 'mysql',
-    'database' => 'kings',
-    'username' => 'drupal8',
-    'password' => 'drupal8',
-    'host' => 'database',
-    'port' => 3306,
-  ];
-
-  $settings['config_ignore_environment'] = TRUE;
-  $settings['skip_permissions_hardening'] = TRUE;
-}
-
-if (getenv('LANDO_INFO')) {
-  $databases['default']['default'] = [
-    'driver' => 'mysql',
-    'database' => 'kings',
-    'username' => 'drupal8',
-    'password' => 'drupal8',
-    'host' => 'database',
-    'port' => 3306,
-  ];
-
-  $settings['config_ignore_environment'] = TRUE;
-  $settings['skip_permissions_hardening'] = TRUE;
 }
