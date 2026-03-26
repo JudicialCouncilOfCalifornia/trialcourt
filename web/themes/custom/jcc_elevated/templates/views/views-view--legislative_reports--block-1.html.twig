@@ -9,26 +9,24 @@
 %}
 {% if grouped_reports|length > 0 %}
 {% set accordion_items = [] %}
-  {% for year, reports in grouped_reports %}  
+  {% for year, reports in grouped_reports %}
     {% set results %}
       {% for report in reports %}
       <div class="report">
-      <ul>
-        <li><a href="{{ report.url }}" target="_blank" rel="noopener">
-        {{ report.text|striptags|trim  }}</a>
-        </li>
-      </ul>   
-      </div>  
+        <ul>
+          <li><a href="{{ report.url }}" target="_blank" rel="noopener">
+          {{ report.text|striptags|trim  }}</a>
+          </li>
+        </ul>
+      </div>
       {% endfor %}
-    {% endset %}      
+    {% endset %}
 
     {% set accordion_items = accordion_items|merge([{
       id: "accordion-" ~ year,
       label: year,
       content: results
-    }
-    ])
-    %}
+    }]) %}
   {% endfor %}
 
   {% include "@molecules/Accordion/Accordion.twig" with {
@@ -40,6 +38,6 @@
     lead: "",
     items: accordion_items
   } %}
-  {% else %}  
-    <div>No results found.</div>  
+  {% else %}
+    <div>No results found.</div>
   {% endif %}

@@ -85,7 +85,8 @@
           layout: 'full-main',
           background: 'default',
           main: {
-            title: content.field_caption,
+            title: 'Tentative Ruling: ' ~ content.field_caption[0]['#text'],
+            title_tag: 'h1',
           },
           aside: {},
           classes: []
@@ -93,24 +94,24 @@
       } %}
 
       {% set body %}
-        {% if content.field_caption %}          
-            <h3>{{ 'Case Number'|t }}</h3>
-            <p>{{ label }}</p>         
+        {% if content.field_caption %}
+            <h2>{{ 'Case Number'|t }}</h2>
+            <p>{{ label }}</p>
         {% endif %}
-        {% if content.field_case_type %}          
-            <h3>{{ 'Case Type'|t }}</h3>
-            <p>{{ content.field_case_type|render }}</p>            
+        {% if content.field_case_type %}
+            <h2>{{ 'Case Type'|t }}</h2>
+            <p>{{ content.field_case_type|render }}</p>
         {% endif %}
-        {% if content.field_date_time %}          
-            <h3>{{ 'Hearing Date / Time'|t }}</h3>
-            <p>{{ content.field_date_time|render|striptags }}</p>            
+        {% if content.field_date_time %}
+            <h2>{{ 'Hearing Date / Time'|t }}</h2>
+            <p>{{ content.field_date_time|render|striptags }}</p>
         {% endif %}
-        {% if content.field_short_text %}         
-            <h3>{{ 'Nature of Proceedings'|t }}</h3>
-            <p>{{ content.field_short_text|render|striptags }}</p>            
-        {% endif %}        
-          <h3>{{  'Tentative Ruling'|t }}</h3>
-          <p>{{ content.body }}</p>         
+        {% if content.field_short_text %}
+            <h2>{{ 'Nature of Proceedings'|t }}</h2>
+            <p>{{ content.field_short_text|render|striptags }}</p>
+        {% endif %}
+          <h2>{{  'Tentative Ruling'|t }}</h2>
+          <p>{{ content.body }}</p>
       {% endset %}
 
     {% if content.field_judge %}

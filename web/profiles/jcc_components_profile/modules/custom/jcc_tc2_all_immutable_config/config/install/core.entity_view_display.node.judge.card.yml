@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.judge.field_custom_link
     - field.field.node.judge.field_date
     - field.field.node.judge.field_department
+    - field.field.node.judge.field_detail_page_title
     - field.field.node.judge.field_division
     - field.field.node.judge.field_job_title
     - field.field.node.judge.field_location
@@ -26,6 +27,11 @@ targetEntityType: node
 bundle: judge
 mode: card
 content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   field_address:
     type: address_default
     label: hidden
@@ -64,6 +70,7 @@ hidden:
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
   field_date: true
+  field_detail_page_title: true
   field_division: true
   field_job_title: true
   field_location: true
