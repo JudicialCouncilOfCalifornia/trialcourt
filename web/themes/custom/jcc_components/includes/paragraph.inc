@@ -343,6 +343,7 @@ function _jcc_components_generate_cards($cards, $sub_variants, $column_size) {
     $is_clickable = NULL;
     $title = !empty($card->field_heading->first()->value) ? $card->field_heading->first()->value : '';
     $url = NULL;
+    $link = [];
 
     if (!empty($card->field_link)) {
       $link = $card->field_link->view('default');

@@ -144,7 +144,7 @@
   {% set biography %}
     {% block bio_component %}
         {% include "@molecules/ProfileBio/ProfileBio.twig" with {
-          name: label.0,
+          name: detail_page_title|default(label),
           title: node.field_job_title.value ? node.field_job_title.entity.label,
           division: node.field_division.value ? node.field_division.entity.label,
           date: service_time,
