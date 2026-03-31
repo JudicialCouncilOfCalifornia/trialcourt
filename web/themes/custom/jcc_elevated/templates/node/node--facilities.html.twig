@@ -10,11 +10,11 @@
   {% if imageurl is not empty %}
     {% set imageTag %}
     <img src={{imageurl}} alt="{{ alt_text|escape }}"/>
-    {% endset %} 
+    {% endset %}
   {% endif %}
- 
- {% set mediacontent = imageTag is not empty ? imageTag : '' %} 
- {% set hangover_content %}  
+
+ {% set mediacontent = imageTag is not empty ? imageTag : '' %}
+ {% set hangover_content %}
     {% include "@molecules/Card/Card.twig" with {
       variant: "media-right",
       aspect: [],
@@ -26,10 +26,10 @@
             text: hero_caption,
             citation: hero_citation,
             overlay: true,
-          },         
-             
-    } %} 
-  {% endset %} 
+          },
+
+    } %}
+  {% endset %}
 
  {% include "@molecules/HeroHangover/HeroHangover.twig" with {
       hangover_hide_compact: false,
@@ -37,15 +37,15 @@
       background: 'striped-base-light-xx',
       brow: {
         variant: 'default_with_date',
-        part_one: details.county,        
+        part_one: details.county,
       },
       heading: details.hero_title,
-      news_header: true,      
+      news_header: true,
       hangover_content: hangover_content,
-      text: ''  
+      text: ''
     } %}
 
- {% set items = [] %} 
+ {% set items = [] %}
   {% for key,value in details.project_information %}
     {% if value is not empty %}
       {% set item = {
@@ -55,21 +55,21 @@
       {% set items = items|merge([item]) %}
     {% endif %}
   {% endfor %}
- 
-  {% set projectdetails %}   
+
+  {% set projectdetails %}
     {% include "@molecules/List/List.twig" with {
       variant: 'none',
       items: items,
     } %}
-    <div class="cluster"> 
+    <div class="cluster">
     {% include "@atoms/Pill/Pill.twig" with {
       variant: 'default',
       label: details['status'],
       url: ''
-    } %} 
+    } %}
     </div>
-   {% endset %} 
- 
+   {% endset %}
+
 {% set detailscard %}
   {% include "@molecules/Card/Card.twig" with {
           variant: "bordered",
@@ -78,17 +78,17 @@
           background: null  ,
           text: projectdetails,
           button_data:[],
-          heading: 'DETAILS'        
+          heading: 'DETAILS'
         }
-  %} 
-{% endset %} 
+  %}
+{% endset %}
 {% set bodycontent %}
      {% for item in content.body %}
-  {{ item['#text'] | raw }}  
+  {{ item['#text'] | raw }}
 {% endfor %}
 {% endset %}
 
-    {% set allcontent %}       
+    {% set allcontent %}
           {% include "@molecules/Body/Body.twig" with {
           variant: "default",
           heading: "",
@@ -96,49 +96,55 @@
           content: bodycontent,
           subheading: '',
           aside: detailscard
-          } %}   
+          } %}
 
-  {# START OF PROJECT IMAGES HERE #}
-  {% if projectimages is not empty %}
-<p> Click on an image below to see in full size </p>
-<div class="container">
-<div class="grid grid-demo" style="--grid-min-width: 30ch;">
-{% for image in projectimages %}  
- {% if image.url %}
-    {% set project_image %}   
-    <a href="{{ image.url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ image.alt }}" aria-label="Click to view larger image">
-    <img src="{{ image.url }}" alt="{{ image.alt|escape }}"></a>
-    {% endset %}
- {% endif %}
-         {% include "@molecules/Card/Card.twig" with {
-          variant: "media-right",
-          aspect: [],
-          clickable_card: false,
-          background: null,
-          media:  project_image | raw,
-          heading: '',
-          button_data:[],
-          text: '',  
-         media_caption: {
-            show: image.caption or image.citation ? true,
-            text: image.caption ~ image.citation ~ media_caption.show,
-            citation: image.citation,
-            overlay: true,
-          },         
-        } %}
+
+          {# START OF PROJECT IMAGES HERE #}
+{% if projectimages is not empty %}
+  <div class="facility-project-images">
+    <p>Click on an image below to see in full size</p>
+    <div class="container">
+      <div class="grid grid-demo" style="--grid-min-width: 30ch;">
+        {% for image in projectimages %}
+          {% if image.url %}
+            {% set project_image %}
+              <a href="{{ image.url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ image.alt }}" aria-label="Click to view larger image">
+                <img src="{{ image.url }}" alt="{{ image.alt|escape }}"></a>
+            {% endset %}
+          {% endif %}
+
+          {% include "@molecules/Card/Card.twig" with {
+            variant: "media-right",
+            aspect: [],
+            clickable_card: false,
+            background: null,
+            media: project_image | raw,
+            heading: '',
+            button_data: [],
+            text: '',
+            media_caption: {
+              show: image.caption or image.citation ? true : false,
+              text: image.caption,
+              citation: image.citation,
+              overlay: true
+            }
+          } %}
         {% endfor %}
-</div>
-</div>   
+      </div>
+    </div>
+  </div>
 {% endif %}
 {# END OF PROJECT IMAGES HERE #}
+
+
 {% endset %}
 </div>
-  
+
  {% block section %}
         {% include "@organisms/Section/Section.twig" with {
           sub_component_layout: 'stack',
           sub_component_data: allcontent,
-          }      
+          }
         %}
 
   {% endblock %}
