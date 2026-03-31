@@ -5,6 +5,7 @@ namespace Drupal\jcc_tc_migration\Drush\Commands;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\file\FileUsage\FileUsageInterface;
 use Drush\Commands\DrushCommands;
 
@@ -320,15 +321,11 @@ class JccTcMigrationCommands extends DrushCommands {
       return 'private://' . $matches[1];
     }
 
-    // Public files are served from the configured public file path.
+    // Public files are served from the configured file_public_path.
     // e.g. sites/default/files/newsroom — strip it to get the stream target.
-    $public_path = $this->fileSystem->realpath('public://');
-    if ($public_path) {
-      // Get the relative public path from DRUPAL_ROOT.
-      $drupal_root = \Drupal::root();
-      $relative_public = str_replace($drupal_root . '/', '', $public_path);
-      // Match the URL path against the relative public path.
-      $escaped = preg_quote('/' . $relative_public, '#');
+    $public_base = PublicStream::basePath();
+    if ($public_base) {
+      $escaped = preg_quote('/' . $public_base, '#');
       if (preg_match('#' . $escaped . '/(.+)$#', $path, $matches)) {
         return 'public://' . $matches[1];
       }
