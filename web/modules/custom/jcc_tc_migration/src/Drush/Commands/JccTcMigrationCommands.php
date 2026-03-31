@@ -132,21 +132,15 @@ class JccTcMigrationCommands extends DrushCommands {
 
     $this->logger()->notice(dt('Setting up batch for @count rows...', ['@count' => $total]));
 
-    // Build the batch.
-    $operations = [];
-    foreach (array_chunk($rows, $batch_size) as $chunk) {
-      $operations[] = [
-        [static::class, 'processBatch'],
-        [$chunk, $dry_run],
-      ];
-    }
-
+    // Use a single batch operation that processes rows one at a time
+    // with sandbox for progress tracking.
     $batch = [
       'title' => dt('Deleting media and file entities'),
-      'operations' => $operations,
+      'operations' => [
+        [[static::class, 'processBatch'], [$rows, $dry_run, $batch_size]],
+      ],
       'finished' => [static::class, 'batchFinished'],
       'init_message' => dt('Starting bulk media delete...'),
-      'progress_message' => dt('Processed @current of @total batches.'),
       'error_message' => dt('An error occurred during bulk media delete.'),
     ];
 
@@ -161,11 +155,17 @@ class JccTcMigrationCommands extends DrushCommands {
    *   Array of row data from the CSV.
    * @param bool $dry_run
    *   Whether this is a dry run.
+   * @param int $batch_size
+   *   Number of rows to process in this batch operation.
    * @param array $context
    *   Batch context.
    */
-  public static function processBatch(array $rows, $dry_run, &$context) {
-    if (!isset($context['results']['deleted'])) {
+  public static function processBatch(array $rows, $dry_run, $batch_size, &$context) {
+    // Initialize sandbox on first call.
+    if (!isset($context['sandbox']['progress'])) {
+      $context['sandbox']['progress'] = 0;
+      $context['sandbox']['total'] = count($rows);
+      $context['sandbox']['rows'] = $rows;
       $context['results']['deleted'] = 0;
       $context['results']['files_deleted'] = 0;
       $context['results']['skipped'] = 0;
@@ -178,7 +178,11 @@ class JccTcMigrationCommands extends DrushCommands {
     $media_storage = $entity_type_manager->getStorage('media');
     $file_storage = $entity_type_manager->getStorage('file');
 
-    foreach ($rows as $item) {
+    $progress = $context['sandbox']['progress'];
+    $chunk = array_slice($context['sandbox']['rows'], $progress, $batch_size);
+
+    foreach ($chunk as $item) {
+      $context['sandbox']['progress']++;
       $media_id = $item['media_id'];
       $filename = $item['filename'];
       $url = $item['url'];
@@ -323,9 +327,17 @@ class JccTcMigrationCommands extends DrushCommands {
       }
     }
 
-    // Reset entity caches after each batch to free memory.
+    // Reset entity caches after each chunk to free memory.
     $media_storage->resetCache();
     $file_storage->resetCache();
+
+    // Update progress for the progress bar.
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['total'];
+    $context['message'] = dt('Processed @progress of @total rows (@percent%).', [
+      '@progress' => $context['sandbox']['progress'],
+      '@total' => $context['sandbox']['total'],
+      '@percent' => round($context['finished'] * 100),
+    ]);
   }
 
   /**
