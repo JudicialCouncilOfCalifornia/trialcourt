@@ -65,7 +65,7 @@ class JccTcMigrationCommands extends DrushCommands {
    * @aliases bmd
    * @option dry-run Preview deletions without actually deleting.
    * @option batch-size Number of entities to process per batch. Default: 50.
-   * @usage drush jcc-tc-migration:bulk-media-delete /path/to/file.csv --dry-run
+   * @usage drush jcc-tc-migration:bulk-media-delete /path/file.csv --dry-run.
    *   Preview which media and files would be deleted.
    * @usage drush jcc-tc-migration:bulk-media-delete /path/to/file.csv
    *   Delete all media and files listed in the CSV.
@@ -83,10 +83,7 @@ class JccTcMigrationCommands extends DrushCommands {
       return;
     }
 
-    $dry_run = $options['dry-run'];
-    $batch_size = (int) $options['batch-size'];
     $header = fgetcsv($handle);
-
     if (!$header) {
       $this->logger()->error(dt('CSV file is empty.'));
       fclose($handle);
@@ -126,175 +123,235 @@ class JccTcMigrationCommands extends DrushCommands {
       return;
     }
 
+    $dry_run = $options['dry-run'];
+    $batch_size = (int) $options['batch-size'];
+
     if ($dry_run) {
       $this->logger()->notice(dt('DRY RUN — no entities will be deleted.'));
     }
 
-    $this->logger()->notice(dt('Processing @count rows...', ['@count' => $total]));
+    $this->logger()->notice(dt('Setting up batch for @count rows...', ['@count' => $total]));
 
-    $deleted = 0;
-    $files_deleted = 0;
-    $skipped = 0;
-    $errors = 0;
-    $media_storage = $this->entityTypeManager->getStorage('media');
-    $file_storage = $this->entityTypeManager->getStorage('file');
+    // Build the batch.
+    $operations = [];
+    foreach (array_chunk($rows, $batch_size) as $chunk) {
+      $operations[] = [
+        [static::class, 'processBatch'],
+        [$chunk, $dry_run],
+      ];
+    }
 
-    foreach (array_chunk($rows, $batch_size) as $batch_index => $batch) {
-      foreach ($batch as $item) {
-        $media_id = $item['media_id'];
-        $filename = $item['filename'];
-        $url = $item['url'];
+    $batch = [
+      'title' => dt('Deleting media and file entities'),
+      'operations' => $operations,
+      'finished' => [static::class, 'batchFinished'],
+      'init_message' => dt('Starting bulk media delete...'),
+      'progress_message' => dt('Processed @current of @total batches.'),
+      'error_message' => dt('An error occurred during bulk media delete.'),
+    ];
 
-        $media = NULL;
-        $file = NULL;
+    batch_set($batch);
+    drush_backend_batch_process();
+  }
 
-        // Extract numeric media ID from URL if needed.
-        if (!empty($media_id) && !is_numeric($media_id)) {
-          if (preg_match('#/media/(\d+)#', $media_id, $matches)) {
-            $media_id = $matches[1];
-          }
-          else {
-            $media_id = '';
-          }
-        }
+  /**
+   * Batch operation callback: process a chunk of rows.
+   *
+   * @param array $rows
+   *   Array of row data from the CSV.
+   * @param bool $dry_run
+   *   Whether this is a dry run.
+   * @param array $context
+   *   Batch context.
+   */
+  public static function processBatch(array $rows, $dry_run, &$context) {
+    if (!isset($context['results']['deleted'])) {
+      $context['results']['deleted'] = 0;
+      $context['results']['files_deleted'] = 0;
+      $context['results']['skipped'] = 0;
+      $context['results']['errors'] = 0;
+    }
 
-        // Try to load and delete the media entity if an ID is provided.
-        if (!empty($media_id)) {
-          /** @var \Drupal\media\MediaInterface $media */
-          $media = $media_storage->load($media_id);
-        }
+    $entity_type_manager = \Drupal::entityTypeManager();
+    $file_usage = \Drupal::service('file.usage');
+    $file_system = \Drupal::service('file_system');
+    $media_storage = $entity_type_manager->getStorage('media');
+    $file_storage = $entity_type_manager->getStorage('file');
 
-        if ($media) {
-          // Get the source file entity from the media.
-          $source_field = $media->getSource()->getConfiguration()['source_field'];
-          $file_field = $media->get($source_field);
-          if (!$file_field->isEmpty()) {
-            $file = $file_storage->load($file_field->target_id);
-          }
+    foreach ($rows as $item) {
+      $media_id = $item['media_id'];
+      $filename = $item['filename'];
+      $url = $item['url'];
 
-          if ($dry_run) {
-            $this->logger()->notice(dt('[DRY RUN] Would delete media @id (@name)@file', [
-              '@id' => $media_id,
-              '@name' => $media->label(),
-              '@file' => $file ? ' and file ' . $file->getFilename() : '',
-            ]));
-            $deleted++;
-            continue;
-          }
+      $media = NULL;
+      $file = NULL;
 
-          try {
-            $media->delete();
-            $deleted++;
-          }
-          catch (\Exception $e) {
-            $this->logger()->error(dt('Error deleting media @id: @msg', [
-              '@id' => $media_id,
-              '@msg' => $e->getMessage(),
-            ]));
-            $errors++;
-            continue;
-          }
+      // Extract numeric media ID from URL if needed.
+      if (!empty($media_id) && !is_numeric($media_id)) {
+        if (preg_match('#/media/(\d+)#', $media_id, $matches)) {
+          $media_id = $matches[1];
         }
         else {
-          // Media missing or no media_id — derive file URI from URL.
-          if (!empty($url)) {
-            $uri = $this->resolveUriFromUrl($url);
-            if ($uri) {
-              // Try decoded URI first, then URL-encoded version.
-              $files = $file_storage->loadByProperties(['uri' => $uri]);
-              if (!$files) {
-                $encoded_uri = str_replace(' ', '%20', $uri);
-                $files = $file_storage->loadByProperties(['uri' => $encoded_uri]);
-              }
-              $file = $files ? reset($files) : NULL;
-            }
-          }
-
-          if (!$file) {
-            $this->logger()->warning(dt('No media or file entity found for row: media_id=@id, filename=@name, url=@url', [
-              '@id' => $media_id ?: '(empty)',
-              '@name' => $filename,
-              '@url' => $url ?: '(empty)',
-            ]));
-            $skipped++;
-            continue;
-          }
-
-          if ($dry_run) {
-            $this->logger()->notice(dt('[DRY RUN] No media; would delete file entity @fid (@uri)', [
-              '@fid' => $file->id(),
-              '@uri' => $file->getFileUri(),
-            ]));
-            $files_deleted++;
-            continue;
-          }
-        }
-
-        // Delete file entity if it exists and is no longer referenced.
-        if ($file) {
-          $usage = $this->fileUsage->listUsage($file);
-          if (empty($usage)) {
-            try {
-              $file->delete();
-              $files_deleted++;
-            }
-            catch (\Throwable $e) {
-              // A hook (e.g. CDN purge) may throw on URIs with special
-              // characters, rolling back the transaction. Fall back to
-              // direct database removal.
-              $this->logger()->info(dt('Normal delete failed for file @fid, falling back to direct removal: @msg', [
-                '@fid' => $file->id(),
-                '@msg' => $e->getMessage(),
-              ]));
-              try {
-                $fid = $file->id();
-                $uri = $file->getFileUri();
-                $db = \Drupal::database();
-                $db->delete('file_usage')->condition('fid', $fid)->execute();
-                $db->delete('file_managed')->condition('fid', $fid)->execute();
-                // Remove the physical file.
-                if ($uri && file_exists($this->fileSystem->realpath($uri))) {
-                  $this->fileSystem->delete($uri);
-                }
-                $file_storage->resetCache([$fid]);
-                $files_deleted++;
-                $this->logger()->notice(dt('File @fid force-deleted via direct DB removal.', ['@fid' => $fid]));
-              }
-              catch (\Throwable $e2) {
-                $this->logger()->error(dt('Error force-deleting file @fid: @msg', [
-                  '@fid' => $file->id(),
-                  '@msg' => $e2->getMessage(),
-                ]));
-                $errors++;
-              }
-            }
-          }
-          else {
-            $this->logger()->info(dt('File @fid (@fname) still in use, kept.', [
-              '@fid' => $file->id(),
-              '@fname' => $file->getFilename(),
-            ]));
-          }
+          $media_id = '';
         }
       }
 
-      // Reset entity caches between batches to free memory.
-      $media_storage->resetCache();
-      $file_storage->resetCache();
+      // Try to load the media entity if an ID is provided.
+      if (!empty($media_id)) {
+        /** @var \Drupal\media\MediaInterface $media */
+        $media = $media_storage->load($media_id);
+      }
 
-      $processed = min(($batch_index + 1) * $batch_size, $total);
-      $this->logger()->notice(dt('Progress: @processed / @total', [
-        '@processed' => $processed,
-        '@total' => $total,
-      ]));
+      if ($media) {
+        // Get the source file entity from the media.
+        $source_field = $media->getSource()->getConfiguration()['source_field'];
+        $file_field = $media->get($source_field);
+        if (!$file_field->isEmpty()) {
+          $file = $file_storage->load($file_field->target_id);
+        }
+
+        if ($dry_run) {
+          \Drupal::logger('jcc_tc_migration')->notice(dt('[DRY RUN] Would delete media @id (@name)@file', [
+            '@id' => $media_id,
+            '@name' => $media->label(),
+            '@file' => $file ? ' and file ' . $file->getFilename() : '',
+          ]));
+          $context['results']['deleted']++;
+          $context['message'] = dt('[DRY RUN] Media @id (@name)', [
+            '@id' => $media_id,
+            '@name' => $media->label(),
+          ]);
+          continue;
+        }
+
+        try {
+          $media->delete();
+          $context['results']['deleted']++;
+          $context['message'] = dt('Deleted media @id', ['@id' => $media_id]);
+        }
+        catch (\Exception $e) {
+          \Drupal::logger('jcc_tc_migration')->error(dt('Error deleting media @id: @msg', [
+            '@id' => $media_id,
+            '@msg' => $e->getMessage(),
+          ]));
+          $context['results']['errors']++;
+          continue;
+        }
+      }
+      else {
+        // Media missing or no media_id — derive file URI from URL.
+        if (!empty($url)) {
+          $uri = static::resolveUriFromUrl($url);
+          if ($uri) {
+            // Try decoded URI first, then URL-encoded version.
+            $files = $file_storage->loadByProperties(['uri' => $uri]);
+            if (!$files) {
+              $encoded_uri = str_replace(' ', '%20', $uri);
+              $files = $file_storage->loadByProperties(['uri' => $encoded_uri]);
+            }
+            $file = $files ? reset($files) : NULL;
+          }
+        }
+
+        if (!$file) {
+          \Drupal::logger('jcc_tc_migration')->warning(dt('No media or file entity found for row: media_id=@id, filename=@name, url=@url', [
+            '@id' => $media_id ?: '(empty)',
+            '@name' => $filename,
+            '@url' => $url ?: '(empty)',
+          ]));
+          $context['results']['skipped']++;
+          continue;
+        }
+
+        if ($dry_run) {
+          \Drupal::logger('jcc_tc_migration')->notice(dt('[DRY RUN] No media; would delete file entity @fid (@uri)', [
+            '@fid' => $file->id(),
+            '@uri' => $file->getFileUri(),
+          ]));
+          $context['results']['files_deleted']++;
+          $context['message'] = dt('[DRY RUN] File @fid', ['@fid' => $file->id()]);
+          continue;
+        }
+      }
+
+      // Delete file entity if it exists and is no longer referenced.
+      if ($file) {
+        $usage = $file_usage->listUsage($file);
+        if (empty($usage)) {
+          try {
+            $file->delete();
+            $context['results']['files_deleted']++;
+          }
+          catch (\Throwable $e) {
+            // A hook (e.g. CDN purge) may throw on URIs with special
+            // characters, rolling back the transaction. Fall back to
+            // direct database removal.
+            \Drupal::logger('jcc_tc_migration')->info(dt('Normal delete failed for file @fid, falling back to direct removal: @msg', [
+              '@fid' => $file->id(),
+              '@msg' => $e->getMessage(),
+            ]));
+            try {
+              $fid = $file->id();
+              $file_uri = $file->getFileUri();
+              $db = \Drupal::database();
+              $db->delete('file_usage')->condition('fid', $fid)->execute();
+              $db->delete('file_managed')->condition('fid', $fid)->execute();
+              // Remove the physical file.
+              $real_path = $file_system->realpath($file_uri);
+              if ($file_uri && $real_path && file_exists($real_path)) {
+                $file_system->delete($file_uri);
+              }
+              $file_storage->resetCache([$fid]);
+              $context['results']['files_deleted']++;
+              \Drupal::logger('jcc_tc_migration')->notice(dt('File @fid force-deleted via direct DB removal.', ['@fid' => $fid]));
+            }
+            catch (\Throwable $e2) {
+              \Drupal::logger('jcc_tc_migration')->error(dt('Error force-deleting file @fid: @msg', [
+                '@fid' => $file->id(),
+                '@msg' => $e2->getMessage(),
+              ]));
+              $context['results']['errors']++;
+            }
+          }
+        }
+        else {
+          \Drupal::logger('jcc_tc_migration')->info(dt('File @fid (@fname) still in use, kept.', [
+            '@fid' => $file->id(),
+            '@fname' => $file->getFilename(),
+          ]));
+        }
+      }
     }
 
-    $this->logger()->notice(dt('Done. Media deleted: @deleted, Files deleted: @files, Skipped: @skipped, Errors: @errors', [
-      '@deleted' => $deleted,
-      '@files' => $files_deleted,
-      '@skipped' => $skipped,
-      '@errors' => $errors,
-    ]));
+    // Reset entity caches after each batch to free memory.
+    $media_storage->resetCache();
+    $file_storage->resetCache();
+  }
+
+  /**
+   * Batch finished callback.
+   *
+   * @param bool $success
+   *   Whether the batch completed without errors.
+   * @param array $results
+   *   Accumulated results from batch operations.
+   * @param array $operations
+   *   Remaining operations if batch failed.
+   */
+  public static function batchFinished($success, array $results, array $operations) {
+    if ($success) {
+      \Drupal::logger('jcc_tc_migration')->notice(dt('Done. Media deleted: @deleted, Files deleted: @files, Skipped: @skipped, Errors: @errors', [
+        '@deleted' => $results['deleted'] ?? 0,
+        '@files' => $results['files_deleted'] ?? 0,
+        '@skipped' => $results['skipped'] ?? 0,
+        '@errors' => $results['errors'] ?? 0,
+      ]));
+    }
+    else {
+      \Drupal::logger('jcc_tc_migration')->error(dt('Batch finished with errors. @count operations remaining.', [
+        '@count' => count($operations),
+      ]));
+    }
   }
 
   /**
@@ -307,7 +364,7 @@ class JccTcMigrationCommands extends DrushCommands {
    * @return string|null
    *   The stream URI (public:// or private://), or NULL if unresolvable.
    */
-  protected function resolveUriFromUrl($url) {
+  protected static function resolveUriFromUrl($url) {
     // Strip scheme and host to get the path. We avoid parse_url() because
     // filenames may contain '#' which it interprets as a fragment delimiter.
     $path = preg_replace('#^https?://[^/]+#', '', $url);
