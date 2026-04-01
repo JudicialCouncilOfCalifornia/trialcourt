@@ -16,6 +16,12 @@ use Drupal\node\NodeInterface;
  */
 function jcc_components_preprocess_node(&$variables) {
   $node = $variables['node'];
+
+  // Restrict if hiding translations & currently not viewing orig lang.
+  if (theme_get_setting('hide_translation') && !$node->isDefaultTranslation()) {
+    __jcc_restrict_to_authenticated();
+  }
+
   $function = "jcc_components_node_" . $node->bundle();
   if (function_exists($function)) {
     $function($variables, $node);

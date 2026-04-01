@@ -11,6 +11,7 @@ use Drupal\Core\Url;
 use Drupal\linkit\SubstitutionManagerInterface;
 use Drupal\linkit\Utility\LinkitHelper;
 use Drupal\user\Entity\User;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Helper function for $entity edit contextual link.
@@ -85,4 +86,15 @@ function _jcc_components_media_substitute_url($uri) {
     }
   }
   return $path;
+}
+
+/**
+ * Helper function to deny access if not authenticated.
+ */
+function __jcc_restrict_to_authenticated() {
+  $current_user = \Drupal::currentUser();
+  $user_roles = $current_user->getRoles();
+  if (!in_array('authenticated', $user_roles)) {
+    return throw new AccessDeniedHttpException();
+  }
 }
