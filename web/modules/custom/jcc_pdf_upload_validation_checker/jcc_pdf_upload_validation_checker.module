@@ -106,19 +106,13 @@ function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void
         continue;
       }
 
-      // Newly attached/replaced PDFs should become pending
-      // unless they already passed a manual audit.
-      if ($type === 'media' && $file->hasField('field_pdf_audit_status')) {
+      // Newly attached/replaced PDFs should always become pending.
+      if ($file->hasField('field_pdf_audit_status')) {
         $current_status = (string) $file->get('field_pdf_audit_status')->value;
 
-        if ($current_status !== 'pass' && $current_status !== 'pending') {
+        if ($current_status !== 'pending') {
           $file->set('field_pdf_audit_status', 'pending');
           $file->save();
-        }
-
-        // Do not re-queue files that already passed manually.
-        if ($current_status === 'pass') {
-          continue;
         }
       }
 
@@ -155,6 +149,8 @@ function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entit
       ->getStorage('media')
       ->loadUnchanged($entity->id());
   }
+
+  _jcc_pdf_upload_validation_checker_mark_new_pdfs_pending($entity, $original);
 
   foreach ($file_fields as $field_name) {
     if (!$entity->hasField($field_name) || $entity->get($field_name)->isEmpty()) {
@@ -791,4 +787,59 @@ function jcc_pdf_upload_validation_checker_manual_check_ajax(array &$form, FormS
   $response->addCommand(new ReplaceCommand('#' . $result_wrapper_id, $result_html));
 
   return $response;
+}
+
+/**
+ * Marks newly attached PDF files as pending on media save.
+ */
+function _jcc_pdf_upload_validation_checker_mark_new_pdfs_pending(MediaInterface $entity, ?MediaInterface $original = NULL): void {
+  $file_storage = \Drupal::entityTypeManager()->getStorage('file');
+
+  foreach (_jcc_pdf_upload_validation_checker_file_fields() as $field_name) {
+    if (!$entity->hasField($field_name) || $entity->get($field_name)->isEmpty()) {
+      continue;
+    }
+
+    $original_fids = [];
+    if ($original && $original->hasField($field_name) && !$original->get($field_name)->isEmpty()) {
+      foreach ($original->get($field_name) as $item) {
+        $fid = (int) $item->target_id;
+        if ($fid) {
+          $original_fids[$fid] = TRUE;
+        }
+      }
+    }
+
+    foreach ($entity->get($field_name) as $item) {
+      $fid = (int) $item->target_id;
+      if (!$fid || isset($original_fids[$fid])) {
+        continue;
+      }
+
+      $file = $file_storage->load($fid);
+      if (!$file instanceof FileInterface || $file->getMimeType() !== 'application/pdf') {
+        continue;
+      }
+
+      if (!$file->hasField('field_pdf_audit_status')) {
+        continue;
+      }
+
+      $status = (string) $file->get('field_pdf_audit_status')->value;
+
+      if ($status !== 'pending' && $status !== 'pass') {
+        $file->set('field_pdf_audit_status', 'pending');
+        $file->save();
+
+        \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+          'Set PDF audit status to pending for fid=@fid on media @mid field @field',
+          [
+            '@fid' => $fid,
+            '@mid' => $entity->id() ?: 'new',
+            '@field' => $field_name,
+          ]
+        );
+      }
+    }
+  }
 }
