@@ -5,6 +5,7 @@ dependencies:
     - field.field.paragraph.data_visualization_embed.field_data_image
     - field.field.paragraph.data_visualization_embed.field_height
     - field.field.paragraph.data_visualization_embed.field_height_mobile
+    - field.field.paragraph.data_visualization_embed.field_iframe_title
     - field.field.paragraph.data_visualization_embed.field_link
     - field.field.paragraph.data_visualization_embed.field_mobile_data_image
     - field.field.paragraph.data_visualization_embed.field_mobile_link
@@ -37,6 +38,7 @@ third_party_settings:
         - field_link
         - field_width
         - field_height
+        - field_iframe_title
       label: Iframe
       region: content
       parent_name: ''
@@ -86,7 +88,15 @@ content:
     third_party_settings: {  }
   field_height_mobile:
     type: string_textfield
-    weight: 23
+    weight: 27
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_iframe_title:
+    type: string_textfield
+    weight: 3
     region: content
     settings:
       size: 60
@@ -109,7 +119,7 @@ content:
     third_party_settings: {  }
   field_mobile_link:
     type: link_default
-    weight: 21
+    weight: 25
     region: content
     settings:
       placeholder_url: ''
@@ -125,7 +135,7 @@ content:
     third_party_settings: {  }
   field_width_mobile:
     type: string_textfield
-    weight: 22
+    weight: 26
     region: content
     settings:
       size: 60

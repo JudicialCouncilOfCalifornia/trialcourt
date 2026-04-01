@@ -416,6 +416,10 @@ function jcc_elevated_paragraph_hero_banner(array &$variables, ParagraphInterfac
       if ($icon) {
         $icon = str_replace(['icon-', 'dark-', 'white-'], ['', '', ''], $icon);
       }
+      $aria_label = NULL;
+      if ($card->entity->field_link->options['attributes'] && $card->entity->field_link->options['attributes']['aria-label']) {
+        $aria_label = $card->entity->field_link->options['attributes']['aria-label'];
+      }
       $variables['cards'][] = [
         'variant' => 'striped-aligned',
         'clickable_card' => TRUE,
@@ -428,7 +432,7 @@ function jcc_elevated_paragraph_hero_banner(array &$variables, ParagraphInterfac
         'button_data' => [
           'label' => 'Button',
           'href' => Url::fromUri($card->entity->field_link->uri)->toString(),
-          'aria_label' => $card->entity->field_link->options['attributes']['aria-label'],
+          'aria_label' => $aria_label,
           'variant' => 'primary',
         ],
       ];
