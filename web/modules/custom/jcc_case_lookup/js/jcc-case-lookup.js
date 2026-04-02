@@ -163,7 +163,7 @@
           if (detectedCases) {
             if ($(modal).length === 0) {
               // Case search contextual modal, screen readers will rely on results page.
-              let caseSearch = '<div id="case-search-field-modal" class="usa-prose case-search-field-modal" aria-hidden="true"></div>';
+              let caseSearch = '<div id="case-search-field-modal" class="usa-prose case-search-field-modal"></div>';
               $(caseSearch).insertAfter(globalSearchField);
 
               // Modal form submission event handler.
