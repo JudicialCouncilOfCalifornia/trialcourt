@@ -6,14 +6,11 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\editor\Entity\Editor;
-use Drupal\media\MediaInterface;
 use Drupal\node\NodeInterface;
 use Drupal\workflows\WorkflowInterface;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 // @codingStandardsIgnoreStart
 
@@ -27,12 +24,12 @@ function jcc_elevated_custom_page_attachments(array &$attachments) {
 function jcc_elevated_custom_cron() {
   $today = (new \DateTimeImmutable('today'))
   ->setTimezone(new \DateTimeZone(date_default_timezone_get()))
-  ->setTime(0, 0, 0); 
+  ->setTime(0, 0, 0);
   $node_storage = \Drupal::entityTypeManager()->getStorage('node');
   $kv = \Drupal::keyValue('feedback_mail_sent');
   $mail_manager = \Drupal::service('plugin.manager.mail');
   $langcode = \Drupal::languageManager()->getDefaultLanguage()->getId();
-  
+
   $nids = $node_storage->getQuery()
     ->condition('type', 'surplus_materials')
     ->exists('field_renewal_date')
@@ -77,8 +74,8 @@ function jcc_elevated_custom_cron() {
       }
     }
 
-  $warning_date = $today->modify('+5 days'); 
-  if ($renewal_date == $warning_date && $current_state === 'published') {   
+  $warning_date = $today->modify('+5 days');
+  if ($renewal_date == $warning_date && $current_state === 'published') {
     $key =  $node->id();
     if (!$kv->get($key)) {
       $author = $node->getOwner();
@@ -102,7 +99,7 @@ function jcc_elevated_custom_cron() {
 
 function jcc_elevated_mail($key, &$message, $params) {
   switch ($key) {
-    case 'expiry_warning':      
+    case 'expiry_warning':
       $node = $params['node'];
       $url = Url::fromRoute('entity.node.canonical', ['node' => $node->id()], [
         'absolute' => TRUE,
@@ -683,14 +680,6 @@ function jcc_elevated_custom_form_node_alert_form_alter(&$form, $form_state): vo
  * Implements hook_file_download().
  */
 function jcc_elevated_custom_file_download($uri): array {
-  // Do not allow file viewing if authenticated access only.
-  switch (__jcc_site_name()) {
-    // If CJER officers site.
-    case 'cjer-judicial':
-      __jcc_restrict_to_authenticated();
-      break;
-  }
-
   // Set all document files to set the appropriate name when a download link is
   // clicked. Because of the private file system, the last part of the main url
   // is used. In private files output, that always ends in /files, which causes
@@ -739,19 +728,6 @@ function jcc_elevated_custom_file_download($uri): array {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_access().
- */
-function jcc_elevated_custom_media_access(MediaInterface $media, $op, AccountInterface $account) {
-  // Do not allow media page viewing if authenticated access only.
-  switch (__jcc_site_name()) {
-    // If CJER officers site.
-    case 'cjer-judicial':
-      __jcc_restrict_to_authenticated();
-      break;
-  }
-}
-
-/**
  * Helper function return site machine name.
  */
 function __jcc_site_name() {
@@ -760,15 +736,4 @@ function __jcc_site_name() {
   preg_match($pattern, $config_dir, $site);
 
   return $site[0];
-}
-
-/**
- * Helper function to deny access if not authenticated.
- */
-function __jcc_restrict_to_authenticated() {
-  $current_user = \Drupal::currentUser();
-  $user_roles = $current_user->getRoles();
-  if (!in_array('authenticated', $user_roles)) {
-    return throw new AccessDeniedHttpException();
-  }
 }
