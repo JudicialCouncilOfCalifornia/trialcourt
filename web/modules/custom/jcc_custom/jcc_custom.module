@@ -21,6 +21,7 @@ use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Implements hook_page_attachments().
@@ -1355,5 +1356,16 @@ function jcc_custom_preprocess_paragraph(array &$variables) {
         $variables['#cache']['max-age'] = 0;
       }
     }
+  }
+}
+
+/**
+ * Helper function to deny access if not authenticated.
+ */
+function jcc_custom_restrict_to_authenticated() {
+  $current_user = \Drupal::currentUser();
+  $user_roles = $current_user->getRoles();
+  if (!in_array('authenticated', $user_roles)) {
+    return throw new AccessDeniedHttpException();
   }
 }

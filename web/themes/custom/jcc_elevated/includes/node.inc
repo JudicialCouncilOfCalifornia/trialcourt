@@ -24,6 +24,12 @@ function jcc_elevated_preprocess_node(&$variables) {
   $variables['sidebar_navigation'] = FALSE;
 
   $node = $variables['node'];
+
+  // Restrict if hiding translations & currently not viewing orig lang.
+  if (theme_get_setting('hide_translation') && !$node->isDefaultTranslation()) {
+    jcc_custom_restrict_to_authenticated();
+  }
+
   $function = "jcc_elevated_node_" . $node->bundle();
   if (function_exists($function)) {
     $function($variables, $node);
