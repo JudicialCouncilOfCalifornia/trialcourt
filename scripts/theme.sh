@@ -77,7 +77,7 @@ while getopts "h?abiw:" opt; do
         # build. Happens when theme.sh -b <theme> is called from CI config.yml.
         # Previously, every project would build every theme. This limits it to
         # only the base theme and the project theme, at least.
-        export NODE_OPTIONS=--openssl-legacy-provider
+        # export NODE_OPTIONS=--openssl-legacy-provider
         if [[ $2 != jcc_* ]] ; then
           theme_name="jcc_$2"
           echo "No jcc_ prefix detected. Building jcc_base first."
@@ -94,7 +94,7 @@ while getopts "h?abiw:" opt; do
         # build. Happens when theme.sh -b <theme> is called from CI config.yml.
         # Previously, every project would build every theme. This limits it to
         # only the base theme and the project theme, at least.
-        export NODE_OPTIONS=--openssl-legacy-provider
+        # export NODE_OPTIONS=--openssl-legacy-provider
         if [[ $2 != jcc_* ]] ; then
           theme_name="jcc_$2"
           echo "No jcc_ prefix detected. Installing jcc_base first."
