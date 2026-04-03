@@ -52,10 +52,10 @@ class SettingsForm extends ConfigFormBase {
       ],
     ];
 
-    $form['equal_web_settings']['api_key'] = [
+    $form['equal_web_settings']['equal_web_api_key'] = [
       '#type' => 'textfield',
       '#title' => $this->t('EqualWeb API key'),
-      '#default_value' => $config->get('api_key'),
+      '#default_value' => $config->get('equal_web_api_key'),
       '#required' => TRUE,
     ];
 
@@ -78,7 +78,7 @@ class SettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('jcc_pdf_upload_validation_checker.settings')
       ->set('pdf_validation_api', $form_state->getValue('pdf_validation_api'))
-      ->set('api_key', $form_state->getValue('api_key'))
+      ->set('equal_web_api_key', $form_state->getValue('equal_web_api_key'))
       ->save();
 
     parent::submitForm($form, $form_state);
