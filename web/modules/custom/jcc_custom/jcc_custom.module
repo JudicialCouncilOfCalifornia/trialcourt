@@ -10,6 +10,7 @@ use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -21,7 +22,7 @@ use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Implements hook_page_attachments().
@@ -105,6 +106,26 @@ function jcc_custom_editor_js_settings_alter(&$settings) {
           $settings['editor']['formats'][$name]['editorSettings']['removeButtons'] = 'Source';
         }
       }
+    }
+  }
+}
+
+/**
+ * Implements hook_node_view().
+ */
+function jcc_custom_node_view(array &$build, EntityInterface $node, $display, $view_mode) {
+  // Restrict if hiding translations & currently not viewing orig lang.
+  if (\Drupal::currentUser()->isAnonymous()) {
+    if (theme_get_setting('hide_translation') && !$node->isDefaultTranslation()) {
+      $untranslated_node = $node->getUntranslated();
+      $untranslated_url = $untranslated_node->toUrl()->toString() ?? NULL;
+
+      // Redirect to untranslated content or homepage temporarily.
+      $response = new RedirectResponse('/', 307);
+      if ($untranslated_url) {
+        $response = new RedirectResponse($untranslated_url, 307);
+      }
+      $response->send();
     }
   }
 }
@@ -1356,16 +1377,5 @@ function jcc_custom_preprocess_paragraph(array &$variables) {
         $variables['#cache']['max-age'] = 0;
       }
     }
-  }
-}
-
-/**
- * Helper function to deny access if not authenticated.
- */
-function jcc_custom_restrict_to_authenticated() {
-  $current_user = \Drupal::currentUser();
-  $user_roles = $current_user->getRoles();
-  if (!in_array('authenticated', $user_roles)) {
-    return throw new AccessDeniedHttpException();
   }
 }
