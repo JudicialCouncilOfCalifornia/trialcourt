@@ -239,6 +239,12 @@ function jcc_elevated_form_system_theme_settings_alter(&$form, FormStateInterfac
     // Default single landing set.
     $form['default_landing_pages'] = array_merge($form['default_landing_pages'], __jcc_landingpage_options_set($bundles, NULL));
   }
+
+  // Custom theme settings submit handler.
+  $moduleHandler = \Drupal::service('module_handler');
+  if ($moduleHandler->moduleExists('jcc_custom')) {
+    $form['#submit'][] = 'jcc_custom_themes_settings_submit';
+  }
 }
 
 /**
