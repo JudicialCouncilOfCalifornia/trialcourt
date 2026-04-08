@@ -30,8 +30,7 @@ public function auditFile(FileInterface $file): array {
   $config = $this->configFactory->get('jcc_pdf_upload_validation_checker.settings');
   $api = (string) ($config->get('pdf_validation_api') ?? 'pdf_audit');
 
-  // Default to the current implementation unless explicitly set to equal_web.
-  if ($api === 'equal_web') {
+  if ($api === 'EqualWeb' || $api === 'equal_web' || $api === 'equalweb') {
     return $this->auditWithEqualWeb($file, $config->get('equal_web_api_key'));
   }
 
@@ -104,7 +103,15 @@ private function auditWithPdfAudit(FileInterface $file): array {
  * EqualWeb implementation.
  */
 private function auditWithEqualWeb(FileInterface $file, ?string $apiKey): array {
-  if (empty($apiKey)) {
+  $apiKey = trim((string) $apiKey);
+
+  if ($apiKey === '') {
+    $this->markEqualWebSummary(
+      $file,
+      ['Missing equal_web_api_key configuration.'],
+      'EqualWeb API key is missing.'
+    );
+
     return [
       'ok' => FALSE,
       'passed' => FALSE,
@@ -116,6 +123,12 @@ private function auditWithEqualWeb(FileInterface $file, ?string $apiKey): array 
 
   $realPath = \Drupal::service('file_system')->realpath($file->getFileUri());
   if (!$realPath || !is_readable($realPath)) {
+    $this->markEqualWebSummary(
+      $file,
+      ['The PDF file could not be resolved to a readable local path.'],
+      'Unable to read PDF from disk.'
+    );
+
     return [
       'ok' => FALSE,
       'passed' => FALSE,
@@ -126,7 +139,19 @@ private function auditWithEqualWeb(FileInterface $file, ?string $apiKey): array 
   }
 
   try {
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+      'EqualWeb upload request: method=PUT path=@path filename=@filename mime=@mime size=@size',
+      [
+        '@path' => $realPath,
+        '@filename' => basename($realPath),
+        '@mime' => mime_content_type($realPath) ?: 'unknown',
+        '@size' => file_exists($realPath) ? filesize($realPath) : 0,
+      ]
+    );
+
     // Step 1: upload document.
+    $handle = fopen($realPath, 'rb');
+
     $uploadResponse = $this->httpClient->request(
       'PUT',
       'https://login.equalweb.com/api/v2/docs/upload',
@@ -141,33 +166,60 @@ private function auditWithEqualWeb(FileInterface $file, ?string $apiKey): array 
         'multipart' => [
           [
             'name' => 'file',
-            'contents' => fopen($realPath, 'rb'),
-            'filename' => $file->getFilename(),
-            'headers' => [
-              'Content-Type' => 'application/pdf',
-            ],
+            'contents' => $handle,
+            'filename' => basename($realPath),
           ],
         ],
       ]
     );
 
-    $uploadCode = $uploadResponse->getStatusCode();
-    $uploadJson = json_decode((string) $uploadResponse->getBody(), TRUE) ?: [];
+    if (is_resource($handle)) {
+      fclose($handle);
+    }
 
-    if (!in_array($uploadCode, [200, 201], TRUE) || empty($uploadJson['id'])) {
+    $uploadCode = $uploadResponse->getStatusCode();
+    $uploadBody = (string) $uploadResponse->getBody();
+    $uploadJson = json_decode($uploadBody, TRUE) ?: [];
+
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+      'EqualWeb upload response: status=@status body=@body',
+      [
+        '@status' => $uploadCode,
+        '@body' => $uploadBody,
+      ]
+    );
+
+    $reportId =
+      $uploadJson['id']
+      ?? $uploadJson['data']['id']
+      ?? $uploadJson['fileId']
+      ?? $uploadJson['document_id']
+      ?? NULL;
+
+    if (!in_array($uploadCode, [200, 201], TRUE) || empty($reportId)) {
+      $readableErrors = [
+        'Upload HTTP status: ' . $uploadCode,
+        'Upload response: ' . ($uploadBody !== '' ? $uploadBody : '[empty response]'),
+      ];
+
+      $this->markEqualWebSummary(
+        $file,
+        $readableErrors,
+        'EqualWeb upload failed.'
+      );
+
       return [
         'ok' => FALSE,
         'passed' => FALSE,
         'summary' => 'EqualWeb upload failed.',
-        'errors' => ['EqualWeb did not return a document ID.'],
+        'errors' => $readableErrors,
         'raw' => [
           'upload' => $uploadJson,
+          'upload_body' => $uploadBody,
         ],
         'status_code' => $uploadCode,
       ];
     }
-
-    $reportId = $uploadJson['id'];
 
     // Step 2: start audit.
     $auditResponse = $this->httpClient->post(
@@ -183,23 +235,43 @@ private function auditWithEqualWeb(FileInterface $file, ?string $apiKey): array 
         ],
         'json' => [
           'files' => [$reportId],
-          'type' => 'audit',
         ],
       ]
     );
 
     $auditCode = $auditResponse->getStatusCode();
-    $auditJson = json_decode((string) $auditResponse->getBody(), TRUE) ?: [];
+    $auditBody = (string) $auditResponse->getBody();
+    $auditJson = json_decode($auditBody, TRUE) ?: [];
+
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+      'EqualWeb audit response: status=@status body=@body',
+      [
+        '@status' => $auditCode,
+        '@body' => $auditBody,
+      ]
+    );
 
     if (!in_array($auditCode, [200, 202], TRUE)) {
+      $errors = [
+        'Audit HTTP status: ' . $auditCode,
+        'Audit response: ' . ($auditBody !== '' ? $auditBody : '[empty response]'),
+      ];
+
+      $this->markEqualWebSummary(
+        $file,
+        $errors,
+        'EqualWeb audit request failed.'
+      );
+
       return [
         'ok' => FALSE,
         'passed' => FALSE,
         'summary' => 'EqualWeb audit request failed.',
-        'errors' => ['EqualWeb did not accept the audit request.'],
+        'errors' => $errors,
         'raw' => [
           'upload' => $uploadJson,
           'audit' => $auditJson,
+          'audit_body' => $auditBody,
         ],
         'status_code' => $auditCode,
       ];
@@ -208,17 +280,17 @@ private function auditWithEqualWeb(FileInterface $file, ?string $apiKey): array 
     // Step 3: poll until the report is ready.
     $statusJson = [];
     $status = NULL;
-    $maxAttempts = 12;
+    $maxAttempts = 180;
 
     for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
       if ($attempt > 0) {
-        usleep(1500000); // 1.5 seconds
+        sleep(5);
       }
 
       $statusResponse = $this->httpClient->get(
         'https://login.equalweb.com/api/v2/docs/status/' . rawurlencode($reportId),
         [
-          'timeout' => 30,
+          'timeout' => 90,
           'connect_timeout' => 10,
           'http_errors' => FALSE,
           'headers' => [
@@ -228,19 +300,40 @@ private function auditWithEqualWeb(FileInterface $file, ?string $apiKey): array 
         ]
       );
 
-      $statusJson = json_decode((string) $statusResponse->getBody(), TRUE) ?: [];
+      $statusBody = (string) $statusResponse->getBody();
+      $statusJson = json_decode($statusBody, TRUE) ?: [];
       $status = strtolower((string) ($statusJson['status'] ?? ''));
 
-      if ($status === 'done' || $status === 'completed') {
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+        'EqualWeb status response: attempt=@attempt status=@status body=@body',
+        [
+          '@attempt' => $attempt + 1,
+          '@status' => $status,
+          '@body' => $statusBody,
+        ]
+      );
+
+      if (in_array($status, ['done', 'completed'], TRUE)) {
         break;
       }
 
       if (str_contains($status, 'failed')) {
+        $errors = [
+          'Status response: ' . ($statusBody !== '' ? $statusBody : '[empty response]'),
+          'Status value: ' . ($statusJson['status'] ?? '[missing]'),
+        ];
+
+        $this->markEqualWebSummary(
+          $file,
+          $errors,
+          'EqualWeb audit failed.'
+        );
+
         return [
           'ok' => FALSE,
           'passed' => FALSE,
           'summary' => 'EqualWeb audit failed.',
-          'errors' => [$statusJson['status'] ?? 'EqualWeb reported a failed audit status.'],
+          'errors' => $errors,
           'raw' => [
             'upload' => $uploadJson,
             'audit' => $auditJson,
@@ -248,14 +341,35 @@ private function auditWithEqualWeb(FileInterface $file, ?string $apiKey): array 
           ],
         ];
       }
+
+      // Keep waiting for intermediate states like:
+      // pending, ocr, queued, processing, etc.
     }
 
     if ($status !== 'done' && $status !== 'completed') {
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+        'EqualWeb polling ended after @attempts attempts. Last status: @status',
+        [
+          '@attempts' => $maxAttempts,
+          '@status' => json_encode($statusJson),
+        ]
+      );
+
+      $errors = [
+        'Last status response: ' . json_encode($statusJson),
+      ];
+
+      $this->markEqualWebSummary(
+        $file,
+        $errors,
+        'EqualWeb audit is still processing.'
+      );
+
       return [
         'ok' => TRUE,
         'passed' => FALSE,
-        'summary' => 'EqualWeb audit started but did not finish in time.',
-        'errors' => ['The report is not ready yet.'],
+        'summary' => 'EqualWeb audit is still processing.',
+        'errors' => $errors,
         'raw' => [
           'upload' => $uploadJson,
           'audit' => $auditJson,
@@ -282,25 +396,47 @@ private function auditWithEqualWeb(FileInterface $file, ?string $apiKey): array 
     );
 
     $reportCode = $reportResponse->getStatusCode();
-    $reportJson = json_decode((string) $reportResponse->getBody(), TRUE) ?: [];
+    $reportBody = (string) $reportResponse->getBody();
+    $reportJson = json_decode($reportBody, TRUE) ?: [];
+
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+      'EqualWeb report response: status=@status body=@body',
+      [
+        '@status' => $reportCode,
+        '@body' => $reportBody,
+      ]
+    );
 
     if ($reportCode !== 200) {
+      $errors = [
+        'Report HTTP status: ' . $reportCode,
+        'Report response: ' . ($reportBody !== '' ? $reportBody : '[empty response]'),
+      ];
+
+      $this->markEqualWebSummary(
+        $file,
+        $errors,
+        'EqualWeb report retrieval failed.'
+      );
+
       return [
         'ok' => FALSE,
         'passed' => FALSE,
         'summary' => 'EqualWeb report retrieval failed.',
-        'errors' => ['Could not fetch EqualWeb report JSON.'],
+        'errors' => $errors,
         'raw' => [
           'upload' => $uploadJson,
           'audit' => $auditJson,
           'status' => $statusJson,
           'report' => $reportJson,
+          'report_body' => $reportBody,
         ],
         'status_code' => $reportCode,
       ];
     }
 
     return $this->normalizeEqualWebReport(
+      $file,
       $reportJson,
       [
         'upload' => $uploadJson,
@@ -311,6 +447,12 @@ private function auditWithEqualWeb(FileInterface $file, ?string $apiKey): array 
     );
   }
   catch (\Throwable $e) {
+    $this->markEqualWebSummary(
+      $file,
+      [$e->getMessage()],
+      'EqualWeb request failed.'
+    );
+
     return [
       'ok' => FALSE,
       'passed' => FALSE,
@@ -324,7 +466,7 @@ private function auditWithEqualWeb(FileInterface $file, ?string $apiKey): array 
 /**
  * Normalize EqualWeb report into the same structure as the existing API.
  */
-private function normalizeEqualWebReport(array $reportJson, array $context = [], int $statusCode = 200): array {
+private function normalizeEqualWebReport(FileInterface $file, array $reportJson, array $context = [], int $statusCode = 200): array {
   $audited = $reportJson['audited'] ?? $reportJson;
   $summary = $audited['Summary'] ?? [];
 
@@ -368,6 +510,13 @@ private function normalizeEqualWebReport(array $reportJson, array $context = [],
       $needsManualCheck
     );
 
+  if ($passed) {
+    $this->clearEqualWebSummary($file);
+  }
+  else {
+    $this->markEqualWebSummary($file, $errors, $summaryText);
+  }
+
   return [
     'ok' => TRUE,
     'passed' => $passed,
@@ -376,6 +525,63 @@ private function normalizeEqualWebReport(array $reportJson, array $context = [],
     'raw' => $reportJson + $context,
     'status_code' => $statusCode,
   ];
+}
+
+/**
+ * Write a readable summary to the file entity.
+ */
+private function markEqualWebSummary(FileInterface $file, array $errors = [], string $summary = ''): void {
+  if (!$file->hasField('field_pdf_audit_summary')) {
+    return;
+  }
+
+  try {
+    $text = $summary ?: 'EqualWeb validation failed.';
+
+    if (!empty($errors)) {
+      $text .= "\n\nIssues:\n- " . implode("\n- ", $errors);
+    }
+
+    $maxLength = 20000;
+    if (strlen($text) > $maxLength) {
+      $text = substr($text, 0, $maxLength) . "\n\n[truncated]";
+    }
+
+    $file->set('field_pdf_audit_summary', $text);
+    $file->save();
+  }
+  catch (\Throwable $e) {
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+      'Unable to write audit summary for file @fid: @message',
+      [
+        '@fid' => $file->id(),
+        '@message' => $e->getMessage(),
+      ]
+    );
+  }
+}
+
+/**
+ * Clear the summary field when validation passes.
+ */
+private function clearEqualWebSummary(FileInterface $file): void {
+  if (!$file->hasField('field_pdf_audit_summary')) {
+    return;
+  }
+
+  try {
+    $file->set('field_pdf_audit_summary', '');
+    $file->save();
+  }
+  catch (\Throwable $e) {
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+      'Unable to clear field_pdf_audit_summary for file @fid: @message',
+      [
+        '@fid' => $file->id(),
+        '@message' => $e->getMessage(),
+      ]
+    );
+  }
 }
 
 }
