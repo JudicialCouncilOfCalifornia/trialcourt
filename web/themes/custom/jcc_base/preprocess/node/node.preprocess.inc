@@ -37,12 +37,19 @@ function jcc_base_preprocess_node(&$variables, $hook) {
 
           switch ($field_name) {
             case 'field_tags':
-              $aria_label = 'Search for content tagged ' . $name;
+              $aria_label = 'Search for content tagged ' . strtolower($name);
               break;
 
             case 'field_topics':
-              $url = '/' . $type . '/' . $term_machine_name;
-              $aria_label = 'View more ' . $type . ' related to ' . $name;
+              $path_validator = \Drupal::service('path.validator');
+              $topic_url = '/' . $type . '/' . $term_machine_name;
+              if ($path_validator->isValid($topic_url)) {
+                $url = $topic_url;
+                $aria_label = 'View more ' . $type . ' related to ' . strtolower($name);
+              }
+              else {
+                $url = NULL;
+              }
               break;
           }
 

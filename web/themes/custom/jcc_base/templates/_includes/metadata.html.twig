@@ -4,7 +4,11 @@
       <div class="{{ key }} relevance">
         <div>{{ key|replace({'_': ' '})|title }}</div>
         {% for item in items %}
-          <a href="{{ item.url }}" aria-label="{{ item.aria_label }}">{{ item.text }}</a>{% if not loop.last %}, {% endif %}
+          {% if item.url %}
+            <a href="{{ item.url }}" aria-label="{{ item.aria_label }}">{{ item.text }}</a>{% if not loop.last %}, {% endif %}
+          {% else %}
+            {{ item.text }}{% if not loop.last %}, {% endif %}
+          {% endif %}
         {% endfor %}
       </div>
     {% endfor %}
