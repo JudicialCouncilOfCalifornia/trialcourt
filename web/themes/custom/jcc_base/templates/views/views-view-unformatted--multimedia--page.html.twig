@@ -99,13 +99,13 @@
                   {% set img_src = file_url(video_media.thumbnail.entity.uri.value) %}
                   {% set img_alt = '' %}
                   {% if video_media.hasField('field_media_thumbnail_alt') and video_media.field_media_thumbnail_alt.value is not empty %}
-                    {% set img_alt = video_media.field_media_thumbnail_alt.value|trim|e('html_attr') %}
+                    {% set img_alt = video_media.field_media_thumbnail_alt.value|trim %}
                   {% elseif video_media.thumbnail.alt %}
-                    {% set img_alt = video_media.thumbnail.alt|trim|e('html_attr') %}
+                    {% set img_alt = video_media.thumbnail.alt|trim %}
                   {% endif %}
                 {% else %}
                   {% set img_src = file_url(page.field_images.entity.field_media_image.entity.uri.value) %}
-                  {% set img_alt = page.field_images.entity.field_media_image.alt|default('')|e('html_attr') %}
+                  {% set img_alt = page.field_images.entity.field_media_image.alt|default('')|trim %}
                 {% endif %}
               {% else %}
                 {% set img_src = '' %}
