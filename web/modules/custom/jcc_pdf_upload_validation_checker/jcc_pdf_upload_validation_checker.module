@@ -47,7 +47,7 @@ function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void
 
   // Media is handled in presave by
   // _jcc_pdf_upload_validation_checker_mark_new_pdfs_pending().
-  // Avoid duplicate queue items here.
+  // Avoids duplicate queue items.
   if ($type === 'media') {
     return;
   }
@@ -130,11 +130,15 @@ function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void
  * Implements hook_entity_presave().
  */
 function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entity): void {
-  if ($entity->getEntityTypeId() !== 'media' || !$entity instanceof MediaInterface) {
+  if ($entity->getEntityTypeId() === 'file' && $entity instanceof FileInterface) {
+    _jcc_pdf_upload_validation_checker_handle_same_fid_file_replace($entity);
+    _jcc_pdf_upload_validation_checker_handle_file_audit_status_transition($entity);
     return;
   }
 
-  $file_fields = _jcc_pdf_upload_validation_checker_file_fields();
+  if ($entity->getEntityTypeId() !== 'media' || !$entity instanceof MediaInterface) {
+    return;
+  }
 
   $original = NULL;
   if (!$entity->isNew() && $entity->id()) {
@@ -144,130 +148,7 @@ function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entit
   }
 
   _jcc_pdf_upload_validation_checker_mark_new_pdfs_pending($entity, $original);
-
-  foreach ($file_fields as $field_name) {
-    if (!$entity->hasField($field_name) || $entity->get($field_name)->isEmpty()) {
-      continue;
-    }
-
-    $current_fids = [];
-    foreach ($entity->get($field_name) as $item) {
-      if (!empty($item->target_id)) {
-        $current_fids[] = (int) $item->target_id;
-      }
-    }
-
-    if (!$current_fids) {
-      continue;
-    }
-
-    $original_fids = [];
-    if ($original && $original->hasField($field_name) && !$original->get($field_name)->isEmpty()) {
-      foreach ($original->get($field_name) as $item) {
-        if (!empty($item->target_id)) {
-          $original_fids[] = (int) $item->target_id;
-        }
-      }
-    }
-
-    sort($current_fids);
-    sort($original_fids);
-
-    $field_changed = ($current_fids !== $original_fids);
-
-    if (
-      $entity->bundle() === 'publication' &&
-      $field_name === 'field_media_file_multiple'
-    ) {
-      $blocking_files = [];
-
-      foreach ($entity->get($field_name) as $item) {
-        $file = $item->entity;
-        if (!$file instanceof FileInterface || $file->getMimeType() !== 'application/pdf') {
-          continue;
-        }
-
-        $status = '';
-        if ($file->hasField('field_pdf_audit_status')) {
-          $status = (string) $file->get('field_pdf_audit_status')->value;
-        }
-
-        if ($status !== 'pass') {
-          $blocking_files[] = sprintf(
-            'fid=%d status=%s',
-            (int) $file->id(),
-            $status !== '' ? $status : 'empty'
-          );
-        }
-      }
-
-      if ($blocking_files) {
-        $entity->set('status', 0);
-
-        if ($entity->hasField('moderation_state')) {
-          $entity->set('moderation_state', 'draft');
-        }
-
-        \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-          'Media @mid unpublished because not all PDFs in @field passed validation: @details',
-          [
-            '@mid' => $entity->id() ?: 'new',
-            '@field' => $field_name,
-            '@details' => implode('; ', $blocking_files),
-          ]
-        );
-
-        return;
-      }
-
-      continue;
-    }
-
-    if (!$field_changed) {
-      continue;
-    }
-
-    $blocking_files = [];
-
-    foreach ($entity->get($field_name) as $item) {
-      $target = $item->entity;
-      if (!$target instanceof FileInterface || $target->getMimeType() !== 'application/pdf') {
-        continue;
-      }
-
-      $status = '';
-      if ($target->hasField('field_pdf_audit_status')) {
-        $status = (string) $target->get('field_pdf_audit_status')->value;
-      }
-
-      if ($status !== 'pass') {
-        $blocking_files[] = sprintf(
-          'fid=%d status=%s',
-          (int) $target->id(),
-          $status !== '' ? $status : 'empty'
-        );
-      }
-    }
-
-    if ($blocking_files) {
-      $entity->set('status', 0);
-
-      if ($entity->hasField('moderation_state')) {
-        $entity->set('moderation_state', 'draft');
-      }
-
-      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-        'Media @mid unpublished because changed PDF(s) in field @field are not validated: @details',
-        [
-          '@mid' => $entity->id() ?: 'new',
-          '@field' => $field_name,
-          '@details' => implode('; ', $blocking_files),
-        ]
-      );
-
-      return;
-    }
-  }
+  _jcc_pdf_upload_validation_checker_enforce_media_pdf_statuses($entity);
 }
 
 /**
@@ -515,7 +396,7 @@ function _jcc_pdf_upload_validation_checker_is_pdf(?FileInterface $file): bool {
 }
 
 /**
- * Determines whether this is a media form we want to alter.
+ * Determines whether this is a media form to alter.
  */
 function _jcc_pdf_upload_validation_checker_is_supported_media_form(string $form_id, FormStateInterface $form_state): bool {
   if (
@@ -801,6 +682,14 @@ function _jcc_pdf_upload_validation_checker_mark_new_pdfs_pending(MediaInterface
       }
     }
 
+    $current_fids = [];
+    foreach ($entity->get($field_name) as $item) {
+      $fid = (int) $item->target_id;
+      if ($fid) {
+        $current_fids[$fid] = TRUE;
+      }
+    }
+
     foreach ($entity->get($field_name) as $item) {
       $fid = (int) $item->target_id;
       if (!$fid || isset($original_fids[$fid])) {
@@ -808,7 +697,20 @@ function _jcc_pdf_upload_validation_checker_mark_new_pdfs_pending(MediaInterface
       }
 
       $file = $file_storage->load($fid);
-      if (!$file instanceof FileInterface || $file->getMimeType() !== 'application/pdf') {
+      if (!$file instanceof FileInterface) {
+        \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+          'DEBUG new fid detected but file could not be loaded: media=@mid field=@field fid=@fid',
+          [
+            '@mid' => $entity->id() ?: 'new',
+            '@field' => $field_name,
+            '@fid' => $fid,
+          ]
+        );
+        continue;
+      }
+
+      // Keep existing behavior below for now.
+      if ($file->getMimeType() !== 'application/pdf') {
         continue;
       }
 
@@ -858,15 +760,259 @@ function _jcc_pdf_upload_validation_checker_normalize_temporary_upload_status(
 
   $status = (string) $file->get('field_pdf_audit_status')->value;
 
-  // Keep manual check results on temporary files.
   if ($status === 'pass' || $status === 'fail') {
     return;
   }
 
   // Temporary uploads should never show pending.
-  // Unknown/empty are already fine.
+  // Unknown/empty are fine.
   if ($status === 'pending') {
     $file->set('field_pdf_audit_status', 'unknown');
     $file->save();
   }
+}
+
+/**
+ * Debugs what changes on an existing PDF file entity during presave.
+ */
+function _jcc_pdf_upload_validation_checker_debug_file_presave(FileInterface $file): void {
+  if ($file->isNew() || $file->getMimeType() !== 'application/pdf') {
+    return;
+  }
+
+  $original = \Drupal::entityTypeManager()
+    ->getStorage('file')
+    ->loadUnchanged($file->id());
+
+  if (!$original instanceof FileInterface) {
+    return;
+  }
+
+  $changes = [];
+
+  if ($original->getFileUri() !== $file->getFileUri()) {
+    $changes[] = 'uri: ' . $original->getFileUri() . ' => ' . $file->getFileUri();
+  }
+
+  if ($original->getFilename() !== $file->getFilename()) {
+    $changes[] = 'filename: ' . $original->getFilename() . ' => ' . $file->getFilename();
+  }
+
+  if ((int) $original->getSize() !== (int) $file->getSize()) {
+    $changes[] = 'size: ' . (int) $original->getSize() . ' => ' . (int) $file->getSize();
+  }
+
+  if ((int) $original->getChangedTime() !== (int) $file->getChangedTime()) {
+    $changes[] = 'changed: ' . (int) $original->getChangedTime() . ' => ' . (int) $file->getChangedTime();
+  }
+
+  if ((int) $original->isPermanent() !== (int) $file->isPermanent()) {
+    $changes[] = 'permanent: ' . ($original->isPermanent() ? 'yes' : 'no') . ' => ' . ($file->isPermanent() ? 'yes' : 'no');
+  }
+
+  if ($file->hasField('field_pdf_audit_status')) {
+    $old_status = (string) $original->get('field_pdf_audit_status')->value;
+    $new_status = (string) $file->get('field_pdf_audit_status')->value;
+
+    if ($old_status !== $new_status) {
+      $changes[] = 'audit_status: ' . ($old_status !== '' ? $old_status : '(empty)') . ' => ' . ($new_status !== '' ? $new_status : '(empty)');
+    }
+  }
+
+}
+
+/**
+ * Handles replacement of an existing PDF file when the same fid is reused.
+ */
+function _jcc_pdf_upload_validation_checker_handle_same_fid_file_replace(FileInterface $file): void {
+  if ($file->isNew() || $file->getMimeType() !== 'application/pdf') {
+    return;
+  }
+
+  if (!$file->hasField('field_pdf_audit_status')) {
+    return;
+  }
+
+  /** @var \Drupal\file\FileInterface|null $original */
+  $original = \Drupal::entityTypeManager()
+    ->getStorage('file')
+    ->loadUnchanged($file->id());
+
+  if (!$original instanceof FileInterface) {
+    return;
+  }
+
+  $size_changed = ((int) $original->getSize() !== (int) $file->getSize());
+
+  // Use size change as the replacement signal.
+  if (!$size_changed) {
+    return;
+  }
+
+  $old_status = (string) $original->get('field_pdf_audit_status')->value;
+  $new_status = (string) $file->get('field_pdf_audit_status')->value;
+
+  // Avoid re-queueing if this same save already moved it to pending.
+  if ($old_status === 'pending' && $new_status === 'pending') {
+    return;
+  }
+
+  $file->set('field_pdf_audit_status', 'pending');
+
+  \Drupal::queue('jcc_pdf_upload_validation_checker_pdf_audit')->createItem([
+    'fid' => (int) $file->id(),
+  ]);
+
+  \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+    'Detected same-fid PDF replacement for fid=@fid via size change @old_size=>@new_size; set status to pending and queued audit.',
+    [
+      '@fid' => (int) $file->id(),
+      '@old_size' => (int) $original->getSize(),
+      '@new_size' => (int) $file->getSize(),
+    ]
+  );
+}
+
+/**
+ * Unpublishes referencing media when a file audit status changes to pending or fail.
+ */
+function _jcc_pdf_upload_validation_checker_handle_file_audit_status_transition(FileInterface $file): void {
+  if ($file->isNew() || !$file->hasField('field_pdf_audit_status')) {
+    return;
+  }
+
+  /** @var \Drupal\file\FileInterface|null $original */
+  $original = \Drupal::entityTypeManager()
+    ->getStorage('file')
+    ->loadUnchanged($file->id());
+
+  if (!$original instanceof FileInterface || !$original->hasField('field_pdf_audit_status')) {
+    return;
+  }
+
+  $old_status = (string) $original->get('field_pdf_audit_status')->value;
+  $new_status = (string) $file->get('field_pdf_audit_status')->value;
+
+  if ($old_status === $new_status) {
+    return;
+  }
+
+  if (!in_array($new_status, ['pending', 'fail'], TRUE)) {
+    return;
+  }
+
+  _jcc_pdf_upload_validation_checker_unpublish_media_referencing_file($file, $new_status, $old_status);
+}
+
+/**
+ * Unpublishes media entities that reference a file whose audit status blocks publication.
+ */
+function _jcc_pdf_upload_validation_checker_unpublish_media_referencing_file(
+  FileInterface $file,
+  string $new_status,
+  string $old_status = ''
+): void {
+  $media_storage = \Drupal::entityTypeManager()->getStorage('media');
+
+  $query = $media_storage->getQuery()
+    ->accessCheck(FALSE);
+
+  $or = $query->orConditionGroup();
+  foreach (_jcc_pdf_upload_validation_checker_file_fields() as $field_name) {
+    $or->condition($field_name . '.target_id', (int) $file->id());
+  }
+  $query->condition($or);
+
+  $mids = $query->execute();
+  if (!$mids) {
+    return;
+  }
+
+  $media_entities = $media_storage->loadMultiple($mids);
+
+  foreach ($media_entities as $media) {
+    if (!$media instanceof MediaInterface) {
+      continue;
+    }
+
+    $changed = FALSE;
+
+    if ($media->hasField('status') || method_exists($media, 'setPublished')) {
+      if ((int) $media->isPublished() === 1) {
+        $media->set('status', 0);
+        $changed = TRUE;
+      }
+    }
+
+    if ($media->hasField('moderation_state') && (string) $media->get('moderation_state')->value !== 'draft') {
+      $media->set('moderation_state', 'draft');
+      $changed = TRUE;
+    }
+
+    if ($changed) {
+      $media->save();
+
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+        'Unpublished media @mid because referenced file fid=@fid audit status changed from @old to @new.',
+        [
+          '@mid' => $media->id(),
+          '@fid' => (int) $file->id(),
+          '@old' => $old_status !== '' ? $old_status : '(empty)',
+          '@new' => $new_status,
+        ]
+      );
+    }
+  }
+}
+
+/**
+ * Unpublishes a media entity if any referenced PDF is not pass.
+ */
+function _jcc_pdf_upload_validation_checker_enforce_media_pdf_statuses(MediaInterface $media): void {
+  $blocking_files = [];
+
+  foreach (_jcc_pdf_upload_validation_checker_file_fields() as $field_name) {
+    if (!$media->hasField($field_name) || $media->get($field_name)->isEmpty()) {
+      continue;
+    }
+
+    foreach ($media->get($field_name) as $item) {
+      $file = $item->entity;
+      if (!$file instanceof FileInterface || $file->getMimeType() !== 'application/pdf') {
+        continue;
+      }
+
+      $status = '';
+      if ($file->hasField('field_pdf_audit_status')) {
+        $status = (string) $file->get('field_pdf_audit_status')->value;
+      }
+
+      if ($status !== 'pass') {
+        $blocking_files[] = sprintf(
+          '%s: fid=%d status=%s',
+          $field_name,
+          (int) $file->id(),
+          $status !== '' ? $status : 'empty'
+        );
+      }
+    }
+  }
+
+  if (!$blocking_files) {
+    return;
+  }
+
+  $media->set('status', 0);
+
+  if ($media->hasField('moderation_state')) {
+    $media->set('moderation_state', 'draft');
+  }
+
+  \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+    'Media @mid unpublished because one or more referenced PDFs are not pass: @details',
+    [
+      '@mid' => $media->id() ?: 'new',
+      '@details' => implode('; ', $blocking_files),
+    ]
+  );
 }
