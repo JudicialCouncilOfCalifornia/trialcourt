@@ -5,14 +5,63 @@
  * Theme and preprocess functions for nodes.
  */
 
-use Drupal\views\Views;
 use Drupal\Core\Url;
+use Drupal\views\Views;
 
 /**
  * Implements hook_preprocess_HOOK().
  */
 function jcc_base_preprocess_node(&$variables, $hook) {
   $node = $variables['node'];
+  $type = $node->bundle();
+
+  // Metadata.
+  foreach ($node->getFields() as $field) {
+    $field_name = $field->getName();
+    $field_machine_name = str_replace('field_', '', $field_name);
+    $fmn_readable = str_replace('_', ' ', $field_machine_name);
+    $url = NULL;
+    $aria_label = NULL;
+
+    switch ($field_name) {
+      case 'field_division':
+      case 'field_tags':
+      case 'field_topics':
+      case 'field_subject_matter':
+        foreach ($field as $item) {
+          $term = $item->entity;
+          $name = $term->getName();
+          $term_machine_name = str_replace(' ', '-', strtolower($name));
+
+          switch ($field_name) {
+            case 'field_division':
+            case 'field_subject_matter':
+              $aria_label = 'Search for ' . strtolower($name) . ' ' . $fmn_readable . ' content';
+              break;
+
+            case 'field_tags':
+              $aria_label = 'Search for content tagged ' . $name;
+              break;
+
+            case 'field_topics':
+              $url = '/' . $type . '/' . $term_machine_name;
+              $aria_label = 'View more ' . $type . ' related to ' . $name;
+              break;
+
+            default:
+              $url = '/search?f[0]=tags:' . $term->id();
+          }
+
+          $variables['metadata'][$field_machine_name][] = [
+            'text' => $name,
+            'url' => $url,
+            'aria_label' => $aria_label,
+          ];
+        }
+        break;
+    }
+  }
+
   switch ($node->getType()) {
     case 'location':
       if ($variables['view_mode'] == 'map_card') {
