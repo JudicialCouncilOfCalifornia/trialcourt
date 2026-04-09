@@ -1,30 +1,15 @@
-{% set meta %}
-  {% if content.field_division[0] %}
-    <div class="division relevance">
-      {{ content.field_division }}
-    </div>
-  {% endif %}
+{% if metadata %}
+  {% set meta %}
+    {% for key, items in metadata %}
+      <div class="{{ key }} relevance">
+        <div>{{ key|replace({'_': ' '})|title }}</div>
+        {% for item in items %}
+          <a href="{{ item.url }}" aria-label="{{ item.aria_label }}">{{ item.text }}</a>{% if not loop.last %}, {% endif %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+  {% endset %}
 
-  {% if content.field_subject_matter[0] %}
-    <div class="subject_matter relevance">
-      {{ content.field_subject_matter }}
-    </div>
-  {% endif %}
-
-  {% if content.field_tags[0] %}
-    <div class="tags relevance">
-      {{ content.field_tags }}
-    </div>
-  {% endif %}
-
-  {% if content.field_topics[0] %}
-    <div class="topics relevance">
-      {{ content.field_topics }}
-    </div>
-  {% endif %}
-{% endset %}
-
-{% if meta %}
   {% include '@molecules/blocks/card/card.twig' with {
     card: {
       title: 'Relevance',
