@@ -663,13 +663,13 @@ function jcc_custom_element_info_alter(array &$info) {
 /**
  * Implements hook_entity_view_alter().
  *
- * Applies video_embed thumbnail alt from field_media_thumbnail_alt only on
- * sites that define that field (e.g. Newsroom config split). Other installs are
- * unchanged: jcc_custom stays enabled globally but this alter is a no-op
- * until the field is added to the video_embed bundle.
+ * Applies video_embed thumbnail alt only on sites that define
+ * field_media_thumbnail_alt (e.g. Newsroom config split). Other installs are
+ * unchanged until the field is added to the video_embed bundle.
  *
- * When the field exists: editor alt when set; otherwise empty string (not the
- * media name). Matches field--field-videos.html.twig on multimedia nodes.
+ * Alt resolution matches field--field-videos.html.twig and multimedia album
+ * cards: non-empty trimmed editor value; else trimmed alt from the media
+ * thumbnail image field when present; else empty. The media name is never used.
  */
 function jcc_custom_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
   if ($entity->getEntityTypeId() !== 'media' || $entity->bundle() !== 'video_embed') {
@@ -681,11 +681,42 @@ function jcc_custom_entity_view_alter(array &$build, EntityInterface $entity, En
   if (!isset($build['field_media_video_embed_field'])) {
     return;
   }
-  $alt = '';
-  if (!$entity->get('field_media_thumbnail_alt')->isEmpty()) {
-    $alt = trim((string) $entity->get('field_media_thumbnail_alt')->value);
-  }
+  $alt = _jcc_custom_video_embed_resolve_thumbnail_alt($entity);
   _jcc_custom_video_embed_walk_thumb_alt($build['field_media_video_embed_field'], $alt);
+}
+
+/**
+ * Resolves alt text for a video_embed media thumbnail for rendered output.
+ *
+ * Order matches Twig (field--field-videos / views album cards): use
+ * field_media_thumbnail_alt when it has non-whitespace content; if the field
+ * has only whitespace, do not fall back (parity with Twig). If the field is
+ * empty, use the thumbnail field's alt when set.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The media entity (video_embed bundle, with field_media_thumbnail_alt).
+ *
+ * @return string
+ *   Trimmed alt text, or an empty string.
+ */
+function _jcc_custom_video_embed_resolve_thumbnail_alt(EntityInterface $entity) : string {
+  $editor_field = $entity->get('field_media_thumbnail_alt');
+  if (!$editor_field->isEmpty()) {
+    $editor_alt = trim((string) $editor_field->value);
+    if ($editor_alt !== '') {
+      return $editor_alt;
+    }
+    return '';
+  }
+  $thumbnail = $entity->get('thumbnail');
+  if ($thumbnail->isEmpty()) {
+    return '';
+  }
+  $values = $thumbnail->first()->getValue();
+  if (!isset($values['alt']) || $values['alt'] === NULL || $values['alt'] === '') {
+    return '';
+  }
+  return trim((string) $values['alt']);
 }
 
 /**
