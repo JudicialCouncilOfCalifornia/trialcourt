@@ -45,7 +45,13 @@
     {% set video_id = video_url|split('v=')|last|split('/')|last|split('?')|first|split('&')|first %}
     {% set video_title = raw_title|length > 60 ? raw_title|slice(0, 60) ~ '...' : raw_title %}    
     {% set thumb_uri = media.thumbnail.entity.uri.value %}
-    {% set thumb_alt = media.thumbnail.alt ?: raw_title %}    
+    {# Thumbnail alt: editor field on video media only, else file thumbnail alt — never duplicate media name (button already has aria-label + visible title). #}
+    {% set thumb_alt = '' %}
+    {% if media.hasField('field_media_thumbnail_alt') and media.field_media_thumbnail_alt.value is not empty %}
+      {% set thumb_alt = media.field_media_thumbnail_alt.value|trim %}
+    {% elseif media.thumbnail.alt %}
+      {% set thumb_alt = media.thumbnail.alt|trim %}
+    {% endif %}
     {% set thumb_url = file_url(thumb_uri) %}
     {% set modal_html %}
       <div class="video-embed-field-provider-youtube video-embed-field-responsive-video video-embed-field-responsive-modal" style="width:854px;">
@@ -71,7 +77,7 @@
             <div class="jcc-card__excerpt-media">
               <div class="content">
                 {% if thumb_url %}
-                  <img src="{{ thumb_url }}" alt="{{ thumb_alt }}" typeof="foaf:Image" />
+                  <img src="{{ thumb_url }}" alt="{{ thumb_alt|e('html_attr') }}" typeof="foaf:Image" />
                 {% endif %}
               </div>
             </div>
