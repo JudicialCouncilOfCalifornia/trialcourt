@@ -1,14 +1,10 @@
 {% if metadata %}
   {% set meta %}
     {% for key, items in metadata %}
-      <div class="{{ key }} relevance">
+      <div class="{{ key|replace({'_': '-'}) }} relevance">
         <div>{{ key|replace({'_': ' '})|title }}</div>
         {% for item in items %}
-          {% if item.url %}
-            <a href="{{ item.url }}" aria-label="{{ item.aria_label }}">{{ item.text }}</a>{% if not loop.last %}, {% endif %}
-          {% else %}
-            {{ item.text }}{% if not loop.last %}, {% endif %}
-          {% endif %}
+          <a href="{{ item.url }}" aria-label="{{ item.aria_label }}">{{ item.text }}</a>{% if not loop.last %}, {% endif %}
         {% endfor %}
       </div>
     {% endfor %}
