@@ -112,7 +112,9 @@
             {% endif %}
             <div class="jcc-tags">
               <div>
-                {{ content.field_topics }}
+                {% for item in metadata.topics %}
+                  <a href="/search?f[0]=topics:{{ item.id }}">{{ item.text }}</a>
+                {% endfor %}
               </div>
             </div>
           </div>

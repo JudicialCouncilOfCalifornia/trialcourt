@@ -46,38 +46,42 @@
     {% set video_title = raw_title|length > 60 ? raw_title|slice(0, 60) ~ '...' : raw_title %}    
     {% set thumb_uri = media.thumbnail.entity.uri.value %}
     {% set thumb_alt = media.thumbnail.alt ?: raw_title %}    
-    {% set thumb_url = file_url(thumb_uri) %}    
-    {% set thumbnail_html %}
-      {% if thumb_url %}
-        <img src="{{ thumb_url }}" alt="{{ thumb_alt }}" typeof="foaf:Image" />
-      {% endif %}
-    {% endset %}   
+    {% set thumb_url = file_url(thumb_uri) %}
     {% set modal_html %}
       <div class="video-embed-field-provider-youtube video-embed-field-responsive-video video-embed-field-responsive-modal" style="width:854px;">
         <iframe width="854" height="480" frameborder="0" allowfullscreen="allowfullscreen" src="https://www.youtube.com/embed/{{ video_id }}?autoplay=1&rel=0"></iframe>
       </div>
     {% endset %}
    
-    <div 
-      class="grid-col-12 tablet:grid-col-3 height-full lightbox__card video video-embed-field-launch-modal" 
-      title="{{ raw_title }}"
-      data-video-embed-field-modal="{{ modal_html|e('html_attr') }}"
-      role="button"
-      tabindex="0"
-      style="cursor: pointer;"
-    >
-      {% set alternate %}
-        <a href="{{ video_url }}" target="_blank" aria-label="Alternate player for video: {{ raw_title }}">
-          Alternate Player
-        </a>
-      {% endset %}
-      {% include '@molecules/blocks/card/card.twig' with {
-        card: {
-          title: video_title,
-          excerpt_vid: thumbnail_html,
-          footer: alternate,
-        }
-      } %}
+    {% set alternate %}
+      <a href="{{ video_url }}" target="_blank" aria-label="Alternate player for video: {{ raw_title }}">
+        Alternate Player
+      </a>
+    {% endset %}
+    {# Native <button>: keyboard activation + no fake role on a div. Keep focusable links outside. #}
+    <div class="grid-col-12 tablet:grid-col-3 height-full lightbox__card video">
+      <div class="jcc-card">
+        <div class="jcc-card__body">
+          <button
+            type="button"
+            class="video-embed-field-launch-modal jcc-video-launch-button"
+            data-video-embed-field-modal="{{ modal_html|e('html_attr') }}"
+            aria-label="{{ 'Play video in dialog: @title'|t({'@title': raw_title})|e('html_attr') }}"
+          >
+            <div class="jcc-card__excerpt-media">
+              <div class="content">
+                {% if thumb_url %}
+                  <img src="{{ thumb_url }}" alt="{{ thumb_alt }}" typeof="foaf:Image" />
+                {% endif %}
+              </div>
+            </div>
+            <h3 class="jcc-card__title">{{ video_title }}</h3>
+          </button>
+          <div class="jcc-card__footer">
+            {{ alternate }}
+          </div>
+        </div>
+      </div>
     </div>
   {% endif %}
 {% endfor %}
