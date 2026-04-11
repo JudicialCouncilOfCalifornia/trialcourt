@@ -2,12 +2,12 @@
 
 namespace Drupal\jcc_custom\EventSubscriber;
 
-use Drupal\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Cache\CacheableRedirectResponse;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 
@@ -18,7 +18,7 @@ class JccHideTranslationRedirectSubscriber implements EventSubscriberInterface {
   /**
    * The route match interface.
    *
-   * @var Drupal\Core\Routing\RouteMatchInterface
+   * @var \Drupal\Core\Routing\RouteMatchInterface
    */
   protected $currentRouteMatch;
 
@@ -32,7 +32,7 @@ class JccHideTranslationRedirectSubscriber implements EventSubscriberInterface {
   /**
    * The configuration interface.
    *
-   * @var Drupal\Core\Config\ConfigFactoryInterface
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 
@@ -88,22 +88,20 @@ class JccHideTranslationRedirectSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\KernelEvent $event
    *   The event to process.
    */
-  public function processEvent(KernelEvent $event) {
-    // If translations are hidden, redirect anonymous to original language.
+  public function processEvent(KernelEvent $event): void {
     $node = $this->currentRouteMatch->getParameter('node');
-    if ($node instanceof NodeInterface) {
-      if ($this->currentUser->isAnonymous()) {
-        $theme = $this->configFactory->get('system.theme')->get('default');
-        $config = $this->configFactory->getEditable($theme . '.settings');
-        if ($config->get('hide_translation') && !$node->isDefaultTranslation()) {
-          $untranslated_url = '/';
-          $untranslated_node = $node->getUntranslated();
-          if ($untranslated_node && $untranslated_node->toUrl()) {
-            $untranslated_url = $untranslated_node->toUrl()->toString();
-          }
-          $response = new CacheableRedirectResponse($untranslated_url);
-          $event->setResponse($response);
+    if ($node instanceof NodeInterface && $this->currentUser->isAnonymous()) {
+      $config = $this->configFactory->get($this->configFactory->get('system.theme')->get('default') . '.settings');
+      if ($config->get('hide_translation') && !$node->isDefaultTranslation()) {
+        $untranslated_node = $node->getUntranslated();
+        $untranslated_url = '/';
+        if ($untranslated_node && $untranslated_node->hasLinkTemplate('canonical')) {
+          $untranslated_url = $untranslated_node->toUrl()->toString();
         }
+        $response = new TrustedRedirectResponse($untranslated_url, 302);
+        $response->addCacheableDependency($node);
+        $response->getCacheableMetadata()->addCacheContexts(['user.roles:anonymous']);
+        $event->setResponse($response);
       }
     }
   }
