@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
@@ -1015,4 +1016,52 @@ function _jcc_pdf_upload_validation_checker_enforce_media_pdf_statuses(MediaInte
       '@details' => implode('; ', $blocking_files),
     ]
   );
+}
+
+/**
+ * Implements hook_preprocess_views_view_field().
+ */
+function jcc_pdf_upload_validation_checker_preprocess_views_view_field(array &$variables): void {
+  $view = $variables['view'];
+  $field = $variables['field'];
+
+  // Adjust these to your actual view.
+  if ($view->id() !== 'pdf_validation_overview' || $view->current_display !== 'page_1') {
+    return;
+  }
+
+  // Adjust this to the field shown in the table column.
+  if ($field->field !== 'field_pdf_audit_summary') {
+    return;
+  }
+
+  $row = $variables['row']->_entity ?? NULL;
+  if (!$row || !$row->hasField('field_pdf_audit_summary') || $row->get('field_pdf_audit_summary')->isEmpty()) {
+    return;
+  }
+
+  $url = Url::fromRoute('jcc_pdf_upload_validation_checker.details_modal', [
+    'entity_type' => $row->getEntityTypeId(),
+    'entity' => $row->id(),
+    'field_name' => 'field_pdf_audit_summary',
+  ], [
+    'attributes' => [
+      'class' => ['use-ajax'],
+      'data-dialog-type' => 'modal',
+      'data-dialog-options' => json_encode([
+        'width' => 800,
+      ]),
+    ],
+  ]);
+
+  $variables['output'] = [
+    '#type' => 'link',
+    '#title' => t('Summary'),
+    '#url' => $url,
+    '#attached' => [
+      'library' => [
+        'core/drupal.dialog.ajax',
+      ],
+    ],
+  ];
 }

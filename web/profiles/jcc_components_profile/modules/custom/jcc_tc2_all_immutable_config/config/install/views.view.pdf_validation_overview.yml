@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.storage.file.field_pdf_audit_status
+    - field.storage.file.field_pdf_audit_summary
     - system.menu.admin
   module:
     - file
@@ -11,7 +12,7 @@ dependencies:
     - options
     - user
 _core:
-  default_config_hash: UamEdFwzIsIkTHABA_wWPCguV5Kygrv8PNA7QaOFLR0
+  default_config_hash: ZXXbx_1HhQ-6iSNKox8ljh9knrKzfKj0C-VOMcPONvE
 id: pdf_validation_overview
 label: 'PDF validation overview'
 module: views
@@ -211,7 +212,7 @@ display:
           admin_label: ''
           entity_type: file
           plugin_id: jcc_pdf_audit_link
-          label: 'Audit details'
+          label: 'PDFAudit details'
           exclude: false
           alter:
             alter_text: false
@@ -252,6 +253,68 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
+        field_pdf_audit_summary:
+          id: field_pdf_audit_summary
+          table: file__field_pdf_audit_summary
+          field: field_pdf_audit_summary
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: 'Audit Summary'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: basic_string
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
         edit_media:
           id: edit_media
           table: media
@@ -676,6 +739,7 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.file.field_pdf_audit_status'
+        - 'config:field.storage.file.field_pdf_audit_summary'
   block_1:
     id: block_1
     display_title: Block
@@ -782,6 +846,7 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.file.field_pdf_audit_status'
+        - 'config:field.storage.file.field_pdf_audit_summary'
   page_1:
     id: page_1
     display_title: Page
@@ -809,3 +874,4 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.file.field_pdf_audit_status'
+        - 'config:field.storage.file.field_pdf_audit_summary'

@@ -14,3 +14,11 @@ jcc_pdf_upload_validation_checker.enqueue_by_fid:
     fid: '\d+'
     _csrf_request_header_token: 'TRUE'
   methods: [POST]
+
+jcc_pdf_upload_validation_checker.details_modal:
+  path: '/jcc-pdf-upload-validation-checker/details/{entity_type}/{entity}/{field_name}'
+  defaults:
+    _controller: '\Drupal\jcc_pdf_upload_validation_checker\Controller\DetailsModalController::content'
+    _title: 'Audit Summary from EqualWeb'
+  requirements:
+    _permission: 'access content'

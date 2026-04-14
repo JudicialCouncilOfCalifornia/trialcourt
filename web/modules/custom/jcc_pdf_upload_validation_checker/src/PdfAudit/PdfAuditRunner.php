@@ -250,6 +250,7 @@ final class PdfAuditRunner {
           ],
           'json' => [
             'files' => [$reportId],
+            'type' => 'check',
           ],
         ]
       );
@@ -482,52 +483,97 @@ final class PdfAuditRunner {
    * Normalize EqualWeb report into the same structure as the existing API.
    */
   private function normalizeEqualWebReport(FileInterface $file, array $reportJson, array $context = [], int $statusCode = 200): array {
-    $audited = $reportJson['audited'] ?? $reportJson;
-    $summary = $audited['Summary'] ?? [];
-
-    $failed = (int) ($summary['Failed'] ?? 0);
-    $manualFailed = (int) ($summary['Failed manually'] ?? 0);
-    $needsManualCheck = (int) ($summary['Needs manual check'] ?? 0);
-
-    $passed = $failed === 0 && $manualFailed === 0 && $needsManualCheck === 0;
-
     $errors = [];
+    $failed = 0;
+    $manualFailed = 0;
+    $needsManualCheck = 0;
+    $recognizedSignal = FALSE;
 
-    if (!$passed) {
-      if (!empty($audited['Detailed Report']) && is_array($audited['Detailed Report'])) {
-        foreach ($audited['Detailed Report'] as $section => $items) {
-          if (!is_array($items)) {
-            continue;
-          }
+    if (!empty($reportJson['totalIssues']) && is_array($reportJson['totalIssues'])) {
+      $totals = $reportJson['totalIssues'];
 
-          foreach ($items as $item) {
-            $itemStatus = strtolower((string) ($item['Status'] ?? ''));
-            if (in_array($itemStatus, [
-              'failed',
-              'failed manually',
-              'needs manual check',
-            ], TRUE)) {
-              $rule = (string) ($item['Rule'] ?? 'Unknown rule');
-              $description = (string) ($item['Description'] ?? '');
-              $errors[] = trim($section . ': ' . $rule . ($description ? ' — ' . $description : ''));
-            }
+      // Only actual EqualWeb failures should block pass.
+      $failed = (int) ($totals['failed'] ?? 0);
+
+      // Keep warnings for reporting only.
+      $needsManualCheck = (int) ($totals['warning'] ?? 0);
+
+      $recognizedSignal = TRUE;
+    }
+
+    if (!empty($reportJson['checkerReport']) && is_array($reportJson['checkerReport'])) {
+      $recognizedSignal = TRUE;
+
+      $failedRuleCount = 0;
+      $warningRuleCount = 0;
+
+      foreach ($reportJson['checkerReport'] as $item) {
+        if (!is_array($item)) {
+          continue;
+        }
+
+        $name = (string) ($item['name'] ?? 'Unknown check');
+        $description = (string) ($item['description'] ?? '');
+        $ruleId = (string) ($item['rule_id'] ?? '');
+        $errorCount = (int) ($item['error'] ?? 0);
+        $warningCount = (int) ($item['warning'] ?? 0);
+
+        if ($errorCount > 0) {
+          $failedRuleCount++;
+
+          $label = $name;
+          if ($ruleId !== '') {
+            $label .= ' (' . $ruleId . ')';
           }
+          if ($description !== '') {
+            $label .= ' — ' . $description;
+          }
+          $label .= ' [errors: ' . $errorCount . ']';
+
+          $errors[] = $label;
+        }
+        elseif ($warningCount > 0) {
+          $warningRuleCount++;
         }
       }
 
-      if (!$errors) {
-        $errors[] = 'EqualWeb reported accessibility issues.';
+      // Fallback if totalIssues is absent.
+      if (empty($reportJson['totalIssues']) || !is_array($reportJson['totalIssues'])) {
+        $failed = $failedRuleCount;
+        $needsManualCheck = $warningRuleCount;
       }
     }
 
+    // Warnings/manual checks do not block pass.
+    $passed = $recognizedSignal && $failed === 0 && $manualFailed === 0;
+
+    if (!$recognizedSignal) {
+      $errors[] = 'EqualWeb report format was not recognized.';
+    }
+    elseif (!$passed && !$errors) {
+      $errors[] = 'EqualWeb reported accessibility issues.';
+    }
+
     $summaryText = $passed
-      ? 'PDF passed validation.'
+      ? ($needsManualCheck > 0
+        ? sprintf('PDF passed validation with %d warning(s) / manual review item(s).', $needsManualCheck)
+        : 'PDF passed validation.')
       : sprintf(
         'PDF failed validation. Failed: %d, Failed manually: %d, Needs manual check: %d.',
         $failed,
         $manualFailed,
         $needsManualCheck
       );
+
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+      'EqualWeb normalized report: passed=@passed failed=@failed manual_failed=@manual_failed needs_manual=@needs_manual',
+      [
+        '@passed' => $passed ? 'true' : 'false',
+        '@failed' => $failed,
+        '@manual_failed' => $manualFailed,
+        '@needs_manual' => $needsManualCheck,
+      ]
+    );
 
     if ($passed) {
       $this->clearEqualWebSummary($file);
