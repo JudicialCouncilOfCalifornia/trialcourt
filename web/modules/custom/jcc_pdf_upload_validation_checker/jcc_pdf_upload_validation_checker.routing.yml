@@ -1,0 +1,24 @@
+jcc_pdf_upload_validation_checker.settings_form:
+  path: '/admin/config/system/jcc-pdf-upload-validation-checker'
+  defaults:
+    _title: 'JCC PDF upload validation checker settings'
+    _form: 'Drupal\jcc_pdf_upload_validation_checker\Form\SettingsForm'
+  requirements:
+    _permission: 'administer jcc_pdf_upload_validation_checker configuration'
+
+jcc_pdf_upload_validation_checker.enqueue_by_fid:
+  path: '/api/pdf-audit/{fid}/pending'
+  defaults:
+    _controller: '\Drupal\jcc_pdf_upload_validation_checker\Controller\PdfAuditEnqueueController::markPendingAndQueue'
+  requirements:
+    fid: '\d+'
+    _csrf_request_header_token: 'TRUE'
+  methods: [POST]
+
+jcc_pdf_upload_validation_checker.details_modal:
+  path: '/jcc-pdf-upload-validation-checker/details/{entity_type}/{entity}/{field_name}'
+  defaults:
+    _controller: '\Drupal\jcc_pdf_upload_validation_checker\Controller\DetailsModalController::content'
+    _title: 'Audit Summary from EqualWeb'
+  requirements:
+    _permission: 'access content'
