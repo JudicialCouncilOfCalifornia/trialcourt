@@ -913,13 +913,33 @@ function _jcc_pdf_upload_validation_checker_unpublish_media_referencing_file(
   string $new_status,
   string $old_status = ''
 ): void {
+  $entity_field_manager = \Drupal::service('entity_field.manager');
   $media_storage = \Drupal::entityTypeManager()->getStorage('media');
+
+  $field_map = $entity_field_manager->getFieldMapByFieldType('entity_reference');
+  $media_fields = $field_map['media'] ?? [];
+
+  $valid_file_fields = [];
+  foreach (_jcc_pdf_upload_validation_checker_file_fields() as $field_name) {
+    if (!isset($media_fields[$field_name])) {
+      continue;
+    }
+
+    $settings = $media_fields[$field_name]['settings'] ?? [];
+    if (($settings['target_type'] ?? NULL) === 'file') {
+      $valid_file_fields[] = $field_name;
+    }
+  }
+
+  if (!$valid_file_fields) {
+    return;
+  }
 
   $query = $media_storage->getQuery()
     ->accessCheck(FALSE);
 
   $or = $query->orConditionGroup();
-  foreach (_jcc_pdf_upload_validation_checker_file_fields() as $field_name) {
+  foreach ($valid_file_fields as $field_name) {
     $or->condition($field_name . '.target_id', (int) $file->id());
   }
   $query->condition($or);
@@ -938,11 +958,9 @@ function _jcc_pdf_upload_validation_checker_unpublish_media_referencing_file(
 
     $changed = FALSE;
 
-    if ($media->hasField('status') || method_exists($media, 'setPublished')) {
-      if ((int) $media->isPublished() === 1) {
-        $media->set('status', 0);
-        $changed = TRUE;
-      }
+    if (method_exists($media, 'isPublished') && $media->isPublished()) {
+      $media->set('status', 0);
+      $changed = TRUE;
     }
 
     if ($media->hasField('moderation_state') && (string) $media->get('moderation_state')->value !== 'draft') {
@@ -952,16 +970,6 @@ function _jcc_pdf_upload_validation_checker_unpublish_media_referencing_file(
 
     if ($changed) {
       $media->save();
-
-      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-        'Unpublished media @mid because referenced file fid=@fid audit status changed from @old to @new.',
-        [
-          '@mid' => $media->id(),
-          '@fid' => (int) $file->id(),
-          '@old' => $old_status !== '' ? $old_status : '(empty)',
-          '@new' => $new_status,
-        ]
-      );
     }
   }
 }
