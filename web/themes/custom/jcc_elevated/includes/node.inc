@@ -729,6 +729,20 @@ function jcc_elevated_node_subpage(array &$variables, NodeInterface $node): void
  *   The node.
  */
 function jcc_elevated_node_judge(array &$variables, NodeInterface $node): void {
+
+  // Detail page title override.
+  $name = $node->label();
+  $detail_prefix = 'Profile of';
+
+  if (
+    $node->hasField('field_detail_page_title') &&
+    !$node->get('field_detail_page_title')->isEmpty()
+  ) {
+    $detail_prefix = trim($node->get('field_detail_page_title')->value);
+  }
+
+  $variables['detail_page_title'] = trim($detail_prefix . ' ' . $name);
+
   // Attachments.
   foreach ($node->field_media_file_multiple as $media_file) {
     $media = Media::load($media_file->target_id);

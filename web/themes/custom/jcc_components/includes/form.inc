@@ -121,7 +121,7 @@ function jcc_components_form_views_exposed_form_alter(&$form, FormStateInterface
   $view = $form_state->get('view');
 
   if ($view->id() == 'arbitrators') {
-    $termID = $view->args[0];
+    $termID = $view->args[0] ?? NULL;
 
     if ($termID == 'Civil-ADR-Provider') {
       $form['adr_process']['#states'] = [

@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.judge.field_custom_link
     - field.field.node.judge.field_date
     - field.field.node.judge.field_department
+    - field.field.node.judge.field_detail_page_title
     - field.field.node.judge.field_division
     - field.field.node.judge.field_job_title
     - field.field.node.judge.field_location
@@ -33,6 +34,11 @@ content:
     third_party_settings: {  }
     weight: 6
     region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   field_address:
     type: address_default
     label: hidden
@@ -56,6 +62,14 @@ content:
       link: false
     third_party_settings: {  }
     weight: 1
+    region: content
+  field_detail_page_title:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 14
     region: content
   field_division:
     type: entity_reference_label
