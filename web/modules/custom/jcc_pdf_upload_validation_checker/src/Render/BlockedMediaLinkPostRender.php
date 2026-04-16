@@ -71,7 +71,7 @@ final class BlockedMediaLinkPostRender implements TrustedCallbackInterface {
       }
 
       if (self::mediaHasBlockingPdf($media)) {
-        $replacement = $dom->createElement('span', (string) t('Document unavailable'));
+        $replacement = $dom->createElement('span', (string) t('[Linked Document Currently Unavailable]'));
         $replacement->setAttribute('class', 'jcc-pdf-unavailable');
         $link->parentNode->replaceChild($replacement, $link);
       }
