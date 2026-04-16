@@ -531,7 +531,7 @@ function _jcc_pdf_upload_validation_checker_build_manual_check(FileInterface $fi
     ],
     'button' => [
       '#type' => 'submit',
-      '#value' => t('PDF Manual check'),
+      '#value' => t('Start the PDF compliance check'),
       '#name' => 'jcc_pdf_manual_check_' . $context_id,
       '#ajax' => [
         'callback' => 'jcc_pdf_upload_validation_checker_manual_check_ajax',
@@ -540,6 +540,24 @@ function _jcc_pdf_upload_validation_checker_build_manual_check(FileInterface $fi
           'type' => 'throbber',
           'message' => t('Running PDF validation...'),
         ],
+      ],
+      'description' => [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => ['jcc-pdf-manual-check-description'],
+        ],
+        'title' => [
+          '#markup' => '<strong>' . t('Notes on our compliance check process:') . '</strong>',
+        ],
+        'list' => [
+          '#theme' => 'item_list',
+          '#items' => [
+            t('Works only for files in PDF format'),
+            t('May take up to three minutes to complete the verification'),
+            t('If you upload the file without initiating the check now, your file will be scanned automatically by the website. This “cron” task runs roughly every 20 minutes'),
+          ],
+        ],
+        '#weight' => 10,
       ],
       '#submit' => [],
       '#validate' => [],

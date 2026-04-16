@@ -75,7 +75,7 @@ final class PdfAuditRunner {
       $response = $this->httpClient->post(
         'https://e3pyeerkgstf2covgz2yjkvj2m0bnqiq.lambda-url.us-east-1.on.aws/validate',
         [
-          'timeout' => 60,
+          'timeout' => 240,
           'connect_timeout' => 10,
           'http_errors' => FALSE,
           'headers' => [
@@ -171,7 +171,7 @@ final class PdfAuditRunner {
         'PUT',
         'https://login.equalweb.com/api/v2/docs/upload',
         [
-          'timeout' => 60,
+          'timeout' => 240,
           'connect_timeout' => 10,
           'http_errors' => FALSE,
           'headers' => [
@@ -240,7 +240,7 @@ final class PdfAuditRunner {
       $auditResponse = $this->httpClient->post(
         'https://login.equalweb.com/api/v2/docs/audit',
         [
-          'timeout' => 60,
+          'timeout' => 240,
           'connect_timeout' => 10,
           'http_errors' => FALSE,
           'headers' => [
@@ -306,7 +306,7 @@ final class PdfAuditRunner {
         $statusResponse = $this->httpClient->get(
           'https://login.equalweb.com/api/v2/docs/status/' . rawurlencode($reportId),
           [
-            'timeout' => 90,
+            'timeout' => 240,
             'connect_timeout' => 10,
             'http_errors' => FALSE,
             'headers' => [
@@ -398,7 +398,7 @@ final class PdfAuditRunner {
       $reportResponse = $this->httpClient->get(
         'https://login.equalweb.com/api/v2/docs/report/' . rawurlencode($reportId),
         [
-          'timeout' => 60,
+          'timeout' => 240,
           'connect_timeout' => 10,
           'http_errors' => FALSE,
           'headers' => [
