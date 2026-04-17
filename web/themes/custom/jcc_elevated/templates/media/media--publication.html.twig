@@ -63,6 +63,8 @@
 {% endif %}
 
 {% set asset %}
+  {% set type = publication.type ? publication.type : 'Publication' %}
+
   {% if publication.languages %}
     {% set translations = [] %}
     {% for language in publication.languages %}
@@ -82,15 +84,19 @@
   {% include "@molecules/AssetBundle/AssetBundle.twig" with {
     text: publication.body|render,
     primary_file_type: publication.primary_file_type,
-    doc_type: publication.type,
+    doc_type: type,
     assets: publication.documents,
     languages: languages,
   } %}
 {% endset %}
 
+{% set heading_aria_label %}
+  aria-label="{{ type }} media for {{ name }}"
+{% endset %}
 {% include "@molecules/HeroHangover/HeroHangover.twig" with {
   background: 'striped-base-light-xx',
   heading: name,
+  heading_attributes: heading_aria_label,
   media: false,
   brow: {
     variant: 'default',
