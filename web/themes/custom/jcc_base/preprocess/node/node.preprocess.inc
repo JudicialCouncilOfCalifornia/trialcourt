@@ -5,14 +5,69 @@
  * Theme and preprocess functions for nodes.
  */
 
-use Drupal\views\Views;
 use Drupal\Core\Url;
+use Drupal\views\Views;
 
 /**
  * Implements hook_preprocess_HOOK().
  */
 function jcc_base_preprocess_node(&$variables, $hook) {
   $node = $variables['node'];
+  $type = $node->bundle();
+
+  // Metadata.
+  foreach ($node->getFields() as $field) {
+    $field_name = $field->getName();
+
+    switch ($field_name) {
+      case 'field_division':
+      case 'field_tags':
+      case 'field_topics':
+      case 'field_subject_matter':
+        $field_defintion = $field->getFieldDefinition();
+        $field_display_name = $field_defintion->getLabel();
+        $field_machine_name = str_replace(' ', '_', strtolower($field_display_name));
+
+        foreach ($field as $item) {
+          $term = $item->entity;
+          $name = $term->getName();
+          $term_machine_name = str_replace(' ', '-', strtolower($name));
+          $url = '/search?f[0]=' . $field_machine_name . ':' . $term->id();
+          $aria_label = 'Search for ' . strtolower($name) . ' ' . strtolower($field_display_name);
+          if ($field_name == 'field_division') {
+            $aria_label = $aria_label . ' content';
+          }
+
+          switch ($field_name) {
+            case 'field_tags':
+              $aria_label = 'Search for content tagged ' . strtolower($name);
+              break;
+
+            case 'field_topics':
+              // If Newsroom and alternative to search is available.
+              $theme = \Drupal::theme()->getActiveTheme()->getName();
+              if (strpos($theme, 'newsroom')) {
+                $path_validator = \Drupal::service('path.validator');
+                $topic_url = '/' . $type . '/' . $term_machine_name;
+                if ($path_validator->isValid($topic_url)) {
+                  $url = $topic_url;
+                  $aria_label = 'View more ' . $type . ' related to ' . strtolower($name);
+                }
+              }
+              break;
+          }
+
+          $variables['metadata'][$field_machine_name][] = [
+            'id' => $term->id(),
+            'text' => $name,
+            'url' => $url,
+            'aria_label' => $aria_label,
+          ];
+        }
+        break;
+    }
+  }
+
   switch ($node->getType()) {
     case 'location':
       if ($variables['view_mode'] == 'map_card') {

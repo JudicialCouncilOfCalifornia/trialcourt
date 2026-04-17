@@ -31,7 +31,7 @@ $config['search_api.index.index']['status'] = true;
 3. Run these commands:
 ```
 % lando destroy -y
-% lando rebuild -y
+% lando start (you might be able to do lando rebuild -y instead, but it didn't work on WSL2)
 ```
 
 ## Disabling Solr Search in your local environment.
