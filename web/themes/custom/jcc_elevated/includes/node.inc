@@ -363,7 +363,7 @@ function jcc_elevated_node_advisory_body(array &$variables, NodeInterface $node)
       $variables['content']['meetings_tab']['past_meetings']['heading'] = [
         '#type' => "html_tag",
         '#tag' => 'h3',
-        '#value' => t('Past Meetings'),
+        '#value' => t('Archive of Past Meetings'),
       ];
 
       // Generate the link.
