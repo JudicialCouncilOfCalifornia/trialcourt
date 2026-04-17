@@ -1495,7 +1495,14 @@ function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variabl
     if ($node->get('field_media_file_multiple')->getValue()) {
       foreach ($node->get('field_media_file_multiple')->getValue() as $citing) {
         $media = Media::load($citing['target_id']);
-        $file = File::load($media->get('field_media_file')->target_id);
+        $file = NULL;
+        if ($media) {
+          if ($media->hasField('field_media_file')) {
+            if (!$media->get('field_media_file')->isEmpty()) {
+              $file = File::load($media->get('field_media_file')->target_id);
+            }
+          }
+        }
         if ($file) {
           $citing_title = $media->get('field_media_text')->value;
           if (is_null($citing_title)) {
