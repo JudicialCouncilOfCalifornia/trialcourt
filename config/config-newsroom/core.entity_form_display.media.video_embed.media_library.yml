@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_form_mode.media.media_library
+    - field.field.media.video_embed.field_media_thumbnail_alt
     - field.field.media.video_embed.field_media_video_embed_field
     - media.type.video_embed
 id: media.video_embed.media_library
@@ -16,6 +17,14 @@ content:
     weight: 2
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_media_thumbnail_alt:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   name:
     type: string_textfield
@@ -30,5 +39,9 @@ hidden:
   field_media_video_embed_field: true
   langcode: true
   path: true
+  publish_on: true
+  publish_state: true
   status: true
   uid: true
+  unpublish_on: true
+  unpublish_state: true
