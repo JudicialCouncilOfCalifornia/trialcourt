@@ -85,20 +85,18 @@
   {% block layout %}
     {{ breadcrumb }}
 
-    <div class="personal_bio">
-      <h2><span>Professional Bio</span></h2>
-      <h3>Contact Information</h3>
-
-      <p class="name_personal_bio">Full Name: {{content.field_last_name.0['#context']['value']}},{{content.field_first_name.0['#context']['value']}}<br>
+    <div class="personal_bio jcc-section">
+      <h2>Contact Information</h2>
+      <div class="name_personal_bio">
+        Full Name: {{content.field_last_name.0['#context']['value']}},{{content.field_first_name.0['#context']['value']}}<br>
         Email: <a href="mailto:{{content.field_email_address.0['#context']['value']}}">{{content.field_email_address.0['#context']['value']}}</a><br>
         Phone Number: <a href="tel:{{content.field_phone_number.0['#context']['value']}}">{{content.field_phone_number.0['#context']['value']}}</a><br>
         {% set fax=content.field_fax.0['#context']['value'] %}
         {% if fax %}
           Fax:{{content.field_fax.0['#context']['value']}}
         {%endif%}
-        <br>
+      </div>
       <div class="address-container">
-        <div class="address-title"></div>
         {{ content.field_address }}
       </div>
       {% if content.field_county.0['#context']['value'] %}
@@ -107,13 +105,12 @@
         </div>
       {% endif %}
     </div>
-    <br>
 
-    <div class="general_information arbitrator-content">
-    {% set mediator =content.field_mediator %}
+    <div class="general_information arbitrator-content jcc-section">
+    {% set mediator = content.field_mediator %}
 
     {% if mediator.0 %}
-      <h3>General Information</h3>
+      <h2>General Information</h2>
       <p class="mediator">Mediator: {{content.field_mediator_type.0["#title"]}}</p>
       </div>
     {% endif %}
@@ -131,8 +128,8 @@
     {%endif%}
     {% set linksArray = content.field_foreign_language %}
     {% if linksArray.0 %}
-      <div class="arbitrator-links-table">
-        <h3>Foreign language</h3>
+      <div class="arbitrator-links-table jcc-section">
+        <h2>Foreign language</h2>
         <table class="arbitrator-table-custom">
           <tbody>
           {% for linkData in linksArray %}
@@ -149,8 +146,8 @@
     {% set linksArray = content.field_language_other %}
     {% if linksArray %}
       {% if linksArray.0 %}
-        <div class="links-table">
-          <h3>Other language</h3>
+        <div class="links-table jcc-section">
+          <h2>Other language</h2>
           <table class="arbitrator-table-custom">
             <tbody>
             {% for linkData in linksArray %}
@@ -196,8 +193,8 @@
     {% set process=content.field_process %}
     {% set linksArray =content.field_process %}
     {% if linksArray.0 %}
-      <div class="links-table">
-        <h3> Process</h3>
+      <div class="links-table jcc-section">
+        <h2>Process</h2>
         <table class="arbitrator-table-custom">
           <tbody>
           {% for linkData in linksArray %}
@@ -213,8 +210,8 @@
     {% endif %}
     {% set linksArray =content.field_adr_process %}
     {% if linksArray.0 %}
-      <div class="links-table">
-        <h3>ADR Process</h3>
+      <div class="links-table jcc-section">
+        <h2>ADR Process</h2>
         <table class="arbitrator-table-custom">
           <tbody>
           {% for linkData in linksArray %}
@@ -231,8 +228,8 @@
 
     {% set linksArray = content.field_subject_matter %}
     {% if linksArray.0 %}
-      <div class="links-table">
-        <h3>Subject Matter</h3>
+      <div class="links-table jcc-section">
+        <h2>Subject Matter</h2>
         <table class="arbitrator-table-custom">
           <tbody>
           {% for linkData in linksArray %}
@@ -250,8 +247,8 @@
     {% set linksArray = content.field_subject_matter_other %}
     {% if linksArray %}
       {% if linksArray.0 %}
-        <div class="links-table">
-          <h3>Subject Matter Other</h3>
+        <div class="links-table jcc-section">
+          <h2>Subject Matter Other</h2>
           <table class="arbitrator-table-custom">
             <tbody>
             {% for linkData in linksArray %}
@@ -270,8 +267,8 @@
     {% set linksArray = content.field_areas_of_law %}
 
     {% if linksArray.0 %}
-      <div class="links-table">
-        <h3>Area of Law</h3>
+      <div class="links-table jcc-section">
+        <h2>Area of Law</h2>
         <table class="arbitrator-table-custom">
           <tbody>
           {% for linkData in linksArray %}
@@ -290,10 +287,10 @@
 
 {% include "@molecules/hero/hero.twig" with {
   hero: {
-    layout: 'default',
+    layout: 'full-main',
     background: 'default',
     main: {
-      title: arbitrator_full_name,
+      title: 'Professional Details for ' ~ arbitrator_full_name,
       lead: content.field_byline|render|striptags,
       brow: node.field_event_type.0.entity.name.value
     },
