@@ -1441,3 +1441,24 @@ function jcc_custom_preprocess_paragraph(array &$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_themes_settings_submit().
+ */
+function jcc_custom_themes_settings_submit($form, FormStateInterface $form_state) {
+  $clear_cache = FALSE;
+  $theme = \Drupal::config('system.theme')->get('default');
+  $config = \Drupal::configFactory()->getEditable($theme . '.settings');
+
+  $hide_trans_setting = 'hide_translation';
+  // On 'Hide Translation' setting toggled off.
+  if (($config->get($hide_trans_setting) !== $form_state->getValue($hide_trans_setting)) && $form_state->getValue($hide_trans_setting) === 0) {
+    // Rebuild cache to ensure translation access.
+    $clear_cache = TRUE;
+  }
+
+  // Clear cache for certain theme settings if requested.
+  if ($clear_cache) {
+    drupal_flush_all_caches();
+  }
+}
