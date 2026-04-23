@@ -1,7 +1,8 @@
 {{ attach_library("jcc_storybook/List") }}
+
 <li class="list__item paragraph--type--rule-section--default">
   {{ content.field_rule_index_section_label }}
-  {% if content.regions %}
+  {% if content.regions|render|striptags|trim or content.field_rule_index_section_content['#items'] is not empty%}
     <ul class="list__container">
       {{ content.field_rule_index_section_content }}
       {{ content|without('field_rule_index_section_label', 'field_rule_index_section_content') }}

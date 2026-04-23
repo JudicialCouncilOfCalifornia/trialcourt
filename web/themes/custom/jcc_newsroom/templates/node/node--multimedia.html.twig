@@ -150,7 +150,7 @@
                   <div class="contextual-region">
                     {{ drupal_contextual_links('media:media=' ~ media_id) }}
                     <a href="{{ image_url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ media_caption }}" aria-label="Click to view larger image">
-                      <img src="{{ image_url }}" alt="{{ image_alt }}">
+                      <img src="{{ image_url }}" alt="{{ (image_alt|default(''))|e('html_attr') }}">
                     </a>
                   </div>
                 {% endset %}

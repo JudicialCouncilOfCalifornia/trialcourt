@@ -77,6 +77,10 @@
 {{ attach_library("jcc_storybook/Brow") }}
 {{ attach_library("jcc_storybook/Button") }}
 
+{% set heading_aria_label %}
+  aria-label="{{ node.field_opinion_source.entity.name.value }} {{ node.bundle() }} for case {{ node.title.value }}"
+{% endset %}
+
 {% include "@molecules/HeroHangover/HeroHangover.twig" with {
   background: 'striped-base-dark-x',
   brow: {
@@ -85,6 +89,7 @@
     part_two: node.field_date_time.value ? node.field_date_time.value|date('F j, Y') : '',
   },
   heading: node.title.value,
+  heading_attributes: heading_aria_label,
   media: false,
   attributes: create_attribute()
 } %}
