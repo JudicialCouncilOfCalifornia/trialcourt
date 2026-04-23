@@ -42,6 +42,34 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
   ];
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  private EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * The HTTP client.
+   *
+   * @var \GuzzleHttp\ClientInterface
+   */
+  private ClientInterface $httpClient;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  private ConfigFactoryInterface $configFactory;
+
+  /**
+   * The PDF audit runner.
+   *
+   * @var \Drupal\jcc_pdf_upload_validation_checker\PdfAudit\PdfAuditRunner
+   */
+  private PdfAuditRunner $pdfAuditRunner;
+
+  /**
    * Finds medias that reference a given file ID in any known file field.
    *
    * @param int $fid
@@ -66,7 +94,9 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
 
     /** @var \Drupal\media\MediaInterface[] $media */
     $media = $this->entityTypeManager->getStorage('media')->loadMultiple($mids);
-    return array_values(array_filter($media, fn($m) => $m instanceof MediaInterface));
+    return array_values(array_filter($media, static function ($media_item) {
+      return $media_item instanceof MediaInterface;
+    }));
   }
 
   /**
@@ -152,6 +182,34 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
   }
 
   /**
+   * Stores a readable failure summary on the file when possible.
+   *
+   * @param \Drupal\file\FileInterface $file
+   *   The file entity being audited.
+   * @param string $summary
+   *   The summary text to persist.
+   */
+  private function storeFailureSummary(FileInterface $file, string $summary): void {
+    if (!$file->hasField('field_pdf_audit_summary')) {
+      return;
+    }
+
+    try {
+      $file->set('field_pdf_audit_summary', $summary);
+      $file->save();
+    }
+    catch (\Throwable $e) {
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+        'Unable to write queue failure summary for file @fid: @message',
+        [
+          '@fid' => $file->id(),
+          '@message' => $e->getMessage(),
+        ]
+      );
+    }
+  }
+
+  /**
    * Constructs a new PdfAuditQueueWorker instance.
    *
    * @param array $configuration
@@ -166,17 +224,23 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
    *   The HTTP client service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory service.
+   * @param \Drupal\jcc_pdf_upload_validation_checker\PdfAudit\PdfAuditRunner $pdfAuditRunner
+   *   The PDF audit runner service.
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private EntityTypeManagerInterface $entityTypeManager,
-    private ClientInterface $httpClient,
-    private ConfigFactoryInterface $configFactory,
-    private PdfAuditRunner $pdfAuditRunner,
+    EntityTypeManagerInterface $entityTypeManager,
+    ClientInterface $httpClient,
+    ConfigFactoryInterface $configFactory,
+    PdfAuditRunner $pdfAuditRunner
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->entityTypeManager = $entityTypeManager;
+    $this->httpClient = $httpClient;
+    $this->configFactory = $configFactory;
+    $this->pdfAuditRunner = $pdfAuditRunner;
   }
 
   /**
@@ -214,8 +278,6 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
    *   - fid: (int) The file entity ID to validate.
    */
   public function processItem($data): void {
-    $config = $this->configFactory->get('jcc_pdf_upload_validation_checker.settings');
-
     $fid = (int) ($data['fid'] ?? 0);
     if (!$fid) {
       return;
@@ -237,8 +299,26 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
 
     \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('Cron processing PDF validation on fid=@fid', ['@fid' => $fid]);
 
-    // Read file bytes from URI.
-    $result = $this->pdfAuditRunner->auditFile($file);
+    try {
+      // Read file bytes from URI.
+      $result = $this->pdfAuditRunner->auditFile($file);
+    }
+    catch (\Throwable $e) {
+      $message = 'PDF audit aborted due to a runtime/dependency error. ' . $e->getMessage();
+
+      $file->set('field_pdf_audit_status', 'fail');
+      $file->save();
+      $this->storeFailureSummary($file, $message);
+
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+        'PDF audit aborted for fid=@fid: @message',
+        [
+          '@fid' => $fid,
+          '@message' => $e->getMessage(),
+        ]
+      );
+      return;
+    }
 
     if (empty($result['passed'])) {
       $file->set('field_pdf_audit_status', 'fail');
@@ -258,8 +338,6 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
       'PDF fid=@fid passed validation',
       ['@fid' => $fid]
     );
-
-    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('PDF fid=@fid passed validation', ['@fid' => $fid]);
 
     foreach ($this->loadMediaReferencingFile($fid) as $media) {
       if ($this->mediaHasAnyFailedFile($media)) {

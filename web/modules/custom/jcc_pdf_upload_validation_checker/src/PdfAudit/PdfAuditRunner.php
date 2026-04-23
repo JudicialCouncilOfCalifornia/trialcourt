@@ -154,16 +154,6 @@ final class PdfAuditRunner {
     }
 
     try {
-      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-        'EqualWeb upload request: method=PUT path=@path filename=@filename mime=@mime size=@size',
-        [
-          '@path' => $realPath,
-          '@filename' => basename($realPath),
-          '@mime' => mime_content_type($realPath) ?: 'unknown',
-          '@size' => file_exists($realPath) ? filesize($realPath) : 0,
-        ]
-      );
-
       // Step 1: upload document.
       $handle = fopen($realPath, 'rb');
 
@@ -195,14 +185,6 @@ final class PdfAuditRunner {
       $uploadCode = $uploadResponse->getStatusCode();
       $uploadBody = (string) $uploadResponse->getBody();
       $uploadJson = json_decode($uploadBody, TRUE) ?: [];
-
-      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-        'EqualWeb upload response: status=@status body=@body',
-        [
-          '@status' => $uploadCode,
-          '@body' => $uploadBody,
-        ]
-      );
 
       $reportId =
         $uploadJson['id']
@@ -259,14 +241,6 @@ final class PdfAuditRunner {
       $auditBody = (string) $auditResponse->getBody();
       $auditJson = json_decode($auditBody, TRUE) ?: [];
 
-      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-        'EqualWeb audit response: status=@status body=@body',
-        [
-          '@status' => $auditCode,
-          '@body' => $auditBody,
-        ]
-      );
-
       if (!in_array($auditCode, [200, 202], TRUE)) {
         $errors = [
           'Audit HTTP status: ' . $auditCode,
@@ -320,15 +294,6 @@ final class PdfAuditRunner {
         $statusJson = json_decode($statusBody, TRUE) ?: [];
         $status = strtolower((string) ($statusJson['status'] ?? ''));
 
-        \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-          'EqualWeb status response: attempt=@attempt status=@status body=@body',
-          [
-            '@attempt' => $attempt + 1,
-            '@status' => $status,
-            '@body' => $statusBody,
-          ]
-        );
-
         if (in_array($status, ['done', 'completed'], TRUE)) {
           break;
         }
@@ -363,14 +328,6 @@ final class PdfAuditRunner {
       }
 
       if ($status !== 'done' && $status !== 'completed') {
-        \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-          'EqualWeb polling ended after @attempts attempts. Last status: @status',
-          [
-            '@attempts' => $maxAttempts,
-            '@status' => json_encode($statusJson),
-          ]
-        );
-
         $errors = [
           'Last status response: ' . json_encode($statusJson),
         ];
@@ -414,14 +371,6 @@ final class PdfAuditRunner {
       $reportCode = $reportResponse->getStatusCode();
       $reportBody = (string) $reportResponse->getBody();
       $reportJson = json_decode($reportBody, TRUE) ?: [];
-
-      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-        'EqualWeb report response: status=@status body=@body',
-        [
-          '@status' => $reportCode,
-          '@body' => $reportBody,
-        ]
-      );
 
       if ($reportCode !== 200) {
         $errors = [
