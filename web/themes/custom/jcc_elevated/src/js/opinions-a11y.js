@@ -1,30 +1,13 @@
-(function (Drupal) {
+(function (Drupal, once) {
   Drupal.behaviors.opinionsA11y = {
     attach: function (context) {
-      var liveRegions = [];
-
-      if (context.matches && context.matches('[data-opinions-results-live]')) {
-        liveRegions.push(context);
-      }
-
-      if (context.querySelectorAll) {
-        liveRegions = liveRegions.concat(Array.prototype.slice.call(
-          context.querySelectorAll('[data-opinions-results-live]')
-        ));
-      }
-
-      liveRegions.forEach(function (liveRegion) {
-        if (liveRegion.getAttribute('data-opinions-a11y-processed') === 'true') {
-          return;
-        }
-        liveRegion.setAttribute('data-opinions-a11y-processed', 'true');
-
+      once('opinions-a11y-announcement', '[data-opinions-results-live]', context).forEach(function (liveRegion) {
         var announcement = liveRegion.getAttribute('data-results-announcement');
         if (!announcement) {
           return;
         }
 
-        // Force a text update after load so screen readers announce changes.
+        // Force a text update so SR announces refreshed result count.
         liveRegion.textContent = '';
         window.setTimeout(function () {
           liveRegion.textContent = announcement;
@@ -32,4 +15,4 @@
       });
     }
   };
-})(Drupal);
+})(Drupal, once);
