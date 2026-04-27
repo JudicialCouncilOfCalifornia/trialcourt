@@ -1357,3 +1357,15 @@ function jcc_custom_preprocess_paragraph(array &$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function jcc_custom_form_geocoder_provider_edit_form_alter(array &$form, FormStateInterface $form_state) {
+  if (isset($form['options']['apiKey'])) {
+    $new_val = 516;
+    $form['options']['apiKey']['#maxlength'] = $new_val;
+    $form['options']['apiKey']['#attributes']['maxlength'] = $new_val;
+    \Drupal::logger('jcc_custom')->notice('Set Geocoder provider API key maxlength at '.$new_val);
+  }
+}
