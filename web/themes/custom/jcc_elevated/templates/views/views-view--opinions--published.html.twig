@@ -35,6 +35,7 @@
 {{ attach_library("jcc_storybook/InlineForm") }}
 {{ attach_library("jcc_storybook/ViewResults") }}
 {{ attach_library("jcc_storybook/ResultExcerpt") }}
+{{ attach_library("jcc_elevated/opinions-a11y") }}
 {% block styles %}{% endblock %}
 
 {%
@@ -46,6 +47,14 @@
 {% set content_header %}
   <div class="cluster">
     <div>{{ count_summary }}</div>
+    <div
+      class="sr-only"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      data-opinions-results-live
+      data-results-announcement="{{ count_summary|striptags|trim }}"
+    ></div>
   </div>
 {% endset %}
 
