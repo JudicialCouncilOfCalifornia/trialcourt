@@ -1,6 +1,19 @@
-{{ attach_library("jcc_storybook/ProfileCards") }}
+{# Workaround to remove attributes render error from log #}
+{% set content %}
+  {% for row in rows %}{{ row.content|raw }}{% endfor %}
+{% endset %}
 
-{% include "@organisms/ProfileCards/ProfileCards.twig" with {
-  variant: 'multiple',
-  sub_component_data: [rows],
-} %}
+{% if rows.0.content['#node'] %}
+  {% set node_type = rows.0.content['#node'].bundle() %}
+  {% if node_type == 'judge' %}
+    {{ attach_library("jcc_storybook/ProfileCards") }}
+    {% include "@organisms/ProfileCards/ProfileCards.twig" with {
+      variant: 'multiple',
+      sub_component_data: [content],
+    } %}
+  {% else %}
+    {{ content }}
+  {% endif %}
+{% else %}
+  {{ content }}
+{% endif %}
