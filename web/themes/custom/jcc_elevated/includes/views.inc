@@ -838,7 +838,7 @@ function jcc_elevated_preprocess_views_view__advisory_body_events__page_1(&$vari
   $variables['exposed'] = $parent_advisory_body ? $variables['exposed'] : [];
 
   // If we have an advisory body in the URL context, adjust the title.
-  $variables['view_title'] = $parent_advisory_body ? t('@title Past Meetings', ['@title' => $parent_advisory_body->getTitle()])->__toString() : t('Past Meetings')->__toString();
+  $variables['view_title'] = $parent_advisory_body ? t('Archive: @title Past Meetings', ['@title' => $parent_advisory_body->getTitle()])->__toString() : t('Past Meetings')->__toString();
   $variables['view_brow'] = $parent_advisory_body ? t('Advisory Committee') : NULL;
 }
 
@@ -1494,17 +1494,43 @@ function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variabl
     $citings = [];
     if ($node->get('field_media_file_multiple')->getValue()) {
       foreach ($node->get('field_media_file_multiple')->getValue() as $citing) {
-        $media = Media::load($citing['target_id']);
-        $file = File::load($media->get('field_media_file')->target_id);
-        if ($file) {
-          $citing_title = $media->get('field_media_text')->value;
-          if (is_null($citing_title)) {
-            $citing_title = $media->get('name')->value;
+        if ($citing['target_id']) {
+          $media_manager = $entity_type_manager->getStorage('media');
+          $media = $media_manager->load($citing['target_id'] ?? NULL);
+          if ($media && $media->get('field_media_file')->target_id) {
+            $file = File::load($media->get('field_media_file')->target_id);
+            if ($file) {
+              $citing_title = $media->get('field_media_text')->value;
+              if (is_null($citing_title)) {
+                $citing_title = $media->get('name')->value;
+              }
+              $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
+              $citings[] = [
+                'text' => ['#markup' => '<a href="' . $file_url . '" aria-label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
+              ];
+            }
+            else {
+              // Missing media file assistance since content is synchronized.
+              if ($user->isAuthenticated() && $user->hasPermission('edit opinion')) {
+                $citings[] = [
+                  'text' => t('No file available for media @id.', ['@id' => $citing['target_id']]),
+                ];
+              }
+            }
           }
-          $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
-          $citings[] = [
-            'text' => ['#markup' => '<a href="' . $file_url . '" aria-label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
-          ];
+          else {
+            // Missing media entity assistance since content is synchronized.
+            $missing_msg = t('Citing @id is not available at this time.', ['@id' => $citing['target_id']]);
+            if ($citing['target_id']) {
+              $user = \Drupal::currentUser();
+              if ($user->isAuthenticated() && $user->hasPermission('edit opinion')) {
+                $missing_msg = t('Cannot find media @id for this citing.', ['@id' => $citing['target_id']]);
+              }
+            }
+            $citings[] = [
+              'text' => ['#markup' => $missing_msg],
+            ];
+          }
         }
       }
     }
