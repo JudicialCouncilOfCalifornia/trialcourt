@@ -746,8 +746,8 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node): void {
   // Attachments.
   foreach ($node->field_media_file_multiple as $media_file) {
     $media = Media::load($media_file->target_id);
-    $media_name = $media->name->value;
-    if ($media->get('field_media_file_multiple')->target_id) {
+    if ($media && $media->get('field_media_file_multiple')->target_id) {
+      $media_name = $media->name->value;
       $file = File::load($media->get('field_media_file_multiple')->target_id);
       $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
       $link = [
