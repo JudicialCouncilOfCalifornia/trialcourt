@@ -59,6 +59,12 @@ class SettingsForm extends ConfigFormBase {
       '#required' => TRUE,
     ];
 
+    $form['pdf_validation_bypass'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable manual pdf validation bypass'),
+      '#default_value' => $config->get('pdf_validation_bypass') ?? FALSE,
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -79,6 +85,7 @@ class SettingsForm extends ConfigFormBase {
     $this->config('jcc_pdf_upload_validation_checker.settings')
       ->set('pdf_validation_api', $form_state->getValue('pdf_validation_api'))
       ->set('equal_web_api_key', $form_state->getValue('equal_web_api_key'))
+      ->set('pdf_validation_bypass', (bool) $form_state->getValue('pdf_validation_bypass'))
       ->save();
 
     parent::submitForm($form, $form_state);
