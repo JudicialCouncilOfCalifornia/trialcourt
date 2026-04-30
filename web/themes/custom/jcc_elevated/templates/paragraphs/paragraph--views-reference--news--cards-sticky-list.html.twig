@@ -15,7 +15,8 @@
           {% if row.imagealt %}
             alt="{{ row.imagealt|escape }}"
           {% else %}
-            role="presentation"
+            {# If no ALT value, hide from screen readers as decorative image #}
+            aria-hidden="true"
           {% endif %}
         {% endset %}
         <img src="{{row.imageurl}}"{{ attribute }} />
