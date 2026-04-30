@@ -1465,6 +1465,19 @@ function jcc_custom_themes_settings_submit($form, FormStateInterface $form_state
 
 /**
  * Implements hook_form_FORM_ID_alter().
+ * for tci-1376, increasing the maxlength field of the api key textbox.
+ */
+function jcc_custom_form_geocoder_provider_edit_form_alter(array &$form, FormStateInterface $form_state) {
+  if (isset($form['options']['apiKey'])) {
+    $new_val = 1024;
+    $form['options']['apiKey']['#maxlength'] = $new_val;
+    $form['options']['apiKey']['#attributes']['maxlength'] = $new_val;
+    \Drupal::logger('jcc_custom')->notice('Set Geocoder provider API key maxlength at '.$new_val);
+  }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ * for ada-430, updating the page title. 
  */
 function jcc_custom_form_node_tentative_ruling_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['#attached']['library'][] = 'jcc_components/tentative_ruling_edit_form';
