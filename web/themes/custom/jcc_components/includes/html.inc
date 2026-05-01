@@ -7,16 +7,6 @@
 
 use Drupal\node\NodeInterface;
 
-/**
- * Implements hook_theme_suggestions_html_alter().
- */
-function jcc_components_theme_suggestions_html_alter(array &$suggestions, array $variables) {
-  $current_path = \Drupal::service('path.current')->getPath();
-  $alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
-  if (str_contains($alias, 'tentative-ruling')) {
-    $suggestions[] = 'html__tentative_ruling';
-  }
-}
 
 /**
  * Implements hook_preprocess_html().
