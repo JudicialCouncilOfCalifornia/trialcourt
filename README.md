@@ -1,6 +1,6 @@
 # Readme
 
-## Meta
+## Meta Peace
 
 This document should be updated by *YOU*, as necessary as the project evolves.
 Add your author information for historical reference and professional context, as:
