@@ -9,7 +9,9 @@ use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -656,6 +658,88 @@ function jcc_custom_element_info_alter(array &$info) {
   // Add the custom command to managed_file elements, so that it is
   // available when called:
   $info['managed_file']['#attached']['library'][] = 'jcc_custom/command.managed_file_upload_complete_event_command';
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ *
+ * Applies video_embed thumbnail alt only on sites that define
+ * field_media_thumbnail_alt (e.g. Newsroom config split). Other installs are
+ * unchanged until the field is added to the video_embed bundle.
+ *
+ * Alt resolution matches field--field-videos.html.twig and multimedia album
+ * cards: non-empty trimmed editor value; else trimmed alt from the media
+ * thumbnail image field when present; else empty. The media name is never used.
+ */
+function jcc_custom_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  if ($entity->getEntityTypeId() !== 'media' || $entity->bundle() !== 'video_embed') {
+    return;
+  }
+  if (!$entity->hasField('field_media_thumbnail_alt')) {
+    return;
+  }
+  $alt = _jcc_custom_video_embed_resolve_thumbnail_alt($entity);
+  if (isset($build['field_media_video_embed_field'])) {
+    _jcc_custom_video_embed_walk_thumb_alt($build['field_media_video_embed_field'], $alt);
+  }
+  if (isset($build['thumbnail'])) {
+    _jcc_custom_video_embed_walk_thumb_alt($build['thumbnail'], $alt);
+  }
+}
+
+/**
+ * Resolves alt text for a video_embed media thumbnail for rendered output.
+ *
+ * Order matches Twig (field--field-videos / views album cards): use
+ * field_media_thumbnail_alt when it has non-whitespace content; if the field
+ * has only whitespace, do not fall back (parity with Twig). If the field is
+ * empty, use the thumbnail field's alt when set.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The media entity (video_embed bundle, with field_media_thumbnail_alt).
+ *
+ * @return string
+ *   Trimmed alt text, or an empty string.
+ */
+function _jcc_custom_video_embed_resolve_thumbnail_alt(EntityInterface $entity) : string {
+  $editor_field = $entity->get('field_media_thumbnail_alt');
+  if (!$editor_field->isEmpty()) {
+    $editor_alt = trim((string) $editor_field->value);
+    if ($editor_alt !== '') {
+      return $editor_alt;
+    }
+    return '';
+  }
+  $thumbnail = $entity->get('thumbnail');
+  if ($thumbnail->isEmpty()) {
+    return '';
+  }
+  $values = $thumbnail->first()->getValue();
+  if (!isset($values['alt']) || $values['alt'] === NULL || $values['alt'] === '') {
+    return '';
+  }
+  return trim((string) $values['alt']);
+}
+
+/**
+ * Sets #alt on nested image / image_style used as video thumbnails.
+ */
+function _jcc_custom_video_embed_walk_thumb_alt(array &$element, string $alt) : void {
+  if (isset($element['#theme'])) {
+    $hook = $element['#theme'];
+    $hooks = is_array($hook) ? $hook : [$hook];
+    foreach ($hooks as $theme_hook) {
+      if ($theme_hook === 'image' || $theme_hook === 'image_style') {
+        $element['#alt'] = $alt;
+        return;
+      }
+    }
+  }
+  foreach (Element::children($element) as $key) {
+    if (is_array($element[$key])) {
+      _jcc_custom_video_embed_walk_thumb_alt($element[$key], $alt);
+    }
+  }
 }
 
 /**
@@ -1359,14 +1443,22 @@ function jcc_custom_preprocess_paragraph(array &$variables) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- * for tci-1376, increasing the maxlength field of the api key textbox
+ * Implements hook_themes_settings_submit().
  */
-function jcc_custom_form_geocoder_provider_edit_form_alter(array &$form, FormStateInterface $form_state) {
-  if (isset($form['options']['apiKey'])) {
-    $new_val = 1024;
-    $form['options']['apiKey']['#maxlength'] = $new_val;
-    $form['options']['apiKey']['#attributes']['maxlength'] = $new_val;
-    \Drupal::logger('jcc_custom')->notice('Set Geocoder provider API key maxlength at '.$new_val);
+function jcc_custom_themes_settings_submit($form, FormStateInterface $form_state) {
+  $clear_cache = FALSE;
+  $theme = \Drupal::config('system.theme')->get('default');
+  $config = \Drupal::configFactory()->getEditable($theme . '.settings');
+
+  $hide_trans_setting = 'hide_translation';
+  // On 'Hide Translation' setting toggled off.
+  if (($config->get($hide_trans_setting) !== $form_state->getValue($hide_trans_setting)) && $form_state->getValue($hide_trans_setting) === 0) {
+    // Rebuild cache to ensure translation access.
+    $clear_cache = TRUE;
+  }
+
+  // Clear cache for certain theme settings if requested.
+  if ($clear_cache) {
+    drupal_flush_all_caches();
   }
 }
