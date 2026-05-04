@@ -134,6 +134,13 @@ final class BlockedMediaLinkPostRender implements TrustedCallbackInterface {
       return FALSE;
     }
 
+    if ($file->hasField('field_bypass_pdf_validation')
+      && (bool) $file->get('field_bypass_pdf_validation')->value
+      && (bool) \Drupal::config('jcc_pdf_upload_validation_checker.settings')->get('pdf_validation_bypass')
+    ) {
+      return FALSE;
+    }
+
     $status = '';
     if ($file->hasField('field_pdf_audit_status')) {
       $status = (string) $file->get('field_pdf_audit_status')->value;
