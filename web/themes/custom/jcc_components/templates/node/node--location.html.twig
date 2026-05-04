@@ -83,8 +83,6 @@
   {% set matters = matters|merge(item) %}
 {% endfor %}
 
-{% set directions_action_aria_label = 'Get directions for the ' ~ node.label ~ ' location'|t %}
-
 {# Build a clean plain-text address once and reuse it everywhere. #}
 {% set address = '' %}
 {% set address_url = '' %}
@@ -97,6 +95,13 @@
   {% if address is not empty %}
     {% set address_url = 'https://maps.google.com/?q=' ~ address|url_encode %}
   {% endif %}
+{% endif %}
+
+{# Define the ARIA label after address is built so we can use it #}
+{% if address is not empty %}
+  {% set directions_action_aria_label = 'Get directions to ' ~ address ~ ' for the ' ~ node.label ~ ' location'|t %}
+{% else %}
+  {% set directions_action_aria_label = 'Get directions for the ' ~ node.label ~ ' location'|t %}
 {% endif %}
 
 {# Build clean phone values once and reuse them everywhere. #}

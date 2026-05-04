@@ -5,6 +5,8 @@
  * Contains update hooks for taxonomy term creation.
  */
 
+use Drupal\taxonomy\Entity as TaxonomyEntity;
+
 /**
  * Implements hook_update_N().
  *
@@ -89,4 +91,161 @@ function jcc_custom_update_8066() {
       }
     }
   }
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adds taxonomy terms to the cases_served and service_categories vocabularies.
+ * Assumes the vocabularies are already created via configuration (immutable).
+ * Will not run if terms already exist in either vocabulary.
+ */
+function jcc_custom_update_9088(&$sandbox) {
+  $update_name = 'jcc_custom_update_9088';
+  $logger = \Drupal::logger('jcc_custom');
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $term_storage = $entity_type_manager->getStorage('taxonomy_term');
+  $vocabulary_terms =  [
+    'cases_served' => [
+      'All Cases Served',
+      'Appeals',
+      'CARE Court',
+      'Civil',
+      'Conservatorships',
+      'Criminal',
+      'Domestic Violence',
+      'Family Law',
+      'Guardianships',
+      'Juvenile Delinquency',
+      'Juvenile Dependency',
+      'Mental Health',
+      'Name Change & Gender Affirmation',
+      'Probate',
+      'Restraining Orders',
+      'Small Claims',
+      'Traffic',
+      'Unlawful Detainer',
+    ],
+    'service_categories' => [
+      'Clerk Window (All cases)',
+      'Clerk Window (criminal)',
+      'Clerk Window (civil)',
+      'Clerk Window (Traffic)',
+      'Self-Help',
+    ],
+  ];
+  $created_count = 0;
+  $skipped_count = 0;
+  $missing_vocabularies = [];
+  $terms_to_create = [];
+
+  // Start of the static helper func, that hat creates a taxonomy term for
+  // A given vocabulary ($vid) and name ($term_name).
+  // Also increments the created counter, and emits log + UI messages.
+  $create_term_static_func = static function ($vid, $term_name) use ($logger, $update_name, &$created_count) {
+    $term = TaxonomyEntity\Term::create([
+      'vid' => $vid,
+      'name' => $term_name,
+    ]);
+    $term->save();
+
+    $created_count++;
+
+    $message = t('%update_name: created term @name in vocabulary @vid.', [
+      '%update_name' => $update_name,
+      '@name' => $term_name,
+      '@vid' => $vid,
+    ]);
+
+    \Drupal::messenger()->addMessage($message);
+    $logger->notice('%update_name: created term %name in vocabulary %vid.', [
+      '%update_name' => $update_name,
+      '%name' => $term_name,
+      '%vid' => $vid,
+    ]);
+  };
+  // End of the static helper func.
+  // Pass 1: evaluate if we should do the update and build an execution plan.
+  foreach ($vocabulary_terms as $vid => $terms) {
+    $vocabulary = TaxonomyEntity\Vocabulary::load($vid);
+    if (!$vocabulary) {
+      $missing_vocabularies[] = $vid;
+      $logger->warning('%update_name: vocabulary %vid does not exist. Skipping it.', [
+        '%update_name' => $update_name,
+        '%vid' => $vid,
+      ]);
+      continue;
+    }
+
+    $existing_names = array_map(
+      static function ($term) {
+        return $term->label();
+      },
+      $term_storage->loadByProperties(['vid' => $vid])
+    );
+    $existing_names = array_fill_keys($existing_names, TRUE);
+
+    foreach ($terms as $term_name) {
+      if (isset($existing_names[$term_name])) {
+        $skipped_count++;
+        continue;
+      }
+      $terms_to_create[$vid][] = $term_name;
+    }
+  }
+
+  // Early exit if no work is needed.
+  if (empty($terms_to_create)) {
+    if ($missing_vocabularies) {
+      \Drupal::messenger()->addWarning(t(
+        '%update_name: skipped missing vocabularies: @vocabularies.',
+        [
+          '%update_name' => $update_name,
+          '@vocabularies' => implode(', ', $missing_vocabularies),
+        ]
+      ));
+    }
+
+    $summary_message = t(
+      '%update_name completed. No new terms were created. Skipped @skipped existing term(s).',
+      [
+        '%update_name' => $update_name,
+        '@skipped' => $skipped_count,
+      ]
+    );
+
+    \Drupal::messenger()->addMessage($summary_message);
+    $logger->notice('%message', ['%message' => $summary_message]);
+    return;
+  }
+
+  // Pass 2: execute the update plan built in Pass 1.
+  foreach ($terms_to_create as $vid => $terms) {
+    foreach ($terms as $term_name) {
+      $create_term_static_func($vid, $term_name);
+    }
+  }
+
+  if ($missing_vocabularies) {
+    \Drupal::messenger()->addWarning(t(
+      '%update_name: skipped missing vocabularies: @vocabularies.',
+      [
+        '%update_name' => $update_name,
+        '@vocabularies' => implode(', ', $missing_vocabularies),
+      ]
+    ));
+  }
+
+  // Prepare the logging message and do the exit.
+  $summary_message = t(
+    '%update_name completed. Created @created term(s). Skipped @skipped existing term(s).',
+    [
+      '%update_name' => $update_name,
+      '@created' => $created_count,
+      '@skipped' => $skipped_count,
+    ]
+  );
+
+  \Drupal::messenger()->addMessage($summary_message);
+  $logger->notice('%message', ['%message' => $summary_message]);
 }

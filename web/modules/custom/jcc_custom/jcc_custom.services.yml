@@ -8,3 +8,8 @@ services:
     arguments: ['@entity_type.manager', '@module_handler', '@current_user', '@content_moderation.moderation_information']
     tags:
       - { name: event_subscriber }
+  jcc_custom.hide_translation_redirect_subscriber:
+    class: Drupal\jcc_custom\EventSubscriber\JccHideTranslationRedirectSubscriber
+    arguments: ['@current_route_match', '@current_user', '@config.factory']
+    tags:
+      - { name: event_subscriber }

@@ -202,4 +202,10 @@ function jcc_components_form_system_theme_settings_alter(&$form, FormStateInterf
     '#title'         => t('Personalized message'),
     '#default_value' => $no_results_msg ? $no_results_msg['value'] : '',
   ];
+
+  // Custom theme settings submit handler.
+  $moduleHandler = \Drupal::service('module_handler');
+  if ($moduleHandler->moduleExists('jcc_custom')) {
+    $form['#submit'][] = 'jcc_custom_themes_settings_submit';
+  }
 }
