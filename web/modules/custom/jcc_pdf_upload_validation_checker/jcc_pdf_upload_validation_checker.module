@@ -20,6 +20,13 @@ use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 
 /**
+ * Implements hook_element_info_alter().
+ */
+function jcc_pdf_upload_validation_checker_element_info_alter(array &$info): void {
+  $info['managed_file']['#process'][] = 'jcc_pdf_upload_validation_checker_bulk_importer_document_upload_process';
+}
+
+/**
  * Implements hook_entity_insert().
  */
 function jcc_pdf_upload_validation_checker_entity_insert(EntityInterface $entity) {
@@ -162,6 +169,15 @@ function jcc_pdf_upload_validation_checker_form_alter(array &$form, FormStateInt
     return;
   }
 
+  if ($form_id === 'jcc_bulk_importer_form') {
+    $bypass_enabled = (bool) \Drupal::config('jcc_pdf_upload_validation_checker.settings')->get('pdf_validation_bypass');
+    if ($bypass_enabled) {
+      _jcc_pdf_upload_validation_checker_prepend_bypass_submit($form);
+    }
+
+    return;
+  }
+
   if (in_array($form_id, ['media_library_add_form_upload', 'media_directories_add_form'], TRUE)) {
     _jcc_pdf_upload_validation_checker_alter_media_library_upload_form($form, $form_state);
 
@@ -203,14 +219,8 @@ function jcc_pdf_upload_validation_checker_form_alter(array &$form, FormStateInt
 
 /**
  * Prepends the bypass save handler to form submit arrays.
- *
- * Adds to $form['#submit'] (used by buttons without their own #submit) and
- * also to any action button that already declares its own #submit list.
- * Never initialises a missing #submit to avoid breaking buttons that rely on
- * the form-level fallback.
  */
 function _jcc_pdf_upload_validation_checker_prepend_bypass_submit(array &$form): void {
-  // Always prepend to the form-level list.
   if (!is_array($form['#submit'] ?? NULL)) {
     $form['#submit'] = [];
   }
@@ -232,6 +242,57 @@ function _jcc_pdf_upload_validation_checker_prepend_bypass_submit(array &$form):
       }
     }
   }
+}
+
+/**
+ * Process callback: attach PDF validation UI to bulk importer document rows.
+ */
+function jcc_pdf_upload_validation_checker_bulk_importer_document_upload_process(array &$element, FormStateInterface $form_state, array &$complete_form): array {
+  // Match the bulk importer module's own managed_file process guard.
+  if (($form_state->getCompleteForm()['#form_id'] ?? '') !== 'jcc_bulk_importer_form') {
+    return $element;
+  }
+
+  $fids = $element['fids']['#value'] ?? [];
+  if (empty($fids) || !is_array($fids)) {
+    return $element;
+  }
+
+  if (empty($element['documents']) || !is_array($element['documents'])) {
+    return $element;
+  }
+
+  $bypass_enabled = (bool) \Drupal::config('jcc_pdf_upload_validation_checker.settings')->get('pdf_validation_bypass');
+
+  foreach ($fids as $fid) {
+    $fid = (int) $fid;
+    if ($fid <= 0 || empty($element['documents'][$fid]) || !is_array($element['documents'][$fid])) {
+      continue;
+    }
+
+    $file = File::load($fid);
+    if (!$file instanceof FileInterface || !_jcc_pdf_upload_validation_checker_is_pdf($file)) {
+      continue;
+    }
+
+    _jcc_pdf_upload_validation_checker_normalize_temporary_upload_status($file);
+
+    $context_id = 'bulk-importer-' . $fid;
+    $element['documents'][$fid]['jcc_pdf_manual_check'] = _jcc_pdf_upload_validation_checker_build_manual_check($file, $context_id);
+    $element['documents'][$fid]['jcc_pdf_manual_check']['#weight'] = 1000;
+
+    if ($bypass_enabled && $file->hasField('field_bypass_pdf_validation')) {
+      $element['documents'][$fid]['jcc_pdf_bypass_validation'] = [
+        '#type' => 'checkbox',
+        '#title' => t('Bypass PDF validation for this file'),
+        '#parents' => ['jcc_pdf_bypass_flags', $fid],
+        '#default_value' => (bool) $file->get('field_bypass_pdf_validation')->value,
+        '#weight' => 1001,
+      ];
+    }
+  }
+
+  return $element;
 }
 
 /**
@@ -468,6 +529,7 @@ function _jcc_pdf_upload_validation_checker_is_pdf(?FileInterface $file): bool {
  */
 function _jcc_pdf_upload_validation_checker_is_supported_media_form(string $form_id, FormStateInterface $form_state): bool {
   if (
+    $form_id === 'jcc_bulk_importer_form' ||
     $form_id === 'media_library_add_form' ||
     $form_id === 'media_add_form' ||
     $form_id === 'media_edit_form' ||
@@ -645,6 +707,11 @@ function jcc_pdf_upload_validation_checker_media_file_delta_process(array $eleme
  */
 function jcc_pdf_upload_validation_checker_save_bypass_flag(array &$form, FormStateInterface $form_state): void {
   $bypass_flags = $form_state->getValue('jcc_pdf_bypass_flags');
+
+  if (!is_array($bypass_flags)) {
+    $bypass_flags = $form_state->getUserInput()['jcc_pdf_bypass_flags'] ?? NULL;
+  }
+
   if (!is_array($bypass_flags)) {
     return;
   }
