@@ -43,7 +43,7 @@ class FindMyCourt extends ControllerBase {
                 <form class="views-exposed-form bef-exposed-form" onsubmit="this.action = \'/find-my-court/\' + this.urlarg.value;">
                   <div class="form-item">
                     <label class="sr-only" for="urlarg">
-                      Enter a city or a zip code to find court locations
+                      Please enter a 5-digit California zip code or a city name to find nearby court locations
                     </label>
                     <input
                       class="form-text"
