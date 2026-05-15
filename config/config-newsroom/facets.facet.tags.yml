@@ -32,17 +32,17 @@ widget:
   type: checkbox
   config:
     show_numbers: true
-    soft_limit: 3
-    show_reset_link: true
+    soft_limit: 0
+    show_reset_link: false
     reset_text: 'Show all'
-    hide_reset_when_no_selection: true
+    hide_reset_when_no_selection: false
     soft_limit_settings:
       show_less_label: 'Show less'
       show_more_label: 'Show more'
 empty_behavior:
   behavior: none
 only_visible_when_facet_source_is_visible: true
-show_only_one_result: false
+show_only_one_result: true
 show_title: true
 processor_configs:
   active_widget_order:
@@ -79,6 +79,11 @@ processor_configs:
     processor_id: hide_non_narrowing_result_processor
     weights:
       build: 40
+    settings: {  }
+  hierarchy_processor:
+    processor_id: hierarchy_processor
+    weights:
+      build: 100
     settings: {  }
   translate_entity:
     processor_id: translate_entity

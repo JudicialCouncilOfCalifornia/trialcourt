@@ -42,7 +42,7 @@ widget:
 empty_behavior:
   behavior: none
 only_visible_when_facet_source_is_visible: true
-show_only_one_result: false
+show_only_one_result: true
 show_title: true
 processor_configs:
   active_widget_order:
@@ -77,6 +77,7 @@ processor_configs:
     settings:
       exclude: 'Basic page, Landing Page'
       regex: false
+      invert: false
   hide_1_result_facet:
     processor_id: hide_1_result_facet
     weights:
@@ -86,6 +87,11 @@ processor_configs:
     processor_id: hide_non_narrowing_result_processor
     weights:
       build: 40
+    settings: {  }
+  hierarchy_processor:
+    processor_id: hierarchy_processor
+    weights:
+      build: 100
     settings: {  }
   translate_entity:
     processor_id: translate_entity
