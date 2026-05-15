@@ -219,6 +219,10 @@ final class PdfAuditRunner {
       }
 
       // Step 2: start audit.
+      // Brief pause to allow EqualWeb to finish processing the uploaded file
+      // before triggering the audit; firing immediately returns "No pages found".
+      sleep(3);
+
       $auditResponse = $this->httpClient->post(
         'https://login.equalweb.com/api/v2/docs/audit',
         [
