@@ -9,7 +9,9 @@ use Drupal\Core\Controller\ControllerBase;
  */
 class FindMyCourt extends ControllerBase {
 
-  /**
+
+
+    /**
    * Returns a simple page.
    *
    * @return array
@@ -40,6 +42,9 @@ class FindMyCourt extends ControllerBase {
               <div class="inline-form inline-form--default" style="max-width:40rem;margin:auto;">
                 <form class="views-exposed-form bef-exposed-form" onsubmit="this.action = \'/find-my-court/\' + this.urlarg.value;">
                   <div class="form-item">
+                    <label class="sr-only" for="urlarg">
+                      Please enter a 5-digit California zip code or a city name to find nearby court locations
+                    </label>
                     <input
                       class="form-text"
                       placeholder="Enter a city or a zip code"
