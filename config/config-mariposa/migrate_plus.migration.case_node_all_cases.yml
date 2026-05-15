@@ -1,4 +1,4 @@
-uuid: 10318c1a-7f01-4d21-a369-4a1997170e7d
+uuid: 20418c1a-7f01-4d21-a370-4a1997170f8e
 langcode: en
 status: true
 dependencies: {  }
@@ -52,6 +52,9 @@ source:
     -
       name: location
       label: "Location"
+    -
+      name: attorney_of_record
+      label: "Attorney of Record"
 process:
   field_party_name:
     -
@@ -177,6 +180,23 @@ process:
       bundle_key: vid
       entity_type: taxonomy_term
       ignore_case: true
+  field_location:
+    - plugin: skip_on_empty
+      source: location
+      method: row
+      message: 'No Location found.'
+    - plugin: callback
+      callable: trim
+  field_attorney_of_record:
+    -
+      plugin: skip_on_empty
+      source: attorney_of_record
+      method: row
+      message: 'No Attorney of Record found.'
+    -
+      plugin: callback
+      callable: trim
+
 destination:
   plugin: 'entity:node'
   default_bundle: case
