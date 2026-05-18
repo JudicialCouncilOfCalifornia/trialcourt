@@ -274,6 +274,7 @@ final class PdfAuditRunner {
       // Step 3: poll until the report is ready.
       $statusJson = [];
       $status = NULL;
+      $reportType = 'audited';
       $maxAttempts = 180;
 
       for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
@@ -297,12 +298,20 @@ final class PdfAuditRunner {
         $statusBody = (string) $statusResponse->getBody();
         $statusJson = json_decode($statusBody, TRUE) ?: [];
         $status = strtolower((string) ($statusJson['status'] ?? ''));
+        $auditStatus = strtolower((string) ($statusJson['auditStatus'] ?? ''));
+        $type = strtolower((string) ($statusJson['type'] ?? ''));
+        if (in_array($type, ['check', 'audit', 'manual', 'convert'], TRUE)) {
+          $reportType = 'audited';
+        }
+        elseif ($type === 'uploading') {
+          $reportType = 'original';
+        }
 
-        if (in_array($status, ['done', 'completed'], TRUE)) {
+        if (in_array($status, ['ready', 'done', 'completed'], TRUE) || $auditStatus === 'done') {
           break;
         }
 
-        if (str_contains($status, 'failed')) {
+        if (in_array($status, ['failed', 'deleted'], TRUE) || str_contains($status, 'failed')) {
           $errors = [
             'Status response: ' . ($statusBody !== '' ? $statusBody : '[empty response]'),
             'Status value: ' . ($statusJson['status'] ?? '[missing]'),
@@ -331,7 +340,7 @@ final class PdfAuditRunner {
         // pending, ocr, queued, processing, etc.
       }
 
-      if ($status !== 'done' && $status !== 'completed') {
+      if (!in_array($status, ['ready', 'done', 'completed'], TRUE)) {
         $errors = [
           'Last status response: ' . json_encode($statusJson),
         ];
@@ -367,7 +376,7 @@ final class PdfAuditRunner {
             'x-a11y-api-key' => $apiKey,
           ],
           'query' => [
-            'type' => 'audited',
+            'type' => $reportType,
           ],
         ]
       );
@@ -375,6 +384,30 @@ final class PdfAuditRunner {
       $reportCode = $reportResponse->getStatusCode();
       $reportBody = (string) $reportResponse->getBody();
       $reportJson = json_decode($reportBody, TRUE) ?: [];
+
+      // Some EqualWeb accounts enforce specific report type values per file.
+      // Retry once with "both" when the first fetch is rejected as bad type.
+      if ($reportCode === 400 && str_contains($reportBody, "'type' must be equal to one of the allowed values")) {
+        $reportResponse = $this->httpClient->get(
+          'https://login.equalweb.com/api/v2/docs/report/' . rawurlencode($reportId),
+          [
+            'timeout' => 240,
+            'connect_timeout' => 10,
+            'http_errors' => FALSE,
+            'headers' => [
+              'Accept' => 'application/json',
+              'x-a11y-api-key' => $apiKey,
+            ],
+            'query' => [
+              'type' => 'both',
+            ],
+          ]
+        );
+
+        $reportCode = $reportResponse->getStatusCode();
+        $reportBody = (string) $reportResponse->getBody();
+        $reportJson = json_decode($reportBody, TRUE) ?: [];
+      }
 
       if ($reportCode !== 200) {
         $errors = [
