@@ -102,7 +102,6 @@ function jcc_elevated_paragraph_views_reference_news_cards_sticky_list(array &$v
  *   The news view.
  */
 function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variables, ViewEntityInterface $view) {
-  $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
   $executable = $view ? $view->getExecutable() : NULL;
 
   // Start with the sticky_list display.
@@ -136,8 +135,20 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
         $variables['sticky_list'][$index]['imagealt'] = '';
       }
 
-      $content = $sticky_item['#node']->get('body')->view('teaser');
-      $variables['excerpts'][] = $content;
+      $node_body = $sticky_item['#node']->get('body');
+      if (!$node_body->isEmpty()) {
+        if (!empty($node_body->summary)) {
+          $excerpt = strip_tags($node_body->summary);
+        }
+        else {
+          $raw = strip_tags($node_body->value ?? '');
+          $excerpt = text_summary($raw, NULL, 600);
+        }
+        $variables['excerpts'][] = ['#markup' => $excerpt];
+      }
+      else {
+        $variables['excerpts'][] = ['#markup' => ''];
+      }
     }
   }
 
