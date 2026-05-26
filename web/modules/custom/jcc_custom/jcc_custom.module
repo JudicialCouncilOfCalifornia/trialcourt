@@ -166,20 +166,46 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
         $query_params = $request->query->all();
         $allowed = FALSE;
 
-        // Check if invitation exist for the given proposal+title query.
-        $invitations = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
-          'type' => 'invitations_to_comment',
-          'field_itc_number' => $query_params['proposal'],
-          'title' => $query_params['title'],
-        ]);
+        // Check if invitation exists for the given proposal+title query.
+        if ($query_params && ($query_params['proposal'] && $query_params['deadline'] && $query_params['title'] && $query_params['category_id'])) {
+          // Invitation uniqueness is proposal number + title + category id.
+          $invitations = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
+            'type' => 'invitations_to_comment',
+            'field_itc_number' => $query_params['proposal'],
+            'title' => $query_params['title'],
+            'field_category' => $query_params['category_id'],
+          ]);
 
-        // Allow webform use if invitation exist & not expired.
-        if (!empty($invitations)) {
-          $today = new DateTime('now');
-          foreach ($invitations as $invitation) {
-            $deadline = new DrupalDateTime($invitation->get('field_deadline')->value);
-            if ($deadline && ($today->format('Ymd') <= $deadline->format('Ymd'))) {
-              $allowed = TRUE;
+          // Allow webform use if invitation is valid & not expired.
+          if (!empty($invitations)) {
+            // Validate deadline query parameter date format.
+            $valid_deadline_query = FALSE;
+            try {
+              new DateTime($query_params['deadline']);
+              $valid_deadline_query = TRUE;
+            }
+            catch (Exception $e) {
+              \Drupal::logger('invitation_to_comment')->error('Deadline date format in the query parameters is not valid for webform setup.' . ' Error message: ' . $e->getMessage());
+            }
+
+            if ($valid_deadline_query) {
+              $timezone = new DateTimeZone('America/Los_Angeles');
+              $today = new DateTime('now');
+              $today = $today->format('Ymd');
+              $deadline_query = new DateTime($query_params['deadline']);
+              $deadline_query = $deadline_query->format('Ymd');
+              $invitation = reset($invitations);
+              $deadline = new DateTime($invitation->get('field_deadline')->value, new DateTimeZone('UTC'));
+              $deadline = $deadline->setTimezone($timezone);
+              $deadline = $deadline->format('Ymd');
+              if ($deadline && ($deadline_query === $deadline) && ($today <= $deadline)) {
+                $allowed = TRUE;
+              }
+
+              // Log duplicate invitations if found.
+              if (count($invitations) > 1) {
+                \Drupal::logger('invitation_to_comment')->warning('Multiple invitations with the same parameters. Confirm if the duplication does not affect proposal availability. ' . $query_params['proposal'] . ' and title ' . $query_params['title']);
+              }
             }
           }
         }
