@@ -365,29 +365,17 @@ final class PdfAuditRunner {
       }
 
       // Step 4: fetch JSON report.
-      $reportResponse = $this->httpClient->get(
-        'https://login.equalweb.com/api/v2/docs/report/' . rawurlencode($reportId),
-        [
-          'timeout' => 240,
-          'connect_timeout' => 10,
-          'http_errors' => FALSE,
-          'headers' => [
-            'Accept' => 'application/json',
-            'x-a11y-api-key' => $apiKey,
-          ],
-          'query' => [
-            'type' => $reportType,
-          ],
-        ]
-      );
+      $reportTypes = array_values(array_unique(array_filter([
+        $reportType,
+        'both',
+        'original',
+        'audited',
+      ])));
+      $reportCode = 0;
+      $reportBody = '';
+      $reportJson = [];
 
-      $reportCode = $reportResponse->getStatusCode();
-      $reportBody = (string) $reportResponse->getBody();
-      $reportJson = json_decode($reportBody, TRUE) ?: [];
-
-      // Some EqualWeb accounts enforce specific report type values per file.
-      // Retry once with "both" when the first fetch is rejected as bad type.
-      if ($reportCode === 400 && str_contains($reportBody, "'type' must be equal to one of the allowed values")) {
+      foreach ($reportTypes as $candidateReportType) {
         $reportResponse = $this->httpClient->get(
           'https://login.equalweb.com/api/v2/docs/report/' . rawurlencode($reportId),
           [
@@ -399,7 +387,7 @@ final class PdfAuditRunner {
               'x-a11y-api-key' => $apiKey,
             ],
             'query' => [
-              'type' => 'both',
+              'type' => $candidateReportType,
             ],
           ]
         );
@@ -407,6 +395,20 @@ final class PdfAuditRunner {
         $reportCode = $reportResponse->getStatusCode();
         $reportBody = (string) $reportResponse->getBody();
         $reportJson = json_decode($reportBody, TRUE) ?: [];
+
+        if ($reportCode === 200) {
+          break;
+        }
+
+        $reportError = strtolower((string) ($reportJson['error'] ?? ''));
+        $canRetry = $reportCode === 400
+          || $reportCode === 404
+          || str_contains($reportError, 'not found')
+          || str_contains($reportError, 'allowed values');
+
+        if (!$canRetry) {
+          break;
+        }
       }
 
       if ($reportCode !== 200) {
@@ -469,6 +471,13 @@ final class PdfAuditRunner {
    * Normalize EqualWeb report into the same structure as the existing API.
    */
   private function normalizeEqualWebReport(FileInterface $file, array $reportJson, array $context = [], int $statusCode = 200): array {
+    if (!empty($reportJson['audited']) && is_array($reportJson['audited'])) {
+      $reportJson = $reportJson['audited'] + ['original' => $reportJson['original'] ?? NULL];
+    }
+    elseif (!empty($reportJson['original']) && is_array($reportJson['original'])) {
+      $reportJson = $reportJson['original'];
+    }
+
     $errors = [];
     $failed = 0;
     $manualFailed = 0;
@@ -530,6 +539,47 @@ final class PdfAuditRunner {
       }
     }
 
+    if (!empty($reportJson['Summary']) && is_array($reportJson['Summary'])) {
+      $recognizedSignal = TRUE;
+
+      $summary = $reportJson['Summary'];
+      $failed = (int) ($summary['Failed'] ?? $failed);
+      $manualFailed = (int) ($summary['Failed manually'] ?? $manualFailed);
+      $needsManualCheck = (int) ($summary['Needs manual check'] ?? $needsManualCheck);
+    }
+
+    if (!empty($reportJson['Detailed Report']) && is_array($reportJson['Detailed Report'])) {
+      $recognizedSignal = TRUE;
+
+      foreach ($reportJson['Detailed Report'] as $section => $items) {
+        if (!is_array($items)) {
+          continue;
+        }
+
+        foreach ($items as $item) {
+          if (!is_array($item)) {
+            continue;
+          }
+
+          $status = strtolower((string) ($item['Status'] ?? ''));
+          if ($status !== 'failed') {
+            continue;
+          }
+
+          $label = (string) ($item['Rule'] ?? 'Unknown check');
+          $description = (string) ($item['Description'] ?? '');
+          if ($section !== '') {
+            $label = $section . ': ' . $label;
+          }
+          if ($description !== '') {
+            $label .= ' — ' . $description;
+          }
+
+          $errors[] = $label;
+        }
+      }
+    }
+
     // Warnings/manual checks do not block pass.
     $passed = $recognizedSignal && $failed === 0 && $manualFailed === 0;
 
@@ -550,17 +600,6 @@ final class PdfAuditRunner {
         $manualFailed,
         $needsManualCheck
       );
-
-    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-      'EqualWeb normalized report: passed=@passed failed=@failed manual_failed=@manual_failed needs_manual=@needs_manual',
-      [
-        '@passed' => $passed ? 'true' : 'false',
-        '@failed' => $failed,
-        '@manual_failed' => $manualFailed,
-        '@needs_manual' => $needsManualCheck,
-      ]
-    );
-
     if ($passed) {
       $this->clearEqualWebSummary($file);
     }
