@@ -166,29 +166,29 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
         $query_params = $request->query->all();
         $allowed = FALSE;
 
-        // Check if invitation exists for the given proposal+title query.
+        // Allow webform use if invitation exists for the provided query.
         if ($query_params && ($query_params['proposal'] && $query_params['deadline'] && $query_params['title'] && $query_params['category_id'])) {
-          // Invitation uniqueness is proposal number + title + category id.
-          $invitations = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
-            'type' => 'invitations_to_comment',
-            'field_itc_number' => $query_params['proposal'],
-            'title' => $query_params['title'],
-            'field_category' => $query_params['category_id'],
-          ]);
+          // Validate deadline query parameter date format.
+          $valid_deadline_query = FALSE;
+          try {
+            new DateTime($query_params['deadline']);
+            $valid_deadline_query = TRUE;
+          }
+          catch (Exception $e) {
+            \Drupal::logger('invitation_to_comment')->error('Deadline date format in the query parameters is not valid for webform setup.' . ' Error message: ' . $e->getMessage());
+          }
 
-          // Allow webform use if invitation is valid & not expired.
-          if (!empty($invitations)) {
-            // Validate deadline query parameter date format.
-            $valid_deadline_query = FALSE;
-            try {
-              new DateTime($query_params['deadline']);
-              $valid_deadline_query = TRUE;
-            }
-            catch (Exception $e) {
-              \Drupal::logger('invitation_to_comment')->error('Deadline date format in the query parameters is not valid for webform setup.' . ' Error message: ' . $e->getMessage());
-            }
+          if ($valid_deadline_query) {
+            // Invitation uniqueness is proposal number + title + category id.
+            $invitations = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
+              'type' => 'invitations_to_comment',
+              'field_itc_number' => $query_params['proposal'],
+              'title' => $query_params['title'],
+              'field_category' => $query_params['category_id'],
+            ]);
 
-            if ($valid_deadline_query) {
+            // Allow webform use if invitation is valid & not expired.
+            if (!empty($invitations)) {
               $timezone = new DateTimeZone('America/Los_Angeles');
               $today = new DateTime('now');
               $today = $today->format('Ymd');
