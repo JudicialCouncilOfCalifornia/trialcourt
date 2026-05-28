@@ -103,7 +103,7 @@
   {% if course.sidebar or course_action or course_schedule %}
     {% set sidebar %}
       {% set sidebar_content = [] %}
-      {% set subsection = [] %}
+      {% set section = [] %}
 
       {# Promo Image #}
       {% if course.sidebar.promo_image %}
@@ -189,7 +189,7 @@
           {% endif %}
         {% endfor %}
         {% if events %}
-          {% set subsection = {
+          {% set section = {
             heading: 'Future Event Dates'|t,
             data: events,
           } %}
@@ -203,7 +203,7 @@
               variant: 'default',
               heading: 'Course Details',
               data: sidebar_content,
-              subsection: subsection,
+              section: section,
               attributes: create_attribute()
             } %}
           </section>
