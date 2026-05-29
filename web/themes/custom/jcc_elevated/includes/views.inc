@@ -2014,7 +2014,13 @@ function jcc_elevated_validate_date(string $date, string $format = 'Y-m-d'): boo
  * Helper function to apply common exposed filter view customizations.
  */
 function __jcc_view_results_exposed_filter_init(&$variables) {
+  $view = $variables['view'];
   $form = &$variables['exposed'];
+
+  // If AJAX is enabled.
+  if ($view->ajaxEnabled()) {
+    $variables['#attached']['library'][] = 'jcc_elevated/view-ajax-customizations';
+  }
 
   // Remove captcha.
   unset($form['captcha']);
