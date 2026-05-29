@@ -1476,3 +1476,11 @@ function jcc_custom_form_geocoder_provider_edit_form_alter(array &$form, FormSta
     $form['options']['apiKey']['#attributes']['maxlength'] = $new_val;
   }
 }
+
+/**
+ * Implements hook_colorbox_settings_alter().
+ */
+function jcc_custom_colorbox_settings_alter(array &$settings, string &$style): void {
+  // Improve control labels announced by assistive technology in the modal.
+  $settings['close'] = t('Close modal');
+}
