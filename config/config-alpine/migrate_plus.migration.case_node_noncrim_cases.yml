@@ -54,7 +54,7 @@ source:
       label: "Location"
     -
       name: attorney_of_record
-      label: "Attorney of Record"
+      label: "Attorney_Of_Record"
 process:
   field_migration_origin:
     plugin: default_value
@@ -108,20 +108,12 @@ process:
       entity_type: taxonomy_term
       ignore_case: true
   field_department:
-    - plugin: callback
+    -
+      plugin: callback
       source: location
       callable: trim
-    - plugin: static_map
-      map:
-        'SB Dept 3': 'Dept. 3 SB-Anacapa'
-        'SM Dept 3': 'Dept. 3 SM-Cook'
-        'SB Dept 4': 'Dept. 4 SB-Anacapa'
-        'SM Dept 4': 'Dept. 4 SM-Cook'
-        'SB Dept 5': 'Dept. 5 SB-Anacapa'
-        'SB Dept 6': 'Dept. 6 SB-Anacapa'
-        'SM Dept 2': 'Dept. 2 SM-Cook'
-      bypass: true
-    - plugin: entity_generate
+    -
+      plugin: entity_generate
       bundle: department
       value_key: name
       bundle_key: vid
@@ -143,15 +135,6 @@ process:
     - plugin: callback
       source: judicial_officer
       callable: trim
-    - plugin: static_map
-      map:
-        'Anderle, Thomas P': 'Judge Thomas Anderle'
-        'Beebe, Jed': 'Judge Jed Beebe'
-        'Geck, Donna D': 'Judge Donna Geck'
-        'Maxwell, Pauline': 'Judge Pauline Maxwell'
-        'Rigali, James F': 'Judge James F. Rigali'
-        'Sterne, Colleen K': 'Judge Colleen Sterne'
-      bypass: true
     - plugin: entity_generate
       bundle: judge
       value_key: title
@@ -202,7 +185,7 @@ process:
     -
       plugin: skip_on_empty
       source: attorney_of_record
-      method: row
+      method: process
       message: 'No Attorney of Record found.'
     -
       plugin: callback
