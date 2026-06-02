@@ -966,13 +966,14 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
 /**
  * Generates the webform URL for ITC.
  */
-function generate_itc_webform_url($item_number, $formatted_deadline, $title) {
+function generate_itc_webform_url($item_number, $formatted_deadline, $title, $category_id) {
   $base_path = '/itc-webform';
   $webform_subpage_url = Url::fromUserInput($base_path, [
     'query' => [
       'proposal' => htmlspecialchars($item_number, ENT_QUOTES, 'UTF-8'),
       'deadline' => htmlspecialchars($formatted_deadline, ENT_QUOTES, 'UTF-8'),
       'title' => htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
+      'category_id' => htmlspecialchars($category_id, ENT_QUOTES, 'UTF-8'),
     ],
   ])->setAbsolute()->toString();
   return $webform_subpage_url;
@@ -1161,9 +1162,10 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
           $formatted_deadline = $utc_deadline->format('F j, Y');
           $item_number = $node->get('field_itc_number')->value;
           $title = $node->get('title')->value;
+          $category_id = $node->hasField('field_category') ? $node->get('field_category')->target_id : FALSE;
           $brow['secondary'] = $item_number;
           if ($utc_deadline > $current_time) {
-            $webform_url = generate_itc_webform_url($item_number, $formatted_deadline, $title);
+            $webform_url = generate_itc_webform_url($item_number, $formatted_deadline, $title, $category_id);
             $email_address = 'invitations@jud.ca.gov';
             $url_content = '<a href="' . $webform_url . '">Submit comments online</a> | <a href="mailto:' . $email_address . '">Comment by email</a></p>';
             $body = $node->get('body')->value;
@@ -2014,7 +2016,13 @@ function jcc_elevated_validate_date(string $date, string $format = 'Y-m-d'): boo
  * Helper function to apply common exposed filter view customizations.
  */
 function __jcc_view_results_exposed_filter_init(&$variables) {
+  $view = $variables['view'];
   $form = &$variables['exposed'];
+
+  // If AJAX is enabled.
+  if ($view->ajaxEnabled()) {
+    $variables['#attached']['library'][] = 'jcc_elevated/view-ajax-customizations';
+  }
 
   // Remove captcha.
   unset($form['captcha']);
