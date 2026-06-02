@@ -140,7 +140,6 @@ function jcc_custom_node_prepare_form($node, $form_id, $form) {
  * Implements hook_form_alter().
  */
 function jcc_custom_form_alter(&$form, $form_state, $form_id) {
-
   $theme = \Drupal::config('system.theme')->get('default');
   $current_user = \Drupal::currentUser();
 
@@ -155,6 +154,59 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
       if (isset($form['field_e'][$node_type]['#access'])) {
         $form['field_e'][$node_type]['#access'] = FALSE;
       }
+    }
+  }
+
+  if (isset($form['#webform_id'])) {
+    switch ($form['#webform_id']) {
+      case 'invitation_to_comment':
+        $allowed = FALSE;
+        $isWebformAdmin = \Drupal::currentUser()->hasPermission('administer webform');
+        // Only invitation_id query param is allowed.
+        $request = \Drupal::request();
+        $query_params = $request->query->all();
+        $restrict_params = array_intersect_key($query_params, array_flip(['invitation_id']));
+        $request->query->replace($restrict_params);
+
+        // Allow webform use if valid and active invitation.
+        if ($query_params['invitation_id']) {
+          $node = \Drupal::entityTypeManager()->getStorage('node')->load($query_params['invitation_id']);
+          if ($node && $node->getType() == 'invitations_to_comment') {
+            $timezone = new DateTimeZone('America/Los_Angeles');
+            $today = new DateTime('now', $timezone);
+            $today = $today->format('Ymd');
+            $deadline = new DateTime($node->get('field_deadline')->value, new DateTimeZone('UTC'));
+            $deadline = $deadline->setTimezone($timezone);
+            $deadline_int = $deadline->format('Ymd');
+            if ($deadline_int && ($today <= $deadline_int)) {
+              $allowed = TRUE;
+              $deadline_formatted = $deadline->format('F j, Y');
+
+              // Prepopulate webform currently done with URL param queries.
+              $request->query->set('title', $node->get('title')->value);
+              $request->query->set('deadline', $deadline_formatted);
+              $request->query->set('proposal', $node->get('field_itc_number')->value);
+            }
+            elseif ($isWebformAdmin) {
+              \Drupal::messenger()->addWarning(t('The invitation node has expired and cannot be used to complete the webform setup.'));
+            }
+          }
+          elseif ($isWebformAdmin) {
+            \Drupal::messenger()->addWarning(t('A valid invitation node ID is needed to complete the webform setup.'));
+          }
+        }
+        elseif ($isWebformAdmin) {
+          \Drupal::messenger()->addWarning(t('A valid invitation node ID is needed to complete the webform setup.'));
+        }
+
+        // Prevent anonymous webform use if not a valid invitation.
+        if (!$allowed && !$isWebformAdmin) {
+          $form_object = $form_state->getFormObject();
+          $webform = $form_object->getWebform();
+          $webform->setStatus(FALSE);
+        }
+
+        break;
     }
   }
 
@@ -1463,13 +1515,11 @@ function jcc_custom_themes_settings_submit($form, FormStateInterface $form_state
   }
 }
 
-
-
 /**
- * Implements hook_form_FORM_ID_alter().
- * for tci-1376, increasing the maxlength field of the api key textbox
+ * Implements hook_form_FORM_ID_form_alter().
  */
 function jcc_custom_form_geocoder_provider_edit_form_alter(array &$form, FormStateInterface $form_state) {
+  // For TCI-1376, increasing the maxlength field of the api key textbox.
   if (isset($form['options']['apiKey'])) {
     $new_val = 1024;
     $form['options']['apiKey']['#maxlength'] = $new_val;
