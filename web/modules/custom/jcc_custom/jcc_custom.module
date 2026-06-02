@@ -142,6 +142,7 @@ function jcc_custom_node_prepare_form($node, $form_id, $form) {
 function jcc_custom_form_alter(&$form, $form_state, $form_id) {
   $theme = \Drupal::config('system.theme')->get('default');
   $current_user = \Drupal::currentUser();
+  $form_main_class = $form['#attributes']['class'][0] ?? NULL;
 
   // Granular editing restrictions.
   if (strpos($form_id, 'node_form') === 0) {
@@ -157,20 +158,21 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
     }
   }
 
-  if (isset($form['#webform_id'])) {
+  // Webform submission form customizations.
+  if ($form_main_class == 'webform-submission-form' && isset($form['#webform_id'])) {
     switch ($form['#webform_id']) {
       case 'invitation_to_comment':
         $allowed = FALSE;
         $isWebformAdmin = \Drupal::currentUser()->hasPermission('administer webform');
+
         // Only invitation_id query param is allowed.
         $request = \Drupal::request();
         $query_params = $request->query->all();
-        $restrict_params = array_intersect_key($query_params, array_flip(['invitation_id']));
-        $request->query->replace($restrict_params);
+        $strict_params = array_intersect_key($query_params, array_flip(['invitation_id']));
 
         // Allow webform use if valid and active invitation.
-        if ($query_params['invitation_id']) {
-          $node = \Drupal::entityTypeManager()->getStorage('node')->load($query_params['invitation_id']);
+        if (isset($strict_params['invitation_id'])) {
+          $node = \Drupal::entityTypeManager()->getStorage('node')->load($strict_params['invitation_id']);
           if ($node && $node->getType() == 'invitations_to_comment') {
             $timezone = new DateTimeZone('America/Los_Angeles');
             $today = new DateTime('now', $timezone);
@@ -188,15 +190,15 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
               $request->query->set('proposal', $node->get('field_itc_number')->value);
             }
             elseif ($isWebformAdmin) {
-              \Drupal::messenger()->addWarning(t('The invitation node has expired and cannot be used to complete the webform setup.'));
+              \Drupal::messenger()->addWarning(t('Invitation @node_id has expired and cannot be used to complete the webform setup.', ['@node_id' => $node->id()]));
             }
           }
           elseif ($isWebformAdmin) {
-            \Drupal::messenger()->addWarning(t('A valid invitation node ID is needed to complete the webform setup.'));
+            \Drupal::messenger()->addWarning(t('A valid invitation ID is needed to complete the webform setup.'));
           }
         }
         elseif ($isWebformAdmin) {
-          \Drupal::messenger()->addWarning(t('A valid invitation node ID is needed to complete the webform setup.'));
+          \Drupal::messenger()->addWarning(t('A valid invitation ID is needed to complete the webform setup.'));
         }
 
         // Prevent anonymous webform use if not a valid invitation.
