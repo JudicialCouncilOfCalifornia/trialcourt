@@ -184,10 +184,13 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
               $allowed = TRUE;
               $deadline_formatted = $deadline->format('F j, Y');
 
-              // Prepopulate webform currently done with URL param queries.
+              // Prepopulate webform display and fields.
               $request->query->set('title', $node->get('title')->value);
+              $form['elements']['proposal_title']['#default_value'] = $node->get('title')->value;
               $request->query->set('deadline', $deadline_formatted);
+              $form['elements']['deadline']['#default_value'] = $deadline_formatted;
               $request->query->set('proposal', $node->get('field_itc_number')->value);
+              $form['elements']['item_number']['#default_value'] = $node->get('field_itc_number')->value;
             }
             elseif ($isWebformAdmin) {
               \Drupal::messenger()->addWarning(t('Invitation @node_id has expired and cannot be used to complete the webform setup.', ['@node_id' => $node->id()]));
