@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.case.field_attorney_of_record
     - field.field.node.case.field_case_category
     - field.field.node.case.field_case_number
     - field.field.node.case.field_case_status
@@ -23,13 +24,21 @@ targetEntityType: node
 bundle: case
 mode: default
 content:
+  field_attorney_of_record:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 13
+    region: content
   field_case_category:
     type: entity_reference_label
     label: above
     settings:
       link: true
     third_party_settings: {  }
-    weight: 110
+    weight: 10
     region: content
   field_case_number:
     type: entity_reference_label
@@ -37,7 +46,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 103
+    weight: 3
     region: content
   field_case_status:
     type: entity_reference_label
@@ -45,7 +54,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 111
+    weight: 11
     region: content
   field_case_subtype:
     type: entity_reference_label
@@ -53,7 +62,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 109
+    weight: 9
     region: content
   field_case_type:
     type: entity_reference_label
@@ -61,7 +70,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 108
+    weight: 8
     region: content
   field_department:
     type: entity_reference_label
@@ -69,7 +78,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 107
+    weight: 7
     region: content
   field_filing_date:
     type: datetime_default
@@ -78,7 +87,7 @@ content:
       timezone_override: ''
       format_type: medium
     third_party_settings: {  }
-    weight: 102
+    weight: 2
     region: content
   field_hearing_date:
     type: datetime_default
@@ -87,7 +96,7 @@ content:
       timezone_override: ''
       format_type: medium
     third_party_settings: {  }
-    weight: 101
+    weight: 1
     region: content
   field_hearing_type:
     type: entity_reference_label
@@ -95,7 +104,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 112
+    weight: 12
     region: content
   field_judge:
     type: entity_reference_label
@@ -103,14 +112,14 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 106
+    weight: 6
     region: content
   field_party_name:
     type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 104
+    weight: 4
     region: content
   field_party_type:
     type: entity_reference_label
@@ -118,12 +127,12 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 105
+    weight: 5
     region: content
   links:
     settings: {  }
     third_party_settings: {  }
-    weight: 100
+    weight: 0
     region: content
 hidden:
   entity_print_view_epub: true
