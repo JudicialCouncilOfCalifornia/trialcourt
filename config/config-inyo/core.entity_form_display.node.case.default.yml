@@ -1,8 +1,8 @@
-uuid: 07bce9cc-f922-4106-9a8b-f71a33dff350
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.case.field_attorney_of_record
     - field.field.node.case.field_case_category
     - field.field.node.case.field_case_number
     - field.field.node.case.field_case_status
@@ -22,8 +22,6 @@ dependencies:
     - path
     - scheduler
     - scheduler_content_moderation_integration
-_core:
-  default_config_hash: i315sfctyZslbJsKAJ9TdTdZuoW24OW-vAzW86OhF5I
 id: node.case.default
 targetEntityType: node
 bundle: case
@@ -34,6 +32,14 @@ content:
     weight: 3
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_attorney_of_record:
+    type: string_textfield
+    weight: 25
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_case_category:
     type: entity_reference_autocomplete
@@ -87,7 +93,7 @@ content:
     third_party_settings: {  }
   field_department:
     type: entity_reference_autocomplete
-    weight: 25
+    weight: 26
     region: content
     settings:
       match_operator: CONTAINS
@@ -147,7 +153,7 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 26
+    weight: 27
     region: content
     settings:
       include_locked: true
