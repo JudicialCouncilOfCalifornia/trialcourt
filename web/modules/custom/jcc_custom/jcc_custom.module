@@ -23,7 +23,6 @@ use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Implements hook_page_attachments().
@@ -141,9 +140,9 @@ function jcc_custom_node_prepare_form($node, $form_id, $form) {
  * Implements hook_form_alter().
  */
 function jcc_custom_form_alter(&$form, $form_state, $form_id) {
-
   $theme = \Drupal::config('system.theme')->get('default');
   $current_user = \Drupal::currentUser();
+  $form_main_class = $form['#attributes']['class'][0] ?? NULL;
 
   // Granular editing restrictions.
   if (strpos($form_id, 'node_form') === 0) {
@@ -159,60 +158,57 @@ function jcc_custom_form_alter(&$form, $form_state, $form_id) {
     }
   }
 
-  if (isset($form['#webform_id'])) {
+  // Webform submission form customizations.
+  if ($form_main_class == 'webform-submission-form' && isset($form['#webform_id'])) {
     switch ($form['#webform_id']) {
       case 'invitation_to_comment':
+        $allowed = FALSE;
+        $isWebformAdmin = \Drupal::currentUser()->hasPermission('administer webform');
+
+        // Only invitation_id query param is allowed.
         $request = \Drupal::request();
         $query_params = $request->query->all();
-        $allowed = FALSE;
+        $strict_params = array_intersect_key($query_params, array_flip(['invitation_id']));
 
-        // Check if invitation exists for the given proposal+title query.
-        if ($query_params && ($query_params['proposal'] && $query_params['deadline'] && $query_params['title'] && $query_params['category_id'])) {
-          // Invitation uniqueness is proposal number + title + category id.
-          $invitations = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
-            'type' => 'invitations_to_comment',
-            'field_itc_number' => $query_params['proposal'],
-            'title' => $query_params['title'],
-            'field_category' => $query_params['category_id'],
-          ]);
+        // Allow webform use if valid and active invitation.
+        if (isset($strict_params['invitation_id'])) {
+          $node = \Drupal::entityTypeManager()->getStorage('node')->load($strict_params['invitation_id']);
+          if ($node && $node->getType() == 'invitations_to_comment') {
+            $timezone = new DateTimeZone('America/Los_Angeles');
+            $today = new DateTime('now', $timezone);
+            $today = $today->format('Ymd');
+            $deadline = new DateTime($node->get('field_deadline')->value, new DateTimeZone('UTC'));
+            $deadline = $deadline->setTimezone($timezone);
+            $deadline_int = $deadline->format('Ymd');
+            if ($deadline_int && ($today <= $deadline_int)) {
+              $allowed = TRUE;
+              $deadline_formatted = $deadline->format('F j, Y');
 
-          // Allow webform use if invitation is valid & not expired.
-          if (!empty($invitations)) {
-            // Validate deadline query parameter date format.
-            $valid_deadline_query = FALSE;
-            try {
-              new DateTime($query_params['deadline']);
-              $valid_deadline_query = TRUE;
+              // Prepopulate webform display and fields.
+              $request->query->set('title', $node->get('title')->value);
+              $form['elements']['proposal_title']['#default_value'] = $node->get('title')->value;
+              $request->query->set('deadline', $deadline_formatted);
+              $form['elements']['deadline']['#default_value'] = $deadline_formatted;
+              $request->query->set('proposal', $node->get('field_itc_number')->value);
+              $form['elements']['item_number']['#default_value'] = $node->get('field_itc_number')->value;
             }
-            catch (Exception $e) {
-              \Drupal::logger('invitation_to_comment')->error('Deadline date format in the query parameters is not valid for webform setup.' . ' Error message: ' . $e->getMessage());
-            }
-
-            if ($valid_deadline_query) {
-              $timezone = new DateTimeZone('America/Los_Angeles');
-              $today = new DateTime('now');
-              $today = $today->format('Ymd');
-              $deadline_query = new DateTime($query_params['deadline']);
-              $deadline_query = $deadline_query->format('Ymd');
-              $invitation = reset($invitations);
-              $deadline = new DateTime($invitation->get('field_deadline')->value, new DateTimeZone('UTC'));
-              $deadline = $deadline->setTimezone($timezone);
-              $deadline = $deadline->format('Ymd');
-              if ($deadline && ($deadline_query === $deadline) && ($today <= $deadline)) {
-                $allowed = TRUE;
-              }
-
-              // Log duplicate invitations if found.
-              if (count($invitations) > 1) {
-                \Drupal::logger('invitation_to_comment')->warning('Multiple invitations with the same parameters. Confirm if the duplication does not affect proposal availability. ' . $query_params['proposal'] . ' and title ' . $query_params['title']);
-              }
+            elseif ($isWebformAdmin) {
+              \Drupal::messenger()->addWarning(t('Invitation @node_id has expired and cannot be used to complete the webform setup.', ['@node_id' => $node->id()]));
             }
           }
+          elseif ($isWebformAdmin) {
+            \Drupal::messenger()->addWarning(t('A valid invitation ID is needed to complete the webform setup.'));
+          }
+        }
+        elseif ($isWebformAdmin) {
+          \Drupal::messenger()->addWarning(t('A valid invitation ID is needed to complete the webform setup.'));
         }
 
-        // Prevent webform use if not a valid invitation.
-        if (!$allowed) {
-          throw new NotFoundHttpException();
+        // Prevent anonymous webform use if not a valid invitation.
+        if (!$allowed && !$isWebformAdmin) {
+          $form_object = $form_state->getFormObject();
+          $webform = $form_object->getWebform();
+          $webform->setStatus(FALSE);
         }
 
         break;
@@ -1534,4 +1530,12 @@ function jcc_custom_form_geocoder_provider_edit_form_alter(array &$form, FormSta
     $form['options']['apiKey']['#maxlength'] = $new_val;
     $form['options']['apiKey']['#attributes']['maxlength'] = $new_val;
   }
+}
+
+/**
+ * Implements hook_colorbox_settings_alter().
+ */
+function jcc_custom_colorbox_settings_alter(array &$settings, string &$style): void {
+  // Improve control labels announced by assistive technology in the modal.
+  $settings['close'] = t('Close modal');
 }

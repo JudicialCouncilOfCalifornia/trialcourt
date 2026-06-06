@@ -11,7 +11,6 @@
   brow: {
     variant: "default",
     part_one: node.itc_number,
-    part_two: node.deadline,
   },
   heading: label,
   media: false,
@@ -22,7 +21,12 @@
   <div class="stack">
     <h2>Description</h2>
     {{ content.body.0|render }}
-    <p><strong>Category:</strong> {{ node.category }}</p>
+    {% if node.deadline %}
+      <p><strong>Deadline:</strong> {{ node.deadline }}</p>
+    {% endif %}
+    {% if node.category %}
+      <p><strong>Category:</strong> {{ node.category }}</p>
+    {% endif %}
     {% if file_link %}
       <p><strong>File:</strong> {{ file_link }}</p>
     {% endif %}

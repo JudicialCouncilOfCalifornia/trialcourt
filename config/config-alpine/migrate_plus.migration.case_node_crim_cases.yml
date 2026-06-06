@@ -14,7 +14,7 @@ migration_group: case_management
 label: 'Case: Import Criminal Case Nodes'
 source:
   plugin: csv
-  path: sites/default/files/alpine/default/upload/export_crim.csv
+  path: sites/default/files/alpine/default/upload/Monday_cal.csv
   delimiter: ','
   enclosure: '"'
   header_row_count: 1
@@ -111,8 +111,8 @@ process:
     - plugin: callback
       source: location
       callable: trim
-    - 
-      plugin: entity_generate      
+    -
+      plugin: entity_generate
       bundle: department
       value_key: name
       bundle_key: vid
@@ -134,7 +134,7 @@ process:
     - plugin: callback
       source: judicial_officer
       callable: trim
-    
+
     - plugin: entity_generate
       bundle: judge
       value_key: title
