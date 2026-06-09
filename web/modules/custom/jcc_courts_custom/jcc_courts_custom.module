@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * @file
+ * Module hooks for jcc_courts_custom.
+ */
+
+use Drupal\migrate\MigrateExecutable;
+use Drupal\migrate\MigrateMessage;
+use Drupal\migrate\Plugin\MigrationInterface;
+
+/**
+ * Citable opinions migration callback.
+ */
+function jcc_courts_custom_migrate_opinions_citable() {
+  $migration_id = 'courts_node_opinion_published';
+  $migration_manager = \Drupal::service('plugin.manager.migration');
+  $migration = $migration_manager->createInstance($migration_id);
+
+  if ($migration) {
+    // 1. Stop & reset migration as a precaution.
+    if ($migration->getStatus() !== MigrationInterface::RESULT_STOPPED) {
+      $migration->setStatus(MigrationInterface::RESULT_STOPPED);
+    }
+    if ($migration->getStatus() !== MigrationInterface::STATUS_IDLE) {
+      $migration->setStatus(MigrationInterface::STATUS_IDLE);
+    }
+
+    // 2. Set option to mirror what is current in the source.
+    $migration->set('syncSource', TRUE);
+
+    // 3. Execute the migration.
+    $message = new MigrateMessage();
+    $executable = new MigrateExecutable($migration, $message);
+    try {
+      $executable->import();
+    }
+    catch (\Exception $e) {
+      \Drupal::logger('jcc_courts_custom')->error('Migration sync failed: @message', [
+        '@message' => $e->getMessage(),
+      ]);
+    }
+    // Update the migrate_last_imported key-value store.
+    $store = \Drupal::keyValue('migrate_last_imported');
+    $timestamp = time() * 1000;
+    $store->set($migration_id, $timestamp);
+  }
+}
