@@ -1,0 +1,30 @@
+uuid: fd6ccbfb-8670-462b-aef9-b1a7cedba555
+langcode: en
+status: true
+dependencies:
+  module:
+    - jcc_courts_custom
+title: 'Migrate Opinions: Non-Citable'
+id: migrate_opinions_noncitable
+weight: 0
+module: jcc_courts_custom
+callback: jcc_courts_custom_migrate_opinions_noncitable
+scheduler:
+  id: crontab
+  configuration:
+    rules:
+      - '* 17-23 * * 1-5'
+    catch_up: 300
+launcher:
+  id: serial
+  configuration:
+    timeouts:
+      lock_timeout: 3600
+    launcher:
+      thread: 0
+logger:
+  id: database
+  configuration:
+    method: '3'
+    expire: 1209600
+    retain: 1000
