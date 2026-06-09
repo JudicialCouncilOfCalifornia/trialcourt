@@ -64,9 +64,14 @@
     description_display == 'invisible' ? 'visually-hidden',
   ]
 %}
-{%
- set label_display = 'after'
-%}
+
+{# Default label position for specific types #}
+{% set types_to_skip = [
+  'select',
+] %}
+{% if type not in types_to_skip %}
+  {% set label_display = 'after' %}
+{% endif %}
 
 <div{{ attributes.addClass(classes) }}>
   {% if label_display in ['before', 'invisible'] %}

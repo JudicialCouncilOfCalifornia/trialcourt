@@ -746,8 +746,8 @@ function jcc_elevated_node_judge(array &$variables, NodeInterface $node): void {
   // Attachments.
   foreach ($node->field_media_file_multiple as $media_file) {
     $media = Media::load($media_file->target_id);
-    $media_name = $media->name->value;
-    if ($media->get('field_media_file_multiple')->target_id) {
+    if ($media && $media->get('field_media_file_multiple')->target_id) {
+      $media_name = $media->name->value;
       $file = File::load($media->get('field_media_file_multiple')->target_id);
       $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
       $link = [
@@ -982,7 +982,7 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   if ($node->get('field_rfp_start_date')->first()) {
     $rfp_dates[] = [
       'brow' => t('Issued date'),
-      'heading' => __jcc_elevated_determine_datetime_output($node->get('field_rfp_start_date')->first()->view('full')),
+      'emphasis' => __jcc_elevated_determine_datetime_output($node->get('field_rfp_start_date')->first()->view('full')),
     ];
   }
 
@@ -992,7 +992,7 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
       $heading = __jcc_elevated_determine_date_range_output($date->get('field_date_range')->first() ? $date->get('field_date_range')->first()->view('full') : NULL);
       $rfp_dates[] = [
         'brow' => $date->get('field_heading')->first() ? $date->get('field_heading')->first()->view('full') : NULL,
-        'heading' => $heading,
+        'emphasis' => $heading,
         'text' => $date->get('field_text')->first() ? $date->get('field_text')->first()->view('full') : NULL,
       ];
     }
@@ -1002,7 +1002,7 @@ function jcc_elevated_node_request(array &$variables, NodeInterface $node): void
   if ($node->get('field_rfp_end_date')->first()) {
     $rfp_dates[] = [
       'brow' => $archived ? t('Archived') : t('Deadline'),
-      'heading' => __jcc_elevated_determine_datetime_output($node->get('field_rfp_end_date')->first()->view('full')),
+      'emphasis' => __jcc_elevated_determine_datetime_output($node->get('field_rfp_end_date')->first()->view('full')),
     ];
   }
 
