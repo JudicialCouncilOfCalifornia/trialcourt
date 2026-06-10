@@ -14,6 +14,69 @@ use Drupal\migrate\Plugin\MigrationInterface;
  */
 function jcc_courts_custom_migrate_opinions_citable() {
   $migration_id = 'courts_node_opinion_published';
+  jcc_courts_custom_run_migration($migration_id, TRUE);
+}
+
+/**
+ * Citable opinions with grant review migration callback.
+ */
+function jcc_courts_custom_migrate_opinions_citable_review() {
+  $migration_id = 'courts_node_opinion_published_review';
+  jcc_courts_custom_run_migration($migration_id, TRUE);
+}
+
+/**
+ * Citable opinions archived migration callback.
+ */
+function jcc_courts_custom_migrate_opinions_citable_archive() {
+  $migration_id = 'courts_node_opinion_published_archive';
+  jcc_courts_custom_run_migration($migration_id, TRUE);
+}
+
+/**
+ * Non-citable opinions migration callback.
+ */
+function jcc_courts_custom_migrate_opinions_noncitable() {
+  $migration_id = 'courts_node_opinion_unpublished';
+  jcc_courts_custom_run_migration($migration_id, TRUE);
+}
+
+/**
+ * Non-citable opinions with grant review migration callback.
+ */
+function jcc_courts_custom_migrate_opinions_noncitable_review() {
+  $migration_id = 'courts_node_opinion_unpublished_review';
+  jcc_courts_custom_run_migration($migration_id, TRUE);
+}
+
+/**
+ * Opinion citing file migration callback.
+ */
+function jcc_courts_custom_migrate_opinions_citing_file() {
+  $migration_id = 'courts_file_opinion_citing';
+  jcc_courts_custom_run_migration($migration_id, TRUE);
+}
+
+/**
+ * Opinion citing media migration callback.
+ */
+function jcc_courts_custom_migrate_opinions_citing_media() {
+  $migration_id = 'courts_media_opinion_citing';
+  jcc_courts_custom_run_migration($migration_id, TRUE);
+}
+
+/**
+ * Opinion citing migration callback.
+ */
+function jcc_courts_custom_migrate_opinions_citing() {
+  $migration_id = 'courts_node_opinion_citing';
+  jcc_courts_custom_run_migration($migration_id, TRUE);
+}
+
+/**
+ * Common migration callback function.
+ */
+function jcc_courts_custom_run_migration($migration_id, $sync_source) {
   $migration_manager = \Drupal::service('plugin.manager.migration');
   $migration = $migration_manager->createInstance($migration_id);
 
@@ -26,23 +89,27 @@ function jcc_courts_custom_migrate_opinions_citable() {
       $migration->setStatus(MigrationInterface::STATUS_IDLE);
     }
 
-    // 2. Set option to mirror what is current in the source.
-    $migration->set('syncSource', TRUE);
+    // 2. Set options.
+    // Mirror what is current in the source.
+    if ($sync_source) {
+      $migration->set('syncSource', TRUE);
+    }
 
     // 3. Execute the migration.
     $message = new MigrateMessage();
     $executable = new MigrateExecutable($migration, $message);
     try {
       $executable->import();
+
+      // Update the migrate_last_imported key-value store.
+      $store = \Drupal::keyValue('migrate_last_imported');
+      $timestamp = time() * 1000;
+      $store->set($migration_id, $timestamp);
     }
     catch (\Exception $e) {
       \Drupal::logger('jcc_courts_custom')->error('Migration sync failed: @message', [
         '@message' => $e->getMessage(),
       ]);
     }
-    // Update the migrate_last_imported key-value store.
-    $store = \Drupal::keyValue('migrate_last_imported');
-    $timestamp = time() * 1000;
-    $store->set($migration_id, $timestamp);
   }
 }
