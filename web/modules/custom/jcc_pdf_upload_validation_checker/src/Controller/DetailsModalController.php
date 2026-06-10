@@ -77,6 +77,19 @@ final class DetailsModalController extends ControllerBase {
       ];
     }
 
+    $raw_text = (string) $entity->get($field_name)->value;
+
+    // Convert plain-text URLs to clickable links, then preserve line breaks.
+    $processed = preg_replace_callback(
+      '~(https?://[^\s]+)~',
+      function (array $m): string {
+        $url = htmlspecialchars($m[1], ENT_QUOTES, 'UTF-8');
+        return '<a href="' . $url . '" target="_blank" rel="noopener noreferrer">View full report</a>';
+      },
+      htmlspecialchars($raw_text, ENT_QUOTES, 'UTF-8')
+    );
+    $processed = nl2br($processed ?? '');
+
     return [
       '#type' => 'container',
       '#attributes' => [
@@ -87,9 +100,9 @@ final class DetailsModalController extends ControllerBase {
           'jcc_pdf_upload_validation_checker/details_modal',
         ],
       ],
-      'content' => $entity->get($field_name)->view([
-        'label' => 'hidden',
-      ]),
+      'content' => [
+        '#markup' => $processed,
+      ],
     ];
   }
 
