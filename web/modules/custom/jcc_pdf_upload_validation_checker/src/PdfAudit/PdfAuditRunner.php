@@ -254,13 +254,15 @@ final class PdfAuditRunner {
         $this->markEqualWebSummary(
           $file,
           $errors,
-          'EqualWeb audit request failed.'
+          'EqualWeb audit request failed.',
+          $reportId
         );
 
         return [
           'ok' => FALSE,
           'passed' => FALSE,
           'summary' => 'EqualWeb audit request failed.',
+          'report_id' => $reportId,
           'errors' => $errors,
           'raw' => [
             'upload' => $uploadJson,
@@ -320,13 +322,15 @@ final class PdfAuditRunner {
           $this->markEqualWebSummary(
             $file,
             $errors,
-            'EqualWeb audit failed.'
+            'EqualWeb audit failed.',
+            $reportId
           );
 
           return [
             'ok' => FALSE,
             'passed' => FALSE,
             'summary' => 'EqualWeb audit failed.',
+            'report_id' => $reportId,
             'errors' => $errors,
             'raw' => [
               'upload' => $uploadJson,
@@ -447,7 +451,8 @@ final class PdfAuditRunner {
           'audit' => $auditJson,
           'status' => $statusJson,
         ],
-        $reportCode
+        $reportCode,
+        $reportId
       );
     }
     catch (\Throwable $e) {
@@ -470,7 +475,7 @@ final class PdfAuditRunner {
   /**
    * Normalize EqualWeb report into the same structure as the existing API.
    */
-  private function normalizeEqualWebReport(FileInterface $file, array $reportJson, array $context = [], int $statusCode = 200): array {
+  private function normalizeEqualWebReport(FileInterface $file, array $reportJson, array $context = [], int $statusCode = 200, string $reportId = ''): array {
     if (!empty($reportJson['audited']) && is_array($reportJson['audited'])) {
       $reportJson = $reportJson['audited'] + ['original' => $reportJson['original'] ?? NULL];
     }
@@ -600,12 +605,7 @@ final class PdfAuditRunner {
         $manualFailed,
         $needsManualCheck
       );
-    if ($passed) {
-      $this->clearEqualWebSummary($file);
-    }
-    else {
-      $this->markEqualWebSummary($file, $errors, $summaryText);
-    }
+    $this->markEqualWebSummary($file, $passed ? [] : $errors, $summaryText, $reportId);
 
     return [
       'ok' => TRUE,
@@ -614,13 +614,14 @@ final class PdfAuditRunner {
       'errors' => $errors,
       'raw' => $reportJson + $context,
       'status_code' => $statusCode,
+      'report_id' => $reportId,
     ];
   }
 
   /**
    * Write a readable summary to the file entity.
    */
-  private function markEqualWebSummary(FileInterface $file, array $errors = [], string $summary = ''): void {
+  private function markEqualWebSummary(FileInterface $file, array $errors = [], string $summary = '', string $reportId = ''): void {
     if (!$file->hasField('field_pdf_audit_summary')) {
       return;
     }
@@ -630,6 +631,10 @@ final class PdfAuditRunner {
 
       if (!empty($errors)) {
         $text .= "\n\nIssues:\n- " . implode("\n- ", $errors);
+      }
+
+      if ($reportId !== '') {
+        $text .= "\n\nView full report: https://login.equalweb.com/reports/pdf/" . $reportId;
       }
 
       $maxLength = 20000;
