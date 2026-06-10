@@ -1,0 +1,5 @@
+services:
+  jcc_courts_custom.logger.channel.cron:
+    class: Drupal\jcc_courts_custom\Logger\CronRunErrorLoggingOnly
+    decorates: logger.channel.cron
+    arguments: ['@jcc_courts_custom.logger.channel.cron.inner']

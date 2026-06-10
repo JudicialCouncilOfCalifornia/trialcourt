@@ -1,0 +1,30 @@
+uuid: 7caefd68-4c8f-4218-b98a-aafaae8604c7
+langcode: en
+status: true
+dependencies:
+  module:
+    - jcc_courts_custom
+title: 'Migrate Opinions: Citing'
+id: migrate_opinions_citing
+weight: 0
+module: jcc_courts_custom
+callback: jcc_courts_custom_migrate_opinions_citing
+scheduler:
+  id: crontab
+  configuration:
+    rules:
+      - '3 17-23 * * 1-5'
+    catch_up: 300
+launcher:
+  id: serial
+  configuration:
+    timeouts:
+      lock_timeout: 3600
+    launcher:
+      thread: 0
+logger:
+  id: database
+  configuration:
+    method: '3'
+    expire: 1209600
+    retain: 1000
