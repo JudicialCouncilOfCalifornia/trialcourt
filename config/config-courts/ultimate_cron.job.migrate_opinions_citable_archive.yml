@@ -1,19 +1,19 @@
-uuid: b2e19df8-d9e3-4f2c-97c4-0770725312c2
+uuid: d01eddc1-55a4-48fe-8d98-1a8f99cd50bd
 langcode: en
 status: true
 dependencies:
   module:
     - jcc_courts_custom
-title: 'Migrate Opinions: Citable'
-id: migrate_opinions_citable
+title: 'Migrate Opinions: Citable Archive'
+id: migrate_opinions_citable_archive
 weight: 0
 module: jcc_courts_custom
-callback: jcc_courts_custom_migrate_opinions_citable
+callback: jcc_courts_custom_migrate_opinions_citable_archive
 scheduler:
   id: crontab
   configuration:
     rules:
-      - '* 15-23 * * 1-5'
+      - '4 15-23 * * 1-5'
     catch_up: 300
 launcher:
   id: serial
