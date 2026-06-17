@@ -1,0 +1,58 @@
+uuid: f8f8c960-60fb-4b17-a9c5-2f2c9d74ac4a
+langcode: en
+status: true
+dependencies: {  }
+id: courts_node_title_update_from_sheet
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - courts
+  - node
+  - title
+  - update
+migration_group: courts
+label: 'Courts: Update node titles from Google Sheet'
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: google_sheets
+  urls: ''
+  ids:
+    url:
+      type: string
+  fields:
+    -
+      name: url
+      label: Url
+      selector: url
+    -
+      name: new_title
+      label: New title
+      selector: new_title
+process:
+  nid:
+    -
+      plugin: node_id_from_url
+      source: url
+    -
+      plugin: skip_on_empty
+      method: row
+      message: 'No existing node found for URL.'
+  title:
+    -
+      plugin: callback
+      source: new_title
+      callable: trim
+    -
+      plugin: skip_on_empty
+      method: row
+      message: 'new_title is empty.'
+destination:
+  plugin: 'entity:node'
+  update_only: true
+  key: nid
+  no_stub: true
+  overwrite_properties:
+    - title
+migration_dependencies: null
