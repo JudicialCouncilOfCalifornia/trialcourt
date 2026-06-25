@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+## Description: Create Playwright test users in Drupal
+## Usage: playwright-users
+## Example: "ddev playwright-users"
+## Aliases: playwright:users,pwu
+
+#ddev-generated
+
+# Abort if anything fails
+set -e
+
+echo "Creating test users for Playwright tests..."
+
+# Admin user — administrator role is always present in Drupal
+ddev drush user-create playwright --mail="playwright@test.local" --password="playwright" || true
+ddev drush user-add-role administrator playwright
+echo "Created/updated admin user: playwright / playwright"
+
+# Editor user — 'editor' role must exist in the project; adjust machine name if needed
+ddev drush user-create playwright-editor --mail="playwright-editor@test.local" --password="playwright" || true
+ddev drush user-add-role editor playwright-editor 2>/dev/null \
+    || echo "  Note: 'editor' role not found — adjust the role machine name for your project"
+echo "Created/updated editor user: playwright-editor / playwright"
+
+# Author user — adjust role machine name to match your project
+ddev drush user-create playwright-author --mail="playwright-author@test.local" --password="playwright" || true
+ddev drush user-add-role content_author playwright-author 2>/dev/null \
+    || echo "  Note: 'content_author' role not found — adjust the role machine name for your project"
+echo "Created/updated author user: playwright-author / playwright"
+
+# Authenticated-only user — all logged-in Drupal users already have the 'authenticated' role
+ddev drush user-create playwright-subscriber --mail="playwright-subscriber@test.local" --password="playwright" || true
+echo "Created/updated authenticated user: playwright-subscriber / playwright"
+
+echo ""
+echo "=== Test users ready ==="
+echo "Admin:       playwright / playwright          (administrator)"
+echo "Editor:      playwright-editor / playwright   (editor — verify role name)"
+echo "Author:      playwright-author / playwright   (content_author — verify role name)"
+echo "Subscriber:  playwright-subscriber / playwright (authenticated only)"
+echo ""
+echo "Tip: Run 'ddev drush role:list' to see available roles in this project."

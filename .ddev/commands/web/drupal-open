@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+## Description: Open the site or admin in your default browser
+## Usage: drupal-open [service]
+## Example: ddev drupal-open      # Opens the site
+##          ddev drupal-open cms  # Opens Drupal admin
+## Aliases: drupal:open,open
+
+#ddev-generated
+
+SERVICE="${1:-}"
+
+if [ "$SERVICE" = "cms" ] || [ "$SERVICE" = "admin" ]; then
+    echo "Opening Drupal admin..."
+    if command -v xdg-open >/dev/null 2>&1; then
+        xdg-open "https://${DDEV_SITENAME}.ddev.site/user/login"
+    elif command -v open >/dev/null 2>&1; then
+        open "https://${DDEV_SITENAME}.ddev.site/user/login"
+    else
+        echo "Please open https://${DDEV_SITENAME}.ddev.site/user/login in your browser"
+    fi
+else
+    echo "Opening site..."
+    if command -v xdg-open >/dev/null 2>&1; then
+        xdg-open "https://${DDEV_SITENAME}.ddev.site"
+    elif command -v open >/dev/null 2>&1; then
+        open "https://${DDEV_SITENAME}.ddev.site"
+    else
+        echo "Please open https://${DDEV_SITENAME}.ddev.site in your browser"
+    fi
+fi

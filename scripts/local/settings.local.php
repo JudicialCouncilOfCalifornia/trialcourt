@@ -98,16 +98,26 @@ $settings['container_yamls'][] = DRUPAL_ROOT . '/sites/[site]/services.local.yml
 /**
  * Database settings: *.
  */
-$databases['default']['default'] = [
-  'database' => '[site]',
-  'username' => 'drupal8',
-  'password' => 'drupal8',
-  'prefix' => '',
-  'host' => 'database',
-  'port' => '3306',
-  'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
-  'driver' => 'mysql',
-];
+if (getenv('IS_DDEV_PROJECT') == 'true') {
+  $databases['default']['default']['database'] = '[site]';
+  $databases['default']['default']['username'] = "db";
+  $databases['default']['default']['password'] = "db";
+  $databases['default']['default']['host'] = "db";
+  $databases['default']['default']['port'] = 3306;
+  $databases['default']['default']['driver'] = "mysql";
+}
+else {
+  $databases['default']['default'] = [
+    'database' => '[site]',
+    'username' => 'drupal8',
+    'password' => 'drupal8',
+    'prefix' => '',
+    'host' => 'database',
+    'port' => '3306',
+    'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+    'driver' => 'mysql',
+  ];
+}
 
 /* Temp and Private dirctories. */
 $config['system.file']['path']['temporary'] = '../data/tmp';
@@ -135,6 +145,10 @@ $config['system.logging']['error_level'] = 'verbose';
 $config['stage_file_proxy.settings']['origin'] = 'https://live-jcc-[site].pantheonsite.io';
 $config['stage_file_proxy.settings']['use_imagecache_root'] = 0;
 $config['stage_file_proxy.settings']['hotlink'] = 1;
+// The origin uses the same public files path as this site. Setting origin_dir
+// to the local file_public_path makes Stage File Proxy build the correct remote
+// URL (sites/default/files/<site>/default/...) instead of stripping it.
+$config['stage_file_proxy.settings']['origin_dir'] = $settings['file_public_path'];
 
 /* Environment Indicator */
 $config['environment_indicator.indicator']['bg_color'] = '#045d30';

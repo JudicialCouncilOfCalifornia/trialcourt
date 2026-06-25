@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+## Description: Install Playwright and browsers for e2e testing
+## Usage: playwright-install
+## Example: "ddev playwright-install"
+## Aliases: playwright:install,pwi
+
+#ddev-generated
+
+#-------------------------- Helper functions ------------------------------
+
+green='\033[0;32m'
+yellow='\033[1;33m'
+NC='\033[0m'
+divider='===================================================\n'
+
+#-------------------------- Execution -------------------------------------
+
+echo -e "🚧 ${yellow} Initializing Playwright...${NC} 🚧"
+echo -e "${green}${divider}${NC}"
+
+# Make sure NVM works
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+if [ ! -f "${DDEV_APPROOT}/package.json" ]; then
+    echo "❌ No package.json found at project root: ${DDEV_APPROOT}"
+    echo "Please create a package.json with Playwright dependencies first."
+    exit 1
+fi
+
+cd "${DDEV_APPROOT}" || exit 1
+
+echo "Installing Playwright dependencies..."
+npm install
+
+echo "Installing Playwright browsers..."
+npx playwright install --with-deps chromium firefox webkit
+
+echo ""
+echo "✅ Playwright installation complete!"
+echo "Run tests with: ddev playwright-run"

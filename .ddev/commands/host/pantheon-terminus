@@ -1,0 +1,31 @@
+#!/bin/bash
+
+## Run Terminus commands in the web container
+##
+## Usage: pantheon-terminus <command> [args...]
+##        ddev pantheon-terminus site:list
+##        ddev pantheon-terminus backup:create site.env --element=database
+##        ddev pantheon-terminus backup:get site.env --element=database
+## Aliases: pantheon:terminus,terminus
+
+#ddev-generated
+
+# Check if terminus is installed, install if not
+ddev exec "command -v terminus >/dev/null 2>&1 || {
+    echo 'Installing Terminus...';
+    curl -O https://raw.githubusercontent.com/pantheon-systems/terminus-installer/master/builds/installer.phar && php installer.phar install;
+}"
+
+# Authenticate with Pantheon using global token (if available and not already authenticated)
+# The TERMINUS_MACHINE_TOKEN is automatically available from the web container environment
+ddev exec "if terminus auth:whoami 2>&1 | grep -q 'You are not logged in'; then
+    if [ -n \"\${TERMINUS_MACHINE_TOKEN:-}\" ]; then
+        terminus auth:login --machine-token=\"\${TERMINUS_MACHINE_TOKEN}\"
+    else
+        echo 'TERMINUS_MACHINE_TOKEN not set globally. Please run:'
+        echo 'ddev config global --web-environment-add=TERMINUS_MACHINE_TOKEN=your_token'
+    fi
+fi"
+
+# Run terminus command
+ddev exec "terminus $*"

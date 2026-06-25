@@ -1,0 +1,4 @@
+# .ddev/web-build/Dockerfile.terminus
+# Terminus 4 drops support for PHP 8.1 which we still need
+ARG TERMINUS_VERSION="3.6.2"
+RUN curl -L --fail -o /usr/local/bin/terminus https://github.com/pantheon-systems/terminus/releases/download/${TERMINUS_VERSION}/terminus.phar && chmod +x /usr/local/bin/terminus

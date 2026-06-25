@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+## Description: Initialize local development.
+## Usage: project-init
+## Example: "ddev project-init"
+## Aliases: project:init,init
+
+#ddev-generated
+
+#-------------------------- Helper functions ------------------------------
+
+green='\033[0;32m'
+yellow='\033[1;33m'
+NC='\033[0m'
+divider='===================================================\n'
+theme_tools_command='ddev theme-build'
+critical_tools_command='ddev critical-install'
+
+#-------------------------- Execution -------------------------------------
+
+echo -e "🚀 ${yellow} Initializing the Project.${NC} 🚀"
+echo -e "${green}${divider}${NC}"
+ddev start -y
+
+# Install the local multisite routing map.
+# The source lives in .ddev/ (committed to git); the destination in
+# web/sites/ is git-ignored and is what Drupal's sites.php includes. Copying
+# it here ensures per-site DDEV hostnames resolve before db-refresh/drush run.
+if [ -f ".ddev/sites.local.php" ]; then
+  echo -e "🗺️  ${yellow} Installing multisite routing map (sites.local.php).${NC} 🗺️"
+  echo -e "${green}${divider}${NC}"
+  cp ".ddev/sites.local.php" "web/sites/sites.local.php"
+fi
+
+# Install Composer dependencies.
+if [ -f "composer.json" ]; then
+  echo -e "🚧 ${yellow} Installing Composer dependencies.${NC} 🚧"
+  echo -e "${green}${divider}${NC}"
+  ddev composer install
+fi
+
+# Get the DB
+ddev db-refresh
+
+# Rebuild cache
+echo "Rebuild cache"
+ddev drush cr -y
+
+# Set up NVM.
+ddev project-nvm
+
+# Install Cypress.
+ddev cypress-install
+
+# Install theme tools.
+ddev theme-install
+
+# Prime Acqui CLI.
+HOSTING_PROVIDER=$(ddev exec printenv HOSTING_PROVIDER)
+if [ "$HOSTING_PROVIDER" = "acquia" ]; then
+  # Ensure telemetry is disabled.
+  ddev exec 'echo "no" | acli hello-world'
+fi
+
+# Complete.
+echo -e "🎉 ${yellow} Build complete!!!${NC} 🎉"
+echo -e "Visit ${yellow}${DDEV_PRIMARY_URL}${NC} in a web browser."
+echo -e "Run ${yellow}${theme_tools_command}${NC} to work on the theme."
+echo -e "${green}${divider}${NC}"

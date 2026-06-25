@@ -1,0 +1,452 @@
+#!/usr/bin/env bash
+
+## Description: Interactive configuration wizard for Kanopi Drupal DDEV
+## Usage: project-configure
+## Example: "ddev project-configure"
+## Aliases: configure,project:configure,prc
+
+#ddev-generated
+
+# Colors and formatting
+green='\033[0;32m'
+yellow='\033[1;33m'
+red='\033[0;31m'
+NC='\033[0m'
+divider='===================================================\n'
+
+echo -e "\n🔧 ${yellow}Kanopi Drupal DDEV Configuration Wizard${NC} 🔧"
+echo -e "${green}${divider}${NC}"
+echo "This tool sets up configuration variables for your hosting provider and development settings."
+echo "Variables are stored in .ddev/scripts/load-config.sh and .ddev/config.yaml"
+echo "Press Ctrl+C anytime to exit."
+echo ""
+
+# Check if DDEV project exists
+if [ ! -f ".ddev/config.yaml" ]; then
+    echo "❌ DDEV project not found. Please run this command from your DDEV project root."
+    echo "💡 If this is a new project, run 'ddev add-on get kanopi/ddev-kanopi-drupal' first."
+    exit 1
+fi
+
+# Check if load-config.sh exists, if not create it
+if [ ! -f ".ddev/scripts/load-config.sh" ]; then
+    echo "📝 Creating .ddev/scripts/load-config.sh..."
+    mkdir -p .ddev/scripts
+    cat > .ddev/scripts/load-config.sh << 'EOF'
+#!/bin/bash
+
+# Load Kanopi configuration variables
+load_kanopi_config() {
+    # Load all environment variables for use in command scripts
+    # Variables are set in DDEV config.yaml and accessed via printenv
+    return 0
+}
+EOF
+    chmod +x .ddev/scripts/load-config.sh
+fi
+
+# Function to prompt for input with default
+prompt_input() {
+    local prompt="$1"
+    local default="$2"
+    local var_name="$3"
+
+    if [ -n "$default" ]; then
+        echo -n "$prompt [$default]: "
+    else
+        echo -n "$prompt: "
+    fi
+
+    read -r input
+    if [ -z "$input" ] && [ -n "$default" ]; then
+        input="$default"
+    fi
+
+    eval "$var_name='$input'"
+}
+
+# Function to select from options
+select_option() {
+    local prompt="$1"
+    shift
+    local options=("$@")
+
+    printf "%s\n" "$prompt" >&2
+    for i in "${!options[@]}"; do
+        printf "  %d. %s\n" "$((i+1))" "${options[i]}" >&2
+    done
+    printf "Select option [1]: " >&2
+
+    read -r choice
+    choice=${choice:-1}
+
+    if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "${#options[@]}" ]; then
+        echo "${options[$((choice-1))]}"
+    else
+        echo "${options[0]}"
+    fi
+}
+
+# Load current configuration from DDEV environment
+CURRENT_PROVIDER=$(ddev exec printenv HOSTING_PROVIDER 2>/dev/null || echo "")
+CURRENT_SITE=$(ddev exec printenv HOSTING_SITE 2>/dev/null || echo "")
+CURRENT_ENV=$(ddev exec printenv HOSTING_ENV 2>/dev/null || echo "")
+CURRENT_THEME=$(ddev exec printenv THEME 2>/dev/null || echo "")
+CURRENT_THEMENAME=$(ddev exec printenv THEMENAME 2>/dev/null || echo "")
+CURRENT_MIGRATE_SOURCE=$(ddev exec printenv MIGRATE_DB_SOURCE 2>/dev/null || echo "")
+CURRENT_MIGRATE_ENV=$(ddev exec printenv MIGRATE_DB_ENV 2>/dev/null || echo "")
+CURRENT_APACHE_FILE_PROXY=$(ddev exec printenv APACHE_FILE_PROXY 2>/dev/null || echo "")
+CURRENT_NGINX_FILE_PROXY=$(ddev exec printenv NGINX_FILE_PROXY 2>/dev/null || echo "")
+
+# Show current configuration
+echo "📋 Current Configuration:"
+echo "------------------------"
+echo "Hosting Provider: ${CURRENT_PROVIDER:-not set}"
+
+# Show provider-specific configuration
+case "${CURRENT_PROVIDER:-not set}" in
+    "pantheon")
+        echo "Pantheon Site: ${CURRENT_SITE:-not set}"
+        echo "Pantheon Environment: ${CURRENT_ENV:-not set}"
+        echo "Migration Source: ${CURRENT_MIGRATE_SOURCE:-not set}"
+        echo "Migration Environment: ${CURRENT_MIGRATE_ENV:-not set}"
+        ;;
+    "acquia")
+        echo "Acquia Application: ${CURRENT_SITE:-not set}"
+        echo "Acquia Environment: ${CURRENT_ENV:-not set}"
+        echo "Apache File Proxy: ${CURRENT_APACHE_FILE_PROXY:-not set}"
+        ;;
+    "upsun")
+        echo "Upsun Application: ${CURRENT_SITE:-not set}"
+        echo "Upsun Environment: ${CURRENT_ENV:-not set}"
+        echo "Nginx File Proxy: ${CURRENT_NGINX_FILE_PROXY:-not set}"
+        ;;
+    "custom")
+        CURRENT_HOST=$(ddev exec printenv HOSTING_HOST 2>/dev/null || echo "")
+        CURRENT_USER=$(ddev exec printenv HOSTING_USER 2>/dev/null || echo "")
+        CURRENT_PORT=$(ddev exec printenv HOSTING_PORT 2>/dev/null || echo "")
+        CURRENT_PATH=$(ddev exec printenv HOSTING_PATH 2>/dev/null || echo "")
+        echo "Hosting Host: ${CURRENT_HOST:-not set}"
+        echo "Hosting User: ${CURRENT_USER:-not set}"
+        echo "Hosting Port: ${CURRENT_PORT:-not set}"
+        echo "Hosting Path: ${CURRENT_PATH:-not set}"
+        ;;
+    *)
+        echo "(Provider-specific settings will appear after selecting a provider)"
+        ;;
+esac
+
+echo "Theme Path: ${CURRENT_THEME:-not set}"
+echo "Theme Name: ${CURRENT_THEMENAME:-not set}"
+echo ""
+
+# Get hosting provider
+echo "🏛️ Hosting Provider Configuration:"
+echo "----------------------------------"
+HOST_PROVIDER=$(select_option "Select your hosting provider:" "pantheon" "acquia" "upsun" "custom")
+echo "✓ Selected: $HOST_PROVIDER"
+
+# Get hosting-specific configuration
+echo ""
+case "$HOST_PROVIDER" in
+    "pantheon")
+        echo "🏛️ Pantheon Configuration:"
+        echo "--------------------------"
+        prompt_input "Site machine name (e.g., my-site)" "${CURRENT_SITE}" HOSTING_SITE
+        prompt_input "Default environment (dev/test/live)" "${CURRENT_ENV:-dev}" HOSTING_ENV
+	NGINX_FILE_PROXY="https://${CURRENT_ENV}-${CURRENT_SITE}.pantheonsite.io"
+        ;;
+    "acquia")
+        echo "🔷 Acquia Configuration:"
+        echo "-----------------------"
+        prompt_input "Application name (e.g., my-app)" "${CURRENT_SITE}" HOSTING_SITE
+        prompt_input "Default environment (dev/stg/prod)" "${CURRENT_ENV:-dev}" HOSTING_ENV
+        echo ""
+        echo "🔗 File Proxy Configuration:"
+        prompt_input "Proxy URL for missing files (e.g., https://your-site.com)" "${CURRENT_APACHE_FILE_PROXY}" APACHE_FILE_PROXY
+        ;;
+    "upsun")
+        echo "🔷 Upsun Configuration:"
+        echo "-----------------------"
+        prompt_input "Project ID (e.g., Abc1234D)" "${CURRENT_SITE}" HOSTING_SITE
+        prompt_input "Default environment (Branch hosting production) (e.g., main)" "${CURRENT_ENV}" HOSTING_ENV
+        echo ""
+        echo "🔗 File Proxy Configuration:"
+        prompt_input "Proxy URL for missing files (e.g., https://your-site.com)" "${CURRENT_NGINX_FILE_PROXY}" NGINX_FILE_PROXY
+        ;;
+    "custom")
+        echo "🔷 Custom Hosting Configuration:"
+        echo "-----------------------"
+        prompt_input "Hosting Host (Host/IP)" "${CURRENT_HOST}" HOSTING_HOST
+        prompt_input "Hosting User (User to loging with)" "${CURRENT_USER}" HOSTING_USER
+        prompt_input "Hosting Port (Default: 22)" "${CURRENT_PORT}" HOSTING_PORT
+        prompt_input "Hosting Path (Default: .)" "${CURRENT_PATH}" HOSTING_PATH
+        echo ""
+        echo "🔗 File Proxy Configuration:"
+        prompt_input "Proxy URL for missing files (e.g., https://your-site.com)" "${CURRENT_NGINX_FILE_PROXY}" NGINX_FILE_PROXY
+        ;;
+esac
+
+# Get theme configuration
+echo ""
+echo "🎨 Theme Configuration:"
+echo "----------------------"
+prompt_input "Theme path (e.g., themes/custom/mytheme)" "${CURRENT_THEME}" THEME_PATH
+prompt_input "Theme name/slug (e.g., mytheme)" "${CURRENT_THEMENAME}" THEME_NAME
+
+# Get migration settings (optional)
+echo ""
+echo "🔄 Migration Settings (optional):"
+echo "---------------------------------"
+prompt_input "Source site for migrations (optional)" "${CURRENT_MIGRATE_SOURCE}" MIGRATE_SOURCE
+if [ -n "$MIGRATE_SOURCE" ]; then
+    prompt_input "Source environment" "${CURRENT_MIGRATE_ENV:-live}" MIGRATE_ENV
+fi
+
+# Function to write variable to DDEV config and load-config.sh
+write_config_var() {
+    local var_name="$1"
+    local var_value="$2"
+    local config_file=".ddev/scripts/load-config.sh"
+
+    # Set the variable in DDEV's web environment
+    ddev config --web-environment-add "${var_name}=${var_value}"
+
+    # Update load-config.sh for backward compatibility
+    if ! grep -q "export ${var_name}=" "$config_file" 2>/dev/null; then
+        # Add variable to load-config.sh before the function
+        local temp_file=$(mktemp)
+        local added_var=false
+
+        while IFS= read -r line || [ -n "$line" ]; do
+            if [[ $line =~ ^load_kanopi_config\(\)[[:space:]]*\{ ]] && [ "$added_var" = false ]; then
+                # Add the new variable before the function
+                printf 'export %s="%s"\n' "$var_name" "$var_value" >> "$temp_file"
+                printf '%s\n' "$line" >> "$temp_file"
+                added_var=true
+            else
+                printf '%s\n' "$line" >> "$temp_file"
+            fi
+        done < "$config_file"
+
+        # Replace the original file
+        mv "$temp_file" "$config_file"
+    else
+        # Update existing variable
+        local temp_file=$(mktemp)
+        while IFS= read -r line || [ -n "$line" ]; do
+            if [[ $line =~ ^export[[:space:]]+${var_name}= ]]; then
+                # Replace existing variable
+                printf 'export %s="%s"\n' "$var_name" "$var_value" >> "$temp_file"
+            else
+                printf '%s\n' "$line" >> "$temp_file"
+            fi
+        done < "$config_file"
+        mv "$temp_file" "$config_file"
+    fi
+}
+
+# Update configuration
+echo ""
+echo "💾 Updating configuration..."
+
+# Stop DDEV to safely update configuration
+echo "Stopping DDEV to update configuration..."
+ddev stop
+
+# Write hosting provider configuration
+echo "Setting hosting provider environment variables..."
+write_config_var "HOSTING_PROVIDER" "$HOST_PROVIDER"
+if [[ "$HOST_PROVIDER" != "custom" ]]; then
+    write_config_var "HOSTING_SITE" "$HOSTING_SITE"
+    write_config_var "HOSTING_ENV" "$HOSTING_ENV"
+else
+    write_config_var "HOSTING_HOST" "$HOSTING_HOST"
+    write_config_var "HOSTING_USER" "$HOSTING_USER"
+    write_config_var "HOSTING_PORT" "$HOSTING_PORT"
+    write_config_var "HOSTING_PATH" "$HOSTING_PATH"
+fi
+
+# Write theme variables
+echo "Setting theme configuration..."
+write_config_var "THEME" "$THEME_PATH"
+write_config_var "THEMENAME" "$THEME_NAME"
+
+# Write migration settings if provided
+if [ -n "$MIGRATE_SOURCE" ]; then
+    echo "Setting migration configuration..."
+    write_config_var "MIGRATE_DB_SOURCE" "$MIGRATE_SOURCE"
+    write_config_var "MIGRATE_DB_ENV" "$MIGRATE_ENV"
+fi
+
+# Write provider-specific configuration
+case "$HOST_PROVIDER" in
+    "acquia")
+        if [ -n "$APACHE_FILE_PROXY" ]; then
+            write_config_var "APACHE_FILE_PROXY" "$APACHE_FILE_PROXY"
+        fi
+        ;;
+    "pantheon"|"upsun"|"custom")
+        if [ -n "$NGINX_FILE_PROXY" ]; then
+            write_config_var "NGINX_FILE_PROXY" "$NGINX_FILE_PROXY"
+        fi
+        ;;
+esac
+
+echo "Ensure NVM is available"
+ddev add-on get ddev/ddev-nvm
+
+# Install provider-specific caching add-on
+echo ""
+echo "📦 Installing provider-specific caching add-on..."
+case "$HOST_PROVIDER" in
+    "pantheon")
+        # Remove Memcached if it exists and install Redis
+        if ddev add-on remove ddev-memcached 2>/dev/null; then
+            echo "✅ Removed Memcached add-on"
+        fi
+        if ! ddev add-on list | grep -q "ddev-redis"; then
+            echo "Installing Redis add-on for Pantheon..."
+            ddev add-on get ddev/ddev-redis
+            echo "settings.ddev.redis.php" >> .gitignore
+        fi
+        echo "✅ Redis configured for Pantheon"
+        ;;
+    "acquia")
+        # Remove Redis if it exists and install Memcached
+        if ddev add-on remove ddev-redis 2>/dev/null; then
+            echo "✅ Removed Redis add-on"
+        fi
+        if ! ddev add-on list | grep -q "ddev-memcached"; then
+            echo "Installing Memcached add-on for Acquia..."
+            ddev add-on get ddev/ddev-memcached
+            echo "settings.ddev.memcached.php" >> .gitignore
+        fi
+        echo "✅ Memcached configured for Acquia"
+        ;;
+    "upsun")
+        APPLICATION_NAME=$(cat ${DDEV_APPROOT}/.platform.app.yaml | docker run -i --rm ddev/ddev-utilities yq '.name')
+        ddev config --web-environment-add="PLATFORM_APPLICATION_NAME=${APPLICATION_NAME}"
+        ddev config --web-environment-add="PLATFORM_PROJECT=${HOSTING_SITE}"
+        ddev config --web-environment-add="PLATFORM_ENVIRONMENT=${HOSTING_ENV}"
+        if ! ddev add-on list --installed | grep -q "ddev-platformsh"; then
+            echo "Installing Platformsh add-on Upsun..."
+            ddev add-on get ddev/ddev-platformsh
+        fi
+        echo "✅ Platform configured for Upsun"
+        ;;
+esac
+
+# Configure platform-specific proxy settings
+echo ""
+echo "🔧 Configuring platform-specific proxy settings..."
+case "$HOST_PROVIDER" in
+    "pantheon")
+        # Configure nginx proxy for Pantheon
+        if [ -n "$HOSTING_SITE" ] && [ -n "$HOSTING_ENV" ]; then
+            if [ ! -f ".ddev/nginx_full/nginx-site.conf" ] && [ -f ".ddev/nginx_full/nginx-site.tmpl" ] ; then
+                envsubst '${NGINX_FILE_PROXY}' < .ddev/nginx_full/nginx-site.tmpl > .ddev/nginx_full/nginx-site.conf
+                echo "✅ Updated nginx proxy to redirect to: $HOSTING_ENV-$HOSTING_SITE.pantheonsite.io"
+            fi
+        fi
+        ;;
+    "acquia")
+        # Remove nginx_full and configure Apache file proxy
+        echo "🔧 Acquia uses Apache-FPM, configuring file proxy..."
+        rm -rf .ddev/nginx_full
+
+        # Get actual docroot from DDEV configuration
+        DOCROOT=$(grep '^docroot:' .ddev/config.yaml | cut -d: -f2 | tr -d ' ' || echo "docroot")
+        HTACCESS_PATH="${DOCROOT}/.htaccess"
+
+        if [ -f "$HTACCESS_PATH" ] && [ -n "$APACHE_FILE_PROXY" ]; then
+            # Check if the file proxy rules already exist
+            if ! grep -q "ENV:APACHE_FILE_PROXY" "$HTACCESS_PATH"; then
+                # Create temporary file with new rules at the top
+                TEMP_FILE=$(mktemp)
+                echo "# File proxy DDEV for Acquia" > "$TEMP_FILE"
+                echo "<IfModule mod_rewrite.c>" >> "$TEMP_FILE"
+                echo "    RewriteEngine on" >> "$TEMP_FILE"
+                echo "    RewriteCond %{ENV:APACHE_FILE_PROXY} !^\$" >> "$TEMP_FILE"
+                echo "" >> "$TEMP_FILE"
+                echo "    # Force image styles that have local files that exist to be generated." >> "$TEMP_FILE"
+                echo "    RewriteCond %{REQUEST_URI} ^/sites/([^\/]*)/files/styles/[^\/]*/public/((.*))$" >> "$TEMP_FILE"
+                echo "    RewriteCond %{DOCUMENT_ROOT}/sites/%1/files/%2 -f" >> "$TEMP_FILE"
+                echo "    RewriteRule ^(.*)\$ \$1 [QSA,L]" >> "$TEMP_FILE"
+                echo "    # Otherwise, send anything else that's in the files directory to the" >> "$TEMP_FILE"
+                echo "    # production server." >> "$TEMP_FILE"
+                echo "    RewriteCond %{REQUEST_URI} ^/sites/[^\/]*/files/.*\$" >> "$TEMP_FILE"
+                echo "    RewriteCond %{REQUEST_URI} !^/sites/[^\/]*/files/css/.*\$" >> "$TEMP_FILE"
+                echo "    RewriteCond %{REQUEST_URI} !^/sites/[^\/]*/files/js/.*\$" >> "$TEMP_FILE"
+                echo "    RewriteCond %{REQUEST_FILENAME} !-f" >> "$TEMP_FILE"
+                echo "    RewriteCond %{REQUEST_FILENAME} !-d" >> "$TEMP_FILE"
+                echo "    RewriteRule ^(.*)\$ %{ENV:APACHE_FILE_PROXY}/\$1 [R=302,L]" >> "$TEMP_FILE"
+                echo "</IfModule>" >> "$TEMP_FILE"
+                echo "" >> "$TEMP_FILE"
+                # Append existing .htaccess content
+                cat "$HTACCESS_PATH" >> "$TEMP_FILE"
+                # Replace original with new content
+                mv "$TEMP_FILE" "$HTACCESS_PATH"
+                echo "✅ Added file proxy configuration to .htaccess"
+            else
+                echo "✅ File proxy configuration already exists in .htaccess"
+            fi
+        elif [ -n "$APACHE_FILE_PROXY" ]; then
+            echo "⚠️  .htaccess file not found at $HTACCESS_PATH"
+        fi
+        ;;
+    "upsun"|"custom")
+        # Configure nginx proxy for Upsun
+        if [ -n "$NGINX_FILE_PROXY" ]; then
+            if [ ! -f ".ddev/nginx_full/nginx-site.conf" ] && [ -f ".ddev/nginx_full/nginx-site.tmpl" ] ; then
+                envsubst '${NGINX_FILE_PROXY}' < .ddev/nginx_full/nginx-site.tmpl > .ddev/nginx_full/nginx-site.conf
+                echo "✅ Updated nginx proxy to redirect to: $NGINX_FILE_PROXY"
+            fi
+        fi
+        ;;
+esac
+
+# Start DDEV with new configuration
+echo ""
+echo "Starting DDEV with updated configuration..."
+ddev start
+
+echo ""
+echo -e "🎉 ${green}Configuration complete!${NC}"
+echo ""
+echo "📁 Settings saved in:"
+echo "   • .ddev/scripts/load-config.sh (for command scripts)"
+echo "   • .ddev/config.yaml web_environment (for DDEV containers)"
+echo ""
+echo -e "${yellow}Next steps:${NC}"
+
+# Provider-specific authentication setup
+case "$HOST_PROVIDER" in
+    "pantheon")
+        echo "1. 🔑 Set your Pantheon machine token globally (if not already set):"
+        echo "   ddev config global --web-environment-add=TERMINUS_MACHINE_TOKEN=your_token"
+        echo "   💡 Get your token: https://dashboard.pantheon.io/machine-token/create"
+        echo ""
+        ;;
+    "acquia")
+        echo "1. 🔑 Set your Acquia API credentials globally (if not already set):"
+        echo "   ddev config global --web-environment-add=ACQUIA_API_KEY=your_api_key"
+        echo "   ddev config global --web-environment-add=ACQUIA_API_SECRET=your_api_secret"
+        echo "   💡 Get credentials: https://cloud.acquia.com/a/profile/tokens"
+        echo ""
+        ;;
+    "upsun")
+        echo "1. 🔑 Set your Upsun API Token globally (if not already set):"
+        echo "   ddev config global --web-environment-add=PLATFORMSH_CLI_TOKEN=your_api_key"
+        echo "   💡 Get credentials: https://console.upsun.com/-/users/me/settings"
+        echo ""
+        ;;
+esac
+
+echo "2. 🌐 Run the init script to launch the site."
+echo "   ddev project-init"
+echo ""
+echo "3. 🎨 Start developing on the theme."
+echo "   ddev theme-watch"
+echo ""
+echo -e "${green}${divider}${NC}"

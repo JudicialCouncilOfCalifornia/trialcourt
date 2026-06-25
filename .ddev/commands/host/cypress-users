@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+## Description: Create Cypress users
+## Usage: cypress-users
+## Example: "ddev cypress-users"
+## Aliases: cypress:users,cyu
+
+#ddev-generated
+
+# Abort if anything fails
+set -e
+
+echo "Create default admin user for Cypress tests."
+ddev drush user-create cypress --mail="cypress@mailinator.com" --password="cypress" || true
+ddev drush user-add-role administrator cypress

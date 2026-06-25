@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+## Description: Run Playwright e2e tests
+## Usage: playwright-run [options]
+## Example: "ddev playwright-run"
+## Example: "ddev playwright-run --reporter=list"
+## Example: "ddev playwright-run --ui"
+## Example: "ddev playwright-run tests/e2e/specs/smoke.spec.ts"
+## Aliases: playwright:run,pwr
+
+#ddev-generated
+
+#-------------------------- Helper functions ------------------------------
+
+green='\033[0;32m'
+yellow='\033[1;33m'
+NC='\033[0m'
+divider='===================================================\n'
+
+#-------------------------- Execution -------------------------------------
+
+# Make sure NVM works
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+if [ ! -f "${DDEV_APPROOT}/playwright.config.ts" ] && [ ! -f "${DDEV_APPROOT}/playwright.config.js" ]; then
+    echo "❌ No playwright.config.ts found at project root"
+    echo "Please run 'ddev playwright-install' first."
+    exit 1
+fi
+
+export BASE_URL="${DDEV_PRIMARY_URL}"
+export DRUPAL_USERNAME="playwright"
+export DRUPAL_PASSWORD="playwright"
+
+cd "${DDEV_APPROOT}" || exit 1
+
+echo -e "🎭 ${yellow} Running Playwright tests against ${BASE_URL}...${NC}"
+echo -e "${green}${divider}${NC}"
+
+npx playwright test "$@"
+
+if [ -d "playwright-report" ]; then
+    echo ""
+    echo "View HTML report with: npx playwright show-report"
+fi

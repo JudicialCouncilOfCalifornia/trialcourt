@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+## Description: Initialize Lefthook.
+## Usage: project-lefthook
+## Example: "ddev project-lefthook"
+## Aliases: project:lefthook
+
+#ddev-generated
+
+#-------------------------- Helper functions ------------------------------
+
+green='\033[0;32m'
+yellow='\033[1;33m'
+NC='\033[0m'
+divider='===================================================\n'
+
+#-------------------------- Execution -------------------------------------
+
+# Check for Lefthook (if using git hooks)
+LEFTHOOK=$(which lefthook || true)
+if [[ "${LEFTHOOK}" == "" ]] && [[ -f ".lefthook.yml" ]]; then
+  echo -e "🚧 ${yellow} Checking for Lefthook.${NC} 🚧"
+  echo -e "If you don't have Lefthook installed, this will ask for your password."
+  echo -e "Installing Lefthook."
+  ARCH=$(uname -m)
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    sudo curl -fsSL -o /usr/local/bin/lefthook "https://github.com/evilmartians/lefthook/releases/download/v1.5.2/lefthook_1.5.2_MacOS_${ARCH}"
+  else
+    # Linux
+    sudo curl -fsSL -o /usr/local/bin/lefthook "https://github.com/evilmartians/lefthook/releases/download/v1.5.2/lefthook_1.5.2_Linux_${ARCH}"
+  fi
+  echo -e "Setting Lefthook permissions."
+  sudo chmod +x /usr/local/bin/lefthook
+  echo -e "${green}${divider}${NC}"
+fi
+
+# Initialize Lefthook if config exists
+if [[ -f ".lefthook.yml" ]] && [[ "${LEFTHOOK}" != "" ]]; then
+  echo -e "🚧 ${yellow} Initializing Lefthook.${NC} 🚧"
+  echo -e "This should require no input."
+  echo -e "${green}${divider}${NC}"
+  lefthook install
+fi

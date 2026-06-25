@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+## Description: Remove UUIDs and _core metadata from Drupal config files.
+## Usage: recipe-uuid-rm [path/to/folder]
+## Example: ddev recipe-uuid-rm config/sync
+## Aliases: recipe:uuid-rm,uuid-rm
+
+#ddev-generated
+
+# Abort if anything fails
+set -e
+
+# Change to the target directory.
+TARGET_DIR="$1"
+cd "${TARGET_DIR}" || { echo -e "\n ❌  Error: Directory '${TARGET_DIR}' not found."; exit 1; }
+
+echo -e "\n 📂  Processing files in: ${TARGET_DIR}"
+
+# Remove UUID and metadata lines from all files in the directory
+for f in *; do
+  if [ -f "$f" ]; then
+    echo "\n 📝  Cleaning $f ..."
+    sed -i '/^uuid:/d' "$f"
+    sed -i '/^_core:/d' "$f"
+    sed -i '/^  default_config_hash:/d' "$f"
+  fi
+done
+
+echo -e "\n ✅  UUID removal complete."

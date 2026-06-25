@@ -1,0 +1,38 @@
+#ddev-generated
+RUN <<EOF
+set -eu -o pipefail
+
+# Install nvm globally first
+TMP_NVM_DIR=/tmp/nvm_install.sh
+mkdir -p "${TMP_NVM_DIR}"
+LATEST_NVM_RELEASE="$(curl -L --fail --silent "https://api.github.com/repos/nvm-sh/nvm/releases/latest" | jq -r .tag_name)"
+curl --fail -sL "https://raw.githubusercontent.com/nvm-sh/nvm/${LATEST_NVM_RELEASE}/install.sh" | PROFILE=/dev/null NVM_DIR="${TMP_NVM_DIR}" bash
+
+# Create gzip-compressed tar of nvm and remove original for easier copying
+tar -C "${TMP_NVM_DIR}" -czf /usr/local/nvm.tar.gz . && rm -rf "${TMP_NVM_DIR}"
+
+# Add runtime initialization to bashrc
+cat >> /tmp/nvm_script.sh <<'NVM_SCRIPT'
+
+# Initialize nvm from the global cache for the current $DDEV_USER
+if [ "$(id -u):$(id -g)" = "${DDEV_UID}:${DDEV_GID}" ]; then
+  if [ ! -f "/mnt/ddev-global-cache/nvm_dir/${HOSTNAME}/nvm.sh" ]; then
+    mkdir -p "/mnt/ddev-global-cache/nvm_dir/${HOSTNAME}"
+    tar -C "/mnt/ddev-global-cache/nvm_dir/${HOSTNAME}" -xzf /usr/local/nvm.tar.gz
+  fi
+  if [ "$(readlink -f "$HOME/.nvm")" != "/mnt/ddev-global-cache/nvm_dir/${HOSTNAME}" ]; then
+    ln -sfn /mnt/ddev-global-cache/nvm_dir/${HOSTNAME} "$HOME/.nvm"
+  fi
+  if ! command -v nvm >/dev/null 2>&1; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+  fi
+fi
+NVM_SCRIPT
+
+cat /tmp/nvm_script.sh >> /etc/bash.bashrc
+cat /tmp/nvm_script.sh >> /etc/bash.nointeractive.bashrc
+rm -f /tmp/nvm_script.sh
+
+EOF
