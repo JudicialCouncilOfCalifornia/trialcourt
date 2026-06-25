@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-## Description: Install and set up theme development tools in DDEV
-## Usage: theme-install
+## Description: Install theme dependencies and build assets (mirrors Lando `ti`). Optionally pass a theme machine name; defaults to the configured theme. Pass "all" for every theme.
+## Usage: theme-install [theme_name|all]
 ## Example: ddev theme-install
+##          ddev theme-install jcc_md
+##          ddev theme-install md     # jcc_ prefix added, installs jcc_base first
+##          ddev theme-install all
 ## Aliases: theme:install,install-theme-tools,thi
-
-#ddev-generated
 
 # Abort if anything fails
 set -e
@@ -14,73 +15,111 @@ set -e
 
 green='\033[0;32m'
 yellow='\033[1;33m'
+red='\033[0;31m'
 NC='\033[0m'
 divider='===================================================\n'
 
 #-------------------------- Settings --------------------------------
 
-# Check if THEME environment variable is set
-if [ -z "${THEME}" ]; then
-    echo "❌ THEME environment variable not set."
-    echo "Please run 'ddev project-configure' to set up your theme configuration."
-    exit 1
-fi
+DOCROOT="${DDEV_DOCROOT:-web}"
+# Root directory that holds all custom themes (derived from the configured THEME).
+THEMES_ROOT="/var/www/html/${DOCROOT}/$(dirname "${THEME:-themes/custom/jcc_base}")"
+# All project themes are subthemes of this base theme and depend on its build.
+BASE_THEME="jcc_base"
 
-# Define paths.
-FULL_THEME_PATH="/var/www/html/${DDEV_DOCROOT}/${THEME}"
+#-------------------------- Node setup -------------------------------------
+
+# Set up NVM and select the theme's Node version from .nvmrc when present;
+# otherwise fall back to the container's default Node.
+setup_node() {
+  local path="$1"
+  export NVM_DIR="$HOME/.nvm"
+  # nvm's auto-use hook can return non-zero (e.g. no default alias); relax
+  # errexit while we source and switch Node so it can't abort the script.
+  set +e
+  if [ -s "$NVM_DIR/nvm.sh" ]; then
+    # shellcheck disable=SC1090
+    source "$NVM_DIR/nvm.sh"
+    if [ -f "$path/.nvmrc" ]; then
+      echo -e "Using Node.js version from .nvmrc: $(cat "$path/.nvmrc")"
+      (cd "$path" && nvm install) >/dev/null 2>&1
+      (cd "$path" && nvm use) >/dev/null 2>&1
+    fi
+  fi
+  set -e
+
+  # Laravel Mix v4 / webpack 4 needs the legacy OpenSSL provider on Node >= 17.
+  local node_major
+  node_major="$(node -v 2>/dev/null | sed 's/v\([0-9]*\).*/\1/')"
+  if [ -n "$node_major" ] && [ "$node_major" -ge 17 ]; then
+    export NODE_OPTIONS=--openssl-legacy-provider
+  fi
+  echo -e "Node: $(node -v 2>/dev/null)"
+}
+
+#-------------------------- Install + build --------------------------------
+
+install_theme() {
+  local theme="$1"
+  local path="${THEMES_ROOT}/${theme}"
+
+  if [ ! -d "$path" ]; then
+    echo -e "${red}Theme directory not found: ${path}${NC}"
+    exit 1
+  fi
+  if [ ! -f "$path/package.json" ]; then
+    echo -e "${yellow}No package.json in ${theme}, skipping.${NC}"
+    return 0
+  fi
+
+  setup_node "$path"
+  cd "$path"
+
+  echo -e "🚧 ${yellow} Installing NPM dependencies for ${theme}. ${NC} 🚧"
+  echo -e "${green}${divider}${NC}"
+  # Prefer a reproducible install when a lockfile is present.
+  if [ -f "package-lock.json" ]; then
+    npm ci || npm install
+  else
+    npm install
+  fi
+
+  echo -e "🚧 ${yellow} Building production assets for ${theme}. ${NC} 🚧"
+  echo -e "${green}${divider}${NC}"
+  npm run production
+}
 
 #-------------------------- Execution -------------------------------------
 
-# Check if theme directory exists
-if [ ! -d "${FULL_THEME_PATH}" ]; then
-    echo "❌ Theme directory not found: ${FULL_THEME_PATH}"
-    echo "Please ensure your theme directory exists or update THEME configuration."
-    exit 1
+THEME_ARG="${1:-}"
+
+# Install + build every theme that has a package.json.
+if [ "$THEME_ARG" = "all" ]; then
+  echo -e "🚧 ${yellow} Installing ALL themes in ${THEMES_ROOT}. ${NC} 🚧"
+  echo -e "${green}${divider}${NC}"
+  for d in "${THEMES_ROOT}"/*/ ; do
+    [ -f "${d}package.json" ] || continue
+    install_theme "$(basename "$d")"
+  done
+  echo -e "🎉 ${yellow} All themes installed and built! ${NC} 🎉"
+  echo -e "To start watching for file changes, run: ${yellow}ddev theme-watch [theme]${NC}"
+  echo -e "${green}${divider}${NC}"
+  exit 0
 fi
 
-# Theme initialization message
-echo -e "🚧 ${yellow} Installing theme development tools. ${NC} 🚧"
-echo -e "${green}${divider}${NC}"
+# Resolve the target theme, defaulting to the configured theme.
+THEME_NAME="${THEME_ARG:-${THEMENAME:-$(basename "${THEME:-themes/custom/jcc_base}")}}"
 
-# Move to the theme directory
-echo -e "🚀 ${yellow} Navigating to theme directory: ${FULL_THEME_PATH} ${NC} 🚀"
-echo -e "${green}${divider}${NC}"
-cd "${FULL_THEME_PATH}"
-
-# Check if package.json exists
-if [ ! -f "${FULL_THEME_PATH}/package.json" ]; then
-    echo "❌ No package.json found in theme directory: ${FULL_THEME_PATH}"
-    echo "Please ensure your theme has a package.json file with npm scripts configured"
-    echo "Run ddev theme-install to set up theme development tools first"
-    exit 1
+# Mirror Lando: a name without the jcc_ prefix gets it added, and the base
+# theme is installed/built first since project themes depend on it.
+if [[ "$THEME_NAME" != jcc_* ]]; then
+  echo -e "${yellow}No jcc_ prefix detected. Installing ${BASE_THEME} first.${NC}"
+  install_theme "$BASE_THEME"
+  THEME_NAME="jcc_${THEME_NAME}"
 fi
 
-# Install NPM dependencies
-echo -e "🚧 ${yellow} Installing NPM dependencies. ${NC} 🚧"
-echo -e "${green}${divider}${NC}"
+install_theme "$THEME_NAME"
 
-export NVM_DIR="$HOME/.nvm" || echo "export NVM_DIR=$HOME/.nvm"
-source "$NVM_DIR/nvm.sh" || echo "source $NVM_DIR/nvm.sh"
-echo "NVM version: $(nvm --version)"
-
-# Use Node version specified in .nvmrc if it exists
-if [ -f "${FULL_THEME_PATH}/.nvmrc" ]; then
-    NODE_VERSION=$(cat "${FULL_THEME_PATH}/.nvmrc")
-    echo "Using Node.js version: ${NODE_VERSION}"
-    nvm install "${NODE_VERSION}" || echo "nvm install"
-    nvm alias default "${NODE_VERSION}" || echo "nvm alias"
-    nvm use || echo "nvm use"
-else
-    echo "No .nvmrc file found, using default Node.js version"
-fi
-npm ci || echo "npm install"
-
-# Compile theme assets
-echo -e "🚧 ${yellow} Compiling theme assets. ${NC} 🚧"
-echo -e "${green}${divider}${NC}"
-npm run build || echo "npm run build"
-
-# Completion message
-echo -e "🎉 ${yellow} Theme setup complete! ${NC} 🎉"
-echo -e "To start watching for file changes, run: ${yellow}ddev theme-watch${NC}"
+echo -e "🎉 ${yellow} Theme setup complete for ${THEME_NAME}! ${NC} 🎉"
+echo -e "To start watching for file changes, run: ${yellow}ddev theme-watch ${THEME_NAME}${NC}"
 echo -e "${green}${divider}${NC}"
