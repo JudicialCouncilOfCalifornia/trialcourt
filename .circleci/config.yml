@@ -37,7 +37,13 @@ cypress: &cypress
   environment:
     CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
 
+# PHP version tag used by the ci-tools static analysis jobs.
+php_tag: &php_tag "8.1"
+
 version: 2.1
+
+orbs:
+  ci-tools: kanopi/ci-tools@2
 
 jobs:
     build_test:
@@ -287,6 +293,16 @@ workflows:
     jobs:
       # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
       - build_test
+      # Static code analysis. These run in parallel with build_test (no
+      # "requires") so the code checks are not sequential.
+      - ci-tools/composer:
+          name: phpstan
+          tag: *php_tag
+          command: phpstan
+      - ci-tools/composer:
+          name: rector
+          tag: *php_tag
+          command: rector
       - deploy:
           name: deploy-<< matrix.site >>
           matrix:
