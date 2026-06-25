@@ -29,19 +29,6 @@ This is a **Drupal 9 multisite** that powers ~70 California court websites from 
 * Each court maps to its own Pantheon site `jcc-<site>` with its own UUID, defined in `.circleci/scripts/project-<site>.sh` (`UUID`, `SITE_CODE`, `LIVE`).
 * Public files are served locally via **Stage File Proxy**, which proxies missing files from each site's live Pantheon environment (`https://live-jcc-<site>.pantheonsite.io`). `origin_dir` is set to the site's `file_public_path` so proxied URLs resolve correctly.
 
-### Stack
-
-| Layer | Choice |
-| --- | --- |
-| CMS | Drupal 9 (`drupal/core-recommended` 9.5.x) |
-| PHP | 8.1 |
-| Web server | nginx-fpm |
-| Database | MariaDB 10.6 |
-| Cache / Search | Redis, Apache Solr |
-| Theme build | webpack via Laravel Mix (npm) |
-| Hosting | Pantheon |
-| CI/CD | CircleCI |
-
 ### Theme
 
 * Base theme `jcc_base` plus subthemes (`jcc_components`, `jcc_md`, `jcc_newsroom`, `jcc_webservices`, …) under `web/themes/custom/`.
@@ -89,6 +76,29 @@ ddev drush -l sf.trialcourt.ddev.site cr
 ```
 
 `ddev refresh <site>` downloads the latest database backup from `jcc-<site>.live`, imports it into a local database named `<site>`, grants the DDEV `db` user access, and enables Stage File Proxy for that site.
+
+### Available site names
+
+Use any of these as `<site>` (e.g. `ddev refresh alameda`, `https://alameda.trialcourt.ddev.site`). They are the directories under `web/sites/` (excluding Drupal's `default` fallback); each maps to the Pantheon site `jcc-<site>`. There are **70** sites:
+
+| ` ` | ` ` | ` ` | ` ` | ` ` |
+| --- | --- | --- | --- | --- |
+| `alameda` | `diversity-toolkit` | `madera` | `placer` | `slo2` |
+| `alpine` | `elcondado` | `marin` | `plumas` | `solano` |
+| `amdr` | `eldorado` | `mariposa` | `riverside` | `sonoma` |
+| `appellate` | `fresno` | `md` | `sacramento` | `stanislaus` |
+| `butte` | `glenn` | `mendocino` | `sanbenito` | `store-front` |
+| `calaveras` | `humboldt` | `merced` | `sanbernardino` | `supremecourt` |
+| `cjeo` | `idm` | `modoc` | `sanmateo` | `sutter` |
+| `cjer` | `imperial` | `mono` | `santabarbara` | `tehama` |
+| `cjer-judicial` | `inyo` | `monterey` | `santaclara` | `trinity` |
+| `colusa` | `jrn` | `napa` | `sc` | `tularesuperiorcourt` |
+| `contracosta` | `kern` | `nccourt` | `sf` | `tuolumne` |
+| `courts` | `kings` | `newsroom` | `shasta` | `ventura` |
+| `delnorte` | `lake` | `oc` | `sierra` | `webservices` |
+| `deprep` | `lassen` | `partners` | `siskiyou` | `yuba` |
+
+> To regenerate this list: `ls -d web/sites/*/ | xargs -n1 basename | grep -v '^default$' | sort`
 
 ### Useful DDEV commands
 
