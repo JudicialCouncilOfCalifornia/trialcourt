@@ -1,7 +1,7 @@
 uuid: 40618c1a-7f02-4d21-a372-1a1997170h4z
 langcode: en
 status: true
-dependencies: {  }
+dependencies: { }
 id: case_node_central_cases
 class: null
 field_plugin_method: null
@@ -22,86 +22,64 @@ source:
     - case_number
     - hearing_date_and_time
   fields:
-    -
-      name: party_name
+    - name: party_name
       label: 'Party_Name'
-    -
-      name: department
+    - name: department
       label: "Department"
-    -
-      name: hearing_date_and_time
+    - name: hearing_date_and_time
       label: 'Hearing_Date_and_Time'
-    -
-      name: judicial_officer
+    - name: judicial_officer
       label: 'Judicial_Officer'
-    -
-      name: hearing_type
+    - name: hearing_type
       label: 'Hearing_Type'
-    -
-      name: party_type
+    - name: party_type
       label: 'Party_Type'
-    -
-      name: case_number
+    - name: case_number
       label: 'Case_Number'
-    -
-      name: case_type
+    - name: case_type
       label: 'Case_Type'
-    -
-      name: case_category
+    - name: case_category
       label: 'Case_Category'
-    -
-      name: location
+    - name: location
       label: "Location"
-    -
-      name: attorney_of_record
+    - name: attorney_of_record
       label: "Attorney_Of_Record"
 process:
   field_migration_origin:
     plugin: default_value
     default_value: central
   field_party_name:
-    -
-      plugin: skip_on_empty
+    - plugin: skip_on_empty
       source: party_name
       method: row
       message: 'No name found.'
-    -
-      plugin: callback
+    - plugin: callback
       callable: trim
   field_case_number:
-    -
-      plugin: skip_on_empty
-      source: case_number
+    - source: case_number
       method: row
       message: 'No case number found.'
-    -
-      plugin: callback
+    - plugin: callback
       callable: trim
-    -
-      plugin: entity_generate
+    - plugin: entity_generate
       bundle: case_number
       value_key: name
       bundle_key: vid
       entity_type: taxonomy_term
       ignore_case: true
   title:
-    -
-      plugin: concat
+    - plugin: concat
       source:
         - '@field_party_name'
         - case_number
       delimiter: ' / '
   field_party_type:
-    -
-      plugin: skip_on_empty
-      source: party_type
+    - source: party_type
       method: row
       message: 'No party type found.'
-    -
-      plugin: callback
+    - plugin: callback
       callable: trim
-    -
-      plugin: entity_generate
+    - plugin: entity_generate
       bundle: case_party_type
       value_key: name
       bundle_key: vid
@@ -111,16 +89,14 @@ process:
     - plugin: callback
       source: location
       callable: trim
-    -
-      plugin: entity_generate
+    - plugin: entity_generate
       bundle: department
       value_key: name
       bundle_key: vid
       entity_type: taxonomy_term
       ignore_case: true
   field_hearing_date:
-    - plugin: skip_on_empty
-      method: process
+    - method: process
       source: hearing_date_and_time
     - plugin: callback
       callable: jcc_custom_custom_date_format
@@ -142,24 +118,19 @@ process:
       entity_type: node
       ignore_case: true
   field_hearing_type:
-    -
-      plugin: skip_on_empty
-      source: hearing_type
+    - source: hearing_type
       method: process
       message: 'No hearing type found.'
-    -
-      plugin: callback
+    - plugin: callback
       callable: trim
-    -
-      plugin: entity_generate
+    - plugin: entity_generate
       bundle: hearing_type
       value_key: name
       bundle_key: vid
       entity_type: taxonomy_term
       ignore_case: true
   field_case_type:
-    - plugin: skip_on_empty
-      source: case_type
+    - source: case_type
       method: process
       message: 'No case type found.'
     - plugin: callback
@@ -171,24 +142,19 @@ process:
       entity_type: taxonomy_term
       ignore_case: true
   field_case_category:
-    -
-      plugin: default_value
+    - plugin: default_value
       default_value: crim
-    -
-      plugin: entity_generate
+    - plugin: entity_generate
       bundle: case_category
       value_key: name
       bundle_key: vid
       entity_type: taxonomy_term
       ignore_case: true
   field_attorney_of_record:
-    -
-      plugin: skip_on_empty
-      source: attorney_of_record
+    - source: attorney_of_record
       method: process
       message: 'No Attorney of Record found.'
-    -
-      plugin: callback
+    - plugin: callback
       callable: trim
 
 destination:
