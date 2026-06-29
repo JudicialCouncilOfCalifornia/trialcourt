@@ -78,3 +78,19 @@ img[typeof="foaf:Image"] {
   box-shadow: 0 0 0 3px #ffbe2e;
   border-radius: 0.25rem;
 }
+
+/**
+ * ADA: Ensure keyboard focus is clearly visible for external links rendered
+ * within the Text Share paragraph component.
+ *
+ * WCAG 2.2 SC 2.4.13 (Focus Appearance) requires the visible focus indicator
+ * to have sufficient contrast (minimum 3:1) against adjacent colors.
+ *
+ * The default focus indicator was not consistently rendered for rich-text
+ * links (e.g. <a class="ext">), so an explicit focus outline is applied.
+ */
+.jcc-text-share__main-text.usa-prose a:focus,
+.jcc-text-share__main-text.usa-prose a:focus-visible {
+  outline: 3px solid #00687d;
+  outline-offset: 2px;
+}
