@@ -153,6 +153,11 @@ ddev composer lint      # php -l syntax check of custom code
 
 ## Testing
 
+> **⚠️ The Cypress tests are no longer maintained.** The specs in `test/cypress/` are
+> kept for reference, but they are not actively updated and the CircleCI Cypress job is
+> commented out. Treat them as a starting point if test coverage is revived, not as a
+> reliable gate.
+
 End-to-end tests use **Cypress** (and Playwright is available):
 
 ```bash
@@ -162,6 +167,17 @@ ddev cypress-users        # create test users
 ```
 
 Cypress runs on the host (not in the container) so it can use local browser options.
+
+### Reviewing work after merge to `develop`
+
+Manual review is the primary way work is verified. The last known **reference site for
+testing was Inyo**. When you want someone to review work after it has merged to
+`develop`, share the Inyo develop URL:
+
+- **Inyo (develop):** <https://develop-jcc-inyo.pantheonsite.io>
+
+If Inyo is no longer the active reference site, confirm the current one and update this
+note (and the `baseUrl` in `cypress.config.js`).
 
 ## Deployment
 
