@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+## Description: Create the Cypress test user on a site
+## Usage: cypress-users [site]
+## Example: "ddev cypress-users alameda"
+## Aliases: cypress:users,cyu
+
+# Abort if anything fails
+set -e
+
+# The Cypress specs log in as test/test (see test/cypress/support/common.js).
+# This is a multisite, so target a specific site's URI; defaults to the DDEV
+# project default if none is given.
+SITE="${1:-}"
+URI_FLAG=""
+if [ -n "$SITE" ]; then
+  URI_FLAG="-l ${SITE}.trialcourt.ddev.site"
+  echo "Creating Cypress 'test' user on ${SITE}.trialcourt.ddev.site"
+else
+  echo "Creating Cypress 'test' user on the default site (pass a site name to target one, e.g. 'ddev cypress-users alameda')"
+fi
+
+ddev drush ${URI_FLAG} user:create test --mail="cypress-test@example.com" --password="test" || true
+ddev drush ${URI_FLAG} user:role:add administrator test

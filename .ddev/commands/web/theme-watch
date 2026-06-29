@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+
+## Description: Start theme development with file watching (mirrors Lando `tw`). Optionally pass a theme machine name; defaults to the configured theme.
+## Usage: theme-watch [theme_name]
+## Example: ddev theme-watch
+##          ddev theme-watch jcc_md
+##          ddev theme-watch md     # jcc_ prefix added automatically
+## Aliases: theme:watch,development,thw,theme-development
+
+# Abort if anything fails
+set -e
+
+#-------------------------- Helper functions --------------------------------
+
+green='\033[0;32m'
+yellow='\033[1;33m'
+red='\033[0;31m'
+NC='\033[0m'
+divider='===================================================\n'
+
+#-------------------------- Settings --------------------------------
+
+DOCROOT="${DDEV_DOCROOT:-web}"
+# Root directory that holds all custom themes (derived from the configured THEME).
+THEMES_ROOT="/var/www/html/${DOCROOT}/$(dirname "${THEME:-themes/custom/jcc_base}")"
+
+#-------------------------- Node setup -------------------------------------
+
+# Set up NVM and select the theme's Node version from .nvmrc when present;
+# otherwise fall back to the container's default Node.
+setup_node() {
+  local path="$1"
+  export NVM_DIR="$HOME/.nvm"
+  # nvm's auto-use hook can return non-zero (e.g. no default alias); relax
+  # errexit while we source and switch Node so it can't abort the script.
+  set +e
+  if [ -s "$NVM_DIR/nvm.sh" ]; then
+    # shellcheck disable=SC1090
+    source "$NVM_DIR/nvm.sh"
+    if [ -f "$path/.nvmrc" ]; then
+      echo -e "Using Node.js version from .nvmrc: $(cat "$path/.nvmrc")"
+      (cd "$path" && nvm install) >/dev/null 2>&1
+      (cd "$path" && nvm use) >/dev/null 2>&1
+    fi
+  fi
+  set -e
+
+  # Laravel Mix v4 / webpack 4 needs the legacy OpenSSL provider on Node >= 17.
+  local node_major
+  node_major="$(node -v 2>/dev/null | sed 's/v\([0-9]*\).*/\1/')"
+  if [ -n "$node_major" ] && [ "$node_major" -ge 17 ]; then
+    export NODE_OPTIONS=--openssl-legacy-provider
+  fi
+  echo -e "Node: $(node -v 2>/dev/null)"
+}
+
+#-------------------------- Execution -------------------------------------
+
+# Resolve the target theme, defaulting to the configured theme.
+THEME_NAME="${1:-${THEMENAME:-$(basename "${THEME:-themes/custom/jcc_base}")}}"
+
+# Add the jcc_ prefix for convenience (e.g. `ddev theme-watch md`).
+if [[ "$THEME_NAME" != jcc_* ]]; then
+  THEME_NAME="jcc_${THEME_NAME}"
+fi
+
+FULL_THEME_PATH="${THEMES_ROOT}/${THEME_NAME}"
+
+# Check the theme directory and package.json exist.
+if [ ! -d "$FULL_THEME_PATH" ]; then
+  echo -e "\n${red}Theme directory not found: ${FULL_THEME_PATH}${NC}"
+  exit 1
+fi
+if [ ! -f "$FULL_THEME_PATH/package.json" ]; then
+  echo -e "\n${yellow}package.json not found in ${FULL_THEME_PATH}${NC}"
+  echo -e "Run ${yellow}ddev theme-install ${THEME_NAME}${NC} to set up theme development tools first"
+  exit 1
+fi
+
+echo -e "🚧 ${yellow} Starting file watcher for ${THEME_NAME}. ${NC} 🚧"
+echo -e "${green}${divider}${NC}"
+
+setup_node "$FULL_THEME_PATH"
+cd "$FULL_THEME_PATH"
+
+# Install dependencies if they are missing.
+if [ ! -d "node_modules" ]; then
+  echo -e "🚧 ${yellow} Installing NPM dependencies for ${THEME_NAME}. ${NC} 🚧"
+  echo -e "${green}${divider}${NC}"
+  npm install
+fi
+
+# Start the watcher (webpack --watch via Laravel Mix).
+echo -e "🚧 ${yellow} Watching ${THEME_NAME} for changes... ${NC} 🚧"
+echo -e "${green}${divider}${NC}"
+npm run watch

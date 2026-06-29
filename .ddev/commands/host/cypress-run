@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+## Description: Run Cypress against a local multisite (root project)
+## Usage: cypress-run [--url <url>] [cypress args]
+## Example: "ddev cypress-run run --spec test/cypress/integration/alameda-ci.cy.js --url https://alameda.trialcourt.ddev.site"
+##          "ddev cypress-run open --url https://sf.trialcourt.ddev.site"
+## RawArg: true
+## Aliases: cy,cypress,cypress-run,cyr
+
+set -e
+
+# Make sure NVM works on the host.
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# The Cypress project (cypress.config.js, node_modules, test/cypress specs)
+# lives at the repo root — same layout CircleCI and Lando use.
+cd "${DDEV_APPROOT}"
+[ -f .nvmrc ] && nvm use >/dev/null 2>&1 || true
+
+# Parse --url flag (which local site to test); pass everything else to cypress.
+# baseUrl is overridden at runtime via CYPRESS_BASE_URL, so cypress.config.js
+# (used by CI) is never modified.
+ENVIRONMENT="${DDEV_PRIMARY_URL}"
+CYPRESS_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --url)
+      ENVIRONMENT="$2"
+      shift 2
+      ;;
+    *)
+      CYPRESS_ARGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+CYPRESS_BASE_URL="${ENVIRONMENT}" ./node_modules/.bin/cypress "${CYPRESS_ARGS[@]}"

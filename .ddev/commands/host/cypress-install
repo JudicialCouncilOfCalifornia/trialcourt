@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+## Description: Install Cypress (root project) on the developer's local machine
+## Usage: cypress-install
+## Example: "ddev cypress-install"
+## Aliases: cypress:install,cyi,install-cypress
+
+#-------------------------- Helper functions ------------------------------
+
+green='\033[0;32m'
+yellow='\033[1;33m'
+NC='\033[0m'
+divider='===================================================\n'
+
+#-------------------------- Execution -------------------------------------
+
+echo -e "🚧 ${yellow} Initializing Cypress...${NC} 🚧"
+echo -e "${green}${divider}${NC}"
+
+# Make sure NVM works on the host.
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+# The Cypress project lives at the repo root (cypress.config.js + package.json),
+# with specs under test/cypress/. This matches what CircleCI and Lando use, so
+# we install/run from the project root rather than a self-contained subdir.
+cd "${DDEV_APPROOT}"
+
+if [ ! -f "${DDEV_APPROOT}/cypress.config.js" ]; then
+    echo "❌ cypress.config.js not found at the project root: ${DDEV_APPROOT}"
+    exit 0
+fi
+
+# Use the Node version from the project's .nvmrc when available.
+if [ -f "${DDEV_APPROOT}/.nvmrc" ]; then
+    NODE_VERSION=$(cat "${DDEV_APPROOT}/.nvmrc")
+    if command -v nvm &> /dev/null; then
+        nvm install "$NODE_VERSION"
+        nvm use
+    else
+        echo "⚠️  NVM not found; using the system Node version."
+    fi
+fi
+
+if [ ! -f "${DDEV_APPROOT}/package.json" ]; then
+    echo "❌ No package.json at the project root."
+    exit 0
+fi
+
+# Install node deps (reproducible) and the Cypress binary.
+npm ci || npm install
+npm run cy:install

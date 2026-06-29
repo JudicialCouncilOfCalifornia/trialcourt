@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+## Description: Logs you in to Drupal.
+## Usage: drupal-uli
+## Example: "ddev project-uli"
+## Aliases: drupal:uli,uli
+
+#ddev-generated
+
+#-------------------------- Helper functions ------------------------------
+
+green='\033[0;32m'
+yellow='\033[1;33m'
+NC='\033[0m'
+divider='===================================================\n'
+
+#-------------------------- Execution -------------------------------------
+
+# Logging into to Drupal.
+echo -e "🔒 ${yellow} Logging you in.${NC} 🔒"
+echo -e "${green}${divider}${NC}"
+
+cd ${DDEV_APPROOT}
+
+if [ -f "config/core.extension.yml" ]; then
+  ddev drush uli --uid=2
+else
+  echo -e "\n${yellow}Don't forget to block user 1!${NC}"
+  ddev drush uli
+fi

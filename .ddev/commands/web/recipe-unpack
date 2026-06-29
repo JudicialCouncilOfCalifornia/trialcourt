@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+## Description: Unpack a recipe package that's already required in your project
+## Usage: recipe-unpack [recipe-name]
+## Example: ddev recipe-unpack drupal/example_recipe
+## Example: ddev recipe-unpack (unpacks all recipes)
+## Aliases: recipe:unpack,ru
+
+#ddev-generated
+
+# Abort if anything fails
+set -e
+
+#-------------------------- Helper functions --------------------------------
+
+green='\033[0;32m'
+yellow='\033[1;33m'
+NC='\033[0m'
+divider='===================================================\n'
+
+#-------------------------- Settings --------------------------------
+
+# Define the Drupal root inside DDEV
+DOCROOT_PATH="/var/www/html/${DDEV_DOCROOT}"
+
+#-------------------------- Execution -------------------------------------
+
+# Ensure we're in the correct directory
+cd "${DOCROOT_PATH}"
+
+# Recipe unpack message
+if [ -n "$1" ]; then
+    echo -e "🧳 ${yellow} Unpacking recipe: $1 ${NC} 🧳"
+else
+    echo -e "🧳 ${yellow} Unpacking all recipes required in your project ${NC} 🧳"
+fi
+echo -e "${green}${divider}${NC}"
+
+# Clear cache before unpacking
+echo -e "\n ${rocket} ${yellow} Clearing cache before unpacking recipe(s) ${NC} ${rocket}"
+echo -e "${green}${divider}${NC}"
+if command -v drush &> /dev/null; then
+    drush cr
+else
+    echo "⚠️  Drush not available, skipping cache clear"
+fi
+
+# Unpack the recipe(s) using Composer
+echo -e "🧳 ${yellow} Unpacking recipe(s) with Composer ${NC} 🧳"
+echo -e "${green}${divider}${NC}"
+
+if [ -n "$1" ]; then
+    # Unpack specific recipe
+    composer drupal:recipe-unpack "$1"
+else
+    # Unpack all recipes
+    composer drupal:recipe-unpack
+fi
+
+# Clear cache after unpacking
+echo -e "🚀 ${yellow} Clearing cache after unpacking recipe(s) ${NC} 🚀"
+echo -e "${green}${divider}${NC}"
+if command -v drush &> /dev/null; then
+    drush cr
+else
+    echo "⚠️  Drush not available, skipping cache clear"
+fi
+
+# Completion message
+echo -e "🎉 ${yellow} Recipe(s) unpacked successfully! ${NC} 🎉"
+echo -e "${green}${divider}${NC}"

@@ -49,17 +49,21 @@ function _jcc_list_faceted_terms($node, $vocabularies) {
   return $tags_markup;
 }
 
-/**
- * Helper function to remove protocol from image paths.
- *
- * @param string $image
- *   The Drupal image url.
- *
- * @return string
- *   Converted url with no http or https.
- */
-function _jcc_components_remove_image_protocol($image) {
-  return preg_replace('(^https?:||^http?:)', '', $image);
+if (!function_exists('_jcc_components_remove_image_protocol')) {
+
+  /**
+   * Helper function to remove protocol from image paths.
+   *
+   * @param string $image
+   *   The Drupal image url.
+   *
+   * @return string
+   *   Converted url with no http or https.
+   */
+  function _jcc_components_remove_image_protocol($image) {
+    return preg_replace('(^https?:||^http?:)', '', $image);
+  }
+
 }
 
 /**

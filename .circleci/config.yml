@@ -37,6 +37,15 @@ cypress: &cypress
   environment:
     CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
 
+# Shared defaults for the static analysis / code-quality jobs. These run on
+# the CircleCI base PHP image, install Composer dependencies, then run a single
+# Composer script.
+static_checks: &static_checks
+  docker:
+    - image: cimg/php:8.1
+  resource_class: large
+  working_directory: ~/project
+
 version: 2.1
 
 jobs:
@@ -73,18 +82,6 @@ jobs:
                 key: composer-cache
                 paths:
                     - $HOME/.composer/cache
-
-            - run:
-                name: lint php code for syntax errors
-                command: composer -n lint
-
-            - run:
-                name: check coding standards
-                command: composer -n code-sniff
-
-            - run:
-                name: run unit tests
-                command: composer -n unit-test
 
     deploy:
         <<: *defaults
@@ -281,11 +278,115 @@ jobs:
                 path: /root/project/test/cypress/screenshots
                 destination: /screenshots
 
+    phpstan:
+        <<: *static_checks
+        description: PHPStan static analysis
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - composer-cache
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install
+            - save_cache:
+                key: composer-cache
+                paths:
+                    - $HOME/.composer/cache
+            - run:
+                name: phpstan
+                command: composer phpstan
+
+    rector:
+        <<: *static_checks
+        description: Rector dry-run
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - composer-cache
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install
+            - save_cache:
+                key: composer-cache
+                paths:
+                    - $HOME/.composer/cache
+            - run:
+                name: rector
+                command: composer rector
+
+    phpcs:
+        <<: *static_checks
+        description: PHP CodeSniffer
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - composer-cache
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install
+            - save_cache:
+                key: composer-cache
+                paths:
+                    - $HOME/.composer/cache
+            - run:
+                name: code-sniff
+                command: composer code-sniff
+
+    unit_test:
+        <<: *static_checks
+        description: PHPUnit tests
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - composer-cache
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install
+            - save_cache:
+                key: composer-cache
+                paths:
+                    - $HOME/.composer/cache
+            - run:
+                name: unit-test
+                command: composer unit-test
+
+    lint:
+        <<: *static_checks
+        description: PHP lint
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - composer-cache
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install
+            - save_cache:
+                key: composer-cache
+                paths:
+                    - $HOME/.composer/cache
+            - run:
+                name: lint
+                command: composer lint
+
 workflows:
   version: 2.1
+  static-checks:
+    jobs:
+      # Static code analysis. These run in parallel with build_test (no
+      # "requires") so the code checks are not sequential.
+      - phpstan
+      - rector
+      - phpcs
+      - unit_test
+      - lint
   build_and_test:
     jobs:
-      # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
+      # Install dev dependencies
       - build_test
       - deploy:
           name: deploy-<< matrix.site >>

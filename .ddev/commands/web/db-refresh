@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+## Refresh DB
+## Description: Downloads the database from the hosting provider. Supports both Pantheon and Acquia platforms.
+## Usage: db-refresh [environment id]
+## Example: ddev db-refresh pr-123
+## Aliases: db:refresh,refresh
+## Flags: [{"Name":"force","Shorthand":"f","Usage":"Force creation of new backup regardless of age"}]
+
+#ddev-generated
+
+green='\033[0;32m'
+yellow='\033[1;33m'
+red='\033[0;31m'
+NC='\033[0m'
+
+# Parse command line arguments
+FORCE_BACKUP=false
+# Get hosting environment from environment variable, default to 'dev' if not set
+ENVIRONMENT="$HOSTING_ENV"
+if [ -z "$ENVIRONMENT" ]; then
+  if [[ "$HOSTING_PROVIDER" == "acquia" ]]; then
+    ENVIRONMENT="prod"
+  else
+    ENVIRONMENT="dev"
+  fi
+fi
+
+for arg in "$@"; do
+  case $arg in
+    --force|-f)
+      FORCE_BACKUP=true
+      shift
+      ;;
+    *)
+      # Skip DDEV internal parameters (like "2") and set environment if valid
+      if [ "$arg" != "2" ] && [ -z "$ENVIRONMENT_SET" ]; then
+        ENVIRONMENT="$arg"
+        ENVIRONMENT_SET=true
+      fi
+      shift
+      ;;
+  esac
+done
+
+cd ${DDEV_APPROOT}
+
+# Get the hosting provider
+HOSTING_PROVIDER="${HOSTING_PROVIDER:-pantheon}"
+
+echo -e "\n${yellow}Refreshing database from ${HOSTING_PROVIDER} environment: ${ENVIRONMENT}${NC}"
+
+# Platform-specific database refresh
+if [[ "$HOSTING_PROVIDER" == "pantheon" ]]; then
+  echo -e "${green}Using Pantheon refresh script...${NC}"
+  # Call the Pantheon-specific refresh script
+  bash .ddev/scripts/refresh-pantheon.sh "$ENVIRONMENT" "$FORCE_BACKUP"
+elif [[ "$HOSTING_PROVIDER" == "acquia" ]]; then
+  echo -e "${green}Using Acquia refresh script...${NC}"
+  # Call the Acquia-specific refresh script
+  bash .ddev/scripts/refresh-acquia.sh "$ENVIRONMENT" "$FORCE_BACKUP"
+elif [[ "$HOSTING_PROVIDER" == "upsun" ]]; then
+  echo -e "${green}Using Upsun refresh script...${NC}"
+  # Call the Upsun-specific refresh script
+  bash .ddev/scripts/refresh-upsun.sh "$ENVIRONMENT" "$FORCE_BACKUP"
+elif [[ "$HOSTING_PROVIDER" == "custom" ]]; then
+  echo -e "${green}Using Custom refresh script...${NC}"
+  # Call the Custom-specific refresh script
+  bash .ddev/scripts/refresh-custom.sh
+else
+  echo -e "${red}Hosting platform '$HOSTING_PROVIDER' not supported${NC}"
+  echo -e "${yellow}Supported platforms: pantheon, acquia, upsun, custom${NC}"
+  exit 1
+fi
+
+echo -e "\n${green}Database refresh completed successfully!${NC}"

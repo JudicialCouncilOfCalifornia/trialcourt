@@ -1,0 +1,24 @@
+includes:
+  - vendor/mglaman/phpstan-drupal/extension.neon
+  - vendor/mglaman/phpstan-drupal/rules.neon
+  - phpstan-baseline.neon
+
+parameters:
+  level: 1
+  customRulesetUsed: true
+  reportUnmatchedIgnoredErrors: false
+  paths:
+    - web/modules/custom
+    - web/themes/custom
+  excludePaths:
+    - '*/node_modules/*'
+    # Drush subtheme generators rely on the Robo traits, which are not installed
+    # as a dependency, so phpstan cannot resolve them.
+    - '*/Commands/*/SubThemeCommands.php'
+    # Overrides migrate_tools with intentionally different return types.
+    - 'web/modules/custom/jcc_migrate_source_ui/src/MigrateBatchExecutable.php'
+  ignoreErrors:
+    - '#\Drupal calls should be avoided in classes, use dependency injection instead#'
+    - '#Plugin definitions cannot be altered.#'
+    - '#Missing cache backend declaration for performance.#'
+    - '#Plugin manager has cache backend specified but does not declare cache tags.#'
