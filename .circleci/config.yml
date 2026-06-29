@@ -37,13 +37,16 @@ cypress: &cypress
   environment:
     CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
 
-# PHP version tag used by the ci-tools static analysis jobs.
-php_tag: &php_tag "8.1"
+# Shared defaults for the static analysis / code-quality jobs. These run on
+# the CircleCI base PHP image, install Composer dependencies, then run a single
+# Composer script.
+static_checks: &static_checks
+  docker:
+    - image: cimg/php:8.1
+  resource_class: large
+  working_directory: ~/project
 
 version: 2.1
-
-orbs:
-  ci-tools: kanopi/ci-tools@2
 
 jobs:
     build_test:
@@ -275,36 +278,112 @@ jobs:
                 path: /root/project/test/cypress/screenshots
                 destination: /screenshots
 
+    phpstan:
+        <<: *static_checks
+        description: PHPStan static analysis
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - composer-cache
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install
+            - save_cache:
+                key: composer-cache
+                paths:
+                    - $HOME/.composer/cache
+            - run:
+                name: phpstan
+                command: composer phpstan
+
+    rector:
+        <<: *static_checks
+        description: Rector dry-run
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - composer-cache
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install
+            - save_cache:
+                key: composer-cache
+                paths:
+                    - $HOME/.composer/cache
+            - run:
+                name: rector
+                command: composer rector
+
+    phpcs:
+        <<: *static_checks
+        description: PHP CodeSniffer
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - composer-cache
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install
+            - save_cache:
+                key: composer-cache
+                paths:
+                    - $HOME/.composer/cache
+            - run:
+                name: code-sniff
+                command: composer code-sniff
+
+    unit_test:
+        <<: *static_checks
+        description: PHPUnit tests
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - composer-cache
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install
+            - save_cache:
+                key: composer-cache
+                paths:
+                    - $HOME/.composer/cache
+            - run:
+                name: unit-test
+                command: composer unit-test
+
+    lint:
+        <<: *static_checks
+        description: PHP lint
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - composer-cache
+            - run:
+                name: run composer install to get the vendor directory
+                command: composer install
+            - save_cache:
+                key: composer-cache
+                paths:
+                    - $HOME/.composer/cache
+            - run:
+                name: lint
+                command: composer lint
+
 workflows:
   version: 2.1
   static-checks:
     jobs:
       # Static code analysis. These run in parallel with build_test (no
       # "requires") so the code checks are not sequential.
-      - ci-tools/composer:
-          name: phpstan
-          tag: *php_tag
-          command: phpstan
-      - ci-tools/composer:
-          name: rector
-          tag: *php_tag
-          command: rector
-      - ci-tools/composer:
-          name: phpstan
-          tag: *php_tag
-          command: phpstan
-      - ci-tools/composer:
-          name: phpcs
-          tag: *php_tag
-          command: code-sniff
-      - ci-tools/composer:
-          name: unit test
-          tag: *php_tag
-          command: unit-test
-      - ci-tools/composer:
-          name: lint
-          tag: *php_tag
-          command: lint
+      - phpstan
+      - rector
+      - phpcs
+      - unit_test
+      - lint
   build_and_test:
     jobs:
       # Install dev dependencies
