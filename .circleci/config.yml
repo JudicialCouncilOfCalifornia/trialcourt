@@ -80,18 +80,6 @@ jobs:
                 paths:
                     - $HOME/.composer/cache
 
-            - run:
-                name: lint php code for syntax errors
-                command: composer -n lint
-
-            - run:
-                name: check coding standards
-                command: composer -n code-sniff
-
-            - run:
-                name: run unit tests
-                command: composer -n unit-test
-
     deploy:
         <<: *defaults
         parameters:
@@ -289,10 +277,8 @@ jobs:
 
 workflows:
   version: 2.1
-  build_and_test:
+  static-checks:
     jobs:
-      # Install dev dependencies and do simple tests (sniff, unit tests, etc.)
-      - build_test
       # Static code analysis. These run in parallel with build_test (no
       # "requires") so the code checks are not sequential.
       - ci-tools/composer:
@@ -303,6 +289,26 @@ workflows:
           name: rector
           tag: *php_tag
           command: rector
+      - ci-tools/composer:
+          name: phpstan
+          tag: *php_tag
+          command: phpstan
+      - ci-tools/composer:
+          name: phpcs
+          tag: *php_tag
+          command: code-sniff
+      - ci-tools/composer:
+          name: unit test
+          tag: *php_tag
+          command: unit-test
+      - ci-tools/composer:
+          name: lint
+          tag: *php_tag
+          command: lint
+  build_and_test:
+    jobs:
+      # Install dev dependencies
+      - build_test
       - deploy:
           name: deploy-<< matrix.site >>
           matrix:
