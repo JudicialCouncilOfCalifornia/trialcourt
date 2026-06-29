@@ -21,14 +21,27 @@ export function commonTests(pages, search_keyword, search_expected) {
   describe("User Login and Administration", () => {
     it("logs in user", () => {
       cy.visit("/user/login");
-      cy.get('input[name="name"]').type("test");
-      cy.get('input[name="pass"]').type("test" + "{enter}");
-      cy.contains("Member for").should("exist");
+      // Scope to the user login form: the page can contain other forms
+      // (e.g. Azure AD / OpenID Connect), so target this form explicitly and
+      // click its submit button rather than relying on {enter}.
+      cy.get(".user-login-form #edit-name").type("test");
+      cy.get(".user-login-form #edit-pass").type("test");
+      cy.get(".user-login-form #edit-submit").click();
+      // Confirm login by checking the Drupal session cookie is set. Using
+      // .should() retries until the cookie appears after the login request.
+      cy.getCookies().should((cookies) => {
+        const sessionCookie = cookies.find((cookie) => cookie.name.includes("SESS"));
+        expect(sessionCookie).to.exist;
+      });
     });
 
     it("logs out user", () => {
       cy.visit("/user/logout");
-      cy.contains("Member for").should("not.exist");
+      // Confirm logout by checking the Drupal session cookie is cleared.
+      cy.getCookies().should((cookies) => {
+        const sessionCookie = cookies.find((cookie) => cookie.name.includes("SESS"));
+        expect(sessionCookie).to.not.exist;
+      });
     });
   });
 }
