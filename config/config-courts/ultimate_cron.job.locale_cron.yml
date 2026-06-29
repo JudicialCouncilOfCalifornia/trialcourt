@@ -1,0 +1,17 @@
+uuid: 2e627a35-b2b5-4c37-9cd6-c575bde5c35d
+langcode: en
+status: true
+dependencies:
+  module:
+    - locale
+title: 'Update translations'
+id: locale_cron
+weight: 0
+module: locale
+callback: 'locale#cron'
+scheduler:
+  id: simple
+launcher:
+  id: serial
+logger:
+  id: database

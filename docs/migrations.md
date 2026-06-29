@@ -225,13 +225,29 @@ Documentation:
 
 ## Automating Migrations
 
-Schedule migrations when the content needs to be updated periodically. For example, case information or job postings are provided by separate systems so that content needs to be imported constantly in bulk.
-We are currently using GitHub actions to schedule migration jobs through the hosting service, currently Pantheon.
+Automating migrations when the content needs to be updated periodically. For example, case information or job postings are provided by separate systems so that content needs to be imported constantly in bulk.
+
+### Option 1: Terminus Github Actions
+We are currently using GitHub actions to loosely schedule migration drush commands through Pantheon.
 
  - [Git clone the terminus-actions repos](https://github.com/JudicialCouncilOfCalifornia/terminus-actions)
  - Create/Copy a new workflow configuration at `.github/workflows`.
  - Add terminus commands for the workflow to execute the migration profiles as described in this document. [Example](https://github.com/JudicialCouncilOfCalifornia/terminus-actions/blob/main/.github/workflows/migration-cases.yml)
  - [Monitor the scheduled migration](https://github.com/JudicialCouncilOfCalifornia/terminus-actions/actions) from the `Actions` tab in the GitHub project.
+
+### Option 2: Ultimate Cron
+For near exact scheduling, we can repurpose Drupal's internal cron that is meant for maintenance tasks. Be mindful of performance and operation concerns using this option.
+
+*Note: Not tried with larger jobs extensively as of June 2026.*
+
+ 1. Install [Ultimate Cron](https://www.drupal.org/project/ultimate_cron) optional module for the site.
+ 1. Use a custom module to create cron jobs with `hook_cron` (single) and callbacks (multiple). For example, cron jobs for courts.ca.gov use only: [JCC Courts Custom](../web/modules/custom/jcc_courts_custom)
+ 1. Until module improvements, clone an existing Ultimate Cron job configuration to import and finalize setup as needed at `https://[DOMAIN]/admin/config/system/cron/jobs`:
+    1. [Simple example](../config/config-courts/ultimate_cron.job.xmlsitemap_cron.yml)
+    1. [Crontab example](../config/config-courts/ultimate_cron.job.migrate_opinions_citable.yml) ... seems to be PST/PDT context and not UTC
+ 1. Disable automated cron runs from Drupal at `https://[DOMAIN]/admin/config/system/cron` by setting the intervals to `Never`.
+ 1. Commit code and exported (cron) configuration files as a site-specific feature. Assess for immutable configurations when dealing with Ultimate Cron upgrades. For example, there is a global settings GUI that is not in use as of June 2026 but could be an immutable feature when it becomes available.
+ 1. Use an external service such as New Relic to externally run Drupal's cron in one minute intervals. Cron URL to ping is noted at `https://[DOMAIN]/admin/config/system/cron`.
 
 ## Missing Pieces
 
