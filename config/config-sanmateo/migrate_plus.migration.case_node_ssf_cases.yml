@@ -47,7 +47,7 @@ source:
 process:
   field_migration_origin:
     plugin: default_value
-    default_value: traffic
+    default_value: central
   field_party_name:
     - plugin: skip_on_empty
       source: party_name
@@ -56,7 +56,8 @@ process:
     - plugin: callback
       callable: trim
   field_case_number:
-    - source: case_number
+    - plugin: get
+      source: case_number
       method: row
       message: 'No case number found.'
     - plugin: callback
@@ -74,7 +75,8 @@ process:
         - case_number
       delimiter: ' / '
   field_party_type:
-    - source: party_type
+    - plugin: get
+      source: party_type
       method: row
       message: 'No party type found.'
     - plugin: callback
@@ -96,7 +98,8 @@ process:
       entity_type: taxonomy_term
       ignore_case: true
   field_hearing_date:
-    - method: process
+    - plugin: get
+      method: process
       source: hearing_date_and_time
     - plugin: callback
       callable: jcc_custom_custom_date_format
@@ -110,6 +113,7 @@ process:
     - plugin: callback
       source: judicial_officer
       callable: trim
+
     - plugin: entity_generate
       bundle: judge
       value_key: title
@@ -117,7 +121,8 @@ process:
       entity_type: node
       ignore_case: true
   field_hearing_type:
-    - source: hearing_type
+    - plugin: get
+      source: hearing_type
       method: process
       message: 'No hearing type found.'
     - plugin: callback
@@ -129,7 +134,8 @@ process:
       entity_type: taxonomy_term
       ignore_case: true
   field_case_type:
-    - source: case_type
+    - plugin: get
+      source: case_type
       method: process
       message: 'No case type found.'
     - plugin: callback
@@ -142,7 +148,7 @@ process:
       ignore_case: true
   field_case_category:
     - plugin: default_value
-      default_value: noncrim
+      default_value: ssf
     - plugin: entity_generate
       bundle: case_category
       value_key: name
@@ -150,7 +156,8 @@ process:
       entity_type: taxonomy_term
       ignore_case: true
   field_attorney_of_record:
-    - source: attorney_of_record
+    - plugin: get
+      source: attorney_of_record
       method: process
       message: 'No Attorney of Record found.'
     - plugin: callback
