@@ -32,6 +32,14 @@ class LinkitFormatter extends LinkFormatter {
   protected $entityTypeManager;
 
   /**
+   * The substitution manager.
+   *
+   * @var \Drupal\linkit\SubstitutionManagerInterface
+   */
+  protected $substitutionManager;
+
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -161,7 +169,7 @@ class LinkitFormatter extends LinkFormatter {
     $value = $item->getValue();
 
     if (strpos($value['uri'], 'entity:') === 0) {
-      list($type, $entity_id) = explode('/', $value['uri']);
+      [$type, $entity_id] = explode('/', $value['uri']);
       $entity_type = substr($type, strpos($type, ':') + 1);
     }
 

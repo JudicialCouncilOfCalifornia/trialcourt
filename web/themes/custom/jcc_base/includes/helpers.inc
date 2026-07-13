@@ -58,7 +58,7 @@ function _jcc_list_faceted_terms($node, $vocabularies) {
  * @return string
  *   Converted url with no http or https.
  */
-function _jcc_components_remove_image_protocol($image) {
+function _jcc_base_remove_image_protocol($image) {
   return preg_replace('(^https?:||^http?:)', '', $image);
 }
 

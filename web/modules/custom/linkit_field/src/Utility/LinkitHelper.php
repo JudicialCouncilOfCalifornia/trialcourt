@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\linkit_Field\Utility;
+namespace Drupal\linkit_field\Utility;
 
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Url;
