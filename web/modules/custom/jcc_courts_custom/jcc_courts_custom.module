@@ -5,9 +5,7 @@
  * Module hooks for jcc_courts_custom.
  */
 
-use Drupal\migrate\MigrateExecutable;
-use Drupal\migrate\MigrateMessage;
-use Drupal\migrate\Plugin\MigrationInterface;
+use Drupal\Core\Queue\RequeueException;
 
 /**
  * Citable opinions migration callback.
@@ -74,42 +72,35 @@ function jcc_courts_custom_migrate_opinions_citing() {
 }
 
 /**
- * Common migration callback function.
+ * Common migration function.
  */
-function jcc_courts_custom_run_migration($migration_id, $sync_source) {
-  $migration_manager = \Drupal::service('plugin.manager.migration');
-  $migration = $migration_manager->createInstance($migration_id);
+function jcc_courts_custom_run_migration($migration_id, $sync_option = FALSE) {
+  $queue = \Drupal::queue('opinions_sync_queue_worker');
+  $queue_worker = \Drupal::service('plugin.manager.queue_worker')->createInstance('opinions_sync_queue_worker');
 
-  if ($migration) {
-    // 1. Stop & reset migration as a precaution.
-    if ($migration->getStatus() !== MigrationInterface::RESULT_STOPPED) {
-      $migration->setStatus(MigrationInterface::RESULT_STOPPED);
-    }
-    if ($migration->getStatus() !== MigrationInterface::STATUS_IDLE) {
-      $migration->setStatus(MigrationInterface::STATUS_IDLE);
-    }
+  // Create queue item.
+  $data = [
+    'migration_id' => $migration_id,
+    'sync_option' => $sync_option,
+  ];
+  $queue->createItem($data);
 
-    // 2. Set options.
-    // Mirror what is current in the source.
-    if ($sync_source) {
-      $migration->set('syncSource', TRUE);
-    }
-
-    // 3. Execute the migration.
-    $message = new MigrateMessage();
-    $executable = new MigrateExecutable($migration, $message);
+  // Queue item managment.
+  while ($item = $queue->claimItem()) {
     try {
-      $executable->import();
-
-      // Update the migrate_last_imported key-value store.
-      $store = \Drupal::keyValue('migrate_last_imported');
-      $timestamp = time() * 1000;
-      $store->set($migration_id, $timestamp);
+      $queue_worker->processItem($item->data);
+      $queue->deleteItem($item);
+    }
+    catch (RequeueException $e) {
+      // Item will be requeued automatically.
+      $queue->releaseItem($item);
     }
     catch (\Exception $e) {
-      \Drupal::logger('jcc_courts_custom')->error('Migration sync failed: @message', [
+      // Critical failure - remove item and log error.
+      \Drupal::logger('jcc_courts_custom')->error('Queue processing failed: @message', [
         '@message' => $e->getMessage(),
       ]);
+      $queue->deleteItem($item);
     }
   }
 }
