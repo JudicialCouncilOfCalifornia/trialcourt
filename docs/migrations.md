@@ -227,7 +227,7 @@ Documentation:
 
 Automating migrations when the content needs to be updated periodically. For example, case information or job postings are provided by separate systems so that content needs to be imported constantly in bulk.
 
-### Option 1: Terminus Github Actions
+### Option 1: Terminus GitHub Actions
 We are currently using GitHub actions to loosely schedule migration drush commands through Pantheon.
 
  - [Git clone the terminus-actions repos](https://github.com/JudicialCouncilOfCalifornia/terminus-actions)

@@ -8,23 +8,22 @@ use Drupal\migrate\MigrateMessage;
 use Drupal\migrate\Plugin\MigrationInterface;
 
 /**
- * Processes custom heavy tasks.
+ * Processes scheduled migration tasks.
+ * Lease time set by cron job callback in module file.
  *
  * @QueueWorker(
- *   id = "opinions_sync_queue_worker",
- *   title = @Translation("Opinions Sync Queue Worker"),
+ *   id = "migration_queue_worker",
+ *   title = @Translation("Migration Queue Worker"),
  *   cron = {"time" = 60}
  * )
  */
-class OpinionsSyncQueueWorker extends QueueWorkerBase {
+class MigrationQueueWorker extends QueueWorkerBase {
 
   /**
    * {@inheritdoc}
    */
   public function processItem($data) {
     if (!isset($data['migration_id']) || !isset($data['sync_option'])) {
-      \Drupal::logger('jcc_courts_custom')->info($data['migration_id'] . ' migration id.');
-      \Drupal::logger('jcc_courts_custom')->info($data['sync_option'] . ' sync option.');
       \Drupal::logger('jcc_courts_custom')->error('Opinions sync queue item missing required data.');
       return;
     }

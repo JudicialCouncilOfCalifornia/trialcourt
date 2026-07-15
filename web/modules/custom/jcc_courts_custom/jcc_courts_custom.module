@@ -8,7 +8,7 @@
 use Drupal\Core\Queue\RequeueException;
 
 /**
- * Citable opinions migration callback.
+ * Citable opinions ultimate cron config callback.
  */
 function jcc_courts_custom_migrate_opinions_citable() {
   $migration_id = 'courts_node_opinion_published';
@@ -16,7 +16,7 @@ function jcc_courts_custom_migrate_opinions_citable() {
 }
 
 /**
- * Citable opinions with grant review migration callback.
+ * Citable opinions with grant review ultimate cron config callback.
  */
 function jcc_courts_custom_migrate_opinions_citable_review() {
   $migration_id = 'courts_node_opinion_published_review';
@@ -24,7 +24,7 @@ function jcc_courts_custom_migrate_opinions_citable_review() {
 }
 
 /**
- * Citable opinions archived migration callback.
+ * Citable opinions archived ultimate cron config callback.
  */
 function jcc_courts_custom_migrate_opinions_citable_archive() {
   $migration_id = 'courts_node_opinion_published_archive';
@@ -32,7 +32,7 @@ function jcc_courts_custom_migrate_opinions_citable_archive() {
 }
 
 /**
- * Non-citable opinions migration callback.
+ * Non-citable opinions ultimate cron config callback.
  */
 function jcc_courts_custom_migrate_opinions_noncitable() {
   $migration_id = 'courts_node_opinion_unpublished';
@@ -40,7 +40,7 @@ function jcc_courts_custom_migrate_opinions_noncitable() {
 }
 
 /**
- * Non-citable opinions with grant review migration callback.
+ * Non-citable opinions with grant review ultimate cron config callback.
  */
 function jcc_courts_custom_migrate_opinions_noncitable_review() {
   $migration_id = 'courts_node_opinion_unpublished_review';
@@ -48,7 +48,7 @@ function jcc_courts_custom_migrate_opinions_noncitable_review() {
 }
 
 /**
- * Opinion citing file migration callback.
+ * Opinion citing file ultimate cron config callback.
  */
 function jcc_courts_custom_migrate_opinions_citing_file() {
   $migration_id = 'courts_file_opinion_citing';
@@ -56,7 +56,7 @@ function jcc_courts_custom_migrate_opinions_citing_file() {
 }
 
 /**
- * Opinion citing media migration callback.
+ * Opinion citing media ultimate cron config callback.
  */
 function jcc_courts_custom_migrate_opinions_citing_media() {
   $migration_id = 'courts_media_opinion_citing';
@@ -64,7 +64,7 @@ function jcc_courts_custom_migrate_opinions_citing_media() {
 }
 
 /**
- * Opinion citing migration callback.
+ * Opinion citing ultimate cron config callback.
  */
 function jcc_courts_custom_migrate_opinions_citing() {
   $migration_id = 'courts_node_opinion_citing';
@@ -74,9 +74,9 @@ function jcc_courts_custom_migrate_opinions_citing() {
 /**
  * Common migration function.
  */
-function jcc_courts_custom_run_migration($migration_id, $sync_option = FALSE) {
-  $queue = \Drupal::queue('opinions_sync_queue_worker');
-  $queue_worker = \Drupal::service('plugin.manager.queue_worker')->createInstance('opinions_sync_queue_worker');
+function jcc_courts_custom_run_migration($migration_id, $sync_option = FALSE, $lease_time = 3600) {
+  $queue = \Drupal::queue('migration_queue_worker');
+  $queue_worker = \Drupal::service('plugin.manager.queue_worker')->createInstance('migration_queue_worker');
 
   // Create queue item.
   $data = [
@@ -86,7 +86,7 @@ function jcc_courts_custom_run_migration($migration_id, $sync_option = FALSE) {
   $queue->createItem($data);
 
   // Queue item managment.
-  while ($item = $queue->claimItem()) {
+  while ($item = $queue->claimItem($lease_time)) {
     try {
       $queue_worker->processItem($item->data);
       $queue->deleteItem($item);
