@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\jcc_courts_custom\Plugin\QueueWorker;
+namespace Drupal\jcc_custom\Plugin\QueueWorker;
 
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\migrate\MigrateExecutable;
@@ -8,8 +8,7 @@ use Drupal\migrate\MigrateMessage;
 use Drupal\migrate\Plugin\MigrationInterface;
 
 /**
- * Processes scheduled migration tasks.
- * Lease time set by cron job callback in module file.
+ * Processes scheduled migration tasks with lease time set in callback.
  *
  * @QueueWorker(
  *   id = "migration_queue_worker",
@@ -24,7 +23,7 @@ class MigrationQueueWorker extends QueueWorkerBase {
    */
   public function processItem($data) {
     if (!isset($data['migration_id']) || !isset($data['sync_option'])) {
-      \Drupal::logger('jcc_courts_custom')->error('Opinions sync queue item missing required data.');
+      \Drupal::logger('jcc_custom')->error('Opinions sync queue item missing required data.');
       return;
     }
 
@@ -43,8 +42,10 @@ class MigrationQueueWorker extends QueueWorkerBase {
 
     // 2. Set options.
     // Mirror what is current in the source.
-    if ($sync_option) {
-      $migration->set('syncSource', TRUE);
+    switch ($sync_option) {
+      case 'sync':
+        $migration->set('syncSource', TRUE);
+        break;
     }
 
     // 3. Execute the migration.
@@ -59,7 +60,7 @@ class MigrationQueueWorker extends QueueWorkerBase {
       $store->set($migration_id, $timestamp);
     }
     catch (\Exception $e) {
-      \Drupal::logger('jcc_courts_custom')->error('Migration sync failed: @message', [
+      \Drupal::logger('jcc_custom')->error('Migration sync failed: @message', [
         '@message' => $e->getMessage(),
       ]);
     }
