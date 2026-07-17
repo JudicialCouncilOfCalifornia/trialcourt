@@ -122,7 +122,7 @@ class JccMigrateSourceLogController extends ControllerBase {
 
     $classes = static::getLogLevelClassMap();
 
-    $this->moduleHandler->loadInclude('jcc_migrate_source_ui', 'admin.inc');
+    // $this->moduleHandler->loadInclude('jcc_migrate_source_ui', 'admin.inc');
 
     $build['jcc_migrate_source_ui_filter_form'] = $this->formBuilder->getForm('Drupal\jcc_migrate_source_ui\Form\JccMigrateSourceLogFilterForm');
 
@@ -308,20 +308,22 @@ class JccMigrateSourceLogController extends ControllerBase {
       return;
     }
 
-    $this->moduleHandler->loadInclude('jcc_migrate_source_ui', 'admin.inc');
+    // $this->moduleHandler->loadInclude('jcc_migrate_source_ui', 'admin.inc');
 
-    $filters = jcc_migrate_source_ui_filters();
+    $filters = $this->jcc_migrate_source_ui_filters();
 
     // Build query.
     $where = $args = [];
-    foreach ($_SESSION['jcc_migrate_source_ui_overview_filter'] as $key => $filter) {
-      $filter_where = [];
-      foreach ($filter as $value) {
-        $filter_where[] = $filters[$key]['lhere'];
-        $args[] = $value;
-      }
-      if (!empty($filter_where)) {
-        $where[] = '(' . implode(' OR ', $filter_where) . ')';
+    if ($filters) {
+      foreach ($_SESSION['jcc_migrate_source_ui_overview_filter'] as $key => $filter) {
+        $filter_where = [];
+        foreach ($filter as $value) {
+          $filter_where[] = $filters[$key]['lhere'];
+          $args[] = $value;
+        }
+        if (!empty($filter_where)) {
+          $where[] = '(' . implode(' OR ', $filter_where) . ')';
+        }
       }
     }
     $where = !empty($where) ? implode(' AND ', $where) : '';
@@ -445,6 +447,13 @@ class JccMigrateSourceLogController extends ControllerBase {
     $build['jcc_migrate_source_ui_top_pager'] = ['#type' => 'pager'];
 
     return $build;
+  }
+
+  /**
+   * Mocks a not found function.
+   */
+  private function jcc_migrate_source_ui_filters() {
+    return [ ];
   }
 
 }

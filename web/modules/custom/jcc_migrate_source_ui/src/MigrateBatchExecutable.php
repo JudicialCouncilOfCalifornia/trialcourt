@@ -39,7 +39,7 @@ class MigrateBatchExecutable extends BaseMigrateBatchExecutable {
    * @return array
    *   The batch operations to perform.
    */
-  protected function batchOperations(array $migrations, $operation, array $options = []) {
+  protected function batchOperations(array $migrations, $operation, array $options = []): array {
     $operations = [];
     foreach ($migrations as $id => $migration) {
 
@@ -83,7 +83,7 @@ class MigrateBatchExecutable extends BaseMigrateBatchExecutable {
    * @param array|\DrushBatchContext $context
    *   The sandbox context.
    */
-  public static function batchProcessImport($migration_id, array $options, &$context) {
+  public static function batchProcessImport($migration_id, array $options, &$context): void {
     if (empty($context['sandbox'])) {
       $context['finished'] = 0;
       $context['sandbox'] = [];

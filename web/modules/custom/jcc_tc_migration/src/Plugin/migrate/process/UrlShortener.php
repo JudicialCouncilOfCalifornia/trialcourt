@@ -52,7 +52,7 @@ class UrlShortener extends ProcessPluginBase {
     }
 
     // Otherwise create a new one.
-    $source = '/r/' . user_password(20);
+    $source = '/r/' . \Drupal::service('password_generator')->generate(20);
     $redirect = Redirect::create();
     $redirect->setStatusCode('301');
     $redirect->setLanguage('und');
