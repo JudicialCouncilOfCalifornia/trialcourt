@@ -249,3 +249,32 @@ function jcc_custom_update_9088(&$sandbox) {
   \Drupal::messenger()->addMessage($summary_message);
   $logger->notice('%message', ['%message' => $summary_message]);
 }
+
+/**
+ * ADA-357, Changes the mediator instruction from h6 to p.
+ */
+function jcc_custom_update_9089(&$sandbox) {
+  $old = '<h6>Click the Mediator Name for additional mediator information, where available.</h6>';
+  $new = '<p>Click the Mediator Name for additional mediator information, where available.</p>';
+
+  $pids = \Drupal::entityQuery('paragraph')
+    ->accessCheck(FALSE)
+    ->condition('field_text.value', $old, 'CONTAINS')
+    ->execute();
+
+  $updated = 0;
+  $storage = \Drupal::entityTypeManager()->getStorage('paragraph');
+
+  foreach ($storage->loadMultiple($pids) as $paragraph) {
+    $field = $paragraph->get('field_text');
+    $value = str_replace($old, $new, $field->value, $count);
+
+    if ($count) {
+      $field->value = $value;
+      $paragraph->save();
+      $updated++;
+    }
+  }
+
+  return t('Updated @count paragraph(s).', ['@count' => $updated]);
+}
