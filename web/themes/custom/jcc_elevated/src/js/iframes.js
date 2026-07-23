@@ -20,7 +20,7 @@
               let iframeTitle = iframe.getAttribute('title');
               let message = Drupal.t('An iframe has finished updating.');
               if (iframeTitle) {
-                message = Drupal.t('"@title" iframe has finished updating.', { '@title': iframeTitle });
+                message = Drupal.t('"@title" has finished updating.', { '@title': iframeTitle });
               }
               iframe.addEventListener('load', () => {
                 Drupal.announce(message, 'assertive');
