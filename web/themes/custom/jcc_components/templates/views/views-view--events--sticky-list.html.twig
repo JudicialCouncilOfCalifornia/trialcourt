@@ -53,6 +53,7 @@
   {% endif %}
 {% endfor %}
 
+{% if items is not empty %}
 {% include "@templates/content-stream/content-stream.twig" with {
   content_stream: {
     media_placeholder: {
@@ -68,3 +69,4 @@
     },
   }
 } %}
+{% endif %}
