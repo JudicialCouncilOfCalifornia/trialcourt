@@ -1,5 +1,5 @@
 {% set summaries = [] %}
-{% for k, item in items if k|first != "#" %}
+{% for k, item in items|filter((value, key) => key|first != "#") %}
   {% set lists %}
     {% set links = [] %}
     {% for summary in item %}

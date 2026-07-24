@@ -72,7 +72,7 @@
 #}
 
 {% set components = [] %}
-{% for k, component in content.field_components if k|first != "#" %}
+{% for k, component in content.field_components|filter((value, key) => key|first != "#") %}
   {% set components = components|merge([component]) %}
 {% endfor %}
 

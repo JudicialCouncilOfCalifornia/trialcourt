@@ -73,7 +73,7 @@
 
 {% if content.field_components_aside %}
   {% set components_aside %}
-    {% for k, component_aside in content.field_components_aside if k|first != "#" %}
+    {% for k, component_aside in content.field_components_aside|filter((value, key) => key|first != "#") %}
       {{ component_aside }}
     {% endfor %}
   {% endset %}
@@ -81,7 +81,7 @@
 
 {% if content.field_components %}
   {% set components %}
-    {% for k, component in content.field_components if k|first != "#" %}
+    {% for k, component in content.field_components|filter((value, key) => key|first != "#") %}
       {{ component }}
     {% endfor %}
   {% endset %}

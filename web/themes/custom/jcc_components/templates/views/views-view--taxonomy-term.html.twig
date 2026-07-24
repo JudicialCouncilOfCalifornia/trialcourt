@@ -52,7 +52,7 @@
 {% endset %}
 
 {% set items = [] %}
-{% for k, row in rows.0['#rows'] if k|first != "#" %}
+{% for k, row in rows.0['#rows']|filter((value, key) => key|first != "#") %}
   {% set doc_title = row['#node'].title.value %}
   {% if row['#node'].field_verbose_title.value %}
     {% set doc_title = row['#node'].field_verbose_title.value %}
