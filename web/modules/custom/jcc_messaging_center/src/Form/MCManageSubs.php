@@ -186,7 +186,7 @@ class MCManageSubs extends FormBase {
  *   Member email.
  */
 function jcc_messaging_center_send_email_from_error_management(string $to_email = '') {
-  global $base_url;
+  $base_url = \Drupal::request()->getSchemeAndHttpHost();
 
   //Creating new token in tempshare
   $email_key = \Drupal::service('password_generator')->generate();
@@ -194,19 +194,12 @@ function jcc_messaging_center_send_email_from_error_management(string $to_email 
   $store = $tempstore->get('jcc_messaging_center');
   $store->set('member_email_' . $to_email, $email_key);
 
-  if (!empty(\Drupal::service('key.repository')->getKey('sendgrid'))) {
-    $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
-    $to = $sendgrid_conf['from_name'];
-    $sendgrid_api_key = \Drupal::service('key.repository')->getKey('sendgrid')->getKeyValue();
-
     $body = str_replace(
       [
         '%base_url%',
-        '%$email_key%'
       ],
       [
         $base_url,
-        $email_key
       ],
       '
           <h2>Preferences management</h2>
@@ -218,44 +211,7 @@ function jcc_messaging_center_send_email_from_error_management(string $to_email 
         '
     );
 
-    // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
-    // Creating email object.
-    $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
-    $email = new Email();
-    $email->setSmtpapiTos([$to_email])
-      ->setFrom($to)
-      ->setFromName(\Drupal::config('system.site')->get('name'))
-      ->setSubject('Preferences management')
-      ->setText('Preferences management')
-      ->setHtml($body)
-      ->addSubstitution('%member_email%', [$to_email])
-      ->addSubstitution('%email_key%', [$email_key])
-      ->addHeader('X-Sent-Using', 'SendGrid-API')
-      ->addHeader('X-Transport', 'web')
-      ->setCategories(
-        [
-          'Email Alert',
-          'Email Alert - Preferences management',
-        ]
-      );
-
-    try {
-      \Drupal::logger('sendgrid_message')->notice('(Manage subs) firing send event to ' . $to_email);
-      $sendGridResponse = $sendgrid->send($email);
-
-      if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
-        \Drupal::messenger()->addMessage(t('Email successfully sent'));
-      }
-      else {
-        // Show error.
-        \Drupal::messenger()->addMessage(t('Email was not sent'));
-      }
-    }
-    catch (Exception $e) {
-      $eMessage = $e->getMessage();
-      if (strpos($eMessage, 'success') !== FALSE) {
-        \Drupal::logger('sendgrid_message')->notice('SendGrid: sent');
-      }
-    }
-  }
+    /** @var \Drupal\jcc_messaging_center\Service\JccMessagingCenterMailService $mail_service */
+    $mail_service = \Drupal::service('jcc_messaging_center.mail_service');
+    $mail_service->sendMail('Preferences management', $body, $to_email, $email_key);
 }

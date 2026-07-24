@@ -108,10 +108,9 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
   if (in_array($form['#form_id'], $forms_enabled_on)
     && $form_state->cleanValues()->getValues()['field_send_email'] == 1) {
 
-    global $base_url;
+    $base_url = \Drupal::request()->getSchemeAndHttpHost();
     // Gathering emails to send emails to.
     $email_to_sendgrid = [];
-    $email_to_sendgrid_list = '';
     $email_access_keys = [];
     $form_group_values = array_filter($form_state->cleanValues()->getValues()['groups_to_notify']);
 
@@ -136,7 +135,6 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
         if (isset($view->field['mail'])) {
           if (!array_search($view->field['mail']->getValue($row), $email_to_sendgrid)) {
             $email_to_sendgrid[] = $view->field['mail']->getValue($row);
-            $email_to_sendgrid_list .= $view->field["mail"]->getValue($row) . ', ';
 
             // Opt out custom tokens.
             $email_key = \Drupal::service('password_generator')->generate();
@@ -212,86 +210,39 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
     }
 
     // Getting from email.
-    if (!empty(\Drupal::service('key.repository')->getKey('sendgrid'))) {
-      $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
-      $to = $sendgrid_conf['from_name'];
-      $sendgrid_api_key = \Drupal::service('key.repository')->getKey('sendgrid')->getKeyValue();
+    $body = str_replace(
+      [
+        '%email_post_date%',
+        '%read_more_element%',
+        '%email_title%',
+        '%email_summary%',
+        '%base_url%',
+        '%email_footer%'
+      ],
+      [
+        $email_post_date,
+        $read_more_element,
+        $email_title[0]['value'],
+        $email_summary_formatted,
+        $base_url,
+        $email_footer
+      ],
+      '
+        <div>%email_post_date%</div>
+        <h2>%email_title%</h2>
+        <p>%email_summary%</p>
+        %read_more_element%
+        <p>%email_footer%</p>
+        <br/>
+        <br/>
+        <p><a href="%base_url%/messaging-center/%member_email%/manage/%email_key%">manage your preferences</a><br>
+        or <a href="%base_url%/messaging-center/%member_email%/delete-all/%email_key%">opt out</a> from all communications.</p>
+      '
+    );
 
-      $body = str_replace(
-        [
-          '%email_post_date%',
-          '%read_more_element%',
-          '%email_title%',
-          '%email_summary%',
-          '%base_url%',
-          '%email_footer%'
-        ],
-        [
-          $email_post_date,
-          $read_more_element,
-          $email_title[0]['value'],
-          $email_summary_formatted,
-          $base_url,
-          $email_footer
-        ],
-        '
-          <div>%email_post_date%</div>
-          <h2>%email_title%</h2>
-          <p>%email_summary%</p>
-          %read_more_element%
-          <p>%email_footer%</p>
-          <br/>
-          <br/>
-          <p><a href="%base_url%/messaging-center/%member_email%/manage/%email_key%">manage your preferences</a><br>
-          or <a href="%base_url%/messaging-center/%member_email%/delete-all/%email_key%">opt out</a> from all communications.</p>
-        '
-      );
-
-      // Creating email object.
-      $sendgrid = new Client($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
-      $email = new Mail();
-      $email->setFrom($to, \Drupal::config('system.site')->get('name'));
-      $email->setSubject($email_title[0]['value']);
-      $email->addContent(MimeType::TEXT, $email_title[0]['value']);
-      $email->addContent(MimeType::HTML, $body);
-      $email->addGlobalHeader('X-Sent-Using', 'SendGrid-API');
-      $email->addGlobalHeader('X-Transport', 'web');
-      $email->addCategories(
-        [
-          'Email Alert',
-          'Email Alert - ' . $email_title[0]['value'],
-        ]
-      );
-
-      // Un addTo() por destinatario: cada llamada genera su propia
-      // "Personalization", replicando el comportamiento tipo BCC + sustituciones
-      // individuales que antes ofrecía setSmtpapiTos() + addSubstitution().
-      foreach ($email_to_sendgrid as $index => $recipient) {
-        $email->addTo($recipient, NULL, [
-          '%member_email%' => $recipient,
-          '%email_key%' => $email_access_keys[$index],
-        ]);
-      }
-
-      try {
-        \Drupal::logger('sendgrid_message')->notice('firing send event to ' . $email_to_sendgrid_list);
-        $sendGridResponse = $sendgrid->send($email);
-
-        if ((int) $sendGridResponse->getCode() === 202) {
-          \Drupal::messenger()->addMessage(t('Email successfully sent'));
-        }
-        else {
-          // Show error.
-          \Drupal::messenger()->addMessage(t('Email was not sent'));
-        }
-      }
-      catch (SendgridException $e) {
-        $eMessage = $e->getMessage();
-        if (str_contains($eMessage, 'success')) {
-          \Drupal::logger('sendgrid_message')->notice('SendGrid: sent');
-        }
-      }
-    }
+    /** @var \Drupal\jcc_messaging_center\Service\JccMessagingCenterMailService $mail_service */
+    $mail_service = \Drupal::service('jcc_messaging_center.mail_service');
+    $mail_service->sendMail($email_title[0]['value'], $body, $email_to_sendgrid, $email_access_keys);
   }
 }
 
