@@ -15,9 +15,7 @@ use Robo\Contract\BuilderAwareInterface;
 use Robo\State\Data as RoboStateData;
 use Robo\TaskAccessor;
 use Symfony\Component\Filesystem\Filesystem;
-
-use Robo\Task\Archive\loadTasks as ArchiveTaskLoader;
-use Robo\Task\Filesystem\loadTasks as FilesystemTaskLoader;
+use Robo\Task\Filesystem\Tasks as FilesystemTaskLoader;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -26,7 +24,6 @@ use Symfony\Component\Finder\Finder;
 class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
 
   use TaskAccessor;
-  use ArchiveTaskLoader;
   use FilesystemTaskLoader;
 
   /**
@@ -92,7 +89,7 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
     $kit = $options['kit'];
 
     // @todo Use extension service.
-    $jcc_componentsDir = drupal_get_path('theme', 'jcc_components');
+    $jcc_componentsDir = \Drupal::service('extension.path.resolver')->getPath('theme', 'jcc_components');
     $srcDir = "$jcc_componentsDir/src/kits/{$kit}";
 
     // Find kit from other active themes.
@@ -421,7 +418,7 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
   protected function convertLabelToMachineName(string $label): string {
     if ($label !== NULL) {
       return mb_strtolower(preg_replace('/[^a-z0-9_]+/ui', '_', $label));
-    } 
+    }
   }
 
   /**

@@ -182,6 +182,7 @@ function jcc_components_get_self_help_location_count() {
   $query = \Drupal::entityQuery('node')
     ->condition('type', 'location')
     ->condition('status', 1)
+    ->accessCheck(FALSE)
     ->exists('field_add_services');
 
   // Get all node IDs that match this condition.

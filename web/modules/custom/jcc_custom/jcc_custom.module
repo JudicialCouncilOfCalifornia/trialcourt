@@ -612,8 +612,9 @@ function jcc_custom_sendgrid_integration_categories_alter($message, $categories)
   }
 
   // Tag outgoing emails with the trial court site.
-  $sitePath = explode('/', \Drupal::service('site.path'));
-  $siteName = $sitePath[1];
+  $site_path = \Drupal::getContainer()->getParameter('site.path');
+  $site_path = explode('/', $site_path);
+  $siteName = $site_path[1];
   $categories[] = $siteName;
 
   // Also add generic TC tag.

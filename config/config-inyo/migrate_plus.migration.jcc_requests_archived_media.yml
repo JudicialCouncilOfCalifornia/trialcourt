@@ -13,7 +13,7 @@ migration_group: jcc_requests_rfps
 label: 'JCC: Solicitation requests: Archived: Media'
 source:
   plugin: csv
-  path: 'modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_archived_media.csv'
+  path: modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_archived_media.csv
   delimiter: ','
   header_offset: 0
   fields:
@@ -43,7 +43,7 @@ source:
       selector: media_label
     -
       name: tags_from_sheets
-      label: 'tags_from_sheets'
+      label: tags_from_sheets
       selector: tags_from_sheets
     -
       name: field_tags
@@ -81,8 +81,16 @@ process:
   name:
     plugin: str_replace
     case_insensitive: true
-    search: ['.pdf', '.docx', '.doc', '.txt']
-    replace: ['', '', '', '']
+    search:
+      - .pdf
+      - .docx
+      - .doc
+      - .txt
+    replace:
+      - ''
+      - ''
+      - ''
+      - ''
     source: file_basename
   field_media_file/target_id:
     -
@@ -115,7 +123,7 @@ process:
       message: 'Row does not contain any tags.'
     -
       plugin: explode
-      delimiter: ","
+      delimiter: ','
     -
       plugin: callback
       callable: trim

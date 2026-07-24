@@ -23,6 +23,27 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class CourtyardIconsFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $config;
+
+  /**
+   * The path to the icons.
+   *
+   * @var string
+   */
+  protected $iconsPath;
+
+  /**
+   * The icon sets.
+   *
+   * @var array
+   */
+  protected $sets = [];
+
+  /**
    * {@inheritDoc}
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, ConfigFactoryInterface $config) {

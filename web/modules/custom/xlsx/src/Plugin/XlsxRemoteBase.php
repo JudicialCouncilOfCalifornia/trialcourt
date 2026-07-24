@@ -58,7 +58,7 @@ class XlsxRemoteBase extends PluginBase implements XlsxRemoteInterface, Containe
    * {@inheritdoc}
    */
   public function process($contents, $filename, $filesize, $extension, $content_type) {
-    return $form;
+    return $contents;
   }
 
 }

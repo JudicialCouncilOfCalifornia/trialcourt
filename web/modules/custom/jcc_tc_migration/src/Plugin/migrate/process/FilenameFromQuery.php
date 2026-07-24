@@ -6,7 +6,7 @@ use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
 use GuzzleHttp\Exception\RequestException;
-use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
+use Symfony\Component\Mime\MimeTypes;
 
 /**
  * Get filename from URL.
@@ -53,10 +53,16 @@ class FilenameFromQuery extends ProcessPluginBase {
         }
 
         if ($contentType) {
-          $extension_guesser = ExtensionGuesser::getInstance();
-          $extension = $extension_guesser->guess($contentType);
-          $extension = empty($extension) && ($contentType == 'application/x-zip-compressed;charset=UTF-8') ? 'zip' : NULL;
-          $value = $extension ? $filename . '.' . $extension : $filename;
+          $mimeType = strtolower(trim(explode(';', $contentType)[0]));
+
+          $mimeTypes = new MimeTypes();
+          $extension = $mimeTypes->getExtensions($mimeType)[0] ?? null;
+
+          if (!$extension && $mimeType === 'application/x-zip-compressed') {
+            $extension = 'zip';
+          }
+
+          $value = $extension ? "$filename.$extension" : $filename;
         }
       }
     }

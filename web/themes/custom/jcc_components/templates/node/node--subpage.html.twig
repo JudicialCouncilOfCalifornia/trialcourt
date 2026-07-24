@@ -107,7 +107,7 @@
   {% endif %}
 
   {% set has_components = FALSE %}
-  {% for k, component in content.field_components if k|first != "#" %}
+  {% for k, component in content.field_components|filter((value, key) => key|first != "#") %}
     {% set has_components = TRUE %}
     {# Inject tertiary menu before content if hero is not first. #}
     {% if (not embed and k == 0 and component['#paragraph'].type.0.target_id != 'hero') %}

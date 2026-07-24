@@ -32,6 +32,7 @@ class MediaIdLookup extends ProcessPluginBase {
     $file_storage = \Drupal::entityTypeManager()->getStorage('file');
     $query = $file_storage->getQuery();
     $query->condition('uri', '%' . $filename, 'LIKE');
+    $query->accessCheck(FALSE);
     $fids = $query->execute();
     if (empty($fids)) {
       \Drupal::logger('media_id_lookup')->warning('No file entity found with filename: @filename', [
@@ -50,10 +51,12 @@ class MediaIdLookup extends ProcessPluginBase {
       ->condition('bundle', 'publication')
       ->condition('field_media_file_multiple.target_id', $fid)
       ->range(0, 1)
+      ->accessCheck(FALSE)
       ->execute();
     $media_ids_other = $media_storage->getQuery()
       ->condition('field_media_file.target_id', $fid)
       ->range(0, 1)
+      ->accessCheck(FALSE)
       ->execute();
     $media_ids = $media_ids_pub + $media_ids_other;
     if (empty($media_ids)) {

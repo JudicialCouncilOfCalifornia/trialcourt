@@ -79,6 +79,20 @@ class JCCMigrateSourceUiForm extends FormBase {
   protected $messenger;
 
   /**
+    * The drupal logger channel.
+    *
+    * @var \Drupal\Core\Logger\LoggerChannel
+    */
+  protected $logger;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManager
+   */
+  protected $entityTypeManager;
+
+  /**
    * MigrateSourceUiForm constructor.
    *
    * @param \Drupal\migrate\Plugin\MigrationPluginManager $plugin_manager_migration
@@ -519,7 +533,7 @@ class JCCMigrateSourceUiForm extends FormBase {
    *   The file usage operation. add|delete.
    */
   private function setFileUsage($migration_id, $uri, $operation) {
-    $files = $this->entityTypeManager()
+    $files = $this->entityTypeManager
       ->getStorage('file')
       ->loadByProperties(['uri' => $uri]);
     foreach ($files as $file) {

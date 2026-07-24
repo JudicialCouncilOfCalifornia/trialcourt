@@ -14,6 +14,20 @@ use Drupal\Core\Link;
 class MediaReplaceFileLink {
 
   /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The file usage service.
+   *
+   * @var \Drupal\Core\File\FileUsage\FileUsageInterface
+   */
+  protected $fileUsage;
+
+  /**
    * Constructs a new CustomService object.
    */
   public function __construct($entity_type_manager, $file_usage) {

@@ -128,7 +128,7 @@ function jcc_elevated_node_surplus_materials(array &$variables, NodeInterface $n
       $media = $media_manager->load($media_file->target_id);
       if ($media && $media->field_media_image->entity) {
         $uri = $media->field_media_image->entity->getFileUri();
-        $url = file_create_url($uri);
+        $url = \Drupal::service('file_url_generator')->generateAbsoluteString($uri);
         $media_url[] = ['url' => $url];
       }
     }
@@ -236,7 +236,7 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
     if ($media && $media->field_media_image && $media->field_media_image->entity) {
       $image_item = $media->get('field_media_image');
       $uri = $media->field_media_image->entity->getFileUri();
-      $image_url = file_create_url($uri);
+      $image_url = \Drupal::service('file_url_generator')->generateAbsoluteString($uri);
       $image_alt = !empty($image_item->alt) ? $image_item->alt : '';
       $variables['imageurl'] = $image_url;
       $variables['imagealt'] = $image_alt;
@@ -266,7 +266,7 @@ function jcc_elevated_node_news(array &$variables, NodeInterface $node): void {
     $media = Media::load($media_file->target_id);
     if ($media && $media->field_media_image->entity) {
       $uri = $media->field_media_image->entity->getFileUri();
-      $media_url = file_create_url($uri);
+      $media_url = \Drupal::service('file_url_generator')->generateAbsoluteString($uri);
     }
     if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
       $caption_value = $media->get('field_media_caption')->value;
@@ -439,7 +439,7 @@ function jcc_elevated_node_invitations_to_comment(array &$variables, NodeInterfa
       if ($media->hasField('field_media_file') && !$media->get('field_media_file')->isEmpty()) {
         $file = $media->get('field_media_file')->entity;
         if ($file instanceof File) {
-          $file_url = file_create_url($file->getFileUri());
+          $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
           $variables['file_link'] = [
             '#type' => 'link',
             '#title' => $file->label(),
@@ -572,7 +572,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
       if ($media && $media->field_media_image->entity) {
         $image_item = $media->get('field_media_image');
         $uri = $media->field_media_image->entity->getFileUri();
-        $media_url = file_create_url($uri);
+        $media_url = \Drupal::service('file_url_generator')->generateAbsoluteString($uri);
         $image_alt = !empty($image_item->alt) ? $image_item->alt : '';
       }
       if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {
@@ -597,7 +597,7 @@ function jcc_elevated_node_facilities(array &$variables, NodeInterface $node): v
     if ($media && $media->field_media_image) {
       $image_item = $media->get('field_media_image')->first();
       $uri = $media->field_media_image->entity->getFileUri();
-      $image_url = file_create_url($uri);
+      $image_url = \Drupal::service('file_url_generator')->generateAbsoluteString($uri);
       $variables['imageurl'] = $image_url;
       $variables['alt_text'] = $image_item->alt;
       if ($media && $media->hasField('field_media_caption') && $media->hasField('field_media_citation')) {

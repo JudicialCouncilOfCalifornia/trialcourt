@@ -12,11 +12,14 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Template\TwigEnvironment;
 use Drupal\image\Entity\ImageStyle;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 /**
  * Additional twig extensions.
  */
-class TwigExtension extends \Twig_Extension {
+class TwigExtension extends AbstractExtension {
   use ContainerAwareTrait;
 
   /**
@@ -24,14 +27,13 @@ class TwigExtension extends \Twig_Extension {
    */
   public function getFilters() {
     return [
-      new \Twig_SimpleFilter('remove_empty', [$this, 'removeEmpty']),
-      new \Twig_SimpleFilter('clean_unique_id', [$this, 'uniqueId']),
-      new \Twig_SimpleFilter('i18n_format_date', [$this, 'formatDate'], ['needs_environment' => TRUE]),
-      new \Twig_SimpleFilter('remove_html_comments', [$this, 'removeHtmlComments']),
-      new \Twig_SimpleFilter('unescape', [$this, 'unescape']),
-      new \Twig_SimpleFilter('auto_convert_urls', [$this, 'autoConvertUrls']),
-      new \Twig_SimpleFilter('image_style', [$this, 'imageStyle']),
-      new \Twig_SimpleFilter('view', [$this, 'view']),
+      new TwigFilter('remove_empty', [$this, 'removeEmpty']),
+      new TwigFilter('clean_unique_id', [$this, 'uniqueId']),
+      new TwigFilter('remove_html_comments', [$this, 'removeHtmlComments']),
+      new TwigFilter('unescape', [$this, 'unescape']),
+      new TwigFilter('auto_convert_urls', [$this, 'autoConvertUrls']),
+      new TwigFilter('image_style', [$this, 'imageStyle']),
+      new TwigFilter('view', [$this, 'view']),
     ];
   }
 
@@ -40,7 +42,7 @@ class TwigExtension extends \Twig_Extension {
    */
   public function getFunctions() {
     return [
-      new \Twig_SimpleFunction('term_field_from_id', [$this, 'termFieldFromId'], ['is_safe' => ['html']]),
+      new TwigFunction('term_field_from_id', [$this, 'termFieldFromId'], ['is_safe' => ['html']]),
     ];
   }
 
@@ -62,59 +64,6 @@ class TwigExtension extends \Twig_Extension {
    */
   public function uniqueId($id) {
     return Html::getUniqueId($id);
-  }
-
-  /**
-   * Render a custom date format with Twig.
-   *
-   * Use the internal helper "format_date" to render the date
-   * using the current language for texts.
-   *
-   * @param \Drupal\Core\Template\TwigEnvironment $env
-   *   A Twig_Environment instance.
-   * @param int|string|DateTime $date
-   *   A string, integer timestamp or DateTime object to convert.
-   * @param string $type
-   *   (optional) The format to use, one of:
-   *   - One of the built-in formats: 'short', 'medium',
-   *     'long', 'html_datetime', 'html_date', 'html_time',
-   *     'html_yearless_date', 'html_week', 'html_month', 'html_year'.
-   *   - The name of a date type defined by a date format config entity.
-   *   - The machine name of an administrator-defined date format.
-   *   - 'custom', to use $format.
-   *   Defaults to 'medium'.
-   * @param string $format
-   *   (optional) If $type is 'custom', a PHP date format string suitable for
-   *   input to date(). Use a backslash to escape ordinary text, so it does not
-   *   get interpreted as date format characters.
-   * @param string|null $timezone
-   *   (optional) Time zone identifier, as described at
-   *   http://php.net/manual/timezones.php Defaults to the time zone used to
-   *   display the page.
-   * @param string|null $langcode
-   *   (optional) Language code to translate to. NULL (default) means to use
-   *   the content language for the page.
-   *
-   * @return string|null
-   *   A translated date string in the requested format. Since the format may
-   *   contain user input, this value should be escaped when output.
-   */
-  public function formatDate(TwigEnvironment $env, $date, $type = 'medium', $format = '', $timezone = NULL, $langcode = NULL) {
-    // Use user's timezone so date/time is rendered without timezone adjustment.
-    $account = \Drupal::currentUser();
-    $timezone = $account->getTimeZone() ?? 'America/Los_Angeles';
-
-    $date = twig_date_converter($env, $date);
-    if (empty($langcode)) {
-      $langcode = $this->getLanguageManager()
-        ->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)
-        ->getId();
-    }
-
-    if ($date instanceof \DateTime) {
-      return $this->getDateFormatter()->format($date->getTimestamp(), $type, $format, $timezone, $langcode);
-    }
-    return NULL;
   }
 
   /**
@@ -174,7 +123,7 @@ class TwigExtension extends \Twig_Extension {
       return;
     }
 
-    return file_url_transform_relative($image_style->buildUrl($path));
+    return \Drupal::service('file_url_generator')->transformRelative($image_style->buildUrl($path));
   }
 
   /**
@@ -210,6 +159,8 @@ class TwigExtension extends \Twig_Extension {
         return $build;
       }
     }
+
+    return [];
   }
 
   /**

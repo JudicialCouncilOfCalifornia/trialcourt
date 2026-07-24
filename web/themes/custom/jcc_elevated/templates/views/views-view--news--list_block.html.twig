@@ -47,7 +47,7 @@
   {% if news.body.0.value %}
     {% set content = {
       '#type': 'processed_text',
-      '#text':  news.body.0.value|length > 250 ? news.body.0.value|jcc_extract_body|striptags|slice(0, 250) ~ ' ...' : news.body.0.value,
+      '#text':  news.body.0.value|length > 250 ? news.body.0.value|striptags|slice(0, 250) ~ ' ...' : news.body.0.value,
       '#format': news.body.format,
   } %}
   {% endif %}
@@ -57,7 +57,11 @@
       secondary: news.field_date.value ? news.field_date.value|date('F j, Y') : '',
     },
     title: news.title.value,
-    url: news.field_origin_url.uri ? news.field_origin_url.uri : news.id ? path('entity.node.canonical', { 'node': news.id }),
+    url: news.field_origin_url.uri
+      ? news.field_origin_url.uri
+        : (news.id
+          ? path('entity.node.canonical', { node: news.id })
+          : ''),
     content: content|render,
     attributes: create_attribute(),
   } %}

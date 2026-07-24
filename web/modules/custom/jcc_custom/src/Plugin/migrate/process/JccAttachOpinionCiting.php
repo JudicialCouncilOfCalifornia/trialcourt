@@ -32,6 +32,7 @@ class JccAttachOpinionCiting extends ProcessPluginBase {
       $query = \Drupal::entityQuery('media');
       $query->condition('status', 1);
       $query->condition('name', $value, 'CONTAINS');
+      $query->accessCheck(FALSE);
       $media_ids = implode(', ', $query->execute());
     }
     return $media_ids;

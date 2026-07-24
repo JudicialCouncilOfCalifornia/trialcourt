@@ -32,7 +32,7 @@
 #}
 
 {% set items = [] %}
-{% for k, row in rows.0['#rows'] if k|first != "#" %}
+{% for k, row in rows.0['#rows']|filter((value, key) => key|first != "#") %}
   {% if row['#node'] and (row['#node'].field_date_range.value|date('Ymd') > 'now'|date('Ymd')) %}
     {% set body %}
       {{ row['#node'].body.summary }}

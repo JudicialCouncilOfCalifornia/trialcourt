@@ -90,7 +90,7 @@ function drush_jcc_components($name = NULL, $machine_name = NULL) {
   $kit = (drush_get_option('kit')) ? drush_trim_path(drush_get_option('kit')) : 'default';
 
   // Make a fresh copy of the kit.
-  $kit_path = drush_normalize_path(drush_get_context('DRUSH_DRUPAL_ROOT') . '/' . drupal_get_path('theme', 'jcc_components') . '/src/kits/' . $kit);
+  $kit_path = drush_normalize_path(drush_get_context('DRUSH_DRUPAL_ROOT') . '/' . \Drupal::service('extension.path.resolver')->getPath('theme', 'jcc_components') . '/src/kits/' . $kit);
 
   // Allow kits to be pulled from external urls.
   if (UrlHelper::isValid($kit, TRUE)) {

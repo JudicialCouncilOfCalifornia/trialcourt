@@ -42,7 +42,7 @@
 {# Create an items array from referenced step items. #}
 {% set items = [] %}
 
-{% for k, item in content.field_components if k|first != "#" %}
+{% for k, item in content.field_components|filter((value, key) => key|first != "#") %}
 
   {% if item['#paragraph'].field_custom_index.value != null %}
     {% set custom_index = item['#paragraph'].field_custom_index.value %}

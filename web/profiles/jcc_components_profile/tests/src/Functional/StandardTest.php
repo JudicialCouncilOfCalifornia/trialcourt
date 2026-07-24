@@ -33,9 +33,9 @@ class JCCTCTest extends BrowserTestBase {
    */
   public function testJCCTC() {
     $this->drupalGet('');
-    $this->assertLink(t('Contact'));
+    $this->assertSession()->linkExists(t('Contact'));
     $this->clickLink(t('Contact'));
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     // Test anonymous user can access 'Main navigation' block.
     $this->adminUser = $this->drupalCreateUser([
@@ -48,13 +48,13 @@ class JCCTCTest extends BrowserTestBase {
     $this->drupalLogin($this->adminUser);
     // Configure the block.
     $this->drupalGet('admin/structure/block/add/system_menu_block:main/bartik');
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'region' => 'sidebar_first',
       'id' => 'main_navigation',
-    ], t('Save block'));
+    ], 'Save block');
     // Verify admin user can see the block.
     $this->drupalGet('');
-    $this->assertText('Main navigation');
+    $this->assertSession()->pageTextContains('Main navigation');
 
     // Verify we have role = aria on system_powered_by and help_block
     // blocks.
@@ -64,18 +64,18 @@ class JCCTCTest extends BrowserTestBase {
       ':id' => 'block-bartik-help',
     ]);
 
-    $this->assertEqual(count($elements), 1, 'Found complementary role on help block.');
+    $this->assertEquals(1, count($elements), 'Found complementary role on help block.');
 
     $this->drupalGet('');
     $elements = $this->xpath('//div[@role=:role and @id=:id]', [
       ':role' => 'complementary',
       ':id' => 'block-bartik-powered',
     ]);
-    $this->assertEqual(count($elements), 1, 'Found complementary role on powered by block.');
+    $this->assertEquals(1, count($elements), 'Found complementary role on powered by block.');
 
     // Verify anonymous user can see the block.
     $this->drupalLogout();
-    $this->assertText('Main navigation');
+    $this->assertSession()->pageTextContains('Main navigation');
 
     // Ensure comments don't show in the front page RSS feed.
     // Create an article.
@@ -90,19 +90,19 @@ class JCCTCTest extends BrowserTestBase {
     // Add a comment.
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('node/1');
-    $this->assertRaw('Then she picked out two somebodies,<br />Sally and me', 'Found a line break.');
-    $this->drupalPostForm(NULL, [
+    $this->assertSession()->responseContains('Then she picked out two somebodies,<br />Sally and me');
+    $this->submitForm([
       'subject[0][value]' => 'Barfoo',
       'comment_body[0][value]' => 'Then she picked out two somebodies, Sally and me',
-    ], t('Save'));
+    ], 'Save');
     // Fetch the feed.
     $this->drupalGet('rss.xml');
-    $this->assertText('Foobar');
-    $this->assertNoText('Then she picked out two somebodies, Sally and me');
+    $this->assertSession()->pageTextContains('Foobar');
+    $this->assertSession()->pageTextNotContains('Then she picked out two somebodies, Sally and me');
 
     // Ensure block body exists.
     $this->drupalGet('block/add');
-    $this->assertFieldByName('body[0][value]');
+    $this->assertSession()->fieldExists('body[0][value]');
 
     // Now we have all configuration imported, test all of them for schema
     // conformance. Ensures all imported default configuration is valid when
@@ -137,7 +137,7 @@ class JCCTCTest extends BrowserTestBase {
     /** @var \Drupal\contact\ContactFormInterface $contact_form */
     $contact_form = ContactForm::load('feedback');
     $recipients = $contact_form->getRecipients();
-    $this->assertEqual(['simpletest@example.com'], $recipients);
+    $this->assertSession()->statusCodeEquals(['simpletest@example.com'], $recipients);
 
     $role = Role::create([
       'id' => 'admin_theme',
@@ -148,32 +148,32 @@ class JCCTCTest extends BrowserTestBase {
     $this->adminUser->addRole($role->id());
     $this->adminUser->save();
     $this->drupalGet('node/add');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     // Ensure that there are no pending updates after installation.
     $this->drupalLogin($this->rootUser);
     $this->drupalGet('update.php/selection');
-    $this->assertText('No pending updates.');
+    $this->assertSession()->pageTextContains('No pending updates.');
 
     // Ensure that there are no pending entity updates after installation.
     $this->assertFalse($this->container->get('entity.definition_update_manager')->needsUpdates(), 'After installation, entity schema is up to date.');
 
     // Make sure the optional image styles are not installed.
     $this->drupalGet('admin/config/media/image-styles');
-    $this->assertNoText('Max 325x325');
-    $this->assertNoText('Max 650x650');
-    $this->assertNoText('Max 1300x1300');
-    $this->assertNoText('Max 2600x2600');
+    $this->assertSession()->responseNotContains('Max 325x325');
+    $this->assertSession()->responseNotContains('Max 650x650');
+    $this->assertSession()->responseNotContains('Max 1300x1300');
+    $this->assertSession()->responseNotContains('Max 2600x2600');
 
     // Make sure the optional image styles are installed after enabling
     // the responsive_image module.
     \Drupal::service('module_installer')->install(['responsive_image']);
     $this->rebuildContainer();
     $this->drupalGet('admin/config/media/image-styles');
-    $this->assertText('Max 325x325');
-    $this->assertText('Max 650x650');
-    $this->assertText('Max 1300x1300');
-    $this->assertText('Max 2600x2600');
+    $this->assertSession()->pageTextContains('Max 325x325');
+    $this->assertSession()->pageTextContains('Max 650x650');
+    $this->assertSession()->pageTextContains('Max 1300x1300');
+    $this->assertSession()->pageTextContains('Max 2600x2600');
 
     // Verify certain routes' responses are cacheable by Dynamic Page Cache, to
     // ensure these responses are very fast for authenticated users.
@@ -181,22 +181,22 @@ class JCCTCTest extends BrowserTestBase {
     $this->drupalLogin($this->adminUser);
     $url = Url::fromRoute('contact.site_page');
     $this->drupalGet($url);
-    $this->assertEqual('UNCACHEABLE', $this->drupalGetHeader(DynamicPageCacheSubscriber::HEADER), 'Site-wide contact page cannot be cached by Dynamic Page Cache.');
+    $this->assertEquals($this->getSession()->getResponseHeader(DynamicPageCacheSubscriber::HEADER), 'UNCACHEABLE', 'Site-wide contact page cannot be cached by Dynamic Page Cache.');
 
     $url = Url::fromRoute('<front>');
     $this->drupalGet($url);
     $this->drupalGet($url);
-    $this->assertEqual('HIT', $this->drupalGetHeader(DynamicPageCacheSubscriber::HEADER), 'Frontpage is cached by Dynamic Page Cache.');
+    $this->assertEquals($this->getSession()->getResponseHeader(DynamicPageCacheSubscriber::HEADER), 'HIT', 'Frontpage is cached by Dynamic Page Cache.');
 
     $url = Url::fromRoute('entity.node.canonical', ['node' => 1]);
     $this->drupalGet($url);
     $this->drupalGet($url);
-    $this->assertEqual('HIT', $this->drupalGetHeader(DynamicPageCacheSubscriber::HEADER), 'Full node page is cached by Dynamic Page Cache.');
+    $this->assertEquals($this->getSession()->getResponseHeader(DynamicPageCacheSubscriber::HEADER), 'HIT', 'Full node page is cached by Dynamic Page Cache.');
 
     $url = Url::fromRoute('entity.user.canonical', ['user' => 1]);
     $this->drupalGet($url);
     $this->drupalGet($url);
-    $this->assertEqual('HIT', $this->drupalGetHeader(DynamicPageCacheSubscriber::HEADER), 'User profile page is cached by Dynamic Page Cache.');
+    $this->assertEquals($this->getSession()->getResponseHeader(DynamicPageCacheSubscriber::HEADER), 'HIT', 'User profile page is cached by Dynamic Page Cache.');
   }
 
 }

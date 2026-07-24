@@ -76,7 +76,7 @@
 
 {% set matters = [] %}
 
-{% for k, matter in content.field_matters_served if k|first != "#" %}
+{% for k, matter in content.field_matters_served|filter((value, key) => key|first != "#") %}
   {% set item = [
     { text: matter['#plain_text'] }
   ] %}

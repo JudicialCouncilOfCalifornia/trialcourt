@@ -53,7 +53,7 @@
 
 {# If additional buttons #}
 {% if not paragraph.field_entire_card_clickable.value and paragraph.field_link_multiple is not empty %}
-  {% for key, child in paragraph.field_link_multiple if key|first != '#' %}
+  {% for key, child in paragraph.field_link_multiple|filter((value, key) => key|first != '#') %}
     {% set button = {
       label: child.title,
       href: child.getUrl(),

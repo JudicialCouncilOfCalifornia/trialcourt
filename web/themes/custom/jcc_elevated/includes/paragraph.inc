@@ -123,7 +123,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
           $file = $image_item->entity;
           if ($file instanceof File) {
             $uri = $file->getFileUri();
-            $image_url = file_create_url($uri);
+            $image_url = \Drupal::service('file_url_generator')->generateAbsoluteString($uri);
             $alt = !empty($image_item->alt) ? $image_item->alt : '';
           }
         }

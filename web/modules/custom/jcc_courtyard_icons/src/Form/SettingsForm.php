@@ -50,7 +50,7 @@ class SettingsForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $icons_path = $form_state->getValue('icons_path');
-    $drupal_path = drupal_get_path('core', NULL) . '/..';
+    $drupal_path = \Drupal::root();
     if (!file_exists("$drupal_path/$icons_path")) {
       $form_state->setErrorByName('icons_path', $this->t('The path is not valid or file does not exist.'));
     }

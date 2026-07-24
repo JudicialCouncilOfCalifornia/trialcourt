@@ -254,7 +254,7 @@ function jcc_components_node_location(array &$variables, NodeInterface $node) {
     // No label; no country.
     $address['#label_display'] = 'hidden';
     $address[0]['country']['#value'] = '';
-    $address = render($address);
+    $address = \Drupal::service('renderer')->render($address);
     $address = trim(strip_tags($address));
     $address = str_replace(PHP_EOL, '<br />', $address);
     $variables['processed_address'] = [

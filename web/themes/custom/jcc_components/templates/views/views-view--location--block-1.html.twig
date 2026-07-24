@@ -2,7 +2,7 @@
 
 {% set cards = [] %}
 {% set row_count = rows.0['#rows']|length %}
-{% for k, row in rows.0['#rows'] if k|first != "#" %}
+{% for k, row in rows.0['#rows']|filter((value, key) => key|first != "#") %}
   {% set fields = row['#view'].field %}
   {% set has_self_help = (self_help_flags[k] is defined) ? self_help_flags[k] : false %}
   {% set entity = row['#row']._entity %}
