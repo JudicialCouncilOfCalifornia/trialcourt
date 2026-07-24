@@ -2,7 +2,7 @@
 {{ attach_library("jcc_storybook/Cards") }}
 
 {% set cards = [] %}
-{% for key, child in content.field_components if key|first != '#' %}
+{% for key, child in content.field_components|filter((value, key) => key|first != '#') %}
   {% set cards = cards|merge([child]) %}
 {% endfor %}
 

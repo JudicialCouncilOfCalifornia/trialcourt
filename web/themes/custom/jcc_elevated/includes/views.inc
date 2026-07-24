@@ -849,7 +849,8 @@ function get_node_titles_by_term($term_id) {
   $query = \Drupal::entityQuery('node')
     ->condition('status', 1)
     ->condition('type', 'facilities')
-    ->condition('field_award', $term_id);
+    ->condition('field_award', $term_id)
+    ->accessCheck(FALSE);
   $nids = $query->execute();
   $nodes = Node::loadMultiple($nids);
   $titles = [];
@@ -1392,6 +1393,7 @@ function jcc_elevated_preprocess_views_view__opinions__published(&$variables) {
     $query = \Drupal::entityQuery('node');
     $query->condition('status', 1);
     $query->condition('field_case_number_plain', $case_number, 'CONTAINS');
+    $query->accessCheck(FALSE);
     $query->exists('field_media_file_multiple');
     $citing_archive = $query->execute();
     if ($citing_archive) {

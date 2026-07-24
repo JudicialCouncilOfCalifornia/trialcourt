@@ -460,7 +460,10 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
   $term_id = $latest_doc->field_document_type ? $latest_doc->field_document_type->target_id : NULL;
 
   if (Term::load($term_id)->get('name')->value == 'Oral Argument') {
-    $nids = \Drupal::entityQuery('node')->condition('type', 'subpage')->execute();
+    $nids = \Drupal::entityQuery('node')
+      ->condition('type', 'subpage')
+      ->accessCheck(FALSE)
+      ->execute();
     $nodes = Node::loadMultiple($nids);
 
     $oral_args = [];
