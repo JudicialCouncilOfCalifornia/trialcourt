@@ -6,16 +6,18 @@
  */
 
 use Drupal\user\Entity\User;
-use SendGrid\Email;
+use SendGrid\Client;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Entity\EntityInterface;
+use SendGrid\Exception\SendgridException;
+use SendGrid\Mail\Mail;
+use SendGrid\Mail\MimeType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\views\Views;
-use SendGrid\Client as SClient;
 
 /**
  * Implements hook_form_alter().
@@ -245,32 +247,37 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
         '
       );
 
-      // DOC: https://github.com/Fastglass-LLC/sendgrid-php-example/blob/master/sendgrid-php-example-send.php
       // Creating email object.
-      $sendgrid = new SClient($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
-      $email = new Email();
-      $email->setSmtpapiTos($email_to_sendgrid)
-        ->setFrom($to)
-        ->setFromName(\Drupal::config('system.site')->get('name'))
-        ->setSubject($email_title[0]['value'])
-        ->setText($email_title[0]['value'])
-        ->setHtml($body)
-        ->addSubstitution('%member_email%', $email_to_sendgrid)
-        ->addSubstitution('%email_key%', $email_access_keys)
-        ->addHeader('X-Sent-Using', 'SendGrid-API')
-        ->addHeader('X-Transport', 'web')
-        ->setCategories(
-          [
-            'Email Alert',
-            'Email Alert - ' . $email_title[0]['value'],
-          ]
-        );
+      $sendgrid = new Client($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
+      $email = new Mail();
+      $email->setFrom($to, \Drupal::config('system.site')->get('name'));
+      $email->setSubject($email_title[0]['value']);
+      $email->addContent(MimeType::TEXT, $email_title[0]['value']);
+      $email->addContent(MimeType::HTML, $body);
+      $email->addGlobalHeader('X-Sent-Using', 'SendGrid-API');
+      $email->addGlobalHeader('X-Transport', 'web');
+      $email->addCategories(
+        [
+          'Email Alert',
+          'Email Alert - ' . $email_title[0]['value'],
+        ]
+      );
+
+      // Un addTo() por destinatario: cada llamada genera su propia
+      // "Personalization", replicando el comportamiento tipo BCC + sustituciones
+      // individuales que antes ofrecía setSmtpapiTos() + addSubstitution().
+      foreach ($email_to_sendgrid as $index => $recipient) {
+        $email->addTo($recipient, NULL, [
+          '%member_email%' => $recipient,
+          '%email_key%' => $email_access_keys[$index],
+        ]);
+      }
 
       try {
         \Drupal::logger('sendgrid_message')->notice('firing send event to ' . $email_to_sendgrid_list);
         $sendGridResponse = $sendgrid->send($email);
 
-        if ($sendGridResponse->getCode() == 200 || $sendGridResponse->getCode() == "200") {
+        if ((int) $sendGridResponse->getCode() === 202) {
           \Drupal::messenger()->addMessage(t('Email successfully sent'));
         }
         else {
@@ -278,7 +285,7 @@ function jcc_messaging_center_form_submit($form, FormStateInterface $form_state)
           \Drupal::messenger()->addMessage(t('Email was not sent'));
         }
       }
-      catch (\Throwable $e) {
+      catch (SendgridException $e) {
         $eMessage = $e->getMessage();
         if (str_contains($eMessage, 'success')) {
           \Drupal::logger('sendgrid_message')->notice('SendGrid: sent');
