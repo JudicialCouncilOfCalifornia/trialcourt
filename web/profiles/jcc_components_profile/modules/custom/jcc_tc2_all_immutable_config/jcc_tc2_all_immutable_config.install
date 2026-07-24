@@ -284,7 +284,7 @@ function jcc_tc2_all_immutable_config_update_8016() {
  * Copy media module icons into file directories.
  */
 function jcc_tc2_all_immutable_config_update_8017() {
-  module_load_include('install', 'media');
+  \Drupal::moduleHandler()->loadInclude('media', 'install', 'media');
   media_install();
 }
 
@@ -680,6 +680,7 @@ function jcc_tc2_all_immutable_config_update_8042(&$sandbox) {
     $result = $query->condition('bundle', 'file')
       ->condition("field_media_file.target_id", '', '<>')
       ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
+      ->accessCheck(FALSE)
       ->execute();
 
     $sandbox['total'] = count($result);
@@ -698,6 +699,7 @@ function jcc_tc2_all_immutable_config_update_8042(&$sandbox) {
     ->condition("field_media_file.target_id", '', '<>')
     ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
     ->range($sandbox['current'], $batch_size)
+    ->accessCheck(FALSE)
     ->execute();
 
   if (empty($result)) {
@@ -746,6 +748,7 @@ function jcc_tc2_all_immutable_config_update_8043(&$sandbox) {
     $result = $query->condition('bundle', 'file')
       ->condition("field_media_file.target_id", '', '<>')
       ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
+      ->accessCheck(FALSE)
       ->execute();
 
     $sandbox['total'] = count($result);
@@ -764,6 +767,7 @@ function jcc_tc2_all_immutable_config_update_8043(&$sandbox) {
     ->condition("field_media_file.target_id", '', '<>')
     ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
     ->range($sandbox['current'], $batch_size)
+    ->accessCheck(FALSE)
     ->execute();
 
   if (empty($result)) {

@@ -43,6 +43,7 @@ function jcc_tc2_all_immutable_config_format_fix($field, $format, $bundle = NULL
 
   $ids = \Drupal::entityQuery($entity_type)
     ->exists($field)
+    ->accessCheck(FALSE)
     ->execute();
 
   $entities = \Drupal::entityTypeManager()->getStorage($entity_type)->loadMultiple($ids);
@@ -89,6 +90,7 @@ function jcc_tc2_all_immutable_config_fix_relative_links($field, $entity_type = 
 
   $ids = \Drupal::entityQuery($entity_type)
     ->exists($field)
+    ->accessCheck(FALSE)
     ->execute();
 
   $entities = \Drupal::entityTypeManager()
@@ -135,6 +137,7 @@ function jcc_tc2_all_immutable_config_fix_mailto_links($field, $entity_type = 'p
 
   $ids = \Drupal::entityQuery($entity_type)
     ->exists($field)
+    ->accessCheck(FALSE)
     ->execute();
 
   $entities = \Drupal::entityTypeManager()
