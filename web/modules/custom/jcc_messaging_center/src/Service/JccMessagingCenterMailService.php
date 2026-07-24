@@ -4,6 +4,8 @@ namespace Drupal\jcc_messaging_center\Service;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\key\KeyRepositoryInterface;
 use SendGrid\Client;
 use SendGrid\Exception\SendgridException;
 use SendGrid\Mail\Mail;
@@ -29,24 +31,39 @@ class JccMessagingCenterMailService {
   protected $logger;
 
   /**
+   * Key repository.
+   *
+   * @var \Drupal\key\KeyRepositoryInterface
+   */
+  protected $keyRepository;
+
+  /**
+   * Messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * Constructs the mail service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, KeyRepositoryInterface $key_repository, MessengerInterface $messenger) {
     $this->configFactory = $config_factory;
     $this->logger = $logger_factory->get('sendgrid_message');
+    $this->keyRepository = $key_repository;
+    $this->messenger = $messenger;
   }
 
   /**
    * Sends a SendGrid message.
    */
   public function sendMail($email_title, $body, $email_to_sendgrid, $email_access_keys) {
-    if (!empty(\Drupal::service('key.repository')->getKey('sendgrid'))) {
-      $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')
+    $sendgrid = $this->keyRepository->getKey('sendgrid');
+    if (!empty($sendgrid)) {
+      $sendgrid_conf = $this->configFactory->get('sendgrid_integration.settings')
         ->get('test_defaults');
       $to = $sendgrid_conf['from_name'];
-      $sendgrid_api_key = \Drupal::service('key.repository')
-        ->getKey('sendgrid')
-        ->getKeyValue();
+      $sendgrid_api_key = $sendgrid->getKeyValue();
 
       if (!is_array($email_to_sendgrid)) {
         $email_to_sendgrid = [$email_to_sendgrid];
@@ -60,7 +77,7 @@ class JccMessagingCenterMailService {
       // Creating email object.
       $sendgrid = new Client($sendgrid_api_key, ["turn_off_ssl_verification" => TRUE]);
       $email = new Mail();
-      $email->setFrom($to, \Drupal::config('system.site')->get('name'));
+      $email->setFrom($to, $this->configFactory->get('system.site')->get('name'));
       $email->setSubject($email_title);
       $email->addContent(MimeType::TEXT, $email_title);
       $email->addContent(MimeType::HTML, $body);
@@ -82,22 +99,21 @@ class JccMessagingCenterMailService {
       }
 
       try {
-        \Drupal::logger('sendgrid_message')
-          ->notice('firing send event to ' . $email_to_sendgrid_list);
+        $this->logger->notice('firing send event to ' . $email_to_sendgrid_list);
         $sendGridResponse = $sendgrid->send($email);
 
         if ((int) $sendGridResponse->getCode() === 202) {
-          \Drupal::messenger()->addMessage(t('Email successfully sent'));
+          $this->messenger->addMessage(t('Email successfully sent'));
         }
         else {
           // Show error.
-          \Drupal::messenger()->addMessage(t('Email was not sent'));
+          $this->messenger->addMessage(t('Email was not sent'));
         }
       }
       catch (SendgridException $e) {
         $eMessage = $e->getMessage();
         if (str_contains($eMessage, 'success')) {
-          \Drupal::logger('sendgrid_message')->notice('SendGrid: sent');
+          $this->logger->notice('SendGrid: sent');
         }
       }
     }
