@@ -966,13 +966,11 @@ function jcc_elevated_preprocess_views_view__facilities_listing__block_1(&$varia
 /**
  * Generates the webform URL for ITC.
  */
-function generate_itc_webform_url($item_number, $formatted_deadline, $title) {
+function generate_itc_webform_url($node_id) {
   $base_path = '/itc-webform';
   $webform_subpage_url = Url::fromUserInput($base_path, [
     'query' => [
-      'proposal' => htmlspecialchars($item_number, ENT_QUOTES, 'UTF-8'),
-      'deadline' => htmlspecialchars($formatted_deadline, ENT_QUOTES, 'UTF-8'),
-      'title' => htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
+      'invitation_id' => htmlspecialchars($node_id, ENT_QUOTES, 'UTF-8'),
     ],
   ])->setAbsolute()->toString();
   return $webform_subpage_url;
@@ -1158,12 +1156,10 @@ function jcc_elevated_preprocess_views_view__past_proposals__block_1(&$variables
           $desired_timezone = new DateTimeZone('America/Los_Angeles');
           $utc_deadline->setTimezone($desired_timezone);
           $current_time = new DateTime('now', $desired_timezone);
-          $formatted_deadline = $utc_deadline->format('F j, Y');
           $item_number = $node->get('field_itc_number')->value;
-          $title = $node->get('title')->value;
           $brow['secondary'] = $item_number;
           if ($utc_deadline > $current_time) {
-            $webform_url = generate_itc_webform_url($item_number, $formatted_deadline, $title);
+            $webform_url = generate_itc_webform_url($node->id());
             $email_address = 'invitations@jud.ca.gov';
             $url_content = '<a href="' . $webform_url . '">Submit comments online</a> | <a href="mailto:' . $email_address . '">Comment by email</a></p>';
             $body = $node->get('body')->value;
