@@ -4,20 +4,20 @@ dependencies:
   config:
     - field.storage.node.field_assignment_area
     - field.storage.node.field_audience
-    - field.storage.node.body
-    - field.storage.node.field_components
-    - field.storage.paragraph.field_aside
-    - field.storage.paragraph.field_brow
-    - field.storage.paragraph.field_components
-    - field.storage.paragraph.field_content
-    - field.storage.paragraph.field_hangover_blurb
-    - field.storage.paragraph.field_heading
-    - field.storage.paragraph.field_lead
-    - field.storage.paragraph.field_subheading
-    - field.storage.paragraph.field_text
     - field.storage.node.field_course_subtype
     - field.storage.node.field_course_type
     - field.storage.node.field_delivery_method
+    - field.storage.node.field_components
+    - field.storage.paragraph.field_brow
+    - field.storage.paragraph.field_components
+    - field.storage.paragraph.field_hangover_blurb
+    - field.storage.paragraph.field_heading
+    - field.storage.paragraph.field_subheading
+    - field.storage.paragraph.field_content
+    - field.storage.node.body
+    - field.storage.paragraph.field_aside
+    - field.storage.paragraph.field_lead
+    - field.storage.paragraph.field_text
     - search_api.server.pantheon_solr8
     - core.entity_view_mode.node.full
   module:
@@ -394,47 +394,10 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
+  rendered_item: {  }
   add_url: {  }
   aggregated_field: {  }
-  auto_aggregated_fulltext_field: {  }
-  content_access:
-    weights:
-      preprocess_query: -30
-  custom_value: {  }
-  double_quote_workaround:
-    weights:
-      postprocess_query: 0
-      preprocess_index: -15
-      preprocess_query: -15
-    all_fields: true
-    fields:
-      - field_brow
-      - field_hangover_blurb
-      - field_heading
-      - field_heading_1
-      - field_subheading
-      - field_subheading_1
-      - processed
-      - processed_1
-      - processed_2
-      - processed_3
-      - processed_4
-      - processed_5
-      - processed_6
-      - processed_8
-      - rendered_item
-      - summary_processed
-      - title
-    replacement: '|9999999998|'
-  entity_status: {  }
   entity_type: {  }
-  file_attachments:
-    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
-    number_indexed: 0
-    number_first_bytes: '1 MB'
-    max_filesize: '0'
-    excluded_private: 1
-    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
   highlight:
     weights:
       postprocess_query: 0
@@ -446,6 +409,12 @@ processor_settings:
     exclude_fields: {  }
     highlight: always
     highlight_partial: true
+  entity_status: {  }
+  language_with_fallback: {  }
+  custom_value: {  }
+  content_access:
+    weights:
+      preprocess_query: -30
   html_filter:
     weights:
       preprocess_index: -15
@@ -482,16 +451,47 @@ processor_settings:
       h2: 3
       h3: 2
       strong: 2
-  language_with_fallback: {  }
+  file_attachments:
+    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
+    number_indexed: 0
+    number_first_bytes: '1 MB'
+    max_filesize: '0'
+    excluded_private: 1
+    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
   node_exclude: {  }
-  rendered_item: {  }
+  double_quote_workaround:
+    weights:
+      postprocess_query: 0
+      preprocess_index: -15
+      preprocess_query: -15
+    all_fields: true
+    fields:
+      - field_brow
+      - field_hangover_blurb
+      - field_heading
+      - field_heading_1
+      - field_subheading
+      - field_subheading_1
+      - processed
+      - processed_1
+      - processed_2
+      - processed_3
+      - processed_4
+      - processed_5
+      - processed_6
+      - processed_8
+      - rendered_item
+      - summary_processed
+      - title
+    replacement: '|9999999998|'
+  solr_date_range:
+    weights:
+      preprocess_index: 0
   solr_boost_more_recent:
     weights:
       preprocess_query: 0
     boosts: {  }
-  solr_date_range:
-    weights:
-      preprocess_index: 0
+  auto_aggregated_fulltext_field: {  }
 tracker_settings:
   default:
     indexing_order: fifo

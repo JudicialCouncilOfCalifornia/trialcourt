@@ -1,4 +1,3 @@
-uuid: 63f27488-f022-429b-8a91-6b9dd0293b22
 langcode: en
 status: true
 dependencies: {  }
@@ -13,7 +12,7 @@ migration_group: jcc_requests_rfps
 label: 'JCC: Solicitation requests: Active: Media'
 source:
   plugin: csv
-  path: 'modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_active_media.csv'
+  path: modules/custom/jcc_elevated_rfp_solicitations/data/jcc_rfp_active_media.csv
   delimiter: ','
   header_offset: 0
   fields:
@@ -77,8 +76,16 @@ process:
   name:
     plugin: str_replace
     case_insensitive: true
-    search: ['.pdf', '.docx', '.doc', '.txt']
-    replace: ['', '', '', '']
+    search:
+      - .pdf
+      - .docx
+      - .doc
+      - .txt
+    replace:
+      - ''
+      - ''
+      - ''
+      - ''
     source: file_basename
   field_media_file/target_id:
     -

@@ -1,7 +1,9 @@
-uuid: 34d2d904-bebc-4818-a10e-130628ef5c6c
 langcode: en
 status: true
 dependencies:
+  config:
+    - user.role.administrator
+    - user.role.manager
   module:
     - csv_serialization
     - rest
@@ -33,7 +35,7 @@ display:
           entity_type: user
           entity_field: name
           plugin_id: field
-          label: 'Username'
+          label: Username
           exclude: false
           alter:
             alter_text: false
@@ -79,7 +81,7 @@ display:
           entity_type: user
           entity_field: mail
           plugin_id: field
-          label: 'Email'
+          label: Email
           exclude: false
           alter:
             alter_text: false
@@ -210,7 +212,7 @@ display:
           entity_type: user
           entity_field: roles
           plugin_id: user_roles
-          label: 'Roles'
+          label: Roles
           exclude: false
           alter:
             alter_text: false
@@ -263,7 +265,7 @@ display:
           entity_type: user
           entity_field: status
           plugin_id: field
-          label: 'Status'
+          label: Status
           exclude: false
           alter:
             alter_text: false
@@ -407,7 +409,7 @@ display:
               empty_column: false
               responsive: ''
             access:
-              label: Last access
+              label: 'Last access'
               sortable: false
               default_sort_order: asc
               align: ''
@@ -528,4 +530,3 @@ display:
         - url.query_args
         - user.permissions
       tags: {  }
-
