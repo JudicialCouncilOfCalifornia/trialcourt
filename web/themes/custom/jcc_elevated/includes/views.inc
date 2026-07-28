@@ -1489,43 +1489,28 @@ function jcc_elevated_preprocess_views_view__opinions__citings_archive(&$variabl
     // Citings.
     $citings = [];
     if ($node->get('field_media_file_multiple')->getValue()) {
+      $user = \Drupal::currentUser();
       foreach ($node->get('field_media_file_multiple')->getValue() as $citing) {
-        if ($citing['target_id']) {
-          $media_manager = $entity_type_manager->getStorage('media');
-          $media = $media_manager->load($citing['target_id'] ?? NULL);
-          if ($media && $media->get('field_media_file')->target_id) {
-            $file = File::load($media->get('field_media_file')->target_id);
-            if ($file) {
-              $citing_title = $media->get('field_media_text')->value;
-              if (is_null($citing_title)) {
-                $citing_title = $media->get('name')->value;
-              }
-              $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
-              $citings[] = [
-                'text' => ['#markup' => '<a href="' . $file_url . '" aria-label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
-              ];
-            }
-            else {
-              // Missing media file assistance since content is synchronized.
-              if ($user->isAuthenticated() && $user->hasPermission('edit opinion')) {
-                $citings[] = [
-                  'text' => t('No file available for media @id.', ['@id' => $citing['target_id']]),
-                ];
-              }
-            }
-          }
-          else {
-            // Missing media entity assistance since content is synchronized.
-            $missing_msg = t('Citing @id is not available at this time.', ['@id' => $citing['target_id']]);
-            if ($citing['target_id']) {
-              $user = \Drupal::currentUser();
-              if ($user->isAuthenticated() && $user->hasPermission('edit opinion')) {
-                $missing_msg = t('Cannot find media @id for this citing.', ['@id' => $citing['target_id']]);
-              }
+        $media_manager = $entity_type_manager->getStorage('media');
+        $media = $media_manager->load($citing['target_id'] ?? NULL);
+        if ($media && $media->hasField('field_media_link')) {
+          $link = $media->get('field_media_link')->first()->getValue();
+          if ($link && $link['uri']) {
+            $citing_title = $link['title'] ?? 'URL reference is missing.';
+            if (is_null($citing_title)) {
+              $citing_title = $media->get('name')->value;
             }
             $citings[] = [
-              'text' => ['#markup' => $missing_msg],
+              'text' => ['#markup' => '<a href="' . $link['uri'] . '" aria-label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
             ];
+          }
+          else {
+            // Missing URL assistance since content is synchronized.
+            if ($user->isAuthenticated() && $user->hasPermission('edit opinion')) {
+              $citings[] = [
+                'text' => t('No URL available for link entity @id.', ['@id' => $citing['target_id']]),
+              ];
+            }
           }
         }
       }

@@ -27,6 +27,8 @@ source:
       label: 'Citing Source'
   ids:
     - name
+  constants:
+    base_url: 'https://www4.courts.ca.gov/opinions/links/'
 process:
   name:
     -
@@ -34,37 +36,18 @@ process:
       source: name
       search: .PDF
       replace: ''
-  field_media_file/target_id:
-    -
-      plugin: migration_lookup
-      migration: courts_file_opinion_citing
-      source: name
-    -
-      plugin: skip_on_empty
-      method: process
-      message: 'No file to attach to media.'
-  field_category:
-    -
-      plugin: default_value
-      default_value: 'Opinion Citing'
-    -
-      plugin: entity_generate
-      entity_type: taxonomy_term
-      value_key: name
-      bundle_key: vid
-      bundle: media_file_category
-  field_media_text/value:
+  field_media_link/uri:
+    plugin: concat
+    source:
+      - constants/base_url
+      - name
+  field_media_link/title:
     plugin: get
     source: citing
-  field_media_text/format:
-    plugin: default_value
-    default_value: caption
   uid:
     plugin: default_value
     default_value: 1
 destination:
   plugin: 'entity:media'
-  default_bundle: file
-migration_dependencies:
-  required:
-    - courts_file_opinion_citing
+  default_bundle: link
+migration_dependencies: null
