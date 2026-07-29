@@ -1,0 +1,106 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for JCC PDF upload validation checker.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
+
+/**
+ * Create the Bypass Reasons vocabulary and default terms.
+ */
+function jcc_pdf_upload_validation_checker_update_9001(): string {
+  $vid = 'bypass_reasons';
+
+  if (!\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    return 'Taxonomy module is not enabled; skipped creating Bypass Reasons vocabulary.';
+  }
+
+  $vocabulary = Vocabulary::load($vid);
+  if (!$vocabulary) {
+    $vocabulary = Vocabulary::create([
+      'vid' => $vid,
+      'name' => 'Bypass Reasons',
+      'description' => 'Reasons for bypassing PDF validation checks.',
+    ]);
+    $vocabulary->save();
+  }
+
+  $default_terms = [
+    'Third Party Content Exception',
+    'Equivalent Accessible Version Confirmation',
+  ];
+
+  $existing = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties(['vid' => $vid]);
+
+  $existing_names = [];
+  foreach ($existing as $term) {
+    $existing_names[mb_strtolower($term->label())] = TRUE;
+  }
+
+  foreach ($default_terms as $term_name) {
+    if (isset($existing_names[mb_strtolower($term_name)])) {
+      continue;
+    }
+
+    Term::create([
+      'vid' => $vid,
+      'name' => $term_name,
+    ])->save();
+  }
+
+  return 'Created/updated Bypass Reasons taxonomy vocabulary and default terms.';
+}
+
+/**
+ * Create bypass reason reference field on file entities.
+ */
+function jcc_pdf_upload_validation_checker_update_9002(): string {
+  $entity_type = 'file';
+  $bundle = 'file';
+  $field_name = 'field_bypass_reason';
+
+  if (!\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    return 'Taxonomy module is not enabled; skipped creating field_bypass_reason.';
+  }
+
+  if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'taxonomy_term',
+      ],
+      'cardinality' => 1,
+      'translatable' => FALSE,
+    ])->save();
+  }
+
+  if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
+    FieldConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+      'label' => 'Bypass reason',
+      'required' => FALSE,
+      'settings' => [
+        'handler' => 'default:taxonomy_term',
+        'handler_settings' => [
+          'target_bundles' => [
+            'bypass_reasons' => 'bypass_reasons',
+          ],
+          'auto_create' => FALSE,
+        ],
+      ],
+    ])->save();
+  }
+
+  return 'Created field_bypass_reason on file entities.';
+}
