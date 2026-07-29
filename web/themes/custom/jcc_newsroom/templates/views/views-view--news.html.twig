@@ -50,6 +50,14 @@
     {% endif %}
   {% endblock %}
 
+  {% block page_title %}
+    {% if display_id == 'page_1' %}
+      <div class="grid-container-widescreen padding-top-4">
+        <h1 class="jcc-news__page-title">{{ view.getTitle() }}</h1>
+      </div>
+    {% endif %}
+  {% endblock %}
+
   {% block header %}
     {% if header %}
       <div class="view__header grid-container-widescreen margin-top-6">
