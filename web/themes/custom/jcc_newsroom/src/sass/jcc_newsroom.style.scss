@@ -16,3 +16,29 @@
 
 @import "layout/front_page.scss";
 @import "layout/search_page.scss";
+
+
+
+/* bug fix for ada-320 */
+.newsroom-calendar-prototype .fc-day-grid-event {
+  display: block;
+  margin: 0;
+  padding: 0 6px;
+  font-size: 16px;
+  line-height: inherit;
+}
+
+/* Visually separate consecutive events without adding height. */
+.newsroom-calendar-prototype .fc-day-grid-event + .fc-day-grid-event {
+  border-top: 2px solid #fff;
+}
+
+.newsroom-calendar-prototype .fc-day-grid-event .fc-content {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.newsroom-calendar-prototype .fc-day-grid-event .fc-title {
+  white-space: nowrap;
+}
