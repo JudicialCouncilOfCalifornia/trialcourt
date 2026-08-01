@@ -1,4 +1,3 @@
-uuid: 9626114b-e120-42f0-b87d-3efecbb60423
 langcode: en
 status: true
 dependencies:
@@ -28,8 +27,6 @@ dependencies:
     - taxonomy
     - telephone
     - user
-_core:
-  default_config_hash: c54Ubxh1nnps3B8lbOi7hm4w15Br5Elm-ql4pu2Q8xg
 id: location
 label: Location
 module: views
@@ -790,12 +787,12 @@ display:
           settings:
             image_link: ''
             image_style: ''
+            image_loading:
+              attribute: lazy
             svg_attributes:
               width: null
               height: null
             svg_render_as_image: true
-            image_loading:
-              attribute: lazy
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -913,9 +910,9 @@ display:
                   collapsible: false
                   collapsible_disable_automatic_open: false
                   is_secondary: false
-                options_show_only_used: false
+                options_show_only_used: true
                 options_show_only_used_filtered: false
-                options_hide_when_empty: false
+                options_hide_when_empty: true
                 options_show_items_count: 0
               field_brow_value:
                 plugin_id: default
@@ -1219,7 +1216,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: string
-          operator: '='
+          operator: contains
           value: ''
           group: 1
           exposed: true
@@ -1252,6 +1249,12 @@ display:
               request_manager: '0'
               advisory_body_manager: '0'
               itc_manager: '0'
+              jrn_legal_opinion_library: '0'
+              surplus_admin: '0'
+              jrn_sourcehr: '0'
+              surplus_user: '0'
+              jrn_tajp: '0'
+              jrn_judicial_officer: '0'
             placeholder: 'Filter by City'
           is_grouped: false
           group_info:

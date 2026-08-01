@@ -91,9 +91,13 @@ function jcc_components_preprocess_views_view(&$variables) {
       $self_help_flags[$key] = $has_self_help;
       $variables['self_help_flag'] = $has_self_help;
 
-      // If the current row has "Self-Help", increment the counter.
+      // If "Self-Help" services available.
       if ($has_self_help) {
         $self_help_count++;
+      }
+      else {
+        // Suppress exposed filter since not BEF option.
+        unset($variables['exposed']['field_service_category_target_id']);
       }
 
       $view_entity = $row->_entity;
