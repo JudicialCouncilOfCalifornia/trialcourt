@@ -1,4 +1,3 @@
-uuid: 9626114b-e120-42f0-b87d-3efecbb60423
 langcode: en
 status: true
 dependencies:
@@ -28,8 +27,6 @@ dependencies:
     - taxonomy
     - telephone
     - user
-_core:
-  default_config_hash: c54Ubxh1nnps3B8lbOi7hm4w15Br5Elm-ql4pu2Q8xg
 id: location
 label: Location
 module: views
@@ -790,12 +787,12 @@ display:
           settings:
             image_link: ''
             image_style: ''
+            image_loading:
+              attribute: lazy
             svg_attributes:
               width: null
               height: null
             svg_render_as_image: true
-            image_loading:
-              attribute: lazy
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -913,9 +910,9 @@ display:
                   collapsible: false
                   collapsible_disable_automatic_open: false
                   is_secondary: false
-                options_show_only_used: false
+                options_show_only_used: true
                 options_show_only_used_filtered: false
-                options_hide_when_empty: false
+                options_hide_when_empty: true
                 options_show_items_count: 0
               field_brow_value:
                 plugin_id: default
@@ -1132,18 +1129,14 @@ display:
             widget: radios
             multiple: false
             remember: false
-            default_group: '1'
+            default_group: All
             default_group_multiple: {  }
             group_items:
               1:
                 title: 'self help'
                 operator: or
                 value:
-                  120: '120'
-                  122: '122'
-                  121: '121'
-                  123: '123'
-                  124: '124'
+                  60: '60'
           reduce_duplicates: false
           vid: service_categories
           type: select
@@ -1219,7 +1212,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: string
-          operator: '='
+          operator: contains
           value: ''
           group: 1
           exposed: true
@@ -1252,6 +1245,12 @@ display:
               request_manager: '0'
               advisory_body_manager: '0'
               itc_manager: '0'
+              jrn_legal_opinion_library: '0'
+              surplus_admin: '0'
+              jrn_sourcehr: '0'
+              surplus_user: '0'
+              jrn_tajp: '0'
+              jrn_judicial_officer: '0'
             placeholder: 'Filter by City'
           is_grouped: false
           group_info:
@@ -1452,14 +1451,14 @@ display:
         options:
           data_provider_id: geolocation_field_provider
           geolocation_field: field_geolocation
-          title_field: ''
-          label_field: ''
+          title_field: none
+          label_field: none
           marker_row_number: 0
           marker_icon_path: ''
           even_empty: 1
           centre:
             client_location:
-              enable: true
+              enable: false
               weight: 0
               map_center_id: client_location
             fixed_boundaries:
@@ -1550,6 +1549,11 @@ display:
                   settings:
                     label: Address
                     description: 'Enter an address to be localized.'
+                    autocomplete_min_length: 1
+                    location_priority:
+                      lat: null
+                      lng: null
+                    remove_duplicates: false
                 enabled: false
               leaflet_control_locate:
                 weight: 0
