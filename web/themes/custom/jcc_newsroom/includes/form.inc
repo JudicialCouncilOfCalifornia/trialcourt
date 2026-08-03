@@ -15,13 +15,3 @@ function jcc_newsroom_form_alter(&$form, $form_state, $form_id) {
       break;
   }
 }
-
-/**
- * Implements hook_form_FORM_ID_alter() for views_exposed_form.
- */
-function jcc_newsroom_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
-  $view = $form_state->get('view');
-  if (!$view || $view->id() !== 'news') {
-    return;
-  }
-}
