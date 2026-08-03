@@ -63,14 +63,14 @@ function jcc_components_preprocess_views_view(&$variables) {
   // Ensure we are at the right view and display.
   // double check with location_listing.
   if ($view->id() == 'location' && ($view->current_display == 'page_1' || $view->current_display == 'block_1')) {
+    $has_self_help = FALSE;
     foreach ($view->result as $key => $row) {
       $view_entity = $row->_entity;
-      $has_self_help = FALSE;
       if ($view_entity && $view_entity->hasField('field_add_services') && !$view_entity->get('field_add_services')->isEmpty()) {
-        // Loop through the referenced paragraph entities.
+        // Loop through the referenced service paragraphs.
         foreach ($view_entity->get('field_add_services')->referencedEntities() as $paragraph) {
           if ($paragraph->hasField('field_service_category') && !$paragraph->get('field_service_category')->isEmpty()) {
-            // Loop through the referenced taxonomy terms.
+            // Loop through the service category terms.
             foreach ($paragraph->get('field_service_category')->referencedEntities() as $term) {
               // Check if the term is the "Self-Help" term.
               if ($term->getName() == 'Self-Help') {
@@ -91,7 +91,7 @@ function jcc_components_preprocess_views_view(&$variables) {
       $self_help_flags[$key] = $has_self_help;
       $variables['self_help_flag'] = $has_self_help;
 
-      // If the current row has "Self-Help", increment the counter.
+      // If "Self-Help" services available.
       if ($has_self_help) {
         $self_help_count++;
       }
@@ -106,11 +106,16 @@ function jcc_components_preprocess_views_view(&$variables) {
       }
     }
 
-    // Pass location count and self-help flags.
-    $variables['self_help_count'] = $self_help_count;
-    $variables['self_help_flags'] = $self_help_flags;
+    if ($has_self_help) {
+      // Pass location count and self-help flags.
+      $variables['self_help_count'] = $self_help_count;
+      $variables['self_help_flags'] = $self_help_flags;
+    }
+    else {
+      // Suppress exposed filter since not BEF option.
+      unset($variables['exposed']['field_service_category_target_id']);
+    }
   }
-
 }
 
 /**
