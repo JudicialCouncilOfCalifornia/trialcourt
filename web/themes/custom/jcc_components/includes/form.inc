@@ -145,14 +145,30 @@ function jcc_components_form_views_exposed_form_alter(&$form, FormStateInterface
     }
   }
 
-  // Check if this is the specific view exposed form we are targeting.
+  // Location page view features & customizations.
   if ($form['#id'] == 'views-exposed-form-location-block-1') {
     // Get the count of nodes that have at least one paragraph with "Self-Help".
-    $self_help_count = jcc_components_get_self_help_location_count();
+    $self_help_count = __jcc_components_get_self_help_location_count();
     // Update the label of the "Self-Help Locations" filter with the count.
     if (isset($form['field_service_category_target_id'])) {
       $form['field_service_category_target_id']['#prefix'] = '<div class ="self-help-count">';
       $form['field_service_category_target_id']['#suffix'] = '<span class = "self-help-label">' . ' (' . $self_help_count . ')' . '</span>' . '</div>';
+
+      // Override service category grouped filter value(s) with local TIDs.
+      // TIDs differ per site so the config values will break the filter.
+      // Currently, we only need to filter by Self-help service.
+      $self_help_service_cat_tid = __jcc_components_get_service_category_tid('Self-Help');
+      if ($self_help_service_cat_tid) {
+        $filter_handler = $view->filter['field_service_category_target_id'] ?? NULL;
+        if ($filter_handler && !empty($filter_handler->options['group_info']['group_items'])) {
+          foreach ($filter_handler->options['group_info']['group_items'] as &$group_item) {
+            if (stripos($group_item['title'] ?? '', 'self help') !== FALSE) {
+              $group_item['value']['value'] = (string) $self_help_service_cat_tid;
+              break;
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -178,7 +194,7 @@ function jcc_components_tentative_rulings_search_validate(array &$form, FormStat
  * @return int
  *   The count of nodes with at least one "Self-Help" service category.
  */
-function jcc_components_get_self_help_location_count() {
+function __jcc_components_get_self_help_location_count() {
   $query = \Drupal::entityQuery('node')
     ->condition('type', 'location')
     ->condition('status', 1)
@@ -217,4 +233,19 @@ function jcc_components_get_self_help_location_count() {
   }
 
   return $self_help_count;
+}
+
+/**
+ * Returns the taxonomy term ID for a service category.
+ *
+ * @return int|null
+ *   The service category TID.
+ */
+function __jcc_components_get_service_category_tid($name) {
+  $tids = \Drupal::entityQuery('taxonomy_term')
+    ->condition('name', $name)
+    ->accessCheck(FALSE)
+    ->execute();
+
+  return !empty($tids) ? (int) reset($tids) : NULL;
 }

@@ -55,14 +55,15 @@ function jcc_components_preprocess_views_view(&$variables) {
     $variables['keywords'] = $variables['exposed']['search']['#value'];
     $variables['num_results'] = $variables['view']->total_rows;
   }
-  // Initialize a counter for the self-help locations.
-  $self_help_count = 0;
-  // Initialize an array to store self-help flags for each row.
-  $self_help_flags = [];
 
-  // Ensure we are at the right view and display.
-  // double check with location_listing.
+  // Location view customizations.
+  // Service category filter customization in form.inc.
   if ($view->id() == 'location' && ($view->current_display == 'page_1' || $view->current_display == 'block_1')) {
+    // Initialize a counter for the self-help locations.
+    $self_help_count = 0;
+    // Initialize an array to store self-help flags for each row.
+    $self_help_flags = [];
+    // Initialize a flag if court has self-help services.
     $has_self_help = FALSE;
     foreach ($view->result as $key => $row) {
       $view_entity = $row->_entity;
@@ -112,7 +113,7 @@ function jcc_components_preprocess_views_view(&$variables) {
       $variables['self_help_flags'] = $self_help_flags;
     }
     else {
-      // Suppress exposed filter since not BEF option.
+      // Suppress exposed filter since not a BEF option.
       unset($variables['exposed']['field_service_category_target_id']);
     }
   }
