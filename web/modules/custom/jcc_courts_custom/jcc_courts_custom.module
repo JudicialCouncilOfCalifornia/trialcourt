@@ -64,6 +64,14 @@ function jcc_courts_custom_migrate_opinions_citing() {
 }
 
 /**
+ * Job posts ultimate cron config callback.
+ */
+function jcc_courts_custom_migrate_job_posts() {
+  $migration_id = 'courts_node_job';
+  jcc_courts_custom_run_migration($migration_id, TRUE);
+}
+
+/**
  * Common migration function.
  */
 function jcc_courts_custom_run_migration($migration_id, $sync_option = FALSE, $lease_time = 3600) {
