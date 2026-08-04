@@ -1,0 +1,30 @@
+uuid: a1f1cecf-953a-45af-ad38-32ab27a8735b
+langcode: en
+status: true
+dependencies:
+  module:
+    - jcc_appellate_custom
+title: 'Migrate Job Posts'
+id: migrate_job_posts
+weight: 0
+module: jcc_appellate_custom
+callback: jcc_appellate_custom_migrate_job_posts
+scheduler:
+  id: crontab
+  configuration:
+    rules:
+      - '30 10 * * 1-5'
+    catch_up: 300
+launcher:
+  id: serial
+  configuration:
+    timeouts:
+      lock_timeout: 3600
+    launcher:
+      thread: 0
+logger:
+  id: database
+  configuration:
+    method: '3'
+    expire: 1209600
+    retain: 1000
