@@ -49,6 +49,34 @@ function jcc_pdf_upload_validation_checker_entity_update(EntityInterface $entity
 }
 
 /**
+ * Implements hook_modules_installed().
+ *
+ * Ensures bypass reason taxonomy/field setup exists when module installation
+ * order or dependency timing causes hook_install() setup to be skipped.
+ */
+function jcc_pdf_upload_validation_checker_modules_installed(array $modules): void {
+  if (!in_array('jcc_pdf_upload_validation_checker', $modules, TRUE) && !in_array('taxonomy', $modules, TRUE)) {
+    return;
+  }
+
+  if (!\Drupal::moduleHandler()->moduleExists('jcc_pdf_upload_validation_checker') || !\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    return;
+  }
+
+  // Reuse install helpers so vocabulary, terms, and file field are idempotently
+  // created if missing.
+  \Drupal::moduleHandler()->loadInclude('jcc_pdf_upload_validation_checker', 'install');
+
+  if (function_exists('_jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary')) {
+    _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
+  }
+
+  if (function_exists('_jcc_pdf_upload_validation_checker_ensure_bypass_reason_field')) {
+    _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
+  }
+}
+
+/**
  * Implements hook_entity_access().
  */
 function jcc_pdf_upload_validation_checker_entity_access(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
@@ -616,6 +644,13 @@ function _jcc_pdf_upload_validation_checker_is_supported_media_form(string $form
  * Determines whether current user can manage the bypass flag.
  */
 function _jcc_pdf_upload_validation_checker_can_manage_bypass_flag(): bool {
+  $account = \Drupal::currentUser();
+
+  // Site admins should always be able to use bypass controls.
+  if ($account->hasPermission('administer site configuration')) {
+    return TRUE;
+  }
+
   $config = \Drupal::config('jcc_pdf_upload_validation_checker.settings');
   $allowed_roles = $config->get('bypass_allowed_roles');
   if (!is_array($allowed_roles)) {
@@ -623,7 +658,7 @@ function _jcc_pdf_upload_validation_checker_can_manage_bypass_flag(): bool {
   }
 
   $allowed_roles = array_values(array_filter($allowed_roles));
-  $user_roles = \Drupal::currentUser()->getRoles();
+  $user_roles = $account->getRoles();
 
   return (bool) array_intersect($allowed_roles, $user_roles);
 }
@@ -828,6 +863,7 @@ function _jcc_pdf_upload_validation_checker_alter_media_library_upload_form(arra
 
       $bypass_enabled = (bool) \Drupal::config('jcc_pdf_upload_validation_checker.settings')->get('pdf_validation_bypass');
       $bypass_checkbox = [];
+      $bypass_reason = [];
       if ($bypass_enabled
         && _jcc_pdf_upload_validation_checker_can_manage_bypass_flag()
         && $file->hasField('field_bypass_pdf_validation')
@@ -846,9 +882,6 @@ function _jcc_pdf_upload_validation_checker_alter_media_library_upload_form(arra
           $fid,
           $attach_to_fields_container ? 27 : 53
         );
-        if ($bypass_reason) {
-          $bypass_checkbox['jcc_pdf_bypass_reason'] = $bypass_reason;
-        }
       }
 
       if ($attach_to_fields_container) {
@@ -856,11 +889,17 @@ function _jcc_pdf_upload_validation_checker_alter_media_library_upload_form(arra
         if ($bypass_checkbox) {
           $fields['jcc_pdf_bypass_validation'] = $bypass_checkbox;
         }
+        if ($bypass_reason) {
+          $fields['jcc_pdf_bypass_reason'] = $bypass_reason;
+        }
       }
       else {
         $fields[$field_name]['jcc_pdf_manual_check'] = $manual_check;
         if ($bypass_checkbox) {
           $fields[$field_name]['jcc_pdf_bypass_validation'] = $bypass_checkbox;
+        }
+        if ($bypass_reason) {
+          $fields[$field_name]['jcc_pdf_bypass_reason'] = $bypass_reason;
         }
       }
 
