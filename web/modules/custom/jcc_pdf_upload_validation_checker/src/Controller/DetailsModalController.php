@@ -79,16 +79,15 @@ final class DetailsModalController extends ControllerBase {
 
     $raw_text = (string) $entity->get($field_name)->value;
 
-    // Convert plain-text URLs to clickable links, then preserve line breaks.
-    $processed = preg_replace_callback(
-      '~(https?://[^\s]+)~',
-      function (array $m): string {
-        $url = htmlspecialchars($m[1], ENT_QUOTES, 'UTF-8');
-        return '<a href="' . $url . '" target="_blank" rel="noopener noreferrer">View full report</a>';
-      },
-      htmlspecialchars($raw_text, ENT_QUOTES, 'UTF-8')
-    );
-    $processed = nl2br($processed ?? '');
+    $report_link = '';
+    if (preg_match('~https?://[^\s]+~', $raw_text, $match)) {
+      $url = htmlspecialchars($match[0], ENT_QUOTES, 'UTF-8');
+      $report_link = '<p><strong>View full report:</strong> <a href="' . $url . '" target="_blank" rel="noopener noreferrer">View full report</a></p>';
+    }
+
+    // Remove URLs from the summary body and preserve line breaks.
+    $summary_text = preg_replace('~https?://[^\s]+~', '', $raw_text) ?? '';
+    $processed = nl2br(htmlspecialchars(trim($summary_text), ENT_QUOTES, 'UTF-8'));
 
     return [
       '#type' => 'container',
@@ -99,6 +98,9 @@ final class DetailsModalController extends ControllerBase {
         'library' => [
           'jcc_pdf_upload_validation_checker/details_modal',
         ],
+      ],
+      'report_link' => [
+        '#markup' => $report_link,
       ],
       'content' => [
         '#markup' => $processed,

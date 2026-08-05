@@ -204,7 +204,7 @@ function jcc_pdf_upload_validation_checker_form_alter(array &$form, FormStateInt
     return;
   }
 
-  if (in_array($form_id, ['media_library_add_form_upload', 'media_directories_add_form'], TRUE)) {
+  if (in_array($form_id, ['media_library_add_form_upload', 'media_directories_add_form', 'media_directories_combined_upload_form'], TRUE)) {
     _jcc_pdf_upload_validation_checker_alter_media_library_upload_form($form, $form_state);
 
     $bypass_enabled = (bool) \Drupal::config('jcc_pdf_upload_validation_checker.settings')->get('pdf_validation_bypass');
@@ -589,7 +589,7 @@ function _jcc_pdf_upload_validation_checker_is_supported_media_form(string $form
     $form_id === 'media_edit_form' ||
     $form_id === 'media_library_add_form_upload' ||
     $form_id === 'media_directories_add_form' ||
-    $form_id === 'views_form_media_library_widget_file' ||
+    $form_id === 'media_directories_combined_upload_form' ||
     preg_match('/^media_.+_(add|edit)_form$/', $form_id)
   ) {
     return TRUE;
@@ -616,7 +616,13 @@ function _jcc_pdf_upload_validation_checker_is_supported_media_form(string $form
  * Determines whether current user can manage the bypass flag.
  */
 function _jcc_pdf_upload_validation_checker_can_manage_bypass_flag(): bool {
-  $allowed_roles = ['editor', 'administrator', 'manager'];
+  $config = \Drupal::config('jcc_pdf_upload_validation_checker.settings');
+  $allowed_roles = $config->get('bypass_allowed_roles');
+  if (!is_array($allowed_roles)) {
+    $allowed_roles = ['editor', 'administrator', 'manager'];
+  }
+
+  $allowed_roles = array_values(array_filter($allowed_roles));
   $user_roles = \Drupal::currentUser()->getRoles();
 
   return (bool) array_intersect($allowed_roles, $user_roles);
@@ -643,6 +649,37 @@ function _jcc_pdf_upload_validation_checker_get_bypass_reason_options(): array {
 }
 
 /**
+ * Returns bypass reason descriptions keyed by term id.
+ */
+function _jcc_pdf_upload_validation_checker_get_bypass_reason_descriptions(): array {
+  if (!\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    return [];
+  }
+
+  $descriptions = [];
+  $terms = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties(['vid' => 'bypass_reasons']);
+
+  foreach ($terms as $term) {
+    $tid = (int) $term->id();
+    $description = '';
+
+    if ($term->hasField('description')) {
+      $description_item = $term->get('description')->first();
+      if ($description_item) {
+        // Use processed text so only allowed markup from the text format renders.
+        $description = trim((string) $description_item->processed);
+      }
+    }
+
+    $descriptions[$tid] = $description;
+  }
+
+  return $descriptions;
+}
+
+/**
  * Builds the bypass reason select element.
  */
 function _jcc_pdf_upload_validation_checker_build_bypass_reason_element(FileInterface $file, int $fid, int $weight): array {
@@ -655,23 +692,61 @@ function _jcc_pdf_upload_validation_checker_build_bypass_reason_element(FileInte
     return [];
   }
 
+  $descriptions = _jcc_pdf_upload_validation_checker_get_bypass_reason_descriptions();
+
   $default_reason = (int) $file->get('field_bypass_reason')->target_id;
   $state_selector = ':input[name="jcc_pdf_bypass_flags[' . $fid . ']"]';
+  $description_wrapper_id = 'jcc-pdf-bypass-reason-description-' . $fid;
+  $default_description = '';
+
+  if ($default_reason > 0 && isset($descriptions[$default_reason])) {
+    $default_description = $descriptions[$default_reason];
+  }
 
   return [
-    '#type' => 'select',
-    '#title' => t('Bypass reason'),
-    '#options' => $options,
-    '#empty_option' => t('- Select a reason -'),
-    '#parents' => ['jcc_pdf_bypass_reasons', $fid],
-    '#default_value' => $default_reason ?: NULL,
+    '#type' => 'container',
     '#weight' => $weight,
-    '#states' => [
-      'visible' => [
-        $state_selector => ['checked' => TRUE],
+    '#attached' => [
+      'library' => [
+        'jcc_pdf_upload_validation_checker/bypass_reason_descriptions',
       ],
-      'required' => [
-        $state_selector => ['checked' => TRUE],
+      'drupalSettings' => [
+        'jccPdfUploadValidationChecker' => [
+          'bypassReasonDescriptions' => $descriptions,
+        ],
+      ],
+    ],
+    'reason' => [
+      '#type' => 'select',
+      '#title' => t('Bypass reason'),
+      '#options' => $options,
+      '#empty_option' => t('- Select a reason -'),
+      '#parents' => ['jcc_pdf_bypass_reasons', $fid],
+      '#default_value' => $default_reason ?: NULL,
+      '#attributes' => [
+        'class' => ['js-jcc-pdf-bypass-reason-select'],
+        'data-description-target' => $description_wrapper_id,
+      ],
+      '#states' => [
+        'visible' => [
+          $state_selector => ['checked' => TRUE],
+        ],
+        'required' => [
+          $state_selector => ['checked' => TRUE],
+        ],
+      ],
+    ],
+    'description' => [
+      '#type' => 'container',
+      '#attributes' => [
+        'id' => $description_wrapper_id,
+        'class' => ['description'],
+      ],
+      '#markup' => $default_description,
+      '#states' => [
+        'visible' => [
+          $state_selector => ['checked' => TRUE],
+        ],
       ],
     ],
   ];

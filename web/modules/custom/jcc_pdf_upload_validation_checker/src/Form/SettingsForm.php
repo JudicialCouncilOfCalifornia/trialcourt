@@ -4,6 +4,7 @@ namespace Drupal\jcc_pdf_upload_validation_checker\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\RoleInterface;
 
 /**
  * Configure JCC PDF upload validation checker settings for this site.
@@ -65,6 +66,44 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('pdf_validation_bypass') ?? FALSE,
     ];
 
+    $role_options = [];
+    $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
+    foreach ($roles as $role) {
+      if ($role instanceof RoleInterface) {
+        $role_options[$role->id()] = $role->label();
+      }
+    }
+
+    $configured_roles = $config->get('bypass_allowed_roles');
+    if (!is_array($configured_roles)) {
+      $configured_roles = ['editor', 'administrator', 'manager'];
+    }
+
+    $default_roles = array_values(array_intersect($configured_roles, array_keys($role_options)));
+
+    $form['bypass_allowed_roles'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Roles allowed to bypass'),
+      '#options' => $role_options,
+      '#default_value' => $default_roles,
+      '#states' => [
+        'visible' => [
+          ':input[name="pdf_validation_bypass"]' => ['checked' => TRUE],
+        ],
+      ],
+      '#description' => $this->t('Only selected roles will see the bypass validation checkbox on media upload forms.'),
+    ];
+
+    if ($this->isNewsroomSite()) {
+      $form['pdf_validation_bypass']['#access'] = FALSE;
+      $form['bypass_allowed_roles']['#access'] = FALSE;
+      $form['bypass_disabled_message'] = [
+        '#type' => 'item',
+        '#title' => $this->t('Manual bypass setting'),
+        '#markup' => $this->t('Manual PDF validation bypass is disabled for the newsroom site.'),
+      ];
+    }
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -75,6 +114,14 @@ class SettingsForm extends ConfigFormBase {
     if ($form_state->getValue('pdf_validation_api') != 'PDF audit' && $form_state->getValue('pdf_validation_api') != 'EqualWeb') {
       $form_state->setErrorByName('pdf_validation_api', $this->t('The value is not correct.'));
     }
+
+    if ((bool) $form_state->getValue('pdf_validation_bypass')) {
+      $selected_roles = array_filter($form_state->getValue('bypass_allowed_roles') ?? []);
+      if (!$selected_roles) {
+        $form_state->setErrorByName('bypass_allowed_roles', $this->t('Select at least one role allowed to bypass validation.'));
+      }
+    }
+
     parent::validateForm($form, $form_state);
   }
 
@@ -82,13 +129,33 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $selected_roles = array_values(array_filter($form_state->getValue('bypass_allowed_roles') ?? []));
+    $bypass_enabled = (bool) $form_state->getValue('pdf_validation_bypass');
+
+    // Keep newsroom bypass disabled regardless of posted values.
+    if ($this->isNewsroomSite()) {
+      $bypass_enabled = FALSE;
+      $selected_roles = [];
+    }
+
     $this->config('jcc_pdf_upload_validation_checker.settings')
       ->set('pdf_validation_api', $form_state->getValue('pdf_validation_api'))
       ->set('equal_web_api_key', $form_state->getValue('equal_web_api_key'))
-      ->set('pdf_validation_bypass', (bool) $form_state->getValue('pdf_validation_bypass'))
+      ->set('pdf_validation_bypass', $bypass_enabled)
+      ->set('bypass_allowed_roles', $selected_roles)
       ->save();
 
     parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Determines if the current site is newsroom.
+   *
+   * @return bool
+   *   TRUE when running on the newsroom multisite.
+   */
+  protected function isNewsroomSite() {
+    return \Drupal::service('site.path') === 'sites/newsroom';
   }
 
 }

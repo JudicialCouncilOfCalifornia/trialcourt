@@ -485,6 +485,9 @@ final class PdfAuditRunner {
 
     $errors = [];
     $failed = 0;
+    $blockingRuleMatches = 0;
+    $blockingErrorCount = 0;
+    $nonBlockingRuleMatches = 0;
     $manualFailed = 0;
     $needsManualCheck = 0;
     $recognizedSignal = FALSE;
@@ -517,6 +520,7 @@ final class PdfAuditRunner {
         $ruleId = (string) ($item['rule_id'] ?? '');
         $errorCount = (int) ($item['error'] ?? 0);
         $warningCount = (int) ($item['warning'] ?? 0);
+        $severity = (int) ($item['severity'] ?? $item['Severity'] ?? 0);
 
         if ($errorCount > 0) {
           $failedRuleCount++;
@@ -528,9 +532,17 @@ final class PdfAuditRunner {
           if ($description !== '') {
             $label .= ' — ' . $description;
           }
-          $label .= ' [errors: ' . $errorCount . ']';
+          $label .= ' [errors: ' . $errorCount . ', severity: ' . $severity . ']';
 
-          $errors[] = $label;
+          // Blocking rule: the same check item must have error >= 1 and severity >= 1.
+          if ($severity >= 1) {
+            $blockingRuleMatches++;
+            $blockingErrorCount += $errorCount;
+            $errors[] = $label;
+          }
+          else {
+            $nonBlockingRuleMatches++;
+          }
         }
         elseif ($warningCount > 0) {
           $warningRuleCount++;
@@ -555,38 +567,10 @@ final class PdfAuditRunner {
 
     if (!empty($reportJson['Detailed Report']) && is_array($reportJson['Detailed Report'])) {
       $recognizedSignal = TRUE;
-
-      foreach ($reportJson['Detailed Report'] as $section => $items) {
-        if (!is_array($items)) {
-          continue;
-        }
-
-        foreach ($items as $item) {
-          if (!is_array($item)) {
-            continue;
-          }
-
-          $status = strtolower((string) ($item['Status'] ?? ''));
-          if ($status !== 'failed') {
-            continue;
-          }
-
-          $label = (string) ($item['Rule'] ?? 'Unknown check');
-          $description = (string) ($item['Description'] ?? '');
-          if ($section !== '') {
-            $label = $section . ': ' . $label;
-          }
-          if ($description !== '') {
-            $label .= ' — ' . $description;
-          }
-
-          $errors[] = $label;
-        }
-      }
     }
 
-    // Warnings/manual checks do not block pass.
-    $passed = $recognizedSignal && $failed === 0 && $manualFailed === 0;
+    // Only this rule blocks validation: same item has error >= 1 and severity >= 1.
+    $passed = $recognizedSignal && $blockingRuleMatches === 0;
 
     if (!$recognizedSignal) {
       $errors[] = 'EqualWeb report format was not recognized.';
@@ -595,16 +579,25 @@ final class PdfAuditRunner {
       $errors[] = 'EqualWeb reported accessibility issues.';
     }
 
-    $summaryText = $passed
-      ? ($needsManualCheck > 0
-        ? sprintf('PDF passed validation with %d warning(s) / manual review item(s).', $needsManualCheck)
-        : 'PDF passed validation.')
-      : sprintf(
-        'PDF failed validation. Failed: %d, Failed manually: %d, Needs manual check: %d.',
-        $failed,
-        $manualFailed,
-        $needsManualCheck
+    if ($passed) {
+      if ($nonBlockingRuleMatches > 0 || $needsManualCheck > 0) {
+        $summaryText = sprintf(
+          "PDF passed validation.\n\nSome accessibility issues are not blocking but should be corrected when possible.\n- Non-blocking issues: %d\n- Manual review items: %d\n\nRule: only issues with error and severity 1 or higher block validation.",
+          $nonBlockingRuleMatches,
+          $needsManualCheck
+        );
+      }
+      else {
+        $summaryText = 'PDF passed validation.';
+      }
+    }
+    else {
+      $summaryText = sprintf(
+        "PDF did not pass validation.\n\nPlease fix the blocking accessibility issues and re-upload.\n- Blocking issues: %d\n- Error instances: %d\n\nRule: only issues with error and severity 1 or higher block validation.",
+        $blockingRuleMatches,
+        $blockingErrorCount
       );
+    }
     $this->markEqualWebSummary($file, $passed ? [] : $errors, $summaryText, $reportId);
 
     return [
@@ -629,12 +622,12 @@ final class PdfAuditRunner {
     try {
       $text = $summary ?: 'EqualWeb validation failed.';
 
-      if (!empty($errors)) {
-        $text .= "\n\nIssues:\n- " . implode("\n- ", $errors);
-      }
-
       if ($reportId !== '') {
         $text .= "\n\nView full report: https://login.equalweb.com/reports/pdf/" . $reportId;
+      }
+
+      if (!empty($errors)) {
+        $text .= "\n\nIssues:\n- " . implode("\n- ", $errors);
       }
 
       $maxLength = 20000;
