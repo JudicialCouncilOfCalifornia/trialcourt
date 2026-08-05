@@ -73,12 +73,14 @@
 
 {% set matters = [] %}
 
-{% for k, matter in content.field_matters_served|filter((value, key) => key|first != "#") %}
-  {% set item = [
-    { text: matter['#plain_text'] }
-  ] %}
-  {% set matters = matters|merge(item) %}
-{% endfor %}
+{% if content.field_matters_served %}
+  {% for k, matter in content.field_matters_served|filter((value, key) => key|first != "#") %}
+    {% set item = [
+      { text: matter['#plain_text'] }
+    ] %}
+    {% set matters = matters|merge(item) %}
+  {% endfor %}
+{% endif %}
 
 {% set directions_action_aria_label = 'Get directions for the ' ~ node.label ~ ' location'|t %}
 
