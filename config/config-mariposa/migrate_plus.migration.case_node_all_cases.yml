@@ -91,19 +91,9 @@ process:
       delimiter: ' / '
   field_party_type:
     -
-      source: party_type
       plugin: callback
+      source: party_type
       callable: trim
-    -
-      plugin: default_value
-      default_value: 'Not Available'
-    -
-      plugin: entity_generate
-      bundle: case_party_type
-      value_key: name
-      bundle_key: vid
-      entity_type: taxonomy_term
-      ignore_case: true
   field_department:
     -
       plugin: callback
