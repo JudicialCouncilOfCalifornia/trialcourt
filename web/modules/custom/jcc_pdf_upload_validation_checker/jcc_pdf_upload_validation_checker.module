@@ -59,7 +59,67 @@ function jcc_pdf_upload_validation_checker_modules_installed(array $modules): vo
     return;
   }
 
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_setup();
+}
+
+/**
+ * Implements hook_cron().
+ *
+ * Self-heals bypass reason setup on already-enabled sites where install/update
+ * ordering or a partial deploy left the taxonomy assets missing.
+ */
+function jcc_pdf_upload_validation_checker_cron(): void {
+  if (_jcc_pdf_upload_validation_checker_has_bypass_reason_setup()) {
+    return;
+  }
+
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_setup();
+}
+
+/**
+ * Determines whether bypass reason vocabulary, terms, and field exist.
+ */
+function _jcc_pdf_upload_validation_checker_has_bypass_reason_setup(): bool {
+  if (!\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    return FALSE;
+  }
+
+  $vocabulary = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_vocabulary')
+    ->load('bypass_reasons');
+
+  if (!$vocabulary) {
+    return FALSE;
+  }
+
+  $existing_terms = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties(['vid' => 'bypass_reasons']);
+
+  $existing_names = [];
+  foreach ($existing_terms as $term) {
+    $existing_names[mb_strtolower($term->label())] = TRUE;
+  }
+
+  foreach (['Third Party Content Exception', 'Equivalent Accessible Version Confirmation'] as $required_term) {
+    if (!isset($existing_names[mb_strtolower($required_term)])) {
+      return FALSE;
+    }
+  }
+
+  return \Drupal\field\Entity\FieldStorageConfig::loadByName('file', 'field_bypass_reason')
+    && \Drupal\field\Entity\FieldConfig::loadByName('file', 'file', 'field_bypass_reason');
+}
+
+/**
+ * Ensures bypass reason taxonomy and field setup exists.
+ */
+function _jcc_pdf_upload_validation_checker_ensure_bypass_reason_setup(): void {
   if (!\Drupal::moduleHandler()->moduleExists('jcc_pdf_upload_validation_checker') || !\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    return;
+  }
+
+  if (_jcc_pdf_upload_validation_checker_has_bypass_reason_setup()) {
     return;
   }
 
@@ -73,6 +133,10 @@ function jcc_pdf_upload_validation_checker_modules_installed(array $modules): vo
 
   if (function_exists('_jcc_pdf_upload_validation_checker_ensure_bypass_reason_field')) {
     _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
+  }
+
+  if (_jcc_pdf_upload_validation_checker_has_bypass_reason_setup()) {
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('Ensured bypass reason taxonomy and file field exist.');
   }
 }
 
