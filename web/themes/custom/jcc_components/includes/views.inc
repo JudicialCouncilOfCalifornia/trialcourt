@@ -59,42 +59,28 @@ function jcc_components_preprocess_views_view(&$variables) {
   // Location view customizations.
   // Service category filter customization in form.inc.
   if ($view->id() == 'location' && ($view->current_display == 'page_1' || $view->current_display == 'block_1')) {
-    // Initialize a counter for the self-help locations.
-    $self_help_count = 0;
-    // Initialize an array to store self-help flags for each row.
-    $self_help_flags = [];
     // Initialize a flag if court has self-help services.
     $has_self_help = FALSE;
-    foreach ($view->result as $key => $row) {
+    foreach ($view->result as $row) {
       $view_entity = $row->_entity;
       if ($view_entity && $view_entity->hasField('field_add_services') && !$view_entity->get('field_add_services')->isEmpty()) {
         // Loop through the referenced service paragraphs.
         foreach ($view_entity->get('field_add_services')->referencedEntities() as $paragraph) {
           if ($paragraph->hasField('field_service_category') && !$paragraph->get('field_service_category')->isEmpty()) {
-            // Loop through the service category terms.
+            // Query by service category.
             foreach ($paragraph->get('field_service_category')->referencedEntities() as $term) {
-              // Check if the term is the "Self-Help" term.
+              // If service is available.
               if ($term->getName() == 'Self-Help') {
-                $has_self_help = TRUE;
-                break;
+                // Flag when at least one self-help location.
+                if (!$has_self_help) {
+                  $has_self_help = TRUE;
+                }
+                // Add flag to location.
+                $row->_entity->has_self_help = TRUE;
               }
             }
           }
-
-          // Break the loop if "Self-Help" is already found.
-          if ($has_self_help) {
-            break;
-          }
         }
-      }
-
-      // Store the flag for the current row.
-      $self_help_flags[$key] = $has_self_help;
-      $variables['self_help_flag'] = $has_self_help;
-
-      // If "Self-Help" services available.
-      if ($has_self_help) {
-        $self_help_count++;
       }
 
       $view_entity = $row->_entity;
@@ -107,13 +93,9 @@ function jcc_components_preprocess_views_view(&$variables) {
       }
     }
 
-    if ($has_self_help) {
-      // Pass location count and self-help flags.
-      $variables['self_help_count'] = $self_help_count;
-      $variables['self_help_flags'] = $self_help_flags;
-    }
-    else {
-      // Suppress exposed filter since not a BEF option.
+    // Suppress exposed filter if no self-help services.
+    // Grouped filter suppression is not a BEF option.
+    if (!$has_self_help) {
       unset($variables['exposed']['field_service_category_target_id']);
     }
   }
