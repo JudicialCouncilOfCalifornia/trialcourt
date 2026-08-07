@@ -534,8 +534,8 @@ final class PdfAuditRunner {
           }
           $label .= ' [errors: ' . $errorCount . ', severity: ' . $severity . ']';
 
-          // Blocking rule: the same check item must have error >= 1 and severity >= 1.
-          if ($severity >= 1) {
+          // Blocking rule: the same check item must have error >= 1 and severity >= 3.
+          if ($severity >= 3) {
             $blockingRuleMatches++;
             $blockingErrorCount += $errorCount;
             $errors[] = $label;
@@ -569,7 +569,7 @@ final class PdfAuditRunner {
       $recognizedSignal = TRUE;
     }
 
-    // Only this rule blocks validation: same item has error >= 1 and severity >= 1.
+    // Only this rule blocks validation: same item has error >= 1 and severity >= 3.
     $passed = $recognizedSignal && $blockingRuleMatches === 0;
 
     if (!$recognizedSignal) {
@@ -582,7 +582,7 @@ final class PdfAuditRunner {
     if ($passed) {
       if ($nonBlockingRuleMatches > 0 || $needsManualCheck > 0) {
         $summaryText = sprintf(
-          "PDF passed validation.\n\nSome accessibility issues are not blocking but should be corrected when possible.\n- Non-blocking issues: %d\n- Manual review items: %d\n\nRule: only issues with error and severity 1 or higher block validation.",
+          "PDF passed validation.\n\nSome accessibility issues are not blocking but should be corrected when possible.\n- Non-blocking issues: %d\n- Manual review items: %d\n\nRule: issues with error / severity level of \"Critical\", \"High\", \"Medium\" or \"Low\" will cause your PDF to fail validation. See the full report linked above for results of the validation check.",
           $nonBlockingRuleMatches,
           $needsManualCheck
         );
@@ -593,7 +593,7 @@ final class PdfAuditRunner {
     }
     else {
       $summaryText = sprintf(
-        "PDF did not pass validation.\n\nPlease fix the blocking accessibility issues and re-upload.\n- Blocking issues: %d\n- Error instances: %d\n\nRule: only issues with error and severity 1 or higher block validation.",
+        "PDF did not pass validation.\n\nPlease fix the blocking accessibility issues and re-upload.\n- Blocking issues: %d\n- Error instances: %d\n\nRule: issues with error / severity level of \"Critical\", \"High\", \"Medium\" or \"Low\" will cause your PDF to fail validation. See the full report linked above for results of the validation check.",
         $blockingRuleMatches,
         $blockingErrorCount
       );

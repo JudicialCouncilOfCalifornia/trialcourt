@@ -73,12 +73,33 @@ function jcc_pdf_upload_validation_checker_enable(): void {
 }
 
 /**
+ * Implements hook_post_config_import().
+ *
+ * Recreate bypass taxonomy assets after config import, since deploy-time
+ * imports can remove config/content created earlier during module enable.
+ */
+function jcc_pdf_upload_validation_checker_post_config_import($op, array $names): void {
+  \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+    'Post config import trigger received for bypass setup. op=@op, changed=@count',
+    [
+      '@op' => (string) $op,
+      '@count' => count($names),
+    ]
+  );
+
+  _jcc_pdf_upload_validation_checker_run_bypass_setup();
+}
+
+/**
  * Reuses install helpers to create bypass taxonomy assets idempotently.
  */
 function _jcc_pdf_upload_validation_checker_run_bypass_setup(): void {
   if (!\Drupal::moduleHandler()->moduleExists('jcc_pdf_upload_validation_checker') || !\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->warning('Bypass setup skipped: required modules not enabled.');
     return;
   }
+
+  \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('Starting bypass setup.');
 
   // Reuse install helpers so vocabulary, terms, and file field are idempotently
   // created if missing.
@@ -91,6 +112,30 @@ function _jcc_pdf_upload_validation_checker_run_bypass_setup(): void {
   if (function_exists('_jcc_pdf_upload_validation_checker_ensure_bypass_reason_field')) {
     _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
   }
+
+  $vocabulary = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_vocabulary')
+    ->load('bypass_reasons');
+
+  $term_count = 0;
+  if ($vocabulary) {
+    $term_count = count(\Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadByProperties(['vid' => 'bypass_reasons']));
+  }
+
+  $has_field_storage = (bool) \Drupal\field\Entity\FieldStorageConfig::loadByName('file', 'field_bypass_reason');
+  $has_field_config = (bool) \Drupal\field\Entity\FieldConfig::loadByName('file', 'file', 'field_bypass_reason');
+
+  \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+    'Bypass setup completed. vocabulary=@vocab terms=@terms field_storage=@storage field_config=@config',
+    [
+      '@vocab' => $vocabulary ? 'yes' : 'no',
+      '@terms' => $term_count,
+      '@storage' => $has_field_storage ? 'yes' : 'no',
+      '@config' => $has_field_config ? 'yes' : 'no',
+    ]
+  );
 }
 
 /**
@@ -111,7 +156,10 @@ function jcc_pdf_upload_validation_checker_entity_access(EntityInterface $entity
     return AccessResult::neutral();
   }
 
-  return AccessResult::forbiddenIf(!in_array('administrator', $account->getRoles(), TRUE))
+  $can_manage = $account->hasPermission('administer taxonomy')
+    || $account->hasPermission('administer site configuration');
+
+  return AccessResult::forbiddenIf(!$can_manage)
     ->cachePerUser();
 }
 
