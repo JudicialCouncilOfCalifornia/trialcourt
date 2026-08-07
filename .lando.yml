@@ -1,57 +1,48 @@
-# Rename this file to .lando.yml to use, or delete if you already have one.
-# Named start.lando.yml to not conflict with projects installed with lando mw install.
-
-# project_code: cmm, apb_d7, etc.
 name: tc
 
-# drupal8 | drupal7 | wordpress
-recipe: drupal8
+# Note: The recipe key has been completely removed to prevent plugin dependency errors.
 
 config:
-  # default: web | lightning: docroot
   webroot: web
-
-  php: '8.1'
-
-  database: mariadb
-
-  composer_version: '2'
-
-  # Optionally activate xdebug
-  #
-  # If you are having trouble getting xdebug to work please see:
-  # https://docs.devwithlando.io/services/php.html#using-xdebug
-  #xdebug: true
 
 proxy:
   appserver:
     - "*.lndo.site"
 
-# Additional services and features.
 services:
+  # Native PHP/Apache container mapping
   appserver:
+    type: php:8.1
+    via: apache
     webroot: web
-    # Uncomment below and lando rebuild to enable xdebug.
-    # The old xon/xoff commands no longer work with recent lando versions.
-    # xdebug: true
     config:
       php: xdebug.php.ini
-  # Theme.
+
+  # Theme container
   node-cli:
     type: compose
     services:
       image: node:13.13.0
-      # Required. See Below
       command: docker-php-entrypoint apache2-foreground
       volumes:
         - .:/app
+
+  # Clean, native MariaDB service
   database:
-    # Create databases for each multisite.
+    type: mariadb:10.6
     run_as_root:
       - /bin/sh -c "/app/scripts/dbcreate.sh"
 
-# Custom Lando commands
+# Custom Lando commands preserved exactly as you had them
 tooling:
+  composer:
+    service: appserver
+    description: "Run composer commands inside the appserver container"
+    cmd: composer
+  drush:
+    service: appserver
+    description: "Run Drush commands inside the appserver container"
+    cmd: /app/vendor/bin/drush
   dbim:
     service: database
     cmd: /app/scripts/dbimport.sh
