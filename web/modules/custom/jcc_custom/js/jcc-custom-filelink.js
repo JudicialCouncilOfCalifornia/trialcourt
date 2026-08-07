@@ -22,24 +22,38 @@
     pptx: 'PowerPoint Presentation'
   };
 
+  // Media bundles that represent video. Internal links to these are
+  // data-entity-type="media" and share the same courtyard icon selector as
+  // documents, so they need their own icon (see jcc-custom-filelink.css) and
+  // their own screen reader label.
+  var VIDEO_BUNDLES = [
+    'remote_video',
+    'oembed_video',
+    'akamai_video',
+    'boxcast_stream',
+    'video',
+    'video_embed'
+  ];
+
   /**
-   * Add screen-reader-only text announcing the document type on a file link.
+   * Append visually hidden text conveying the linked media type.
    *
-   * The document icon on these links is drawn with a CSS ::after pseudo-element,
+   * The type icon on these links is drawn with a CSS ::after pseudo-element,
    * which is not part of the accessibility tree. Without this, screen readers
-   * only announce the file name and never convey that the link is a document.
+   * only announce the link text and never convey whether the link points to a
+   * document or a video.
    *
    * @param {HTMLAnchorElement} link
-   *   The file link element.
-   * @param {string} extension
-   *   The detected file extension, without the leading dot.
+   *   The media/file link element.
+   * @param {string} label
+   *   The human readable media type, e.g. "PDF Document" or "Video".
    */
-  function announceDocumentType(link, extension) {
+  function announceMediaType(link, label) {
     // Only label each link once, even if behaviors re-attach (e.g. via AJAX).
-    if (link.getAttribute('data-doc-a11y')) {
+    if (link.getAttribute('data-media-a11y')) {
       return;
     }
-    link.setAttribute('data-doc-a11y', 'true');
+    link.setAttribute('data-media-a11y', 'true');
 
     // Respect an author-provided accessible name; aria-label/aria-labelledby
     // already override the link content for assistive tech, so appended hidden
@@ -48,13 +62,12 @@
       return;
     }
 
-    var documentType = DOCUMENT_TYPES[extension];
-    if (!documentType) {
+    if (!label) {
       return;
     }
 
-    // Leading space keeps the announcement from running into the file name.
-    $(link).append('<span class="usa-sr-only"> ' + documentType + '</span>');
+    // Leading space keeps the announcement from running into the link text.
+    $(link).append('<span class="usa-sr-only"> ' + label + '</span>');
   }
 
   Drupal.behaviors.jccFilelink = {
@@ -70,10 +83,28 @@
         var match = url.match(/\.(pdf|zip|docx|doc|xlsx|xls|pptx|ppt)/);
         if (match) {
           filelinks.push(this);
-          announceDocumentType(this, match[1]);
+          announceMediaType(this, DOCUMENT_TYPES[match[1]]);
         }
         $(filelinks).addClass('file');
         $(filelinks).attr('target', '_blank');
+      });
+
+      // Internal video media links carry no file extension, so classify them by
+      // media bundle. Some references render without the data-entity-bundle
+      // attribute (e.g. a second link to the same /media/NNN entity); those
+      // still resolve to the canonical media route, which in body content is a
+      // remote video (documents link straight to /system/files instead).
+      $('a[data-entity-type="media"]', context).each(function() {
+        var bundle = this.getAttribute('data-entity-bundle');
+        var isVideo = bundle
+          ? VIDEO_BUNDLES.indexOf(bundle) !== -1
+          : /^\/media\/\d+$/.test(this.pathname || '');
+
+        if (isVideo) {
+          // Class drives the play-button icon in jcc-custom-filelink.css.
+          $(this).addClass('jcc-media-video');
+          announceMediaType(this, 'Video');
+        }
       });
 
       // Lightweight a11y labeling for remote video Colorbox launchers.
