@@ -87,6 +87,10 @@ final class DetailsModalController extends ControllerBase {
 
     // Remove URLs from the summary body and preserve line breaks.
     $summary_text = preg_replace('~https?://[^\s]+~', '', $raw_text) ?? '';
+
+    // Drop the now-empty report label line after URL removal.
+    $summary_text = preg_replace('/^\s*View full report:\s*$/mi', '', $summary_text) ?? $summary_text;
+
     $processed = nl2br(htmlspecialchars(trim($summary_text), ENT_QUOTES, 'UTF-8'));
 
     return [
