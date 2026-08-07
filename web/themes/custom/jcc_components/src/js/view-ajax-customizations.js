@@ -35,21 +35,25 @@
           document.addEventListener('DOMContentLoaded', fn);
         }
       }
-
+      
       // Listen for event triggered by Views AJAX.
       if (context !== document) {
+        if (once('jcc-view-ajax-announce', context).length === 0) {
+          return;
+        }
         // Announce view update occurrence.
         let message = Drupal.t('The view has been updated.');
-
         // Check if the view has a results count.
-        const resultsView = context.querySelectorAll('.view-results');
+        const resultsViews = [
+          '.jcc-news-listing__content',
+        ];
+        const resultsView = context.querySelectorAll(resultsViews);
         if (resultsView.length > 0) {
-          const resultsCount = resultsView[0].querySelector('.cluster .views-results_content-header').textContent;
+          const resultsCount = resultsView[0].querySelector('.jcc-listing_result').textContent;
           if (resultsCount) {
             message = message + Drupal.t(' Now showing @count.', { '@count': resultsCount.trim()});
           }
         }
-
         announce(message, 'assertive');
       }
     }

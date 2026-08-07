@@ -14,8 +14,6 @@ use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
-use Drupal\Core\Render\Renderer;
-use Drupal\views\Views;
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -45,85 +43,75 @@ function jcc_components_theme_suggestions_views_view_alter(array &$suggestions, 
  * Implements hook_preprocess_HOOK().
  */
 function jcc_components_preprocess_views_view(&$variables) {
+  $view = $variables['view'];
   $variables['header_footer_variant'] = theme_get_setting('header_footer_variant', 'jcc_components');
+
+  // If AJAX is enabled.
+  if ($view->ajaxEnabled()) {
+    $variables['#attached']['library'][] = 'jcc_components/view-ajax-customizations';
+  }
 
   if ($variables['id'] == 'search') {
     $variables['keywords'] = $variables['exposed']['search']['#value'];
     $variables['num_results'] = $variables['view']->total_rows;
   }
-  $view = $variables['view'];
-  // Initialize a counter for the self-help locations.
-  $self_help_count = 0;
-  // Initialize an array to store self-help flags for each row.
-  $self_help_flags = [];
 
-
-  // Ensure we are at the right view and display.
-  // double check with location_listing
+  // Location view customizations.
+  // Service category filter customization in form.inc.
   if ($view->id() == 'location' && ($view->current_display == 'page_1' || $view->current_display == 'block_1')) {
-    $location_has_self_help = false;
-
-    foreach ($view->result as $key => $row) {
+    // Initialize a flag if court has self-help services.
+    $has_self_help = FALSE;
+    foreach ($view->result as $row) {
       $view_entity = $row->_entity;
-      $has_self_help = false;
       if ($view_entity && $view_entity->hasField('field_add_services') && !$view_entity->get('field_add_services')->isEmpty()) {
-        // Loop through the referenced paragraph entities in 'field_add_services'.
+        // Loop through the referenced service paragraphs.
         foreach ($view_entity->get('field_add_services')->referencedEntities() as $paragraph) {
-          // Check if the paragraph has the 'field_service_category' field and it's not empty.
           if ($paragraph->hasField('field_service_category') && !$paragraph->get('field_service_category')->isEmpty()) {
-            // Loop through the referenced taxonomy terms in 'field_service_category'.
+            // Query by service category.
             foreach ($paragraph->get('field_service_category')->referencedEntities() as $term) {
-              // Check if the term is the "Self-Help" term.
+              // If service is available.
               if ($term->getName() == 'Self-Help') {
-                $has_self_help = true;  // Set flag to true if the condition is met.
-                break;  // No need to check further, we found "Self-Help".
+                // Flag when at least one self-help location.
+                if (!$has_self_help) {
+                  $has_self_help = TRUE;
+                }
+                // Add flag to location.
+                $row->_entity->has_self_help = TRUE;
               }
             }
-          }
-
-          // Break the loop if "Self-Help" is already found.
-          if ($has_self_help) {
-            break;
           }
         }
       }
 
-      // Store the flag for the current row.
-      $self_help_flags[$key] = $has_self_help;
-      $variables['self_help_flag'] = $has_self_help;
-
-      // If the current row has "Self-Help", increment the counter.
-      if ($has_self_help) {
-        $self_help_count++;
-      }
-
       $view_entity = $row->_entity;
       if ($view_entity->hasField('field_address') && !$view_entity->get('field_address')->isEmpty()) {
-          // Render the field using the 'default' view mode or another configured view mode.
-          $field_render_array = $view_entity->get('field_address')->view('default');
+        // Render the field using the 'default' view mode.
+        $field_render_array = $view_entity->get('field_address')->view('default');
 
-          // Render the field to a string.
-          $variables['my_address'] = \Drupal::service('renderer')->renderPlain($field_render_array);
+        // Render the field to a string.
+        $variables['my_address'] = \Drupal::service('renderer')->renderPlain($field_render_array);
       }
     }
 
-    // Store the count of self-help locations in the $variables array to pass to Twig.
-    $variables['self_help_count'] = $self_help_count;
-    $variables['self_help_flags'] = $self_help_flags;  // Pass the self-help flags array to Twig.
+    // Suppress exposed filter if no self-help services.
+    // Grouped filter suppression is not a BEF option.
+    if (!$has_self_help) {
+      unset($variables['exposed']['field_service_category_target_id']);
+    }
   }
-
 }
 
+/**
+ * Implements hook_preprocess_HOOK() for unformatted views.
+ */
 function jcc_components_preprocess_views_view_unformatted(&$variables) {
   $view = $variables['view'];
-    if($view->id() == "location"){
-      $location_page = \Drupal::configFactory()->getEditable('jcc_custom.settings')
-      ->get('new_location_listing_page');
-
-      if($location_page == 1 ){
-        $variables['listing_page'] = "new";
-      }
+  if ($view->id() == "location") {
+    $location_page = \Drupal::configFactory()->getEditable('jcc_custom.settings')->get('new_location_listing_page');
+    if ($location_page == 1) {
+      $variables['listing_page'] = "new";
     }
+  }
 }
 
 /**
@@ -562,7 +550,7 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
       break;
 
     case "location":
-      if($view->current_display == 'page_1'){
+      if ($view->current_display == 'page_1') {
         foreach ($view->result as $key => $row) {
 
           $view_entity = $row->_entity;
@@ -572,13 +560,14 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
           }
         }
       }
-      if($view->current_display == 'block_1'){
+      if ($view->current_display == 'block_1') {
         // An associative array to track unique Node IDs.
         $unique_results = [];
 
         // Loop through the results.
         foreach ($view->result as $index => $row) {
-          $nid = $row->nid; // Ensure this is the correct property for Node ID.
+          // Ensure this is the correct property for Node ID.
+          $nid = $row->nid;
           // If this Node ID hasn't been added to the unique results, keep it.
           if (!isset($unique_results[$nid])) {
             $unique_results[$nid] = $row;
@@ -588,7 +577,7 @@ function jcc_components_views_pre_render(ViewExecutable $view) {
             unset($view->result[$index]);
           }
         }
-       // Reindex the result array after removing duplicates.
+        // Reindex the result array after removing duplicates.
         $view->result = array_values($view->result);
 
       }
