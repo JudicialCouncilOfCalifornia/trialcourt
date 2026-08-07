@@ -1,0 +1,33 @@
+/**
+ * @file
+ * Icons for media/file links.
+ *
+ * Courtyard renders a document icon on every media link through a ::after
+ * pseudo-element (a[data-entity-type="media"]::after). That is correct for
+ * documents (PDF, Word, etc.), but internal video media links are also
+ * data-entity-type="media", so they wrongly show the document/PDF icon.
+ *
+ * Override the icon with a play button for video media links. Two selectors are
+ * used so the fix works with and without JavaScript:
+ *   - the data-entity-bundle selectors catch links that carry the video bundle
+ *     in their markup (no JS required);
+ *   - the .jcc-media-video class is added by jcc-custom-filelink.js, which also
+ *     catches video links that render without the bundle attribute (e.g. a
+ *     second reference to the same /media/NNN entity).
+ * Both selectors include an extra attribute/class so they out-specify the
+ * courtyard base rule regardless of stylesheet load order. Only the mask image
+ * is changed; size, colour and spacing are inherited from courtyard.
+ *
+ * External video links (e.g. YouTube) are handled by the extlink module and are
+ * not data-entity-type="media", so they are intentionally left untouched.
+ */
+a[data-entity-type="media"][data-entity-bundle="remote_video"]::after,
+a[data-entity-type="media"][data-entity-bundle="oembed_video"]::after,
+a[data-entity-type="media"][data-entity-bundle="akamai_video"]::after,
+a[data-entity-type="media"][data-entity-bundle="boxcast_stream"]::after,
+a[data-entity-type="media"][data-entity-bundle="video"]::after,
+a[data-entity-type="media"][data-entity-bundle="video_embed"]::after,
+a[data-entity-type="media"].jcc-media-video::after {
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm115.7 272l-176 101c-15.8 8.8-35.7-2.5-35.7-21V152c0-18.4 19.8-29.8 35.7-21l176 107c16.4 9.2 16.4 32.9 0 42z"></path></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm115.7 272l-176 101c-15.8 8.8-35.7-2.5-35.7-21V152c0-18.4 19.8-29.8 35.7-21l176 107c16.4 9.2 16.4 32.9 0 42z"></path></svg>');
+}
