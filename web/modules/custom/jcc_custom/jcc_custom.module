@@ -1380,6 +1380,7 @@ function jcc_custom_form_views_exposed_form_alter(&$form, FormStateInterface $fo
         // Currently, we only need to filter by Self-help service.
         $self_help_service_cat_tid = jcc_custom_get_service_category_tid('Self-Help');
         if ($self_help_service_cat_tid) {
+          $view = $form_state->get('view');
           $filter_handler = $view->filter['field_service_category_target_id'] ?? NULL;
           if ($filter_handler && !empty($filter_handler->options['group_info']['group_items'])) {
             foreach ($filter_handler->options['group_info']['group_items'] as &$group_item) {
