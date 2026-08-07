@@ -136,3 +136,13 @@ function jcc_pdf_upload_validation_checker_update_9003(): string {
 
   return 'Ensured bypass reasons vocabulary, terms, and field exist.';
 }
+
+/**
+ * Backfill bypass reason taxonomy assets on already-enabled sites.
+ */
+function jcc_pdf_upload_validation_checker_update_9004(): string {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
+
+  return 'Backfilled bypass reasons vocabulary, terms, and field for enabled sites.';
+}

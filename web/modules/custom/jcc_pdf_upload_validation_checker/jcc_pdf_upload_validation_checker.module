@@ -59,6 +59,23 @@ function jcc_pdf_upload_validation_checker_modules_installed(array $modules): vo
     return;
   }
 
+  _jcc_pdf_upload_validation_checker_run_bypass_setup();
+}
+
+/**
+ * Implements hook_enable().
+ *
+ * Ensures bypass reason taxonomy and field exist whenever this module is
+ * enabled, regardless of install ordering.
+ */
+function jcc_pdf_upload_validation_checker_enable(): void {
+  _jcc_pdf_upload_validation_checker_run_bypass_setup();
+}
+
+/**
+ * Reuses install helpers to create bypass taxonomy assets idempotently.
+ */
+function _jcc_pdf_upload_validation_checker_run_bypass_setup(): void {
   if (!\Drupal::moduleHandler()->moduleExists('jcc_pdf_upload_validation_checker') || !\Drupal::moduleHandler()->moduleExists('taxonomy')) {
     return;
   }
