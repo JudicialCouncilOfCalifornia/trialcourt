@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @file
+ * Module hooks for jcc_courts_custom.
+ */
+
+/**
+ * Citable opinions ultimate cron config callback.
+ */
+function jcc_courts_custom_migrate_opinions_citable() {
+  $migration_id = 'courts_node_opinion_published';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+}
+
+/**
+ * Citable opinions with grant review ultimate cron config callback.
+ */
+function jcc_courts_custom_migrate_opinions_citable_review() {
+  $migration_id = 'courts_node_opinion_published_review';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+}
+
+/**
+ * Citable opinions archived ultimate cron config callback.
+ */
+function jcc_courts_custom_migrate_opinions_citable_archive() {
+  $migration_id = 'courts_node_opinion_published_archive';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+}
+
+/**
+ * Non-citable opinions ultimate cron config callback.
+ */
+function jcc_courts_custom_migrate_opinions_noncitable() {
+  $migration_id = 'courts_node_opinion_unpublished';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+}
+
+/**
+ * Non-citable opinions with grant review ultimate cron config callback.
+ */
+function jcc_courts_custom_migrate_opinions_noncitable_review() {
+  $migration_id = 'courts_node_opinion_unpublished_review';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+}
+
+/**
+ * Opinion citing media ultimate cron config callback.
+ */
+function jcc_courts_custom_migrate_opinions_citing_media() {
+  $migration_id = 'courts_media_opinion_citing';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+}
+
+/**
+ * Opinion citing ultimate cron config callback.
+ */
+function jcc_courts_custom_migrate_opinions_citing() {
+  $migration_id = 'courts_node_opinion_citing';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+}
+
+/**
+ * Job posts ultimate cron config callback.
+ */
+function jcc_courts_custom_migrate_job_posts() {
+  $migration_id = 'courts_node_job';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+}
