@@ -5,46 +5,10 @@
  * Module hooks for jcc_appellate_custom.
  */
 
-use Drupal\Core\Queue\RequeueException;
-
 /**
  * Job posts ultimate cron config callback.
  */
 function jcc_appellate_custom_migrate_job_posts() {
   $migration_id = 'appellate_node_job';
-  jcc_appellate_custom_run_migration($migration_id, TRUE);
-}
-
-/**
- * Common migration function.
- */
-function jcc_appellate_custom_run_migration($migration_id, $sync_option = FALSE, $lease_time = 3600) {
-  $queue = \Drupal::queue('migration_queue_worker');
-  $queue_worker = \Drupal::service('plugin.manager.queue_worker')->createInstance('migration_queue_worker');
-
-  // Create queue item.
-  $data = [
-    'migration_id' => $migration_id,
-    'sync_option' => $sync_option,
-  ];
-  $queue->createItem($data);
-
-  // Queue item managment.
-  while ($item = $queue->claimItem($lease_time)) {
-    try {
-      $queue_worker->processItem($item->data);
-      $queue->deleteItem($item);
-    }
-    catch (RequeueException $e) {
-      // Item will be requeued automatically.
-      $queue->releaseItem($item);
-    }
-    catch (\Exception $e) {
-      // Critical failure - remove item and log error.
-      \Drupal::logger('jcc_appellate_custom')->error('Queue processing failed: @message', [
-        '@message' => $e->getMessage(),
-      ]);
-      $queue->deleteItem($item);
-    }
-  }
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
 }
