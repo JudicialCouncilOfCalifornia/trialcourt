@@ -241,14 +241,14 @@ For near exact scheduling, we can repurpose Drupal's internal cron that is meant
 *Note: Not tried with larger jobs extensively as of June 2026.*
 
  1. Install [Ultimate Cron](https://www.drupal.org/project/ultimate_cron) optional module for the site.
- 1. Use a custom module to create cron jobs with `hook_cron` (single) and callbacks (multiple). For example, cron jobs for courts.ca.gov use only: [JCC Courts Custom](../web/modules/custom/jcc_courts_custom)
- 1. Until module improvements, clone an existing Ultimate Cron job configuration to import and finalize setup as needed at `https://[DOMAIN]/admin/config/system/cron/jobs`:
+ 1. Use a custom module to create cron jobs with `hook_cron` (single) and callbacks (multiple). For example, common jobs for `jcc_custom` or specific site jobs such as [JCC Courts Custom](../web/modules/custom/jcc_courts_custom) for courts.ca.gov.
+    1. A [migration service](../web/modules/custom/jcc_custom/src/MigrationJobService.php) with common functions is available for reuse if you just need a generic function.
+ 1. Until Ultimate Cron improves, clone an existing Ultimate Cron job configuration to import and finalize setup as needed at `https://[DOMAIN]/admin/config/system/cron/jobs`:
     1. [Simple example](../config/config-courts/ultimate_cron.job.xmlsitemap_cron.yml)
-    1. [Crontab example](../config/config-courts/ultimate_cron.job.migrate_opinions_citable.yml) ... seems to be PST/PDT context and not UTC
+    1. [Crontab with callback example](../config/config-courts/ultimate_cron.job.migrate_opinions_citable.yml) ... PST/PDT context and not UTC
  1. Disable automated cron runs from Drupal at `https://[DOMAIN]/admin/config/system/cron` by setting the intervals to `Never`.
- 1. Commit code and exported (cron) configuration files as a site-specific feature. Assess for immutable configurations when dealing with Ultimate Cron upgrades. For example, there is a global settings GUI that is not in use as of June 2026 but could be an immutable feature when it becomes available.
+ 1. Commit code and exported configuration files as a site-specific feature. Assess for immutable configurations when dealing with Ultimate Cron upgrades. For example, there is a global settings GUI that is not in use as of June 2026 but could be an immutable feature when it becomes available.
  1. Use an external service such as New Relic to externally run Drupal's cron in one minute intervals. Cron URL to ping is noted at `https://[DOMAIN]/admin/config/system/cron`.
 
 ## Missing Pieces
-
 There was discussion about migrating additional taxonomy references with `forms_file` but that was never fully defined. Works needs to be done to flesh the rest of the taxonomy structure out and ensure the appropriate entities have the appropriate taxonomy reference fields.
