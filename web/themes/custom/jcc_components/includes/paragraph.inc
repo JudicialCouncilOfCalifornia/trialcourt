@@ -338,6 +338,7 @@ function _jcc_components_generate_cards($cards, $sub_variants, $column_size) {
     $extra = NULL;
     $icon = [];
     $media = [];
+    $media_decorative = FALSE;
     $bgcolor = NULL;
     $brow = NULL;
     $is_clickable = NULL;
@@ -392,6 +393,10 @@ function _jcc_components_generate_cards($cards, $sub_variants, $column_size) {
           $sub_variants['card'] = $card->field_entire_card_clickable->value ? 'media-full usa-card--hover' : 'media-full';
         }
       }
+
+      // Full-bleed and top-overlay variants treat the image as a background.
+      $media_decorative = str_contains($sub_variants['card'], 'media-full') || str_contains($sub_variants['card'], 'media-top-overlay');
+      $media['decorative'] = $media_decorative;
     }
 
     // Image from media library for Local theme.
@@ -408,6 +413,7 @@ function _jcc_components_generate_cards($cards, $sub_variants, $column_size) {
 
       $media['src'] = _jcc_components_remove_image_protocol($styled_image_url);
       $media['alt'] = $alt;
+      $media['decorative'] = FALSE;
 
       $sub_variants['card'] = 'media-top';
       if ($column_size == 1) {
