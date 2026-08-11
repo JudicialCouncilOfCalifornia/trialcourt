@@ -13,9 +13,9 @@
         if (!region) {
           region = document.createElement('div');
           region.id = id;
+          region.className = 'visually-hidden';
           region.setAttribute('aria-live', level);
           region.setAttribute('aria-atomic', 'true');
-          region.style.cssText = 'position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(100%);white-space:nowrap;';
           (document.body || document.documentElement).appendChild(region);
         }
 
