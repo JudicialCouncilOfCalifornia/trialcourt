@@ -122,8 +122,6 @@ class JccMigrateSourceLogController extends ControllerBase {
 
     $classes = static::getLogLevelClassMap();
 
-    // $this->moduleHandler->loadInclude('jcc_migrate_source_ui', 'admin.inc');
-
     $build['jcc_migrate_source_ui_filter_form'] = $this->formBuilder->getForm('Drupal\jcc_migrate_source_ui\Form\JccMigrateSourceLogFilterForm');
 
     $header = [
@@ -307,8 +305,6 @@ class JccMigrateSourceLogController extends ControllerBase {
     if (empty($_SESSION['jcc_migrate_source_ui_overview_filter'])) {
       return;
     }
-
-    // $this->moduleHandler->loadInclude('jcc_migrate_source_ui', 'admin.inc');
 
     $filters = $this->jcc_migrate_source_ui_filters();
 
