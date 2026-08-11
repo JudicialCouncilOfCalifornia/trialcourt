@@ -26,26 +26,38 @@
         }, 50);
       }
 
-      // Listen for event triggered by Views AJAX.
-      if (context !== document) {
-        if (once('jcc-view-ajax-announce', context).length === 0) {
-          return;
+      function docReady(fn) {
+        // See if DOM is already available.
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+          // Call on next available tick.
+          setTimeout(fn, 1);
+        } else {
+          document.addEventListener('DOMContentLoaded', fn);
         }
-        // Announce view update occurrence.
-        let message = Drupal.t('The view has been updated.');
-        // Check if the view has a results count.
-        const resultsViews = [
-          '.jcc-news-listing__content',
-        ];
-        const resultsView = context.querySelectorAll(resultsViews);
-        if (resultsView.length > 0) {
-          const resultsCount = resultsView[0].querySelector('.jcc-listing_result').textContent;
-          if (resultsCount) {
-            message = message + Drupal.t(' Now showing @count.', { '@count': resultsCount.trim()});
-          }
-        }
-        announce(message, 'assertive');
       }
+
+      docReady(function() {
+        // Listen for event triggered by Views AJAX.
+        // Anonymous user support only.
+        if (context !== document) {
+          // Announce view update occurrence.
+          let message = Drupal.t('The view has been updated.');
+
+          // Check if the view has a results count.
+          // List all region selectors since inconsistent patterns.
+          const resultsViews = [
+            '.jcc-news-listing__content',
+          ];
+          const resultsView = context.querySelectorAll(resultsViews.join(', '));
+          if (resultsView.length > 0) {
+            const resultsCount = resultsView[0].querySelector('.jcc-listing_result').textContent;
+            if (resultsCount) {
+              message = message + Drupal.t(' Now showing @count.', { '@count': resultsCount.trim()});
+            }
+          }
+          announce(message, 'assertive');
+        }
+      });
     }
   };
 })(Drupal, once);
