@@ -1,4 +1,4 @@
-uuid: 20418c1a-7f01-4d21-a370-4a1997170f8e
+uuid: 6b3eab6f-0a2a-41bc-9f9b-9e91e2eb6d91
 langcode: en
 status: true
 dependencies: {  }
@@ -14,7 +14,7 @@ migration_group: case_management
 label: 'Case: Import Case Nodes'
 source:
   plugin: csv
-  path: sites/default/files/mariposa/default/upload/export.csv
+  path: sites/default/files/mono/default/upload/export.csv
   delimiter: ','
   enclosure: '"'
   header_row_count: 1
@@ -91,12 +91,12 @@ process:
       delimiter: ' / '
   field_party_type:
     -
-      plugin: callback
       source: party_type
+      plugin: callback
       callable: trim
     -
       plugin: default_value
-      default_value: 'Not available'
+      default_value: 'Not Available'
     -
       plugin: entity_generate
       bundle: case_party_type
@@ -194,3 +194,5 @@ destination:
   plugin: 'entity:node'
   default_bundle: case
 migration_dependencies: null
+
+
