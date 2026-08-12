@@ -51,6 +51,7 @@ $sites['www.courts.ca.gov'] = 'courts';
 $sites['courts.ca.gov'] = 'courts';
 $sites['beta.courts.ca.gov'] = 'courts';
 $sites['preview.courts.ca.gov'] = 'courts';
+$sites['epic-d11-jcc-courts.pantheonsite.io'] = 'courts';
 
 // = 'jcart';
 $sites['develop.jcart.courts.ca.gov'] = 'deprep';
