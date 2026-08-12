@@ -1241,18 +1241,29 @@ function jcc_elevated_node_opinion(array &$variables, NodeInterface $node): void
   // Citings.
   $citings = [];
   if ($node->get('field_media_file_multiple')->getValue()) {
+    $user = \Drupal::currentUser();
     foreach ($node->get('field_media_file_multiple')->getValue() as $citing) {
       $media = $media_manager->load($citing['target_id']);
-      $file = $file_manager->load($media->get('field_media_file')->target_id);
-      if ($file) {
-        $citing_title = $media->get('field_media_text')->value;
-        if (is_null($citing_title)) {
-          $citing_title = $media->get('name')->value;
+      $link = $file_manager->load($media->get('field_media_link')->target_id);
+      if ($media && $media->hasField('field_media_link')) {
+        $link = $media->get('field_media_link')->first()->getValue();
+        if ($link && $link['uri']) {
+          $citing_title = $link['title'] ?? 'URL reference is missing.';
+          if (is_null($citing_title)) {
+            $citing_title = $media->get('name')->value;
+          }
+          $citings[] = [
+            'text' => ['#markup' => '<a href="' . $link['uri'] . '" aria-label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
+          ];
         }
-        $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->get('uri')->value);
-        $citings[] = [
-          'text' => ['#markup' => '<a href="' . $file_url . '" aria-label="Download or view citing ' . $citing_title . '">' . $citing_title . '</a>'],
-        ];
+        else {
+          // Missing URL assistance since content is synchronized.
+          if ($user->isAuthenticated() && $user->hasPermission('edit opinion')) {
+            $citings[] = [
+              'text' => t('No URL available for link entity @id.', ['@id' => $citing['target_id']]),
+            ];
+          }
+        }
       }
     }
   }
