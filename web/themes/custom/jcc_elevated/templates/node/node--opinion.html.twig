@@ -76,6 +76,7 @@
 {{ attach_library("jcc_storybook/AssetBundle") }}
 {{ attach_library("jcc_storybook/Brow") }}
 {{ attach_library("jcc_storybook/Button") }}
+{{ attach_library("jcc_elevated/opinions") }}
 
 {% set heading_aria_label %}
   aria-label="{{ node.field_opinion_source.entity.name.value }} {{ node.bundle() }} for case {{ node.title.value }}"
@@ -102,7 +103,7 @@
     {% set type = node.field_opinion_type.entity.name.value ~ ' Opinion' %}
   {% endif %}
 
-  <div class="stack">
+  <div class="opinion stack">
     <div class="asset-bundle__details">
       {% if node.field_opinion_source.value %}
         <span>{{ node.field_opinion_source.entity.name.value }}</span>
@@ -115,7 +116,7 @@
       {% endif %}
     </div>
 
-    {% if opinion.remote_files %}
+    {% if opinion.remote_files and not opinion.citings %}
       <div>
         {% for remote_file in opinion.remote_files %}
           {% include "@atoms/Button/Button.twig" with {
@@ -126,6 +127,34 @@
           } %}
         {% endfor %}
       </div>
+    {% elseif opinion.citings %}
+      <p>Web Page Citings:</p>
+      <ul class="opinion-citings">
+        {% for link in opinion.citings %}
+          <li>{{ link }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if opinion.downloads %}
+      <div>
+        {% for download in opinion.downloads %}
+          {% include "@atoms/Button/Button.twig" with {
+            variant: loop.index == 1 ?'primary' : 'secondary',
+            label: download.file_type,
+            href: download.url,
+            aria_label: download.aria_label,
+          } %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if opinion.related_cases_urls %}
+      <p>Related Cases: {{ opinion.related_cases_urls|raw }}</p>
+    {% endif %}
+
+    {% if opinion.related_cases and not opinion.related_cases_urls %}
+      <p>Related Cases: {{ opinion.related_cases|raw }}</p>
     {% endif %}
 
     {% if opinion.details %}
@@ -136,15 +165,6 @@
 
     {% if opinion.related_cases %}
       <p>Related Cases: {{ opinion.related_cases|raw }}</p>
-    {% endif %}
-
-    {% if opinion.citings %}
-      <p>Web Page Citings:</p>
-      <ul>
-        {% for link in opinion.citings %}
-          <li>{{ link }}</li>
-        {% endfor %}
-      </ul>
     {% endif %}
   </div>
 {% endset %}

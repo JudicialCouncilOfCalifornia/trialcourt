@@ -1,0 +1,17 @@
+uuid: 1690c5c5-cfcc-4048-b3fd-a9ee405b6f8e
+langcode: en
+status: true
+dependencies:
+  module:
+    - xmlsitemap
+title: 'Regenerate XML sitemaps'
+id: xmlsitemap_cron
+weight: 0
+module: xmlsitemap
+callback: 'xmlsitemap#cron'
+scheduler:
+  id: simple
+launcher:
+  id: serial
+logger:
+  id: database
