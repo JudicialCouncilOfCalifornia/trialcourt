@@ -143,7 +143,7 @@ final class BypassAuditLogController extends ControllerBase {
     foreach ($query->execute() as $record) {
       $rows[] = [
         $this->dateFormatter->format((int) $record->created, 'short'),
-        Html::escape((string) $record->username) . ' (uid ' . (int) $record->uid . ')',
+        $this->buildUserLabel((int) $record->uid, (string) $record->username),
         Html::escape((string) $record->file_name) . ' (fid ' . (int) $record->fid . ')',
         ['data' => $this->buildMediaEditLink((int) $record->fid)],
         $this->formatAction((string) $record->action),
@@ -198,6 +198,26 @@ final class BypassAuditLogController extends ControllerBase {
       default:
         return (string) $this->t('Bypass updated');
     }
+  }
+
+  /**
+   * Builds user label in the format USER_EMAIL (ID).
+   */
+  private function buildUserLabel(int $uid, string $fallbackUsername): string {
+    $uid_label = (string) $uid;
+    if ($uid <= 0) {
+      return Html::escape($fallbackUsername !== '' ? $fallbackUsername : 'anonymous') . ' (' . $uid_label . ')';
+    }
+
+    $account = $this->entityTypeManager()->getStorage('user')->load($uid);
+    if ($account && method_exists($account, 'getEmail')) {
+      $email = trim((string) $account->getEmail());
+      if ($email !== '') {
+        return Html::escape($email) . ' (' . $uid_label . ')';
+      }
+    }
+
+    return Html::escape($fallbackUsername !== '' ? $fallbackUsername : 'user') . ' (' . $uid_label . ')';
   }
 
   /**
