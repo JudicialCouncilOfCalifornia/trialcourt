@@ -94,16 +94,6 @@ class SettingsForm extends ConfigFormBase {
       '#description' => $this->t('Only selected roles will see the bypass validation checkbox on media upload forms.'),
     ];
 
-    if ($this->isNewsroomSite()) {
-      $form['pdf_validation_bypass']['#access'] = FALSE;
-      $form['bypass_allowed_roles']['#access'] = FALSE;
-      $form['bypass_disabled_message'] = [
-        '#type' => 'item',
-        '#title' => $this->t('Manual bypass setting'),
-        '#markup' => $this->t('Manual PDF validation bypass is disabled for the newsroom site.'),
-      ];
-    }
-
     return parent::buildForm($form, $form_state);
   }
 
@@ -132,12 +122,6 @@ class SettingsForm extends ConfigFormBase {
     $selected_roles = array_values(array_filter($form_state->getValue('bypass_allowed_roles') ?? []));
     $bypass_enabled = (bool) $form_state->getValue('pdf_validation_bypass');
 
-    // Keep newsroom bypass disabled regardless of posted values.
-    if ($this->isNewsroomSite()) {
-      $bypass_enabled = FALSE;
-      $selected_roles = [];
-    }
-
     $this->config('jcc_pdf_upload_validation_checker.settings')
       ->set('pdf_validation_api', $form_state->getValue('pdf_validation_api'))
       ->set('equal_web_api_key', $form_state->getValue('equal_web_api_key'))
@@ -146,16 +130,6 @@ class SettingsForm extends ConfigFormBase {
       ->save();
 
     parent::submitForm($form, $form_state);
-  }
-
-  /**
-   * Determines if the current site is newsroom.
-   *
-   * @return bool
-   *   TRUE when running on the newsroom multisite.
-   */
-  protected function isNewsroomSite() {
-    return \Drupal::service('site.path') === 'sites/newsroom';
   }
 
 }

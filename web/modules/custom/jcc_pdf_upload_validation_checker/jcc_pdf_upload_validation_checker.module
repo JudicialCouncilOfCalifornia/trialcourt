@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
@@ -258,6 +259,7 @@ function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void
  */
 function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entity): void {
   if ($entity->getEntityTypeId() === 'file' && $entity instanceof FileInterface) {
+    _jcc_pdf_upload_validation_checker_apply_pending_bypass_update($entity);
     _jcc_pdf_upload_validation_checker_handle_same_fid_file_replace($entity);
     _jcc_pdf_upload_validation_checker_handle_file_audit_status_transition($entity);
     return;
@@ -708,8 +710,8 @@ function _jcc_pdf_upload_validation_checker_is_supported_media_form(string $form
 /**
  * Determines whether current user can manage the bypass flag.
  */
-function _jcc_pdf_upload_validation_checker_can_manage_bypass_flag(): bool {
-  $account = \Drupal::currentUser();
+function _jcc_pdf_upload_validation_checker_can_manage_bypass_flag(?AccountInterface $account = NULL): bool {
+  $account = $account ?? \Drupal::currentUser();
 
   // Site admins should always be able to use bypass controls.
   if ($account->hasPermission('administer site configuration')) {
@@ -726,6 +728,43 @@ function _jcc_pdf_upload_validation_checker_can_manage_bypass_flag(): bool {
   $user_roles = $account->getRoles();
 
   return (bool) array_intersect($allowed_roles, $user_roles);
+}
+
+/**
+ * Implements hook_menu_tree_alter().
+ */
+function jcc_pdf_upload_validation_checker_menu_tree_alter(array &$tree, $menu_name, RouteMatchInterface $route_match): void {
+  if (!in_array($menu_name, ['admin', 'tools'], TRUE)) {
+    return;
+  }
+
+  $bypass_enabled = (bool) \Drupal::config('jcc_pdf_upload_validation_checker.settings')->get('pdf_validation_bypass');
+  $can_manage_bypass = _jcc_pdf_upload_validation_checker_can_manage_bypass_flag();
+
+  if ($bypass_enabled && $can_manage_bypass) {
+    return;
+  }
+
+  _jcc_pdf_upload_validation_checker_remove_menu_link_recursive(
+    $tree,
+    'jcc_pdf_upload_validation_checker.bypass_audit_log'
+  );
+}
+
+/**
+ * Removes a menu link plugin and its subtree from a menu tree recursively.
+ */
+function _jcc_pdf_upload_validation_checker_remove_menu_link_recursive(array &$tree, string $plugin_id): void {
+  foreach ($tree as $index => &$item) {
+    if (($item->link->getPluginId() ?? '') === $plugin_id) {
+      unset($tree[$index]);
+      continue;
+    }
+
+    if (!empty($item->subtree) && is_array($item->subtree)) {
+      _jcc_pdf_upload_validation_checker_remove_menu_link_recursive($item->subtree, $plugin_id);
+    }
+  }
 }
 
 /**
@@ -1024,6 +1063,13 @@ function jcc_pdf_upload_validation_checker_media_file_delta_process(array $eleme
  * Submit handler: saves the bypass flag to the file entity.
  */
 function jcc_pdf_upload_validation_checker_save_bypass_flag(array &$form, FormStateInterface $form_state): void {
+  // Guard against duplicate execution when both form-level and action-level
+  // submit handlers run in the same request.
+  if ((bool) $form_state->get('jcc_pdf_bypass_processed')) {
+    return;
+  }
+  $form_state->set('jcc_pdf_bypass_processed', TRUE);
+
   if (!_jcc_pdf_upload_validation_checker_can_manage_bypass_flag()) {
     return;
   }
@@ -1049,10 +1095,15 @@ function jcc_pdf_upload_validation_checker_save_bypass_flag(array &$form, FormSt
       continue;
     }
 
+    $previous_bypass = (bool) $file->get('field_bypass_pdf_validation')->value;
+    $previous_reason = $file->hasField('field_bypass_reason')
+      ? (int) $file->get('field_bypass_reason')->target_id
+      : 0;
+
     $new_bypass = (bool) $bypass_value;
     $has_changes = FALSE;
 
-    if ((bool) $file->get('field_bypass_pdf_validation')->value !== $new_bypass) {
+    if ($previous_bypass !== $new_bypass) {
       $file->set('field_bypass_pdf_validation', $new_bypass);
       $has_changes = TRUE;
     }
@@ -1076,9 +1127,148 @@ function jcc_pdf_upload_validation_checker_save_bypass_flag(array &$form, FormSt
     }
 
     if ($has_changes) {
+      if ($file->isTemporary()) {
+        _jcc_pdf_upload_validation_checker_store_pending_bypass_update(
+          (int) $file->id(),
+          [
+            'new_bypass' => $new_bypass,
+            'new_reason' => (int) ($new_reason ?? 0),
+            'previous_bypass' => $previous_bypass,
+            'previous_reason' => $previous_reason,
+          ]
+        );
+        continue;
+      }
+
       $file->save();
+
+      _jcc_pdf_upload_validation_checker_log_bypass_event(
+        $file,
+        $new_bypass,
+        $new_reason ?? 0,
+        $previous_bypass,
+        $previous_reason
+      );
     }
   }
+}
+
+/**
+ * Stores a pending bypass update for a file id in private tempstore.
+ */
+function _jcc_pdf_upload_validation_checker_store_pending_bypass_update(int $fid, array $data): void {
+  if ($fid <= 0) {
+    return;
+  }
+
+  \Drupal::service('tempstore.private')
+    ->get('jcc_pdf_upload_validation_checker')
+    ->set('pending_bypass_update:' . $fid, $data);
+}
+
+/**
+ * Applies and clears any pending bypass update before file entity save.
+ */
+function _jcc_pdf_upload_validation_checker_apply_pending_bypass_update(FileInterface $file): void {
+  $fid = (int) $file->id();
+  if ($fid <= 0 || !$file->hasField('field_bypass_pdf_validation')) {
+    return;
+  }
+
+  $tempstore = \Drupal::service('tempstore.private')->get('jcc_pdf_upload_validation_checker');
+  $key = 'pending_bypass_update:' . $fid;
+  $pending = $tempstore->get($key);
+
+  if (!is_array($pending)) {
+    return;
+  }
+
+  $new_bypass = (bool) ($pending['new_bypass'] ?? FALSE);
+  $new_reason = (int) ($pending['new_reason'] ?? 0);
+  $previous_bypass = (bool) ($pending['previous_bypass'] ?? FALSE);
+  $previous_reason = (int) ($pending['previous_reason'] ?? 0);
+
+  $current_bypass = (bool) $file->get('field_bypass_pdf_validation')->value;
+  if ($current_bypass !== $new_bypass) {
+    $file->set('field_bypass_pdf_validation', $new_bypass);
+  }
+
+  if ($file->hasField('field_bypass_reason')) {
+    $current_reason = (int) $file->get('field_bypass_reason')->target_id;
+    if ($new_reason > 0 && $current_reason !== $new_reason) {
+      $file->set('field_bypass_reason', ['target_id' => $new_reason]);
+    }
+    elseif ($new_reason <= 0 && $current_reason !== 0) {
+      $file->set('field_bypass_reason', NULL);
+    }
+  }
+
+  _jcc_pdf_upload_validation_checker_log_bypass_event(
+    $file,
+    $new_bypass,
+    $new_reason,
+    $previous_bypass,
+    $previous_reason
+  );
+
+  $tempstore->delete($key);
+}
+
+/**
+ * Stores a bypass change event in the audit log table.
+ */
+function _jcc_pdf_upload_validation_checker_log_bypass_event(FileInterface $file, bool $new_bypass, int $new_reason, bool $previous_bypass, int $previous_reason): void {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+
+  if (!$schema->tableExists('jcc_pdf_bypass_audit_log')) {
+    return;
+  }
+
+  $action = 'updated';
+  if (!$previous_bypass && $new_bypass) {
+    $action = 'enabled';
+  }
+  elseif ($previous_bypass && !$new_bypass) {
+    $action = 'disabled';
+  }
+  elseif ($previous_reason !== $new_reason) {
+    $action = 'reason_updated';
+  }
+
+  $reason_label = '';
+  if ($new_reason > 0 && \Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    $terms = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadByProperties([
+        'tid' => $new_reason,
+        'vid' => 'bypass_reasons',
+      ]);
+
+    if ($terms) {
+      $term = reset($terms);
+      if ($term) {
+        $reason_label = (string) $term->label();
+      }
+    }
+  }
+
+  $account = \Drupal::currentUser();
+
+  $database->insert('jcc_pdf_bypass_audit_log')
+    ->fields([
+      'fid' => (int) $file->id(),
+      'uid' => (int) $account->id(),
+      'username' => (string) $account->getAccountName(),
+      'file_name' => (string) $file->getFilename(),
+      'action' => $action,
+      'bypass_enabled' => $new_bypass ? 1 : 0,
+      'reason_tid' => $new_reason > 0 ? $new_reason : NULL,
+      'reason_label' => $reason_label,
+      'site_path' => (string) \Drupal::service('site.path'),
+      'created' => (int) \Drupal::time()->getRequestTime(),
+    ])
+    ->execute();
 }
 
 /**
@@ -1246,7 +1436,12 @@ function jcc_pdf_upload_validation_checker_manual_check_ajax(array &$form, FormS
   // Persist file audit status if the field exists.
   if ($file->hasField('field_pdf_audit_status')) {
     $file->set('field_pdf_audit_status', $status);
-    $file->save();
+
+    // Avoid saving temporary files during managed_file workflows to prevent
+    // duplicate dedicated-field inserts in the same request lifecycle.
+    if (!$file->isTemporary()) {
+      $file->save();
+    }
   }
 
   $badge_build = [
@@ -1363,7 +1558,12 @@ function _jcc_pdf_upload_validation_checker_mark_new_pdfs_pending(MediaInterface
 
       if ($status !== 'pending') {
         $file->set('field_pdf_audit_status', 'pending');
-        $file->save();
+
+        // Defer persistence for temporary files until Drupal finalizes file
+        // entity writes for the request.
+        if (!$file->isTemporary()) {
+          $file->save();
+        }
       }
 
       $queue->createItem([
@@ -1403,7 +1603,12 @@ function _jcc_pdf_upload_validation_checker_normalize_temporary_upload_status(
   // Unknown/empty are fine.
   if ($status === 'pending') {
     $file->set('field_pdf_audit_status', 'unknown');
-    $file->save();
+
+    // Do not save temporary file entities from form processing callbacks.
+    // This state is only needed for current-request UI rendering.
+    if (!$file->isTemporary()) {
+      $file->save();
+    }
   }
 }
 

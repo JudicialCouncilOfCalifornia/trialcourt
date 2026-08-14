@@ -13,3 +13,11 @@ jcc_pdf_upload_validation_checker.details_modal:
     _title: 'Audit Summary from EqualWeb'
   requirements:
     _permission: 'access content'
+
+jcc_pdf_upload_validation_checker.bypass_audit_log:
+  path: '/admin/reports/jcc-pdf-bypass-audit-log'
+  defaults:
+    _controller: '\Drupal\jcc_pdf_upload_validation_checker\Controller\BypassAuditLogController::content'
+    _title: 'PDF Bypass Audit Log'
+  requirements:
+    _custom_access: '\Drupal\jcc_pdf_upload_validation_checker\Controller\BypassAuditLogController::access'

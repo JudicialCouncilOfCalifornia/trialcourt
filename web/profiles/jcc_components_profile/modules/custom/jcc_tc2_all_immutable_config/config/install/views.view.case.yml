@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.node.field_attorney_of_record
     - field.storage.node.field_case_number
     - field.storage.node.field_case_type
     - field.storage.node.field_department
@@ -278,6 +279,68 @@ display:
           settings:
             link: false
           group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_attorney_of_record:
+          id: field_attorney_of_record
+          table: node__field_attorney_of_record
+          field: field_attorney_of_record
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: 'Attorney of Record'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: basic_string
+          settings: {  }
+          group_column: value
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -817,6 +880,7 @@ display:
             field_hearing_date: field_hearing_date
             field_case_number: field_case_number
             field_party_name: field_party_name
+            field_attorney_of_record: field_attorney_of_record
             field_judge: field_judge
             field_hearing_type: field_hearing_type
             field_case_type: field_case_type
@@ -1003,6 +1067,7 @@ display:
             field_case_number: field_case_number
             field_party_name: field_party_name
             field_party_type: field_party_type
+            field_attorney_of_record: field_attorney_of_record
             field_judge: field_judge
             field_department: field_department
             field_hearing_type: field_hearing_type
@@ -1033,6 +1098,13 @@ display:
               responsive: ''
             field_party_type:
               sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: true
+              responsive: ''
+            field_attorney_of_record:
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
@@ -1112,6 +1184,7 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:field.storage.node.field_attorney_of_record'
         - 'config:field.storage.node.field_case_number'
         - 'config:field.storage.node.field_case_type'
         - 'config:field.storage.node.field_department'
@@ -1139,6 +1212,7 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:field.storage.node.field_attorney_of_record'
         - 'config:field.storage.node.field_case_number'
         - 'config:field.storage.node.field_case_type'
         - 'config:field.storage.node.field_department'

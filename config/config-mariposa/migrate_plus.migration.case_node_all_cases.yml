@@ -21,6 +21,7 @@ source:
   ids:
     - case_number
     - hearing_date_and_time
+    - hearing_type
   fields:
     -
       name: party_name
@@ -90,13 +91,12 @@ process:
       delimiter: ' / '
   field_party_type:
     -
-      plugin: skip_on_empty
-      source: party_type
-      method: row
-      message: 'No party type found.'
-    -
       plugin: callback
+      source: party_type
       callable: trim
+    -
+      plugin: default_value
+      default_value: 'Not available'
     -
       plugin: entity_generate
       bundle: case_party_type
