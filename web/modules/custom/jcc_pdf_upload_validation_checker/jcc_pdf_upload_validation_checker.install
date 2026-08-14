@@ -1,0 +1,233 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for JCC PDF upload validation checker.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
+
+/**
+ * Implements hook_schema().
+ */
+function jcc_pdf_upload_validation_checker_schema(): array {
+  $schema['jcc_pdf_bypass_audit_log'] = [
+    'description' => 'Stores audit records for PDF validation bypass changes.',
+    'fields' => [
+      'id' => [
+        'description' => 'Primary key.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'fid' => [
+        'description' => 'The file entity id.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uid' => [
+        'description' => 'The user id who changed bypass settings.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'username' => [
+        'description' => 'Username at the time of change.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'file_name' => [
+        'description' => 'File name at the time of change.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'action' => [
+        'description' => 'Type of bypass change event.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => 'updated',
+      ],
+      'bypass_enabled' => [
+        'description' => 'Whether bypass is enabled after the change.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'reason_tid' => [
+        'description' => 'Selected bypass reason term id.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+      ],
+      'reason_label' => [
+        'description' => 'Selected bypass reason label at the time of change.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'site_path' => [
+        'description' => 'Site path where the change was made.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'created' => [
+        'description' => 'Unix timestamp of the change.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'created' => ['created'],
+      'fid' => ['fid'],
+      'uid' => ['uid'],
+      'reason_tid' => ['reason_tid'],
+      'site_path' => ['site_path'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function jcc_pdf_upload_validation_checker_install(): void {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
+}
+
+/**
+ * Ensures bypass reasons vocabulary and default terms exist.
+ */
+function _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary(): void {
+  $vid = 'bypass_reasons';
+
+  if (!\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    return;
+  }
+
+  $vocabulary = Vocabulary::load($vid);
+  if (!$vocabulary) {
+    $vocabulary = Vocabulary::create([
+      'vid' => $vid,
+      'name' => 'Bypass Reasons',
+      'description' => 'Reasons for bypassing PDF validation checks.',
+    ]);
+    $vocabulary->save();
+  }
+
+  $default_terms = [
+    'Third Party Content Exception',
+    'Equivalent Accessible Version Confirmation',
+  ];
+
+  $existing = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties(['vid' => $vid]);
+
+  $existing_names = [];
+  foreach ($existing as $term) {
+    $existing_names[mb_strtolower($term->label())] = TRUE;
+  }
+
+  foreach ($default_terms as $term_name) {
+    if (isset($existing_names[mb_strtolower($term_name)])) {
+      continue;
+    }
+
+    Term::create([
+      'vid' => $vid,
+      'name' => $term_name,
+    ])->save();
+  }
+}
+
+/**
+ * Ensures bypass reason reference field exists on file entities.
+ */
+function _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field(): void {
+  $entity_type = 'file';
+  $bundle = 'file';
+  $field_name = 'field_bypass_reason';
+
+  if (!\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    return;
+  }
+
+  if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'taxonomy_term',
+      ],
+      'cardinality' => 1,
+      'translatable' => FALSE,
+    ])->save();
+  }
+
+  if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
+    FieldConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+      'label' => 'Bypass reason',
+      'required' => FALSE,
+      'settings' => [
+        'handler' => 'default:taxonomy_term',
+        'handler_settings' => [
+          'target_bundles' => [
+            'bypass_reasons' => 'bypass_reasons',
+          ],
+          'auto_create' => FALSE,
+        ],
+      ],
+    ])->save();
+  }
+}
+
+/**
+ * Create the Bypass Reasons vocabulary and default terms.
+ */
+function jcc_pdf_upload_validation_checker_update_9001(): string {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
+
+  return 'Created/updated Bypass Reasons taxonomy vocabulary and default terms.';
+}
+
+/**
+ * Create bypass reason reference field on file entities.
+ */
+function jcc_pdf_upload_validation_checker_update_9002(): string {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
+
+  return 'Created field_bypass_reason on file entities.';
+}
+
+/**
+ * Backfill bypass reasons vocabulary/field for already-enabled sites.
+ */
+function jcc_pdf_upload_validation_checker_update_9003(): string {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
+
+  return 'Ensured bypass reasons vocabulary, terms, and field exist.';
+}
+

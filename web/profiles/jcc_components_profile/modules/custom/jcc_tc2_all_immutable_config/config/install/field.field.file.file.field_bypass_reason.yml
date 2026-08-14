@@ -1,0 +1,26 @@
+uuid: 293aad65-51e5-4d75-bd6c-bc55ca4f6180
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.file.field_bypass_reason
+    - taxonomy.vocabulary.bypass_reasons
+  module:
+    - file
+id: file.file.field_bypass_reason
+field_name: field_bypass_reason
+entity_type: file
+bundle: file
+label: 'Bypass reason'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      bypass_reasons: bypass_reasons
+    auto_create: false
+field_type: entity_reference
