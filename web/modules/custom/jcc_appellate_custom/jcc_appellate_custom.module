@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Module hooks for jcc_appellate_custom.
+ */
+
+/**
+ * Job posts ultimate cron config callback.
+ */
+function jcc_appellate_custom_migrate_job_posts() {
+  $migration_id = 'appellate_node_job';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+}

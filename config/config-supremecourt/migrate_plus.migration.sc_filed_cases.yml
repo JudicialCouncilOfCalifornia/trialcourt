@@ -1,7 +1,7 @@
 uuid: 4e8b9136-a1a2-42ad-bc3a-00f1b6539e25
 langcode: en
 status: true
-dependencies: { }
+dependencies: {  }
 id: sc_filed_cases
 class: null
 field_plugin_method: null
@@ -17,24 +17,23 @@ source:
   data_parser_plugin: json
   urls: 'https://appellatecases.courtinfo.ca.gov/jobs/SCSevenDay.json'
   item_selector: /
-  
   fields:
     -
       name: src_case_number
       label: 'Case Number'
-      selector: '1/case_number'
+      selector: 1/case_number
     -
       name: src_case_title
       label: 'Case Title'
-      selector: '1/case_title'
+      selector: 1/case_title
     -
       name: src_case_type
       label: 'Case Type'
-      selector: '1/case_type'
+      selector: 1/case_type
     -
       name: src_init_date
       label: 'Initiation Date'
-      selector: '1/case_initiation'
+      selector: 1/case_initiation
   ids:
     src_case_number:
       type: string
@@ -42,28 +41,24 @@ process:
   type:
     plugin: default_value
     default_value: filed_cases
-  
   title: src_case_title
-  
   field_case_number: src_case_number
   field_case_type:
     plugin: entity_generate
     source: src_case_type
     value_key: name
-    bundle: case_type 
+    bundle: case_type
     entity_type: taxonomy_term
     ignore_case: true
-  
   field_case_initiation_date:
     plugin: format_date
     source: src_init_date
-    from_format: 'm/d/Y'
-    to_format: 'Y-m-d'
-
+    from_format: m/d/Y
+    to_format: Y-m-d
   uid:
     plugin: default_value
     default_value: 1
 destination:
   plugin: 'entity:node'
   default_bundle: filed_cases
-migration_dependencies: { }
+migration_dependencies: {  }

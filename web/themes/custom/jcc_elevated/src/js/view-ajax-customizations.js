@@ -1,16 +1,51 @@
-(function (Drupal) {
+(function (Drupal, once) {
   Drupal.behaviors.viewAjaxCustomizations = {
     attach: function (context, settings) {
-      if (context !== document) {
-        // Announce view region update occurrence.
-        const resultsView = document.querySelectorAll('.view-results');
-        const resultsCount = resultsView[0].querySelector('.cluster .views-results_content-header').textContent;
-        let message = Drupal.t('The view has been updated.');
-        if (resultsCount) {
-          message = Drupal.t('The view has been updated. Now showing @count.', { '@count': resultsCount.trim()});
+      function announce(message, priority) {
+        if (!message) {
+          return;
         }
-        Drupal.announce(message, 'assertive');
+
+        const level = priority === 'assertive' ? 'assertive' : 'polite';
+        const id = 'jcc-announce-' + level;
+        let region = document.getElementById(id);
+
+        if (!region) {
+          region = document.createElement('div');
+          region.id = id;
+          region.className = 'visually-hidden';
+          region.setAttribute('aria-live', level);
+          region.setAttribute('aria-atomic', 'true');
+          (document.body || document.documentElement).appendChild(region);
+        }
+
+        // Clear and repopulate only the message text to avoid duplicate announcements.
+        region.textContent = '';
+        window.setTimeout(function () {
+          region.textContent = message;
+        }, 50);
+      }
+
+      // Listen for event triggered by Views AJAX.
+      // Anonymous user support only.
+      if (context !== document) {
+        // Announce view update occurrence.
+        let message = Drupal.t('The view has been updated.');
+
+        // Check if the view has a results count.
+        // Should be the one selector pattern but can list others.
+        const resultsViews = [
+          '.view-results',
+        ];
+        const resultsView = context.querySelectorAll(resultsViews.join(', '));
+        if (resultsView.length > 0) {
+          const resultsCount = resultsView[0].querySelector('.cluster .views-results_content-header').textContent;
+          if (resultsCount) {
+            message = message + Drupal.t(' Now showing @count.', { '@count': resultsCount.trim()});
+          }
+        }
+        announce(message, 'assertive');
       }
     }
   };
-})(Drupal);
+})(Drupal, once);

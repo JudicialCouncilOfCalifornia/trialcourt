@@ -149,29 +149,44 @@ const mapLinkItems = document.querySelectorAll(".zcs-map-link__item");
 });
 
 /**
- * Trigger hover of svg when link is hovered.
+ * Dim every district except the one matching the given link name, so the
+ * active district's counties stand out on the map.
+ *
+ * @param {string} linkName - The link's name attribute (e.g. "District_1"),
+ *   which matches the corresponding svg group's id.
  */
-['mouseover','mouseout'].forEach((evt) => {
+const dimOtherDistricts = (linkName) => {
+  const svgItem = document.getElementById(linkName);
+  svgGroups.forEach((svgGroupItem) => {
+    if (svgGroupItem !== svgItem) {
+      svgGroupItem.classList.add('not-hovered');
+    }
+  });
+};
+
+/**
+ * Clear the map dimming applied by dimOtherDistricts().
+ */
+const clearDimmedDistricts = () => {
+  svgGroups.forEach((svgGroupItem) => svgGroupItem.classList.remove('not-hovered'));
+};
+
+/**
+ * Highlight the matching district on the map when its link is hovered (mouse)
+ * or focused (keyboard), so keyboard users get the same visual feedback as
+ * mouse users.
+ */
+['mouseover','mouseout','focus','blur'].forEach((evt) => {
   mapLinkItems.forEach((targetMapLink) => {
     targetMapLink.addEventListener(evt, (e) => {
-
       const linkName = targetMapLink.getAttribute('name');
-      const svgItem = document.getElementById(linkName);
 
-      if (e.type === "mouseover") {
-        svgGroups.forEach((svgGroupItem) => {
-          if (svgGroupItem !== svgItem) {
-            svgGroupItem.classList.add('not-hovered');
-          }
-        });
+      if (e.type === "mouseover" || e.type === "focus") {
+        dimOtherDistricts(linkName);
       }
 
-      if (e.type === "mouseout") {
-        svgGroups.forEach((svgGroupItem) => {
-          if (svgGroupItem !== svgItem) {
-            svgGroupItem.classList.remove('not-hovered');
-          }
-        });
+      if (e.type === "mouseout" || e.type === "blur") {
+        clearDimmedDistricts();
       }
     });
   });

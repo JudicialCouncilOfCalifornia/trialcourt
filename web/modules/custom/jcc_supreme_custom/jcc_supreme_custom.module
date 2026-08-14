@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Module hooks for jcc_supreme_custom.
+ */
+
+/**
+ * Case filings ultimate cron config callback.
+ */
+function jcc_supreme_custom_migrate_case_filings() {
+  $migration_id = 'sc_filed_cases';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, FALSE);
+}
