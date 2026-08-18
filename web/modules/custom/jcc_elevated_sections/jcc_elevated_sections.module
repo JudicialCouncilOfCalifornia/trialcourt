@@ -336,6 +336,7 @@ function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $
       'url' => $home_url->setOption('set_active_class', $active),
       'attributes' => [],
       'active' => $active,
+      'is_current' => $active,
       'links' => [],
     ];
   }
@@ -346,6 +347,7 @@ function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $
 
       $active = $menu_data['url']->getOption('set_active_class');
       $menu_item_relative_url = $menu_data['url']->toString();
+      $is_current = $current_relative_url == $menu_item_relative_url;
 
       $section_link = [];
       $sublinks = $menu_data['below'] ? jcc_elevated_sections_build_menu_tree($menu_data['below']) : [];
@@ -364,6 +366,7 @@ function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $
           'url' => $menu_data['url']->setOption('set_active_class', $active),
           'attributes' => !empty($menu_data['attributes']->toArray()) ? $menu_data['attributes']->toArray() : [],
           'active' => $active,
+          'is_current' => $is_current,
           'is_overview_link' => TRUE,
           'links' => [],
         ];
@@ -375,6 +378,7 @@ function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $
         'url' => $menu_data['url'],
         'attributes' => !empty($menu_data['attributes']->toArray()) ? $menu_data['attributes']->toArray() : [],
         'active' => $active,
+        'is_current' => $is_current,
         'links' => $sublinks,
         'section_link' => $section_link,
       ];

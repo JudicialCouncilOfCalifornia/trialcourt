@@ -214,6 +214,18 @@ function jcc_elevated_get_menu_array(string $menu_name, bool $expanded = FALSE, 
  */
 function jcc_elevated_menu_to_array(array $tree, string $menu_name, bool $add_overview_links = FALSE, bool $expanded = FALSE): array {
   $links = [];
+  static $current_plugin_ids = [];
+  if (!array_key_exists($menu_name, $current_plugin_ids)) {
+    $menu_active_trail = \Drupal::service('menu.active_trail')->getActiveTrailIds($menu_name);
+    $current_plugin_ids[$menu_name] = NULL;
+    foreach ($menu_active_trail as $plugin_id) {
+      if (!empty($plugin_id)) {
+        $current_plugin_ids[$menu_name] = $plugin_id;
+        break;
+      }
+    }
+  }
+  $current_plugin_id = $current_plugin_ids[$menu_name];
 
   foreach ($tree as $element) {
     // Don't include links the user doesn't have access to.
@@ -221,30 +233,33 @@ function jcc_elevated_menu_to_array(array $tree, string $menu_name, bool $add_ov
       continue;
     }
 
+    $is_current = $current_plugin_id !== NULL && $element->link->getPluginId() === $current_plugin_id;
+
     // Build the sublinks array.
     $sublinks = [];
     $section_link = [];
-    if ($expanded && $element->depth = 1 && $element->hasChildren && $add_overview_links) {
+
+    if ($expanded && $element->depth == 1 && $element->hasChildren && $add_overview_links) {
       $sublinks = jcc_elevated_menu_to_array($element->subtree, $menu_name, $add_overview_links);
 
       $section_link = [
         'text' => $element->link->getTitle(),
         'url' => $element->link->getUrlObject(),
-        'is_current' => $element->inActiveTrail,
+        'is_current' => $is_current,
         'is_overview_link' => TRUE,
         'links' => [],
       ];
 
       array_unshift($sublinks, $section_link);
     }
-    elseif ($expanded && $element->depth = 1 && $element->hasChildren) {
+    elseif ($expanded && $element->depth == 1 && $element->hasChildren) {
       $sublinks = jcc_elevated_menu_to_array($element->subtree, $menu_name, $add_overview_links);
     }
 
     $links[] = [
       'text' => $element->link->getTitle(),
       'url' => $element->link->getUrlObject(),
-      'is_current' => $element->inActiveTrail,
+      'is_current' => $is_current,
       'is_overview_link' => FALSE,
       'links' => $sublinks,
       'section_link' => $section_link,
