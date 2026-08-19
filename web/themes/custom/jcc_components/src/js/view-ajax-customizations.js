@@ -26,16 +26,6 @@
         }, 50);
       }
 
-      function docReady(fn) {
-        // See if DOM is already available.
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-          // Call on next available tick.
-          setTimeout(fn, 1);
-        } else {
-          document.addEventListener('DOMContentLoaded', fn);
-        }
-      }
-
       // Listen for event triggered by Views AJAX.
       // Anonymous user support only.
       if (context !== document) {
