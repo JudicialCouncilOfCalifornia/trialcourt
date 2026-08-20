@@ -25,26 +25,56 @@
           region.textContent = message;
         }, 50);
       }
-   
-      // Listen for event triggered by Views AJAX.
-      if (context !== document) {
-        if (once('jcc-view-ajax-announce', context).length === 0) {
-          return;
-        }
+
+      function announceMessage(customMsg) {
         // Announce view update occurrence.
         let message = Drupal.t('The view has been updated.');
-        // Check if the view has a results count.
-        const resultsViews = [
-          '.jcc-news-listing__content',
-        ];
-        const resultsView = context.querySelectorAll(resultsViews);
-        if (resultsView.length > 0) {
-          const resultsCount = resultsView[0].querySelector('.jcc-listing_result').textContent;
-          if (resultsCount) {
-            message = message + Drupal.t(' Now showing @count.', { '@count': resultsCount.trim()});
+
+        // If any context can be provided.
+        if (customMsg) {
+          message = customMsg;
+        }
+
+        announce(message, 'assertive');
+      }
+
+      // Listen for event triggered by Views AJAX.
+      // Anonymous user support only.
+      if (context !== document) {
+        if (context.className.includes('fc-view')) {
+          // If calendar view is in use.
+          const calendar = document.querySelector('.js-drupal-fullcalendar');
+          // Announce when Ajax is triggered by any control.
+          // This also prevents the announce on page load.
+          const ctrlSelectors = [
+            'button',
+            '.fc-day-header a',
+            '.fc-list-heading .fc-widget-header a'
+          ];
+          const calendarControls = calendar.querySelectorAll(ctrlSelectors.join(', '));
+          for (let control of calendarControls) {
+            control.addEventListener('click', (event) => {
+              announceMessage(Drupal.t('The calendar view has been updated.'));
+            });
           }
         }
-        announce(message, 'assertive');
+        else {
+          let message = null;
+          const viewElements = context.children;
+          const headingSelectors = [
+            'view__header',
+          ];
+          for (let element of viewElements) {
+            if (element.className.includes(headingSelectors.join(', '))) {
+              if (element && element.textContent) {
+                message = Drupal.t(element.textContent + ' view has been updated.');
+                break;
+              }
+            }
+          }
+
+          announceMessage(message);
+        }
       }
     }
   };
