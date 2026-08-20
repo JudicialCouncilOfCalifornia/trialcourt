@@ -299,6 +299,13 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
 
     \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('Cron processing PDF validation on fid=@fid', ['@fid' => $fid]);
 
+    // Move from unknown to pending only when cron actually starts processing.
+    $current_status = (string) $file->get('field_pdf_audit_status')->value;
+    if ($current_status !== 'pending') {
+      $file->set('field_pdf_audit_status', 'pending');
+      $file->save();
+    }
+
     try {
       // Read file bytes from URI.
       $result = $this->pdfAuditRunner->auditFile($file);

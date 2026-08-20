@@ -520,7 +520,12 @@ final class PdfAuditRunner {
         $ruleId = (string) ($item['rule_id'] ?? '');
         $errorCount = (int) ($item['error'] ?? 0);
         $warningCount = (int) ($item['warning'] ?? 0);
-        $severity = (int) ($item['severity'] ?? $item['Severity'] ?? 0);
+        $wcagLevel = trim((string) (
+          $item['wcag_level']
+          ?? $item['wcagLevel']
+          ?? $item['wcag']
+          ?? ''
+        ));
 
         if ($errorCount > 0) {
           $failedRuleCount++;
@@ -532,10 +537,14 @@ final class PdfAuditRunner {
           if ($description !== '') {
             $label .= ' — ' . $description;
           }
-          $label .= ' [errors: ' . $errorCount . ', severity: ' . $severity . ']';
+          $label .= ' [errors: ' . $errorCount;
+          if ($wcagLevel !== '') {
+            $label .= ', wcag_level: ' . $wcagLevel;
+          }
+          $label .= ']';
 
-          // Blocking rule: the same check item must have error >= 1 and severity >= 3.
-          if ($severity >= 3) {
+          // Blocking rule: same check item must have errors and a WCAG level.
+          if ($wcagLevel !== '') {
             $blockingRuleMatches++;
             $blockingErrorCount += $errorCount;
             $errors[] = $label;
@@ -569,7 +578,7 @@ final class PdfAuditRunner {
       $recognizedSignal = TRUE;
     }
 
-    // Only this rule blocks validation: same item has error >= 1 and severity >= 3.
+    // Only this rule blocks validation: same item has errors and WCAG level.
     $passed = $recognizedSignal && $blockingRuleMatches === 0;
 
     if (!$recognizedSignal) {
@@ -582,7 +591,7 @@ final class PdfAuditRunner {
     if ($passed) {
       if ($nonBlockingRuleMatches > 0 || $needsManualCheck > 0) {
         $summaryText = sprintf(
-          "PDF passed validation.\n\nSome accessibility issues are not blocking but should be corrected when possible.\n- Non-blocking issues: %d\n- Manual review items: %d\n\nRule: issues with error / severity level of \"Critical\", \"High\", \"Medium\" or \"Low\" will cause your PDF to fail validation. See the full report linked above for results of the validation check.",
+          "PDF passed validation.\n\nSome accessibility issues are not blocking but should be corrected when possible.\n- Non-blocking issues: %d\n- Manual review items: %d\n\nRule: a check blocks validation only when it doesn't meet WCAG standards (A or AA) See the full report linked above for results of the validation check.",
           $nonBlockingRuleMatches,
           $needsManualCheck
         );
@@ -593,7 +602,7 @@ final class PdfAuditRunner {
     }
     else {
       $summaryText = sprintf(
-        "PDF did not pass validation.\n\nPlease fix the blocking accessibility issues and re-upload.\n- Blocking issues: %d\n- Error instances: %d\n\nRule: issues with error / severity level of \"Critical\", \"High\", \"Medium\" or \"Low\" will cause your PDF to fail validation. See the full report linked above for results of the validation check.",
+        "PDF did not pass validation.\n\nPlease fix the blocking accessibility issues and re-upload.\n- Blocking issues: %d\n- Error instances: %d\n\nRule: a check blocks validation only when it doesn't meet WCAG standards (A or AA) See the full report linked above for results of the validation check.",
         $blockingRuleMatches,
         $blockingErrorCount
       );

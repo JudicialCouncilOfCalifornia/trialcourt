@@ -14,6 +14,13 @@ use Drupal\taxonomy\Entity\Vocabulary;
  * Implements hook_schema().
  */
 function jcc_pdf_upload_validation_checker_schema(): array {
+  return [];
+}
+
+/**
+ * Returns schema for the bypass audit log table.
+ */
+function _jcc_pdf_upload_validation_checker_audit_log_table_schema(): array {
   $schema['jcc_pdf_bypass_audit_log'] = [
     'description' => 'Stores audit records for PDF validation bypass changes.',
     'fields' => [
@@ -101,15 +108,31 @@ function jcc_pdf_upload_validation_checker_schema(): array {
     ],
   ];
 
-  return $schema;
+  return $schema['jcc_pdf_bypass_audit_log'];
 }
 
 /**
  * Implements hook_install().
  */
 function jcc_pdf_upload_validation_checker_install(): void {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_audit_log_table();
   _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
   _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
+}
+
+/**
+ * Ensures bypass audit log table exists.
+ */
+function _jcc_pdf_upload_validation_checker_ensure_bypass_audit_log_table(): void {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $table = 'jcc_pdf_bypass_audit_log';
+
+  if ($schema->tableExists($table)) {
+    return;
+  }
+
+  $schema->createTable($table, _jcc_pdf_upload_validation_checker_audit_log_table_schema());
 }
 
 /**
@@ -225,9 +248,19 @@ function jcc_pdf_upload_validation_checker_update_9002(): string {
  * Backfill bypass reasons vocabulary/field for already-enabled sites.
  */
 function jcc_pdf_upload_validation_checker_update_9003(): string {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_audit_log_table();
   _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
   _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
 
-  return 'Ensured bypass reasons vocabulary, terms, and field exist.';
+  return 'Ensured bypass audit log table, bypass reasons vocabulary, terms, and field exist.';
+}
+
+/**
+ * Ensure bypass audit log table exists for environments that missed install.
+ */
+function jcc_pdf_upload_validation_checker_update_9005(): string {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_audit_log_table();
+
+  return 'Ensured jcc_pdf_bypass_audit_log table exists.';
 }
 

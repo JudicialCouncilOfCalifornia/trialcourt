@@ -259,6 +259,7 @@ function _jcc_pdf_upload_validation_checker_queue(EntityInterface $entity): void
  */
 function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entity): void {
   if ($entity->getEntityTypeId() === 'file' && $entity instanceof FileInterface) {
+    _jcc_pdf_upload_validation_checker_apply_pending_audit_status_update($entity);
     _jcc_pdf_upload_validation_checker_apply_pending_bypass_update($entity);
     _jcc_pdf_upload_validation_checker_handle_same_fid_file_replace($entity);
     _jcc_pdf_upload_validation_checker_handle_file_audit_status_transition($entity);
@@ -1127,29 +1128,47 @@ function jcc_pdf_upload_validation_checker_save_bypass_flag(array &$form, FormSt
     }
 
     if ($has_changes) {
-      if ($file->isTemporary()) {
+      $new_reason = (int) ($new_reason ?? 0);
+      if (_jcc_pdf_upload_validation_checker_can_save_file_bypass_now($file)) {
+        $file->save();
+
+        _jcc_pdf_upload_validation_checker_log_bypass_event(
+          $file,
+          $new_bypass,
+          $new_reason,
+          $previous_bypass,
+          $previous_reason
+        );
+      }
+      else {
         _jcc_pdf_upload_validation_checker_store_pending_bypass_update(
           (int) $file->id(),
           [
             'new_bypass' => $new_bypass,
-            'new_reason' => (int) ($new_reason ?? 0),
+            'new_reason' => $new_reason,
             'previous_bypass' => $previous_bypass,
             'previous_reason' => $previous_reason,
           ]
         );
-        continue;
       }
-
-      $file->save();
-
-      _jcc_pdf_upload_validation_checker_log_bypass_event(
-        $file,
-        $new_bypass,
-        $new_reason ?? 0,
-        $previous_bypass,
-        $previous_reason
-      );
     }
+  }
+}
+
+/**
+ * Returns TRUE when bypass updates can be saved immediately on file entity.
+ */
+function _jcc_pdf_upload_validation_checker_can_save_file_bypass_now(FileInterface $file): bool {
+  if ($file->isTemporary()) {
+    return FALSE;
+  }
+
+  try {
+    $usage = \Drupal::service('file.usage')->listUsage($file);
+    return !empty($usage);
+  }
+  catch (\Throwable $e) {
+    return FALSE;
   }
 }
 
@@ -1436,12 +1455,7 @@ function jcc_pdf_upload_validation_checker_manual_check_ajax(array &$form, FormS
   // Persist file audit status if the field exists.
   if ($file->hasField('field_pdf_audit_status')) {
     $file->set('field_pdf_audit_status', $status);
-
-    // Avoid saving temporary files during managed_file workflows to prevent
-    // duplicate dedicated-field inserts in the same request lifecycle.
-    if (!$file->isTemporary()) {
-      $file->save();
-    }
+    _jcc_pdf_upload_validation_checker_store_pending_audit_status_update((int) $file->id(), $status);
   }
 
   $badge_build = [
@@ -1501,6 +1515,44 @@ function jcc_pdf_upload_validation_checker_manual_check_ajax(array &$form, FormS
 }
 
 /**
+ * Stores a pending manual audit status update for a file id in tempstore.
+ */
+function _jcc_pdf_upload_validation_checker_store_pending_audit_status_update(int $fid, string $status): void {
+  if ($fid <= 0 || !in_array($status, ['pending', 'pass', 'fail', 'unknown'], TRUE)) {
+    return;
+  }
+
+  \Drupal::service('tempstore.private')
+    ->get('jcc_pdf_upload_validation_checker')
+    ->set('pending_audit_status_update:' . $fid, ['status' => $status]);
+}
+
+/**
+ * Applies and clears any pending manual audit status update before file save.
+ */
+function _jcc_pdf_upload_validation_checker_apply_pending_audit_status_update(FileInterface $file): void {
+  $fid = (int) $file->id();
+  if ($fid <= 0 || !$file->hasField('field_pdf_audit_status')) {
+    return;
+  }
+
+  $tempstore = \Drupal::service('tempstore.private')->get('jcc_pdf_upload_validation_checker');
+  $key = 'pending_audit_status_update:' . $fid;
+  $pending = $tempstore->get($key);
+
+  if (!is_array($pending)) {
+    return;
+  }
+
+  $new_status = (string) ($pending['status'] ?? '');
+  if (in_array($new_status, ['pending', 'pass', 'fail', 'unknown'], TRUE)) {
+    $file->set('field_pdf_audit_status', $new_status);
+  }
+
+  $tempstore->delete($key);
+}
+
+/**
  * Marks newly attached or replaced PDF files as pending on media save and queues them.
  */
 function _jcc_pdf_upload_validation_checker_mark_new_pdfs_pending(MediaInterface $entity, ?MediaInterface $original = NULL): void {
@@ -1556,14 +1608,11 @@ function _jcc_pdf_upload_validation_checker_mark_new_pdfs_pending(MediaInterface
         continue;
       }
 
-      if ($status !== 'pending') {
-        $file->set('field_pdf_audit_status', 'pending');
+      if ($status !== 'unknown') {
+        $file->set('field_pdf_audit_status', 'unknown');
 
-        // Defer persistence for temporary files until Drupal finalizes file
-        // entity writes for the request.
-        if (!$file->isTemporary()) {
-          $file->save();
-        }
+        // Defer persistence until file entity writes complete for the request.
+        _jcc_pdf_upload_validation_checker_store_pending_audit_status_update((int) $file->id(), 'unknown');
       }
 
       $queue->createItem([
@@ -1571,7 +1620,7 @@ function _jcc_pdf_upload_validation_checker_mark_new_pdfs_pending(MediaInterface
       ]);
 
       \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-        'Set PDF audit status to pending and queued audit for fid=@fid on media @mid field @field',
+        'Set PDF audit status to unknown and queued audit for fid=@fid on media @mid field @field',
         [
           '@fid' => $fid,
           '@mid' => $entity->id() ?: 'new',
@@ -1603,12 +1652,6 @@ function _jcc_pdf_upload_validation_checker_normalize_temporary_upload_status(
   // Unknown/empty are fine.
   if ($status === 'pending') {
     $file->set('field_pdf_audit_status', 'unknown');
-
-    // Do not save temporary file entities from form processing callbacks.
-    // This state is only needed for current-request UI rendering.
-    if (!$file->isTemporary()) {
-      $file->save();
-    }
   }
 }
 
@@ -1643,19 +1686,19 @@ function _jcc_pdf_upload_validation_checker_handle_same_fid_file_replace(FileInt
   $old_status = (string) $original->get('field_pdf_audit_status')->value;
   $new_status = (string) $file->get('field_pdf_audit_status')->value;
 
-  // Avoid re-queueing if this same save already moved it to pending.
-  if ($old_status === 'pending' && $new_status === 'pending') {
+  // Avoid re-queueing if this same save already moved it to unknown.
+  if ($old_status === 'unknown' && $new_status === 'unknown') {
     return;
   }
 
-  $file->set('field_pdf_audit_status', 'pending');
+  $file->set('field_pdf_audit_status', 'unknown');
 
   \Drupal::queue('jcc_pdf_upload_validation_checker_pdf_audit')->createItem([
     'fid' => (int) $file->id(),
   ]);
 
   \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
-    'Detected same-fid PDF replacement for fid=@fid via size change @old_size=>@new_size; set status to pending and queued audit.',
+    'Detected same-fid PDF replacement for fid=@fid via size change @old_size=>@new_size; set status to unknown and queued audit.',
     [
       '@fid' => (int) $file->id(),
       '@old_size' => (int) $original->getSize(),
