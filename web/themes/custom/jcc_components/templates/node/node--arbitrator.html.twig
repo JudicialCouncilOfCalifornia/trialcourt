@@ -126,21 +126,21 @@
         <p>MI:{{mi}}</p>
       </div>
     {%endif%}
+    {# ADA-354: Single-column presentational tables replaced with <ul> lists.
+       Layout tables misrepresent document structure to assistive technology
+       (WCAG 1.3.1 Info and Relationships); these values are simple lists, not
+       tabular data. #}
     {% set linksArray = content.field_foreign_language %}
     {% if linksArray.0 %}
       <div class="arbitrator-links-table jcc-section">
         <h2>Foreign language</h2>
-        <table class="arbitrator-table-custom">
-          <tbody>
+        <ul>
           {% for linkData in linksArray %}
             {% if linkData['#url'] %}
-              <tr>
-                <td>{{ linkData['#title'] }}</td>
-              </tr>
+              <li>{{ linkData['#title'] }}</li>
             {% endif %}
           {% endfor %}
-          </tbody>
-        </table>
+        </ul>
       </div>
     {% endif %}
     {% set linksArray = content.field_language_other %}
@@ -148,17 +148,13 @@
       {% if linksArray.0 %}
         <div class="links-table jcc-section">
           <h2>Other language</h2>
-          <table class="arbitrator-table-custom">
-            <tbody>
+          <ul>
             {% for linkData in linksArray %}
               {% if linkData.value %}
-                <tr>
-                  <td>{{linkData.value }}</td>
-                </tr>
+                <li>{{ linkData.value }}</li>
               {% endif %}
             {% endfor %}
-            </tbody>
-          </table>
+          </ul>
         </div>
       {% endif %}
     {% endif %}
@@ -195,34 +191,26 @@
     {% if linksArray.0 %}
       <div class="links-table jcc-section">
         <h2>Process</h2>
-        <table class="arbitrator-table-custom">
-          <tbody>
+        <ul>
           {% for linkData in linksArray %}
             {% if linkData.value %}
-              <tr>
-                <td>{{linkData.value }}</td>
-              </tr>
+              <li>{{ linkData.value }}</li>
             {% endif %}
           {% endfor %}
-          </tbody>
-        </table>
+        </ul>
       </div>
     {% endif %}
     {% set linksArray =content.field_adr_process %}
     {% if linksArray.0 %}
       <div class="links-table jcc-section">
         <h2>ADR Process</h2>
-        <table class="arbitrator-table-custom">
-          <tbody>
+        <ul>
           {% for linkData in linksArray %}
             {% if linkData.value %}
-              <tr>
-                <td>{{linkData.value }}</td>
-              </tr>
+              <li>{{ linkData.value }}</li>
             {% endif %}
           {% endfor %}
-          </tbody>
-        </table>
+        </ul>
       </div>
     {% endif %}
 
@@ -230,17 +218,13 @@
     {% if linksArray.0 %}
       <div class="links-table jcc-section">
         <h2>Subject Matter</h2>
-        <table class="arbitrator-table-custom">
-          <tbody>
+        <ul>
           {% for linkData in linksArray %}
             {% if linkData['#url'] %}
-              <tr>
-                <td>{{ linkData['#title'] }}</td>
-              </tr>
+              <li>{{ linkData['#title'] }}</li>
             {% endif %}
           {% endfor %}
-          </tbody>
-        </table>
+        </ul>
       </div>
     {% endif %}
 
@@ -249,17 +233,13 @@
       {% if linksArray.0 %}
         <div class="links-table jcc-section">
           <h2>Subject Matter Other</h2>
-          <table class="arbitrator-table-custom">
-            <tbody>
+          <ul>
             {% for linkData in linksArray %}
               {% if linkData.value %}
-                <tr>
-                  <td>{{ linkData.value }}</td>
-                </tr>
+                <li>{{ linkData.value }}</li>
               {% endif %}
             {% endfor %}
-            </tbody>
-          </table>
+          </ul>
         </div>
       {% endif %}
     {% endif %}
@@ -269,17 +249,13 @@
     {% if linksArray.0 %}
       <div class="links-table jcc-section">
         <h2>Area of Law</h2>
-        <table class="arbitrator-table-custom">
-          <tbody>
+        <ul>
           {% for linkData in linksArray %}
             {% if linkData['#url'] %}
-              <tr>
-                <td>{{ linkData['#title'] }}</td>
-              </tr>
+              <li>{{ linkData['#title'] }}</li>
             {% endif %}
           {% endfor %}
-          </tbody>
-        </table>
+        </ul>
       </div>
     {% endif %}
   {% endblock %}
