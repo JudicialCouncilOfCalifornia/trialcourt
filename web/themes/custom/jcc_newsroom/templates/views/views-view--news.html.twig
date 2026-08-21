@@ -50,6 +50,16 @@
     {% endif %}
   {% endblock %}
 
+  {% block page_title %}
+    {% if display_id == 'page_1' %}
+      {% include '@jcc_base/_includes/section-hero.html.twig' with {
+        background_variant: "has-background-color--none",
+        title: 'News & Features'|t,
+        breadcrumbs: 'disabled'
+      } %}
+    {% endif %}
+  {% endblock %}
+
   {% block header %}
     {% if header %}
       <div class="view__header grid-container-widescreen margin-top-6">

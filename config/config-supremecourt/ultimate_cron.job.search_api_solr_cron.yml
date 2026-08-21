@@ -1,0 +1,17 @@
+uuid: 9686c86b-1a4d-44f3-8ed5-0d2c1e9df732
+langcode: en
+status: true
+dependencies:
+  module:
+    - search_api_solr
+title: 'Optimize Solr servers'
+id: search_api_solr_cron
+weight: 0
+module: search_api_solr
+callback: 'search_api_solr#cron'
+scheduler:
+  id: simple
+launcher:
+  id: serial
+logger:
+  id: database

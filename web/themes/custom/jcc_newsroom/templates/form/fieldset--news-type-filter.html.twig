@@ -1,0 +1,49 @@
+{#
+/**
+ * @file
+ * Theme override for the "Filter by News Type" exposed filter fieldset.
+ *
+ * ADA-330: Identical to jcc_base fieldset.html.twig except the legend text is
+ * wrapped in an <h2> so the filter section appears in the page's heading
+ * outline (WCAG 1.3.1). Heading elements are valid inside <legend>.
+ */
+#}
+{%
+  set classes = [
+    'js-form-item',
+    'form-item',
+    'js-form-wrapper',
+    'form-wrapper',
+    'usa-fieldset',
+  ]
+%}
+<fieldset{{ attributes.addClass(classes) }}>
+  {%
+    set legend_span_classes = [
+      'fieldset-legend',
+      required ? 'js-form-required',
+      required ? 'form-required',
+    ]
+  %}
+  {# The legend text doubles as a document heading for the filter section. #}
+  <legend{{ legend.attributes.addClass('usa-legend', 'jcc-form-group__title') }}>
+    <h2{{ legend_span.attributes.addClass(legend_span_classes) }}>{{ legend.title }}</h2>
+  </legend>
+  <div class="fieldset-wrapper">
+    {% if errors %}
+      <div class="form-item--error-message usa-error-message">
+        <strong>{{ errors }}</strong>
+      </div>
+    {% endif %}
+    {% if prefix %}
+      <span class="field-prefix">{{ prefix }}</span>
+    {% endif %}
+    {{ children }}
+    {% if suffix %}
+      <span class="field-suffix">{{ suffix }}</span>
+    {% endif %}
+    {% if description.content %}
+      <div{{ description.attributes.addClass('description', 'usa-hint') }}>{{ description.content }}</div>
+    {% endif %}
+  </div>
+</fieldset>
