@@ -23,12 +23,12 @@ function jcc_base_preprocess_block__views_block__news_block_2(&$variables) {
       $url = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $row->_entity->nid->value);
 
       // Placeholder if no image available.
-      $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><div class="placeholder-photo"><span class="fas fa-camera" aria-label="Camera icon indicating no image provided"></span></div></a>');
+      $img_elem = Markup::create('<div class="placeholder-photo"><span class="fas fa-camera" aria-label="Camera icon indicating no image provided"></span></div>');
 
       if (isset($row->_entity->field_images)) {
         $first_image = _jcc_get_first_image($row->_entity);
         if ($first_image) {
-          $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $first_image['url'] . '" alt="' . $first_image['alt'] . '"></a>');
+          $img_elem = Markup::create('<img src="' . $first_image['url'] . '" alt="' . $first_image['alt'] . '">');
         }
       }
 
