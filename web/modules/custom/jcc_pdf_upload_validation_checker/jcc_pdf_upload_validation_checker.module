@@ -776,10 +776,16 @@ function _jcc_pdf_upload_validation_checker_get_bypass_reason_options(): array {
     return [];
   }
 
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $terms = $storage->loadTree('bypass_reasons');
+
+  // Self-heal missing bypass terms (site drift after config imports/resets).
+  if (empty($terms)) {
+    _jcc_pdf_upload_validation_checker_run_bypass_setup();
+    $terms = $storage->loadTree('bypass_reasons');
+  }
+
   $options = [];
-  $terms = \Drupal::entityTypeManager()
-    ->getStorage('taxonomy_term')
-    ->loadTree('bypass_reasons');
 
   foreach ($terms as $term) {
     $options[(int) $term->tid] = $term->name;
@@ -824,7 +830,18 @@ function _jcc_pdf_upload_validation_checker_get_bypass_reason_descriptions(): ar
  */
 function _jcc_pdf_upload_validation_checker_build_bypass_reason_element(FileInterface $file, int $fid, int $weight): array {
   if (!$file->hasField('field_bypass_reason')) {
-    return [];
+    _jcc_pdf_upload_validation_checker_run_bypass_setup();
+
+    // Field definitions can be stale for entities loaded before setup ran.
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+    $reloaded = File::load((int) $file->id());
+    if ($reloaded instanceof FileInterface) {
+      $file = $reloaded;
+    }
+
+    if (!$file->hasField('field_bypass_reason')) {
+      return [];
+    }
   }
 
   $options = _jcc_pdf_upload_validation_checker_get_bypass_reason_options();
