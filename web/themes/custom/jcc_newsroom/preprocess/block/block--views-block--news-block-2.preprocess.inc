@@ -36,7 +36,7 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
             $promo_image_alt = $promo_media->field_media_image->alt;
             $file_uri = $promo_img_file->getFileUri();
             $img_style = \Drupal::entityTypeManager()->getStorage('image_style')->load('crop_16x9');
-            $promo_image_url = _jcc_base_remove_image_protocol($img_style->buildUrl($file_uri));
+            $promo_image_url = _jcc_components_remove_image_protocol($img_style->buildUrl($file_uri));
 
             $img_elem = Markup::create('<a href="' . $url . '" data-colorbox-gallery="gallery-beforeafter"><img src="' . $promo_image_url . '" alt="' . $promo_image_alt . '"></a>');
           }
