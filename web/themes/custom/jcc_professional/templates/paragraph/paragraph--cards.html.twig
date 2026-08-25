@@ -15,6 +15,11 @@
 {% endblock %}
 
 {% block cards_section %}
+  {# ADA-387: card titles are decorative, not structural headings — use <p> instead of <h3>. #}
+  {% set non_heading_cards = [] %}
+  {% for item in cards %}
+    {% set non_heading_cards = non_heading_cards|merge([item|merge({ card_title_tag: 'p' })]) %}
+  {% endfor %}
   {% include "@organisms/cards/cards.twig" with {
       cards: {
         background: variant.cards,
@@ -24,7 +29,7 @@
           title: content.field_heading.0|render,
           lead: content.field_lead|render
         },
-        items: cards,
+        items: non_heading_cards,
         link: {
           url: content.field_link.0['#url']|render,
           text: paragraph.field_link.0.title,
