@@ -168,6 +168,7 @@ function jcc_components_node_landing_page(array &$variables, NodeInterface $node
  */
 function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
   $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
+  $current_node_id = (string) $node->id();
 
   // Subpage node information.
   $current_path = \Drupal::service('path.current')->getPath();
@@ -196,8 +197,15 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
       // If we want links for the secondary active trail.
       if ($content->inActiveTrail) {
         foreach ($content->subtree as $sub_content) {
+          $sub_content_in_active_trail = $sub_content->inActiveTrail;
+          $sub_content_is_current = FALSE;
+          $sub_content_route_parameters = $sub_content->link->getRouteParameters();
+          if ($sub_content->link->getRouteName() === 'entity.node.canonical' && !empty($sub_content_route_parameters['node'])) {
+            $sub_content_is_current = (string) $sub_content_route_parameters['node'] === $current_node_id;
+          }
+
           // If we're in the third level, add parent for link to second level.
-          if ($sub_content->inActiveTrail) {
+          if ($sub_content_in_active_trail) {
             $variables['tertiary_menu']['parent'] = [
               'title' => $content->link->getTitle(),
               'url' => $content->link->getUrlObject(),
@@ -207,7 +215,7 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
             $variables['tertiary_menu']['items'][] = [
               'title' => $sub_content->link->getTitle(),
               'url' => $sub_content->link->getUrlObject(),
-              'in_active_trail' => $sub_content->inActiveTrail,
+              'is_current' => $sub_content_is_current,
             ];
           }
         }
