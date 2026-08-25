@@ -3,7 +3,7 @@
  **/
 
 (function ($, Drupal) {
-  Drupal.behaviors.extlinkcustom = {
+  Drupal.behaviors.courses = {
     attach: function attach(context, drupalSettings) {
       function docReady(fn) {
         // See if DOM is already available.
@@ -15,7 +15,7 @@
         }
       }
 
-      docReady(function () {
+      docReady(function() {
         const shs = Array.from(document.querySelectorAll('.shs-container'));
         if (shs) {
           const labelMaker  = function(){

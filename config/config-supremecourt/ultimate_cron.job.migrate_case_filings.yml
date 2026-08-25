@@ -1,0 +1,30 @@
+uuid: f8522e3f-6975-4c0b-99f2-884f3bb83fbf
+langcode: en
+status: true
+dependencies:
+  module:
+    - jcc_supreme_custom
+title: 'Migrate Case Filings'
+id: migrate_case_filings
+weight: 0
+module: jcc_supreme_custom
+callback: jcc_supreme_custom_migrate_case_filings
+scheduler:
+  id: crontab
+  configuration:
+    rules:
+      - '59 8 * * 1-5'
+    catch_up: 300
+launcher:
+  id: serial
+  configuration:
+    timeouts:
+      lock_timeout: 3600
+    launcher:
+      thread: 0
+logger:
+  id: database
+  configuration:
+    method: '3'
+    expire: 1209600
+    retain: 1000

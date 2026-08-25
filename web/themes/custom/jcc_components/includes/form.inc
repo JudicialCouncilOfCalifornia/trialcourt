@@ -144,17 +144,6 @@ function jcc_components_form_views_exposed_form_alter(&$form, FormStateInterface
       $form['areas_of_law']['#access'] = FALSE;
     }
   }
-
-  // Check if this is the specific view exposed form we are targeting.
-  if ($form['#id'] == 'views-exposed-form-location-block-1') {
-    // Get the count of nodes that have at least one paragraph with "Self-Help".
-    $self_help_count = jcc_components_get_self_help_location_count();
-    // Update the label of the "Self-Help Locations" filter with the count.
-    if (isset($form['field_service_category_target_id'])) {
-      $form['field_service_category_target_id']['#prefix'] = '<div class ="self-help-count">';
-      $form['field_service_category_target_id']['#suffix'] = '<span class = "self-help-label">' . ' (' . $self_help_count . ')' . '</span>' . '</div>';
-    }
-  }
 }
 
 /**
@@ -170,52 +159,4 @@ function jcc_components_tentative_rulings_search_validate(array &$form, FormStat
   if (empty($values['case_number']) && empty($values['field_judge_target_id']) && ($form['#id'] != 'views-exposed-form-tentative-rulings-block-1')) {
     $form_state->setErrorByName('field_judge_target_id', t('Enter a case number or select a Judicial Officer.'));
   }
-}
-
-/**
- * Node count of paragraphs with "Self-Help".
- *
- * @return int
- *   The count of nodes with at least one "Self-Help" service category.
- */
-function jcc_components_get_self_help_location_count() {
-  $query = \Drupal::entityQuery('node')
-    ->condition('type', 'location')
-    ->condition('status', 1)
-    ->accessCheck(FALSE)
-    ->exists('field_add_services');
-
-  // Get all node IDs that match this condition.
-  $nids = $query->execute();
-
-  // Initialize the count.
-  $self_help_count = 0;
-
-  // Load the nodes.
-  $nodes = Node::loadMultiple($nids);
-
-  foreach ($nodes as $node) {
-    // Get the "Add Service" paragraph field.
-    if ($node->hasField('field_add_services') && !$node->get('field_add_services')->isEmpty()) {
-      $paragraphs = $node->get('field_add_services')->referencedEntities();
-
-      // Check each paragraph's service category.
-      foreach ($paragraphs as $paragraph) {
-        if ($paragraph->hasField('field_service_category') && !$paragraph->get('field_service_category')->isEmpty()) {
-          $terms = $paragraph->get('field_service_category')->referencedEntities();
-
-          // Check if any term is "Self-Help".
-          foreach ($terms as $term) {
-            if ($term->getName() == 'Self-Help') {
-              $self_help_count++;
-              // Stop further checks for this node.
-              break 2;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return $self_help_count;
 }

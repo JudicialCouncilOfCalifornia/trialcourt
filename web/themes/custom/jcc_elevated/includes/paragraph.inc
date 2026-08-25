@@ -321,8 +321,6 @@ function jcc_elevated_paragraph_hero(array &$variables, ParagraphInterface $para
         $icon = str_replace(['icon-', 'dark-', 'white-'], ['', '', ''], $icon);
       }
       $variables['cards'][] = [
-        'variant' => 'striped-aligned',
-        'clickable_card' => TRUE,
         'icon_data' => [
           'icon' => $icon,
           'color' => FALSE,
