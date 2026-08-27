@@ -41,10 +41,15 @@ class MigrationQueueWorker extends QueueWorkerBase {
     }
 
     // 2. Set options.
-    // Mirror what is current in the source.
     switch ($sync_option) {
       case 'sync':
+        // Mirror what is current in the source.
         $migration->set('syncSource', TRUE);
+        break;
+
+      case 'update':
+        // Update imported records.
+        $migration->getIdMap()->prepareUpdate();
         break;
     }
 
