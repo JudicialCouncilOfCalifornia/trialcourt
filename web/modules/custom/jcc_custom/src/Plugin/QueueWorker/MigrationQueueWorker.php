@@ -48,7 +48,8 @@ class MigrationQueueWorker extends QueueWorkerBase {
         break;
 
       case 'update':
-        // Update imported records.
+        // Reimport all imported items with the new items.
+        // Alternatively, use 'track_changes' in YML over this option.
         $migration->getIdMap()->prepareUpdate();
         break;
     }
