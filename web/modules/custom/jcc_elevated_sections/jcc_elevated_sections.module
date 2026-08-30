@@ -324,18 +324,14 @@ function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $
     $home = $add_home;
     $home_url = $home->toUrl();
 
-    // For the section Home link, determine if it is the currently active page.
-    $active = FALSE;
     $current_node = \Drupal::routeMatch()->getParameter('node');
-    if ($current_node instanceof NodeInterface) {
-      $active = $current_node->id() == $home->id();
-    }
+    $is_current = $current_node->id() == $home->id();
 
     $items[] = [
       'text' => t('Home'),
-      'url' => $home_url->setOption('set_active_class', $active),
+      'url' => $home_url,
       'attributes' => [],
-      'active' => $active,
+      'is_current' => $is_current,
       'links' => [],
     ];
   }
@@ -344,26 +340,27 @@ function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $
   foreach ($tree as $menu_data) {
     if (!empty($menu_data['url'])) {
 
-      $active = $menu_data['url']->getOption('set_active_class');
       $menu_item_relative_url = $menu_data['url']->toString();
-
       $section_link = [];
       $sublinks = $menu_data['below'] ? jcc_elevated_sections_build_menu_tree($menu_data['below']) : [];
 
-      if (str_contains($current_relative_url, $menu_item_relative_url) && ($current_relative_url != $menu_item_relative_url)) {
+      // Reliable current page check.
+      $is_current = $current_relative_url == $menu_item_relative_url;
+
+      // Mimic Drupal's trail check since provided in section nav.
+      if (str_contains($current_relative_url, $menu_item_relative_url)) {
         $attributes = (array) $menu_data['url']->getOption('attributes');
         $attributes['class'][] = 'in-active-trail';
         $menu_data['url']->setOption('attributes', $attributes);
-        $active = TRUE;
       }
 
       // Add overview link to sublinks array. Needed for mobile links.
       if ($overview_link && !empty($sublinks)) {
         $section_link = [
           'text' => $menu_data['title'],
-          'url' => $menu_data['url']->setOption('set_active_class', $active),
+          'url' => $menu_data['url'],
           'attributes' => !empty($menu_data['attributes']->toArray()) ? $menu_data['attributes']->toArray() : [],
-          'active' => $active,
+          'is_current' => $is_current,
           'is_overview_link' => TRUE,
           'links' => [],
         ];
@@ -374,7 +371,7 @@ function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $
         'text' => $menu_data['title'],
         'url' => $menu_data['url'],
         'attributes' => !empty($menu_data['attributes']->toArray()) ? $menu_data['attributes']->toArray() : [],
-        'active' => $active,
+        'is_current' => $is_current,
         'links' => $sublinks,
         'section_link' => $section_link,
       ];
@@ -388,7 +385,7 @@ function jcc_elevated_sections_build_menu_tree(array $tree, $add_home = FALSE, $
 /**
  * Helper function to return the Section of the current page (node).
  */
-function jcc_get_current_page_section() {
+function _jcc_elevated_sections_get_current_page_section() {
   $route_match = \Drupal::routeMatch();
   $route = $route_match->getRouteObject();
   $is_admin = \Drupal::service('router.admin_context')->isAdminRoute($route);
