@@ -239,6 +239,7 @@ class JccSectionService implements JccSectionServiceInterface {
    */
   public function getSectionIds() {
     return $this->entityTypeManager->getStorage('taxonomy_term')->getQuery()
+      ->accessCheck(FALSE)
       ->condition('vid', $this->getSectionSourceId())
       ->condition('status', TRUE)
       ->sort('weight')

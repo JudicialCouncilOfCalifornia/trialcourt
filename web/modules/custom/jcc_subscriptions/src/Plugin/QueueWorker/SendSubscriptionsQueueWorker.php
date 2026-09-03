@@ -4,7 +4,6 @@ namespace Drupal\jcc_subscriptions\Plugin\QueueWorker;
 
 use Drupal\Core\Queue\QueueWorkerBase;
 use SendGrid\Client as SClient;
-use SendGrid\Exception;
 
 /**
  * Processes tasks for subscriptions module.
@@ -39,10 +38,8 @@ class SendSubscriptionsQueueWorker extends QueueWorkerBase {
         \Drupal::logger('jcc_subscriptions')->notice('Subscriptions --- Sendgrid response: Email(s) was not sent.)');
       }
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       $eMessage = $e->getMessage();
-      if (strpos($eMessage, 'success') !== FALSE) {
-      }
     }
   }
 

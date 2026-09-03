@@ -84,6 +84,7 @@ class JccStaffListBuilder extends EntityListBuilder {
     }
     $total = $this->getStorage()
       ->getQuery()
+      ->accessCheck()
       ->count()
       ->execute();
     $build['summary']['#markup'] = $this->t('Total staff: @total', ['@total' => $total]);
@@ -252,7 +253,7 @@ class JccStaffListBuilder extends EntityListBuilder {
       $query->pager($this->limit);
     }
 
-    return $query->execute();
+    return $query->accessCheck()->execute();
   }
 
 }

@@ -252,6 +252,7 @@ function template_preprocess_jcc_court(array &$variables) {
       $division->condition('name_2', $district_name);
       $division->sort('id', 'ASC');
       $division->range(0, 1);
+      $division->accessCheck();
       $first_division_ids = $division->execute();
 
       if (!empty($first_division_ids)) {

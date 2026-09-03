@@ -68,6 +68,7 @@ class JccCourtListBuilder extends EntityListBuilder {
 
     $total = $this->getStorage()
       ->getQuery()
+      ->accessCheck()
       ->count()
       ->execute();
 
@@ -162,7 +163,7 @@ class JccCourtListBuilder extends EntityListBuilder {
       $query->pager($this->limit);
     }
 
-    return $query->execute();
+    return $query->accessCheck()->execute();
   }
 
 }

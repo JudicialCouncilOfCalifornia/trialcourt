@@ -76,7 +76,8 @@ class NewsLinksArchiveQueueWorker extends QueueWorkerBase {
             $queryMediaUsage = \Drupal::entityQuery('node')
               ->condition('type', 'news')
               ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
-              ->condition('field_images', $mid);
+              ->condition('field_images', $mid)
+              ->accessCheck(FALSE);
             $mediaUsage = $queryMediaUsage->execute();
             if (empty($mediaUsage)) {
               // Delete media image entity.

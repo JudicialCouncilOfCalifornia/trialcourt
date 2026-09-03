@@ -12,7 +12,7 @@
    */
   Drupal.behaviors.jccAudioStream = {
     attach: function (context, settings) {
-			$('.jcc-section__inner', context).once('add-audio-check').each (function() {
+      once('add-audio-check', '.jcc-section__inner', context).forEach(function (el) {
 				$("a[data-radiomast-id]").each(function (index, element) {
           var UUID = element.dataset.radiomastId;
           // Run the checker on page load, then re-run every 5 seconds.

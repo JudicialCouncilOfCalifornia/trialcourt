@@ -12,12 +12,21 @@ use Drupal\views\Views;
  * Class JCCSubscriptionsDigestCron.
  */
 class JCCSubscriptionsDigestCron {
+  /**
+   * State service.
+   *
+   * @var \Drupal\Core\State\State
+   */
+  protected $state;
+
+  public function __construct() {
+    $this->state = \Drupal::state();
+  }
 
   /**
    * Action on cron run.
    */
   public function cron() {
-    $this->state = \Drupal::state();
     $now = \Drupal::time()->getRequestTime();
 
     $jcc_config = \Drupal::config('jcc_subscriptions.settings');
@@ -150,11 +159,11 @@ class JCCSubscriptionsDigestCron {
             // Building array of ID's for opting out urls.
             array_push($id_to_sendgrid, $user_group->member_id);
 
-            $email_key = user_password();
+            $email_key = \Drupal::service('password_generator')->generate();
             array_push($email_access_keys, $email_key);
             $store->set('member_email_' . $user_group->email, $email_key);
 
-            $id_key = user_password();
+            $id_key = \Drupal::service('password_generator')->generate();
             array_push($id_access_keys, $id_key);
             $store->set('member_id_' . $user_group->member_id, $id_key);
           }

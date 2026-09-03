@@ -51,7 +51,7 @@ class PageBuilder extends PluginBase implements CKEditorPluginInterface, CKEdito
    * {@inheritdoc}
    */
   public function getFile() {
-    return drupal_get_path('module', 'jcc_ckeditor') . '/js/plugins/pagebuilder/plugin.js';
+    return \Drupal::service('extension.path.resolver')->getPath('module', 'jcc_ckeditor') . '/js/plugins/pagebuilder/plugin.js';
   }
 
   /**
@@ -61,7 +61,7 @@ class PageBuilder extends PluginBase implements CKEditorPluginInterface, CKEdito
     $pattern_structure = json_decode($this->patternlabData);
     $menu_groups = $menu_items = [];
 
-    $path = base_path() . drupal_get_path('module', 'jcc_ckeditor') . '/js/plugins/pagebuilder/components';
+    $path = base_path() . \Drupal::service('extension.path.resolver')->getPath('module', 'jcc_ckeditor') . '/js/plugins/pagebuilder/components';
     $pagebuilder = [
       "grid" => [
         "label" => 'Grid',
@@ -210,7 +210,7 @@ class PageBuilder extends PluginBase implements CKEditorPluginInterface, CKEdito
     $menu_items['PageBuilder'] = [
       "label" => 'PageBuilder',
       'group' => 'PageBuilder',
-      'icon' => '/' . drupal_get_path('module', 'jcc_ckeditor') . '/js/plugins/pagebuilder/pagebuilder.png',
+      'icon' => '/' . \Drupal::service('extension.path.resolver')->getPath('module', 'jcc_ckeditor') . '/js/plugins/pagebuilder/pagebuilder.png',
     ];
 
     $items = [];

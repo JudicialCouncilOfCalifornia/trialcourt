@@ -28,11 +28,12 @@ class JccNewsArchiveController extends ControllerBase {
   public function newsArchive_cron():void {
     \Drupal::logger('jcc_news_archive')->notice("newsArchive_cron() got called ");
 
-    $five_years_ago = strtotime('-5 years', REQUEST_TIME);
+    $five_years_ago = strtotime('-5 years', \Drupal::time()->getRequestTime());
     $query = \Drupal::entityQuery('node')
       ->condition('type', ['news'], 'IN')
       ->condition('created', $five_years_ago, '<') // Items older than 5 years
-      ->condition('status', 1); // Only published items
+      ->condition('status', 1) // Only published items
+      ->accessCheck(FALSE); // Bypass access checks
     $nids = $query->execute();
 
     if (!empty($nids)) {

@@ -165,6 +165,7 @@ function jcc_tc2_roc_feature_get_subsection_ids_not_with_document_id($parent_rul
   $results = \Drupal::entityQuery('node')
     ->condition('type', 'roc_rule')
     ->condition('field_roc_rule_parent_index', $parent_rule_document_id, '!=')
+    ->accessCheck()
     ->sort('title', 'ASC')
     ->execute();
 

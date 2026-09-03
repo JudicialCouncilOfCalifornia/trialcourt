@@ -31,6 +31,7 @@ function jcc_elevated_sections_uninstall() {
 
     // Delete the site sections terms.
     $tids = \Drupal::entityQuery('taxonomy_term')
+      ->accessCheck(FALSE)
       ->condition('vid', $vid)
       ->execute();
 

@@ -56,7 +56,7 @@ class MediaFileUrl extends EntityReferenceFormatterBase {
           if (!empty($file)) {
             $uri = $file->getFileUri();
             if (!empty($uri)) {
-              $value = file_create_url($uri);
+              $value = \Drupal::service('file_url_generator')->generateAbsoluteString($uri);
             }
             $label = $file->getFilename();
           }

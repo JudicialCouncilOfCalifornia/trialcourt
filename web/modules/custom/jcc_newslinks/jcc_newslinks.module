@@ -22,6 +22,7 @@ function jcc_newslinks_cron() {
     ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
     // Items that only are promoted.
     ->condition('promote', TRUE)
+    ->accessCheck(FALSE)
     // Get the 4th item; indexed at 0.
     ->range(3, 1)
     ->sort('field_sorting_weight', 'ASC');
@@ -45,7 +46,8 @@ function jcc_newslinks_cron() {
     // Items older than 14 days ago.
     ->condition('created', $oldTimeValue, '<')
     // Items older than 4th ranking.
-    ->condition('field_sorting_weight', $fourth_sorting_weight, '>');
+    ->condition('field_sorting_weight', $fourth_sorting_weight, '>')
+    ->accessCheck(FALSE);
   $unpromoteItems = $queryUnpromote->execute();
 
   $unpromoteQueue = \Drupal::queue('newslinks_unpromote_queue');
@@ -64,7 +66,8 @@ function jcc_newslinks_cron() {
     // Items that are in draft.
     ->condition('moderation_state', 'draft')
     // Items older than 5 days ago.
-    ->condition('created', $draftTimeLimit, '<');
+    ->condition('created', $draftTimeLimit, '<')
+    ->accessCheck(FALSE);
   $draftItems = $queryDrafts->execute();
 
   $archiveQueue = \Drupal::queue('newslinks_archive_queue');
@@ -87,6 +90,7 @@ function jcc_newslinks_cron() {
     ->condition('created', $archiveTimeLimit, '<')
     // Items have media image entities.
     ->exists('field_images')
+    ->accessCheck(FALSE)
     ->range(0, 200);
   $purgeItems = $queryArchived->execute();
 
@@ -118,6 +122,7 @@ function jcc_newslinks_cron() {
     ->condition('field_news_type.entity:taxonomy_term.name', 'NewsLink')
     ->condition('created', $threeMonthLimit, '<')
     ->condition('moderation_state', ['draft', 'archived', 'published', 'Ready for Review'], 'IN') // Match multiple moderation states
+    ->accessCheck(FALSE)
     ->range(0, 1000)  // Process 500 nodes per batch
     ->execute();
 

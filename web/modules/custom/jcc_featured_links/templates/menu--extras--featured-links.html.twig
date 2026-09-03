@@ -23,7 +23,7 @@
 {% set i = 0 %}
 <div class="grid-container">
   <ul class="menu menu-level-{{ items|first.menu_level }} menu--featured-links">
-    {% for key, item in items if key|first != '#' %}
+    {% for key, item in items|filter((value, key) => key|first != '#') %}
       {% set menu_item_classes = [
         'menu-item',
         item.is_expanded ? 'menu-item--expanded',

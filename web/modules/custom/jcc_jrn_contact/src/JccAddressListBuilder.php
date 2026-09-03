@@ -68,6 +68,7 @@ class JccAddressListBuilder extends EntityListBuilder {
 
     $total = $this->getStorage()
       ->getQuery()
+      ->accessCheck()
       ->count()
       ->execute();
 
@@ -161,7 +162,7 @@ class JccAddressListBuilder extends EntityListBuilder {
       $query->pager($this->limit);
     }
 
-    return $query->execute();
+    return $query->accessCheck(FALSE)->execute();
   }
 
 }

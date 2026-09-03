@@ -2,7 +2,7 @@
  * @file
  * Alter map links to use maps protocol on desktop.
  */
-(function ($, Drupal) {
+(function (Drupal) {
 
   'use strict';
 
@@ -43,4 +43,4 @@
 
     }
   };
-})(jQuery, Drupal);
+})(Drupal);

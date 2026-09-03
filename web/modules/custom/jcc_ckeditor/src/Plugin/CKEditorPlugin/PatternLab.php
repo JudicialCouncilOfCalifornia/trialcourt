@@ -51,7 +51,7 @@ class PatternLab extends PluginBase implements CKEditorPluginInterface, CKEditor
    * {@inheritdoc}
    */
   public function getFile() {
-    return drupal_get_path('module', 'jcc_ckeditor') . '/js/plugins/patternlab/plugin.js';
+    return \Drupal::service('extension.path.resolver')->getPath('module', 'jcc_ckeditor') . '/js/plugins/patternlab/plugin.js';
   }
 
   /**
@@ -74,7 +74,7 @@ class PatternLab extends PluginBase implements CKEditorPluginInterface, CKEditor
     $menu_items['PatternLab'] = [
       'label' => 'PatternLab',
       'group' => 'PatternLab',
-      'icon' => '/' . drupal_get_path('module', 'jcc_ckeditor') . '/js/plugins/patternlab/patternlab.png',
+      'icon' => '/' . \Drupal::service('extension.path.resolver')->getPath('module', 'jcc_ckeditor') . '/js/plugins/patternlab/patternlab.png',
     ];
 
     $items = [];

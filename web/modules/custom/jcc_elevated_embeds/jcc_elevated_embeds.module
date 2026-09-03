@@ -187,6 +187,7 @@ function jcc_elevated_embeds_form_views_exposed_form_alter(&$form,
     return;
   }
   $media_ids = \Drupal::entityQuery('media')
+    ->accessCheck()
     ->condition('status', 1)
     ->condition('field_category.target_id', $category_tids, 'IN')
     ->execute();

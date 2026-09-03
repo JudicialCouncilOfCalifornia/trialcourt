@@ -39,7 +39,7 @@ class JccElevatedEmbedsContentStreamEmbedBlockFieldForm extends FormBase {
    * Creates a MyForm instance.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, StateInterface $state, MessengerInterface $messenger) {
-    $this->entity_type_manager = $entity_type_manager;
+    $this->entityTypeManager = $entity_type_manager;
     $this->state = $state;
     $this->messenger = $messenger;
   }

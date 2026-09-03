@@ -2,7 +2,8 @@
 
 namespace Drupal\jcc_feeds_file_proxy\EventSubscriber;
 
-use Drupal\media\entity\Media;
+use Drupal\file\FileRepositoryInterface;
+use Drupal\media\Entity\Media;
 use Drupal\feeds\Event\FeedsEvents;
 use Drupal\feeds\Event\ParseEvent;
 use Drupal\Core\File\FileSystemInterface;
@@ -22,15 +23,28 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
   /**
    * Request used to find hostname.
    *
-   * @var Symfony\Component\HttpFoundation\RequestStack
+   * @var \Symfony\Component\HttpFoundation\Request
    */
-
   protected $request;
+
+  /**
+   * The file repository service.
+   *
+   * @var \Drupal\file\FileRepositoryInterface
+   */
+  protected $fileRepository;
+
+  /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
 
   /**
    * Constructor.
    */
-  public function __construct(RequestStack $request_stack, FileRepository $file_repository, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(RequestStack $request_stack, FileRepositoryInterface $file_repository, EntityTypeManagerInterface $entity_type_manager) {
     $this->request = $request_stack->getCurrentRequest();
     $this->fileRepository = $file_repository;
     $this->entityTypeManager = $entity_type_manager;
@@ -42,14 +56,15 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('request_stack'),
-      $container->get('file.repository')
+      $container->get('file.repository'),
+      $container->get('entity_type.manager')
     );
   }
 
   /**
    * Modify events after saving imported data from feeds.
    *
-   * @param \Drupal\feeds\Event\Entity $event
+   * @param \Drupal\feeds\Event\EntityEvent $event
    *   The Entity Event.
    */
   public function postSaveNews(EntityEvent $event) {
@@ -62,7 +77,7 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
       $title = urldecode($title);
       $data = file_get_contents($image_url);
       if ($data) {
-        $file = file_save_data($data, 'public://images/' . basename($title), FileSystemInterface::EXISTS_REPLACE);
+        $file = \Drupal::service('file.repository')->writeData($data, 'public://images/' . basename($title), FileSystemInterface::EXISTS_REPLACE);
 
         if ($file) {
           $file_id = $file->id();
@@ -119,6 +134,7 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
    */
   protected function createImgEntity(string $img_url, string $img_id) {
     $media = \Drupal::entityQuery("media")
+      ->accessCheck(FALSE)
       ->condition("name", $img_id)
       ->sort("mid", "DESC")
       ->execute();
@@ -130,7 +146,7 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
     $file_data = file_get_contents($img_url);
 
     if (!file_exists('public://newslink/')) {
-      drupal_mkdir('public://newslink/');
+      \Drupal::service('file_system')->mkdir('public://newslink/');
     }
 
     $filename = "public://newslink/" . $img_id . ".png";

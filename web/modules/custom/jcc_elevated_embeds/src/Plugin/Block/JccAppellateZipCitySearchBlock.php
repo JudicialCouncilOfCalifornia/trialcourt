@@ -94,7 +94,6 @@ class JccAppellateZipCitySearchBlock extends BlockBase implements ContainerFacto
     $this->cache = $cache_backend;
     $this->moduleHandler = $module_handler;
     $this->jccSectionService = $jcc_section_service;
-    $this->nodeStorage = $entity_type_manager->getStorage('node');
   }
 
   /**

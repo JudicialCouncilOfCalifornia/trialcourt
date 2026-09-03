@@ -11,7 +11,7 @@
 function jcc_custom_jcart_install() {
   // Reset the schema version, so our update hooks can be processed
   // after installation.
-  drupal_set_installed_schema_version('jcc_custom_jcart', '8000');
+  \Drupal::service('update.update_hook_registry')->setInstalledVersion('jcc_custom_jcart', '8000');
 }
 
 /**

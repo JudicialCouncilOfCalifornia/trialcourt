@@ -23,7 +23,8 @@ function surplus_reference_number_entity_presave(EntityInterface $entity) {
         ->condition('type', 'surplus_materials')
         ->exists('field_reference_number')
         ->sort('field_reference_number', 'DESC')
-        ->range(0, 1);
+        ->range(0, 1)
+        ->accessCheck(FALSE);
       $nids = $query->execute();
 
       $max_value = 0;

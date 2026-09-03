@@ -5,6 +5,7 @@ namespace Drupal\jcc_elevated_rfp_solicitations\Services;
 use Drupal\Core\Link;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Url;
+use Drupal\pathauto\AliasCleanerInterface;
 
 /**
  * Class MediaReplaceFileLink.
@@ -13,6 +14,33 @@ use Drupal\Core\Url;
  * available.
  */
 class JccSolicitationMediaReplaceFileLinkService {
+  /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The file usage service.
+   *
+   * @var \Drupal\file\FileUsage\FileUsageInterface
+   */
+  protected $fileUsage;
+
+  /**
+   * The pathauto alias cleaner service.
+   *
+   * @var \Drupal\pathauto\AliasCleanerInterface
+   */
+  protected $pathAutoAliasCleaner;
+
+  /**
+   * The logger factory service.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $loggerFactory;
 
   /**
    * Constructs a new CustomService object.

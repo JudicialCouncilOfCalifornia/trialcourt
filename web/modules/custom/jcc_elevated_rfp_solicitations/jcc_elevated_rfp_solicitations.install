@@ -35,7 +35,8 @@ function delete_topics_terms_in_batch($batch_size) {
   $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
   $query = $storage->getQuery()
     ->condition('vid', 'topics')
-    ->range(0, $batch_size);
+    ->range(0, $batch_size)
+    ->accessCheck(FALSE);
 
   $term_ids = $query->execute();
   if (!empty($term_ids)) {
