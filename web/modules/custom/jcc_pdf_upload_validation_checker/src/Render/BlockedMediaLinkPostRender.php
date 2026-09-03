@@ -146,7 +146,13 @@ final class BlockedMediaLinkPostRender implements TrustedCallbackInterface {
       $status = (string) $file->get('field_pdf_audit_status')->value;
     }
 
-    return in_array($status, ['pending', 'fail'], TRUE);
+    // "unknown" covers files that were just (re)uploaded and haven't been
+    // queued/audited yet (see
+    // _jcc_pdf_upload_validation_checker_normalize_temporary_upload_status()
+    // and _jcc_pdf_upload_validation_checker_detect_same_fid_replacement()).
+    // Treat them as blocking too, otherwise the real (unvalidated) link
+    // renders until the audit runs.
+    return in_array($status, ['pending', 'fail', 'unknown'], TRUE);
   }
 
   /**

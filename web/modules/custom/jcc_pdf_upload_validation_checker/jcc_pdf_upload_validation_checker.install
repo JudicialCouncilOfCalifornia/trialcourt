@@ -118,6 +118,41 @@ function jcc_pdf_upload_validation_checker_install(): void {
   _jcc_pdf_upload_validation_checker_ensure_bypass_audit_log_table();
   _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
   _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
+  _jcc_pdf_upload_validation_checker_ensure_view_access_permission();
+}
+
+/**
+ * Ensures the PDF validation overview view is gated by a module-owned permission.
+ *
+ * The view's page display previously used the generic "access content
+ * overview" permission, which has nothing to do with this module, so its
+ * Views-generated main menu link kept showing up (and its route stayed
+ * reachable) even when this module was disabled. Switch the page display to
+ * a permission this module defines, and grant it to whichever roles already
+ * had "access content overview" so visibility for existing users doesn't
+ * change. Once the module is disabled, this permission no longer exists, so
+ * access is denied for everyone and the menu link/route are hidden.
+ */
+function _jcc_pdf_upload_validation_checker_ensure_view_access_permission(): void {
+  $config = \Drupal::configFactory()->getEditable('views.view.pdf_validation_overview');
+  if ($config->isNew()) {
+    return;
+  }
+
+  $new_permission = 'access pdf validation overview';
+
+  foreach (\Drupal\user\Entity\Role::loadMultiple() as $role) {
+    if ($role->hasPermission('access content overview') && !$role->hasPermission($new_permission)) {
+      $role->grantPermission($new_permission);
+      $role->save();
+    }
+  }
+
+  $access = $config->get('display.page_1.display_options.access');
+  if (is_array($access) && ($access['options']['perm'] ?? NULL) !== $new_permission) {
+    $config->set('display.page_1.display_options.access.options.perm', $new_permission);
+    $config->save();
+  }
 }
 
 /**
@@ -262,5 +297,14 @@ function jcc_pdf_upload_validation_checker_update_9005(): string {
   _jcc_pdf_upload_validation_checker_ensure_bypass_audit_log_table();
 
   return 'Ensured jcc_pdf_bypass_audit_log table exists.';
+}
+
+/**
+ * Gate the PDF validation overview view behind a module-owned permission.
+ */
+function jcc_pdf_upload_validation_checker_update_9006(): string {
+  _jcc_pdf_upload_validation_checker_ensure_view_access_permission();
+
+  return 'Switched the PDF Validation overview page to the "access pdf validation overview" permission so its main menu link disappears when this module is disabled.';
 }
 
