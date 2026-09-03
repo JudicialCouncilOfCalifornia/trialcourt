@@ -10,5 +10,13 @@
  */
 function jcc_supreme_custom_migrate_case_filings() {
   $migration_id = 'sc_filed_cases';
-  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, FALSE);
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, NULL);
+}
+
+/**
+ * Granicus events ultimate cron config callback.
+ */
+function jcc_supreme_custom_migrate_granicus_events() {
+  $migration_id = 'sc_node_event_granicus';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "update");
 }
