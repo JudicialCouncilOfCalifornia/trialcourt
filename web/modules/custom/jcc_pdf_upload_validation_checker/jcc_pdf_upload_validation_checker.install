@@ -1,0 +1,310 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for JCC PDF upload validation checker.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
+
+/**
+ * Implements hook_schema().
+ */
+function jcc_pdf_upload_validation_checker_schema(): array {
+  return [];
+}
+
+/**
+ * Returns schema for the bypass audit log table.
+ */
+function _jcc_pdf_upload_validation_checker_audit_log_table_schema(): array {
+  $schema['jcc_pdf_bypass_audit_log'] = [
+    'description' => 'Stores audit records for PDF validation bypass changes.',
+    'fields' => [
+      'id' => [
+        'description' => 'Primary key.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'fid' => [
+        'description' => 'The file entity id.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uid' => [
+        'description' => 'The user id who changed bypass settings.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'username' => [
+        'description' => 'Username at the time of change.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'file_name' => [
+        'description' => 'File name at the time of change.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'action' => [
+        'description' => 'Type of bypass change event.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => 'updated',
+      ],
+      'bypass_enabled' => [
+        'description' => 'Whether bypass is enabled after the change.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'reason_tid' => [
+        'description' => 'Selected bypass reason term id.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+      ],
+      'reason_label' => [
+        'description' => 'Selected bypass reason label at the time of change.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'site_path' => [
+        'description' => 'Site path where the change was made.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'created' => [
+        'description' => 'Unix timestamp of the change.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'created' => ['created'],
+      'fid' => ['fid'],
+      'uid' => ['uid'],
+      'reason_tid' => ['reason_tid'],
+      'site_path' => ['site_path'],
+    ],
+  ];
+
+  return $schema['jcc_pdf_bypass_audit_log'];
+}
+
+/**
+ * Implements hook_install().
+ */
+function jcc_pdf_upload_validation_checker_install(): void {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_audit_log_table();
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
+  _jcc_pdf_upload_validation_checker_ensure_view_access_permission();
+}
+
+/**
+ * Ensures the PDF validation overview view is gated by a module-owned permission.
+ *
+ * The view's page display previously used the generic "access content
+ * overview" permission, which has nothing to do with this module, so its
+ * Views-generated main menu link kept showing up (and its route stayed
+ * reachable) even when this module was disabled. Switch the page display to
+ * a permission this module defines, and grant it to whichever roles already
+ * had "access content overview" so visibility for existing users doesn't
+ * change. Once the module is disabled, this permission no longer exists, so
+ * access is denied for everyone and the menu link/route are hidden.
+ */
+function _jcc_pdf_upload_validation_checker_ensure_view_access_permission(): void {
+  $config = \Drupal::configFactory()->getEditable('views.view.pdf_validation_overview');
+  if ($config->isNew()) {
+    return;
+  }
+
+  $new_permission = 'access pdf validation overview';
+
+  foreach (\Drupal\user\Entity\Role::loadMultiple() as $role) {
+    if ($role->hasPermission('access content overview') && !$role->hasPermission($new_permission)) {
+      $role->grantPermission($new_permission);
+      $role->save();
+    }
+  }
+
+  $access = $config->get('display.page_1.display_options.access');
+  if (is_array($access) && ($access['options']['perm'] ?? NULL) !== $new_permission) {
+    $config->set('display.page_1.display_options.access.options.perm', $new_permission);
+    $config->save();
+  }
+}
+
+/**
+ * Ensures bypass audit log table exists.
+ */
+function _jcc_pdf_upload_validation_checker_ensure_bypass_audit_log_table(): void {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $table = 'jcc_pdf_bypass_audit_log';
+
+  if ($schema->tableExists($table)) {
+    return;
+  }
+
+  $schema->createTable($table, _jcc_pdf_upload_validation_checker_audit_log_table_schema());
+}
+
+/**
+ * Ensures bypass reasons vocabulary and default terms exist.
+ */
+function _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary(): void {
+  $vid = 'bypass_reasons';
+
+  if (!\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    return;
+  }
+
+  $vocabulary = Vocabulary::load($vid);
+  if (!$vocabulary) {
+    $vocabulary = Vocabulary::create([
+      'vid' => $vid,
+      'name' => 'Bypass Reasons',
+      'description' => 'Reasons for bypassing PDF validation checks.',
+    ]);
+    $vocabulary->save();
+  }
+
+  $default_terms = [
+    'Third Party Content Exception',
+    'Equivalent Accessible Version Confirmation',
+  ];
+
+  $existing = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties(['vid' => $vid]);
+
+  $existing_names = [];
+  foreach ($existing as $term) {
+    $existing_names[mb_strtolower($term->label())] = TRUE;
+  }
+
+  foreach ($default_terms as $term_name) {
+    if (isset($existing_names[mb_strtolower($term_name)])) {
+      continue;
+    }
+
+    Term::create([
+      'vid' => $vid,
+      'name' => $term_name,
+    ])->save();
+  }
+}
+
+/**
+ * Ensures bypass reason reference field exists on file entities.
+ */
+function _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field(): void {
+  $entity_type = 'file';
+  $bundle = 'file';
+  $field_name = 'field_bypass_reason';
+
+  if (!\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    return;
+  }
+
+  if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'taxonomy_term',
+      ],
+      'cardinality' => 1,
+      'translatable' => FALSE,
+    ])->save();
+  }
+
+  if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
+    FieldConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+      'label' => 'Bypass reason',
+      'required' => FALSE,
+      'settings' => [
+        'handler' => 'default:taxonomy_term',
+        'handler_settings' => [
+          'target_bundles' => [
+            'bypass_reasons' => 'bypass_reasons',
+          ],
+          'auto_create' => FALSE,
+        ],
+      ],
+    ])->save();
+  }
+}
+
+/**
+ * Create the Bypass Reasons vocabulary and default terms.
+ */
+function jcc_pdf_upload_validation_checker_update_9001(): string {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
+
+  return 'Created/updated Bypass Reasons taxonomy vocabulary and default terms.';
+}
+
+/**
+ * Create bypass reason reference field on file entities.
+ */
+function jcc_pdf_upload_validation_checker_update_9002(): string {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
+
+  return 'Created field_bypass_reason on file entities.';
+}
+
+/**
+ * Backfill bypass reasons vocabulary/field for already-enabled sites.
+ */
+function jcc_pdf_upload_validation_checker_update_9003(): string {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_audit_log_table();
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
+
+  return 'Ensured bypass audit log table, bypass reasons vocabulary, terms, and field exist.';
+}
+
+/**
+ * Ensure bypass audit log table exists for environments that missed install.
+ */
+function jcc_pdf_upload_validation_checker_update_9005(): string {
+  _jcc_pdf_upload_validation_checker_ensure_bypass_audit_log_table();
+
+  return 'Ensured jcc_pdf_bypass_audit_log table exists.';
+}
+
+/**
+ * Gate the PDF validation overview view behind a module-owned permission.
+ */
+function jcc_pdf_upload_validation_checker_update_9006(): string {
+  _jcc_pdf_upload_validation_checker_ensure_view_access_permission();
+
+  return 'Switched the PDF Validation overview page to the "access pdf validation overview" permission so its main menu link disappears when this module is disabled.';
+}
+
