@@ -15,9 +15,9 @@ label: 'Event: Import upcoming Granicus events feed'
 source:
   plugin: url
   data_fetcher_plugin: http
-  data_parser_plugin: xml
+  data_parser_plugin: json
   urls: 'https://jcc.granicus.com/ViewPublisher.php?view_id=50'
-  item_selector: /events/event
+  item_selector: /events/
   fields:
     -
       name: unique_id
@@ -78,13 +78,12 @@ process:
       method: row
       condition:
         plugin: not:matches
-        regex: '/Supreme Court Oral Argument|Supreme Court Oral Argument Test/'
+        regex: '/Supreme Court Oral Argument/'
     -
       plugin: static_map
       source: type
       map:
         'Supreme Court Oral Argument': 'Supreme Court Oral Argument Granicus'
-        'Supreme Court Oral Argument Test': 'Supreme Court Oral Argument Granicus'
     -
       plugin: entity_lookup
       entity_type: taxonomy_term
