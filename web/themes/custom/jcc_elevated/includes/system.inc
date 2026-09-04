@@ -54,7 +54,7 @@ function jcc_elevated_preprocess_breadcrumb(&$variables) {
   // Detect if site sections feature enabled.
   $section = NULL;
   $section_machine_name = NULL;
-  if (function_exists('jcc_get_current_page_section') && $section_id = jcc_get_current_page_section()) {
+  if (function_exists('_jcc_elevated_sections_get_current_page_section') && $section_id = _jcc_elevated_sections_get_current_page_section()) {
     $section_service = Drupal::service('jcc_elevated_sections.service');
     $section = $section_service->getSectionInfo($section_id);
     $section_machine_name = $section->jcc_section_machine_name->value;

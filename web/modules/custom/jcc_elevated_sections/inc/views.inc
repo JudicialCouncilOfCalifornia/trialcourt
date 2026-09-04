@@ -26,7 +26,7 @@ function jcc_elevated_sections_views_query_alter(ViewExecutable $view, QueryPlug
   if (!$is_admin && $section_service->isViewSectionable($view_name_display)) {
 
     // Figure out the section for the current node.
-    $sid = jcc_get_current_page_section();
+    $sid = _jcc_elevated_sections_get_current_page_section();
     $general_content_excluded = $section_service->isViewGeneralContentExcluded($view_name_display);
     if ($sid && $general_content_excluded) {
       $query->addWhere('', 'node_field_data.jcc_section', [$sid], 'IN');
@@ -72,7 +72,7 @@ function jcc_elevated_sections_views_pre_render(ViewExecutable $view) {
     }
 
     // Figure out the section for the current node.
-    $sid = jcc_get_current_page_section();
+    $sid = _jcc_elevated_sections_get_current_page_section();
 
     if ($sid && !$view_contains_exposed_filter && !empty($view->result) && !$exposed_form_overridden_to_contextual) {
       $results = $view->result;
