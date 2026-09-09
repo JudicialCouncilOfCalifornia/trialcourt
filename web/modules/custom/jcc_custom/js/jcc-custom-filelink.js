@@ -67,7 +67,7 @@
     }
 
     // Leading space keeps the announcement from running into the link text.
-    $(link).append('<span class="usa-sr-only"> ' + label + '</span>');
+    $(link).append('<span class="sr-only"> ' + label + '</span>');
   }
 
   Drupal.behaviors.jccFilelink = {

@@ -20,6 +20,7 @@
              <img src="{{ file_url(media_uri|image_style('profile_cards_portrait'))}}"  alt="{{ image_alt }}">
           {% endset %}
       {% endif %}
+      {# heading_level forces the card name to h4: page title h1 > "Current/Former Justices" h2 > division h3 > name h4. #}
       {% include "@molecules/ProfileCard/ProfileCard.twig" with {
         image: image ? image|raw,
         placeholder: {
@@ -31,6 +32,7 @@
         name: profile.name,
         title: profile.title,
         has_section_heading: division ? true : false,
+        heading_level: 'h4',
         content: profile.content,
         url: profile.url,
       } %}
@@ -38,9 +40,11 @@
   {% endset %}
 
 <div style="{{ not loop.first ? 'margin-block-start: var(--s5);' : '' }}">
+  {# heading_level forces the division heading to h3 (subsection of the "Current/Former Justices" h2); flows into Section.twig via _context. #}
   {% include "@organisms/ProfileCards/ProfileCards.twig" with {
     variant: 'multiple',
     heading: division != 'Unassigned' ? division : '',
+    heading_level: 'h3',
     sub_component_data: [cards],
     disable_inner_box: true,
     bg_tint: 'default',
