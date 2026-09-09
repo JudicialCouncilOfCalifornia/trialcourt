@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\jcc_messaging_center\Service;
+namespace Drupal\jcc_sendgrid_mail;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -14,9 +14,9 @@ use SendGrid\Mail\Mail;
 use SendGrid\Mail\MimeType;
 
 /**
- * Provides SendGrid mail utilities for the messaging center.
+ * Sends mail through the SendGrid v3 API.
  */
-class JccMessagingCenterMailService {
+class JccSendGridMailer {
 
   use StringTranslationTrait;
 

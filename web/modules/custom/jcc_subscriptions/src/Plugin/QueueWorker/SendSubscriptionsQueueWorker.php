@@ -6,7 +6,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\Queue\SuspendQueueException;
-use Drupal\jcc_messaging_center\Service\JccMessagingCenterMailService;
+use Drupal\jcc_sendgrid_mail\JccSendGridMailer;
 use Drupal\jcc_subscriptions\Services\JCCSubscriptionsDigestCron;
 use SendGrid\Exception\SendgridException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,7 +25,7 @@ final class SendSubscriptionsQueueWorker extends QueueWorkerBase implements Cont
   /**
    * The messaging center mail service.
    *
-   * @var \Drupal\jcc_messaging_center\Service\JccMessagingCenterMailService
+   * @var \Drupal\jcc_sendgrid_mail\JccSendGridMailer
    */
   protected $mailService;
 
@@ -45,12 +45,12 @@ final class SendSubscriptionsQueueWorker extends QueueWorkerBase implements Cont
    *   The plugin ID.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\jcc_messaging_center\Service\JccMessagingCenterMailService $mail_service
+   * @param \Drupal\jcc_sendgrid_mail\JccSendGridMailer $mail_service
    *   The messaging center mail service.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger channel factory.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, JccMessagingCenterMailService $mail_service, LoggerChannelFactoryInterface $logger_factory) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, JccSendGridMailer $mail_service, LoggerChannelFactoryInterface $logger_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->mailService = $mail_service;
     $this->logger = $logger_factory->get('jcc_subscriptions');
@@ -64,7 +64,7 @@ final class SendSubscriptionsQueueWorker extends QueueWorkerBase implements Cont
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('jcc_messaging_center.mail_service'),
+      $container->get('jcc_sendgrid_mail.mailer'),
       $container->get('logger.factory')
     );
   }

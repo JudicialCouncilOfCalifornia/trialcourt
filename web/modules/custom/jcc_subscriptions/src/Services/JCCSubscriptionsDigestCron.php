@@ -11,7 +11,7 @@ use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\TempStore\SharedTempStoreFactory;
-use Drupal\jcc_messaging_center\Service\JccMessagingCenterMailService;
+use Drupal\jcc_sendgrid_mail\JccSendGridMailer;
 use Drupal\views\Views;
 use JudicialCouncil\Emma\JccClient;
 
@@ -169,7 +169,7 @@ class JCCSubscriptionsDigestCron {
   /**
    * The messaging center mail service.
    *
-   * @var \Drupal\jcc_messaging_center\Service\JccMessagingCenterMailService
+   * @var \Drupal\jcc_sendgrid_mail\JccSendGridMailer
    */
   protected $mailService;
 
@@ -192,11 +192,11 @@ class JCCSubscriptionsDigestCron {
    *   The password generator.
    * @param \Drupal\Component\Datetime\TimeInterface $time
    *   The time service.
-   * @param \Drupal\jcc_messaging_center\Service\JccMessagingCenterMailService $mail_service
+   * @param \Drupal\jcc_sendgrid_mail\JccSendGridMailer $mail_service
    *   The messaging center mail service, used to check that sending is
    *   configured before queueing a digest.
    */
-  public function __construct(StateInterface $state, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, QueueFactory $queue_factory, RendererInterface $renderer, SharedTempStoreFactory $temp_store_factory, PasswordGeneratorInterface $password_generator, TimeInterface $time, JccMessagingCenterMailService $mail_service) {
+  public function __construct(StateInterface $state, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, QueueFactory $queue_factory, RendererInterface $renderer, SharedTempStoreFactory $temp_store_factory, PasswordGeneratorInterface $password_generator, TimeInterface $time, JccSendGridMailer $mail_service) {
     $this->state = $state;
     $this->configFactory = $config_factory;
     $this->logger = $logger_factory->get('jcc_subscriptions');

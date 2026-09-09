@@ -191,8 +191,8 @@ function jcc_subscriptions_send_email_from_error(string $to_email = '') {
         '
     );
 
-    /** @var \Drupal\jcc_messaging_center\Service\JccMessagingCenterMailService $mail_service */
-    $mail_service = \Drupal::service('jcc_messaging_center.mail_service');
+    /** @var \Drupal\jcc_sendgrid_mail\JccSendGridMailer $mail_service */
+    $mail_service = \Drupal::service('jcc_sendgrid_mail.mailer');
     $mail_service->sendMail('Preferences management', $body, $email_to_sendgrid, $email_access_keys);
   }
 }
