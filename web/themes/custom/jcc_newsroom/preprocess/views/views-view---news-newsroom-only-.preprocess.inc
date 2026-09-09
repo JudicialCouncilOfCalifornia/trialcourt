@@ -58,7 +58,7 @@ function jcc_newsroom_preprocess_views_view__news_newsroom_only_(&$variables) {
         ],
       ]
     );
-    $summary_markup = render($summary);
+    $summary_markup = \Drupal::service('renderer')->render($summary);
     $summary = [];
 
     $tags_markup = _jcc_list_faceted_terms($node,
@@ -87,7 +87,7 @@ TEMPLATE;
     $variables['tiles_list']['tiles'][] = [
       'card' => [
         'title' => $node->getTitle(),
-        'excerpt' => render($excerpt),
+        'excerpt' => \Drupal::service('renderer')->render($excerpt),
         'url' => $node_link,
       ],
       'date' => '',

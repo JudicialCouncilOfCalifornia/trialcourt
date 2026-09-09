@@ -92,7 +92,7 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
     $kit = $options['kit'];
 
     // @todo Use extension service.
-    $jcc_baseDir = drupal_get_path('theme', 'jcc_base');
+    $jcc_baseDir = \Drupal::service('extension.path.resolver')->getPath('theme', 'jcc_base');
     $srcDir = "$jcc_baseDir/src/kits/{$kit}";
 
     // Find kit from other active themes.

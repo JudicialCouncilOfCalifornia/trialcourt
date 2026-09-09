@@ -89,7 +89,7 @@ function _jcc_get_first_image(NodeInterface $node) {
           $uri = $media_image->first()->entity->getFileUri();
           $style = \Drupal::entityTypeManager()->getStorage('image_style')->load('crop_16x9');
           return [
-            'url' => $style ? $style->buildUrl($uri) : file_create_url($uri),
+            'url' => $style ? $style->buildUrl($uri) : \Drupal::service('file_url_generator')->generateAbsoluteString($uri),
             'alt' => $media_image->first()->alt ?? '',
           ];
         }

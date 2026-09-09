@@ -40,7 +40,7 @@
 {% endif %}
 
 {% set components %}
-  {% for k, component in content.field_components if k|first != "#" %}
+  {% for key, component in content.field_components |filter((value, key) => key|first != '#') %}
     {{ component }}
   {% endfor %}
 {% endset %}

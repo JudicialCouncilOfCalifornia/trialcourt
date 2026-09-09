@@ -105,7 +105,7 @@ function jcc_base_preprocess_views_view_unformatted__faq__block(&$variables) {
     $node = $row['content']['#row']->_entity;
     $view_mode = 'accordion_item';
     $content = \Drupal::entityTypeManager()->getViewBuilder('node')->view($node, $view_mode);
-    $content = render($content);
+    $content = \Drupal::service('renderer')->render($content);
     $variables['accordion']['expand_first'] = 0;
     $variables['accordion']['items'][] = [
       'title' => $row['content']['#row']->_entity->getTitle(),

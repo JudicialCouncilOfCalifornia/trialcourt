@@ -202,10 +202,6 @@ function jcc_subscriptions_form_submit($form, FormStateInterface $form_state) {
 
     // Getting from email.
     if (!empty(\Drupal::service('key.repository')->getKey('newsroom_sendgrid'))) {
-      $sendgrid_conf = \Drupal::config('sendgrid_integration.settings')->get('test_defaults');
-      $to = $sendgrid_conf['from_name'];
-      $sendgrid_api_key = \Drupal::service('key.repository')->getKey('newsroom_sendgrid')->getKeyValue();
-
       $body = str_replace(
         [
           '%news_post_date%',

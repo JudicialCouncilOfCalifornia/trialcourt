@@ -40,7 +40,7 @@ function _jcc_list_faceted_terms($node, $vocabularies) {
       }
     }
 
-    $tags_markup .= render($tag_render);
+    $tags_markup .= \Drupal::service('renderer')->render($tag_render);
   }
 
   // NEW-35.

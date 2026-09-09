@@ -51,7 +51,7 @@ function jcc_base_preprocess_block__views_block__multimedia_block_1(&$variables)
         // Video embed.
         $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
         $build = $view_builder->view($video_entity, 'default');
-        $video_elem = render($build);
+        $video_elem = \Drupal::service('renderer')->render($build);
 
         $featured_video_card = [
           'title' => $video_title,
