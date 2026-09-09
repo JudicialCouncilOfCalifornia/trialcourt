@@ -7,9 +7,6 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\SharedTempStoreFactory;
-use SendGrid\Client as SClient;
-use SendGrid\Email;
-use SendGrid\Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

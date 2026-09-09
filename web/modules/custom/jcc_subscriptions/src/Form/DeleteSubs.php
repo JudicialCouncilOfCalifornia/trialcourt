@@ -10,9 +10,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use SendGrid\Client as SClient;
-use SendGrid\Email;
-
 /**
  * Deletes all groups from user.
  */

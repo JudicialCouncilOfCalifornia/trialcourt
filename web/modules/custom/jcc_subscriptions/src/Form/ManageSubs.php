@@ -8,8 +8,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\SharedTempStoreFactory;
 use MarkRoland\Emma\Client;
-use SendGrid\Client as SClient;
-use SendGrid\Email;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

@@ -1,4 +1,13 @@
 services:
   jcc_subscriptions.digestcron:
-    class: '\Drupal\jcc_subscriptions\Services\JCCSubscriptionsDigestCron'
-    arguments: ['@state']
+    class: Drupal\jcc_subscriptions\Services\JCCSubscriptionsDigestCron
+    arguments:
+      - '@state'
+      - '@config.factory'
+      - '@logger.factory'
+      - '@queue'
+      - '@renderer'
+      - '@tempstore.shared'
+      - '@password_generator'
+      - '@datetime.time'
+      - '@jcc_messaging_center.mail_service'
