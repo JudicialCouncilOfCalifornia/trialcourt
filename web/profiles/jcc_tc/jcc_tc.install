@@ -42,3 +42,39 @@ function jcc_tc_install() {
 function jcc_tc_update_8001() {
   jcc_tc_install();
 }
+
+/**
+ * TW-30086830: Revoke permissions that no longer exist from every role.
+ */
+function jcc_tc_update_10001() {
+  $permissions = array_keys(\Drupal::service('user.permissions')->getPermissions());
+  /** @var \Drupal\user\RoleInterface[] $roles */
+  $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
+  $revoked = [];
+
+  foreach ($roles as $role) {
+    $orphans = array_diff($role->getPermissions(), $permissions);
+    if (empty($orphans)) {
+      continue;
+    }
+
+    foreach ($orphans as $permission) {
+      $role->revokePermission($permission);
+    }
+    $role->save();
+    $revoked[] = $role->id() . ': ' . implode(', ', $orphans);
+  }
+
+  if (empty($revoked)) {
+    return 'No orphaned permissions found.';
+  }
+
+  return 'Revoked orphaned permissions - ' . implode(' | ', $revoked);
+}
+
+/**
+ * Install jcc_sendgrid_mail.
+ */
+function jcc_tc_update_10002() {
+  \Drupal::service('module_installer')->install(['jcc_sendgrid_mail']);
+}

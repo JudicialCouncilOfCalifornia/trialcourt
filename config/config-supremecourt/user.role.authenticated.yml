@@ -2,7 +2,10 @@ uuid: 51cf02d9-d461-4649-93e3-d622be01b46a
 langcode: en
 status: true
 dependencies:
+  config:
+    - filter.format.webform_default
   module:
+    - filter
     - media
     - system
     - userprotect
@@ -14,6 +17,7 @@ weight: -5
 is_admin: false
 permissions:
   - 'access content'
+  - 'use text format webform_default'
   - userprotect.account.edit
   - userprotect.mail.edit
   - userprotect.pass.edit
