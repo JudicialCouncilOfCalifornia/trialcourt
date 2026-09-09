@@ -11,7 +11,6 @@ use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\TempStore\SharedTempStoreFactory;
-use Drupal\jcc_sendgrid_mail\JccSendGridMailer;
 use Drupal\views\Views;
 use JudicialCouncil\Emma\JccClient;
 
@@ -34,6 +33,11 @@ class JCCSubscriptionsDigestCron {
    * Payload version, so the queue worker can reject older items.
    */
   const PAYLOAD_VERSION = 2;
+
+  /**
+   * The ID of the service that sends the mail.
+   */
+  const MAILER_SERVICE = 'jcc_sendgrid_mail.mailer';
 
   /**
    * The HTML wrapper of the digest email.
@@ -167,7 +171,7 @@ class JCCSubscriptionsDigestCron {
   protected $time;
 
   /**
-   * The messaging center mail service.
+   * Cached mail service, resolved on demand by ::mailService().
    *
    * @var \Drupal\jcc_sendgrid_mail\JccSendGridMailer
    */
@@ -192,11 +196,8 @@ class JCCSubscriptionsDigestCron {
    *   The password generator.
    * @param \Drupal\Component\Datetime\TimeInterface $time
    *   The time service.
-   * @param \Drupal\jcc_sendgrid_mail\JccSendGridMailer $mail_service
-   *   The messaging center mail service, used to check that sending is
-   *   configured before queueing a digest.
    */
-  public function __construct(StateInterface $state, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, QueueFactory $queue_factory, RendererInterface $renderer, SharedTempStoreFactory $temp_store_factory, PasswordGeneratorInterface $password_generator, TimeInterface $time, JccSendGridMailer $mail_service) {
+  public function __construct(StateInterface $state, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, QueueFactory $queue_factory, RendererInterface $renderer, SharedTempStoreFactory $temp_store_factory, PasswordGeneratorInterface $password_generator, TimeInterface $time) {
     $this->state = $state;
     $this->configFactory = $config_factory;
     $this->logger = $logger_factory->get('jcc_subscriptions');
@@ -205,7 +206,6 @@ class JCCSubscriptionsDigestCron {
     $this->tempStoreFactory = $temp_store_factory;
     $this->passwordGenerator = $password_generator;
     $this->time = $time;
-    $this->mailService = $mail_service;
   }
 
   /**
@@ -312,6 +312,25 @@ class JCCSubscriptionsDigestCron {
   }
 
   /**
+   * Returns the service that sends the mail, resolving it on first use.
+   *
+   * The jcc_sendgrid_mail module is a declared dependency, so it is resolved
+   * on demand rather than injected: a constructor argument would make the
+   * container fail to compile in the window between a code deploy and the
+   * config import that installs the module.
+   *
+   * @return \Drupal\jcc_sendgrid_mail\JccSendGridMailer
+   *   The mail service.
+   */
+  protected function mailService() {
+    if ($this->mailService === NULL) {
+      $this->mailService = \Drupal::service(self::MAILER_SERVICE);
+    }
+
+    return $this->mailService;
+  }
+
+  /**
    * Queue the digest for delivery.
    *
    * The message itself is sent by
@@ -334,7 +353,7 @@ class JCCSubscriptionsDigestCron {
 
     // Without a usable API key the worker could never send this item, and
     // would keep retrying it on every cron run.
-    if ($this->mailService->getKeyId() === NULL) {
+    if ($this->mailService()->getKeyId() === NULL) {
       $this->logger->error('Subscriptions --- No usable SendGrid key entity; digest not queued.');
       return FALSE;
     }

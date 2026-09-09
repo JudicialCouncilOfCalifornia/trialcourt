@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class SendSubscriptionsQueueWorker extends QueueWorkerBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The messaging center mail service.
+   * The mail service.
    *
    * @var \Drupal\jcc_sendgrid_mail\JccSendGridMailer
    */
@@ -46,7 +46,7 @@ final class SendSubscriptionsQueueWorker extends QueueWorkerBase implements Cont
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
    * @param \Drupal\jcc_sendgrid_mail\JccSendGridMailer $mail_service
-   *   The messaging center mail service.
+   *   The mail service.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger channel factory.
    */
