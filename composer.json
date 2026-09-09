@@ -183,7 +183,7 @@
         "drupal/config_ignore": "^3.3",
         "drupal/config_split": "^2.0",
         "drupal/config_update": "^2.0@alpha",
-        "drupal/content_access": "^1.0@alpha",
+        "drupal/content_access": "^2.0",
         "drupal/content_lock": "^2.4",
         "drupal/content_moderation_notifications": "^3.7",
         "drupal/core-composer-scaffold": "9.5.11",
@@ -238,7 +238,7 @@
         "drupal/image_widget_crop": "^2.3",
         "drupal/imagemagick": "^3.1",
         "drupal/inline_entity_form": "^1.0@RC",
-        "drupal/insert_view_adv": "^1.0@beta",
+        "drupal/insert_view_adv": "^2.0",
         "drupal/jquery_ui_autocomplete": "^2.0",
         "drupal/jquery_ui_menu": "^2.0",
         "drupal/jquery_ui_slider": "^2.1",
@@ -251,7 +251,7 @@
         "drupal/linkit_media_library": "^1.0",
         "drupal/login_emailusername": "^2.1",
         "drupal/maxlength": "^2.1",
-        "drupal/media_directories": "^2.x-dev",
+        "drupal/media_directories": "^2.1@beta",
         "drupal/media_entity_browser": "^2.0@alpha",
         "drupal/media_entity_download": "^2.1",
         "drupal/media_entity_file_replace": "^1.0",
@@ -266,7 +266,7 @@
         "drupal/migrate_google_sheets": "2.0.0 || ^2.3",
         "drupal/migrate_plus": "^6.0",
         "drupal/migrate_process_array": "^2.0",
-        "drupal/migrate_process_inline_images": "1.x-dev",
+        "drupal/migrate_process_inline_images": "^1.0",
         "drupal/migrate_source_csv": "^3.7",
         "drupal/migrate_tools": "^6.0.0",
         "drupal/mimemail": "^1.0@alpha",
@@ -284,7 +284,7 @@
         "drupal/password_policy": "^4.0",
         "drupal/pathauto": "^1.13",
         "drupal/protected_pages": "^1.8",
-        "drupal/queue_ui": "^2.2",
+        "drupal/queue_ui": "^3.1",
         "drupal/r4032login": "^2.1",
         "drupal/range": "^1.6",
         "drupal/rate_limits": "^2.0",
@@ -322,7 +322,7 @@
         "drupal/taxonomy_multidelete_terms": "^1.4",
         "drupal/term_reference_tree": "2.0.1",
         "drupal/tfa": "^1.12",
-        "drupal/title_length": "^1.2",
+        "drupal/title_length": "^2.0@RC",
         "drupal/tmgmt": "^1.12",
         "drupal/tooltip": "^1.0",
         "drupal/twig_tweak": "^3.3",
@@ -339,7 +339,7 @@
         "drupal/views_tree": "^2.0@RC",
         "drupal/viewsreference": "^2.0",
         "drupal/webform": "^6.2",
-        "drupal/webform_myemma": "1.0",
+        "drupal/webform_myemma": "^1.1",
         "drupal/webform_spam_words": "^2.0",
         "drupal/webform_translation_permissions": "^2.0",
         "drupal/webform_views": "^5.0@alpha",
@@ -379,7 +379,7 @@
         "drupal/coder": "^8.3",
         "drupal/devel": "^5.1",
         "drupal/masquerade": "^2.0",
-        "drupal/stage_file_proxy": "^1.0@RC",
+        "drupal/stage_file_proxy": "^2.1",
         "drupal/twig_xdebug": "^1.1",
         "mglaman/phpstan-drupal": "^1.2",
         "palantirnet/drupal-rector": "^0.20",
@@ -491,7 +491,7 @@
             },
             "drupal/migrate_process_inline_images": {
                 "Better local file detection": "https://www.drupal.org/files/issues/2020-01-09/migrate_process_inline_images-3105332-2_0.patch",
-                "Core version requirement.": "https://www.drupal.org/files/issues/2020-11-12/core_version_requirement_issue-3182162-2.patch"
+                "#3399463 - Drupal 10 compatibility": "./patches/migrate_process_inline_images-d10.patch"
             },
             "drupal/redirect": {
                 "Allowing wildcards": "https://www.drupal.org/files/issues/2020-09-21/support-for-wildcards-2831605-56.patch"
@@ -543,9 +543,6 @@
             },
             "drupal/scheduler": {
                 "Schedule does not work for forward pending revisions after published": "https://www.drupal.org/files/issues/2024-07-03/content-moderation-translation-scheduler-3080979-49.patch"
-            },
-            "drupal/stage_file_proxy": {
-                "Fix for Deprecated function trim, passing null to parameter": "patches/stagefileproxy_deprecated_trim.patch"
             },
             "drupal/events_log_track": {
                 "Fix to trucate title to 255 characters": "patches/events_log_track_title_truncate.patch"
@@ -605,7 +602,8 @@
                 "drupal/migrate_source_csv",
                 "drupal/geocoder",
                 "drupal/migrate_google_sheets",
-                "drupal/openid_connect_windows_aad"
+                "drupal/openid_connect_windows_aad",
+                "drupal/media_directories"
             ]
         }
     }
