@@ -11,7 +11,7 @@ use Drupal\xlsx\Entity\XlsxEntityMapping;
 function xlsx_entity_update(EntityInterface $entity) {
   $event_type = XlsxEventType::UPDATE_ENTITY;
   $dispatcher = \Drupal::service('event_dispatcher')
-    ->dispatch($event_type, new XlsxEntityEvent($event_type, $entity));
+    ->dispatch(new XlsxEntityEvent($event_type, $entity), $event_type);
 }
 
 /**
@@ -20,7 +20,7 @@ function xlsx_entity_update(EntityInterface $entity) {
 function xlsx_entity_delete(EntityInterface $entity) {
   $event_type = XlsxEventType::DELETE_ENTITY;
   $dispatcher = \Drupal::service('event_dispatcher')
-    ->dispatch($event_type, new XlsxEntityEvent($event_type, $entity));
+    ->dispatch(new XlsxEntityEvent($event_type, $entity), $event_type);
   $mapItems = XlsxEntityMapping::loadByProperties([
     'entity_type' => $entity->getEntityTypeId() . '::' . $entity->bundle(),
     'entity_id' => $entity->id(),

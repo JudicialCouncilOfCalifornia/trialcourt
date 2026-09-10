@@ -1,0 +1,46 @@
+Add Drupal 10 to core_version_requirement.
+
+The 8.x-2.x branch of Components was never released with Drupal 10 support,
+so its .info.yml files declare "^8.7.7 || ^9" and core reports the module and
+its test themes as incompatible. Only the compatibility constraint is widened
+here; no other change.
+
+The two .info.yml files under tests/modules are exempt from the constraint
+because they declare "package: Testing", so they are not touched.
+
+diff --git a/components.info.yml b/components.info.yml
+--- a/components.info.yml
++++ b/components.info.yml
+@@ -1,7 +1,7 @@
+ type: module
+ name: Components
+ description: 'Registers folders of components defined by your theme or module as Twig namespaces'
+-core_version_requirement: ^8.7.7 || ^9
++core_version_requirement: ^8.7.7 || ^9 || ^10
+ components:
+   # Allow themes to reuse this module's default namespace, "components".
+   allow_default_namespace_reuse: true
+diff --git a/tests/themes/components_test_base_theme/components_test_base_theme.info.yml b/tests/themes/components_test_base_theme/components_test_base_theme.info.yml
+--- a/tests/themes/components_test_base_theme/components_test_base_theme.info.yml
++++ b/tests/themes/components_test_base_theme/components_test_base_theme.info.yml
+@@ -1,7 +1,7 @@
+ name: Components test base theme
+ type: theme
+ base theme: stable
+-core_version_requirement: ^8.7.7 || ^9
++core_version_requirement: ^8.7.7 || ^9 || ^10
+ description: Theme for testing Components functionality.
+ components:
+   namespaces:
+diff --git a/tests/themes/components_test_theme/components_test_theme.info.yml b/tests/themes/components_test_theme/components_test_theme.info.yml
+--- a/tests/themes/components_test_theme/components_test_theme.info.yml
++++ b/tests/themes/components_test_theme/components_test_theme.info.yml
+@@ -1,7 +1,7 @@
+ name: Components test theme
+ type: theme
+ base theme: components_test_base_theme
+-core_version_requirement: ^8.7.7 || ^9
++core_version_requirement: ^8.7.7 || ^9 || ^10
+ description: Theme for testing Components functionality.
+ components:
+   namespaces:
