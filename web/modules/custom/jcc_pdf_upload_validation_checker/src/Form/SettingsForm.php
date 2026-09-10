@@ -31,6 +31,13 @@ class SettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('jcc_pdf_upload_validation_checker.settings');
 
+    $form['enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable PDF upload validation checker'),
+      '#default_value' => $config->get('enabled') ?? FALSE,
+      '#description' => $this->t('When disabled, all PDF upload validation checking/enforcement is skipped and the "PDF Validation" report link/page is hidden.'),
+    ];
+
     $form['pdf_validation_api'] = [
       '#type' => 'select',
       '#title' => $this->t('Api to use for validation'),
@@ -123,6 +130,7 @@ class SettingsForm extends ConfigFormBase {
     $bypass_enabled = (bool) $form_state->getValue('pdf_validation_bypass');
 
     $this->config('jcc_pdf_upload_validation_checker.settings')
+      ->set('enabled', (bool) $form_state->getValue('enabled'))
       ->set('pdf_validation_api', $form_state->getValue('pdf_validation_api'))
       ->set('equal_web_api_key', $form_state->getValue('equal_web_api_key'))
       ->set('pdf_validation_bypass', $bypass_enabled)

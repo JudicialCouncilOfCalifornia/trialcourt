@@ -1,4 +1,8 @@
 services:
+  jcc_pdf_upload_validation_checker.route_subscriber:
+    class: Drupal\jcc_pdf_upload_validation_checker\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
   jcc_pdf_upload_validation_checker.pdf_audit_queue_worker:
     class: Drupal\jcc_pdf_upload_validation_checker\Plugin\QueueWorker\PdfAuditQueueWorker
     tags:
