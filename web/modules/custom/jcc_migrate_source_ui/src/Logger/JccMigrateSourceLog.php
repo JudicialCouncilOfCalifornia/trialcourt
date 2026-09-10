@@ -52,7 +52,7 @@ class JccMigrateSourceLog implements LoggerInterface {
   /**
    * {@inheritdoc}
    */
-  public function log($level, $message, array $context = []) {
+  public function log($level, $message, array $context = []): void {
     // Skip if not a Jcc Migrate Source Log.
     if (empty($context['channel']) || $context['channel'] !== 'jcc_migrate_source_ui') {
       return;

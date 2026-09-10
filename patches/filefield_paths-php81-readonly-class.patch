@@ -1,0 +1,69 @@
+Fix "syntax error, unexpected token readonly" on PHP 8.1.
+
+Readonly classes ("readonly class Foo") are a PHP 8.2 feature. On PHP 8.1
+these declarations are a parse error. Drop the class-level readonly modifier
+so the module parses on PHP 8.1; the classes are stateless service/hook
+objects, so losing the immutability enforcement has no functional effect.
+
+See https://www.drupal.org/project/filefield_paths/issues/3622262
+
+diff --git a/src/Access/ImageStyleTemporaryAccessCheck.php b/src/Access/ImageStyleTemporaryAccessCheck.php
+--- a/src/Access/ImageStyleTemporaryAccessCheck.php
++++ b/src/Access/ImageStyleTemporaryAccessCheck.php
+@@ -18,7 +18,7 @@
+  * Prevents the route from serving derivatives for arbitrary temporary:// files
+  * outside the configured File (Field) Paths temp location.
+  */
+-final readonly class ImageStyleTemporaryAccessCheck implements AccessInterface {
++final class ImageStyleTemporaryAccessCheck implements AccessInterface {
+ 
+   public function __construct(
+     private ConfigFactoryInterface $configFactory,
+diff --git a/src/Hook/EntityWithFileField.php b/src/Hook/EntityWithFileField.php
+--- a/src/Hook/EntityWithFileField.php
++++ b/src/Hook/EntityWithFileField.php
+@@ -14,7 +14,7 @@
+ /**
+  * Provides functionality to handle file processing for an entity's fields.
+  */
+-final readonly class EntityWithFileField {
++final class EntityWithFileField {
+ 
+   /**
+    * Constructor.
+diff --git a/src/Hook/FieldWidgetSingleElementForm.php b/src/Hook/FieldWidgetSingleElementForm.php
+--- a/src/Hook/FieldWidgetSingleElementForm.php
++++ b/src/Hook/FieldWidgetSingleElementForm.php
+@@ -14,7 +14,7 @@
+ /**
+  * Field Widget Single Element Form Alter hook implementation.
+  */
+-final readonly class FieldWidgetSingleElementForm {
++final class FieldWidgetSingleElementForm {
+ 
+   /**
+    * Constructor.
+diff --git a/src/Hook/FileFieldPathsProcessFileLegacy.php b/src/Hook/FileFieldPathsProcessFileLegacy.php
+--- a/src/Hook/FileFieldPathsProcessFileLegacy.php
++++ b/src/Hook/FileFieldPathsProcessFileLegacy.php
+@@ -27,7 +27,7 @@
+  *
+  * @todo Convert this to a plugin.
+  */
+-final readonly class FileFieldPathsProcessFileLegacy {
++final class FileFieldPathsProcessFileLegacy {
+ 
+   public function __construct(
+     private FileSystemInterface $fileSystem,
+diff --git a/src/Hook/FileUrlHooks.php b/src/Hook/FileUrlHooks.php
+--- a/src/Hook/FileUrlHooks.php
++++ b/src/Hook/FileUrlHooks.php
+@@ -12,7 +12,7 @@
+ /**
+  * File URL and download hook implementations.
+  */
+-final readonly class FileUrlHooks {
++final class FileUrlHooks {
+ 
+   public function __construct(
+     private ConfigFactoryInterface $configFactory,

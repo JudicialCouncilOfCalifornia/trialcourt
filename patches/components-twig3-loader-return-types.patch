@@ -1,0 +1,21 @@
+diff --git a/src/Template/Loader/ComponentsLoader.php b/src/Template/Loader/ComponentsLoader.php
+--- a/src/Template/Loader/ComponentsLoader.php
++++ b/src/Template/Loader/ComponentsLoader.php
+@@ -198,7 +198,7 @@ class ComponentsLoader extends FilesystemLoader {
+   /**
+    * {@inheritdoc}
+    */
+-  public function addPath($path, $namespace = self::MAIN_NAMESPACE) {
++  public function addPath(string $path, string $namespace = self::MAIN_NAMESPACE): void {
+     // Invalidate the cache.
+     $this->cache = $this->errorCache = [];
+     $this->paths[$namespace][] = rtrim($path, '/\\');
+@@ -207,7 +207,7 @@ class ComponentsLoader extends FilesystemLoader {
+   /**
+    * {@inheritdoc}
+    */
+-  public function prependPath($path, $namespace = self::MAIN_NAMESPACE) {
++  public function prependPath(string $path, string $namespace = self::MAIN_NAMESPACE): void {
+     // Invalidate the cache.
+     $this->cache = $this->errorCache = [];
+ 
