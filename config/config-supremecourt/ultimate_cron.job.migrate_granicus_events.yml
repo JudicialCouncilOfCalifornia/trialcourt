@@ -1,19 +1,19 @@
-uuid: d1e5bb61-1093-407c-9fa3-58841162106c
+uuid: 7e122be3-5174-4074-a533-e461f2251f3e
 langcode: en
 status: true
 dependencies:
   module:
-    - jcc_courts_custom
-title: 'Migrate Job Posts'
-id: migrate_job_posts
+    - jcc_supreme_custom
+title: 'Migrate Granicus Events'
+id: migrate_granicus_events
 weight: 0
-module: jcc_courts_custom
-callback: jcc_courts_custom_migrate_job_posts
+module: jcc_supreme_custom
+callback: jcc_supreme_custom_migrate_granicus_events
 scheduler:
   id: crontab
   configuration:
     rules:
-      - '30 8-18 * * 1-5'
+      - '15 8-18 * * 1-5'
     catch_up: 300
 launcher:
   id: serial

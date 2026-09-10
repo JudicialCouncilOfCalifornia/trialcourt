@@ -24,7 +24,7 @@ class MigrationJobService {
   /**
    * Common migration function.
    */
-  public function jccRunMigration($migration_id, $sync_option = FALSE, $lease_time = 3600) {
+  public function jccRunMigration($migration_id, $sync_option = NULL, $lease_time = 3600) {
     $queue = $this->queueFactory->get('migration_queue_worker');
     $queue_worker = $this->queueWorkerManager->createInstance('migration_queue_worker');
 
