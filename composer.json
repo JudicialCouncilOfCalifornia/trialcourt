@@ -150,7 +150,6 @@
         "ckeditor-plugin/templates": "^4.13",
         "ckeditor/inserthtml4x": "^2.0",
         "composer/installers": "^1.9",
-        "consolidation/site-process": "^4.0.0",
         "cweagans/composer-patches": "^1.7",
         "drupal/access_unpublished": "^1.6",
         "drupal/address": "^1.12",
@@ -177,7 +176,7 @@
         "drupal/ckeditor_templates_ui": "^1.2",
         "drupal/classy": "^1.0",
         "drupal/color": "^1.0",
-        "drupal/colorbox": "2.0.2",
+        "drupal/colorbox": "^2.0",
         "drupal/colorbox_inline": "^2.0",
         "drupal/components": "^2.4 || ^3",
         "drupal/config_filter": "^2.7",
@@ -187,9 +186,9 @@
         "drupal/content_access": "^2.0",
         "drupal/content_lock": "^2.4",
         "drupal/content_moderation_notifications": "^3.7",
-        "drupal/core-composer-scaffold": "9.5.11",
-        "drupal/core-project-message": "9.5.11",
-        "drupal/core-recommended": "9.5.11",
+        "drupal/core-composer-scaffold": "^10",
+        "drupal/core-project-message": "^10",
+        "drupal/core-recommended": "^10",
         "drupal/cshs": "^4",
         "drupal/csv_serialization": "^2.1 || ^4.0.1",
         "drupal/ctools": "^3.6",
@@ -350,7 +349,6 @@
         "drupal/weight": "^3.6",
         "drupal/x_frame_options_configuration": "^1.3",
         "drupal/xmlsitemap": "^1.5",
-        "drush/drush": "^11",
         "enyo/dropzone": "^5.5",
         "geocoder-php/bing-maps-provider": "^4.0",
         "geocoder-php/common-http": "^4.7",
@@ -465,10 +463,8 @@
                 "Dynamically provide action plugins for content moderation": "https://www.drupal.org/files/issues/2020-01-25/2797583-149.patch",
                 "Content moderation state entity query support": "https://www.drupal.org/files/issues/2020-09-25/3025164-28.patch",
                 "Add Mayan and Tigrinya language support": "patches/add-mayan-tigrinya-languages-02.patch",
-                "Enable Needs Translation on moderated content.": "https://www.drupal.org/files/issues/2022-02-01/2950626-14.patch",
-                "Recursive rendering images when they are 20+": "https://www.drupal.org/files/issues/2021-09-24/3151977-d9-media-recursive-rendering.patch",
-                "Required fields support under collapsed details grouping": "https://www.drupal.org/files/issues/2023-05-24/3333481-fix-details-html5-validation-10.patch",
-                "Taxonomy terms load in admin side give white screen": "https://www.drupal.org/files/issues/2023-06-06/2183565-69.patch",
+                "Enable Needs Translation on moderated content.": "https://www.drupal.org/files/issues/2024-12-03/2950626-outdated-22.patch",
+                "Recursive rendering images when they are 20+": "https://www.drupal.org/files/issues/2024-10-10/media_recursive-rendering-3151977-30.patch",
                 "Fix for unable to decode outout into JSON": "patches/locale_patch.patch",
                 "PoStreamReader error": "https://www.drupal.org/files/issues/2023-01-17/drupal_core-PoStreamReader_readLine_throws_an_error_on_module_install-3301239-7.patch",
                 "Fix for PHP warning isArray check": "patches/fixphp-warning.patch",
@@ -481,7 +477,7 @@
             },
             "drupal/devel": {
                 "Fix devel count() warning in php 7.2": "patches/devel-count-warning.patch",
-                "Fix Cannot unset offset in a non-array variable in devel_get_handlers" : "patches/devel-unset-issue.patch"
+                "Fix Cannot unset offset in a non-array variable in devel_get_handlers": "patches/devel-unset-issue.patch"
             },
             "drupal/json_feed": {
                 "Adds JSONP support to feeds": "patches/json_feed_jsonp_support.patch"
@@ -497,7 +493,7 @@
                 "#3399463 - Drupal 10 compatibility": "./patches/migrate_process_inline_images-d10.patch"
             },
             "drupal/redirect": {
-                "Allowing wildcards": "https://www.drupal.org/files/issues/2020-09-21/support-for-wildcards-2831605-56.patch"
+                "Allowing wildcards": "https://git.drupalcode.org/project/redirect/-/merge_requests/97.diff"
             },
             "drupal/video_embed_field": {
                 "Allow creation of new video media entities using the Media Browser": "https://www.drupal.org/files/issues/2020-06-20/vef-3039873-media-library-add-32.patch"
@@ -510,24 +506,11 @@
                 "Update to Google v4 API": "https://www.drupal.org/files/issues/2021-11-03/migrate_google_sheets-google_sheets_v4_api-3236814-3.patch",
                 "Resolve incompatibility with migrate_plus": "patches/migrate-google-sheets-declaration.patch"
             },
-            "drupal/token": {
-                "Prevent menu link on node preview": "https://www.drupal.org/files/issues/2021-08-13/responsive_preview_support_3218969-6.patch"
-            },
-            "drupal/filefield_paths": {
-                "Fix private file path redirects.": "https://www.drupal.org/files/issues/2022-05-26/3269636-incorrect-private-file-redirect-path-2.patch",
-                "https://www.drupal.org/files/issues/2021-07-19/incorrect_redirect_hash_generated-3045063-7.patch": "https://www.drupal.org/files/issues/2021-07-19/incorrect_redirect_hash_generated-3045063-7.patch"
-            },
             "drupal/advagg": {
                 "#3348391 - PHP 8.1 - Deprecated function: stripos(): Passing null to parameter #1 ($haystack) of type string is deprecated": "https://www.drupal.org/files/issues/2023-06-30/3348391-5-deprecated-function-stripos.patch"
             },
             "drupal/fullcalendar_view" : {
                 "Fix for Calendar options": "patches/fix-title-apostrophe-render-fullcalendarview.patch"
-            },
-            "drupal/search_api_autocomplete": {
-                "Fix for Solr error":"https://www.drupal.org/files/issues/2023-10-01/3382226-22--solr_version_check_bug.patch"
-            },
-            "drupal/feeds": {
-                "Fix for call to a member function unlink() on null": "https://www.drupal.org/files/issues/2023-09-29/feeds-3390530.patch"
             },
             "drupal/mimemail": {
                 "Webform fix  PHP upgrade" : "https://www.drupal.org/files/issues/2023-03-24/3302223-check-in-public-path.patch"
@@ -535,26 +518,17 @@
             "drupal/colorbox": {
                 "Add support for remote video media": "https://www.drupal.org/files/issues/2023-06-08/add-support-for-remote-video-media-D10-3021913-43.patch"
             },
-            "drupal/viewsreference": {
-                "'Enable extra settings' only allows for saving of 'Pagination' and 'Argument' options": "https://git.drupalcode.org/project/viewsreference/-/merge_requests/38.patch"
-            },
             "drupal/migrate_source_csv": {
                 "Importing CSV data by URL based off https://www.drupal.org/files/issues/2021-10-28/csv-from-url-2927126-15.patch": "patches/import_from_csv_url_with_date_replacement.patch"
             },
             "drupal/nodeaccess": {
-                "null in nodeaccess_node_access_records() & Undefined array key NodeAccessHelper": "https://www.drupal.org/files/issues/2024-02-07/3419865-03-nodeaccess_node.patch"
+                "null in nodeaccess_node_access_records() & Undefined array key NodeAccessHelper": "https://www.drupal.org/files/issues/2026-09-09/3419865-04-nodeaccess_node.patch"
             },
             "drupal/scheduler": {
-                "Schedule does not work for forward pending revisions after published": "https://www.drupal.org/files/issues/2024-07-03/content-moderation-translation-scheduler-3080979-49.patch"
+                "Schedule does not work for forward pending revisions after published": "https://www.drupal.org/files/issues/2026-06-18/3080979-76.patch"
             },
             "drupal/events_log_track": {
                 "Fix to trucate title to 255 characters": "patches/events_log_track_title_truncate.patch"
-            },
-            "drupal/recaptcha": {
-                "AJAX support": "https://www.drupal.org/files/issues/2024-05-08/recaptcha-2493183-313-ajax-support.patch"
-            },
-            "drupal/content_moderation_notifications": {
-                "Fix for DeprecationHelper": "patches/contentmoderation_patch.patch"
             },
             "drupal/search_api": {
                 "SQL duplicate entry warnings still occurring after v1.30": "https://www.drupal.org/files/issues/2023-11-23/sqlstate-duplicate-entry-warning-when-theres-a-49-symbols-word-3402938-4.patch"
@@ -609,7 +583,10 @@
                 "drupal/geocoder",
                 "drupal/migrate_google_sheets",
                 "drupal/openid_connect_windows_aad",
-                "drupal/media_directories"
+                "drupal/media_directories",
+                "drupal/ckeditor_balloonpanel",
+                "drupal/ga_login",
+                "drupal/migrate_process_inline_images"
             ]
         }
     }
