@@ -75,14 +75,14 @@ function jcc_tc_update_9001() {
 /**
  * Install jcc_sendgrid_mail.
  */
-function jcc_tc_update_9002() {
+function jcc_tc_update_10002() {
   \Drupal::service('module_installer')->install(['jcc_sendgrid_mail']);
 }
 
 /**
  * Update node type conditions from node_type to entity_bundle.
  */
-function jcc_tc_update_9003() {
+function jcc_tc_update_10003() {
   // Load all pattern configuration entities.
   foreach (\Drupal::configFactory()->listAll('pathauto.pattern.') as $pattern_config_name) {
     $pattern_config = \Drupal::configFactory()->getEditable($pattern_config_name);

@@ -60,7 +60,7 @@ function jcc_components_profile_update_8002() {
 /**
  * Revoke permissions that no longer exist from every role - D10 upgrade.
  */
-function jcc_components_profile_update_9001() {
+function jcc_components_profile_update_10001() {
   $permissions = array_keys(\Drupal::service('user.permissions')->getPermissions());
   /** @var \Drupal\user\RoleInterface[] $roles */
   $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
@@ -89,7 +89,7 @@ function jcc_components_profile_update_9001() {
 /**
  * Install jcc_sendgrid_mail.
  */
-function jcc_components_profile_update_9002() {
+function jcc_components_profile_update_10002() {
   \Drupal::service('module_installer')->install(['jcc_sendgrid_mail']);
 }
 
