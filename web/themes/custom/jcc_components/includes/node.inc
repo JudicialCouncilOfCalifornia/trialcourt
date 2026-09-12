@@ -146,14 +146,22 @@ function jcc_components_node_landing_page(array &$variables, NodeInterface $node
   // Populate menu if items are defined - second level only.
   $menu_items = jcc_get_menu_items('main', 1, 2);
 
+  $current_relative_url = \Drupal::request()->getRequestUri();
+
   foreach ($menu_items as $content) {
     if ($content->inActiveTrail) {
       // If we want parent links for the current section.
       foreach ($content->subtree as $sub_content) {
+        $menu_item_relative_url = $content->link->getUrlObject()->toString();
+
+        // Reliable current page check.
+        $is_current = $current_relative_url == $menu_item_relative_url;
+
         $variables['secondary_menu']['items'][] = [
           'title' => $sub_content->link->getTitle(),
           'url' => $sub_content->link->getUrlObject(),
           'in_active_trail' => $sub_content->inActiveTrail,
+          'is_current' => $is_current,
         ];
       }
     }
@@ -168,6 +176,7 @@ function jcc_components_node_landing_page(array &$variables, NodeInterface $node
  */
 function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
   $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
+  $current_relative_url = \Drupal::request()->getRequestUri();
 
   // Subpage node information.
   $current_path = \Drupal::service('path.current')->getPath();
@@ -182,6 +191,11 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
   // Return links only if subpage is within menu & menu depth.
   if ($menu_items && $is_menu_item) {
     foreach ($menu_items as $content) {
+      $menu_item_relative_url = $content->link->getUrlObject()->toString();
+
+      // Reliable current page check.
+      $is_current = $current_relative_url == $menu_item_relative_url;
+
       // If we want links for primary active trail/parents of current section.
       $section = $menu_link_manager->createInstance($content->link->getParent())->getUrlObject()->toString();
       if ($section == $current_section) {
@@ -189,6 +203,7 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
           'title' => $content->link->getTitle(),
           'url' => $content->link->getUrlObject(),
           'in_active_trail' => $content->inActiveTrail,
+          'is_current' => $is_current,
           'has_children' => $content->hasChildren,
         ];
       }
@@ -196,6 +211,11 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
       // If we want links for the secondary active trail.
       if ($content->inActiveTrail) {
         foreach ($content->subtree as $sub_content) {
+          $menu_item_relative_url = $sub_content->link->getUrlObject()->toString();
+
+          // Reliable current page check.
+          $is_current = $current_relative_url == $menu_item_relative_url;
+
           // If we're in the third level, add parent for link to second level.
           if ($sub_content->inActiveTrail) {
             $variables['tertiary_menu']['parent'] = [
@@ -208,6 +228,7 @@ function jcc_components_node_subpage(array &$variables, NodeInterface $node) {
               'title' => $sub_content->link->getTitle(),
               'url' => $sub_content->link->getUrlObject(),
               'in_active_trail' => $sub_content->inActiveTrail,
+              'is_current' => $is_current,
             ];
           }
         }
