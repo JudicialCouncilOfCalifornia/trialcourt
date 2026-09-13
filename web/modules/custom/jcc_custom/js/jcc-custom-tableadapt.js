@@ -9,23 +9,21 @@
 
   Drupal.behaviors.jccTableAdapt = {
     attach: function (context, settings) {
-      var $formTable = $('.jcc-form', context).siblings('table');
-      var $formViewId = $('.jcc-form', context).attr('id');
-
       const excluded_tables = [
         'views-exposed-form-imported-events-events',
         'views-exposed-form-case-block-1'
       ];
 
-      $('.jcc-section table', context).add($formTable).each( function() {
+      $(once('jcc-table-adapt', '.jcc-section table, .jcc-form + table', context)).each( function() {
         let $currentTable = $(this);
-        let $headers = $currentTable.find('thead th');
+        let $formViewId = $currentTable.siblings('.jcc-form').attr('id');
 
         // The case view can contain fields that render as an empty string for
         // every result. Views still emits their header and cells because this
         // view uses a custom table template, so remove those columns after
         // the final markup has been built.
-        if ($formViewId === 'views-exposed-form-case-block-1') {
+        if ($currentTable.closest('.jcc-case-table-view').length) {
+          let $headers = $currentTable.find('thead th');
           const emptyColumns = [];
           $headers.each(function (index) {
             const hasValue = $currentTable.find('tbody tr').toArray().some(function (row) {
@@ -44,6 +42,7 @@
         }
 
         $currentTable.addClass('usa-table').removeClass('sortable');
+        let $headers = $currentTable.find('thead th');
 
         $headers.each( function() {
           let $tableHeader = $(this);

@@ -61,42 +61,7 @@ class CaseTable extends Table {
     // Views may rebuild style options after init (for example after a
     // configuration import). Apply the flags again at the final render point.
     $this->applyEmptyColumnOptions();
-
-    if (!empty($this->options['hide_empty_columns'])) {
-      $this->removeEmptyColumns();
-    }
     return parent::render();
-  }
-
-  /**
-   * Removes columns whose displayed fields are empty for every result row.
-   *
-   * Core performs a similar operation in its theme preprocess, but doing it
-   * here ensures the style works for inherited display options and block
-   * displays that do not retain the per-field table settings.
-   */
-  protected function removeEmptyColumns(): void {
-    $fields = $this->displayHandler->getHandlers('field');
-    $columns = $this->sanitizeColumns($this->options['columns'], $fields);
-    $has_value = [];
-
-    foreach ($columns as $field_id => $column_id) {
-      if (!isset($fields[$field_id]) || !empty($fields[$field_id]->options['exclude'])) {
-        continue;
-      }
-      $has_value[$column_id] = $has_value[$column_id] ?? FALSE;
-      foreach ($this->view->result as $row) {
-        if (trim((string) $fields[$field_id]->advancedRender($row)) !== '') {
-          $has_value[$column_id] = TRUE;
-          break;
-        }
-      }
-    }
-
-    $this->options['columns'] = array_filter(
-      $columns,
-      static fn(string $column_id): bool => !empty($has_value[$column_id])
-    );
   }
 
   /**
