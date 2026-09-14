@@ -68,16 +68,16 @@ process:
       message: 'Cannot import empty image filename.'
   name: '@pseudo_destination_filename'
   field_media_image:
-      -
-        plugin: explode
-        delimiter: ','
-        source: url
-      -
-        plugin: callback
-        callable: trim
-      -
-        plugin: migration_lookup
-        migration: appellate_forms_file
+    -
+      plugin: explode
+      delimiter: ','
+      source: url
+    -
+      plugin: callback
+      callable: trim
+    -
+      plugin: migration_lookup
+      migration: appellate_forms_file
   field_media_caption/value: '@pseudo_encoded_title'
   field_media_caption/format: caption
   uid:

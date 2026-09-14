@@ -1,0 +1,34 @@
+uuid: 1c81da7e-2b32-40a1-b8f8-ef0f12d3a850
+langcode: en
+status: true
+dependencies:
+  module:
+    - openid_connect_windows_aad
+id: windows_aad
+label: 'Windows Azure AD'
+plugin: windows_aad
+settings:
+  client_id: d29e7f87-990f-4166-867f-bc35f05d7120
+  client_secret: openid_connect_windows_aad_key
+  iss_allowed_domains: ''
+  authorization_endpoint_wa: 'https://login.microsoftonline.com/10cfa08a-5b17-4e8f-a245-139062e839dc/oauth2/authorize'
+  token_endpoint_wa: 'https://login.microsoftonline.com/10cfa08a-5b17-4e8f-a245-139062e839dc/oauth2/token'
+  userinfo_endpoint_wa: 'https://example.com/oauth2/UserInfo'
+  map_ad_groups_to_roles: false
+  group_mapping:
+    method: 0
+    mappings: ''
+    strict: false
+  userinfo_graph_api_wa: 2
+  userinfo_graph_api_use_other_mails: false
+  userinfo_update_email: false
+  hide_email_address_warning: false
+  prompt:
+    - login
+    - '0'
+    - '0'
+    - '0'
+  subject_key: sub
+  redirect_url: ''
+  enable_single_sign_out: 0
+  provider_slug: windows_aad
