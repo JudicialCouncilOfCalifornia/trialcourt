@@ -150,3 +150,48 @@ function jcc_components_profile_set_field_format($table, $type, $id, array $form
     }
   }
 }
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function jcc_components_profile_update_dependencies() {
+  $dependencies = [];
+
+  // pantheon_advanced_page_cache_update_8002() is what uninstalls big_pipe, so
+  // putting it back has to happen after that one or it would just be removed
+  // again. The dependency is only declared when the module is actually there:
+  // pointing at an update that can never run would leave 10004 permanently
+  // blocked as having unmet dependencies.
+  if (\Drupal::moduleHandler()->moduleExists('pantheon_advanced_page_cache')) {
+    $dependencies['jcc_components_profile'][10004] = [
+      'pantheon_advanced_page_cache' => 8002,
+    ];
+  }
+
+  return $dependencies;
+}
+
+/**
+ * Reinstalls big_pipe so its already queued post update can be resolved.
+ */
+function jcc_components_profile_update_10004() {
+  // Drush builds the list of pending updates once, before anything runs, so on
+  // sites that still had big_pipe installed the operation for
+  // big_pipe_post_update_html5_placeholders is already queued.
+  // pantheon_advanced_page_cache_update_8002() then uninstalls big_pipe, and by
+  // the time that queued operation is invoked the registry no longer loads
+  // big_pipe.post_update.php: function_exists() returns FALSE and Drush aborts
+  // the whole batch. Putting the module back makes the function resolvable
+  // again, and jcc_components_profile_post_update_uninstall_big_pipe() removes it
+  // once the post update phase has gone past it.
+  if (!\Drupal::moduleHandler()->moduleExists('pantheon_advanced_page_cache')) {
+    return 'pantheon_advanced_page_cache is not installed, so nothing removes big_pipe here.';
+  }
+  if (\Drupal::moduleHandler()->moduleExists('big_pipe')) {
+    return 'big_pipe is already installed, nothing to do.';
+  }
+
+  \Drupal::service('module_installer')->install(['big_pipe']);
+
+  return 'Reinstalled big_pipe for the remainder of this update run.';
+}
