@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * @file
+ * Install and update functions for the appellate legacy project.
+ */
+
+/**
+ * Convert scalar taxonomy filter values to arrays in the legacy project views.
+ */
+function jcc_appellate_legacy_project_update_9001() {
+  $view_names = [
+    'views.view.justices_appellate_legacy_project',
+    'views.view.media_justices_appellate_legacy_project',
+  ];
+
+  foreach ($view_names as $view_name) {
+    $config = \Drupal::configFactory()->getEditable($view_name);
+    if ($config->isNew()) {
+      continue;
+    }
+
+    $displays = $config->get('display') ?: [];
+    $changed = FALSE;
+
+    foreach ($displays as $display_id => $display) {
+      foreach ($display['display_options']['filters'] ?? [] as $filter_id => $filter) {
+        // TaxonomyIndexTid::calculateDependencies() passes this straight to
+        // EntityStorageBase::loadMultiple(), which only accepts an array.
+        if (($filter['plugin_id'] ?? '') !== 'taxonomy_index_tid') {
+          continue;
+        }
+        if (!isset($filter['value']) || is_array($filter['value'])) {
+          continue;
+        }
+
+        $displays[$display_id]['display_options']['filters'][$filter_id]['value'] = [(int) $filter['value']];
+        $changed = TRUE;
+      }
+    }
+
+    if ($changed) {
+      $config->set('display', $displays)->save();
+    }
+  }
+}
