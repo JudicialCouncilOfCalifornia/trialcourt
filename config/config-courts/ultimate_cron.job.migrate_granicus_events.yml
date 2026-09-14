@@ -1,19 +1,19 @@
-uuid: ef257141-3070-4be2-be8a-87245b37c4d1
+uuid: 75df284b-b160-42c5-baed-aadae6dd31b7
 langcode: en
 status: true
 dependencies:
   module:
     - jcc_courts_custom
-title: 'Migrate Opinions: Citing File'
-id: migrate_opinions_citing_file
+title: 'Migrate Granicus Events'
+id: migrate_granicus_events
 weight: 0
 module: jcc_courts_custom
-callback: jcc_courts_custom_migrate_opinions_citing_file
+callback: jcc_courts_custom_migrate_granicus_events
 scheduler:
   id: crontab
   configuration:
     rules:
-      - '0 8-17 * * 1-5'
+      - '15 8-18 * * 1-5'
     catch_up: 300
 launcher:
   id: serial

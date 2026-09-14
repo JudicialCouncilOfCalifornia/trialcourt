@@ -1,3 +1,4 @@
+uuid: fa7ae6e9-1515-4b56-af4f-2b77218540f6
 langcode: en
 status: true
 dependencies: {  }
@@ -44,39 +45,52 @@ process:
     plugin: default_value
     default_value: 1
   hero:
-    - plugin: explode
+    -
+      plugin: explode
       delimiter: ','
       source: src_unique_id
-    - plugin: callback
+    -
+      plugin: callback
       callable: trim
-    - plugin: multiple_values
-    - plugin: migration_lookup
+    -
+      plugin: multiple_values
+    -
+      plugin: migration_lookup
       migration: courts_programs_hero_hangover
-    - plugin: sub_process
+    -
+      plugin: sub_process
       process:
         target_id: '0'
         target_revision_id: '1'
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       method: process
       message: 'No hero component to add to node.'
   section:
-    - plugin: explode
+    -
+      plugin: explode
       delimiter: ','
       source: src_unique_id
-    - plugin: callback
+    -
+      plugin: callback
       callable: trim
-    - plugin: multiple_values
-    - plugin: migration_lookup
+    -
+      plugin: multiple_values
+    -
+      plugin: migration_lookup
       migration: courts_programs_section
-    - plugin: sub_process
+    -
+      plugin: sub_process
       process:
         target_id: '0'
         target_revision_id: '1'
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       method: process
       message: 'No section component to add to node.'
   field_components:
-    - plugin: merge
+    -
+      plugin: merge
       source:
         - '@hero'
         - '@section'

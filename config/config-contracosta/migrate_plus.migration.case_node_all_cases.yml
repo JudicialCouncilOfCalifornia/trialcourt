@@ -25,37 +25,37 @@ source:
   fields:
     -
       name: party_name
-      label: 'Party_Name'
+      label: Party_Name
     -
       name: department
-      label: "Department"
+      label: Department
     -
       name: hearing_date_and_time
-      label: 'Hearing_Date_and_Time'
+      label: Hearing_Date_and_Time
     -
       name: judicial_officer
-      label: 'Judicial_Officer'
+      label: Judicial_Officer
     -
       name: hearing_type
-      label: 'Hearing_Type'
+      label: Hearing_Type
     -
       name: party_type
-      label: 'Party_Type'
+      label: Party_Type
     -
       name: case_number
-      label: 'Case_Number'
+      label: Case_Number
     -
       name: case_type
-      label: 'Case_Type'
+      label: Case_Type
     -
       name: case_category
-      label: 'Case_Category'
+      label: Case_Category
     -
       name: location
-      label: "Location"
+      label: Location
     -
       name: attorney_of_record
-      label: "Attorney_Of_Record"
+      label: Attorney_Of_Record
 process:
   field_party_name:
     -
@@ -117,13 +117,16 @@ process:
       entity_type: taxonomy_term
       ignore_case: true
   field_hearing_date:
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       method: process
       source: hearing_date_and_time
-    - plugin: callback
+    -
+      plugin: callback
       callable: jcc_custom_custom_date_format
       source: hearing_date_and_time
-    - plugin: format_date
+    -
+      plugin: format_date
       from_format: 'Y-m-d H:i'
       to_format: 'Y-m-d\TH:i:s'
       from_timezone: America/Los_Angeles
@@ -157,13 +160,16 @@ process:
       entity_type: taxonomy_term
       ignore_case: true
   field_case_type:
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       source: case_type
       method: process
       message: 'No case type found.'
-    - plugin: callback
+    -
+      plugin: callback
       callable: trim
-    - plugin: entity_generate
+    -
+      plugin: entity_generate
       bundle: case_type
       value_key: name
       bundle_key: vid
@@ -189,10 +195,7 @@ process:
     -
       plugin: callback
       callable: trim
-
 destination:
   plugin: 'entity:node'
   default_bundle: case
 migration_dependencies: null
-
-

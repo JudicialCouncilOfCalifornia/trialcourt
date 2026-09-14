@@ -1,4 +1,4 @@
-#uuid: ab68cb48-4ba2-4e0f-a6bf-a9fbad1edb7a
+uuid: b970d7f6-9be4-4368-8134-edd25629f791
 langcode: en
 status: true
 dependencies: {  }
@@ -16,8 +16,8 @@ source:
   path: 'public://media_update.csv'
   header_row_count: 1
   ids:
-    - url 
-  fields:    
+    - url
+  fields:
     -
       name: title
       selector: title
@@ -41,12 +41,12 @@ source:
     -
       name: funding
       selector: funding
-      label: Budget Funding
+      label: 'Budget Funding'
     -
       name: category
       selector: category
       label: Category
-process:  
+process:
   pseudo_destination_filename:
     -
       plugin: path_from_url
@@ -67,7 +67,7 @@ process:
     -
       plugin: skip_on_empty
       method: process
-      message: 'Could not create file from URL.'    
+      message: 'Could not create file from URL.'
   mid:
     -
       plugin: media_id_lookup
@@ -81,43 +81,43 @@ process:
       source: category
       entity_type: taxonomy_term
       bundle_key: vid
-      bundle: media_file_category      
+      bundle: media_file_category
       value_key: name
       ignore_case: true
   field_source:
-    - 
+    -
       plugin: entity_generate
       source: funding
       entity_type: taxonomy_term
       bundle_key: vid
       bundle: source
       value_key: name
-      ignore_case: true        
+      ignore_case: true
   field_matters_served:
-    - 
+    -
       plugin: entity_generate
       source: topic
       entity_type: taxonomy_term
       bundle_key: vid
       bundle: matters_served
       value_key: name
-      ignore_case: true    
-  field_tags:  
-    - 
+      ignore_case: true
+  field_tags:
+    -
       plugin: entity_generate
       source: office
       entity_type: taxonomy_term
       bundle_key: vid
       bundle: media_tags
       value_key: name
-      ignore_case: true   
+      ignore_case: true
   field_date:
     -
       plugin: format_date
       source: year
       from_format: m/d/Y
-      to_format: 'Y-m-d' 
-  field_media_text/value: title    
+      to_format: Y-m-d
+  field_media_text/value: title
 destination:
   plugin: 'entity:media'
   update_only: true

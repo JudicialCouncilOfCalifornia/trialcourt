@@ -1,3 +1,4 @@
+uuid: 56865ae7-4d12-4e3a-ab4b-055df6d05f93
 langcode: en
 status: true
 dependencies: {  }
@@ -15,8 +16,8 @@ source:
   path: 'public://reports.csv'
   header_row_count: 1
   ids:
-    - url 
-  fields:    
+    - url
+  fields:
     -
       name: title
       selector: title
@@ -40,12 +41,12 @@ source:
     -
       name: funding
       selector: funding
-      label: Budget Funding
+      label: 'Budget Funding'
     -
       name: category
       selector: category
       label: Category
-process:  
+process:
   pseudo_destination_filename:
     -
       plugin: path_from_url
@@ -66,7 +67,7 @@ process:
     -
       plugin: skip_on_empty
       method: process
-      message: 'Could not create file from URL.'    
+      message: 'Could not create file from URL.'
   mid:
     -
       plugin: media_id_lookup
@@ -82,8 +83,8 @@ process:
     -
       plugin: format_date
       from_format: U
-      to_format: 'Y-m-d'
-  field_media_text/value: title  
+      to_format: Y-m-d
+  field_media_text/value: title
 destination:
   plugin: 'entity:media'
   update_only: true

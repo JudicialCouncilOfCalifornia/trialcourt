@@ -1,3 +1,4 @@
+uuid: 4335a6d3-fd5b-464b-9e88-422026d0752c
 langcode: en
 status: true
 dependencies: {  }
@@ -43,55 +44,74 @@ source:
       type: string
 process:
   bodies:
-    - plugin: explode
+    -
+      plugin: explode
       delimiter: ','
       source: bodies
-    - plugin: callback
+    -
+      plugin: callback
       callable: trim
-    - plugin: multiple_values
-    - plugin: migration_lookup
+    -
+      plugin: multiple_values
+    -
+      plugin: migration_lookup
       migration: courts_programs_body
-    - plugin: sub_process
+    -
+      plugin: sub_process
       process:
         target_id: '0'
         target_revision_id: '1'
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       method: process
       message: 'No body components to add to node.'
   accordions:
-    - plugin: explode
+    -
+      plugin: explode
       delimiter: ','
       source: accordions
-    - plugin: callback
+    -
+      plugin: callback
       callable: trim
-    - plugin: multiple_values
-    - plugin: migration_lookup
+    -
+      plugin: multiple_values
+    -
+      plugin: migration_lookup
       migration: courts_programs_accordion
-    - plugin: sub_process
+    -
+      plugin: sub_process
       process:
         target_id: '0'
         target_revision_id: '1'
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       method: process
       message: 'No accordions to add to node.'
   tabs:
-    - plugin: explode
+    -
+      plugin: explode
       delimiter: ','
       source: tabs
-    - plugin: callback
+    -
+      plugin: callback
       callable: trim
-    - plugin: multiple_values
-    - plugin: migration_lookup
+    -
+      plugin: multiple_values
+    -
+      plugin: migration_lookup
       migration: courts_programs_tabs
-    - plugin: sub_process
+    -
+      plugin: sub_process
       process:
         target_id: '0'
         target_revision_id: '1'
-    - plugin: skip_on_empty
+    -
+      plugin: skip_on_empty
       method: process
       message: 'No tabs to add to node.'
   field_components:
-    - plugin: merge
+    -
+      plugin: merge
       source:
         - '@bodies'
         - '@accordions'
