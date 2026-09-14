@@ -129,6 +129,8 @@ $sites['plumascourt.ca.gov'] = 'plumas';
 $sites['cjerjudicial.courts.ca.gov'] = 'cjer-judicial';
 // = 'store-front';
 $sites['webservices.courts.ca.gov'] = 'store-front';
+// = 'cjeo';
+$sites['judicialethicsopinions.ca.gov'] = 'cjeo';
 
 // Local using Other.
 // If you're not using Lando, place additional site definitions in

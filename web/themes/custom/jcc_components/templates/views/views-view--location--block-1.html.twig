@@ -93,14 +93,14 @@
   <article class="jcc-section jcc-section--container jcc-section--spacing-default">
     <div class="{{ classes|join(' ')|trim }}">
       <div class="jcc-news-listing__form">
-        <label id="listing_filter_label">Filter</label>
+        <h2 id="listing_filter_label">{{ 'Filter'|t }}</h2>
         {% if exposed %}
           {{ exposed }}
         {% endif %}
       </div>
 
       <div class="jcc-news-listing__content">
-        <div class="jcc-listing_result">{{ row_count }} locations</div>
+        <h2 class="jcc-listing_result">{{ row_count }} locations</h2>
         {% include '@organisms/cards/cards.twig' with {
           cards: {
             num_cols: '2-50-50',
