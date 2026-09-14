@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   module:
+    - content_access
     - menu_ui
     - scheduler
 third_party_settings:
@@ -22,12 +23,19 @@ third_party_settings:
     unpublish_enable: false
     unpublish_required: false
     unpublish_revision: false
+  content_access:
+    view_own:
+      - authenticated
+      - administrator
+    view:
+      - authenticated
+      - administrator
 _core:
   default_config_hash: 58knuC1bs8iD0MkjHFDYlWMctuHvSyuMJXysFA6jSZM
 name: Location
 type: location
 description: 'Court locations, office hours, contact information, and services offered.'
-help: ''
+help: null
 new_revision: true
 preview_mode: 1
 display_submitted: false

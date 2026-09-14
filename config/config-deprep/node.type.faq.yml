@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   module:
+    - content_access
     - menu_ui
     - scheduler
 third_party_settings:
@@ -21,12 +22,19 @@ third_party_settings:
     unpublish_enable: false
     unpublish_required: false
     unpublish_revision: false
+  content_access:
+    view_own:
+      - authenticated
+      - administrator
+    view:
+      - authenticated
+      - administrator
 _core:
   default_config_hash: gc5-nc_F2OGUOCg5zoo34jGE1R69H6hT3Ixbf_ePhIw
 name: FAQ
 type: faq
 description: 'Frequently asked questions and answers.'
-help: ''
+help: null
 new_revision: true
 preview_mode: 1
 display_submitted: false

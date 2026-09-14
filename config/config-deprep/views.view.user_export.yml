@@ -278,6 +278,15 @@ display:
             date_format: short
             custom_date_format: ''
             timezone: ''
+            tooltip:
+              date_format: ''
+              custom_date_format: ''
+            time_diff:
+              enabled: false
+              future_format: '@interval hence'
+              past_format: '@interval ago'
+              granularity: 2
+              refresh: 60
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -306,6 +315,7 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
+          pagination_heading_level: h4
       exposed_form:
         type: basic
         options:
@@ -397,10 +407,10 @@ display:
       automatic_download: true
       export_method: batch
       export_batch_size: 200
-      store_in_public_file_directory: false
       custom_redirect_path: false
       redirect_to_display: none
       include_query_params: false
+      export_filesystem: private
     cache_metadata:
       max-age: -1
       contexts:

@@ -2,6 +2,8 @@ uuid: e926c862-fe7c-41dd-b5ee-3d949c753173
 langcode: en
 status: true
 dependencies:
+  config:
+    - node.type.book
   module:
     - node
 _core:
@@ -9,12 +11,11 @@ _core:
 id: book_pages
 label: 'Book pages'
 type: 'canonical_entities:node'
-pattern: '[node:book:parents:join-path]/[node:title]'
+pattern: '/[node:book:parents:join-path]/[node:title]'
 selection_criteria:
   39ea136b-5231-4c2f-b4ff-65e80a497a25:
     id: 'entity_bundle:node'
     negate: false
-    uuid: 39ea136b-5231-4c2f-b4ff-65e80a497a25
     context_mapping:
       node: node
     bundles:

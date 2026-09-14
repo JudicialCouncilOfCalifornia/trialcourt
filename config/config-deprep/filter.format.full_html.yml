@@ -18,29 +18,35 @@ name: 'Full HTML'
 format: full_html
 weight: -10
 filters:
+  editor_file_reference:
+    id: editor_file_reference
+    provider: editor
+    status: true
+    weight: -44
+    settings: {  }
+  entity_embed:
+    id: entity_embed
+    provider: entity_embed
+    status: true
+    weight: -42
+    settings: {  }
   filter_align:
     id: filter_align
     provider: filter
     status: true
     weight: -47
     settings: {  }
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: false
+    weight: -38
+    settings: {  }
   filter_caption:
     id: filter_caption
     provider: filter
     status: true
     weight: -46
-    settings: {  }
-  filter_htmlcorrector:
-    id: filter_htmlcorrector
-    provider: filter
-    status: true
-    weight: -45
-    settings: {  }
-  editor_file_reference:
-    id: editor_file_reference
-    provider: editor
-    status: true
-    weight: -44
     settings: {  }
   filter_html:
     id: filter_html
@@ -51,39 +57,35 @@ filters:
       allowed_html: '<a href hreflang> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <s> <sup> <sub> <img src alt data-entity-type data-entity-uuid data-align data-caption> <table> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <hr> <p> <h1> <pre>'
       filter_html_help: true
       filter_html_nofollow: false
-  media_embed:
-    id: media_embed
-    provider: media
+  filter_html_escape:
+    id: filter_html_escape
+    provider: filter
+    status: false
+    weight: -39
+    settings: {  }
+  filter_html_image_secure:
+    id: filter_html_image_secure
+    provider: filter
+    status: false
+    weight: -36
+    settings: {  }
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
+    provider: filter
     status: true
-    weight: -41
-    settings:
-      default_view_mode: default
-      allowed_view_modes:
-        media_library: media_library
-      allowed_media_types:
-        image: image
-  glossify_taxonomy:
-    id: glossify_taxonomy
-    provider: glossify_taxonomy
+    weight: -45
+    settings: {  }
+  filter_image_lazy_load:
+    id: filter_image_lazy_load
+    provider: filter
     status: true
-    weight: -50
-    settings:
-      glossify_taxonomy_case_sensitivity: '0'
-      glossify_taxonomy_first_only: '1'
-      glossify_taxonomy_type: tooltips
-      glossify_taxonomy_vocabs: glossary
-      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+    weight: -43
+    settings: {  }
   filter_token_links:
     id: filter_token_links
     provider: jcc_ckeditor
     status: true
     weight: -49
-    settings: {  }
-  entity_embed:
-    id: entity_embed
-    provider: entity_embed
-    status: true
-    weight: -42
     settings: {  }
   filter_url:
     id: filter_url
@@ -92,24 +94,20 @@ filters:
     weight: -37
     settings:
       filter_url_length: 72
-  filter_html_image_secure:
-    id: filter_html_image_secure
-    provider: filter
-    status: false
-    weight: -36
-    settings: {  }
-  filter_html_escape:
-    id: filter_html_escape
-    provider: filter
-    status: false
-    weight: -39
-    settings: {  }
-  filter_autop:
-    id: filter_autop
-    provider: filter
-    status: false
-    weight: -38
-    settings: {  }
+  glossify_taxonomy:
+    id: glossify_taxonomy
+    provider: glossify_taxonomy
+    status: true
+    weight: -50
+    settings:
+      glossify_taxonomy_case_sensitivity: false
+      glossify_taxonomy_first_only: true
+      glossify_taxonomy_ignore_tags: ''
+      glossify_taxonomy_type: tooltips
+      glossify_taxonomy_tooltip_truncate: false
+      glossify_taxonomy_vocabs: glossary
+      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+      glossify_taxonomy_synonyms_field: ''
   insert_view_adv:
     id: insert_view_adv
     provider: insert_view_adv
@@ -131,3 +129,15 @@ filters:
     weight: -48
     settings:
       title: true
+      media_substitution: metadata
+  media_embed:
+    id: media_embed
+    provider: media
+    status: true
+    weight: -41
+    settings:
+      default_view_mode: default
+      allowed_view_modes:
+        media_library: media_library
+      allowed_media_types:
+        image: image

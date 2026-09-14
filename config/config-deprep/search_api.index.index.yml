@@ -3,32 +3,31 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.node.body
     - field.storage.node.field_alert_type
     - field.storage.node.field_attachments
-    - field.storage.node.body
     - field.storage.node.field_department
     - field.storage.node.field_division
     - field.storage.node.field_document_type
     - field.storage.node.field_event_type
     - field.storage.node.field_first_name
+    - field.storage.node.field_help_links
     - field.storage.node.field_images
     - field.storage.node.field_last_name
-    - field.storage.node.field_help_links
+    - field.storage.node.field_links
     - field.storage.node.field_location_type
     - field.storage.node.field_news_type
     - field.storage.node.field_person_type
     - field.storage.node.field_phone
-    - field.storage.node.field_links
     - field.storage.node.field_subject_matter
     - field.storage.node.field_tags
     - field.storage.node.field_topics
     - search_api.server.solr
   module:
-    - search_api_solr
-    - node
-    - search_api
-    - search_api_attachments
     - media
+    - node
+    - search_api_attachments
+    - search_api_solr
 third_party_settings:
   search_api_solr:
     finalize: false
@@ -79,7 +78,7 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: body
     type: 'solr_text_custom:ngram'
-    boost: !!float 2
+    boost: 2.0
     dependencies:
       config:
         - field.storage.node.body
@@ -300,7 +299,7 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: title
     type: 'solr_text_custom:ngram'
-    boost: !!float 3
+    boost: 3.0
     dependencies:
       module:
         - node
@@ -433,9 +432,9 @@ processor_settings:
       preprocess_index: 0
     boosts:
       'entity:media':
-        datasource_boost: !!float 1
+        datasource_boost: 1.0
       'entity:node':
-        datasource_boost: !!float 1
+        datasource_boost: 1.0
 tracker_settings:
   default:
     indexing_order: fifo

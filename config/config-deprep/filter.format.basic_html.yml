@@ -16,6 +16,36 @@ name: 'Basic HTML'
 format: basic_html
 weight: -9
 filters:
+  editor_file_reference:
+    id: editor_file_reference
+    provider: editor
+    status: true
+    weight: -44
+    settings: {  }
+  entity_embed:
+    id: entity_embed
+    provider: entity_embed
+    status: false
+    weight: -37
+    settings: {  }
+  filter_align:
+    id: filter_align
+    provider: filter
+    status: true
+    weight: -47
+    settings: {  }
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: false
+    weight: -42
+    settings: {  }
+  filter_caption:
+    id: filter_caption
+    provider: filter
+    status: true
+    weight: -46
+    settings: {  }
   filter_html:
     id: filter_html
     provider: filter
@@ -25,17 +55,11 @@ filters:
       allowed_html: '<em> <strong> <cite> <blockquote cite> <code> <ul type> <ol type start> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <p> <br> <span> <img src alt data-entity-type data-entity-uuid data-align data-caption width height> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title>'
       filter_html_help: false
       filter_html_nofollow: false
-  filter_align:
-    id: filter_align
+  filter_html_escape:
+    id: filter_html_escape
     provider: filter
-    status: true
-    weight: -47
-    settings: {  }
-  filter_caption:
-    id: filter_caption
-    provider: filter
-    status: true
-    weight: -46
+    status: false
+    weight: -43
     settings: {  }
   filter_html_image_secure:
     id: filter_html_image_secure
@@ -43,28 +67,23 @@ filters:
     status: true
     weight: -45
     settings: {  }
-  editor_file_reference:
-    id: editor_file_reference
-    provider: editor
-    status: true
-    weight: -44
-    settings: {  }
-  glossify_taxonomy:
-    id: glossify_taxonomy
-    provider: glossify_taxonomy
-    status: true
-    weight: -49
-    settings:
-      glossify_taxonomy_case_sensitivity: '0'
-      glossify_taxonomy_first_only: '1'
-      glossify_taxonomy_type: tooltips
-      glossify_taxonomy_vocabs: glossary
-      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
-  entity_embed:
-    id: entity_embed
-    provider: entity_embed
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
+    provider: filter
     status: false
-    weight: -37
+    weight: -38
+    settings: {  }
+  filter_image_lazy_load:
+    id: filter_image_lazy_load
+    provider: filter
+    status: true
+    weight: -43
+    settings: {  }
+  filter_token_links:
+    id: filter_token_links
+    provider: jcc_ckeditor
+    status: false
+    weight: -39
     settings: {  }
   filter_url:
     id: filter_url
@@ -73,24 +92,20 @@ filters:
     weight: -41
     settings:
       filter_url_length: 72
-  filter_htmlcorrector:
-    id: filter_htmlcorrector
-    provider: filter
-    status: false
-    weight: -38
-    settings: {  }
-  filter_html_escape:
-    id: filter_html_escape
-    provider: filter
-    status: false
-    weight: -43
-    settings: {  }
-  filter_autop:
-    id: filter_autop
-    provider: filter
-    status: false
-    weight: -42
-    settings: {  }
+  glossify_taxonomy:
+    id: glossify_taxonomy
+    provider: glossify_taxonomy
+    status: true
+    weight: -49
+    settings:
+      glossify_taxonomy_case_sensitivity: false
+      glossify_taxonomy_first_only: true
+      glossify_taxonomy_ignore_tags: ''
+      glossify_taxonomy_type: tooltips
+      glossify_taxonomy_tooltip_truncate: false
+      glossify_taxonomy_vocabs: glossary
+      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+      glossify_taxonomy_synonyms_field: ''
   insert_view_adv:
     id: insert_view_adv
     provider: insert_view_adv
@@ -100,12 +115,6 @@ filters:
       allowed_views: {  }
       render_as_empty: 0
       hide_argument_input: false
-  filter_token_links:
-    id: filter_token_links
-    provider: jcc_ckeditor
-    status: false
-    weight: -39
-    settings: {  }
   linkit:
     id: linkit
     provider: linkit
@@ -113,6 +122,7 @@ filters:
     weight: -48
     settings:
       title: true
+      media_substitution: metadata
   media_embed:
     id: media_embed
     provider: media
