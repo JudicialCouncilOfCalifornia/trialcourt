@@ -27,13 +27,13 @@ class TwigExtension extends AbstractExtension {
    */
   public function getFilters() {
     return [
-      new TwigFilter('remove_empty', [$this, 'removeEmpty']),
-      new TwigFilter('clean_unique_id', [$this, 'uniqueId']),
-      new TwigFilter('remove_html_comments', [$this, 'removeHtmlComments']),
-      new TwigFilter('unescape', [$this, 'unescape']),
-      new TwigFilter('auto_convert_urls', [$this, 'autoConvertUrls']),
-      new TwigFilter('image_style', [$this, 'imageStyle']),
-      new TwigFilter('view', [$this, 'view']),
+      new TwigFilter('remove_empty', $this->removeEmpty(...)),
+      new TwigFilter('clean_unique_id', $this->uniqueId(...)),
+      new TwigFilter('remove_html_comments', $this->removeHtmlComments(...)),
+      new TwigFilter('unescape', $this->unescape(...)),
+      new TwigFilter('auto_convert_urls', $this->autoConvertUrls(...)),
+      new TwigFilter('image_style', $this->imageStyle(...)),
+      new TwigFilter('view', $this->view(...)),
     ];
   }
 
@@ -42,7 +42,7 @@ class TwigExtension extends AbstractExtension {
    */
   public function getFunctions() {
     return [
-      new TwigFunction('term_field_from_id', [$this, 'termFieldFromId'], ['is_safe' => ['html']]),
+      new TwigFunction('term_field_from_id', $this->termFieldFromId(...), ['is_safe' => ['html']]),
     ];
   }
 

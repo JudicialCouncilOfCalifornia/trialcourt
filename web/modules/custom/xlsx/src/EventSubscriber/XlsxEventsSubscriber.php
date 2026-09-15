@@ -16,7 +16,7 @@ class XlsxEventsSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     return [
       XlsxEventType::UPDATE_ENTITY => 'updateEntity',
       XlsxEventType::DELETE_ENTITY => 'deleteEntity',

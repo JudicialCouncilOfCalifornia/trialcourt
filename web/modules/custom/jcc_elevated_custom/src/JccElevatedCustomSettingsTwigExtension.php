@@ -28,12 +28,8 @@ class JccElevatedCustomSettingsTwigExtension extends AbstractExtension {
    */
   public function getFunctions() {
     return [
-      new TwigFunction('jcc_elevated_setting', [
-        $this, 'jccElevatedCustomGetSetting',
-      ]),
-      new TwigFunction('jcc_elevated_site_name', [
-        $this, 'jccElevatedCustomGetSiteName',
-      ]),
+      new TwigFunction('jcc_elevated_setting', $this->jccElevatedCustomGetSetting(...)),
+      new TwigFunction('jcc_elevated_site_name', $this->jccElevatedCustomGetSiteName(...)),
     ];
   }
 

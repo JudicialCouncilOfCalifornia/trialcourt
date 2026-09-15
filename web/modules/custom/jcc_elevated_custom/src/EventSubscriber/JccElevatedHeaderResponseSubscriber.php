@@ -51,7 +51,7 @@ class JccElevatedHeaderResponseSubscriber implements EventSubscriberInterface {
   /**
    * Get subscriber events.
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::RESPONSE][] = ['onResponse'];
     return $events;
   }

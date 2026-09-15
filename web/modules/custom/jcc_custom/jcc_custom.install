@@ -6,6 +6,8 @@
  */
 
 use Drupal\taxonomy\Entity as TaxonomyEntity;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
 
 /**
  * Implements hook_update_N().
@@ -69,7 +71,7 @@ function jcc_custom_update_8066() {
 
   // Add missing terms.
   foreach ($vocabularies as $vid => $data) {
-    $vocabulary = \Drupal\taxonomy\Entity\Vocabulary::load($vid);
+    $vocabulary = Vocabulary::load($vid);
     if ($vocabulary) {
       foreach ($data['terms'] as $term_name) {
         $existing = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
@@ -78,7 +80,7 @@ function jcc_custom_update_8066() {
         ]);
 
         if (empty($existing)) {
-          $term = \Drupal\taxonomy\Entity\Term::create([
+          $term = Term::create([
             'vid' => $vid,
             'name' => $term_name,
           ]);

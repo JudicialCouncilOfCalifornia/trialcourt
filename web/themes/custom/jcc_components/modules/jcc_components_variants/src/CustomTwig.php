@@ -15,7 +15,7 @@ class CustomTwig extends AbstractExtension {
    */
   public function getFilters() {
     return [
-      new TwigFilter('json_decode', [$this, 'jsonDecode']),
+      new TwigFilter('json_decode', $this->jsonDecode(...)),
     ];
   }
 

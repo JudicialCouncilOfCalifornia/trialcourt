@@ -15,7 +15,7 @@ class JccElevatedCustomTwigExtractBody extends AbstractExtension {
    */
   public function getFilters() {
     return [
-      new TwigFilter('jcc_extract_body', [$this, 'jccExtractBodyFilter']),
+      new TwigFilter('jcc_extract_body', $this->jccExtractBodyFilter(...)),
     ];
   }
 

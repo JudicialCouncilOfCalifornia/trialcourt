@@ -6,15 +6,14 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Utility\Tags;
 use Drupal\Core\KeyValueStore\KeyValueStoreInterface;
 use Drupal\Core\Site\Settings;
+use Drupal\system\Controller\EntityAutocompleteController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\jcc_autocomplete_duplicates\JccEntityAutocompleteMatcher;
 
-
-
-class JccEntityAutocompleteController extends \Drupal\system\Controller\EntityAutocompleteController {
+class JccEntityAutocompleteController extends EntityAutocompleteController {
 
   /**
    * The autocomplete matcher for entity references.
@@ -75,7 +74,7 @@ class JccEntityAutocompleteController extends \Drupal\system\Controller\EntityAu
       $typed_string = Tags::explode($input);
       if ($typed_string !== NULL) {
         $typed_string = mb_strtolower(array_pop($typed_string));
-      } 
+      }
       // Selection settings are passed in as a hashed key of a serialized array
       // stored in the key/value store.
       $selection_settings = $this->keyValue

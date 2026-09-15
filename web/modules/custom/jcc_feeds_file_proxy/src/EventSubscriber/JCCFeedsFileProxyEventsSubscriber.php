@@ -171,7 +171,7 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events = [];
     $events[FeedsEvents::PARSE][] = ['afterParse', FeedsEvents::AFTER];
     $events[FeedsEvents::PROCESS_ENTITY_POSTSAVE][] = ['postSaveNews', FeedsEvents::AFTER];

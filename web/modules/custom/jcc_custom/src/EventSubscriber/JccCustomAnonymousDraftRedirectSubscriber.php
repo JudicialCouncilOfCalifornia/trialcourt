@@ -98,7 +98,7 @@ class JccCustomAnonymousDraftRedirectSubscriber implements EventSubscriberInterf
    */
   public function onRequest(KernelEvent $event): void {
     // This is needed.
-    if (!$event->isMasterRequest()) {
+    if (!$event->isMainRequest()) {
       return;
     }
 

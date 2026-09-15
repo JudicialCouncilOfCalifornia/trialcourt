@@ -59,7 +59,7 @@ class JccHideTranslationRedirectSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events['kernel.request'][] = ['onRequest', 30];
     return $events;
   }
@@ -75,7 +75,7 @@ class JccHideTranslationRedirectSubscriber implements EventSubscriberInterface {
    */
   public function onRequest(KernelEvent $event): void {
     // This is needed.
-    if (!$event->isMasterRequest()) {
+    if (!$event->isMainRequest()) {
       return;
     }
 

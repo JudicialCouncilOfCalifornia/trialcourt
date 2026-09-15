@@ -61,7 +61,7 @@ class JccElevatedAlertRedirectSubscriber implements EventSubscriberInterface {
   /**
    * Get subscriber events.
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events['kernel.request'] = ['onRequest', 99];
     $events['kernel.response'] = ['onResponse'];
     return $events;
@@ -78,7 +78,7 @@ class JccElevatedAlertRedirectSubscriber implements EventSubscriberInterface {
    */
   public function onRequest(KernelEvent $event) {
     // This is needed.
-    if (!$event->isMasterRequest()) {
+    if (!$event->isMainRequest()) {
       return;
     }
 

@@ -5,10 +5,11 @@
  * Contains jcc_glossify_path_exclude.module.
  */
 
+use Drupal\block\Entity\Block;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 function jcc_glossify_path_exclude_preprocess_html(&$variables) {
-  $block = Drupal\block\Entity\Block::load('jccglossifypathexclusion');
+  $block = Block::load('jccglossifypathexclusion');
   if ($block && $block->access('view')) {
     $variables['attributes']['class'][] = 'no-glossify';
   }

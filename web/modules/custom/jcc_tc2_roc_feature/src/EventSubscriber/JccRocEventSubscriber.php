@@ -19,7 +19,7 @@ class JccRocEventSubscriber implements EventSubscriberInterface {
   public function redirectOldRulesUrlsToNewRulesUrls(RequestEvent $event): void {
 
     // This is needed.
-    if (!$event->isMasterRequest()) {
+    if (!$event->isMainRequest()) {
       return;
     }
 
