@@ -80,7 +80,7 @@ function jcc_components_preprocess_page(&$variables) {
       $node = \Drupal::routeMatch()->getParameter('node');
       // Add only if translated content exists.
       if ($node instanceof NodeInterface && $node->hasTranslation($langcode)) {
-        $url = ($langcode == $default) ? $url : "/${langcode}${url}";
+        $url = ($langcode == $default) ? $url : "/$langcode$url";
         $languages[] = [
           'langcode' => $langcode,
           'text' => $language->getName(),

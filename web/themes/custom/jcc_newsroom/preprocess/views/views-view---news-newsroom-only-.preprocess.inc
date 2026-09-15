@@ -65,12 +65,12 @@ function jcc_newsroom_preprocess_views_view__news_newsroom_only_(&$variables) {
       ['field_topics', 'field_tags', 'field_division', 'field_subject_matter']);
 
     $excerpt['#markup'] = <<<TEMPLATE
-<div class="source">{$source}</div>
-<div class="created">{$date}</div>
-<div class="teaser-text">{$summary_markup}</div>
-{$links_markup}
+<div class="source">$source</div>
+<div class="created">$date</div>
+<div class="teaser-text">$summary_markup</div>
+$links_markup
 <div class="jcc-tags">
-  {$tags_markup}
+  $tags_markup
 </div>
 TEMPLATE;
 

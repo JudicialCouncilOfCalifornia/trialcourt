@@ -82,7 +82,7 @@ function jcc_elevated_preprocess_page(&$variables) {
       }
 
       // Add langcode prefix if not the default language.
-      $url = ($langcode == $default) ? $url : "/{$langcode}{$url}";
+      $url = ($langcode == $default) ? $url : "/$langcode$url";
 
       $variables['translation_links'][] = [
         'text' => $language->getName(),

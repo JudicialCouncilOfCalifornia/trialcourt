@@ -71,7 +71,7 @@ function jcc_elevated_paragraph_views_reference(array &$variables, ParagraphInte
 
     $target_id = $reference->target_id;
     $display_id = $reference->display_id;
-    $function = "jcc_elevated_paragraph_views_reference_{$target_id}_{$display_id}";
+    $function = "jcc_elevated_paragraph_views_reference_" . $target_id . '_' . $display_id;
   }
 
   $variables['more']['use_more_text'] = !empty($ref_override['use_more_text']) ? $ref_override['use_more_text'] : FALSE;

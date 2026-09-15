@@ -26,7 +26,7 @@ function jcc_tc2_roc_feature_config_ignore_settings_alter(array &$settings) {
   // Ignore any config that exists in this module's config/install.
   $module_handler = \Drupal::service('module_handler');
   $module_path = $module_handler->getModule('jcc_tc2_roc_feature')->getPath();
-  $paths[] = "${module_path}/config/install";
+  $paths[] = "$module_path/config/install";
 
   foreach ($paths as $path) {
     $config = scandir($path);

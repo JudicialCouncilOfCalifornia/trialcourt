@@ -890,7 +890,7 @@ function jcc_elevated_preprocess_views_view__facilities_awards_and_recognition__
       $children_details = '';
       foreach ($children as $child) {
         $child_name = $child->getName();
-        $children_details .= "<p>{$child_name} ";
+        $children_details .= "<p>$child_name ";
         $node_titles = get_node_titles_by_term($child->id());
         if (!empty($node_titles)) {
           $children_details .= ": " . implode(", ", $node_titles);
@@ -912,7 +912,7 @@ function jcc_elevated_preprocess_views_view__facilities_awards_and_recognition__
   foreach ($terms_noparent as $child) {
     if (!in_array($child->id(), $all_parent_ids)) {
       $child_name = $child->getName();
-      $misc_awards .= "<p>{$child_name} ";
+      $misc_awards .= "<p>$child_name ";
       $node_titles = get_node_titles_by_term($child->id());
       if (!empty($node_titles)) {
         $misc_awards .= ": " . implode(", ", $node_titles);

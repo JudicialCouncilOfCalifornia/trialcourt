@@ -148,7 +148,7 @@ function jcc_components_paragraph_hero_banner(array &$variables, ParagraphInterf
       $card_icon['#icon_set'] = str_replace("-dark", "-white", $card_icon['#icon_set']);
       // Link.
       $link = !empty($component->field_link->view('default')[0]) ? $component->field_link->view('default')[0] : NULL;
-      $link_options = $link['#options'] ?: NULL;
+      $link_options = $link['#options'] ?? NULL;
       $aria_label = NULL;
       if ($link_options && isset($link_options['attributes']['aria-label'])) {
         $aria_label = $link_options['attributes']['aria-label'];
@@ -177,7 +177,7 @@ function jcc_components_paragraph_views_reference(array &$variables, ParagraphIn
     $reference = $paragraph->field_views_reference->first();
     $target_id = $reference->target_id;
     $display_id = $reference->display_id;
-    $function = "jcc_components_paragraph_views_reference_${target_id}_${display_id}";
+    $function = "jcc_components_paragraph_views_reference_" . $target_id . "_" . $display_id;
   }
 
   if (!empty($function) && function_exists($function)) {
@@ -461,7 +461,7 @@ function _jcc_components_generate_cards($cards, $sub_variants, $column_size) {
     }
 
     $aria_label = NULL;
-    if (!empty($link[0]) && $link[0]['#options'] && isset($link[0]['#options']['attributes']['aria-label'])) {
+    if (isset($link[0]['#options']['attributes']['aria-label']) && !empty($link[0]) && $link[0]['#options']) {
       $aria_label = $link[0]['#options']['attributes']['aria-label'];
     }
 

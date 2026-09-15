@@ -262,7 +262,7 @@ class SubThemeGenerator {
    */
   protected function getFileNamesToRename(): array {
     // Find all files within the theme that match *{KIT_NAME}*.
-    return array_keys(iterator_to_array($this->finder->files()->name("*{$this->machineNameOld}*")->in($this->getDir())));
+    return array_keys(iterator_to_array($this->finder->files()->name("*$this->machineNameOld*")->in($this->getDir())));
   }
 
   /**

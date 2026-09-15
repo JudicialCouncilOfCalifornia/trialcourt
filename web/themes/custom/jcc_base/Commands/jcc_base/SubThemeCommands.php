@@ -93,18 +93,20 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
 
     // @todo Use extension service.
     $jcc_baseDir = \Drupal::service('extension.path.resolver')->getPath('theme', 'jcc_base');
-    $srcDir = "$jcc_baseDir/src/kits/{$kit}";
+    $srcDir = "$jcc_baseDir/src/kits/$kit";
 
     // Find kit from other active themes.
     /** @var \Drupal\Core\Extension\Extension[] $themes */
     foreach (\Drupal::service('theme_handler')->listInfo() as $theme) {
-      $path = "{$theme->getPath()}/src/kits/{$kit}";
+      $path = $theme->getPath() . "/src/kits/$kit";
       if ($this->fs->exists($path)) {
         $srcDir = $path;
       }
     }
 
-    $dstDir = "{$options['destination']}/{$options['machine-name']}";
+    $options_destination = $options['destination'];
+    $options_machine_name = $options['machine-name'];
+    $dstDir = "$options_destination/$options_machine_name";
 
     $cb = $this->collectionBuilder();
     $cb->getState()->offsetSet('srcDir', $srcDir);
@@ -123,7 +125,7 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
         );
 
         $fileName = $this->getFileNameFromUrl($kitUrl);
-        $packDir = "{$data['path']}/pack";
+        $packDir = $data['path'] . "/pack";
         $data['packPath'] = "$packDir/$fileName";
 
         try {
@@ -149,7 +151,7 @@ class SubThemeCommands extends DrushCommands implements BuilderAwareInterface {
           ]
         );
 
-        $data['srcDir'] = "{$data['path']}/kit";
+        $data['srcDir'] = $data['path'] . "/kit";
 
         /** @var \Drupal\Core\Archiver\ArchiverManager $extractorManager */
         $extractorManager = \Drupal::service('plugin.manager.archiver');
