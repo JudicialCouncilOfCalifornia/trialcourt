@@ -118,7 +118,7 @@ function jcc_components_variants_setup($element, $type) {
 function jcc_components_variants_preview($type) {
   // Variants are defined by available variant preview images.
   $path = \Drupal::service('extension.list.module')->getPath('jcc_components_variants');
-  $dir = "${path}/variants/${type}/";
+  $dir = "$path/variants/$type/";
   $files = preg_grep('/^([^.])/', scandir($dir));
   $variants = '';
   $options = [];
@@ -154,7 +154,7 @@ function jcc_components_variants_preview($type) {
         'name' => $name,
         'file' => $file,
       ];
-      $variants .= "<button class='variant' data-variant='" . $type . ":" . $variant['name'] . "'><img src='/${path}/variants/${type}/" . $variant['file'] . "' />\"${type}\":\"${name}\"</button>";
+      $variants .= "<button class='variant' data-variant='" . $type . ":" . $variant['name'] . "'><img src='/$path/variants/$type/" . $variant['file'] . "' />\"$type\":\"$name\"</button>";
       $options[$variant['name']] = $variant['name'];
     }
   }

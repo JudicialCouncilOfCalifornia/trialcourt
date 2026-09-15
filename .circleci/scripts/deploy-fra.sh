@@ -52,7 +52,28 @@ for name in "$@" ; do
 
   # echo
   echo Importing Features for $PANTHEON_ENV
+
+  # fra can spend well over ten minutes without writing a single line, and
+  # CircleCI kills a step that produces no output for no_output_timeout. This
+  # heartbeat breaks that silence so the step is judged on whether drush
+  # actually finishes, not on how quiet it is while it works.
+  ( while sleep 60; do echo "  ... fra still running for ${SITE_CODE} ($(date -u +%H:%M:%S) UTC)"; done ) &
+  HEARTBEAT_PID=$!
+  # Kill the heartbeat even if drush aborts the script.
+  trap 'kill "$HEARTBEAT_PID" 2>/dev/null || true' EXIT
+
+  set +e
   drush @${SITE_CODE}.${PANTHEON_ENV} fra --bundle=jcc_tc2 -y
+  FRA_STATUS=$?
+  set -e
+
+  kill "$HEARTBEAT_PID" 2>/dev/null || true
+  trap - EXIT
+
+  if [ "$FRA_STATUS" -ne 0 ]; then
+    echo "fra failed for ${SITE_CODE} (exit ${FRA_STATUS})"
+    exit "$FRA_STATUS"
+  fi
 
   # echo
   # echo Clearing Cache for $PANTHEON_ENV
