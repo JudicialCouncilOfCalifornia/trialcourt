@@ -87,25 +87,3 @@ function jcc_components_profile_post_update_repair_openid_connect_clients() {
     ? 'Repaired openid_connect client config: ' . implode('; ', $repaired) . '.'
     : 'No malformed openid_connect client config found.';
 }
-
-/**
- * Uninstalls the big_pipe module that was put back during the update run.
- */
-function jcc_components_profile_post_update_uninstall_big_pipe() {
-  // jcc_components_profile_update_10004() reinstalled big_pipe so the queued
-  // big_pipe_post_update_html5_placeholders could resolve. Post updates run in
-  // alphabetical order of the function name, and 'big_pipe_' sorts before
-  // 'jcc_components_profile_', so that one is done by now and the module can go
-  // away again, which is what pantheon_advanced_page_cache wants: it declares
-  // big_pipe incompatible with itself on Pantheon.
-  if (!\Drupal::moduleHandler()->moduleExists('big_pipe')) {
-    return 'big_pipe is not installed, nothing to do.';
-  }
-  if (!\Drupal::moduleHandler()->moduleExists('pantheon_advanced_page_cache')) {
-    return 'pantheon_advanced_page_cache is not installed, big_pipe is left alone.';
-  }
-
-  \Drupal::service('module_installer')->uninstall(['big_pipe']);
-
-  return 'Uninstalled big_pipe again.';
-}

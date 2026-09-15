@@ -482,6 +482,7 @@ display:
             offset: false
             offset_label: Offset
           quantity: 9
+          pagination_heading_level: h4
       exposed_form:
         type: basic
         options:
@@ -523,7 +524,7 @@ display:
           admin_label: ''
           entity_type: tmgmt_job_item
           entity_field: tjid
-          plugin_id: numeric
+          plugin_id: entity_target_id
           default_action: 'not found'
           exception:
             value: all
@@ -534,7 +535,6 @@ display:
           default_argument_type: fixed
           default_argument_options:
             argument: ''
-          default_argument_skip_url: false
           summary_options:
             base_path: ''
             count: true
@@ -550,6 +550,7 @@ display:
             fail: 'not found'
           break_phrase: false
           not: false
+          target_entity_type_id: tmgmt_job
       filters: {  }
       style:
         type: table
@@ -875,6 +876,15 @@ display:
             date_format: medium
             custom_date_format: ''
             timezone: ''
+            tooltip:
+              date_format: ''
+              custom_date_format: ''
+            time_diff:
+              enabled: false
+              future_format: '@interval hence'
+              past_format: '@interval ago'
+              granularity: 2
+              refresh: 60
           group_column: value
           group_columns: {  }
           group_rows: true

@@ -1,3 +1,4 @@
+uuid: 21d23b4a-9890-4081-b212-9dd050668677
 langcode: en
 status: true
 dependencies: {  }
@@ -17,62 +18,59 @@ source:
   fields:
     -
       name: subject
-      label: 'subject'
+      label: subject
       selector: subject
     -
       name: field_department_id
-      label: 'field_department_id'
+      label: field_department_id
       selector: am_Location
     -
       name: field_am_access_code
-      label: 'field_am_access_code'
+      label: field_am_access_code
       selector: am_ConferenceId
     -
       name: field_am_conference_id
-      label: 'field_am_conference_id'
+      label: field_am_conference_id
       selector: am_ConferenceId
     -
       name: field_am_conference_number
-      label: 'field_am_conference_number'
+      label: field_am_conference_number
       selector: am_ConferenceNumber
     -
       name: field_am_meeting_start_time
-      label: 'field_am_meeting_start_time'
+      label: field_am_meeting_start_time
       selector: am_StartDate
     -
       name: field_am_meeting_end_time
-      label: 'field_am_meeting_end_time'
+      label: field_am_meeting_end_time
       selector: am_EnDate
     -
       name: field_am_meeting_url
-      label: 'field_am_meeting_url'
+      label: field_am_meeting_url
       selector: am_Url
     -
       name: field_pm_access_code
-      label: 'field_pm_access_code'
+      label: field_pm_access_code
       selector: pm_ConferenceId
     -
       name: field_pm_conference_id
-      label: 'field_pm_conference_id'
+      label: field_pm_conference_id
       selector: pm_ConferenceId
     -
       name: field_pm_conference_number
-      label: 'field_pm_conference_number'
+      label: field_pm_conference_number
       selector: pm_ConferenceNumber
     -
       name: field_pm_meeting_start_time
-      label: 'field_pm_meeting_start_time'
+      label: field_pm_meeting_start_time
       selector: pm_StartDate
     -
       name: field_pm_meeting_url
-      label: 'field_pm_meeting_url'
+      label: field_pm_meeting_url
       selector: pm_Url
   ids:
     subject:
       type: string
-destination:
-  plugin: entity:node
-  default_bundle: remote_hearings
 process:
   type:
     plugin: default_value
@@ -92,4 +90,7 @@ process:
   uid:
     plugin: default_value
     default_value: 0
+destination:
+  plugin: 'entity:node'
+  default_bundle: remote_hearings
 migration_dependencies: {  }

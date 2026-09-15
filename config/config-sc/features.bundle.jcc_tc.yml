@@ -2,26 +2,28 @@ uuid: dcee8082-c132-41dd-b1e5-0e27aaebbc1f
 langcode: en
 status: true
 dependencies: {  }
-name: 'JCC TC'
 machine_name: jcc_tc
+name: 'JCC TC'
 description: ''
 assignments:
   alter:
+    enabled: false
+    weight: 0
     core: true
     uuid: true
     user_permissions: true
-    enabled: false
-    weight: 0
   base:
+    enabled: false
+    weight: -2
     types:
       config:
         comment_type: comment_type
         node_type: node_type
       content:
         user: user
-    enabled: false
-    weight: -2
   core:
+    enabled: false
+    weight: 5
     types:
       config:
         date_format: date_format
@@ -32,12 +34,12 @@ assignments:
         responsive_image_style: responsive_image_style
         user_role: user_role
         entity_view_mode: entity_view_mode
-    enabled: false
-    weight: 5
   dependency:
     enabled: false
     weight: 15
   exclude:
+    enabled: false
+    weight: -5
     types:
       config:
         features_bundle: features_bundle
@@ -47,8 +49,6 @@ assignments:
       profile: true
       namespace: true
       namespace_any: false
-    enabled: false
-    weight: -5
   existing:
     enabled: false
     weight: 12
@@ -59,14 +59,16 @@ assignments:
     enabled: false
     weight: 0
   optional:
-    types:
-      config: {  }
     enabled: false
     weight: 0
+    types:
+      config: {  }
   packages:
     enabled: true
     weight: -20
   profile:
+    enabled: false
+    weight: 10
     curated: true
     standard:
       files: true
@@ -79,9 +81,9 @@ assignments:
         migration: migration
         shortcut_set: shortcut_set
         tour: tour
-    enabled: false
-    weight: 10
   site:
+    enabled: false
+    weight: 7
     types:
       config:
         action: action
@@ -92,7 +94,5 @@ assignments:
         taxonomy_vocabulary: taxonomy_vocabulary
         editor: editor
         filter_format: filter_format
-    enabled: false
-    weight: 7
 profile_name: jcc_tc
 is_profile: true

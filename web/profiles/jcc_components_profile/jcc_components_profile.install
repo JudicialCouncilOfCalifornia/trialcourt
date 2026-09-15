@@ -152,46 +152,85 @@ function jcc_components_profile_set_field_format($table, $type, $id, array $form
 }
 
 /**
- * Implements hook_update_dependencies().
- */
-function jcc_components_profile_update_dependencies() {
-  $dependencies = [];
-
-  // pantheon_advanced_page_cache_update_8002() is what uninstalls big_pipe, so
-  // putting it back has to happen after that one or it would just be removed
-  // again. The dependency is only declared when the module is actually there:
-  // pointing at an update that can never run would leave 10004 permanently
-  // blocked as having unmet dependencies.
-  if (\Drupal::moduleHandler()->moduleExists('pantheon_advanced_page_cache')) {
-    $dependencies['jcc_components_profile'][10004] = [
-      'pantheon_advanced_page_cache' => 8002,
-    ];
-  }
-
-  return $dependencies;
-}
-
-/**
- * Reinstalls big_pipe so its already queued post update can be resolved.
+ * Makes big_pipe's queued post update resolvable after it is uninstalled.
  */
 function jcc_components_profile_update_10004() {
   // Drush builds the list of pending updates once, before anything runs, so on
   // sites that still had big_pipe installed the operation for
   // big_pipe_post_update_html5_placeholders is already queued.
-  // pantheon_advanced_page_cache_update_8002() then uninstalls big_pipe, and by
-  // the time that queued operation is invoked the registry no longer loads
-  // big_pipe.post_update.php: function_exists() returns FALSE and Drush aborts
-  // the whole batch. Putting the module back makes the function resolvable
-  // again, and jcc_components_profile_post_update_uninstall_big_pipe() removes it
-  // once the post update phase has gone past it.
-  if (!\Drupal::moduleHandler()->moduleExists('pantheon_advanced_page_cache')) {
-    return 'pantheon_advanced_page_cache is not installed, so nothing removes big_pipe here.';
-  }
-  if (\Drupal::moduleHandler()->moduleExists('big_pipe')) {
-    return 'big_pipe is already installed, nothing to do.';
+  // pantheon_advanced_page_cache_update_8002() then uninstalls the module, and
+  // when that queued operation is reached the registry refuses to load
+  // big_pipe.post_update.php for an extension that is no longer installed:
+  // UpdateDBCommands::updateDoOnePostUpdate() only looks at function_exists(),
+  // so it aborts the whole batch.
+  //
+  // Loading the file by hand defines the function for the rest of this process,
+  // which is all that check cares about. The function is an empty no-op in
+  // core, so nothing is skipped by resolving it this way. Doing it here rather
+  // than reinstalling the module avoids two module state changes, and with them
+  // the locale batches that batch_set() injects into the running update batch.
+  if (function_exists('big_pipe_post_update_html5_placeholders')) {
+    return 'The big_pipe post update is already loaded.';
   }
 
-  \Drupal::service('module_installer')->install(['big_pipe']);
+  $file = DRUPAL_ROOT . '/core/modules/big_pipe/big_pipe.post_update.php';
+  if (!file_exists($file)) {
+    return 'big_pipe is not present in this core, nothing to load.';
+  }
 
-  return 'Reinstalled big_pipe for the remainder of this update run.';
+  include_once $file;
+
+  return 'Loaded big_pipe.post_update.php so its queued post update can resolve.';
+}
+
+/**
+ * Normalises taxonomy_index_tid filter values that are not arrays.
+ */
+function jcc_components_profile_update_10005() {
+  // TaxonomyIndexTid::calculateDependencies() passes the filter value straight
+  // to EntityStorageBase::loadMultiple(), and loadMultiple(NULL) means "load
+  // every term", not "load none". On a site with a large vocabulary that is
+  // enough to exhaust memory the moment any post update saves the view, and the
+  // kernel kills whichever process holds the most memory. A scalar value blows
+  // up differently, with a TypeError, since the argument is typed ?array.
+  //
+  // Config is rewritten raw on purpose: saving the View entity would trigger the
+  // very calculateDependencies() call this update exists to make safe.
+  $config_factory = \Drupal::configFactory();
+  $fixed = [];
+
+  foreach ($config_factory->listAll('views.view.') as $name) {
+    $config = $config_factory->getEditable($name);
+    $displays = $config->get('display') ?: [];
+    $changed = FALSE;
+
+    foreach ($displays as $display_id => $display) {
+      foreach ($display['display_options']['filters'] ?? [] as $filter_id => $filter) {
+        $plugin_id = $filter['plugin_id'] ?? '';
+        if ($plugin_id !== 'taxonomy_index_tid' && $plugin_id !== 'taxonomy_index_tid_depth') {
+          continue;
+        }
+
+        $value = $filter['value'] ?? NULL;
+        if (is_array($value)) {
+          continue;
+        }
+
+        // A numeric scalar is a single term id that was stored unwrapped;
+        // anything else cannot be a term id and becomes an empty list.
+        $new_value = is_numeric($value) ? [(int) $value] : [];
+        $displays[$display_id]['display_options']['filters'][$filter_id]['value'] = $new_value;
+        $changed = TRUE;
+        $fixed[] = sprintf('%s:%s:%s (%s)', $name, $display_id, $filter_id, $value === NULL ? 'null' : var_export($value, TRUE));
+      }
+    }
+
+    if ($changed) {
+      $config->set('display', $displays)->save();
+    }
+  }
+
+  return $fixed
+    ? 'Normalised taxonomy filter values: ' . implode('; ', $fixed) . '.'
+    : 'No taxonomy_index_tid filters needed normalising.';
 }

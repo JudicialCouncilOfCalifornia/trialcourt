@@ -2,26 +2,28 @@ uuid: a6cc16a5-90a5-4b08-86a9-88e68f2f404e
 langcode: en
 status: true
 dependencies: {  }
-name: Default
 machine_name: default
+name: Default
 description: ''
 assignments:
   alter:
+    enabled: true
+    weight: 0
     core: true
     uuid: true
     user_permissions: true
-    enabled: true
-    weight: 0
   base:
+    enabled: true
+    weight: -2
     types:
       config:
         comment_type: comment_type
         node_type: node_type
       content:
         user: user
-    enabled: true
-    weight: -2
   core:
+    enabled: true
+    weight: 5
     types:
       config:
         date_format: date_format
@@ -32,12 +34,12 @@ assignments:
         responsive_image_style: responsive_image_style
         user_role: user_role
         entity_view_mode: entity_view_mode
-    enabled: true
-    weight: 5
   dependency:
     enabled: true
     weight: 15
   exclude:
+    enabled: true
+    weight: -5
     types:
       config:
         features_bundle: features_bundle
@@ -47,8 +49,6 @@ assignments:
       profile: true
       namespace: true
       namespace_any: false
-    enabled: true
-    weight: -5
   existing:
     enabled: true
     weight: 12
@@ -59,14 +59,16 @@ assignments:
     enabled: true
     weight: 0
   optional:
-    types:
-      config: {  }
     enabled: true
     weight: 0
+    types:
+      config: {  }
   packages:
     enabled: true
     weight: -20
   profile:
+    enabled: true
+    weight: 10
     curated: true
     standard:
       files: true
@@ -79,9 +81,9 @@ assignments:
         migration: migration
         shortcut_set: shortcut_set
         tour: tour
-    enabled: true
-    weight: 10
   site:
+    enabled: true
+    weight: 7
     types:
       config:
         action: action
@@ -92,7 +94,5 @@ assignments:
         taxonomy_vocabulary: taxonomy_vocabulary
         editor: editor
         filter_format: filter_format
-    enabled: true
-    weight: 7
 profile_name: ''
 is_profile: false

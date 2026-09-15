@@ -17,15 +17,6 @@ name: Body
 format: body
 weight: -9
 filters:
-  filter_html:
-    id: filter_html
-    provider: filter
-    status: true
-    weight: -10
-    settings:
-      allowed_html: '<em> <strong> <b> <i class=""> <cite> <ul type> <ol type start> <li> <dl> <dt> <dd> <h2 id class=""> <h3 id> <h4 id> <h5 id> <h6 id> <table class=""> <img src alt data-entity-type data-entity-uuid data-align data-caption width> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <a href hreflang id class aria-label rel target data-entity-substitution data-entity-type data-entity-uuid data-radiomast-id> <blockquote cite class="blockquote blockquote--alert blockquote--alert--warning blockquote--alert--error blockquote--alert--success blockquote--alert--info blockquote--callout blockquote--italic blockquote--box"> <p> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <hr> <video> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title> <iframe longdesc name scrolling src title width height frameborder align> <span data-tooltip>'
-      filter_html_help: false
-      filter_html_nofollow: false
   entity_embed:
     id: entity_embed
     provider: entity_embed
@@ -44,6 +35,21 @@ filters:
     status: true
     weight: 0
     settings: {  }
+  filter_caption:
+    id: filter_caption
+    provider: filter
+    status: true
+    weight: 0
+    settings: {  }
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<em> <strong> <b> <i class=""> <cite> <ul type> <ol type start> <li> <dl> <dt> <dd> <h2 id class=""> <h3 id> <h4 id> <h5 id> <h6 id> <table class=""> <img src alt data-entity-type data-entity-uuid data-align data-caption width> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <a href hreflang id class aria-label rel target data-entity-substitution data-entity-type data-entity-uuid data-radiomast-id> <blockquote cite class="blockquote blockquote--alert blockquote--alert--warning blockquote--alert--error blockquote--alert--success blockquote--alert--info blockquote--callout blockquote--italic blockquote--box"> <p> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <hr> <video> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title> <iframe longdesc name scrolling src title width height frameborder align> <span data-tooltip>'
+      filter_html_help: false
+      filter_html_nofollow: false
   filter_htmlcorrector:
     id: filter_htmlcorrector
     provider: filter
@@ -65,10 +71,12 @@ filters:
     settings:
       glossify_taxonomy_case_sensitivity: true
       glossify_taxonomy_first_only: true
+      glossify_taxonomy_ignore_tags: ''
       glossify_taxonomy_type: tooltips
       glossify_taxonomy_tooltip_truncate: false
       glossify_taxonomy_vocabs: ''
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+      glossify_taxonomy_synonyms_field: ''
   linkit:
     id: linkit
     provider: linkit
@@ -76,6 +84,7 @@ filters:
     weight: 0
     settings:
       title: true
+      media_substitution: metadata
   media_embed:
     id: media_embed
     provider: media
@@ -91,12 +100,6 @@ filters:
         image: image
         remote_video: remote_video
         snippet: snippet
-  filter_caption:
-    id: filter_caption
-    provider: filter
-    status: true
-    weight: 0
-    settings: {  }
   tooltip:
     id: tooltip
     provider: tooltip

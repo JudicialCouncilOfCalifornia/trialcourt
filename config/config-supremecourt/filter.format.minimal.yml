@@ -11,6 +11,12 @@ name: Minimal
 format: minimal
 weight: -8
 filters:
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: true
+    weight: 0
+    settings: {  }
   filter_html:
     id: filter_html
     provider: filter
@@ -20,31 +26,6 @@ filters:
       allowed_html: '<em> <strong> <a href hreflang id class aria-label rel target data-entity-substitution data-entity-type data-entity-uuid> <iframe class longdesc name scrolling src title width height frameborder align>'
       filter_html_help: true
       filter_html_nofollow: false
-  glossify_taxonomy:
-    id: glossify_taxonomy
-    provider: glossify_taxonomy
-    status: false
-    weight: -10
-    settings:
-      glossify_taxonomy_case_sensitivity: true
-      glossify_taxonomy_first_only: true
-      glossify_taxonomy_type: tooltips
-      glossify_taxonomy_tooltip_truncate: false
-      glossify_taxonomy_vocabs: ''
-      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
-  linkit:
-    id: linkit
-    provider: linkit
-    status: true
-    weight: 0
-    settings:
-      title: true
-  filter_autop:
-    id: filter_autop
-    provider: filter
-    status: true
-    weight: 0
-    settings: {  }
   filter_htmlcorrector:
     id: filter_htmlcorrector
     provider: filter
@@ -58,3 +39,25 @@ filters:
     weight: 0
     settings:
       filter_url_length: 72
+  glossify_taxonomy:
+    id: glossify_taxonomy
+    provider: glossify_taxonomy
+    status: false
+    weight: -10
+    settings:
+      glossify_taxonomy_case_sensitivity: true
+      glossify_taxonomy_first_only: true
+      glossify_taxonomy_ignore_tags: ''
+      glossify_taxonomy_type: tooltips
+      glossify_taxonomy_tooltip_truncate: false
+      glossify_taxonomy_vocabs: ''
+      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+      glossify_taxonomy_synonyms_field: ''
+  linkit:
+    id: linkit
+    provider: linkit
+    status: true
+    weight: 0
+    settings:
+      title: true
+      media_substitution: metadata

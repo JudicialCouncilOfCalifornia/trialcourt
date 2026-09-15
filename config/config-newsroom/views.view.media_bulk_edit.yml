@@ -86,16 +86,17 @@ display:
           batch: true
           batch_size: 100
           form_step: true
+          ajax_loader: false
           buttons: true
           action_title: Action
+          clear_on_exposed: true
           selected_actions:
             3:
               action_id: views_bulk_edit
               preconfiguration:
-                get_bundles_from_results: 1
+                get_bundles_from_results: true
             4:
               action_id: views_bulk_operations_delete_entity
-          clear_on_exposed: true
         thumbnail__target_id:
           id: thumbnail__target_id
           table: media_field_data
@@ -152,12 +153,12 @@ display:
           settings:
             image_link: ''
             image_style: thumbnail
+            image_loading:
+              attribute: lazy
             svg_attributes:
               width: null
               height: null
             svg_render_as_image: true
-            image_loading:
-              attribute: lazy
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -282,6 +283,7 @@ display:
         type: full
         options:
           offset: 0
+          pagination_heading_level: h4
           items_per_page: 200
           total_pages: null
           id: 0
@@ -591,7 +593,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - user.roles
       tags:
         - 'config:field.storage.node.field_news_type'
@@ -610,7 +611,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - user.roles
       tags:
         - 'config:field.storage.node.field_news_type'

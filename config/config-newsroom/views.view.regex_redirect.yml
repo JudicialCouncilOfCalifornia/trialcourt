@@ -167,7 +167,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{{ redirect_redirect__uri|striptags|replace({''%3C'': ''<'', ''%3E'': ''>''}) }}'
+            text: "{{ redirect_redirect__uri|striptags|replace({'%3C': '<', '%3E': '>'}) }}"
             make_link: false
             path: ''
             absolute: false
@@ -317,6 +317,7 @@ display:
             offset: false
             offset_label: Offset
           quantity: 9
+          pagination_heading_level: h4
       exposed_form:
         type: basic
         options:

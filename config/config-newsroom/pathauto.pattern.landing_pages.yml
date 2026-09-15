@@ -2,6 +2,8 @@ uuid: 383e5f8a-d497-4977-a3a7-c6fd8cbf1a52
 langcode: en
 status: true
 dependencies:
+  config:
+    - node.type.landing_page
   module:
     - node
 _core:
@@ -9,12 +11,11 @@ _core:
 id: landing_pages
 label: 'Landing pages'
 type: 'canonical_entities:node'
-pattern: '[node:menu-link:parents:join-path]/[node:menu-link:title]'
+pattern: '/[node:menu-link:parents:join-path]/[node:menu-link:title]'
 selection_criteria:
   95fb4476-dd3b-459e-8033-43c234a672f6:
     id: 'entity_bundle:node'
     negate: false
-    uuid: 95fb4476-dd3b-459e-8033-43c234a672f6
     context_mapping:
       node: node
     bundles:

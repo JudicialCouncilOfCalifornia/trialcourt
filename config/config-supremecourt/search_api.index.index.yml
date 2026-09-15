@@ -3,18 +3,17 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.full
     - field.storage.node.body
     - field.storage.node.field_alert_type
     - field.storage.node.field_byline
     - field.storage.node.field_news_type
-    - search_api.server.pantheon_solr8
-    - core.entity_view_mode.node.full
+    - search_api.server.pantheon_search
   module:
-    - search_api_solr
-    - media
     - file
+    - media
     - node
-    - search_api
+    - search_api_solr
 third_party_settings:
   search_api_solr:
     finalize: false
@@ -217,6 +216,7 @@ processor_settings:
   add_url: {  }
   aggregated_field: {  }
   auto_aggregated_fulltext_field: {  }
+  custom_value: {  }
   entity_type: {  }
   language_with_fallback: {  }
   rendered_item: {  }
@@ -226,6 +226,7 @@ tracker_settings:
     indexing_order: fifo
 options:
   cron_limit: 50
+  delete_on_fail: true
   index_directly: true
   track_changes_in_references: true
-server: pantheon_solr8
+server: pantheon_search

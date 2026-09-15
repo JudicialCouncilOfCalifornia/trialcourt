@@ -207,7 +207,7 @@ field_settings:
     label: 'Rendered HTML output'
     property_path: rendered_item
     type: text
-    boost: !!float 2
+    boost: 2.0
     configuration:
       roles:
         - anonymous
@@ -241,7 +241,7 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: title
     type: text
-    boost: !!float 5
+    boost: 5.0
     dependencies:
       module:
         - node
@@ -373,12 +373,12 @@ processor_settings:
       preprocess_index: -43
     boosts:
       'entity:node':
-        datasource_boost: !!float 1
+        datasource_boost: 1.0
         bundle_boosts:
-          document: !!float 2
-          landing_page: !!float 2
-          news: !!float 3
-          subpage: !!float 2
+          document: 2.0
+          landing_page: 2.0
+          news: 3.0
+          subpage: 2.0
   ignorecase:
     weights:
       preprocess_index: -50

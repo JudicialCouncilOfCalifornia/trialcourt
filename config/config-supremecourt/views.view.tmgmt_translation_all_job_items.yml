@@ -552,6 +552,15 @@ display:
             date_format: medium
             custom_date_format: ''
             timezone: ''
+            tooltip:
+              date_format: ''
+              custom_date_format: ''
+            time_diff:
+              enabled: false
+              future_format: '@interval hence'
+              past_format: '@interval ago'
+              granularity: 2
+              refresh: 60
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -618,6 +627,7 @@ display:
         type: full
         options:
           offset: 0
+          pagination_heading_level: h4
           items_per_page: 10
           total_pages: null
           id: 0
@@ -798,50 +808,18 @@ display:
           table: tmgmt_job
           field: job_type
           relationship: tjid
-          group_type: group
-          admin_label: ''
           entity_type: tmgmt_job
           plugin_id: tmgmt_job_type_filter
-          operator: '='
-          group: 1
+          value:
+            all: all
+            normal: normal
+            continuous: continuous
           exposed: true
           expose:
             operator_id: job_type_op
-            label: 'Job Type (Custom)'
-            description: null
-            use_operator: false
-            operator: job_type_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: job_type
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            hide_no_continuous: true
-          is_grouped: true
-          group_info:
             label: 'Job type'
-            description: ''
+            operator: job_type_op
             identifier: job_type
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items:
-              1:
-                title: Normal
-                operator: '='
-                value:
-                  value: normal
-              2:
-                title: Continuous
-                operator: '='
-                value:
-                  value: continuous
       filter_groups:
         operator: AND
         groups:
@@ -977,7 +955,7 @@ display:
           empty: true
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -990,6 +968,7 @@ display:
     display_plugin: page
     position: 1
     display_options:
+      filters: {  }
       display_extenders: {  }
       path: admin/tmgmt/job_items
       menu:
@@ -1002,7 +981,7 @@ display:
         parent: tmgmt.admin_tmgmt
         context: '0'
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
