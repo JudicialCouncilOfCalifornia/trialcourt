@@ -36,7 +36,7 @@ for name in "$@" ; do
   fi
 
   # Disable strict host checking so we can run drush on all envs.
-  echo -e "Host appserver.${PANTHEON_ENV}.${UUID}.drush.in\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  echo -e "Host appserver.${PANTHEON_ENV}.${UUID}.drush.in\n\tStrictHostKeyChecking no\n\tServerAliveInterval 60\n\tServerAliveCountMax 30\n" >> ~/.ssh/config
 
   # echo
   # echo Clearing Cache for $PANTHEON_ENV
