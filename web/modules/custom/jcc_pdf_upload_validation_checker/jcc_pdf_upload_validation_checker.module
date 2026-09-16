@@ -37,6 +37,23 @@ function _jcc_pdf_upload_validation_checker_feature_enabled(): bool {
 }
 
 /**
+ * Implements hook_rebuild().
+ *
+ * Config sync (main sync directory + the immutable config split) can delete
+ * and recreate the "bypass_reasons" vocabulary config across two separate
+ * import passes, which cascades-deletes its terms in between. Rather than
+ * depend on the exact ordering of update hooks/cim/config-split steps in any
+ * given deploy or reset script, re-assert the canonical terms here: this
+ * runs after every cache rebuild (i.e. after the container/config are fully
+ * up to date), which every deploy or `drush cr`/`lando reset` already ends
+ * with. The underlying check is idempotent and cheap.
+ */
+function jcc_pdf_upload_validation_checker_rebuild() {
+  \Drupal::moduleHandler()->loadInclude('jcc_pdf_upload_validation_checker', 'install');
+  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
+}
+
+/**
  * Implements hook_element_info_alter().
  */
 function jcc_pdf_upload_validation_checker_element_info_alter(array &$info): void {

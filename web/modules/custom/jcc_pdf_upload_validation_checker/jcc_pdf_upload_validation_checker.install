@@ -171,6 +171,37 @@ function _jcc_pdf_upload_validation_checker_ensure_bypass_audit_log_table(): voi
 }
 
 /**
+ * Returns the canonical set of Bypass Reasons terms.
+ *
+ * Each entry defines the current name/description for a default term, plus
+ * any older names previously seeded by this module (for example, by
+ * earlier versions of this function) so that sites which already created a
+ * term under a legacy name are updated in place instead of ending up with a
+ * duplicate. This is what previously caused inconsistent results across
+ * sites: some sites had terms created under older names, or with no
+ * description at all.
+ */
+function _jcc_pdf_upload_validation_checker_bypass_reason_definitions(): array {
+  return [
+    [
+      'name' => 'Third Party Content Exception (ADA Title II)',
+      'aliases' => ['third party content exception'],
+      'description' => 'This PDF comes from an external third-party source and was not created or directed by or on behalf of the Judicial Branch Entity. Because it is independent third‑party content, it falls under an exception to the accessibility requirements that apply to internally produced and posted web content. This option is intended for files submitted by individuals or organizations outside of, and not under contract or other arrangement with, the Judicial Branch Entity.',
+    ],
+    [
+      'name' => 'Accessible Alternate Version Confirmation',
+      'aliases' => ['equivalent accessible version confirmation'],
+      'description' => 'An accessible, equivalent version of this document—such as an HTML (Web Page) alternative—has already been published and made available to users. The accessible version provides the same information and functionality as the original document. For conventional electronic documents, such as PDFs, the accessible version may be provided in another format while the original document remains available, where the original document is retained for formatting or other legal or administrative purposes.',
+    ],
+    [
+      'name' => 'Urgent Legal Publication Requirement',
+      'aliases' => [],
+      'description' => 'This PDF must be published immediately due to a statute, rule of court, or court order that requires posting within a strict timeframe. In the event that accessibility remediation cannot be completed before the required publication deadline, this option is selected to identify content that may need to be posted in its current form temporarily while an accessible version can be prepared. This option does not, by itself, establish an exception to the applicable accessibility requirements or authorize temporary posting of inaccessible content.',
+    ],
+  ];
+}
+
+/**
  * Ensures bypass reasons vocabulary and default terms exist.
  */
 function _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary(): void {
@@ -190,29 +221,54 @@ function _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary(): v
     $vocabulary->save();
   }
 
-  $default_terms = [
-    'Third Party Content Exception',
-    'Equivalent Accessible Version Confirmation',
-  ];
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
-  $existing = \Drupal::entityTypeManager()
-    ->getStorage('taxonomy_term')
-    ->loadByProperties(['vid' => $vid]);
-
-  $existing_names = [];
-  foreach ($existing as $term) {
-    $existing_names[mb_strtolower($term->label())] = TRUE;
+  /** @var \Drupal\taxonomy\TermInterface[] $existing_by_name */
+  $existing_by_name = [];
+  foreach ($storage->loadByProperties(['vid' => $vid]) as $term) {
+    $existing_by_name[mb_strtolower($term->label())] = $term;
   }
 
-  foreach ($default_terms as $term_name) {
-    if (isset($existing_names[mb_strtolower($term_name)])) {
+  foreach (_jcc_pdf_upload_validation_checker_bypass_reason_definitions() as $definition) {
+    $term = $existing_by_name[mb_strtolower($definition['name'])] ?? NULL;
+
+    if (!$term) {
+      foreach ($definition['aliases'] as $alias) {
+        if (isset($existing_by_name[mb_strtolower($alias)])) {
+          $term = $existing_by_name[mb_strtolower($alias)];
+          break;
+        }
+      }
+    }
+
+    if (!$term) {
+      Term::create([
+        'vid' => $vid,
+        'name' => $definition['name'],
+        'description' => [
+          'value' => $definition['description'],
+          'format' => 'basic_html',
+        ],
+      ])->save();
       continue;
     }
 
-    Term::create([
-      'vid' => $vid,
-      'name' => $term_name,
-    ])->save();
+    $needs_save = FALSE;
+
+    if ($term->label() !== $definition['name']) {
+      $term->setName($definition['name']);
+      $needs_save = TRUE;
+    }
+
+    if ($term->getDescription() !== $definition['description']) {
+      $term->setDescription($definition['description']);
+      $term->setFormat('basic_html');
+      $needs_save = TRUE;
+    }
+
+    if ($needs_save) {
+      $term->save();
+    }
   }
 }
 
@@ -262,35 +318,6 @@ function _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field(): void {
 }
 
 /**
- * Create the Bypass Reasons vocabulary and default terms.
- */
-function jcc_pdf_upload_validation_checker_update_9001(): string {
-  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
-
-  return 'Created/updated Bypass Reasons taxonomy vocabulary and default terms.';
-}
-
-/**
- * Create bypass reason reference field on file entities.
- */
-function jcc_pdf_upload_validation_checker_update_9002(): string {
-  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
-
-  return 'Created field_bypass_reason on file entities.';
-}
-
-/**
- * Backfill bypass reasons vocabulary/field for already-enabled sites.
- */
-function jcc_pdf_upload_validation_checker_update_9003(): string {
-  _jcc_pdf_upload_validation_checker_ensure_bypass_audit_log_table();
-  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_vocabulary();
-  _jcc_pdf_upload_validation_checker_ensure_bypass_reason_field();
-
-  return 'Ensured bypass audit log table, bypass reasons vocabulary, terms, and field exist.';
-}
-
-/**
  * Ensure bypass audit log table exists for environments that missed install.
  */
 function jcc_pdf_upload_validation_checker_update_9005(): string {
@@ -307,4 +334,3 @@ function jcc_pdf_upload_validation_checker_update_9006(): string {
 
   return 'Switched the PDF Validation overview page to the "access pdf validation overview" permission so its main menu link disappears when this module is disabled.';
 }
-

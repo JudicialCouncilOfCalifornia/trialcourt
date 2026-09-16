@@ -12,4 +12,8 @@ services:
     arguments:
       - '@http_client'
       - '@config.factory'
+  jcc_pdf_upload_validation_checker.drush_commands:
+    class: Drupal\jcc_pdf_upload_validation_checker\Drush\Commands\BypassReasonsCommands
+    tags:
+      - { name: drush.command }
 
