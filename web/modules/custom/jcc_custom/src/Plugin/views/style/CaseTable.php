@@ -12,7 +12,7 @@ use Drupal\views\ViewExecutable;
  *
  * @ViewsStyle(
  *   id = "jcc_case_table",
- *   title = @Translation("JCC Case table"),
+ *   title = @Translation("JCC Case Table"),
  *   help = @Translation("Displays a case table and can hide columns empty across the current results."),
  *   theme = "views_view_table",
  *   display_types = {"normal"}
