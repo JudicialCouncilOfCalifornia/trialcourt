@@ -45,8 +45,8 @@
   {% for row in rows %}
     {% if row.columns[key] is defined %}
       {% for item in row.columns[key].content %}
-        {% set text = item.field_output['#markup']|default('')|striptags|replace({
-          '&nbsp;': ' ', '&#160;': ' ', '&#xA0;': ' ', '&#xa0;': ' ', ' ': ' '
+        {% set text = item.field_output|default('')|render|striptags|replace({
+          '&nbsp;': ' ', '&#160;': ' ', '&#xA0;': ' ', '&#xa0;': ' '
         })|trim %}
         {% if text is not empty %}
           {% set has_content = true %}
@@ -63,6 +63,11 @@
     'cols-' ~ visible_columns|length,
     responsive ? 'responsive-enabled',
     sticky ? 'sticky-enabled',
+    'usa-table',
+    'usa-table--borderless',
+    'usa-table--striped',
+    'usa-table--compressed',
+    'usa-table--border-light',
   ]
 %}
 <table{{ attributes.addClass(classes) }}>
@@ -81,8 +86,7 @@
   {% if header %}
     <thead>
       <tr>
-        {% for key, column in header %}
-          {% if key in visible_columns %}
+        {% for key, column in header if key in visible_columns %}
           {% if column.default_classes %}
             {%
               set column_classes = [
@@ -108,7 +112,6 @@
               {%- endif -%}
             {%- endif -%}
           </th>
-          {% endif %}
         {% endfor %}
       </tr>
     </thead>
@@ -116,8 +119,7 @@
   <tbody>
     {% for row in rows %}
       <tr{{ row.attributes }}>
-        {% for key, column in row.columns %}
-          {% if key in visible_columns %}
+        {% for key, column in row.columns if key in visible_columns %}
           {% if column.default_classes %}
             {%
               set column_classes = [
@@ -141,7 +143,6 @@
               {% endfor %}
             {%- endif %}
           </td>
-          {% endif %}
         {% endfor %}
       </tr>
     {% endfor %}
