@@ -594,7 +594,7 @@ function jcc_custom_field_widget_single_element_entity_reference_paragraphs_form
  */
 function jcc_custom_preprocess_views_view(&$variables) {
   $view = $variables['view'];
-  if ($view->style_plugin && $view->style_plugin->getPluginId() === 'jcc_case_table') {
+  if ($view->id() === 'case' && $view->current_display === 'block_1') {
     $variables['attributes']['class'][] = 'jcc-case-table-view';
   }
 

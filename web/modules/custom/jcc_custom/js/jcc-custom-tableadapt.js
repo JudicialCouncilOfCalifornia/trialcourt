@@ -23,35 +23,6 @@
         }
         const formViewId = $exposedForm.attr('id');
 
-        // The case view can contain fields that render as an empty string for
-        // every result. Views still emits their header and cells because this
-        // view uses a custom table template, so remove those columns after
-        // the final markup has been built.
-        if ($caseView.length) {
-          const $headers = $currentTable.find('thead th');
-          const rows = $currentTable.find('tbody tr').toArray();
-          const emptyColumns = [];
-
-          // Keep the table headers when there are no results to compare.
-          if (rows.length) {
-            $headers.each(function (index) {
-              const hasValue = rows.some(function (row) {
-                const cellText = $(row).children('td').eq(index).text();
-                return cellText.replace(/\u00a0/g, ' ').trim() !== '';
-              });
-              if (!hasValue) {
-                emptyColumns.push(index);
-              }
-            });
-            emptyColumns.reverse().forEach(function (index) {
-              $headers.eq(index).remove();
-              rows.forEach(function (row) {
-                $(row).children('td').eq(index).remove();
-              });
-            });
-          }
-        }
-
         $currentTable.addClass('usa-table').removeClass('sortable');
         let $headers = $currentTable.find('thead th');
 
