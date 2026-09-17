@@ -14,7 +14,7 @@
         'views-exposed-form-case-block-1'
       ];
 
-      $(once('jcc-table-adapt', '.jcc-section table, .jcc-form + table, .jcc-case-table-view > table.usa-table', context)).each(function () {
+      $(once('jcc-table-adapt', '.jcc-section table, .jcc-form ~ table, .jcc-case-table-view > table.usa-table', context)).each(function () {
         let $currentTable = $(this);
         let $caseView = $currentTable.closest('.jcc-case-table-view');
         let $exposedForm = $currentTable.siblings('.jcc-form');
