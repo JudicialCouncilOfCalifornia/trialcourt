@@ -234,6 +234,7 @@ class JCCSubscriptionsDigestCron {
                                       <span style="font-size:16.5pt;">NewsLinks Digest</span>
                                     </h1>
                                     <h3>%today_date%</h3>
+                                    <p style="color:#202020;font-size:10pt;font-family:Arial,sans-serif;font-style:italic;margin:0 0 15pt 0;">NewsLinks is a collection of recent news items relating primarily to the California judicial branch. NewsLinks does not verify or endorse the accuracy or fairness of the news items, and the views expressed in opinions, editorials, and commentaries are those of the writers only. Some news articles linked from this page may require a subscription or be behind a paywall.</p>
                                     <br>
                                     <div>%email_body%</div>
                                     <br>
