@@ -1,0 +1,33 @@
+.remote-video-colorbox-launch-modal {
+  display: flex ;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+}
+
+.remote-video-colorbox-launch-modal:before {
+  position: absolute;
+  content: "\25B6";
+  transform: scale(5);
+  color: var(--color-white);
+  opacity: 0.4;
+}
+
+.remote-video-colorbox-launch-modal:hover::before {
+  transform: scale(6);
+}
+
+.card .remote-video-colorbox-launch-modal img {
+  width: 40rem;
+  height: auto;
+}
+
+.card .frame:has(.remote-video-colorbox-launch-modal:focus) {
+  outline: 2px solid var(--focus-outline-color);
+  outline-offset: 2px;
+}
+
+.card--default .frame:has(.remote-video-colorbox-launch-modal:focus) {
+  border-radius: var(--corner-radius);
+}
