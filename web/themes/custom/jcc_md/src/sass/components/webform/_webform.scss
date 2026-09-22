@@ -1,6 +1,79 @@
 .webform-options-display-buttons-label {
   width: 150px;
 }
+
+// ADA-749: Webform button-like controls need a stronger focus indicator than
+// the contrib defaults, and the +/- image buttons need clearer resting contrast.
+.webform-options-display-buttons {
+  input + label.webform-options-display-buttons-label {
+    color: #4a4a4a;
+    border-color: #767676;
+  }
+
+  input:hover + label.webform-options-display-buttons-label {
+    color: #1b1b1b;
+    border-color: #565c65;
+  }
+
+  input:focus + label.webform-options-display-buttons-label,
+  input:focus-visible + label.webform-options-display-buttons-label {
+    color: #1b1b1b;
+    border-color: #005ea2;
+    outline: 3px solid #ffbe2e;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px #005ea2;
+  }
+
+  input:checked + label.webform-options-display-buttons-label {
+    color: #1b1b1b;
+    border-color: #005ea2;
+    background-color: #f0f6ff;
+  }
+
+  input:checked:focus + label.webform-options-display-buttons-label,
+  input:checked:focus-visible + label.webform-options-display-buttons-label {
+    outline: 3px solid #ffbe2e;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px #005ea2;
+  }
+}
+
+.webform-submission-form {
+  button:not(.ui-dialog-titlebar-close):focus,
+  button:not(.ui-dialog-titlebar-close):focus-visible,
+  input[type="button"]:focus,
+  input[type="button"]:focus-visible,
+  input[type="submit"]:focus,
+  input[type="submit"]:focus-visible,
+  input[type="reset"]:focus,
+  input[type="reset"]:focus-visible,
+  .button:focus,
+  .button:focus-visible {
+    outline: 3px solid #ffbe2e;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px #005ea2;
+  }
+
+  .webform-multiple-add input[type="submit"]:focus,
+  .webform-multiple-add input[type="submit"]:focus-visible,
+  .webform-multiple-table--operations input[type="image"]:focus,
+  .webform-multiple-table--operations input[type="image"]:focus-visible,
+  input.button--small:focus,
+  input.button--small:focus-visible,
+  input.button--danger:focus,
+  input.button--danger:focus-visible {
+    outline: 3px solid #ffbe2e;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px #005ea2;
+  }
+
+  .webform-multiple-table--operations input[type="image"] {
+    border: 1px solid #767676;
+    border-radius: 9999px;
+    background-color: #fff;
+  }
+}
+
 .jcc-feedback {
   dialog {
     textarea, .form-type-email {
