@@ -1,0 +1,27 @@
+/*
+ * Site-specific focus fixes for Language Access webforms.
+ *
+ * Keep this in Drupal because the affected add/remove controls come from
+ * Drupal Webform markup and the Storybook button focus treatment is being
+ * overridden downstream on the partners site.
+ */
+
+main[role="main"] .button.button--primary:focus,
+main[role="main"] .button.button--primary:focus-visible,
+main[role="main"] input.form-submit.button:focus,
+main[role="main"] input.form-submit.button:focus-visible {
+  outline: 3px solid var(--color-accent-warm-light-xx);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--color-primary);
+}
+
+.webform-multiple-table--operations input.image {
+  opacity: 1;
+}
+
+.webform-multiple-table--operations input.image:focus,
+.webform-multiple-table--operations input.image:focus-visible {
+  outline: 3px solid var(--color-accent-warm-light-xx);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--color-primary);
+}
