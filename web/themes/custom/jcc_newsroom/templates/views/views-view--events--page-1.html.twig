@@ -1,0 +1,88 @@
+{#
+/**
+ * @file
+ * View template for the Newsroom events list page (events, page_1).
+ *
+ * ADA-822: The FullCalendar display that previously served /event was
+ * removed. This template gives the standalone list page the same card
+ * layout the calendar page had, including the Related links sidebar.
+ */
+#}
+{% set tag = tag|default('div') %}
+{% set classes = [
+  'view',
+  'view-' ~ id|clean_class,
+  'view-id-' ~ id,
+  'view-display-id-' ~ display_id,
+  dom_id ? 'js-view-dom-id-' ~ dom_id,
+] %}
+
+
+    {% block view %}
+      <{{ tag }}{{ attributes.addClass(classes) }}>
+      {{ title_prefix }}
+      {{ title_suffix }}
+
+      <div class="jcc-text-section-aside__container">
+        <div class="jcc-text-section-aside">
+          <div class="jcc-text-section-aside__content">
+            <div class="jcc-card">
+
+              <div class="view-footer jcc-text-section-aside__container">
+                <div class="view view-events view-id-events view-display-id-page_1">
+
+                  {% if header %}
+                    <div class="view__header">
+                      {{ header }}
+                    </div>
+                  {% endif %}
+
+                  {% if exposed %}
+                    {{ exposed }}
+                  {% endif %}
+
+                  {% block content %}
+                    {% if rows %}
+                      <div class="view__content">
+                        {{ rows }}
+                      </div>
+                    {% endif %}
+                  {% endblock %}
+
+                  {% block empty %}
+                    {% if empty %}
+                      <div class="view__content is-empty">
+                        {{ empty }}
+                      </div>
+                    {% endif %}
+                  {% endblock %}
+
+                  {% block pager %}
+                    {% if pager %}
+                      {{ pager }}
+                    {% endif %}
+                  {% endblock %}
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="jcc-text-section-aside__aside">
+            <div class="jcc-card">
+              <div class="jcc-card__title">
+                Related
+              </div>
+              {% set _block = drupal_entity('block', 'relatednews') %}
+              {% if _block is not empty %}
+                <div>{{ drupal_entity('block', 'relatednews') }}</div>
+              {% else %}
+                <div>{{ drupal_block('related_news_custom') }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </{{ tag }}>
+    {% endblock %}
