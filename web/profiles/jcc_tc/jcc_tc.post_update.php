@@ -87,3 +87,31 @@ function jcc_tc_post_update_repair_openid_connect_clients() {
     ? 'Repaired openid_connect client config: ' . implode('; ', $repaired) . '.'
     : 'No malformed openid_connect client config found.';
 }
+
+/**
+ * Installs the Scheduler moderation state fields on taxonomy terms.
+ */
+function jcc_tc_profile_post_update_install_scheduler_moderation_term_fields() {
+  // Scheduler 2.x supports taxonomy terms, so on moderated vocabularies
+  // scheduler_content_moderation_integration now defines publish_state and
+  // unpublish_state base fields for them, but ships no update hook to install
+  // the storage. The status report flags them as mismatched until it exists.
+  if (!\Drupal::moduleHandler()->moduleExists('scheduler_content_moderation_integration')) {
+    return 'scheduler_content_moderation_integration is not installed, nothing to do.';
+  }
+
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('taxonomy_term');
+  $installed = [];
+
+  foreach (['publish_state', 'unpublish_state'] as $field_name) {
+    if (isset($definitions[$field_name]) && !$update_manager->getFieldStorageDefinition($field_name, 'taxonomy_term')) {
+      $update_manager->installFieldStorageDefinition($field_name, 'taxonomy_term', 'scheduler_content_moderation_integration', $definitions[$field_name]);
+      $installed[] = $field_name;
+    }
+  }
+
+  return $installed
+    ? 'Installed taxonomy_term fields: ' . implode(', ', $installed) . '.'
+    : 'No taxonomy_term Scheduler moderation fields needed installing.';
+}

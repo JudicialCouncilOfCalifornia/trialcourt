@@ -1,0 +1,12 @@
+diff --git a/core/modules/media_library/src/Plugin/views/field/MediaLibrarySelectForm.php b/core/modules/media_library/src/Plugin/views/field/MediaLibrarySelectForm.php
+--- a/core/modules/media_library/src/Plugin/views/field/MediaLibrarySelectForm.php
++++ b/core/modules/media_library/src/Plugin/views/field/MediaLibrarySelectForm.php
+@@ -183,7 +183,7 @@
+    * {@inheritdoc}
+    */
+   public function viewsFormValidate(array &$form, FormStateInterface $form_state) {
+-    $selected = array_filter($form_state->getValue($this->options['id']));
++    $selected = array_filter((array) $form_state->getValue($this->options['id']));
+     if (empty($selected)) {
+       $form_state->setErrorByName('', $this->t('No items selected.'));
+     }

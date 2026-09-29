@@ -102,17 +102,14 @@ function jcc_components_paragraph_action_list(array &$variables, ParagraphInterf
   foreach ($items as $item) {
     $item = \Drupal::service('entity.repository')->getTranslationFromContext($item, $langcode);
 
-    $title = !empty($item->field_heading) ? $item->field_heading->first()->value : '';
+    $title = $item->field_heading->value ?? '';
 
+    $link = NULL;
     if (!empty($item->field_link)) {
       $link = $item->field_link->view('default');
     }
 
-    $link_options = $item->field_link[0]->options ?: NULL;
-    $aria_label = NULL;
-    if (!empty($link[0]) && $link[0]['#options'] && isset($link_options['attributes']['aria-label'])) {
-      $aria_label = $link[0]['#options']['attributes']['aria-label'];
-    }
+    $aria_label = $link[0]['#options']['attributes']['aria-label'] ?? NULL;
 
     $variables['action_items'][] = [
       'title' => $title,
