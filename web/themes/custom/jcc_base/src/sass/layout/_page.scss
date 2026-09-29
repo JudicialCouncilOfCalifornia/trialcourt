@@ -178,3 +178,16 @@ div[class^='jcc-'] .body > p, .date, .location, .relevance, .geolocation-map-wra
     }
   }
 }
+
+// ADA-318: Visible keyboard focus for media embed launchers. The library's
+// [tabindex]/[href]:focus ring draws at outline-offset 0, where the card's
+// 16:9 crop (USWDS add-aspect, overflow hidden) clips it - and a ring on the
+// launcher itself loses its bottom edge because 4:3 video thumbnails are
+// taller than the 16:9 window. The ring is therefore drawn on the crop
+// wrapper via :focus-within: an element's own outline is not clipped by its
+// own overflow. Offset 0 verified in DevTools (negative offsets drop the
+// bottom edge on this height-0 aspect box).
+.jcc-card__excerpt-media:focus-within {
+  outline: 0.25rem solid #face00;
+  outline-offset: 0;
+}

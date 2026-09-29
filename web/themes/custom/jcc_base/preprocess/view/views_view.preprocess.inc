@@ -18,6 +18,12 @@ use Drupal\taxonomy\Entity\Term;
  */
 function jcc_base_preprocess_views_view(&$variables) {
   $view = $variables['view'];
+
+  // If AJAX is enabled.
+  if ($view->ajaxEnabled()) {
+    $variables['#attached']['library'][] = 'jcc_base/view-ajax-customizations';
+  }
+
   switch ($view->id()) {
     case 'location':
       if ($view->current_display == 'block' || $view->current_display == 'block_1') {

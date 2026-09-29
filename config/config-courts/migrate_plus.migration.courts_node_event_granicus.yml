@@ -16,9 +16,9 @@ label: 'Courts: Import upcoming Granicus events feed'
 source:
   plugin: url
   data_fetcher_plugin: http
-  data_parser_plugin: xml
+  data_parser_plugin: json
   urls: ''
-  item_selector: /events/event
+  item_selector: /events/
   fields:
     -
       name: unique_id
@@ -90,12 +90,16 @@ process:
       source: start_timestamp
       from_format: U
       to_format: 'Y-m-d\TH:i:s'
+      from_timezone: 'UTC'
+      to_timezone: 'UTC'
   field_event_date/end_value:
     -
       plugin: format_date
       source: end_timestamp
       from_format: U
       to_format: 'Y-m-d\TH:i:s'
+      from_timezone: 'UTC'
+      to_timezone: 'UTC'
   field_granicus_link/value:
     -
       plugin: get

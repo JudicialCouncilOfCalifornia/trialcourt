@@ -1,0 +1,30 @@
+uuid: 7e122be3-5174-4074-a533-e461f2251f3e
+langcode: en
+status: true
+dependencies:
+  module:
+    - jcc_supreme_custom
+title: 'Migrate Granicus Events'
+id: migrate_granicus_events
+weight: 0
+module: jcc_supreme_custom
+callback: jcc_supreme_custom_migrate_granicus_events
+scheduler:
+  id: crontab
+  configuration:
+    rules:
+      - '15 8-18 * * 1-5'
+    catch_up: 300
+launcher:
+  id: serial
+  configuration:
+    timeouts:
+      lock_timeout: 3600
+    launcher:
+      thread: 0
+logger:
+  id: database
+  configuration:
+    method: '3'
+    expire: 1209600
+    retain: 1000
