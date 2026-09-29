@@ -1,0 +1,40 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.litigant.field_case_location
+    - field.field.node.litigant.field_case_number_plain
+    - field.field.node.litigant.field_comments
+    - field.field.node.litigant.field_date
+    - field.field.node.litigant.field_first_name
+    - field.field.node.litigant.field_last_name
+    - field.field.node.litigant.field_litigant_type
+    - field.field.node.litigant.field_middle_name
+    - node.type.litigant
+  module:
+    - user
+id: node.litigant.teaser
+targetEntityType: node
+bundle: litigant
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_case_location: true
+  field_case_number_plain: true
+  field_comments: true
+  field_date: true
+  field_first_name: true
+  field_last_name: true
+  field_litigant_type: true
+  field_middle_name: true
+  langcode: true
+  search_api_excerpt: true

@@ -76,3 +76,11 @@ function jcc_courts_custom_migrate_granicus_events() {
   $migration_id = 'courts_node_event_granicus';
   \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "update");
 }
+
+/**
+ * Vexatious litigants ultimate cron config callback.
+ */
+function jcc_courts_custom_migrate_litigants_vexatious() {
+  $migration_id = 'courts_node_litigants_vexatious';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "sync");
+}
