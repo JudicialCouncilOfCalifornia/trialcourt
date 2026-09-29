@@ -91,7 +91,7 @@ function jcc_tc_post_update_repair_openid_connect_clients() {
 /**
  * Installs the Scheduler moderation state fields on taxonomy terms.
  */
-function jcc_tc_profile_post_update_install_scheduler_moderation_term_fields() {
+function jcc_tc_post_update_install_scheduler_moderation_term_fields() {
   // Scheduler 2.x supports taxonomy terms, so on moderated vocabularies
   // scheduler_content_moderation_integration now defines publish_state and
   // unpublish_state base fields for them, but ships no update hook to install
