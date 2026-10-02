@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.case.field_case_category
     - field.field.node.case.field_case_number
     - field.field.node.case.field_case_status
+    - field.field.node.case.field_service_region
     - field.field.node.case.field_case_subtype
     - field.field.node.case.field_case_type
     - field.field.node.case.field_department
@@ -64,6 +65,16 @@ content:
   field_case_status:
     type: entity_reference_autocomplete
     weight: 18
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_service_region:
+    type: entity_reference_autocomplete
+    weight: 28
     region: content
     settings:
       match_operator: CONTAINS

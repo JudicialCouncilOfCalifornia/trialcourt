@@ -147,10 +147,22 @@ process:
       entity_type: taxonomy_term
       ignore_case: true
   field_case_category:
+    - source: case_category
+      plugin: callback
+      callable: trim
+    - plugin: default_value
+      default_value: 'Not Available'
+    - plugin: entity_generate
+      bundle: case_category
+      value_key: name
+      bundle_key: vid
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_service_region:
     - plugin: default_value
       default_value: rwc
     - plugin: entity_generate
-      bundle: case_category
+      bundle: service_region
       value_key: name
       bundle_key: vid
       entity_type: taxonomy_term
