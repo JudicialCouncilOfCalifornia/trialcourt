@@ -1052,13 +1052,22 @@ function jcc_custom_field_widget_entity_reference_paragraphs_form_alter(&$elemen
  */
 function jcc_custom_build_menu_tree(array $tree): array {
   $items = [];
+  $current_relative_url = \Drupal::request()->getRequestUri();
+
   foreach ($tree as $menu_data) {
+    $node_path = '/node/' . $menu_data['url']->getRouteParameters()['node'];
+    $menu_item_relative_url = \Drupal::service('path_alias.manager')->getAliasByPath($node_path);
+
+    // Reliable current page check.
+    $is_current = $current_relative_url == $menu_item_relative_url;
+
     if (!empty($menu_data['url'])) {
       $items[] = [
         'title' => $menu_data['title'],
         'url' => !empty($menu_data['url']) ? $menu_data['url'] : '',
         'attributes' => !empty($menu_data['attributes']) ? $menu_data['attributes']->toArray() : [],
-        'active' => $menu_data['in_active_trail'],
+        'in_active_trail' => $menu_data['in_active_trail'],
+        'is_current' => $is_current,
         'links' => $menu_data['below'] && $menu_data['in_active_trail'] ? jcc_custom_build_menu_tree($menu_data['below']) : [],
       ];
     }

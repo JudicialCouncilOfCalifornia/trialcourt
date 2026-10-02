@@ -150,6 +150,7 @@ function jcc_components_get_menu_array($menu_name) {
  */
 function jcc_components_menu_to_array(array $tree, $menu_name) {
   $links = [];
+  $current_relative_url = \Drupal::request()->getRequestUri();
 
   foreach ($tree as $element) {
     // Don't include links the user doesnt' have access to.
@@ -157,17 +158,25 @@ function jcc_components_menu_to_array(array $tree, $menu_name) {
       continue;
     }
 
+    $menu_item_relative_url = $element->link->getUrlObject()->toString();
+
+    // Reliable current page check.
+    $is_current = $current_relative_url == $menu_item_relative_url;
+
     $section_link = [];
     if ($menu_name == 'main' && $element->depth = 1 && $element->hasChildren) {
       $section_link = [
         'text' => $element->link->getTitle(),
         'url' => $element->link->getUrlObject(),
+        'in_active_trail' => $element->inActiveTrail,
+        'is_current' => $is_current,
       ];
     }
     $links[] = [
       'text' => $element->link->getTitle(),
       'url' => $element->link->getUrlObject(),
-      'is_current' => $element->inActiveTrail,
+      'in_active_trail' => $element->inActiveTrail,
+      'is_current' => $is_current,
       'links' => jcc_components_menu_to_array($element->subtree, $menu_name),
       'section_link' => $section_link,
     ];
