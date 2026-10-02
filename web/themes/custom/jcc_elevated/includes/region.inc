@@ -26,10 +26,9 @@ function jcc_elevated_preprocess_webform(&$variables) {
     return;
   }
 
-  $site_name_second = theme_get_setting('site_name_second');
   $webform_id = $variables['element']['#webform_id'];
 
-  if ($site_name_second === 'Language Access Services' && $webform_id !== 'was_this_helpful') {
+  if ($webform_id !== 'was_this_helpful') {
     $variables['#attached']['library'][] = 'jcc_elevated/webform';
   }
 }
