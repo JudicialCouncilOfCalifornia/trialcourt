@@ -27,6 +27,12 @@ class MigrationQueueWorker extends QueueWorkerBase {
       return;
     }
 
+    // Prevent stale migration definitions by clearing relevant caches.
+    // Clear the specific migration discovery cache bin.
+    \Drupal::cache('discovery_migration')->deleteAll();
+    // For Migrate Plus configuration entities, clear the plugin manager cache.
+    \Drupal::service('plugin.manager.migration')->clearCachedDefinitions();
+
     $migration_id = $data['migration_id'];
     $migration_manager = \Drupal::service('plugin.manager.migration');
     $migration = $migration_manager->createInstance($migration_id);
