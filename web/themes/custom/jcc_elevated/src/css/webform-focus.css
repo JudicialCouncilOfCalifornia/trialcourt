@@ -1,0 +1,21 @@
+/*
+ * Configurable focus fixes for elevated webforms.
+ *
+ * Keep this in Drupal because the affected Webform markup can be overridden
+ * downstream on elevated sites.
+ */
+
+.placeholder-container input:focus,
+.placeholder-container input:focus-visible,
+.placeholder-container textarea:focus,
+.placeholder-container textarea:focus-visible {
+  outline: 3px solid var(--color-accent-warm-light-xx);
+  outline-offset: 2px;
+}
+
+.webform-multiple-table--operations input.image:focus,
+.webform-multiple-table--operations input.image:focus-visible {
+  outline: 3px solid var(--color-accent-warm-light-xx);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--color-primary);
+}
