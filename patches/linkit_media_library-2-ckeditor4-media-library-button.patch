@@ -1,0 +1,121 @@
+diff --git a/linkit_media_library.module b/linkit_media_library.module
+new file mode 100644
+index 0000000..c749a11
+--- /dev/null
++++ b/linkit_media_library.module
+@@ -0,0 +1,115 @@
++<?php
++
++/**
++ * @file
++ * Main file for the linkit_media_library module.
++ */
++
++use Drupal\Core\Form\FormStateInterface;
++use Drupal\media_library\MediaLibraryState;
++use Drupal\media_library\Plugin\Field\FieldWidget\MediaLibraryWidget;
++
++/**
++ * Implements hook_form_FORM_ID_alter().
++ *
++ * Restores the 1.x "Media Library" button in the CKEditor 4 link dialog,
++ * which 2.x dropped in favour of the CKEditor 5 plugin.
++ */
++function linkit_media_library_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state) {
++  if (($form['attributes']['href']['#type'] ?? NULL) !== 'linkit') {
++    return;
++  }
++
++  $profile_id = $form['attributes']['href']['#autocomplete_route_parameters']['linkit_profile_id'] ?? NULL;
++  if (empty($profile_id)) {
++    return;
++  }
++
++  /** @var \Drupal\editor\EditorInterface|null $editor */
++  $editor = \Drupal::routeMatch()->getParameter('editor');
++  if (!$editor || !$editor->hasAssociatedFilterFormat()) {
++    return;
++  }
++
++  $filter_format = $editor->getFilterFormat();
++  $filters = $filter_format->filters();
++  if (!$filters->has('linkit') || !$filters->get('linkit')->status) {
++    return;
++  }
++
++  /** @var \Drupal\linkit\ProfileInterface|null $profile */
++  $profile = \Drupal::entityTypeManager()
++    ->getStorage('linkit_profile')
++    ->load($profile_id);
++  if (!$profile) {
++    return;
++  }
++
++  $media_matcher = NULL;
++  foreach ($profile->getMatchers() as $matcher) {
++    if ($matcher->getPluginId() === 'entity:media') {
++      $media_matcher = $matcher;
++      break;
++    }
++  }
++
++  if (!$media_matcher) {
++    return;
++  }
++
++  $settings = $media_matcher->getConfiguration()['settings'] ?? [];
++  $bundles = $settings['bundles'] ?? [];
++
++  // If the types are not limited, we must load all media types.
++  if (empty($bundles)) {
++    $bundles = \Drupal::entityTypeManager()
++      ->getStorage('media_type')
++      ->getQuery()
++      ->accessCheck(TRUE)
++      ->execute();
++  }
++
++  if (empty($bundles)) {
++    return;
++  }
++
++  $bundles = array_values($bundles);
++  $state = MediaLibraryState::create(
++    'linkit_media_library.opener.editor',
++    $bundles,
++    reset($bundles),
++    1,
++    [
++      'filter_format_id' => $filter_format->id(),
++      'substitution_plugin' => $settings['substitution_type'] ?? 'media',
++    ]
++  );
++
++  $form['attributes']['media_library'] = [
++    '#type' => 'button',
++    '#value' => t('Media Library'),
++    '#weight' => ($form['attributes']['href']['#weight'] ?? 0) + 1,
++    '#name' => 'linkit_media_library_opener',
++    // Keep the button value out of "attributes", which the dialog saves
++    // as-is onto the link element.
++    '#parents' => ['linkit_media_library_opener'],
++    '#attributes' => [
++      'class' => [
++        'js-media-library-open-button',
++      ],
++      // The jQuery UI dialog automatically moves focus to the first :tabbable
++      // element of the modal, so we need to disable refocus on the button.
++      'data-disable-refocus' => 'true',
++    ],
++    '#media_library_state' => $state,
++    '#ajax' => [
++      'callback' => [MediaLibraryWidget::class, 'openMediaLibrary'],
++      'progress' => [
++        'type' => 'throbber',
++        'message' => t('Opening media library.'),
++      ],
++    ],
++    // Allow the media library to be opened even if there are form errors.
++    '#limit_validation_errors' => [],
++  ];
++}
