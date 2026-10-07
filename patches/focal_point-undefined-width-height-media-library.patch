@@ -1,0 +1,23 @@
+diff -ruN a/src/Plugin/Field/FieldWidget/FocalPointImageWidget.php b/src/Plugin/Field/FieldWidget/FocalPointImageWidget.php
+--- a/src/Plugin/Field/FieldWidget/FocalPointImageWidget.php	2026-10-07 15:46:52
++++ b/src/Plugin/Field/FieldWidget/FocalPointImageWidget.php	2026-10-07 15:46:52
+@@ -188,8 +188,18 @@
+         $crop_type = \Drupal::config('focal_point.settings')->get('crop_type');
+         $crop = Crop::findCrop($file->getFileUri(), $crop_type);
+         if ($crop) {
++          $width = $return['width'] ?? NULL;
++          $height = $return['height'] ?? NULL;
++          // Width and height are only stored on the item when the entity is
++          // saved, so a newly created entity (e.g. in the Media Library add
++          // form) does not have them yet. Read them from the image instead.
++          if (empty($width) || empty($height)) {
++            $image = \Drupal::service('image.factory')->get($file->getFileUri());
++            $width = $image->getWidth();
++            $height = $image->getHeight();
++          }
+           $anchor = \Drupal::service('focal_point.manager')
+-            ->absoluteToRelative($crop->x->value, $crop->y->value, $return['width'], $return['height']);
++            ->absoluteToRelative($crop->x->value, $crop->y->value, $width, $height);
+           $return['focal_point'] = "{$anchor['x']},{$anchor['y']}";
+         }
+       }
