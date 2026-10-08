@@ -53,4 +53,10 @@ function jcc_newsroom_preprocess_views_view(array &$variables) {
   if ($view->id() === 'events' && $view->current_display === 'page_2') {
     $variables['#attached']['library'][] = 'jcc_newsroom/calendar_headings';
   }
+
+  if ($view->id() === 'events'
+    && $view->current_display === 'page_1'
+    && !empty($view->parent_views)) {
+    $variables['header'] = [];
+  }
 }
