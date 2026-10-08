@@ -25,6 +25,7 @@ Add your author information for historical reference and professional context, a
  - [Local Development](./docs/local-development.md)
    - [Acquire a database dump.](./docs/local-development.md#acquire-a-database-dump)
    - [Spin up the local.](./docs/local-development.md#user-content-spin-up-the-local)
+   - [Spin up local solr search.](./docs/local-solr-search)
  - [Code Management](./docs/code-management.md)
    - [Adding Contrib Modules](./docs/code-management.md#user-content-adding-contrib-modules)
    - [Updating Core](./docs/code-management.md#updating-core)

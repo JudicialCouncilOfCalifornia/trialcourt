@@ -1644,3 +1644,42 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
     'sidebar' => $sidebar,
   ];
 }
+
+/**
+ * Node: Litigant preprocess.
+ *
+ * @param array $variables
+ *   The preprocess variables.
+ * @param Drupal\node\NodeInterface $node
+ *   The node.
+ */
+function jcc_elevated_node_litigant(array &$variables, NodeInterface $node): void {
+  $litigant['case'] = [];
+  if ($node->get('field_case_number_plain')->value) {
+    $litigant['case'][] = [
+      'label' => $node->get('field_case_number_plain')->getFieldDefinition()->getLabel(),
+      'text' => $node->get('field_case_number_plain')->value,
+    ];
+  }
+  if ($node->get('field_date')->value) {
+    $litigant['case'][] = [
+      'label' => $node->get('field_date')->getFieldDefinition()->getLabel(),
+      'text' => $node->get('field_date')->date->format('F d, Y'),
+    ];
+  }
+  if ($node->get('field_case_location')->target_id) {
+    $entity_type_manager = \Drupal::service('entity_type.manager');
+    $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+    $litigant['case'][] = [
+      'label' => $node->get('field_case_location')->getFieldDefinition()->getLabel(),
+      'text' => $taxonomy_manager->load($node->get('field_case_location')->target_id)->label(),
+    ];
+  }
+  if ($node->get('field_comments')->value) {
+    $litigant['case'][] = [
+      'label' => $node->get('field_comments')->getFieldDefinition()->getLabel(),
+      'text' => $node->get('field_comments')->value,
+    ];
+  }
+  $variables['litigant'] = $litigant;
+}

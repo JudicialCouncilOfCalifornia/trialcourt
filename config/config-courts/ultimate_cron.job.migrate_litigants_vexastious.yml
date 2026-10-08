@@ -1,0 +1,32 @@
+uuid: 0c830199-0377-467e-86a0-2d684adb7046
+langcode: en
+status: true
+dependencies:
+  module:
+    - jcc_courts_custom
+_core:
+  default_config_hash: P6cmw07xbErIb5TSuAcJHjgfTxvihg6f2HWYAYV_sIw
+title: 'Migrate Vexatious Litigants'
+id: migrate_litigants_vexatious
+weight: 0
+module: jcc_courts_custom
+callback: jcc_courts_custom_migrate_litigants_vexatious
+scheduler:
+  id: crontab
+  configuration:
+    rules:
+      - '0 8-9 * * 1'
+    catch_up: 300
+launcher:
+  id: serial
+  configuration:
+    timeouts:
+      lock_timeout: 3600
+    launcher:
+      thread: 0
+logger:
+  id: database
+  configuration:
+    method: '3'
+    expire: 1209600
+    retain: 1000
