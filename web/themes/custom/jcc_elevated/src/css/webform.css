@@ -10,3 +10,47 @@
   outline: 2px solid var(--focus-outline-color);
   outline-offset: 2px;
 }
+
+/*
+ * Normalize keyboard focus styling across Webform action inputs.
+ *
+ * Storybook button styles use an offset focus ring, but generic form-control
+ * focus rules can collapse that ring back onto the button border for Webform
+ * actions like Add, Reset, and Submit. Reassert the shared action-button
+ * treatment here, while keeping :focus as a fallback for browsers that do not
+ * yet support :focus-visible.
+ */
+form.webform-submission-form input.form-submit:focus {
+  outline: 2px solid var(--focus-outline-color);
+  outline-offset: 2px;
+  border-color: var(--focus-outline-color);
+}
+
+form.webform-submission-form input.form-submit:focus:not(:focus-visible) {
+  outline: none;
+  border-color: currentColor;
+}
+
+form.webform-submission-form input.form-submit:focus-visible {
+  outline: 2px solid var(--focus-outline-color);
+  outline-offset: 2px;
+  border-color: var(--focus-outline-color);
+}
+
+/*
+ * Defensively reset single webform checkbox/radio controls.
+ *
+ * Some pages still pick up the broad Storybook form-field input rule, which
+ * can stretch checkbox/radio inputs to full width. Keep the reset on the
+ * Webform submission wrapper so it only affects the problematic controls.
+ */
+form.webform-submission-form .js-form-type-checkbox.form-item .form--inline > input.form-checkbox.form-check.form-check-input[type="checkbox"],
+form.webform-submission-form .js-form-type-radio.form-item .form--inline > input.form-radio.form-check.form-check-input[type="radio"] {
+  width: 1rem;
+  min-width: 1rem;
+  max-width: 1rem;
+  height: 1rem;
+  padding: 0;
+  flex: 0 0 1rem;
+}
+
