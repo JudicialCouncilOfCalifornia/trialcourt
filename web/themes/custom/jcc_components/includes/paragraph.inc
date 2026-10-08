@@ -470,7 +470,7 @@ function _jcc_components_generate_cards($cards, $sub_variants, $column_size) {
       'style' => $sub_variants['card'],
       'title' => $title,
       'brow' => $brow,
-      'body' => $card->field_text->value || $card->field_display_document_list->getValue() ? $card->field_text->view('default') : NULL,
+      'body' => $card->field_text->getValue() ? $card->field_text->view('default') : NULL,
       'extra_content' => $extra,
       'icon' => $icon,
       'link' => [
