@@ -62,6 +62,10 @@
                 {% endif %}
               {% endblock %}
 
+              {# ADA-822: The graphical calendar is suppressed (rather than removed) until
+                  the fullcalendar_view module and its dependencies can be safely uninstalled; 
+                  the filterable events list embedded in this display's footer remains. #}
+              {#
               {% block content %}
                 {% if rows %}
                   <div class="view__content">
@@ -69,6 +73,7 @@
                   </div>
                 {% endif %}
               {% endblock %}
+              #}
 
               {% block empty %}
                 {% if empty %}
