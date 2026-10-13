@@ -216,7 +216,7 @@ How to create additional migration profiles through configuration files for [Mig
          </details>
 
 ### Cached Migration Source
-Migration source uploaded to Drupal can encounter outdated copies due to caching, specifically through Pantheon's AGCDN. Add the migration to `JccMigrationSourceUrlTimestamp.php` event subscriber to dynamically add a timestamp param which ensures that the latest copy appears. Using a custom migration plugin is another option, but extending on the `url` plugin will prevent the use of the migration source UI if needed.
+Migration source uploaded to Drupal can encounter outdated copies due to caching, specifically through Pantheon's AGCDN. Add the migration to `JccMigrationSourceUrlModifier.php` event subscriber which dynamically adds a timestamp param to ensure that the latest copy appears. Using a custom migration plugin is another option, but extending on the `url` plugin will prevent the use of the Migrate Source UI if needed.
 
 Documentation:
  - [Migration 101](https://drupalmigrate.org/)

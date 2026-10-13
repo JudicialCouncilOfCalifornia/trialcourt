@@ -41,6 +41,8 @@ class JccMigrationSourceUrlModifier implements EventSubscriberInterface {
   /**
    * Management for modifying migration source URLs.
    *
+   * Not used by Migrate Source UI but that migrate option is broken.
+   *
    * @param \Drupal\migrate\Event\MigrateImportEvent $event
    *   The event to process.
    */
