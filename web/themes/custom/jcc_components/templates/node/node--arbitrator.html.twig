@@ -106,6 +106,12 @@
       {% endif %}
     </div>
 
+    {% if content.body.0 %}
+      <div class="arbitrator-body jcc-section">
+        {{ content.body }}
+      </div>
+    {% endif %}
+
     <div class="general_information arbitrator-content jcc-section">
     {% set mediator = content.field_mediator %}
 
@@ -256,6 +262,12 @@
             {% endif %}
           {% endfor %}
         </ul>
+      </div>
+    {% endif %}
+
+    {% if content.field_arbitrary_pdf.0 %}
+      <div class="arbitrator-documents jcc-section">
+        {{ content.field_arbitrary_pdf }}
       </div>
     {% endif %}
   {% endblock %}
