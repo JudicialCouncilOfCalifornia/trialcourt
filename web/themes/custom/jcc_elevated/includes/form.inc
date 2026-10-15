@@ -60,3 +60,18 @@ function jcc_elevated_preprocess_form(&$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_preprocess_webform().
+ */
+function jcc_elevated_preprocess_webform(&$variables) {
+  if (empty($variables['element']['#webform_id'])) {
+    return;
+  }
+
+  $webform_id = $variables['element']['#webform_id'];
+
+  if ($webform_id !== 'was_this_helpful') {
+    $variables['#attached']['library'][] = 'jcc_elevated/webform';
+  }
+}
