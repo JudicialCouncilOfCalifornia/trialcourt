@@ -45,14 +45,22 @@
       {{ title_prefix }}
       {{ title_suffix }}
 
+      {# ADA-822: Page heading rendered via the shared hero component so the
+         H1 and tagline match the Media Contacts page styling. #}
+      {% set hero_lead %}
+        <em>Below is a selection of judicial branch events, including Judicial Council meetings, Supreme Court oral argument sessions, and branchwide holidays. For more events, consult superior court and appellate court websites.</em>
+      {% endset %}
+      {% include '@jcc_base/_includes/section-hero.html.twig' with {
+        background_variant: "has-background-color--none",
+        title: 'Featured Events'|t,
+        lead: hero_lead,
+        breadcrumbs: 'disabled'
+      } %}
+
       <div class="jcc-text-section-aside__container">
         <div class="jcc-text-section-aside">
           <div class="jcc-text-section-aside__content">
             <div class="jcc-card">
-
-              {% if header %}
-                {{ header }}
-              {% endif %}
 
               {% block attachment_before %}
                 {% if attachment_before %}
@@ -62,6 +70,10 @@
                 {% endif %}
               {% endblock %}
 
+              {# ADA-822: The graphical calendar is suppressed (rather than removed) until
+                  the fullcalendar_view module and its dependencies can be safely uninstalled; 
+                  the filterable events list embedded in this display's footer remains. #}
+              {#
               {% block content %}
                 {% if rows %}
                   <div class="view__content">
@@ -69,6 +81,7 @@
                   </div>
                 {% endif %}
               {% endblock %}
+              #}
 
               {% block empty %}
                 {% if empty %}
