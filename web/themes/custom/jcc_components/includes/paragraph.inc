@@ -238,6 +238,12 @@ function jcc_components_paragraph_views_reference_location_map_list(array &$vari
 
   if ($map_list) {
     $variables['map_list'] = !empty($display['#rows']) ? $display['#rows'] : [];
+    if (!empty($variables['map_list'])) {
+      // The adjacent location list provides the accessible names and addresses.
+      $variables['map_list']['#attributes']['aria-hidden'] = 'true';
+      $variables['map_list']['#attributes']['data-location-map-visual-only'] = '';
+      $variables['map_list']['#attached']['library'][] = 'jcc_components/location-map-accessibility';
+    }
   }
   // Reset the executable for the map_list_attachment.
   $executable = $view ? $view->getExecutable() : NULL;
