@@ -73,6 +73,7 @@
 {{ attach_library("jcc_elevated/iframes") }}
 
 <div class="layout-container">
+  <header>
   {% include "@molecules/Hat/Hat.twig" with {
     variant: "default",
     global_branding_data: {
@@ -84,6 +85,7 @@
       attributes: create_attribute(),
       variant: "",
       overflowing_variant: "hidden",
+      label: "Judicial branch sites"|t,
       links: hat.links,
     }
   } %}
@@ -97,12 +99,14 @@
     },
     primary_nav_data: {
       variant: "default",
+      label: "Main navigation"|t,
       links: main_links,
       icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
     },
     secondary_nav_data: {
       variant: "with-divider",
       overflowing_variant: "hidden",
+      label: "Featured links"|t,
       links: featured_links,
       icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
     },
@@ -116,6 +120,7 @@
       show_label: false,
     },
     mobile_nav_data: {
+      label: "Site menu"|t,
       icon_path: url('<front>')|render ~ 'themes/contrib/jcc_storybook/src/assets/icons.svg',
       primary_nav_data: {
         variant: "default",
@@ -124,6 +129,7 @@
       secondary_nav_data: {
         variant: "stacked",
         overflowing_variant: "",
+        label: "Featured links"|t,
         links: featured_links,
       },
       search_form: {
@@ -134,6 +140,11 @@
     },
     translate: translate,
   } %}
+
+  </header>
+
+  <main role="main">
+    <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
 
   {% if section_navigation %}
     {% include "@molecules/SectionNav/SectionNav.twig" with {
@@ -169,9 +180,6 @@
 
   {{ page.help }}
 
-  <main role="main">
-    <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
-
     <div class="layout-content">
       {{ page.content }}
     </div>{# /.layout-content #}
@@ -190,10 +198,9 @@
 
   </main>
 
+  <footer>
   {% if page.footer %}
-    <footer role="contentinfo">
-      {{ page.footer }}
-    </footer>
+    {{ page.footer }}
   {% endif %}
 
   {% set footer_about_link = [] %}
@@ -221,6 +228,7 @@
       attributes: create_attribute(),
       variant: footer_values.display_footer_lower ? "with-divider" : "default",
       overflowing_variant: "stack",
+      label: "Footer links"|t,
       links: footer_values.upper_footer_menu,
     },
     display_footer_lower: footer_values.display_footer_lower,
@@ -233,6 +241,7 @@
       attributes: create_attribute(),
       variant: "default",
       overflowing_variant: "stack",
+      label: "Secondary footer links"|t,
       links: footer_values.lower_footer_menu,
     },
     footer_social_link: footer_values.social_links,
@@ -250,10 +259,12 @@
       attributes: create_attribute(),
       variant: "",
       overflowing_variant: "hidden",
+      label: "Judicial Branch Universal footer"|t,
       links: shoe.links,
     },
     attributes: create_attribute(),
   } %}
+  </footer>
 </div>{# /.layout-container #}
 
 {% if page.drawer %}
