@@ -1092,3 +1092,35 @@ function jcc_tc2_all_immutable_config_update_9007() {
     ->execute();
 }
 
+/**
+ * Move media revision permissions from media_revisions_ui to core.
+ *
+ * Roles managed by this feature are config-ignored, so config import cannot
+ * update them. They must stop depending on media_revisions_ui before config
+ * import uninstalls it.
+ */
+function jcc_tc2_all_immutable_config_update_9008() {
+  $available = \Drupal::service('user.permissions')->getPermissions();
+  $updated = [];
+
+  foreach (\Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple() as $role) {
+    $changed = FALSE;
+    foreach ($role->getPermissions() as $permission) {
+      if (!preg_match('/^(view|revert|delete) ([a-z0-9_]+) media revisions$/', $permission, $matches) || $matches[2] === 'all') {
+        continue;
+      }
+      $role->revokePermission($permission);
+      $core_permission = "$matches[1] any $matches[2] media revisions";
+      if (isset($available[$core_permission])) {
+        $role->grantPermission($core_permission);
+      }
+      $changed = TRUE;
+    }
+    if ($changed) {
+      $role->save();
+      $updated[] = $role->id();
+    }
+  }
+
+  return $updated ? t('Updated media revision permissions for: @roles.', ['@roles' => implode(', ', $updated)]) : t('No media revision permissions to update.');
+}
