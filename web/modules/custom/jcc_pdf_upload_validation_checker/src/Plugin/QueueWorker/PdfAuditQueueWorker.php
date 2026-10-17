@@ -23,24 +23,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFactoryPluginInterface {
 
-  private const MEDIA_FILE_FIELDS = [
-    'field_media_file',
-    'field_media_file_farsi',
-    'field_media_file_arabic',
-    'field_media_file_cambodian',
-    'field_media_file_chinese_simple',
-    'field_media_file_chinese',
-    'field_east_armenian_file',
-    'field_media_file_hmong',
-    'field_media_file_korean',
-    'field_media_file_multiple',
-    'field_media_file_punjabi',
-    'field_media_file_russian',
-    'field_media_file_spanish',
-    'field_media_file_tagalog',
-    'field_media_file_vietnamese',
-  ];
-
   /**
    * The entity type manager.
    *
@@ -83,7 +65,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
       ->accessCheck(FALSE);
 
     $or = $query->orConditionGroup();
-    foreach (self::MEDIA_FILE_FIELDS as $field_name) {
+    foreach (_jcc_pdf_upload_validation_checker_file_fields() as $field_name) {
       $or->condition($field_name, $fid);
     }
 
@@ -109,7 +91,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
    *   TRUE if any referenced file failed audit, otherwise FALSE.
    */
   private function mediaHasAnyFailedFile(MediaInterface $media): bool {
-    foreach (self::MEDIA_FILE_FIELDS as $field_name) {
+    foreach (_jcc_pdf_upload_validation_checker_file_fields() as $field_name) {
       if (!$media->hasField($field_name) || $media->get($field_name)->isEmpty()) {
         continue;
       }

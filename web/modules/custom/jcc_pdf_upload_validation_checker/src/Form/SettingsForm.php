@@ -4,6 +4,8 @@ namespace Drupal\jcc_pdf_upload_validation_checker\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\jcc_pdf_upload_validation_checker\PdfAudit\Api\DefaultPdfAuditApi;
+use Drupal\jcc_pdf_upload_validation_checker\PdfAudit\Api\EqualWebPdfAuditApi;
 use Drupal\user\RoleInterface;
 
 /**
@@ -42,10 +44,10 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'select',
       '#title' => $this->t('Api to use for validation'),
       '#options' => [
-        'PDF audit' => $this->t('pdf_audit'),
-        'EqualWeb' => $this->t('equal_web'),
+        DefaultPdfAuditApi::ID => $this->t('PDF audit (default)'),
+        EqualWebPdfAuditApi::ID => $this->t('EqualWeb'),
       ],
-      '#default_value' => $config->get('pdf_validation_api') ?? 'pdf_audit',
+      '#default_value' => $config->get('pdf_validation_api') ?? DefaultPdfAuditApi::ID,
       '#required' => TRUE,
     ];
 
@@ -55,7 +57,7 @@ class SettingsForm extends ConfigFormBase {
       '#open' => TRUE,
       '#states' => [
         'visible' => [
-          ':input[name="pdf_validation_api"]' => ['value' => 'EqualWeb'],
+          ':input[name="pdf_validation_api"]' => ['value' => EqualWebPdfAuditApi::ID],
         ],
       ],
     ];
@@ -108,7 +110,8 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    if ($form_state->getValue('pdf_validation_api') != 'PDF audit' && $form_state->getValue('pdf_validation_api') != 'EqualWeb') {
+    $valid_apis = [DefaultPdfAuditApi::ID, EqualWebPdfAuditApi::ID];
+    if (!in_array($form_state->getValue('pdf_validation_api'), $valid_apis, TRUE)) {
       $form_state->setErrorByName('pdf_validation_api', $this->t('The value is not correct.'));
     }
 

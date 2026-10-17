@@ -100,7 +100,7 @@ final class BlockedMediaLinkPostRender implements TrustedCallbackInterface {
    *   TRUE if one referenced PDF is pending or failed.
    */
   protected static function mediaHasBlockingPdf(MediaInterface $media): bool {
-    foreach (self::mediaFileFields() as $field_name) {
+    foreach (_jcc_pdf_upload_validation_checker_file_fields() as $field_name) {
       if (!$media->hasField($field_name) || $media->get($field_name)->isEmpty()) {
         continue;
       }
@@ -149,36 +149,10 @@ final class BlockedMediaLinkPostRender implements TrustedCallbackInterface {
     // "unknown" covers files that were just (re)uploaded and haven't been
     // queued/audited yet (see
     // _jcc_pdf_upload_validation_checker_normalize_temporary_upload_status()
-    // and _jcc_pdf_upload_validation_checker_detect_same_fid_replacement()).
+    // and _jcc_pdf_upload_validation_checker_handle_same_fid_file_replace()).
     // Treat them as blocking too, otherwise the real (unvalidated) link
     // renders until the audit runs.
     return in_array($status, ['pending', 'fail', 'unknown'], TRUE);
-  }
-
-  /**
-   * Returns the media file fields handled by the module.
-   *
-   * @return string[]
-   *   The media file field names.
-   */
-  protected static function mediaFileFields(): array {
-    return [
-      'field_media_file',
-      'field_media_file_farsi',
-      'field_media_file_arabic',
-      'field_media_file_cambodian',
-      'field_media_file_chinese_simple',
-      'field_media_file_chinese',
-      'field_east_armenian_file',
-      'field_media_file_hmong',
-      'field_media_file_korean',
-      'field_media_file_multiple',
-      'field_media_file_punjabi',
-      'field_media_file_russian',
-      'field_media_file_spanish',
-      'field_media_file_tagalog',
-      'field_media_file_vietnamese',
-    ];
   }
 
 }

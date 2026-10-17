@@ -9,8 +9,6 @@
           const url = el.getAttribute('href');
 
           try {
-            const url = el.getAttribute('href');
-
             const tokenResp = await fetch('/session/token', { credentials: 'same-origin' });
             const csrfToken = (await tokenResp.text()).trim();
 

@@ -7,10 +7,26 @@ services:
     class: Drupal\jcc_pdf_upload_validation_checker\Plugin\QueueWorker\PdfAuditQueueWorker
     tags:
       - { name: queue_worker, title: 'PDF Audit queue', cron: 5 }
+  jcc_pdf_upload_validation_checker.pdf_audit_api.default:
+    class: Drupal\jcc_pdf_upload_validation_checker\PdfAudit\Api\DefaultPdfAuditApi
+    arguments:
+      - '@http_client'
+    tags:
+      - { name: jcc_pdf_upload_validation_checker.pdf_audit_api }
+  jcc_pdf_upload_validation_checker.pdf_audit_api.equal_web:
+    class: Drupal\jcc_pdf_upload_validation_checker\PdfAudit\Api\EqualWebPdfAuditApi
+    arguments:
+      - '@http_client'
+      - '@file_system'
+      - '@config.factory'
+    tags:
+      - { name: jcc_pdf_upload_validation_checker.pdf_audit_api }
   jcc_pdf_upload_validation_checker.pdf_audit_runner:
     class: Drupal\jcc_pdf_upload_validation_checker\PdfAudit\PdfAuditRunner
     arguments:
-      - '@http_client'
+      -
+        - '@jcc_pdf_upload_validation_checker.pdf_audit_api.default'
+        - '@jcc_pdf_upload_validation_checker.pdf_audit_api.equal_web'
       - '@config.factory'
   jcc_pdf_upload_validation_checker.drush_commands:
     class: Drupal\jcc_pdf_upload_validation_checker\Drush\Commands\BypassReasonsCommands
