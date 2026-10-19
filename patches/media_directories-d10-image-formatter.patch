@@ -1,0 +1,20 @@
+diff -ruN a/modules/media_directories_editor/src/Plugin/Field/FieldFormatter/MediaDirectoriesImageDimensionsFormatter.php b/modules/media_directories_editor/src/Plugin/Field/FieldFormatter/MediaDirectoriesImageDimensionsFormatter.php
+--- a/modules/media_directories_editor/src/Plugin/Field/FieldFormatter/MediaDirectoriesImageDimensionsFormatter.php	2026-10-19 10:23:04
++++ b/modules/media_directories_editor/src/Plugin/Field/FieldFormatter/MediaDirectoriesImageDimensionsFormatter.php	2026-10-19 10:23:04
+@@ -64,8 +64,14 @@
+    *   The file URL generator.
+    */
+   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, AccountInterface $current_user, ImageStyleStorageInterface $image_style_storage, RendererInterface $renderer, ConfigFactoryInterface $config_factory, FileUrlGeneratorInterface $file_url_generator) {
+-    $imageDerivativeUtilities = new ImageDerivativeUtilities();
+-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $current_user, $image_style_storage, $file_url_generator, $renderer, $imageDerivativeUtilities);
++    if (class_exists(ImageDerivativeUtilities::class)) {
++      parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $current_user, $image_style_storage, $file_url_generator, $renderer, new ImageDerivativeUtilities());
++    }
++    else {
++      // Drupal 10: MediaThumbnailFormatter takes the renderer last and has no
++      // ImageDerivativeUtilities (added in Drupal 11.4).
++      parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $current_user, $image_style_storage, $file_url_generator, $renderer);
++    }
+     $this->configFactory = $config_factory;
+     $this->fileUrlGenerator = $file_url_generator;
+   }

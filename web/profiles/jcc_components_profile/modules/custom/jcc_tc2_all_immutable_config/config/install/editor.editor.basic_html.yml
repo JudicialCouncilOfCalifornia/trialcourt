@@ -4,49 +4,75 @@ dependencies:
   config:
     - filter.format.basic_html
   module:
-    - ckeditor
+    - ckeditor5
 format: basic_html
-editor: ckeditor
+editor: ckeditor5
 settings:
   toolbar:
-    rows:
-      -
-        -
-          name: Formatting
-          items:
-            - Bold
-            - Italic
-            - RemoveFormat
-            - Format
-        -
-          name: Links
-          items:
-            - DrupalLink
-            - DrupalUnlink
-        -
-          name: Lists
-          items:
-            - BulletedList
-            - NumberedList
-        -
-          name: Embed
-          items:
-            - Blockquote
-            - DrupalImage
-            - Templates
-        -
-          name: Tools
-          items:
-            - Source
+    items:
+      - bold
+      - italic
+      - removeFormat
+      - heading
+      - '|'
+      - link
+      - '|'
+      - bulletedList
+      - numberedList
+      - '|'
+      - blockQuote
+      - drupalInsertImage
+      - '|'
+      - sourceEditing
+      - '|'
+      - textPartLanguage
   plugins:
-    drupallink:
-      linkit_enabled: false
-      linkit_profile: ''
+    ckeditor5_heading:
+      enabled_headings:
+        - heading2
+        - heading3
+        - heading4
+        - heading5
+        - heading6
+    ckeditor5_imageResize:
+      allow_resize: true
+    ckeditor5_language:
+      language_list: un
+    ckeditor5_list:
+      properties:
+        reversed: false
+        startIndex: true
+      multiBlock: true
+    ckeditor5_sourceEditing:
+      allowed_tags:
+        - '<cite>'
+        - '<dt>'
+        - '<dd>'
+        - '<code dir>'
+        - '<dl dir>'
+        - '<i class>'
+        - '<a hreflang target data-link-*>'
+        - '<blockquote cite dir>'
+        - '<ul type dir>'
+        - '<ol type dir>'
+        - '<h2 id dir>'
+        - '<h3 id dir>'
+        - '<h4 id dir>'
+        - '<h5 id dir>'
+        - '<h6 id dir>'
+        - '<p id dir>'
+        - '<span>'
+    editor_advanced_link_link:
+      enabled_attributes:
+        - aria-label
+        - id
+        - rel
+        - target
 image_upload:
   status: true
   scheme: public
   directory: inline-images
-  max_size: ''
+  max_size: null
   max_dimensions:
     width: null
     height: null

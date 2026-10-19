@@ -1,3 +1,21 @@
 .usa-accordion__content {
   display: block !important;
 }
+
+/* The Accordion template has no <button>: CKEditor 5 cannot edit text inside
+   one, and jcc_base/accordion adds it on the page. Show the heading like the
+   button in the editor. */
+.usa-accordion__heading:not(:has(.usa-accordion__button)) {
+  margin-top: 0.5rem;
+  padding: 1rem 3.5rem 1rem 1.25rem;
+  background: #f9f9f9 url(../../../../../libraries/courtyard-artifact/1.x/public/images/icomoon/SVG/add.svg) no-repeat calc(100% - 1.25rem) 50% / 1.5rem;
+  color: #1b1b1b;
+  font-size: 1.06rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+/* Courtyard hides .jcc-alert until its JS adds .active on the page. */
+.usa-alert.jcc-alert {
+  display: block;
+}

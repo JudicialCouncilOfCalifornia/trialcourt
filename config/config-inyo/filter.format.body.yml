@@ -1,3 +1,4 @@
+uuid: af389db4-a2e5-4657-b64d-24b05ed5db9a
 langcode: en
 status: true
 dependencies:
@@ -14,6 +15,8 @@ dependencies:
     - linkit
     - media
     - tooltip
+_core:
+  default_config_hash: JA3GtwoQptLKeQ8YWleCIgjBaJvQzjtNIzB1GgQrdxE
 name: Body
 format: body
 weight: -9
@@ -24,20 +27,17 @@ filters:
     status: true
     weight: 0
     settings: {  }
-  filter_html:
-    id: filter_html
-    provider: filter
-    status: true
-    weight: -10
-    settings:
-      allowed_html: '<em> <strong> <b> <i class> <cite> <ul type class dir> <ol type start class="legal" dir> <li> <dl dir> <dt> <dd> <h2 id class dir> <h3 id dir> <h4 id dir> <h5 id dir> <h6 id dir> <table class> <img src alt data-entity-type data-entity-uuid data-align data-caption> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <blockquote cite class="blockquote blockquote--alert blockquote--alert--warning blockquote--alert--error blockquote--alert--success blockquote--alert--info blockquote--callout blockquote--italic blockquote--box" dir> <p id class dir> <caption dir> <tbody> <thead> <tfoot> <th scope> <td scope> <tr> <hr> <video> <iframe longdesc name scrolling src title width height frameborder align> <u> <s> <sup> <sub> <span data-tooltip> <a href hreflang id aria-label rel target data-entity-bundle data-entity-substitution data-entity-type data-entity-uuid data-radiomast-id name class="twitter-timeline button button--primary jcc-button--primary button--secondary jcc-button--secondary jcc-button--cta-link button--cta-link button--text twitter-timeline" data-link-*> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title data-langcode> <br>'
-      filter_html_help: false
-      filter_html_nofollow: false
   entity_embed:
     id: entity_embed
     provider: entity_embed
     status: true
     weight: 100
+    settings: {  }
+  filter_align:
+    id: filter_align
+    provider: filter
+    status: true
+    weight: 0
     settings: {  }
   filter_autop:
     id: filter_autop
@@ -45,17 +45,26 @@ filters:
     status: true
     weight: 0
     settings: {  }
-  filter_htmlcorrector:
-    id: filter_htmlcorrector
+  filter_html:
+    id: filter_html
     provider: filter
     status: true
-    weight: 10
-    settings: {  }
+    weight: -10
+    settings:
+      allowed_html: '<a id name class hreflang target data-entity-bundle data-radiomast-id data-link-* href aria-label rel data-entity-type data-entity-uuid data-entity-substitution title> <br> <p id dir class> <h2 id dir class> <h3 id dir> <h4 id dir> <h5 id dir> <h6 id dir> <blockquote class="blockquote--callout blockquote--italic blockquote--box blockquote--alert--warning blockquote--alert--error blockquote--alert--success blockquote--alert--info blockquote blockquote--alert" cite dir> <ol class="legal" type dir start> <b> <cite> <dt> <dd> <video> <i class> <dl dir> <img src alt data-entity-type data-entity-uuid data-align data-caption> <iframe longdesc name scrolling src title width height frameborder align> <span data-tooltip> <ul type dir class> <drupal-media data-caption title data-entity-type data-entity-uuid alt data-view-mode data-align> <caption dir> <th scope rowspan colspan> <td scope rowspan colspan> <drupal-entity data-entity-type data-embed-button alt title data-align data-caption data-entity-embed-display data-entity-embed-display-settings data-view-mode data-entity-uuid data-langcode> <strong> <em> <u> <s> <sub> <sup> <li> <hr> <table class> <tr> <thead> <tbody> <tfoot>'
+      filter_html_help: false
+      filter_html_nofollow: false
   filter_html_image_secure:
     id: filter_html_image_secure
     provider: filter
     status: true
     weight: 9
+    settings: {  }
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
+    provider: filter
+    status: true
+    weight: 10
     settings: {  }
   filter_url:
     id: filter_url
@@ -72,10 +81,12 @@ filters:
     settings:
       glossify_taxonomy_case_sensitivity: true
       glossify_taxonomy_first_only: true
+      glossify_taxonomy_ignore_tags: ''
       glossify_taxonomy_type: tooltips
       glossify_taxonomy_tooltip_truncate: false
       glossify_taxonomy_vocabs: ''
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+      glossify_taxonomy_synonyms_field: ''
   linkit:
     id: linkit
     provider: linkit
@@ -83,6 +94,7 @@ filters:
     weight: 0
     settings:
       title: false
+      media_substitution: metadata
   media_embed:
     id: media_embed
     provider: media
@@ -108,12 +120,6 @@ filters:
   tooltip:
     id: tooltip
     provider: tooltip
-    status: true
-    weight: 0
-    settings: {  }
-  filter_align:
-    id: filter_align
-    provider: filter
     status: true
     weight: 0
     settings: {  }

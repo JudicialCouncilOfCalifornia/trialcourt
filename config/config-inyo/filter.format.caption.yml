@@ -1,3 +1,4 @@
+uuid: 07fd8b26-e0f2-4c3d-91e6-18501be63f0d
 langcode: en
 status: true
 dependencies:
@@ -5,6 +6,8 @@ dependencies:
     - emptyparagraphkiller
     - glossify_taxonomy
     - linkit
+_core:
+  default_config_hash: wE9x5Lc3OH7yzK6Vbkv0OVXonCI5NDl_vcupD_ewNsw
 name: Caption
 format: caption
 weight: -6
@@ -27,7 +30,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <a href hreflang id aria-label rel target data-entity-substitution data-entity-type data-entity-uuid data-link-*> <u> <s> <p dir>'
+      allowed_html: '<br> <p dir> <a hreflang target data-link-* href aria-label id rel data-entity-type data-entity-uuid data-entity-substitution title class> <strong> <em> <u> <s>'
       filter_html_help: true
       filter_html_nofollow: false
   filter_htmlcorrector:
@@ -51,10 +54,12 @@ filters:
     settings:
       glossify_taxonomy_case_sensitivity: true
       glossify_taxonomy_first_only: true
+      glossify_taxonomy_ignore_tags: ''
       glossify_taxonomy_type: tooltips
       glossify_taxonomy_tooltip_truncate: false
       glossify_taxonomy_vocabs: ''
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+      glossify_taxonomy_synonyms_field: ''
   linkit:
     id: linkit
     provider: linkit
@@ -62,3 +67,4 @@ filters:
     weight: 0
     settings:
       title: false
+      media_substitution: metadata

@@ -4,64 +4,139 @@ dependencies:
   config:
     - filter.format.body
   module:
-    - ckeditor
+    - ckeditor5
 format: body
-editor: ckeditor
+editor: ckeditor5
 settings:
   toolbar:
-    rows:
-      -
-        -
-          name: Formatting
-          items:
-            - Bold
-            - Italic
-            - Strike
-            - Superscript
-            - Subscript
-            - RemoveFormat
-            - Format
-            - Styles
-        -
-          name: Links
-          items:
-            - DrupalLink
-            - DrupalUnlink
-            - Anchor
-            - tooltip
-        -
-          name: Lists
-          items:
-            - BulletedList
-            - NumberedList
-        -
-          name: Embed
-          items:
-            - Blockquote
-            - Table
-            - HorizontalRule
-            - DrupalMediaLibrary
-            - paragraphs_inline_entity_form
-        -
-          name: Tools
-          items:
-            - Source
-            - Maximize
+    items:
+      - bold
+      - italic
+      - strikethrough
+      - superscript
+      - subscript
+      - removeFormat
+      - heading
+      - style
+      - '|'
+      - link
+      - anchor
+      - '|'
+      - bulletedList
+      - numberedList
+      - '|'
+      - blockQuote
+      - insertTable
+      - horizontalLine
+      - drupalMedia
+      - paragraphs_inline_entity_form
+      - '|'
+      - sourceEditing
+      - '|'
+      - underline
   plugins:
-    drupallink:
+    ckeditor5_heading:
+      enabled_headings:
+        - heading2
+        - heading3
+        - heading4
+        - heading5
+        - heading6
+    ckeditor5_list:
+      properties:
+        reversed: false
+        startIndex: true
+      multiBlock: true
+    ckeditor5_sourceEditing:
+      allowed_tags:
+        - '<b>'
+        - '<cite>'
+        - '<dt>'
+        - '<dd>'
+        - '<video>'
+        - '<i class>'
+        - '<dl dir>'
+        - '<img src alt data-entity-type data-entity-uuid data-align data-caption>'
+        - '<iframe longdesc name scrolling src title width height frameborder align>'
+        - '<span data-tooltip>'
+        - '<ul type dir>'
+        - '<ol type dir>'
+        - '<h2 id dir>'
+        - '<h3 id dir>'
+        - '<h4 id dir>'
+        - '<h5 id dir>'
+        - '<h6 id dir>'
+        - '<drupal-media data-caption title>'
+        - '<blockquote cite dir>'
+        - '<p id dir>'
+        - '<caption dir>'
+        - '<th scope>'
+        - '<td scope>'
+        - '<a hreflang target data-entity-bundle data-radiomast-id data-link-*>'
+        - '<drupal-entity data-entity-type data-embed-button>'
+    ckeditor5_style:
+      styles:
+        -
+          label: Callout
+          element: '<blockquote class="blockquote--callout">'
+        -
+          label: Italic
+          element: '<blockquote class="blockquote--italic">'
+        -
+          label: Box
+          element: '<blockquote class="blockquote--box">'
+        -
+          label: 'Warning alert'
+          element: '<blockquote class="blockquote--alert--warning">'
+        -
+          label: 'Error alert'
+          element: '<blockquote class="blockquote--alert--error">'
+        -
+          label: 'Success alert'
+          element: '<blockquote class="blockquote--alert--success">'
+        -
+          label: 'Info alert'
+          element: '<blockquote class="blockquote--alert--info">'
+        -
+          label: 'Primary Button'
+          element: '<a class="jcc-button--primary button button--primary">'
+        -
+          label: 'Secondary Button'
+          element: '<a class="jcc-button--secondary button button--secondary">'
+        -
+          label: 'CTA Link'
+          element: '<a class="jcc-button--cta-link button button--text">'
+        -
+          label: 'Twitter Timeline'
+          element: '<a class="twitter-timeline">'
+        -
+          label: 'Legal Formatted List'
+          element: '<ol class="legal">'
+        -
+          label: Blockquote
+          element: '<blockquote class="blockquote">'
+        -
+          label: Alert
+          element: '<blockquote class="blockquote--alert">'
+    editor_advanced_link_link:
+      enabled_attributes:
+        - aria-label
+        - id
+        - rel
+        - target
+    jcc_ckeditor_classes:
+      enabled: true
+      tags: 'p ul h2 table'
+    linkit_extension:
       linkit_enabled: true
       linkit_profile: default
-    stylescombo:
-      styles: "blockquote.blockquote--callout|Callout\r\nblockquote.blockquote--italic|Italic\r\nblockquote.blockquote--box|Box\r\nblockquote.blockquote--alert--warning|Warning alert\r\nblockquote.blockquote--alert--error|Error alert\r\nblockquote.blockquote--alert--success|Success alert\r\nblockquote.blockquote--alert--info|Info alert\r\na.jcc-button--primary.button.button--primary|Primary Button\r\na.jcc-button--secondary.button.button--secondary|Secondary Button\r\na.jcc-button--cta-link.button.button--text|CTA Link\r\na.twitter-timeline|Twitter Timeline\r\nol.legal|Legal Formatted List"
-    tooltip:
-      text: 'Tooltip text'
-      placement: top
-      arrow: 1
+    media_media:
+      allow_view_mode_override: true
 image_upload:
   status: true
   scheme: public
   directory: inline-images
-  max_size: ''
+  max_size: null
   max_dimensions:
     width: null
     height: null

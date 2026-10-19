@@ -21,7 +21,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <a href hreflang href data-entity-substitution data-entity-type data-entity-uuid title>'
+      allowed_html: '<br> <p> <cite> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <blockquote cite> <ul type> <ol type start> <a hreflang href title data-entity-type data-entity-uuid data-entity-substitution> <strong> <em> <code> <li>'
       filter_html_help: true
       filter_html_nofollow: false
   filter_htmlcorrector:
@@ -43,12 +43,14 @@ filters:
     status: false
     weight: -10
     settings:
-      glossify_taxonomy_case_sensitivity: '1'
-      glossify_taxonomy_first_only: '1'
+      glossify_taxonomy_case_sensitivity: true
+      glossify_taxonomy_first_only: true
+      glossify_taxonomy_ignore_tags: ''
       glossify_taxonomy_type: tooltips
-      glossify_taxonomy_tooltip_truncate: '0'
+      glossify_taxonomy_tooltip_truncate: false
       glossify_taxonomy_vocabs: ''
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+      glossify_taxonomy_synonyms_field: ''
   linkit:
     id: linkit
     provider: linkit
@@ -56,3 +58,4 @@ filters:
     weight: 0
     settings:
       title: true
+      media_substitution: metadata
