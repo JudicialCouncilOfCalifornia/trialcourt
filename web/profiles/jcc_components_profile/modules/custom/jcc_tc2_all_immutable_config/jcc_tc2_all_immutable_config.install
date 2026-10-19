@@ -37,6 +37,14 @@ function jcc_tc2_all_immutable_config_update_dependencies() {
   $dependencies['search_api'][8107] = [
     'jcc_tc2_all_immutable_config' => 8035,
   ];
+  // The Rules of Court editor must leave CKEditor 4 before 9009 uninstalls it.
+  // Only where that feature is installed: Drupal does not run an update whose
+  // dependency belongs to a missing module.
+  if (\Drupal::moduleHandler()->moduleExists('jcc_tc2_roc_feature')) {
+    $dependencies['jcc_tc2_all_immutable_config'][9009] = [
+      'jcc_tc2_roc_feature' => 9004,
+    ];
+  }
 
   return $dependencies;
 }

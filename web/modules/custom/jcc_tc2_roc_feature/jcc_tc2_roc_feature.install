@@ -5,6 +5,8 @@
  * Updates for roc feature.
  */
 
+use Drupal\Core\Config\FileStorage;
+
 /**
  * Implements hook_install().
  */
@@ -55,4 +57,25 @@ function jcc_tc2_roc_feature_update_9003(): void {
   \Drupal::service('features.manager')->import(['jcc_tc2_roc_feature']);
 
   node_access_rebuild(TRUE);
+}
+
+/**
+ * Move the Rules of Court editor to CKEditor 5.
+ *
+ * Runs before jcc_tc2_all_immutable_config_update_9009(), which uninstalls
+ * CKEditor 4 only when no editor uses it anymore.
+ */
+function jcc_tc2_roc_feature_update_9004() {
+  \Drupal::service('module_installer')->install(['ckeditor5', 'jcc_ckeditor']);
+  $source = new FileStorage(\Drupal::service('extension.list.module')->getPath('jcc_tc2_roc_feature') . '/config/install');
+  $entity_type_manager = \Drupal::entityTypeManager();
+  // The format first: an editor's settings are validated against its format.
+  foreach (['filter_format' => 'filter.format.rules_of_court_content', 'editor' => 'editor.editor.rules_of_court_content'] as $entity_type => $name) {
+    $storage = $entity_type_manager->getStorage($entity_type);
+    $record = $source->read($name);
+    $entity = $storage->load($record[$storage->getEntityType()->getKey('id')]);
+    $entity = $entity ? $storage->updateFromStorageRecord($entity, $record) : $storage->createFromStorageRecord($record);
+    $entity->save();
+  }
+  return t('Rules of Court editor saved on CKEditor 5.');
 }
