@@ -3,15 +3,12 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_design_build_entity
+    - filter.format.minimal
     - node.type.facilities
   module:
-    - allowed_formats
     - text
     - tmgmt_content
 third_party_settings:
-  allowed_formats:
-    allowed_formats:
-      - minimal
   tmgmt_content:
     excluded: false
 id: node.facilities.field_design_build_entity
@@ -27,4 +24,6 @@ default_value_callback: ''
 settings:
   display_summary: false
   required_summary: false
+  allowed_formats:
+    - minimal
 field_type: text_with_summary

@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.rss
     - field.storage.node.body
     - field.storage.node.field_date
     - field.storage.node.field_lead
@@ -221,21 +222,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              facilities: '0'
-              opinions_editor: '0'
-              request_manager: '0'
-              advisory_body_manager: '0'
-              itc_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -321,10 +307,8 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
-        - url.query_args
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
@@ -860,7 +844,7 @@ display:
         type: node_rss
         options:
           relationship: none
-          view_mode: default
+          view_mode: rss
       defaults:
         access: true
         group_by: true

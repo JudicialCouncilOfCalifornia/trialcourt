@@ -1,14 +1,11 @@
 uuid: 6b9025f4-3100-47ec-8105-ab8fa5350425
 langcode: en
 status: true
-dependencies:
-  module:
-    - jcc_tc_tours
+dependencies: {  }
 _core:
   default_config_hash: lDP48aIUVyIu2vq3v5WQDfVJYf-Yaf5Q00kCNLIPMPg
 id: news
 label: 'Add or edit an News Node.'
-module: jcc_tc_tours
 routes:
   -
     route_name: node.add
@@ -23,16 +20,18 @@ tips:
     label: 'Adding or Editing an News'
     weight: 1
     position: top-start
-    attributes: {  }
+    selector: null
     body: 'News, press releases, court updates go here.'
+    attributes: {  }
   news-title:
     id: news-title
     plugin: text
     label: Title
     weight: 2
-    location: null
+    position: ''
     selector: '#edit-title-0-value'
     body: 'Write a clear and concise title for the News.'
+    location: null
   news-type:
     id: news-type
     plugin: text

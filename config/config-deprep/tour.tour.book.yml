@@ -1,14 +1,11 @@
 uuid: 85a15b98-4168-4870-9e2d-a8499bfd5f04
 langcode: en
 status: true
-dependencies:
-  module:
-    - jcc_tc_tours
+dependencies: {  }
 _core:
   default_config_hash: 30Oz0yMbsLxCLsqzlrnwQDb7lXDwVqvQOA1U9GREQZ0
 id: book
 label: 'Add or edit an Book Node.'
-module: jcc_tc_tours
 routes:
   -
     route_name: node.add
@@ -23,16 +20,18 @@ tips:
     label: 'Adding or Editing an Book'
     weight: 1
     position: top-start
-    attributes: {  }
+    selector: null
     body: 'A book is a set of pages tied together in a hierarchical sequence, perhaps with chapters, sections, and subsections.'
+    attributes: {  }
   book-title:
     id: book-title
     plugin: text
     label: Title
     weight: 3
-    location: null
+    position: ''
     selector: '#edit-title-0-value'
     body: 'Write a clear and concise title.'
+    location: null
   book-body:
     id: book-body
     plugin: text

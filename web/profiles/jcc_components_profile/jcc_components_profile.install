@@ -6,6 +6,20 @@
  */
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function jcc_components_profile_update_dependencies() {
+  // See jcc_components_profile_update_10006().
+  $dependencies['google_tag'][8200] = [
+    'jcc_components_profile' => 10006,
+  ];
+  $dependencies['file_delete'][400002] = [
+    'jcc_components_profile' => 10006,
+  ];
+  return $dependencies;
+}
+
+/**
  * TCI-284: Update field formats for existing paragraph content.
  */
 function jcc_components_profile_update_8001() {
@@ -233,4 +247,35 @@ function jcc_components_profile_update_10005() {
   return $fixed
     ? 'Normalised taxonomy filter values: ' . implode('; ', $fixed) . '.'
     : 'No taxonomy_index_tid filters needed normalising.';
+}
+
+/**
+ * Renames the google_tag 1.x and file_delete 2.x permissions in one save.
+ */
+function jcc_components_profile_update_10006() {
+  // google_tag_update_8200() and file_delete_update_400002() each rename their
+  // own permission and save the role, and saving a role removes every
+  // permission no module defines anymore. Whichever runs first wipes the other
+  // module's old permission before it can be renamed, so do both here.
+  $renames = [
+    'administer google tag manager' => ['administer google_tag_container'],
+    'delete file' => ['delete own files', 'delete any file'],
+    'delete files' => ['delete own files', 'delete any file'],
+  ];
+  $updated = [];
+  foreach (\Drupal\user\Entity\Role::loadMultiple() as $role) {
+    $changed = FALSE;
+    foreach ($renames as $old => $new) {
+      if ($role->hasPermission($old)) {
+        $role->revokePermission($old);
+        array_map([$role, 'grantPermission'], $new);
+        $changed = TRUE;
+      }
+    }
+    if ($changed) {
+      $role->save();
+      $updated[] = $role->id();
+    }
+  }
+  return 'Renamed permissions on roles: ' . (implode(', ', $updated) ?: 'none');
 }

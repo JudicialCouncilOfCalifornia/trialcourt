@@ -2,7 +2,5 @@ services:
   jcc_twig.twig_extension:
     arguments: ['@renderer']
     class: Drupal\jcc_twig\Twig\TwigExtension
-    calls:
-      - [setContainer, ['@service_container']]
     tags:
     - { name: twig.extension }

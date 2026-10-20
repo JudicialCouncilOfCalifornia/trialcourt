@@ -1,7 +1,7 @@
 # https://circleci.com/docs/2.0/workflows/#using-workspaces-to-share-data-among-jobs
 defaults: &defaults
   docker:
-    - image: quay.io/pantheon-public/build-tools-ci:8.x-php8.1
+    - image: quay.io/pantheon-public/build-tools-ci:8.x-php8.3
   resource_class: xlarge
   working_directory: ~/project
   environment:
@@ -42,7 +42,7 @@ cypress: &cypress
 # Composer script.
 static_checks: &static_checks
   docker:
-    - image: cimg/php:8.1
+    - image: cimg/php:8.3
   resource_class: large
   working_directory: ~/project
 
@@ -129,7 +129,7 @@ jobs:
 
             - run:
                 name: Clearing cache of << parameters.site >>
-                command: .circleci/scripts/deploy-cr.sh << parameters.site >>
+                command: .circleci/scripts/deploy-cr.sh << parameters.site >> || echo "Cache rebuild before updb may fail."
 
             - run:
                 name: Updating DB of << parameters.site >>
@@ -197,7 +197,7 @@ jobs:
 
             - run:
                 name: Clearing cache of << parameters.site >>
-                command: .circleci/scripts/deploy-cr.sh << parameters.site >>
+                command: .circleci/scripts/deploy-cr.sh << parameters.site >> || echo "Cache rebuild before updb may fail."
 
             - run:
                 name: Updating DB of << parameters.site >>

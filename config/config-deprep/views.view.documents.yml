@@ -291,6 +291,7 @@ display:
         type: full
         options:
           offset: 0
+          pagination_heading_level: h4
           items_per_page: 12
           total_pages: null
           id: 0
@@ -308,7 +309,6 @@ display:
             offset: false
             offset_label: Offset
           quantity: 5
-          pagination_heading_level: h4
       exposed_form:
         type: bef
         options:
@@ -324,8 +324,11 @@ display:
           bef:
             general:
               autosubmit: true
+              auto_submit_sort_only: false
+              autosubmit_breakpoint: ''
               autosubmit_exclude_textfield: false
               autosubmit_textfield_delay: 500
+              autosubmit_textfield_minimum_length: 3
               autosubmit_hide: true
               input_required: false
               allow_secondary: false
@@ -335,9 +338,15 @@ display:
               title:
                 plugin_id: default
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   placeholder_text: ''
                   collapsible: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
       access:
         type: perm
         options:
@@ -452,6 +461,7 @@ display:
           empty_table: false
           caption: ''
           description: ''
+          class: ''
       row:
         type: fields
         options:
@@ -630,10 +640,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              author: '0'
-              administrator: '0'
             placeholder: 'Search for keywords'
           is_grouped: false
           group_info:

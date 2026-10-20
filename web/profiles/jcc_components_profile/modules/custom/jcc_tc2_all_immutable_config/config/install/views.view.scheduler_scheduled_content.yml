@@ -570,10 +570,7 @@ display:
             required: false
             remember: false
             multiple: false
-            remember_roles:
-              anonymous: '0'
-              authenticated: '0'
-              administrator: '0'
+            remember_roles: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -612,10 +609,7 @@ display:
             required: false
             remember: false
             multiple: false
-            remember_roles:
-              anonymous: '0'
-              authenticated: '0'
-              administrator: '0'
+            remember_roles: {  }
             placeholder: ''
           is_grouped: false
           group_info:
@@ -655,10 +649,7 @@ display:
             required: false
             remember: false
             multiple: false
-            remember_roles:
-              anonymous: '0'
-              authenticated: '0'
-              administrator: '0'
+            remember_roles: {  }
             reduce: false
           is_grouped: false
           group_info:
@@ -698,10 +689,7 @@ display:
             required: false
             remember: false
             multiple: false
-            remember_roles:
-              anonymous: '0'
-              authenticated: '0'
-              administrator: '0'
+            remember_roles: {  }
           is_grouped: true
           group_info:
             label: 'Published status'
@@ -748,10 +736,7 @@ display:
             required: false
             remember: false
             multiple: false
-            remember_roles:
-              anonymous: '0'
-              authenticated: '0'
-              administrator: '0'
+            remember_roles: {  }
             reduce: false
           is_grouped: false
           group_info:
@@ -795,10 +780,7 @@ display:
             required: false
             remember: false
             multiple: false
-            remember_roles:
-              anonymous: '0'
-              authenticated: '0'
-              administrator: '0'
+            remember_roles: {  }
             min_placeholder: ''
             max_placeholder: ''
             placeholder: ''
@@ -844,10 +826,7 @@ display:
             required: false
             remember: false
             multiple: false
-            remember_roles:
-              anonymous: '0'
-              authenticated: '0'
-              administrator: '0'
+            remember_roles: {  }
             min_placeholder: ''
             max_placeholder: ''
             placeholder: ''
@@ -943,6 +922,7 @@ display:
           empty_table: true
           caption: ''
           description: ''
+          class: ''
       row:
         type: fields
       query:
@@ -986,7 +966,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
       tags: {  }
   overview:
@@ -995,8 +974,8 @@ display:
     display_plugin: page
     position: 1
     display_options:
-      display_description: 'Overview of all scheduled content, as a tab on main ''content admin'' page'
-      display_comment: 'Revision nid relationship is required because the content type is only stored at ''content'' level, not ''content revision'' level.'
+      display_description: "Overview of all scheduled content, as a tab on main 'content admin' page"
+      display_comment: "Revision nid relationship is required because the content type is only stored at 'content' level, not 'content revision' level."
       display_extenders: {  }
       path: admin/content/scheduled
       menu:
@@ -1021,7 +1000,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
       tags: {  }
   user_page:
@@ -1090,7 +1068,7 @@ display:
         arguments: false
         filters: true
         filter_groups: true
-      display_description: 'Scheduled content tab on user profile, showing just that user''s scheduled content'
+      display_description: "Scheduled content tab on user profile, showing just that user's scheduled content"
       display_extenders: {  }
       path: user/%user/scheduled
       menu:
@@ -1114,6 +1092,5 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
       tags: {  }

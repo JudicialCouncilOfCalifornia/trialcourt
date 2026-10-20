@@ -812,6 +812,7 @@ display:
         type: full
         options:
           offset: 0
+          pagination_heading_level: h4
           items_per_page: 100
           total_pages: null
           id: 0
@@ -829,7 +830,6 @@ display:
             offset: false
             offset_label: Offset
           quantity: 9
-          pagination_heading_level: h4
       exposed_form:
         type: bef
         options:
@@ -845,8 +845,11 @@ display:
           bef:
             general:
               autosubmit: true
+              auto_submit_sort_only: false
+              autosubmit_breakpoint: ''
               autosubmit_exclude_textfield: false
               autosubmit_textfield_delay: 500
+              autosubmit_textfield_minimum_length: 3
               autosubmit_hide: true
               input_required: false
               allow_secondary: false
@@ -856,40 +859,82 @@ display:
               status:
                 plugin_id: bef
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   rewrite:
                     filter_rewrite_values: ''
                   collapsible: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
                 select_all_none: false
                 select_all_none_nested: false
                 display_inline: true
+                soft_limit: 0
+                soft_limit_label_less: 'Show less'
+                soft_limit_label_more: 'Show more'
+                soft_limit_include_children: false
+                scrollable: false
+                scrollable_height: 300
               moderation_state:
                 plugin_id: default
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   rewrite:
                     filter_rewrite_values: ''
                   collapsible: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
               field_feed_imported_on_value:
                 plugin_id: bef_datepicker
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   collapsible: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
               field_feed_imported_on_value_1:
                 plugin_id: bef_datepicker
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   collapsible: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
               created:
                 plugin_id: bef_datepicker
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   collapsible: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
               created_1:
                 plugin_id: bef_datepicker
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   collapsible: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
       access:
         type: role
         options:
@@ -973,9 +1018,6 @@ display:
             remember_roles:
               editor: editor
               author: author
-              anonymous: '0'
-              authenticated: '0'
-              administrator: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -1173,6 +1215,7 @@ display:
           empty_table: false
           caption: ''
           description: ''
+          class: ''
       row:
         type: fields
       query:
@@ -2307,10 +2350,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              author: '0'
-              administrator: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -2353,11 +2392,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              subscriber: '0'
-              author: '0'
-              administrator: '0'
             reduce: true
           is_grouped: false
           group_info:
@@ -2449,11 +2483,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              subscriber: '0'
-              author: '0'
-              administrator: '0'
             min_placeholder: ''
             max_placeholder: ''
             placeholder: ''
@@ -2501,11 +2530,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              subscriber: '0'
-              author: '0'
-              administrator: '0'
             min_placeholder: ''
             max_placeholder: ''
             placeholder: ''
@@ -3320,10 +3344,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              author: '0'
-              administrator: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -3363,10 +3383,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              author: '0'
-              administrator: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -3408,10 +3424,6 @@ display:
             multiple: true
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              author: '0'
-              administrator: '0'
             reduce: true
           is_grouped: false
           group_info:
@@ -3457,10 +3469,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              author: '0'
-              administrator: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -3512,10 +3520,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              author: '0'
-              administrator: '0'
             min_placeholder: ''
             max_placeholder: ''
             placeholder: ''
@@ -3563,10 +3567,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              author: '0'
-              administrator: '0'
             min_placeholder: ''
             max_placeholder: ''
             placeholder: ''
@@ -3719,14 +3719,14 @@ display:
           empty_zero: false
           hide_alter_empty: true
           plugin:
-            hide_title: 1
-            hide_description: 1
+            hide_title: true
+            hide_description: true
             type: text_textarea_with_summary
             settings:
-              rows: '9'
+              rows: 9
+              summary_rows: 3
               placeholder: ''
-              summary_rows: '3'
-              show_summary: 0
+              show_summary: false
             third_party_settings: {  }
         form_field_field_feed_source:
           id: form_field_field_feed_source
@@ -3779,11 +3779,11 @@ display:
           empty_zero: false
           hide_alter_empty: true
           plugin:
-            hide_title: 1
-            hide_description: 1
+            hide_title: true
+            hide_description: true
             type: text_textfield
             settings:
-              size: '60'
+              size: 60
               placeholder: ''
             third_party_settings: {  }
         form_field_field_links:
@@ -3837,8 +3837,8 @@ display:
           empty_zero: false
           hide_alter_empty: true
           plugin:
-            hide_title: 0
-            hide_description: 1
+            hide_title: false
+            hide_description: true
             type: link_default
             settings: {  }
             third_party_settings: {  }

@@ -3,17 +3,14 @@ status: true
 dependencies:
   config:
     - field.storage.paragraph.field_lead
+    - filter.format.minimal
     - paragraphs.paragraphs_type.webform
   module:
-    - allowed_formats
     - text
     - tmgmt_content
 third_party_settings:
   tmgmt_content:
     excluded: false
-  allowed_formats:
-    allowed_formats:
-      - minimal
 id: paragraph.webform.field_lead
 field_name: field_lead
 entity_type: paragraph
@@ -24,5 +21,7 @@ required: false
 translatable: true
 default_value: {  }
 default_value_callback: ''
-settings: {  }
+settings:
+  allowed_formats:
+    - minimal
 field_type: text_long

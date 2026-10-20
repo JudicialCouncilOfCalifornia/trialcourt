@@ -18,7 +18,7 @@ class CSVProcessorForm extends FormBase {
             '#upload_location' => 'public://csv_files/',
             '#required' => TRUE,
             '#upload_validators' => [
-                'file_validate_extensions' => ['csv']
+                'FileExtension' => ['extensions' => 'csv']
             ],
         ];
 

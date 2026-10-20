@@ -3,16 +3,13 @@ status: true
 dependencies:
   config:
     - field.storage.paragraph.field_text
+    - filter.format.body
+    - filter.format.minimal
     - paragraphs.paragraphs_type.information
   module:
-    - allowed_formats
     - text
     - tmgmt_content
 third_party_settings:
-  allowed_formats:
-    allowed_formats:
-      - body
-      - minimal
   tmgmt_content:
     excluded: false
 id: paragraph.information.field_text
@@ -25,5 +22,8 @@ required: false
 translatable: true
 default_value: {  }
 default_value_callback: ''
-settings: {  }
+settings:
+  allowed_formats:
+    - body
+    - minimal
 field_type: text_long

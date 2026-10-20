@@ -3,17 +3,14 @@ status: true
 dependencies:
   config:
     - field.storage.media.field_media_caption
+    - filter.format.caption
     - media.type.remote_video
   module:
-    - allowed_formats
     - text
     - tmgmt_content
 third_party_settings:
   tmgmt_content:
     excluded: false
-  allowed_formats:
-    allowed_formats:
-      - caption
 id: media.remote_video.field_media_caption
 field_name: field_media_caption
 entity_type: media
@@ -24,5 +21,7 @@ required: false
 translatable: true
 default_value: {  }
 default_value_callback: ''
-settings: {  }
+settings:
+  allowed_formats:
+    - caption
 field_type: text_long

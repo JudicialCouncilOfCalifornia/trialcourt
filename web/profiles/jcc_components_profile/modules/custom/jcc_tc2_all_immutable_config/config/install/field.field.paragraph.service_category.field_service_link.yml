@@ -3,15 +3,12 @@ status: true
 dependencies:
   config:
     - field.storage.paragraph.field_service_link
+    - filter.format.full_html
     - paragraphs.paragraphs_type.service_category
   module:
-    - allowed_formats
     - text
     - tmgmt_content
 third_party_settings:
-  allowed_formats:
-    allowed_formats:
-      - full_html
   tmgmt_content:
     excluded: false
 id: paragraph.service_category.field_service_link
@@ -24,5 +21,7 @@ required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings: {  }
+settings:
+  allowed_formats:
+    - full_html
 field_type: text

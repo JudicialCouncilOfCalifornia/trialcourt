@@ -106,6 +106,7 @@ display:
         type: full
         options:
           offset: 0
+          pagination_heading_level: h4
           items_per_page: 12
           total_pages: null
           id: 0
@@ -123,7 +124,6 @@ display:
             offset: false
             offset_label: Offset
           quantity: 5
-          pagination_heading_level: h4
       exposed_form:
         type: bef
         options:
@@ -139,8 +139,11 @@ display:
           bef:
             general:
               autosubmit: true
+              auto_submit_sort_only: false
+              autosubmit_breakpoint: ''
               autosubmit_exclude_textfield: false
               autosubmit_textfield_delay: 500
+              autosubmit_textfield_minimum_length: 3
               autosubmit_hide: false
               input_required: false
               allow_secondary: false
@@ -153,6 +156,7 @@ display:
                 combine_rewrite: ''
                 reset: false
                 reset_label: ''
+                no_reset: false
                 collapsible: false
                 collapsible_label: 'Sort options'
                 is_secondary: false
@@ -160,10 +164,16 @@ display:
               search_api_fulltext:
                 plugin_id: default
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   rewrite:
                     filter_rewrite_values: ''
                   collapsible: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
       access:
         type: none
         options: {  }
@@ -213,11 +223,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              subscriber: '0'
-              author: '0'
-              administrator: '0'
             expose_fields: false
             placeholder: 'Search for keywords'
             searched_fields_id: ''
@@ -418,7 +423,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
       tags:
         - 'config:field.storage.node.body'
@@ -448,6 +452,17 @@ display:
         - user
         - 'user.node_grants:view'
       tags:
+        - 'config:facets.facet.content'
+        - 'config:facets.facet.department'
+        - 'config:facets.facet.division'
+        - 'config:facets.facet.document_type'
+        - 'config:facets.facet.event_type'
+        - 'config:facets.facet.location_type'
+        - 'config:facets.facet.news_type'
+        - 'config:facets.facet.subject_matter'
+        - 'config:facets.facet.tags'
+        - 'config:facets.facet.topics'
         - 'config:field.storage.node.body'
         - 'config:search_api.index.index'
+        - 'config:views.view.search'
         - 'search_api_list:index'

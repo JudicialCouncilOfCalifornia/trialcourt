@@ -90,6 +90,8 @@ display:
           buttons: true
           action_title: Action
           clear_on_exposed: true
+          show_multipage_selection_box: default
+          show_select_all: default
           selected_actions:
             3:
               action_id: views_bulk_edit
@@ -316,8 +318,11 @@ display:
           bef:
             general:
               autosubmit: true
+              auto_submit_sort_only: false
+              autosubmit_breakpoint: ''
               autosubmit_exclude_textfield: false
               autosubmit_textfield_delay: 500
+              autosubmit_textfield_minimum_length: 3
               autosubmit_hide: true
               input_required: false
               allow_secondary: false
@@ -327,23 +332,47 @@ display:
               bundle:
                 plugin_id: bef
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   rewrite:
                     filter_rewrite_values: ''
                   collapsible: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
                 select_all_none: false
                 select_all_none_nested: false
                 display_inline: true
+                soft_limit: 0
+                soft_limit_label_less: 'Show less'
+                soft_limit_label_more: 'Show more'
+                soft_limit_include_children: false
+                scrollable: false
+                scrollable_height: 300
               field_news_type_target_id:
                 plugin_id: bef
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   rewrite:
                     filter_rewrite_values: ''
                   collapsible: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
                 select_all_none: false
                 select_all_none_nested: false
                 display_inline: true
+                soft_limit: 0
+                soft_limit_label_less: 'Show less'
+                soft_limit_label_more: 'Show more'
+                soft_limit_include_children: false
+                scrollable: false
+                scrollable_height: 300
       access:
         type: role
         options:
@@ -414,11 +443,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              subscriber: '0'
-              author: '0'
-              administrator: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -459,11 +483,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              subscriber: '0'
-              author: '0'
-              administrator: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -511,11 +530,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              subscriber: '0'
-              author: '0'
-              administrator: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -552,6 +566,7 @@ display:
           empty_table: false
           caption: ''
           description: ''
+          class: ''
       row:
         type: fields
       query:

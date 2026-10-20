@@ -6,7 +6,7 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManager;
-use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\File\FileExists;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannel;
@@ -305,9 +305,9 @@ class JCCMigrateSourceUiForm extends FormBase {
     $definition = $this->pluginManagerMigration->getDefinition($migration_id);
     $migrationInstance = $this->pluginManagerMigration->createStubMigration($definition);
     $extension = $this->getFileExtensionSupported($migrationInstance);
-    $validators = ['file_validate_extensions' => [$extension]];
+    $validators = ['FileExtension' => ['extensions' => $extension]];
     // Save file to private directory for use by migrator.
-    $file = file_save_upload('source_file', $validators, 'private://', 0, FileSystemInterface::EXISTS_REPLACE);
+    $file = file_save_upload('source_file', $validators, 'private://', 0, FileExists::Replace);
     $url = $form_state->getValue('source_url') ? $form_state->getValue('source_url') : $migrations[$migration_id];
 
     // Set file_path for use in submit.

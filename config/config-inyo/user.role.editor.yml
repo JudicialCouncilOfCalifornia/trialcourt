@@ -3,6 +3,9 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.media_entity_browser
+    - entity_browser.browser.media_entity_browser_modal
+    - entity_browser.browser.paragraph_items
     - filter.format.aside
     - filter.format.body
     - filter.format.caption
@@ -58,7 +61,6 @@ dependencies:
     - file_replace
     - filter
     - media
-    - media_file_delete
     - menu_admin_per_menu
     - moderated_content_bulk_publish
     - node
@@ -76,7 +78,7 @@ dependencies:
     - userprotect
     - webform
 _core:
-  default_config_hash: bDKkVzkP2Uu4W0DKqkA1CiAXnBddBO4IxEVuxSgk5VE
+  default_config_hash: zjRmIGEF9C-FatrG3TSUJiutOuUX1hEAAuN_p8sptw4
 id: editor
 label: Editor
 weight: -8
@@ -138,11 +140,13 @@ permissions:
   - 'delete any remote_video media'
   - 'delete any webform'
   - 'delete content translations'
-  - 'delete files'
+  - 'delete files immediately'
+  - 'delete files override usage'
   - 'delete media'
   - 'delete own boxcast_stream media'
   - 'delete own case content'
   - 'delete own file media'
+  - 'delete own files'
   - 'delete own image media'
   - 'delete own remote_video media'
   - 'delete own webform submission'

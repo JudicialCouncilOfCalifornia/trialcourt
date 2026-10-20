@@ -176,7 +176,7 @@ class XlsxSourceBase extends PluginBase implements XlsxSourceInterface, Containe
    */
   protected function getColumnsFromFilePath($filepath, $file_type) {
     if (filter_var($filepath, FILTER_VALIDATE_URL)) {
-      $filepath = system_retrieve_file($filepath);
+      $filepath = xlsx_retrieve_file($filepath);
     }
     $reader = IOFactory::createReader($file_type);
     if ($file_type == 'Csv') {
@@ -244,7 +244,7 @@ class XlsxSourceBase extends PluginBase implements XlsxSourceInterface, Containe
    */
   public function buildBatchItemsFilePath($xlsx_entity, $filepath, $file_type) {
     if (filter_var($filepath, FILTER_VALIDATE_URL)) {
-      $filepath = system_retrieve_file($filepath);
+      $filepath = xlsx_retrieve_file($filepath);
     }
     $mapping = $xlsx_entity->getMapping();
     $reader = IOFactory::createReader($file_type);

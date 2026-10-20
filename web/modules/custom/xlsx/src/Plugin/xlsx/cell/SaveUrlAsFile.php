@@ -43,7 +43,7 @@ class SaveUrlAsFile extends XlsxCellBase {
       else {
         // Prepare directory.
         \Drupal::service('file_system')->prepareDirectory($this->upload_directory, FileSystemInterface::CREATE_DIRECTORY);
-        if ($file = system_retrieve_file($value, $this->upload_directory . '/' . $filename, TRUE)) {
+        if ($file = xlsx_retrieve_file($value, $this->upload_directory . '/' . $filename, TRUE)) {
           // Keep track of imported files. This will prevent file duplication in the future.
           // We checking file hash to make sure it is unique. Not the best apporach as a generic solution
           // but a good start for a custom plugin.

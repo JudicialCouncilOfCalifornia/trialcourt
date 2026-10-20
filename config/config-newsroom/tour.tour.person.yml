@@ -1,14 +1,11 @@
 uuid: 726dc573-f4e1-4e20-bc0c-7dfed7e4b9df
 langcode: en
 status: true
-dependencies:
-  module:
-    - jcc_tc_tours
+dependencies: {  }
 _core:
   default_config_hash: jiYLfKLd-xDDhE1VBs7v2qcei8AAjT-w1kIyACP07JI
 id: person
 label: 'Add or edit an Person Node.'
-module: jcc_tc_tours
 routes:
   -
     route_name: node.add
@@ -23,16 +20,18 @@ tips:
     label: 'Adding or Editing an Person'
     weight: 1
     position: top-start
-    attributes: {  }
+    selector: null
     body: 'Use this for profiles of Judges, Officers, and staff.'
+    attributes: {  }
   person-title:
     id: person-title
     plugin: text
     label: Title
     weight: 2
-    location: null
+    position: ''
     selector: '#edit-title-0-value'
     body: 'Write a clear and concise title for the person.'
+    location: null
   person-type:
     id: person-type
     plugin: text

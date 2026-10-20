@@ -3,15 +3,12 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_ceqa
+    - filter.format.snippet
     - node.type.facilities
   module:
-    - allowed_formats
     - text
     - tmgmt_content
 third_party_settings:
-  allowed_formats:
-    allowed_formats:
-      - snippet
   tmgmt_content:
     excluded: false
 id: node.facilities.field_ceqa
@@ -27,4 +24,6 @@ default_value_callback: ''
 settings:
   display_summary: false
   required_summary: false
+  allowed_formats:
+    - snippet
 field_type: text_with_summary

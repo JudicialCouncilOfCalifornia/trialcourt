@@ -25,7 +25,7 @@ class XlsxFile extends XlsxSourceBase {
       '#title' => $this->t('XLSX file template'),
       '#upload_location' => 'public://spreadsheets',
       '#upload_validators' => [
-        'file_validate_extensions' => ['xlsx'],
+        'FileExtension' => ['extensions' => 'xlsx'],
       ],
       '#description' => $this->t('This file is only used to map fields in Drupal with appropriate columns in the XLSX file. No data import happening during this process.'),
       '#required' => TRUE,
