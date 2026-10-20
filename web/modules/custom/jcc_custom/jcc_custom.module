@@ -22,6 +22,7 @@ use Drupal\file\Element\ManagedFile;
 use Drupal\jcc_custom\Ajax\ManagedFileUploadCompleteEventCommand;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\ViewExecutable;
 
 /**
@@ -657,7 +658,41 @@ function jcc_custom_views_query_alter(ViewExecutable $view, QueryPluginBase $que
         $query->addWhere(0, 'node__field_date_range.field_date_range_end_value', $view->args[1], '<');
       }
       break;
+
+    case 'litigants':
+      switch ($view->getDisplay()->display['id']) {
+        case 'vexatious':
+          if ($query instanceof Sql) {
+            foreach ($query->where as $group_key => $group) {
+              foreach ($group['conditions'] as $condition_key => $condition) {
+                if ($condition['field']) {
+                  switch (substr(strrchr($condition['field'], '.'), 1)) {
+                    case 'field_case_number_plain_value':
+                      // Ignore hyphens when searching case numbers.
+                      if (
+                        isset($condition['field'], $condition['operator'], $condition['value']) &&
+                        $condition['operator'] === 'LIKE' &&
+                        is_string($condition['value'])
+                      ) {
+                        $query->where[$group_key]['conditions'][$condition_key] = [
+                          'field' => "REPLACE({$condition['field']}, '-', '') LIKE :case_number_plain_value",
+                          'value' => [
+                            ':case_number_plain_value' => str_replace('-', '', $condition['value']),
+                          ],
+                          'operator' => 'formula',
+                        ];
+                      }
+                      break;
+                  }
+                }
+              }
+            }
+          }
+          break;
+      }
+      break;
   }
+
   // This code is related to the CSV importer.
   if ($view->id() == 'imported_events' && $view->getDisplay()->display['id'] == 'events') {
     $datetime = \Drupal::request()->query->get('dt');
