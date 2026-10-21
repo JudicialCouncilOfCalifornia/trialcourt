@@ -17,7 +17,10 @@ class AkamaiVideo extends ProviderPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function renderEmbedCode($width, $height, $autoplay) {
+  public function renderEmbed(array $options) {
+    $width = $options['width'];
+    $height = $options['height'];
+    $autoplay = $options['autoplay'];
     return [
       '#type' => 'html_tag',
       '#tag' => 'video',
