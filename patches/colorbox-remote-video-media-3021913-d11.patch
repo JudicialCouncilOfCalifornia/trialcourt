@@ -1,0 +1,288 @@
+--- a/colorbox.libraries.yml
++++ b/colorbox.libraries.yml
+@@ -21,7 +21,7 @@
+     url: https://github.com/TurbojetTechnologies/colorbox/blob/master/LICENSE.md
+     gpl-compatible: false
+   js:
+-    /libraries/colorbox/jquery.colorbox.js: { }
++    /libraries/colorbox/jquery.colorbox.js: {}
+   dependencies:
+     - core/jquery
+     - core/once
+@@ -34,8 +34,18 @@
+     url: https://github.com/cure53/DOMPurify/blob/main/LICENSE
+     gpl-compatible: false
+   js:
+-    /libraries/dompurify/dist/purify.min.js: { }
++    /libraries/dompurify/dist/purify.min.js: {}
+ 
++colorbox-remote-video:
++  js:
++    js/colorbox-remote-video.js: {}
++  dependencies:
++    - core/drupal
++    - core/jquery
++    - core/once
++    - system/drupal.system
++    - colorbox/colorbox
++
+ init:
+   version: VERSION
+   js:
+--- /dev/null
++++ b/js/colorbox-remote-video.js
+@@ -0,0 +1,20 @@
++/**
++ * @file
++ * The remote video colorbox integration.
++ */
++
++(function ($, Drupal, once) {
++  Drupal.behaviors.videoRemoteColorbox = {
++    attach: function (context, settings) {
++      once('colorbox-remote-video', '.remote-video-colorbox-launch-modal', context).forEach(function (element) {
++        $(element).on('click', function (e) {
++          // Allow the thumbnail that launches the modal to link to other places
++          // such as video URL, so if the modal is sidestepped things degrade
++          // gracefully.
++          e.preventDefault();
++          $.colorbox($.extend(settings.colorbox, {'html': $(this).data('remote-video-colorbox-modal')}));
++        });
++      });
++    }
++  };
++})(jQuery, Drupal, once);
+--- /dev/null
++++ b/src/Plugin/Field/FieldFormatter/VideoColorbox.php
+@@ -0,0 +1,231 @@
++<?php
++
++namespace Drupal\colorbox\Plugin\Field\FieldFormatter;
++
++use Drupal\Core\Field\FieldDefinitionInterface;
++use Drupal\Core\Field\FormatterBase;
++use Drupal\Core\Field\FieldItemListInterface;
++use Drupal\Core\Field\FormatterInterface;
++use Drupal\Core\Form\FormStateInterface;
++use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
++use Drupal\Core\Render\RendererInterface;
++use Drupal\media\Plugin\Field\FieldFormatter\OEmbedFormatter;
++use Symfony\Component\DependencyInjection\ContainerInterface;
++
++/**
++ * Plugin implementation of the thumbnail field formatter.
++ *
++ * @FieldFormatter(
++ *   id = "remote_video_colorbox",
++ *   label = @Translation("Colorbox Remote Video"),
++ *   field_types = {
++ *     "link",
++ *     "string",
++ *     "string_long",
++ *     "video_embed_field",
++ *   },
++ * )
++ */
++class VideoColorbox extends FormatterBase implements ContainerFactoryPluginInterface
++{
++
++  /**
++   * The field formatter plugin instance for videos.
++   *
++   * @var \Drupal\Core\Field\FormatterInterface
++   */
++  protected $videoFormatter;
++
++  /**
++   * Allow us to attach colorbox settings to our element.
++   *
++   * @var \Drupal\colorbox\ElementAttachmentInterface
++   */
++  protected $colorboxAttachment;
++
++  /**
++   * The renderer.
++   *
++   * @var \Drupal\Core\Render\RendererInterface
++   */
++  protected $renderer;
++
++  /**
++   * Constructs a new instance of the plugin.
++   *
++   * @param string $plugin_id
++   *   The plugin_id for the formatter.
++   * @param mixed $plugin_definition
++   *   The plugin implementation definition.
++   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
++   *   The definition of the field to which the formatter is associated.
++   * @param array $settings
++   *   The formatter settings.
++   * @param string $label
++   *   The formatter label display setting.
++   * @param string $view_mode
++   *   The view mode.
++   * @param array $third_party_settings
++   *   Third party settings.
++   * @param \Drupal\Core\Render\RendererInterface $renderer
++   *   The renderer.
++   * @param \Drupal\Core\Field\FormatterInterface $video_formatter
++   *   The field formatter for videos.
++   * @param \Drupal\colorbox\ElementAttachmentInterface|null $colorbox_attachment
++   *   The colorbox attachment if colorbox is enabled.
++   */
++  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, RendererInterface $renderer, FormatterInterface $video_formatter, $colorbox_attachment)
++  {
++    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
++    $this->videoFormatter = $video_formatter;
++    $this->renderer = $renderer;
++    $this->colorboxAttachment = $colorbox_attachment;
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition)
++  {
++    $formatter_manager = $container->get('plugin.manager.field.formatter');
++    return new static(
++      $plugin_id,
++      $plugin_definition,
++      $configuration['field_definition'],
++      $configuration['settings'],
++      $configuration['label'],
++      $configuration['view_mode'],
++      $configuration['third_party_settings'],
++      $container->get('renderer'),
++      $formatter_manager->createInstance('oembed', $configuration),
++      $container->get('colorbox.attachment')
++    );
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  public static function defaultSettings()
++  {
++    return OEmbedFormatter::defaultSettings() + [
++        'display' => 'thumbnail',
++        'link_text' => 'View Video',
++        'image_style' => 'thumbnail',
++      ] + parent::defaultSettings();
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  public function settingsForm(array $form, FormStateInterface $form_state)
++  {
++    $image_styles = image_style_options(FALSE);
++    $element = parent::settingsForm($form, $form_state);
++    $element += $this->videoFormatter->settingsForm([], $form_state);
++    $element['display'] = [
++      '#type' => 'select',
++      '#title' => $this->t('Display'),
++      '#default_value' => $this->getSetting('display'),
++      '#options' => [
++        'thumbnail' => $this->t('Thumbnail'),
++        'text' => $this->t('Text'),
++      ],
++    ];
++    $element['link_text'] = [
++      '#type' => 'textfield',
++      '#title' => $this->t('Link text'),
++      '#default_value' => $this->getSetting('link_text'),
++      '#states' => [
++        'visible' => [
++          [':input[name="options[settings][display]"]' => ['value' => 'text']],
++        ],
++      ],
++    ];
++    $element['image_style'] = [
++      '#title' => $this->t('Image style'),
++      '#type' => 'select',
++      '#default_value' => $this->getSetting('image_style'),
++      '#empty_option' => $this->t('None (original image)'),
++      '#options' => $image_styles,
++      '#states' => [
++        'visible' => [
++          [':input[name="options[settings][display]"]' => ['value' => 'thumbnail']],
++        ],
++      ],
++    ];
++    return $element;
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  public function settingsSummary()
++  {
++    $summary[] = $this->t('Text that launches a modal window.');
++    if ($video_settings_summary = $this->videoFormatter->settingsSummary()) {
++      $summary[] = reset($video_settings_summary);
++    }
++    if ($this->getSetting('display') == 'text') {
++      $summary[] = $this->t('Link text: @link_text.', [
++        '@link_text' => $this->getSetting('link_text'),
++      ]);
++    } else {
++      $image_styles = image_style_options(FALSE);
++      if (isset($image_styles[$this->getSetting('image_style')])) {
++        $summary[] = $this->t('Thumbnail image: @image_style.', [
++          '@image_style' => $image_styles[$this->getSetting('image_style')],
++        ]);
++      } else {
++        $summary[] = $this->t('Colorbox image style: Original image');
++      }
++    }
++    return $summary;
++  }
++
++  /**
++   * {@inheritdoc}
++   */
++  public function viewElements(FieldItemListInterface $items, $langcode)
++  {
++    $element = [];
++    $videos = $this->videoFormatter->viewElements($items, $langcode);
++    foreach ($items as $delta => $item) {
++      $element[$delta] = [
++        '#type' => 'container',
++        '#attributes' => [
++          'data-remote-video-colorbox-modal' => (string)$this->renderer->render($videos[$delta]),
++          'class' => ['remote-video-colorbox-launch-modal'],
++        ],
++        '#attached' => [
++          'library' => [
++            'colorbox/colorbox-remote-video',
++          ],
++        ],
++        // Ensure the cache context from the video formatter which was rendered
++        // early still exists in the renderable array for this formatter.
++        '#cache' => [
++          'contexts' => ['user.permissions'],
++        ],
++      ];
++      if ($this->getSetting('display') == 'text') {
++        $element[$delta]['children'][] = [
++          '#type' => 'inline_template',
++          '#template' => '<button class="button">{{ link_text }}</button>',
++          '#context' => [
++            'link_text' => $this->t($this->getSetting('link_text')),
++          ],
++        ];
++      } else {
++        $element[$delta]['children'][] = [
++          '#theme' => 'image_formatter',
++          '#item' => $items->getEntity()->get('thumbnail')->first(),
++          '#item_attributes' => [],
++          '#image_style' => $this->getSetting('image_style'),
++        ];
++      }
++    }
++    $this->colorboxAttachment->attach($element);
++    return $element;
++  }
++}
++

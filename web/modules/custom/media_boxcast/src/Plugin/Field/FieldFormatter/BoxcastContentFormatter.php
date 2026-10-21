@@ -39,7 +39,7 @@ class BoxcastContentFormatter extends FormatterBase implements ContainerFactoryP
       $elements[] = [
         '#type' => 'processed_text',
         '#format' => 'full_html',
-        '#text' => "<div id='boxcast-widget-${id}' class='media-boxcast'></div>",
+        '#text' => "<div id='boxcast-widget-{$id}' class='media-boxcast'></div>",
         '#attached' => [
           'library' => [
             'media_boxcast/field_formatter',
