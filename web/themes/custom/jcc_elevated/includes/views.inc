@@ -1780,6 +1780,68 @@ function jcc_elevated_preprocess_views_view__courses__promoted(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_views_view() for vexatious litigants block.
+ */
+function jcc_elevated_preprocess_views_view__litigants(&$variables) {
+  $entity_type_manager = \Drupal::service('entity_type.manager');
+  $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+
+  // Customize filter UI.
+  __jcc_view_results_exposed_filter_init($variables);
+
+  if (empty($variables['rows'][0]['#rows'])) {
+    return;
+  }
+
+  $litigants = [];
+  foreach ($variables['rows'][0]['#rows'] as $row) {
+    if (isset($row['#row']) && $row['#row'] instanceof ResultRow) {
+      $nid = $row['#row']->_entity->id() ?? NULL;
+      if ($nid) {
+        $node = Node::load($nid);
+        if ($node) {
+          // Party or person name.
+          $name = $node->get('field_last_name')->value ? $node->get('field_last_name')->value : NULL;
+          if ($name) {
+            if ($node->get('field_first_name')->value || $node->get('field_middle_name')->value) {
+              $name = $name . ', ' . $node->get('field_first_name')->value;
+              if ($node->get('field_middle_name')->value) {
+                $name = $name . ' ' . $node->get('field_middle_name')->value;
+              }
+            }
+
+            // Case details.
+            $entity_type_manager = \Drupal::service('entity_type.manager');
+            $taxonomy_manager = $entity_type_manager->getStorage('taxonomy_term');
+            $detail_list_data = [
+              'details' => array_filter([
+                $node->get('field_case_number_plain')->value ? 'Case: ' . $node->get('field_case_number_plain')->value : NULL,
+                $node->get('field_date')->value ? 'Date: ' . $node->get('field_date')->date->format('F d, Y') : NULL,
+                $node->get('field_case_location')->target_id ? 'Location: ' . $taxonomy_manager->load($node->get('field_case_location')->target_id)->label() : NULL,
+              ]),
+            ];
+
+            $litigant = [
+              'title' => [
+                'text' => $name,
+              ],
+              'comments' => $node->get('field_comments')->value ?? NULL,
+              'detail_list_data' => $detail_list_data,
+            ];
+            $litigants[] = $litigant;
+          }
+        }
+      }
+    }
+  }
+
+  // Count summary for the current page of results.
+  $litigants['count_summary'] = $variables['header']['result']['#markup'] ?? '';
+
+  $variables['litigants'] = $litigants;
+}
+
+/**
  * Implements hook_preprocess_HOOK() for rss feed.
  */
 function jcc_elevated_preprocess_views_view_rss(&$variables) {
@@ -1972,6 +2034,12 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
     // Remove captcha from search form.
     unset($form['captcha']);
     unset($form['field_rfp_end_date_value']['#options']['All']);
+  }
+
+  if ($view && $view->id() === 'litigants' && $view->current_display === 'vexatious') {
+    if ($form['field_case_number_plain_value']) {
+      $form['field_case_number_plain_value']['#description'] = t('Hyphens are optional.');
+    }
   }
 }
 

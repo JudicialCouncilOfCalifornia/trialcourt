@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: M8AqKPmj22hq2wHAvcyCfzBGmPkPAJcAdtD3uGZJdoQ
+id: litigant_content_type_pattern
+label: 'Litigant Content Type Pattern'
+type: 'canonical_entities:node'
+pattern: '[node:content-type]/[node:field_last_name]--[node:field_case_number_plain]'
+selection_criteria:
+  a987ccbc-6775-48de-b087-7f1c825b3b31:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: a987ccbc-6775-48de-b087-7f1c825b3b31
+    context_mapping:
+      node: node
+    bundles:
+      litigant: litigant
+selection_logic: and
+weight: -5
+relationships: {  }
