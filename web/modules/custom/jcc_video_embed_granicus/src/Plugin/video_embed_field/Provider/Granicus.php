@@ -37,7 +37,10 @@ class Granicus extends ProviderPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function renderEmbedCode($width, $height, $autoplay) {
+  public function renderEmbed(array $options) {
+    $width = $options['width'];
+    $height = $options['height'];
+    $autoplay = $options['autoplay'];
     $embed_code = [
       '#type' => 'html_tag',
       '#provider' => 'granicus',
