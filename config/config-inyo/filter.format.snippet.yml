@@ -1,3 +1,4 @@
+uuid: 4d2671df-c826-43a1-85bc-a48ac17b722e
 langcode: en
 status: true
 dependencies:
@@ -5,6 +6,8 @@ dependencies:
     - emptyparagraphkiller
     - glossify_taxonomy
     - linkit
+_core:
+  default_config_hash: MCvl73A5zN5KCJjeAA07JPGHJDOjP-faUwXK8EUhqWc
 name: Snippet
 format: snippet
 weight: -10
@@ -27,7 +30,7 @@ filters:
     status: true
     weight: -10
     settings:
-      allowed_html: '<em> <strong> <ul type dir> <ol type start dir> <li> <blockquote class="blockquote blockquote--callout" dir> <a href hreflang id aria-label rel target data-entity-bundle data-entity-substitution data-entity-type data-entity-uuid class="jcc-button--primary button button--primary jcc-button--cta-link jcc-button--primary button button--cta-link jcc-button--secondary button button--secondary jcc-button--cta-link button button--text" data-link-*> <p dir>'
+      allowed_html: '<br> <p dir> <blockquote class="blockquote--callout blockquote" dir> <a class hreflang target data-entity-bundle data-link-* href aria-label id rel data-entity-type data-entity-uuid data-entity-substitution title> <ul type dir> <ol type dir start> <strong> <em> <li>'
       filter_html_help: true
       filter_html_nofollow: false
   filter_htmlcorrector:
@@ -51,10 +54,12 @@ filters:
     settings:
       glossify_taxonomy_case_sensitivity: true
       glossify_taxonomy_first_only: true
+      glossify_taxonomy_ignore_tags: ''
       glossify_taxonomy_type: tooltips
       glossify_taxonomy_tooltip_truncate: false
       glossify_taxonomy_vocabs: ''
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+      glossify_taxonomy_synonyms_field: ''
   linkit:
     id: linkit
     provider: linkit
@@ -62,3 +67,4 @@ filters:
     weight: 0
     settings:
       title: false
+      media_substitution: metadata

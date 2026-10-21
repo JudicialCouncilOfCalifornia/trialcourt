@@ -9,15 +9,18 @@ name: 'Basic HTML'
 format: basic_html
 weight: -6
 filters:
-  filter_html:
-    id: filter_html
-    provider: filter
+  editor_file_reference:
+    id: editor_file_reference
+    provider: editor
     status: true
-    weight: -10
-    settings:
-      allowed_html: '<a href hreflang id aria-label rel target data-link-*> <em> <strong> <cite> <blockquote cite dir> <code dir> <ul type dir> <ol start type dir> <li> <dl dir> <dt> <dd> <h2 id dir> <h3 id dir> <h4 id dir> <h5 id dir> <h6 id dir> <p id dir> <br> <span dir> <img src alt height width data-entity-type data-entity-uuid data-align data-caption> <i class="">'
-      filter_html_help: false
-      filter_html_nofollow: false
+    weight: 11
+    settings: {  }
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
+    status: true
+    weight: 0
+    settings: {  }
   filter_align:
     id: filter_align
     provider: filter
@@ -30,17 +33,20 @@ filters:
     status: true
     weight: 8
     settings: {  }
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<br> <p id dir> <h2 id dir> <h3 id dir> <h4 id dir> <h5 id dir> <h6 id dir> <cite> <dt> <dd> <code dir> <dl dir> <i class> <a hreflang target data-link-* href aria-label id rel> <blockquote cite dir> <ul type dir> <ol type dir start> <span dir> <strong> <em> <li> <img src alt height width data-entity-uuid data-entity-type data-caption data-align>'
+      filter_html_help: false
+      filter_html_nofollow: false
   filter_html_image_secure:
     id: filter_html_image_secure
     provider: filter
     status: true
     weight: 9
-    settings: {  }
-  editor_file_reference:
-    id: editor_file_reference
-    provider: editor
-    status: true
-    weight: 11
     settings: {  }
   glossify_taxonomy:
     id: glossify_taxonomy
@@ -50,13 +56,9 @@ filters:
     settings:
       glossify_taxonomy_case_sensitivity: false
       glossify_taxonomy_first_only: true
+      glossify_taxonomy_ignore_tags: ''
       glossify_taxonomy_type: tooltips
       glossify_taxonomy_tooltip_truncate: false
       glossify_taxonomy_vocabs: glossary
       glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
-  emptyparagraphkiller:
-    id: emptyparagraphkiller
-    provider: emptyparagraphkiller
-    status: true
-    weight: 0
-    settings: {  }
+      glossify_taxonomy_synonyms_field: ''

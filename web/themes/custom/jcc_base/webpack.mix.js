@@ -79,4 +79,23 @@ mix.styles(
 mix
   .js("src/js/jcc_base.script.js", "js")
   .js("src/js/datefinder.js", "js")
-  .js("src/js/jump-nav.js", "js");
+  .js("src/js/jump-nav.js", "js")
+  .js("src/js/accordion.js", "js")
+  .js("src/js/read-more.js", "js");
+
+/*
+ |--------------------------------------------------------------------------
+ | CKEditor 5
+ |--------------------------------------------------------------------------
+ | The CSS listed in ckeditor_stylesheets (CKEditor 4), scoped to the editor.
+ */
+mix.then(() =>
+  require("./scripts/ckeditor5-css")(
+    [
+      "assets/css/jcc_base.style.css",
+      "src/css/ckeditor-custom-styles.css",
+      "../../../libraries/courtyard-artifact/1.x/public/css/styles-trial.min.css",
+    ],
+    "assets/css/ckeditor5.css"
+  )
+);

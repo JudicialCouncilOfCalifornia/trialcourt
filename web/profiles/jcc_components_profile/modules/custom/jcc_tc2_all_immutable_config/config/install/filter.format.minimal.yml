@@ -10,40 +10,33 @@ name: Minimal
 format: minimal
 weight: -8
 filters:
-  filter_html:
-    id: filter_html
-    provider: filter
-    status: true
-    weight: -10
-    settings:
-      allowed_html: '<em> <strong> <a href hreflang id aria-label rel target data-entity-bundle data-entity-substitution data-entity-type data-entity-uuid data-link-*> <u> <s> <sup> <sub> <ol dir> <li> <ul dir> <p dir> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title data-langcode>'
-      filter_html_help: true
-      filter_html_nofollow: false
-  glossify_taxonomy:
-    id: glossify_taxonomy
-    provider: glossify_taxonomy
-    status: false
-    weight: -10
-    settings:
-      glossify_taxonomy_case_sensitivity: true
-      glossify_taxonomy_first_only: true
-      glossify_taxonomy_type: tooltips
-      glossify_taxonomy_tooltip_truncate: false
-      glossify_taxonomy_vocabs: ''
-      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
-  linkit:
-    id: linkit
-    provider: linkit
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
     status: true
     weight: 0
-    settings:
-      title: false
+    settings: {  }
+  entity_embed:
+    id: entity_embed
+    provider: entity_embed
+    status: true
+    weight: 100
+    settings: {  }
   filter_autop:
     id: filter_autop
     provider: filter
     status: true
     weight: 0
     settings: {  }
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<br> <p dir> <a hreflang target data-entity-bundle data-link-* href aria-label id rel data-entity-type data-entity-uuid data-entity-substitution title class> <ol dir> <ul dir> <drupal-entity data-entity-type data-embed-button alt title data-align data-caption data-entity-embed-display data-entity-embed-display-settings data-view-mode data-entity-uuid data-langcode> <strong> <em> <u> <s> <sub> <sup> <li>'
+      filter_html_help: true
+      filter_html_nofollow: false
   filter_htmlcorrector:
     id: filter_htmlcorrector
     provider: filter
@@ -57,15 +50,25 @@ filters:
     weight: 0
     settings:
       filter_url_length: 72
-  emptyparagraphkiller:
-    id: emptyparagraphkiller
-    provider: emptyparagraphkiller
+  glossify_taxonomy:
+    id: glossify_taxonomy
+    provider: glossify_taxonomy
+    status: false
+    weight: -10
+    settings:
+      glossify_taxonomy_case_sensitivity: true
+      glossify_taxonomy_first_only: true
+      glossify_taxonomy_ignore_tags: ''
+      glossify_taxonomy_type: tooltips
+      glossify_taxonomy_tooltip_truncate: false
+      glossify_taxonomy_vocabs: ''
+      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+      glossify_taxonomy_synonyms_field: ''
+  linkit:
+    id: linkit
+    provider: linkit
     status: true
     weight: 0
-    settings: {  }
-  entity_embed:
-    id: entity_embed
-    provider: entity_embed
-    status: true
-    weight: 100
-    settings: {  }
+    settings:
+      title: false
+      media_substitution: metadata

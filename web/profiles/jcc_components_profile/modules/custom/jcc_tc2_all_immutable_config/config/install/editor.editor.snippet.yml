@@ -4,49 +4,63 @@ dependencies:
   config:
     - filter.format.snippet
   module:
-    - ckeditor
+    - ckeditor5
 format: snippet
-editor: ckeditor
+editor: ckeditor5
 settings:
   toolbar:
-    rows:
-      -
-        -
-          name: Formatting
-          items:
-            - Bold
-            - Italic
-            - RemoveFormat
-            - Styles
-        -
-          name: Links
-          items:
-            - DrupalLink
-            - DrupalUnlink
-        -
-          name: Lists
-          items:
-            - BulletedList
-            - NumberedList
-        -
-          name: Embed
-          items:
-            - Blockquote
-        -
-          name: Tools
-          items:
-            - Source
+    items:
+      - bold
+      - italic
+      - removeFormat
+      - style
+      - '|'
+      - link
+      - '|'
+      - bulletedList
+      - numberedList
+      - '|'
+      - blockQuote
+      - '|'
+      - sourceEditing
   plugins:
-    drupallink:
+    ckeditor5_list:
+      properties:
+        reversed: false
+        startIndex: true
+      multiBlock: true
+    ckeditor5_sourceEditing:
+      allowed_tags:
+        - '<ul type dir>'
+        - '<ol type dir>'
+        - '<blockquote dir>'
+        - '<a hreflang target data-entity-bundle data-link-*>'
+        - '<p dir>'
+    ckeditor5_style:
+      styles:
+        -
+          label: Callout
+          element: '<blockquote class="blockquote--callout">'
+        -
+          label: 'Primary Button'
+          element: '<a class="jcc-button--primary button button--primary">'
+        -
+          label: 'Secondary Button'
+          element: '<a class="jcc-button--secondary button button--secondary">'
+        -
+          label: 'CTA Link'
+          element: '<a class="jcc-button--cta-link button button--text">'
+        -
+          label: Blockquote
+          element: '<blockquote class="blockquote">'
+    editor_advanced_link_link:
+      enabled_attributes:
+        - aria-label
+        - id
+        - rel
+        - target
+    linkit_extension:
       linkit_enabled: true
       linkit_profile: default
-    stylescombo:
-      styles: "blockquote.blockquote--callout|Callout\r\na.jcc-button--primary.button.button--primary|Primary Button\r\na.jcc-button--secondary.button.button--secondary|Secondary Button\r\na.jcc-button--cta-link.button.button--text|CTA Link"
 image_upload:
   status: false
-  scheme: public
-  directory: inline-images
-  max_size: ''
-  max_dimensions:
-    width: null
-    height: null

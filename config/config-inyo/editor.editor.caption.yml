@@ -1,40 +1,41 @@
+uuid: b3a14e54-183c-4a5b-9839-8e4188872d3f
 langcode: en
 status: true
 dependencies:
   config:
     - filter.format.caption
   module:
-    - ckeditor
+    - ckeditor5
+_core:
+  default_config_hash: OLpfGJhRqZK969c45uMCRhaTPw6KC-boIdunUoPAmeQ
 format: caption
-editor: ckeditor
+editor: ckeditor5
 settings:
   toolbar:
-    rows:
-      -
-        -
-          name: Formatting
-          items:
-            - Bold
-            - Italic
-            - RemoveFormat
-        -
-          name: Links
-          items:
-            - DrupalLink
-            - DrupalUnlink
-        -
-          name: Tools
-          items:
-            - Source
+    items:
+      - bold
+      - italic
+      - removeFormat
+      - '|'
+      - link
+      - '|'
+      - sourceEditing
+      - '|'
+      - underline
+      - strikethrough
   plugins:
-    drupallink:
+    ckeditor5_sourceEditing:
+      allowed_tags:
+        - '<a hreflang target data-link-*>'
+        - '<p dir>'
+    editor_advanced_link_link:
+      enabled_attributes:
+        - aria-label
+        - id
+        - rel
+        - target
+    linkit_extension:
       linkit_enabled: true
       linkit_profile: default
 image_upload:
   status: false
-  scheme: public
-  directory: inline-images
-  max_size: ''
-  max_dimensions:
-    width: null
-    height: null

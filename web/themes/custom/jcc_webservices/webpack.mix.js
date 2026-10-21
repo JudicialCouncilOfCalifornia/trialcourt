@@ -85,3 +85,16 @@ mix.styles(
  |--------------------------------------------------------------------------
  */
 mix.js("src/js/jcc_webservices.script.js", "js");
+
+/*
+ |--------------------------------------------------------------------------
+ | CKEditor 5
+ |--------------------------------------------------------------------------
+ | The CSS listed in ckeditor_stylesheets (CKEditor 4), scoped to the editor.
+ */
+mix.then(() =>
+  require("../jcc_base/scripts/ckeditor5-css")(
+    ["assets/css/jcc_webservices.style.css"],
+    "assets/css/ckeditor5.css"
+  )
+);

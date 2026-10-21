@@ -17,40 +17,33 @@ name: Aside
 format: aside
 weight: -7
 filters:
-  filter_html:
-    id: filter_html
-    provider: filter
-    status: true
-    weight: -10
-    settings:
-      allowed_html: '<em> <strong> <ul type class dir> <ol type start class dir> <li> <blockquote class="blockquote blockquote--callout" dir> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title> <p class dir> <h4 dir> <h5 dir> <a href hreflang id aria-label rel target data-entity-bundle data-entity-substitution data-entity-type data-entity-uuid class="jcc-button--primary button button--primary jcc-button--cta-link jcc-button--primary jcc-button--cta-link twitter-library jcc-button--primary jcc-button--cta-link twitter-timeline jcc-button--primary button jcc-button--secondary button button--secondary jcc-button--cta-link button--cta-link button button--text twitter-timeline" data-link-*> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title data-langcode>'
-      filter_html_help: true
-      filter_html_nofollow: false
-  glossify_taxonomy:
-    id: glossify_taxonomy
-    provider: glossify_taxonomy
-    status: false
-    weight: -10
-    settings:
-      glossify_taxonomy_case_sensitivity: true
-      glossify_taxonomy_first_only: true
-      glossify_taxonomy_type: tooltips
-      glossify_taxonomy_tooltip_truncate: false
-      glossify_taxonomy_vocabs: ''
-      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
-  linkit:
-    id: linkit
-    provider: linkit
+  emptyparagraphkiller:
+    id: emptyparagraphkiller
+    provider: emptyparagraphkiller
     status: true
     weight: 0
-    settings:
-      title: false
+    settings: {  }
+  entity_embed:
+    id: entity_embed
+    provider: entity_embed
+    status: true
+    weight: 100
+    settings: {  }
   filter_autop:
     id: filter_autop
     provider: filter
     status: true
     weight: 0
     settings: {  }
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<br> <p dir class> <h4 dir> <h5 dir> <blockquote class="blockquote--callout blockquote" dir> <a class hreflang target data-entity-bundle data-link-* href aria-label id rel data-entity-type data-entity-uuid data-entity-substitution title> <ul type dir class> <ol type dir start class> <drupal-media data-align data-caption title data-entity-type data-entity-uuid alt data-view-mode> <drupal-entity data-entity-type data-embed-button alt title data-align data-caption data-entity-embed-display data-entity-embed-display-settings data-view-mode data-entity-uuid data-langcode> <strong> <em> <li>'
+      filter_html_help: true
+      filter_html_nofollow: false
   filter_htmlcorrector:
     id: filter_htmlcorrector
     provider: filter
@@ -64,6 +57,28 @@ filters:
     weight: 0
     settings:
       filter_url_length: 72
+  glossify_taxonomy:
+    id: glossify_taxonomy
+    provider: glossify_taxonomy
+    status: false
+    weight: -10
+    settings:
+      glossify_taxonomy_case_sensitivity: true
+      glossify_taxonomy_first_only: true
+      glossify_taxonomy_ignore_tags: ''
+      glossify_taxonomy_type: tooltips
+      glossify_taxonomy_tooltip_truncate: false
+      glossify_taxonomy_vocabs: ''
+      glossify_taxonomy_urlpattern: '/taxonomy/term/[id]'
+      glossify_taxonomy_synonyms_field: ''
+  linkit:
+    id: linkit
+    provider: linkit
+    status: true
+    weight: 0
+    settings:
+      title: false
+      media_substitution: metadata
   media_embed:
     id: media_embed
     provider: media
@@ -82,15 +97,3 @@ filters:
         image: image
         remote_video: remote_video
         snippet: snippet
-  entity_embed:
-    id: entity_embed
-    provider: entity_embed
-    status: true
-    weight: 100
-    settings: {  }
-  emptyparagraphkiller:
-    id: emptyparagraphkiller
-    provider: emptyparagraphkiller
-    status: true
-    weight: 0
-    settings: {  }

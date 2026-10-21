@@ -5,6 +5,8 @@
  * Updates for profile.
  */
 
+use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Utility\UpdateException;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\paragraphs\Entity\Paragraph;
@@ -35,6 +37,14 @@ function jcc_tc2_all_immutable_config_update_dependencies() {
   $dependencies['search_api'][8107] = [
     'jcc_tc2_all_immutable_config' => 8035,
   ];
+  // The Rules of Court editor must leave CKEditor 4 before 9009 uninstalls it.
+  // Only where that feature is installed: Drupal does not run an update whose
+  // dependency belongs to a missing module.
+  if (\Drupal::moduleHandler()->moduleExists('jcc_tc2_roc_feature')) {
+    $dependencies['jcc_tc2_all_immutable_config'][9009] = [
+      'jcc_tc2_roc_feature' => 9004,
+    ];
+  }
 
   return $dependencies;
 }
@@ -1092,3 +1102,96 @@ function jcc_tc2_all_immutable_config_update_9007() {
     ->execute();
 }
 
+/**
+ * Move media revision permissions from media_revisions_ui to core.
+ *
+ * Roles managed by this feature are config-ignored, so config import cannot
+ * update them. They must stop depending on media_revisions_ui before config
+ * import uninstalls it.
+ */
+function jcc_tc2_all_immutable_config_update_9008() {
+  $available = \Drupal::service('user.permissions')->getPermissions();
+  $updated = [];
+
+  foreach (\Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple() as $role) {
+    $changed = FALSE;
+    foreach ($role->getPermissions() as $permission) {
+      if (!preg_match('/^(view|revert|delete) ([a-z0-9_]+) media revisions$/', $permission, $matches) || $matches[2] === 'all') {
+        continue;
+      }
+      $role->revokePermission($permission);
+      $core_permission = "$matches[1] any $matches[2] media revisions";
+      if (isset($available[$core_permission])) {
+        $role->grantPermission($core_permission);
+      }
+      $changed = TRUE;
+    }
+    if ($changed) {
+      $role->save();
+      $updated[] = $role->id();
+    }
+  }
+
+  return $updated ? t('Updated media revision permissions for: @roles.', ['@roles' => implode(', ', $updated)]) : t('No media revision permissions to update.');
+}
+
+/**
+ * Move the text editors from CKEditor 4 to CKEditor 5.
+ *
+ * Editors and text formats are feature config, which config import ignores,
+ * and config import would uninstall CKEditor 4 while its editors still exist.
+ * So this installs CKEditor 5, saves the feature's editors and formats, and
+ * only then uninstalls CKEditor 4.
+ */
+function jcc_tc2_all_immutable_config_update_9009() {
+  $installer = \Drupal::service('module_installer');
+  $installer->install(['ckeditor5', 'jcc_ckeditor']);
+
+  $path = \Drupal::service('extension.list.module')->getPath('jcc_tc2_all_immutable_config');
+  $source = new FileStorage($path . '/config/install');
+  $config_manager = \Drupal::service('config.manager');
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $saved = [];
+  $editors = $source->listAll('editor.editor.');
+  // Only the formats that have an editor, saved before the editors: an
+  // editor's settings are validated against its format.
+  $formats = array_map(fn($name) => 'filter.format.' . substr($name, strlen('editor.editor.')), $editors);
+  foreach ([array_intersect($formats, $source->listAll('filter.format.')), $editors] as $names) {
+    foreach ($names as $name) {
+      $storage = $entity_type_manager->getStorage($config_manager->getEntityTypeIdByName($name));
+      $record = $source->read($name);
+      $entity = $storage->load($record[$storage->getEntityType()->getKey('id')]);
+      $entity = $entity ? $storage->updateFromStorageRecord($entity, $record) : $storage->createFromStorageRecord($record);
+      $entity->save();
+      $saved[] = $name;
+    }
+  }
+
+  // Uninstalling CKEditor 4 deletes every editor still using it without a
+  // word, e.g. site-only editors or ones from other features. Stop instead.
+  $left = array_keys(array_filter($entity_type_manager->getStorage('editor')->loadMultiple(), fn($editor) => $editor->getEditor() === 'ckeditor'));
+  if ($left) {
+    throw new UpdateException('These editors still use CKEditor 4 and must be migrated first: ' . implode(', ', $left));
+  }
+
+  $module_handler = \Drupal::moduleHandler();
+  $remove = array_values(array_filter(['ckeditor_balloonpanel', 'ckeditor'], [$module_handler, 'moduleExists']));
+  // Never uninstall dependents implicitly: anything still requiring CKEditor 4
+  // has to be fixed in code, not silently removed from the site.
+  if ($remove && !$installer->uninstall($remove, FALSE)) {
+    $dependents = [];
+    foreach ($remove as $module) {
+      foreach (array_keys(\Drupal::service('extension.list.module')->get($module)->required_by) as $dependent) {
+        if ($module_handler->moduleExists($dependent) && !in_array($dependent, $remove, TRUE)) {
+          $dependents[] = "$dependent (requires $module)";
+        }
+      }
+    }
+    throw new UpdateException('Cannot uninstall CKEditor 4, still required by: ' . implode(', ', $dependents));
+  }
+
+  return t('Saved @config. Uninstalled: @modules.', [
+    '@config' => implode(', ', $saved),
+    '@modules' => implode(', ', $remove) ?: 'none',
+  ]);
+}

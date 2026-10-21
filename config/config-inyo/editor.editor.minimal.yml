@@ -1,49 +1,56 @@
+uuid: 0d9e0f3d-83b4-45c4-86d7-781f9956cc30
 langcode: en
 status: true
 dependencies:
   config:
     - filter.format.minimal
   module:
-    - ckeditor
+    - ckeditor5
+_core:
+  default_config_hash: g5tp1wFXlXosIT3fsZDS6Z9lMSA3vGTEqo7Eoz_f6ng
 format: minimal
-editor: ckeditor
+editor: ckeditor5
 settings:
   toolbar:
-    rows:
-      -
-        -
-          name: Formatting
-          items:
-            - Bold
-            - Italic
-            - RemoveFormat
-        -
-          name: Links
-          items:
-            - DrupalLink
-            - DrupalUnlink
-        -
-          name: List
-          items:
-            - NumberedList
-            - BulletedList
-        -
-          name: Embed
-          items:
-            - paragraphs_inline_entity_form
-        -
-          name: Tools
-          items:
-            - Source
+    items:
+      - bold
+      - italic
+      - removeFormat
+      - '|'
+      - link
+      - '|'
+      - numberedList
+      - bulletedList
+      - '|'
+      - paragraphs_inline_entity_form
+      - '|'
+      - sourceEditing
+      - '|'
+      - underline
+      - strikethrough
+      - superscript
+      - subscript
   plugins:
-    drupallink:
+    ckeditor5_list:
+      properties:
+        reversed: false
+        startIndex: false
+      multiBlock: true
+    ckeditor5_sourceEditing:
+      allowed_tags:
+        - '<a hreflang target data-entity-bundle data-link-*>'
+        - '<ol dir>'
+        - '<ul dir>'
+        - '<p dir>'
+        - '<drupal-entity data-entity-type data-embed-button>'
+    editor_advanced_link_link:
+      enabled_attributes:
+        - aria-label
+        - id
+        - rel
+        - target
+    linkit_extension:
       linkit_enabled: true
       linkit_profile: default
 image_upload:
   status: false
-  scheme: public
-  directory: inline-images
-  max_size: ''
-  max_dimensions:
-    width: null
-    height: null

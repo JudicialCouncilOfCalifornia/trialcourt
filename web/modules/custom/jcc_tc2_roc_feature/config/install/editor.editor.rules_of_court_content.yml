@@ -4,49 +4,56 @@ dependencies:
   config:
     - filter.format.rules_of_court_content
   module:
-    - ckeditor
+    - ckeditor5
 format: rules_of_court_content
-editor: ckeditor
+editor: ckeditor5
 settings:
   toolbar:
-    rows:
-      -
-        -
-          name: Formatting
-          items:
-            - Bold
-            - Italic
-        -
-          name: Links
-          items:
-            - DrupalLink
-            - DrupalUnlink
-        -
-          name: Lists
-          items:
-            - BulletedList
-            - NumberedList
-        -
-          name: Media
-          items:
-            - Blockquote
-            - DrupalImage
-        -
-          name: Tools
-          items:
-            - Source
-            - Styles
+    items:
+      - bold
+      - italic
+      - '|'
+      - link
+      - '|'
+      - bulletedList
+      - numberedList
+      - '|'
+      - blockQuote
+      - drupalInsertImage
+      - '|'
+      - sourceEditing
+      - style
+      - '|'
+      - code
   plugins:
-    stylescombo:
-      styles: p.rulesubheading|Subheading
-    drupallink:
-      linkit_enabled: false
-      linkit_profile: ''
+    ckeditor5_imageResize:
+      allow_resize: true
+    ckeditor5_list:
+      properties:
+        reversed: false
+        startIndex: true
+      multiBlock: true
+    ckeditor5_sourceEditing:
+      allowed_tags:
+        - '<cite>'
+        - '<dl>'
+        - '<dt>'
+        - '<dd>'
+        - '<h2 id="jump-*">'
+        - '<h3 id>'
+        - '<h4 id>'
+        - '<h5 id>'
+        - '<h6 id>'
+        - '<a hreflang>'
+        - '<blockquote cite>'
+        - '<ul type>'
+        - '<ol type="1 A I">'
+    ckeditor5_style:
+      styles:
+        -
+          label: Subheading
+          element: '<p class="rulesubheading">'
+    editor_advanced_link_link:
+      enabled_attributes: {  }
 image_upload:
   status: false
-  scheme: public
-  directory: inline-images
-  max_size: ''
-  max_dimensions:
-    width: null
-    height: null
