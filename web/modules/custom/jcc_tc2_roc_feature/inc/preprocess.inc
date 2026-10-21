@@ -194,9 +194,8 @@ function jcc_tc2_roc_feature_preprocess_views_view_table(&$variables) {
       // Grab the entity for the row.
       $rule_node = $variables['result'][$index]->_entity;
 
-      // Get all the revision Ids for this entity and get the last revision.
-      $revision_ids = $node_manager->revisionIds($rule_node);
-      $last_revision_id = end($revision_ids);
+      // Get the last revision of this entity.
+      $last_revision_id = $node_manager->getLatestRevisionId($rule_node->id());
 
       // Load the entity version of the last revision.
       $rule_node_last_revision = $node_manager->loadRevision($last_revision_id);

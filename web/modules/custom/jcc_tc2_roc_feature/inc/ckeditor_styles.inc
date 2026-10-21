@@ -14,8 +14,8 @@ use Drupal\node\NodeInterface;
 function jcc_tc2_roc_feature_editor_js_settings_alter(array &$settings): void {
 
   // Change the style set on rule_subsection nodes with RuleFormatting items.
-  foreach (array_keys($settings['editor']['formats']) as $text_format_id) {
-    if ($settings['editor']['formats'][$text_format_id]['editor'] === 'ckeditor') {
+  foreach (array_keys($settings['editor']['formats'] ?? []) as $text_format_id) {
+    if (($settings['editor']['formats'][$text_format_id]['editor'] ?? NULL) === 'ckeditor') {
 
       $route_match = \Drupal::routeMatch();
       $route_name = $route_match->getRouteName();

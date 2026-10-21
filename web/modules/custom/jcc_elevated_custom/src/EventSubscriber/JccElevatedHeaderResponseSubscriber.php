@@ -2,6 +2,7 @@
 
 namespace Drupal\jcc_elevated_custom\EventSubscriber;
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -41,7 +42,7 @@ class JccElevatedHeaderResponseSubscriber implements EventSubscriberInterface {
    */
   public function onResponse(ResponseEvent $event) {
     // Add X-Robots-Tag header response if opted.
-    if (theme_get_setting('block_search_engine_indexing')) {
+    if (\Drupal::service(ThemeSettingsProvider::class)->getSetting('block_search_engine_indexing')) {
       $response = $event->getResponse();
       $response->headers->set('X-Robots-Tag', 'none');
       $event->setResponse($response);

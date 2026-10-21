@@ -129,7 +129,15 @@ jobs:
 
             - run:
                 name: Clearing cache of << parameters.site >>
-                command: .circleci/scripts/deploy-cr.sh << parameters.site >> || echo "Cache rebuild before updb may fail."
+                command: |
+                  .circleci/scripts/deploy-cr.sh << parameters.site >> || {
+                    rc=$?
+                    echo "=================================================================="
+                    echo "WARNING: pre-updb cache rebuild FAILED for << parameters.site >> (exit ${rc})."
+                    echo "Continuing to updb. See the error above; if updb also fails it"
+                    echo "is most likely the same root cause."
+                    echo "=================================================================="
+                  }
 
             - run:
                 name: Updating DB of << parameters.site >>
@@ -197,7 +205,15 @@ jobs:
 
             - run:
                 name: Clearing cache of << parameters.site >>
-                command: .circleci/scripts/deploy-cr.sh << parameters.site >> || echo "Cache rebuild before updb may fail."
+                command: |
+                  .circleci/scripts/deploy-cr.sh << parameters.site >> || {
+                    rc=$?
+                    echo "=================================================================="
+                    echo "WARNING: pre-updb cache rebuild FAILED for << parameters.site >> (exit ${rc})."
+                    echo "Continuing to updb. See the error above; if updb also fails it"
+                    echo "is most likely the same root cause."
+                    echo "=================================================================="
+                  }
 
             - run:
                 name: Updating DB of << parameters.site >>

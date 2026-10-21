@@ -5,6 +5,7 @@
  * Preprocess Region Secondary Footer.
  */
 
+use Drupal\contextual\ContextualLinksSerializer;
 use Drupal\Core\Menu\MenuTreeParameters;
 
 /**
@@ -56,7 +57,7 @@ function jcc_base_preprocess_region__secondary_footer(&$variables) {
       ];
       $placeholder = [
         '#type' => 'contextual_links_placeholder',
-        '#id' => _contextual_links_to_id($contextual_links),
+        '#id' => \Drupal::service(ContextualLinksSerializer::class)->linksToId($contextual_links),
       ];
     }
     $variables['list_section']['menu']['contextual_links'] = $placeholder;

@@ -5,18 +5,19 @@
  * Functions for page processing.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_preprocess_HOOK().
  */
 function jcc_professional_preprocess_page(&$variables) {
-  $variables['logo'] = theme_get_setting('logo', 'jcc_professional');
-  $variables['header_footer_variant'] = theme_get_setting('header_footer_variant', 'jcc_professional');
+  $variables['logo'] = \Drupal::service(ThemeSettingsProvider::class)->getSetting('logo', 'jcc_professional');
+  $variables['header_footer_variant'] = \Drupal::service(ThemeSettingsProvider::class)->getSetting('header_footer_variant', 'jcc_professional');
 
   $variables['site_name'] = [
-    'first' => theme_get_setting('site_name_first', 'jcc_professional'),
-    'second' => theme_get_setting('site_name_second', 'jcc_professional'),
+    'first' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('site_name_first', 'jcc_professional'),
+    'second' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('site_name_second', 'jcc_professional'),
   ];
 
   $variables['main_links'] = jcc_components_get_menu_array('main');
@@ -25,16 +26,16 @@ function jcc_professional_preprocess_page(&$variables) {
 
   $variables['hat'] = [
     'title' => [
-      'text' => theme_get_setting('hat_shoe_text', 'jcc_professional'),
-      'url' => theme_get_setting('hat_shoe_url', 'jcc_professional'),
+      'text' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hat_shoe_text', 'jcc_professional'),
+      'url' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hat_shoe_url', 'jcc_professional'),
     ],
     'links' => jcc_components_get_menu_array('hat'),
   ];
 
   $variables['shoe'] = [
     'title' => [
-      'text' => theme_get_setting('hat_shoe_text', 'jcc_professional'),
-      'url' => theme_get_setting('hat_shoe_url', 'jcc_professional'),
+      'text' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hat_shoe_text', 'jcc_professional'),
+      'url' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hat_shoe_url', 'jcc_professional'),
     ],
     'links' => jcc_components_get_menu_array('shoe'),
   ];
@@ -91,7 +92,7 @@ function jcc_professional_preprocess_page(&$variables) {
   // Force page cache refresh until better cache controls.
   if (\Drupal::service('path.matcher')->isFrontPage()) {
     // Find events tagged as granicus_event_type value.
-    $term_id = theme_get_setting('granicus_event_type');
+    $term_id = \Drupal::service(ThemeSettingsProvider::class)->getSetting('granicus_event_type');
     $node_storage = \Drupal::entityTypeManager()->getStorage('node');
     $imported_events = $term_id ? $node_storage->loadByProperties(['field_event_type' => $term_id]) : '';
 
@@ -123,7 +124,7 @@ function jcc_professional_preprocess_page(&$variables) {
           $current_to_start = $current_timestamp - $start_timestamp;
           $status = NULL;
           if ($current_to_start > -3600 && $current_timestamp < $end_timestamp) {
-            if (!theme_get_setting('granicus_status_override') == 1 && ($current_to_start > -3600 && $current_to_start < 0)) {
+            if (!\Drupal::service(ThemeSettingsProvider::class)->getSetting('granicus_status_override') == 1 && ($current_to_start > -3600 && $current_to_start < 0)) {
               $status = 'starting soon';
             }
             else {
@@ -135,8 +136,8 @@ function jcc_professional_preprocess_page(&$variables) {
           if ($status) {
             $captioning_links = [];
             $captions = [
-              'English' => theme_get_setting('granicus_english_captions'),
-              'Español' => theme_get_setting('granicus_spanish_captions'),
+              'English' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('granicus_english_captions'),
+              'Español' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('granicus_spanish_captions'),
             ];
             foreach ($captions as $key => $caption) {
               if ($caption) {
@@ -215,7 +216,7 @@ function jcc_professional_social_links() {
   ];
 
   foreach ($social as $k => $item) {
-    $url = theme_get_setting($item['name'], 'jcc_professional');
+    $url = \Drupal::service(ThemeSettingsProvider::class)->getSetting($item['name'], 'jcc_professional');
     if (!empty($url)) {
       $social[$k]['url'] = $url;
     }

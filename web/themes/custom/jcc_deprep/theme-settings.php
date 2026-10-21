@@ -5,6 +5,7 @@
  * Theme Settings.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -24,19 +25,19 @@ function jcc_deprep_form_system_theme_settings_alter(&$form, FormStateInterface 
   $form['social']['facebook'] = [
     '#type' => 'textfield',
     '#title' => t('Facebook'),
-    '#default_value' => theme_get_setting('facebook'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('facebook'),
     '#placeholder' => 'https://www.facebook.com/[name]/',
   ];
   $form['social']['twitter'] = [
     '#type' => 'textfield',
     '#title' => t('Twitter'),
-    '#default_value' => theme_get_setting('twitter'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('twitter'),
     '#placeholder' => 'https://twitter.com/[name]',
   ];
   $form['social']['youtube'] = [
     '#type' => 'textfield',
     '#title' => t('YouTube'),
-    '#default_value' => theme_get_setting('youtube'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('youtube'),
     '#placeholder' => 'https://www.youtube.com/user/[name]',
   ];
 }

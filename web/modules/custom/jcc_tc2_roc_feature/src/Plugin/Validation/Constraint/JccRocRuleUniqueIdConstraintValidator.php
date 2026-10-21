@@ -54,7 +54,7 @@ class JccRocRuleUniqueIdConstraintValidator extends ConstraintValidator implemen
   /**
    * {@inheritdoc}
    */
-  public function validate($items, Constraint $constraint): void {
+  public function validate(mixed $items, Constraint $constraint): void {
     $value = !empty($items->getValue()) ? $items->getValue()[0]['value'] : '';
     $entity = $items->getEntity();
     $entity_type = $entity->getEntityTypeId();

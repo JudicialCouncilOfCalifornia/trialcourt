@@ -25,7 +25,7 @@
  * not to any Drupal files.
  */
 if (!defined("PANTHEON_VERSION")) {
-  define("PANTHEON_VERSION", "3");
+  define("PANTHEON_VERSION", "4");
 }
 
 /**
@@ -166,7 +166,7 @@ if (isset($_ENV['PANTHEON_ROLLING_TMP']) && isset($_ENV['PANTHEON_DEPLOYMENT_IDE
  * Pantheon edge cache whenever the Drupal cache is rebuilt.
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-  $GLOBALS['conf']['container_service_providers']['PantheonServiceProvider'] = '\Pantheon\Internal\PantheonServiceProvider';
+  $GLOBALS['conf']['container_service_providers']['PantheonServiceProvider'] = '\Pantheon\Internal\PantheonServiceProvider11';
 }
 /**
  * Trusted host settings" are not necessary on Pantheon.

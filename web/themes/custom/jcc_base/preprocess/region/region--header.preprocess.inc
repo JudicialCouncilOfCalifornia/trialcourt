@@ -5,6 +5,7 @@
  * Theme and preprocess functions for region.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\menu_item_extras\Service\MenuLinkTreeHandler;
 
 /**
@@ -12,13 +13,13 @@ use Drupal\menu_item_extras\Service\MenuLinkTreeHandler;
  */
 function jcc_base_preprocess_region__header(&$variables) {
   // Get theme logo from appearance setting.
-  $theme_logo = theme_get_setting('logo.url');
+  $theme_logo = \Drupal::service(ThemeSettingsProvider::class)->getSetting('logo.url');
   // Get translation hiding settings.
-  $hide_translation = theme_get_setting('hide_translation');
+  $hide_translation = \Drupal::service(ThemeSettingsProvider::class)->getSetting('hide_translation');
   // Get theme variations.
-  $header_extended = theme_get_setting('header_extended');
-  $mega_menu = theme_get_setting('mega_menu');
-  $inverted_color = theme_get_setting('color_inverted');
+  $header_extended = \Drupal::service(ThemeSettingsProvider::class)->getSetting('header_extended');
+  $mega_menu = \Drupal::service(ThemeSettingsProvider::class)->getSetting('mega_menu');
+  $inverted_color = \Drupal::service(ThemeSettingsProvider::class)->getSetting('color_inverted');
 
   // BEGIN Get basic site settings (e.g. site name for logo alt)
   $config = \Drupal::config('system.site');

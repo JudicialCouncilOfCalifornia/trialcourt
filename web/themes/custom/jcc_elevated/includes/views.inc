@@ -5,6 +5,7 @@
  * Functions for views processing.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
@@ -19,6 +20,7 @@ use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\text\TextSummary;
 use Drupal\user\Entity\User;
 use Drupal\views\ResultRow;
 use Drupal\views\ViewExecutable;
@@ -439,11 +441,11 @@ function jcc_elevated_preprocess_views_view__search__search(&$variables) {
 
   // Personalized no results message.
   $variables['no_results_heading'] = 'We are unable to find a result for your search.';
-  if (theme_get_setting('no_search_results_heading')) {
-    $variables['no_results_heading'] = theme_get_setting('no_search_results_heading');
+  if (\Drupal::service(ThemeSettingsProvider::class)->getSetting('no_search_results_heading')) {
+    $variables['no_results_heading'] = \Drupal::service(ThemeSettingsProvider::class)->getSetting('no_search_results_heading');
   }
   $variables['no_results_message'] = ['#markup' => Html::decodeEntities('Visit our <a href="/">homepage</a> for more options.')];
-  $no_results_msg = theme_get_setting('no_search_results_message');
+  $no_results_msg = \Drupal::service(ThemeSettingsProvider::class)->getSetting('no_search_results_message');
   if ($no_results_msg && $no_results_msg['value']) {
     $variables['no_results_message'] = ['#markup' => Html::decodeEntities($no_results_msg['value'])];
   }
@@ -1279,7 +1281,7 @@ function jcc_elevated_preprocess_views_view__jobs__search(&$variables) {
               if (!empty($content['#items'])) {
                 $body_content = $content['#items']->getValue()[0]['value'];
                 $summary_trim_length = $content[0]['#text_summary_trim_length'] ?? 600;
-                $body_summary = text_summary(strip_tags($body_content), NULL, $summary_trim_length);
+                $body_summary = \Drupal::service(TextSummary::class)->generate(strip_tags($body_content), NULL, $summary_trim_length);
                 $teaser = html_entity_decode($body_summary);
               }
             }

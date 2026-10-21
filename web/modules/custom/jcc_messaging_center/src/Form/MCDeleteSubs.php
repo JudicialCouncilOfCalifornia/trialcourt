@@ -112,7 +112,7 @@ class MCDeleteSubs extends FormBase {
     }
     else {
       $user_email = $form_state->cleanValues()->getValues()['user_email'];
-      $user = user_load_by_mail($user_email);
+      $user = array_values(\Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['mail' => $user_email]))[0] ?? FALSE;
 
       $user->set('field_jcc_messaging_center_group', []);
       $user->save();

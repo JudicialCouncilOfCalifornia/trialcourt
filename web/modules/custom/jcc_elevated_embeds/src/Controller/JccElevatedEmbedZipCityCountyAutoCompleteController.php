@@ -20,13 +20,6 @@ use Symfony\Component\HttpFoundation\Request;
 class JccElevatedEmbedZipCityCountyAutoCompleteController extends ControllerBase {
 
   /**
-   * The node storage.
-   *
-   * @var \Drupal\node\NodeStorage
-   */
-  protected $nodeStorage;
-
-  /**
    * Entity type manager service.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -99,7 +92,6 @@ class JccElevatedEmbedZipCityCountyAutoCompleteController extends ControllerBase
     $this->moduleHandler = $module_handler;
     $this->aliasManager = $alias_manager;
     $this->jccSectionService = $jcc_section_service;
-    $this->nodeStorage = $entity_type_manager->getStorage('node');
   }
 
   /**

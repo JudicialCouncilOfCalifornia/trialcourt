@@ -66,7 +66,7 @@ class JccMigrateSourceLogClearLogConfirmForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $_SESSION['jcc_migrate_source_ui_overview_filter'] = [];
+    \Drupal::request()->getSession()->set('jcc_migrate_source_ui_overview_filter', []);
     $this->connection->truncate('jcc_migrate_source_log')->execute();
     $this->messenger()->addStatus($this->t('Database log cleared.'));
     $form_state->setRedirectUrl($this->getCancelUrl());

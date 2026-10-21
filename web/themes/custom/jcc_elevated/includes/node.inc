@@ -5,6 +5,7 @@
  * Preprocess and functions for node types and components.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Link;
@@ -1535,7 +1536,7 @@ function jcc_elevated_node_course(array &$variables, NodeInterface $node): void 
         // Node with catalog view must be specified for actionable links.
         $enable_link = FALSE;
         $domain = 'https://' . \Drupal::request()->getHost();
-        $path_catalog = theme_get_setting('landing_course');
+        $path_catalog = \Drupal::service(ThemeSettingsProvider::class)->getSetting('landing_course');
         $path = NULL;
         if ($path_catalog && str_starts_with($path_catalog, '/node')) {
           if (\Drupal::service('path_alias.manager')->getAliasByPath($path_catalog)) {

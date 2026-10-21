@@ -5,6 +5,7 @@
  * Paragraph preprocessors.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
@@ -14,6 +15,7 @@ use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\paragraphs\ParagraphInterface;
+use Drupal\text\TextSummary;
 use Drupal\views\ViewEntityInterface;
 
 /**
@@ -107,7 +109,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
   // Start with the sticky_list display.
   $sticky_list = $executable ? $executable->setDisplay('sticky_list') : FALSE;
   $display = $executable->executeDisplay();
-  $default_image_path = theme_get_setting('news_default_seal') ?? 'themes/custom/jcc_elevated/images/news-default-seal.svg';
+  $default_image_path = \Drupal::service(ThemeSettingsProvider::class)->getSetting('news_default_seal') ?? 'themes/custom/jcc_elevated/images/news-default-seal.svg';
   $default_image_url = Url::fromUri('base://' . $default_image_path, ['absolute' => TRUE])->toString();
   if ($sticky_list) {
     $variables['sticky_list'] = !empty($display['#rows']) ? $display['#rows'][0]['#rows'] : [];
@@ -142,7 +144,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
         }
         else {
           $raw = strip_tags($node_body->value ?? '');
-          $excerpt = text_summary($raw, NULL, 600);
+          $excerpt = \Drupal::service(TextSummary::class)->generate($raw, NULL, 600);
         }
         $variables['excerpts'][] = ['#markup' => $excerpt];
       }
