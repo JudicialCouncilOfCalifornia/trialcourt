@@ -44,7 +44,7 @@ for name in "$@" ; do
 
   echo
   echo Running Database Updates for $PANTHEON_ENV
-  drush @${SITE_CODE}.${PANTHEON_ENV} updb -y
+  "$DIR/vendor/bin/drush" @${SITE_CODE}.${PANTHEON_ENV} updb -y
 
   # echo
   # echo Importing Config for $PANTHEON_ENV
