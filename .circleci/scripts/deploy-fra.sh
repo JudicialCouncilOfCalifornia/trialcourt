@@ -63,7 +63,7 @@ for name in "$@" ; do
   trap 'kill "$HEARTBEAT_PID" 2>/dev/null || true' EXIT
 
   set +e
-  drush @${SITE_CODE}.${PANTHEON_ENV} fra --bundle=jcc_tc2 -y
+  "$DIR/vendor/bin/drush" @${SITE_CODE}.${PANTHEON_ENV} fra --bundle=jcc_tc2 -y
   FRA_STATUS=$?
   set -e
 

@@ -40,7 +40,7 @@ for name in "$@" ; do
 
   # echo
   echo Clearing Cache for $PANTHEON_ENV
-  drush @${SITE_CODE}.${PANTHEON_ENV} cr
+  "$DIR/vendor/bin/drush" @${SITE_CODE}.${PANTHEON_ENV} cr
 
   # echo
   # echo Running Database Updates for $PANTHEON_ENV

@@ -48,7 +48,7 @@ for name in "$@" ; do
 
   # echo
   echo Importing Config for $PANTHEON_ENV
-  drush @${SITE_CODE}.${PANTHEON_ENV} cim -y
+  "$DIR/vendor/bin/drush" @${SITE_CODE}.${PANTHEON_ENV} cim -y
 
   # echo
   # echo Importing Features for $PANTHEON_ENV
