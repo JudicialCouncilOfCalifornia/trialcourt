@@ -5,6 +5,7 @@
  * Functions for views processing.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\Markup;
@@ -44,7 +45,7 @@ function jcc_components_theme_suggestions_views_view_alter(array &$suggestions, 
  */
 function jcc_components_preprocess_views_view(&$variables) {
   $view = $variables['view'];
-  $variables['header_footer_variant'] = theme_get_setting('header_footer_variant', 'jcc_components');
+  $variables['header_footer_variant'] = \Drupal::service(ThemeSettingsProvider::class)->getSetting('header_footer_variant', 'jcc_components');
 
   // If AJAX is enabled.
   if ($view->ajaxEnabled()) {
@@ -497,11 +498,11 @@ function jcc_components_preprocess_views_view__documents__default(&$variables) {
 function jcc_components_preprocess_views_view__search(&$variables) {
   // Personalized no results message.
   $variables['no_results_heading'] = 'We are unable to find a result for your search.';
-  if (theme_get_setting('no_search_results_heading')) {
-    $variables['no_results_heading'] = theme_get_setting('no_search_results_heading');
+  if (\Drupal::service(ThemeSettingsProvider::class)->getSetting('no_search_results_heading')) {
+    $variables['no_results_heading'] = \Drupal::service(ThemeSettingsProvider::class)->getSetting('no_search_results_heading');
   }
   $variables['no_results_message'] = ['#markup' => Html::decodeEntities('Visit our <a href="/">homepage</a> for more options.')];
-  $no_results_msg = theme_get_setting('no_search_results_message');
+  $no_results_msg = \Drupal::service(ThemeSettingsProvider::class)->getSetting('no_search_results_message');
   if ($no_results_msg && $no_results_msg['value']) {
     $variables['no_results_message'] = ['#markup' => Html::decodeEntities($no_results_msg['value'])];
   }

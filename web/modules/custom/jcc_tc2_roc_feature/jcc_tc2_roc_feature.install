@@ -5,6 +5,7 @@
  * Updates for roc feature.
  */
 
+use Drupal\node\NodeAccessRebuild;
 use Drupal\Core\Config\FileStorage;
 
 /**
@@ -23,7 +24,7 @@ function jcc_tc2_roc_feature_install(): void {
 
   \Drupal::service('features.manager')->import(['jcc_tc2_all_immutable_config']);
 
-  node_access_rebuild(TRUE);
+  \Drupal::service(NodeAccessRebuild::class)->rebuild(TRUE);
 }
 
 /**
@@ -47,7 +48,7 @@ function jcc_tc2_roc_feature_update_9001(): void {
 function jcc_tc2_roc_feature_update_9002(): void {
   \Drupal::service('features.manager')->import(['jcc_tc2_all_immutable_config']);
 
-  node_access_rebuild(TRUE);
+  \Drupal::service(NodeAccessRebuild::class)->rebuild(TRUE);
 }
 
 /**
@@ -56,7 +57,7 @@ function jcc_tc2_roc_feature_update_9002(): void {
 function jcc_tc2_roc_feature_update_9003(): void {
   \Drupal::service('features.manager')->import(['jcc_tc2_roc_feature']);
 
-  node_access_rebuild(TRUE);
+  \Drupal::service(NodeAccessRebuild::class)->rebuild(TRUE);
 }
 
 /**

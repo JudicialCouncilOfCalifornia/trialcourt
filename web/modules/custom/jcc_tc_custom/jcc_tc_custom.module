@@ -5,6 +5,7 @@
  * Contains jcc_tc_custom.module.
  */
 
+use Drupal\Core\Database\Statement\FetchAs;
 use Drupal\search_api\Query\QueryInterface;
 use Solarium\QueryType\Select\Query\Query;
 use Drupal\Core\Database\Database;
@@ -174,7 +175,7 @@ function jcc_tc_custom_cleanup_empty_filters(&$form, $form_name, $field_name) {
   $sth->groupBy('tags.' . $form_name);
 
   $data = $sth->execute();
-  $results = array_flip($data->fetchAll(\PDO::FETCH_COLUMN));
+  $results = array_flip($data->fetchAll(FetchAs::Column));
   $options = array_intersect_key($options, $results);
   $form[$form_name]['#options'] = $options;
 }

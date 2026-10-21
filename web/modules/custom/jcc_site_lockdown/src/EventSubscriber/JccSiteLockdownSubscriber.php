@@ -260,7 +260,7 @@ class JccSiteLockdownSubscriber implements EventSubscriberInterface {
       $configuration
     );
     $scopes = $this->claims->getScopes($client);
-    $_SESSION['openid_connect_op'] = 'login';
+    $this->session->saveOp('login');
     $response = $client->authorize($scopes);
     return $response;
   }

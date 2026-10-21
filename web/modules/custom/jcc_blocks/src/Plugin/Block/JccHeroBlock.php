@@ -2,6 +2,7 @@
 
 namespace Drupal\jcc_blocks\Plugin\Block;
 
+use Drupal\contextual\ContextualLinksSerializer;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Form\FormStateInterface;
@@ -165,7 +166,7 @@ class JccHeroBlock extends BlockBase implements ContainerFactoryPluginInterface 
       ];
       $placeholder = [
         '#type' => 'contextual_links_placeholder',
-        '#id' => _contextual_links_to_id($contextual_links),
+        '#id' => \Drupal::service(ContextualLinksSerializer::class)->linksToId($contextual_links),
       ];
     }
 

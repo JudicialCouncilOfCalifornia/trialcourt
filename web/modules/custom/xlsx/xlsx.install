@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Extension\Requirement\RequirementSeverity;
+
 /**
  * Implements hook_requirements().
  */
@@ -13,7 +15,7 @@ function xlsx_requirements($phase) {
           'title' => t('Spreadsheets (XLSX)'),
           'value' => '1.0',
           'description' => t('phpoffice/phpspreadsheet class is missing. Please install it via composer require phpoffice/phpspreadsheet:"^1.11".'),
-          'severity' => REQUIREMENT_ERROR,
+          'severity' => RequirementSeverity::Error,
         ];
       }
       break;

@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -296,7 +297,7 @@ function jcc_elevated_sections_entity_access(EntityInterface $entity, $operation
 /**
  * Implements hook_entity_operation_alter().
  */
-function jcc_elevated_sections_entity_operation_alter(array &$operations, EntityInterface $entity) {
+function jcc_elevated_sections_entity_operation_alter(array &$operations, EntityInterface $entity, ?CacheableMetadata $cacheability = NULL) {
   // Set some variables.
   $section_service = Drupal::service('jcc_elevated_sections.service');
 

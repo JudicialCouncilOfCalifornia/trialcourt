@@ -5,6 +5,7 @@
  * Theme settings.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -23,7 +24,7 @@ function jcc_base_form_system_theme_settings_alter(&$form, FormStateInterface $f
   $form['global']['hide_translation'] = [
     '#type'          => 'checkbox',
     '#title'         => t('Hide translation'),
-    '#default_value' => theme_get_setting('hide_translation'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hide_translation'),
     '#description'   => t("Hide translation dropdown from header."),
   ];
   // BEGIN Edit no search results message.
@@ -35,9 +36,9 @@ function jcc_base_form_system_theme_settings_alter(&$form, FormStateInterface $f
   $form['global']['no_search_results']['no_search_results_heading'] = [
     '#type'          => 'textfield',
     '#title'         => t('Personalized heading'),
-    '#default_value' => theme_get_setting('no_search_results_heading'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('no_search_results_heading'),
   ];
-  $no_results_msg = theme_get_setting('no_search_results_message');
+  $no_results_msg = \Drupal::service(ThemeSettingsProvider::class)->getSetting('no_search_results_message');
   $form['global']['no_search_results']['no_search_results_message'] = [
     '#type'          => 'text_format',
     '#format'        => $no_results_msg ? $no_results_msg['format'] : 'snippet',
@@ -52,7 +53,7 @@ function jcc_base_form_system_theme_settings_alter(&$form, FormStateInterface $f
   $form['theme']['site_entity_type'] = [
     '#type' => 'select',
     '#title' => t('What type of judicial site is this?'),
-    '#default_value' => theme_get_setting('site_entity_type'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('site_entity_type'),
     '#description'   => t("The judicial site type can enable specific features. For example, ensures the correct footer boilerplate branding appears."),
     '#options' => [
       '' => t('General'),
@@ -62,19 +63,19 @@ function jcc_base_form_system_theme_settings_alter(&$form, FormStateInterface $f
   $form['theme']['header_extended'] = [
     '#type'          => 'checkbox',
     '#title'         => t('Extended Header'),
-    '#default_value' => theme_get_setting('header_extended'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('header_extended'),
     '#description'   => t('Set the patternlab <a target="_blank" href=":extended">extended header variant</a> instead of the <a target="_blank" href=":default">default one</a>.', [':extended' => 'http://patternlab.courts.ca.gov/?p=organisms-header-base-extended', ':default' => 'http://patternlab.courts.ca.gov/?p=organisms-header-base']),
   ];
   $form['theme']['mega_menu'] = [
     '#type'          => 'checkbox',
     '#title'         => t('Mega menu'),
-    '#default_value' => theme_get_setting('mega_menu'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('mega_menu'),
     '#description'   => t('Set the patternlab <a target="_blank" href=":mega">Mega menu variant</a>. (This will only apply if the header is set to extended)', [':mega' => 'http://patternlab.courts.ca.gov/?p=organisms-header-base-extended-mega']),
   ];
   $form['theme']['footer_extended'] = [
     '#type'          => 'checkbox',
     '#title'         => t('Extended footer'),
-    '#default_value' => theme_get_setting('footer_extended'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('footer_extended'),
     '#description'   => t('Set the patternlab <a target="_blank" href=":extended_footer">Extended footer variant</a> instead of the <a target="_blank" href=":default_footer">default one</a>.', [':extended_footer' => 'http://patternlab.courts.ca.gov/?p=organisms-footer-tall', ':default_footer' => 'http://patternlab.courts.ca.gov/?p=organisms-footer-base']),
   ];
   // BEGIN Footer extension settings.
@@ -90,14 +91,14 @@ function jcc_base_form_system_theme_settings_alter(&$form, FormStateInterface $f
   $form['theme']['footer_extended_settings']['footer_extended_message'] = [
     '#type'          => 'textfield',
     '#title'         => t('Optional site name adjustment'),
-    '#default_value' => theme_get_setting('footer_extended_message'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('footer_extended_message'),
     '#description'   => t('Adjust the site name if a variant is needed from the <a target="_blank" href=":basic_site_settings">basic site setting</a>.', [':basic_site_settings' => '/admin/config/system/site-information']),
   ];
   // END.
   $form['theme']['color_inverted'] = [
     '#type'          => 'checkbox',
     '#title'         => t('Inverted Color'),
-    '#default_value' => theme_get_setting('color_inverted'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('color_inverted'),
     '#description'   => t('Set the patternlab inverted color variant for the <a target="_blank" href=":inverted_header">header</a> and the <a target="_blank" href=":inverted_footer">footer</a>.', [':inverted_header' => 'http://patternlab.courts.ca.gov/?p=organisms-header-base-inverted', ':inverted_footer' => 'http://patternlab.courts.ca.gov/?p=organisms-footer-base-inverted']),
   ];
 
@@ -109,43 +110,43 @@ function jcc_base_form_system_theme_settings_alter(&$form, FormStateInterface $f
   $form['social']['email'] = [
     '#type' => 'textfield',
     '#title' => t('Email'),
-    '#default_value' => theme_get_setting('email'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('email'),
     '#placeholder' => 'https://newsroom.courts.ca.gov/alerts',
   ];
   $form['social']['facebook'] = [
     '#type' => 'textfield',
     '#title' => t('Facebook'),
-    '#default_value' => theme_get_setting('facebook'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('facebook'),
     '#placeholder' => 'https://www.facebook.com/[name]/',
   ];
   $form['social']['flickr'] = [
     '#type' => 'textfield',
     '#title' => t('Flickr'),
-    '#default_value' => theme_get_setting('flickr'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('flickr'),
     '#placeholder' => 'https://www.flickr.com/photos/[name]/sets/',
   ];
   $form['social']['linkedin'] = [
     '#type' => 'textfield',
     '#title' => t('LinkedIn'),
-    '#default_value' => theme_get_setting('linkedin'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('linkedin'),
     '#placeholder' => 'https://www.linkedin.com/company/[name]/',
   ];
   $form['social']['rss'] = [
     '#type' => 'textfield',
     '#title' => t('RSS'),
-    '#default_value' => theme_get_setting('rss'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('rss'),
     '#placeholder' => 'https://newsroom.courts.ca.gov/rss',
   ];
   $form['social']['twitter'] = [
     '#type' => 'textfield',
     '#title' => t('Twitter'),
-    '#default_value' => theme_get_setting('twitter'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('twitter'),
     '#placeholder' => 'https://twitter.com/[name]',
   ];
   $form['social']['youtube'] = [
     '#type' => 'textfield',
     '#title' => t('YouTube'),
-    '#default_value' => theme_get_setting('youtube'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('youtube'),
     '#placeholder' => 'https://www.youtube.com/user/[name]',
   ];
 }

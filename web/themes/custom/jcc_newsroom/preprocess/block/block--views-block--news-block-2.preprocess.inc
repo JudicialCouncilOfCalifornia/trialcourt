@@ -5,6 +5,7 @@
  * Theme and preprocess functions for blocks.
  */
 
+use Drupal\contextual\ContextualLinksSerializer;
 use Drupal\Core\Render\Markup;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -62,7 +63,7 @@ function jcc_newsroom_preprocess_block__views_block__news_block_2(&$variables) {
         ];
         $placeholder = [
           '#type' => 'contextual_links_placeholder',
-          '#id' => _contextual_links_to_id($contextual_links),
+          '#id' => \Drupal::service(ContextualLinksSerializer::class)->linksToId($contextual_links),
         ];
       }
 

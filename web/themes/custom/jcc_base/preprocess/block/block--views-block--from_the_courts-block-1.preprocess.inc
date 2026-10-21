@@ -5,6 +5,8 @@
  * Theme and preprocess functions for blocks.
  */
 
+use Drupal\contextual\ContextualLinksSerializer;
+
 /**
  * Implements hook_preprocess_HOOK().
  */
@@ -34,7 +36,7 @@ function jcc_base_preprocess_block__views_block__from_the_courts_block_1(&$varia
         ];
         $placeholder = [
           '#type' => 'contextual_links_placeholder',
-          '#id' => _contextual_links_to_id($contextual_links),
+          '#id' => \Drupal::service(ContextualLinksSerializer::class)->linksToId($contextual_links),
         ];
       }
 

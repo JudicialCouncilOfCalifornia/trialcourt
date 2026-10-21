@@ -5,6 +5,7 @@
  * Theme and preprocess functions for region.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\system\Entity\Menu;
 
 /**
@@ -13,9 +14,9 @@ use Drupal\system\Entity\Menu;
 function jcc_base_preprocess_region__footer(&$variables) {
   $theme = \Drupal::service('theme.manager')->getActiveTheme()->getName();
   $site = \Drupal::config('system.site');
-  $variables['site_entity_type'] = theme_get_setting('site_entity_type');
-  $variables['footer_extended'] = theme_get_setting('footer_extended');
-  $variables['footer_extended_message'] = theme_get_setting('footer_extended_message');
+  $variables['site_entity_type'] = \Drupal::service(ThemeSettingsProvider::class)->getSetting('site_entity_type');
+  $variables['footer_extended'] = \Drupal::service(ThemeSettingsProvider::class)->getSetting('footer_extended');
+  $variables['footer_extended_message'] = \Drupal::service(ThemeSettingsProvider::class)->getSetting('footer_extended_message');
 
   // Site branding.
   $site_name = $site->get('name');
@@ -106,7 +107,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
             'decorative' => FALSE,
           ],
           'title' => (string) t('YouTube'),
-          'url' => theme_get_setting('youtube', $theme),
+          'url' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('youtube', $theme),
         ],
         [
           'icon' => [
@@ -115,7 +116,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
             'decorative' => FALSE,
           ],
           'title' => (string) t('Twitter'),
-          'url' => theme_get_setting('twitter', $theme),
+          'url' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('twitter', $theme),
         ],
         [
           'icon' => [
@@ -124,7 +125,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
             'decorative' => FALSE,
           ],
           'title' => (string) t('Flickr'),
-          'url' => theme_get_setting('flickr', $theme),
+          'url' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('flickr', $theme),
         ],
         [
           'icon' => [
@@ -133,7 +134,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
             'decorative' => FALSE,
           ],
           'title' => (string) t('LinkedIn'),
-          'url' => theme_get_setting('linkedin', $theme),
+          'url' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('linkedin', $theme),
         ],
         [
           'icon' => [
@@ -142,7 +143,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
             'decorative' => FALSE,
           ],
           'title' => (string) t('RSS'),
-          'url' => theme_get_setting('rss', $theme),
+          'url' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('rss', $theme),
         ],
         [
           'icon' => [
@@ -151,7 +152,7 @@ function jcc_base_preprocess_region__footer(&$variables) {
             'decorative' => FALSE,
           ],
           'title' => (string) t('Email'),
-          'url' => theme_get_setting('email', $theme),
+          'url' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('email', $theme),
         ],
       ],
     ],

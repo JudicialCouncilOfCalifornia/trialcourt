@@ -107,7 +107,7 @@ class MCManageSubs extends FormBase {
       ];
 
       // Populating default values.
-      $user_object = user_load_by_mail($member_email);
+      $user_object = array_values(\Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['mail' => $member_email]))[0] ?? FALSE;
       $active_groups = [];
       if($user_object->get('field_jcc_messaging_center_group')->getValue()){
         foreach ($user_object->get('field_jcc_messaging_center_group')->getValue() as $active_group) {
@@ -141,7 +141,7 @@ class MCManageSubs extends FormBase {
     } else {
       $user_email = $form_state->cleanValues()->getValues()['user_email'];
       $user_groups = $form_state->cleanValues()->getValues()['user_groups'];
-      $user = user_load_by_mail($user_email);
+      $user = array_values(\Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['mail' => $user_email]))[0] ?? FALSE;
 
       $user->set('field_jcc_messaging_center_group', $user_groups);
       $user->save();

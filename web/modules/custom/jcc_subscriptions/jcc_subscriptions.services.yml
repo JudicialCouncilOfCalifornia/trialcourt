@@ -1,4 +1,7 @@
 services:
+  logger.channel.jcc_subscriptions:
+    parent: logger.channel_base
+    arguments: ['jcc_subscriptions']
   jcc_subscriptions.digestcron:
     class: Drupal\jcc_subscriptions\Services\JCCSubscriptionsDigestCron
     arguments:

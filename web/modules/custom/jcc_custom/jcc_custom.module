@@ -5,6 +5,7 @@
  * Contains jcc_custom.module.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Datetime\DrupalDateTime;
@@ -74,7 +75,7 @@ function jcc_custom_ckeditor_css_alter(array &$css, Editor $editor) {
     }
   }
   else {
-    if ($scheme = theme_get_setting('scheme', $theme_handler->getDefault())) {
+    if ($scheme = \Drupal::service(ThemeSettingsProvider::class)->getSetting('scheme', $theme_handler->getDefault())) {
       if (!$editor->hasAssociatedFilterFormat()) {
         return;
       }

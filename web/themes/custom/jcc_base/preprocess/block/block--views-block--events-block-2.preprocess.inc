@@ -5,6 +5,7 @@
  * Theme and preprocess functions for blocks.
  */
 
+use Drupal\contextual\ContextualLinksSerializer;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\taxonomy\Entity\Term;
 
@@ -55,7 +56,7 @@ function jcc_base_preprocess_block__views_block__events_block_2(&$variables) {
           ];
           $placeholder = [
             '#type' => 'contextual_links_placeholder',
-            '#id' => _contextual_links_to_id($contextual_links),
+            '#id' => \Drupal::service(ContextualLinksSerializer::class)->linksToId($contextual_links),
           ];
         }
 

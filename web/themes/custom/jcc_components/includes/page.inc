@@ -5,6 +5,7 @@
  * Functions for page processing.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
@@ -13,12 +14,12 @@ use Drupal\node\NodeInterface;
  * Implements hook_preprocess_HOOK().
  */
 function jcc_components_preprocess_page(&$variables) {
-  $variables['logo'] = theme_get_setting('logo', 'jcc_components');
-  $variables['header_footer_variant'] = theme_get_setting('header_footer_variant', 'jcc_components');
+  $variables['logo'] = \Drupal::service(ThemeSettingsProvider::class)->getSetting('logo', 'jcc_components');
+  $variables['header_footer_variant'] = \Drupal::service(ThemeSettingsProvider::class)->getSetting('header_footer_variant', 'jcc_components');
 
   $variables['site_name'] = [
-    'first' => theme_get_setting('site_name_first', 'jcc_components'),
-    'second' => theme_get_setting('site_name_second', 'jcc_components'),
+    'first' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('site_name_first', 'jcc_components'),
+    'second' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('site_name_second', 'jcc_components'),
   ];
 
   $variables['main_links'] = jcc_components_get_menu_array('main');
@@ -47,16 +48,16 @@ function jcc_components_preprocess_page(&$variables) {
 
   $variables['hat'] = [
     'title' => [
-      'text' => theme_get_setting('hat_shoe_text', 'jcc_components'),
-      'url' => theme_get_setting('hat_shoe_url', 'jcc_components'),
+      'text' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hat_shoe_text', 'jcc_components'),
+      'url' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hat_shoe_url', 'jcc_components'),
     ],
     'links' => jcc_components_get_menu_array('hat'),
   ];
 
   $variables['shoe'] = [
     'title' => [
-      'text' => theme_get_setting('hat_shoe_text', 'jcc_components'),
-      'url' => theme_get_setting('hat_shoe_url', 'jcc_components'),
+      'text' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hat_shoe_text', 'jcc_components'),
+      'url' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hat_shoe_url', 'jcc_components'),
     ],
     'links' => jcc_components_get_menu_array('shoe'),
   ];
@@ -65,7 +66,7 @@ function jcc_components_preprocess_page(&$variables) {
 
   $path = \Drupal::service('path.current')->getPath();
   $langcodes = \Drupal::languageManager()->getLanguages();
-  if (count($langcodes) > 1 && !theme_get_setting('hide_translation')) {
+  if (count($langcodes) > 1 && !\Drupal::service(ThemeSettingsProvider::class)->getSetting('hide_translation')) {
     $languages = [];
     $default = \Drupal::languageManager()->getDefaultLanguage()->getId();
     foreach ($langcodes as $langcode => $language) {
@@ -95,13 +96,13 @@ function jcc_components_preprocess_page(&$variables) {
   }
 
   // Add Google Translate block.
-  if (theme_get_setting('show_google_translate')) {
+  if (\Drupal::service(ThemeSettingsProvider::class)->getSetting('show_google_translate')) {
     $google_translate = \Drupal::service('plugin.manager.block')->createInstance('google_translate_block', []);
     if (isset($google_translate) && !empty($google_translate)) {
       $variables['google_translate'] = $google_translate->build();
     }
   }
-  if (theme_get_setting('enable_twitter_embed') === 1) {
+  if (\Drupal::service(ThemeSettingsProvider::class)->getSetting('enable_twitter_embed') === 1) {
     $variables['#attached']['library'][] = 'jcc_components/twitter_widget';
   }
 
@@ -222,7 +223,7 @@ function jcc_components_social_links() {
   ];
 
   foreach ($social as $k => $item) {
-    $url = theme_get_setting($item['name'], 'jcc_components');
+    $url = \Drupal::service(ThemeSettingsProvider::class)->getSetting($item['name'], 'jcc_components');
     if (!empty($url)) {
       $social[$k]['url'] = $url;
     }

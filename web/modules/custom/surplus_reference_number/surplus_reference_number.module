@@ -14,7 +14,7 @@ use Drupal\node\Entity\Node;
 function surplus_reference_number_entity_presave(EntityInterface $entity) {
   // For node creation: generate reference number.
   if ($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'surplus_materials') {
-    $original = $entity->original ?? NULL;
+    $original = $entity->getOriginal() ?? NULL;
     $existing_ref = $entity->get('field_reference_number')->value;
     $original_ref = $original ? $original->get('field_reference_number')->value : NULL;
     if (!$original && empty($existing_ref)) {

@@ -5,6 +5,7 @@
  * Page preprocessors.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\EnforcedResponseException;
 use Drupal\Core\Form\FormState;
@@ -32,11 +33,11 @@ function jcc_elevated_preprocess_page(&$variables) {
     $entity_type = $route_name[1];
   }
 
-  $variables['logo'] = theme_get_setting('logo', 'jcc_elevated');
+  $variables['logo'] = \Drupal::service(ThemeSettingsProvider::class)->getSetting('logo', 'jcc_elevated');
 
   $variables['site_name'] = [
-    'first' => theme_get_setting('site_name_first', 'jcc_elevated'),
-    'second' => theme_get_setting('site_name_second', 'jcc_elevated'),
+    'first' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('site_name_first', 'jcc_elevated'),
+    'second' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('site_name_second', 'jcc_elevated'),
   ];
 
   // Primary navigation and mobile version of links.
@@ -54,16 +55,16 @@ function jcc_elevated_preprocess_page(&$variables) {
 
   $variables['hat'] = [
     'title' => [
-      'text' => theme_get_setting('hat_shoe_text', 'jcc_elevated'),
-      'url' => theme_get_setting('hat_shoe_url', 'jcc_elevated'),
+      'text' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hat_shoe_text', 'jcc_elevated'),
+      'url' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hat_shoe_url', 'jcc_elevated'),
     ],
     'links' => jcc_elevated_get_menu_array('hat'),
   ];
 
   $variables['shoe'] = [
     'title' => [
-      'text' => theme_get_setting('hat_shoe_text', 'jcc_elevated'),
-      'url' => theme_get_setting('hat_shoe_url', 'jcc_elevated'),
+      'text' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hat_shoe_text', 'jcc_elevated'),
+      'url' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hat_shoe_url', 'jcc_elevated'),
     ],
     'links' => jcc_elevated_get_menu_array('shoe'),
   ];
@@ -71,7 +72,7 @@ function jcc_elevated_preprocess_page(&$variables) {
   $path = \Drupal::service('path.current')->getPath();
   $langcodes = \Drupal::languageManager()->getLanguages();
 
-  if (count($langcodes) > 1 && !theme_get_setting('hide_translation')) {
+  if (count($langcodes) > 1 && !\Drupal::service(ThemeSettingsProvider::class)->getSetting('hide_translation')) {
     foreach ($langcodes as $langcode => $language) {
       $default = \Drupal::languageManager()->getDefaultLanguage()->getId();
       $url = \Drupal::service('path_alias.manager')->getAliasByPath($path, $langcode);
@@ -95,7 +96,7 @@ function jcc_elevated_preprocess_page(&$variables) {
   // @todo Add Drupal translate menu to array.
   $variables['translate'] = [];
   // Google Translate.
-  if (theme_get_setting('show_google_translate')) {
+  if (\Drupal::service(ThemeSettingsProvider::class)->getSetting('show_google_translate')) {
     $google_translate = \Drupal::service('plugin.manager.block')->createInstance('google_translate_block', []);
     if (isset($google_translate) && !empty($google_translate)) {
       $variables['translate'][] = $google_translate->build();

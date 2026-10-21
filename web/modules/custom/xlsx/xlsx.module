@@ -68,13 +68,13 @@ function xlsx_retrieve_file($url, $destination = NULL, $managed = FALSE, FileExi
   /** @var \Drupal\Core\File\FileSystemInterface $file_system */
   $file_system = \Drupal::service('file_system');
   if (!isset($destination)) {
-    $path = $file_system->basename($parsed_url['path']);
+    $path = basename($parsed_url['path']);
     $path = \Drupal::config('system.file')->get('default_scheme') . '://' . $path;
     $path = \Drupal::service('stream_wrapper_manager')->normalizeUri($path);
   }
   elseif (is_dir($file_system->realpath($destination))) {
     // Prevent URIs with triple slashes when glueing parts together.
-    $path = str_replace('///', '//', "$destination/") . $file_system->basename($parsed_url['path']);
+    $path = str_replace('///', '//', "$destination/") . basename($parsed_url['path']);
   }
   else {
     $path = $destination;

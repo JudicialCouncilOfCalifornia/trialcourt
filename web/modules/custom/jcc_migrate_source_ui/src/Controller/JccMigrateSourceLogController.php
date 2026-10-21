@@ -52,13 +52,6 @@ class JccMigrateSourceLogController extends ControllerBase {
   protected $formBuilder;
 
   /**
-   * The user storage.
-   *
-   * @var \Drupal\user\UserStorageInterface
-   */
-  protected $userStorage;
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
@@ -87,7 +80,6 @@ class JccMigrateSourceLogController extends ControllerBase {
     $this->moduleHandler = $module_handler;
     $this->dateFormatter = $date_formatter;
     $this->formBuilder = $form_builder;
-    $this->userStorage = $this->entityTypeManager()->getStorage('user');
   }
 
   /**
@@ -191,7 +183,7 @@ class JccMigrateSourceLogController extends ControllerBase {
       }
       $username = [
         '#theme' => 'username',
-        '#account' => $this->userStorage->load($jcc_migrate_source_ui->uid),
+        '#account' => $this->entityTypeManager()->getStorage('user')->load($jcc_migrate_source_ui->uid),
       ];
       $rows[] = [
         'data' => [
@@ -241,7 +233,7 @@ class JccMigrateSourceLogController extends ControllerBase {
       $message = $this->formatMessage($jcc_migrate_source_ui);
       $username = [
         '#theme' => 'username',
-        '#account' => $jcc_migrate_source_ui->uid ? $this->userStorage->load($jcc_migrate_source_ui->uid) : User::getAnonymousUser(),
+        '#account' => $jcc_migrate_source_ui->uid ? $this->entityTypeManager()->getStorage('user')->load($jcc_migrate_source_ui->uid) : User::getAnonymousUser(),
       ];
       $rows = [
         [
@@ -302,7 +294,8 @@ class JccMigrateSourceLogController extends ControllerBase {
    *   no filters set.
    */
   protected function buildFilterQuery() {
-    if (empty($_SESSION['jcc_migrate_source_ui_overview_filter'])) {
+    $session_filters = \Drupal::request()->getSession()->get('jcc_migrate_source_ui_overview_filter', []);
+    if (empty($session_filters)) {
       return;
     }
 
@@ -311,7 +304,7 @@ class JccMigrateSourceLogController extends ControllerBase {
     // Build query.
     $where = $args = [];
     if ($filters) {
-      foreach ($_SESSION['jcc_migrate_source_ui_overview_filter'] as $key => $filter) {
+      foreach ($session_filters as $key => $filter) {
         $filter_where = [];
         foreach ($filter as $value) {
           $filter_where[] = $filters[$key]['lhere'];

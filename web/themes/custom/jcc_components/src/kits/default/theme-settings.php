@@ -5,6 +5,7 @@
  * Theme Settings.
  */
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -24,43 +25,43 @@ function JCC_COMPONENTS_SUBTHEME_MACHINE_NAME_form_system_theme_settings_alter(&
   $form['social']['email'] = [
     '#type' => 'textfield',
     '#title' => t('Email'),
-    '#default_value' => theme_get_setting('email'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('email'),
     '#placeholder' => 'https://newsroom.courts.ca.gov/alerts',
   ];
   $form['social']['facebook'] = [
     '#type' => 'textfield',
     '#title' => t('Facebook'),
-    '#default_value' => theme_get_setting('facebook'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('facebook'),
     '#placeholder' => 'https://www.facebook.com/[name]/',
   ];
   $form['social']['flickr'] = [
     '#type' => 'textfield',
     '#title' => t('Flickr'),
-    '#default_value' => theme_get_setting('flickr'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('flickr'),
     '#placeholder' => 'https://www.flickr.com/photos/[name]/sets/',
   ];
   $form['social']['linkedin'] = [
     '#type' => 'textfield',
     '#title' => t('LinkedIn'),
-    '#default_value' => theme_get_setting('linkedin'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('linkedin'),
     '#placeholder' => 'https://www.linkedin.com/company/[name]/',
   ];
   $form['social']['rss'] = [
     '#type' => 'textfield',
     '#title' => t('RSS'),
-    '#default_value' => theme_get_setting('rss'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('rss'),
     '#placeholder' => 'https://newsroom.courts.ca.gov/rss',
   ];
   $form['social']['twitter'] = [
     '#type' => 'textfield',
     '#title' => t('Twitter'),
-    '#default_value' => theme_get_setting('twitter'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('twitter'),
     '#placeholder' => 'https://twitter.com/[name]',
   ];
   $form['social']['youtube'] = [
     '#type' => 'textfield',
     '#title' => t('YouTube'),
-    '#default_value' => theme_get_setting('youtube'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('youtube'),
     '#placeholder' => 'https://www.youtube.com/user/[name]',
   ];
   $form['global'] = [
@@ -71,7 +72,7 @@ function JCC_COMPONENTS_SUBTHEME_MACHINE_NAME_form_system_theme_settings_alter(&
   $form['global']['hide_translation'] = [
     '#type'          => 'checkbox',
     '#title'         => t('Hide translation'),
-    '#default_value' => theme_get_setting('hide_translation'),
+    '#default_value' => \Drupal::service(ThemeSettingsProvider::class)->getSetting('hide_translation'),
     '#description'   => t("Hide translation dropdown from header."),
   ];
 }
