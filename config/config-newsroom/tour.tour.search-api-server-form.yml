@@ -1,14 +1,11 @@
 uuid: 37ca32fb-df8f-483e-b924-c01f375d0d2a
 langcode: en
 status: true
-dependencies:
-  module:
-    - search_api
+dependencies: {  }
 _core:
   default_config_hash: relOKOunL5ibpQmh_fK35Q5Sr-eA-wWO5-tCEbnmAxU
 id: search-api-server-form
 label: 'Add or edit a Search API server'
-module: search_api
 routes:
   -
     route_name: entity.search_api_server.add_form
@@ -20,12 +17,15 @@ tips:
     plugin: text
     label: 'Adding or editing a Server'
     weight: 1
+    position: ''
+    selector: null
     body: 'This form can be used to edit an existing server or add a new server to your site. Servers will hold your indexed data.'
   search-api-server-form-name:
     id: search-api-server-form-name
     plugin: text
     label: 'Server name'
     weight: 2
+    position: ''
     selector: '#edit-name'
     body: 'Enter a name to identify this server. For example, "Solr server". This will only be displayed in the admin user interface.'
   search-api-server-form-description:
@@ -33,6 +33,7 @@ tips:
     plugin: text
     label: 'Server description'
     weight: 3
+    position: ''
     selector: '#edit-description'
     body: 'Optionally, enter a description to explain the function of the server in more detail. This will only be displayed in the admin user interface.'
   search-api-server-form-backend:
@@ -40,5 +41,6 @@ tips:
     plugin: text
     label: 'Server backend'
     weight: 4
+    position: ''
     selector: '#edit-backend'
     body: 'Servers can be based on different technologies. These are called "backends". A server uses exactly one backend and cannot change it later. You can make the "Database" backend available by enabling the "Database Search" module. Another very common backend is <a href="https://www.drupal.org/project/search_api_solr">"Solr"</a>, which requires to be set up separately.'

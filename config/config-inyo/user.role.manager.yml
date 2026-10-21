@@ -1,7 +1,11 @@
+uuid: cced076d-f3fb-49d8-a96a-eb68f44970b8
 langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.media_entity_browser
+    - entity_browser.browser.media_entity_browser_modal
+    - entity_browser.browser.paragraph_items
     - filter.format.aside
     - filter.format.body
     - filter.format.caption
@@ -61,6 +65,7 @@ dependencies:
     - entity_usage
     - environment_indicator
     - file
+    - file_delete
     - file_replace
     - filter
     - google_tag
@@ -87,6 +92,8 @@ dependencies:
     - webform
     - webform_translation_permissions
     - xlsx
+_core:
+  default_config_hash: tvehiVVY_mJ1xOfTuajeMgoGSADrgg1sNbOj-vpTJvM
 id: manager
 label: Manager
 weight: -7
@@ -111,7 +118,7 @@ permissions:
   - 'access webform overview'
   - 'add xlsx mapping'
   - 'administer footer menu items'
-  - 'administer google tag manager'
+  - 'administer google_tag_container'
   - 'administer hat menu items'
   - 'administer main menu items'
   - 'administer media file delete'
@@ -206,6 +213,8 @@ permissions:
   - 'delete course revisions'
   - 'delete custom_email revisions'
   - 'delete document revisions'
+  - 'delete files immediately'
+  - 'delete files override usage'
   - 'delete job revisions'
   - 'delete judge revisions'
   - 'delete landing_page revisions'
@@ -222,6 +231,7 @@ permissions:
   - 'delete own custom_email content'
   - 'delete own document content'
   - 'delete own file media'
+  - 'delete own files'
   - 'delete own image media'
   - 'delete own job content'
   - 'delete own judge content'
@@ -337,6 +347,7 @@ permissions:
   - 'openid connect set own password'
   - 'perform batch updates entity usage'
   - 'rebuild cache access'
+  - 'rebuild node access permissions'
   - 'renew token'
   - 'replace files'
   - 'revert alert revisions'

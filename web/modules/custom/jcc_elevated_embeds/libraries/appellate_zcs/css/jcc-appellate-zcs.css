@@ -240,3 +240,25 @@ svg > g > g > g#District_6:hover {
   text-align: right;
 }
 
+/* On narrow screens the district labels don't fit beside the map and get cut
+   off at the viewport edges, so list them in a grid below the map instead. */
+@media (max-width: 40em) {
+  .block__jcc-appellate-zcs__map__container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-2) var(--s-3);
+    max-height: none;
+  }
+
+  .block__jcc-appellate-zcs__map__container svg {
+    grid-column: 1 / -1;
+    max-height: 400px;
+  }
+
+  .block__jcc-appellate-zcs__map .zcs-map-link__item {
+    position: static;
+    text-align: left;
+    text-wrap: wrap;
+    line-height: 1.3;
+  }
+}

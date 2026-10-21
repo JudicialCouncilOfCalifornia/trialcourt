@@ -3,15 +3,12 @@ status: true
 dependencies:
   config:
     - field.storage.paragraph.field_content
+    - filter.format.snippet
     - paragraphs.paragraphs_type.find_my_court_embed
   module:
-    - allowed_formats
     - text
     - tmgmt_content
 third_party_settings:
-  allowed_formats:
-    allowed_formats:
-      - snippet
   tmgmt_content:
     excluded: false
 id: paragraph.find_my_court_embed.field_content
@@ -27,5 +24,7 @@ default_value:
     value: "<p>Pay traffic violations, access jury information, find a local self-help desk, and much more.</p>\r\n"
     format: snippet
 default_value_callback: ''
-settings: {  }
+settings:
+  allowed_formats:
+    - snippet
 field_type: text_long

@@ -11,7 +11,6 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Template\TwigEnvironment;
 use Drupal\image\Entity\ImageStyle;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -20,7 +19,6 @@ use Twig\TwigFunction;
  * Additional twig extensions.
  */
 class TwigExtension extends AbstractExtension {
-  use ContainerAwareTrait;
 
   /**
    * {@inheritdoc}
@@ -212,14 +210,14 @@ class TwigExtension extends AbstractExtension {
    * Returns the language manager service.
    */
   protected function getLanguageManager() {
-    return $this->container->get('language_manager');
+    return \Drupal::languageManager();
   }
 
   /**
    * Provides a service to handle various date related functionality.
    */
   protected function getDateFormatter() {
-    return $this->container->get('date.formatter');
+    return \Drupal::service('date.formatter');
   }
 
 }

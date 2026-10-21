@@ -126,8 +126,11 @@ display:
           bef:
             general:
               autosubmit: false
+              auto_submit_sort_only: false
+              autosubmit_breakpoint: ''
               autosubmit_exclude_textfield: false
               autosubmit_textfield_delay: 500
+              autosubmit_textfield_minimum_length: 3
               autosubmit_hide: false
               input_required: false
               allow_secondary: false
@@ -143,12 +146,18 @@ display:
                 plugin_id: default
                 advanced:
                   sort_options: false
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   rewrite:
                     filter_rewrite_values: ''
                     filter_rewrite_values_key: false
                   collapsible: false
                   collapsible_disable_automatic_open: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
                 options_show_only_used: true
                 options_show_only_used_filtered: true
                 options_hide_when_empty: false
@@ -156,10 +165,16 @@ display:
               field_case_number_plain_value:
                 plugin_id: default
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   placeholder_text: ''
                   collapsible: false
                   collapsible_disable_automatic_open: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
                 options_show_only_used: false
                 options_show_only_used_filtered: false
                 options_hide_when_empty: false
@@ -167,10 +182,16 @@ display:
               title:
                 plugin_id: default
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   placeholder_text: ''
                   collapsible: false
                   collapsible_disable_automatic_open: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
                 options_show_only_used: false
                 options_show_only_used_filtered: false
                 options_hide_when_empty: false
@@ -354,18 +375,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -418,18 +427,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -468,18 +465,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -521,18 +506,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -596,7 +569,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -720,18 +692,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -773,18 +733,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -999,18 +947,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -1063,18 +999,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -1113,18 +1037,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -1166,18 +1078,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -1255,7 +1155,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -1430,18 +1329,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -1494,18 +1381,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -1544,18 +1419,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -1597,18 +1460,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -1687,7 +1538,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -1802,18 +1652,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -1866,18 +1704,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -1916,18 +1742,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -1969,18 +1783,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -2058,7 +1860,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -2173,18 +1974,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -2237,18 +2026,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -2287,18 +2064,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -2340,18 +2105,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -2428,7 +2181,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -2543,18 +2295,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -2607,18 +2347,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -2657,18 +2385,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -2710,18 +2426,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              author: '0'
-              legal_files: '0'
-              editor: '0'
-              manager: '0'
-              contributor: '0'
-              translator: '0'
-              administrator: '0'
-              anonymous: '0'
-              tentative_rulings_editor: '0'
-              messaging_manager: '0'
-              opinions_editor: '0'
-              request_manager: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -2798,7 +2502,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }

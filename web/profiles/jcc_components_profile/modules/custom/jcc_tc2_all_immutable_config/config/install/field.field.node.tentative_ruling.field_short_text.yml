@@ -3,17 +3,14 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_short_text
+    - filter.format.minimal
     - node.type.tentative_ruling
   module:
-    - allowed_formats
     - text
     - tmgmt_content
 third_party_settings:
   tmgmt_content:
     excluded: false
-  allowed_formats:
-    allowed_formats:
-      - minimal
 id: node.tentative_ruling.field_short_text
 field_name: field_short_text
 entity_type: node
@@ -24,5 +21,7 @@ required: true
 translatable: true
 default_value: {  }
 default_value_callback: ''
-settings: {  }
+settings:
+  allowed_formats:
+    - minimal
 field_type: text

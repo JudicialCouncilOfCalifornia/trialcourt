@@ -6,7 +6,7 @@ use Drupal\file\FileRepositoryInterface;
 use Drupal\media\Entity\Media;
 use Drupal\feeds\Event\FeedsEvents;
 use Drupal\feeds\Event\ParseEvent;
-use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\File\FileExists;
 use Drupal\File\FileRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -77,7 +77,7 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
       $title = urldecode($title);
       $data = file_get_contents($image_url);
       if ($data) {
-        $file = \Drupal::service('file.repository')->writeData($data, 'public://images/' . basename($title), FileSystemInterface::EXISTS_REPLACE);
+        $file = \Drupal::service('file.repository')->writeData($data, 'public://images/' . basename($title), FileExists::Replace);
 
         if ($file) {
           $file_id = $file->id();
@@ -151,7 +151,7 @@ class JCCFeedsFileProxyEventsSubscriber implements EventSubscriberInterface {
 
     $filename = "public://newslink/" . $img_id . ".png";
     if (!file_exists($filename)) {
-      $file = $this->fileRepository->writeData($file_data, $filename, FileSystemInterface::EXISTS_REPLACE);
+      $file = $this->fileRepository->writeData($file_data, $filename, FileExists::Replace);
 
       $media = Media::create([
         'bundle' => 'image',

@@ -1,6 +1,10 @@
 <?php
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\File\Exception\FileException;
+use Drupal\Core\File\Exception\InvalidStreamWrapperException;
+use Drupal\Core\File\FileExists;
+use Psr\Http\Client\ClientExceptionInterface;
 use Drupal\xlsx\Event\XlsxEventType;
 use Drupal\xlsx\Event\XlsxEntityEvent;
 use Drupal\xlsx\Entity\XlsxEntityMapping;
@@ -37,4 +41,63 @@ function xlsx_entity_delete(EntityInterface $entity) {
  */
 function xlsx_cron() {
   \Drupal::service('xlsx.cron_imports')->processQueue();
+}
+
+/**
+ * Fetches a remote file over HTTP and saves it locally.
+ *
+ * Replacement for system_retrieve_file(), removed in Drupal 11. Same
+ * arguments and return values.
+ *
+ * @param string $url
+ *   The URL of the file to grab.
+ * @param string|null $destination
+ *   Stream wrapper URI of the directory or file to save to. Defaults to the
+ *   site's default files scheme.
+ * @param bool $managed
+ *   TRUE to save it as a managed file entity.
+ * @param \Drupal\Core\File\FileExists $replace
+ *   Replace behavior when the destination file already exists.
+ *
+ * @return mixed
+ *   The local URI, a \Drupal\file\FileInterface when $managed is TRUE, or
+ *   FALSE on failure.
+ */
+function xlsx_retrieve_file($url, $destination = NULL, $managed = FALSE, FileExists $replace = FileExists::Rename) {
+  $parsed_url = parse_url($url);
+  /** @var \Drupal\Core\File\FileSystemInterface $file_system */
+  $file_system = \Drupal::service('file_system');
+  if (!isset($destination)) {
+    $path = $file_system->basename($parsed_url['path']);
+    $path = \Drupal::config('system.file')->get('default_scheme') . '://' . $path;
+    $path = \Drupal::service('stream_wrapper_manager')->normalizeUri($path);
+  }
+  elseif (is_dir($file_system->realpath($destination))) {
+    // Prevent URIs with triple slashes when glueing parts together.
+    $path = str_replace('///', '//', "$destination/") . $file_system->basename($parsed_url['path']);
+  }
+  else {
+    $path = $destination;
+  }
+  try {
+    $data = (string) \Drupal::httpClient()->get($url)->getBody();
+    if ($managed) {
+      $local = \Drupal::service('file.repository')->writeData($data, $path, $replace);
+    }
+    else {
+      $local = $file_system->saveData($data, $path, $replace);
+    }
+  }
+  catch (ClientExceptionInterface $exception) {
+    \Drupal::messenger()->addError(t('Failed to fetch file due to error "%error"', ['%error' => $exception->getMessage()]));
+    return FALSE;
+  }
+  catch (FileException | InvalidStreamWrapperException $e) {
+    \Drupal::messenger()->addError(t('Failed to save file due to error "%error"', ['%error' => $e->getMessage()]));
+    return FALSE;
+  }
+  if (!$local) {
+    \Drupal::messenger()->addError(t('@remote could not be saved to @path.', ['@remote' => $url, '@path' => $path]));
+  }
+  return $local;
 }

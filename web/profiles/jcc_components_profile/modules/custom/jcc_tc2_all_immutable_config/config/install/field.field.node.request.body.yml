@@ -3,16 +3,13 @@ status: true
 dependencies:
   config:
     - field.storage.node.body
+    - filter.format.body
+    - filter.format.minimal
     - node.type.request
   module:
-    - allowed_formats
     - text
     - tmgmt_content
 third_party_settings:
-  allowed_formats:
-    allowed_formats:
-      - body
-      - minimal
   tmgmt_content:
     excluded: false
 id: node.request.body
@@ -28,4 +25,7 @@ default_value_callback: ''
 settings:
   display_summary: true
   required_summary: false
+  allowed_formats:
+    - body
+    - minimal
 field_type: text_with_summary

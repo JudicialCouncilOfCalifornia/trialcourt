@@ -3,14 +3,10 @@ status: true
 dependencies:
   config:
     - field.storage.paragraph.field_lead
+    - filter.format.minimal
     - paragraphs.paragraphs_type.views_reference
   module:
-    - allowed_formats
     - text
-third_party_settings:
-  allowed_formats:
-    allowed_formats:
-      - minimal
 id: paragraph.views_reference.field_lead
 field_name: field_lead
 entity_type: paragraph
@@ -21,5 +17,7 @@ required: false
 translatable: true
 default_value: {  }
 default_value_callback: ''
-settings: {  }
+settings:
+  allowed_formats:
+    - minimal
 field_type: text_long

@@ -43,7 +43,7 @@ class SaveUrlAsImageMedia extends XlsxCellBase {
       else {
         // Prepare directory.
         \Drupal::service('file_system')->prepareDirectory($this->upload_directory, FileSystemInterface::CREATE_DIRECTORY);
-        if ($file = system_retrieve_file($value, $this->upload_directory . '/' . $filename, TRUE)) {
+        if ($file = xlsx_retrieve_file($value, $this->upload_directory . '/' . $filename, TRUE)) {
           $media = Media::create([
             'bundle' => 'image',
             'uid' => \Drupal::currentUser()->id(),

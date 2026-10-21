@@ -3,15 +3,12 @@ status: true
 dependencies:
   config:
     - field.storage.node.body
+    - filter.format.body
     - node.type.course
   module:
-    - allowed_formats
     - text
     - tmgmt_content
 third_party_settings:
-  allowed_formats:
-    allowed_formats:
-      - body
   tmgmt_content:
     excluded: false
 id: node.course.body
@@ -27,4 +24,6 @@ default_value_callback: ''
 settings:
   display_summary: true
   required_summary: false
+  allowed_formats:
+    - body
 field_type: text_with_summary

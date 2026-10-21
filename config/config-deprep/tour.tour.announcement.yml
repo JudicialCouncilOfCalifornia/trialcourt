@@ -1,14 +1,11 @@
 uuid: 8b75abcb-5c3c-4117-9bbe-636054c12d5b
 langcode: en
 status: true
-dependencies:
-  module:
-    - jcc_tc_tours
+dependencies: {  }
 _core:
   default_config_hash: M4GX6I7mEa63G_aG-S0u6Cez9NqP9_q2GgIY1Upm7YE
 id: announcement
 label: 'Add or edit an Announcement Node.'
-module: jcc_tc_tours
 routes:
   -
     route_name: node.add
@@ -23,32 +20,36 @@ tips:
     label: 'Adding or Editing an Announcement'
     weight: 1
     position: top-start
-    attributes: {  }
+    selector: null
     body: 'Announcements keep users informed of important and sometimes time-sensitive changes. Too many notifications will either overwhelm or annoy the user and are likely to be ignored.'
+    attributes: {  }
   announcement-type:
     id: announcement-type
     plugin: text
     label: 'Announcement Type'
     weight: 2
-    location: null
+    position: ''
     selector: '#edit-field-alert-type'
     body: 'Select the announcement type.'
+    location: null
   announcement-title:
     id: announcement-title
     plugin: text
     label: Title
     weight: 3
-    location: null
+    position: ''
     selector: '#edit-title-0-value'
     body: 'Write a clear and concise title.'
+    location: null
   announcement-body:
     id: announcement-body
     plugin: text
     label: Body
     weight: 4
-    location: null
+    position: ''
     selector: '#edit-body-wrapper'
     body: 'Think about how much context to provide in the body.'
+    location: null
   announcement-visibility-global:
     id: announcement-visibility-global
     plugin: text
@@ -86,14 +87,16 @@ tips:
     plugin: text
     label: Publish
     weight: 9
-    location: null
+    position: ''
     selector: '#edit-publish-on-0-value-date'
     body: 'Schedule when the announcement is published.'
+    location: null
   announcement-scheduler-unpublish:
     id: announcement-scheduler-unpublish
     plugin: text
     label: Unpublish
     weight: 10
-    location: null
+    position: ''
     selector: '#edit-unpublish-on-0-value-date'
     body: 'Schedule when the announcement is unpublished.'
+    location: null

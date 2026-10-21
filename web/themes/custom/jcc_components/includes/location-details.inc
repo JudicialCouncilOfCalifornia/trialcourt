@@ -142,10 +142,10 @@ function extract_service_details($paragraph) {
 
   $services = [
     'name' => $service_display_name,
-    'phone_number' => $paragraph->hasField('field_service_phone_number') ? Html::escape($paragraph->get('field_service_phone_number')->value) : '',
-    'email' => $paragraph->hasField('field_service_email_address') ? Html::escape($paragraph->get('field_service_email_address')->value) : '',
-    'fax' => $paragraph->hasField('field_service_fax_number') ? Html::escape($paragraph->get('field_service_fax_number')->value) : '',
-    'additional_info' => $paragraph->hasField('field_additional_information') ? Html::escape($paragraph->get('field_additional_information')->value) : '',
+    'phone_number' => $paragraph->hasField('field_service_phone_number') ? Html::escape((string) $paragraph->get('field_service_phone_number')->value) : '',
+    'email' => $paragraph->hasField('field_service_email_address') ? Html::escape((string) $paragraph->get('field_service_email_address')->value) : '',
+    'fax' => $paragraph->hasField('field_service_fax_number') ? Html::escape((string) $paragraph->get('field_service_fax_number')->value) : '',
+    'additional_info' => $paragraph->hasField('field_additional_information') ? Html::escape((string) $paragraph->get('field_additional_information')->value) : '',
     'service_appointment' => $paragraph->hasField('field_service_appointment') ? create_link($paragraph->get('field_service_appointment')->getValue()) : '',
     'categories' => $paragraph->hasField('field_service_category') ? array_map(function ($term_reference) {
       return Html::escape($term_reference->getName());

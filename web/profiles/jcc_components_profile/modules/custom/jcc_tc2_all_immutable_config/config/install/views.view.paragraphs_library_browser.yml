@@ -14,108 +14,12 @@ base_table: paragraphs_library_item_field_data
 base_field: id
 display:
   default:
-    display_plugin: default
     id: default
     display_title: Master
+    display_plugin: default
     position: 0
     display_options:
-      access:
-        type: none
-        options: {  }
-      cache:
-        type: tag
-        options: {  }
-      query:
-        type: views_query
-        options:
-          disable_sql_rewrite: false
-          distinct: false
-          replica: false
-          query_comment: ''
-          query_tags: {  }
-      exposed_form:
-        type: basic
-        options:
-          submit_button: Filter
-          reset_button: false
-          reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-      pager:
-        type: mini
-        options:
-          items_per_page: 10
-          offset: 0
-          id: 0
-          total_pages: null
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
-          tags:
-            previous: ‹‹
-            next: ››
-      style:
-        type: table
-        options:
-          grouping: {  }
-          row_class: ''
-          default_row_class: true
-          override: true
-          sticky: false
-          caption: ''
-          summary: ''
-          description: ''
-          columns:
-            label: label
-            type: type
-            id: id
-            count: count
-            operations: operations
-          info:
-            label:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            type:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            id:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            count:
-              sortable: false
-              default_sort_order: asc
-              align: views-align-right
-              separator: ''
-              empty_column: false
-              responsive: ''
-            operations:
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-          default: '-1'
-          empty_table: true
-      row:
-        type: fields
+      title: 'Paragraphs library'
       fields:
         entity_browser_select:
           id: entity_browser_select
@@ -124,6 +28,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: paragraphs_library_item
+          plugin_id: entity_browser_select
           label: Select
           exclude: false
           alter:
@@ -166,8 +72,6 @@ display:
           empty_zero: false
           hide_alter_empty: true
           use_field_cardinality: true
-          entity_type: paragraphs_library_item
-          plugin_id: entity_browser_select
         label:
           id: label
           table: paragraphs_library_item_field_data
@@ -175,6 +79,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: paragraphs_library_item
+          entity_field: label
+          plugin_id: field
           label: Label
           exclude: false
           alter:
@@ -230,9 +137,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: paragraphs_library_item
-          entity_field: label
-          plugin_id: field
         type:
           id: type
           table: paragraphs_item_field_data
@@ -240,6 +144,9 @@ display:
           relationship: paragraphs__target_id
           group_type: group
           admin_label: ''
+          entity_type: paragraph
+          entity_field: type
+          plugin_id: field
           label: Type
           exclude: false
           alter:
@@ -295,9 +202,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: paragraph
-          entity_field: type
-          plugin_id: field
         paragraphs__target_id:
           id: paragraphs__target_id
           table: paragraphs_library_item_field_data
@@ -305,6 +209,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: paragraphs_library_item
+          entity_field: paragraphs
+          plugin_id: field
           label: Paragraphs
           exclude: false
           alter:
@@ -361,9 +268,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: paragraphs_library_item
-          entity_field: paragraphs
-          plugin_id: field
         changed:
           id: changed
           table: paragraphs_library_item_field_data
@@ -371,6 +275,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: paragraphs_library_item
+          entity_field: changed
+          plugin_id: field
           label: Changed
           exclude: false
           alter:
@@ -428,9 +335,54 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: paragraphs_library_item
-          entity_field: changed
-          plugin_id: field
+      pager:
+        type: mini
+        options:
+          offset: 0
+          items_per_page: 10
+          total_pages: null
+          id: 0
+          tags:
+            next: ››
+            previous: ‹‹
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Filter
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      access:
+        type: none
+        options: {  }
+      cache:
+        type: tag
+        options: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: true
+          content: 'No library items available.'
+          tokenize: false
+      sorts: {  }
+      arguments: {  }
       filters:
         label:
           id: label
@@ -439,6 +391,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: paragraphs_library_item
+          entity_field: label
+          plugin_id: string
           operator: contains
           value: ''
           group: 1
@@ -449,16 +404,14 @@ display:
             description: ''
             use_operator: false
             operator: label_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: label
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: Label
@@ -474,9 +427,6 @@ display:
               1: {  }
               2: {  }
               3: {  }
-          entity_type: paragraphs_library_item
-          entity_field: label
-          plugin_id: string
         type:
           id: type
           table: paragraphs_item_field_data
@@ -484,6 +434,9 @@ display:
           relationship: paragraphs__target_id
           group_type: group
           admin_label: ''
+          entity_type: paragraph
+          entity_field: type
+          plugin_id: bundle
           operator: in
           value: {  }
           group: 1
@@ -494,17 +447,15 @@ display:
             description: ''
             use_operator: false
             operator: type_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: type
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
             reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -517,9 +468,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: paragraph
-          entity_field: type
-          plugin_id: bundle
         default_langcode:
           id: default_langcode
           table: paragraphs_library_item_field_data
@@ -527,6 +475,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: paragraphs_library_item
+          entity_field: default_langcode
+          plugin_id: boolean
           operator: '='
           value: '1'
           group: 1
@@ -537,14 +488,14 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -557,9 +508,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: paragraphs_library_item
-          entity_field: default_langcode
-          plugin_id: boolean
         default_langcode_1:
           id: default_langcode_1
           table: paragraphs_item_field_data
@@ -567,6 +515,9 @@ display:
           relationship: paragraphs__target_id
           group_type: group
           admin_label: ''
+          entity_type: paragraph
+          entity_field: default_langcode
+          plugin_id: boolean
           operator: '='
           value: '1'
           group: 1
@@ -577,14 +528,14 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -597,25 +548,74 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: paragraph
-          entity_field: default_langcode
-          plugin_id: boolean
-      sorts: {  }
-      title: 'Paragraphs library'
-      header: {  }
-      footer: {  }
-      empty:
-        area_text_custom:
-          id: area_text_custom
-          table: views
-          field: area_text_custom
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: true
-          tokenize: false
-          content: 'No library items available.'
-          plugin_id: text_custom
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      style:
+        type: table
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          columns:
+            label: label
+            type: type
+            id: id
+            count: count
+            operations: operations
+          default: '-1'
+          info:
+            label:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            type:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            id:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            count:
+              sortable: false
+              default_sort_order: asc
+              align: views-align-right
+              separator: ''
+              empty_column: false
+              responsive: ''
+            operations:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          override: true
+          sticky: false
+          summary: ''
+          empty_table: true
+          caption: ''
+          description: ''
+          class: ''
+      row:
+        type: fields
+      query:
+        type: views_query
+        options:
+          query_comment: ''
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_tags: {  }
       relationships:
         paragraphs__target_id:
           id: paragraphs__target_id
@@ -624,20 +624,17 @@ display:
           relationship: none
           group_type: group
           admin_label: Paragraphs
-          required: true
           entity_type: paragraphs_library_item
           entity_field: paragraphs
           plugin_id: standard
-      arguments: {  }
-      display_extenders: {  }
-      filter_groups:
-        operator: AND
-        groups:
-          1: AND
-      group_by: false
+          required: true
       use_ajax: true
+      group_by: false
+      header: {  }
+      footer: {  }
+      display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -645,15 +642,15 @@ display:
         - url.query_args
       tags: {  }
   entity_browser:
-    display_plugin: entity_browser
     id: entity_browser
     display_title: 'Entity browser'
+    display_plugin: entity_browser
     position: 2
     display_options:
-      display_extenders: {  }
       rendering_language: '***LANGUAGE_language_interface***'
+      display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_interface'
         - url

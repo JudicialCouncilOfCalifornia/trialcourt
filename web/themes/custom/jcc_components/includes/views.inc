@@ -89,7 +89,7 @@ function jcc_components_preprocess_views_view(&$variables) {
         $field_render_array = $view_entity->get('field_address')->view('default');
 
         // Render the field to a string.
-        $variables['my_address'] = \Drupal::service('renderer')->renderPlain($field_render_array);
+        $variables['my_address'] = \Drupal::service('renderer')->renderInIsolation($field_render_array);
       }
     }
 

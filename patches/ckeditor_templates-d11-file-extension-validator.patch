@@ -1,0 +1,11 @@
+--- a/src/Form/CKEditorTemplatesEntityForm.php
++++ b/src/Form/CKEditorTemplatesEntityForm.php
+@@ -112,7 +112,7 @@
+       '#description' => $this->t('Allowed types: png jpeg jpg gif'),
+       '#upload_location' => 'public://ckeditor-templates',
+       '#upload_validators' => [
+-        'file_validate_extensions' => ['gif png jpg jpeg'],
++        'FileExtension' => ['extensions' => 'gif png jpg jpeg'],
+       ],
+       '#cardinality' => 1,
+     ];

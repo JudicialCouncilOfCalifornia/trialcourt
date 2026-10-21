@@ -37,7 +37,7 @@ class BulkImporterForm extends FormBase {
       '#multiple' => TRUE,
       '#unlimited' => TRUE,
       '#upload_validators' => [
-        'file_validate_extensions' => ['pdf zip doc docx xls xlsx ppt pptx csv'],
+        'FileExtension' => ['extensions' => 'pdf zip doc docx xls xlsx ppt pptx csv'],
       ],
       '#description' => t('Allowed formats: pdf, zip, doc, docx, xls, xlsx, ppt, pptx, csv'),
     ];

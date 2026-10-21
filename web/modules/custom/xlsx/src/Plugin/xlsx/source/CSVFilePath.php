@@ -132,7 +132,7 @@ class CSVFilePath extends XlsxSourceBase {
       '#title' => $this->t('Upload CSV file'),
       '#upload_location' => 'public://spreadsheets',
       '#upload_validators' => [
-        'file_validate_extensions' => ['csv'],
+        'FileExtension' => ['extensions' => 'csv'],
       ],
       '#description' => $this->t('<strong>WARNING:</strong> If you\'re not using original file the import could potentially break the site. Running a new import will remove preiously imported data and replace with the latest.'),
     ];

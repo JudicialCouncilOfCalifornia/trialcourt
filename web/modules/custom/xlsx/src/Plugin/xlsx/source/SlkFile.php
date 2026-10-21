@@ -25,7 +25,7 @@ class SlkFile extends XlsxSourceBase {
       '#title' => $this->t('SLK file template'),
       '#upload_location' => 'public://spreadsheets',
       '#upload_validators' => [
-        'file_validate_extensions' => ['slk'],
+        'FileExtension' => ['extensions' => 'slk'],
       ],
       '#description' => $this->t('This file is only used to map fields in Drupal with appropriate columns in the SLK file. No data import happening during this process.'),
       '#required' => TRUE,

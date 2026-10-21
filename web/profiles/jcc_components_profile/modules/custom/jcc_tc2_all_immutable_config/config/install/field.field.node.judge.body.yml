@@ -3,17 +3,14 @@ status: true
 dependencies:
   config:
     - field.storage.node.body
+    - filter.format.body
     - node.type.judge
   module:
-    - allowed_formats
     - text
     - tmgmt_content
 third_party_settings:
   tmgmt_content:
     excluded: false
-  allowed_formats:
-    allowed_formats:
-      - body
 id: node.judge.body
 field_name: body
 entity_type: node
@@ -27,4 +24,6 @@ default_value_callback: ''
 settings:
   display_summary: true
   required_summary: false
+  allowed_formats:
+    - body
 field_type: text_with_summary

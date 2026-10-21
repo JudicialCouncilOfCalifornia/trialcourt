@@ -19,7 +19,7 @@ class JccBookNavigationBlock extends BookNavigationBlock {
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     parent::defaultConfiguration();
 
     return [
@@ -72,7 +72,7 @@ class JccBookNavigationBlock extends BookNavigationBlock {
   /**
    * {@inheritdoc}
    */
-  public function blockSubmit($form, $form_state) {
+  public function blockSubmit($form, $form_state): void {
     parent::blockSubmit($form, $form_state);
 
     $values = $form_state->getValues();
@@ -91,7 +91,7 @@ class JccBookNavigationBlock extends BookNavigationBlock {
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $current_bid = 0;
 
     $node = $this->routeMatch->getParameter('node');

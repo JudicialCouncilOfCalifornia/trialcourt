@@ -80,6 +80,7 @@ display:
         type: full
         options:
           offset: 0
+          pagination_heading_level: h4
           items_per_page: 16
           total_pages: null
           id: 0
@@ -97,7 +98,6 @@ display:
             offset: false
             offset_label: Offset
           quantity: 9
-          pagination_heading_level: h4
       exposed_form:
         type: bef
         options:
@@ -113,8 +113,11 @@ display:
           bef:
             general:
               autosubmit: true
+              auto_submit_sort_only: false
+              autosubmit_breakpoint: ''
               autosubmit_exclude_textfield: false
               autosubmit_textfield_delay: 1500
+              autosubmit_textfield_minimum_length: 3
               autosubmit_hide: true
               input_required: false
               allow_secondary: false
@@ -124,15 +127,27 @@ display:
               name:
                 plugin_id: default
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   collapsible: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
               field_document_type_target_id:
                 plugin_id: default
                 advanced:
+                  sort_options_method: alphabetical_asc
+                  sort_options_natural: true
                   rewrite:
                     filter_rewrite_values: ''
                   collapsible: false
+                  open_by_default: false
                   is_secondary: false
+                  no_reset: false
+                  hide_label: false
+                  field_classes: ''
       access:
         type: perm
         options:
@@ -209,10 +224,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              editor: '0'
-              author: '0'
-              administrator: '0'
-              anonymous: '0'
             placeholder: 'Search title or topic'
           is_grouped: false
           group_info:
@@ -252,10 +263,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              editor: '0'
-              author: '0'
-              administrator: '0'
-              anonymous: '0'
             reduce: false
           is_grouped: false
           group_info:
