@@ -109,6 +109,9 @@ function jcc_tc2_roc_feature_form_alter(&$form, &$form_state, $form_id): void {
 
     // Set helper text on moderation state field.
     $form['moderation_state']['widget'][0]['state']['#description'] = implode('<br/>', $moderation_description);
+
+    // Rule formatting inside the CKEditor 5 body.
+    $form['#attached']['library'][] = 'jcc_tc2_roc_feature/rules-ckeditor5';
   }
 }
 

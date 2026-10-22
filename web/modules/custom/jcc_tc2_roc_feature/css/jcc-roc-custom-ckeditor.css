@@ -1,131 +1,134 @@
-body:is(.cke_editable) {
-  font-size: var(--s0);
+/**
+ * Rules of Court formatting inside the CKEditor 5 editing area.
+ *
+ * Mirrors jcc_storybook RulesFormatting.css (front end). Gin does not define
+ * the storybook tokens, so each one has a fallback.
+ */
+
+.ck-content {
+  font-size: var(--s0, 1rem);
   line-height: 1.5;
 }
 
-body:is(.cke_editable) hr {
+.ck-content hr {
   margin-block: 2rem;
 }
 
-body:is(.cke_editable) p:is(.ruleheading, .subdivheading, .subdivtext, .subdhist, .paragraphlist, .subparagraphlist, .subparagraphnolist, .rulehist, .advcommheader, .advcommtext) +
+.ck-content p:is(.ruleheading, .subdivheading, .subdivtext, .subdhist, .paragraphlist, .subparagraphlist, .subparagraphnolist, .rulehist, .advcommheader, .advcommtext) +
 p:is(.ruleheading, .subdivheading, .subdivtext, .subdhist, .paragraphlist, .subparagraphlist, .subparagraphnolist, .rulehist, .advcommheader, .advcommtext) {
-  margin-block-start: var(--s0);
+  margin-block-start: var(--s0, 1rem);
 }
 
-body:is(.cke_editable) p.normal {
-  font-weight: normal;
+.ck-content p.normal {
+  font-weight: 400;
 }
 
-body:is(.cke_editable) p.ruleheading {
-  margin-block-start: var(--s0);
-  font-weight: bold;
+.ck-content p.ruleheading {
+  margin-block-start: var(--s0, 1rem);
+  font-weight: 700;
 }
 
-body:is(.cke_editable) p.subdivheading {
+.ck-content p.subdivheading {
   margin-inline-start: 1rem;
 }
 
-body:is(.cke_editable) p.subdivtext {
-  margin-inline-start:2.25rem;
+.ck-content p.subdivtext {
+  margin-inline-start: 2.25rem;
 }
 
-body:is(.cke_editable) p.subdhist {
+.ck-content p.subdhist {
   margin-inline-start: 2.25rem;
-  font-size: var(--s-1);
+  font-size: var(--s-1, 0.8rem);
   font-style: italic;
   line-height: 1.5;
 }
 
-body:is(.cke_editable) p.paragraphlist {
+.ck-content p.paragraphlist {
   margin-inline-start: 3rem;
+  padding-inline-start: 1.5rem;
+  text-indent: -1.5rem;
 }
 
-body:is(.cke_editable) p.paragraphnolist {
+.ck-content p.paragraphnolist {
   margin-inline-start: 4.5rem;
-  text-indent: none;
-}
-
-body:is(.cke_editable) p.subparagraphlist {
-  margin-inline-start: 5rem;
-}
-
-body:is(.cke_editable) p.subparagraphnolist {
-  margin-inline-start: 6.5rem;
   text-indent: unset;
 }
 
-body:is(.cke_editable) p:is(.itemList, .itemlist) {
-  margin-inline-start: 7rem;
+.ck-content p.subparagraphlist {
+  margin-inline-start: 4rem;
+  padding-inline-start: 2rem;
+  text-indent: -1.5rem;
 }
 
-body:is(.cke_editable) p.rulehist {
-  font-size: var(--s-1);
+.ck-content p.subparagraphnolist {
+  margin-inline-start: 6rem;
+  text-indent: unset;
+}
+
+.ck-content p:is(.itemList, .itemlist) {
+  margin-inline-start: 7rem;
+  padding-inline-start: 1rem;
+  text-indent: -1rem;
+}
+
+.ck-content p:is(.itemNoList, .itemnolist) {
+  margin-inline-start: 8rem;
+}
+
+.ck-content p:is(.itemSubList, .itemsublist) {
+  margin-inline-start: 9rem;
+  padding-inline-start: 1rem;
+  text-indent: -1rem;
+}
+
+.ck-content p:is(.itemSubNoList, .itemsubnolist) {
+  margin-inline-start: 10rem;
+}
+
+.ck-content p.rulehist {
+  font-size: var(--s-1, 0.8rem);
   font-style: italic;
   line-height: 1.5;
 }
 
-body:is(.cke_editable) p.advcommheader {
-  font-size: var(--s-2);
-  font-weight: bold;
+.ck-content p.advcommheader {
+  margin-inline: auto;
+  font-size: var(--s-2, 0.64rem);
+  font-weight: 700;
   text-align: center;
 }
 
-body:is(.cke_editable) p.advcommtext {
-  font-size: var(--s-2);
+.ck-content p.advcommtext {
+  font-size: var(--s-2, 0.64rem);
   line-height: 1.5;
 }
 
-body:is(.cke_editable) li:is(.TOClevel1, .TOClevel2, .TOClevel3, .TOClevel4) {
-  list-style-type: none;
-  margin-block-start: var(--s-1);
-  margin-inline-start: 0;
-}
-
-body:is(.cke_editable) li.TOClevel1 {
-  font-weight: bold;
-  margin-block-start: var(--s2);
-  margin-block-end: var(--s-1);
-  padding-block-end: var(--s-1);
-  border-block-end: 1px solid var(--border-color-gray);
-}
-
-body:is(.cke_editable) li.TOClevel3 {
-  margin-inline-start: 2rem;
-}
-
-body:is(.cke_editable) li.TOClevel4 {
-  margin-inline-start: 4rem;
-}
-
-/* Local rule styles */
-body:is(.cke_editable) blockquote {
-  margin: 0 0 1rem;
-  padding: 1rem 0 0 2rem;
-}
-
-body:is(.cke_editable) p[style*="TEXT-INDENT: 40px"] {
-  text-indent: 2.25rem;
-}
-
-/* Table style */
-body:is(.cke_editable) table  {
+/*
+ * Tables: dotted cells while editing, solid with "Add grid/borders".
+ * CKEditor 5 injects its own figure.table rules after this file, so these
+ * selectors add ".ck" to win on specificity.
+ */
+.ck.ck-content figure.table:not(.layout-table) > table {
   border-collapse: collapse;
-  margin-block-start: var(--gap);
-  margin-block-end: calc(var(--gap) * 2);
-  border: 1px solid var(--color-base-light-x);
+  margin-block-start: var(--gap, 1rem);
+  margin-block-end: calc(var(--gap, 1rem) * 1.5);
+  border: 1px solid var(--color-base-light-x, #c4c4c4);
   table-layout: fixed;
   width: 100%;
 }
 
-body:is(.cke_editable) table td,
-body:is(.cke_editable) table th {
-  border: 1px dotted var(--color-base-light-x);
-  padding: var(--s-2) var(--s-2);
-  background-color: var(--color-base-light-xxx);
+.ck.ck-content figure.table:not(.layout-table) > table > :is(thead, tbody, tfoot) > tr > :is(td, th) {
+  border: 1px dotted var(--color-base-light-x, #c4c4c4);
+  padding: var(--s-4, 0.4rem) var(--s-2, 0.64rem);
+  background-color: var(--color-base-light-xxx, #f5f5f5);
 }
 
-body:is(.cke_editable) table th {
-  color: var(--color-white);
-  background-color: var(--color-base-dark-x);
+.ck.ck-content figure.table:not(.layout-table) > table > :is(thead, tbody, tfoot) > tr > th {
+  color: var(--color-white, #fff);
+  background-color: var(--color-base-dark-x, #333);
   text-align: left;
+}
+
+.ck.ck-content figure.table:not(.layout-table) > table.add-borders > :is(thead, tbody, tfoot) > tr > :is(td, th) {
+  border: 1px solid var(--color-base-light-x, #c4c4c4);
 }
