@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Module hooks for jcc_sanmateo_custom.
+ */
+
+/**
+ * Central Branch cases ultimate cron config callback.
+ */
+function jcc_sanmateo_custom_migrate_cases_central() {
+  $migration_id = 'case_node_central_cases';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "sync");
+}
+
+/**
+ * Northern Branch cases ultimate cron config callback.
+ */
+function jcc_sanmateo_custom_migrate_cases_northern() {
+  $migration_id = 'case_node_ssf_cases';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "sync");
+}
+
+/**
+ * Southern Branch cases ultimate cron config callback.
+ */
+function jcc_sanmateo_custom_migrate_cases_southern() {
+  $migration_id = 'case_node_rwc_cases';
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "sync");
+}
