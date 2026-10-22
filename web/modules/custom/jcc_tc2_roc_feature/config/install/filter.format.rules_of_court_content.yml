@@ -1,5 +1,5 @@
 langcode: en
-status: false
+status: true
 dependencies:
   module:
     - editor
@@ -24,7 +24,7 @@ filters:
     id: emptyparagraphkiller
     provider: emptyparagraphkiller
     status: true
-    weight: -37
+    weight: 0
     settings: {  }
   entity_embed:
     id: entity_embed
@@ -41,8 +41,8 @@ filters:
   filter_autop:
     id: filter_autop
     provider: filter
-    status: false
-    weight: -45
+    status: true
+    weight: 0
     settings: {  }
   filter_caption:
     id: filter_caption
@@ -54,10 +54,10 @@ filters:
     id: filter_html
     provider: filter
     status: true
-    weight: -50
+    weight: -10
     settings:
-      allowed_html: '<br> <p class="rulesubheading"> <cite> <dl> <dt> <dd> <h2 id="jump-*"> <h3 id> <h4 id> <h5 id> <h6 id> <a hreflang href> <blockquote cite> <ul type> <ol type="1 A I" start> <strong> <em> <code> <li> <img src alt height width>'
-      filter_html_help: true
+      allowed_html: '<br> <p class> <h3> <h4> <h5> <ul class="paragraphlist"> <ol class="numberedlist advcommtext" start> <table class="add-borders"> <span> <strong> <em> <u> <s> <a href> <li> <hr> <tr> <td rowspan colspan> <th rowspan colspan> <thead> <tbody> <tfoot> <caption>'
+      filter_html_help: false
       filter_html_nofollow: false
   filter_html_escape:
     id: filter_html_escape
@@ -75,13 +75,13 @@ filters:
     id: filter_htmlcorrector
     provider: filter
     status: true
-    weight: -38
+    weight: 10
     settings: {  }
   filter_url:
     id: filter_url
     provider: filter
-    status: false
-    weight: -43
+    status: true
+    weight: 0
     settings:
       filter_url_length: 72
   glossify_taxonomy:

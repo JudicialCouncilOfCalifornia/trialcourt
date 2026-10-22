@@ -5,8 +5,9 @@
  * Updates for roc feature.
  */
 
-use Drupal\node\NodeAccessRebuild;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\FileStorage;
+use Drupal\node\NodeAccessRebuild;
 
 /**
  * Implements hook_install().
@@ -68,15 +69,58 @@ function jcc_tc2_roc_feature_update_9003(): void {
  */
 function jcc_tc2_roc_feature_update_9004() {
   \Drupal::service('module_installer')->install(['ckeditor5', 'jcc_ckeditor']);
-  $source = new FileStorage(\Drupal::service('extension.list.module')->getPath('jcc_tc2_roc_feature') . '/config/install');
-  $entity_type_manager = \Drupal::entityTypeManager();
   // The format first: an editor's settings are validated against its format.
-  foreach (['filter_format' => 'filter.format.rules_of_court_content', 'editor' => 'editor.editor.rules_of_court_content'] as $entity_type => $name) {
-    $storage = $entity_type_manager->getStorage($entity_type);
+  _jcc_tc2_roc_feature_import_config([
+    'filter.format.rules_of_court_content',
+    'editor.editor.rules_of_court_content',
+  ]);
+  return t('Rules of Court editor saved on CKEditor 5.');
+}
+
+/**
+ * Move Rules of Court bodies to the Rules of Court Content format.
+ *
+ * Rules get their own CKEditor 5 editor with the rule styles. Runs before
+ * "fra", so the format is enabled here before any content points to it.
+ */
+function jcc_tc2_roc_feature_update_9005() {
+  _jcc_tc2_roc_feature_import_config([
+    'filter.format.rules_of_court_content',
+    'editor.editor.rules_of_court_content',
+    'user.role.rules_manager',
+    'field.field.node.roc_rule.body',
+  ]);
+
+  $database = \Drupal::database();
+  $moved = 0;
+  foreach (['node__body', 'node_revision__body'] as $table) {
+    $moved += $database->update($table)
+      ->fields(['body_format' => 'rules_of_court_content'])
+      ->condition('bundle', 'roc_rule')
+      ->condition('body_format', 'body')
+      ->execute();
+  }
+  \Drupal::entityTypeManager()->getStorage('node')->resetCache();
+  Cache::invalidateTags(['node_list:roc_rule']);
+
+  return t('@count Rules of Court body rows moved to the Rules of Court Content format.', ['@count' => $moved]);
+}
+
+/**
+ * Creates or updates config entities from this module's config/install.
+ *
+ * @param string[] $names
+ *   Config names, saved in this order.
+ */
+function _jcc_tc2_roc_feature_import_config(array $names): void {
+  $source = new FileStorage(\Drupal::service('extension.list.module')->getPath('jcc_tc2_roc_feature') . '/config/install');
+  $config_manager = \Drupal::service('config.manager');
+  $entity_type_manager = \Drupal::entityTypeManager();
+  foreach ($names as $name) {
+    $storage = $entity_type_manager->getStorage($config_manager->getEntityTypeIdByName($name));
     $record = $source->read($name);
     $entity = $storage->load($record[$storage->getEntityType()->getKey('id')]);
     $entity = $entity ? $storage->updateFromStorageRecord($entity, $record) : $storage->createFromStorageRecord($record);
     $entity->save();
   }
-  return t('Rules of Court editor saved on CKEditor 5.');
 }
