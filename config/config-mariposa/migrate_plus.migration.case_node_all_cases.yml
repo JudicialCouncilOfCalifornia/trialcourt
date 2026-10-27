@@ -18,8 +18,9 @@ source:
   delimiter: ','
   enclosure: '"'
   header_row_count: 1
+  # Identify hearings by Case Name; Case Number is optional.
   ids:
-    - case_number
+    - case_name
     - hearing_date_and_time
     - hearing_type
   fields:
@@ -56,7 +57,6 @@ source:
     -
       name: attorney_of_record
       label: "Attorney_Of_Record"
-    # CSV fields are positional: append new columns to preserve existing feeds.
     -
       name: case_name
       label: 'Case_Name'
@@ -74,21 +74,19 @@ process:
       plugin: skip_on_empty
       source: party_name
       method: row
-      message: 'No name found.'
+      message: 'No party name found.'
     -
       plugin: callback
       callable: trim
   field_case_number:
-    -
-      plugin: skip_on_empty
+    # Normalize the optional value; entity_generate handles empty input.
+    - plugin: default_value
       source: case_number
-      method: row
-      message: 'No case number found.'
-    -
-      plugin: callback
+      default_value: ''
+      strict: true
+    - plugin: callback
       callable: trim
-    -
-      plugin: entity_generate
+    - plugin: entity_generate
       bundle: case_number
       value_key: name
       bundle_key: vid
@@ -99,7 +97,7 @@ process:
       plugin: concat
       source:
         - '@field_party_name'
-        - case_number
+        - '@case_name'
       delimiter: ' / '
   field_party_type:
     -
