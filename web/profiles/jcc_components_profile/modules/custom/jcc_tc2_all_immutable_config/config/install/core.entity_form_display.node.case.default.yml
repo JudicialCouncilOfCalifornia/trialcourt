@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.case.case_name
     - field.field.node.case.field_attorney_of_record
     - field.field.node.case.field_case_category
     - field.field.node.case.field_case_number
@@ -27,6 +28,14 @@ targetEntityType: node
 bundle: case
 mode: default
 content:
+  case_name:
+    type: string_textfield
+    weight: 28
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   created:
     type: datetime_timestamp
     weight: 3

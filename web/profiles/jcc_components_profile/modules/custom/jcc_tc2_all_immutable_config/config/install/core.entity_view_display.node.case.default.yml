@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.case.case_name
     - field.field.node.case.field_attorney_of_record
     - field.field.node.case.field_case_category
     - field.field.node.case.field_case_number
@@ -24,6 +25,14 @@ targetEntityType: node
 bundle: case
 mode: default
 content:
+  case_name:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 14
+    region: content
   field_attorney_of_record:
     type: string
     label: above
