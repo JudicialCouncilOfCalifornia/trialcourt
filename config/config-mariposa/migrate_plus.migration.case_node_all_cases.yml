@@ -56,7 +56,19 @@ source:
     -
       name: attorney_of_record
       label: "Attorney_Of_Record"
+    # CSV fields are positional: append new columns to preserve existing feeds.
+    -
+      name: case_name
+      label: 'Case_Name'
 process:
+  case_name:
+    -
+      plugin: skip_on_empty
+      source: case_name
+      method: process
+    -
+      plugin: callback
+      callable: trim
   field_party_name:
     -
       plugin: skip_on_empty
