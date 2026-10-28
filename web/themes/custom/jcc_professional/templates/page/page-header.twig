@@ -4,32 +4,12 @@
   {% set variant = inherited_masthead_color %}
 {% endif %}
 
-{# Granicus #}
-{% if livecast is not empty %}
-  {% set body %}
-    <div class="granicus">
-      <div class="granicus__details">
-        <span class="granicus__status">{{ livecast.status }}</span>
-        <strong>{{ livecast.title }}</strong>
-        <span class="granicus__start_time">
-          {{ livecast.time }}
-        </span>
-      </div>
-      {% if livecast.status == 'live' or livecast.status == 'starting soon' %}
-        <div class="granicus__actions">
-          {% if livecast.url %}
-            <a class="jcc-button--inverse" href="{{ livecast.url }}" arial_label="View {{ livecast.date }} {{ livecast.title }}">
-              Watch live broadcast
-            </a>
-          {% endif %}
-          {% if livecast.captioning %}
-            <p class="granicus__captioning">{{ livecast.captioning }}</p>
-          {% endif %}
-        </div>
-      {% endif %}
-    </div>
-  {% endset %}
-{% endif %}
+{% set body %}
+  {# Dynamic livecast banner placeholder. #}
+  {% if livecast is not empty %}
+    {{ livecast }}
+  {% endif %}
+{% endset %}
 
 {% include '@organisms/global/header.twig' with {
   header: {
@@ -57,4 +37,3 @@
     }
   }
 } %}
-
