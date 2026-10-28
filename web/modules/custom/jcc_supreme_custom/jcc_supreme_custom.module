@@ -5,6 +5,39 @@
  * Module hooks for jcc_supreme_custom.
  */
 
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_theme().
+ */
+function jcc_supreme_custom_theme() {
+  // Registers the livecast Twig template.
+  return [
+    'jcc_supreme_custom_livecast' => [
+      'variables' => ['livecast' => NULL],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function jcc_supreme_custom_preprocess_page(&$variables) {
+  if (\Drupal::service('path.matcher')->isFrontPage()) {
+    // Livecast banner URL & JavaScript container.
+    $variables['livecast'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'data-jcc-livecast-url' => Url::fromRoute('jcc_supreme_custom.livecast')->toString(),
+        'hidden' => TRUE,
+      ],
+      '#attached' => [
+        'library' => ['jcc_supreme_custom/livecast'],
+      ],
+    ];
+  }
+}
+
 /**
  * Case filings ultimate cron config callback.
  */
