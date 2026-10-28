@@ -97,9 +97,6 @@ function jcc_professional_preprocess_page(&$variables) {
 
     // If matching event type found.
     if ($imported_events) {
-      $timezone = new DateTimeZone('America/Los_Angeles');
-      $current_datetime = new DateTime('now', $timezone);
-      $today = $current_datetime->format('m/d/y');
       $term_storage = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term');
       $node = \Drupal::entityTypeManager()->getStorage('node')->load($variables['node']->id());
 
