@@ -165,9 +165,6 @@ function jcc_professional_preprocess_page(&$variables) {
       if ($livecast) {
         $variables['livecast'] = $livecast;
       }
-
-      // Refresh page cache to not block dynamic info.
-      \Drupal::service('page_cache_kill_switch')->trigger();
     }
   }
 }

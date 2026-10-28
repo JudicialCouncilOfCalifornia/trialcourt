@@ -17,10 +17,14 @@
       </div>
       {% if livecast.status == 'live' or livecast.status == 'starting soon' %}
         <div class="granicus__actions">
-          <a class="jcc-button--inverse" href="{{ livecast.url }}" arial_label="View {{ livecast.date }} {{ livecast.title }}">
-            Watch live broadcast
-          </a>
-          <p class="granicus__captioning">{{ livecast.captioning }}</p>
+          {% if livecast.url %}
+            <a class="jcc-button--inverse" href="{{ livecast.url }}" arial_label="View {{ livecast.date }} {{ livecast.title }}">
+              Watch live broadcast
+            </a>
+          {% endif %}
+          {% if livecast.captioning %}
+            <p class="granicus__captioning">{{ livecast.captioning }}</p>
+          {% endif %}
         </div>
       {% endif %}
     </div>
