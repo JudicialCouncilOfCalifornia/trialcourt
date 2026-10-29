@@ -25,6 +25,58 @@
           }
 
           map.container.attr({ role: 'region', 'aria-label': Drupal.t('Court locations map') });
+          let zooming = false;
+          let focusFrame;
+          const keepFocusedLocationVisible = function () {
+            const marker = map.mapMarkers.find(function (item) {
+              const popup = item.getPopup();
+              const element = popup && popup.getElement();
+              return item.getElement() === document.activeElement ||
+                (item.isPopupOpen() && element && element.contains(document.activeElement));
+            });
+            if (marker && !zooming) {
+              // An earlier popup auto-pan may still be animating after zoomend.
+              // Stop it before applying the final focused location position.
+              map.leafletMap.stop();
+              if (marker.getElement() === document.activeElement) {
+                map.leafletMap.panInside(marker.getLatLng(), {
+                  padding: [45, 60],
+                  animate: false
+                });
+              }
+              if (marker.isPopupOpen()) {
+                // Keep the existing popup DOM (and focus) while bringing its
+                // controls inside the map, rather than rebuilding its content.
+                const popup = marker.getPopup().getElement().getBoundingClientRect();
+                const container = map.container.get(0).getBoundingClientRect();
+                const x = Math.max(0, popup.right - container.right + 8) -
+                  Math.max(0, container.left + 8 - popup.left);
+                const y = Math.max(0, popup.bottom - container.bottom + 8) -
+                  Math.max(0, container.top + 8 - popup.top);
+                if (x || y) {
+                  map.leafletMap.panBy([x, y], { animate: false });
+                }
+              }
+            }
+          };
+          const onZoomStart = function () {
+            zooming = true;
+          };
+          const onZoomEnd = function () {
+            zooming = false;
+            // Zoom animation and popup auto-pan can overwrite a focus-time pan.
+            // Recheck the current focus after the provider finishes zooming.
+            cancelAnimationFrame(focusFrame);
+            focusFrame = requestAnimationFrame(keepFocusedLocationVisible);
+          };
+          map.leafletMap.on('zoomstart', onZoomStart);
+          map.leafletMap.on('zoomend', onZoomEnd);
+          state.cleanup.push(function () {
+            cancelAnimationFrame(focusFrame);
+            map.leafletMap.off('zoomstart', onZoomStart);
+            map.leafletMap.off('zoomend', onZoomEnd);
+          });
+
           map.addMarkerAddedCallback(function (marker) {
             if (!state.active || !marker.locationWrapper) {
               return;
@@ -116,10 +168,7 @@
               if (event.target === marker.getElement()) {
                 // A zoomed or panned map can leave keyboard targets offscreen.
                 // Bring the focused marker and its ring inside the map viewport.
-                map.leafletMap.panInside(marker.getLatLng(), {
-                  padding: [45, 60],
-                  animate: false
-                });
+                keepFocusedLocationVisible();
               }
             };
 
