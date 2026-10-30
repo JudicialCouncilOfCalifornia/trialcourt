@@ -27,15 +27,40 @@
           map.container.attr({ role: 'region', 'aria-label': Drupal.t('Court locations map') });
           let orderFrame;
           const orderMarkers = function () {
-            // Use rendered map pixels so markers on the same visual row are
-            // visited left-to-right, even if their latitudes differ slightly.
+            // Nearby pins read as a visual row even when their coordinates are
+            // a few pixels apart vertically. Group before sorting horizontally;
+            // a tolerance in a pairwise comparator would be non-transitive.
             const focused = document.activeElement;
-            const markers = map.mapMarkers.filter(function (marker) {
+            const positions = map.mapMarkers.filter(function (marker) {
               return marker.getElement();
-            }).slice().sort(function (a, b) {
-              const first = map.leafletMap.latLngToLayerPoint(a.getLatLng());
-              const second = map.leafletMap.latLngToLayerPoint(b.getLatLng());
-              return first.y - second.y || first.x - second.x;
+            }).map(function (marker) {
+              const point = map.leafletMap.latLngToLayerPoint(marker.getLatLng());
+              return { marker: marker, x: point.x, y: point.y };
+            }).sort(function (a, b) {
+              return a.y - b.y || a.x - b.x;
+            });
+            const rows = [];
+            positions.forEach(function (position) {
+              let row = rows[rows.length - 1];
+              if (!row || position.y - row.y > row.tolerance) {
+                row = {
+                  y: position.y,
+                  // Anchor each row at its top pin to avoid chaining together
+                  // multiple rows. Scale the tolerance with the rendered icon.
+                  tolerance: position.marker.getElement().getBoundingClientRect().height,
+                  positions: []
+                };
+                rows.push(row);
+              }
+              row.positions.push(position);
+            });
+            const markers = [];
+            rows.forEach(function (row) {
+              row.positions.sort(function (a, b) {
+                return a.x - b.x || a.y - b.y;
+              }).forEach(function (position) {
+                markers.push(position.marker);
+              });
             });
             markers.forEach(function (marker, index) {
               const icon = marker.getElement();
