@@ -1591,3 +1591,52 @@ function jcc_custom_get_service_category_tid($name) {
 
   return !empty($tids) ? (int) reset($tids) : NULL;
 }
+
+/**
+ * Implements hook_preprocess_field().
+ *
+ * ADA-878: Remote video launchers rendered by the colorbox module's
+ * remote_video_colorbox formatter all shared the identical accessible
+ * name "Launch video modal". Build a unique name server-side from the
+ * media's own data instead: "Play video: <thumbnail alt>", falling back
+ * to the media label. Expose the launcher as a button and make the
+ * thumbnail decorative (the launcher carries the name).
+ */
+function jcc_custom_preprocess_field(&$variables) {
+  if (($variables['element']['#formatter'] ?? '') !== 'remote_video_colorbox') {
+    return;
+  }
+
+  $media = $variables['element']['#object'] ?? NULL;
+  $title = '';
+  if ($media instanceof \Drupal\media\MediaInterface) {
+    if ($media->hasField('thumbnail') && !$media->get('thumbnail')->isEmpty()) {
+      $title = trim((string) $media->get('thumbnail')->alt);
+    }
+    if ($title === '' || $title === 'Launch video modal') {
+      $title = trim((string) $media->label());
+    }
+  }
+
+  foreach ($variables['items'] as &$item) {
+    $content = &$item['content'];
+    $content['#attributes']['role'] = 'button';
+    $content['#attributes']['aria-label'] = $title !== ''
+      ? t('Play video: @title', ['@title' => $title])
+      : t('Launch video modal');
+
+    // Thumbnail is decorative: blank its alt on a clone of the field item
+    // so the loaded media entity itself is not modified.
+    if (!empty($content['children']) && is_array($content['children'])) {
+      foreach ($content['children'] as &$child) {
+        if (is_array($child) && ($child['#theme'] ?? '') === 'image_formatter' && isset($child['#item'])) {
+          $thumb = clone $child['#item'];
+          $thumb->set('alt', '');
+          $child['#item'] = $thumb;
+        }
+      }
+      unset($child);
+    }
+  }
+  unset($item);
+}
