@@ -8,26 +8,30 @@
   'use strict';
 
   Drupal.behaviors.jccTableAdapt = {
-    attach: function (context, settings) {
-      var $formTable = $('.jcc-form', context).siblings('table');
-      var $formViewId = $('.jcc-form', context).attr('id');
-
-      const excluded_tables = [
+    attach: function (context) {
+      const excludedTables = [
         'views-exposed-form-imported-events-events',
         'views-exposed-form-case-block-1'
       ];
 
-      $('.jcc-section table', context).add($formTable).each( function() {
+      $(once('jcc-table-adapt', '.jcc-section table, .jcc-form ~ table, .jcc-case-table-view > table', context)).each(function () {
         let $currentTable = $(this);
-        let $headers = $currentTable.find('thead th');
+        let $caseView = $currentTable.closest('.jcc-case-table-view');
+        let $exposedForm = $currentTable.siblings('.jcc-form');
+        if (!$exposedForm.length && $caseView.length) {
+          $exposedForm = $caseView.find('.jcc-form').first();
+        }
+        const formViewId = $exposedForm.attr('id');
+        const canApplySortable = !$caseView.length || (!!formViewId && !excludedTables.includes(formViewId));
 
         $currentTable.addClass('usa-table').removeClass('sortable');
+        let $headers = $currentTable.find('thead th');
 
         $headers.each( function() {
           let $tableHeader = $(this);
           let $headerMarkup = $tableHeader.text();
 
-         if (!excluded_tables.includes($formViewId)) {
+         if (canApplySortable) {
            $tableHeader.attr('data-sortable', '');
            $tableHeader.attr('scope', 'col');
            $tableHeader.html($headerMarkup);
