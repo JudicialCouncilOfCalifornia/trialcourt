@@ -1243,7 +1243,7 @@ function jcc_tc2_all_immutable_config_update_9010() {
     }
   }
 
+  // Empty storages are not queued for purging: deleting them drops the tables.
   $storage->delete();
-  field_purge_batch(10);
   return t('Deleted the unused taxonomy term field_address storage.');
 }
