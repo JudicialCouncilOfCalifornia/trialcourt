@@ -1203,17 +1203,46 @@ function jcc_tc2_all_immutable_config_update_9009() {
  * added its address_line3 column, which the status report shows as a
  * mismatched field definition. It is only deleted when it has no fields and no
  * data.
+ *
+ * The field API reads every column the address field defines when it checks
+ * for data, so the missing columns are added to the empty tables first.
  */
 function jcc_tc2_all_immutable_config_update_9010() {
   $storage = FieldStorageConfig::loadByName('taxonomy_term', 'field_address');
   if (!$storage) {
     return t('No taxonomy term field_address storage to delete.');
   }
-  if ($storage->getBundles() || $storage->hasData()) {
+  if ($storage->getBundles()) {
     return t('Kept taxonomy term field_address: it is used by @bundles.', [
-      '@bundles' => implode(', ', $storage->getBundles()) ?: t('existing data'),
+      '@bundles' => implode(', ', $storage->getBundles()),
     ]);
   }
+
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  /** @var \Drupal\Core\Entity\Sql\DefaultTableMapping $table_mapping */
+  $table_mapping = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->getTableMapping();
+  $tables = [
+    $table_mapping->getDedicatedDataTableName($storage),
+    $table_mapping->getDedicatedRevisionTableName($storage),
+  ];
+  foreach ($tables as $table) {
+    if (!$schema->tableExists($table)) {
+      return t('Kept taxonomy term field_address: table @table is missing.', ['@table' => $table]);
+    }
+    if ($database->select($table)->countQuery()->execute()->fetchField()) {
+      return t('Kept taxonomy term field_address: table @table has data.', ['@table' => $table]);
+    }
+  }
+  foreach ($tables as $table) {
+    foreach ($storage->getSchema()['columns'] as $column => $spec) {
+      $column_name = $table_mapping->getFieldColumnName($storage, $column);
+      if (!$schema->fieldExists($table, $column_name)) {
+        $schema->addField($table, $column_name, $spec);
+      }
+    }
+  }
+
   $storage->delete();
   field_purge_batch(10);
   return t('Deleted the unused taxonomy term field_address storage.');
