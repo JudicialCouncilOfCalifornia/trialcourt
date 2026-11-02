@@ -747,6 +747,19 @@ function jcc_custom_entity_view_alter(array &$build, EntityInterface $entity, En
 }
 
 /**
+ * Implements hook_entity_build_defaults_alter().
+ *
+ * Alert nodes only render on some pages (front page only, or the referenced
+ * pages), so their render cache has to vary by path.
+ */
+function jcc_custom_entity_build_defaults_alter(array &$build, EntityInterface $entity, $view_mode) {
+  if ($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'alert') {
+    $build['#cache']['contexts'][] = 'url.path';
+    $build['#cache']['contexts'][] = 'url.path.is_front';
+  }
+}
+
+/**
  * Resolves alt text for a video_embed media thumbnail for rendered output.
  *
  * Order matches Twig (field--field-videos / views album cards): use

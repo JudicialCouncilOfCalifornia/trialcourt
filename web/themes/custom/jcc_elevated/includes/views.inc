@@ -141,7 +141,10 @@ function jcc_elevated_preprocess_views_view__alerts__alerts(&$variables) {
   $variables['title_prefix'] = [];
   $variables['title_suffix'] = [];
 
-  // Remove access to alerts that should not display on the page.
+  // Remove access to alerts that should not display on the page. Which alerts
+  // remain depends on the page, so the output has to vary by path.
+  $variables['#cache']['contexts'][] = 'url.path';
+  $variables['#cache']['contexts'][] = 'url.path.is_front';
   $is_front = \Drupal::service('path.matcher')->isFrontPage();
   $current_page = \Drupal::routeMatch()->getParameter('node');
   foreach ($variables['rows'] as $index => $row) {
