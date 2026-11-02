@@ -684,8 +684,8 @@ function jcc_elevated_custom_file_download($uri): array {
   // clicked. Because of the private file system, the last part of the main url
   // is used. In private files output, that always ends in /files, which causes
   // the default name to always be 'files'.
-  $filename = basename($uri);
-  $mime = \Drupal::service('file.mime_type.guesser')->guess($uri);
+  $filename = \Drupal::service('file_system')->basename($uri);
+  $mime = \Drupal::service('file.mime_type.guesser')->guessMimeType($uri);
 
   // Render HTML content only if uploaded into supported directory.
   $scheme = \Drupal::service('stream_wrapper_manager')->getScheme($uri);
@@ -706,7 +706,7 @@ function jcc_elevated_custom_file_download($uri): array {
     }
 
     // Render HTML pages rather download.
-    $mime = \Drupal::service('file.mime_type.guesser')->guess($uri);
+    $mime = \Drupal::service('file.mime_type.guesser')->guessMimeType($uri);
     switch ($mime) {
       case 'text/html':
         $filename = basename($uri);

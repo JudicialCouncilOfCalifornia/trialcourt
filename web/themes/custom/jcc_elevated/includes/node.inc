@@ -694,7 +694,10 @@ function jcc_elevated_node_alert(array &$variables, NodeInterface $node): void {
     }
   }
 
-  // Default is to hide the alert content.
+  // Default is to hide the alert content. Whether it shows depends on the
+  // page, so the output has to vary by path.
+  $variables['#cache']['contexts'][] = 'url.path';
+  $variables['#cache']['contexts'][] = 'url.path.is_front';
   $is_front = \Drupal::service('path.matcher')->isFrontPage();
   $current_page = \Drupal::routeMatch()->getParameter('node');
   $variables['display_alert'] = jcc_elevated_should_alert_display($node, $current_page, $is_front);

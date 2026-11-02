@@ -251,3 +251,38 @@ function jcc_custom_update_9088(&$sandbox) {
   \Drupal::messenger()->addMessage($summary_message);
   $logger->notice('%message', ['%message' => $summary_message]);
 }
+
+/**
+ * Show the confirmation inline on webforms with a broken confirmation page.
+ *
+ * Their confirmation page path holds a full URL (e.g. "/http://example.com"),
+ * so submitting them ends on a "Page not found" page. Until now the settings
+ * screen always showed "Inline", which hid this from editors.
+ *
+ * The config is edited directly: saving the webform entity deletes all of its
+ * URL aliases on sites where webform pages are disabled globally.
+ */
+function jcc_custom_update_10001() {
+  $config_factory = \Drupal::configFactory();
+  $alias_storage = \Drupal::entityTypeManager()->getStorage('path_alias');
+  $fixed = [];
+  foreach ($config_factory->listAll('webform.webform.') as $name) {
+    $config = $config_factory->getEditable($name);
+    $path = (string) $config->get('settings.page_confirm_path');
+    if ($config->get('settings.confirmation_type') !== 'page' || (!str_contains($path, '://') && !str_contains($path, 'http'))) {
+      continue;
+    }
+    $config
+      ->set('settings.confirmation_type', 'inline')
+      ->set('settings.page_confirm_path', '')
+      ->save();
+    // Remove the alias that points the confirmation page at the broken path.
+    $aliases = $alias_storage->loadByProperties([
+      'path' => '/webform/' . $config->get('id') . '/confirmation',
+      'alias' => $path,
+    ]);
+    $alias_storage->delete($aliases);
+    $fixed[] = $config->get('id') . ' (' . $path . ')';
+  }
+  return $fixed ? t('Switched to inline confirmation: @webforms.', ['@webforms' => implode(', ', $fixed)]) : t('No webforms with a broken confirmation page.');
+}

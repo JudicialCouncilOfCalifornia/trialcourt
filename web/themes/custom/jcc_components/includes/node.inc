@@ -5,7 +5,6 @@
  * Preprocess and functions for alert content type and component.
  */
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Render\Markup;
 use Drupal\media\Entity\Media;
@@ -111,20 +110,6 @@ function jcc_components_node_alert(array &$variables, NodeInterface $node) {
     if ($current->id() == $node->id()) {
       $variables['show_content'] = TRUE;
     }
-  }
-}
-
-/**
- * Implements hook_entity_build_defaults_alter().
- */
-function jcc_custom_entity_build_defaults_alter(&$build, EntityInterface $entity, $view_mode) {
-  switch ($entity->bundle()) {
-    // Add cache context url.path to alert node content because we only want it
-    // to render on specific page sometimes as controlled on the node itself.
-    case 'alert':
-      $build['#cache']['contexts'][] = 'url.path';
-      break;
-
   }
 }
 
