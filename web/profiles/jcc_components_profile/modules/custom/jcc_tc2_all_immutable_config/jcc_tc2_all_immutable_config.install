@@ -1195,3 +1195,26 @@ function jcc_tc2_all_immutable_config_update_9009() {
     '@modules' => implode(', ', $remove) ?: 'none',
   ]);
 }
+
+/**
+ * Delete the unused taxonomy term field_address storage.
+ *
+ * The storage has no field on any vocabulary, so address_update_9201() never
+ * added its address_line3 column, which the status report shows as a
+ * mismatched field definition. It is only deleted when it has no fields and no
+ * data.
+ */
+function jcc_tc2_all_immutable_config_update_9010() {
+  $storage = FieldStorageConfig::loadByName('taxonomy_term', 'field_address');
+  if (!$storage) {
+    return t('No taxonomy term field_address storage to delete.');
+  }
+  if ($storage->getBundles() || $storage->hasData()) {
+    return t('Kept taxonomy term field_address: it is used by @bundles.', [
+      '@bundles' => implode(', ', $storage->getBundles()) ?: t('existing data'),
+    ]);
+  }
+  $storage->delete();
+  field_purge_batch(10);
+  return t('Deleted the unused taxonomy term field_address storage.');
+}
