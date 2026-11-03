@@ -1,0 +1,89 @@
+/*
+ * ADA-749: webform control fixes for elevated themes.
+ *
+ * Keep this in Drupal because the affected Webform markup can be overridden
+ * downstream on elevated sites.
+ *
+ * 1. Visible keyboard focus for image-button and submit controls.
+ * 2. Fixed-size checkbox/radio inputs. Broad input rules elsewhere (Webform
+ *    flexbox widths, generic form-control styles) can otherwise stretch
+ *    these controls to full width.
+ *
+ * --focus-outline-color comes from the jcc_storybook base theme
+ * (scheme-default.css :root). Each use carries a currentColor fallback so a
+ * renamed or unset token degrades to a visible ring instead of none.
+ */
+
+/*
+ * Visible keyboard focus for image buttons: multi-value "remove" buttons
+ * anywhere, plus any custom image submit inside a webform. Image inputs get
+ * inconsistent focus indication from user-agent styles alone.
+ */
+.webform-multiple-table--operations input[type="image"]:is(:focus, :focus-visible),
+form.webform-submission-form input[type="image"]:is(:focus, :focus-visible) {
+  outline: 2px solid var(--focus-outline-color, currentColor);
+  outline-offset: 2px;
+}
+
+/*
+ * Normalize keyboard focus styling across Webform action controls.
+ *
+ * Storybook button styles use an offset focus ring, but generic form-control
+ * focus rules can collapse that ring back onto the button border for Webform
+ * actions like Add, Reset, and Submit. Reassert the shared action-button
+ * treatment here. The :focus selector covers browsers without :focus-visible
+ * support; the :focus:not(:focus-visible) reset keeps mouse clicks ring-free
+ * where :focus-visible is supported. Both input and button elements are
+ * covered: core's preRenderButton() adds .form-submit to every #type button,
+ * submit, and reset alike, and #type button renders as a <button>.
+ */
+form.webform-submission-form :is(input, button).form-submit:is(:focus, :focus-visible) {
+  outline: 2px solid var(--focus-outline-color, currentColor);
+  outline-offset: 2px;
+  border-color: var(--focus-outline-color, currentColor);
+}
+
+form.webform-submission-form :is(input, button).form-submit:focus:not(:focus-visible) {
+  outline: none;
+  border-color: currentColor;
+}
+
+/*
+ * Fixed-size checkbox/radio inputs, scoped to the Webform submission wrapper
+ * so other forms are untouched.
+ *
+ * Covers grouped options (.form-checkboxes/.form-radios) and single on/off
+ * controls (.js-form-type-checkbox/.js-form-type-radio). The min/max-width
+ * pair clamps the size even if another rule overrides `width` alone.
+ */
+form.webform-submission-form input[type="checkbox"].form-checkbox,
+form.webform-submission-form .form-radios input[type="radio"].form-radio,
+form.webform-submission-form .js-form-type-radio input[type="radio"] {
+  width: 1rem;
+  min-width: 1rem;
+  max-width: 1rem;
+  height: 1rem;
+  padding: 0;
+  margin: 0;
+  box-sizing: content-box;
+  flex: 0 0 auto;
+}
+
+/*
+ * Keep radios inline-level so a broad input rule cannot stretch them to full
+ * width.
+ */
+form.webform-submission-form .form-radios input[type="radio"].form-radio,
+form.webform-submission-form .js-form-type-radio input[type="radio"] {
+  display: inline-block;
+}
+
+/*
+ * Pin checkboxes to Storybook's grid centering at this file's higher
+ * specificity, so the custom checkmark stays centered even if a downstream
+ * override disturbs Storybook's own display rule.
+ */
+form.webform-submission-form input[type="checkbox"].form-checkbox {
+  display: grid;
+  place-content: center;
+}
