@@ -16,3 +16,9 @@ services:
   jcc_custom.migration_job_service:
     class: Drupal\jcc_custom\MigrationJobService
     arguments: ['@queue', '@plugin.manager.queue_worker', '@logger.factory']
+  jcc_custom.migration_source_url_modifier_subscriber:
+    class: Drupal\jcc_custom\EventSubscriber\JccMigrationSourceUrlModifier
+    arguments: ['@logger.factory']
+    tags:
+      - { name: event_subscriber }
+

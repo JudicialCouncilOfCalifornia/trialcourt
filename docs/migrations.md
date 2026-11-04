@@ -26,8 +26,6 @@ https://docs.google.com/spreadsheets/d/1zsZ-cEIZGWvmv0dXVTyL8Hh4Y9ld64Gcqy3TuxQA
       - OR `lando drush @[site].[env] mim --all` (ok at the time of writing)
       - **NOTE:** Local environments use `@local.[site]` as the site selector.
 
-
----
 ## Migrating Content
 
 ### Commandline
@@ -216,6 +214,9 @@ How to create additional migration profiles through configuration files for [Mig
          migration_dependencies: null
          ```
          </details>
+
+### Cached Migration Source
+Migration source uploaded to Drupal can encounter outdated copies due to caching, specifically through Pantheon's AGCDN. Add the migration to `JccMigrationSourceUrlModifier.php` event subscriber which dynamically adds a timestamp param to ensure that the latest copy appears. Using a custom migration plugin is another option, but extending on the `url` plugin will prevent the use of the Migrate Source UI if needed.
 
 Documentation:
  - [Migration 101](https://drupalmigrate.org/)

@@ -30,6 +30,10 @@ function jcc_base_preprocess_node(&$variables, $hook) {
 
         foreach ($field as $item) {
           $term = $item->entity;
+          // References can remain after a taxonomy term has been deleted.
+          if ($term === NULL) {
+            continue;
+          }
           $name = $term->getName();
           $term_machine_name = str_replace(' ', '-', strtolower($name));
           $url = '/search?f[0]=' . $field_machine_name . ':' . $term->id();
