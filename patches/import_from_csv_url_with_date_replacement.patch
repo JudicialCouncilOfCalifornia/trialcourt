@@ -1,8 +1,15 @@
-diff --git a/src/Plugin/migrate/source/CSV.php b/src/Plugin/migrate/source/CSV.php
-index 68e53cd..b787b2a 100644
---- a/src/Plugin/migrate/source/CSV.php
-+++ b/src/Plugin/migrate/source/CSV.php
-@@ -111,8 +111,8 @@ class CSV extends SourcePluginBase implements ConfigurableInterface {
+diff -ruN a/src/Plugin/migrate/source/CSV.php b/src/Plugin/migrate/source/CSV.php
+--- a/src/Plugin/migrate/source/CSV.php	2026-11-04 09:23:31
++++ b/src/Plugin/migrate/source/CSV.php	2026-11-04 09:23:46
+@@ -4,6 +4,7 @@
+ 
+ use Drupal\Component\Plugin\ConfigurableInterface;
+ use Drupal\Component\Utility\NestedArray;
++use Drupal\Core\File\FileExists;
+ use Drupal\migrate\Plugin\MigrationInterface;
+ use Drupal\migrate\Plugin\migrate\source\SourcePluginBase;
+ use League\Csv\Reader;
+@@ -118,8 +119,8 @@
      }
  
      // Path is required.
@@ -13,10 +20,10 @@ index 68e53cd..b787b2a 100644
      }
      // IDs are required.
      if (empty($this->configuration['ids']) || !is_array($this->configuration['ids'])) {
-@@ -291,14 +291,52 @@ class CSV extends SourcePluginBase implements ConfigurableInterface {
-    *   The reader.
+@@ -278,11 +279,25 @@
+    * @throws \League\Csv\Exception
     */
-   protected function createReader() {
+   protected function getReader() {
 -    if (!file_exists($this->configuration['path'])) {
 -      throw new \RuntimeException(sprintf('File "%s" was not found.', $this->configuration['path']));
 +    $path = $this->configuration['path'];
@@ -24,7 +31,6 @@ index 68e53cd..b787b2a 100644
 +    if ($url = $this->configuration['url'] ?? NULL) {
 +      $path = $this->downloadFile($url);
      }
--    $csv = fopen($this->configuration['path'], 'r');
 +    elseif ($path_with_date = $this->configuration['path_with_date'] ?? NULL) {
 +      $path = str_replace('DATE', date('Ymd'), $path_with_date);
 +      if (!file_exists($path)) {
@@ -37,14 +43,18 @@ index 68e53cd..b787b2a 100644
 +    if (!file_exists($path)) {
 +      throw new \RuntimeException(sprintf('File "%s" was not found.', $path));
 +    }
-+    $csv = fopen($path, 'r');
-     if (!$csv) {
--      throw new \RuntimeException(sprintf('File "%s" could not be opened.', $this->configuration['path']));
-+      throw new \RuntimeException(sprintf('File "%s" could not be opened.', $path));
-     }
-     return Reader::createFromStream($csv);
-   }
  
+-    $reader = Reader::from($this->configuration['path'], 'r');
++    $reader = Reader::from($path, 'r');
+ 
+     if (!empty($this->configuration['filters'])) {
+       foreach ($this->configuration['filters'] as $filter) {
+@@ -303,6 +318,30 @@
+     $reader->setHeaderOffset($this->configuration['header_offset']);
+ 
+     return $reader;
++  }
++
 +  /**
 +   * Pull in a file from a URL.
 +   *
@@ -62,11 +72,11 @@ index 68e53cd..b787b2a 100644
 +    }
 +    // Save data to temporary dir.
 +    $path = "temporary://" . basename($url);
-+    $file = \Drupal::service('file.repository')->writeData($data, $path, \Drupal\Core\File\FileSystemInterface::EXISTS_REPLACE);
++    $file = \Drupal::service('file.repository')->writeData($data, $path, FileExists::Replace);
 +    if ($file === FALSE) {
 +      throw new \RuntimeException("Unable to save file to '{$path}'.");
 +    }
 +    return $file->getFileUri();
-+  }
-+
+   }
+ 
  }
