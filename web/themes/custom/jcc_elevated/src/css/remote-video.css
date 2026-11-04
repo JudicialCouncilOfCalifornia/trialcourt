@@ -1,4 +1,4 @@
-.remote-video-colorbox-launch-modal {
+.glightbox-media-video {
   display: flex ;
   align-items: center;
   justify-content: center;
@@ -6,7 +6,7 @@
   outline: none;
 }
 
-.remote-video-colorbox-launch-modal:before {
+.glightbox-media-video:before {
   position: absolute;
   content: "\25B6";
   transform: scale(5);
@@ -14,24 +14,35 @@
   opacity: 0.4;
 }
 
-.remote-video-colorbox-launch-modal:hover::before {
+.glightbox-media-video:hover::before {
   transform: scale(6);
 }
 
-.card .remote-video-colorbox-launch-modal img {
+.card .glightbox-media-video img {
   width: 40rem;
   height: auto;
 }
 
-.card .frame:has(.remote-video-colorbox-launch-modal:focus) {
+.card .frame:has(.glightbox-media-video:focus) {
   outline: 2px solid var(--focus-outline-color);
   outline-offset: 2px;
 }
 
-.card--default .frame:has(.remote-video-colorbox-launch-modal:focus) {
+.card--default .frame .glightbox-media-video,
+.card--default .frame .glightbox-media-video img,
+.card--default .frame:has(.glightbox-media-video:focus) {
   border-radius: var(--corner-radius);
 }
 
-.card--default.bg-adjust:has(.remote-video-colorbox-launch-modal:focus) {
+.card--default.bg-adjust:has(.glightbox-media-video:focus) {
   overflow: unset;
+}
+
+/* Text within anchor needs to be visible to the screen reader*/
+.glightbox-desc {
+  display: block !important;
+  position: absolute !important;
+  left: -999em !important;
+  right: auto !important;
+  transform: unset !important;
 }
