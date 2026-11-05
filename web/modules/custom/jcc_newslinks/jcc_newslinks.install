@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @file
+ * Update hooks for JCC NewsLinks.
+ */
+
+use Drupal\Core\Utility\UpdateException;
+
+/**
+ * Remove Newsroom's obsolete index-removal tasks for retired Azure Solr.
+ */
+function jcc_newslinks_update_9001() {
+  // This retirement decision applies only to the Newsroom multisite.
+  if (\Drupal::getContainer()->getParameter('site.path') !== 'sites/newsroom') {
+    return t('Skipped Azure Solr task cleanup outside Newsroom.');
+  }
+
+  $manager = \Drupal::entityTypeManager();
+  $task_storage = $manager->getStorage('search_api_task');
+  $tasks = $task_storage->loadByProperties([
+    'type' => 'removeIndex',
+    'server_id' => 'solr',
+    'index_id' => 'index',
+  ]);
+  if (!$tasks) {
+    return t('No obsolete Newsroom Azure Solr index-removal tasks remain.');
+  }
+
+  $servers = $manager->getStorage('search_api_server');
+  $legacy = $servers->load('solr');
+  $active = $servers->load('pantheon_solr8');
+  $index = $manager->getStorage('search_api_index')->load('index');
+  $connection = $legacy ? $legacy->getBackendConfig() : [];
+  if (!$legacy || $legacy->status()
+    || ($connection['connector_config']['host'] ?? '') !== 'jcc-trialcourt-solr.azurewebsites.net'
+    || !$active || !$active->status()
+    || !$index || !$index->status() || $index->getServerId() !== 'pantheon_solr8') {
+    throw new UpdateException('Newsroom Solr retirement prerequisites do not match. Review the server and index configuration before removing tasks.');
+  }
+  foreach ($manager->getStorage('search_api_index')->loadMultiple() as $candidate) {
+    if ($candidate->getServerId() === 'solr') {
+      throw new UpdateException('A search index still references the Azure Solr server. Its cleanup tasks were preserved.');
+    }
+  }
+
+  // Delete only local task entities. Never execute the queued remote deletion,
+  // remove a server, clear an index, or contact either Solr endpoint here.
+  $count = count($tasks);
+  $task_storage->delete($tasks);
+  return t('Removed @count obsolete Newsroom Azure Solr index-removal task(s).', ['@count' => $count]);
+}
+
+/**
+ * Restore Newsroom's missing unpublished-access response-header default.
+ */
+function jcc_newslinks_update_9002() {
+  if (\Drupal::getContainer()->getParameter('site.path') !== 'sites/newsroom'
+    || !\Drupal::moduleHandler()->moduleExists('access_unpublished')) {
+    return t('Skipped unpublished-access header defaults outside enabled Newsroom.');
+  }
+
+  $config = \Drupal::configFactory()->getEditable('access_unpublished.settings');
+  if ($config->get('modify_http_headers') !== NULL) {
+    return t('Preserved existing unpublished-access response-header settings.');
+  }
+
+  $config->set('modify_http_headers', [])->save();
+  return t('Restored the empty unpublished-access response-header default.');
+}

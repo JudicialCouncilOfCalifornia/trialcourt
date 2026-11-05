@@ -1,0 +1,30 @@
+uuid: d3e0d2a3-8722-4e76-8ff5-f59ebe2ce595
+langcode: en
+status: true
+dependencies:
+  module:
+    - jcc_sanmateo_custom
+title: 'Migrate Cases: Southern Branch'
+id: migrate_cases_southern
+weight: 0
+module: jcc_sanmateo_custom
+callback: jcc_sanmateo_custom_migrate_cases_southern
+scheduler:
+  id: crontab
+  configuration:
+    rules:
+      - '*/15 8-18 * * 1-5'
+    catch_up: 300
+launcher:
+  id: serial
+  configuration:
+    timeouts:
+      lock_timeout: 3600
+    launcher:
+      thread: 0
+logger:
+  id: database
+  configuration:
+    method: '3'
+    expire: 1209600
+    retain: 1000

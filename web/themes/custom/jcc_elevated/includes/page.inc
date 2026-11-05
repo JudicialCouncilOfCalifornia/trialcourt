@@ -12,6 +12,7 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 use Drupal\views\Views;
 
 /**
@@ -214,7 +215,11 @@ function jcc_elevated_get_menu_array(string $menu_name, bool $expanded = FALSE, 
  */
 function jcc_elevated_menu_to_array(array $tree, string $menu_name, bool $add_overview_links = FALSE, bool $expanded = FALSE): array {
   $links = [];
-  $current_relative_url = \Drupal::request()->getRequestUri();
+  $current_node = \Drupal::routeMatch()->getParameter('node');
+  $current_node_alias = NULL;
+  if ($current_node instanceof NodeInterface) {
+    $current_node_alias = \Drupal::service('path_alias.manager')->getAliasByPath('/node/' . $current_node->id());
+  }
 
   foreach ($tree as $element) {
     // Don't include links the user doesn't have access to.
@@ -222,14 +227,9 @@ function jcc_elevated_menu_to_array(array $tree, string $menu_name, bool $add_ov
       continue;
     }
 
+    // Reliable current page check against node alias.
     $menu_item_relative_url = $element->link->getUrlObject()->toString();
-
-    // Reliable current page check.
-    $is_current = $current_relative_url == $menu_item_relative_url;
-    // Always true if viewing elevated sections home page.
-    if (\Drupal::service('module_handler')->moduleExists('jcc_elevated_sections') && \Drupal::service('path.matcher')->isFrontPage()) {
-      $is_current = TRUE;
-    }
+    $is_current = $current_node_alias == $menu_item_relative_url;
 
     // Build the sublinks array.
     $sublinks = [];
