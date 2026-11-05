@@ -2,16 +2,15 @@
   display: flex ;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  outline: none;
 }
 
+/* Play button overlay */
 .glightbox-media-video:before {
   position: absolute;
   content: "\25B6";
   transform: scale(5);
   color: var(--color-white);
-  opacity: 0.4;
+  opacity: 0.5;
 }
 
 .glightbox-media-video:hover::before {
@@ -19,30 +18,17 @@
 }
 
 .card .glightbox-media-video img {
-  width: 40rem;
   height: auto;
 }
 
+/* Clickable card media focus outline adjustment due to component layout */
 .card .frame:has(.glightbox-media-video:focus) {
   outline: 2px solid var(--focus-outline-color);
   outline-offset: 2px;
 }
 
-.card--default .frame .glightbox-media-video,
-.card--default .frame .glightbox-media-video img,
-.card--default .frame:has(.glightbox-media-video:focus) {
-  border-radius: var(--corner-radius);
-}
-
-.card--default.bg-adjust:has(.glightbox-media-video:focus) {
-  overflow: unset;
-}
-
-/* Text within anchor needs to be visible to the screen reader*/
+/* Text within anchor needs to be visible to the screen reader only */
+/* Unsure why module has this hidden by CSS */
 .glightbox-desc {
   display: block !important;
-  position: absolute !important;
-  left: -999em !important;
-  right: auto !important;
-  transform: unset !important;
 }
