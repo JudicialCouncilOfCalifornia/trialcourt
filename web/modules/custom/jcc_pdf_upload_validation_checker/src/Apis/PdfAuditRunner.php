@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\jcc_pdf_upload_validation_checker\PdfAudit;
+namespace Drupal\jcc_pdf_upload_validation_checker\Apis;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\file\FileInterface;
-use Drupal\jcc_pdf_upload_validation_checker\PdfAudit\Api\DefaultPdfAuditApi;
-use Drupal\jcc_pdf_upload_validation_checker\PdfAudit\Api\EqualWebPdfAuditApi;
+use Drupal\jcc_pdf_upload_validation_checker\Apis\Api\DefaultPdfAuditApi;
+use Drupal\jcc_pdf_upload_validation_checker\Apis\Api\EqualWebPdfAuditApi;
 
 /**
  * Dispatches PDF accessibility audits to the configured API backend.
@@ -22,14 +22,14 @@ final class PdfAuditRunner {
   /**
    * Available audit APIs, keyed by PdfAuditApiInterface::getId().
    *
-   * @var \Drupal\jcc_pdf_upload_validation_checker\PdfAudit\PdfAuditApiInterface[]
+   * @var \Drupal\jcc_pdf_upload_validation_checker\Apis\PdfAuditApiInterface[]
    */
   private array $apis = [];
 
   /**
    * Constructs the PdfAuditRunner service.
    *
-   * @param iterable<\Drupal\jcc_pdf_upload_validation_checker\PdfAudit\PdfAuditApiInterface> $apis
+   * @param iterable<\Drupal\jcc_pdf_upload_validation_checker\Apis\PdfAuditApiInterface> $apis
    *   The registered PDF audit API backends.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The configuration factory used to retrieve module settings.

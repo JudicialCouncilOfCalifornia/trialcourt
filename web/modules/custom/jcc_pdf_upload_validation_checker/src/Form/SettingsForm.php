@@ -4,8 +4,9 @@ namespace Drupal\jcc_pdf_upload_validation_checker\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\jcc_pdf_upload_validation_checker\PdfAudit\Api\DefaultPdfAuditApi;
-use Drupal\jcc_pdf_upload_validation_checker\PdfAudit\Api\EqualWebPdfAuditApi;
+use Drupal\jcc_pdf_upload_validation_checker\Apis\Api\DefaultPdfAuditApi;
+use Drupal\jcc_pdf_upload_validation_checker\Apis\Api\EqualWebPdfAuditApi;
+use Drupal\jcc_pdf_upload_validation_checker\Apis\Api\PlanetariaPdfAuditApi;
 use Drupal\user\RoleInterface;
 
 /**
@@ -46,6 +47,7 @@ class SettingsForm extends ConfigFormBase {
       '#options' => [
         DefaultPdfAuditApi::ID => $this->t('PDF audit (default)'),
         EqualWebPdfAuditApi::ID => $this->t('EqualWeb'),
+        PlanetariaPdfAuditApi::ID => $this->t('Planetaria'),
       ],
       '#default_value' => $config->get('pdf_validation_api') ?? DefaultPdfAuditApi::ID,
       '#required' => TRUE,
@@ -66,6 +68,24 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('EqualWeb API key'),
       '#default_value' => $config->get('equal_web_api_key'),
+      '#required' => TRUE,
+    ];
+
+    $form['planetaria_settings'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Planetaria Settings'),
+      '#open' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="pdf_validation_api"]' => ['value' => PlanetariaPdfAuditApi::ID],
+        ],
+      ],
+    ];
+
+    $form['planetaria_settings']['planetaria_api_key'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Planetaria API key'),
+      '#default_value' => $config->get('planetaria_api_key'),
       '#required' => TRUE,
     ];
 
@@ -110,7 +130,7 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $valid_apis = [DefaultPdfAuditApi::ID, EqualWebPdfAuditApi::ID];
+    $valid_apis = [DefaultPdfAuditApi::ID, EqualWebPdfAuditApi::ID, PlanetariaPdfAuditApi::ID];
     if (!in_array($form_state->getValue('pdf_validation_api'), $valid_apis, TRUE)) {
       $form_state->setErrorByName('pdf_validation_api', $this->t('The value is not correct.'));
     }
@@ -136,6 +156,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('enabled', (bool) $form_state->getValue('enabled'))
       ->set('pdf_validation_api', $form_state->getValue('pdf_validation_api'))
       ->set('equal_web_api_key', $form_state->getValue('equal_web_api_key'))
+      ->set('planetaria_api_key', $form_state->getValue('planetaria_api_key'))
       ->set('pdf_validation_bypass', $bypass_enabled)
       ->set('bypass_allowed_roles', $selected_roles)
       ->save();

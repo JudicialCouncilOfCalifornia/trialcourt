@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\jcc_pdf_upload_validation_checker\PdfAudit\Api;
+namespace Drupal\jcc_pdf_upload_validation_checker\Apis\Api;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\file\FileInterface;
-use Drupal\jcc_pdf_upload_validation_checker\PdfAudit\PdfAuditApiInterface;
+use Drupal\jcc_pdf_upload_validation_checker\Apis\PdfAuditApiInterface;
 use GuzzleHttp\ClientInterface;
 
 /**

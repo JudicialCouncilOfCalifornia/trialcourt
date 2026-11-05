@@ -7,7 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\file\FileInterface;
-use Drupal\jcc_pdf_upload_validation_checker\PdfAudit\PdfAuditRunner;
+use Drupal\jcc_pdf_upload_validation_checker\Apis\PdfAuditRunner;
 use Drupal\media\MediaInterface;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -47,7 +47,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
   /**
    * The PDF audit runner.
    *
-   * @var \Drupal\jcc_pdf_upload_validation_checker\PdfAudit\PdfAuditRunner
+   * @var \Drupal\jcc_pdf_upload_validation_checker\Apis\PdfAuditRunner
    */
   private PdfAuditRunner $pdfAuditRunner;
 
@@ -206,7 +206,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
    *   The HTTP client service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory service.
-   * @param \Drupal\jcc_pdf_upload_validation_checker\PdfAudit\PdfAuditRunner $pdfAuditRunner
+   * @param \Drupal\jcc_pdf_upload_validation_checker\Apis\PdfAuditRunner $pdfAuditRunner
    *   The PDF audit runner service.
    */
   public function __construct(

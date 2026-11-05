@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\jcc_pdf_upload_validation_checker\PdfAudit;
+namespace Drupal\jcc_pdf_upload_validation_checker\Apis;
 
 use Drupal\file\FileInterface;
 
