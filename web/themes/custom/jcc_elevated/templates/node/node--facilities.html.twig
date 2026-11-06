@@ -5,6 +5,7 @@
 {{ attach_library("jcc_storybook/Card") }}
 {{ attach_library("jcc_storybook/List") }}
 {{ attach_library("jcc_storybook/Pill") }}
+{{ attach_library('glightbox/glightbox') }}
 
   {#{% block layout %}#}
   {% if imageurl is not empty %}
@@ -106,8 +107,9 @@
 {% for image in projectimages %}  
  {% if image.url %}
     {% set project_image %}   
-    <a href="{{ image.url }}" class="colorbox cboxElement" data-colorbox-gallery="gallery-beforeafter" title="{{ image.alt }}" aria-label="Click to view larger image">
-    <img src="{{ image.url }}" alt="{{ image.alt|escape }}"></a>
+    <a href="{{ image.url }}" class="glightbox" aria-label="Click to view larger image of {{ image.alt }}">
+      <img src="{{ image.url }}" alt="{{ image.alt|escape }}">
+    </a>
     {% endset %}
  {% endif %}
          {% include "@molecules/Card/Card.twig" with {
