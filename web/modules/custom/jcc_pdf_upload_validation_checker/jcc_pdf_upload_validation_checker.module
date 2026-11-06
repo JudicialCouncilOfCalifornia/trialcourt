@@ -305,6 +305,7 @@ function jcc_pdf_upload_validation_checker_entity_presave(EntityInterface $entit
 
   if ($entity->getEntityTypeId() === 'file' && $entity instanceof FileInterface) {
     _jcc_pdf_upload_validation_checker_apply_pending_audit_status_update($entity);
+    _jcc_pdf_upload_validation_checker_apply_pending_audit_summary_update($entity);
     _jcc_pdf_upload_validation_checker_apply_pending_bypass_update($entity);
     _jcc_pdf_upload_validation_checker_handle_same_fid_file_replace($entity);
     _jcc_pdf_upload_validation_checker_handle_file_audit_status_transition($entity);
@@ -1229,7 +1230,7 @@ function jcc_pdf_upload_validation_checker_save_bypass_flag(array &$form, FormSt
 
     if ($has_changes) {
       $new_reason = (int) ($new_reason ?? 0);
-      if (_jcc_pdf_upload_validation_checker_can_save_file_bypass_now($file)) {
+      if (_jcc_pdf_upload_validation_checker_can_save_file_now($file)) {
         $file->save();
 
         _jcc_pdf_upload_validation_checker_log_bypass_event(
@@ -1256,9 +1257,11 @@ function jcc_pdf_upload_validation_checker_save_bypass_flag(array &$form, FormSt
 }
 
 /**
- * Returns TRUE when bypass updates can be saved immediately on file entity.
+ * Returns TRUE when it's safe to save a file entity directly right now
+ * (permanent and already attached—has file usage), vs. needing to defer
+ * the change via tempstore + hook_entity_presave() instead.
  */
-function _jcc_pdf_upload_validation_checker_can_save_file_bypass_now(FileInterface $file): bool {
+function _jcc_pdf_upload_validation_checker_can_save_file_now(FileInterface $file): bool {
   if ($file->isTemporary()) {
     return FALSE;
   }
@@ -1649,6 +1652,46 @@ function _jcc_pdf_upload_validation_checker_apply_pending_audit_status_update(Fi
     $file->set('field_pdf_audit_status', $new_status);
   }
 
+  $tempstore->delete($key);
+}
+
+/**
+ * Stores a pending audit summary text for a file id in private tempstore.
+ *
+ * Used by PdfAuditApiInterface backends (guarded by
+ * _jcc_pdf_upload_validation_checker_can_save_file_now()) so they never call
+ * $file->save() directly on a file that isn't safe to save yet (e.g. a
+ * still-temporary, not-yet-attached upload) — same reason
+ * field_pdf_audit_status updates are deferred this way.
+ */
+function _jcc_pdf_upload_validation_checker_store_pending_audit_summary_update(int $fid, string $summary): void {
+  if ($fid <= 0) {
+    return;
+  }
+
+  \Drupal::service('tempstore.private')
+    ->get('jcc_pdf_upload_validation_checker')
+    ->set('pending_audit_summary_update:' . $fid, ['summary' => $summary]);
+}
+
+/**
+ * Applies and clears any pending audit summary update before file save.
+ */
+function _jcc_pdf_upload_validation_checker_apply_pending_audit_summary_update(FileInterface $file): void {
+  $fid = (int) $file->id();
+  if ($fid <= 0 || !$file->hasField('field_pdf_audit_summary')) {
+    return;
+  }
+
+  $tempstore = \Drupal::service('tempstore.private')->get('jcc_pdf_upload_validation_checker');
+  $key = 'pending_audit_summary_update:' . $fid;
+  $pending = $tempstore->get($key);
+
+  if (!is_array($pending)) {
+    return;
+  }
+
+  $file->set('field_pdf_audit_summary', (string) ($pending['summary'] ?? ''));
   $tempstore->delete($key);
 }
 

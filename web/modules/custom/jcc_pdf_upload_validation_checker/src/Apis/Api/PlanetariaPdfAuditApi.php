@@ -30,7 +30,9 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
 
   public const ID = 'planetaria';
 
-  private const BASE_URL = 'https://pdfchecker.inquiros.io/api/v1';
+  private const PRODUCTION_BASE_URL = 'https://pdfchecker.inquiros.io/api/v1';
+
+  private const STAGING_BASE_URL = 'https://staging.pdfchecker.inquiros.io/api/v1';
 
   /**
    * Constructs the PlanetariaPdfAuditApi service.
@@ -54,6 +56,21 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
    */
   public function getId(): string {
     return self::ID;
+  }
+
+  /**
+   * Returns the API base URL, honoring the staging environment toggle.
+   *
+   * Staging keys (e.g. from https://staging.pdfchecker.inquiros.io) are
+   * rejected by the production API with 401 API_KEY_ENVIRONMENT, so the
+   * configured environment must match the key's own environment.
+   */
+  private function getBaseUrl(): string {
+    $useStaging = (bool) $this->configFactory
+      ->get('jcc_pdf_upload_validation_checker.settings')
+      ->get('planetaria_use_staging');
+
+    return $useStaging ? self::STAGING_BASE_URL : self::PRODUCTION_BASE_URL;
   }
 
   /**
@@ -96,7 +113,7 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
 
       $submitResponse = $this->httpClient->request(
         'POST',
-        self::BASE_URL . '/documents',
+        $this->getBaseUrl() . '/documents',
         [
           'timeout' => 240,
           'connect_timeout' => 10,
@@ -145,7 +162,7 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
         }
 
         $pollResponse = $this->httpClient->get(
-          self::BASE_URL . '/documents/' . rawurlencode($documentId),
+          $this->getBaseUrl() . '/documents/' . rawurlencode($documentId),
           [
             'timeout' => 240,
             'connect_timeout' => 10,
@@ -203,7 +220,7 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
 
       // Step 3: fetch the issue list for a human-readable breakdown.
       $issuesResponse = $this->httpClient->get(
-        self::BASE_URL . '/documents/' . rawurlencode($documentId),
+        $this->getBaseUrl() . '/documents/' . rawurlencode($documentId),
         [
           'timeout' => 240,
           'connect_timeout' => 10,
@@ -362,7 +379,18 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
       }
 
       $file->set('field_pdf_audit_summary', $text);
-      $file->save();
+
+      // A still-temporary, not-yet-attached file (e.g. the user clicked
+      // "Start the PDF compliance check" before saving the media entity)
+      // can't be saved directly here without racing the save that attaches
+      // it later in the same request; defer via the same tempstore +
+      // hook_entity_presave() pattern used for field_pdf_audit_status.
+      if (_jcc_pdf_upload_validation_checker_can_save_file_now($file)) {
+        $file->save();
+      }
+      else {
+        _jcc_pdf_upload_validation_checker_store_pending_audit_summary_update((int) $file->id(), $text);
+      }
     }
     catch (\Throwable $e) {
       \Drupal::logger('jcc_pdf_upload_validation_checker')->error(

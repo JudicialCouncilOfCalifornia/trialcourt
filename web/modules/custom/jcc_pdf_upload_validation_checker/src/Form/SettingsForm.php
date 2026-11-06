@@ -68,7 +68,6 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('EqualWeb API key'),
       '#default_value' => $config->get('equal_web_api_key'),
-      '#required' => TRUE,
     ];
 
     $form['planetaria_settings'] = [
@@ -86,7 +85,13 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Planetaria API key'),
       '#default_value' => $config->get('planetaria_api_key'),
-      '#required' => TRUE,
+    ];
+
+    $form['planetaria_settings']['planetaria_use_staging'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Use Planetaria staging environment'),
+      '#default_value' => $config->get('planetaria_use_staging') ?? FALSE,
+      '#description' => $this->t('Enable only when the API key above was generated from the Planetaria/Inquiros staging dashboard (staging.pdfchecker.inquiros.io). Staging keys are rejected by the production API with a 401 API_KEY_ENVIRONMENT error.'),
     ];
 
     $form['pdf_validation_bypass'] = [
@@ -131,8 +136,18 @@ class SettingsForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $valid_apis = [DefaultPdfAuditApi::ID, EqualWebPdfAuditApi::ID, PlanetariaPdfAuditApi::ID];
-    if (!in_array($form_state->getValue('pdf_validation_api'), $valid_apis, TRUE)) {
+    $selected_api = $form_state->getValue('pdf_validation_api');
+    if (!in_array($selected_api, $valid_apis, TRUE)) {
       $form_state->setErrorByName('pdf_validation_api', $this->t('The value is not correct.'));
+    }
+
+    // Only the key for the currently selected API is required — the other
+    // key field is hidden via #states, so it can't be made #required.
+    if ($selected_api === EqualWebPdfAuditApi::ID && trim((string) $form_state->getValue('equal_web_api_key')) === '') {
+      $form_state->setErrorByName('equal_web_api_key', $this->t('EqualWeb API key is required.'));
+    }
+    if ($selected_api === PlanetariaPdfAuditApi::ID && trim((string) $form_state->getValue('planetaria_api_key')) === '') {
+      $form_state->setErrorByName('planetaria_api_key', $this->t('Planetaria API key is required.'));
     }
 
     if ((bool) $form_state->getValue('pdf_validation_bypass')) {
@@ -157,6 +172,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('pdf_validation_api', $form_state->getValue('pdf_validation_api'))
       ->set('equal_web_api_key', $form_state->getValue('equal_web_api_key'))
       ->set('planetaria_api_key', $form_state->getValue('planetaria_api_key'))
+      ->set('planetaria_use_staging', (bool) $form_state->getValue('planetaria_use_staging'))
       ->set('pdf_validation_bypass', $bypass_enabled)
       ->set('bypass_allowed_roles', $selected_roles)
       ->save();

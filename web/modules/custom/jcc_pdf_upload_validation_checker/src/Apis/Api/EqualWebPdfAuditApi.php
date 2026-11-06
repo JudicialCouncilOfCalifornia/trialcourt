@@ -584,7 +584,18 @@ final class EqualWebPdfAuditApi implements PdfAuditApiInterface {
       }
 
       $file->set('field_pdf_audit_summary', $text);
-      $file->save();
+
+      // A still-temporary, not-yet-attached file (e.g. the user clicked
+      // "Start the PDF compliance check" before saving the media entity)
+      // can't be saved directly here without racing the save that attaches
+      // it later in the same request; defer via the same tempstore +
+      // hook_entity_presave() pattern used for field_pdf_audit_status.
+      if (_jcc_pdf_upload_validation_checker_can_save_file_now($file)) {
+        $file->save();
+      }
+      else {
+        _jcc_pdf_upload_validation_checker_store_pending_audit_summary_update((int) $file->id(), $text);
+      }
     }
     catch (\Throwable $e) {
       \Drupal::logger('jcc_pdf_upload_validation_checker')->error(

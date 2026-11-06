@@ -177,8 +177,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
     }
 
     try {
-      $file->set('field_pdf_audit_summary', $summary);
-      $file->save();
+      $this->saveSummary($file, $summary);
     }
     catch (\Throwable $e) {
       \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
@@ -189,6 +188,71 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
         ]
       );
     }
+  }
+
+  /**
+   * Sets field_pdf_audit_status and persists it, deferring the save when the
+   * file isn't safe to save directly yet (e.g. still temporary/unattached,
+   * which can happen if automated cron runs before the file is attached).
+   * Never lets a save failure propagate — falls back to the deferred update.
+   *
+   * @param \Drupal\file\FileInterface $file
+   *   The file entity to update.
+   * @param string $status
+   *   The new field_pdf_audit_status value.
+   */
+  private function saveFileStatus(FileInterface $file, string $status): void {
+    $file->set('field_pdf_audit_status', $status);
+
+    try {
+      if (_jcc_pdf_upload_validation_checker_can_save_file_now($file)) {
+        $file->save();
+        return;
+      }
+    }
+    catch (\Throwable $e) {
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+        'Direct save of field_pdf_audit_status failed for fid=@fid, deferring instead: @message',
+        [
+          '@fid' => $file->id(),
+          '@message' => $e->getMessage(),
+        ]
+      );
+    }
+
+    _jcc_pdf_upload_validation_checker_store_pending_audit_status_update((int) $file->id(), $status);
+  }
+
+  /**
+   * Sets field_pdf_audit_summary and persists it, deferring the save when
+   * the file isn't safe to save directly yet (see saveFileStatus()). Never
+   * lets a save failure propagate — falls back to the deferred update.
+   *
+   * @param \Drupal\file\FileInterface $file
+   *   The file entity to update.
+   * @param string $summary
+   *   The new field_pdf_audit_summary value.
+   */
+  private function saveSummary(FileInterface $file, string $summary): void {
+    $file->set('field_pdf_audit_summary', $summary);
+
+    try {
+      if (_jcc_pdf_upload_validation_checker_can_save_file_now($file)) {
+        $file->save();
+        return;
+      }
+    }
+    catch (\Throwable $e) {
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+        'Direct save of field_pdf_audit_summary failed for fid=@fid, deferring instead: @message',
+        [
+          '@fid' => $file->id(),
+          '@message' => $e->getMessage(),
+        ]
+      );
+    }
+
+    _jcc_pdf_upload_validation_checker_store_pending_audit_summary_update((int) $file->id(), $summary);
   }
 
   /**
@@ -284,8 +348,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
     // Move from unknown to pending only when cron actually starts processing.
     $current_status = (string) $file->get('field_pdf_audit_status')->value;
     if ($current_status !== 'pending') {
-      $file->set('field_pdf_audit_status', 'pending');
-      $file->save();
+      $this->saveFileStatus($file, 'pending');
     }
 
     try {
@@ -295,8 +358,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
     catch (\Throwable $e) {
       $message = 'PDF audit aborted due to a runtime/dependency error. ' . $e->getMessage();
 
-      $file->set('field_pdf_audit_status', 'fail');
-      $file->save();
+      $this->saveFileStatus($file, 'fail');
       $this->storeFailureSummary($file, $message);
 
       \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
@@ -310,8 +372,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
     }
 
     if (empty($result['passed'])) {
-      $file->set('field_pdf_audit_status', 'fail');
-      $file->save();
+      $this->saveFileStatus($file, 'fail');
 
       \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
         'PDF fid=@fid failed validation',
@@ -320,8 +381,7 @@ final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFact
       return;
     }
 
-    $file->set('field_pdf_audit_status', 'pass');
-    $file->save();
+    $this->saveFileStatus($file, 'pass');
 
     \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
       'PDF fid=@fid passed validation',
