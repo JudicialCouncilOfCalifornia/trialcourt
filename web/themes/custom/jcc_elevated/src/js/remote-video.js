@@ -83,10 +83,6 @@
     if (event.key !== ' ' || event.defaultPrevented) {
       return;
     }
-    // Ensure space key doesn't interfere with other interactive elements.
-    if (event.target.closest && event.target.closest('button, a, input, textarea, select, [contenteditable]')) {
-      return;
-    }
     // Toggle the current video's play state.
     var playButton = document.querySelector(
       '.gslide.current .gvideo.youtube-video [data-plyr="play"], .gslide.current .gvideo.vimeo-video [data-plyr="play"]'
@@ -103,7 +99,7 @@
       if (!observing) {
         observing = true;
 
-        // Space key triggers video play/pause.
+        // Space key triggers only video play/pause.
         document.addEventListener('keydown', spaceKeyPlayToggle);
 
         // Remember the last GLightbox trigger element to return focus to it when modal closes.
