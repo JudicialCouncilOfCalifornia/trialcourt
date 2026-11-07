@@ -1,37 +1,36 @@
-.remote-video-colorbox-launch-modal {
+.glightbox-media-video {
   display: flex ;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  outline: none;
 }
 
-.remote-video-colorbox-launch-modal:before {
+/* Play button overlay */
+.glightbox-media-video:before {
   position: absolute;
   content: "\25B6";
   transform: scale(5);
   color: var(--color-white);
-  opacity: 0.4;
+  opacity: 0.5;
 }
 
-.remote-video-colorbox-launch-modal:hover::before {
+.glightbox-media-video:hover::before {
   transform: scale(6);
 }
 
-.card .remote-video-colorbox-launch-modal img {
-  width: 40rem;
+.card .glightbox-media-video img {
   height: auto;
 }
 
-.card .frame:has(.remote-video-colorbox-launch-modal:focus) {
-  outline: 2px solid var(--focus-outline-color);
-  outline-offset: 2px;
+/* Text within anchor needs to be visible to the screen readers. */
+/* Unsure why module has this hidden by CSS. */
+/* Relevant to glightbox remote video formatter template only which has sr-only class applied to same element. */
+.glightbox-desc {
+  display: block !important;
 }
 
-.card--default .frame:has(.remote-video-colorbox-launch-modal:focus) {
-  border-radius: var(--corner-radius);
-}
-
-.card--default.bg-adjust:has(.remote-video-colorbox-launch-modal:focus) {
-  overflow: unset;
+/* Hide gallery elements workaround since settings curently do nothing */
+.glightbox-container .gnext,
+.glightbox-container .gprev,
+.glightbox-container .gcounter {
+  display: none !important;
 }
