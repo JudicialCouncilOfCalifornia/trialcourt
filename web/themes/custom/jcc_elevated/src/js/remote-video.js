@@ -6,10 +6,10 @@
 **/
 
 (function (Drupal) {
-  var playerSelector = '.gvideo.youtube-video .plyr, .gvideo.vimeo-video .plyr';
-  var arrowKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
-  var observing = false;
-  var lastTrigger = null;
+  let playerSelector = '.gvideo.youtube-video .plyr, .gvideo.vimeo-video .plyr';
+  let arrowKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+  let observing = false;
+  let lastTrigger = null;
 
   // Binds keyboard support and accessibility features to a single video player container.
   function bindPlayer(container) {
@@ -27,19 +27,19 @@
     }
 
     // Handle keyboard events for the video container.
-    var hideTimer;
-    var holdPrevHover = false;
+    let hideTimer;
+    let holdPrevHover = false;
     container.addEventListener('keydown', function (event) {
       // Ensuring tab and arrow keys pertain to the Plyr controls.
       // Gallery support for videos not available at this time.
-      var isSeekKey = arrowKeys.indexOf(event.key) !== -1;
+      let isSeekKey = arrowKeys.indexOf(event.key) !== -1;
       if (isSeekKey || event.key === 'Tab') {
         event.stopPropagation();
       }
       // Plyr only shows controls on mouse/touch, so reveal them for keyboard users.
       container.classList.remove('plyr--hide-controls');
       // Plyr skips hiding while controls.hover is true, so hold that flag during the seek.
-      var controls = container.querySelector('.plyr__controls');
+      let controls = container.querySelector('.plyr__controls');
       if (controls && !hideTimer) {
         holdPrevHover = controls.hover;
         controls.hover = true;
@@ -72,10 +72,47 @@
   // Sets focus on the current video player within the active GLightbox slide.
   // Matches GLightbox's autofocusVideos behavior, which only runs when autoplay is on.
   function focusCurrentPlayer() {
-    var player = document.querySelector('.gslide.current ' + playerSelector);
+    let player = document.querySelector('.gslide.current ' + playerSelector);
     if (player && !player.contains(document.activeElement)) {
       player.focus({ preventScroll: true });
     }
+  }
+
+  // Limits tab context to Plyr controls and the GLightbox close button.
+  // Prevents confusion with remote video's native UI until integration improvements.
+  function trapTab(event) {
+    if (event.key !== 'Tab') {
+      return;
+    }
+    let player = document.querySelector('.gslide.current ' + playerSelector);
+    let close = document.querySelector('.glightbox-container .gclose');
+    if (!player || !(player.contains(document.activeElement) || document.activeElement === close)) {
+      return;
+    }
+    let visible = function (el) {
+      return !el.disabled && el.getClientRects().length > 0;
+    };
+    let items = Array.prototype.filter.call(
+      player.querySelectorAll('.plyr__controls button, .plyr__controls input'),
+      visible
+    );
+    if (close && visible(close)) {
+      items.push(close);
+    }
+    if (!items.length) {
+      event.preventDefault();
+      return;
+    }
+    let index = items.indexOf(document.activeElement);
+    let last = items.length - 1;
+    let next;
+    if (event.shiftKey) {
+      next = index <= 0 ? last : index - 1;
+    } else {
+      next = index === -1 || index === last ? 0 : index + 1;
+    }
+    event.preventDefault();
+    items[next].focus();
   }
 
   // Binds space key to video play/pause.
@@ -83,7 +120,7 @@
     if (event.key !== ' ' || event.defaultPrevented) {
       return;
     }
-    var playButton = document.querySelector(
+    let playButton = document.querySelector(
       '.gslide.current .gvideo.youtube-video [data-plyr="play"], .gslide.current .gvideo.vimeo-video [data-plyr="play"]'
     );
     if (playButton) {
@@ -101,11 +138,14 @@
         // Space key triggers only video play/pause.
         document.addEventListener('keydown', spaceKeyPlayToggle);
 
+        // Tab key context.
+        document.addEventListener('keydown', trapTab, true);
+
         // Remember the last GLightbox trigger element to return focus to it when modal closes.
         document.addEventListener(
           'click',
           function (event) {
-            var trigger = event.target.closest && event.target.closest('.glightbox');
+            let trigger = event.target.closest && event.target.closest('.glightbox');
             if (trigger) {
               lastTrigger = trigger;
             }
@@ -135,7 +175,7 @@
         // Ensure the current video player receives focus when a GLightbox slide becomes active.
         new MutationObserver(function (mutations) {
           mutations.forEach(function (mutation) {
-            var target = mutation.target;
+            let target = mutation.target;
             if (target.matches && target.matches('.gslide.current')) {
               focusCurrentPlayer();
             }
