@@ -107,18 +107,6 @@
         }
       });
 
-      // Lightweight a11y labeling for remote video Colorbox launchers.
-      $('div[data-remote-video-colorbox-modal]', context).each(function() {
-        var $launcher = $(this);
-        var $img = $launcher.find('img').first();
-
-        $launcher.attr('aria-label', 'Launch video modal');
-
-        if ($img.length) {
-          $img.attr('alt', 'Launch video modal');
-        }
-      });
-
       if (!window.jccRemoteVideoColorboxFocusBound) {
         window.jccRemoteVideoColorboxFocusBound = true;
 

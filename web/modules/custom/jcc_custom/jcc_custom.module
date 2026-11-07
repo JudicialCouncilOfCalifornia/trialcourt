@@ -1583,3 +1583,71 @@ function jcc_custom_get_service_category_tid($name) {
 
   return !empty($tids) ? (int) reset($tids) : NULL;
 }
+
+/**
+ * Implements hook_preprocess_field().
+ *
+ * Dispatches per-field preprocessing. Add a case per field that needs it.
+ */
+function jcc_custom_preprocess_field(&$variables) {
+  switch ($variables['field_name']) {
+    case 'field_media_oembed_video':
+      _jcc_custom_preprocess_remote_video_launchers($variables);
+      break;
+  }
+}
+
+/**
+ * ADA-878: Unique accessible names for remote video launchers.
+ *
+ * Launchers rendered by the colorbox module's remote_video_colorbox formatter all shared 
+ * the identical accessible name "Launch video modal". Build the name server-side from the
+ * media's own data instead: "Play video: <video title>" (the media label, per the ticket),
+ * with the thumbnail alt as an editor-provided override when present. Expose the launcher
+ * as a button and render the thumbnail decorative, per the audit recommendation.
+ */
+function _jcc_custom_preprocess_remote_video_launchers(array &$variables) {
+  // Only the colorbox launcher rendering of this field: the same field is
+  // rendered by the plain oEmbed formatter in other view modes (the iframe
+  // inside the modal), where these attributes would be wrong.
+  if (($variables['element']['#formatter'] ?? '') !== 'remote_video_colorbox') {
+    return;
+  }
+
+  $media = $variables['element']['#object'] ?? NULL;
+  $title = '';
+  if ($media instanceof \Drupal\media\MediaInterface) {
+    // The video title, per the ticket recommendation.
+    $title = trim((string) $media->label());
+    // An editor-provided thumbnail alt overrides the title when present
+    // (the oEmbed auto-thumbnail alt is empty in practice).
+    if ($media->hasField('thumbnail') && !$media->get('thumbnail')->isEmpty()) {
+      $alt = trim((string) $media->get('thumbnail')->alt);
+      if ($alt !== '' && $alt !== 'Launch video modal') {
+        $title = $alt;
+      }
+    }
+  }
+
+  foreach ($variables['items'] as &$item) {
+    $content = &$item['content'];
+    $content['#attributes']['role'] = 'button';
+    $content['#attributes']['aria-label'] = $title !== ''
+      ? t('Play video: @title', ['@title' => $title])
+      : t('Launch video modal');
+
+    // Thumbnail is decorative: blank its alt on a clone of the field item
+    // so the loaded media entity itself is not modified.
+    if (!empty($content['children']) && is_array($content['children'])) {
+      foreach ($content['children'] as &$child) {
+        if (is_array($child) && ($child['#theme'] ?? '') === 'image_formatter' && isset($child['#item'])) {
+          $thumb = clone $child['#item'];
+          $thumb->set('alt', '');
+          $child['#item'] = $thumb;
+        }
+      }
+      unset($child);
+    }
+  }
+  unset($item);
+}
