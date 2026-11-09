@@ -107,3 +107,9 @@ form label.form-required{
 .webform-progress-tracker .progress-step:not(.is-active):not(.is-complete) .progress-text {
   color: #5c5c5c;
 }
+
+/* ADA-996: Match unfinished step markers and lines to the label gray. */
+.webform-progress-tracker .progress-step:not(.is-active):not(.is-complete) .progress-marker::before,
+.webform-progress-tracker .progress-step:not(.is-complete) .progress-marker::after {
+  background-color: #5c5c5c;
+}
