@@ -1,31 +1,31 @@
 (function (Drupal, once) {
-  function announce(message, priority) {
-    if (!message) {
-      return;
-    }
-
-    const level = priority === 'assertive' ? 'assertive' : 'polite';
-    const id = 'jcc-announce-' + level;
-    let region = document.getElementById(id);
-
-    if (!region) {
-      region = document.createElement('div');
-      region.id = id;
-      region.className = 'visually-hidden';
-      region.setAttribute('aria-live', level);
-      region.setAttribute('aria-atomic', 'true');
-      (document.body || document.documentElement).appendChild(region);
-    }
-
-    // Clear and repopulate only the message text to avoid duplicate announcements.
-    region.textContent = '';
-    window.setTimeout(function () {
-      region.textContent = message;
-    }, 50);
-  }
-
   Drupal.behaviors.viewAjaxCustomizations = {
     attach: function (context, settings) {
+      function announce(message, priority) {
+        if (!message) {
+          return;
+        }
+
+        const level = priority === 'assertive' ? 'assertive' : 'polite';
+        const id = 'jcc-announce-' + level;
+        let region = document.getElementById(id);
+
+        if (!region) {
+          region = document.createElement('div');
+          region.id = id;
+          region.className = 'visually-hidden';
+          region.setAttribute('aria-live', level);
+          region.setAttribute('aria-atomic', 'true');
+          (document.body || document.documentElement).appendChild(region);
+        }
+
+        // Clear and repopulate only the message text to avoid duplicate announcements.
+        region.textContent = '';
+        window.setTimeout(function () {
+          region.textContent = message;
+        }, 50);
+      }
+
       // Listen for event triggered by Views AJAX.
       // Anonymous user support only.
       if (context !== document) {
@@ -46,18 +46,6 @@
         }
         announce(message, 'assertive');
       }
-    }
-  };
-
-  // Announce the search results summary via aria-live once per page load
-  // (and again if the view is replaced via AJAX). A summary rendered
-  // directly inside a live region isn't announced by screen readers since
-  // it is present on first paint rather than added after the fact.
-  Drupal.behaviors.searchResultsAnnounce = {
-    attach: function (context, settings) {
-      once('search-results-announce', '[data-search-results-announce]', context).forEach(function (element) {
-        announce(element.textContent.trim(), 'polite');
-      });
     }
   };
 })(Drupal, once);

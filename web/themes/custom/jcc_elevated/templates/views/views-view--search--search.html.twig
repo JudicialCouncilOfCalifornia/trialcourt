@@ -38,7 +38,6 @@
 {{ attach_library("jcc_storybook/ResultExcerpt") }}
 {{ attach_library("jcc_storybook/Card") }}
 {{ attach_library("jcc_storybook/Icon") }}
-{{ attach_library("jcc_elevated/view-ajax-customizations") }}
 
 {%
   set classes = [
@@ -62,20 +61,7 @@
   {% endset %}
 {% endif %}
 
-{% set results_announcement %}
-  {% if rows %}
-    {% if searched_term %}{{ 'Search results for'|t }} "{{ searched_term }}". {% endif %}{{ count_summary|striptags|trim }}
-  {% else %}
-    {{ no_results_heading }}
-  {% endif %}
-{% endset %}
-
 <div{{ attributes.addClass(classes) }}>
-  {# Read once by src/js/view-ajax-customizations.js and relayed through a
-     JS-managed aria-live region, since a region rendered live on first
-     paint is not announced by screen readers. #}
-  <div class="visually-hidden" data-search-results-announce>{{ results_announcement|trim }}</div>
-
   {% include "@molecules/HeroHangover/HeroHangover.twig" with {
     heading: page_heading,
     background: 'base-dark-x',
