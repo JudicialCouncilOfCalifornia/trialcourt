@@ -61,7 +61,7 @@ source:
       name: case_name
       label: 'Case_Name'
 process:
-  case_name:
+  field_case_name:
     -
       plugin: skip_on_empty
       source: case_name
@@ -97,7 +97,7 @@ process:
       plugin: concat
       source:
         - '@field_party_name'
-        - '@case_name'
+        - '@field_case_name'
       delimiter: ' / '
   field_party_type:
     -
