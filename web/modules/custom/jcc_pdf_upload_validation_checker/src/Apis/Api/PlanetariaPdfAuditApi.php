@@ -388,10 +388,8 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
     try {
       $text = $summary ?: 'Planetaria validation failed.';
 
-      if ($reportId !== '') {
-        $text .= "\n\nView validation results on Planetaria: " . $this->buildReportUrl($reportId);
-      }
-
+      // The "View full report" link is already rendered separately from
+      // report_url; avoid duplicating it inline in the summary text.
       if (!empty($errors)) {
         $text .= "\n\nIssues:\n- " . implode("\n- ", $errors);
       }
