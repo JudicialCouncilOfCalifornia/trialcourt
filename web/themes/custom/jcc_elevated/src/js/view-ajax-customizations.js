@@ -1,5 +1,5 @@
 (function (Drupal, once) {
-  function announce(message, priority) {
+  function announce(message, priority, delay) {
     if (!message) {
       return;
     }
@@ -21,7 +21,7 @@
     region.textContent = '';
     window.setTimeout(function () {
       region.textContent = message;
-    }, 50);
+    }, delay || 50);
   }
 
   Drupal.behaviors.viewAjaxCustomizations = {
@@ -49,14 +49,20 @@
     }
   };
 
-  // Announce the search results summary via aria-live once per page load
-  // (and again if the view is replaced via AJAX). A summary rendered
-  // directly inside a live region isn't announced by screen readers since
-  // it is present on first paint rather than added after the fact.
+  // Move focus to the results heading, then announce the results summary
+  // via aria-live, once per page load (and again if the view is replaced
+  // via AJAX). Screen readers only read the document title on a normal
+  // page load, so without this the results go unannounced until the user
+  // manually navigates down to them.
   Drupal.behaviors.searchResultsAnnounce = {
     attach: function (context, settings) {
+      once('search-results-focus', '[data-search-results-heading]', context).forEach(function (heading) {
+        heading.focus();
+      });
+
+      // Delayed so it doesn't talk over the heading announced by the focus move above.
       once('search-results-announce', '[data-search-results-announce]', context).forEach(function (element) {
-        announce(element.textContent.trim(), 'polite');
+        announce(element.textContent.trim(), 'polite', 600);
       });
     }
   };
