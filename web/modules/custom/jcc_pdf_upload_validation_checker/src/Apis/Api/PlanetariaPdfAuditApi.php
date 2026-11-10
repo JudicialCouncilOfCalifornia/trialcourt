@@ -388,8 +388,14 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
     try {
       $text = $summary ?: 'Planetaria validation failed.';
 
-      // The "View full report" link is already rendered separately from
-      // report_url; avoid duplicating it inline in the summary text.
+      // DetailsModalController extracts the first URL in this text to build
+      // its own "View full report" link, then strips a line that reads
+      // exactly "View full report:" \u2014 the wording here must match that
+      // literally or the link building/cleanup both silently no-op.
+      if ($reportId !== '') {
+        $text .= "\n\nView full report: " . $this->buildReportUrl($reportId);
+      }
+
       if (!empty($errors)) {
         $text .= "\n\nIssues:\n- " . implode("\n- ", $errors);
       }
