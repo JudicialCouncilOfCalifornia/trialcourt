@@ -1,0 +1,400 @@
+<?php
+
+namespace Drupal\jcc_pdf_upload_validation_checker\Plugin\QueueWorker;
+
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\file\FileInterface;
+use Drupal\jcc_pdf_upload_validation_checker\Apis\PdfAuditRunner;
+use Drupal\media\MediaInterface;
+use GuzzleHttp\ClientInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Processes PDF validation jobs.
+ *
+ * @QueueWorker(
+ *   id = "jcc_pdf_upload_validation_checker_pdf_audit",
+ *   title = @Translation("JCC PDF audit"),
+ *   cron = {"time" = 120}
+ * )
+ */
+final class PdfAuditQueueWorker extends QueueWorkerBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  private EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * The HTTP client.
+   *
+   * @var \GuzzleHttp\ClientInterface
+   */
+  private ClientInterface $httpClient;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  private ConfigFactoryInterface $configFactory;
+
+  /**
+   * The PDF audit runner.
+   *
+   * @var \Drupal\jcc_pdf_upload_validation_checker\Apis\PdfAuditRunner
+   */
+  private PdfAuditRunner $pdfAuditRunner;
+
+  /**
+   * Finds medias that reference a given file ID in any known file field.
+   *
+   * @param int $fid
+   *   The file entity ID.
+   *
+   * @return \Drupal\media\MediaInterface[]
+   *   An array of loaded media entities.
+   */
+  private function loadMediaReferencingFile(int $fid): array {
+    $query = $this->entityTypeManager->getStorage('media')->getQuery()
+      ->accessCheck(FALSE);
+
+    $or = $query->orConditionGroup();
+    foreach (_jcc_pdf_upload_validation_checker_file_fields() as $field_name) {
+      $or->condition($field_name, $fid);
+    }
+
+    $mids = $query->condition($or)->execute();
+    if (empty($mids)) {
+      return [];
+    }
+
+    /** @var \Drupal\media\MediaInterface[] $media */
+    $media = $this->entityTypeManager->getStorage('media')->loadMultiple($mids);
+    return array_values(array_filter($media, static function ($media_item) {
+      return $media_item instanceof MediaInterface;
+    }));
+  }
+
+  /**
+   * Returns TRUE if any file referenced by the media has audit status "fail".
+   *
+   * @param \Drupal\media\MediaInterface $media
+   *   The media entity to check.
+   *
+   * @return bool
+   *   TRUE if any referenced file failed audit, otherwise FALSE.
+   */
+  private function mediaHasAnyFailedFile(MediaInterface $media): bool {
+    foreach (_jcc_pdf_upload_validation_checker_file_fields() as $field_name) {
+      if (!$media->hasField($field_name) || $media->get($field_name)->isEmpty()) {
+        continue;
+      }
+
+      foreach ($media->get($field_name) as $item) {
+        $file = $item->entity;
+        if (!$file instanceof FileInterface) {
+          continue;
+        }
+
+        if ($file->getMimeType() !== 'application/pdf') {
+          continue;
+        }
+
+        if ($file->hasField('field_pdf_audit_status')) {
+          $status = (string) $file->get('field_pdf_audit_status')->value;
+          if ($status === 'fail') {
+            return TRUE;
+          }
+        }
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Publishes a media entity if it is not already published.
+   *
+   * @param \Drupal\media\MediaInterface $media
+   *   The media entity.
+   */
+  private function publishMediaIfNeeded(MediaInterface $media): void {
+    $storage = \Drupal::entityTypeManager()->getStorage('media');
+    $media = $storage->load($media->id());
+
+    if (!$media) {
+      return;
+    }
+
+    $is_published = method_exists($media, 'isPublished')
+      ? (bool) $media->isPublished()
+      : ((int) $media->get('status')->value === 1);
+
+    if ($is_published) {
+      return;
+    }
+
+    if (method_exists($media, 'setPublished')) {
+      $media->setPublished(TRUE);
+    }
+    else {
+      $media->set('status', 1);
+    }
+
+    if ($media->hasField('moderation_state')) {
+      $media->set('moderation_state', 'published');
+    }
+
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+      'Saving media @mid with status=@status moderation_state=@state',
+      [
+        '@mid' => $media->id(),
+        '@status' => $media->hasField('status') ? $media->get('status')->value : 'none',
+        '@state' => $media->hasField('moderation_state') ? $media->get('moderation_state')->value : 'none',
+      ]
+    );
+
+    $media->save();
+  }
+
+  /**
+   * Stores a readable failure summary on the file when possible.
+   *
+   * @param \Drupal\file\FileInterface $file
+   *   The file entity being audited.
+   * @param string $summary
+   *   The summary text to persist.
+   */
+  private function storeFailureSummary(FileInterface $file, string $summary): void {
+    if (!$file->hasField('field_pdf_audit_summary')) {
+      return;
+    }
+
+    try {
+      $this->saveSummary($file, $summary);
+    }
+    catch (\Throwable $e) {
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+        'Unable to write queue failure summary for file @fid: @message',
+        [
+          '@fid' => $file->id(),
+          '@message' => $e->getMessage(),
+        ]
+      );
+    }
+  }
+
+  /**
+   * Sets field_pdf_audit_status and persists it, deferring the save when the
+   * file isn't safe to save directly yet (e.g. still temporary/unattached,
+   * which can happen if automated cron runs before the file is attached).
+   * Never lets a save failure propagate — falls back to the deferred update.
+   *
+   * @param \Drupal\file\FileInterface $file
+   *   The file entity to update.
+   * @param string $status
+   *   The new field_pdf_audit_status value.
+   */
+  private function saveFileStatus(FileInterface $file, string $status): void {
+    $file->set('field_pdf_audit_status', $status);
+
+    try {
+      if (_jcc_pdf_upload_validation_checker_can_save_file_now($file)) {
+        $file->save();
+        return;
+      }
+    }
+    catch (\Throwable $e) {
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+        'Direct save of field_pdf_audit_status failed for fid=@fid, deferring instead: @message',
+        [
+          '@fid' => $file->id(),
+          '@message' => $e->getMessage(),
+        ]
+      );
+    }
+
+    _jcc_pdf_upload_validation_checker_store_pending_audit_status_update((int) $file->id(), $status);
+  }
+
+  /**
+   * Sets field_pdf_audit_summary and persists it, deferring the save when
+   * the file isn't safe to save directly yet (see saveFileStatus()). Never
+   * lets a save failure propagate — falls back to the deferred update.
+   *
+   * @param \Drupal\file\FileInterface $file
+   *   The file entity to update.
+   * @param string $summary
+   *   The new field_pdf_audit_summary value.
+   */
+  private function saveSummary(FileInterface $file, string $summary): void {
+    $file->set('field_pdf_audit_summary', $summary);
+
+    try {
+      if (_jcc_pdf_upload_validation_checker_can_save_file_now($file)) {
+        $file->save();
+        return;
+      }
+    }
+    catch (\Throwable $e) {
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+        'Direct save of field_pdf_audit_summary failed for fid=@fid, deferring instead: @message',
+        [
+          '@fid' => $file->id(),
+          '@message' => $e->getMessage(),
+        ]
+      );
+    }
+
+    _jcc_pdf_upload_validation_checker_store_pending_audit_summary_update((int) $file->id(), $summary);
+  }
+
+  /**
+   * Constructs a new PdfAuditQueueWorker instance.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager service.
+   * @param \GuzzleHttp\ClientInterface $httpClient
+   *   The HTTP client service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory service.
+   * @param \Drupal\jcc_pdf_upload_validation_checker\Apis\PdfAuditRunner $pdfAuditRunner
+   *   The PDF audit runner service.
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    EntityTypeManagerInterface $entityTypeManager,
+    ClientInterface $httpClient,
+    ConfigFactoryInterface $configFactory,
+    PdfAuditRunner $pdfAuditRunner
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->entityTypeManager = $entityTypeManager;
+    $this->httpClient = $httpClient;
+    $this->configFactory = $configFactory;
+    $this->pdfAuditRunner = $pdfAuditRunner;
+  }
+
+  /**
+   * Creates an instance of the plugin.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container.
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   *
+   * @return static
+   *   Returns an instance of this plugin.
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+    return new self(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_type.manager'),
+      $container->get('http_client'),
+      $container->get('config.factory'),
+      $container->get('jcc_pdf_upload_validation_checker.pdf_audit_runner'),
+    );
+  }
+
+  /**
+   * Processes a single PDF audit queue item.
+   *
+   * @param array $data
+   *   The queue item data. Expected structure:
+   *   - fid: (int) The file entity ID to validate.
+   */
+  public function processItem($data): void {
+    $fid = (int) ($data['fid'] ?? 0);
+    if (!$fid) {
+      return;
+    }
+
+    /** @var \Drupal\file\FileInterface|null $file */
+    $file = $this->entityTypeManager->getStorage('file')->load($fid);
+    if (!$file) {
+      return;
+    }
+
+    if ($file->getMimeType() !== 'application/pdf') {
+      return;
+    }
+
+    if (!$file->hasField('field_pdf_audit_status')) {
+      return;
+    }
+
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice('Cron processing PDF validation on fid=@fid', ['@fid' => $fid]);
+
+    // Move from unknown to pending only when cron actually starts processing.
+    $current_status = (string) $file->get('field_pdf_audit_status')->value;
+    if ($current_status !== 'pending') {
+      $this->saveFileStatus($file, 'pending');
+    }
+
+    try {
+      // Read file bytes from URI.
+      $result = $this->pdfAuditRunner->auditFile($file);
+    }
+    catch (\Throwable $e) {
+      $message = 'PDF audit aborted due to a runtime/dependency error. ' . $e->getMessage();
+
+      $this->saveFileStatus($file, 'fail');
+      $this->storeFailureSummary($file, $message);
+
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->error(
+        'PDF audit aborted for fid=@fid: @message',
+        [
+          '@fid' => $fid,
+          '@message' => $e->getMessage(),
+        ]
+      );
+      return;
+    }
+
+    if (empty($result['passed'])) {
+      $this->saveFileStatus($file, 'fail');
+
+      \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+        'PDF fid=@fid failed validation',
+        ['@fid' => $fid]
+      );
+      return;
+    }
+
+    $this->saveFileStatus($file, 'pass');
+
+    \Drupal::logger('jcc_pdf_upload_validation_checker')->notice(
+      'PDF fid=@fid passed validation',
+      ['@fid' => $fid]
+    );
+
+    foreach ($this->loadMediaReferencingFile($fid) as $media) {
+      if ($this->mediaHasAnyFailedFile($media)) {
+        // At least one failed file exists on this media: keep unpublished.
+        continue;
+      }
+      $this->publishMediaIfNeeded($media);
+    }
+  }
+
+}

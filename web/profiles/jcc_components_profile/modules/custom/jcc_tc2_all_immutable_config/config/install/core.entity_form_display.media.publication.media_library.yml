@@ -31,6 +31,8 @@ dependencies:
     - field.field.media.publication.field_tags
     - field.field.media.publication.field_topic
     - media.type.publication
+  module:
+    - file
 id: media.publication.media_library
 targetEntityType: media
 bundle: publication
@@ -42,8 +44,15 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_media_file:
+    type: file_generic
+    weight: 0
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -57,7 +66,6 @@ hidden:
   field_document_type: true
   field_east_armenian_file: true
   field_matters_served: true
-  field_media_file: true
   field_media_file_arabic: true
   field_media_file_cambodian: true
   field_media_file_chinese: true

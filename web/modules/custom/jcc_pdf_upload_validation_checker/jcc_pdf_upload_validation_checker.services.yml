@@ -1,0 +1,44 @@
+services:
+  jcc_pdf_upload_validation_checker.route_subscriber:
+    class: Drupal\jcc_pdf_upload_validation_checker\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  jcc_pdf_upload_validation_checker.pdf_audit_queue_worker:
+    class: Drupal\jcc_pdf_upload_validation_checker\Plugin\QueueWorker\PdfAuditQueueWorker
+    tags:
+      - { name: queue_worker, title: 'PDF Audit queue', cron: 5 }
+  jcc_pdf_upload_validation_checker.pdf_audit_api.default:
+    class: Drupal\jcc_pdf_upload_validation_checker\Apis\Api\DefaultPdfAuditApi
+    arguments:
+      - '@http_client'
+    tags:
+      - { name: jcc_pdf_upload_validation_checker.pdf_audit_api }
+  jcc_pdf_upload_validation_checker.pdf_audit_api.equal_web:
+    class: Drupal\jcc_pdf_upload_validation_checker\Apis\Api\EqualWebPdfAuditApi
+    arguments:
+      - '@http_client'
+      - '@file_system'
+      - '@config.factory'
+    tags:
+      - { name: jcc_pdf_upload_validation_checker.pdf_audit_api }
+  jcc_pdf_upload_validation_checker.pdf_audit_api.planetaria:
+    class: Drupal\jcc_pdf_upload_validation_checker\Apis\Api\PlanetariaPdfAuditApi
+    arguments:
+      - '@http_client'
+      - '@file_system'
+      - '@config.factory'
+    tags:
+      - { name: jcc_pdf_upload_validation_checker.pdf_audit_api }
+  jcc_pdf_upload_validation_checker.pdf_audit_runner:
+    class: Drupal\jcc_pdf_upload_validation_checker\Apis\PdfAuditRunner
+    arguments:
+      -
+        - '@jcc_pdf_upload_validation_checker.pdf_audit_api.default'
+        - '@jcc_pdf_upload_validation_checker.pdf_audit_api.equal_web'
+        - '@jcc_pdf_upload_validation_checker.pdf_audit_api.planetaria'
+      - '@config.factory'
+  jcc_pdf_upload_validation_checker.drush_commands:
+    class: Drupal\jcc_pdf_upload_validation_checker\Drush\Commands\BypassReasonsCommands
+    tags:
+      - { name: drush.command }
+
