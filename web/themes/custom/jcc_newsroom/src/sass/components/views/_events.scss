@@ -1,0 +1,28 @@
+// ADA-1020: Match the events page hero spacing to node pages such as Media Contacts (follow-up to ADA-822).
+// jcc_base reduces the hero component's default 80px padding via 'article > .jcc-hero' (jcc_base layout/_page.scss), 
+// but on /events the hero is rendered inside the events view container rather than a node <article>, so that
+// rule never matches and the component default applies. Mirror the same values here - top covers the space above
+// the H1, bottom the space after the intro text.
+.view-id-events.view-display-id-page_2 > .jcc-hero {
+  .jcc-hero__content {
+    padding-top: 2em !important;
+    padding-bottom: 2em !important;
+  }
+}
+
+// tighten the gap between the intro text and the embedded events list. Two wrappers stack extra top padding here:
+// the text-section-aside layout container (48px) and the embedded list view (32px). Remove the first and halve the second;
+// the hero's own 2em bottom padding (above) remains the primary breathing room.
+.view-id-events.view-display-id-page_2 {
+  .jcc-text-section-aside {
+    padding-top: 0 !important;
+  }
+  .view-display-id-page_1 {
+    padding-top: 1rem !important;
+  }
+}
+
+.view-display-id-page_2 .view-display-id-page_1 .view__header,
+.view-display-id-page_2 .view-display-id-page_1 .jcc-header-group {
+  display: none;
+}
