@@ -34,6 +34,10 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
 
   private const STAGING_BASE_URL = 'https://staging.pdfchecker.inquiros.io/api/v1';
 
+  private const PRODUCTION_WEB_URL = 'https://pdfchecker.inquiros.io';
+
+  private const STAGING_WEB_URL = 'https://staging.pdfchecker.inquiros.io';
+
   /**
    * Constructs the PlanetariaPdfAuditApi service.
    *
@@ -71,6 +75,22 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
       ->get('planetaria_use_staging');
 
     return $useStaging ? self::STAGING_BASE_URL : self::PRODUCTION_BASE_URL;
+  }
+
+  /**
+   * Builds the hosted dashboard report URL for a given Planetaria scan id.
+   *
+   * The document id returned by POST /documents doubles as the dashboard's
+   * scanId query param; the dashboard lives at the web root (not /api/v1)
+   * and also switches between staging/production with the same toggle.
+   */
+  private function buildReportUrl(string $documentId): string {
+    $useStaging = (bool) $this->configFactory
+      ->get('jcc_pdf_upload_validation_checker.settings')
+      ->get('planetaria_use_staging');
+    $webUrl = $useStaging ? self::STAGING_WEB_URL : self::PRODUCTION_WEB_URL;
+
+    return $webUrl . '/?scanId=' . rawurlencode($documentId) . '&page=results';
   }
 
   /**
@@ -198,6 +218,7 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
           'passed' => FALSE,
           'summary' => 'Planetaria validation failed.',
           'report_id' => $documentId,
+          'report_url' => $this->buildReportUrl($documentId),
           'errors' => $errors,
           'raw' => ['document' => $document],
         ];
@@ -213,6 +234,7 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
           'passed' => FALSE,
           'summary' => 'Planetaria validation is still processing.',
           'report_id' => $documentId,
+          'report_url' => $this->buildReportUrl($documentId),
           'errors' => $errors,
           'raw' => ['document' => $document],
         ];
@@ -351,6 +373,7 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
       'errors' => $errors,
       'raw' => $document,
       'report_id' => $documentId,
+      'report_url' => $this->buildReportUrl($documentId),
     ];
   }
 
@@ -366,7 +389,7 @@ final class PlanetariaPdfAuditApi implements PdfAuditApiInterface {
       $text = $summary ?: 'Planetaria validation failed.';
 
       if ($reportId !== '') {
-        $text .= "\n\nPlanetaria document id: " . $reportId;
+        $text .= "\n\nView validation results on Planetaria: " . $this->buildReportUrl($reportId);
       }
 
       if (!empty($errors)) {
