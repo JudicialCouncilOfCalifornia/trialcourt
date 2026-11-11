@@ -5,28 +5,21 @@
 * already provides the support but was unused by GLightbox.
 **/
 
-(function (Drupal) {
+(function (Drupal, once) {
   let playerSelector = '.gvideo.youtube-video .plyr, .gvideo.vimeo-video .plyr';
   let arrowKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
-  let observing = false;
   let lastTrigger = null;
+  let lastTriggerLabel = null;
 
-  // Binds keyboard support and accessibility features to a single video player container.
   function bindPlayer(container) {
-    // Skip if the container is already bound to keyboard support.
     if (container.dataset.remoteVideoKeys) {
       return;
     }
-
-    // Mark the container as bound to prevent duplicate bindings.
     container.dataset.remoteVideoKeys = 'true';
-
-    // Ensure the container is focusable for keyboard users.
     if (!container.hasAttribute('tabindex')) {
       container.setAttribute('tabindex', '0');
     }
 
-    // Handle keyboard events for the video container.
     let hideTimer;
     let holdPrevHover = false;
     container.addEventListener('keydown', function (event) {
@@ -44,7 +37,6 @@
         holdPrevHover = controls.hover;
         controls.hover = true;
       }
-      // Set a new hide timer to hide controls after a certain amount of inactivity.
       clearTimeout(hideTimer);
       hideTimer = setTimeout(function () {
         hideTimer = null;
@@ -56,10 +48,8 @@
         }
       }, 2000);
     });
-
   }
 
-  // Binds all video players within the given root element.
   function bindAll(root) {
     if (root.matches && root.matches(playerSelector)) {
       bindPlayer(root);
@@ -69,13 +59,56 @@
     }
   }
 
-  // Sets focus on the current video player within the active GLightbox slide.
-  // Matches GLightbox's autofocusVideos behavior, which only runs when autoplay is on.
-  function focusCurrentPlayer() {
-    let player = document.querySelector('.gslide.current ' + playerSelector);
-    if (player && !player.contains(document.activeElement)) {
-      player.focus({ preventScroll: true });
+  // Limits screen reader context.
+  // Inert also removes the remote video's native UI from the tab order.
+  function screenReaderScope() {
+    // Focus on current slide only since gallery is not supported.
+    document.querySelectorAll('.glightbox-container .gslide').forEach(function (slide) {
+      if (slide.classList.contains('current')) {
+        slide.removeAttribute('inert');
+      } else {
+        slide.setAttribute('inert', '');
+      }
+    });
+    // Focus on Plyr controls only.
+    document.querySelectorAll(playerSelector).forEach(function (player) {
+      let active = !!player.closest('.gslide.current');
+      Array.prototype.forEach.call(player.children, function (child) {
+        if (child.classList.contains('plyr__controls')) {
+          return;
+        }
+        if (active) {
+          child.setAttribute('inert', '');
+        } else {
+          child.removeAttribute('inert');
+        }
+      });
+    });
+  }
+
+  let region = null;
+  let announceTimer = null;
+  function ensureRegion() {
+    if (!region || !document.body.contains(region)) {
+      region = document.createElement('div');
+      region.id = 'remote-video-announcements';
+      region.className = 'visually-hidden';
+      region.setAttribute('aria-live', 'polite');
+      document.body.appendChild(region);
     }
+    return region;
+  }
+
+  // The delay lets the live region settle before its text changes, so the message is announced.
+  function announce(message) {
+    if (!message) {
+      return;
+    }
+    ensureRegion();
+    clearTimeout(announceTimer);
+    announceTimer = setTimeout(function () {
+      region.textContent = message;
+    }, 500);
   }
 
   // Limits tab context to Plyr controls and the GLightbox close button.
@@ -84,18 +117,21 @@
     if (event.key !== 'Tab') {
       return;
     }
-    let player = document.querySelector('.gslide.current ' + playerSelector);
-    let close = document.querySelector('.glightbox-container .gclose');
-    if (!player || !(player.contains(document.activeElement) || document.activeElement === close)) {
+    let modal = document.querySelector('.glightbox-container');
+    if (!modal || !modal.contains(document.activeElement)) {
       return;
     }
+    let player = modal.querySelector('.gslide.current ' + playerSelector);
+    let close = modal.querySelector('.gclose');
     let visible = function (el) {
       return !el.disabled && el.getClientRects().length > 0;
     };
-    let items = Array.prototype.filter.call(
-      player.querySelectorAll('.plyr__controls button, .plyr__controls input'),
-      visible
-    );
+    let items = player
+      ? Array.prototype.filter.call(
+          player.querySelectorAll('.plyr__controls button, .plyr__controls input'),
+          visible
+        )
+      : [];
     if (close && visible(close)) {
       items.push(close);
     }
@@ -115,74 +151,98 @@
     items[next].focus();
   }
 
-  // Binds space key to video play/pause.
-  function spaceKeyPlayToggle(event) {
+  function spaceKeyOpenModal(event) {
     if (event.key !== ' ' || event.defaultPrevented) {
       return;
     }
-    let playButton = document.querySelector(
-      '.gslide.current .gvideo.youtube-video [data-plyr="play"], .gslide.current .gvideo.vimeo-video [data-plyr="play"]'
-    );
-    if (playButton) {
+    let trigger = event.target.closest && event.target.closest('a.glightbox');
+    if (trigger) {
       event.preventDefault();
-      playButton.click();
+      trigger.click();
     }
   }
 
-  Drupal.behaviors.remotevideoaccessibilty = {
+  Drupal.behaviors.remoteVideoAccessibility = {
     attach: function attach(context) {
-      // GLightbox builds its slides after attach runs, so watch for new players.
-      if (!observing) {
-        observing = true;
-
-        // Space key triggers only video play/pause.
-        document.addEventListener('keydown', spaceKeyPlayToggle);
-
-        // Tab key context.
-        document.addEventListener('keydown', trapTab, true);
-
-        // Remember the last GLightbox trigger element to return focus to it when modal closes.
-        document.addEventListener(
-          'click',
-          function (event) {
-            let trigger = event.target.closest && event.target.closest('.glightbox');
-            if (trigger) {
-              lastTrigger = trigger;
-            }
-          },
-          true
-        );
-
-        // Observe changes to the DOM to handle dynamically added or removed video players and GLightbox slides.
-        new MutationObserver(function (mutations) {
-          mutations.forEach(function (mutation) {
-            // Modal open handling.
-            mutation.addedNodes.forEach(function (node) {
-              if (node.nodeType === 1) {
-                bindAll(node);
-              }
-            });
-            // Modal close handling.
-            mutation.removedNodes.forEach(function (node) {
-              // When modal closes, drop focus back to the last trigger element.
-              if (node.nodeType === 1 && node.matches && node.matches('.glightbox-container') && lastTrigger) {
-                lastTrigger.focus();
-              }
-            });
-          });
-        }).observe(document.body, { childList: true, subtree: true });
-
-        // Ensure the current video player receives focus when a GLightbox slide becomes active.
-        new MutationObserver(function (mutations) {
-          mutations.forEach(function (mutation) {
-            let target = mutation.target;
-            if (target.matches && target.matches('.gslide.current')) {
-              focusCurrentPlayer();
-            }
-          });
-        }).observe(document.body, { attributes: true, attributeFilter: ['class'], subtree: true });
+      // Only initialize once per page load.
+      if (!once('remote-video-accessibility', 'body').length) {
+        return;
       }
+
+      document.addEventListener(
+        'ready',
+        function (event) {
+          // Ensure the current slide's player has focus within the GLightbox modal.
+          let player = event.target;
+          let dialog = player.closest('.glightbox-container');
+          setTimeout(function () {
+            if (dialog) {
+              dialog.focus({ preventScroll: true });
+            }
+          }, 500);
+        },
+        true
+      );
+
+      // Tab and space keys handling.
+      document.addEventListener('keydown', trapTab, true);
+      document.addEventListener('keydown', spaceKeyOpenModal);
+
+      // Remember last trigger element and its label when a GLightbox link is clicked.
+      // Used later to return focus to the trigger element after modal is closed.
+      document.addEventListener(
+        'click',
+        function (event) {
+          let trigger = event.target.closest && event.target.closest('.glightbox');
+          if (trigger) {
+            lastTrigger = trigger;
+            lastTriggerLabel = trigger.getAttribute('aria-label') || trigger.textContent.trim() || trigger.title || '';
+          }
+        },
+        true
+      );
+
+      // GLightbox builds its slides after attach runs, so watch for new players and slide changes.
+      new MutationObserver(function (mutations) {
+        let needsScope = false;
+        mutations.forEach(function (mutation) {
+          // Check if any added or modified nodes require scoping for screen readers.
+          if (mutation.type === 'attributes') {
+            if (mutation.target.matches && mutation.target.matches('.gslide.current')) {
+              needsScope = true;
+            }
+            return;
+          }
+          mutation.addedNodes.forEach(function (node) {
+            if (node.nodeType === 1) {
+              // Reset announce region for every new modal session.
+              if (node.matches && node.matches('.glightbox-container') && region) {
+                region.remove();
+                region = null;
+              }
+              // Bind all necessary event handlers.
+              bindAll(node);
+              // Initialize any new GLightbox players within the added node.
+              needsScope = true;
+            }
+          });
+          mutation.removedNodes.forEach(function (node) {
+            // Handle focus return when closing modal.
+            if (node.nodeType === 1 && node.matches && node.matches('.glightbox-container') && lastTrigger) {
+              lastTrigger.focus();
+              announce(lastTriggerLabel ? 'Returning focus to link for ' + lastTriggerLabel : 'Returning focus to link');
+            }
+          });
+        });
+        // Apply screen reader scoping if needed after processing mutations.
+        if (needsScope) {
+          screenReaderScope();
+        }
+      }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+
+      // Bind all necessary event handlers and apply initial screen reader scoping.
       bindAll(context);
+      screenReaderScope();
     }
   };
-})(Drupal);
+})(Drupal, once);

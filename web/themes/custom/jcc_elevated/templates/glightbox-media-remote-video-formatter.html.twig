@@ -19,13 +19,9 @@
 
 <a {{ attributes }}>
 	{{ image }}
-
-	{# Leverage description as link context for screen readers. #}
-	{# Not sure why module is hiding with CSS so may need to revisit later. #}
-	{% if caption_description is not empty %}
-		<div class="glightbox-desc sr-only">
-			{{- 'Play video ' ~ caption_description -}}
-		</div>
-	{% endif %}
 </a>
-
+{% if caption_description is not empty %}
+	<div class="glightbox-desc">
+		{{- caption_description -}}
+	</div>
+{% endif %}
