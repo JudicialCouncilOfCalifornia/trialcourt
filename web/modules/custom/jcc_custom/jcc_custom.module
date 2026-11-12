@@ -1583,3 +1583,30 @@ function jcc_custom_get_service_category_tid($name) {
 
   return !empty($tids) ? (int) reset($tids) : NULL;
 }
+
+/**
+ * Implements hook_views_post_execute().
+ */
+function jcc_custom_views_post_execute(ViewExecutable $view) {
+  switch ($view->id()) {
+    case 'search':
+      switch ($view->current_display) {
+        case 'search':
+          // Cap total_rows when the pager defines total_pages.
+          $total_pages = $view->pager->options['total_pages'] ?? NULL;
+          $items_per_page = $view->pager->getItemsPerPage();
+          if (!empty($total_pages) && $items_per_page > 0) {
+            $max_limit = (int) $total_pages * ($items_per_page);
+
+            // @total stops at $max_limit.
+            if ($view->total_rows > $max_limit) {
+              $view->total_rows = $max_limit;
+              $view->pager->total_items = $max_limit;
+              $view->pager->updatePageInfo();
+            }
+          }
+          break;
+      }
+      break;
+  }
+}
