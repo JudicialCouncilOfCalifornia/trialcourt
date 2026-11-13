@@ -90,3 +90,20 @@ img[typeof="foaf:Image"] {
 .jcc-header.jcc-header--masthead .jcc-header__nav .usa-nav .usa-search > button svg {
   color: #005ea2;
 }
+
+/* Keep masthead submenu focus rings clear of link backgrounds and adjacent rows. */
+.jcc-header--masthead .jcc-header__nav .usa-nav__primary .usa-nav__submenu-item > a:focus {
+  outline-offset: 0.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Contain nested submenu layers so they cannot cover a focused sibling row. */
+.jcc-header--masthead .jcc-header__nav .usa-nav__primary .usa-nav__submenu-item {
+  isolation: isolate;
+}
+
+.jcc-header--masthead .jcc-header__nav .usa-nav__primary .usa-nav__submenu-item:focus-within {
+  position: relative;
+  z-index: 1;
+}
