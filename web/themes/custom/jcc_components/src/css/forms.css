@@ -102,3 +102,20 @@ form label.form-required{
   margin-top: 1.9rem;
 }
 /* END */
+
+/* ADA-996: Improve contrast of pending webform progress labels. */
+.webform-progress-tracker .progress-step:not(.is-active):not(.is-complete) .progress-text {
+  color: #5c5c5c;
+}
+
+/* ADA-996: Match unfinished step markers and lines to the label gray. */
+.webform-progress-tracker .progress-step:not(.is-active):not(.is-complete) .progress-marker::before,
+.webform-progress-tracker .progress-step:not(.is-complete) .progress-marker::after {
+  background-color: #5c5c5c;
+}
+
+/* ADA-996: Darken the current step marker so its numeral passes contrast. */
+.webform-progress-tracker .progress-step.is-active .progress-marker::before,
+.webform-progress-tracker .progress-step.is-active:hover .progress-marker::before {
+  background-color: #1976d2;
+}
