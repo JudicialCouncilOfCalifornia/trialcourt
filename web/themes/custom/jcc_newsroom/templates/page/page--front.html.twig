@@ -97,6 +97,11 @@
   {% endif %}
 
   <main id="main-content"> {# link is in html.html.twig #}
+    {# ADA-327: the front page has no visible page title (the logo is the
+       page identity), so provide a visually hidden h1 for the document
+       outline. Subpage titles come from page content instead. #}
+    <h1 class="visually-hidden">{{ 'California Courts Newsroom'|t }}</h1>
+
     {%  if page.messaging|render %}
       {{ page.messaging }}
     {% endif %}
