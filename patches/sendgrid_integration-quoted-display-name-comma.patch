@@ -1,0 +1,106 @@
+diff -ruN a/src/Plugin/Mail/SendGridMail.php b/src/Plugin/Mail/SendGridMail.php
+--- a/src/Plugin/Mail/SendGridMail.php	2026-11-16 14:23:23
++++ b/src/Plugin/Mail/SendGridMail.php	2026-11-16 14:24:14
+@@ -278,26 +278,12 @@
+     # Set the from address and add a name if it exists.
+     $sendgrid_message->setFrom($from);
+ 
+-    // If there are multiple recipients we have to explode and walk the values.
+-    if (strpos($message['to'], ',')) {
+-      $sendtosarry = explode(',', $message['to']);
+-      foreach ($sendtosarry as $value) {
+-        // Remove unnecessary spaces.
+-        $value = trim($value);
+-        $sendtoarrayparsed = $this->parseAddress($value);
+-        $personalization0->addTo(new To($sendtoarrayparsed[0], isset($sendtoarrayparsed[1]) ? $sendtoarrayparsed[1] : NULL));
+-      }
++    // Walk every recipient. Commas inside quoted display names, such as
++    // "Last, First" <mail@example.com>, do not separate recipients.
++    foreach ($this->splitAddresses($message['to']) as $value) {
++      $sendtoarrayparsed = $this->parseAddress($value);
++      $personalization0->addTo(new To($sendtoarrayparsed[0], $sendtoarrayparsed[1] ?? NULL));
+     }
+-    else {
+-      $toaddrarray = $this->parseAddress($message['to']);
+-      if (isset($toaddrarray[1])) {
+-        $toname = $toaddrarray[1];
+-      }
+-      else {
+-        $toname = NULL;
+-      }
+-      $personalization0->addTo(new To($toaddrarray[0], $toname));
+-    }
+ 
+     // Empty array to process addresses from mail headers.
+     $address_cc_bcc = [];
+@@ -458,9 +444,8 @@
+ 
+       // Handle latter case issue for cc and bcc key.
+       if (in_array(mb_strtolower($key), $cc_bcc_keys)) {
+-        $mail_ids = explode(',', $value);
++        $mail_ids = $this->splitAddresses($value);
+         foreach ($mail_ids as $mail_id) {
+-          $mail_id = trim($mail_id);
+           $email_components = $this->parseAddress($mail_id);
+           $mail_cc_address = $email_components[0];
+           // If there was a name with the mail,
+@@ -665,11 +650,57 @@
+    */
+   protected function parseAddress(string $email) {
+     if (preg_match(self::SENDGRID_INTEGRATION_EMAIL_REGEX, $email, $matches)) {
+-      return [$matches[2], strval($matches[1])];
++      $name = strval($matches[1]);
++      // Display names may arrive RFC 2047 encoded (e.g. from Symfony Mime or
++      // Mime Mail). SendGrid expects the plain UTF-8 name.
++      if (str_contains($name, '=?')) {
++        $name = mb_decode_mimeheader($name);
++      }
++      // Unescape characters escaped inside a quoted display name.
++      $name = str_replace(['\\"', '\\\\'], ['"', '\\'], $name);
++      return [trim($matches[2]), $name];
+     }
+     else {
+-      return [$email];
++      return [trim($email)];
+     }
++  }
++
++  /**
++   * Splits a comma separated address list into individual addresses.
++   *
++   * Commas inside double quoted display names are kept, so
++   * '"Last, First" <a@example.com>, b@example.com' yields two addresses.
++   *
++   * @param string $addresses
++   *   The address list.
++   *
++   * @return string[]
++   *   The trimmed, non-empty addresses.
++   */
++  protected function splitAddresses(string $addresses): array {
++    $result = [];
++    $current = '';
++    $in_quotes = FALSE;
++    $length = strlen($addresses);
++    for ($i = 0; $i < $length; $i++) {
++      $char = $addresses[$i];
++      if ($char === '\\' && $in_quotes && $i + 1 < $length) {
++        // Keep escaped characters (e.g. \") as part of the display name.
++        $current .= $char . $addresses[++$i];
++        continue;
++      }
++      if ($char === '"') {
++        $in_quotes = !$in_quotes;
++      }
++      elseif ($char === ',' && !$in_quotes) {
++        $result[] = $current;
++        $current = '';
++        continue;
++      }
++      $current .= $char;
++    }
++    $result[] = $current;
++    return array_values(array_filter(array_map('trim', $result), 'strlen'));
+   }
+ 
+   /**
