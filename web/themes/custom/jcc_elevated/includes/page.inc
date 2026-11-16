@@ -103,6 +103,15 @@ function jcc_elevated_preprocess_page(&$variables) {
     }
   }
 
+  // When "Was this helpful" is hidden, drop the drawer region before it is
+  // rendered. region--drawer.html.twig only skips printing it, so the webform
+  // would still be built and leak its #ajax settings into drupalSettings,
+  // where they can bind to another form's submit button with the same HTML id
+  // (e.g. the password reset or login button).
+  if (\Drupal::service(ThemeSettingsProvider::class)->getSetting('hide_was_this_helpful') === 1) {
+    unset($variables['page']['drawer']);
+  }
+
   // Display content only when embed param is 1.  Hide header and footer.
   $variables['embed'] = \Drupal::request()->query->get('embed') == 1;
 
