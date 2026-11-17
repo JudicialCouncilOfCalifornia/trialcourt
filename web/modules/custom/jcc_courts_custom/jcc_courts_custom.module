@@ -6,6 +6,13 @@
  */
 
 /**
+ * Granicus events ultimate cron config callback.
+ */
+function jcc_courts_custom_migrate_granicus_events() {
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration('courts_node_event_granicus', 'update');
+}
+
+/**
  * Citable opinions ultimate cron config callback.
  */
 function jcc_courts_custom_migrate_opinions_citable() {

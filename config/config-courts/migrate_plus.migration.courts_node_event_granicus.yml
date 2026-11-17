@@ -71,8 +71,12 @@ process:
     default_value: 1
   field_event_type:
     -
+      plugin: jcc_granicus_event_type
+      source:
+        - type
+        - title
+    -
       plugin: skip_on_condition
-      source: type
       method: row
       condition:
         plugin: 'not:matches'

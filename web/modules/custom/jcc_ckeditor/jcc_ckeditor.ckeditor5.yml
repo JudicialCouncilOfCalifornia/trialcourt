@@ -1,3 +1,20 @@
+jcc_ckeditor_media_edit:
+  ckeditor5:
+    plugins:
+      - jccMediaEdit.MediaEdit
+    config:
+      drupalMedia:
+        toolbar:
+          - jccEditMedia
+  drupal:
+    label: Edit embedded media
+    library: jcc_ckeditor/media_edit
+    elements: false
+    conditions:
+      filter: entity_embed
+      plugins:
+        - media_media
+
 jcc_ckeditor_classes:
   ckeditor5:
     plugins:

@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Updates for Supreme Court customizations.
+ */
+
+/**
+ * Read filed cases from the root JSON array with the current JSON parser.
+ */
+function jcc_supreme_custom_update_11001() {
+  $config = \Drupal::configFactory()->getEditable('migrate_plus.migration.sc_filed_cases');
+  if (!$config->isNew() && $config->get('source.item_selector') === '/') {
+    $config->set('source.item_selector', '')->save();
+    \Drupal::service('plugin.manager.migration')->clearCachedDefinitions();
+  }
+}
