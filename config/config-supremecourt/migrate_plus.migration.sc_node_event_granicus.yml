@@ -73,15 +73,18 @@ process:
     default_value: 1
   field_event_type:
     -
+      plugin: jcc_granicus_event_type
+      source:
+        - type
+        - title
+    -
       plugin: skip_on_condition
-      source: type
       method: row
       condition:
         plugin: 'not:matches'
         regex: '/Supreme Court Oral Argument/'
     -
       plugin: static_map
-      source: type
       map:
         'Supreme Court Oral Argument': 'Supreme Court Oral Argument Granicus'
     -

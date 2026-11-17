@@ -6,6 +6,13 @@
  */
 
 /**
+ * Granicus events ultimate cron config callback.
+ */
+function jcc_supreme_custom_migrate_granicus_events() {
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration('sc_node_event_granicus', 'update');
+}
+
+/**
  * Case filings ultimate cron config callback.
  */
 function jcc_supreme_custom_migrate_case_filings() {

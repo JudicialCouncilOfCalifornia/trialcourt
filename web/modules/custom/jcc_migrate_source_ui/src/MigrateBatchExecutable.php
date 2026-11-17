@@ -16,14 +16,14 @@ class MigrateBatchExecutable extends BaseMigrateBatchExecutable {
    *
    * @var string
    */
-  protected $file_path;
+  protected $filePath;
 
   /**
    * {@inheritdoc}
    */
   public function __construct(MigrationInterface $migration, MigrateMessageInterface $message, array $options = []) {
     parent::__construct($migration, $message, $options);
-    $this->file_path = $options['file_path'];
+    $this->filePath = $options['file_path'];
   }
 
   /**
@@ -41,7 +41,7 @@ class MigrateBatchExecutable extends BaseMigrateBatchExecutable {
    */
   protected function batchOperations(array $migrations, $operation, array $options = []): array {
     $operations = [];
-    foreach ($migrations as $id => $migration) {
+    foreach ($migrations as $migration) {
 
       if (!empty($options['update'])) {
         $migration->getIdMap()->prepareUpdate();
@@ -66,7 +66,7 @@ class MigrateBatchExecutable extends BaseMigrateBatchExecutable {
 
       $operations[] = [
         [get_class($this), 'batchProcessImport'],
-        [$migration->id(), $options + ['file_path' => $this->file_path]],
+        [$migration->id(), $options + ['file_path' => $this->filePath]],
       ];
     }
 
@@ -97,7 +97,8 @@ class MigrateBatchExecutable extends BaseMigrateBatchExecutable {
     $message = new StubMigrationMessage();
     $definition = \Drupal::getContainer()->get('plugin.manager.migration')->getDefinition($migration_id);
     // Override the file path.
-    $definition['source']['urls'] = $options['file_path'];
+    $source_key = ($definition['source']['plugin'] ?? '') === 'url' ? 'urls' : 'path';
+    $definition['source'][$source_key] = $options['file_path'];
     /** @var \Drupal\migrate\Plugin\MigrationInterface $migration */
     $migration = \Drupal::getContainer()->get('plugin.manager.migration')->createStubMigration($definition);
 

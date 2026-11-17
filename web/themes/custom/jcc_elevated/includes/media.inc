@@ -32,7 +32,10 @@ function jcc_elevated_preprocess_media(&$variables) {
       Html::getClass($alignment),
     ];
 
-    $variables['content']['field_media_image'][0]['#item_attributes']['class'][] = implode(' ', $img_classes);
+    $variables['content']['field_media_image'][0]['#attributes']['class'] = array_merge(
+      $variables['content']['field_media_image'][0]['#attributes']['class'] ?? [],
+      array_filter($img_classes),
+    );
   }
 }
 
