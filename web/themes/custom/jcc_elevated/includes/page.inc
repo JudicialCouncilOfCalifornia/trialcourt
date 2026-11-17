@@ -34,6 +34,7 @@ function jcc_elevated_preprocess_page(&$variables) {
   }
 
   $variables['logo'] = theme_get_setting('logo', 'jcc_elevated');
+  $variables['logo']['alt'] = theme_get_setting('alt', 'jcc_elevated');
 
   $variables['site_name'] = [
     'first' => theme_get_setting('site_name_first', 'jcc_elevated'),
