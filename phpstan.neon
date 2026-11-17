@@ -15,8 +15,6 @@ parameters:
     # Drush subtheme generators rely on the Robo traits, which are not installed
     # as a dependency, so phpstan cannot resolve them.
     - '*/Commands/*/SubThemeCommands.php'
-    # Overrides migrate_tools with intentionally different return types.
-    - 'web/modules/custom/jcc_migrate_source_ui/src/MigrateBatchExecutable.php'
   ignoreErrors:
     - '#\Drupal calls should be avoided in classes, use dependency injection instead#'
     - '#Plugin definitions cannot be altered.#'

@@ -2,6 +2,7 @@
 
 namespace Drupal\jcc_migrate_source_ui\Form;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
@@ -9,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Logger\LoggerChannel;
 use Drupal\Core\Messenger\Messenger;
 use Drupal\Core\State\StateInterface;
@@ -111,6 +113,10 @@ class JCCMigrateSourceUiForm extends FormBase {
    *   The logger channel.
    * @param \Drupal\Core\Entity\EntityTypeManager $type_manager
    *   Entity Type Manager.
+   * @param \Drupal\Core\KeyValueStore\KeyValueFactoryInterface $keyValue
+   *   The key value factory.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    */
   public function __construct(
     MigrationPluginManager $plugin_manager_migration,
@@ -121,6 +127,8 @@ class JCCMigrateSourceUiForm extends FormBase {
     Messenger $messenger,
     LoggerChannel $logger_channel,
     EntityTypeManager $type_manager,
+    protected KeyValueFactoryInterface $keyValue,
+    protected TimeInterface $time,
   ) {
 
     $this->pluginManagerMigration = $plugin_manager_migration;
@@ -146,7 +154,9 @@ class JCCMigrateSourceUiForm extends FormBase {
       $container->get('file.usage'),
       $container->get('messenger'),
       $container->get('logger.factory')->get('jcc_migrate_source_ui'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('keyvalue'),
+      $container->get('datetime.time'),
     );
   }
 
@@ -375,14 +385,25 @@ class JCCMigrateSourceUiForm extends FormBase {
         ]));
         return;
       }
+      $source_key = $migration->getSourcePlugin()->getPluginId() === 'url' ? 'urls' : 'path';
       $options = [
-        'file_path' => $form_state->getValue('file_path'),
+        'configuration' => [
+          'source' => [$source_key => $form_state->getValue('file_path')],
+        ],
       ];
       // Force updates or not.
       if ($form_state->getValue('update_existing_records')) {
-        $options['update'] = TRUE;
+        $options['update'] = 1;
       }
-      $executable = new MigrateBatchExecutable($migration, new StubMigrationMessage(), $options);
+      $executable = new MigrateBatchExecutable(
+        $migration,
+        new StubMigrationMessage(),
+        $this->keyValue,
+        $this->time,
+        $this->getStringTranslation(),
+        $this->pluginManagerMigration,
+        $options,
+      );
       $executable->batchImport();
     }
   }
