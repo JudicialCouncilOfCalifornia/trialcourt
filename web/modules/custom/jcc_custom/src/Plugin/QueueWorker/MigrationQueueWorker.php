@@ -5,6 +5,7 @@ namespace Drupal\jcc_custom\Plugin\QueueWorker;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\Queue\RequeueException;
+use Drupal\jcc_custom\EventSubscriber\JccMigrationSourceUrlModifier;
 use Drupal\migrate\Event\MigrateEvents;
 use Drupal\migrate\Event\MigrateMapSaveEvent;
 use Drupal\migrate\MigrateExecutable;
@@ -53,12 +54,18 @@ final class MigrationQueueWorker extends QueueWorkerBase implements ContainerFac
   protected $logger;
 
   /**
+   * The jobs HTTP request modifier.
+   */
+  protected JccMigrationSourceUrlModifier $sourceUrlModifier;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = new static($configuration, $plugin_id, $plugin_definition);
     $instance->migrationManager = $container->get('plugin.manager.migration');
     $instance->keyValue = $container->get('keyvalue');
+    $instance->sourceUrlModifier = $container->get('jcc_custom.migration_source_url_modifier_subscriber');
     $instance->eventDispatcher = $container->get('event_dispatcher');
     $instance->logger = $container->get('logger.factory')->get('jcc_custom');
     return $instance;
@@ -76,6 +83,21 @@ final class MigrationQueueWorker extends QueueWorkerBase implements ContainerFac
     $migration = $this->migrationManager->createInstance($migration_id);
     if ($migration->getStatus() !== MigrationInterface::STATUS_IDLE) {
       throw new RequeueException(sprintf('Migration %s is busy; its status was preserved.', $migration_id));
+    }
+
+    // Preserve Courts' sync policy, but never delete jobs from an empty feed.
+    if ($migration_id === 'courts_node_job' && in_array($data['sync_option'], [TRUE, 'sync'], TRUE)) {
+      $this->sourceUrlModifier->prepare($migration);
+      try {
+        if ($migration->getSourcePlugin()->count(TRUE) <= 0) {
+          throw new \RuntimeException('Courts jobs source is empty; synchronization cancelled to preserve existing jobs.');
+        }
+        $migration->getIdMap()->prepareUpdate();
+      }
+      catch (\Throwable $e) {
+        $this->sourceUrlModifier->reset();
+        throw $e;
+      }
     }
 
     // Existing opinion callbacks pass TRUE; Granicus updates existing events.
@@ -106,6 +128,7 @@ final class MigrationQueueWorker extends QueueWorkerBase implements ContainerFac
     }
     finally {
       $this->eventDispatcher->removeListener(MigrateEvents::MAP_SAVE, $listener);
+      $this->sourceUrlModifier->reset();
     }
 
     if ($result !== MigrationInterface::RESULT_COMPLETED || $counts['failed'] > 0) {

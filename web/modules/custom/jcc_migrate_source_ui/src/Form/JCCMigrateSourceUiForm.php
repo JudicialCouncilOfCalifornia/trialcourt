@@ -391,6 +391,9 @@ class JCCMigrateSourceUiForm extends FormBase {
           'source' => [$source_key => $form_state->getValue('file_path')],
         ],
       ];
+      if (in_array($migration_id, ['courts_node_job', 'appellate_node_job'], TRUE)) {
+        $options['configuration']['source']['jcc_job_source_timestamp'] = $this->time->getCurrentTime();
+      }
       // Force updates or not.
       if ($form_state->getValue('update_existing_records')) {
         $options['update'] = 1;

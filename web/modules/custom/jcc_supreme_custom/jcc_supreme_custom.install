@@ -15,3 +15,59 @@ function jcc_supreme_custom_update_11001() {
     \Drupal::service('plugin.manager.migration')->clearCachedDefinitions();
   }
 }
+
+/**
+ * Classify filed cases by filing week rather than node creation time.
+ */
+function jcc_supreme_custom_update_11002() {
+  $view = \Drupal::entityTypeManager()->getStorage('view')->load('case_files');
+  if (!$view) {
+    return;
+  }
+  $displays = $view->get('display');
+  $base_filters = $displays['default']['display_options']['filters'] ?? [];
+  foreach (['default' => 'recent', 'block_1' => 'recent', 'block_2' => 'archive'] as $id => $period) {
+    if (!isset($displays[$id])) {
+      continue;
+    }
+    $options = &$displays[$id]['display_options'];
+    $filters = $options['filters'] ?? $base_filters;
+    foreach ($filters as $key => $filter) {
+      if (($filter['table'] ?? '') === 'node__field_case_initiation_date' || (($filter['table'] ?? '') === 'node_field_data' && ($filter['field'] ?? '') === 'created')) {
+        unset($filters[$key]);
+      }
+    }
+    foreach (['status', 'type'] as $key) {
+      $filters[$key] = [
+        'id' => $key,
+        'table' => 'node_field_data',
+        'field' => $key,
+        'entity_type' => 'node',
+        'entity_field' => $key,
+        'plugin_id' => $key === 'status' ? 'boolean' : 'bundle',
+        'value' => $key === 'status' ? '1' : ['filed_cases' => 'filed_cases'],
+        // Group zero remains mandatory even if other filters use OR.
+        'group' => 0,
+        'exposed' => FALSE,
+      ];
+    }
+    $filters['jcc_filed_case_period'] = [
+      'id' => 'jcc_filed_case_period',
+      'table' => 'node__field_case_initiation_date',
+      'field' => 'jcc_filed_case_period',
+      'relationship' => 'none',
+      'plugin_id' => 'jcc_filed_case_period',
+      'period' => $period,
+      'group' => 0,
+      'exposed' => FALSE,
+    ];
+    $options['filters'] = $filters;
+    $options['filter_groups']['groups'][0] = 'AND';
+    if ($id !== 'default') {
+      $options['defaults']['filters'] = FALSE;
+      $options['defaults']['filter_groups'] = FALSE;
+    }
+    unset($options);
+  }
+  $view->set('display', $displays)->save();
+}
