@@ -5,16 +5,17 @@
  * Contains jcc_tc_custom.module.
  */
 
-use Drupal\search_api\Query\QueryInterface;
-use Solarium\QueryType\Select\Query\Query;
-use Drupal\Core\Database\Database;
-use Drupal\user\Entity\User;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
+use Drupal\search_api\Query\QueryInterface;
+use Drupal\user\Entity\User;
+use Drupal\views\Views;
+use Solarium\QueryType\Select\Query\Query;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -230,19 +231,18 @@ function jcc_tc_custom_form_views_form_news_dashboard_page_1_alter(&$form, FormS
 /**
  * Custom validation handler for the news dashboard form.
  */
-function  jcc_tc_custom_custom_validate($form, FormStateInterface $form_state) {
+function jcc_tc_custom_custom_validate($form, FormStateInterface $form_state) {
   $action = $form_state->getValue('action');
-  $selected_nodes = $form_state->getValue('node_bulk_form');
   // Validate the action. keeping all the possible value of actions to prevent error.
   $valid_actions = [
-    'change_to_archived', 
+    'change_to_archived',
     'change_to_draft',
     'change_to_published',
     'change_to_ready_for_review',
     'node_break_lock_action',
     'node_promote_action',
-    'node_unpromote_action'
-    ];
+    'node_unpromote_action',
+  ];
 
   if (!in_array($action, $valid_actions)) {
     $form_state->setErrorByName('action', t('The selected action is not valid.'));
@@ -261,44 +261,75 @@ function jcc_tc_custom_node_form_submit($form, FormStateInterface $form_state) {
     'change_to_archived' => 'archived',
     'change_to_draft' => 'draft',
     'change_to_published' => 'published',
-    'change_to_ready_for_review' => 'ready_for_review'
+    'change_to_ready_for_review' => 'ready_for_review',
   ];
 
   // Check if the provided action key exists in the map.
   if (isset($action_map[$action_key])) {
     $action = $action_map[$action_key];
-  } else {
-    // Handle unknown action, perhaps log or set a default.
-    $action = $action_key;  // Set your default or handle as required.
   }
-  foreach ($selected_nodes as $nid) {   
-    // Decode the base64 string 
+  else {
+    // Handle unknown action, perhaps log or set a default.
+    // Set your default or handle as required.
+    $action = $action_key;
+  }
+  foreach ($selected_nodes as $nid) {
+    // Decode the base64 string.
     $decoded_string = base64_decode($nid);
-    if($decoded_string === false){
-      continue; // skip this iteration
+    if ($decoded_string === FALSE) {
+      continue;
     }
 
-    $decoded_json = json_decode($decoded_string , true);
-    if($decoded_json === null || !is_array($decoded_json)){
-      continue; //skip this iteration
+    $decoded_json = json_decode($decoded_string, TRUE);
+    if ($decoded_json === NULL || !is_array($decoded_json)) {
+      continue;
     }
 
-    if(isset($decoded_json[1])){
+    if (isset($decoded_json[1])) {
       $node_id = $decoded_json[1];
       $node = Node::load($node_id);
-      if($node){    
-        // get latest revision ID
+      if ($node) {
+        // Get latest revision ID.
         $latest_vid = \Drupal::entityTypeManager()->getStorage('node')->getLatestRevisionId($node_id);
-        // load latest revision
-        $latest_revision = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($latest_vid); 
-        // update the latest revision
+        // Load latest revision.
+        $latest_revision = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($latest_vid);
+        // Update the latest revision.
         $latest_revision->set('moderation_state', $action)->save();
-        }
-    }else{
-      //skip the iteration
-      continue;  
-    }    
+      }
+    }
+    else {
+      // Skip the iteration.
+      continue;
+    }
   }
 }
- 
 
+/**
+ * Implements hook_preprocess_HOOK() for facets-summary-count.html.twig.
+ */
+function jcc_tc_custom_preprocess_facets_summary_count(array &$variables) {
+  $route_match = \Drupal::routeMatch();
+  $view_id = $route_match->getParameter('view_id');
+  $display_id = $route_match->getParameter('display_id');
+
+  switch ($view_id) {
+    case 'search':
+      switch ($display_id) {
+        case 'page_1':
+          $view = Views::getView('search');
+          if (!$view || !$view->setDisplay('page_1')) {
+            return;
+          }
+
+          $pager = $view->getPager();
+          $total_pages = $pager->options['total_pages'] ?? NULL;
+          $items_per_page = $pager->getItemsPerPage();
+          if (!empty($total_pages) && $items_per_page > 0) {
+            $max_count = (int) $total_pages * $items_per_page;
+            $variables['count'] = min((int) $variables['count'], $max_count);
+          }
+          break;
+      }
+      break;
+  }
+}

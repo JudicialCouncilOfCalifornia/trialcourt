@@ -13,7 +13,7 @@ do_command() {
   declare -a sitemap
 
   echo -e "\n${B}Creating backup for SRL${RE}"
-  terminus backup:create "jcc-srl.${env}" &
+  terminus backup:create "jcc-srl.${env}" --keep-for=120 &
 
   for site in $sites
     do
@@ -22,9 +22,9 @@ do_command() {
       if [ ${site} == "jcc-newsroom.${env}" ] || [ ${site} == "jcc-supremecourt.${env}" ]
       then
         echo -e "\n${G}*** Database only for ${site}${RE}"
-        terminus backup:create ${site} --element=db &
+        terminus backup:create ${site} --element=db --keep-for=120 &
       else
-        terminus backup:create ${site} &
+        terminus backup:create ${site} --keep-for=120 &
       fi
 
       PIDS+=" $!"
