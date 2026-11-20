@@ -3,3 +3,23 @@
     display: none;
   }
 }
+
+// Keep FullCalendar's month title looking like the original toolbar h2
+// after it is retagged as an h3 for heading order.
+.js-drupal-fullcalendar .fc-center h3 {
+  font-size: 1.75em;
+  margin: 0;
+}
+
+// Shared jcc_base fullcalendar styles target h3.jcc-card__title for the
+// nested events list heading. After promoting that heading to h2, keep
+// the same spacing and hide courtyard title decorations.
+.view-id-events.view-display-id-page_2 .view-id-events.view-display-id-page_1 h2.jcc-card__title {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.view-id-events.view-display-id-page_2 .view-id-events.view-display-id-page_1 h2.jcc-card__title::before,
+.view-id-events.view-display-id-page_2 .view-id-events.view-display-id-page_1 h2.jcc-card__title::after {
+  display: none;
+}

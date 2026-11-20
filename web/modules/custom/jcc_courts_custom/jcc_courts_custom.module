@@ -17,7 +17,7 @@ function jcc_courts_custom_migrate_granicus_events() {
  */
 function jcc_courts_custom_migrate_opinions_citable() {
   $migration_id = 'courts_node_opinion_published';
-  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "sync");
 }
 
 /**
@@ -25,7 +25,7 @@ function jcc_courts_custom_migrate_opinions_citable() {
  */
 function jcc_courts_custom_migrate_opinions_citable_review() {
   $migration_id = 'courts_node_opinion_published_review';
-  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "sync");
 }
 
 /**
@@ -33,7 +33,7 @@ function jcc_courts_custom_migrate_opinions_citable_review() {
  */
 function jcc_courts_custom_migrate_opinions_citable_archive() {
   $migration_id = 'courts_node_opinion_published_archive';
-  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "sync");
 }
 
 /**
@@ -41,7 +41,7 @@ function jcc_courts_custom_migrate_opinions_citable_archive() {
  */
 function jcc_courts_custom_migrate_opinions_noncitable() {
   $migration_id = 'courts_node_opinion_unpublished';
-  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "sync");
 }
 
 /**
@@ -49,7 +49,7 @@ function jcc_courts_custom_migrate_opinions_noncitable() {
  */
 function jcc_courts_custom_migrate_opinions_noncitable_review() {
   $migration_id = 'courts_node_opinion_unpublished_review';
-  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "sync");
 }
 
 /**
@@ -57,7 +57,7 @@ function jcc_courts_custom_migrate_opinions_noncitable_review() {
  */
 function jcc_courts_custom_migrate_opinions_citing_media() {
   $migration_id = 'courts_media_opinion_citing';
-  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "sync");
 }
 
 /**
@@ -65,7 +65,7 @@ function jcc_courts_custom_migrate_opinions_citing_media() {
  */
 function jcc_courts_custom_migrate_opinions_citing() {
   $migration_id = 'courts_node_opinion_citing';
-  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, TRUE);
+  \Drupal::service('jcc_custom.migration_job_service')->jccRunMigration($migration_id, "sync");
 }
 
 /**
