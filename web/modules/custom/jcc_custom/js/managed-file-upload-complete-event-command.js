@@ -7,11 +7,16 @@
    */
   Drupal.AjaxCommands.prototype.triggerManagedFileUploadComplete = function (context) {
     const form = context.$form[0];
-    const fileName = form.querySelector('.js-form-managed-file .file a').innerHTML.replace(/\.[^/.]+$/, "");
+    const fileLink = form.querySelector('.js-form-managed-file .file a');
     const nameField = form.querySelector('.js-form-item-name-0-value input');
 
+    // Bulk import and failed uploads may not provide these elements.
+    if (!nameField || !fileLink) {
+      return;
+    }
+
     if (nameField.value == '') {
-      nameField.value = fileName;
+      nameField.value = fileLink.innerHTML.replace(/\.[^/.]+$/, "");
     }
   };
 

@@ -161,7 +161,7 @@ function jcc_elevated_paragraph_views_reference_news_sticky_list(array &$variabl
   // Apply a section query to this link, if the sections module is enabled and
   // the current page has a section applied.
   if (\Drupal::service('module_handler')->moduleExists('jcc_elevated_sections')) {
-    if ($sid = jcc_get_current_page_section()) {
+    if ($sid = _jcc_elevated_sections_get_current_page_section()) {
       $options['query'] = ['jcc_section' => $sid];
     }
   }

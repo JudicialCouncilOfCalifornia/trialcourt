@@ -84,7 +84,8 @@
   {% set link = {
     text: item.title,
     url: path(item.url.routeName, {'node': item.url.routeParameters.node}),
-    is_current: item.in_active_trail
+    in_active_trail: item.in_active_trail,
+    is_current: item.is_current,
   } %}
   {% set sub_links = sub_links|merge([link]) %}
 {% endfor %}
