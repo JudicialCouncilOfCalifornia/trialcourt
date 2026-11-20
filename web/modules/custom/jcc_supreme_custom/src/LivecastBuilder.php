@@ -2,6 +2,8 @@
 
 namespace Drupal\jcc_supreme_custom;
 
+use Drupal\Core\Extension\ThemeSettingsProvider;
+
 /**
  * Builds time-sensitive livecast banner.
  */
@@ -21,7 +23,8 @@ class LivecastBuilder {
     $build = ['#cache' => ['max-age' => 0]];
 
     // Theme settings required.
-    $term_id = theme_get_setting('granicus_event_type', $theme);
+    $theme_settings = \Drupal::service(ThemeSettingsProvider::class);
+    $term_id = $theme_settings->getSetting('granicus_event_type', $theme);
     if (!$term_id) {
       return $build;
     }
@@ -47,7 +50,7 @@ class LivecastBuilder {
       }
 
       // Display event status.
-      $status = !theme_get_setting('granicus_status_override', $theme) && $current_timestamp < $start_timestamp
+      $status = !$theme_settings->getSetting('granicus_status_override', $theme) && $current_timestamp < $start_timestamp
         ? 'starting soon'
         : 'live';
 
@@ -58,8 +61,8 @@ class LivecastBuilder {
       // Get captioning links from theme settings.
       $captioning_links = [];
       $captions = [
-        'English' => theme_get_setting('granicus_english_captions', $theme),
-        'Español' => theme_get_setting('granicus_spanish_captions', $theme),
+        'English' => $theme_settings->getSetting('granicus_english_captions', $theme),
+        'Español' => $theme_settings->getSetting('granicus_spanish_captions', $theme),
       ];
       foreach ($captions as $title => $caption) {
         if ($caption) {
