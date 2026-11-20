@@ -11,7 +11,7 @@ migration_tags:
   - case
   - debug
 migration_group: case_management
-label: 'Case: Import Northern Branch And Northern Case Nodes'
+label: 'Case: Import Northern Branch Cases  (Replaced and for rollback use only)'
 source:
   plugin: csv
   path: sites/default/files/sanmateo/default/upload/South_San_Francisco.csv
@@ -58,7 +58,7 @@ source:
 process:
   field_migration_origin:
     plugin: default_value
-    default_value: ssf
+    default_value: traffic
   field_party_name:
     -
       plugin: skip_on_empty
@@ -181,7 +181,7 @@ process:
   field_case_category:
     -
       plugin: default_value
-      default_value: ssf
+      default_value: noncrim
     -
       plugin: entity_generate
       bundle: case_category

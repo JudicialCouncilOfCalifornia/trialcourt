@@ -75,18 +75,20 @@ final class MigrationQueueWorker extends QueueWorkerBase implements ContainerFac
    * {@inheritdoc}
    */
   public function processItem($data) {
-    if (!isset($data['migration_id'], $data['sync_option'])) {
+    // The sync option is optional: some callers enqueue a plain import (NULL).
+    if (!isset($data['migration_id'])) {
       throw new \InvalidArgumentException('Migration queue item missing required data.');
     }
 
     $migration_id = $data['migration_id'];
+    $sync_option = $data['sync_option'] ?? NULL;
     $migration = $this->migrationManager->createInstance($migration_id);
     if ($migration->getStatus() !== MigrationInterface::STATUS_IDLE) {
       throw new RequeueException(sprintf('Migration %s is busy; its status was preserved.', $migration_id));
     }
 
     // Preserve Courts' sync policy, but never delete jobs from an empty feed.
-    if ($migration_id === 'courts_node_job' && in_array($data['sync_option'], [TRUE, 'sync'], TRUE)) {
+    if ($migration_id === 'courts_node_job' && in_array($sync_option, [TRUE, 'sync'], TRUE)) {
       $this->sourceUrlModifier->prepare($migration);
       try {
         if ($migration->getSourcePlugin()->count(TRUE) <= 0) {
@@ -101,10 +103,14 @@ final class MigrationQueueWorker extends QueueWorkerBase implements ContainerFac
     }
 
     // Existing opinion callbacks pass TRUE; Granicus updates existing events.
-    if ($data['sync_option'] === TRUE || $data['sync_option'] === 'sync') {
+    // NULL runs a plain import of new items.
+    if ($sync_option === TRUE || $sync_option === 'sync') {
+      // Mirror what is current in the source.
       $migration->set('syncSource', TRUE);
     }
-    elseif ($data['sync_option'] === 'update') {
+    elseif ($sync_option === 'update') {
+      // Reimport all imported items with the new items.
+      // Alternatively, use 'track_changes' in YML over this option.
       $migration->getIdMap()->prepareUpdate();
     }
 

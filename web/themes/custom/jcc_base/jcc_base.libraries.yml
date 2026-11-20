@@ -16,7 +16,11 @@ courtyard:
 
   js:
     ../../../libraries/courtyard-artifact/1.x/public/js/scripts.min.js: { minified: true, preprocess: false }
+  # Drupal 10.1+ sorts libraries alphabetically, so without this dependency
+  # courtyard would load before jcc_base/style. Courtyard must load after it
+  # so its component styles (e.g. .jcc-pagination) override the base styles.
   dependencies:
+    - jcc_base/style
     - jcc_base/accordion
     - jcc_base/read_more
 
@@ -41,3 +45,9 @@ twocol_66_33:
   css:
     theme:
       templates/layouts/twocol_66_33/twocol_66_33.css: {}
+
+view-ajax-customizations:
+  js:
+    src/js/view-ajax-customizations.js: {}
+  dependencies:
+    - core/once
