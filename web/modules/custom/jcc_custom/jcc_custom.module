@@ -718,6 +718,11 @@ function jcc_custom_element_info_alter(array &$info) {
   // Add the custom command to managed_file elements, so that it is
   // available when called:
   $info['managed_file']['#attached']['library'][] = 'jcc_custom/command.managed_file_upload_complete_event_command';
+
+  // Keep Chosen off the hidden root select of CSHS widgets.
+  if (isset($info['cshs'])) {
+    $info['cshs']['#process'][] = 'jcc_custom_cshs_no_chosen';
+  }
 }
 
 /**
@@ -839,6 +844,19 @@ function jcc_custom_managed_file_ajax_callback(array &$form, FormStateInterface 
  */
 function jcc_custom_managed_file_process(array &$element, FormStateInterface $form_state) {
   $element['upload_button']['#ajax']['callback'] = 'jcc_custom_managed_file_ajax_callback';
+
+  return $element;
+}
+
+/**
+ * Process callback for cshs elements: excludes the root select from Chosen.
+ *
+ * Drupal 10.1+ loads libraries in alphabetical order, so Chosen's behavior
+ * runs before CSHS hides its root select and turns it into a second widget.
+ * The "chosen-disable" class is part of Chosen's ignore selector.
+ */
+function jcc_custom_cshs_no_chosen(array &$element, FormStateInterface $form_state) {
+  $element['#attributes']['class'][] = 'chosen-disable';
 
   return $element;
 }

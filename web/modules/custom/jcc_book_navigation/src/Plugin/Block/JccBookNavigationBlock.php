@@ -2,6 +2,7 @@
 
 namespace Drupal\jcc_book_navigation\Plugin\Block;
 
+use Drupal\book\BookInterface;
 use Drupal\book\Plugin\Block\BookNavigationBlock;
 use Drupal\node\NodeInterface;
 
@@ -93,10 +94,14 @@ class JccBookNavigationBlock extends BookNavigationBlock {
    */
   public function build(): array {
     $current_bid = 0;
+    $book = [];
 
+    // Contrib book 3.x stores the outline on the Book bundle class, not on
+    // $node->book.
     $node = $this->routeMatch->getParameter('node');
-    if ($node instanceof NodeInterface && !empty($node->book['bid'])) {
-      $current_bid = $node->book['bid'];
+    if ($node instanceof BookInterface && !empty($node->getBook()['bid'])) {
+      $book = $node->getBook();
+      $current_bid = $book['bid'];
     }
     if ($this->configuration['block_mode'] == 'all pages') {
       return parent::build();
@@ -106,17 +111,17 @@ class JccBookNavigationBlock extends BookNavigationBlock {
       // not show unpublished books.
       $nid = \Drupal::entityQuery('node')
         ->accessCheck(TRUE)
-        ->condition('nid', $node->book['bid'], '=')
+        ->condition('nid', $current_bid, '=')
         ->condition('status', NodeInterface::PUBLISHED)
         ->execute();
       // Only show the block if the user has view access for the top-level node.
       if ($nid) {
-        $tree = $this->bookManager->bookTreeAllData($node->book['bid'], $node->book);
+        $tree = $this->bookManager->bookTreeAllData($current_bid, $book);
 
         // Search for the book root.
         $book_parent_key = '';
-        foreach ($tree as $key => $book) {
-          if ($book['link']['nid'] == $current_bid) {
+        foreach ($tree as $key => $item) {
+          if ($item['link']['nid'] == $current_bid) {
             $book_parent_key = $key;
             break;
           }
@@ -132,7 +137,7 @@ class JccBookNavigationBlock extends BookNavigationBlock {
         $build['#theme'] = 'jcc_book_navigation_block';
 
         // Add active trail to theme.
-        $active_trail = $this->bookManager->getActiveTrailIds($node->book['bid'], $node->book);
+        $active_trail = $this->bookManager->getActiveTrailIds($current_bid, $book);
         $build['#active_trail'] = $active_trail;
 
         // Add icon library preferences.
