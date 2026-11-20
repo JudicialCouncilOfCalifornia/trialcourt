@@ -286,3 +286,26 @@ function jcc_custom_update_10001() {
   }
   return $fixed ? t('Switched to inline confirmation: @webforms.', ['@webforms' => implode(', ', $fixed)]) : t('No webforms with a broken confirmation page.');
 }
+
+/**
+ * Remove the Ultimate Cron jobs for hook_cron() implementations core dropped.
+ *
+ * Drupal 11 moved the field purge into system's cron and the node search
+ * ranking into search_node, so "field_cron" and "node_cron" are listed as
+ * "Missing" in Ultimate Cron.
+ */
+function jcc_custom_update_10002() {
+  if (!\Drupal::moduleHandler()->moduleExists('ultimate_cron')) {
+    return t('Ultimate Cron is not enabled.');
+  }
+  $storage = \Drupal::entityTypeManager()->getStorage('ultimate_cron_job');
+  $removed = [];
+  /** @var \Drupal\ultimate_cron\CronJobInterface $job */
+  foreach ($storage->loadMultiple(['field_cron', 'node_cron']) as $id => $job) {
+    if (!$job->isValid()) {
+      $job->delete();
+      $removed[] = $id;
+    }
+  }
+  return $removed ? t('Removed Ultimate Cron jobs: @jobs.', ['@jobs' => implode(', ', $removed)]) : t('No obsolete Ultimate Cron jobs found.');
+}
