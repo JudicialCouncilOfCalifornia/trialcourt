@@ -13,7 +13,7 @@ do_command() {
     do
       site="jcc-${site}.${env}"
       echo -e "\n${B}Creating backup for ${site}${RE}"
-      terminus backup:create ${site} &
+      terminus backup:create ${site} --keep-for=120 &
     done
 }
 
