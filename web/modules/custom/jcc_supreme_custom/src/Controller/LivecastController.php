@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * Delivers the livecast independently of cached front-page responses.
  */
-class LivecastController extends ControllerBase {
+final class LivecastController extends ControllerBase {
 
   /**
    * The renderer.

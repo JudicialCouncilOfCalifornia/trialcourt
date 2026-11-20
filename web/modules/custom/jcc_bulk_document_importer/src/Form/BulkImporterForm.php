@@ -5,6 +5,7 @@ namespace Drupal\jcc_bulk_document_importer\Form;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Utility\Error;
 use Drupal\file\FileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -13,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @internal
  */
-class BulkImporterForm extends FormBase {
+final class BulkImporterForm extends FormBase {
 
   /**
    * The database connection.
@@ -238,7 +239,8 @@ class BulkImporterForm extends FormBase {
         $created++;
       }
       // Commit the complete batch before reporting success or releasing locks.
-      unset($transaction);
+      // Releasing the transaction object commits it.
+      $transaction = NULL;
     }
     catch (\Throwable $exception) {
       // Restore moved uploads while their database rows are still locked.
@@ -262,16 +264,14 @@ class BulkImporterForm extends FormBase {
           $restore_errors[$fid] = $restore_exception;
         }
       }
-      if (isset($transaction)) {
-        $transaction->rollBack();
-      }
+      $transaction?->rollBack();
       // Entity caches may still contain entities from the rolled-back saves.
       foreach (['file', 'media', 'node'] as $entity_type) {
         $this->entityTypeManager->getStorage($entity_type)->resetCache();
       }
-      watchdog_exception('jcc_bulk_document_importer', $exception);
+      Error::logException($this->getLogger('jcc_bulk_document_importer'), $exception);
       foreach ($restore_errors as $fid => $restore_exception) {
-        watchdog_exception('jcc_bulk_document_importer', $restore_exception);
+        Error::logException($this->getLogger('jcc_bulk_document_importer'), $restore_exception);
         $this->getLogger('jcc_bulk_document_importer')->error('Upload recovery copy retained at @path for file @fid.', [
           '@path' => $backups[$fid]['backup'],
           '@fid' => $fid,
@@ -292,7 +292,7 @@ class BulkImporterForm extends FormBase {
           $file_system->delete($paths['backup']);
         }
         catch (\Throwable $cleanup_exception) {
-          watchdog_exception('jcc_bulk_document_importer', $cleanup_exception);
+          Error::logException($this->getLogger('jcc_bulk_document_importer'), $cleanup_exception);
         }
       }
     }
