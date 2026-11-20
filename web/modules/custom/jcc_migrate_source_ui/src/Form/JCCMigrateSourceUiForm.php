@@ -3,6 +3,7 @@
 namespace Drupal\jcc_migrate_source_ui\Form;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Component\Serialization\Json as JsonSerializer;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
@@ -222,17 +223,23 @@ class JCCMigrateSourceUiForm extends FormBase {
       // option is selected.
       foreach (array_keys($opts) as $key) {
         $stored_source = $this->getMigrationSource($key);
+        $states = [
+          'visible' => [
+            ':input[name="source_type"]' => ['value' => $type],
+            ':input[name="migrations[' . $type . ']"]' => ['value' => $key],
+          ],
+        ];
         $form['migrations'][$key] = [
           '#type' => 'item',
           '#title' => $this->t('Stored Source'),
           '#plain_text' => is_array($stored_source) ? implode(', ', $stored_source) : (string) $stored_source,
           '#value' => $stored_source,
           '#access' => !empty($stored_source),
-          '#states' => [
-            'visible' => [
-              ':input[name="source_type"]' => ['value' => $type],
-              ':input[name="migrations[' . $type . ']"]' => ['value' => $key],
-            ],
+          '#wrapper_attributes' => [
+            'data-drupal-states' => JsonSerializer::encode($states),
+          ],
+          '#attached' => [
+            'library' => ['core/drupal.states'],
           ],
         ];
       }
