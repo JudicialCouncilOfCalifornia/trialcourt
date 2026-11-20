@@ -29,13 +29,16 @@ function jcc_newslinks_update_9001() {
 
   $servers = $manager->getStorage('search_api_server');
   $legacy = $servers->load('solr');
-  $active = $servers->load('pantheon_solr8');
   $index = $manager->getStorage('search_api_index')->load('index');
+  // The active Pantheon server is named pantheon_solr8 in the pre-D11 config
+  // (live) and pantheon_search once the D11 config has been imported.
+  $active_ids = ['pantheon_solr8', 'pantheon_search'];
+  $active = $index ? $servers->load($index->getServerId()) : NULL;
   $connection = $legacy ? $legacy->getBackendConfig() : [];
   if (!$legacy || $legacy->status()
     || ($connection['connector_config']['host'] ?? '') !== 'jcc-trialcourt-solr.azurewebsites.net'
-    || !$active || !$active->status()
-    || !$index || !$index->status() || $index->getServerId() !== 'pantheon_solr8') {
+    || !$index || !$index->status() || !in_array($index->getServerId(), $active_ids, TRUE)
+    || !$active || !$active->status()) {
     throw new UpdateException('Newsroom Solr retirement prerequisites do not match. Review the server and index configuration before removing tasks.');
   }
   foreach ($manager->getStorage('search_api_index')->loadMultiple() as $candidate) {
