@@ -1900,6 +1900,12 @@ function jcc_elevated_form_views_exposed_form_alter(array &$form, FormStateInter
   $view = $form_state->get('view');
 
   if (($view->id() == 'search') && ($view->current_display == 'search')) {
+    // Give the search field a visually hidden accessible label.
+    if (isset($form['search'])) {
+      $form['search']['#title'] = t('Search this site');
+      $form['search']['#title_display'] = 'invisible';
+    }
+
     // Remove captcha from search form.
     unset($form['captcha']);
     // Apply the form id to the items per page element, so it can be moved out.
