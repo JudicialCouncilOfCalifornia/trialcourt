@@ -1,0 +1,51 @@
+// ADA-319: Focus indicator colors.
+// Blue outline on light backgrounds, yellow retained on the dark navy bands,
+// 4px outline-offset everywhere for a visible gap around the element. The selector 
+// groups below mirror the courtyard library's own focus rules (styles-trial css).
+//
+// !important is used deliberately: it makes these overrides win
+// deterministically. Without it, the outcome would depend on CSS
+// aggregation order between the library and this theme, which is
+// not guaranteed; the library sets its yellow outline across dozens
+// of high-specificity selectors.
+
+$focus-light-bg: #2c608a; // USWDS blue-60v - 6.66:1 on white
+$focus-dark-bg: #face00;  // existing yellow, kept for navy bands
+$focus-offset: 4px;
+
+// Light backgrounds: blue.
+input:not([disabled]):focus,
+select:not([disabled]):focus,
+textarea:not([disabled]):focus,
+button:not([disabled]):focus,
+iframe:focus,
+[href]:focus,
+[tabindex]:focus,
+[contenteditable="true"]:focus,
+.usa-focus,
+.usa-checkbox__input:focus + .usa-checkbox__label::before,
+.usa-radio__input:focus + .usa-radio__label::before {
+  outline: 0.25rem solid $focus-light-bg !important;
+  outline-offset: $focus-offset !important;
+}
+
+// Dark navy bands (header strip and footer bottom bar): keep yellow.
+.jcc-global-bar [href]:focus {
+  outline-color: $focus-dark-bg !important;
+}
+
+// Heroes with a background image keep the library's currentColor treatment.
+.jcc-hero--has-background-image [href]:focus {
+  outline-color: currentColor !important;
+}
+
+// Checkboxes and radios: small controls close to their labels, so the full
+// 4px offset collides with the label text. Tighter offset on these only.
+// Covers both the USWDS label::before pattern and the visible inputs used
+// in the exposed filters.
+.usa-checkbox__input:focus + .usa-checkbox__label::before,
+.usa-radio__input:focus + .usa-radio__label::before,
+input[type="checkbox"]:focus,
+input[type="radio"]:focus {
+  outline-offset: 2px !important;
+}
