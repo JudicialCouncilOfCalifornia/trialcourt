@@ -12,6 +12,7 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
+use Drupal\media\MediaInterface;
 use Drupal\node\NodeInterface;
 use Drupal\views\Views;
 
@@ -31,6 +32,12 @@ function jcc_elevated_preprocess_page(&$variables) {
   $route_name = explode('.', $route_name);
   if ($route_name[0] == 'entity') {
     $entity_type = $route_name[1];
+  }
+
+  // Determine entity bundle.
+  $entity_bundle = \Drupal::routeMatch()->getParameter($entity_type);
+  if ($entity_bundle instanceof NodeInterface || $entity_bundle instanceof MediaInterface) {
+    $variables['entity_bundle'] = 'page--' . $entity_type . '--' . $entity_bundle->bundle();
   }
 
   $variables['logo'] = theme_get_setting('logo', 'jcc_elevated');
