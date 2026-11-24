@@ -1,0 +1,27 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a formatted glightbox image field.
+ *
+ * Available variables:
+ * - image: A collection of image data.
+ * - url: An URL the image can be linked to.
+ * - attributes: Link attributes.
+ *
+ * @see template_preprocess_glightbox_formatter()
+ *
+ * @ingroup themeable
+ */
+#}
+
+{# Our styles and behavior customizations. #}
+{{ attach_library("jcc_elevated/remote-video") }}
+
+<a {{ attributes }}>
+	{{ image }}
+</a>
+{% if caption_description is not empty %}
+	<div class="glightbox-desc">
+		{{- caption_description -}}
+	</div>
+{% endif %}

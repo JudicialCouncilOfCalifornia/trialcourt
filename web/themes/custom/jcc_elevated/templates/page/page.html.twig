@@ -144,7 +144,11 @@
 
   </header>
 
-  <main role="main">
+  {% set entity_bundle %}
+    class="{{ entity_bundle }}"
+  {% endset %}
+
+  <main role="main" {{ entity_bundle }}>
     <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
 
   {% if section_navigation %}

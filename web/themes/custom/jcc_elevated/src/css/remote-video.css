@@ -1,37 +1,54 @@
-.remote-video-colorbox-launch-modal {
+.glightbox-media-video {
   display: flex ;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  outline: none;
+  width: fit-content;
 }
 
-.remote-video-colorbox-launch-modal:before {
-  position: absolute;
-  content: "\25B6";
-  transform: scale(5);
-  color: var(--color-white);
-  opacity: 0.4;
-}
-
-.remote-video-colorbox-launch-modal:hover::before {
-  transform: scale(6);
-}
-
-.card .remote-video-colorbox-launch-modal img {
-  width: 40rem;
-  height: auto;
-}
-
-.card .frame:has(.remote-video-colorbox-launch-modal:focus) {
+/* Storybook focus outline */
+.glightbox-media-video:focus {
   outline: 2px solid var(--focus-outline-color);
   outline-offset: 2px;
 }
 
-.card--default .frame:has(.remote-video-colorbox-launch-modal:focus) {
-  border-radius: var(--corner-radius);
+/* BEGIN Play button overlay */
+.glightbox-media-video:before {
+  position: absolute;
+  content: "\25B6";
+  transform: scale(5);
+  color: var(--color-white);
+  opacity: 0.5;
 }
 
-.card--default.bg-adjust:has(.remote-video-colorbox-launch-modal:focus) {
-  overflow: unset;
+.glightbox-media-video:hover::before {
+  transform: scale(6);
 }
+/* END */
+
+/* Hide gallery elements workaround since settings curently do nothing */
+.glightbox-container .gnext,
+.glightbox-container .gprev,
+.glightbox-container .gcounter {
+  display: none !important;
+}
+
+/* BEGIN Storybook card adjustments */
+/* Precaution: Remove obscured thumbnail focus outline */ 
+/* caused and replaced by thumbnail aspect ratio */
+.card .glightbox-media-video:focus {
+  outline: unset;
+  outline-offset: unset;
+}
+/* Aspect ratio adjustment */
+.card .glightbox-media-video img {
+  height: auto;
+}
+/* END */
+
+/* BEGIN Remote video page adjustments */
+/* Layout */
+.page--media--remote_video .glightbox-media-video {
+  margin-block: var(--s0);
+  margin-inline: auto;
+}
+/* END */
