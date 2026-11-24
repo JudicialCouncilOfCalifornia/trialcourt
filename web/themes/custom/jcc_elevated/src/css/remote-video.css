@@ -2,9 +2,16 @@
   display: flex ;
   align-items: center;
   justify-content: center;
+  width: fit-content;
 }
 
-/* Play button overlay */
+/* Storybook focus outline */
+.glightbox-media-video:focus {
+  outline: 2px solid var(--focus-outline-color);
+  outline-offset: 2px;
+}
+
+/* BEGIN Play button overlay */
 .glightbox-media-video:before {
   position: absolute;
   content: "\25B6";
@@ -16,10 +23,7 @@
 .glightbox-media-video:hover::before {
   transform: scale(6);
 }
-
-.card .glightbox-media-video img {
-  height: auto;
-}
+/* END */
 
 /* Hide gallery elements workaround since settings curently do nothing */
 .glightbox-container .gnext,
@@ -27,3 +31,24 @@
 .glightbox-container .gcounter {
   display: none !important;
 }
+
+/* BEGIN Storybook card adjustments */
+/* Precaution: Remove obscured thumbnail focus outline */ 
+/* caused and replaced by thumbnail aspect ratio */
+.card .glightbox-media-video:focus {
+  outline: unset;
+  outline-offset: unset;
+}
+/* Aspect ratio adjustment */
+.card .glightbox-media-video img {
+  height: auto;
+}
+/* END */
+
+/* BEGIN Remote video page adjustments */
+/* Layout */
+.page--media--remote_video .glightbox-media-video {
+  margin-block: var(--s0);
+  margin-inline: auto;
+}
+/* END */
